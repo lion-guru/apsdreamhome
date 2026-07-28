@@ -23,6 +23,7 @@ use App\Services\AI\Agents\MarketIntelligenceAgent;
 
 class AISystemController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     /**
      * Main AI Dashboard
      */
@@ -137,9 +138,10 @@ class AISystemController extends AdminController
 
         // Log the execution
         try {
+            $tid = $this->tenantId();
             Database::getInstance()->getConnection()->prepare(
-                "INSERT INTO agent_task_logs (agent_type, action_type, details, status, created_at) VALUES (?, ?, ?, 'completed', NOW())"
-            )->execute(['ai_' . $agentType, $action, json_encode($result)]);
+                "INSERT INTO agent_task_logs (agent_type, action_type, details, status, tenant_id, created_at) VALUES (?, ?, ?, 'completed', ?, NOW())"
+            )->execute(['ai_' . $agentType, $action, json_encode($result), $tid]);
         } catch (\Throwable $e) { /* non-critical */ }
 
         if (is_ajax()) {

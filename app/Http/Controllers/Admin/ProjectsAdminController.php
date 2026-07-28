@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 
 class ProjectsAdminController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();
@@ -59,6 +60,8 @@ class ProjectsAdminController extends AdminController
                 $data[] = $v;
             }
 
+            $fields[] = 'tenant_id';
+            $data[] = $this->tenantId();
             $placeholders = rtrim(str_repeat('?,', count($fields)), ',');
             $cols = implode(',', $fields);
 
@@ -116,8 +119,8 @@ class ProjectsAdminController extends AdminController
             $db = Database::getInstance();
             $status = $_POST['status'] ?? 'planning';
 
-            $stmt = $db->prepare("UPDATE projects SET status = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$status, $id]);
+            $stmt = $db->prepare("UPDATE projects SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$status, $id, $this->tenantId()]);
 
             $this->setFlash('success', 'Project status updated');
         }
@@ -135,8 +138,8 @@ class ProjectsAdminController extends AdminController
             $status = $_POST['status'] ?? 'planning';
             $description = $_POST['description'] ?? '';
 
-            $stmt = $db->prepare("UPDATE projects SET name = ?, status = ?, description = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$name, $status, $description, $id]);
+            $stmt = $db->prepare("UPDATE projects SET name = ?, status = ?, description = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$name, $status, $description, $id, $this->tenantId()]);
 
             $this->setFlash('success', 'Project updated successfully');
         }
@@ -159,8 +162,8 @@ class ProjectsAdminController extends AdminController
     public function destroy($id)
     {
         $db = Database::getInstance();
-        $stmt = $db->prepare("DELETE FROM projects WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $db->prepare("DELETE FROM projects WHERE id = ? AND tenant_id = ?");
+        $stmt->execute([$id, $this->tenantId()]);
         $this->redirect('/admin/projects');
     }
 }

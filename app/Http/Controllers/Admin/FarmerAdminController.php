@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 class FarmerAdminController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -119,10 +121,11 @@ class FarmerAdminController extends AdminController
         $advanceAmount = (float)($_POST['advance_amount'] ?? 0);
         $commissionRate = (float)($_POST['commission_rate'] ?? 0);
         $remarks = $_POST['remarks'] ?? '';
-        $this->db->query("INSERT INTO farmer_agreements (farmer_id, agreement_number, agreement_type, start_date, end_date, terms_conditions, total_amount, advance_amount, commission_rate, status, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, NOW())", [
+        $tid = $this->tenantId();
+        $this->db->query("INSERT INTO farmer_agreements (farmer_id, agreement_number, agreement_type, start_date, end_date, terms_conditions, total_amount, advance_amount, commission_rate, status, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, NOW(), ?)", [
             $farmerId, $agreementNumber, $type, $startDate, $endDate ?: null,
             $terms, $totalAmount, $advanceAmount, $commissionRate,
-            $_SESSION['admin_id'] ?? 0,
+            $_SESSION['admin_id'] ?? 0, $tid,
         ]);
         $this->setFlash('success', 'Agreement created successfully');
         $this->redirect('/admin/farmers/agreements');
@@ -144,8 +147,8 @@ class FarmerAdminController extends AdminController
         if ($status === 'active' && ($signedByFarmer || $signedByCompany)) {
             $signedDate = date('Y-m-d');
         }
-        $this->db->query("UPDATE farmer_agreements SET status=?, signed_by_farmer=?, signed_by_company=?, signed_date=COALESCE(?, signed_date), remarks=? WHERE id=?", [
-            $status, $signedByFarmer, $signedByCompany, $signedDate, $remarks, $id,
+        $this->db->query("UPDATE farmer_agreements SET status=?, signed_by_farmer=?, signed_by_company=?, signed_date=COALESCE(?, signed_date), remarks=? WHERE id=? AND tenant_id=?", [
+            $status, $signedByFarmer, $signedByCompany, $signedDate, $remarks, $id, $this->tenantId(),
         ]);
         $this->setFlash('success', 'Agreement status updated');
         $this->redirect('/admin/farmers/agreements/' . $id);
@@ -218,11 +221,12 @@ class FarmerAdminController extends AdminController
         $collateralValue = (float)($_POST['collateral_value'] ?? 0);
         $guarantorName = $_POST['guarantor_name'] ?? '';
         $guarantorPhone = $_POST['guarantor_phone'] ?? '';
-        $this->db->query("INSERT INTO farmer_loans (farmer_id, loan_number, loan_amount, interest_rate, loan_tenure, emi_amount, purpose, sanction_date, maturity_date, outstanding_amount, status, collateral_type, collateral_value, guarantor_name, guarantor_phone, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sanctioned', ?, ?, ?, ?, ?, NOW())", [
+        $tid = $this->tenantId();
+        $this->db->query("INSERT INTO farmer_loans (farmer_id, loan_number, loan_amount, interest_rate, loan_tenure, emi_amount, purpose, sanction_date, maturity_date, outstanding_amount, status, collateral_type, collateral_value, guarantor_name, guarantor_phone, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sanctioned', ?, ?, ?, ?, ?, NOW(), ?)", [
             $farmerId, $loanNumber, $loanAmount, $interestRate, $loanTenure,
             $emiAmount, $purpose, $sanctionDate, $maturityDate ?: null,
             $loanAmount, $collateralType, $collateralValue, $guarantorName, $guarantorPhone,
-            $_SESSION['admin_id'] ?? 0,
+            $_SESSION['admin_id'] ?? 0, $tid,
         ]);
         $this->setFlash('success', 'Loan created successfully');
         $this->redirect('/admin/farmers/loans');
@@ -238,11 +242,12 @@ class FarmerAdminController extends AdminController
             $this->redirect('/admin/farmers/loans/' . $id);
             return;
         }
-        $this->db->query("UPDATE farmer_loans SET status=?, disbursement_date=COALESCE(?, disbursement_date) WHERE id=?", [
-            $status, $disbursementDate ?: null, $id,
+        $tid = $this->tenantId();
+        $this->db->query("UPDATE farmer_loans SET status=?, disbursement_date=COALESCE(?, disbursement_date) WHERE id=? AND tenant_id=?", [
+            $status, $disbursementDate ?: null, $id, $tid,
         ]);
         if ($status === 'closed') {
-            $this->db->query("UPDATE farmer_loans SET outstanding_amount=0 WHERE id=?", [$id]);
+            $this->db->query("UPDATE farmer_loans SET outstanding_amount=0 WHERE id=? AND tenant_id=?", [$id, $tid]);
         }
         $this->setFlash('success', 'Loan status updated');
         $this->redirect('/admin/farmers/loans/' . $id);
@@ -275,8 +280,8 @@ class FarmerAdminController extends AdminController
         $area = (float)($_POST['area'] ?? 0);
         $availableArea = (float)($_POST['available_area'] ?? $area);
         try {
-            $this->db->query("INSERT INTO gata_master (site_id, gata_no, area, available_area) VALUES (?, ?, ?, ?)", [
-                $siteId, $gataNo, $area, $availableArea,
+            $this->db->query("INSERT INTO gata_master (site_id, gata_no, area, available_area, tenant_id) VALUES (?, ?, ?, ?, ?)", [
+                $siteId, $gataNo, $area, $availableArea, $this->tenantId(),
             ]);
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref

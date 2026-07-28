@@ -13,6 +13,8 @@ use UploadValidator;
 
 class PropertyImageController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     protected $db;
     private $uploadPath;
     private $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -156,7 +158,7 @@ class PropertyImageController extends AdminController
                 $isPrimary = ($existingCount == 0) ? 1 : 0;
 
                 // Save to database
-                $this->db->insert('property_images', [
+                $insertData = [
                     'property_id' => $propertyId,
                     'image_path' => $relPath,
                     'thumbnail_path' => $relThumb,
@@ -168,7 +170,12 @@ class PropertyImageController extends AdminController
                     'sort_order' => $existingCount,
                     'caption' => $_POST['caption'] ?? null,
                     'created_at' => date('Y-m-d H:i:s')
-                ]);
+                ];
+                $insertExtra = $this->tenantInsertData();
+                if (!empty($insertExtra)) {
+                    $insertData['tenant_id'] = $insertExtra['tenant_id'];
+                }
+                $this->db->insert('property_images', $insertData);
 
                 $uploadedCount++;
             } else {
@@ -260,7 +267,7 @@ class PropertyImageController extends AdminController
             $isPrimary = ($existingCount == 0) ? 1 : 0;
 
             // Save to database
-            $imageId = $this->db->insert('property_images', [
+            $insertData = [
                 'property_id' => $propertyId,
                 'image_path' => $relPath,
                 'thumbnail_path' => $relThumb,
@@ -271,7 +278,12 @@ class PropertyImageController extends AdminController
                 'is_primary' => $isPrimary,
                 'sort_order' => $existingCount,
                 'created_at' => date('Y-m-d H:i:s')
-            ]);
+            ];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) {
+                $insertData['tenant_id'] = $insertExtra['tenant_id'];
+            }
+            $imageId = $this->db->insert('property_images', $insertData);
 
             echo json_encode([
                 'success' => true,
@@ -302,16 +314,17 @@ class PropertyImageController extends AdminController
             exit;
         }
         
+        list($tSql, $tParams) = $this->tenantWhere();
         // Remove primary from all images of this property
         $this->db->query(
-            "UPDATE property_images SET is_primary = 0 WHERE property_id = ?",
-            [$propertyId]
+            "UPDATE property_images SET is_primary = 0 WHERE property_id = ? $tSql",
+            array_merge([$propertyId], $tParams)
         );
         
         // Set new primary
         $this->db->query(
-            "UPDATE property_images SET is_primary = 1 WHERE id = ?",
-            [$imageId]
+            "UPDATE property_images SET is_primary = 1 WHERE id = ? $tSql",
+            array_merge([$imageId], $tParams)
         );
         
         $_SESSION['success'] = "Primary image updated!";
@@ -334,9 +347,10 @@ class PropertyImageController extends AdminController
             exit;
         }
         
+        list($tSql, $tParams) = $this->tenantWhere();
         $this->db->query(
-            "UPDATE property_images SET caption = ? WHERE id = ?",
-            [$caption, $imageId]
+            "UPDATE property_images SET caption = ? WHERE id = ? $tSql",
+            array_merge([$caption, $imageId], $tParams)
         );
         
         echo json_encode(['success' => true]);
@@ -376,14 +390,15 @@ class PropertyImageController extends AdminController
                 unlink($basePath . $image['medium_path']);
             }
             
+            list($tSql, $tParams) = $this->tenantWhere();
             // Delete from database
-            $this->db->query("DELETE FROM property_images WHERE id = ?", [$imageId]);
+            $this->db->query("DELETE FROM property_images WHERE id = ? $tSql", array_merge([$imageId], $tParams));
             
             // If deleted image was primary, set another as primary
             if ($image['is_primary']) {
                 $this->db->query(
-                    "UPDATE property_images SET is_primary = 1 WHERE property_id = ? ORDER BY id ASC LIMIT 1",
-                    [$propertyId]
+                    "UPDATE property_images SET is_primary = 1 WHERE property_id = ? $tSql ORDER BY id ASC LIMIT 1",
+                    array_merge([$propertyId], $tParams)
                 );
             }
             
@@ -403,10 +418,11 @@ class PropertyImageController extends AdminController
         
         $order = $_POST['order'] ?? [];
         
+        list($tSql, $tParams) = $this->tenantWhere();
         foreach ($order as $index => $imageId) {
             $this->db->query(
-                "UPDATE property_images SET sort_order = ? WHERE id = ?",
-                [$index, $imageId]
+                "UPDATE property_images SET sort_order = ? WHERE id = ? $tSql",
+                array_merge([$index, $imageId], $tParams)
             );
         }
         

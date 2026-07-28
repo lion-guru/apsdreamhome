@@ -5,7 +5,7 @@
 /* ─── Root ─── */
 .lcw-root {
   position: fixed;
-  bottom: 20px;
+  bottom: 90px;
   right: 20px;
   z-index: 99998;
   font-family:
@@ -506,7 +506,7 @@
 /* ─── Mobile ─── */
 @media (max-width: 480px) {
   .lcw-root {
-    bottom: 12px;
+    bottom: 80px;
     right: 12px;
   }
   .lcw-window {
@@ -521,4 +521,69 @@
     height: 52px;
     font-size: 20px;
   }
+}
+
+/* ─── Dark Mode Support ─── */
+body.dark-mode .lcw-window {
+  background: var(--card-bg, #23272f);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+body.dark-mode .lcw-messages {
+  background: var(--primary-bg, #1f232b);
+}
+body.dark-mode .lcw-msg-agent .lcw-msg-bubble,
+body.dark-mode .lcw-msg-bot .lcw-msg-bubble {
+  background: var(--surface-3, #2a2f38);
+  color: var(--text-main, #e3eafc);
+  border-color: var(--aps-cp-border, #334155);
+}
+body.dark-mode .lcw-input-bar {
+  background: var(--card-bg, #23272f);
+  border-top-color: var(--aps-cp-border, #334155);
+}
+body.dark-mode .lcw-input {
+  background: var(--primary-bg, #1f232b);
+  color: var(--text-main, #e3eafc);
+  border-color: var(--aps-cp-border, #334155);
+}
+body.dark-mode .lcw-input::placeholder {
+  color: var(--text-muted, #64748b);
+}
+body.dark-mode .lcw-msg-name {
+  color: var(--text-secondary, #94a3b8);
+}
+body.dark-mode .lcw-msg-time {
+  color: var(--text-muted, #64748b);
+}
+body.dark-mode .lcw-system-info {
+  background: var(--surface-3, #2a2f38);
+  color: var(--text-secondary, #94a3b8);
+}
+body.dark-mode .lcw-prechat-form .form-control {
+  background: var(--primary-bg, #1f232b);
+  color: var(--text-main, #e3eafc);
+  border-color: var(--aps-cp-border, #334155);
+}
+body.dark-mode .lcw-powered {
+  background: var(--primary-bg, #1f232b);
+  color: var(--text-muted, #64748b);
+  border-top-color: var(--aps-cp-border, #334155);
+}
+body.dark-mode .lcw-emoji-picker {
+  background: var(--card-bg, #23272f);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+body.dark-mode .lcw-emoji-btn:hover {
+  background: var(--aps-cp-border, #334155);
+}
+body.dark-mode .lcw-connection {
+  background: #422006;
+  color: #fbbf24;
+}
+body.dark-mode .lcw-msg-file a {
+  background: var(--surface-3, #2a2f38);
+  color: #818cf8;
+}
+body.dark-mode .lcw-msg-file a:hover {
+  background: var(--aps-cp-border, #334155);
 }

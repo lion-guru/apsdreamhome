@@ -34,35 +34,36 @@ foreach ($menuItems as $item) {
 // Section display names with icons
 $sectionNames = [
     'dashboards'  => '📊 Dashboards',
-    'crm'         => '👥 CRM & Sales',
-    'properties'  => '🏠 Properties',
+    'crm'         => '👥 CRM & Leads',
+    'properties'  => '🏠 Properties & Land',
     'mlm'         => '🔗 MLM Network',
-    'finance'     => '💰 Finance',
-    'bookings'    => '📅 Bookings',
-    'cms'         => '📝 Content',
-    'marketing'   => '📢 Marketing',
-    'reports'     => '📈 Reports',
+    'finance'     => '💰 Finance & Accounting',
+    'commission'  => '💸 Commission Engine',
+    'cms'         => '📝 Content (CMS)',
+    'marketing'   => '📢 Marketing & Referrals',
+    'reports'     => '📈 Reports & Analytics',
     'operations'  => '⚙️ Operations',
-    'users'       => '👤 Users & Team',
+    'users'       => '👤 Users & Roles',
     'locations'   => '📍 Locations',
     'settings'    => '🔧 Settings',
     'hrm'         => '👔 HR & Payroll',
-    'legal'       => '⚖️ Legal',
-    'sales'       => '🏷️ Sales',
+    'legal'       => '⚖️ Legal & Compliance',
+    'sales'       => '🏷️ Sales & Bookings',
     'services'    => '🛎️ Services',
-    'system'      => '🖥️ System',
-    'technology'  => '🤖 Technology',
-    'commission'  => '💸 Commission',
+    'system'      => '🖥️ System Admin',
+    'ai_tech'     => '🤖 AI & Technology',
     'security'    => '🔒 Security',
-    'employee'    => '👩‍💼 Employee',
+    'employee'    => '👩‍💼 Employee Portal',
+    'saas'        => '☁️ SaaS / Multi-Tenant',
+    'communication' => '📡 Communication',
 ];
 
-// Section sort order — controls which sections appear first
+// Section sort order — matches DB section_order
 $sectionOrder = [
-    'dashboards', 'crm', 'properties', 'sales', 'bookings', 'finance',
-    'commission', 'mlm', 'hrm', 'employee', 'legal', 'marketing',
-    'services', 'cms', 'operations', 'reports', 'locations', 'technology',
-    'security', 'settings', 'system', 'users',
+    'dashboards', 'crm', 'properties', 'sales', 'finance',
+    'commission', 'mlm', 'hrm', 'legal', 'marketing',
+    'cms', 'services', 'reports', 'operations', 'locations',
+    'ai_tech', 'security', 'communication', 'users', 'saas', 'settings', 'system', 'employee',
 ];
 
 // Sort grouped items by defined order

@@ -115,9 +115,9 @@ class PlotsAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO plots (colony_id, plot_number, block, sector, plot_type, area_sqft, area_sqm, frontage_ft, depth_ft, price_per_sqft, total_price, status, description, features, facing, corner_plot, park_facing, road_width_ft, latitude, longitude, image_path, documents_path, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt = $this->db->prepare("INSERT INTO plots (colony_id, plot_number, block, sector, plot_type, area_sqft, area_sqm, frontage_ft, depth_ft, price_per_sqft, total_price, status, description, features, facing, corner_plot, park_facing, road_width_ft, latitude, longitude, image_path, documents_path, is_featured, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-                $stmt->execute([$colony_id, $plot_number, $block, $sector, $plot_type, $area_sqft, $area_sqm, $frontage_ft, $depth_ft, $price_per_sqft, $total_price, $status, $description, $features, $facing, $corner_plot, $park_facing, $road_width_ft, $latitude, $longitude, $image_path, $documents_path, $is_featured]);
+                $stmt->execute([$colony_id, $plot_number, $block, $sector, $plot_type, $area_sqft, $area_sqm, $frontage_ft, $depth_ft, $price_per_sqft, $total_price, $status, $description, $features, $facing, $corner_plot, $park_facing, $road_width_ft, $latitude, $longitude, $image_path, $documents_path, $is_featured, $this->tenantId()]);
 
                 $_SESSION['success'] = 'Plot created successfully';
                 redirect('/admin/plots');
@@ -191,9 +191,9 @@ class PlotsAdminController extends AdminController
             try {
                 $oldStatus = $plot['status'];
 
-                $stmt = $this->db->prepare("UPDATE plots SET colony_id = ?, plot_number = ?, block = ?, sector = ?, plot_type = ?, area_sqft = ?, area_sqm = ?, frontage_ft = ?, depth_ft = ?, price_per_sqft = ?, total_price = ?, status = ?, booking_amount = ?, total_paid = ?, payment_status = ?, customer_id = ?, booking_date = ?, sale_date = ?, possession_date = ?, description = ?, features = ?, facing = ?, corner_plot = ?, park_facing = ?, road_width_ft = ?, latitude = ?, longitude = ?, image_path = ?, documents_path = ?, is_featured = ?, is_active = ? WHERE id = ?");
+                $stmt = $this->db->prepare("UPDATE plots SET colony_id = ?, plot_number = ?, block = ?, sector = ?, plot_type = ?, area_sqft = ?, area_sqm = ?, frontage_ft = ?, depth_ft = ?, price_per_sqft = ?, total_price = ?, status = ?, booking_amount = ?, total_paid = ?, payment_status = ?, customer_id = ?, booking_date = ?, sale_date = ?, possession_date = ?, description = ?, features = ?, facing = ?, corner_plot = ?, park_facing = ?, road_width_ft = ?, latitude = ?, longitude = ?, image_path = ?, documents_path = ?, is_featured = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
 
-                $stmt->execute([$colony_id, $plot_number, $block, $sector, $plot_type, $area_sqft, $area_sqm, $frontage_ft, $depth_ft, $price_per_sqft, $total_price, $status, $booking_amount, $total_paid, $payment_status, $customer_id, $booking_date, $sale_date, $possession_date, $description, $features, $facing, $corner_plot, $park_facing, $road_width_ft, $latitude, $longitude, $image_path, $documents_path, $is_featured, $is_active, $id]);
+                $stmt->execute([$colony_id, $plot_number, $block, $sector, $plot_type, $area_sqft, $area_sqm, $frontage_ft, $depth_ft, $price_per_sqft, $total_price, $status, $booking_amount, $total_paid, $payment_status, $customer_id, $booking_date, $sale_date, $possession_date, $description, $features, $facing, $corner_plot, $park_facing, $road_width_ft, $latitude, $longitude, $image_path, $documents_path, $is_featured, $is_active, $id, $this->tenantId()]);
 
                 // Log status change if different
                 if ($oldStatus !== $status) {
@@ -219,8 +219,8 @@ class PlotsAdminController extends AdminController
         $this->checkAuth();
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM plots WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("DELETE FROM plots WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
 
             $_SESSION['success'] = 'Plot deleted successfully';
         } catch (\PDOException $e) {
@@ -260,8 +260,8 @@ class PlotsAdminController extends AdminController
             $old_status = $plot['status'];
 
             // Update plot status
-            $stmt = $this->db->prepare("UPDATE plots SET status = ? WHERE id = ?");
-            $stmt->execute([$new_status, $id]);
+            $stmt = $this->db->prepare("UPDATE plots SET status = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$new_status, $id, $this->tenantId()]);
 
             // Log status change
             $this->logStatusChange($id, $old_status, $new_status, $_SESSION['user_id'], $reason);
@@ -335,8 +335,9 @@ class PlotsAdminController extends AdminController
 
                 if ($plot && $plot['status'] !== $new_status) {
                     // Update status
-                    $stmt = $this->db->prepare("UPDATE plots SET status = ? WHERE id = ?");
-                    $stmt->execute([$new_status, $plot_id]);
+                    $tid = $this->tenantId();
+                    $stmt = $this->db->prepare("UPDATE plots SET status = ? WHERE id = ? AND tenant_id = ?");
+                    $stmt->execute([$new_status, $plot_id, $tid]);
 
                     // Log change
                     $this->logStatusChange($plot_id, $plot['status'], $new_status, $_SESSION['user_id'], $reason);
@@ -452,10 +453,11 @@ class PlotsAdminController extends AdminController
     private function logStatusChange($plot_id, $old_status, $new_status, $changed_by, $reason)
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason) VALUES (?, ?, ?, ?, ?)");
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
-        $stmt->execute([$plot_id, $old_status, $new_status, $changed_by, $reason]);
+        $stmt->execute([$plot_id, $old_status, $new_status, $changed_by, $reason, $tid]);
     }
 }

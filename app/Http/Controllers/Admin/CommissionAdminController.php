@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 class CommissionAdminController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -96,10 +98,11 @@ class CommissionAdminController extends AdminController
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO agent_commission_rates (agent_id, property_type, base_rate_pct, override_pct, bonus_rate_pct, effective_from, effective_to) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+            $tid = $this->tenantId();
+            $this->db->query("INSERT INTO agent_commission_rates (agent_id, property_type, base_rate_pct, override_pct, bonus_rate_pct, effective_from, effective_to, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
                 (int)$_POST['agent_id'], $_POST['property_type'] ?? 'plot', (float)($_POST['base_rate_pct'] ?? 0),
                 (float)($_POST['override_pct'] ?? 0), (float)($_POST['bonus_rate_pct'] ?? 0),
-                $_POST['effective_from'] ?? date('Y-m-d'), $_POST['effective_to'] ?? null
+                $_POST['effective_from'] ?? date('Y-m-d'), $_POST['effective_to'] ?? null, $tid
             ]);
             $this->setFlash('success', 'Agent rate created');
         } catch (\Exception $e) {
@@ -111,7 +114,7 @@ class CommissionAdminController extends AdminController
     public function agentRateDelete($id)
     {
         try {
-            $this->db->query("DELETE FROM agent_commission_rates WHERE id = ?", [(int)$id]);
+            $this->db->query("DELETE FROM agent_commission_rates WHERE id = ? AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rate deleted');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -137,12 +140,14 @@ class CommissionAdminController extends AdminController
         $this->validateCsrfOrFail();
         try {
             $rankName = $_POST['level_name'] ?? $_POST['rank_name'] ?? '';
-            $this->db->query("UPDATE mlm_rank_benefits SET direct_sale_pct = ?, l1_pct = ?, l2_pct = ?, l3_pct = ? WHERE rank_name = ?", [
+            list($tenantSql, $tenantParams) = $this->tenantWhere();
+            $this->db->query("UPDATE mlm_rank_benefits SET direct_sale_pct = ?, l1_pct = ?, l2_pct = ?, l3_pct = ? WHERE rank_name = ?" . $tenantSql, [
                 (float)($_POST['commission_percentage'] ?? 0),
                 (float)($_POST['gen1_override_pct'] ?? 0),
                 (float)($_POST['gen2_override_pct'] ?? 0),
                 (float)($_POST['gen3_override_pct'] ?? 0),
-                $rankName
+                $rankName,
+                ...$tenantParams
             ]);
             $this->setFlash('success', "Rank benefits updated for {$rankName}");
         } catch (\Exception $e) {
@@ -180,7 +185,7 @@ class CommissionAdminController extends AdminController
         if (!in_array($status, ['confirmed','paid'])) { $status = 'confirmed'; }
         try {
             $dbStatus = ($status === 'confirmed') ? 'approved' : 'paid';
-            $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ?", [$dbStatus, (int)$id]);
+            $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ? AND tenant_id = ?", [$dbStatus, (int)$id, $this->tenantId()]);
             $this->setFlash('success', "Record #{$id} marked as {$status}");
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -214,9 +219,10 @@ class CommissionAdminController extends AdminController
             $bonusAmount = (float)$_POST['bonus_amount'];
             $beneficiaryId = (int)$_POST['associate_id'];
             $reason = $_POST['reason'] ?? 'Manual bonus';
+            $tid = $this->tenantId();
             $this->db->query(
-                "INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, status, payment_amount, notes) VALUES (?, ?, 'performance_bonus', ?, 'pending', 0, ?)",
-                [$beneficiaryId, $beneficiaryId, $bonusAmount, $reason]
+                "INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, status, payment_amount, notes, tenant_id) VALUES (?, ?, 'performance_bonus', ?, 'pending', 0, ?, ?)",
+                [$beneficiaryId, $beneficiaryId, $bonusAmount, $reason, $tid]
             );
             $this->setFlash('success', 'Bonus recorded in commission ledger');
         } catch (\Exception $e) {
@@ -228,7 +234,7 @@ class CommissionAdminController extends AdminController
     public function bonusDelete($id)
     {
         try {
-            $this->db->query("UPDATE mlm_commission_ledger SET status = 'reversed' WHERE id = ? AND commission_type = 'performance_bonus'", [(int)$id]);
+            $this->db->query("UPDATE mlm_commission_ledger SET status = 'reversed' WHERE id = ? AND commission_type = 'performance_bonus' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Bonus reversed');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -270,13 +276,14 @@ class CommissionAdminController extends AdminController
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO mlm_rank_benefits (rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_override_pct, l2_override_pct, l3_override_pct) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+            $this->db->query("INSERT INTO mlm_rank_benefits (rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_override_pct, l2_override_pct, l3_override_pct, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
                 strtolower(trim($_POST['name'] ?? '')),
                 (int)($_POST['min_associates'] ?? 0),
                 (float)($_POST['min_business'] ?? 0),
                 (float)($_POST['commission_rate'] ?? 1),
                 (float)($_POST['direct_percentage'] ?? 1),
-                1.5, 1.0
+                1.5, 1.0,
+                $this->tenantId()
             ]);
             $this->setFlash('success', 'MLM level created');
         } catch (\Exception $e) {
@@ -288,7 +295,8 @@ class CommissionAdminController extends AdminController
     public function mlmLevelDelete($id)
     {
         try {
-            $this->db->query("DELETE FROM mlm_rank_benefits WHERE id = ?", [(int)$id]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $this->db->query("DELETE FROM mlm_rank_benefits WHERE id = ?" . $tSql, [(int)$id, ...$tParams]);
             $this->setFlash('success', 'Level deleted');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -316,7 +324,7 @@ class CommissionAdminController extends AdminController
     {
         if (!in_array($status, ['approved','paid','cancelled'])) { $status = 'approved'; }
         try {
-            $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ?", [$status, (int)$id]);
+            $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ? AND tenant_id = ?", [$status, (int)$id, $this->tenantId()]);
             $this->setFlash('success', "Record #{$id} marked as {$status}");
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -428,11 +436,12 @@ class CommissionAdminController extends AdminController
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO telecaller_commission_rules (rule_name, commission_type, amount, percentage, min_calls, target_type, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+            $tid = $this->tenantId();
+            $this->db->query("INSERT INTO telecaller_commission_rules (rule_name, commission_type, amount, percentage, min_calls, target_type, is_active, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
                 $_POST['rule_name'], $_POST['commission_type'], (float)$_POST['amount'],
                 !empty($_POST['percentage']) ? (float)$_POST['percentage'] : null,
                 (int)($_POST['min_calls'] ?? 0), $_POST['target_type'] ?? 'monthly',
-                isset($_POST['is_active']) ? 1 : 0
+                isset($_POST['is_active']) ? 1 : 0, $tid
             ]);
             $this->setFlash('success', 'Rule created');
         } catch (\Exception $e) {
@@ -446,7 +455,7 @@ class CommissionAdminController extends AdminController
         try {
             $r = $this->db->fetchOne("SELECT is_active FROM telecaller_commission_rules WHERE id = ?", [(int)$id]);
             $new = $r ? ($r['is_active'] ? 0 : 1) : 0;
-            $this->db->query("UPDATE telecaller_commission_rules SET is_active = ? WHERE id = ?", [$new, (int)$id]);
+            $this->db->query("UPDATE telecaller_commission_rules SET is_active = ? WHERE id = ? AND tenant_id = ?", [$new, (int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rule status toggled');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -457,7 +466,7 @@ class CommissionAdminController extends AdminController
     public function telecallerRuleDelete($id)
     {
         try {
-            $this->db->query("DELETE FROM telecaller_commission_rules WHERE id = ?", [(int)$id]);
+            $this->db->query("DELETE FROM telecaller_commission_rules WHERE id = ? AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rule deleted');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -490,8 +499,8 @@ class CommissionAdminController extends AdminController
     public function telecallerCommissionApprove($id)
     {
         try {
-            $this->db->query("UPDATE telecaller_commissions SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ?", [
-                (int)($_SESSION['admin_id'] ?? 0), (int)$id
+            $this->db->query("UPDATE telecaller_commissions SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ? AND tenant_id = ?", [
+                (int)($_SESSION['admin_id'] ?? 0), (int)$id, $this->tenantId()
             ]);
             $this->setFlash('success', 'Commission approved');
         } catch (\Exception $e) {
@@ -503,7 +512,7 @@ class CommissionAdminController extends AdminController
     public function telecallerCommissionPay($id)
     {
         try {
-            $this->db->query("UPDATE telecaller_commissions SET status = 'paid', paid_at = NOW() WHERE id = ? AND status = 'approved'", [(int)$id]);
+            $this->db->query("UPDATE telecaller_commissions SET status = 'paid', paid_at = NOW() WHERE id = ? AND status = 'approved' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Commission marked as paid');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());

@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\AdminController;
 
 class BankingController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -92,8 +94,11 @@ class BankingController extends AdminController
         $financial_year = $_POST['financial_year'] ?? date('Y') . '-' . (date('Y') + 1);
         $financial_period = $_POST['financial_period'] ?? date('F Y');
         try {
-            $stmt = $this->db->prepare("UPDATE transactions SET reconciliation_status = ?, reconciled_at = NOW(), reconciled_by = ?, financial_year = ?, financial_period = ? WHERE id = ?");
-            $stmt->execute([$status, $_SESSION['admin_id'] ?? 0, $financial_year, $financial_period, $id]);
+            list($tenantClause, $tenantParams) = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE transactions SET reconciliation_status = ?, reconciled_at = NOW(), reconciled_by = ?, financial_year = ?, financial_period = ? WHERE id = ?" . $tenantClause);
+            $params = [$status, $_SESSION['admin_id'] ?? 0, $financial_year, $financial_period, $id];
+            $params = array_merge($params, $tenantParams);
+            $stmt->execute($params);
             $this->setFlash('success', 'Transaction reconciled successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to reconcile: ' . $e->getMessage());

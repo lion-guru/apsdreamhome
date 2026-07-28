@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use \App\Traits\TenantAwareTrait;
+
 class AdminMarketplaceController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -69,12 +73,13 @@ class AdminMarketplaceController extends AdminController
         $this->validateCsrfOrFail();
         $id = (int)($_POST['id'] ?? 0);
         if ($id) {
-            $stmt = $this->db->prepare("SELECT is_featured FROM user_properties WHERE id = ?");
-            $stmt->execute([$id]);
+            [$where, $params] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT is_featured FROM user_properties WHERE id = ? $where");
+            $stmt->execute(array_merge([$id], $params));
             $current = (int)$stmt->fetchColumn();
             $new = $current ? 0 : 1;
-            $stmt = $this->db->prepare("UPDATE user_properties SET is_featured = ? WHERE id = ?");
-            $stmt->execute([$new, $id]);
+            $stmt = $this->db->prepare("UPDATE user_properties SET is_featured = ? WHERE id = ? $where");
+            $stmt->execute(array_merge([$new, $id], $params));
             $this->setFlash('success', $new ? 'Property marked as featured' : 'Featured removed');
         }
         $this->redirect('/admin/marketplace');
@@ -86,12 +91,13 @@ class AdminMarketplaceController extends AdminController
         $this->validateCsrfOrFail();
         $id = (int)($_POST['id'] ?? 0);
         if ($id) {
-            $stmt = $this->db->prepare("SELECT is_urgent FROM user_properties WHERE id = ?");
-            $stmt->execute([$id]);
+            [$where, $params] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT is_urgent FROM user_properties WHERE id = ? $where");
+            $stmt->execute(array_merge([$id], $params));
             $current = (int)$stmt->fetchColumn();
             $new = $current ? 0 : 1;
-            $stmt = $this->db->prepare("UPDATE user_properties SET is_urgent = ? WHERE id = ?");
-            $stmt->execute([$new, $id]);
+            $stmt = $this->db->prepare("UPDATE user_properties SET is_urgent = ? WHERE id = ? $where");
+            $stmt->execute(array_merge([$new, $id], $params));
             $this->setFlash('success', $new ? 'Property marked as urgent' : 'Urgent removed');
         }
         $this->redirect('/admin/marketplace');

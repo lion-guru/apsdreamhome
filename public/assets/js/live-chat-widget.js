@@ -195,22 +195,24 @@
     }
 
     bindEvents() {
-      this.launcher.addEventListener('click', () => this.toggle());
-      this.closeBtn.addEventListener('click', () => this.close());
-      this.prechatForm.addEventListener('submit', e => this.onStartSubmit(e));
-      this.sendBtn.addEventListener('click', () => this.sendMessage());
+      if (this.launcher) this.launcher.addEventListener('click', () => this.toggle());
+      if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close());
+      if (this.prechatForm) this.prechatForm.addEventListener('submit', e => this.onStartSubmit(e));
+      if (this.sendBtn) this.sendBtn.addEventListener('click', () => this.sendMessage());
 
-      this.input.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          this.sendMessage();
-        }
-      });
+      if (this.input) {
+        this.input.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.sendMessage();
+          }
+        });
 
-      this.input.addEventListener('input', () => {
-        this.sendBtn.disabled = !this.input.value.trim() || this.sending;
-        this.autoResizeInput();
-      });
+        this.input.addEventListener('input', () => {
+          if (this.sendBtn) this.sendBtn.disabled = !this.input.value.trim() || this.sending;
+          this.autoResizeInput();
+        });
+      }
 
       // Emoji button (add to input bar)
       this.addEmojiButton();
@@ -269,6 +271,7 @@
     }
 
     autoResizeInput() {
+      if (!this.input) return;
       this.input.style.height = 'auto';
       this.input.style.height = Math.min(this.input.scrollHeight, 90) + 'px';
     }
@@ -368,9 +371,9 @@
 
     open() {
       this.opened = true;
-      this.win.hidden = false;
-      this.root.classList.add('lcw-open');
-      this.launcher.classList.add('lcw-launcher-active');
+      if (this.win) this.win.hidden = false;
+      if (this.root) this.root.classList.add('lcw-open');
+      if (this.launcher) this.launcher.classList.add('lcw-launcher-active');
       this.clearBadge();
       this.scrollToBottom();
       if (this.session && this.session.token) {
@@ -382,9 +385,9 @@
 
     close() {
       this.opened = false;
-      this.win.hidden = true;
-      this.root.classList.remove('lcw-open');
-      this.launcher.classList.remove('lcw-launcher-active');
+      if (this.win) this.win.hidden = true;
+      if (this.root) this.root.classList.remove('lcw-open');
+      if (this.launcher) this.launcher.classList.remove('lcw-launcher-active');
       this.stopPolling();
       this.disconnectWs();
     }
@@ -480,9 +483,9 @@
     }
 
     showThread() {
-      this.prechat.hidden = true;
-      this.thread.hidden = false;
-      this.inputBar.hidden = false;
+      if (this.prechat) this.prechat.hidden = true;
+      if (this.thread) this.thread.hidden = false;
+      if (this.inputBar) this.inputBar.hidden = false;
       setTimeout(() => this.input && this.input.focus(), 50);
     }
 
@@ -678,21 +681,21 @@
     /* ─── Send Message ─── */
     async sendMessage() {
       if (this.sending) return;
-      const text = (this.input.value || '').trim();
+      const text = ((this.input && this.input.value) || '').trim();
       if (!text) return;
       if (!this.session || !this.session.token) return;
 
       // Offline queue
       if (!navigator.onLine) {
         this.enqueueMessage(text);
-        this.input.value = '';
+        if (this.input) this.input.value = '';
         this.autoResizeInput();
         return;
       }
 
       this.sending = true;
-      this.sendBtn.disabled = true;
-      this.input.value = '';
+      if (this.sendBtn) this.sendBtn.disabled = true;
+      if (this.input) this.input.value = '';
       this.autoResizeInput();
 
       const msgId = uid();
@@ -727,8 +730,10 @@
         this.enqueueMessage(text);
       } finally {
         this.sending = false;
-        this.sendBtn.disabled = false;
-        this.sendBtn.disabled = !this.input.value.trim();
+        if (this.sendBtn) {
+          this.sendBtn.disabled = false;
+          this.sendBtn.disabled = !(this.input && this.input.value.trim());
+        }
       }
     }
 

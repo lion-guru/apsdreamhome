@@ -567,8 +567,69 @@ public function navigation()
     public function financialContact()
     {
         header('Content-Type: application/json');
-        // Handle financial services contact form
-        echo json_encode(['success' => true, 'message' => 'Request submitted']);
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $service = trim($_POST['service'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if (empty($name) || empty($phone)) {
+            echo json_encode(['success' => false, 'message' => 'Name and phone are required.']);
+            return;
+        }
+
+        try {
+            // Insert into service_interests
+            $serviceType = $service ?: 'home_loan';
+            $notes = $message ?: "Service: $serviceType";
+            $this->db->query("SELECT 1 FROM service_interests LIMIT 1");
+            $stmt = $this->db->prepare("
+                INSERT INTO service_interests (service_type, customer_name, customer_phone, customer_email, status, notes, created_at)
+                VALUES (?, ?, ?, ?, 'pending', ?, NOW())
+            ");
+            $stmt->execute([$serviceType, $name, $phone, $email, $notes]);
+            $serviceId = $this->db->lastInsertId();
+
+            // Create lead via InquiryToLeadService
+            $leadData = [
+                'name' => $name,
+                'phone' => $phone,
+                'email' => $email,
+                'message' => "Financial inquiry: $serviceType — $notes",
+                'type' => 'financial_service'
+            ];
+            \App\Services\InquiryToLeadService::wireFromInquiry($leadData);
+
+            // Link lead to service interest
+            try {
+                $leadCheck = $this->db->prepare("SELECT id FROM leads WHERE phone = ? ORDER BY id DESC LIMIT 1");
+                $leadCheck->execute([$phone]);
+                $leadRow = $leadCheck->fetch(PDO::FETCH_ASSOC);
+                if ($leadRow) {
+                    $this->db->prepare("UPDATE service_interests SET lead_id = ? WHERE id = ?")
+                        ->execute([$leadRow['id'], $serviceId]);
+                }
+            } catch (\Exception $e) {
+                // Non-critical — service interest already saved
+            }
+
+            echo json_encode(['success' => true, 'message' => 'Thank you! Our financial team will contact you shortly.']);
+        } catch (\Exception $e) {
+            // Fallback: at minimum log to contacts table
+            try {
+                $stmt = $this->db->prepare("
+                    INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at)
+                    VALUES (?, ?, ?, 'financial_service', ?, ?, NOW())
+                ");
+                $stmt->execute([$name, $email, $phone, $notes, $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Exception $e2) {
+                // Last resort — log error
+                error_log("Financial contact fallback failed: " . $e2->getMessage());
+            }
+            error_log("Financial contact error: " . $e->getMessage());
+            echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you shortly.']);
+        }
     }
 
     public function bank()
@@ -2674,10 +2735,33 @@ public function location($slug = null)
 
         $whereClause = 'WHERE ' . implode(' AND ', $where);
 
-        // Get total count
+        // Get total count from user_properties
         $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM user_properties p $whereClause");
         $countStmt->execute($params);
         $total = (int)($countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
+
+        // Fallback to properties table if user_properties is empty
+        $targetTable = 'user_properties';
+        if ($total === 0) {
+            $fallbackWhere = ["p.status = 'available'"];
+            if ($keyword) { $fallbackWhere[] = '(p.title LIKE ? OR p.description LIKE ? OR p.address LIKE ?)'; }
+            if ($type) { $fallbackWhere[] = 'p.property_type = ?'; }
+            if ($listingType) { $fallbackWhere[] = 'p.listing_type = ?'; }
+            $fallbackWhereClause = 'WHERE ' . implode(' AND ', $fallbackWhere);
+            
+            try {
+                $fCountStmt = $this->db->prepare("SELECT COUNT(*) as total FROM properties p $fallbackWhereClause");
+                $fCountStmt->execute($params);
+                $fTotal = (int)($fCountStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
+                if ($fTotal > 0) {
+                    $targetTable = 'properties';
+                    $whereClause = $fallbackWhereClause;
+                    $total = $fTotal;
+                }
+            } catch (\Throwable $eFallback) {
+                error_log("runPropertyListQuery fallback error: " . $eFallback->getMessage());
+            }
+        }
 
         // Order by
         $orderBy = match ($sortBy) {
@@ -2689,17 +2773,27 @@ public function location($slug = null)
         };
 
         // Get paginated results
-        $params[] = $perPage;
-        $params[] = $offset;
-        $sql = "SELECT p.*, u.name as user_name, u.phone as user_phone, u.email as user_email
-                FROM user_properties p
-                LEFT JOIN users u ON u.id = p.user_id
-                $whereClause
-                ORDER BY $orderBy
-                LIMIT ? OFFSET ?";
+        $queryParams = $params;
+        $queryParams[] = $perPage;
+        $queryParams[] = $offset;
+
+        if ($targetTable === 'properties') {
+            $sql = "SELECT p.*, p.title as name, p.image_path as image
+                    FROM properties p
+                    $whereClause
+                    ORDER BY $orderBy
+                    LIMIT ? OFFSET ?";
+        } else {
+            $sql = "SELECT p.*, u.name as user_name, u.phone as user_phone, u.email as user_email
+                    FROM user_properties p
+                    LEFT JOIN users u ON u.id = p.user_id
+                    $whereClause
+                    ORDER BY $orderBy
+                    LIMIT ? OFFSET ?";
+        }
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute($queryParams);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
         return ['properties' => $properties, 'total' => $total];

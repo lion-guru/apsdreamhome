@@ -5,6 +5,7 @@ use App\Services\RankEvaluationService;
 
 class MLMSettingsController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     private $rankService;
 
     public function __construct()
@@ -91,8 +92,9 @@ class MLMSettingsController extends AdminController
         $rate = $_POST['rate_percentage'] ?? $rule['rate_percentage'];
         $active = isset($_POST['is_active']) ? 1 : 0;
         try {
-            $this->db->query("UPDATE commission_calculation_rules SET rate_percentage = ?, is_active = ? WHERE id = ?",
-                [$rate, $active, $id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $this->db->query("UPDATE commission_calculation_rules SET rate_percentage = ?, is_active = ? WHERE id = ?" . $tw,
+                array_merge([$rate, $active, $id], $tp));
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }

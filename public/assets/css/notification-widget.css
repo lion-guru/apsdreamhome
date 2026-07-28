@@ -190,3 +190,46 @@
     max-width: none;
   }
 }
+
+/* ─── Dark Mode Support ─── */
+body.dark-mode .lcw-toast {
+  background: var(--card-bg, #23272f);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+body.dark-mode .lcw-toast-title {
+  color: var(--text-primary, #f8fafc);
+}
+body.dark-mode .lcw-toast-body {
+  color: var(--text-secondary, #94a3b8);
+}
+body.dark-mode .lcw-toast-time {
+  color: var(--text-muted, #64748b);
+}
+body.dark-mode .lcw-toast-btn:hover {
+  background: var(--aps-cp-border, #334155);
+  color: #818cf8;
+}
+body.dark-mode .lcw-toast-success .lcw-toast-icon {
+  background: #052e16;
+  color: #4ade80;
+}
+body.dark-mode .lcw-toast-error .lcw-toast-icon {
+  background: #450a0a;
+  color: #f87171;
+}
+body.dark-mode .lcw-toast-warning .lcw-toast-icon {
+  background: #422006;
+  color: #fbbf24;
+}
+body.dark-mode .lcw-toast-info .lcw-toast-icon {
+  background: #1e1b4b;
+  color: #818cf8;
+}
+body.dark-mode .lcw-toast-campaign .lcw-toast-icon {
+  background: #2e1065;
+  color: #a78bfa;
+}
+body.dark-mode .lcw-toast-system .lcw-toast-icon {
+  background: #1f2937;
+  color: #9ca3af;
+}

@@ -9,6 +9,8 @@ use PDO;
 
 class ToolsAdminController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private function getDb(): PDO
     {
         return \App\Core\Database\Database::getInstance()->getPdo();
@@ -186,11 +188,11 @@ class ToolsAdminController extends AdminController
             $existing = $db->prepare("SELECT id FROM stamp_duty_config WHERE state_code = ? AND property_type = ?");
             $existing->execute([$stateCode, $propertyType]);
             if ($existing->fetch()) {
-                $stmt = $db->prepare("UPDATE stamp_duty_config SET stamp_rate = ?, registration_rate = ?, updated_at = NOW() WHERE state_code = ? AND property_type = ?");
-                $stmt->execute([$stampRate, $regRate, $stateCode, $propertyType]);
+                $stmt = $db->prepare("UPDATE stamp_duty_config SET stamp_rate = ?, registration_rate = ?, updated_at = NOW() WHERE state_code = ? AND property_type = ? AND tenant_id = ?");
+                $stmt->execute([$stampRate, $regRate, $stateCode, $propertyType, $this->tenantId()]);
             } else {
-                $stmt = $db->prepare("INSERT INTO stamp_duty_config (state_code, property_type, stamp_rate, registration_rate, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
-                $stmt->execute([$stateCode, $propertyType, $stampRate, $regRate]);
+                $stmt = $db->prepare("INSERT INTO stamp_duty_config (state_code, property_type, stamp_rate, registration_rate, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), NOW(), ?)");
+                $stmt->execute([$stateCode, $propertyType, $stampRate, $regRate, $this->tenantId()]);
             }
             $_SESSION['success'] = "Stamp duty config saved for $stateCode ($propertyType)";
         } catch (\Exception $e) {
@@ -263,16 +265,17 @@ class ToolsAdminController extends AdminController
         }
 
         try {
-            $stmt = $db->prepare("INSERT INTO landmarks (name, category, address, latitude, longitude, pincode, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, 1, NOW())");
-            $stmt->execute([$name, $category, $address, $latitude, $longitude, $pincode]);
+            $tid = $this->tenantId();
+            $stmt = $db->prepare("INSERT INTO landmarks (name, category, address, latitude, longitude, pincode, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, 1, NOW(), ?)");
+            $stmt->execute([$name, $category, $address, $latitude, $longitude, $pincode, $tid]);
             $landmarkId = (int)$db->lastInsertId();
 
             // Auto-calculate distances to all active colonies
             $colonies = $db->query("SELECT id, latitude, longitude FROM colonies WHERE status = 'active' AND latitude IS NOT NULL AND longitude IS NOT NULL")->fetchAll(PDO::FETCH_ASSOC);
             foreach ($colonies as $colony) {
                 $distance = $this->haversineDistance($latitude, $longitude, (float)$colony['latitude'], (float)$colony['longitude']);
-                $stmt2 = $db->prepare("INSERT IGNORE INTO colony_landmark_distances (colony_id, landmark_id, distance_km, created_at) VALUES (?, ?, ?, NOW())");
-                $stmt2->execute([$colony['id'], $landmarkId, round($distance, 2)]);
+                $stmt2 = $db->prepare("INSERT IGNORE INTO colony_landmark_distances (colony_id, landmark_id, distance_km, created_at, tenant_id) VALUES (?, ?, ?, NOW(), ?)");
+                $stmt2->execute([$colony['id'], $landmarkId, round($distance, 2), $tid]);
             }
 
             $_SESSION['success'] = "Landmark '$name' added. Distances calculated for " . count($colonies) . " colonies.";
@@ -290,8 +293,8 @@ class ToolsAdminController extends AdminController
         $db = $this->getDb();
 
         try {
-            $db->prepare("DELETE FROM colony_landmark_distances WHERE landmark_id = ?")->execute([$id]);
-            $db->prepare("DELETE FROM landmarks WHERE id = ?")->execute([$id]);
+            $db->prepare("DELETE FROM colony_landmark_distances WHERE landmark_id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
+            $db->prepare("DELETE FROM landmarks WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Landmark deleted';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -349,11 +352,11 @@ class ToolsAdminController extends AdminController
 
         try {
             if ($id > 0) {
-                $stmt = $db->prepare("UPDATE whatsapp_templates SET name = ?, content = ?, category = ?, language = ?, is_active = ?, updated_at = NOW() WHERE id = ?");
-                $stmt->execute([$name, $content, $category, $language, $isActive, $id]);
+                $stmt = $db->prepare("UPDATE whatsapp_templates SET name = ?, content = ?, category = ?, language = ?, is_active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $content, $category, $language, $isActive, $id, $this->tenantId()]);
             } else {
-                $stmt = $db->prepare("INSERT INTO whatsapp_templates (name, content, category, language, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
-                $stmt->execute([$name, $content, $category, $language, $isActive]);
+                $stmt = $db->prepare("INSERT INTO whatsapp_templates (name, content, category, language, is_active, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?)");
+                $stmt->execute([$name, $content, $category, $language, $isActive, $this->tenantId()]);
             }
             $_SESSION['success'] = "Template '$name' saved";
         } catch (\Exception $e) {
@@ -370,7 +373,7 @@ class ToolsAdminController extends AdminController
         $db = $this->getDb();
 
         try {
-            $db->prepare("DELETE FROM whatsapp_templates WHERE id = ?")->execute([$id]);
+            $db->prepare("DELETE FROM whatsapp_templates WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Template deleted';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();

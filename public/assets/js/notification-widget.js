@@ -247,7 +247,7 @@
 
       // Event handlers
       const dismissBtn = toast.querySelector('.lcw-toast-dismiss');
-      dismissBtn.addEventListener('click', () => this.dismissToast(toast));
+      if (dismissBtn) dismissBtn.addEventListener('click', () => this.dismissToast(toast));
 
       const viewBtn = toast.querySelector('.lcw-toast-view');
       if (viewBtn && item.actionUrl) {

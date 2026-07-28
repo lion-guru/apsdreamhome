@@ -10,6 +10,7 @@ use App\Core\Database\Database;
  */
 class PropertyAllocationController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -121,19 +122,20 @@ class PropertyAllocationController extends AdminController
             // Generate allocation number
             $allocationNumber = 'PA-' . date('Ymd-His');
             
+            $tid = $this->tenantId();
             $sql = "INSERT INTO property_allocations 
                     (allocation_number, customer_id, property_id, booking_amount, total_price, 
-                     installment_plan, installment_months, notes, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
-            
+                     installment_plan, installment_months, notes, status, tenant_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())";
+
             $stmt = $conn->prepare($sql);
             $stmt->execute([
                 $allocationNumber, $customerId, $propertyId, $bookingAmount, $totalPrice,
-                $installmentPlan, $installmentMonths, $notes
+                $installmentPlan, $installmentMonths, $notes, $tid
             ]);
-            
+
             // Update property status to booked
-            $conn->prepare("UPDATE properties SET status = 'booked' WHERE id = ?")->execute([$propertyId]);
+            $conn->prepare("UPDATE properties SET status = 'booked' WHERE id = ? AND tenant_id = ?")->execute([$propertyId, $tid]);
             
             redirect('/admin/property-allocations?success=Property allocated successfully');
             exit;
@@ -206,15 +208,16 @@ class PropertyAllocationController extends AdminController
         try {
             $conn = $this->db->getConnection();
             
+            $tid = $this->tenantId();
             // Update allocation status to confirmed
-            $conn->prepare("UPDATE property_allocations SET status = 'confirmed', confirmed_at = NOW() WHERE id = ?")->execute([$id]);
-            
+            $conn->prepare("UPDATE property_allocations SET status = 'confirmed', confirmed_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+
             // Update property status to sold
             $sql = "UPDATE properties p 
                     INNER JOIN property_allocations pa ON p.id = pa.property_id 
                     SET p.status = 'sold' 
-                    WHERE pa.id = ?";
-            $conn->prepare($sql)->execute([$id]);
+                    WHERE pa.id = ? AND pa.tenant_id = ?";
+            $conn->prepare($sql)->execute([$id, $tid]);
             
             redirect('/admin/property-allocations?success=Property allocation confirmed');
             exit;
@@ -241,11 +244,12 @@ class PropertyAllocationController extends AdminController
             $property = $propertyStmt->fetch(\PDO::FETCH_ASSOC);
             
             if ($property) {
+                $tid = $this->tenantId();
                 // Update allocation status to cancelled
-                $conn->prepare("UPDATE property_allocations SET status = 'cancelled', cancelled_at = NOW() WHERE id = ?")->execute([$id]);
-                
+                $conn->prepare("UPDATE property_allocations SET status = 'cancelled', cancelled_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+
                 // Update property status back to available
-                $conn->prepare("UPDATE properties SET status = 'available' WHERE id = ?")->execute([$property['property_id']]);
+                $conn->prepare("UPDATE properties SET status = 'available' WHERE id = ? AND tenant_id = ?")->execute([$property['property_id'], $tid]);
             }
             
             redirect('/admin/property-allocations?success=Property allocation cancelled');

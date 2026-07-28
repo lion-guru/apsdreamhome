@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 class EventController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();
@@ -40,8 +41,8 @@ class EventController extends AdminController
         $location = $_POST['location'] ?? '';
         $status = $_POST['status'] ?? 'active';
         try {
-            $stmt = $this->db->prepare("INSERT INTO events (title, description, event_date, location, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$title, $description, $event_date, $location, $status]);
+            $stmt = $this->db->prepare("INSERT INTO events (title, description, event_date, location, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$title, $description, $event_date, $location, $status, $this->tenantId()]);
             $_SESSION['success'] = 'Event created successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -95,8 +96,9 @@ class EventController extends AdminController
         $location = $_POST['location'] ?? '';
         $status = $_POST['status'] ?? 'active';
         try {
-            $stmt = $this->db->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, location = ?, status = ? WHERE id = ?");
-            $stmt->execute([$title, $description, $event_date, $location, $status, $id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, location = ?, status = ? WHERE id = ?" . $tw);
+            $stmt->execute([$title, $description, $event_date, $location, $status, $id, ...$tp]);
             $_SESSION['success'] = 'Event updated successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -107,8 +109,9 @@ class EventController extends AdminController
     public function destroy($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM events WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $stmt = $this->db->prepare("DELETE FROM events WHERE id = ?" . $tw);
+            $stmt->execute([$id, ...$tp]);
             $_SESSION['success'] = 'Event deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();

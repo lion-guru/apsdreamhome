@@ -10,6 +10,8 @@ use App\Services\Notification\BookingNotificationService;
 
 class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function dashboard()
     {
         $this->requireAdmin();
@@ -76,11 +78,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                     'is_active' => (int)($_POST['is_active'] ?? 1),
                 ];
                 if ($id > 0) {
-                    $stmt = $db->prepare("UPDATE packages SET name=?, price=?, direct_reward=?, level_reward=?, daily_capping=?, description=?, is_active=? WHERE id=?");
-                    $stmt->execute([$data['name'], $data['price'], $data['direct_reward'], $data['level_reward'], $data['daily_capping'], $data['description'], $data['is_active'], $id]);
+                    $stmt = $db->prepare("UPDATE packages SET name=?, price=?, direct_reward=?, level_reward=?, daily_capping=?, description=?, is_active=? WHERE id=? AND tenant_id=?");
+                    $stmt->execute([$data['name'], $data['price'], $data['direct_reward'], $data['level_reward'], $data['daily_capping'], $data['description'], $data['is_active'], $id, $this->tenantId()]);
                 } else {
-                    $stmt = $db->prepare("INSERT INTO packages (name, price, direct_reward, level_reward, daily_capping, description, is_active) VALUES (?,?,?,?,?,?,?)");
-                    $stmt->execute([$data['name'], $data['price'], $data['direct_reward'], $data['level_reward'], $data['daily_capping'], $data['description'], $data['is_active']]);
+                    $stmt = $db->prepare("INSERT INTO packages (name, price, direct_reward, level_reward, daily_capping, description, is_active, tenant_id) VALUES (?,?,?,?,?,?,?,?)");
+                    $stmt->execute([$data['name'], $data['price'], $data['direct_reward'], $data['level_reward'], $data['daily_capping'], $data['description'], $data['is_active'], $this->tenantId()]);
                 }
                 $_SESSION['success'] = 'Package saved successfully';
             } catch (\Exception $e) {
@@ -431,14 +433,15 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
 
             $db->beginTransaction();
 
-            $stmt = $db->prepare("UPDATE bookings SET status = 'confirmed', confirmed_at = NOW(), confirmed_by = ? WHERE id = ?");
-            $stmt->execute([$_SESSION['admin_id'] ?? 0, $id]);
+            $tid = $this->tenantId();
+            $stmt = $db->prepare("UPDATE bookings SET status = 'confirmed', confirmed_at = NOW(), confirmed_by = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$_SESSION['admin_id'] ?? 0, $id, $tid]);
 
             if (!empty($booking['plot_id'])) {
-                $stmt = $db->prepare("UPDATE plots SET status = 'booked' WHERE id = ?");
-                $stmt->execute([$booking['plot_id']]);
-                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Booked' WHERE id = ?");
-                $stmt->execute([$booking['plot_id']]);
+                $stmt = $db->prepare("UPDATE plots SET status = 'booked' WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$booking['plot_id'], $tid]);
+                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Booked' WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$booking['plot_id'], $tid]);
             }
 
             $commissionResult = [];
@@ -570,14 +573,15 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
 
             $db->beginTransaction();
             $reason = $_POST['reason'] ?? 'Rejected by admin';
-            $stmt = $db->prepare("UPDATE bookings SET status = 'cancelled', cancelled_at = NOW(), cancelled_by = ?, cancellation_reason = ? WHERE id = ?");
-            $stmt->execute([$_SESSION['admin_id'] ?? 0, $reason, $id]);
+            $tid = $this->tenantId();
+            $stmt = $db->prepare("UPDATE bookings SET status = 'cancelled', cancelled_at = NOW(), cancelled_by = ?, cancellation_reason = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$_SESSION['admin_id'] ?? 0, $reason, $id, $tid]);
 
             if (!empty($booking['plot_id'])) {
-                $stmt = $db->prepare("UPDATE plots SET status = 'available' WHERE id = ?");
-                $stmt->execute([$booking['plot_id']]);
-                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Available' WHERE id = ?");
-                $stmt->execute([$booking['plot_id']]);
+                $stmt = $db->prepare("UPDATE plots SET status = 'available' WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$booking['plot_id'], $tid]);
+                $stmt = $db->prepare("UPDATE inventory_plots SET status = 'Available' WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$booking['plot_id'], $tid]);
             }
 
             $db->commit();

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 class DocumentController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private function getDb()
     {
         return \App\Core\Database\Database::getInstance()->getConnection();
@@ -87,8 +89,9 @@ class DocumentController extends AdminController
                 $filePath = $uploadDir . $safeName;
 
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                    $stmt = $db->prepare("INSERT INTO documents (title, type, description, file_path, file_size, related_type, related_id, category_id, doc_type_id, uploaded_by, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())");
-                    $stmt->execute([$title, $type, $description, $filePath, $file['size'], $relatedType, $relatedId, $categoryId, $docTypeId, $_SESSION['admin_id'] ?? 0]);
+                    $tid = $this->tenantId();
+                    $stmt = $db->prepare("INSERT INTO documents (title, type, description, file_path, file_size, related_type, related_id, category_id, doc_type_id, uploaded_by, status, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW(), ?)");
+                    $stmt->execute([$title, $type, $description, $filePath, $file['size'], $relatedType, $relatedId, $categoryId, $docTypeId, $_SESSION['admin_id'] ?? 0, $tid]);
 
                     $_SESSION['success'] = 'Document uploaded successfully';
                 } else {
@@ -114,8 +117,8 @@ class DocumentController extends AdminController
             if ($doc && !empty($doc['file_path']) && file_exists($doc['file_path'])) {
                 unlink($doc['file_path']);
             }
-            $stmt = $db->prepare("DELETE FROM documents WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("DELETE FROM documents WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Document deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Delete failed: ' . $e->getMessage();
@@ -180,8 +183,8 @@ class DocumentController extends AdminController
                 $parentId = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
                 $isActive = isset($_POST['is_active']) ? 1 : 1;
 
-                $stmt = $db->prepare("INSERT INTO document_categories (name, slug, description, parent_id, is_active, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$name, $slug, $description, $parentId, $isActive]);
+                $stmt = $db->prepare("INSERT INTO document_categories (name, slug, description, parent_id, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, NOW(), ?)");
+                $stmt->execute([$name, $slug, $description, $parentId, $isActive, $this->tenantId()]);
                 $_SESSION['success'] = 'Category created successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -203,8 +206,8 @@ class DocumentController extends AdminController
                 $parentId = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
                 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
-                $stmt = $db->prepare("UPDATE document_categories SET name = ?, slug = ?, description = ?, parent_id = ?, is_active = ? WHERE id = ?");
-                $stmt->execute([$name, $slug, $description, $parentId, $isActive, $id]);
+                $stmt = $db->prepare("UPDATE document_categories SET name = ?, slug = ?, description = ?, parent_id = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $slug, $description, $parentId, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Category updated successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -219,8 +222,8 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->prepare("DELETE FROM document_categories WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("DELETE FROM document_categories WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Category deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -259,8 +262,8 @@ class DocumentController extends AdminController
                 $categoryId = !empty($_POST['category_id']) ? (int)$_POST['category_id'] : null;
                 $description = $_POST['description'] ?? '';
 
-                $stmt = $db->prepare("INSERT INTO document_types (name, slug, category_id, description, is_active, created_at) VALUES (?, ?, ?, ?, 1, NOW())");
-                $stmt->execute([$name, $slug, $categoryId, $description]);
+                $stmt = $db->prepare("INSERT INTO document_types (name, slug, category_id, description, is_active, created_at, tenant_id) VALUES (?, ?, ?, ?, 1, NOW(), ?)");
+                $stmt->execute([$name, $slug, $categoryId, $description, $this->tenantId()]);
                 $_SESSION['success'] = 'Document type created successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -282,8 +285,8 @@ class DocumentController extends AdminController
                 $description = $_POST['description'] ?? '';
                 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
-                $stmt = $db->prepare("UPDATE document_types SET name = ?, slug = ?, category_id = ?, description = ?, is_active = ? WHERE id = ?");
-                $stmt->execute([$name, $slug, $categoryId, $description, $isActive, $id]);
+                $stmt = $db->prepare("UPDATE document_types SET name = ?, slug = ?, category_id = ?, description = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $slug, $categoryId, $description, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Document type updated successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -298,8 +301,8 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->prepare("DELETE FROM document_types WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("DELETE FROM document_types WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Document type deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -339,8 +342,8 @@ class DocumentController extends AdminController
                 $content = $_POST['content'] ?? '';
                 $description = $_POST['description'] ?? '';
 
-                $stmt = $db->prepare("INSERT INTO document_templates (name, type, category_id, content, description, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())");
-                $stmt->execute([$name, $type, $categoryId, $content, $description]);
+                $stmt = $db->prepare("INSERT INTO document_templates (name, type, category_id, content, description, is_active, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW(), ?)");
+                $stmt->execute([$name, $type, $categoryId, $content, $description, $this->tenantId()]);
                 $_SESSION['success'] = 'Template created successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -379,8 +382,8 @@ class DocumentController extends AdminController
                 $description = $_POST['description'] ?? '';
                 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
-                $stmt = $db->prepare("UPDATE document_templates SET name = ?, type = ?, category_id = ?, content = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ?");
-                $stmt->execute([$name, $type, $categoryId, $content, $description, $isActive, $id]);
+                $stmt = $db->prepare("UPDATE document_templates SET name = ?, type = ?, category_id = ?, content = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $type, $categoryId, $content, $description, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Template updated successfully';
             } catch (\Exception $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -395,8 +398,8 @@ class DocumentController extends AdminController
         $this->requireAdmin();
         try {
             $db = $this->getDb();
-            $stmt = $db->prepare("DELETE FROM document_templates WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("DELETE FROM document_templates WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Template deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -444,7 +447,8 @@ class DocumentController extends AdminController
             try {
                 $db = $this->getDb();
                 try {
-                    $stmt = $db->prepare("INSERT INTO document_reviews (document_id, reviewer_id, review_status, comments, reviewed_at, created_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
+                    $tid = $this->tenantId();
+                    $stmt = $db->prepare("INSERT INTO document_reviews (document_id, reviewer_id, review_status, comments, reviewed_at, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), NOW(), ?)");
                 } catch (\Throwable $e) {
                     // Gracefully handle dropped table ref
                 }
@@ -452,7 +456,8 @@ class DocumentController extends AdminController
                     (int)$_POST['document_id'],
                     (int)($_SESSION['admin_id'] ?? 0),
                     $_POST['review_status'] ?? 'pending',
-                    $_POST['comments'] ?? ''
+                    $_POST['comments'] ?? '',
+                    $tid
                 ]);
                 $_SESSION['success'] = 'Review submitted successfully';
             } catch (\Exception $e) {

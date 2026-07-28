@@ -17,6 +17,7 @@ use UploadValidator;
 
 class MoneyWorkflowController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     /** @var \PDO|null */
     protected $db;
 
@@ -1135,8 +1136,9 @@ class MoneyWorkflowController extends AdminController
         $this->requireAdmin();
         $this->validateCsrfOrFail();
         try {
-            $stmt = $this->db->prepare("UPDATE invoices SET status = 'cancelled' WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE invoices SET status = 'cancelled' WHERE id = ?" . $tw);
+            $stmt->execute([$id, ...$tp]);
             $this->setFlash('success', 'Invoice cancelled');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());

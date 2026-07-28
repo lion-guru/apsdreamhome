@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 class LocationAdminController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
 
     // States Management
     public function index()
@@ -35,8 +37,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO states (name, code) VALUES (?, ?)");
-                $stmt->execute([$name, $code]);
+                $stmt = $this->db->prepare("INSERT INTO states (name, code, tenant_id) VALUES (?, ?, ?)");
+                $stmt->execute([$name, $code, $this->tenantId()]);
 
                 $_SESSION['success'] = 'State created successfully';
                 redirect('/admin/locations/states');
@@ -77,8 +79,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("UPDATE states SET name = ?, code = ?, is_active = ? WHERE id = ?");
-                $stmt->execute([$name, $code, $is_active, $id]);
+                $stmt = $this->db->prepare("UPDATE states SET name = ?, code = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$name, $code, $is_active, $id, $this->tenantId()]);
 
                 $_SESSION['success'] = 'State updated successfully';
                 redirect('/admin/locations/states');
@@ -98,8 +100,8 @@ class LocationAdminController extends AdminController
         
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM states WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("DELETE FROM states WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
 
             $_SESSION['success'] = 'State deleted successfully';
         } catch (\PDOException $e) {
@@ -164,8 +166,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO districts (state_id, name, code) VALUES (?, ?, ?)");
-                $stmt->execute([$state_id, $name, $code]);
+                $stmt = $this->db->prepare("INSERT INTO districts (state_id, name, code, tenant_id) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$state_id, $name, $code, $this->tenantId()]);
 
                 $_SESSION['success'] = 'District created successfully';
                 redirect('/admin/locations/districts');
@@ -209,8 +211,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("UPDATE districts SET state_id = ?, name = ?, code = ?, is_active = ? WHERE id = ?");
-                $stmt->execute([$state_id, $name, $code, $is_active, $id]);
+                $stmt = $this->db->prepare("UPDATE districts SET state_id = ?, name = ?, code = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$state_id, $name, $code, $is_active, $id, $this->tenantId()]);
 
                 $_SESSION['success'] = 'District updated successfully';
                 redirect('/admin/locations/districts');
@@ -230,8 +232,8 @@ class LocationAdminController extends AdminController
         
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM districts WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("DELETE FROM districts WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
 
             $_SESSION['success'] = 'District deleted successfully';
         } catch (\PDOException $e) {
@@ -318,8 +320,9 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO colonies (district_id, name, description, amenities, map_link, total_plots, available_plots, starting_price, image_path, brochure_path, is_featured, land_cost, min_price_per_sqft, block_count, phase) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $land_cost, $min_price_per_sqft, $block_count, $phase]);
+                $tid = $this->tenantId();
+                $stmt = $this->db->prepare("INSERT INTO colonies (district_id, name, description, amenities, map_link, total_plots, available_plots, starting_price, image_path, brochure_path, is_featured, land_cost, min_price_per_sqft, block_count, phase, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $land_cost, $min_price_per_sqft, $block_count, $phase, $tid]);
 
                 $_SESSION['success'] = 'Colony created successfully';
                 redirect('/admin/locations/colonies');
@@ -376,8 +379,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("UPDATE colonies SET district_id = ?, name = ?, description = ?, amenities = ?, map_link = ?, total_plots = ?, available_plots = ?, starting_price = ?, image_path = ?, brochure_path = ?, is_featured = ?, is_active = ?, land_cost = ?, min_price_per_sqft = ?, block_count = ?, phase = ? WHERE id = ?");
-                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $is_active, $land_cost, $min_price_per_sqft, $block_count, $phase, $id]);
+                $stmt = $this->db->prepare("UPDATE colonies SET district_id = ?, name = ?, description = ?, amenities = ?, map_link = ?, total_plots = ?, available_plots = ?, starting_price = ?, image_path = ?, brochure_path = ?, is_featured = ?, is_active = ?, land_cost = ?, min_price_per_sqft = ?, block_count = ?, phase = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $is_active, $land_cost, $min_price_per_sqft, $block_count, $phase, $id, $this->tenantId()]);
 
                 $_SESSION['success'] = 'Colony updated successfully';
                 redirect('/admin/locations/colonies');
@@ -397,8 +400,8 @@ class LocationAdminController extends AdminController
         $this->requireAdmin();
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM colonies WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("DELETE FROM colonies WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
 
             $_SESSION['success'] = 'Colony deleted successfully';
         } catch (\PDOException $e) {

@@ -400,12 +400,8 @@ document.documentElement.classList.add('js-animations');
         header.classList.remove('scrolled');
       }
 
-      // Hide/show navbar on scroll
-      if (scrollY > lastScrollY && scrollY > 200) {
-        header.style.transform = 'translateY(-100%)';
-      } else {
-        header.style.transform = 'translateY(0)';
-      }
+      // Keep header stably fixed at top without scroll jump
+      header.style.transform = 'translateY(0)';
 
       lastScrollY = scrollY;
       ticking = false;

@@ -319,7 +319,8 @@ class ResellPropertiesAdminController extends AdminController
         $sets[] = "updated_at = NOW()";
         $params[] = $id;
 
-        $db->query("UPDATE user_properties SET " . implode(', ', $sets) . " WHERE id = ?", $params);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $db->query("UPDATE user_properties SET " . implode(', ', $sets) . " WHERE id = ? $tSql", array_merge($params, $tParams));
 
         $_SESSION['success'] = 'Property updated successfully';
         header('Location: ' . BASE_URL . '/admin/resell-properties/edit/' . $id);
@@ -358,7 +359,8 @@ class ResellPropertiesAdminController extends AdminController
         }
         $params[] = $id;
 
-        $db->query("UPDATE user_properties SET " . implode(', ', $sets) . " WHERE id = ?", $params);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $db->query("UPDATE user_properties SET " . implode(', ', $sets) . " WHERE id = ? $tSql", array_merge($params, $tParams));
 
         $_SESSION['success'] = 'Status updated to ' . ucfirst($newStatus);
         header('Location: ' . BASE_URL . '/admin/resell-properties/status/' . $id);
@@ -370,7 +372,8 @@ class ResellPropertiesAdminController extends AdminController
         $this->requireAdmin();
         $this->validateCsrfOrFail();
         $db = Database::getInstance();
-        $db->query("DELETE FROM user_properties WHERE id = ?", [(int)$id]);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $db->query("DELETE FROM user_properties WHERE id = ? $tSql", array_merge([(int)$id], $tParams));
         $_SESSION['success'] = 'Property deleted';
         header('Location: ' . BASE_URL . '/admin/resell-properties');
         exit;

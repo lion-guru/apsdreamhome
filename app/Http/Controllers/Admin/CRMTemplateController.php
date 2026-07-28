@@ -6,6 +6,13 @@ use App\Core\Database;
 
 class CRMTemplateController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
+    private function pdo(): \PDO
+    {
+        $db = Database::getInstance()->getConnection();
+        return $db;
+    }
     public function index()
     {
         $this->requireAdmin();
@@ -49,16 +56,17 @@ class CRMTemplateController extends AdminController
                 return $this->redirect('/admin/crm/templates');
             }
 
+            $tid = $this->tenantId();
             $table = $type === 'sms' ? 'sms_templates' : 'email_templates';
             $columns = $type === 'sms'
-                ? 'name, body, category, created_at'
-                : 'name, subject, body, category, created_at';
+                ? 'name, body, category, tenant_id, created_at'
+                : 'name, subject, body, category, tenant_id, created_at';
             $values = $type === 'sms'
-                ? '?, ?, ?, NOW()'
-                : '?, ?, ?, ?, NOW()';
+                ? '?, ?, ?, ?, NOW()'
+                : '?, ?, ?, ?, ?, NOW()';
             $params = $type === 'sms'
-                ? [$name, $body, $category]
-                : [$name, $subject, $body, $category];
+                ? [$name, $body, $category, $tid]
+                : [$name, $subject, $body, $category, $tid];
 
             $db->query("INSERT INTO $table ($columns) VALUES ($values)", $params);
             $this->setFlash('success', 'Template created successfully');
@@ -103,11 +111,12 @@ class CRMTemplateController extends AdminController
             $category = $_POST['category'] ?? 'general';
             $type = $_POST['type'] ?? 'email';
 
+            $tid = $this->tenantId();
             $table = $type === 'sms' ? 'sms_templates' : 'email_templates';
             if ($type === 'sms') {
-                $db->query("UPDATE $table SET name=?, body=?, category=?, updated_at=NOW() WHERE id=?", [$name, $body, $category, $id]);
+                $db->query("UPDATE $table SET name=?, body=?, category=?, updated_at=NOW() WHERE id=? AND tenant_id=?", [$name, $body, $category, $id, $tid]);
             } else {
-                $db->query("UPDATE $table SET name=?, subject=?, body=?, category=?, updated_at=NOW() WHERE id=?", [$name, $subject, $body, $category, $id]);
+                $db->query("UPDATE $table SET name=?, subject=?, body=?, category=?, updated_at=NOW() WHERE id=? AND tenant_id=?", [$name, $subject, $body, $category, $id, $tid]);
             }
             $this->setFlash('success', 'Template updated successfully');
         } catch (\Throwable $e) {
@@ -120,9 +129,10 @@ class CRMTemplateController extends AdminController
     {
         $this->requireAdmin();
         try {
+            $tid = $this->tenantId();
             $db = Database::getInstance()->getConnection();
-            $db->query("DELETE FROM email_templates WHERE id = ?", [$id]);
-            $db->query("DELETE FROM sms_templates WHERE id = ?", [$id]);
+            $db->query("DELETE FROM email_templates WHERE id = ? AND tenant_id = ?", [$id, $tid]);
+            $db->query("DELETE FROM sms_templates WHERE id = ? AND tenant_id = ?", [$id, $tid]);
             $this->setFlash('success', 'Template deleted');
         } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to delete template');

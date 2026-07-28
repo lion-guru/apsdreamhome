@@ -20,6 +20,7 @@ use Throwable;
  */
 class ExperimentController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     /** @var ExperimentService */
     private $svc;
 
@@ -232,8 +233,9 @@ class ExperimentController extends AdminController
         }
 
         try {
-            $stmt = $this->svc->getPdo()->prepare("UPDATE ab_experiments SET winner = ? WHERE id = ?");
-            $stmt->execute([$winner, $id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $stmt = $this->svc->getPdo()->prepare("UPDATE ab_experiments SET winner = ? WHERE id = ?" . $tw);
+            $stmt->execute([$winner, $id, ...$tp]);
             $this->setFlash('success', "Winner set to '{$winner}'.");
         } catch (Throwable $e) {
             $this->setFlash('error', 'Failed to set winner: ' . $e->getMessage());

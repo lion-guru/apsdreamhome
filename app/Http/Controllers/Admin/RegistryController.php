@@ -8,6 +8,8 @@ use Exception;
 
 class RegistryController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $notificationService;
 
     public function __construct()
@@ -121,9 +123,10 @@ class RegistryController extends AdminController
             $status = $_POST['status'] ?? 'documents_pending';
             $notes = $_POST['notes'] ?? '';
 
-            $stmt = $this->db->prepare("UPDATE bookings SET registry_status = ?, registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ?");
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare("UPDATE bookings SET registry_status = ?, registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ? AND tenant_id = ?");
             $note = "\n[" . date('Y-m-d H:i') . "] Documents " . ($status === 'documents_pending' ? 'marked pending' : 'collected') . ": " . $notes;
-            $stmt->execute([$status, $note, $id]);
+            $stmt->execute([$status, $note, $id, $tid]);
 
             $this->logRegistryActivity($id, 'documents_' . ($status === 'documents_pending' ? 'pending' : 'collected'), $notes);
 
@@ -149,9 +152,9 @@ class RegistryController extends AdminController
             $regFees = floatval($_POST['registration_fees'] ?? 0);
             $notes = $_POST['notes'] ?? '';
 
-            $stmt = $this->db->prepare("UPDATE bookings SET stamp_duty_amount = ?, registration_fees = ?, registry_status = 'stamp_duty_pending', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE bookings SET stamp_duty_amount = ?, registration_fees = ?, registry_status = 'stamp_duty_pending', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ? AND tenant_id = ?");
             $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: ₹$stampDuty, Reg fees: ₹$regFees. " . $notes;
-            $stmt->execute([$stampDuty, $regFees, $note, $id]);
+            $stmt->execute([$stampDuty, $regFees, $note, $id, $this->tenantId()]);
 
             $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: ₹$stampDuty, Registration Fees: ₹$regFees. $notes");
 
@@ -176,9 +179,9 @@ class RegistryController extends AdminController
                 $this->redirect('/admin/registry/show/' . $id);
             }
 
-            $stmt = $this->db->prepare("UPDATE bookings SET appointment_date = ?, sub_registrar_office = ?, registry_status = 'appointment_scheduled', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE bookings SET appointment_date = ?, sub_registrar_office = ?, registry_status = 'appointment_scheduled', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ? AND tenant_id = ?");
             $note = "\n[" . date('Y-m-d H:i') . "] Appointment scheduled at $office on $appointmentDate. " . $notes;
-            $stmt->execute([$appointmentDate, $office, $note, $id]);
+            $stmt->execute([$appointmentDate, $office, $note, $id, $this->tenantId()]);
 
             $this->logRegistryActivity($id, 'appointment_scheduled', "Office: $office, Date: $appointmentDate. $notes");
 
@@ -209,9 +212,9 @@ class RegistryController extends AdminController
                 $this->redirect('/admin/registry/show/' . $id);
             }
 
-            $stmt = $this->db->prepare("UPDATE bookings SET registry_number = ?, registry_date = ?, registry_status = 'registered', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE bookings SET registry_number = ?, registry_date = ?, registry_status = 'registered', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ? AND tenant_id = ?");
             $note = "\n[" . date('Y-m-d H:i') . "] Registered: #$registryNumber on $registryDate. " . $notes;
-            $stmt->execute([$registryNumber, $registryDate, $note, $id]);
+            $stmt->execute([$registryNumber, $registryDate, $note, $id, $this->tenantId()]);
 
             $this->logRegistryActivity($id, 'registered', "Registry #$registryNumber, Date: $registryDate. $notes");
 
@@ -256,8 +259,9 @@ class RegistryController extends AdminController
             $updates[] = "registry_notes = CONCAT(IFNULL(registry_notes,''), ?)";
             $params[] = "\n[" . date('Y-m-d H:i') . "] Mutation: $mutationStatus" . (!empty($mutationNumber) ? " #$mutationNumber" : "") . ". $notes";
             $params[] = $id;
+            $params[] = $this->tenantId();
 
-            $stmt = $this->db->prepare("UPDATE bookings SET " . implode(', ', $updates) . " WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE bookings SET " . implode(', ', $updates) . " WHERE id = ? AND tenant_id = ?");
             $stmt->execute($params);
 
             $this->logRegistryActivity($id, 'mutation_' . $mutationStatus, "Mutation #$mutationNumber, Status: $mutationStatus. $notes");
@@ -362,11 +366,12 @@ class RegistryController extends AdminController
     {
         try {
             try {
-                $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at) VALUES (?, ?, ?, ?, NOW())");
+                $tid = $this->tenantId();
+                $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null]);
+            $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null, $tid]);
         } catch (\Exception $e) {
                     error_log("RegistryController.php: " . $e->getMessage());
         }

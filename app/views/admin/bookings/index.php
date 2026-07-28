@@ -104,35 +104,39 @@ $active_page = 'bookings';
                 <div class="col-md-2">
                     <label for="status" class="form-label"><?= __('admin_status') ?></label>
                     <select class="form-select" id="status" name="status">
-                        <option value=""><?= __('admin_all_status') ?></option>
-                        <option value="pending" <?= $filters['status'] == 'pending' ? 'selected' : '' ?>><?= __('admin_pending') ?></option>
-                        <option value="confirmed" <?= $filters['status'] == 'confirmed' ? 'selected' : '' ?>><?= __('admin_confirmed') ?></option>
-                        <option value="completed" <?= $filters['status'] == 'completed' ? 'selected' : '' ?>><?= __('admin_completed') ?></option>
-                        <option value="cancelled" <?= $filters['status'] == 'cancelled' ? 'selected' : '' ?>><?= __('admin_cancelled') ?></option>
+                         <option value="">All Statuses</option>
+                         <option value="token_paid" <?= $filters['status'] == 'token_paid' ? 'selected' : '' ?>>Token Paid</option>
+                         <option value="agreement_signed" <?= $filters['status'] == 'agreement_signed' ? 'selected' : '' ?>>Agreement Signed</option>
+                         <option value="emi_active" <?= $filters['status'] == 'emi_active' ? 'selected' : '' ?>>EMI Active</option>
+                         <option value="partially_paid" <?= $filters['status'] == 'partially_paid' ? 'selected' : '' ?>>Partially Paid</option>
+                         <option value="fully_paid" <?= $filters['status'] == 'fully_paid' ? 'selected' : '' ?>>Fully Paid</option>
+                         <option value="cancelled" <?= $filters['status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                         <option value="transferred" <?= $filters['status'] == 'transferred' ? 'selected' : '' ?>>Transferred</option>
+                         <option value="registration_done" <?= $filters['status'] == 'registration_done' ? 'selected' : '' ?>>Registry Done</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label for="customer_id" class="form-label"><?= __('admin_customer') ?></label>
-                    <select class="form-select" id="customer_id" name="customer_id">
-                        <option value=""><?= __('admin_all_users') ?></option>
-                        <?php foreach ($users as $customer): ?>
-                            <option value="<?= $customer['id'] ?>" <?= $filters['customer_id'] == $customer['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($customer['name'] ?? '') ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="associate_id" class="form-label"><?= __('admin_associate') ?></label>
-                    <select class="form-select" id="associate_id" name="associate_id">
-                        <option value=""><?= __('admin_all_users') ?></option>
-                        <?php foreach ($users as $associate): ?>
-                            <option value="<?= $associate['id'] ?>" <?= $filters['associate_id'] == $associate['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($associate['name'] ?? '') ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                 <div class="col-md-2">
+                     <label for="colony_id" class="form-label">Colony</label>
+                     <select class="form-select" id="colony_id" name="colony_id">
+                         <option value="">All Colonies</option>
+                         <?php foreach ($colonies ?? [] as $col): ?>
+                             <option value="<?= $col['id'] ?>" <?= ($filters['colony_id'] ?? '') == $col['id'] ? 'selected' : '' ?>>
+                                 <?= htmlspecialchars($col['name'] ?? '') ?>
+                             </option>
+                         <?php endforeach; ?>
+                     </select>
+                 </div>
+                 <div class="col-md-2">
+                     <label for="associate_id" class="form-label"><?= __('admin_associate') ?></label>
+                     <select class="form-select" id="associate_id" name="associate_id">
+                         <option value="">All Associates</option>
+                         <?php foreach ($associates ?? [] as $assoc): ?>
+                             <option value="<?= $assoc['id'] ?>" <?= ($filters['associate_id'] ?? '') == $assoc['id'] ? 'selected' : '' ?>>
+                                 <?= htmlspecialchars($assoc['name'] ?? '') ?>
+                             </option>
+                         <?php endforeach; ?>
+                     </select>
+                 </div>
                 <div class="col-md-3">
                     <label class="form-label">&nbsp;</label>
                     <div class="d-flex gap-2">
@@ -182,7 +186,7 @@ $active_page = 'bookings';
                                 <i class="fas fa-file-contract fa-3x text-muted mb-3 d-block"></i>
                                 <h5 class="text-muted">No bookings yet</h5>
                                 <p class="text-muted mb-3">Start by creating your first booking to track payments, EMI schedules, and commissions.</p>
-                                <a href="<?= BASE_URL ?>/admin/sales/bookings/new" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Create Booking</a>
+                                <a href="<?= BASE_URL ?>/admin/sales/bookings/new" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Create Booking (Sales)</a>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -192,9 +196,9 @@ $active_page = 'bookings';
                                     <strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong>
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars($booking['property_title'] ?? 'N/A') ?>
+                                    <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong>
                                     <br>
-                                    <small class="text-muted"><?= htmlspecialchars($booking['property_location'] ?? '') ?></small>
+                                    <small class="text-muted"><?= htmlspecialchars($booking['colony_name'] ?? '') ?></small>
                                 </td>
                                 <td>
                                     <?= htmlspecialchars($booking['customer_name'] ?? 'N/A') ?>

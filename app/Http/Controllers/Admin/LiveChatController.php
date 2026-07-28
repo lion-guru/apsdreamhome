@@ -6,6 +6,8 @@ use App\Services\LiveChatService;
 
 class LiveChatController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $service;
 
     public function __construct($db = null, $auth = null, array $config = [])
@@ -62,8 +64,9 @@ class LiveChatController extends AdminController
             return $this->redirect(BASE_URL . '/admin/live-chat');
         }
         $this->service->sendMessage($sessionId, 'agent', $this->getUserId(), $this->getUserName(), $message, 'text', null, $isInternal);
-        $this->pdo()->prepare("UPDATE chat_sessions SET status = 'active' WHERE id = ? AND status IN ('open','assigned')")
-            ->execute([$sessionId]);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $this->pdo()->prepare("UPDATE chat_sessions SET status = 'active' WHERE id = ? AND status IN ('open','assigned') $tSql")
+            ->execute(array_merge([$sessionId], $tParams));
         if ($isInternal) {
             return $this->redirect(BASE_URL . '/admin/live-chat/open/' . $sessionId);
         }

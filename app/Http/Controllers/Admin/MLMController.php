@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 class MLMController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function index() 
     {
         $this->requireAdmin();
@@ -68,10 +69,10 @@ class MLMController extends AdminController
                 $onboardingTrack = ($agentTrack === 'telecaller') ? 'telecaller' : (($agentTrack === 'independent') ? 'free_consultant' : 'networker');
                 
                 $stmt = $db->prepare("
-                    INSERT INTO users (name, email, phone, password, role, onboarding_track, status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                    INSERT INTO users (name, email, phone, password, role, onboarding_track, status, tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ");
-                $stmt->execute([$name, $email, $phone, $hashedPassword, $role, $onboardingTrack, $status]);
+                $stmt->execute([$name, $email, $phone, $hashedPassword, $role, $onboardingTrack, $status, $this->tenantId()]);
                 $userId = (int)$db->lastInsertId();
                 
                 // 4. Insert into associates
@@ -79,20 +80,21 @@ class MLMController extends AdminController
                     INSERT INTO associates 
                         (user_id, status, agent_track, brokerage_model, brokerage_rate, 
                          telecaller_salary, telecaller_incentive_rate, telecaller_sqft_rate, telecaller_parent_id, 
-                         created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                         tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ");
                 $stmt->execute([
                     $userId, $status, $agentTrack, $brokerageModel, $brokerageRate,
-                    $telecallerSalary, $telecallerIncentiveRate, $telecallerSqftRate, $telecallerParentId
+                    $telecallerSalary, $telecallerIncentiveRate, $telecallerSqftRate, $telecallerParentId,
+                    $this->tenantId()
                 ]);
                 
                 // 5. Insert into user_wallets
                 $stmt = $db->prepare("
-                    INSERT INTO user_wallets (user_id, user_type, balance, total_credited, is_active) 
-                    VALUES (?, 'associate', 0, 0, 1)
+                    INSERT INTO user_wallets (user_id, user_type, balance, total_credited, is_active, tenant_id) 
+                    VALUES (?, 'associate', 0, 0, 1, ?)
                 ");
-                $stmt->execute([$userId]);
+                $stmt->execute([$userId, $this->tenantId()]);
                 
                 // 6. Insert into mlm_profiles
                 $refCode = 'APS' . str_pad($userId, 4, '0', STR_PAD_LEFT);
@@ -100,11 +102,12 @@ class MLMController extends AdminController
                     INSERT INTO mlm_profiles 
                         (user_id, referral_code, sponsor_user_id, user_type, current_level, 
                          lifetime_sales, total_team_size, direct_referrals, total_commission, pending_commission, 
-                         status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0, 0, 'active', NOW())
+                         status, tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0, 0, 'active', ?, NOW())
                 ");
                 $stmt->execute([
-                    $userId, $refCode, $sponsorId ?: 1, $role, $level
+                    $userId, $refCode, $sponsorId ?: 1, $role, $level,
+                    $this->tenantId()
                 ]);
                 
                 // 7. Insert into mlm_network_tree
@@ -117,22 +120,23 @@ class MLMController extends AdminController
                 $treeCols = $db->query("SHOW COLUMNS FROM mlm_network_tree")->fetchAll(\PDO::FETCH_COLUMN, 0);
                 if (in_array('sponsor_id', $treeCols)) {
                     $stmtTree = $db->prepare("
-                        INSERT INTO mlm_network_tree (associate_id, sponsor_id, parent_id, level, position) 
-                        VALUES (?, ?, ?, ?, 'left')
+                        INSERT INTO mlm_network_tree (associate_id, sponsor_id, parent_id, level, position, tenant_id) 
+                        VALUES (?, ?, ?, ?, 'left', ?)
                     ");
-                    $stmtTree->execute([$userId, $parentId, $parentId, $levelNumber]);
+                    $stmtTree->execute([$userId, $parentId, $parentId, $levelNumber, $this->tenantId()]);
                 } else {
                     $stmtTree = $db->prepare("
-                        INSERT INTO mlm_network_tree (associate_id, parent_id, level) 
-                        VALUES (?, ?, ?)
+                        INSERT INTO mlm_network_tree (associate_id, parent_id, level, tenant_id) 
+                        VALUES (?, ?, ?, ?)
                     ");
-                    $stmtTree->execute([$userId, $parentId, $levelNumber]);
+                    $stmtTree->execute([$userId, $parentId, $levelNumber, $this->tenantId()]);
                 }
                 
                 // Update parent's direct referrals count
                 if ($sponsorId) {
-                    $db->prepare("UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1 WHERE user_id = ?")
-                       ->execute([$sponsorId]);
+                    [$tw, $tp] = $this->tenantWhere();
+                    $db->prepare("UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1 WHERE user_id = ?" . $tw)
+                       ->execute([$sponsorId, ...$tp]);
                 }
                 
                 $db->commit();

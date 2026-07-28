@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 class AboutCmsController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function index()
     {
         $content = [];
@@ -39,9 +40,10 @@ class AboutCmsController extends AdminController
             $post = $_POST;
             $updated = 0;
 
-            $stmt = $this->db->prepare("UPDATE site_content SET content_value = ? WHERE section = 'about' AND content_key = ?");
+            [$tenantWhere, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE site_content SET content_value = ? WHERE section = 'about' AND content_key = ?" . $tenantWhere);
             $exists = $this->db->prepare("SELECT COUNT(*) as cnt FROM site_content WHERE section = 'about' AND content_key = ?");
-            $insert = $this->db->prepare("INSERT INTO site_content (section, content_key, content_value, content_group, sort_order) VALUES ('about', ?, ?, ?, ?)");
+            $insert = $this->db->prepare("INSERT INTO site_content (section, content_key, content_value, content_group, sort_order, tenant_id) VALUES ('about', ?, ?, ?, ?, ?)");
 
             foreach ($post as $key => $value) {
                 if ($key === 'csrf_token') continue;
@@ -59,9 +61,9 @@ class AboutCmsController extends AdminController
 
                 $exists->execute([$key]);
                 if ($exists->fetch()['cnt'] > 0) {
-                    $stmt->execute([$value, $key]);
+                    $stmt->execute([$value, $key, ...$tenantParams]);
                 } else {
-                    $insert->execute([$key, $value, $group, 0]);
+                    $insert->execute([$key, $value, $group, 0, $this->tenantId()]);
                 }
                 $updated++;
             }
@@ -93,7 +95,8 @@ class AboutCmsController extends AdminController
             $filename = $key . '_' . time() . '.' . $ext;
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadDir . $filename)) {
                 $path = 'assets/images/team/' . $filename;
-                $this->db->prepare("UPDATE site_content SET content_value = ? WHERE section = 'about' AND content_key = ?")->execute([$path, $key]);
+                [$tw, $tp] = $this->tenantWhere();
+                $this->db->prepare("UPDATE site_content SET content_value = ? WHERE section = 'about' AND content_key = ?" . $tw)->execute([$path, $key, ...$tp]);
                 $_SESSION['success'] = 'Photo uploaded!';
             } else {
                 $_SESSION['error'] = 'Upload failed';

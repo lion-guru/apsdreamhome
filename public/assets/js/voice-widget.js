@@ -68,19 +68,20 @@
   }
 
   function bindEvents() {
-    btn.addEventListener('click', toggleListening);
-    closeBtn.addEventListener('click', closeDialog);
+    if (btn) btn.addEventListener('click', toggleListening);
+    if (closeBtn) closeBtn.addEventListener('click', closeDialog);
 
     // Stop synthesis when dialog closed
-    closeBtn.addEventListener('click', () => {
-      if (synth.speaking) synth.cancel();
-    });
+    if (closeBtn)
+      closeBtn.addEventListener('click', () => {
+        if (synth.speaking) synth.cancel();
+      });
 
     recognition.onstart = function () {
       isListening = true;
       updateMode('listening');
-      transcriptEl.textContent = 'Listening...';
-      replyEl.classList.remove('show');
+      if (transcriptEl) transcriptEl.textContent = 'Listening...';
+      if (replyEl) replyEl.classList.remove('show');
       if (synth.speaking) synth.cancel(); // stop talking if user interrupts
     };
 
@@ -97,17 +98,17 @@
       }
 
       if (finalTranscript !== '') {
-        transcriptEl.textContent = finalTranscript;
+        if (transcriptEl) transcriptEl.textContent = finalTranscript;
         processVoiceCommand(finalTranscript);
       } else {
-        transcriptEl.textContent = interimTranscript;
+        if (transcriptEl) transcriptEl.textContent = interimTranscript;
       }
     };
 
     recognition.onerror = function (event) {
       console.error('Speech recognition error:', event.error);
       updateMode('ready');
-      transcriptEl.textContent = 'Error: ' + event.error;
+      if (transcriptEl) transcriptEl.textContent = 'Error: ' + event.error;
       isListening = false;
     };
 
@@ -121,7 +122,7 @@
   }
 
   function toggleListening() {
-    if (!dialog.classList.contains('active')) {
+    if (dialog && !dialog.classList.contains('active')) {
       dialog.classList.add('active');
     }
 
@@ -139,7 +140,7 @@
   }
 
   function closeDialog() {
-    dialog.classList.remove('active');
+    if (dialog) dialog.classList.remove('active');
     if (isListening) {
       recognition.stop();
       isListening = false;
@@ -148,24 +149,26 @@
   }
 
   function updateMode(mode) {
-    widget.className = 'aps-voice-widget'; // reset
-    btn.className = 'aps-voice-button'; // reset
-    btn.innerHTML = '<i class="fas fa-microphone"></i><div class="aps-voice-tooltip">AI Voice Booking</div>';
+    if (widget) widget.className = 'aps-voice-widget'; // reset
+    if (btn) {
+      btn.className = 'aps-voice-button'; // reset
+      btn.innerHTML = '<i class="fas fa-microphone"></i><div class="aps-voice-tooltip">AI Voice Booking</div>';
+    }
 
     if (mode === 'listening') {
-      widget.classList.add('mode-listening');
-      btn.classList.add('listening');
-      btn.innerHTML = '<i class="fas fa-stop"></i>';
-      statusText.textContent = 'Listening...';
+      if (widget) widget.classList.add('mode-listening');
+      if (btn) btn.classList.add('listening');
+      if (btn) btn.innerHTML = '<i class="fas fa-stop"></i>';
+      if (statusText) statusText.textContent = 'Listening...';
     } else if (mode === 'processing') {
-      widget.classList.add('mode-processing');
-      statusText.textContent = 'Thinking...';
+      if (widget) widget.classList.add('mode-processing');
+      if (statusText) statusText.textContent = 'Thinking...';
     } else if (mode === 'speaking') {
-      widget.classList.add('mode-speaking');
-      btn.classList.add('speaking');
-      statusText.textContent = 'Speaking...';
+      if (widget) widget.classList.add('mode-speaking');
+      if (btn) btn.classList.add('speaking');
+      if (statusText) statusText.textContent = 'Speaking...';
     } else {
-      statusText.textContent = 'Ready';
+      if (statusText) statusText.textContent = 'Ready';
     }
   }
 
@@ -194,8 +197,10 @@
         if (data.success) {
           if (data.session_id) sessionId = data.session_id;
 
-          replyEl.textContent = data.reply;
-          replyEl.classList.add('show');
+          if (replyEl) {
+            replyEl.textContent = data.reply;
+            replyEl.classList.add('show');
+          }
 
           speakText(data.reply);
         } else {
@@ -209,8 +214,10 @@
   }
 
   function showError(msg) {
-    replyEl.textContent = msg;
-    replyEl.classList.add('show');
+    if (replyEl) {
+      replyEl.textContent = msg;
+      replyEl.classList.add('show');
+    }
     updateMode('ready');
   }
 

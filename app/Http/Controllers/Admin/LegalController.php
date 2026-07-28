@@ -7,6 +7,7 @@ use Exception;
 
 class LegalController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function services()
     {
         $this->requireAdmin();
@@ -46,8 +47,8 @@ class LegalController extends AdminController
         $status = $_POST['status'] ?? 'active';
         $display_order = (int)($_POST['display_order'] ?? 0);
         try {
-            $stmt = $this->db->prepare("INSERT INTO legal_services (title, description, icon, price_range, duration, features, status, display_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$title, $description, $icon, $price_range, $duration, $features, $status, $display_order]);
+            $stmt = $this->db->prepare("INSERT INTO legal_services (title, description, icon, price_range, duration, features, status, display_order, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$title, $description, $icon, $price_range, $duration, $features, $status, $display_order, $this->tenantId()]);
             $this->setFlash('success', 'Legal service created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create legal service: ' . $e->getMessage());
@@ -118,9 +119,10 @@ class LegalController extends AdminController
             $resolved_date = date('Y-m-d');
         }
         try {
-            $sql = "UPDATE legal_disputes SET status = ?, notes = ?, assigned_to = ?, resolved_date = COALESCE(?, resolved_date) WHERE id = ?";
+            [$tw, $tp] = $this->tenantWhere();
+            $sql = "UPDATE legal_disputes SET status = ?, notes = ?, assigned_to = ?, resolved_date = COALESCE(?, resolved_date) WHERE id = ?" . $tw;
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$status, $notes, $assigned_to, $resolved_date, (int)$id]);
+            $stmt->execute([$status, $notes, $assigned_to, $resolved_date, (int)$id, ...$tp]);
             $this->setFlash('success', 'Dispute updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update dispute: ' . $e->getMessage());
@@ -173,8 +175,8 @@ class LegalController extends AdminController
         $assigned_to = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
         $status = $_POST['status'] ?? 'pending';
         try {
-            $stmt = $this->db->prepare("INSERT INTO legal_deadlines (title, description, legal_type, deadline_date, assigned_to, status, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$title, $description, $legal_type, $deadline_date, $assigned_to, $status]);
+            $stmt = $this->db->prepare("INSERT INTO legal_deadlines (title, description, legal_type, deadline_date, assigned_to, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$title, $description, $legal_type, $deadline_date, $assigned_to, $status, $this->tenantId()]);
             $this->setFlash('success', 'Deadline created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create deadline: ' . $e->getMessage());

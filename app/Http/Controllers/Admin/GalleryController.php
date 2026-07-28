@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 class GalleryController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function index()
     {
         $category = $_GET['category'] ?? '';
@@ -79,7 +80,7 @@ class GalleryController extends AdminController
                 }
             }
 
-            $stmt = $this->db->prepare("INSERT INTO gallery (title, category, caption, description, image_path, status, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO gallery (title, category, caption, description, image_path, status, sort_order, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
             $stmt->execute([
                 $_POST['title'] ?? '',
                 $_POST['category'] ?? 'general',
@@ -87,7 +88,8 @@ class GalleryController extends AdminController
                 $_POST['description'] ?? '',
                 $imagePath,
                 $_POST['status'] ?? 'active',
-                (int)($_POST['sort_order'] ?? 0)
+                (int)($_POST['sort_order'] ?? 0),
+                $this->tenantId()
             ]);
 
             $_SESSION['success'] = 'Image added to gallery!';
@@ -160,8 +162,10 @@ class GalleryController extends AdminController
                 $fields[] = "$k = ?";
                 $values[] = $v;
             }
+            [$tw, $tp] = $this->tenantWhere();
             $values[] = $id;
-            $this->db->prepare("UPDATE gallery SET " . implode(', ', $fields) . " WHERE id = ?")->execute($values);
+            $values = array_merge($values, $tp);
+            $this->db->prepare("UPDATE gallery SET " . implode(', ', $fields) . " WHERE id = ?" . $tw)->execute($values);
 
             $_SESSION['success'] = 'Image updated!';
             $this->redirect('/admin/gallery');
@@ -183,7 +187,8 @@ class GalleryController extends AdminController
                     unlink($filePath);
                 }
             }
-            $this->db->prepare("DELETE FROM gallery WHERE id = ?")->execute([$id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $this->db->prepare("DELETE FROM gallery WHERE id = ?" . $tw)->execute([$id, ...$tp]);
             $_SESSION['success'] = 'Image deleted!';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();

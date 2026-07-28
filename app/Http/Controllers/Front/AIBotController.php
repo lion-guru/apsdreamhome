@@ -101,8 +101,17 @@ class AIBotController extends BaseController
     private function saveConversation($sessionId, $message, $response, $intent, $platform)
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO ai_conversations (session_id, message, response, intent, platform, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$sessionId, $message, $response, $intent, $platform]);
+            $cols = "session_id, message, response, intent, platform, created_at";
+            $vals = "?, ?, ?, ?, ?, NOW()";
+            $params = [$sessionId, $message, $response, $intent, $platform];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) {
+                $cols .= ", tenant_id";
+                $vals .= ", ?";
+                $params[] = $insertExtra['tenant_id'];
+            }
+            $stmt = $this->db->prepare("INSERT INTO ai_conversations ($cols) VALUES ($vals)");
+            $stmt->execute($params);
         } catch (\Exception $e) {
             // table may not exist; ignore
         }
@@ -166,8 +175,17 @@ class AIBotController extends BaseController
                 if (!$this->tenantEnforce('create_lead')) {
                     return;
                 }
-                $stmt = $this->db->prepare("INSERT INTO leads (name, phone, message, source, status, created_at) VALUES (?, ?, ?, 'whatsapp', 'new', NOW())");
-                $stmt->execute(['WhatsApp User', $phone, $message]);
+                $cols = "name, phone, message, source, status, created_at";
+                $vals = "?, ?, ?, 'whatsapp', 'new', NOW()";
+                $params = ['WhatsApp User', $phone, $message];
+                $insertExtra = $this->tenantInsertData();
+                if (!empty($insertExtra)) {
+                    $cols .= ", tenant_id";
+                    $vals .= ", ?";
+                    $params[] = $insertExtra['tenant_id'];
+                }
+                $stmt = $this->db->prepare("INSERT INTO leads ($cols) VALUES ($vals)");
+                $stmt->execute($params);
 
                 $leadId = (int)$this->db->lastInsertId();
                 if ($leadId) {

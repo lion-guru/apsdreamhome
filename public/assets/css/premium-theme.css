@@ -76,15 +76,60 @@ footer.bg-dark {
   --aps-text-muted: rgba(255, 255, 255, 0.7);
 }
 
-.hero-section h1, .hero-section h2, .hero-section h3, .hero-section h4, .hero-section h5, .hero-section h6,
-.hero-section .display-1, .hero-section .display-2, .hero-section .display-3, .hero-section .display-4, .hero-section .display-5, .hero-section .display-6,
-.project-hero-section h1, .project-hero-section h2, .project-hero-section h3, .project-hero-section h4, .project-hero-section h5, .project-hero-section h6,
-.project-hero-section .display-1, .project-hero-section .display-2, .project-hero-section .display-3, .project-hero-section .display-4, .project-hero-section .display-5, .project-hero-section .display-6,
-.text-white h1, .text-white h2, .text-white h3, .text-white h4, .text-white h5, .text-white h6,
-.text-white .display-1, .text-white .display-2, .text-white .display-3, .text-white .display-4, .text-white .display-5, .text-white .display-6,
-.bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark h4, .bg-dark h5, .bg-dark h6,
-.bg-primary h1, .bg-primary h2, .bg-primary h3, .bg-primary h4, .bg-primary h5, .bg-primary h6,
-.bg-gradient-primary h1, .bg-gradient-primary h2, .bg-gradient-primary h3, .bg-gradient-primary h4, .bg-gradient-primary h5, .bg-gradient-primary h6 {
+.hero-section h1,
+.hero-section h2,
+.hero-section h3,
+.hero-section h4,
+.hero-section h5,
+.hero-section h6,
+.hero-section .display-1,
+.hero-section .display-2,
+.hero-section .display-3,
+.hero-section .display-4,
+.hero-section .display-5,
+.hero-section .display-6,
+.project-hero-section h1,
+.project-hero-section h2,
+.project-hero-section h3,
+.project-hero-section h4,
+.project-hero-section h5,
+.project-hero-section h6,
+.project-hero-section .display-1,
+.project-hero-section .display-2,
+.project-hero-section .display-3,
+.project-hero-section .display-4,
+.project-hero-section .display-5,
+.project-hero-section .display-6,
+.text-white h1,
+.text-white h2,
+.text-white h3,
+.text-white h4,
+.text-white h5,
+.text-white h6,
+.text-white .display-1,
+.text-white .display-2,
+.text-white .display-3,
+.text-white .display-4,
+.text-white .display-5,
+.text-white .display-6,
+.bg-dark h1,
+.bg-dark h2,
+.bg-dark h3,
+.bg-dark h4,
+.bg-dark h5,
+.bg-dark h6,
+.bg-primary h1,
+.bg-primary h2,
+.bg-primary h3,
+.bg-primary h4,
+.bg-primary h5,
+.bg-primary h6,
+.bg-gradient-primary h1,
+.bg-gradient-primary h2,
+.bg-gradient-primary h3,
+.bg-gradient-primary h4,
+.bg-gradient-primary h5,
+.bg-gradient-primary h6 {
   color: #ffffff !important;
 }
 
@@ -119,44 +164,44 @@ body {
   color: var(--aps-text);
 }
 
-/* Card Body High Contrast Text Protection */
-.card:not(.bg-dark):not(.bg-primary) .card-body,
-.card:not(.bg-dark):not(.bg-primary) .card-body p,
-.card:not(.bg-dark):not(.bg-primary) .card-body span,
-.card:not(.bg-dark):not(.bg-primary) .card-body td,
-.card:not(.bg-dark):not(.bg-primary) .card-body th,
-.card:not(.bg-dark):not(.bg-primary) .card-body strong,
-.card:not(.bg-dark):not(.bg-primary) .card-body label,
-.card:not(.bg-dark):not(.bg-primary) .card-body li {
+/* Card Body High Contrast Text Protection — NOT in dark mode */
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body p,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body span,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body td,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body th,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body strong,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body label,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body li {
   color: #1e293b !important;
 }
 
-.card:not(.bg-dark):not(.bg-primary) .card-body .text-muted {
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body .text-muted {
   color: #64748b !important;
 }
 
 /* Card Surface Reset inside Dark Sections — prevents white-on-white text */
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]),
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]),
-.hero-premium .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]),
-.cta-section .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) {
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
+.hero-premium .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
+.cta-section .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) {
   --aps-text: var(--premium-dark);
   --aps-heading: var(--premium-navy);
   --aps-text-muted: #64748b;
   color: var(--premium-dark) !important;
 }
 
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) p,
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) span,
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) div,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) p,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) span,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) div {
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) p,
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) span,
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) div,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) p,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) span,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) div {
   color: var(--premium-dark);
 }
 
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) .text-muted,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) .text-muted {
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) .text-muted,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) .text-muted {
   color: #64748b !important;
 }
 
@@ -198,18 +243,42 @@ h6,
   color: var(--aps-heading);
 }
 
-/* Universal Card Heading & Text Reset for Light Cards inside Dark Containers */
-.card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h1,
-.card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h2,
-.card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h3,
-.card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h4,
-.card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h5,
-.card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h6,
-.ps-card h1, .ps-card h2, .ps-card h3, .ps-card h4, .ps-card h5, .ps-card h6,
-.feature-box h1, .feature-box h2, .feature-box h3, .feature-box h4, .feature-box h5, .feature-box h6,
-.amenity-item h1, .amenity-item h2, .amenity-item h3, .amenity-item h4, .amenity-item h5, .amenity-item h6 {
+/* Universal Card Heading & Text Reset — NOT in dark mode */
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h1,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h2,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h3,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h4,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h5,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h6,
+body:not(.dark-mode) .ps-card h1,
+body:not(.dark-mode) .ps-card h2,
+body:not(.dark-mode) .ps-card h3,
+body:not(.dark-mode) .ps-card h4,
+body:not(.dark-mode) .ps-card h5,
+body:not(.dark-mode) .ps-card h6,
+body:not(.dark-mode) .feature-box h1,
+body:not(.dark-mode) .feature-box h2,
+body:not(.dark-mode) .feature-box h3,
+body:not(.dark-mode) .feature-box h4,
+body:not(.dark-mode) .feature-box h5,
+body:not(.dark-mode) .feature-box h6,
+body:not(.dark-mode) .amenity-item h1,
+body:not(.dark-mode) .amenity-item h2,
+body:not(.dark-mode) .amenity-item h3,
+body:not(.dark-mode) .amenity-item h4,
+body:not(.dark-mode) .amenity-item h5,
+body:not(.dark-mode) .amenity-item h6 {
   --aps-heading: var(--premium-navy);
   color: #1e293b !important;
+}
+
+body:not(.dark-mode) .ps-card-title,
+body:not(.dark-mode) .ps-card .ps-card-title {
+  color: #1e293b !important;
+}
+
+body:not(.dark-mode) .ps-card-stats span {
+  color: #64748b !important;
 }
 
 .ps-card-title,
@@ -222,7 +291,8 @@ h6,
 }
 
 /* Breadcrumb Contrast Fix */
-.breadcrumb-item, .breadcrumb-item a {
+.breadcrumb-item,
+.breadcrumb-item a {
   color: #0d9488 !important;
 }
 .breadcrumb-item.active {
@@ -1110,13 +1180,18 @@ html {
    ============================================================ */
 
 /* Form Control Focus Ring & Smooth Transition */
-.form-control, .form-select {
+.form-control,
+.form-select {
   border-radius: 10px;
   border: 1px solid #cbd5e1;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: var(--accent, #14b8a6) !important;
   box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18) !important;
 }
@@ -1144,41 +1219,50 @@ html {
   letter-spacing: 0.02em;
 }
 
-.badge.bg-success, .badge.badge-success {
+.badge.bg-success,
+.badge.badge-success {
   background-color: rgba(16, 185, 129, 0.15) !important;
   color: #047857 !important;
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-.badge.bg-info, .badge.badge-info {
+.badge.bg-info,
+.badge.badge-info {
   background-color: rgba(59, 130, 246, 0.15) !important;
   color: #1d4ed8 !important;
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.badge.bg-warning, .badge.badge-warning {
+.badge.bg-warning,
+.badge.badge-warning {
   background-color: rgba(245, 158, 11, 0.15) !important;
   color: #b45309 !important;
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-.badge.bg-danger, .badge.badge-danger {
+.badge.bg-danger,
+.badge.badge-danger {
   background-color: rgba(239, 68, 68, 0.15) !important;
   color: #b91c1c !important;
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.badge.bg-primary, .badge.badge-primary {
+.badge.bg-primary,
+.badge.badge-primary {
   background-color: rgba(13, 148, 136, 0.15) !important;
   color: #0f766e !important;
   border: 1px solid rgba(13, 148, 136, 0.3);
 }
 
 /* Card Hover Micro-Lift & Soft Shadow */
-.card:not(.no-hover), .aps-cp-card:not(.no-hover) {
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+.card:not(.no-hover),
+.aps-cp-card:not(.no-hover) {
+  transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card:hover:not(.no-hover), .aps-cp-card:hover:not(.no-hover) {
+.card:hover:not(.no-hover),
+.aps-cp-card:hover:not(.no-hover) {
   box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.1) !important;
 }

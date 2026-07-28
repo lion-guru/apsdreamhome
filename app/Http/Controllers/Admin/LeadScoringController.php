@@ -11,6 +11,8 @@ use App\Core\Database\Database;
  */
 class LeadScoringController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     protected $db;
     private $pdo;
 
@@ -386,6 +388,7 @@ class LeadScoringController extends AdminController
     private function saveLeadScore($leadId, $score)
     {
         try {
+            list($tSql, $tParams) = $this->tenantWhere();
             // Check if score record exists
             $sql = "SELECT id FROM lead_scoring WHERE lead_id = ?";
             $stmt = $this->pdo->prepare($sql);
@@ -398,16 +401,23 @@ class LeadScoringController extends AdminController
                 // Update existing
                 $sql = "UPDATE lead_scoring 
                         SET score = ?, breakdown_json = ?, calculated_at = NOW()
-                        WHERE lead_id = ?";
+                        WHERE lead_id = ? $tSql";
                 $stmt = $this->pdo->prepare($sql);
-                $stmt->execute([$score['total'], $breakdownJson, $leadId]);
+                $stmt->execute(array_merge([$score['total'], $breakdownJson, $leadId], $tParams));
             } else {
                 // Insert new
-                $sql = "INSERT INTO lead_scoring 
-                        (lead_id, score, breakdown_json, calculated_at, created_at)
-                        VALUES (?, ?, ?, NOW(), NOW())";
+                $insertExtra = $this->tenantInsertData();
+                $cols = "lead_id, score, breakdown_json, calculated_at, created_at";
+                $vals = "?, ?, ?, NOW(), NOW()";
+                $params = [$leadId, $score['total'], $breakdownJson];
+                if (!empty($insertExtra)) {
+                    $cols .= ", tenant_id";
+                    $vals .= ", ?";
+                    $params[] = $insertExtra['tenant_id'];
+                }
+                $sql = "INSERT INTO lead_scoring ($cols) VALUES ($vals)";
                 $stmt = $this->pdo->prepare($sql);
-                $stmt->execute([$leadId, $score['total'], $breakdownJson]);
+                $stmt->execute($params);
             }
 
             // Lead score updates are already saved above in lead_scoring table

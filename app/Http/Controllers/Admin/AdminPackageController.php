@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 class AdminPackageController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -42,9 +44,9 @@ class AdminPackageController extends AdminController
                 $this->setFlash('error', 'Name and slug are required');
                 $this->redirect('/admin/premium-packages/create');
             }
-            $this->db->prepare("INSERT INTO premium_packages (name, slug, description, price, duration_days, features, badge_label, badge_color, priority_order, is_active) VALUES (?,?,?,?,?,?,?,?,?,?)")->execute([
+            $this->db->prepare("INSERT INTO premium_packages (name, slug, description, price, duration_days, features, badge_label, badge_color, priority_order, is_active, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)")->execute([
                 $name, $slug, trim($_POST['description'] ?? ''), $price, $durationDays,
-                json_encode($features), $badgeLabel, $badgeColor, $priority, $isActive
+                json_encode($features), $badgeLabel, $badgeColor, $priority, $isActive, $this->tenantId()
             ]);
             $this->setFlash('success', 'Package created');
             $this->redirect('/admin/premium-packages');
@@ -72,7 +74,8 @@ class AdminPackageController extends AdminController
                 $f = trim($_POST['feature_' . $i] ?? '');
                 if ($f) $features[] = $f;
             }
-            $this->db->prepare("UPDATE premium_packages SET name=?, slug=?, description=?, price=?, duration_days=?, features=?, badge_label=?, badge_color=?, priority_order=?, is_active=? WHERE id=?")->execute([
+            [$tw, $tp] = $this->tenantWhere();
+            $this->db->prepare("UPDATE premium_packages SET name=?, slug=?, description=?, price=?, duration_days=?, features=?, badge_label=?, badge_color=?, priority_order=?, is_active=? WHERE id=?" . $tw)->execute([
                 trim($_POST['name'] ?? ''),
                 trim($_POST['slug'] ?? ''),
                 trim($_POST['description'] ?? ''),
@@ -83,7 +86,8 @@ class AdminPackageController extends AdminController
                 trim($_POST['badge_color'] ?? '#ff6b35'),
                 (int)($_POST['priority_order'] ?? 0),
                 isset($_POST['is_active']) ? 1 : 0,
-                $id
+                $id,
+                ...$tp
             ]);
             $this->setFlash('success', 'Package updated');
             $this->redirect('/admin/premium-packages');
@@ -99,7 +103,8 @@ class AdminPackageController extends AdminController
     {
         $this->requireAdmin();
         $this->validateCsrfOrFail();
-        $this->db->prepare("DELETE FROM premium_packages WHERE id = ?")->execute([$id]);
+        [$tw, $tp] = $this->tenantWhere();
+        $this->db->prepare("DELETE FROM premium_packages WHERE id = ?" . $tw)->execute([$id, ...$tp]);
         $this->setFlash('success', 'Package deleted');
         $this->redirect('/admin/premium-packages');
     }

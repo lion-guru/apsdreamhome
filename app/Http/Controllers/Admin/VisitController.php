@@ -7,6 +7,8 @@ use App\Services\AuditService;
 
 class VisitController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $service;
     private $audit;
 
@@ -94,7 +96,8 @@ class VisitController extends AdminController
             try {
                 $leadId = (int)($_POST['lead_id'] ?? 0);
                 if ($leadId > 0) {
-                    $this->db->prepare("UPDATE leads SET status = 'visit_scheduled' WHERE id = ?")->execute([$leadId]);
+                    list($tSql, $tParams) = $this->tenantWhere();
+                    $this->db->prepare("UPDATE leads SET status = 'visit_scheduled' WHERE id = ? $tSql")->execute(array_merge([$leadId], $tParams));
                 }
             } catch (\Throwable $e) { error_log('VisitController::store error: ' . $e->getMessage()); }
             if ($this->audit) $this->audit->log('visit.create', $this->getUserId(), $this->getUserRole(), 'visit', $result['visit_id'] ?? 0, "Scheduled visit for " . $data['customer_name']);
@@ -159,13 +162,15 @@ class VisitController extends AdminController
             $visitDate = $_POST['visit_date'] ?? null;
             $visitTime = $_POST['visit_time'] ?? null;
 
+            list($tSql, $tParams) = $this->tenantWhere();
             $sql = "UPDATE property_visits SET status = ?, notes = ?";
             $params = [$status, $notes];
             if ($assignedTo !== null) { $sql .= ", assigned_to = ?"; $params[] = $assignedTo; }
             if ($visitDate) { $sql .= ", visit_date = ?"; $params[] = $visitDate . ' ' . ($visitTime ?? '00:00:00'); }
             if ($visitTime) { $sql .= ", visit_time = ?"; $params[] = $visitTime; }
-            $sql .= " WHERE id = ?";
+            $sql .= " WHERE id = ? $tSql";
             $params[] = $id;
+            $params = array_merge($params, $tParams);
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             if ($this->audit) $this->audit->log('visit.update', $this->getUserId(), $this->getUserRole(), 'visit', $id, "Updated visit #$id to status: $status");

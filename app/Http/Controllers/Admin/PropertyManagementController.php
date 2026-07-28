@@ -359,25 +359,26 @@ class PropertyManagementController extends AdminController
                 }
 
                 // Process allocation based on action
+                list($tSql, $tParams) = $this->tenantWhere();
                 if ($action === 'approve') {
                     // Update allocation status
                     $sql = "UPDATE property_allocations 
                             SET status = 'approved', processed_by = ?, processed_at = NOW(), notes = ?
-                            WHERE id = ?";
+                            WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
+                    $stmt->execute(array_merge([$_SESSION['user_id'] ?? 0, $notes, $allocationId], $tParams));
 
                     // Update property status
-                    $sql = "UPDATE properties SET status = 'reserved', updated_at = NOW() WHERE id = ?";
+                    $sql = "UPDATE properties SET status = 'reserved', updated_at = NOW() WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$allocation['property_id']]);
+                    $stmt->execute(array_merge([$allocation['property_id']], $tParams));
                 } elseif ($action === 'reject') {
                     // Update allocation status
                     $sql = "UPDATE property_allocations 
                             SET status = 'rejected', processed_by = ?, processed_at = NOW(), notes = ?
-                            WHERE id = ?";
+                            WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
+                    $stmt->execute(array_merge([$_SESSION['user_id'] ?? 0, $notes, $allocationId], $tParams));
                 } else {
                     $this->db->rollBack();
                     return $this->jsonError('Invalid action', 400);
@@ -510,11 +511,12 @@ class PropertyManagementController extends AdminController
             $updated = 0;
             $failed = 0;
 
+            list($tSql, $tParams) = $this->tenantWhere();
             foreach ($propertyIds as $propertyId) {
                 try {
-                    $sql = "UPDATE properties SET status = ?, updated_at = NOW() WHERE id = ?";
+                    $sql = "UPDATE properties SET status = ?, updated_at = NOW() WHERE id = ? $tSql";
                     $stmt = $this->db->prepare($sql);
-                    $result = $stmt->execute([$status, (int)$propertyId]);
+                    $result = $stmt->execute(array_merge([$status, (int)$propertyId], $tParams));
 
                     if ($result) {
                         $updated++;
@@ -856,14 +858,15 @@ class PropertyManagementController extends AdminController
                 return;
             }
 
+            list($tSql, $tParams) = $this->tenantWhere();
             $stmt = $this->db->prepare("
                 UPDATE properties SET 
                     title = ?, description = ?, price = ?, property_type = ?, status = ?,
                     site_id = ?, bedrooms = ?, bathrooms = ?, area = ?, address = ?, city = ?,
                     updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ? $tSql
             ");
-            $stmt->execute([$title, $description, $price, $property_type, $status, $site_id, $bedrooms, $bathrooms, $area, $address, $city, $id]);
+            $stmt->execute(array_merge([$title, $description, $price, $property_type, $status, $site_id, $bedrooms, $bathrooms, $area, $address, $city, $id], $tParams));
 
             $this->setFlash('success', 'Property updated successfully');
         } catch (\Throwable $e) {
@@ -877,8 +880,9 @@ class PropertyManagementController extends AdminController
     {
         $id = (int)$id;
         try {
-            $stmt = $this->db->prepare("UPDATE properties SET status = 'archived', updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$id]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE properties SET status = 'archived', updated_at = NOW() WHERE id = ? $tSql");
+            $stmt->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Property archived successfully');
         } catch (\Throwable $e) {
             error_log("Property delete error: " . $e->getMessage());

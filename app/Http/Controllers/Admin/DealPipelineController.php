@@ -10,6 +10,7 @@ use App\Core\Database\Database;
  */
 class DealPipelineController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -142,13 +143,13 @@ class DealPipelineController extends AdminController
             
             $sql = "INSERT INTO deals 
                     (deal_name, lead_id, assigned_to, deal_value, 
-                     expected_close_date, probability, stage_id, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
-            
+                     expected_close_date, probability, stage_id, status, tenant_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'active', ?, NOW())";
+
             $stmt = $conn->prepare($sql);
             $stmt->execute([
                 $dealName, $leadId, $assignedTo, $dealValue,
-                $expectedCloseDate, $probability, $stageId
+                $expectedCloseDate, $probability, $stageId, $this->tenantId()
             ]);
             
             redirect('/admin/deal-pipeline?success=Deal created successfully');
@@ -240,17 +241,18 @@ class DealPipelineController extends AdminController
             $current->execute([$id]);
             $currentStage = $current->fetchColumn();
             
+            $tid = $this->tenantId();
             // Update deal stage
-            $conn->prepare("UPDATE deals SET stage_id = ?, updated_at = NOW() WHERE id = ?")->execute([$newStage, $id]);
-            
+            $conn->prepare("UPDATE deals SET stage_id = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$newStage, $id, $tid]);
+
             try {
                 // Log stage change in history
-                $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
-                              VALUES (?, 'stage_change', ?, ?, NOW())";
+                $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, tenant_id, created_at)
+                              VALUES (?, 'stage_change', ?, ?, ?, NOW())";
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $conn->prepare($historySql)->execute([$id, $currentStage, $newStage]);
+            $conn->prepare($historySql)->execute([$id, $currentStage, $newStage, $tid]);
             
             redirect('/admin/deal-pipeline?success=Deal stage updated');
             exit;
@@ -279,7 +281,7 @@ class DealPipelineController extends AdminController
             }
             
             // Update deal probability
-            $conn->prepare("UPDATE deals SET probability = ?, updated_at = NOW() WHERE id = ?")->execute([$probability, $id]);
+            $conn->prepare("UPDATE deals SET probability = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$probability, $id, $this->tenantId()]);
             
             redirect('/admin/deal-pipeline?success=Deal probability updated');
             exit;
@@ -304,13 +306,14 @@ class DealPipelineController extends AdminController
             $current->execute([$id]);
             $dealData = $current->fetch(\PDO::FETCH_ASSOC);
             
+            $tid = $this->tenantId();
             // Update deal stage to closed won
-            $conn->prepare("UPDATE deals SET stage_id = 'closed_won', status = 'completed' WHERE id = ?")->execute([$id]);
-            
+            $conn->prepare("UPDATE deals SET stage_id = 'closed_won', status = 'completed' WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+
             // Log in history
-            $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
-                          VALUES (?, 'deal_won', ?, 'closed_won', NOW())";
-            $conn->prepare($historySql)->execute([$id, $dealData['stage_id'] ?? '']);
+            $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, tenant_id, created_at)
+                          VALUES (?, 'deal_won', ?, 'closed_won', ?, NOW())";
+            $conn->prepare($historySql)->execute([$id, $dealData['stage_id'] ?? '', $tid]);
             
             redirect('/admin/deal-pipeline?success=Deal marked as won');
             exit;
@@ -335,13 +338,14 @@ class DealPipelineController extends AdminController
             $current->execute([$id]);
             $currentStage = $current->fetchColumn();
             
+            $tid = $this->tenantId();
             // Update deal stage to closed lost
-            $conn->prepare("UPDATE deals SET stage_id = 'closed_lost', status = 'completed' WHERE id = ?")->execute([$id]);
-            
+            $conn->prepare("UPDATE deals SET stage_id = 'closed_lost', status = 'completed' WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+
             // Log in history
-            $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, created_at)
-                          VALUES (?, 'deal_lost', ?, 'closed_lost', NOW())";
-            $conn->prepare($historySql)->execute([$id, $currentStage]);
+            $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, tenant_id, created_at)
+                          VALUES (?, 'deal_lost', ?, 'closed_lost', ?, NOW())";
+            $conn->prepare($historySql)->execute([$id, $currentStage, $tid]);
             
             redirect('/admin/deal-pipeline?success=Deal marked as lost');
             exit;

@@ -26,14 +26,29 @@
 }
 
 /* ── BASE ────────────────────────────────────────────────────── */
+body:not(.page-home) {
+  padding-top: 76px;
+}
+@media (max-width: 991px) {
+  body:not(.page-home) {
+    padding-top: 64px;
+  }
+}
+
 .premium-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 9999;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transform: translateY(0) !important;
 }
 .premium-header.header-scrolled {
   background: rgba(255, 255, 255, 0.98);

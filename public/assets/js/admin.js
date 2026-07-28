@@ -2,7 +2,8 @@
   'use strict';
 
   window.toggleProfile = function () {
-    document.getElementById('profileDropdown').classList.toggle('show');
+    var el = document.getElementById('profileDropdown');
+    if (el) el.classList.toggle('show');
   };
 
   document.addEventListener('click', function (e) {

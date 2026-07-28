@@ -9,6 +9,8 @@ use App\Core\Database\Database;
  */
 class BulkOutreachController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();

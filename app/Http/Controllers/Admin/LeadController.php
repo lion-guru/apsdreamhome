@@ -181,8 +181,9 @@ class LeadController extends AdminController
         $notes = [];
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT n.*, u.name as created_by_name FROM lead_notes n LEFT JOIN users u ON n.created_by = u.id WHERE n.lead_id = ? ORDER BY n.created_at DESC LIMIT 50");
-            $stmt->execute([(int)$id]);
+            list($nsql, $nparams) = $this->tenantWhere();
+            $stmt = $db->prepare("SELECT n.*, u.name as created_by_name FROM lead_notes n LEFT JOIN users u ON n.created_by = u.id WHERE n.lead_id = ?" . $nsql . " ORDER BY n.created_at DESC LIMIT 50");
+            $stmt->execute([(int)$id, ...$nparams]);
             $notes = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {}
 
@@ -369,11 +370,13 @@ class LeadController extends AdminController
             $lead = $db->prepare("SELECT * FROM leads WHERE id = ?$tidSql");
             $lead->execute($tid ? [$id, $tid] : [$id]);
             $lead = $lead->fetch(\PDO::FETCH_ASSOC);
-            $notesStmt = $db->prepare("SELECT * FROM lead_notes WHERE lead_id = ? ORDER BY created_at DESC");
-            $notesStmt->execute([$id]);
+            list($nsql, $nparams) = $this->tenantWhere();
+            $notesStmt = $db->prepare("SELECT * FROM lead_notes WHERE lead_id = ?" . $nsql . " ORDER BY created_at DESC");
+            $notesStmt->execute([$id, ...$nparams]);
             $notes = $notesStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $activities = $db->prepare("SELECT * FROM lead_activities WHERE lead_id=? ORDER BY activity_date DESC LIMIT 20");
-            $activities->execute([$id]);
+            list($asql, $aparams) = $this->tenantWhere();
+            $activities = $db->prepare("SELECT * FROM lead_activities WHERE lead_id=?" . $asql . " ORDER BY activity_date DESC LIMIT 20");
+            $activities->execute([$id, ...$aparams]);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $lead = null; $notes = []; $activities = [];
@@ -576,8 +579,9 @@ class LeadController extends AdminController
 
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("INSERT INTO lead_notes (lead_id, note, content, created_by, created_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([(int)$id, $noteText, $noteText, $adminId]);
+            $tid = $this->tenantId();
+            $stmt = $db->prepare("INSERT INTO lead_notes (lead_id, note, content, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
+            $stmt->execute([(int)$id, $noteText, $noteText, $adminId, $tid]);
         } catch (\Exception $e) {
             error_log('LeadController::addNote error: ' . $e->getMessage());
         }
@@ -775,7 +779,7 @@ class LeadController extends AdminController
     public function deleteDocument($id, $docId) {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]);
+            $db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ? AND tenant_id = ?", [$docId, $id, $this->tenantId()]);
             $this->crm->logActivity((int)$id, $this->getCurrentUserId(), 'document_delete', 'Document deleted', "Document #$docId deleted");
             $this->setFlash('success', 'Document deleted');
         } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); }

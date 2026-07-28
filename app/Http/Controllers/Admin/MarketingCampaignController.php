@@ -11,6 +11,7 @@ use App\Services\AuditService;
  */
 class MarketingCampaignController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     private $service;
     private $audit;
 
@@ -177,12 +178,13 @@ class MarketingCampaignController extends AdminController
                 'name' => $u['name'],
                 'channel' => $channel
             ]);
-            $this->getPdo()->prepare("UPDATE marketing_campaign_recipients SET status = 'delivered', delivered_at = NOW() WHERE id = ?")->execute([$recipientId]);
+            $tid = $this->tenantId();
+            $this->getPdo()->prepare("UPDATE marketing_campaign_recipients SET status = 'delivered', delivered_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$recipientId, $tid]);
             $delivered++;
             $sent++;
         }
         $this->service->updateStats($id, compact('sent', 'delivered', 'opened', 'clicked', 'failed', 'unsubscribed'));
-        $this->getPdo()->prepare("UPDATE marketing_campaigns SET total_recipients = ?, status = 'sent', sent_at = NOW(), completed_at = NOW() WHERE id = ?")->execute([$total, $id]);
+        $this->getPdo()->prepare("UPDATE marketing_campaigns SET total_recipients = ?, status = 'sent', sent_at = NOW(), completed_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$total, $id, $tid]);
         if ($this->audit) {
             $this->audit->log('marketing_campaign.send', $this->getUserId(), $this->getUserRole(), 'campaign', $id, "Sent campaign #$id to $sent recipients");
         }
@@ -195,8 +197,9 @@ class MarketingCampaignController extends AdminController
         $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
         if ($id > 0 && $this->service) {
             try {
-                $this->getPdo()->prepare("DELETE FROM marketing_campaign_recipients WHERE campaign_id = ?")->execute([$id]);
-                $this->getPdo()->prepare("DELETE FROM marketing_campaigns WHERE id = ?")->execute([$id]);
+                $tid = $this->tenantId();
+                $this->getPdo()->prepare("DELETE FROM marketing_campaign_recipients WHERE campaign_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->getPdo()->prepare("DELETE FROM marketing_campaigns WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
                 if ($this->audit) {
                     $this->audit->log('marketing_campaign.delete', $this->getUserId(), $this->getUserRole(), 'campaign', $id, "Deleted campaign #$id");
                 }

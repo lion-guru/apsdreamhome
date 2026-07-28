@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 class MarketingController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function strategies()
     {
         $this->requireAdmin();
@@ -43,8 +44,8 @@ class MarketingController extends AdminController
         $image_url = $_POST['image_url'] ?? '';
         $active = isset($_POST['active']) ? 1 : 0;
         try {
-            $stmt = $this->db->prepare("INSERT INTO marketing_strategies (title, description, image_url, active, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$title, $description, $image_url, $active]);
+            $stmt = $this->db->prepare("INSERT INTO marketing_strategies (title, description, image_url, active, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([$title, $description, $image_url, $active, $this->tenantId()]);
             $this->setFlash('success', 'Strategy created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create strategy: ' . $e->getMessage());
@@ -80,8 +81,8 @@ class MarketingController extends AdminController
         $image_url = $_POST['image_url'] ?? '';
         $active = isset($_POST['active']) ? 1 : 0;
         try {
-            $stmt = $this->db->prepare("UPDATE marketing_strategies SET title = ?, description = ?, image_url = ?, active = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$title, $description, $image_url, $active, $id]);
+            $stmt = $this->db->prepare("UPDATE marketing_strategies SET title = ?, description = ?, image_url = ?, active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$title, $description, $image_url, $active, $id, $this->tenantId()]);
             $this->setFlash('success', 'Strategy updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update strategy: ' . $e->getMessage());
@@ -98,8 +99,8 @@ class MarketingController extends AdminController
             $strategy = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ($strategy) {
                 $newActive = $strategy['active'] ? 0 : 1;
-                $updateStmt = $this->db->prepare("UPDATE marketing_strategies SET active = ?, updated_at = NOW() WHERE id = ?");
-                $updateStmt->execute([$newActive, $id]);
+                $updateStmt = $this->db->prepare("UPDATE marketing_strategies SET active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+                $updateStmt->execute([$newActive, $id, $this->tenantId()]);
                 $this->setFlash('success', 'Strategy status toggled successfully');
             } else {
                 $this->setFlash('error', 'Strategy not found');
@@ -132,8 +133,8 @@ class MarketingController extends AdminController
         $provider = $_POST['provider'] ?? '';
         $app_url = $_POST['app_url'] ?? '';
         try {
-            $stmt = $this->db->prepare("INSERT INTO marketplace_apps (app_name, provider, app_url, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->execute([$app_name, $provider, $app_url]);
+            $stmt = $this->db->prepare("INSERT INTO marketplace_apps (app_name, provider, app_url, tenant_id, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt->execute([$app_name, $provider, $app_url, $this->tenantId()]);
             $this->setFlash('success', 'Marketplace app added successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to add marketplace app: ' . $e->getMessage());

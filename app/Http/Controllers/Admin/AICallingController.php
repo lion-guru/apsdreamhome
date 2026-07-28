@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 class AICallingController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function index()
     {
         header('Location: ' . BASE_URL . '/admin/ai-calling/dashboard');
@@ -271,13 +273,14 @@ class AICallingController extends AdminController
             'notes' => trim($_POST['notes'] ?? ''),
         ];
         if (empty($data['model_name'])) { $this->data['error'] = 'Model name is required'; return $this->training(); }
+        $tid = $this->tenantId();
         if ($id) {
-            $db->prepare("UPDATE ai_voice_models SET model_name=?, language=?, voice_gender=?, model_provider=?, status=?, notes=? WHERE id=?")
-               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $id]);
+            $db->prepare("UPDATE ai_voice_models SET model_name=?, language=?, voice_gender=?, model_provider=?, status=?, notes=? WHERE id=? AND tenant_id=?")
+               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $id, $tid]);
             $_SESSION['success'] = 'Voice model updated';
         } else {
-            $db->prepare("INSERT INTO ai_voice_models (model_name, language, voice_gender, model_provider, status, notes, created_by) VALUES (?,?,?,?,?,?,?)")
-               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $_SESSION['admin_id'] ?? null]);
+            $db->prepare("INSERT INTO ai_voice_models (model_name, language, voice_gender, model_provider, status, notes, created_by, tenant_id) VALUES (?,?,?,?,?,?,?,?)")
+               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $_SESSION['admin_id'] ?? null, $tid]);
             $_SESSION['success'] = 'Voice model created';
         }
         redirect(BASE_URL . '/admin/ai-calling/training');
@@ -305,13 +308,14 @@ class AICallingController extends AdminController
             $_SESSION['error'] = 'Script name and greeting are required';
             return $this->training();
         }
+        $tid = $this->tenantId();
         if ($id) {
-            $db->prepare("UPDATE ai_calling_scripts SET script_name=?, script_code=?, category=?, language=?, greeting_text=?, main_body=?, closing_text=?, estimated_duration_seconds=?, is_active=? WHERE id=?")
-               ->execute([$data['script_name'], $data['script_code'], $data['category'], $data['language'], $data['greeting_text'], $data['main_body'], $data['closing_text'], $data['estimated_duration_seconds'], $data['is_active'], $id]);
+            $db->prepare("UPDATE ai_calling_scripts SET script_name=?, script_code=?, category=?, language=?, greeting_text=?, main_body=?, closing_text=?, estimated_duration_seconds=?, is_active=? WHERE id=? AND tenant_id=?")
+               ->execute([$data['script_name'], $data['script_code'], $data['category'], $data['language'], $data['greeting_text'], $data['main_body'], $data['closing_text'], $data['estimated_duration_seconds'], $data['is_active'], $id, $tid]);
             $_SESSION['success'] = 'Script updated';
         } else {
-            $db->prepare("INSERT INTO ai_calling_scripts (script_name, script_code, category, language, greeting_text, main_body, closing_text, estimated_duration_seconds, is_active, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)")
-               ->execute([$data['script_name'], $data['script_code'], $data['category'], $data['language'], $data['greeting_text'], $data['main_body'], $data['closing_text'], $data['estimated_duration_seconds'], $data['is_active'], $_SESSION['admin_id'] ?? null]);
+            $db->prepare("INSERT INTO ai_calling_scripts (script_name, script_code, category, language, greeting_text, main_body, closing_text, estimated_duration_seconds, is_active, created_by, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)")
+               ->execute([$data['script_name'], $data['script_code'], $data['category'], $data['language'], $data['greeting_text'], $data['main_body'], $data['closing_text'], $data['estimated_duration_seconds'], $data['is_active'], $_SESSION['admin_id'] ?? null, $tid]);
             $_SESSION['success'] = 'Script created';
         }
         redirect(BASE_URL . '/admin/ai-calling/training');
@@ -336,13 +340,14 @@ class AICallingController extends AdminController
             $_SESSION['error'] = 'Intent name is required';
             return $this->training();
         }
+        $tid = $this->tenantId();
         if ($id) {
-            $db->prepare("UPDATE ai_calling_intents SET intent_name=?, intent_code=?, category=?, description=?, priority=?, is_active=? WHERE id=?")
-               ->execute([$data['intent_name'], $data['intent_code'], $data['category'], $data['description'], $data['priority'], $data['is_active'], $id]);
+            $db->prepare("UPDATE ai_calling_intents SET intent_name=?, intent_code=?, category=?, description=?, priority=?, is_active=? WHERE id=? AND tenant_id=?")
+               ->execute([$data['intent_name'], $data['intent_code'], $data['category'], $data['description'], $data['priority'], $data['is_active'], $id, $tid]);
             $_SESSION['success'] = 'Intent updated';
         } else {
-            $db->prepare("INSERT INTO ai_calling_intents (intent_name, intent_code, category, description, priority, is_active) VALUES (?,?,?,?,?,?)")
-               ->execute([$data['intent_name'], $data['intent_code'], $data['category'], $data['description'], $data['priority'], $data['is_active']]);
+            $db->prepare("INSERT INTO ai_calling_intents (intent_name, intent_code, category, description, priority, is_active, tenant_id) VALUES (?,?,?,?,?,?,?)")
+               ->execute([$data['intent_name'], $data['intent_code'], $data['category'], $data['description'], $data['priority'], $data['is_active'], $tid]);
             $_SESSION['success'] = 'Intent created';
         }
         redirect(BASE_URL . '/admin/ai-calling/training');

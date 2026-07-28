@@ -9,6 +9,8 @@ use App\Services\NocRegistryService;
  */
 class NocRegistryController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $service;
 
     public function __construct()
@@ -181,8 +183,9 @@ class NocRegistryController extends AdminController
 
         $nocId = (int)($_POST['noc_id'] ?? 0);
         $pdo = $this->getPdoLocal();
-        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'processing', rejection_reason = NULL WHERE id = ?");
-        $stmt->execute([$nocId]);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'processing', rejection_reason = NULL WHERE id = ? $tSql");
+        $stmt->execute(array_merge([$nocId], $tParams));
 
         $_SESSION['flash_success'] = "NOC #{$nocId} set to processing";
         redirect('/admin/noc-registry/nocs/' . $nocId);

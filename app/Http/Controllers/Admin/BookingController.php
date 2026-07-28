@@ -11,6 +11,7 @@ use Exception;
 
 class BookingController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
 
     public function index()
     {
@@ -20,18 +21,18 @@ class BookingController extends AdminController
             $perPage = 20;
             $offset = ($page - 1) * $perPage;
             $filters = [
-                'search' => $_GET['search'] ?? '',
-                'status' => $_GET['status'] ?? '',
-                'customer_id' => $_GET['customer_id'] ?? '',
+                'search'       => $_GET['search'] ?? '',
+                'status'       => $_GET['status'] ?? '',
+                'colony_id'    => $_GET['colony_id'] ?? '',
                 'associate_id' => $_GET['associate_id'] ?? '',
-                'sort' => $_GET['sort'] ?? 'b.created_at',
-                'order' => $_GET['order'] ?? 'DESC'
+                'sort'         => $_GET['sort'] ?? 'b.created_at',
+                'order'        => $_GET['order'] ?? 'DESC'
             ];
 
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(b.booking_number LIKE ? OR u.name LIKE ? OR p.title LIKE ?)";
+                $where[] = "(b.booking_number LIKE ? OR u.name LIKE ? OR pl.plot_number LIKE ?)";
                 $searchTerm = '%' . $filters['search'] . '%';
                 $params[] = $searchTerm; $params[] = $searchTerm; $params[] = $searchTerm;
             }
@@ -39,9 +40,9 @@ class BookingController extends AdminController
                 $where[] = "b.status = ?";
                 $params[] = $filters['status'];
             }
-            if (!empty($filters['customer_id'])) {
-                $where[] = "b.customer_id = ?";
-                $params[] = $filters['customer_id'];
+            if (!empty($filters['colony_id'])) {
+                $where[] = "pl.colony_id = ?";
+                $params[] = $filters['colony_id'];
             }
             if (!empty($filters['associate_id'])) {
                 $where[] = "b.associate_id = ?";
@@ -49,67 +50,53 @@ class BookingController extends AdminController
             }
             $whereClause = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            if (!empty($filters['search'])) {
-                $countSql = "SELECT COUNT(DISTINCT b.id) as total FROM bookings b LEFT JOIN properties p ON b.property_id = p.id LEFT JOIN users u ON b.customer_id = u.id $whereClause";
-            } else {
-                $simpleWhere = array_filter($where, fn($w) => str_starts_with(trim($w), 'b.'));
-                $simpleParams = [];
-                $simpleWhereClause = '';
-                if ($simpleWhere) {
-                    $reindexed = [];
-                    foreach ($where as $i => $w) {
-                        if (str_starts_with(trim($w), 'b.')) {
-                            $reindexed[] = $w;
-                            $simpleParams[] = $params[$i];
-                        }
-                    }
-                    $simpleWhereClause = 'WHERE ' . implode(' AND ', $reindexed);
-                }
-                $countSql = "SELECT COUNT(*) as total FROM bookings b $simpleWhereClause";
-                $params = $simpleParams ?: $params;
-            }
+            $countSql = "SELECT COUNT(DISTINCT b.id) as total FROM plot_bookings b LEFT JOIN plots pl ON b.plot_id = pl.id LEFT JOIN users u ON b.customer_id = u.id $whereClause";
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = intval($countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
             $totalPages = max(1, ceil($total / $perPage));
 
-            $validSorts = ['b.created_at', 'b.booking_number', 'b.total_amount', 'b.status'];
+            $validSorts = ['b.created_at', 'b.booking_number', 'b.total_plot_value', 'b.status'];
             $sortCol = in_array($filters['sort'], $validSorts) ? $filters['sort'] : 'b.created_at';
             $sortDir = strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
 
             $stmt = $this->db->prepare(
-                "SELECT b.*, p.title as property_title, p.location as property_location,
-                        u.name as customer_name, u.email as customer_email,
-                        a.name as associate_name, a.email as associate_email
-                 FROM bookings b
-                 LEFT JOIN properties p ON b.property_id = p.id
+                "SELECT b.id, b.booking_number, b.status, b.total_plot_value, b.booking_amount,
+                        b.booking_date, b.created_at,
+                        pl.plot_number, pl.colony_id,
+                        c.name as colony_name,
+                        u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
+                        a.name as associate_name
+                 FROM plot_bookings b
+                 LEFT JOIN plots pl ON b.plot_id = pl.id
+                 LEFT JOIN colonies c ON pl.colony_id = c.id
                  LEFT JOIN users u ON b.customer_id = u.id
                  LEFT JOIN users a ON b.associate_id = a.id
                  $whereClause
                  ORDER BY $sortCol $sortDir
                  LIMIT $perPage OFFSET $offset"
             );
-            $allParams = array_merge($params, []);
-            $stmt->execute($allParams);
+            $stmt->execute($params);
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            $allRoles = $this->db->query("SELECT id, name, role FROM users WHERE role IN ('customer','agent','associate') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $users = array_values(array_filter($allRoles, fn($u) => in_array($u['role'], ['customer','agent'])));
-            $associates = array_values(array_filter($allRoles, fn($u) => $u['role'] === 'associate'));
+            $allAssociates = $this->db->query("SELECT id, name FROM users WHERE role IN ('associate','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $colonies = $this->db->query("SELECT id, name FROM colonies WHERE is_active=1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $statuses = ['token_paid','agreement_signed','emi_active','partially_paid','fully_paid','cancelled','transferred','registration_done'];
 
             return $this->render('admin/bookings/index', [
-                'bookings' => $bookings,
-                'total' => $total,
-                'filters' => $filters,
-                'users' => $users,
-                'associates' => $associates,
-                'total_pages' => $totalPages,
+                'bookings'     => $bookings,
+                'total'        => $total,
+                'filters'      => $filters,
+                'associates'   => $allAssociates,
+                'colonies'     => $colonies,
+                'statuses'     => $statuses,
+                'total_pages'  => $totalPages,
                 'current_page' => $page
             ]);
         } catch (\Exception $e) {
             return $this->render('admin/bookings/index', [
                 'bookings' => [], 'total' => 0, 'filters' => [],
-                'users' => [], 'associates' => [],
+                'associates' => [], 'colonies' => [], 'statuses' => [],
                 'total_pages' => 1, 'current_page' => 1,
                 'error' => $e->getMessage()
             ]);
@@ -148,10 +135,15 @@ class BookingController extends AdminController
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT b.*, p.title as property_title, p.location, p.price, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
-                 FROM bookings b
-                 LEFT JOIN properties p ON b.property_id = p.id
+                "SELECT b.*, pl.plot_number, pl.area_sqft, pl.price_per_sqft,
+                        c.name as colony_name,
+                        u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
+                        a.name as associate_name
+                 FROM plot_bookings b
+                 LEFT JOIN plots pl ON b.plot_id = pl.id
+                 LEFT JOIN colonies c ON pl.colony_id = c.id
                  LEFT JOIN users u ON b.customer_id = u.id
+                 LEFT JOIN users a ON b.associate_id = a.id
                  WHERE b.id = ?"
             );
             $stmt->execute([$id]);
@@ -162,17 +154,17 @@ class BookingController extends AdminController
             $commissions = [];
             $total_commission = 0;
             try {
-                $pStmt = $this->db->prepare("SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC");
+                $pStmt = $this->db->prepare("SELECT * FROM booking_payment_schedules WHERE booking_id = ? ORDER BY due_date ASC");
                 $pStmt->execute([$id]);
                 $payments = $pStmt->fetchAll(\PDO::FETCH_ASSOC);
                 foreach ($payments as $pmt) {
-                    if (($pmt['status'] ?? '') === 'completed') {
-                        $total_paid += floatval($pmt['amount'] ?? 0);
+                    if (($pmt['paid_date'] ?? '') !== '') {
+                        $total_paid += floatval($pmt['paid_amount'] ?? $pmt['amount'] ?? 0);
                     }
                 }
-            } catch (\Exception $e) { error_log('BookingController::show error: ' . $e->getMessage()); }
+            } catch (\Exception $e) { error_log('BookingController::show payment error: ' . $e->getMessage()); }
             try {
-                $cStmt = $this->db->prepare("SELECT * FROM mlm_commission_ledger WHERE booking_id = ? ORDER BY created_at DESC");
+                $cStmt = $this->db->prepare("SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl LEFT JOIN users u ON mcl.associate_id = u.id WHERE mcl.booking_id = ? ORDER BY mcl.created_at DESC");
                 $cStmt->execute([$id]);
                 $commissions = $cStmt->fetchAll(\PDO::FETCH_ASSOC);
                 foreach ($commissions as $cm) {
@@ -181,19 +173,16 @@ class BookingController extends AdminController
             } catch (\Exception $e) { error_log('BookingController::show commission error: ' . $e->getMessage()); }
 
             return $this->render('admin/bookings/show', [
-                'booking' => $booking,
-                'payments' => $payments,
-                'total_paid' => $total_paid,
-                'commissions' => $commissions,
+                'booking'          => $booking,
+                'payments'         => $payments,
+                'total_paid'       => $total_paid,
+                'commissions'      => $commissions,
                 'total_commission' => $total_commission
             ]);
         } catch (\Exception $e) {
             return $this->render('admin/bookings/show', [
-                'booking' => null,
-                'payments' => [],
-                'total_paid' => 0,
-                'commissions' => [],
-                'total_commission' => 0,
+                'booking' => null, 'payments' => [], 'total_paid' => 0,
+                'commissions' => [], 'total_commission' => 0,
                 'error' => $e->getMessage()
             ]);
         }
@@ -202,14 +191,14 @@ class BookingController extends AdminController
     public function edit($id)
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT b.*, pl.plot_number, pl.colony_id, u.name as customer_name FROM plot_bookings b LEFT JOIN plots pl ON b.plot_id = pl.id LEFT JOIN users u ON b.customer_id = u.id WHERE b.id = ?");
             $stmt->execute([$id]);
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $users = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-            return $this->render('admin/bookings/edit', ['booking' => $booking, 'users' => $users, 'properties' => $properties]);
+            $customers = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','user') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $plots = $this->db->query("SELECT pl.id, pl.plot_number, c.name as colony_name FROM plots pl LEFT JOIN colonies c ON pl.colony_id = c.id WHERE pl.status IN ('available','booked') ORDER BY c.name, pl.plot_number")->fetchAll(\PDO::FETCH_ASSOC);
+            return $this->render('admin/bookings/edit', ['booking' => $booking, 'customers' => $customers, 'plots' => $plots]);
         } catch (\Exception $e) {
-            return $this->render('admin/bookings/edit', ['booking' => null, 'users' => [], 'properties' => [], 'error' => $e->getMessage()]);
+            return $this->render('admin/bookings/edit', ['booking' => null, 'customers' => [], 'plots' => [], 'error' => $e->getMessage()]);
         }
     }
 
@@ -234,7 +223,7 @@ class BookingController extends AdminController
     public function destroy($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM bookings WHERE id = ?");
+            $stmt = $this->db->prepare("DELETE FROM plot_bookings WHERE id = ?");
             $stmt->execute([$id]);
             $_SESSION['success'] = 'Booking deleted successfully.';
         } catch (\Exception $e) {

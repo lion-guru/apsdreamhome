@@ -166,40 +166,47 @@
       document.body.appendChild(this.overlay);
 
       // Bind events
-      this.overlay.querySelector('.lightbox-backdrop').addEventListener('click', () => this.hide());
-      this.overlay.querySelector('.lightbox-close').addEventListener('click', () => this.hide());
-      this.overlay.querySelector('.lightbox-prev').addEventListener('click', () => this.prev());
-      this.overlay.querySelector('.lightbox-next').addEventListener('click', () => this.next());
+      const backdrop = this.overlay.querySelector('.lightbox-backdrop');
+      if (backdrop) backdrop.addEventListener('click', () => this.hide());
+      const closeBtn = this.overlay.querySelector('.lightbox-close');
+      if (closeBtn) closeBtn.addEventListener('click', () => this.hide());
+      const prevBtn = this.overlay.querySelector('.lightbox-prev');
+      if (prevBtn) prevBtn.addEventListener('click', () => this.prev());
+      const nextBtn = this.overlay.querySelector('.lightbox-next');
+      if (nextBtn) nextBtn.addEventListener('click', () => this.next());
 
       // Image load events
       const imgEl = this.overlay.querySelector('.lightbox-image');
       const spinner = this.overlay.querySelector('.lightbox-spinner');
 
-      imgEl.addEventListener('load', () => {
-        spinner.hidden = true;
-        imgEl.style.opacity = '1';
-        this.preloadAdjacent();
-      });
-      imgEl.addEventListener('error', () => {
-        spinner.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size:2rem;color:#999"></i>';
-      });
+      if (imgEl) {
+        imgEl.addEventListener('load', () => {
+          if (spinner) spinner.hidden = true;
+          imgEl.style.opacity = '1';
+          this.preloadAdjacent();
+        });
+        imgEl.addEventListener('error', () => {
+          if (spinner)
+            spinner.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size:2rem;color:#999"></i>';
+        });
 
-      // Click to zoom
-      imgEl.addEventListener('click', e => {
-        if (e.detail === 1) {
-          // Single click — zoom in/out on desktop
+        // Click to zoom
+        imgEl.addEventListener('click', e => {
+          if (e.detail === 1) {
+            // Single click — zoom in/out on desktop
+            if (!('ontouchstart' in window)) {
+              this.zoom = this.zoom === 1 ? 2 : 1;
+              this.applyZoom();
+            }
+          }
+        });
+        imgEl.addEventListener('dblclick', e => {
           if (!('ontouchstart' in window)) {
-            this.zoom = this.zoom === 1 ? 2 : 1;
+            this.zoom = this.zoom === 2 ? 1 : 2;
             this.applyZoom();
           }
-        }
-      });
-      imgEl.addEventListener('dblclick', e => {
-        if (!('ontouchstart' in window)) {
-          this.zoom = this.zoom === 2 ? 1 : 2;
-          this.applyZoom();
-        }
-      });
+        });
+      }
 
       // Control buttons
       this.overlay.querySelectorAll('.lightbox-btn').forEach(btn => {
@@ -211,7 +218,8 @@
     }
 
     bindTouch() {
-      const stage = this.overlay.querySelector('.lightbox-stage');
+      const stage = this.overlay ? this.overlay.querySelector('.lightbox-stage') : null;
+      if (!stage) return;
       let initialDistance = 0;
       let initialZoom = 1;
 
@@ -460,19 +468,25 @@
     render() {
       if (!this.overlay) return;
       const img = this.images[this.current];
+      if (!img) return;
       const imgEl = this.overlay.querySelector('.lightbox-image');
       const spinner = this.overlay.querySelector('.lightbox-spinner');
 
       // Show spinner while loading
-      spinner.hidden = false;
-      spinner.innerHTML = '<div class="spinner"></div>';
-      imgEl.style.opacity = '0';
+      if (spinner) {
+        spinner.hidden = false;
+        spinner.innerHTML = '<div class="spinner"></div>';
+      }
+      if (imgEl) {
+        imgEl.style.opacity = '0';
+        imgEl.src = img.src;
+        imgEl.alt = img.caption;
+      }
 
-      imgEl.src = img.src;
-      imgEl.alt = img.caption;
-
-      this.overlay.querySelector('.lightbox-caption').textContent = img.caption || '';
-      this.overlay.querySelector('.lightbox-counter').textContent = this.current + 1 + ' / ' + this.images.length;
+      const caption = this.overlay.querySelector('.lightbox-caption');
+      if (caption) caption.textContent = img.caption || '';
+      const counter = this.overlay.querySelector('.lightbox-counter');
+      if (counter) counter.textContent = this.current + 1 + ' / ' + this.images.length;
       this.resetZoom();
 
       // Render dots

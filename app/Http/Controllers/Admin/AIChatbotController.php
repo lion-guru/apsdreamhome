@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 class AIChatbotController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function index()
     {
         $this->requireAdmin();
@@ -40,7 +41,8 @@ class AIChatbotController extends AdminController
         try {
             $existing = $this->db->fetch("SELECT id FROM ai_chatbot_config LIMIT 1");
             if ($existing) {
-                $this->db->query("UPDATE ai_chatbot_config SET bot_name=?, welcome_message=?, fallback_message=?, language=?, is_active=? WHERE id=?", [$botName, $welcomeMsg, $fallbackMsg, $language, $isActive, $existing['id']]);
+                [$tw, $tp] = $this->tenantWhere();
+                $this->db->query("UPDATE ai_chatbot_config SET bot_name=?, welcome_message=?, fallback_message=?, language=?, is_active=? WHERE id=?" . $tw, array_merge([$botName, $welcomeMsg, $fallbackMsg, $language, $isActive, $existing['id']], $tp));
             } else {
                 $this->db->insert('ai_chatbot_config', ['bot_name' => $botName, 'welcome_message' => $welcomeMsg, 'fallback_message' => $fallbackMsg, 'language' => $language, 'is_active' => $isActive, 'provider' => 'internal']);
             }
@@ -108,7 +110,8 @@ class AIChatbotController extends AdminController
             $item = $this->db->fetch("SELECT id, is_active FROM chatbot_training_data WHERE id=?", [$id]);
             if ($item) {
                 $newStatus = $item['is_active'] ? 0 : 1;
-                $this->db->query("UPDATE chatbot_training_data SET is_active=? WHERE id=?", [$newStatus, $id]);
+                [$tw, $tp] = $this->tenantWhere();
+                $this->db->query("UPDATE chatbot_training_data SET is_active=? WHERE id=?" . $tw, array_merge([$newStatus, $id], $tp));
             }
         } catch (\Exception $e) { error_log('AIChatbotController toggleTraining: ' . $e->getMessage()); }
         $this->redirect(BASE_URL . '/admin/chatbot/train');

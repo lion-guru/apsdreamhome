@@ -7,6 +7,7 @@ use App\Services\AuditService;
 
 class DripCampaignController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     private $service;
     private $audit;
 
@@ -130,7 +131,7 @@ class DripCampaignController extends AdminController
             $campaign = $this->service->getCampaignById($id);
             if ($campaign) {
                 $newStatus = $campaign['status'] === 'active' ? 'paused' : 'active';
-                $this->pdo()->prepare("UPDATE drip_campaigns SET status = ? WHERE id = ?")->execute([$newStatus, $id]);
+                $this->pdo()->prepare("UPDATE drip_campaigns SET status = ? WHERE id = ? AND tenant_id = ?")->execute([$newStatus, $id, $this->tenantId()]);
                 $this->setFlash('success', "Campaign $newStatus");
             }
         }
@@ -142,10 +143,11 @@ class DripCampaignController extends AdminController
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             try {
-                $this->pdo()->prepare("DELETE FROM drip_email_log WHERE campaign_id = ?")->execute([$id]);
-                $this->pdo()->prepare("DELETE FROM drip_enrollments WHERE campaign_id = ?")->execute([$id]);
-                $this->pdo()->prepare("DELETE FROM drip_emails WHERE campaign_id = ?")->execute([$id]);
-                $this->pdo()->prepare("DELETE FROM drip_campaigns WHERE id = ?")->execute([$id]);
+                $tid = $this->tenantId();
+                $this->pdo()->prepare("DELETE FROM drip_email_log WHERE campaign_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM drip_enrollments WHERE campaign_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM drip_emails WHERE campaign_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM drip_campaigns WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
                 $this->setFlash('success', 'Campaign deleted');
             } catch (\Throwable $e) {
                 $this->setFlash('error', 'Delete failed: ' . $e->getMessage());

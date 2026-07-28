@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Admin;
  */
 class SiteVisitController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -104,8 +106,9 @@ class SiteVisitController extends AdminController
         }
 
         try {
-            $st = $pdo->prepare("UPDATE site_visits SET status = ? WHERE id = ?");
-            $st->execute([$status, $id]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $st = $pdo->prepare("UPDATE site_visits SET status = ? WHERE id = ? $tSql");
+            $st->execute(array_merge([$status, $id], $tParams));
             echo json_encode(['ok' => true]);
         } catch (\Throwable $e) {
             echo json_encode(['ok' => false, 'error' => $e->getMessage()]);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 class AIManagementController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function integrations()
     {
         $this->requireAdmin();
@@ -36,7 +37,8 @@ class AIManagementController extends AdminController
                 return $this->jsonResponse(['success' => false, 'message' => 'Integration not found'], 404);
             }
             $newStatus = ($row['status'] ?? '') === 'active' ? 'inactive' : 'active';
-            $this->db->query("UPDATE ai_integrations SET status = ? WHERE id = ?", [$newStatus, (int)$id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $this->db->query("UPDATE ai_integrations SET status = ? WHERE id = ?" . $tw, array_merge([$newStatus, (int)$id], $tp));
             return $this->jsonResponse(['success' => true, 'status' => $newStatus]);
         } catch (\Exception $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
@@ -149,7 +151,8 @@ class AIManagementController extends AdminController
                 return $this->jsonResponse(['success' => false, 'message' => 'Content not found'], 404);
             }
             $newStatus = ($row['is_published'] ?? 0) ? 0 : 1;
-            $this->db->query("UPDATE ai_generated_content SET is_published = ? WHERE id = ?", [$newStatus, (int)$id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $this->db->query("UPDATE ai_generated_content SET is_published = ? WHERE id = ?" . $tw, array_merge([$newStatus, (int)$id], $tp));
             return $this->jsonResponse(['success' => true, 'is_published' => $newStatus]);
         } catch (\Exception $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);

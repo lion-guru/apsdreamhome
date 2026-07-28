@@ -7,6 +7,8 @@ use Exception;
 
 class InquiryController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -101,8 +103,9 @@ class InquiryController extends AdminController
         // Mark as contacted if new
         if ($inquiry['status'] === 'new') {
             try {
-                $updateStmt = $this->db->prepare("UPDATE inquiries SET status = 'contacted', updated_at = NOW() WHERE id = ?");
-                $updateStmt->execute([$id]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $updateStmt = $this->db->prepare("UPDATE inquiries SET status = 'contacted', updated_at = NOW() WHERE id = ? $tSql");
+                $updateStmt->execute(array_merge([$id], $tParams));
                 $inquiry['status'] = 'contacted';
             } catch (\Exception $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
         }
@@ -118,8 +121,9 @@ class InquiryController extends AdminController
             $status = $_POST['status'] ?? 'new';
 
             try {
-                $stmt = $this->db->prepare("UPDATE inquiries SET status = ?, updated_at = NOW() WHERE id = ?");
-                $stmt->execute([$status, $id]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $stmt = $this->db->prepare("UPDATE inquiries SET status = ?, updated_at = NOW() WHERE id = ? $tSql");
+                $stmt->execute(array_merge([$status, $id], $tParams));
                 $this->setFlash('success', 'Status updated successfully');
             } catch (\Exception $e) {
                 $this->setFlash('error', 'Failed to update status');
@@ -136,8 +140,9 @@ class InquiryController extends AdminController
         }
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM inquiries WHERE id = ?");
-            $stmt->execute([$id]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $stmt = $this->db->prepare("DELETE FROM inquiries WHERE id = ? $tSql");
+            $stmt->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Inquiry deleted successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to delete inquiry');

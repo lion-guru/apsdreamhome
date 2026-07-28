@@ -11,6 +11,7 @@ use App\Core\Database\Database;
  */
 class FaqController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -64,8 +65,9 @@ class FaqController extends AdminController
         ];
 
         try {
-            $sql = "INSERT INTO faqs (question, answer, category, display_order, status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
+            $tid = $this->tenantId();
+            $sql = "INSERT INTO faqs (question, answer, category, display_order, status, tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $data['question'],
@@ -73,6 +75,7 @@ class FaqController extends AdminController
                 $data['category'],
                 $data['display_order'],
                 $data['status'],
+                $tid,
                 $data['created_at']
             ]);
 
@@ -156,9 +159,10 @@ class FaqController extends AdminController
         ];
 
         try {
+            [$tw, $tp] = $this->tenantWhere();
             $sql = "UPDATE faqs 
                     SET question = ?, answer = ?, category = ?, display_order = ?, status = ? 
-                    WHERE id = ?";
+                    WHERE id = ?" . $tw;
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $data['question'],
@@ -166,7 +170,8 @@ class FaqController extends AdminController
                 $data['category'],
                 $data['display_order'],
                 $data['status'],
-                $id
+                $id,
+                ...$tp
             ]);
 
             $_SESSION['success'] = 'FAQ updated successfully!';
@@ -185,8 +190,9 @@ class FaqController extends AdminController
     public function delete($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM faqs WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tw, $tp] = $this->tenantWhere();
+            $stmt = $this->db->prepare("DELETE FROM faqs WHERE id = ?" . $tw);
+            $stmt->execute([$id, ...$tp]);
 
             $_SESSION['success'] = 'FAQ deleted successfully!';
         } catch (\Exception $e) {

@@ -6,6 +6,7 @@ use App\Services\AuctionService;
 
 class AuctionController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     private $service;
 
     public function __construct($db = null, $auth = null, array $config = [])
@@ -115,10 +116,11 @@ class AuctionController extends AdminController
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if ($id) {
             try {
-                $this->pdo()->prepare("DELETE FROM auction_deposits WHERE auction_id = ?")->execute([$id]);
-                $this->pdo()->prepare("DELETE FROM auction_watchers WHERE auction_id = ?")->execute([$id]);
-                $this->pdo()->prepare("DELETE FROM auction_bids WHERE auction_id = ?")->execute([$id]);
-                $this->pdo()->prepare("DELETE FROM auctions WHERE id = ?")->execute([$id]);
+                $tid = $this->tenantId();
+                $this->pdo()->prepare("DELETE FROM auction_deposits WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM auction_watchers WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM auction_bids WHERE auction_id = ? AND tenant_id = ?")->execute([$id, $tid]);
+                $this->pdo()->prepare("DELETE FROM auctions WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
                 $this->setFlash('success', 'Auction deleted');
             } catch (\Throwable $e) {
                 $this->setFlash('error', 'Delete failed: ' . $e->getMessage());

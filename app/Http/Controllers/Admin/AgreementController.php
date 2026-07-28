@@ -9,6 +9,7 @@ use Exception;
 
 class AgreementController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     private $agreementService;
     private $notificationService;
 
@@ -179,14 +180,14 @@ class AgreementController extends AdminController
                 INSERT INTO agreements 
                 (agreement_number, agreement_type, booking_id, plot_id, party_a_name, party_a_id, party_b_name, party_b_id,
                  agreement_date, registration_date, stamp_duty_amount, registration_fee, total_value, 
-                 validity_date, notes, status, created_by, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, NOW(), NOW())
+                 validity_date, notes, status, created_by, tenant_id, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, NOW(), NOW())
             ");
             $stmt->execute([
                 $agreementNumber, $agreementType, $bookingId ?: null, $plotId ?: null,
                 $partyAName, $partyAId, $partyBName, $partyBId,
                 $agreementDate, $registrationDate, $stampDuty, $registrationFee, $totalValue,
-                $validityDate, $notes, $_SESSION['admin_id'] ?? null
+                $validityDate, $notes, $_SESSION['admin_id'] ?? null, $this->tenantId()
             ]);
 
             $agreementId = $this->db->lastInsertId();
@@ -278,7 +279,8 @@ class AgreementController extends AdminController
 
             $params[] = $id;
             $setClause = implode(', ', $updates);
-            $stmt = $this->db->prepare("UPDATE agreements SET $setClause WHERE id = ?");
+            $params[] = $this->tenantId();
+            $stmt = $this->db->prepare("UPDATE agreements SET $setClause WHERE id = ? AND tenant_id = ?");
             $stmt->execute($params);
 
             // Send status-based email notifications
@@ -373,8 +375,8 @@ class AgreementController extends AdminController
                 return;
             }
 
-            $stmt = $this->db->prepare("UPDATE generated_documents SET download_count = download_count + 1 WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("UPDATE generated_documents SET download_count = download_count + 1 WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->tenantId()]);
 
             header('Content-Type: application/pdf');
             header('Content-Disposition: attachment; filename="' . basename($fullPath) . '"');
@@ -449,8 +451,8 @@ class AgreementController extends AdminController
                     $message .= "You can download it from: " . (BASE_URL) . "/admin/agreements/download/" . $id . "\n\n";
                     $message .= "Thank you,\n" . ($this->company['company_name'] ?? 'APS Dream Home');
                     try {
-                        $stmt2 = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
-                        $stmt2->execute([$customerEmail, $subject, $message]);
+                        $stmt2 = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, tenant_id, created_at) VALUES (?, ?, ?, 'pending', ?, NOW())");
+                        $stmt2->execute([$customerEmail, $subject, $message, $this->tenantId()]);
                     } catch (\Exception $e2) {
                         error_log("AgreementController: email_queue fallback failed: " . $e2->getMessage());
                     }
@@ -460,8 +462,8 @@ class AgreementController extends AdminController
             if (!empty($customerPhone)) {
                 $smsText = "Dear " . ($bookingData['customer_name'] ?? 'Customer') . ", your " . $doc['title'] . " is ready. Doc No: " . $doc['document_code'] . " - APS Dream Home";
                 try {
-                    $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient_phone, message, status, created_at) VALUES (?, ?, 'pending', NOW())");
-                    $stmt->execute([$customerPhone, $smsText]);
+                    $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient_phone, message, status, tenant_id, created_at) VALUES (?, ?, 'pending', ?, NOW())");
+                    $stmt->execute([$customerPhone, $smsText, $this->tenantId()]);
                 } catch (\Exception $e) {
                     error_log("AgreementController.php: " . $e->getMessage());
                 }

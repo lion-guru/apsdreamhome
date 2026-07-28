@@ -11,6 +11,7 @@ use App\Core\Database\Database;
  */
 class KnowledgeBaseController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -94,11 +95,12 @@ class KnowledgeBaseController extends AdminController
         try {
             try {
                 // Increment view count
-                $stmt = $this->db->prepare("UPDATE knowledge_base SET views = views + 1 WHERE id = ?");
+                [$tw, $tp] = $this->tenantWhere();
+                $stmt = $this->db->prepare("UPDATE knowledge_base SET views = views + 1 WHERE id = ?" . $tw);
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $stmt->execute([$id]);
+            $stmt->execute([$id, ...$tp]);
 
             $stmt = $this->db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
             $stmt->execute([$id]);
@@ -196,11 +198,12 @@ class KnowledgeBaseController extends AdminController
     {
         try {
             try {
-                $stmt = $this->db->prepare("DELETE FROM knowledge_base WHERE id = ?");
+                [$tw, $tp] = $this->tenantWhere();
+                $stmt = $this->db->prepare("DELETE FROM knowledge_base WHERE id = ?" . $tw);
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $stmt->execute([$id]);
+            $stmt->execute([$id, ...$tp]);
 
             $_SESSION['success'] = 'Article deleted successfully!';
         } catch (\Exception $e) {

@@ -6,6 +6,8 @@ use App\Services\ReferralService;
 
 class ReferralController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -57,8 +59,17 @@ class ReferralController extends AdminController
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $code = strtoupper(substr(md5(uniqid()), 0, 8));
-            $stmt = $db->prepare("INSERT INTO referrals (referrer_id, referred_email, referral_code, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
-            $stmt->execute([$_POST['referrer_id'] ?? 0, $_POST['referred_email'] ?? '', $code]);
+            $insertExtra = $this->tenantInsertData();
+            $cols = "referrer_id, referred_email, referral_code, status, created_at";
+            $vals = "?, ?, ?, 'pending', NOW()";
+            $params = [$_POST['referrer_id'] ?? 0, $_POST['referred_email'] ?? '', $code];
+            if (!empty($insertExtra)) {
+                $cols .= ", tenant_id";
+                $vals .= ", ?";
+                $params[] = $insertExtra['tenant_id'];
+            }
+            $stmt = $db->prepare("INSERT INTO referrals ($cols) VALUES ($vals)");
+            $stmt->execute($params);
             $this->setFlash('success', 'Referral created');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
@@ -71,7 +82,8 @@ class ReferralController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $db->prepare("UPDATE referrals SET status='converted', converted_at=NOW() WHERE id=?")->execute([$id]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $db->prepare("UPDATE referrals SET status='converted', converted_at=NOW() WHERE id=? $tSql")->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Referral approved');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed');
@@ -84,7 +96,8 @@ class ReferralController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $db->prepare("UPDATE referrals SET status='rejected' WHERE id=?")->execute([$id]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $db->prepare("UPDATE referrals SET status='rejected' WHERE id=? $tSql")->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Referral rejected');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed');

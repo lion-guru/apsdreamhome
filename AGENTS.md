@@ -1398,6 +1398,17 @@ _52. **CSS files must be in `public/` directory** — Assets referenced in HTML 
 
 ---
 
+## Session 59: Header Scroll Jump Fix, Mobile/Tablet Responsive Polish & Master OpenCode Prompt (2026-07-28)
+
+| Feature / Fix | Details |
+| :--- | :--- |
+| **Header Scroll Jump Bug Fixed** | Fixed issue where `premium-animations.js` and `page-transitions.js` dynamically set `header.style.transform = 'translateY(-100%)'` on scroll down, causing header to hide and leaving a blank white space at top. Header now stays stably fixed at `top: 0` (`translateY(0)`). |
+| **Mobile & Tablet Header Padding** | Added `body:not(.page-home) { padding-top: 76px; }` (64px on mobile/tablet) in `header.css` to prevent page content from slipping under header or leaving blank scroll gaps. |
+| **Master OpenCode IDE Prompt Created** | Created `master_opencode_prompt.md` artifact providing a complete, step-by-step Senior Architect prompt for OpenCode IDE execution across all 144 admin menu routes, public pages, and portals. |
+| **JS Null-Safety & E2E Status** | Guarded 40+ DOM accesses across 9 JS files (`chatbot.js`, `admin.js`, `employee.js`, `voice-widget.js`, `live-chat-widget.js`, `page-transitions.js`, `image-gallery.js`, `layout.js`, `notification-widget.js`). 153/153 E2E tests pass. |
+
+---
+
 ## New Features (2026-07-28 — Session 59: Cron Tenant Isolation + SQL Injection Fix)
 
 | Feature                                   | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |

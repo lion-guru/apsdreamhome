@@ -7,6 +7,8 @@ use Exception;
 
 class PossessionController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $notificationService;
 
     public function __construct()
@@ -224,8 +226,9 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession/checklist/' . $id);
             }
 
-            $stmt = $this->db->prepare("INSERT INTO possession_checklist (booking_id, item_name) VALUES (?, ?)");
-            $stmt->execute([$id, $itemName]);
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO possession_checklist (booking_id, item_name, tenant_id) VALUES (?, ?, ?)");
+            $stmt->execute([$id, $itemName, $tid]);
 
             $this->setFlash('success', 'Checklist item added successfully');
             $this->redirect('/admin/possession/checklist/' . $id);
@@ -248,12 +251,13 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession/checklist/' . $id);
             }
 
+            $tid = $this->tenantId();
             if ($isCompleted) {
-                $stmt = $this->db->prepare("UPDATE possession_checklist SET is_completed = 1, completed_by = ?, completed_at = NOW(), remarks = ? WHERE id = ? AND booking_id = ?");
-                $stmt->execute([$_SESSION['admin_id'] ?? null, $remarks, $itemId, $id]);
+                $stmt = $this->db->prepare("UPDATE possession_checklist SET is_completed = 1, completed_by = ?, completed_at = NOW(), remarks = ? WHERE id = ? AND booking_id = ? AND tenant_id = ?");
+                $stmt->execute([$_SESSION['admin_id'] ?? null, $remarks, $itemId, $id, $tid]);
             } else {
-                $stmt = $this->db->prepare("UPDATE possession_checklist SET is_completed = 0, completed_by = NULL, completed_at = NULL, remarks = ? WHERE id = ? AND booking_id = ?");
-                $stmt->execute([$remarks, $itemId, $id]);
+                $stmt = $this->db->prepare("UPDATE possession_checklist SET is_completed = 0, completed_by = NULL, completed_at = NULL, remarks = ? WHERE id = ? AND booking_id = ? AND tenant_id = ?");
+                $stmt->execute([$remarks, $itemId, $id, $tid]);
             }
 
             $this->setFlash('success', 'Checklist item updated successfully');
@@ -276,9 +280,9 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession/show/' . $id);
             }
 
-            $stmt = $this->db->prepare("UPDATE bookings SET possession_status = 'scheduled', possession_date = ?, handover_notes = CONCAT(IFNULL(handover_notes,''), ?) WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE bookings SET possession_status = 'scheduled', possession_date = ?, handover_notes = CONCAT(IFNULL(handover_notes,''), ?) WHERE id = ? AND tenant_id = ?");
             $note = "\n[" . date('Y-m-d H:i') . "] Handover scheduled for " . $possessionDate . ". " . $notes;
-            $stmt->execute([$possessionDate, $note, $id]);
+            $stmt->execute([$possessionDate, $note, $id, $this->tenantId()]);
 
             $this->logPossessionActivity($id, 'scheduled', "Handover scheduled for " . $possessionDate . ". " . $notes);
 
@@ -315,9 +319,9 @@ class PossessionController extends AdminController
                 handover_by = ?,
                 defect_liability_period = ?,
                 defect_liability_end_date = ?
-                WHERE id = ?");
+                WHERE id = ? AND tenant_id = ?");
             $note = "\n[" . date('Y-m-d H:i') . "] Handed over on " . $possessionDate . ". Letter: " . $letterNumber . ". Defect liability: " . $defectPeriod . " days. " . $notes;
-            $stmt->execute([$possessionDate, $letterNumber, $note, $_SESSION['admin_id'] ?? null, $defectPeriod, $defectEnd, $id]);
+            $stmt->execute([$possessionDate, $letterNumber, $note, $_SESSION['admin_id'] ?? null, $defectPeriod, $defectEnd, $id, $this->tenantId()]);
 
             $this->logPossessionActivity($id, 'handed_over', "Handed over on $possessionDate. Letter #$letterNumber. Defect liability until $defectEnd. $notes");
 
@@ -432,11 +436,12 @@ class PossessionController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO defect_reports (booking_id, reported_by, defect_type, description, priority) VALUES (?, ?, ?, ?, ?)");
+                $tid = $this->tenantId();
+                $stmt = $this->db->prepare("INSERT INTO defect_reports (booking_id, reported_by, defect_type, description, priority, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $stmt->execute([$id, $_SESSION['admin_id'] ?? null, $defectType, $description, $priority]);
+            $stmt->execute([$id, $_SESSION['admin_id'] ?? null, $defectType, $description, $priority, $tid]);
 
             $this->setFlash('success', 'Defect reported successfully');
             $this->redirect('/admin/possession/show/' . $id);
@@ -470,8 +475,8 @@ class PossessionController extends AdminController
                 $this->redirect('/admin/possession');
             }
 
-            $stmt = $this->db->prepare("UPDATE defect_reports SET status = 'resolved', resolution_notes = ?, resolved_by = ?, resolved_at = NOW() WHERE id = ?");
-            $stmt->execute([$resolutionNotes, $_SESSION['admin_id'] ?? null, $defectId]);
+            $stmt = $this->db->prepare("UPDATE defect_reports SET status = 'resolved', resolution_notes = ?, resolved_by = ?, resolved_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$resolutionNotes, $_SESSION['admin_id'] ?? null, $defectId, $this->tenantId()]);
 
             $this->setFlash('success', 'Defect marked as resolved');
             $this->redirect('/admin/possession/show/' . $defect['booking_id']);
@@ -484,7 +489,7 @@ class PossessionController extends AdminController
     private function logPossessionActivity($bookingId, $action, $details = '')
     {
         try {
-            $this->db->query("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at) VALUES (?, ?, ?, ?, NOW())", [$bookingId, 'possession_' . $action, $details, $_SESSION['admin_id'] ?? null]);
+            $this->db->query("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)", [$bookingId, 'possession_' . $action, $details, $_SESSION['admin_id'] ?? null, $this->tenantId()]);
         } catch (\Exception $e) {
                     error_log("PossessionController.php: " . $e->getMessage());
         }

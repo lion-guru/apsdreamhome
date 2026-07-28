@@ -575,7 +575,7 @@ img {
 .form-control,
 .form-select {
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 8px 12px;
   font-size: 0.85rem;
   transition:
@@ -584,8 +584,8 @@ img {
 }
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18);
 }
 .form-label {
   font-weight: 500;
@@ -594,7 +594,7 @@ img {
   margin-bottom: 4px;
 }
 .input-group-text {
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.85rem;
 }
 
@@ -602,9 +602,15 @@ img {
 .btn {
   font-size: 0.85rem;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 500;
   transition: all 0.2s;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: scale(0.98);
 }
 .btn-primary {
   background: var(--primary);
@@ -633,10 +639,31 @@ img {
 
 /* ===== BADGES ===== */
 .badge {
-  font-weight: 500;
-  padding: 3px 8px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+.badge.bg-success {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+.badge.bg-info {
+  background: #dbeafe !important;
+  color: #1e40af !important;
+}
+.badge.bg-warning {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+.badge.bg-danger {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+.badge.bg-primary {
+  background: #ede9fe !important;
+  color: #5b21b6 !important;
 }
 
 /* ===== ALERTS ===== */
@@ -2047,26 +2074,26 @@ body {
 
 /* High Contrast & Guardrails for Admin Panel Cards, Tables & Headers */
 /* Explicit APS Design System Card & Header High Contrast Controls */
-.aps-cp-card:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) {
+.aps-cp-card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) {
   background: var(--card-bg, #ffffff);
   color: var(--text-primary, #1e293b);
   border: 1px solid var(--border-color, #e2e8f0);
 }
 
-.aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) {
+.aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) {
   background: var(--card-header-bg, #ffffff);
   border-bottom: 1px solid var(--border-color, #e2e8f0);
   color: var(--text-primary, #1e293b);
 }
 
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h1,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h2,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h3,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h4,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h5,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) h6,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) i,
-body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*="gradient"]) span {
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h1,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h2,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h3,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h4,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h5,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h6,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) i,
+body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([class*='gradient']) span {
   color: var(--text-primary, #1e293b);
 }
 
@@ -2094,12 +2121,60 @@ body:not(.dark-mode) .aps-cp-card-header:not(.bg-dark):not(.bg-primary):not([cla
 }
 
 /* Dark & Light Card Header Title Protection */
-.dark-mode .aps-cp-card-header h1, .dark-mode .aps-cp-card-header h2, .dark-mode .aps-cp-card-header h3, .dark-mode .aps-cp-card-header h4, .dark-mode .aps-cp-card-header h5, .dark-mode .aps-cp-card-header h6, .dark-mode .aps-cp-card-header i, .dark-mode .aps-cp-card-header span, .dark-mode .aps-cp-card-header a,
-.dark-mode .card-header h1, .dark-mode .card-header h2, .dark-mode .card-header h3, .dark-mode .card-header h4, .dark-mode .card-header h5, .dark-mode .card-header h6, .dark-mode .card-header i, .dark-mode .card-header span, .dark-mode .card-header a,
-.card-header.bg-dark h1, .card-header.bg-dark h2, .card-header.bg-dark h3, .card-header.bg-dark h4, .card-header.bg-dark h5, .card-header.bg-dark h6, .card-header.bg-dark i, .card-header.bg-dark span, .card-header.bg-dark a,
-.card-header.bg-primary h1, .card-header.bg-primary h2, .card-header.bg-primary h3, .card-header.bg-primary h4, .card-header.bg-primary h5, .card-header.bg-primary h6, .card-header.bg-primary i, .card-header.bg-primary span, .card-header.bg-primary a,
-.card-header.text-white h1, .card-header.text-white h2, .card-header.text-white h3, .card-header.text-white h4, .card-header.text-white h5, .card-header.text-white h6, .card-header.text-white i, .card-header.text-white span, .card-header.text-white a,
-.card-header[style*="background"] h1, .card-header[style*="background"] h2, .card-header[style*="background"] h3, .card-header[style*="background"] h4, .card-header[style*="background"] h5, .card-header[style*="background"] h6, .card-header[style*="background"] i, .card-header[style*="background"] span, .card-header[style*="background"] a {
+.dark-mode .aps-cp-card-header h1,
+.dark-mode .aps-cp-card-header h2,
+.dark-mode .aps-cp-card-header h3,
+.dark-mode .aps-cp-card-header h4,
+.dark-mode .aps-cp-card-header h5,
+.dark-mode .aps-cp-card-header h6,
+.dark-mode .aps-cp-card-header i,
+.dark-mode .aps-cp-card-header span,
+.dark-mode .aps-cp-card-header a,
+.dark-mode .card-header h1,
+.dark-mode .card-header h2,
+.dark-mode .card-header h3,
+.dark-mode .card-header h4,
+.dark-mode .card-header h5,
+.dark-mode .card-header h6,
+.dark-mode .card-header i,
+.dark-mode .card-header span,
+.dark-mode .card-header a,
+.card-header.bg-dark h1,
+.card-header.bg-dark h2,
+.card-header.bg-dark h3,
+.card-header.bg-dark h4,
+.card-header.bg-dark h5,
+.card-header.bg-dark h6,
+.card-header.bg-dark i,
+.card-header.bg-dark span,
+.card-header.bg-dark a,
+.card-header.bg-primary h1,
+.card-header.bg-primary h2,
+.card-header.bg-primary h3,
+.card-header.bg-primary h4,
+.card-header.bg-primary h5,
+.card-header.bg-primary h6,
+.card-header.bg-primary i,
+.card-header.bg-primary span,
+.card-header.bg-primary a,
+.card-header.text-white h1,
+.card-header.text-white h2,
+.card-header.text-white h3,
+.card-header.text-white h4,
+.card-header.text-white h5,
+.card-header.text-white h6,
+.card-header.text-white i,
+.card-header.text-white span,
+.card-header.text-white a,
+.card-header[style*='background'] h1,
+.card-header[style*='background'] h2,
+.card-header[style*='background'] h3,
+.card-header[style*='background'] h4,
+.card-header[style*='background'] h5,
+.card-header[style*='background'] h6,
+.card-header[style*='background'] i,
+.card-header[style*='background'] span,
+.card-header[style*='background'] a {
   color: #ffffff !important;
 }
 
@@ -2114,22 +2189,72 @@ body:not(.dark-mode) .aps-cp-card:not(.bg-dark):not(.bg-primary) .aps-cp-card-he
 }
 
 /* Dark Stat Card Labels & Text Reset */
-.card.bg-dark small, .card.bg-dark .text-muted, .card.bg-dark .text-xs, .card.bg-dark p, .card.bg-dark span:not(.badge), .card.bg-dark a:not(.btn),
-.card.bg-primary small, .card.bg-primary .text-muted, .card.bg-primary .text-xs, .card.bg-primary p, .card.bg-primary span:not(.badge), .card.bg-primary a:not(.btn),
-.card[style*="background: #1"] small, .card[style*="background: #1"] .text-muted, .card[style*="background: #1"] .text-xs, .card[style*="background: #1"] p, .card[style*="background: #1"] span:not(.badge),
-.card[style*="background:#1"] small, .card[style*="background:#1"] .text-muted, .card[style*="background:#1"] .text-xs, .card[style*="background:#1"] p, .card[style*="background:#1"] span:not(.badge),
-.card[style*="background: #2"] small, .card[style*="background: #2"] .text-muted, .card[style*="background: #2"] .text-xs, .card[style*="background: #2"] p, .card[style*="background: #2"] span:not(.badge) {
+.card.bg-dark small,
+.card.bg-dark .text-muted,
+.card.bg-dark .text-xs,
+.card.bg-dark p,
+.card.bg-dark span:not(.badge),
+.card.bg-dark a:not(.btn),
+.card.bg-primary small,
+.card.bg-primary .text-muted,
+.card.bg-primary .text-xs,
+.card.bg-primary p,
+.card.bg-primary span:not(.badge),
+.card.bg-primary a:not(.btn),
+.card[style*='background: #1'] small,
+.card[style*='background: #1'] .text-muted,
+.card[style*='background: #1'] .text-xs,
+.card[style*='background: #1'] p,
+.card[style*='background: #1'] span:not(.badge),
+.card[style*='background:#1'] small,
+.card[style*='background:#1'] .text-muted,
+.card[style*='background:#1'] .text-xs,
+.card[style*='background:#1'] p,
+.card[style*='background:#1'] span:not(.badge),
+.card[style*='background: #2'] small,
+.card[style*='background: #2'] .text-muted,
+.card[style*='background: #2'] .text-xs,
+.card[style*='background: #2'] p,
+.card[style*='background: #2'] span:not(.badge) {
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
-.card.bg-dark h1, .card.bg-dark h2, .card.bg-dark h3, .card.bg-dark h4, .card.bg-dark h5, .card.bg-dark h6, .card.bg-dark .h1, .card.bg-dark .h2, .card.bg-dark .h3, .card.bg-dark .h4, .card.bg-dark .h5, .card.bg-dark .h6, .card.bg-dark .fw-bold,
-.card[style*="background: #1"] h1, .card[style*="background: #1"] h2, .card[style*="background: #1"] h3, .card[style*="background: #1"] h4, .card[style*="background: #1"] h5, .card[style*="background: #1"] h6,
-.card[style*="background:#1"] h1, .card[style*="background:#1"] h2, .card[style*="background:#1"] h3, .card[style*="background:#1"] h4, .card[style*="background:#1"] h5, .card[style*="background:#1"] h6,
-.card[style*="background: #2"] h1, .card[style*="background: #2"] h2, .card[style*="background: #2"] h3, .card[style*="background: #2"] h4, .card[style*="background: #2"] h5, .card[style*="background: #2"] h6 {
+.card.bg-dark h1,
+.card.bg-dark h2,
+.card.bg-dark h3,
+.card.bg-dark h4,
+.card.bg-dark h5,
+.card.bg-dark h6,
+.card.bg-dark .h1,
+.card.bg-dark .h2,
+.card.bg-dark .h3,
+.card.bg-dark .h4,
+.card.bg-dark .h5,
+.card.bg-dark .h6,
+.card.bg-dark .fw-bold,
+.card[style*='background: #1'] h1,
+.card[style*='background: #1'] h2,
+.card[style*='background: #1'] h3,
+.card[style*='background: #1'] h4,
+.card[style*='background: #1'] h5,
+.card[style*='background: #1'] h6,
+.card[style*='background:#1'] h1,
+.card[style*='background:#1'] h2,
+.card[style*='background:#1'] h3,
+.card[style*='background:#1'] h4,
+.card[style*='background:#1'] h5,
+.card[style*='background:#1'] h6,
+.card[style*='background: #2'] h1,
+.card[style*='background: #2'] h2,
+.card[style*='background: #2'] h3,
+.card[style*='background: #2'] h4,
+.card[style*='background: #2'] h5,
+.card[style*='background: #2'] h6 {
   color: #ffffff !important;
 }
 
-.card:not(.bg-dark):not(.bg-primary) .text-muted, .aps-cp-card .text-muted {
+.card:not(.bg-dark):not(.bg-primary) .text-muted,
+.aps-cp-card .text-muted {
   color: var(--text-secondary, #64748b) !important;
 }
 
@@ -2137,7 +2262,8 @@ body:not(.dark-mode) .aps-cp-card:not(.bg-dark):not(.bg-primary) .aps-cp-card-he
   color: var(--text-primary, #1e293b);
 }
 
-.breadcrumb-item, .breadcrumb-item a {
+.breadcrumb-item,
+.breadcrumb-item a {
   color: var(--primary, #0d9488) !important;
 }
 .breadcrumb-item.active {
