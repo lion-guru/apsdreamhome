@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\BaseController;
 use App\Core\Security;
 use App\Services\WebSocketBroadcaster;
+use App\Traits\TenantAwareTrait;
 use UploadValidator;
 
 use EmailNotification;
@@ -19,6 +20,7 @@ use PDO;
 
 class MobileApiController extends BaseController
 {
+    use TenantAwareTrait;
 
     protected $apiAuthService;
     protected $syncService;
@@ -91,6 +93,12 @@ class MobileApiController extends BaseController
             return;
         }
 
+        if (!$this->tenantEnforce('add_user')) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => $_SESSION['error'] ?? 'User limit reached for your plan']);
+            return;
+        }
+
         try {
             $pdo = $this->db->getConnection();
 
@@ -111,6 +119,8 @@ class MobileApiController extends BaseController
             ");
             $stmt->execute([$name, $email, $phone, $hash, $role]);
             $userId = $pdo->lastInsertId();
+
+            $this->tenantTrackUsage('users');
 
             // Auto-login after registration
             $result = $this->apiAuthService->login($email, $password);

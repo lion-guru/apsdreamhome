@@ -5,6 +5,8 @@ use App\Core\Database\Database;
 
 class ResellPropertiesAdminController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function index() 
     {
         $this->requireAdmin();
@@ -74,6 +76,13 @@ class ResellPropertiesAdminController extends AdminController
     public function store()
     {
         $this->requireAdmin();
+
+        if (!$this->tenantEnforce('create_property')) {
+            $_SESSION['error'] = $_SESSION['error'] ?? 'Tenant limit reached';
+            header('Location: ' . BASE_URL . '/admin/resell-properties');
+            exit;
+        }
+
         $db = Database::getInstance();
 
         $data = [
@@ -95,6 +104,7 @@ class ResellPropertiesAdminController extends AdminController
             array_values($data)
         );
 
+        $this->tenantTrackUsage('properties');
         $_SESSION['success'] = 'Resell property created successfully';
         header('Location: ' . BASE_URL . '/admin/resell-properties');
         exit;

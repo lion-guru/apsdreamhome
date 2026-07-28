@@ -14,6 +14,8 @@ use Exception;
  */
 class PropertyManagementController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $loggingService;
 
     public function __construct()
@@ -164,6 +166,10 @@ class PropertyManagementController extends AdminController
             return $this->jsonError('Invalid request method', 400);
         }
 
+        if (!$this->tenantEnforce('create_property')) {
+            return $this->jsonError($_SESSION['error'] ?? 'Tenant limit reached', 403);
+        }
+
         try {
             $data = $_POST;
 
@@ -190,6 +196,7 @@ class PropertyManagementController extends AdminController
 
             if ($result) {
                 $propertyId = $this->db->lastInsertId();
+                $this->tenantTrackUsage('properties');
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'property_created', [
                     'property_id' => $propertyId,
                     'title' => $data['title']

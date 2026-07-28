@@ -14,6 +14,8 @@ use Exception;
  */
 class PlotManagementController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $loggingService;
 
     public function __construct()
@@ -61,6 +63,10 @@ class PlotManagementController extends AdminController
             return $this->jsonError('Invalid request method', 400);
         }
 
+        if (!$this->tenantEnforce('create_property')) {
+            return $this->jsonError($_SESSION['error'] ?? 'Tenant limit reached', 403);
+        }
+
         try {
             $data = $_POST;
 
@@ -91,6 +97,7 @@ class PlotManagementController extends AdminController
             ]);
 
             if ($result) {
+                $this->tenantTrackUsage('properties');
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_created', [
                     'plot_number' => $data['plot_number'],
                     'colony_id' => $data['colony_id']
@@ -1063,6 +1070,11 @@ class PlotManagementController extends AdminController
     public function storeBooking($id)
     {
         $this->requireAdmin();
+
+        if (!$this->tenantEnforce('create_property')) {
+            return $this->jsonError($_SESSION['error'] ?? 'Tenant limit reached', 403);
+        }
+
         try {
             $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ?", [$id]);
             if (!$plot) {
@@ -1137,6 +1149,7 @@ class PlotManagementController extends AdminController
 
                 $this->db->commit();
 
+                $this->tenantTrackUsage('properties');
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_booked', [
                     'plot_id' => $id, 'customer_id' => $customerId, 'booking_id' => $bookingId
                 ]);

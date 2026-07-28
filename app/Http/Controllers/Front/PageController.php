@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 use Exception;
 use PDO;
 
 class PageController extends BaseController
 {
+    use TenantAwareTrait;
     protected function skipCsrfProtection(): bool
     {
         return true;
@@ -919,6 +921,12 @@ public function handlePropertyListing()
                 return;
             }
 
+            if (!$this->tenantEnforce('create_property')) {
+                $_SESSION['error'] = $_SESSION['error'] ?? 'Property limit reached for your plan.';
+                $this->redirect('/list-property');
+                return;
+            }
+
             try {
                 // Handle image upload
                 $imagePath = null;
@@ -1034,6 +1042,10 @@ public function handlePropertyListing()
                         $savedToUserProperties = true;
                         error_log("PageController.php: " . $e1->getMessage());
                     }
+                }
+
+                if ($savedToUserProperties) {
+                    $this->tenantTrackUsage('properties');
                 }
 
                 // Also save to inquiries for CRM tracking

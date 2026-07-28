@@ -6,11 +6,14 @@ namespace App\Http\Controllers;
 
 require_once __DIR__ . '/BaseController.php';
 
+use App\Traits\TenantAwareTrait;
+
 /**
  * AssociateController - Property Associate management
  */
 class AssociateController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();
@@ -92,6 +95,12 @@ class AssociateController extends BaseController
             return;
         }
 
+        if (!$this->tenantEnforce('add_user')) {
+            $_SESSION['error'] = $_SESSION['error'] ?? 'User limit reached for your plan';
+            $this->redirect('/associate/register');
+            return;
+        }
+
         try {
             // Check duplicate email
             $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
@@ -131,6 +140,8 @@ class AssociateController extends BaseController
             );
 
             $newUserId = (int)$this->db->lastInsertId();
+
+            $this->tenantTrackUsage('users');
 
             // Create wallet entry
             try {
