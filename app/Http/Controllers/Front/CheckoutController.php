@@ -21,6 +21,8 @@ use App\Core\Database\Database;
  */
 class CheckoutController extends BaseController
 {
+    use \App\Traits\TenantAwareTrait;
+
     protected $layout = 'layouts/base';
 
     /** GET /checkout/{bookingId} */

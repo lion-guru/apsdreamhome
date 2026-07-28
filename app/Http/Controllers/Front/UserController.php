@@ -8,6 +8,8 @@ use App\Services\Sales\BookingLifecycleService;
 
 class UserController extends BaseController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -1292,20 +1294,12 @@ class UserController extends BaseController
         try {
             $this->db->beginTransaction();
 
-            $this->db->prepare("
-                INSERT INTO plot_bookings
-                    (plot_id, customer_id, booking_number, booking_date, total_plot_value,
-                     booking_amount, agreement_value, status, channel, notes, created_at, updated_at)
-                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', 'direct', ?, NOW(), NOW())
-            ")->execute([
-                $plotId,
-                $userId,
-                $bookingNumber,
-                $totalAmount,
-                $tokenAmount,
-                $totalAmount,
-                trim($_POST['notes'] ?? ''),
-            ]);
+            $insCols = "plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, agreement_value, status, channel, notes, created_at, updated_at";
+            $insVals = "?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', 'direct', ?, NOW(), NOW()";
+            $insParams = [$plotId, $userId, $bookingNumber, $totalAmount, $tokenAmount, $totalAmount, trim($_POST['notes'] ?? '')];
+            $insExtra = $this->tenantInsertData();
+            if (!empty($insExtra)) { $insCols .= ", tenant_id"; $insVals .= ", ?"; $insParams[] = $insExtra['tenant_id']; }
+            $this->db->prepare("INSERT INTO plot_bookings ($insCols) VALUES ($insVals)")->execute($insParams);
 
             $bookingId = (int)$this->db->lastInsertId();
 

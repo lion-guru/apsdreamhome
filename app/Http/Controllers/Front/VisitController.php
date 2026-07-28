@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\VisitService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Public visit scheduling - book site visits
  */
 class VisitController extends BaseController
 {
+    use TenantAwareTrait;
     private $service;
 
     public function __construct($db = null, $auth = null, array $config = [])

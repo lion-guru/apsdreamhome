@@ -8,10 +8,13 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 use UploadValidator;
 
 class PropertyListingWizardController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
     private const STEPS = [
         'step1' => 'Basics',
@@ -279,10 +282,15 @@ class PropertyListingWizardController extends BaseController
             exit;
         }
         try {
+            if (!$this->tenantEnforce('create_property')) {
+                $_SESSION['listing_errors'] = ['Account is not authorized to list properties. Please contact support.'];
+                header('Location: ' . BASE_URL . '/list-property/step1');
+                exit;
+            }
             $this->db->execute(
                 "INSERT INTO user_properties
-                    (name, phone, email, property_type, listing_type, address, location, area_sqft, price, price_type, description, status, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())",
+                    (name, phone, email, property_type, listing_type, address, location, area_sqft, price, price_type, description, status, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())",
                 [
                     $d['name'] ?? 'Anonymous',
                     $d['phone'] ?? '',
@@ -295,6 +303,7 @@ class PropertyListingWizardController extends BaseController
                     (float)($d['price'] ?? 0),
                     $d['priceType'] ?? 'lakh',
                     $this->buildDescription($d),
+                    $this->tenantId(),
                 ]
             );
             $newId = (int)$this->db->lastInsertId();

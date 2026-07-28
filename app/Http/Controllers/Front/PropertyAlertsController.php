@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\PropertyAlertService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Property Alerts - Customer-facing subscription page
  */
 class PropertyAlertsController extends BaseController
 {
+    use TenantAwareTrait;
     private $alerts;
 
     public function __construct($db = null, $auth = null, array $config = [])

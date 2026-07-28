@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Front;
 
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Share Controller — Track referral share analytics
  */
 class ShareController extends \App\Http\Controllers\BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -45,14 +48,15 @@ class ShareController extends \App\Http\Controllers\BaseController
             $userId = $_SESSION['user_id'] ?? null;
 
             if ($userId) {
-                $stmt = $db->prepare("SELECT share_clicks FROM users WHERE id = ?");
-                $stmt->execute([$userId]);
+                $tid = $this->tenantId();
+                $stmt = $db->prepare("SELECT share_clicks FROM users WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$userId, $tid]);
                 $row = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $clicks = $row ? json_decode($row['share_clicks'] ?? '{}', true) : [];
                 $clicks[$platform] = ($clicks[$platform] ?? 0) + 1;
                 $json = json_encode($clicks);
-                $stmt = $db->prepare("UPDATE users SET share_clicks = ? WHERE id = ?");
-                $stmt->execute([$json, $userId]);
+                $stmt = $db->prepare("UPDATE users SET share_clicks = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$json, $userId, $tid]);
             }
 
             echo json_encode(['success' => true, 'message' => 'Share tracked']);

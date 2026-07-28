@@ -9,6 +9,8 @@ use App\Services\Notification\BookingNotificationService;
 
 class PlotController extends BaseController
 {
+    use \App\Traits\TenantAwareTrait;
+
     protected $db;
 
     public function __construct()
@@ -48,9 +50,11 @@ class PlotController extends BaseController
      */
     public function index()
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND p.tenant_id = $tid" : "";
         $colonies = $this->db->fetchAll("
             SELECT c.*, d.name as district_name, s.name as state_name,
-                (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available') as available_plots
+                (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available'" . $tidSql . ") as available_plots
             FROM colonies c
             LEFT JOIN districts d ON c.district_id = d.id
             LEFT JOIN states s ON d.state_id = s.id
@@ -85,6 +89,8 @@ class PlotController extends BaseController
         // Build filter query
         $where = "p.colony_id = ? AND p.is_active = 1";
         $params = [$colony['id']];
+        $tid = $this->tenantId();
+        if ($tid > 1) { $where .= " AND p.tenant_id = ?"; $params[] = $tid; }
 
         // Status filter
         $status = $_GET['status'] ?? 'available';
@@ -140,8 +146,9 @@ class PlotController extends BaseController
         $plots = $this->db->fetchAll($sql, $params);
 
         // Get distinct dimensions, blocks for filters
-        $dimensions = $this->db->fetchAll("SELECT DISTINCT dimension_label FROM plots WHERE colony_id = ? AND dimension_label IS NOT NULL AND dimension_label != '' ORDER BY dimension_label", [$colony['id']]);
-        $blocks = $this->db->fetchAll("SELECT DISTINCT block FROM plots WHERE colony_id = ? AND block IS NOT NULL AND block != '' ORDER BY block", [$colony['id']]);
+        $tidPlots = $tid > 1 ? " AND tenant_id = $tid" : "";
+        $dimensions = $this->db->fetchAll("SELECT DISTINCT dimension_label FROM plots WHERE colony_id = ? AND dimension_label IS NOT NULL AND dimension_label != ''" . $tidPlots . " ORDER BY dimension_label", [$colony['id']]);
+        $blocks = $this->db->fetchAll("SELECT DISTINCT block FROM plots WHERE colony_id = ? AND block IS NOT NULL AND block != ''" . $tidPlots . " ORDER BY block", [$colony['id']]);
 
         // Stats
         $stats = $this->db->fetchRow("
@@ -154,7 +161,7 @@ class PlotController extends BaseController
                 MAX(total_price) as max_price,
                 MIN(area_sqft) as min_area,
                 MAX(area_sqft) as max_area
-            FROM plots WHERE colony_id = ? AND is_active = 1
+            FROM plots WHERE colony_id = ? AND is_active = 1" . $tidPlots . "
         ", [$colony['id']]);
 
         $this->render('pages/colony_plots', [
@@ -291,7 +298,8 @@ class PlotController extends BaseController
         }
 
         $plotId = intval($_POST['plot_id'] ?? 0);
-        $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'", [$plotId]);
+        $tid = $this->tenantId();
+        $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'" . ($tid > 1 ? " AND tenant_id = $tid" : ""), [$plotId]);
         if (!$plot) {
             $this->setFlash('error', 'Plot not found or no longer available');
             return $this->redirect('/plots');

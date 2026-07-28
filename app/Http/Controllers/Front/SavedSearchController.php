@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\BaseController;
 use App\Services\SavedSearchService;
 use App\Services\EmailService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Front-end controller for saved searches.
@@ -18,6 +19,7 @@ use App\Services\EmailService;
  */
 class SavedSearchController extends BaseController
 {
+    use TenantAwareTrait;
     private SavedSearchService $service;
 
     public function __construct()

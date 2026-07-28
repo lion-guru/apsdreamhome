@@ -3,9 +3,11 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\DirectoryService;
+use App\Traits\TenantAwareTrait;
 
 class DirectoryController extends BaseController
 {
+    use TenantAwareTrait;
     protected function skipCsrfProtection(): bool
     {
         return true;

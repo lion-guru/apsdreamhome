@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\ReferralService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Customer Referral Dashboard
@@ -11,6 +12,7 @@ use App\Services\ReferralService;
  */
 class ReferralController extends BaseController
 {
+    use TenantAwareTrait;
     public function index()
     {
         if (empty($_SESSION['user_id'])) {

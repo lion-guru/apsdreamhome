@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 class MarketplaceController extends BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -118,7 +121,7 @@ class MarketplaceController extends BaseController
                 echo '<h2>Listing not found</h2>';
                 exit;
             }
-            $this->db->execute("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$id]);
+            $this->db->execute("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$prop['tenant_id'] ?? $id]);
         } catch (\Exception $e) {
             error_log('Marketplace detail error: ' . $e->getMessage());
             header('HTTP/1.0 404 Not Found');

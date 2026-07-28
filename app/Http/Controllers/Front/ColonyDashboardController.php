@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 class ColonyDashboardController extends BaseController
 {
+    use TenantAwareTrait;
+
     private $firebaseConfig;
 
     public function __construct()

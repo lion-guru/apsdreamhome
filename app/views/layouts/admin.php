@@ -43,6 +43,33 @@ $GLOBALS['_html_doc_started'] = true;
             --tenant-secondary: <?= htmlspecialchars($tcColors['secondary']) ?>;
         }
         .navbar-brand img[src*="favicon"], .navbar-brand img:not([src]) { max-height: 36px; }
+        .sidebar-heading { background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary)); }
+        .sidebar .nav-link.active, .sidebar-link.active { background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.1)); border-left: 3px solid var(--tenant-primary); }
+        .sidebar .nav-link:hover:not(.active), .sidebar-link:hover:not(.active) { background: rgba(102,126,234,0.08); }
+        .btn-tenant-primary { background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary)); border: none; color: #fff; }
+        .btn-tenant-primary:hover { opacity: 0.9; color: #fff; }
+        .navbar.bg-primary, .top-header.bg-primary { background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary)) !important; }
+        .badge-tenant { background: var(--tenant-primary); color: #fff; }
+        .tenant-brand-text { color: var(--tenant-primary); }
+        a.tenant-link { color: var(--tenant-primary); }
+        a.tenant-link:hover { color: var(--tenant-secondary); }
+        .card-header.bg-primary, .card-header.bg-tenant { background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary)) !important; color: #fff; }
+        .table thead.tenant-header th { background: var(--tenant-primary); color: #fff; border-color: var(--tenant-primary); }
+        .page-item.active .page-link { background: var(--tenant-primary); border-color: var(--tenant-primary); }
+        .page-item.active .page-link:hover { background: var(--tenant-secondary); border-color: var(--tenant-secondary); }
+        .progress-bar.tenant-progress { background: linear-gradient(90deg, var(--tenant-primary), var(--tenant-secondary)); }
+        .btn-primary.tenant-btn { background: var(--tenant-primary); border-color: var(--tenant-primary); }
+        .btn-primary.tenant-btn:hover { background: var(--tenant-secondary); border-color: var(--tenant-secondary); }
+        .btn-outline-primary.tenant-btn { color: var(--tenant-primary); border-color: var(--tenant-primary); }
+        .btn-outline-primary.tenant-btn:hover { background: var(--tenant-primary); border-color: var(--tenant-primary); color: #fff; }
+        .dropdown-item:active, .dropdown-item.active { background: var(--tenant-primary); }
+        .alert-tenant { background: rgba(102,126,234,0.12); border-left: 4px solid var(--tenant-primary); color: inherit; }
+        .list-group-item.active { background: var(--tenant-primary); border-color: var(--tenant-primary); }
+        .modal-header.bg-tenant { background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary)); color: #fff; }
+        ::selection { background: rgba(102,126,234,0.3); }
+        .form-control:focus, .form-select:focus { border-color: var(--tenant-primary); box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.25); }
+        .nav-tabs .nav-link.active { color: var(--tenant-primary); border-bottom: 2px solid var(--tenant-primary); }
+        .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
 </head>

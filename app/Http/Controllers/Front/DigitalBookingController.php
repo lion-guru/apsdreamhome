@@ -13,6 +13,8 @@ use Exception;
 
 class DigitalBookingController extends BaseController
 {
+    use \App\Traits\TenantAwareTrait;
+
     /** @var BookingLifecycleService */
     protected $bookingService;
     

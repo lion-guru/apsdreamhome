@@ -6,9 +6,12 @@ use App\Http\Controllers\BaseController;
 use App\Services\AI\AIManager;
 use App\Services\Voice\AIVoicePipeline;
 use App\Services\Communication\WhatsAppWebService;
+use App\Traits\TenantAwareTrait;
 
 class AIBotController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected function skipCsrfProtection(): bool
     {
         return true;
@@ -160,6 +163,9 @@ class AIBotController extends BaseController
             $existing = $stmt->fetch();
 
             if (!$existing) {
+                if (!$this->tenantEnforce('create_lead')) {
+                    return;
+                }
                 $stmt = $this->db->prepare("INSERT INTO leads (name, phone, message, source, status, created_at) VALUES (?, ?, ?, 'whatsapp', 'new', NOW())");
                 $stmt->execute(['WhatsApp User', $phone, $message]);
 

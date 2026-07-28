@@ -3,9 +3,11 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\KYCService;
+use App\Traits\TenantAwareTrait;
 
 class KycController extends BaseController
 {
+    use TenantAwareTrait;
     public function index()
     {
         $this->requireLogin();

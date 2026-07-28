@@ -8,6 +8,8 @@ use App\Services\Esign\ESignManager;
 
 class BookingController extends BaseController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -243,7 +245,7 @@ class BookingController extends BaseController
             try {
                 $notifSvc = new \App\Services\Communication\NotificationService();
                 $notifSvc->sendNotification($user['id'], 'in_app', 'Booking Confirmed',
-                    'Your booking for plot #' . $plot['plot_no'] . ' has been confirmed. Booking #' . $result['booking_number'] . '.',
+                    'Your booking for plot #' . $plot['plot_number'] . ' has been confirmed. Booking #' . $result['booking_number'] . '.',
                     ['event_type' => 'booking', 'booking_id' => $result['id'], 'action_url' => '/booking/confirmation/' . $result['id']]
                 );
             } catch (\Throwable $e) {
