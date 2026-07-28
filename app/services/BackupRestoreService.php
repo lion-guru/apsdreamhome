@@ -272,7 +272,7 @@ class BackupRestoreService
         
         foreach ($backups as &$backup) {
             $backup['file_size_formatted'] = $this->formatBytes($backup['file_size']);
-            $backup['tables_backed'] = json_decode($backup['tables_backed'], true);
+            $backup['tables_backed'] = json_decode($backup['tables_backed'] ?? '[]', true);
         }
         
         return $backups;

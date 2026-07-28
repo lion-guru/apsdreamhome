@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 use App\Services\ReviewService;
 
 /**
@@ -10,6 +11,8 @@ use App\Services\ReviewService;
  */
 class TestimonialsController extends BaseController
 {
+    use TenantAwareTrait;
+
     private $service;
 
     public function __construct($db = null, $auth = null, array $config = [])
@@ -56,9 +59,9 @@ class TestimonialsController extends BaseController
             ]);
         }
         try {
-            $stmt = $this->db ? $this->db->prepare("INSERT INTO testimonials (customer_name, client_name, email, rating, content, testimonial, project_name, location, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')") : null;
+            $stmt = $this->db ? $this->db->prepare("INSERT INTO testimonials (customer_name, client_name, email, rating, content, testimonial, project_name, location, tenant_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')") : null;
             if ($stmt) {
-                $stmt->execute([$name, $name, $email, $rating, $content, $content, $project, $location]);
+                $stmt->execute([$name, $name, $email, $rating, $content, $content, $project, $location, $this->tenantId()]);
             }
             $this->setFlash('success', 'Thank you! Your testimonial has been submitted for review.');
             return $this->redirect(BASE_URL . '/testimonials');

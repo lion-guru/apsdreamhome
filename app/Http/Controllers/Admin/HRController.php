@@ -63,7 +63,7 @@ class HRController extends AdminController
         try {
             $total = $this->db->fetch("SELECT COUNT(*) as c FROM users e JOIN users u ON e.id=u.id $where", $params)['c'] ?? 0;
             $users = $this->db->fetchAll("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.id=u.id $where ORDER BY e.id DESC LIMIT $perPage OFFSET $offset", $params);
-            $departments = $this->db->fetchAll("SELECT DISTINCT department FROM users WHERE department IS NOT NULL AND department!='' ORDER BY department");
+            $departments = $this->db->fetchAll("SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department!='' ORDER BY department");
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
 

@@ -150,8 +150,8 @@ class ColonyDashboardController extends BaseController
             $user = $user->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
-                $stmt = $this->db->prepare("INSERT INTO users (name, phone, role, created_at) VALUES (?, ?, 'customer', NOW())");
-                $stmt->execute([$name, $phone]);
+                $stmt = $this->db->prepare("INSERT INTO users (name, phone, role, tenant_id, created_at) VALUES (?, ?, 'customer', ?, NOW())");
+                $stmt->execute([$name, $phone, $this->tenantId()]);
                 $customerId = $this->db->lastInsertId();
             } else {
                 $customerId = $user['id'];
@@ -160,20 +160,21 @@ class ColonyDashboardController extends BaseController
             // Create booking in MySQL
             $bookingNumber = 'BK' . date('Ymd') . strtoupper(substr(md5($plotId . $phone), 0, 6));
             $stmt = $this->db->prepare("
-                INSERT INTO plot_bookings (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, approval_status, channel, notes, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, 'token_paid', 'pending', 'direct', ?, NOW())
+                INSERT INTO plot_bookings (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, approval_status, channel, notes, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'token_paid', 'pending', 'direct', ?, ?, NOW())
             ");
             $stmt->execute([
                 $plot['id'], $customerId, $bookingNumber,
                 date('Y-m-d', strtotime($timestamp)),
                 $plot['total_price'] ?? 0,
                 $plot['total_price'] ?? 0,
-                json_encode(['source' => 'firebase_dashboard', 'firebase_timestamp' => $timestamp])
+                json_encode(['source' => 'firebase_dashboard', 'firebase_timestamp' => $timestamp]),
+                $this->tenantId()
             ]);
 
             // Update plot status
-            $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ?")
-                ->execute([$customerId, date('Y-m-d', strtotime($timestamp)), $plot['id']]);
+            $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ? AND tenant_id = ?")
+                ->execute([$customerId, date('Y-m-d', strtotime($timestamp)), $plot['id'], $this->tenantId()]);
 
             // Log for audit
             error_log("Firebase booking synced: Plot {$plotId}, Customer {$name}, Phone {$phone}, Booking {$bookingNumber}");

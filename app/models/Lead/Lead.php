@@ -38,6 +38,7 @@ use App\Models\User\User;
 class Lead extends Model
 {
     protected static $table = 'leads';
+    protected static $tenantScoped = true;
     protected static $primaryKey = 'id';
 
     /**

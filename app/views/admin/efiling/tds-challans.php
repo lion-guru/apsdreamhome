@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'TDS Challans (Form 281)';
 ob_start();
 ?>
@@ -51,7 +51,7 @@ ob_start();
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm text-center p-3">
-            <div class="fs-3 fw-bold text-success">₹<?= number_format($summary['total_deposited'], 0) ?></div>
+            <div class="fs-3 fw-bold text-success">?<?= number_format($summary['total_deposited'], 0) ?></div>
             <div class="small text-muted">Total Deposited</div>
         </div>
     </div>
@@ -90,7 +90,7 @@ ob_start();
                             <td class="small"><?= htmlspecialchars($c['bsr_code'] ?? '-') ?></td>
                             <td><span class="badge bg-secondary"><?= htmlspecialchars($c['section']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($c['assessment_year']) ?></td>
-                            <td class="fw-bold">₹<?= number_format($c['total_with_charges'], 0) ?></td>
+                            <td class="fw-bold">?<?= number_format($c['total_with_charges'], 0) ?></td>
                             <td class="small"><?= date('d M Y', strtotime($c['deposit_date'])) ?></td>
                             <td><span class="badge bg-<?= $c['deposited_via'] === 'online' ? 'primary' : 'info' ?>"><?= ucfirst($c['deposited_via']) ?></span></td>
                             <td><span class="badge bg-<?= $c['status'] === 'deposited' ? 'success' : ($c['status'] === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst($c['status']) ?></span></td>

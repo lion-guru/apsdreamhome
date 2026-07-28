@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'New TDS Challan (Form 281)';
 ob_start();
 ?>
@@ -38,7 +38,7 @@ ob_start();
                         <option value="194IB">194IB - Rent</option>
                         <option value="194I">194I - Rent (Property)</option>
                         <option value="194J">194J - Professional/Technical Fees</option>
-                        <option value="194M">194M - Contract (₹50L+)</option>
+                        <option value="194M">194M - Contract (?50L+)</option>
                         <option value="194N">194N - Cash Withdrawal</option>
                     </select>
                 </div>
@@ -62,19 +62,19 @@ ob_start();
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label small">TDS Amount (₹) <span class="text-danger">*</span></label>
+                    <label class="form-label small">TDS Amount (?) <span class="text-danger">*</span></label>
                     <input type="number" name="tds_amount" class="form-control form-control-sm" step="0.01" required>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label small">Interest (₹)</label>
+                    <label class="form-label small">Interest (?)</label>
                     <input type="number" name="interest_amount" class="form-control form-control-sm" step="0.01" value="0">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label small">Penalty (₹)</label>
+                    <label class="form-label small">Penalty (?)</label>
                     <input type="number" name="penalty_amount" class="form-control form-control-sm" step="0.01" value="0">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label small">Late Fee (₹)</label>
+                    <label class="form-label small">Late Fee (?)</label>
                     <input type="number" name="late_fee" class="form-control form-control-sm" step="0.01" value="0">
                 </div>
                 <div class="col-12">

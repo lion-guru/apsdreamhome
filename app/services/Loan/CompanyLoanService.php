@@ -673,7 +673,7 @@ class CompanyLoanService
     public function getPlots(): array
     {
         try {
-            return $this->db->query("SELECT p.id, p.plot_no, p.total_price, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.status IN ('available','booked') ORDER BY c.name, p.plot_no")->fetchAll(PDO::FETCH_ASSOC);
+            return $this->db->query("SELECT p.id, p.plot_number, p.total_price, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.status IN ('available','booked') ORDER BY c.name, p.plot_number")->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }

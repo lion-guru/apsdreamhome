@@ -10,6 +10,7 @@ namespace App\Models;
 class Plot extends Model
 {
     protected static $table = 'plots';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'colony_id', 'project_id', 'plot_number', 'block', 'sector',

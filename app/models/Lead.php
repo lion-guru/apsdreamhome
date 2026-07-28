@@ -5,6 +5,7 @@ namespace App\Models;
 class Lead extends Model
 {
     protected static $table = 'leads';
+    protected static $tenantScoped = true;
     
     public static function all()
     {

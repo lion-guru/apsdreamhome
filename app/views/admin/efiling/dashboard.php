@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'E-Filing Dashboard';
 ob_start();
 ?>
@@ -165,7 +165,7 @@ ob_start();
                             <td class="small"><?= htmlspecialchars($s['financial_year']) ?></td>
                             <td class="small"><?= $s['quarter'] ? "Q{$s['quarter']}" : ($s['period_month'] ? date('M Y', mktime(0,0,0,$s['period_month'],1,$s['period_year'])) : '-') ?></td>
                             <td><?= $s['total_records'] ?></td>
-                            <td class="small">₹<?= number_format($s['total_amount'], 0) ?></td>
+                            <td class="small">?<?= number_format($s['total_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : 'secondary')) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= date('d M', strtotime($s['created_at'])) ?></td>
                         </tr>

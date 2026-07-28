@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'TDS Certificates (Form 16A)';
 ob_start();
 ?>
@@ -52,7 +52,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Certificate No</th><th>Section</th><th>AY</th><th>Quarter</th><th>TDS (₹)</th><th>Status</th><th>Issued</th><th>Action</th></tr>
+                        <tr><th>#</th><th>Certificate No</th><th>Section</th><th>AY</th><th>Quarter</th><th>TDS (?)</th><th>Status</th><th>Issued</th><th>Action</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($certificates as $c): ?>
@@ -62,7 +62,7 @@ ob_start();
                             <td><span class="badge bg-secondary"><?= htmlspecialchars($c['section']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($c['assessment_year']) ?></td>
                             <td class="small">Q<?= $c['quarter'] ?></td>
-                            <td class="fw-bold">₹<?= number_format($c['tds_amount'], 0) ?></td>
+                            <td class="fw-bold">?<?= number_format($c['tds_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $c['status'] === 'sent' ? 'success' : ($c['status'] === 'generated' ? 'info' : 'secondary') ?>"><?= ucfirst($c['status']) ?></span></td>
                             <td class="small"><?= $c['issued_date'] ? date('d M Y', strtotime($c['issued_date'])) : '-' ?></td>
                             <td class="text-nowrap">

@@ -26,7 +26,7 @@ class NocController extends AdminController
         try {
             $registries = $this->db->query(
                 "SELECT r.*, pb.booking_number, u.name AS customer_name,
-                        p.plot_no AS plot_number
+                        p.plot_number AS plot_number
                  FROM registries r
                  LEFT JOIN plot_bookings pb ON pb.id = r.booking_id
                  LEFT JOIN users u ON u.id = r.user_id
@@ -40,7 +40,7 @@ class NocController extends AdminController
         try {
             $nocs = $this->db->query(
                 "SELECT n.*, pb.booking_number, u.name AS customer_name,
-                        p.plot_no AS plot_number
+                        p.plot_number AS plot_number
                  FROM noc_requests n
                  LEFT JOIN plot_bookings pb ON pb.id = n.booking_id
                  LEFT JOIN users u ON u.id = n.user_id
@@ -67,7 +67,7 @@ class NocController extends AdminController
         try {
             $bookings = $this->db->query(
                 "SELECT pb.id, pb.booking_number, u.name AS customer_name,
-                        p.plot_no AS plot_number
+                        p.plot_number AS plot_number
                  FROM plot_bookings pb
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
@@ -115,7 +115,7 @@ class NocController extends AdminController
         try {
             $bookings = $this->db->query(
                 "SELECT pb.id, pb.booking_number, u.name AS customer_name,
-                        p.plot_no AS plot_number
+                        p.plot_number AS plot_number
                  FROM plot_bookings pb
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
@@ -148,7 +148,7 @@ class NocController extends AdminController
         try {
             $stmt = $this->db->prepare(
                 "SELECT r.*, pb.booking_number, u.name AS customer_name,
-                        p.plot_no AS plot_number, c.name AS colony_name,
+                        p.plot_number AS plot_number, c.name AS colony_name,
                         a.name AS associate_name
                  FROM registries r
                  LEFT JOIN plot_bookings pb ON pb.id = r.booking_id
@@ -183,7 +183,7 @@ class NocController extends AdminController
         try {
             $stmt = $this->db->prepare(
                 "SELECT n.*, pb.booking_number, u.name AS customer_name,
-                        p.plot_no AS plot_number, c.name AS colony_name,
+                        p.plot_number AS plot_number, c.name AS colony_name,
                         req.name AS requested_by_name,
                         appr.name AS approved_by_name
                  FROM noc_requests n

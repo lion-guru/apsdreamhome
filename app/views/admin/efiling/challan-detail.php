@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Challan Detail';
 ob_start();
 ?>
@@ -56,29 +56,29 @@ ob_start();
         <div class="row g-3">
             <div class="col-md-3">
                 <label class="form-label small text-muted">TDS Amount</label>
-                <div class="fs-4 fw-bold text-primary">₹<?= number_format($challan['tds_amount'] ?? $challan['total_with_charges'] ?? 0, 0) ?></div>
+                <div class="fs-4 fw-bold text-primary">?<?= number_format($challan['tds_amount'] ?? $challan['total_with_charges'] ?? 0, 0) ?></div>
             </div>
             <?php if (($challan['interest_amount'] ?? 0) > 0): ?>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Interest</label>
-                <div class="fs-5 fw-bold text-warning">₹<?= number_format($challan['interest_amount'], 0) ?></div>
+                <div class="fs-5 fw-bold text-warning">?<?= number_format($challan['interest_amount'], 0) ?></div>
             </div>
             <?php endif; ?>
             <?php if (($challan['penalty_amount'] ?? 0) > 0): ?>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Penalty</label>
-                <div class="fs-5 fw-bold text-danger">₹<?= number_format($challan['penalty_amount'], 0) ?></div>
+                <div class="fs-5 fw-bold text-danger">?<?= number_format($challan['penalty_amount'], 0) ?></div>
             </div>
             <?php endif; ?>
             <?php if (($challan['late_fee'] ?? 0) > 0): ?>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Late Fee</label>
-                <div class="fs-5 fw-bold text-danger">₹<?= number_format($challan['late_fee'], 0) ?></div>
+                <div class="fs-5 fw-bold text-danger">?<?= number_format($challan['late_fee'], 0) ?></div>
             </div>
             <?php endif; ?>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Total Deposited</label>
-                <div class="fs-4 fw-bold text-success">₹<?= number_format($challan['total_with_charges'] ?? $challan['tds_amount'] ?? 0, 0) ?></div>
+                <div class="fs-4 fw-bold text-success">?<?= number_format($challan['total_with_charges'] ?? $challan['tds_amount'] ?? 0, 0) ?></div>
             </div>
         </div>
 

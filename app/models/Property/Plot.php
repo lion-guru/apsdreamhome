@@ -13,6 +13,7 @@ use App\Core\Database\Database;
 class Plot extends Model
 {
     protected static $table = 'plots';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'colony_id', 'plot_number', 'block', 'sector',

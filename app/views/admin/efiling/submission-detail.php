@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Submission Detail';
 ob_start();
 ?>
@@ -41,7 +41,7 @@ ob_start();
             </div>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Total Amount</label>
-                <div class="fw-bold">₹<?= number_format($submission['total_amount'], 0) ?></div>
+                <div class="fw-bold">?<?= number_format($submission['total_amount'], 0) ?></div>
             </div>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Filing Date</label>

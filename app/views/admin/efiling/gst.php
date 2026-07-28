@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'GST E-Filing';
 ob_start();
 ?>
@@ -34,15 +34,15 @@ ob_start();
                 ?>
                     <tr>
                         <td class="small"><?= htmlspecialchars($m['period']) ?></td>
-                        <td class="text-end">₹<?= number_format($m['out_tax'], 0) ?></td>
-                        <td class="text-end text-success">₹<?= number_format($m['in_tax'], 0) ?></td>
-                        <td class="text-end fw-bold <?= $m['net_payable'] > 0 ? 'text-danger' : 'text-success' ?>">₹<?= number_format($m['net_payable'], 0) ?></td>
+                        <td class="text-end">?<?= number_format($m['out_tax'], 0) ?></td>
+                        <td class="text-end text-success">?<?= number_format($m['in_tax'], 0) ?></td>
+                        <td class="text-end fw-bold <?= $m['net_payable'] > 0 ? 'text-danger' : 'text-success' ?>">?<?= number_format($m['net_payable'], 0) ?></td>
                         <td class="small"><?= ($m['output']['count'] ?? 0) + ($m['input']['count'] ?? 0) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
                 <tfoot class="table-light">
-                    <tr><th>Total</th><th class="text-end">₹<?= number_format($totalOut, 0) ?></th><th class="text-end">₹<?= number_format($totalIn, 0) ?></th><th class="text-end">₹<?= number_format($totalNet, 0) ?></th><th></th></tr>
+                    <tr><th>Total</th><th class="text-end">?<?= number_format($totalOut, 0) ?></th><th class="text-end">?<?= number_format($totalIn, 0) ?></th><th class="text-end">?<?= number_format($totalNet, 0) ?></th><th></th></tr>
                 </tfoot>
             </table>
         </div>
@@ -134,7 +134,7 @@ ob_start();
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>ID</th><th>Type</th><th>Period</th><th>Records</th><th>Amount (₹)</th><th>Status</th><th>ARN</th><th>Action</th></tr></thead>
+                    <thead class="table-light"><tr><th>ID</th><th>Type</th><th>Period</th><th>Records</th><th>Amount (?)</th><th>Status</th><th>ARN</th><th>Action</th></tr></thead>
                     <tbody>
                     <?php foreach ($submissions as $s): ?>
                         <tr>
@@ -142,7 +142,7 @@ ob_start();
                             <td><span class="badge bg-<?= $s['submission_type'] === 'gstr1' ? 'primary' : 'warning' ?>"><?= strtoupper($s['submission_type']) ?></span></td>
                             <td class="small"><?= $s['period_month'] ? date('M Y', mktime(0,0,0,$s['period_month'],1,$s['period_year'] ?? 2025)) : $s['financial_year'] ?></td>
                             <td><?= $s['total_records'] ?></td>
-                            <td>₹<?= number_format($s['total_amount'], 0) ?></td>
+                            <td>?<?= number_format($s['total_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : 'secondary')) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($s['portal_reference'] ?? '-') ?></td>
                             <td><a href="<?= BASE_URL ?>/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>

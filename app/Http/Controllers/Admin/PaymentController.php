@@ -77,7 +77,7 @@ class PaymentController extends AdminController
             $countSql = str_replace("SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email, pr.title as property_title", "SELECT COUNT(DISTINCT p.payment_id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
-            $total = $countStmt->fetch()['total'];
+            $total = $countStmt->fetch()['total'] ?? 0;
 
             // Apply pagination
             $sql .= " LIMIT ?, ?";

@@ -942,7 +942,7 @@ class LegalDocumentService
     public function getBookings(): array
     {
         try {
-            $stmt = $this->db->query("SELECT b.id, b.booking_number, u.name as customer_name, p.plot_no, c.name as colony_name FROM plot_bookings b JOIN users u ON b.user_id = u.id LEFT JOIN plots p ON b.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id ORDER BY b.created_at DESC");
+            $stmt = $this->db->query("SELECT b.id, b.booking_number, u.name as customer_name, p.plot_number, c.name as colony_name FROM plot_bookings b JOIN users u ON b.user_id = u.id LEFT JOIN plots p ON b.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id ORDER BY b.created_at DESC");
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             return [];
@@ -952,7 +952,7 @@ class LegalDocumentService
     public function getPlots(): array
     {
         try {
-            $stmt = $this->db->query("SELECT p.id, p.plot_no, c.name as colony_name, p.total_price FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.status = 'available' ORDER BY c.name, p.plot_no");
+            $stmt = $this->db->query("SELECT p.id, p.plot_number, c.name as colony_name, p.total_price FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.status = 'available' ORDER BY c.name, p.plot_number");
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             return [];

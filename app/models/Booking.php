@@ -9,6 +9,7 @@ use PDO;
 class Booking extends Model
 {
     protected static $table = 'bookings';
+    protected static $tenantScoped = true;
     protected static $primaryKey = 'id';
 
     /**

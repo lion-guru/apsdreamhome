@@ -5,6 +5,7 @@ namespace App\Models;
 class Property extends Model
 {
     protected static $table = 'properties';
+    protected static $tenantScoped = true;
     protected $fillable = [
         'title',
         'description',

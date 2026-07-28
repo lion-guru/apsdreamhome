@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Filing Submissions';
 ob_start();
 ?>
@@ -56,7 +56,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Type</th><th>FY</th><th>Period</th><th>Records</th><th>Amount (₹)</th><th>Status</th><th>ARN/Token</th><th>Created</th><th>Action</th></tr>
+                        <tr><th>#</th><th>Type</th><th>FY</th><th>Period</th><th>Records</th><th>Amount (?)</th><th>Status</th><th>ARN/Token</th><th>Created</th><th>Action</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($submissions as $s):
@@ -69,7 +69,7 @@ ob_start();
                             <td class="small"><?= htmlspecialchars($s['financial_year']) ?></td>
                             <td class="small"><?= $periodLabel ?></td>
                             <td><?= $s['total_records'] ?></td>
-                            <td>₹<?= number_format($s['total_amount'], 0) ?></td>
+                            <td>?<?= number_format($s['total_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : ($s['status'] === 'prepared' ? 'info' : 'secondary'))) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($s['portal_reference'] ?? '-') ?></td>
                             <td class="small"><?= date('d M Y', strtotime($s['created_at'])) ?></td>

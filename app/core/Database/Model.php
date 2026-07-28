@@ -45,6 +45,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
     protected $relations = [];
 
     /**
+     * Whether this model is tenant-scoped (auto-adds tenant_id WHERE + INSERT).
+     * Models with a `tenant_id` column should set this to `true`.
+     */
+    protected static $tenantScoped = false;
+
+    /**
      * The attributes that should be hidden for arrays.
      */
     protected $hidden = [];
@@ -191,7 +197,22 @@ abstract class Model implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * Begin querying the model.
+     * Get the current tenant ID from TenantContext (returns 1 if not available).
+     */
+    protected static function getTenantId(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * Begin querying the model, with optional global tenant scoping.
      *
      * @return \App\Core\Database\Builder
      */
@@ -200,7 +221,16 @@ abstract class Model implements ArrayAccess, JsonSerializable
         $db = \App\Core\Database::getInstance();
         $table = (new static)->getTable();
         $queryBuilder = new QueryBuilder($db, $table);
-        return (new Builder($queryBuilder))->setModel(new static);
+        $builder = (new Builder($queryBuilder))->setModel(new static);
+
+        if (static::$tenantScoped) {
+            $tid = static::getTenantId();
+            if ($tid > 1) {
+                $builder->where('tenant_id', '=', $tid);
+            }
+        }
+
+        return $builder;
     }
 
     /**
@@ -253,6 +283,12 @@ abstract class Model implements ArrayAccess, JsonSerializable
      */
     public static function create(array $attributes = [])
     {
+        if (static::$tenantScoped) {
+            $tid = static::getTenantId();
+            if ($tid > 1 && !isset($attributes['tenant_id'])) {
+                $attributes['tenant_id'] = $tid;
+            }
+        }
         $model = new static($attributes);
         $model->save();
         return $model;
@@ -283,8 +319,21 @@ abstract class Model implements ArrayAccess, JsonSerializable
     {
         $query = $this->newQuery();
         if ($this->exists()) {
+            // Prevent cross-tenant update on scoped models
+            if (static::$tenantScoped && !isset($this->attributes['tenant_id'])) {
+                $tid = static::getTenantId();
+                if ($tid > 1) {
+                    $query->where('tenant_id', '=', $tid);
+                }
+            }
             return $query->where($this->getKeyName(), '=', $this->attributes[$this->getKeyName()])->update($this->attributes);
         } else {
+            if (static::$tenantScoped && !isset($this->attributes['tenant_id'])) {
+                $tid = static::getTenantId();
+                if ($tid > 1) {
+                    $this->attributes['tenant_id'] = $tid;
+                }
+            }
             $id = $query->insertGetId($this->attributes);
             if ($id) {
                 $this->attributes[$this->getKeyName()] = $id;

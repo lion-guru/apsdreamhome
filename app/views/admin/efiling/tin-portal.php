@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'TIN Portal';
 ob_start();
 ?>
@@ -165,7 +165,7 @@ ob_start();
                         <td class="small">Q<?= $s['quarter'] ?> <?= $s['financial_year'] ?></td>
                         <td><span class="badge bg-<?= $s['status'] === 'submitted' ? 'success' : ($s['status'] === 'accepted' ? 'info' : ($s['status'] === 'rejected' ? 'danger' : 'secondary')) ?>"><?= ucfirst($s['status']) ?></span></td>
                         <td><?= $s['total_records'] ?></td>
-                        <td>₹<?= number_format($s['total_amount'], 0) ?></td>
+                        <td>?<?= number_format($s['total_amount'], 0) ?></td>
                         <td class="small text-muted"><?= $s['portal_reference'] ?? '-' ?></td>
                         <td class="small"><?= date('d M Y', strtotime($s['created_at'])) ?></td>
                     </tr>

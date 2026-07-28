@@ -151,7 +151,7 @@ class RealtimeAnalyticsController extends AdminController
         try {
             $bookings = $this->db->fetchAll(
                 "SELECT 'booking' AS type,
-                        CONCAT('Plot #',COALESCE(p.plot_no,'?')) AS description,
+                        CONCAT('Plot #',COALESCE(p.plot_number,'?')) AS description,
                         pb.created_at
                  FROM plot_bookings pb
                  LEFT JOIN plots p ON pb.plot_id = p.id

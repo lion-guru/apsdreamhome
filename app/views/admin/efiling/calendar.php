@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Filing Calendar';
 ob_start();
 ?>
@@ -84,7 +84,7 @@ ob_start();
                                     <span class="badge bg-success"><?= $daysLeft ?>d left</span>
                                 <?php endif; ?>
                             </td>
-                            <td class="small"><?= $d['penalty_per_day'] > 0 ? '₹' . number_format($d['penalty_per_day'], 0) . '/day' : '-' ?></td>
+                            <td class="small"><?= $d['penalty_per_day'] > 0 ? '?' . number_format($d['penalty_per_day'], 0) . '/day' : '-' ?></td>
                             <td><span class="badge bg-<?= $d['status'] === 'completed' ? 'success' : ($d['status'] === 'overdue' ? 'danger' : ($d['status'] === 'extended' ? 'warning' : 'secondary')) ?>"><?= ucfirst($d['status']) ?></span></td>
                         </tr>
                     <?php endforeach; ?>

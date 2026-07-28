@@ -8,6 +8,7 @@ use App\Models\User\User;
 class LeadActivity extends Model
 {
     protected static $table = 'lead_activities';
+    protected static $tenantScoped = true;
 
     /**
      * The attributes that are mass assignable.
