@@ -177,7 +177,7 @@ $extraHead = '<style>
                 </h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <?php if ($booking['associate_name']): ?>
+                <?php if (!empty($booking['associate_name'])): ?>
                     <p><strong><?= __('admin_name_label') ?>:</strong><br><?= htmlspecialchars($booking['associate_name'] ?? '') ?></p>
                     <p><strong><?= __('admin_email_label') ?>:</strong><br>
                         <a href="mailto:<?= htmlspecialchars($booking['associate_email'] ?? '') ?>">

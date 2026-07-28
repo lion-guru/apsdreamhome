@@ -42,7 +42,7 @@ class AdminController extends BaseController
         error_log("enterpriseDashboard: admin_id=" . ($_SESSION['admin_id'] ?? 'NOT SET') . ", admin_role=" . ($_SESSION['admin_role'] ?? 'NOT SET') . ", role=" . ($_SESSION['role'] ?? 'NOT SET') . ", session_id=" . session_id());
 
         // Check if admin is logged in — allow any role with RBAC menu permissions
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
             error_log("enterpriseDashboard: FAILED auth check, redirecting to login");
             $_SESSION['error'] = 'Admin access required';
@@ -604,7 +604,7 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
@@ -657,7 +657,7 @@ class AdminController extends BaseController
     public function requireAdmin()
     {
         // Allow any role with RBAC menu permissions — sidebar handles item-level filtering
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
         $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
         if (!$this->isLoggedIn() || !in_array($role, $allowedRoles)) {
             $this->setFlash('error', 'Admin access required');

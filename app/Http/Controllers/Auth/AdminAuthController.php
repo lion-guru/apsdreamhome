@@ -71,7 +71,12 @@ class AdminAuthController extends BaseController
             $_SESSION['logged_in'] = true;
 
             // Only set admin_id for actual admin roles — NOT for associate/customer/agent
-            $adminRoles = ['admin', 'super_admin', 'manager'];
+            $adminRoles = ['admin', 'super_admin', 'manager', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro',
+                'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director',
+                'legal_head', 'finance_head', 'hr_head', 'operations_head',
+                'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager',
+                'finance_manager', 'property_manager', 'it_manager', 'operations_manager',
+                'legal_advisor', 'chartered_accountant', 'senior_developer'];
             if (in_array($admin['role'], $adminRoles)) {
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_user_id'] = $admin['id'];
@@ -205,7 +210,7 @@ class AdminAuthController extends BaseController
             // Check database
             $db = Database::getInstance();
 
-            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','associate','agent','employee','telecaller') LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','associate','agent','employee','telecaller','ceo','cfo','cto','coo','cmo','chro','sales_director','marketing_director','construction_director','finance_director','hr_director','operations_director','legal_director','legal_head','finance_head','hr_head','operations_head','department_manager','project_manager','sales_manager','hr_manager','marketing_manager','finance_manager','property_manager','it_manager','operations_manager','legal_advisor','chartered_accountant','senior_developer') LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
                 // Prevent session fixation: rotate session ID on successful login
                 session_regenerate_id(true);

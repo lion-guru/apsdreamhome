@@ -160,7 +160,13 @@ class CoreAuthController extends BaseController
         if (isset($_SESSION['user_id'])) {
             $role = $_SESSION['role'] ?? 'customer';
             // If this is an admin role, redirect to admin dashboard
-            if (in_array($role, ['admin', 'super_admin', 'manager', 'employee', 'telecaller'])) {
+            $adminRoles = ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro',
+                'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director',
+                'legal_head', 'finance_head', 'hr_head', 'operations_head',
+                'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager',
+                'finance_manager', 'property_manager', 'it_manager', 'operations_manager',
+                'legal_advisor', 'chartered_accountant', 'senior_developer'];
+            if (in_array($role, $adminRoles)) {
                 header('Location: ' . BASE_URL . '/admin/dashboard');
             } else {
                 $this->redirectToDashboard($role);
@@ -251,6 +257,14 @@ class CoreAuthController extends BaseController
             $_SESSION['role'] = $role;
             $_SESSION['logged_in'] = true;
 
+            // All admin-level roles that get admin_id session
+            $adminRoles = ['admin', 'super_admin', 'manager', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro',
+                'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director',
+                'legal_head', 'finance_head', 'hr_head', 'operations_head',
+                'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager',
+                'finance_manager', 'property_manager', 'it_manager', 'operations_manager',
+                'legal_advisor', 'chartered_accountant', 'senior_developer'];
+
             // Load role-specific IDs
             if (in_array($role, ['agent', 'associate'], true)) {
                 try {
@@ -260,35 +274,21 @@ class CoreAuthController extends BaseController
                         if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
                     }
                 } catch (\Throwable $e) {}
-            } elseif ($role === 'employee') {
+            } elseif ($role === 'employee' || $role === 'telecaller') {
                 try {
                     $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$user['id']]);
                     if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
                 } catch (\Throwable $e) {}
-            } elseif (in_array($role, ['admin', 'super_admin', 'manager'], true)) {
+            }
+
+            // Set admin session for ALL admin-level roles
+            if (in_array($role, $adminRoles, true)) {
                 $_SESSION['admin_id'] = (int)$user['id'];
                 $_SESSION['admin_user_id'] = (int)$user['id'];
                 $_SESSION['admin_email'] = $user['email'] ?? '';
                 $_SESSION['admin_role'] = $role;
                 $_SESSION['admin_name'] = $user['name'] ?? 'Admin';
                 $_SESSION['admin_username'] = $user['name'] ?? 'admin';
-            } elseif ($role === 'telecaller') {
-                try {
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$user['id']]);
-                    if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
-                } catch (\Throwable $e) {}
-            } elseif (in_array($role, ['admin', 'super_admin', 'manager'], true)) {
-                $_SESSION['admin_id'] = (int)$user['id'];
-                $_SESSION['admin_user_id'] = (int)$user['id'];
-                $_SESSION['admin_email'] = $user['email'] ?? '';
-                $_SESSION['admin_role'] = $role;
-                $_SESSION['admin_name'] = $user['name'] ?? 'Admin';
-                $_SESSION['admin_username'] = $user['name'] ?? 'admin';
-            } elseif ($role === 'telecaller') {
-                try {
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$user['id']]);
-                    if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
-                } catch (\Throwable $e) {}
             }
 
             // Audit log
@@ -473,10 +473,15 @@ class CoreAuthController extends BaseController
             'finance_manager' => '/admin/dashboard/finance',
             'property_manager' => '/admin/dashboard',
             'it_manager' => '/admin/dashboard',
-            'operations_manager' => '/admin/dashboard',
+            'operations_manager' => '/admin/dashboard/operations',
+            'legal_head' => '/admin/dashboard',
+            'finance_head' => '/admin/dashboard/finance',
+            'hr_head' => '/admin/dashboard/hr',
+            'operations_head' => '/admin/dashboard/operations',
+            'operations_director' => '/admin/dashboard/operations',
             'legal_advisor' => '/admin/dashboard',
             'chartered_accountant' => '/admin/dashboard/finance',
-            'senior_developer' => '/admin/dashboard',
+            'senior_developer' => '/admin/dashboard/it',
         ];
         $redirect = $map[$role] ?? '/admin/dashboard';
         $roleLabels = [

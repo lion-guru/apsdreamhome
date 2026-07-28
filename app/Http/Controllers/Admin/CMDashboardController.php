@@ -99,7 +99,7 @@ class CMDashboardController extends AdminController
                 SELECT u.name, u.email, u.role, COUNT(p.id) as properties_managed, 
                        SUM(CASE WHEN p.status = 'sold' THEN 1 ELSE 0 END) as sales_count
                 FROM users u 
-                LEFT JOIN properties p ON u.id = p.assigned_to 
+                LEFT JOIN properties p ON u.id = p.created_by 
                 WHERE u.role IN ('employee', 'associate') AND u.status = 'active'
                 GROUP BY u.id, u.name, u.email, u.role
                 ORDER BY sales_count DESC

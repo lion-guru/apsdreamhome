@@ -51,11 +51,11 @@
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Status *</label>
                                         <select class="form-select" name="status" required>
-                                            <option value="available" <?= $plot['status'] === 'available' ? 'selected' : '' ?>>Available</option>
-                                            <option value="booked" <?= $plot['status'] === 'booked' ? 'selected' : '' ?>>Booked</option>
-                                            <option value="sold" <?= $plot['status'] === 'sold' ? 'selected' : '' ?>>Sold</option>
-                                            <option value="hold" <?= $plot['status'] === 'hold' ? 'selected' : '' ?>>Hold</option>
-                                            <option value="reserved" <?= $plot['status'] === 'reserved' ? 'selected' : '' ?>>Reserved</option>
+                                            <option value="available" <?= ($plot['status'] ?? '') === 'available' ? 'selected' : '' ?>>Available</option>
+                                            <option value="booked" <?= ($plot['status'] ?? '') === 'booked' ? 'selected' : '' ?>>Booked</option>
+                                            <option value="sold" <?= ($plot['status'] ?? '') === 'sold' ? 'selected' : '' ?>>Sold</option>
+                                            <option value="hold" <?= ($plot['status'] ?? '') === 'hold' ? 'selected' : '' ?>>Hold</option>
+                                            <option value="reserved" <?= ($plot['status'] ?? '') === 'reserved' ? 'selected' : '' ?>>Reserved</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4 mb-3">
@@ -130,7 +130,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Base Price per Sqft</label>
-                                        <input type="number" class="form-control" name="base_price_per_sqft" step="0.01" value="<?= $plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?>" id="base_pps">
+                                        <input type="number" class="form-control" name="base_price_per_sqft" step="0.01" value="<?= $plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0 ?>" id="base_pps">
                                         <small class="text-muted">Original base rate (₹/sqft)</small>
                                     </div>
                                     <div class="col-md-4 mb-3">
