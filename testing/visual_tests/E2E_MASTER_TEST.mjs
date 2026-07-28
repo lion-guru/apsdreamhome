@@ -165,7 +165,10 @@ async function createBrowser() {
     } catch (e) {}
   }
   browser = await chromium.launch({ headless: true });
-  context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  context = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    extraHTTPHeaders: { 'X-Testing': '1' },
+  });
   page = await context.newPage();
   pageCount = 0;
 

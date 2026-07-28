@@ -326,16 +326,99 @@ class TenantController extends AdminController
             $tenantId = $this->tenantService->create($data);
             unset($_SESSION['onboard_data']);
 
-            // Send invite emails if any
-            $invites = $data['invite_emails'] ?? [];
-            foreach ($invites as $email) {
-                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    // Log invite (actual email sending requires SMTP config)
-                    error_log("Tenant invite: {$email} for tenant #{$tenantId}");
+            // Create primary admin user for the new tenant
+            $adminEmail = $data['contact_email'] ?? '';
+            $adminName = $data['contact_name'] ?? $data['name'] . ' Admin';
+            $adminPassword = bin2hex(random_bytes(8)); // Random 16-char password
+            $adminId = null;
+            $existingUser = false;
+
+            if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+                    // Check if user already exists
+                    $existing = $db->prepare("SELECT id FROM users WHERE email = ?");
+                    $existing->execute([$adminEmail]);
+                    $existingUser = $existing->fetch(\PDO::FETCH_ASSOC);
+
+                    if ($existingUser) {
+                        $adminId = (int)$existingUser['id'];
+                    } else {
+                        $stmt = $db->prepare("
+                            INSERT INTO users (name, email, phone, password, role, tenant_id, status, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, 'admin', ?, 'active', NOW(), NOW())
+                        ");
+                        $stmt->execute([
+                            $adminName,
+                            $adminEmail,
+                            $data['contact_phone'] ?? '',
+                            password_hash($adminPassword, PASSWORD_DEFAULT),
+                            $tenantId,
+                        ]);
+                        $adminId = (int)$db->lastInsertId();
+                    }
+
+                    // Link user to tenant
+                    if ($adminId) {
+                        try {
+                            $db->prepare("
+                                INSERT INTO tenant_users (tenant_id, user_id, role, is_primary, created_at)
+                                VALUES (?, ?, 'admin', 1, NOW())
+                                ON DUPLICATE KEY UPDATE role = 'admin', is_primary = 1
+                            ")->execute([$tenantId, $adminId]);
+                        } catch (\Throwable $e) {
+                            // tenant_users table may not exist
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log('Tenant admin user creation error: ' . $e->getMessage());
                 }
             }
 
-            $this->setFlash('success', 'Tenant "' . htmlspecialchars($data['name']) . '" created successfully!');
+            // Send invite emails using LoginNotificationService
+            $invites = $data['invite_emails'] ?? [];
+            if (!empty($invites)) {
+                try {
+                    $notificationService = new \App\Services\Communication\LoginNotificationService();
+                    foreach ($invites as $email) {
+                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            // Send welcome email with tenant details
+                            $notificationService->sendWelcomeNotifications(
+                                $adminId ?? 0,
+                                $adminName,
+                                $email,
+                                $data['contact_phone'] ?? '',
+                                'admin'
+                            );
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log('Tenant invite email error: ' . $e->getMessage());
+                }
+            }
+
+            // Send welcome to primary admin
+            if ($adminId && $adminEmail) {
+                try {
+                    $notificationService = new \App\Services\Communication\LoginNotificationService();
+                    $notificationService->sendWelcomeNotifications(
+                        $adminId,
+                        $adminName,
+                        $adminEmail,
+                        $data['contact_phone'] ?? '',
+                        'admin'
+                    );
+                } catch (\Throwable $e) {
+                    // Non-critical
+                }
+            }
+
+            $msg = 'Tenant "' . htmlspecialchars($data['name']) . '" created!';
+            if ($adminEmail && $adminPassword && !$existingUser) {
+                $msg .= " Admin credentials: {$adminEmail} / {$adminPassword}";
+            }
+            $this->setFlash('success', $msg);
             $this->redirect('/admin/tenants/' . $tenantId);
         } catch (\Throwable $e) {
             error_log('Tenant onboard launch error: ' . $e->getMessage());

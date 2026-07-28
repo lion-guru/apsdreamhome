@@ -114,6 +114,17 @@ class TenantEnforcement
                     ];
                 }
                 break;
+
+            case 'use_api':
+                // Check if plan includes API access
+                if (isset($tenant['api_access']) && !$tenant['api_access']) {
+                    return [
+                        'allowed' => false,
+                        'reason'  => 'API access is not included in your current plan. Please upgrade.',
+                        'code'    => 'NO_API_ACCESS',
+                    ];
+                }
+                break;
         }
 
         return ['allowed' => true, 'reason' => '', 'code' => 'OK'];

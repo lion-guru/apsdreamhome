@@ -2,8 +2,15 @@
 
 /** @var Router $router */
 
-if (class_exists('\App\Middleware\RateLimiter')) {
-    \App\Middleware\RateLimiter::checkApi();
+// Per-tenant rate limiting (plan-based), fallback to global if middleware unavailable
+// Only apply to API routes (this file is included from web.php, so must not block web pages)
+$apiUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+if (strpos($apiUri, '/api/') !== false || strpos($apiUri, '/apsdreamhome/api/') !== false) {
+    if (class_exists('\App\Middleware\TenantRateLimitMiddleware')) {
+        \App\Middleware\TenantRateLimitMiddleware::check();
+    } elseif (class_exists('\App\Middleware\RateLimiter')) {
+        \App\Middleware\RateLimiter::checkApi();
+    }
 }
 
 // API Routes

@@ -8,10 +8,11 @@ use App\Services\TenantService;
  *
  * Priority order:
  * 1. HTTP header: X-Tenant-ID or X-Tenant-Slug (API/mobile)
- * 2. Subdomain: {tenant}.apsdreamhome.com
- * 3. Query param: ?tenant_id=N (admin switching)
- * 4. Session: $_SESSION['tenant_id'] (persistent)
- * 5. Default: APS Dream Home (id=1)
+ * 2. Custom domain: crm.theirbrand.com (white-label)
+ * 3. Subdomain: {tenant}.apsdreamhome.com
+ * 4. Query param: ?tenant_id=N (admin switching)
+ * 5. Session: $_SESSION['tenant_id'] (persistent)
+ * 6. Default: APS Dream Home (id=1)
  *
  * Call TenantContext::resolve() from BaseController::__construct() or AdminController.
  */
@@ -42,8 +43,22 @@ class TenantContext
             return;
         }
 
-        // 2. Subdomain
+        // 2. Custom domain (white-label)
         $host = $_SERVER['HTTP_HOST'] ?? '';
+        // Strip port if present
+        $hostname = preg_replace('/:\d+$/', '', $host);
+        try {
+            $stmt = $db->prepare("SELECT id FROM tenants WHERE domain = ? AND status IN ('active', 'trial') LIMIT 1");
+            $stmt->execute([$hostname]);
+            if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                self::setById((int)$row['id'], $db);
+                return;
+            }
+        } catch (\Throwable $e) {
+            // domain column may not exist yet — fall through
+        }
+
+        // 3. Subdomain
         $hostParts = explode('.', $host);
         if (count($hostParts) > 2) {
             $subdomain = $hostParts[0];
@@ -53,19 +68,19 @@ class TenantContext
             }
         }
 
-        // 3. Query param (admin switching)
+        // 4. Query param (admin switching)
         if (!empty($_GET['tenant_id']) && is_numeric($_GET['tenant_id'])) {
             self::setById((int)$_GET['tenant_id'], $db);
             return;
         }
 
-        // 4. Session
+        // 5. Session
         if (!empty($_SESSION['tenant_id'])) {
             self::setById((int)$_SESSION['tenant_id'], $db);
             return;
         }
 
-        // 5. Default: APS Dream Home
+        // 6. Default: APS Dream Home
         self::setById(1, $db);
     }
 

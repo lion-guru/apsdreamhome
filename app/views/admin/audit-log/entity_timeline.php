@@ -84,4 +84,4 @@ ob_start();
   </div>
 </div>
 <?php
-require_once APP_PATH . '/views/admin/layouts/admin_footer.php';
+require_once APP_PATH . '/views/layouts/admin_footer.php';
