@@ -55,6 +55,22 @@ class UserRegistrationService
             return ['success' => false, 'message' => "Invalid role: {$role}"];
         }
 
+        // Tenant enforcement: check user limit before creating
+        if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantEnforcement')) {
+            try {
+                $tenantId = \App\Core\Middleware\TenantContext::getId();
+                if ($tenantId > 1) {
+                    $enforcement = \App\Services\TenantEnforcement::getInstance();
+                    $check = $enforcement->canPerform($tenantId, 'add_user');
+                    if (!$check['allowed']) {
+                        return ['success' => false, 'message' => $check['reason']];
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log('UserRegistrationService: tenant enforcement check failed: ' . $e->getMessage());
+            }
+        }
+
         $name = trim($data['name'] ?? '');
         $email = trim($data['email'] ?? '');
         $phone = trim($data['phone'] ?? '');
@@ -199,6 +215,26 @@ class UserRegistrationService
             }
 
             $this->db->commit();
+
+            // Track usage for tenant
+            if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
+                try {
+                    $tenantId = \App\Core\Middleware\TenantContext::getId();
+                    if ($tenantId > 1) {
+                        // Record in tenant_users pivot table
+                        try {
+                            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+                            $stmt = $pdo->prepare("INSERT IGNORE INTO tenant_users (tenant_id, user_id, role, is_primary) VALUES (?, ?, ?, 0)");
+                            $stmt->execute([$tenantId, $userId, $role]);
+                        } catch (\Throwable $e) {
+                            error_log('UserRegistrationService: tenant_users insert failed: ' . $e->getMessage());
+                        }
+                        \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'users');
+                    }
+                } catch (\Throwable $e) {
+                    error_log('UserRegistrationService: incrementUsage failed: ' . $e->getMessage());
+                }
+            }
 
             $user = [
                 'id' => $userId,

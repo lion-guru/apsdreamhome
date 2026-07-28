@@ -2866,6 +2866,24 @@ public function location($slug = null)
     }
 
     /**
+     * SaaS product landing page — public homepage for the SaaS product.
+     */
+    public function saasHome()
+    {
+        $plans = [];
+        try {
+            $plans = \App\Services\TenantService::getInstance()->getPlans();
+        } catch (\Throwable $e) {
+            error_log('saasHome() error: ' . $e->getMessage());
+        }
+
+        $this->render('pages/saas_home', [
+            'page_title' => 'APS CRM — All-in-One Business Platform',
+            'plans'      => $plans,
+        ]);
+    }
+
+    /**
      * Tenant self-service signup — GET shows form, POST creates tenant.
      */
     public function tenantSignup()

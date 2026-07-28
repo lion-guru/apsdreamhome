@@ -4925,5 +4925,6 @@ $router->post('/admin/billing/webhook',                     'App\\Http\\Controll
 
 // ── Public SaaS Pricing & Tenant Signup ──────────────────────
 $router->get('/pricing',                                    'App\\Http\\Controllers\\Front\\PageController@pricing');
+$router->get('/saas-home',                                  'App\\Http\\Controllers\\Front\\PageController@saasHome');
 $router->get('/tenant-signup',                              'App\\Http\\Controllers\\Front\\PageController@tenantSignup');
 $router->post('/tenant-signup',                             'App\\Http\\Controllers\\Front\\PageController@tenantSignup');

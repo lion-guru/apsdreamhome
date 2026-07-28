@@ -472,7 +472,19 @@ class TenantService
     {
         $periodStart = date('Y-m-01');
         $periodEnd = date('Y-m-t');
-        $column = $metric . '_count'; // leads_created, users_count, etc.
+
+        // Map metric names to valid DB column names
+        $metricMap = [
+            'users'      => 'users_count',
+            'leads'      => 'leads_created',
+            'properties' => 'properties_count',
+            'api_calls'  => 'api_calls',
+            'storage'    => 'storage_used_mb',
+            'emails'     => 'emails_sent',
+            'sms'        => 'sms_sent',
+        ];
+
+        $column = $metricMap[$metric] ?? ($metric . '_count');
 
         // Ensure column name is safe
         $validColumns = ['users_count', 'leads_created', 'properties_count', 'api_calls', 'storage_used_mb', 'emails_sent', 'sms_sent'];
@@ -534,12 +546,17 @@ class TenantService
 
     private function countUsers(int $tenantId): int
     {
-        // Users don't have tenant_id — count distinct users who own leads in this tenant
-        // This is a rough estimate; proper solution needs tenant_users pivot table
         try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(DISTINCT assigned_to) FROM leads WHERE tenant_id = ? AND deleted_at IS NULL AND assigned_to IS NOT NULL");
+            // Primary: use pivot table if it exists
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM tenant_users WHERE tenant_id = ?");
             $stmt->execute([$tenantId]);
-            return max(1, (int)$stmt->fetchColumn());
+            $count = (int)$stmt->fetchColumn();
+            if ($count > 0) return $count;
+
+            // Fallback: count distinct users who own leads in this tenant
+            $stmt2 = $this->pdo->prepare("SELECT COUNT(DISTINCT assigned_to) FROM leads WHERE tenant_id = ? AND deleted_at IS NULL AND assigned_to IS NOT NULL");
+            $stmt2->execute([$tenantId]);
+            return max(1, (int)$stmt2->fetchColumn());
         } catch (\Throwable $e) {
             return 1;
         }

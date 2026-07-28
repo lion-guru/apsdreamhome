@@ -136,6 +136,22 @@ class BookingLifecycleService
             if ($customerId <= 0) return ['success' => false, 'error' => 'customer_id is required'];
             if ($totalValue <= 0) return ['success' => false, 'error' => 'total_plot_value must be > 0'];
 
+            // Tenant enforcement: check property limit before booking
+            if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantEnforcement')) {
+                try {
+                    $tenantId = \App\Core\Middleware\TenantContext::getId();
+                    if ($tenantId > 1) {
+                        $enforcement = \App\Services\TenantEnforcement::getInstance();
+                        $check = $enforcement->canPerform($tenantId, 'create_property');
+                        if (!$check['allowed']) {
+                            return ['success' => false, 'error' => $check['reason'], 'code' => $check['code']];
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log('[BookingLifecycleService] tenant enforcement check failed: ' . $e->getMessage());
+                }
+            }
+
             $channel        = (string)($data['channel'] ?? 'direct');
             if (!in_array($channel, ['direct','associate','agent','walk_in'], true)) {
                 $channel = 'direct';
@@ -186,6 +202,9 @@ class BookingLifecycleService
                 error_log('[BookingLifecycleService] Push notification failed: ' . $e->getMessage());
             }
 
+            // Track property usage for tenant
+            $this->trackBookingUsage();
+
             return [
                 'success'           => true,
                 'id'                => $bookingId,
@@ -195,6 +214,24 @@ class BookingLifecycleService
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::createBooking] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Track property usage for tenant after successful booking.
+     * Called internally after createBooking succeeds.
+     */
+    private function trackBookingUsage(): void
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
+            try {
+                $tenantId = \App\Core\Middleware\TenantContext::getId();
+                if ($tenantId > 1) {
+                    \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'properties');
+                }
+            } catch (\Throwable $e) {
+                error_log('[BookingLifecycleService] incrementUsage failed: ' . $e->getMessage());
+            }
         }
     }
 

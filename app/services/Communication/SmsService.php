@@ -208,6 +208,18 @@ class SMSService
             $result = $this->callAPI($this->apiUrl, $payload);
             
             $this->logSMS($mobile, $type, $message, $result['type'] ?? 'unknown');
+
+            // Track SMS usage for tenant
+            if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
+                try {
+                    $tenantId = \App\Core\Middleware\TenantContext::getId();
+                    if ($tenantId > 1) {
+                        \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'sms');
+                    }
+                } catch (\Throwable $e) {
+                    // usage tracking should never break SMS sending
+                }
+            }
             
             return ['success' => true, 'message_id' => $result['message_id'] ?? null];
             

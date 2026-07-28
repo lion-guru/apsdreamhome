@@ -59,7 +59,21 @@ class EmailService
             $mail->Subject = $subject;
             $mail->Body = $body;
             $mail->AltBody = strip_tags($body);
-            return $mail->send();
+            $result = $mail->send();
+
+            // Track email usage for tenant
+            if ($result && class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
+                try {
+                    $tenantId = \App\Core\Middleware\TenantContext::getId();
+                    if ($tenantId > 1) {
+                        \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'emails');
+                    }
+                } catch (\Throwable $e) {
+                    // usage tracking should never break email sending
+                }
+            }
+
+            return $result;
         } catch (Exception $e) {
             error_log("Email sending failed: " . $e->getMessage());
             return false;
