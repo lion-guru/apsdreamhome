@@ -19,6 +19,15 @@ $errors = [];
 
 echo "=== Milestone Bonus Auto-Credit Cron — $today ===\n\n";
 
+// Set tenant context for TenantContext consumers
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $db->getConnection());
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 $milestones = [
     25 => 'quarter_milestone',
     50 => 'half_milestone',
@@ -42,10 +51,12 @@ try {
                 (SELECT COUNT(*) FROM mlm_commission_ledger 
                  WHERE reference_id = pb.id 
                  AND commission_type IN ('quarter_milestone','half_milestone','three_quarter_milestone','full_milestone')
-                 AND status != 'cancelled') as existing_milestones
+                 AND status != 'cancelled'
+                 {$cronTenantSql}) as existing_milestones
          FROM plot_bookings pb
          LEFT JOIN booking_payment_schedules bps ON bps.booking_id = pb.id AND bps.status = 'paid'
          WHERE pb.status IN ('emi_active', 'agreement_signed', 'fully_paid')
+         {$cronTenantSql}
          GROUP BY pb.id
          HAVING total_paid > 0"
     );
@@ -67,14 +78,14 @@ try {
                 // Check if this milestone already credited
                 $exists = $db->fetchOne(
                     "SELECT id FROM mlm_commission_ledger 
-                     WHERE reference_id = ? AND commission_type = ? AND status != 'cancelled' LIMIT 1",
+                     WHERE reference_id = ? AND commission_type = ? AND status != 'cancelled'{$cronTenantSql} LIMIT 1",
                     [$booking['booking_id'], $type]
                 );
 
                 if (!$exists) {
                     $bonusAmount = $bonusRates[$type];
                     try {
-                        $db->insert('mlm_commission_ledger', [
+                        $milestoneLedgerData = [
                             'user_id' => $associateId,
                             'associate_id' => $associateId,
                             'booking_id' => $booking['booking_id'],
@@ -86,7 +97,9 @@ try {
                             'description' => ucfirst(str_replace('_', ' ', $type)) . " — " . $pct . "% of ₹" . number_format($totalValue) . " paid",
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s')
-                        ]);
+                        ];
+                        if ($cronTenantId > 1) $milestoneLedgerData['tenant_id'] = $cronTenantId;
+                        $db->insert('mlm_commission_ledger', $milestoneLedgerData);
 
                         echo "  ✅ Booking #{$booking['booking_id']} — $type (₹$bonusAmount) → Associate #$associateId\n";
                         $credited++;

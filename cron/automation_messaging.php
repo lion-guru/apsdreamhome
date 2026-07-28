@@ -46,6 +46,15 @@ use App\Services\Communication\CommunicationAutomationService;
 $db = Database::getInstance();
 $auto = new CommunicationAutomationService();
 
+// Set tenant context for TenantContext consumers
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $db->getConnection());
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 // ─── 1. Birthday & Festival Greetings ────────────────────────
 logMsg("--- Birthday & Festival Greetings ---");
 try {
@@ -88,6 +97,7 @@ try {
         WHERE bps.status = 'pending' 
         AND bps.due_date < CURDATE()
         AND bps.reminder_count < 3
+        {$cronTenantSql}
         ORDER BY bps.due_date ASC
         LIMIT 50
     ")->fetchAll(PDO::FETCH_ASSOC);
@@ -120,7 +130,7 @@ try {
         }
         
         // Update reminder count
-        $pdo->prepare("UPDATE booking_payment_schedules SET reminder_count = reminder_count + 1 WHERE id = ?")
+        $pdo->prepare("UPDATE booking_payment_schedules SET reminder_count = reminder_count + 1 WHERE id = ?{$cronTenantSql}")
             ->execute([$emi['id']]);
         
         if ($sent) {

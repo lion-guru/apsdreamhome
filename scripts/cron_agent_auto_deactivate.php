@@ -12,6 +12,17 @@
 require_once __DIR__ . '/../app/Core/autoload.php';
 
 $db = \App\Core\Database\Database::getInstance();
+$pdo = $db->getConnection();
+
+// Set tenant context for service compatibility
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $pdo);
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 $dryRun = in_array('--dry-run', $argv ?? []);
 $threshold = date('Y-m-d', strtotime('-90 days'));
 $deactivated = 0;

@@ -31,6 +31,17 @@ if (file_exists($envFile)) {
 echo "[" . date('Y-m-d H:i:s') . "] Push Notification Queue Processor started\n";
 
 $db = Database::getInstance();
+$pdo = $db->getConnection();
+
+// Set tenant context for service compatibility
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $pdo);
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 $pushService = new PushNotificationService();
 
 try {
@@ -64,7 +75,7 @@ try {
         $userId = $notification['user_id'];
 
         $db->query(
-            "UPDATE push_notification_queue SET status = 'processing', updated_at = NOW() WHERE id = ?",
+            "UPDATE push_notification_queue SET status = 'processing', updated_at = NOW() WHERE id = ?{$cronTenantSql}",
             [$id]
         );
 
@@ -83,7 +94,7 @@ try {
 
             if ($result['success'] ?? false) {
                 $db->query(
-                    "UPDATE push_notification_queue SET status = 'sent', sent_at = NOW(), updated_at = NOW() WHERE id = ?",
+                    "UPDATE push_notification_queue SET status = 'sent', sent_at = NOW(), updated_at = NOW() WHERE id = ?{$cronTenantSql}",
                     [$id]
                 );
                 $sent++;
@@ -91,7 +102,7 @@ try {
             } else {
                 $error = $result['error'] ?? 'Unknown error';
                 $db->query(
-                    "UPDATE push_notification_queue SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?",
+                    "UPDATE push_notification_queue SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?{$cronTenantSql}",
                     [$error, $id]
                 );
                 $failed++;
@@ -99,7 +110,7 @@ try {
             }
         } catch (\Exception $e) {
             $db->query(
-                "UPDATE push_notification_queue SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?",
+                "UPDATE push_notification_queue SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?{$cronTenantSql}",
                 [$e->getMessage(), $id]
             );
             $failed++;
@@ -117,7 +128,7 @@ try {
 $stale = $db->query(
     "UPDATE push_notification_queue
      SET status = 'failed', error_message = 'Stuck in processing state', updated_at = NOW()
-     WHERE status = 'processing' AND updated_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE)"
+     WHERE status = 'processing' AND updated_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE){$cronTenantSql}"
 );
 if ($stale->rowCount() > 0) {
     echo "\nCleaned up " . $stale->rowCount() . " stale processing items\n";

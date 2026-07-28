@@ -38,6 +38,16 @@ try {
     );
     echo "[✓] Database connected" . PHP_EOL . PHP_EOL;
 
+    // Set tenant context for TenantContext consumers
+    require_once __DIR__ . '/../app/Core/autoload.php';
+    $cronTenantId = 1;
+    if (class_exists('\App\Core\Middleware\TenantContext')) {
+        \App\Core\Middleware\TenantContext::setById($cronTenantId, $pdo);
+    }
+    $cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+    $cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+    $cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
     // Find tasks needing reminders
     $stmt = $pdo->prepare("
         SELECT t.id, t.lead_id, t.title, t.task_type, t.due_date, t.due_time,
@@ -51,6 +61,7 @@ try {
           AND t.reminder_at IS NOT NULL
           AND t.reminder_at <= NOW()
           AND t.reminder_sent = 0
+          {$cronTenantSql}
         ORDER BY t.reminder_at ASC
         LIMIT 50
     ");
@@ -87,8 +98,8 @@ try {
         try {
             // Log activity
             $activityStmt = $pdo->prepare("
-                INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
-                VALUES (?, 'reminder', ?, ?, NOW())
+                INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at{$cronTenantCol})
+                VALUES (?, 'reminder', ?, ?, NOW(){$cronTenantVal})
             ");
             $reminderDesc = "Follow-up reminder: {$taskTitle} (due: {$dueDate})";
             $activityStmt->execute([
@@ -99,7 +110,7 @@ try {
 
             // Mark reminder as sent
             $updateStmt = $pdo->prepare("
-                UPDATE crm_tasks SET reminder_sent = 1, updated_at = NOW() WHERE id = ?
+                UPDATE crm_tasks SET reminder_sent = 1, updated_at = NOW() WHERE id = ?{$cronTenantSql}
             ");
             $updateStmt->execute([$task['id']]);
 

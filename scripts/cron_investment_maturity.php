@@ -19,6 +19,15 @@ $errors = [];
 
 echo "=== Investment Maturity Cron — $today ===\n\n";
 
+// Set tenant context for TenantContext consumers
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $db->getConnection());
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 try {
     // Find investments that have matured today or earlier
     $investments = $db->fetchAll(
@@ -31,6 +40,7 @@ try {
            AND i.maturity_status = 'pending'
            AND i.maturity_date IS NOT NULL
            AND i.maturity_date <= ?
+           {$cronTenantSql}
          ORDER BY i.maturity_date ASC",
         [$today]
     );
@@ -44,19 +54,21 @@ try {
                     maturity_status = 'matured', 
                     updated_at = NOW(),
                     notes = CONCAT(COALESCE(notes, ''), '\n[Maturity] Marked as matured on " . $today . "')
-                 WHERE id = ? AND maturity_status = 'pending'",
+                 WHERE id = ? AND maturity_status = 'pending'{$cronTenantSql}",
                 [$inv['id']]
             );
 
             // Log the maturity event
             try {
-                $db->insert('activity_logs_unified', [
+                $activityLogData = [
                     'user_id' => $inv['user_id'],
                     'user_type' => 'customer',
                     'action' => "Investment {$inv['investment_ref']} matured. Principal: ₹" . number_format($inv['principal_amount']) . ", Final Value: ₹" . number_format($inv['current_value']),
                     'ip_address' => '127.0.0.1',
                     'created_at' => date('Y-m-d H:i:s')
-                ]);
+                ];
+                if ($cronTenantId > 1) $activityLogData['tenant_id'] = $cronTenantId;
+                $db->insert('activity_logs_unified', $activityLogData);
             } catch (\Throwable $e) {
                 // Non-fatal — logging failure doesn't block maturity
             }

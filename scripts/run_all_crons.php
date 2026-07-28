@@ -57,12 +57,14 @@ $config = require $root . '/config/database.php';
 $mode       = 'auto';
 $statusOnly = false;
 $dryRun     = false;
+$specificTenantId = null;
 foreach ($argv as $arg) {
     if ($arg === '--mode=daily')   $mode = 'daily';
     if ($arg === '--mode=monthly') $mode = 'monthly';
     if ($arg === '--mode=all')     $mode = 'all';
     if ($arg === '--status')       $statusOnly = true;
     if ($arg === '--dry-run')      $dryRun = true;
+    if (preg_match('/^--tenant=(\d+)$/', $arg, $m)) $specificTenantId = (int)$m[1];
 }
 
 if ($mode === 'auto') {
@@ -164,6 +166,16 @@ try {
     $autoloader = \App\Core\Autoloader::getInstance();
     $autoloader->register();
 
+    // Set tenant context for all tasks
+    $tenantId = $specificTenantId ?? 1;
+    \App\Core\Middleware\TenantContext::setById($tenantId, $pdo);
+    echo "[✓] Tenant context: ID {$tenantId}" . PHP_EOL . PHP_EOL;
+
+    // Tenant SQL helper: returns scoped WHERE clause for tenant-specific tables
+    $tenantSql = $tenantId > 1 ? " AND tenant_id = " . (int)$tenantId : "";
+    $tenantCol = $tenantId > 1 ? ", tenant_id" : "";
+    $tenantVal = $tenantId > 1 ? ", " . (int)$tenantId : "";
+
     $taskNum = 0;
 
     // ══════════════════════════════════════════════════════════
@@ -235,6 +247,7 @@ try {
                 JOIN users u ON i.user_id = u.id
                 WHERE i.maturity_status = 'active'
                   AND i.maturity_date <= NOW()
+                  {$tenantSql}
                 ORDER BY i.maturity_date ASC
                 LIMIT 50
             ");
@@ -244,7 +257,7 @@ try {
             if (!empty($matured)) {
                 $count = 0;
                 foreach ($matured as $inv) {
-                    $pdo->prepare("UPDATE investments SET maturity_status = 'matured', updated_at = NOW() WHERE id = ?")->execute([$inv['id']]);
+                    $pdo->prepare("UPDATE investments SET maturity_status = 'matured', updated_at = NOW() WHERE id = ?{$tenantSql}")->execute([$inv['id']]);
                     $count++;
                 }
                 echo "  ✅ {$count} investments marked as matured" . PHP_EOL;
@@ -324,13 +337,13 @@ try {
 
                 foreach ($milestones as $threshold => $bonusAmount) {
                     if ($pctPaid >= $threshold) {
-                        $existing = $pdo->prepare("SELECT id FROM mlm_commission_ledger WHERE booking_id = ? AND commission_type = 'milestone_bonus' AND JSON_EXTRACT(metadata, '$.milestone_pct') = ?");
+                        $existing = $pdo->prepare("SELECT id FROM mlm_commission_ledger WHERE booking_id = ? AND commission_type = 'milestone_bonus' AND JSON_EXTRACT(metadata, '$.milestone_pct') = ?{$tenantSql}");
                         $existing->execute([$booking['id'], $threshold]);
                         if (!$existing->fetch()) {
                             $pdo->prepare("
                                 INSERT INTO mlm_commission_ledger
-                                (user_id, booking_id, commission_type, amount, status, description, metadata, created_at)
-                                VALUES (?, ?, 'milestone_bonus', ?, 'pending', ?, ?, NOW())
+                                (user_id, booking_id, commission_type, amount, status, description, metadata{$tenantCol}, created_at)
+                                VALUES (?, ?, 'milestone_bonus', ?, 'pending', ?, ?{$tenantVal}, NOW())
                             ")->execute([
                                 $booking['associate_id'] ?? $booking['customer_id'],
                                 $booking['id'],
@@ -359,7 +372,7 @@ try {
         try {
             $reminderStmt = $pdo->prepare("
                 SELECT COUNT(*) FROM crm_tasks 
-                WHERE status = 'pending' AND reminder_at IS NOT NULL AND reminder_at <= NOW() AND reminder_sent = 0
+                WHERE status = 'pending' AND reminder_at IS NOT NULL AND reminder_at <= NOW() AND reminder_sent = 0{$tenantSql}
             ");
             $reminderStmt->execute();
             $pendingReminders = (int)$reminderStmt->fetchColumn();
@@ -369,16 +382,16 @@ try {
                 $tasks = $pdo->prepare("
                     SELECT t.id, t.lead_id, t.title, t.due_date, t.assigned_to, t.created_by
                     FROM crm_tasks t
-                    WHERE t.status = 'pending' AND t.reminder_at IS NOT NULL AND t.reminder_at <= NOW() AND t.reminder_sent = 0
+                    WHERE t.status = 'pending' AND t.reminder_at IS NOT NULL AND t.reminder_at <= NOW() AND t.reminder_sent = 0{$tenantSql}
                     LIMIT 50
                 ");
                 $tasks->execute();
                 $taskRows = $tasks->fetchAll(PDO::FETCH_ASSOC);
                 $sent = 0;
                 foreach ($taskRows as $task) {
-                    $pdo->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'reminder', ?, ?, NOW())")
+                    $pdo->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by{$tenantCol}, created_at) VALUES (?, 'reminder', ?, ?{$tenantVal}, NOW())")
                         ->execute([$task['lead_id'], "Follow-up reminder: {$task['title']} (due: {$task['due_date']})", $task['assigned_to'] ?: $task['created_by']]);
-                    $pdo->prepare("UPDATE crm_tasks SET reminder_sent = 1, updated_at = NOW() WHERE id = ?")->execute([$task['id']]);
+                    $pdo->prepare("UPDATE crm_tasks SET reminder_sent = 1, updated_at = NOW() WHERE id = ?{$tenantSql}")->execute([$task['id']]);
                     $sent++;
                 }
                 echo "  ✅ {$sent} reminders processed" . PHP_EOL;

@@ -14,6 +14,16 @@ require_once __DIR__ . '/../app/Core/Database/Database.php';
 use App\Core\Database\Database;
 
 $db = Database::getInstance();
+$pdo = $db->getConnection();
+
+// Set tenant context for service compatibility
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $pdo);
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
 
 $cutoff = (new DateTime('-24 hours'))->format('Y-m-d H:i:s');
 $stats = [
@@ -59,8 +69,8 @@ try {
 
         try {
             $db->execute(
-                "INSERT INTO gateway_logs (gateway, action, recipient, status, request_body, response_body, created_at)
-                 VALUES (?, 'abandoned_registration_reminder', ?, ?, ?, ?, NOW())",
+                "INSERT INTO gateway_logs (gateway, action, recipient, status, request_body, response_body, created_at{$cronTenantCol})
+                 VALUES (?, 'abandoned_registration_reminder', ?, ?, ?, ?, NOW(){$cronTenantVal})",
                 [
                     $gateway,
                     $recipient,
@@ -78,7 +88,7 @@ try {
 
     // Cleanup: mark records that are still here 14 days later as expired.
     $expiredCutoff = (new DateTime('-14 days'))->format('Y-m-d H:i:s');
-    $db->execute("DELETE FROM incomplete_registrations WHERE last_activity_at < ? AND recovered_at IS NULL", [$expiredCutoff]);
+    $db->execute("DELETE FROM incomplete_registrations WHERE last_activity_at < ? AND recovered_at IS NULL{$cronTenantSql}", [$expiredCutoff]);
 
     echo "[abandoned-cron] Stats: " . json_encode($stats, JSON_UNESCAPED_UNICODE) . "\n";
 } catch (\Throwable $e) {

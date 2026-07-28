@@ -69,9 +69,12 @@ class AdminMarketplaceController extends AdminController
         $this->validateCsrfOrFail();
         $id = (int)($_POST['id'] ?? 0);
         if ($id) {
-            $current = $this->db->query("SELECT is_featured FROM user_properties WHERE id = $id")->fetchColumn();
+            $stmt = $this->db->prepare("SELECT is_featured FROM user_properties WHERE id = ?");
+            $stmt->execute([$id]);
+            $current = (int)$stmt->fetchColumn();
             $new = $current ? 0 : 1;
-            $this->db->query("UPDATE user_properties SET is_featured = $new WHERE id = $id");
+            $stmt = $this->db->prepare("UPDATE user_properties SET is_featured = ? WHERE id = ?");
+            $stmt->execute([$new, $id]);
             $this->setFlash('success', $new ? 'Property marked as featured' : 'Featured removed');
         }
         $this->redirect('/admin/marketplace');
@@ -83,9 +86,12 @@ class AdminMarketplaceController extends AdminController
         $this->validateCsrfOrFail();
         $id = (int)($_POST['id'] ?? 0);
         if ($id) {
-            $current = $this->db->query("SELECT is_urgent FROM user_properties WHERE id = $id")->fetchColumn();
+            $stmt = $this->db->prepare("SELECT is_urgent FROM user_properties WHERE id = ?");
+            $stmt->execute([$id]);
+            $current = (int)$stmt->fetchColumn();
             $new = $current ? 0 : 1;
-            $this->db->query("UPDATE user_properties SET is_urgent = $new WHERE id = $id");
+            $stmt = $this->db->prepare("UPDATE user_properties SET is_urgent = ? WHERE id = ?");
+            $stmt->execute([$new, $id]);
             $this->setFlash('success', $new ? 'Property marked as urgent' : 'Urgent removed');
         }
         $this->redirect('/admin/marketplace');

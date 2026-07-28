@@ -27,6 +27,19 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
     echo "[" . date('Y-m-d H:i:s') . "] Connected to MySQL\n";
+
+    // Set tenant context for service compatibility
+    if (class_exists('\App\Core\Middleware\TenantContext')) {
+        try {
+            \App\Core\Middleware\TenantContext::setById(1, $db);
+        } catch (\Throwable $e) {
+            // non-fatal
+        }
+    }
+    $cronTenantId = 1;
+    $cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+    $cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+    $cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
 } catch (PDOException $e) {
     die("ERROR: MySQL connection failed: " . $e->getMessage() . "\n");
 }
@@ -89,7 +102,7 @@ foreach ($allBookings as $key => $booking) {
         $stmt = $db->prepare("
             SELECT p.id, p.colony_id, p.total_price, p.plot_number
             FROM plots p
-            WHERE p.plot_number = ? AND p.block = 'C' AND p.is_active = 1
+            WHERE p.plot_number = ? AND p.block = 'C' AND p.is_active = 1{$cronTenantSql}
         ");
         $stmt->execute([$plotId]);
         $plot = $stmt->fetch();
@@ -102,7 +115,7 @@ foreach ($allBookings as $key => $booking) {
 
         // Check if booking already exists
         $existing = $db->prepare("
-            SELECT id FROM plot_bookings WHERE plot_id = ? AND status NOT IN ('cancelled')
+            SELECT id FROM plot_bookings WHERE plot_id = ? AND status NOT IN ('cancelled'){$cronTenantSql}
         ");
         $existing->execute([$plot['id']]);
         if ($existing->fetch()) {
@@ -117,7 +130,7 @@ foreach ($allBookings as $key => $booking) {
         $user = $user->fetch();
 
         if (!$user) {
-            $stmt = $db->prepare("INSERT INTO users (name, phone, role, created_at) VALUES (?, ?, 'customer', NOW())");
+            $stmt = $db->prepare("INSERT INTO users (name, phone, role, created_at{$cronTenantCol}) VALUES (?, ?, 'customer', NOW(){$cronTenantVal})");
             $stmt->execute([$name, $phone]);
             $customerId = $db->lastInsertId();
         } else {
@@ -127,8 +140,8 @@ foreach ($allBookings as $key => $booking) {
         // Create booking
         $bookingNumber = 'BK' . date('Ymd') . strtoupper(substr(md5($plotId . $phone), 0, 6));
         $stmt = $db->prepare("
-            INSERT INTO plot_bookings (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, approval_status, channel, notes, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 'token_paid', 'pending', 'firebase_sync', ?, NOW())
+            INSERT INTO plot_bookings (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, approval_status, channel, notes, created_at{$cronTenantCol})
+            VALUES (?, ?, ?, ?, ?, ?, 'token_paid', 'pending', 'firebase_sync', ?, NOW(){$cronTenantVal})
         ");
         $stmt->execute([
             $plot['id'], $customerId, $bookingNumber,
@@ -139,7 +152,7 @@ foreach ($allBookings as $key => $booking) {
         ]);
 
         // Update plot status
-        $db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ?")
+        $db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ?{$cronTenantSql}")
             ->execute([$customerId, date('Y-m-d', strtotime($timestamp)), $plot['id']]);
 
         echo "OK [$key]: Synced plot '$plotId' → booking '$bookingNumber'\n";

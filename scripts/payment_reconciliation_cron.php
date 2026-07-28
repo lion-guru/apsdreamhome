@@ -149,6 +149,15 @@ try {
     exit(1);
 }
 
+// Set tenant context for TenantContext consumers
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $pdo);
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 // Verify gateway_logs has the columns we need (safe additive migration)
 try {
     $cols = [];
@@ -193,7 +202,7 @@ try {
                    amount, currency, status, created_at, expires_at
               FROM payment_orders
              WHERE status = 'created'
-               AND gateway = ?
+               AND gateway = ?{$cronTenantSql}
                AND created_at < ?
              ORDER BY id ASC
              LIMIT " . (int)$opts['limit'];
@@ -283,14 +292,16 @@ foreach ($orders as $o) {
                                       SET status = 'paid',
                                           paid_at = COALESCE(paid_at, NOW()),
                                           updated_at = NOW()
-                                    WHERE id = ? AND status = 'created'");
+                                    WHERE 1=1{$cronTenantSql}
+                                      AND id = ?
+                                      AND status = 'created'");
             $upd->execute([$localId]);
 
             // 2) if a payment_id is known, store it
             $firstPaymentId = null;
             if (is_array($paymentsList) && !empty($paymentsList['items'][0]['id'])) {
                 $firstPaymentId = $paymentsList['items'][0]['id'];
-                $pdo->prepare("UPDATE payment_orders SET payment_id = ? WHERE id = ? AND payment_id IS NULL")
+                $pdo->prepare("UPDATE payment_orders SET payment_id = ? WHERE 1=1{$cronTenantSql} AND id = ? AND payment_id IS NULL")
                     ->execute([$firstPaymentId, $localId]);
             }
 
@@ -303,11 +314,11 @@ foreach ($orders as $o) {
                     (payment_id, transaction_id, customer_id, booking_id, property_type, payment_type,
                      amount, currency, tax_amount, discount_amount, total_amount, gateway,
                      gateway_transaction_id, status, payment_date, payment_time,
-                     description, user_id, created_at, updated_at)
+                     description, user_id, created_at, updated_at{$cronTenantCol})
                     VALUES (?, ?, ?, ?, 'plot', 'booking',
                             ?, ?, 0, 0, ?, 'razorpay',
                             ?, 'completed', CURDATE(), CURTIME(),
-                            ?, ?, NOW(), NOW())");
+                            ?, ?, NOW(), NOW(){$cronTenantVal})");
                 $ins->execute([
                     $firstPaymentId ?: $orderId, // payment_id
                     $orderId,                     // transaction_id = order id for traceability
@@ -327,14 +338,14 @@ foreach ($orders as $o) {
             logReconciliation($pdo, 'razorpay', 'reconciliation_paid', $orderId, 'success', 200, $apiAmountPaidPaise, null);
 
         } elseif ($apiStatus === 'expired') {
-            $pdo->prepare("UPDATE payment_orders SET status = 'expired', updated_at = NOW() WHERE id = ? AND status = 'created'")
+            $pdo->prepare("UPDATE payment_orders SET status = 'expired', updated_at = NOW() WHERE 1=1{$cronTenantSql} AND id = ? AND status = 'created'")
                 ->execute([$localId]);
             $stats['expired']++;
             logMsg("     + marked EXPIRED");
             logReconciliation($pdo, 'razorpay', 'reconciliation_expired', $orderId, 'success', 200, null, null);
 
         } elseif ($apiStatus === 'cancelled') {
-            $pdo->prepare("UPDATE payment_orders SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND status = 'created'")
+            $pdo->prepare("UPDATE payment_orders SET status = 'cancelled', updated_at = NOW() WHERE 1=1{$cronTenantSql} AND id = ? AND status = 'created'")
                 ->execute([$localId]);
             $stats['cancelled']++;
             logMsg("     + marked CANCELLED");
@@ -383,10 +394,11 @@ exit($stats['errors'] > 0 ? 2 : 0);
 // ========================================================================
 function logReconciliation(PDO $pdo, string $gateway, string $action, string $orderId, string $status, int $httpCode, ?int $amountPaise, ?string $error): void
 {
+    global $cronTenantCol, $cronTenantVal;
     try {
         $stmt = $pdo->prepare("INSERT INTO gateway_logs
-            (gateway, action, method, endpoint, transaction_id, status, response_code, amount_paise, error_message)
-            VALUES (?, ?, 'GET', ?, ?, ?, ?, ?, ?)");
+            (gateway, action, method, endpoint, transaction_id, status, response_code, amount_paise, error_message{$cronTenantCol})
+            VALUES (?, ?, 'GET', ?, ?, ?, ?, ?, ?{$cronTenantVal})");
         $stmt->execute([
             $gateway,
             $action,

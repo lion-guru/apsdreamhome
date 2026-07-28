@@ -12,6 +12,15 @@ use App\Core\Database\Database;
 
 $db = Database::getInstance();
 
+// Set tenant context for TenantContext consumers
+$cronTenantId = 1;
+if (class_exists('\App\Core\Middleware\TenantContext')) {
+    \App\Core\Middleware\TenantContext::setById($cronTenantId, $db->getConnection());
+}
+$cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+$cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+$cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
 echo "=== Chat Conversation Cleanup ===\n";
 echo "Time: " . date('Y-m-d d H:i:s') . "\n\n";
 
@@ -19,7 +28,7 @@ echo "Time: " . date('Y-m-d d H:i:s') . "\n\n";
 $stmt = $db->query(
     "DELETE FROM ai_chat_conversations 
      WHERE status IN ('completed', 'cancelled', 'expired') 
-     AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
+     AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY){$cronTenantSql}"
 );
 $deletedOld = $stmt->rowCount();
 echo "✓ Deleted {$deletedOld} old conversations (>7 days, completed/cancelled/expired)\n";
@@ -28,7 +37,7 @@ echo "✓ Deleted {$deletedOld} old conversations (>7 days, completed/cancelled/
 $stmt = $db->query(
     "DELETE FROM ai_chat_conversations 
      WHERE status = 'active' 
-     AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+     AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR){$cronTenantSql}"
 );
 $deletedStale = $stmt->rowCount();
 echo "✓ Deleted {$deletedStale} stale active conversations (>24h)\n";
@@ -37,7 +46,7 @@ echo "✓ Deleted {$deletedStale} stale active conversations (>24h)\n";
 $stmt = $db->query(
     "DELETE FROM ai_chat_conversations 
      WHERE status = 'confirm' 
-     AND created_at < DATE_SUB(NOW(), INTERVAL 1 HOUR)"
+     AND created_at < DATE_SUB(NOW(), INTERVAL 1 HOUR){$cronTenantSql}"
 );
 $deletedConfirm = $stmt->rowCount();
 echo "✓ Deleted {$deletedConfirm} abandoned confirm conversations (>1h)\n";

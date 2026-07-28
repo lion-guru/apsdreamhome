@@ -32,6 +32,15 @@ try {
     $db = Database::getInstance();
     $wa = new WhatsAppWebService();
 
+    // Set tenant context for TenantContext consumers
+    $cronTenantId = 1;
+    if (class_exists('\App\Core\Middleware\TenantContext')) {
+        \App\Core\Middleware\TenantContext::setById($cronTenantId, $db->getConnection());
+    }
+    $cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+    $cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+    $cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
     // Check WhatsApp connection
     $status = $wa->isConnected();
     if (isset($status['error']) || empty($status['connected'])) {
@@ -105,8 +114,8 @@ try {
 
         // Log
         $db->execute(
-            "INSERT INTO whatsapp_followup_log (session_id, phone, followup_type, message, status, sent_at, created_at)
-             VALUES (?, ?, 'post_call', ?, ?, NOW(), NOW())",
+            "INSERT INTO whatsapp_followup_log (session_id, phone, followup_type, message, status, sent_at, created_at{$cronTenantCol})
+             VALUES (?, ?, 'post_call', ?, ?, NOW(), NOW(){$cronTenantVal})",
             [$call['session_id'], $phone, $message, $sent ? 'sent' : 'failed']
         );
 
@@ -177,8 +186,8 @@ try {
         $sent = !isset($result['error']);
 
         $db->execute(
-            "INSERT INTO whatsapp_followup_log (installment_id, phone, followup_type, message, status, sent_at, created_at)
-             VALUES (?, ?, 'emi_reminder', ?, ?, NOW(), NOW())",
+            "INSERT INTO whatsapp_followup_log (installment_id, phone, followup_type, message, status, sent_at, created_at{$cronTenantCol})
+             VALUES (?, ?, 'emi_reminder', ?, ?, NOW(), NOW(){$cronTenantVal})",
             [$emi['installment_id'], $phone, $message, $sent ? 'sent' : 'failed']
         );
 
@@ -224,8 +233,8 @@ try {
         $sent = !isset($result['error']);
 
         $db->execute(
-            "INSERT INTO whatsapp_followup_log (user_id, phone, followup_type, message, status, sent_at, created_at)
-             VALUES (?, ?, 'welcome', ?, ?, NOW(), NOW())",
+            "INSERT INTO whatsapp_followup_log (user_id, phone, followup_type, message, status, sent_at, created_at{$cronTenantCol})
+             VALUES (?, ?, 'welcome', ?, ?, NOW(), NOW(){$cronTenantVal})",
             [$user['id'], $phone, $message, $sent ? 'sent' : 'failed']
         );
 

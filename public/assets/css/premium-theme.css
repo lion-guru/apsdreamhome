@@ -1104,3 +1104,81 @@ html {
     padding: 2rem 0;
   }
 }
+
+/* ============================================================
+   UI/UX POLISH - MICRO-INTERACTIONS, FORM GLOW & MODERN BADGES
+   ============================================================ */
+
+/* Form Control Focus Ring & Smooth Transition */
+.form-control, .form-select {
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--accent, #14b8a6) !important;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18) !important;
+}
+
+/* Button Active & Hover Micro-Interactions */
+.btn {
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Modern Pill Badges & Status Chips */
+.badge {
+  padding: 0.4em 0.75em;
+  font-weight: 600;
+  border-radius: 8px;
+  letter-spacing: 0.02em;
+}
+
+.badge.bg-success, .badge.badge-success {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #047857 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge.bg-info, .badge.badge-info {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge.bg-warning, .badge.badge-warning {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #b45309 !important;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge.bg-danger, .badge.badge-danger {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #b91c1c !important;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge.bg-primary, .badge.badge-primary {
+  background-color: rgba(13, 148, 136, 0.15) !important;
+  color: #0f766e !important;
+  border: 1px solid rgba(13, 148, 136, 0.3);
+}
+
+/* Card Hover Micro-Lift & Soft Shadow */
+.card:not(.no-hover), .aps-cp-card:not(.no-hover) {
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover:not(.no-hover), .aps-cp-card:hover:not(.no-hover) {
+  box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.1) !important;
+}

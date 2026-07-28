@@ -28,6 +28,17 @@ dialerLog("=== Auto-Dialer Started ===");
 
 try {
     $db = Database::getInstance();
+    $pdo = $db->getConnection();
+
+    // Set tenant context for service compatibility
+    $cronTenantId = 1;
+    if (class_exists('\App\Core\Middleware\TenantContext')) {
+        \App\Core\Middleware\TenantContext::setById($cronTenantId, $pdo);
+    }
+    $cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : "";
+    $cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
+    $cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
+
     $asterisk = new AsteriskService();
     $voiceService = new VoiceCallService();
 
@@ -108,7 +119,7 @@ try {
         if (empty($phone)) {
             dialerLog("No phone number for schedule #{$call['id']}. Skipping.");
             $db->execute(
-                "UPDATE ai_calling_schedule SET status = 'failed', result_notes = 'No phone number', updated_at = NOW() WHERE id = ?",
+                "UPDATE ai_calling_schedule SET status = 'failed', result_notes = 'No phone number', updated_at = NOW() WHERE id = ?{$cronTenantSql}",
                 [$call['id']]
             );
             continue;
@@ -143,7 +154,7 @@ try {
                 $failMsg = $callResult['message'] ?? 'unknown';
                 dialerLog("FAIL Call failed: {$leadName} ($phone) - {$failMsg}");
                 $db->execute(
-                    "UPDATE ai_calling_schedule SET status = 'pending', attempt_count = attempt_count - 1 WHERE id = ?",
+                    "UPDATE ai_calling_schedule SET status = 'pending', attempt_count = attempt_count - 1 WHERE id = ?{$cronTenantSql}",
                     [$call['id']]
                 );
             }
@@ -224,9 +235,9 @@ try {
         $db->execute(
             "INSERT INTO ai_calling_schedule 
              (lead_id, phone, priority, scheduled_date, scheduled_time, ai_agent_id, 
-              script_template, max_attempts, status, notes, created_by, created_at, updated_at)
+              script_template, max_attempts, status, notes, created_by, created_at, updated_at{$cronTenantCol})
              VALUES (?, ?, ?, CURDATE(), DATE_FORMAT(NOW() + INTERVAL 10 MINUTE, '%H:%i:%s'), 
-                     ?, ?, 3, 'pending', ?, 0, NOW(), NOW())",
+                     ?, ?, 3, 'pending', ?, 0, NOW(), NOW(){$cronTenantVal})",
             [
                 $emi['customer_id'],
                 $emi['customer_phone'],
@@ -238,8 +249,8 @@ try {
         );
 
         $db->execute(
-            "UPDATE booking_payment_schedules SET reminder_count = COALESCE(reminder_count, 0) + 1, last_reminder_at = NOW() WHERE id = ?",
-            [$emi['id']]
+            "UPDATE booking_payment_schedules SET reminder_count = COALESCE(reminder_count, 0) + 1, last_reminder_at = NOW() WHERE id = ?{$cronTenantSql}",
+                [$emi['id']]
         );
 
         dialerLog("EMI reminder: {$custName} Rs{$amount}, {$daysOverdue}d overdue - {$script}");
