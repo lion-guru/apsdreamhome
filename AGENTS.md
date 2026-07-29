@@ -50,6 +50,64 @@ _58. **Transparent prefixing beats call-site changes** — Adding `tenantKey()` 
 _59. **Database query cache bypasses must be caught** — `Database::fetchCached()` used `Cache::rememberQuery()` directly, bypassing `CacheService`. Fixed by making `Cache::rememberQuery()` itself tenant-aware._
 
 _60. **LookupCacheService correctly left unprefixed** — IFSC/pincode/stamp duty data is shared reference data. Prefixing would waste cache space with no isolation benefit._
+
+---
+
+# Session 62: Model-Level Tenant Scoping + Cron Isolation + E2E Stability (2026-07-29)
+
+## Goal
+
+Complete multi-tenant SaaS isolation — ensure ALL models with business-critical data have `$tenantScoped = true`, fix cron scripts missing TenantContext, improve E2E test stability.
+
+## What Was Done
+
+| Feature                       | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Model Tenant Scoping (34)** | Added `protected static $tenantScoped = true;` to 34 business-critical models: User, Payment, Notification, Colony, Referral, SupportTicket, LegalDocument, MarketingLead, SavedSearch, ResellProperty, all Lead sub-models (Inquiry, LeadNote, LeadTag, LeadFile, LeadCustomField, LeadScoring), Employee, EmployeeAttendance, Farmer, FarmerLandHolding, LandPurchase, FieldVisit, MobileDevice, AgentReview, PropertyReview, TrafficStat, NewsletterSubscriber, Property/Favorite, Property/Inquiry, Property/Project, System/AuditLog |
+| **User Model Fixed**          | User model was missing `$tenantScoped = true` — all User Model queries bypassed tenant isolation. Now properly scoped.                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Cron EMI Dunning**          | `cron_emi_dunning.php` — Added TenantContext + `$tenantSql`/`$tenantCol`/`$tenantVal` helpers for tenant-scoped queries                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **Cron Notifications**        | `cron_process_notifications.php` — Added TenantContext + `$tenantSql` to 4 queries (push/email/sms SELECTs + stale cleanup UPDATE)                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **5 Duplicate Cron Scripts**  | Archived: `run_commission_cron.php`, `run_royalty_pool.php`, `run_clawback.php`, `run_daily_penalties.php`, `run_rank_promotion.php` — all duplicated tasks already in `run_all_crons.php` and lacked TenantContext                                                                                                                                                                                                                                                                                                                       |
+| **E2E Stability Fix**         | Changed `waitUntil: 'load'` to `waitUntil: 'domcontentloaded'` in `E2E_MASTER_TEST.mjs` (6 instances) to prevent CDN timeouts from causing flaky failures                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Admin Layout Preconnect**   | Added `<link rel="preconnect">` hints for 4 CDN origins (jsdelivr,cdnjs,googleapis,gstatic) in `admin.php` layout for faster resource loading                                                                                                                                                                                                                                                                                                                                                                                             |
+| **View Cleanup**              | Updated stale cron reference in `royalty-pool.php`, archived dead `business/associates/` views (4 files)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+## Architecture — 6-Layer Tenant Enforcement (Updated)
+
+1. **Global (BaseController)** — `enforceTenantStatus()` blocks suspended/cancelled tenants
+2. **Controller (TenantAwareTrait)** — `tenantWhere()`/`tenantInsertData()` for raw SQL
+3. **Service (TenantEnforcement)** — `canPerform()` checks usage limits
+4. **Model (Model::$tenantScoped)** — Global tenant scoping on all models — **NOW 39 models have explicit `$tenantScoped = true`**
+5. **Cache (CacheService)** — `tenantKey()` prefixes all cache keys with `t{N}_`
+6. **Cron (TenantContext)** — All standalone cron scripts now initialize TenantContext
+
+## Files Changed
+
+| File                                       | Changes                                                 |
+| :----------------------------------------- | :------------------------------------------------------ |
+| `app/Models/User.php`                      | +`protected static $tenantScoped = true;`               |
+| `app/Models/Payment/Payment.php`           | +`protected static $tenantScoped = true;`               |
+| 32 more model files                        | +`protected static $tenantScoped = true;` each          |
+| `scripts/cron_emi_dunning.php`             | +TenantContext + `$tenantSql`/`$tenantCol`/`$tenantVal` |
+| `scripts/cron_process_notifications.php`   | +TenantContext + `$tenantSql` to 4 queries              |
+| `app/views/layouts/admin.php`              | +4 `<link rel="preconnect">` CDN hints                  |
+| `testing/visual_tests/E2E_MASTER_TEST.mjs` | 6x `waitUntil: 'load'` → `domcontentloaded`             |
+| `app/views/admin/mlm/royalty-pool.php`     | Updated stale cron reference                            |
+
+## E2E Tests
+
+**153/153 PASS** — zero regressions. Commit: `5cacb937`
+
+### Key Lessons (Session 62)
+
+_61. **Model `$tenantScoped` must be explicitly set on business models** — The base `Model` class has `$tenantScoped = false` (line 51). Each business model must override with `protected static $tenantScoped = true;` to enable automatic tenant scoping via `scopeQuery()`. Without it, all Model queries bypass tenant isolation._
+
+_62. **Cron scripts need TenantContext before any DB operations** — Standalone cron scripts create their own PDO but must call `TenantContext::setById()` early, then use `$cronTenantSql`/`$cronTenantCol`/`$cronTenantVal` helpers in every query. Scripts that delegate to services (like `run_all_crons.php`) inherit the parent's TenantContext._
+
+_63. **Duplicate cron scripts waste resources and lack tenant isolation** — 5 scripts duplicated tasks already in `run_all_crons.php` but without TenantContext. Archiving them reduces maintenance surface and prevents accidental standalone execution with wrong tenant context._
+
+_64. **`domcontentloaded` beats `load` for E2E stability** — CDN resources (Bootstrap, Font Awesome, Google Fonts) can take 2-5 seconds to load. `waitUntil: 'load'` blocks on these, causing timeouts. `domcontentloaded` fires when HTML is parsed, which is sufficient for route-testing. Preconnect hints further reduce CDN latency._
+
 **Full details:** `DELETION_RULE.md`
 
 ### 7-Step Pre-Deletion Checklist (MANDATORY)
