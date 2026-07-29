@@ -283,7 +283,7 @@ class AutoDialerController extends BaseController
                     "SELECT COUNT(*) as total FROM ai_calling_schedule"
                 );
                 $stats['total_scheduled'] = intval($row['total'] ?? 0);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AutoDialerController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             try {
                 $row = $this->db->fetch(
@@ -291,7 +291,7 @@ class AutoDialerController extends BaseController
                     [$today]
                 );
                 $stats['completed_today'] = intval($row['total'] ?? 0);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AutoDialerController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             try {
                 $row = $this->db->fetch(
@@ -299,7 +299,7 @@ class AutoDialerController extends BaseController
                     [$today]
                 );
                 $stats['pending_today'] = intval($row['total'] ?? 0);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AutoDialerController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             try {
                 $row = $this->db->fetch(
@@ -307,7 +307,7 @@ class AutoDialerController extends BaseController
                     [$today]
                 );
                 $stats['failed_today'] = intval($row['total'] ?? 0);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AutoDialerController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             // Call outcomes
             try {
@@ -320,7 +320,7 @@ class AutoDialerController extends BaseController
                 if ($row) {
                     $stats[$row['call_outcome']] = intval($row['total']);
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AutoDialerController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             return $this->jsonResponse([
                 'success' => true,
@@ -853,7 +853,7 @@ class AutoDialerController extends BaseController
                         $u = $this->db->fetch("SELECT phone FROM users WHERE id = ?", [$_SESSION['user_id']]);
                         $phone = $u['phone'] ?? '';
                     }
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log("AutoDialerController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
                 if (empty($phone)) {
                     $phone = 'app-voice-chat';
                 }

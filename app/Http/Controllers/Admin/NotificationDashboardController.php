@@ -138,7 +138,7 @@ class NotificationDashboardController extends AdminController
             $stats['channels_active'] = (int)$db->query("SELECT COUNT(DISTINCT channel) FROM notification_logs WHERE channel IS NOT NULL")->fetchColumn();
             $stats['sms_templates'] = (int)$db->query("SELECT COUNT(*) FROM sms_templates WHERE is_active = 1")->fetchColumn();
             $stats['wa_templates'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_templates WHERE is_active = 1")->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $stats;
     }
@@ -213,13 +213,13 @@ class NotificationDashboardController extends AdminController
             $stats['sms'] = $db->query(
                 "SELECT template_code, template_name, 0 as usage_count FROM sms_templates WHERE is_active = 1 ORDER BY template_name"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $stats['whatsapp'] = $db->query(
                 "SELECT name as template_name, category, status, usage_count FROM whatsapp_templates WHERE is_active = 1 ORDER BY name"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $stats;
     }

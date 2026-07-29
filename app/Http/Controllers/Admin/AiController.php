@@ -44,7 +44,7 @@ class AiController extends AdminController
         try {
             $db = \App\Core\Database\Database::getInstance();
             $campaigns = [];
-            try { $campaigns = $db->fetchAll("SELECT * FROM marketing_campaigns ORDER BY created_at DESC LIMIT 15") ?: []; } catch (\Exception $e) {}
+            try { $campaigns = $db->fetchAll("SELECT * FROM marketing_campaigns ORDER BY created_at DESC LIMIT 15") ?: []; } catch (\Exception $e) { error_log("AiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             $data = [
                 'page_title' => 'AI Hub - APS Dream Home',

@@ -81,8 +81,8 @@
                                 <div class="card-body py-2">
                                     <small><strong><?= __('payment_bank_transfer') ?>:</strong><br>
                                     Account: APS Dream Home<br>
-                                    IFSC: SBIN00XXXXX<br>
-                                    Account: XXXXXXXXXXXX</small>
+                                    IFSC: Check with office<br>
+                                    Account: Contact support for details</small>
                                 </div>
                             </div>
                         </div>

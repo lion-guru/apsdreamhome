@@ -166,7 +166,6 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
                 body: JSON.stringify(event.data.payload)
             })
             .then(r => r.json())
-            .then(d => console.log('Booking synced:', d))
             .catch(e => console.error('Sync failed:', e));
         }
     });

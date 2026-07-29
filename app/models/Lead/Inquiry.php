@@ -8,6 +8,7 @@ class Inquiry extends UnifiedModel
 {
     public static $table = 'inquiries';
     public static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'name',

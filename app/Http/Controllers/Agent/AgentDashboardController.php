@@ -919,7 +919,7 @@ class AgentDashboardController extends BaseController
         $sources = [];
         try {
             $sources = $this->db->fetchAll("SELECT id, name FROM lead_sources ORDER BY name") ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("AgentDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('agent/lead_form', [
             'page_title' => 'Add New Lead',

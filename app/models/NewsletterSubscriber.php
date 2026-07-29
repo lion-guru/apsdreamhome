@@ -7,6 +7,7 @@ namespace App\Models;
 
 class NewsletterSubscriber extends \App\Models\Model {
     protected static $table = 'newsletter_subscribers';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'email',

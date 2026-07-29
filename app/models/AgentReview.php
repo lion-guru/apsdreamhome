@@ -10,6 +10,7 @@ namespace App\Models;
 
 class AgentReview extends Model {
     public static $table = 'agent_reviews';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'agent_id',

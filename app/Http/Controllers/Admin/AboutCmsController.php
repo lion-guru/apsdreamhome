@@ -16,7 +16,7 @@ class AboutCmsController extends AdminController
             foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
                 $content[$row['content_group']][$row['content_key']] = $row['content_value'];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AboutCmsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $data = [
             'page_title' => 'About Page CMS',

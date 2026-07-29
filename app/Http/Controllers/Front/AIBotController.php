@@ -61,7 +61,7 @@ class AIBotController extends BaseController
         // Track behavior
         try {
             $this->ai()->track($userId, 'chat_message', null, 'chat', null, ['message' => $message], $sessionId);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
 
         // If intent is buy/rent and user is logged in, suggest properties
         $suggestions = [];
@@ -76,7 +76,7 @@ class AIBotController extends BaseController
                         'reason' => $r['reason']
                     ];
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
         }
 
         echo json_encode([
@@ -189,7 +189,7 @@ class AIBotController extends BaseController
 
                 $leadId = (int)$this->db->lastInsertId();
                 if ($leadId) {
-                    try { $this->ai()->scoreLead($leadId); } catch (\Exception $e) {}
+                    try { $this->ai()->scoreLead($leadId); } catch (\Exception $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
                 }
             }
         } catch (\Exception $e) {

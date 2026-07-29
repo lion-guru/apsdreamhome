@@ -99,7 +99,7 @@ $distAt      = $pool['distributed_at'] ?? null;
                             <li class="mb-2"><strong>Qualification:</strong> At month-end, managers with ≥₹50L GBV qualify for a share.</li>
                             <li class="mb-2"><strong>Distribution:</strong> <code>distributeRoyaltyPool()</code> splits the pool equally among qualified managers and writes ledger entries.</li>
                             <li class="mb-2"><strong>Idempotent:</strong> Distribution can only happen once per month (guarded by <code>distributed_status</code>).</li>
-                            <li class="mb-2"><strong>Cron schedule:</strong> Run <code>scripts/run_rank_promotion.php</code> monthly to trigger distribution.</li>
+                            <li class="mb-2"><strong>Cron schedule:</strong> Run <code>scripts/run_all_crons.php</code> to trigger daily and monthly tasks.</li>
                         </ol>
                     </div>
                 </div>

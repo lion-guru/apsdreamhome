@@ -45,7 +45,7 @@ class ReferralController extends BaseController
             ");
             $stmt->execute([$userId]);
             $earnings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ReferralController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $shareUrl = $service->getShareUrl($referralCode);
         $tierInfo = $service->getUserTier($userId);
@@ -73,7 +73,7 @@ class ReferralController extends BaseController
             $stmt3 = $this->db->prepare("SELECT * FROM whatsapp_lead_shares WHERE shared_by_user_id = ? ORDER BY created_at DESC LIMIT 10");
             $stmt3->execute([$userId]);
             $shareStats['recent'] = $stmt3->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ReferralController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Referral leaderboard (top 10 referrers)
         $leaderboard = [];
@@ -88,7 +88,7 @@ class ReferralController extends BaseController
                 ORDER BY referral_count DESC
                 LIMIT 10
             ") ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ReferralController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->layout = 'layouts/customer';
         $this->render('pages/customer_referral', [

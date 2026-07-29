@@ -296,7 +296,7 @@ class AssociateController extends BaseController
         // Wallet balance
         try {
             $walletBalance = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(points), 0) FROM wallet_points WHERE user_id = ? AND status = 'active'", [$userId]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Bookings by associate's referred users
         try {
@@ -311,7 +311,7 @@ class AssociateController extends BaseController
                  ORDER BY pb.created_at DESC LIMIT 5",
                 [$userId]
             ) ?: [];
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // EMI summary for associate's referrals
         try {
@@ -331,7 +331,7 @@ class AssociateController extends BaseController
                 $emiSummary['pending_emi'] = (int)($emiRow['pending_emi'] ?? 0);
                 $emiSummary['overdue_emi'] = (int)($emiRow['overdue_emi'] ?? 0);
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Property views on associate's listings
         try {
@@ -339,7 +339,7 @@ class AssociateController extends BaseController
                 "SELECT COALESCE(SUM(views), 0) FROM user_properties WHERE posted_by = ?",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Total inquiries on associate's properties
         try {
@@ -347,7 +347,7 @@ class AssociateController extends BaseController
                 "SELECT COALESCE(SUM(inquiries), 0) FROM user_properties WHERE posted_by = ?",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Fallbacks
         if (empty($recentLeads)) {
@@ -887,7 +887,7 @@ class AssociateController extends BaseController
         $states = [];
         try {
             $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $success = $_SESSION['success'] ?? null;
         $error = $_SESSION['error'] ?? null;
@@ -1455,7 +1455,7 @@ class AssociateController extends BaseController
             }
 
             // Auto-wire to CRM lead
-            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_listing','created_by'=>$associateId]); } catch (\Exception $e3) {}
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_listing','created_by'=>$associateId]); } catch (\Exception $e3) { error_log("AssociateController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
             $_SESSION['success'] = 'Thank you! Your property listing has been submitted. Our team will verify and publish it soon.';
         } catch (\Exception $e) {
@@ -1549,7 +1549,7 @@ class AssociateController extends BaseController
         try {
             $mlmSettings = $this->db->fetchAll("SELECT setting_key, setting_value FROM mlm_settings");
             $mlmSettings = array_column($mlmSettings, 'setting_value', 'setting_key');
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Get user's actual commission data
         try {
@@ -1561,7 +1561,7 @@ class AssociateController extends BaseController
                 "SELECT COUNT(*) FROM users WHERE referred_by = ?",
                 [$userId]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recalculate rank from 12-month ledger (consistent with dashboard)
         try {
@@ -1727,7 +1727,7 @@ class AssociateController extends BaseController
         $properties = [];
         try {
             $properties = $this->db->fetchAll("SELECT id, name, property_type, colony_id FROM user_properties WHERE status = 'approved' ORDER BY name LIMIT 50");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->render('associate/add_lead', [
             'page_title' => 'Add Lead - APS Dream Home',
@@ -1795,7 +1795,7 @@ class AssociateController extends BaseController
             try {
                 $db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'created', 'Lead created by associate', ?, NOW())")
                     ->execute([$leadId, $userId]);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             $_SESSION['success'] = 'Lead added successfully!';
             $this->redirect('/associate/leads');
@@ -1842,7 +1842,7 @@ class AssociateController extends BaseController
         $colonies = [];
         try {
             $colonies = $this->db->getConnection()->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // ── Commission Calculator Data ──
         $commissionEstimate = [
@@ -1992,7 +1992,7 @@ class AssociateController extends BaseController
             try {
                 $db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_by, created_at) VALUES (?, 'status_change', ?, ?, ?, ?, NOW())")
                     ->execute([$id, "Status changed from $oldStatus to $newStatus", $oldStatus, $newStatus, $userId]);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             $_SESSION['success'] = 'Lead status updated to ' . ucfirst(str_replace('_', ' ', $newStatus));
         } catch (\Exception $e) {
             error_log('Update lead status error: ' . $e->getMessage());
@@ -2306,7 +2306,7 @@ class AssociateController extends BaseController
         try {
             $referralService = new \App\Services\ReferralService();
             $tierInfo = $referralService->getUserTier($userId);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->render('associate/referral', [
             'page_title' => 'Refer & Earn - APS Dream Home',
@@ -3180,13 +3180,13 @@ $this->render('associate/book_plot', [
             $st = $pdo->prepare("SELECT id, name, phone FROM leads WHERE (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL ORDER BY name ASC");
             $st->execute([$userId, $userId]);
             $leads = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Get colonies for dropdown
         $colonies = [];
         try {
             $colonies = $pdo->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Handle POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -3220,7 +3220,7 @@ $this->render('associate/book_plot', [
                 if ($leadId) {
                     try {
                         $pdo->prepare("UPDATE leads SET status = 'site_visit', updated_at = NOW() WHERE id = ? AND status NOT IN ('closed_won','closed_lost')")->execute([$leadId]);
-                    } catch (\Throwable $e) {}
+                    } catch (\Throwable $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
                 }
 
                 $_SESSION['success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
@@ -3273,7 +3273,7 @@ $this->render('associate/book_plot', [
                     try {
                         $pdo->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'site_visit', ?, ?, NOW())")
                             ->execute([$v['lead_id'], "Site visit completed. Rating: $rating/5. " . mb_substr($feedback, 0, 200), $userId]);
-                    } catch (\Throwable $e) {}
+                    } catch (\Throwable $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
                 }
 
                 $_SESSION['success'] = 'Site visit marked as completed!';

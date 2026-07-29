@@ -7,6 +7,7 @@ use App\Core\Database\Model;
 class LeadNote extends Model
 {
     protected static $table = 'lead_notes';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'lead_id',

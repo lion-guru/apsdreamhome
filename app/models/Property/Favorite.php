@@ -8,6 +8,7 @@ namespace App\Models;
 
 class PropertyFavorite extends Model {
     protected static $table = 'property_favorites';
+    protected static $tenantScoped = true;
 
     /**
      * Add property to favorites

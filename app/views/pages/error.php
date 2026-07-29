@@ -298,7 +298,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
     <script>
         // Add any necessary JavaScript here
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Error page loaded');
+            // Error page loaded
         });
     </script>
 </body>

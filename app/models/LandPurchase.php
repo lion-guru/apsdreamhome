@@ -16,6 +16,7 @@ class LandPurchase extends Model
 {
     protected static $table = 'land_purchases';
     protected static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     /**
      * Get all land purchases with details

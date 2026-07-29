@@ -1098,7 +1098,7 @@ public function handlePropertyListing()
                 }
 
                 // Auto-wire to CRM lead
-                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property','created_by'=>$postedBy]); } catch (\Exception $e3) {}
+                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property','created_by'=>$postedBy]); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
                 // Success message with user-specific redirect
                 $_SESSION['success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
@@ -1283,7 +1283,7 @@ public function propertyInquiry()
             $stmt->execute([$propertyId, $name, $email, $phone, $message]);
 
             // Auto-wire to CRM lead
-            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_inquiry','property_id'=>$propertyId]); } catch (\Exception $e3) {}
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_inquiry','property_id'=>$propertyId]); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
             // Also notify property owner
             try {
@@ -1419,7 +1419,7 @@ public function contact()
                     }
 
                     // Auto-wire to CRM lead
-                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Exception $e3) {}
+                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
                     // Trigger WhatsApp notification for new inquiry
                     try {
@@ -1696,7 +1696,7 @@ public function constructionInquiry()
             $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ╬ô├⌐Γòú{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
             // Auto-wire to CRM lead
-            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) {}
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
             // Also save to service_interests if table exists
             try {
@@ -2293,7 +2293,7 @@ public function handleQuickInquiry()
                 $inquiryId = $this->db->lastInsertId();
 
                 // Auto-wire to CRM lead
-                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$fullMessage,'type'=>$formType]); } catch (\Exception $e3) {}
+                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$fullMessage,'type'=>$formType]); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
                 // Also save to contacts table
                 try {

@@ -7,6 +7,7 @@ namespace App\Models;
 class ResellProperty extends Model
 {
     public static $table = 'resell_properties';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'user_id',

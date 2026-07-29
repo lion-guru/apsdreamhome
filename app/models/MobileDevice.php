@@ -8,6 +8,7 @@ namespace App\Models;
 
 class MobileDevice extends Model {
     public static $table = 'mobile_devices';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'device_user',

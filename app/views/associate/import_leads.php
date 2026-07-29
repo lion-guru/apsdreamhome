@@ -44,7 +44,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     </div>
 
                     <div class="mb-4">
-                        <a href="data:text/csv,name,phone,email,source,budget,location,notes%0ARahul Sharma,9876543210,rahul@email.com,referral,50-70 Lakh,Noida,Interested in 3BHK%0APriya Patel,9876543211,priya@email.com,website,30-50 Lakh,Greater Noida," class="btn btn-outline-secondary btn-sm" download="sample_leads.csv">
+                        <a href="data:text/csv,name,phone,email,source,budget,location,notes%0AJohn Doe,9800000001,john@example.com,referral,50-70 Lakh,Noida,Interested in 3BHK%0AJane Smith,9800000002,jane@example.com,website,30-50 Lakh,Greater Noida," class="btn btn-outline-secondary btn-sm" download="sample_leads.csv">
                             <i class="fas fa-download me-1"></i> <?= __('assoc_il_download_sample', [], 'Download Sample CSV') ?>
                         </a>
                     </div>

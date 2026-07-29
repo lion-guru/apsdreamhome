@@ -11,6 +11,7 @@ use App\Models\User\User;
 class LeadNote extends Model
 {
     protected static $table = 'lead_notes';
+    protected static $tenantScoped = true;
 
     /**
      * The attributes that are mass assignable.

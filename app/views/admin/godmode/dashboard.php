@@ -785,7 +785,6 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                 .then(r => r.json())
                 .then(data => {
                     showToast('System health check completed', 'success');
-                    console.log(data);
                 })
                 .catch(err => showToast('Error checking health', 'error'));
         }

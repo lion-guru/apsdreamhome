@@ -160,7 +160,7 @@ class RoleBasedDashboardController extends AdminController
             $db = \App\Core\Database::getInstance()->getConnection();
 
             // Common stats for all roles
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
             $stats['total_users'] = $safeQuery("SELECT COUNT(*) as c FROM users");
             $stats['total_leads'] = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE 1=1{$tidSql}");
@@ -187,7 +187,7 @@ class RoleBasedDashboardController extends AdminController
                     $r = $db->prepare("SELECT rank FROM associates WHERE user_id=?");
                     $r->execute([$userId]);
                     $stats['rank'] = $r->fetch()['rank'] ?? 'associate';
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log("RoleBasedDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             } elseif (in_array($role, ['agent'])) {
                 $stats['my_leads'] = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE assigned_to=?{$tidSql}", [$userId]);
                 $stats['conversions'] = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE assigned_to=? AND status='converted'{$tidSql}", [$userId]);
@@ -241,7 +241,7 @@ class RoleBasedDashboardController extends AdminController
         $items = [];
         try {
             $db = \App\Core\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid > 1 ? " AND leads.tenant_id = $tid" : "";
             
             if (in_array($role, ['super_admin', 'admin', 'manager'])) {
@@ -393,9 +393,9 @@ class RoleBasedDashboardController extends AdminController
         try {
             $db = \App\Core\Database::getInstance()->getConnection();
             $stats = ['team_size' => 0, 'active_projects' => 0, 'monthly_sales' => 0, 'performance_score' => 0];
-            try { $stats['team_size'] = (int)$db->query("SELECT COUNT(*) as c FROM users WHERE role IN ('employee','associate') AND status='active'")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) {}
-            try { $stats['active_projects'] = (int)$db->query("SELECT COUNT(*) as c FROM properties WHERE status='active'")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) {}
-            try { $stats['monthly_sales'] = (int)$db->query("SELECT COUNT(*) as c FROM properties WHERE status='sold' AND MONTH(updated_at)=MONTH(CURRENT_DATE()) AND YEAR(updated_at)=YEAR(CURRENT_DATE())")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) {}
+            try { $stats['team_size'] = (int)$db->query("SELECT COUNT(*) as c FROM users WHERE role IN ('employee','associate') AND status='active'")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { error_log("RoleBasedDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            try { $stats['active_projects'] = (int)$db->query("SELECT COUNT(*) as c FROM properties WHERE status='active'")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { error_log("RoleBasedDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            try { $stats['monthly_sales'] = (int)$db->query("SELECT COUNT(*) as c FROM properties WHERE status='sold' AND MONTH(updated_at)=MONTH(CURRENT_DATE()) AND YEAR(updated_at)=YEAR(CURRENT_DATE())")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { error_log("RoleBasedDashboardController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             try {
                 $row = $db->query("SELECT (SELECT COUNT(*) FROM properties WHERE status='sold' AND MONTH(updated_at)=MONTH(CURRENT_DATE())) as ms, (SELECT AVG(CASE WHEN status='sold' THEN 1 ELSE 0 END)*100 FROM properties WHERE MONTH(updated_at)=MONTH(CURRENT_DATE())) as cr")->fetch(\PDO::FETCH_ASSOC);
                 $stats['performance_score'] = round(min(($row['ms']/10)*100, 100)*0.4 + min($row['cr']*0.3, 30) + 30, 1);
@@ -903,7 +903,7 @@ class RoleBasedDashboardController extends AdminController
     }
     private function getAssociateClients()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; $tid = $this->tenantId(); $tidSql = $tid > 1 ? " AND tenant_id = $tid" : ""; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; $tid = (int)$this->tenantId(); $tidSql = $tid > 1 ? " AND tenant_id = $tid" : ""; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", [$uid])['c']; } catch (\Exception $e) { return 0; }
     }
     private function getAssociateCommissions()
     {
@@ -911,7 +911,7 @@ class RoleBasedDashboardController extends AdminController
     }
     private function getAssociateLeads()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; $tid = $this->tenantId(); $tidSql = $tid > 1 ? " AND tenant_id = $tid" : ""; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; $tid = (int)$this->tenantId(); $tidSql = $tid > 1 ? " AND tenant_id = $tid" : ""; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", [$uid])['c']; } catch (\Exception $e) { return 0; }
     }
     private function getUserSavedProperties()
     {
@@ -967,7 +967,7 @@ class RoleBasedDashboardController extends AdminController
     private function getTeamPerformanceData()
     {
         try {
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid > 1 ? " AND l.tenant_id = $tid" : "";
             $rows = $this->db->fetchAll("SELECT u.name, COUNT(l.id) as leads, SUM(CASE WHEN l.status='converted' THEN 1 ELSE 0 END) as conversions FROM users u LEFT JOIN leads l ON l.assigned_to=u.id WHERE u.role IN ('associate','agent'){$tidSql} GROUP BY u.id ORDER BY leads DESC LIMIT 10");
             return ['members' => $rows];
@@ -1005,7 +1005,7 @@ class RoleBasedDashboardController extends AdminController
     {
         try {
             $uid = $_SESSION['user_id'] ?? 0;
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
             $total = (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", [$uid])['c'];
             $converted = (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=? AND status='converted'{$tidSql}", [$uid])['c'];
@@ -1023,7 +1023,7 @@ class RoleBasedDashboardController extends AdminController
     private function getLeadConversionData()
     {
         try {
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid > 1 ? " WHERE tenant_id = $tid" : "";
             $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM leads{$tidSql} GROUP BY status ORDER BY cnt DESC");
             return ['labels' => array_column($rows, 'status'), 'data' => array_column($rows, 'cnt')];

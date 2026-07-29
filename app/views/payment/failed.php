@@ -125,7 +125,7 @@
             <div class="contact-info">
                 <div class="contact-item">
                     <i class="fas fa-phone"></i>
-                    <div>+91-XXXXXXXXXX</div>
+                    <div>+91-7007444842</div>
                     <small>Call us</small>
                 </div>
                 <div class="contact-item">
@@ -146,7 +146,7 @@
             <button class="btn btn-retry" onclick="window.history.back()">
                 <i class="fas fa-redo"></i> Try Again
             </button>
-            <a href="tel:+91XXXXXXXXXX" class="btn btn-outline-danger">
+            <a href="tel:+917007444842" class="btn btn-outline-danger">
                 <i class="fas fa-phone"></i> Call Support
             </a>
             <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-primary">

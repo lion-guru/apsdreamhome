@@ -50,7 +50,7 @@ class PlotController extends BaseController
      */
     public function index()
     {
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         $tidSql = $tid > 1 ? " AND p.tenant_id = $tid" : "";
         $colonies = $this->db->fetchAll("
             SELECT c.*, d.name as district_name, s.name as state_name,

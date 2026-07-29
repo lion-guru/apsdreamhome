@@ -120,7 +120,7 @@ class CronController extends BaseController
         try {
             $this->db->query("UPDATE agent_state SET state_value = '{}' WHERE updated_at < DATE_SUB(NOW(), INTERVAL 7 DAY)");
             $results['state_cleanup'] = 'done';
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CronController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->jsonResponse([
             'success' => true,
@@ -140,7 +140,7 @@ class CronController extends BaseController
         $st = $this->db->query("SELECT id FROM property_maintenance WHERE status = 'open' AND created_at <= DATE_SUB(NOW(), INTERVAL 30 DAY)");
         $rows = $st->fetchAll(\PDO::FETCH_COLUMN);
         foreach ($rows as $id) {
-            try { $this->mkt()->completeMaintenance((int)$id, 0, 'Auto-completed by cron'); } catch (\Throwable $e) {}
+            try { $this->mkt()->completeMaintenance((int)$id, 0, 'Auto-completed by cron'); } catch (\Throwable $e) { error_log("CronController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
     }
 }

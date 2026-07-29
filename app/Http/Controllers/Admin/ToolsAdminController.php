@@ -49,7 +49,7 @@ class ToolsAdminController extends AdminController
             $countRow->execute($params);
             $totalJobs = (int)$countRow->fetchColumn();
             $totalPages = max(1, (int)ceil($totalJobs / $perPage));
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $stats = ['pending_review' => 0, 'approved_today' => 0, 'corrected_today' => 0, 'avg_confidence' => 0];
         try {
@@ -58,7 +58,7 @@ class ToolsAdminController extends AdminController
             $stats['corrected_today'] = (int)$db->query("SELECT COUNT(*) FROM document_extraction_jobs WHERE status = 'corrected' AND DATE(reviewed_at) = CURDATE()")->fetchColumn();
             $avgRow = $db->query("SELECT AVG(confidence_score) FROM document_extraction_jobs WHERE status IN ('completed','approved','corrected')");
             $stats['avg_confidence'] = round((float)$avgRow->fetchColumn());
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/ai/document-extraction', [
             'page_title' => 'Document AI Review Queue',
@@ -86,7 +86,7 @@ class ToolsAdminController extends AdminController
             $stats['signed'] = (int)$db->query("SELECT COUNT(*) FROM esign_transactions WHERE status = 'signed'")->fetchColumn();
             $stats['expired'] = (int)$db->query("SELECT COUNT(*) FROM esign_transactions WHERE status = 'expired'")->fetchColumn();
             $stats['today'] = (int)$db->query("SELECT COUNT(*) FROM esign_transactions WHERE DATE(created_at) = CURDATE()")->fetchColumn();
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $transactions = [];
         try {
@@ -99,13 +99,13 @@ class ToolsAdminController extends AdminController
             $stmt = $db->prepare("SELECT * FROM esign_transactions $where ORDER BY created_at DESC LIMIT $perPage OFFSET $offset");
             $stmt->execute($params);
             $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $config = [];
         try {
             $configRows = $db->query("SELECT config_key, config_value FROM esign_config WHERE is_active = 1")->fetchAll(PDO::FETCH_KEY_PAIR);
             $config = $configRows;
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/tools/esign', [
             'page_title' => 'eSign Management',
@@ -126,12 +126,12 @@ class ToolsAdminController extends AdminController
         $configs = [];
         try {
             $configs = $db->query("SELECT * FROM stamp_duty_config ORDER BY state_code, property_type")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $rates = [];
         try {
             $rates = $db->query("SELECT * FROM stamp_duty_rates ORDER BY state_code, effective_from DESC")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $circleRates = [];
         try {
@@ -144,17 +144,17 @@ class ToolsAdminController extends AdminController
             $stmt = $db->prepare("SELECT * FROM circle_rates $where ORDER BY state_code, district, area_type LIMIT $perPage OFFSET $offset");
             $stmt->execute($params);
             $circleRates = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $states = [];
         try {
             $states = $db->query("SELECT DISTINCT state_code FROM circle_rates ORDER BY state_code")->fetchAll(PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $totalCircleRates = 0;
         try {
             $totalCircleRates = (int)$db->query("SELECT COUNT(*) FROM circle_rates")->fetchColumn();
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/tools/stamp-duty', [
             'page_title' => 'Stamp Duty & Circle Rate Config',
@@ -213,12 +213,12 @@ class ToolsAdminController extends AdminController
         $landmarks = [];
         try {
             $landmarks = $db->query("SELECT l.*, (SELECT COUNT(*) FROM colony_landmark_distances WHERE landmark_id = l.id) as linked_colonies FROM landmarks l ORDER BY l.category, l.name")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $colonies = [];
         try {
             $colonies = $db->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $distances = [];
         try {
@@ -229,12 +229,12 @@ class ToolsAdminController extends AdminController
                 JOIN colonies c ON cld.colony_id = c.id 
                 ORDER BY c.name, cld.distance_km
             ")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $categories = [];
         try {
             $categories = $db->query("SELECT DISTINCT category FROM landmarks ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/tools/landmarks', [
             'page_title' => 'Landmarks & Distance Config',
@@ -314,7 +314,7 @@ class ToolsAdminController extends AdminController
         $templates = [];
         try {
             $templates = $db->query("SELECT * FROM whatsapp_templates ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs' => 0];
         try {
@@ -322,7 +322,7 @@ class ToolsAdminController extends AdminController
             $stats['active'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_templates WHERE is_active = 1")->fetchColumn();
             $stats['inactive'] = $stats['total'] - $stats['active'];
             $stats['message_logs'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_message_logs")->fetchColumn();
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/tools/whatsapp-templates', [
             'page_title' => 'WhatsApp Template Manager',

@@ -33,6 +33,19 @@ if (file_exists($envFile)) {
 echo "[" . date('Y-m-d H:i:s') . "] Notification Queue Processor started\n";
 
 $db = Database::getInstance();
+$pdo = $db->getConnection();
+
+// Tenant context
+$tenantId = 1;
+foreach ($argv as $arg) {
+    if (strpos($arg, '--tenant=') === 0) {
+        $tenantId = (int)substr($arg, 9);
+    }
+}
+\App\Core\Middleware\TenantContext::setById($tenantId, $pdo);
+$tenantSql = $tenantId > 1 ? " AND tenant_id = " . $tenantId : "";
+echo "Tenant: $tenantId\n";
+
 $pushService = new PushNotificationService();
 
 // Process queued push notifications
@@ -44,6 +57,7 @@ try {
          WHERE nq.status = 'queued'
            AND nq.type = 'push'
            AND (nq.scheduled_at IS NULL OR nq.scheduled_at <= NOW())
+           $tenantSql
          ORDER BY FIELD(nq.priority, 'urgent', 'high', 'normal', 'low'), nq.created_at ASC
          LIMIT 50"
     )->fetchAll();
@@ -122,6 +136,7 @@ try {
          WHERE status = 'queued'
            AND type = 'email'
            AND (scheduled_at IS NULL OR scheduled_at <= NOW())
+           $tenantSql
          LIMIT 50"
     )->fetchAll();
 
@@ -158,6 +173,7 @@ try {
          WHERE status = 'queued'
            AND type = 'sms'
            AND (scheduled_at IS NULL OR scheduled_at <= NOW())
+           $tenantSql
          LIMIT 50"
     )->fetchAll();
 
@@ -187,7 +203,8 @@ try {
 $stale = $db->query(
     "UPDATE notification_queue
      SET status = 'failed', error_message = 'Stuck in processing state', updated_at = NOW()
-     WHERE status = 'processing' AND updated_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE)"
+     WHERE status = 'processing' AND updated_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+     $tenantSql"
 );
 if ($stale->rowCount() > 0) {
     echo "\nCleaned up " . $stale->rowCount() . " stale processing items\n";

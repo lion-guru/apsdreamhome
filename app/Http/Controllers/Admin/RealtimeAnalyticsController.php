@@ -145,7 +145,7 @@ class RealtimeAnalyticsController extends AdminController
             ) ?: [];
             foreach ($leads as &$l) { $l['icon'] = 'fa-user-plus'; $l['color'] = '#3b82f6'; }
             $activities = array_merge($activities, $leads);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recent bookings
         try {
@@ -160,7 +160,7 @@ class RealtimeAnalyticsController extends AdminController
             ) ?: [];
             foreach ($bookings as &$b) { $b['icon'] = 'fa-file-signature'; $b['color'] = '#10b981'; }
             $activities = array_merge($activities, $bookings);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recent payments
         try {
@@ -173,7 +173,7 @@ class RealtimeAnalyticsController extends AdminController
             ) ?: [];
             foreach ($payments as &$p) { $p['icon'] = 'fa-rupee-sign'; $p['color'] = '#14b8a6'; }
             $activities = array_merge($activities, $payments);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Sort by created_at desc, take top 10
         usort($activities, function ($a, $b) {

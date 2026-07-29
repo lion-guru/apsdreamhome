@@ -410,7 +410,7 @@ if (!function_exists('cm_getProjectStatusClass')) {
     }
 
     function scheduleMeeting() {
-        showToast('Meeting scheduler coming soon', 'info');
+        window.location.href = '<?= BASE_URL ?>admin/visits';
     }
 
     function viewFullTeam() {

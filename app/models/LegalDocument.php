@@ -8,6 +8,7 @@ class LegalDocument extends UnifiedModel
 {
     public static $table = 'legal_documents';
     public static $primaryKey = 'id';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'title',

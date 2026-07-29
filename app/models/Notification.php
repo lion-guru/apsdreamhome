@@ -8,6 +8,7 @@ namespace App\Models;
 
 class Notification extends Model {
     public static $table = 'notifications';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'user_id',

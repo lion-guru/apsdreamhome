@@ -18,6 +18,12 @@ $GLOBALS['_html_doc_started'] = true;
     <meta name="user-id" content="<?= (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0) ?>">
     <?php endif; ?>
 
+    <!-- Preconnect for CDN performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->

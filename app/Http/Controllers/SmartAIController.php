@@ -760,7 +760,7 @@ EOT;
                 if (!empty($bookings)) {
                     $prompt .= "Active Plot Bookings: " . count($bookings) . "\n";
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             
             // Query live EMI schedules and overdue counts
             try {
@@ -769,7 +769,7 @@ EOT;
                 
                 $overdue = $this->db->fetch("SELECT count(*) as count, sum(amount) as balance FROM emi_payments WHERE user_id = ? AND status = 'overdue'", [$userContext['id']]);
                 $prompt .= "Overdue Installments: " . ($overdue['count'] ?? 0) . " (Balance: ₹" . number_format($overdue['balance'] ?? 0) . ")\n";
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
 
         return $prompt;

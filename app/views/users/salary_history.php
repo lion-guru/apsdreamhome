@@ -110,7 +110,7 @@ function salMonth($date) {
                                     <td class="text-end fw-bold">₹<?= number_format((float)($s['net_pay'] ?? 0)) ?></td>
                                     <td><?= salStatusBadge($s['status'] ?? 'Pending') ?></td>
                                     <td class="text-end">
-                                        <button class="emp-sal-slip-btn" onclick="alert('Payslip download coming soon')"><i class="fas fa-download me-1"></i>Payslip</button>
+                                        <button class="emp-sal-slip-btn" onclick="window.print()"><i class="fas fa-print me-1"></i>Print Payslip</button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

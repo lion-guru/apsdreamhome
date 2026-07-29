@@ -749,7 +749,7 @@ class EmployeeController extends BaseController
                     "SELECT title, priority, status, due_date, completed_at FROM tasks WHERE assigned_to = ? ORDER BY updated_at DESC LIMIT 8",
                     [$employeeId]
                 );
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
         $this->render('employees/performance', [
             'page_title' => 'Performance Overview',
@@ -1069,7 +1069,7 @@ class EmployeeController extends BaseController
                     }
                     unset($sub);
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
         $this->render('users/reporting_structure', [
             'page_title' => 'Reporting Structure',
@@ -1618,7 +1618,7 @@ class EmployeeController extends BaseController
             $sources = $this->db->fetchAll("SELECT id, name FROM lead_sources ORDER BY name") ?: [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('employee','admin','manager') AND deleted_at IS NULL ORDER BY name") ?: [];
             $assignees = $users;
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('employee/lead_form', [
             'page_title' => 'Add New Lead',

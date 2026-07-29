@@ -11,6 +11,7 @@ use App\Core\UnifiedModel;
 class Colony extends UnifiedModel
 {
     protected static $table = 'colonies';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'district_id',

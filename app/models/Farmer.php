@@ -12,6 +12,7 @@ use PDO;
 class Farmer extends Model
 {
     protected static $table = 'farmers';
+    protected static $tenantScoped = true;
 
     /**
      * Get PDO connection

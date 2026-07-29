@@ -653,7 +653,6 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
         document.querySelectorAll('.nav-link, .action-btn').forEach(link => {
             link.addEventListener('click', function(e) {
                 const pageName = this.textContent.trim();
-                console.log(`Navigating to: ${pageName}`);
 
                 // Add visual feedback
                 this.style.transform = 'scale(0.95)';

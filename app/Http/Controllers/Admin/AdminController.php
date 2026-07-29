@@ -417,7 +417,7 @@ class AdminController extends BaseController
                     return $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
                 }, 300),
                 'total_leads' => Cache::remember('admin_api_total_leads_' . ($this->tenantId()), function () {
-                    $tid = $this->tenantId();
+                    $tid = (int)$this->tenantId();
                     $tidSql = $tid > 1 ? " WHERE tenant_id = $tid" : "";
                     return $this->db->fetch("SELECT COUNT(*) as c FROM leads{$tidSql}")['c'] ?? 0;
                 }, 300),

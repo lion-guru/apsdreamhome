@@ -9,6 +9,7 @@ use App\Models\Lead\LeadCustomFieldValue;
 class LeadCustomField extends Model
 {
     protected static $table = 'lead_custom_fields';
+    protected static $tenantScoped = true;
 
     /**
      * The attributes that are mass assignable.

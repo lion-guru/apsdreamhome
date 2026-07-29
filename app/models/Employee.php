@@ -12,6 +12,7 @@ use Exception;
 class Employee extends Model
 {
     protected static $table = 'employees';
+    protected static $tenantScoped = true;
 
     /**
      * Get PDO connection for raw queries

@@ -36,7 +36,7 @@ class KycController extends AdminController
                 $stats[$row['status']] = (int)$row['cnt'];
                 $stats['total'] += (int)$row['cnt'];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("KycController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/kyc/index', [
             'page_title' => 'KYC Requests',

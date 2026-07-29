@@ -345,45 +345,45 @@ class CRMController extends BaseController
         ];
         $recent_activity = [];
 
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         $tidSql = $tid > 1 ? " AND leads.tenant_id = $tid" : "";
 
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL")->fetch();
             $stats['total_users'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE role='associate' AND deleted_at IS NULL")->fetch();
             $stats['active_associates'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM plot_bookings WHERE DATE(created_at)=CURDATE()")->fetch();
             $stats['bookings_today'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COALESCE(SUM(total_plot_value),0) as v FROM plot_bookings WHERE status NOT IN ('cancelled')")->fetch();
             $stats['total_revenue'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE deleted_at IS NULL{$tidSql}")->fetch();
             $stats['total_leads'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE lead_category='hot' AND deleted_at IS NULL{$tidSql}")->fetch();
             $stats['hot_leads'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM colonies WHERE deleted_at IS NULL")->fetch();
             $stats['total_colonies'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM plots WHERE deleted_at IS NULL")->fetch();
             $stats['total_plots'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM mlm_commission_ledger WHERE status='pending'")->fetch();
             $stats['pending_commissions'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recent activity from CRM interactions
         try {
@@ -396,7 +396,7 @@ class CRMController extends BaseController
             ");
             $stmt->execute();
             $recent_activity = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->json(['success' => true, 'stats' => $stats, 'recent_activity' => $recent_activity]);
     }
@@ -411,19 +411,19 @@ class CRMController extends BaseController
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate')")->fetch();
             $stats['total'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate') AND status='active'")->fetch();
             $stats['active'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate') AND status='inactive'")->fetch();
             $stats['inactive'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         try {
             $r = $pdo->query("SELECT role, COUNT(*) as c FROM users WHERE deleted_at IS NULL AND role IN ('employee','agent','associate') GROUP BY role")->fetchAll(\PDO::FETCH_ASSOC);
             foreach ($r as $row) { $stats['by_role'][$row['role']] = (int)$row['c']; }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $search = $_GET['search'] ?? '';
@@ -456,7 +456,7 @@ class CRMController extends BaseController
             ");
             $stmt->execute($params);
             $employees = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->json(['success' => true, 'stats' => $stats, 'employees' => $employees]);
     }
@@ -479,44 +479,44 @@ class CRMController extends BaseController
         try {
             $r = $pdo->query("SELECT COALESCE(SUM(paid_amount),0) as v FROM booking_payment_schedules WHERE DATE(payment_date)=CURDATE() AND paid_amount > 0")->fetch();
             $stats['todays_collection'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Monthly collection
         try {
             $r = $pdo->query("SELECT COALESCE(SUM(paid_amount),0) as v FROM booking_payment_schedules WHERE MONTH(payment_date)=MONTH(CURDATE()) AND YEAR(payment_date)=YEAR(CURDATE()) AND paid_amount > 0")->fetch();
             $stats['collected_this_month'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Pending EMI
         try {
             $r = $pdo->query("SELECT COUNT(*) as c, COALESCE(SUM(emi_amount - paid_amount),0) as v FROM booking_payment_schedules WHERE status='pending' AND due_date < CURDATE()")->fetch();
             $stats['pending_emi'] = (float)($r['v'] ?? 0);
             $stats['overdue_emi_count'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Total outstanding
         try {
             $r = $pdo->query("SELECT COALESCE(SUM(emi_amount - paid_amount),0) as v FROM booking_payment_schedules WHERE status IN ('pending','overdue')")->fetch();
             $stats['total_outstanding'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Active EMI count
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status IN ('pending','overdue')")->fetch();
             $stats['active_emi_count'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Total bookings value
         try {
             $r = $pdo->query("SELECT COALESCE(SUM(total_plot_value),0) as v FROM plot_bookings WHERE status NOT IN ('cancelled')")->fetch();
             $stats['total_bookings_value'] = (float)($r['v'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Vendors count
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM vendors")->fetch();
             $stats['total_vendors'] = (int)($r['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recent collections
         try {
@@ -530,7 +530,7 @@ class CRMController extends BaseController
                 ORDER BY s.payment_date DESC LIMIT 15
             ");
             $collections = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Upcoming EMI schedule
         try {
@@ -545,7 +545,7 @@ class CRMController extends BaseController
                 ORDER BY s.due_date ASC LIMIT 20
             ");
             $emi_schedule = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CRMController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->json([
             'success' => true, 'stats' => $stats,

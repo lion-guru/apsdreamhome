@@ -3995,7 +3995,7 @@ class MobileApiController extends BaseController
             $inquiryId = (int) $pdo->lastInsertId();
 
             // Auto-wire to CRM lead
-            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>$type,'created_by'=>$userId]); } catch (\Exception $e3) {}
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>$type,'created_by'=>$userId]); } catch (\Exception $e3) { error_log("MobileApiController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
             echo json_encode([
                 'success' => true,
@@ -5753,7 +5753,7 @@ class MobileApiController extends BaseController
             try {
                 $stmt2 = $this->db->query("SELECT id, name, position, photo, bio, experience, expertise, linkedin, facebook_url, instagram_url, category, group_name, sort_order FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC LIMIT 10");
                 $team = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("MobileApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             echo json_encode(['success' => true, 'data' => ['content' => $content, 'team' => $team, 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
         } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => ['content' => [], 'team' => [], 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
@@ -6335,7 +6335,7 @@ class MobileApiController extends BaseController
             // users.status enum has no 'deleted' value; use 'inactive' + anonymize PII
             $this->db->prepare("UPDATE users SET status = 'inactive', name = CONCAT(name, '_deleted_', id), email = CONCAT('deleted_', id, '@deleted.com'), updated_at = NOW() WHERE id = ?")->execute([$userId]);
             // Revoke any active API tokens
-            try { $this->db->prepare("DELETE FROM api_tokens WHERE user_id = ?")->execute([$userId]); } catch (\Throwable $t) {}
+            try { $this->db->prepare("DELETE FROM api_tokens WHERE user_id = ?")->execute([$userId]); } catch (\Throwable $t) { error_log("MobileApiController::" . __FUNCTION__ . " query failed: " . $t->getMessage()); }
             echo json_encode(['success'=>true,'message'=>'Account deleted']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6691,7 +6691,7 @@ class MobileApiController extends BaseController
             try {
                 $this->db->prepare("UPDATE conversations SET last_message_at = NOW(), last_message_preview = ? WHERE id = ?")
                     ->execute([mb_substr($message, 0, 500), $conversationId]);
-            } catch (\Throwable $t) {}
+            } catch (\Throwable $t) { error_log("MobileApiController::" . __FUNCTION__ . " query failed: " . $t->getMessage()); }
             $resp = [
                 'id'=>(int)$msgId, 'sender_id'=>$userId, 'receiver_id'=>$receiverId,
                 'message'=>$message, 'content'=>$message,

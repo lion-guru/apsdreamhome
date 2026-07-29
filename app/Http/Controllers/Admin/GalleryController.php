@@ -28,7 +28,7 @@ class GalleryController extends AdminController
         $categories = [];
         try {
             $categories = $this->db->fetchAll("SELECT DISTINCT category, COUNT(*) as cnt FROM gallery GROUP BY category ORDER BY category");
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("GalleryController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $data = [
             'page_title' => 'Gallery Management',

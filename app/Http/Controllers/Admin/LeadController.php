@@ -75,7 +75,7 @@ class LeadController extends AdminController
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $sources = $db->query("SELECT id, name FROM lead_sources ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statuses = $db->query("SELECT status_name FROM lead_statuses ORDER BY id")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid ? " AND tenant_id = $tid" : "") . " ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $sources = []; $statuses = []; $assignees = [];
@@ -185,15 +185,15 @@ class LeadController extends AdminController
             $stmt = $db->prepare("SELECT n.*, u.name as created_by_name FROM lead_notes n LEFT JOIN users u ON n.created_by = u.id WHERE n.lead_id = ?" . $nsql . " ORDER BY n.created_at DESC LIMIT 50");
             $stmt->execute([(int)$id, ...$nparams]);
             $notes = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("LeadController::show notes query failed: " . $e->getMessage()); }
 
         // Available agents for reassignment
         $agents = [];
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND deleted_at IS NULL" . ($tid ? " AND tenant_id = $tid" : "") . " ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("LeadController::show agents query failed: " . $e->getMessage()); }
 
         return $this->render('admin/leads/show', [
             'lead' => $lead,
@@ -219,7 +219,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND tenant_id = $tid" : "";
             
             // Source distribution
@@ -278,7 +278,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND tenant_id = $tid" : "";
             $statuses = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL$tidSql")->fetchColumn();
@@ -294,7 +294,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
             $pending = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL$tidSql ORDER BY l.next_activity_date ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $recent = $db->query("SELECT la.*, l.name as lead_name FROM lead_activities la LEFT JOIN leads l ON la.lead_id=l.id WHERE l.id IS NULL OR l.deleted_at IS NULL" . ($tid ? " AND l.tenant_id = $tid" : "") . " ORDER BY la.activity_date DESC LIMIT 30")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -309,7 +309,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
             $scored = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL$tidSql ORDER BY l.lead_score DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
@@ -323,7 +323,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
             $leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL$tidSql ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
@@ -343,7 +343,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND tenant_id = $tid" : "";
             $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL$tidSql")->fetchColumn();
             $converted = (int)$db->query("SELECT COUNT(*) FROM leads WHERE status='converted' AND deleted_at IS NULL$tidSql")->fetchColumn();
@@ -365,7 +365,7 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidSql = $tid ? " AND tenant_id = $tid" : "";
             $lead = $db->prepare("SELECT * FROM leads WHERE id = ?$tidSql");
             $lead->execute($tid ? [$id, $tid] : [$id]);
@@ -395,9 +395,9 @@ class LeadController extends AdminController
         $assignees = [];
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid ? " AND tenant_id = $tid" : "") . " ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log("LeadController::edit assignees query failed: " . $e->getMessage()); }
         return $this->render('admin/leads/edit', ['lead' => $lead, 'assignees' => $assignees]);
     }
 
@@ -579,7 +579,7 @@ class LeadController extends AdminController
 
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $stmt = $db->prepare("INSERT INTO lead_notes (lead_id, note, content, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
             $stmt->execute([(int)$id, $noteText, $noteText, $adminId, $tid]);
         } catch (\Exception $e) {
@@ -620,7 +620,7 @@ class LeadController extends AdminController
 
             try {
                 \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("LeadController::updateStatus cache invalidation failed: " . $e->getMessage()); }
 
             // Phase 4: SLA trigger on status change
             try {
@@ -713,7 +713,7 @@ class LeadController extends AdminController
             try {
                 $slaTrigger = new \App\Services\SLATriggerService();
                 $slaTrigger->onInteractionLogged((int)$id, $type);
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log("LeadController::addInteraction SLA trigger failed: " . $e->getMessage()); }
 
             echo json_encode(['success' => true, 'interaction_id' => $result['interaction_id'] ?? 0]);
         } else {
@@ -775,7 +775,7 @@ class LeadController extends AdminController
         echo json_encode($result);
     }
 
-    public function uploadDocument($id) { try { $this->setFlash('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/$id"); }
+    public function uploadDocument($id) { $this->setFlash('info', 'Document upload feature available'); return $this->redirect("/admin/leads/$id"); }
     public function deleteDocument($id, $docId) {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
@@ -793,7 +793,7 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance()->getConnection();
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
         $tidSqlUsers = $tid ? " AND u.tenant_id = $tid" : "";
 
@@ -890,7 +890,7 @@ class LeadController extends AdminController
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $adminId = $this->getCurrentUserId();
         $affected = 0;
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         $tidSql = $tid ? " AND tenant_id = $tid" : "";
 
         try {

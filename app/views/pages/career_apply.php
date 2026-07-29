@@ -147,7 +147,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                                     <i class="fas fa-phone text-primary me-3"></i>
                                     <div>
                                         <strong><?= __('career_apply_phone_lbl') ?>:</strong><br>
-                                        <a href="tel:+919876543210"><?= htmlspecialchars($phoneDisplay) ?></a>
+                                        <a href="tel:+917007444842"><?= htmlspecialchars($phoneDisplay) ?></a>
                                     </div>
                                 </div>
                             </div>

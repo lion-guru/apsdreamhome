@@ -10,6 +10,7 @@ namespace App\Models;
 
 class Referral extends Model {
     public static $table = 'referrals';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'referrer_id',

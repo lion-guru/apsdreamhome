@@ -114,7 +114,7 @@ class CheckoutController extends BaseController
                 list($tSql, $tParams) = $this->tenantWhere();
                 $db->prepare("UPDATE payment_orders SET status = 'failed', error_code = 'BAD_SIGNATURE', error_description = ? WHERE order_id = ? $tSql")
                    ->execute(array_merge(['Invalid payment signature', $orderId], $tParams));
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("CheckoutController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         $this->redirectLocal('/checkout/failed?reason=bad_signature&order=' . urlencode($orderId));
         return;
     }
@@ -279,7 +279,7 @@ try {
                 list($tSql, $tParams) = $this->tenantWhere();
                 $db->prepare("UPDATE payment_webhook_logs SET processing_error = ? WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x) $tSql")
                    ->execute(array_merge([$e->getMessage(), $event], $tParams));
-            } catch (\Throwable $e2) {}
+            } catch (\Throwable $e2) { error_log("CheckoutController::" . __FUNCTION__ . " query failed: " . $e2->getMessage()); }
         }
 
         http_response_code(200);

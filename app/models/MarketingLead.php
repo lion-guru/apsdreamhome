@@ -8,6 +8,7 @@ class MarketingLead extends UnifiedModel
 {
     public static $table = 'marketing_leads';
     public static $primaryKey = 'id';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'first_name',

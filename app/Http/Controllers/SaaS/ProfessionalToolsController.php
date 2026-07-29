@@ -93,16 +93,16 @@ class ProfessionalToolsController extends BaseController
         try {
             $row = $db->query("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE MONTH(expense_date) = MONTH(CURDATE()) AND YEAR(expense_date) = YEAR(CURDATE()) AND status != 'rejected'")->fetch(\PDO::FETCH_ASSOC);
             $totalExpenses = (float)($row['total'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ProfessionalToolsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $row = $db->query("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE status = 'pending'")->fetch(\PDO::FETCH_ASSOC);
             $upcomingPayments = (float)($row['total'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ProfessionalToolsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $recentExpenses = $db->query("SELECT * FROM expenses ORDER BY expense_date DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ProfessionalToolsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $data = [
             'page_title' => 'Expense Tracker',

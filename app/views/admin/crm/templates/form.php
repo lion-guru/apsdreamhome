@@ -108,12 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updatePreview() {
         let body = bodyField.value || '<em class="text-muted">Start typing to see preview...</em>';
-        body = body.replace(/\{\{name\}\}/g, '<strong>Rahul Sharma</strong>');
-        body = body.replace(/\{\{phone\}\}/g, '9876543210');
-        body = body.replace(/\{\{email\}\}/g, 'rahul@example.com');
-        body = body.replace(/\{\{city\}\}/g, 'Noida');
-        body = body.replace(/\{\{budget\}\}/g, '₹50,00,000');
-        body = body.replace(/\{\{source\}\}/g, 'Website');
+        body = body.replace(/\{\{name\}\}/g, '<strong>John Doe</strong>');
+        body = body.replace(/\{\{phone\}\}/g, '98XX-XXX-XXXX');
+        body = body.replace(/\{\{email\}\}/g, 'john@example.com');
+        body = body.replace(/\{\{city\}\}/g, 'Your City');
+        body = body.replace(/\{\{budget\}\}/g, '₹XX,XX,XXX');
+        body = body.replace(/\{\{source\}\}/g, 'Channel');
         preview.innerHTML = body;
     }
     if (bodyField) bodyField.addEventListener('input', updatePreview);

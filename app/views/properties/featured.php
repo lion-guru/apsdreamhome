@@ -230,8 +230,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
 
 <script>
     function contactOwner(propertyId) {
-        // Implement contact functionality
-        showToast('Contact feature coming soon', 'info');
+        window.location.href = '<?= BASE_URL ?>support?ref=property_' + propertyId;
     }
 </script>
 

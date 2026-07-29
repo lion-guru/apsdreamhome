@@ -169,8 +169,8 @@ ob_start();
                             <p><?php echo __('pp_s11_desc', [], 'If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us:'); ?></p>
                             <div class="contact-info bg-light p-3 rounded">
                                 <p><strong><?php echo __('email', [], 'Email:'); ?></strong> privacy@apsdreamhome.com</p>
-                                <p><strong><?php echo __('phone', [], 'Phone:'); ?></strong> +91-XXXXXXXXXX</p>
-                                <p><strong><?php echo __('address', [], 'Address:'); ?></strong> <?php echo __('business_address', [], '[Your Business Address]'); ?></p>
+                                <p><strong><?php echo __('phone', [], 'Phone:'); ?></strong> +91-7007444842</p>
+                                <p><strong><?php echo __('address', [], 'Address:'); ?></strong> <?php echo __('business_address', [], 'Gorakhpur, Uttar Pradesh, India'); ?></p>
                                 <p><strong><?php echo __('dpo', [], 'Data Protection Officer:'); ?></strong> dpo@apsdreamhome.com</p>
                             </div>
                         </section>

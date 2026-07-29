@@ -14,6 +14,7 @@ use DateTime;
 class LeadScoring extends Model
 {
     protected $table = 'lead_scores';
+    protected static $tenantScoped = true;
 
     /**
      * Calculate lead score

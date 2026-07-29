@@ -291,7 +291,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     if (typeof SmartFormAutocomplete !== 'undefined') {
         var smartForm = new SmartFormAutocomplete();
         smartForm.initUpiValidation('#upi_id', {
-            onValid: function(data) { console.log('UPI Provider:', data.provider); }
+            onValid: function(data) { /* UPI validated */ }
         });
     }
 

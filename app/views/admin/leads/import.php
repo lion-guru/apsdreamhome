@@ -49,9 +49,9 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <tr><th>Column</th><th>Required</th><th>Example</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><code>name</code></td><td><span class="badge bg-danger">Yes</span></td><td>Ravi Kumar</td></tr>
-                            <tr><td><code>email</code></td><td><span class="badge bg-secondary">No</span></td><td>ravi@email.com</td></tr>
-                            <tr><td><code>phone</code></td><td><span class="badge bg-warning text-dark">One required</span></td><td>9876543210</td></tr>
+                            <tr><td><code>name</code></td><td><span class="badge bg-danger">Yes</span></td><td>John Doe</td></tr>
+                            <tr><td><code>email</code></td><td><span class="badge bg-secondary">No</span></td><td>john@example.com</td></tr>
+                            <tr><td><code>phone</code></td><td><span class="badge bg-warning text-dark">One required</span></td><td>98XX-XXX-XXXX</td></tr>
                             <tr><td><code>source</code></td><td><span class="badge bg-secondary">No</span></td><td>website, google, referral</td></tr>
                             <tr><td><code>budget</code></td><td><span class="badge bg-secondary">No</span></td><td>5000000</td></tr>
                             <tr><td><code>budget_range</code></td><td><span class="badge bg-secondary">No</span></td><td>50L-75L</td></tr>
@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <h6 class="card-title"><i class="fas fa-download me-2 text-primary"></i>Sample Template</h6>
                     <p class="small text-muted">Download a sample CSV to get started:</p>
-                    <a href="data:text/csv;charset=utf-8,name,email,phone,source,budget,property_interest,location_preference,priority,notes%0ARavi Kumar,ravi@email.com,9876543210,website,5000000,Plot,Mathura,high,Interested in corner plot%0AGeeta Devi,geeta@email.com,9876543211,referral,7500000,Flat,Agra,medium,Looking for 2BHK" download="lead_import_template.csv" class="btn btn-outline-primary btn-sm w-100">
+                    <a href="data:text/csv;charset=utf-8,name,email,phone,source,budget,property_interest,location_preference,priority,notes%0AJohn Doe,john@example.com,9800000001,website,5000000,Plot,Gorakhpur,high,Interested in corner plot%0AJane Smith,jane@example.com,9800000002,referral,7500000,Flat,Lucknow,medium,Looking for 2BHK" download="lead_import_template.csv" class="btn btn-outline-primary btn-sm w-100">
                             <i class="fas fa-download me-1"></i>Download Template CSV
                         </a>
                 </div>

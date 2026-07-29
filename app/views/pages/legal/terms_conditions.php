@@ -93,8 +93,8 @@ ob_start();
                             <p><?php echo __('tc_s12_desc', [], 'If you have any questions about these Terms and Conditions, please contact us at:'); ?></p>
                             <div class="contact-info bg-light p-3 rounded">
                                 <p><strong><?php echo __('email', [], 'Email:'); ?></strong> legal@apsdreamhome.com</p>
-                                <p><strong><?php echo __('phone', [], 'Phone:'); ?></strong> +91-XXXXXXXXXX</p>
-                                <p><strong><?php echo __('address', [], 'Address:'); ?></strong> <?php echo __('business_address', [], '[Your Business Address]'); ?></p>
+                                <p><strong><?php echo __('phone', [], 'Phone:'); ?></strong> +91-7007444842</p>
+                                <p><strong><?php echo __('address', [], 'Address:'); ?></strong> <?php echo __('business_address', [], 'Gorakhpur, Uttar Pradesh, India'); ?></p>
                             </div>
                         </section>
                     </div>

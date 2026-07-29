@@ -11,6 +11,7 @@ class AuditLog extends Model
 {
     public static $table = 'audit_log';
     public static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'user_id', 'action', 'entity_type', 'entity_id', 'changes', 'ip_address', 'created_at'

@@ -985,7 +985,6 @@ try {
                 'Bedrooms: ' + (searchCriteria.bedrooms || 'Any'));
 
             // In a real application, this would filter the properties
-            console.log('Search criteria:', searchCriteria);
         }
 
         // Favorite Properties
@@ -1012,7 +1011,6 @@ try {
         document.querySelectorAll('.filter-option input').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 // In a real application, this would filter the properties
-                console.log('Filter changed:', this.id, this.checked);
             });
         });
 

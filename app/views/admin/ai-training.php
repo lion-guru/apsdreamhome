@@ -8,8 +8,6 @@
 // Auth handled by controller (AdminAIController@training calls requireAdmin())
 // Data passed from AdminAIController::training() — knowledgeBase, analytics, categories
 
-require_once __DIR__ . '/../../../app/Core/Database/Database.php';
-
 $db = \App\Core\Database\Database::getInstance();
 
 // Handle form submissions

@@ -237,10 +237,10 @@ $supportedRoles = [
                 <div class="divider"><span>or</span></div>
 
                 <div class="social-row">
-                    <button type="button" class="social-btn" onclick="alert('Google login coming soon')">
+                    <button type="button" class="social-btn" disabled title="Google login coming soon">
                         <i class="fab fa-google" style="color:#ea4335"></i> Google
                     </button>
-                    <button type="button" class="social-btn" onclick="alert('Phone login coming soon')">
+                    <button type="button" class="social-btn" disabled title="Phone login coming soon">
                         <i class="fas fa-phone" style="color:#0d9488"></i> Phone
                     </button>
                 </div>

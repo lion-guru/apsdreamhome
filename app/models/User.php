@@ -12,6 +12,7 @@ class User extends UnifiedModel
 {
     public static $table = 'users';
     public static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'id',

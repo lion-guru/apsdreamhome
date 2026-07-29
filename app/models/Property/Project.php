@@ -7,6 +7,7 @@ use PDO;
 class Project extends Model
 {
     protected static $table = 'projects';
+    protected static $tenantScoped = true;
     protected $fillable = [
         'name',
         'slug',

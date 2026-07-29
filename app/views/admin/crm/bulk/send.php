@@ -141,11 +141,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const bodyField = document.getElementById('bulkBody');
     bodyField.addEventListener('input', function() {
         let body = this.value || '<em class="text-muted">Type your message to see a preview</em>';
-        body = body.replace(/\{\{name\}\}/g, '<strong>Rahul Sharma</strong>');
-        body = body.replace(/\{\{phone\}\}/g, '9876543210');
-        body = body.replace(/\{\{email\}\}/g, 'rahul@example.com');
-        body = body.replace(/\{\{city\}\}/g, 'Noida');
-        body = body.replace(/\{\{budget\}\}/g, '₹50,00,000');
+        body = body.replace(/\{\{name\}\}/g, '<strong>John Doe</strong>');
+        body = body.replace(/\{\{phone\}\}/g, '98XX-XXX-XXXX');
+        body = body.replace(/\{\{email\}\}/g, 'john@example.com');
+        body = body.replace(/\{\{city\}\}/g, 'Your City');
+        body = body.replace(/\{\{budget\}\}/g, '₹XX,XX,XXX');
         document.getElementById('messagePreview').innerHTML = body;
     });
 });

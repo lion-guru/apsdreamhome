@@ -11,6 +11,7 @@ use App\Models\User\User;
 class LeadFile extends Model
 {
     protected static $table = 'lead_files';
+    protected static $tenantScoped = true;
 
     /**
      * The attributes that are mass assignable.

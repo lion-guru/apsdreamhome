@@ -286,7 +286,6 @@ $active_page = 'properties';
         const siteId = this.value;
         if (siteId) {
             // This could be enhanced to load site-specific information
-            console.log('Selected site ID:', siteId);
         }
     });
 
@@ -332,7 +331,6 @@ $active_page = 'properties';
         const pricePerSqft = (price / area).toFixed(2);
 
         // You could display this information to the user
-        console.log('Price per sq ft:', pricePerSqft);
     });
 
     // Featured property warning

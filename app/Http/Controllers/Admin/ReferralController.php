@@ -167,7 +167,7 @@ class ReferralController extends AdminController
                 $userTier = $service->getUserTier((int)$u['id']);
                 $tierCounts[$userTier['tier']] = ($tierCounts[$userTier['tier']] ?? 0) + 1;
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("ReferralController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/referrals/tiers', [
             'tiers' => $tiers,

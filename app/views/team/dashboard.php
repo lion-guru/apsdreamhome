@@ -850,7 +850,6 @@
 
             node.addEventListener('click', () => {
                 // Could navigate to member detail page
-                console.log('Clicked member:', member.id);
             });
 
             return node;
@@ -910,7 +909,6 @@
         // Auto-refresh data every 5 minutes
         setInterval(function() {
             // Could add real-time updates here
-            console.log('Team dashboard data refresh check...');
         }, 300000);
     </script>
 </body>
@@ -952,11 +950,6 @@ function exportReport() {
     // In real implementation, this would generate and download report
 }
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\user\dashboard.php
-
-class
-require_once __DIR__ . '/../../../core/Helpers.php';
-
 // Ensure $data is defined to prevent errors
 if (!isset($data)) {
     $data = [
@@ -970,20 +963,3 @@ if (!isset($data)) {
         'favorites' => []
     ];
 }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 950 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

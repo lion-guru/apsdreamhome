@@ -8,6 +8,7 @@ namespace App\Models;
 
 class TrafficStat extends Model {
     public static $table = 'traffic_stats';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'source',

@@ -9,6 +9,7 @@ use PDO;
 class SupportTicket extends Model
 {
     protected static $table = 'support_tickets';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'ticket_number',

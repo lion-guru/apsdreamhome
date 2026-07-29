@@ -171,7 +171,7 @@ class AgreementController extends AdminController
                     $bst->execute([$bookingId]);
                     $brow = $bst->fetch(\PDO::FETCH_ASSOC);
                     if ($brow) $plotId = intval($brow['plot_id']);
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log("AgreementController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             }
 
             $agreementNumber = $this->generateAgreementNumber($agreementType);
@@ -230,7 +230,7 @@ class AgreementController extends AdminController
                     $dstmt = $this->db->prepare("SELECT * FROM generated_documents WHERE entity_type = 'booking' AND entity_id = ? ORDER BY generated_at DESC");
                     $dstmt->execute([$agreement['booking_id']]);
                     $relatedDocs = $dstmt->fetchAll(\PDO::FETCH_ASSOC);
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log("AgreementController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             }
 
             return $this->render('admin/agreements/show', [
@@ -514,7 +514,7 @@ class AgreementController extends AdminController
                 $stats[$row['status']] = intval($row['cnt']);
                 $stats['total'] += intval($row['cnt']);
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("AgreementController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         return $stats;
     }
 }

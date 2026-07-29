@@ -141,9 +141,7 @@ function docTypeLabel($type) {
                                     <i class="fas fa-eye me-1"></i> View
                                 </a>
                             <?php endif; ?>
-                            <button class="btn btn-sm btn-outline-secondary flex-grow-1" onclick="alert('Download coming soon')">
-                                <i class="fas fa-download me-1"></i> Download
-                            </button>
+                            <a href="<?= htmlspecialchars($d['url'] ?? '#') ?>" download class="btn btn-sm btn-outline-secondary flex-grow-1"><i class="fas fa-download me-1"></i> Download</a>
                         </div>
                     </div>
                 </div>

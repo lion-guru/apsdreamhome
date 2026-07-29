@@ -10,6 +10,7 @@ namespace App\Models;
 
 class PropertyReview extends Model {
     public static $table = 'property_reviews';
+    protected static $tenantScoped = true;
     
     protected $fillable = [
         'customer_id',

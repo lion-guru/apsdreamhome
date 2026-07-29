@@ -37,6 +37,19 @@ try {
     exit(1);
 }
 
+// Tenant context
+$tenantId = 1;
+foreach ($argv as $arg) {
+    if (strpos($arg, '--tenant=') === 0) {
+        $tenantId = (int)substr($arg, 9);
+    }
+}
+\App\Core\Middleware\TenantContext::setById($tenantId, $pdo);
+$tenantSql = $tenantId > 1 ? " AND tenant_id = " . $tenantId : "";
+$tenantCol = $tenantId > 1 ? ", tenant_id" : "";
+$tenantVal = $tenantId > 1 ? ", " . $tenantId : "";
+echo "Tenant: $tenantId\n\n";
+
 // 1. Show status summary
 $summary = [
     'total_pending'  => 0,

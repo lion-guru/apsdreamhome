@@ -14,6 +14,7 @@ class FieldVisit extends Model
 {
     protected static $table = 'visits';
     protected static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'associate_id',

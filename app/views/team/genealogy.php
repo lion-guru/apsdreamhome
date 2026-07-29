@@ -156,7 +156,7 @@ include __DIR__ . '/../layouts/base.php';
             .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
             .attr("transform", d => `translate(${d.x},${d.y + 50})`)
             .on("click", (event, d) => {
-                console.log("Node clicked:", d.data);
+                // Node clicked — could navigate to detail
             });
 
         // Node Circle

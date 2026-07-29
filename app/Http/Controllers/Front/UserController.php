@@ -1309,7 +1309,7 @@ class UserController extends BaseController
             $this->db->commit();
         } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
-                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+                try { $this->db->rollBack(); } catch (\Throwable $e2) { error_log("UserController::" . __FUNCTION__ . " rollback failed: " . $e2->getMessage()); }
             }
             error_log("UserController::createBooking insert - " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Booking failed. Please try again.'], 500);
@@ -1576,7 +1576,7 @@ class UserController extends BaseController
             $this->db->commit();
         } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
-                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+                try { $this->db->rollBack(); } catch (\Throwable $e2) { error_log("UserController::" . __FUNCTION__ . " rollback failed: " . $e2->getMessage()); }
             }
             error_log("UserController::processTokenPayment db error booking #{$bookingId}: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Payment processing failed. Please contact support.'], 500);
@@ -1899,7 +1899,7 @@ class UserController extends BaseController
             $this->db->commit();
         } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
-                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+                try { $this->db->rollBack(); } catch (\Throwable $e2) { error_log("UserController::" . __FUNCTION__ . " rollback failed: " . $e2->getMessage()); }
             }
             error_log("UserController::processInstallmentPayment db error inst #{$instId}: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Payment processing failed. Please contact support.'], 500);
@@ -2158,7 +2158,7 @@ class UserController extends BaseController
             $this->db->commit();
         } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
-                try { $this->db->rollBack(); } catch (\Throwable $e2) {}
+                try { $this->db->rollBack(); } catch (\Throwable $e2) { error_log("UserController::" . __FUNCTION__ . " rollback failed: " . $e2->getMessage()); }
             }
             error_log("UserController::signAgreement db error #{$agreementId}: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Signing failed. Please try again.'], 500);
@@ -2684,7 +2684,7 @@ class UserController extends BaseController
         $colonies = [];
         try {
             $colonies = $pdo->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("UserController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $this->render('pages/user_site_visits', [
             'page_title' => 'My Site Visits - APS Dream Home',

@@ -601,6 +601,6 @@ $users = $users ?? [];
     
     function showNotification(message, type = 'info') {
         // This would use the global notification system
-        console.log(`${type.toUpperCase()}: ${message}`);
+        if (type === 'error') { alert(message); }
     }
 </script>

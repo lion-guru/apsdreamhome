@@ -15,6 +15,7 @@ use DateTime;
 class EmployeeAttendance extends Model
 {
     protected static $table = 'employee_attendance';
+    protected static $tenantScoped = true;
     protected $fillable = [
         'employee_id',
         'check_in_time',

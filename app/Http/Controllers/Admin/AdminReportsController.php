@@ -359,7 +359,9 @@ class AdminReportsController extends AdminController
                 $filename = "lead_report_{$startDate}_to_{$endDate}.csv";
                 break;
             default:
-                die('Invalid report type');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid report type']);
+                exit;
         }
 
         header('Content-Type: text/csv');

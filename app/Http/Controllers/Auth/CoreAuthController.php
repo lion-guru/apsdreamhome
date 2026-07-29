@@ -273,12 +273,12 @@ class CoreAuthController extends BaseController
                         $_SESSION['associate_id'] = (int)$ass['id'];
                         if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
                     }
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log("CoreAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
             } elseif ($role === 'employee' || $role === 'telecaller') {
                 try {
                     $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$user['id']]);
                     if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) { error_log("CoreAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
             }
 
             // Set admin session for ALL admin-level roles
@@ -293,9 +293,9 @@ class CoreAuthController extends BaseController
 
             // Audit log
             try {
-                require_once __DIR__ . '/../../../services/AuditService.php';
+                require_once __DIR__ . '/../../../Services/AuditService.php';
                 (new \App\Services\AuditService($db))->log('login', (int)$user['id'], $role, 'user', (int)$user['id'], 'User logged in');
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("CoreAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
 
             // ── Send login alert notifications ──
             try {

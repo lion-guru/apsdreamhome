@@ -113,7 +113,7 @@ ob_start();
                     <h2 class="display-5 fw-bold mb-3">Invest in Your Future at Budha City</h2>
                     <p class="lead mb-4 opacity-75">Secure your plot or row house in Kushinagar's most promising integrated township.</p>
                     <div class="d-flex flex-wrap justify-content-center gap-3">
-                        <a href="tel:+91XXXXXXXXXX" class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary">
+                        <a href="tel:+917007444842" class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary">
                             <i class="fas fa-phone-alt me-2"></i>Call for Booking
                         </a>
                         <a href="/contact" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold">

@@ -12,6 +12,7 @@ use App\Core\Database;
 
 class PropertyInquiry extends Model {
     protected static $table = 'property_inquiries';
+    protected static $tenantScoped = true;
 
     /**
      * Create new inquiry

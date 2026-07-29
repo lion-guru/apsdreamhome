@@ -182,7 +182,7 @@ async function restartBrowserIfHeavy() {
   if (pageCount >= CRASH_THRESHOLD) {
     console.log(`  [restart] Browser restarting after ${CRASH_THRESHOLD} pages (memory management)...`);
     await createBrowser();
-    await page.goto(`${BASE}/admin/login?test_login=1`, { waitUntil: 'load', timeout: 15000 });
+    await page.goto(`${BASE}/admin/login?test_login=1`, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForTimeout(1000);
   }
 }
@@ -190,7 +190,7 @@ async function restartBrowserIfHeavy() {
 async function safeGoto(path, name, label, results) {
   await restartBrowserIfHeavy();
   try {
-    const response = await page.goto(`${BASE}${path}`, { waitUntil: 'load', timeout: 15000 });
+    const response = await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
     const status = response.status();
     const pass = status === 200 || status === 302;
     check(label, `${name} (${path})`, status, pass, results);
@@ -200,10 +200,10 @@ async function safeGoto(path, name, label, results) {
     if (isCrash) {
       console.log(`  [!] Crash on ${path} - restarting browser...`);
       await createBrowser();
-      await page.goto(`${BASE}/admin/login?test_login=1`, { waitUntil: 'load', timeout: 15000 });
+      await page.goto(`${BASE}/admin/login?test_login=1`, { waitUntil: 'domcontentloaded', timeout: 15000 });
       await page.waitForTimeout(1000);
       try {
-        const response = await page.goto(`${BASE}${path}`, { waitUntil: 'load', timeout: 15000 });
+        const response = await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
         const status = response.status();
         check(label, `${name} (${path})`, status, status === 200 || status === 302, results);
       } catch (err2) {
@@ -231,7 +231,7 @@ async function run() {
 
   // STEP 1: Admin Login
   console.log('--- Step 1: Admin Login ---');
-  await page.goto(`${BASE}/admin/login?test_login=1`, { waitUntil: 'load', timeout: 15000 });
+  await page.goto(`${BASE}/admin/login?test_login=1`, { waitUntil: 'domcontentloaded', timeout: 15000 });
   await page.waitForTimeout(1000);
   const loggedIn = !page.url().includes('login');
   check('OK', 'Admin Login', page.url(), loggedIn, results);
@@ -267,7 +267,7 @@ async function run() {
     console.log('\n--- Step 6: Customer Login Flow ---');
     try {
       // Go directly to /auth/login to avoid redirect issues in Playwright
-      await page.goto(`${BASE}/auth/login`, { waitUntil: 'load', timeout: 30000 });
+      await page.goto(`${BASE}/auth/login`, { waitUntil: 'domcontentloaded', timeout: 30000 });
       // Page loads successfully (HTTP 200) - verified via API that login works
       // Playwright element detection has timing issues in headless mode
       check('OK', 'Customer Login Page Loaded', `${BASE}/auth/login`, true, results);

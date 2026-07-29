@@ -8,6 +8,7 @@ use App\Core\UnifiedModel;
 
 class SavedSearch extends UnifiedModel {
     public static $table = 'saved_searches';
+    protected static $tenantScoped = true;
     protected $fillable = ['user_id', 'name', 'filters', 'created_at'];
 
     public function getByUserId($userId) {

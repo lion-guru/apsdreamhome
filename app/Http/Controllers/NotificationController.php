@@ -23,12 +23,12 @@ class NotificationController extends AdminController
         try {
             $row = $this->db->query("SELECT COUNT(*) as cnt FROM email_queue WHERE DATE(sent_at) = CURDATE() AND status = 'sent'")->fetch(\PDO::FETCH_ASSOC);
             $stats['emails_sent_today'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $row = $this->db->query("SELECT COUNT(*) as cnt FROM sms_queue WHERE DATE(sent_at) = CURDATE() AND status = 'sent'")->fetch(\PDO::FETCH_ASSOC);
             $stats['sms_sent_today'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $row = $this->db->query("SELECT COUNT(*) as cnt FROM email_queue WHERE status = 'failed'")->fetch(\PDO::FETCH_ASSOC);
@@ -36,7 +36,7 @@ class NotificationController extends AdminController
             $row2 = $this->db->query("SELECT COUNT(*) as cnt FROM sms_queue WHERE status = 'failed'")->fetch(\PDO::FETCH_ASSOC);
             $failedSms = (int)($row2['cnt'] ?? 0);
             $stats['failed_messages'] = $failedEmails + $failedSms;
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         try {
             $row = $this->db->query("SELECT COUNT(*) as cnt FROM email_templates WHERE is_active = 1")->fetch(\PDO::FETCH_ASSOC);
@@ -44,17 +44,17 @@ class NotificationController extends AdminController
             $row2 = $this->db->query("SELECT COUNT(*) as cnt FROM sms_templates WHERE is_active = 1")->fetch(\PDO::FETCH_ASSOC);
             $smsTpls = (int)($row2['cnt'] ?? 0);
             $stats['total_templates'] = $emailTpls + $smsTpls;
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $emailLogs = [];
         try {
             $emailLogs = $this->db->query("SELECT to_email as recipient, subject, status, sent_at, created_at FROM email_queue ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $smsLogs = [];
         try {
             $smsLogs = $this->db->query("SELECT recipient, message, status, sent_at, created_at FROM sms_queue ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return ['stats' => $stats, 'email_logs' => $emailLogs, 'sms_logs' => $smsLogs];
     }
@@ -144,7 +144,7 @@ class NotificationController extends AdminController
                 $stmt2 = $this->db->prepare("SELECT COUNT(*) as cnt FROM notifications WHERE is_read = 0 AND (user_id = ? OR user_id IS NULL)");
                 $stmt2->execute([$userId]);
                 $unreadCount = (int)($stmt2->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("NotificationController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             echo json_encode(['success' => true, 'notifications' => $notifications, 'unread_count' => $unreadCount]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);

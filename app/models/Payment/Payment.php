@@ -15,6 +15,7 @@ class Payment extends Model
 {
     protected static $table = 'payments';
     protected static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     /**
      * Get dashboard statistics for accounting

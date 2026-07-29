@@ -455,7 +455,7 @@ class CustomerAuthController extends BaseController
             try {
                 $db = Database::getInstance();
                 $this->auditLog($db, 'logout', $_SESSION['user_id'], $_SESSION['role'] ?? 'customer');
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("CustomerAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
         }
 
         // Clear all session data
@@ -548,17 +548,17 @@ class CustomerAuthController extends BaseController
     {
         try {
             $db->execute("DELETE FROM login_attempts WHERE identifier = ?", [$identifier]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CustomerAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
     }
 
     // ─── Audit Logger ──────────────────────────────────────
     private function auditLog($db, string $action, int $userId, string $role, array $context = []): void
     {
         try {
-            require_once __DIR__ . '/../../../services/AuditService.php';
+            require_once __DIR__ . '/../../../Services/AuditService.php';
             $audit = new \App\Services\AuditService($db);
             $audit->log($action, $userId, $role, 'user', $userId, ucfirst($action), $context);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log("CustomerAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
     }
 
     // ─── Redirect Map ──────────────────────────────────────

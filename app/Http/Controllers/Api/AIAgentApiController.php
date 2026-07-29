@@ -548,7 +548,7 @@ class AIAgentApiController extends BaseController
                     $analytics['total_chats'] = intval($row['total']);
                     $analytics['avg_confidence'] = round(floatval($row['avg_conf']) * 100, 1);
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AIAgentApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             // Get engine distribution
             try {
@@ -560,7 +560,7 @@ class AIAgentApiController extends BaseController
                 foreach ($rows as $r) {
                     $analytics['engine_distribution'][$r['engine']] = intval($r['count']);
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AIAgentApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             // Get daily activity (last 7 days)
             try {
@@ -575,7 +575,7 @@ class AIAgentApiController extends BaseController
                         'count' => intval($r['count']),
                     ];
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AIAgentApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             // Get top intents
             try {
@@ -590,7 +590,7 @@ class AIAgentApiController extends BaseController
                         'count' => intval($r['count']),
                     ];
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("AIAgentApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             return $this->jsonResponse([
                 'success' => true,

@@ -50,7 +50,7 @@ class PropertyCommissionController extends BaseController
             try {
                 $rateRow = $pdo->query("SELECT config_value FROM wallet_configuration WHERE config_key = 'property_commission_rate'")->fetch(\PDO::FETCH_ASSOC);
                 if ($rateRow) $rate = (float)$rateRow['config_value'];
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log("PropertyCommissionController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
             $commissionAmount = $salePrice * ($rate / 100);
             $companyShare = $commissionAmount * 0.50;   // 50% to company

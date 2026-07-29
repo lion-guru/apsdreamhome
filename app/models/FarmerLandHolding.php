@@ -16,6 +16,7 @@ class FarmerLandHolding extends Model
 {
     protected static $table = 'farmer_land_holdings';
     protected static $primaryKey = 'id';
+    protected static $tenantScoped = true;
 
     /**
      * Get all land holdings with farmer details

@@ -138,7 +138,7 @@ foreach ($plots as $plot) {
                                 <a href="/contact" class="btn btn-primary py-3">
                                     <i class="fas fa-calendar-check me-2"></i><?= __('plots_avail_schedule_visit', [], 'Schedule a Site Visit') ?>
                                 </a>
-                                <a href="tel:+91XXXXXXXXXX" class="btn btn-outline-secondary py-2">
+                                <a href="tel:+917007444842" class="btn btn-outline-secondary py-2">
                                     <i class="fas fa-phone-alt me-2"></i><?= __('plots_avail_call', [], 'Call for Inquiry') ?>
                                 </a>
                             </div>

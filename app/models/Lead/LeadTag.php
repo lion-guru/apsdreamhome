@@ -7,6 +7,7 @@ use App\Core\Database\Model;
 class LeadTag extends Model
 {
     protected static $table = 'lead_tags';
+    protected static $tenantScoped = true;
 
     protected $fillable = [
         'name',
