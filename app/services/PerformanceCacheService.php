@@ -13,8 +13,33 @@ class PerformanceCacheService
         $this->ttl = $ttl;
     }
 
+    /**
+     * Tenant-aware cache key prefix.
+     */
+    private static function tenantPrefix(): string
+    {
+        if (!class_exists('\App\Core\Middleware\TenantContext')) {
+            return '';
+        }
+        try {
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            if ($tid > 1) {
+                return 't' . $tid . '_';
+            }
+        } catch (\Throwable $e) {
+            // fail open
+        }
+        return '';
+    }
+
+    private static function tenantKey(string $key): string
+    {
+        return self::tenantPrefix() . $key;
+    }
+
     public function remember(string $key, callable $callback, ?int $ttl = null): mixed
     {
+        $key = self::tenantKey($key);
         $ttl = $ttl ?? $this->ttl;
         $cached = $this->cache->get($key);
         if ($cached !== null) return $cached;
@@ -26,17 +51,17 @@ class PerformanceCacheService
 
     public function get(string $key): mixed
     {
-        return $this->cache->get($key);
+        return $this->cache->get(self::tenantKey($key));
     }
 
     public function set(string $key, mixed $value, int $ttl = 3600): bool
     {
-        return $this->cache->set($key, $value, $ttl);
+        return $this->cache->set(self::tenantKey($key), $value, $ttl);
     }
 
     public function forget(string $key): bool
     {
-        return $this->cache->delete($key);
+        return $this->cache->delete(self::tenantKey($key));
     }
 
     public function flush(): bool

@@ -89,11 +89,30 @@ class CacheService
     }
     
     /**
-     * Get cache key
+     * Get cache key with tenant prefix
      */
     private function getKey(string $key): string
     {
-        return $this->prefix . $key;
+        return $this->prefix . self::tenantPrefix() . $key;
+    }
+
+    /**
+     * Tenant-aware cache key prefix.
+     */
+    private static function tenantPrefix(): string
+    {
+        if (!class_exists('\App\Core\Middleware\TenantContext')) {
+            return '';
+        }
+        try {
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            if ($tid > 1) {
+                return 't' . $tid . '_';
+            }
+        } catch (\Throwable $e) {
+            // fail open
+        }
+        return '';
     }
     
     /**

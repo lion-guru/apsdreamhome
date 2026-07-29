@@ -239,6 +239,10 @@ class Cache
      */
     public static function rememberQuery($key, $query, $params = [], $ttl = null)
     {
+        // Tenant-prefix the key for multi-tenant isolation
+        if (class_exists('\App\Services\CacheService')) {
+            $key = \App\Services\CacheService::tenantKey($key);
+        }
         return self::remember($key, function () use ($query, $params) {
             try {
                 $db = \App\Core\Database\Database::getInstance();

@@ -31,6 +31,37 @@ class CacheService
     ];
 
     /**
+     * Tenant-aware cache key prefix.
+     * Returns 't{N}_' for tenants > 1, empty string for superadmin (tenant 1).
+     * Used to isolate cached data across tenants in shared Redis/file cache.
+     */
+    public static function tenantPrefix(): string
+    {
+        if (!class_exists('\App\Core\Middleware\TenantContext')) {
+            return '';
+        }
+        try {
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            if ($tid > 1) {
+                return 't' . $tid . '_';
+            }
+        } catch (\Throwable $e) {
+            // fail open — no prefix
+        }
+        return '';
+    }
+
+    /**
+     * Prepend tenant prefix to a cache key for multi-tenant isolation.
+     * Logical key 'admin_menu_role_abc' becomes 't2_admin_menu_role_abc' for tenant 2.
+     * For tenant 1 (APS Dream Home), key is returned unchanged.
+     */
+    public static function tenantKey(string $key): string
+    {
+        return self::tenantPrefix() . $key;
+    }
+
+    /**
      * Get-or-set: try Redis first, then file cache, then callback.
      *
      * @param string   $key      Cache key (without prefix)
@@ -39,6 +70,8 @@ class CacheService
      */
     public static function cache(string $key, int $ttl, callable $callback)
     {
+        $key = self::tenantKey($key);
+
         $redis = RedisCache::getInstance();
         if ($redis->isAvailable()) {
             $value = $redis->get($key);
@@ -71,6 +104,7 @@ class CacheService
      */
     public static function invalidate(string $key): bool
     {
+        $key = self::tenantKey($key);
         self::$localStats['invalidations']++;
         $ok1 = RedisCache::getInstance()->delete($key);
         $ok2 = Cache::delete($key);
@@ -82,11 +116,12 @@ class CacheService
      *
      *   CacheService::invalidatePattern('admin_menu_*')
      *
-     * For Redis uses SCAN + DEL. For the file layer, iterates cache
-     * files and decodes them to read the original key.
+     * Pattern is automatically prefixed with tenant scope so only the
+     * current tenant's keys are invalidated.
      */
     public static function invalidatePattern(string $pattern): int
     {
+        $pattern = self::tenantPrefix() . $pattern;
         self::$localStats['invalidations']++;
         $count = 0;
 
