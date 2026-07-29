@@ -3,9 +3,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\ApiKeyService;
+use \App\Traits\TenantAwareTrait;
 
 class ApiKeyController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct() { parent::__construct(); }
 
     public function index()

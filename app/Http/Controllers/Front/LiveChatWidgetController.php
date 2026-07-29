@@ -54,8 +54,8 @@ class LiveChatWidgetController extends BaseController
             );
 
             if ($result) {
-                $this->pdo()->prepare("UPDATE chat_sessions SET visitor_phone = ?, subject = ?, category = ?, priority = ? WHERE id = ?")
-                    ->execute([$phone, $subject, $_POST['category'] ?? null, $_POST['priority'] ?? 'normal', $result['id']]);
+                $this->pdo()->prepare("UPDATE chat_sessions SET visitor_phone = ?, subject = ?, category = ?, priority = ? WHERE id = ? AND tenant_id = ?")
+                    ->execute([$phone, $subject, $_POST['category'] ?? null, $_POST['priority'] ?? 'normal', $result['id'], $this->tenantId()]);
                 if ($firstMessage) {
                     $this->service->sendMessage($result['id'], 'visitor', $userId ?: null, $name, $firstMessage);
                 }

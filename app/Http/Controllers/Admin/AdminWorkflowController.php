@@ -9,6 +9,7 @@ use App\Services\ImportExportService;
 use App\Services\BackupRestoreService;
 use App\Services\EmailQueueService;
 use App\Services\APIDocumentationService;
+use \App\Traits\TenantAwareTrait;
 
 /**
  * Admin Workflow Controller
@@ -16,6 +17,8 @@ use App\Services\APIDocumentationService;
  */
 class AdminWorkflowController extends AdminController
 {
+    use TenantAwareTrait;
+
     private $workflowService;
     private $reportService;
     private $auditService;
@@ -604,9 +607,10 @@ class AdminWorkflowController extends AdminController
             exit;
         }
         try {
+            [$where, $params] = $this->tenantWhere();
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("DELETE FROM backups WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("DELETE FROM backups WHERE id = ? $where");
+            $stmt->execute(array_merge([$id], $params));
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -656,9 +660,10 @@ class AdminWorkflowController extends AdminController
             exit;
         }
         try {
+            [$where, $params] = $this->tenantWhere();
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("UPDATE email_queue SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND status IN ('pending', 'queued')");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("UPDATE email_queue SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND status IN ('pending', 'queued') $where");
+            $stmt->execute(array_merge([$id], $params));
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);

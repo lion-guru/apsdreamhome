@@ -111,45 +111,53 @@ class CheckoutController extends BaseController
         if (!$service->verifyPaymentSignature($orderId, $paymentId, $signature)) {
             try {
                 $db = Database::getInstance()->getConnection();
-                $db->prepare("UPDATE payment_orders SET status = 'failed', error_code = 'BAD_SIGNATURE', error_description = ? WHERE order_id = ?")
-                   ->execute(['Invalid payment signature', $orderId]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $db->prepare("UPDATE payment_orders SET status = 'failed', error_code = 'BAD_SIGNATURE', error_description = ? WHERE order_id = ? $tSql")
+                   ->execute(array_merge(['Invalid payment signature', $orderId], $tParams));
             } catch (\Throwable $e) {}
         $this->redirectLocal('/checkout/failed?reason=bad_signature&order=' . urlencode($orderId));
         return;
     }
 
-        try {
+try {
             $db = Database::getInstance()->getConnection();
+            list($tSql, $tParams) = $this->tenantWhere();
             $stmt = $db->prepare("UPDATE payment_orders
                 SET status = 'paid', payment_id = ?, signature = ?, paid_at = NOW()
-                WHERE order_id = ?");
-            $stmt->execute([$paymentId, $signature, $orderId]);
+                WHERE order_id = ? $tSql");
+            $stmt->execute(array_merge([$paymentId, $signature, $orderId], $tParams));
 
-            $order = $db->prepare("SELECT booking_id, user_id, amount, currency FROM payment_orders WHERE order_id = ?");
-            $order->execute([$orderId]);
+            $order = $db->prepare("SELECT booking_id, user_id, amount, currency FROM payment_orders WHERE order_id = ? $tSql");
+            $order->execute(array_merge([$orderId], $tParams));
             $row = $order->fetch(\PDO::FETCH_ASSOC);
             if ($row) {
-                $existsStmt = $db->prepare("SELECT id FROM payments WHERE gateway_transaction_id = ?");
-                $existsStmt->execute([$paymentId]);
+                $existsStmt = $db->prepare("SELECT id FROM payments WHERE gateway_transaction_id = ? $tSql");
+                $existsStmt->execute(array_merge([$paymentId], $tParams));
                 if (!$existsStmt->fetch()) {
-                    $db->prepare("INSERT INTO payments
-                        (payment_id, transaction_id, reference_id, customer_id, booking_id, amount, currency, gateway, gateway_transaction_id, status, payment_date, payment_time, created_at, updated_at, user_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, 'razorpay', ?, 'completed', CURDATE(), CURTIME(), NOW(), NOW(), ?)")
-                       ->execute([
-                           $paymentId,
-                           $paymentId,
-                           $row['booking_id'] ?? null,
-                           $row['user_id'] ?? null,
-                           $row['booking_id'] ?? null,
-                           $row['amount'] ?? 0,
-                           $row['currency'] ?? 'INR',
-                           $paymentId,
-                           $row['user_id'] ?? null,
-                       ]);
+                    $insCols = "payment_id, transaction_id, reference_id, customer_id, booking_id, amount, currency, gateway, gateway_transaction_id, status, payment_date, payment_time, created_at, updated_at, user_id";
+                    $insVals = "?, ?, ?, ?, ?, ?, ?, 'razorpay', ?, 'completed', CURDATE(), CURTIME(), NOW(), NOW(), ?";
+                    $insParams = [
+                        $paymentId,
+                        $paymentId,
+                        $row['booking_id'] ?? null,
+                        $row['user_id'] ?? null,
+                        $row['booking_id'] ?? null,
+                        $row['amount'] ?? 0,
+                        $row['currency'] ?? 'INR',
+                        $paymentId,
+                        $row['user_id'] ?? null,
+                    ];
+                    $insExtra = $this->tenantInsertData();
+                    if (!empty($insExtra)) {
+                        $insCols .= ", tenant_id";
+                        $insVals .= ", ?";
+                        $insParams[] = $insExtra['tenant_id'];
+                    }
+                    $db->prepare("INSERT INTO payments ($insCols) VALUES ($insVals)")->execute($insParams);
                 }
                 if (!empty($row['booking_id'])) {
-                    $db->prepare("UPDATE bookings SET payment_status = 'paid', status = IF(status = 'pending', 'confirmed', status) WHERE id = ?")
-                       ->execute([$row['booking_id']]);
+                    $db->prepare("UPDATE bookings SET payment_status = 'paid', status = IF(status = 'pending', 'confirmed', status) WHERE id = ? $tSql")
+                       ->execute(array_merge([$row['booking_id']], $tParams));
                 }
             }
         } catch (\Throwable $e) {
@@ -229,19 +237,25 @@ class CheckoutController extends BaseController
             $urlLogged = true;
         }
 
-        try {
+try {
             $db = Database::getInstance()->getConnection();
-            $db->prepare("INSERT INTO payment_webhook_logs
-                (gateway, event_type, event_id, payload, signature, signature_verified, processed, ip_address)
-                VALUES ('razorpay', ?, ?, ?, ?, ?, 0, ?)")
-               ->execute([
-                   $event,
-                   $payload['account_id'] ?? null,
-                   $rawBody,
-                   $signature,
-                   $valid ? 1 : 0,
-                   $_SERVER['REMOTE_ADDR'] ?? null,
-               ]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $insCols = "gateway, event_type, event_id, payload, signature, signature_verified, processed, ip_address";
+            $insVals = "?, ?, ?, ?, ?, ?, 0, ?";
+            $insParams = [
+                $event,
+                $payload['account_id'] ?? null,
+                $rawBody,
+                $signature,
+                $valid ? 1 : 0,
+                $_SERVER['REMOTE_ADDR'] ?? null,
+            ];
+            if (!empty($this->tenantInsertData())) {
+                $insCols .= ", tenant_id";
+                $insVals .= ", ?";
+                $insParams[] = $this->tenantInsertData()['tenant_id'];
+            }
+            $db->prepare("INSERT INTO payment_webhook_logs ($insCols) VALUES ($insVals)")->execute($insParams);
         } catch (\Throwable $e) {
             error_log('webhook log failed: ' . $e->getMessage());
         }
@@ -255,14 +269,16 @@ class CheckoutController extends BaseController
         try {
             $this->processWebhookEvent($event, $payload);
             $db = Database::getInstance()->getConnection();
-            $db->prepare("UPDATE payment_webhook_logs SET processed = 1 WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x)")
-               ->execute([$event]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $db->prepare("UPDATE payment_webhook_logs SET processed = 1 WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x) $tSql")
+               ->execute(array_merge([$event], $tParams));
         } catch (\Throwable $e) {
             error_log('webhook processing failed: ' . $e->getMessage());
             try {
                 $db = Database::getInstance()->getConnection();
-                $db->prepare("UPDATE payment_webhook_logs SET processing_error = ? WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x)")
-                   ->execute([$e->getMessage(), $event]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $db->prepare("UPDATE payment_webhook_logs SET processing_error = ? WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x) $tSql")
+                   ->execute(array_merge([$e->getMessage(), $event], $tParams));
             } catch (\Throwable $e2) {}
         }
 
@@ -303,6 +319,7 @@ class CheckoutController extends BaseController
     private function processWebhookEvent(string $event, array $payload): void
     {
         $db = Database::getInstance()->getConnection();
+        list($tSql, $tParams) = $this->tenantWhere();
         switch ($event) {
             case 'payment.captured':
                 $payment = $payload['payload']['payment']['entity'] ?? null;
@@ -310,28 +327,28 @@ class CheckoutController extends BaseController
                     $amount = ($payment['amount'] ?? 0) / 100;
                     $db->prepare("UPDATE payment_orders
                         SET status = 'paid', payment_id = ?, paid_at = NOW()
-                        WHERE order_id = ?")
-                       ->execute([$payment['id'], $payment['order_id']]);
+                        WHERE order_id = ? $tSql")
+                       ->execute(array_merge([$payment['id'], $payment['order_id']], $tParams));
                     $bookingId = $this->resolveBookingId($payment['order_id']);
                     $userId    = $this->resolveUserIdFromOrder($payment['order_id']);
                     if ($bookingId) {
-                        $db->prepare("UPDATE bookings SET payment_status = 'paid' WHERE id = ?")
-                           ->execute([$bookingId]);
+                        $db->prepare("UPDATE bookings SET payment_status = 'paid' WHERE id = ? $tSql")
+                           ->execute(array_merge([$bookingId], $tParams));
                     }
                 }
                 break;
             case 'payment.failed':
                 $payment = $payload['payload']['payment']['entity'] ?? null;
                 if ($payment && isset($payment['order_id'])) {
-                    $db->prepare("UPDATE payment_orders SET status = 'failed', error_code = ?, error_description = ? WHERE order_id = ?")
-                       ->execute([$payment['error_code'] ?? null, $payment['error_description'] ?? null, $payment['order_id']]);
+                    $db->prepare("UPDATE payment_orders SET status = 'failed', error_code = ?, error_description = ? WHERE order_id = ? $tSql")
+                       ->execute(array_merge([$payment['error_code'] ?? null, $payment['error_description'] ?? null, $payment['order_id']], $tParams));
                 }
                 break;
             case 'refund.processed':
                 $refund = $payload['payload']['refund']['entity'] ?? null;
                 if ($refund && isset($refund['payment_id'])) {
-                    $db->prepare("UPDATE payments SET status = 'refunded', refund_amount = ? WHERE gateway_transaction_id = ?")
-                       ->execute([($refund['amount'] ?? 0) / 100, $refund['payment_id']]);
+                    $db->prepare("UPDATE payments SET status = 'refunded', refund_amount = ? WHERE gateway_transaction_id = ? $tSql")
+                       ->execute(array_merge([($refund['amount'] ?? 0) / 100, $refund['payment_id']], $tParams));
                 }
                 break;
         }

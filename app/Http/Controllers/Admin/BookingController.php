@@ -119,10 +119,17 @@ class BookingController extends AdminController
         try {
             $data = $_POST;
             $stmt = $this->db->prepare(
-                "INSERT INTO bookings (customer_id, property_id, visit_date, status, notes, created_at)
-                 VALUES (?, ?, ?, 'pending', ?, NOW())"
+                "INSERT INTO plot_bookings (customer_id, plot_id, booking_amount, total_plot_value, booking_date, status, notes, created_at)
+                 VALUES (?, ?, ?, ?, ?, 'pending', ?, NOW())"
             );
-            $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['notes'] ?? '']);
+            $stmt->execute([
+                $data['customer_id'],
+                $data['plot_id'],
+                $data['booking_amount'] ?? $data['total_plot_value'] ?? 0,
+                $data['total_plot_value'] ?? 0,
+                $data['booking_date'] ?? date('Y-m-d'),
+                $data['notes'] ?? ''
+            ]);
             $_SESSION['success'] = 'Booking created successfully.';
             $this->redirect('/admin/bookings');
         } catch (\Exception $e) {
@@ -207,9 +214,17 @@ class BookingController extends AdminController
         try {
             $data = $_POST;
             $stmt = $this->db->prepare(
-                "UPDATE bookings SET customer_id = ?, property_id = ?, visit_date = ?, status = ?, notes = ? WHERE id = ?"
+                "UPDATE plot_bookings SET customer_id = ?, plot_id = ?, booking_amount = ?, total_plot_value = ?, status = ?, notes = ? WHERE id = ?"
             );
-            $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['status'] ?? 'pending', $data['notes'] ?? '', $id]);
+            $stmt->execute([
+                $data['customer_id'],
+                $data['plot_id'],
+                $data['booking_amount'] ?? 0,
+                $data['total_plot_value'] ?? 0,
+                $data['status'] ?? 'pending',
+                $data['notes'] ?? '',
+                $id
+            ]);
             $_SESSION['success'] = 'Booking updated successfully.';
             // Hot-path: booking status/amount changes affect the admin dashboard KPI bundle.
             \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
@@ -271,20 +286,18 @@ class BookingController extends AdminController
     public function myBookings()
     {
         try {
-            $user = $this->auth->user();
-            $sql = "SELECT b.*, p.title as property_title, p.location 
-                    FROM bookings b
-                    JOIN properties p ON b.property_id = p.id
+            $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0;
+            if (!$userId) {
+                return $this->jsonErrorLocal('Unauthorized', 401);
+            }
+            $sql = "SELECT b.*, pl.plot_number, pl.area_sqft, c.name as colony_name 
+                    FROM plot_bookings b
+                    JOIN plots pl ON b.plot_id = pl.id
+                    JOIN colonies c ON pl.colony_id = c.id
                     WHERE b.customer_id = ?
-                    ORDER BY b.visit_date DESC";
-            $stmt = $this->db->prepare(
-                "SELECT b.*, p.title as property_title, p.location 
-                    FROM bookings b
-                    JOIN properties p ON b.property_id = p.id
-                    WHERE b.customer_id = ?
-                    ORDER BY b.visit_date DESC"
-            );
-            $stmt->execute([$user->id]);
+                    ORDER BY b.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonSuccess($bookings);

@@ -183,8 +183,8 @@ class DigitalBookingController extends BaseController
             
             $stmt = $pdo->prepare("
                 INSERT INTO booking_video_consents 
-                (booking_id, customer_id, video_url, recorded_at, ip_address, terms_accepted, privacy_accepted)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (booking_id, customer_id, video_url, recorded_at, ip_address, terms_accepted, privacy_accepted, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE 
                     video_url = VALUES(video_url),
                     terms_accepted = VALUES(terms_accepted),
@@ -199,6 +199,7 @@ class DigitalBookingController extends BaseController
                 $consentData['ip_address'],
                 $consentData['terms_accepted'] ? 1 : 0,
                 $consentData['privacy_accepted'] ? 1 : 0,
+                $this->tenantId()
             ]);
             
             return $this->jsonResponse(['success' => true, 'message' => 'Video consent recorded']);

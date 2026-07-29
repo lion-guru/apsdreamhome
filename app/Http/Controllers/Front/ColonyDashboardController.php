@@ -150,8 +150,11 @@ class ColonyDashboardController extends BaseController
             $user = $user->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
-                $stmt = $this->db->prepare("INSERT INTO users (name, phone, role, tenant_id, created_at) VALUES (?, ?, 'customer', ?, NOW())");
-                $stmt->execute([$name, $phone, $this->tenantId()]);
+                $cols = "name, phone, role, tenant_id, created_at";
+                $vals = "?, ?, 'customer', ?, NOW()";
+                $params = [$name, $phone, $this->tenantId()];
+                $stmt = $this->db->prepare("INSERT INTO users ($cols) VALUES ($vals)");
+                $stmt->execute($params);
                 $customerId = $this->db->lastInsertId();
             } else {
                 $customerId = $user['id'];
@@ -173,8 +176,8 @@ class ColonyDashboardController extends BaseController
             ]);
 
             // Update plot status
-            $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ? AND tenant_id = ?")
-                ->execute([$customerId, date('Y-m-d', strtotime($timestamp)), $plot['id'], $this->tenantId()]);
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$customerId, date('Y-m-d', strtotime($timestamp)), $plot['id'], $this->tenantId()]);
 
             // Log for audit
             error_log("Firebase booking synced: Plot {$plotId}, Customer {$name}, Phone {$phone}, Booking {$bookingNumber}");

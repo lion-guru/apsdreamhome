@@ -154,7 +154,7 @@ class FarmerDashboardController extends BaseController
             if (empty($name)) {
                 $error = 'Name is required';
             } else {
-                $this->db->query("UPDATE farmers SET name = ?, email = ?, address = ? WHERE id = ?", [$name, $email, $address, $farmerId]);
+                $this->db->query("UPDATE farmers SET name = ?, email = ?, address = ? WHERE id = ? AND tenant_id = ?", [$name, $email, $address, $farmerId, $this->tenantId()]);
                 $_SESSION['farmer_name'] = $name;
                 $_SESSION['farmer_email'] = $email;
                 $success = true;
