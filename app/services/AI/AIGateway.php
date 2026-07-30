@@ -415,6 +415,8 @@ class AIGateway
     public function getStats(): array
     {
         try {
+            $tid = TenantContext::getId();
+            $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
             return $this->db->fetch("
                 SELECT COUNT(*) as total_calls,
                     SUM(CASE WHEN engine_used='rule' THEN 1 ELSE 0 END) as rule_calls,
@@ -423,8 +425,7 @@ class AIGateway
                     SUM(CASE WHEN engine_used='gemini' THEN 1 ELSE 0 END) as gemini_calls,
                     ROUND(AVG(confidence),2) as avg_confidence,
                     ROUND(AVG(response_time_ms),1) as avg_response_ms
-                FROM ai_api_logs WHERE DATE(created_at) = CURDATE()
-            ") ?: [];
+                FROM ai_api_logs WHERE DATE(created_at) = CURDATE()" . $tenantFilter, $tid > 1 ? [$tid] : []) ?: [];
         } catch (\Throwable $e) {
             return [];
         }
