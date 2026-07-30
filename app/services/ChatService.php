@@ -12,6 +12,8 @@ use App\Models\Model;
  */
 class ChatService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     private $websocketServer;
@@ -267,17 +269,15 @@ class ChatService
 
     private function createChatSession($userId, $propertyId, $department, $sessionType)
     {
-        $sql = "INSERT INTO chat_sessions (user_id, property_id, department, session_type, priority)
-                VALUES (?, ?, ?, ?, 
-                    CASE 
-                        WHEN ? = 'support' THEN 'high'
-                        WHEN ? = 'technical' THEN 'high'
-                        WHEN ? = 'sales' THEN 'medium'
-                        ELSE 'low'
-                    END
-                )";
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $cols = 'user_id, property_id, department, session_type, priority';
+        $vals = '?, ?, ?, ?, CASE WHEN ? = \'support\' THEN \'high\' WHEN ? = \'technical\' THEN \'high\' WHEN ? = \'sales\' THEN \'medium\' ELSE \'low\' END';
+        if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
+        $sql = "INSERT INTO chat_sessions ($cols) VALUES ($vals)";
+        $params = [$userId, $propertyId, $department, $sessionType, $department, $department, $department];
+        if ($tid) { $params[] = $tid; }
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$userId, $propertyId, $department, $sessionType, $department, $department, $department]);
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -342,8 +342,14 @@ class ChatService
 
     private function sendSystemMessage($sessionId, $message)
     {
-        $stmt = $this->db->prepare("INSERT INTO chat_messages (session_id, sender_type, message_type, message_content) VALUES (?, 'system', 'system_notification', ?)");
-        $stmt->execute([$sessionId, $message]);
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $cols = 'session_id, sender_type, message_type, message_content';
+        $vals = '?, \'system\', \'system_notification\', ?';
+        if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
+        $stmt = $this->db->prepare("INSERT INTO chat_messages ($cols) VALUES ($vals)");
+        $params = [$sessionId, $message];
+        if ($tid) { $params[] = $tid; }
+        $stmt->execute($params);
         $messageId = $this->db->lastInsertId();
 
         $this->broadcastMessage($sessionId, [
@@ -357,20 +363,19 @@ class ChatService
 
     private function createMessage($sessionId, $senderType, $senderId, $message, $messageType, $attachment)
     {
-        $sql = "INSERT INTO chat_messages (session_id, sender_type, sender_id, message_type, message_content, attachment_url, file_name, file_size, mime_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $cols = 'session_id, sender_type, sender_id, message_type, message_content, attachment_url, file_name, file_size, mime_type';
+        $vals = '?, ?, ?, ?, ?, ?, ?, ?, ?';
+        if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
+        $sql = "INSERT INTO chat_messages ($cols) VALUES ($vals)";
+        $params = [
+            $sessionId, $senderType, $senderId, $messageType, $message,
+            $attachment['url'] ?? null, $attachment['name'] ?? null,
+            $attachment['size'] ?? null, $attachment['mime_type'] ?? null
+        ];
+        if ($tid) { $params[] = $tid; }
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            $sessionId,
-            $senderType,
-            $senderId,
-            $messageType,
-            $message,
-            $attachment['url'] ?? null,
-            $attachment['name'] ?? null,
-            $attachment['size'] ?? null,
-            $attachment['mime_type'] ?? null
-        ]);
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -398,8 +403,12 @@ class ChatService
 
     private function updateSessionActivity($sessionId)
     {
-        $stmt = $this->db->prepare("UPDATE chat_sessions SET last_activity = NOW() WHERE id = ?");
-        $stmt->execute([$sessionId]);
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $sql = "UPDATE chat_sessions SET last_activity = NOW() WHERE id = ?";
+        $params = [$sessionId];
+        if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
     }
 
     private function broadcastMessage($sessionId, $messageData)

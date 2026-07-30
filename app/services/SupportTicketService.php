@@ -6,6 +6,8 @@ use PDO;
 
 class SupportTicketService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()
@@ -16,22 +18,29 @@ class SupportTicketService
     public function createTicket(int $userId, string $subject, string $message, string $category = 'general', string $priority = 'medium', ?int $bookingId = null): array
     {
         $ticketNumber = 'APS-TKT-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
 
-        $stmt = $this->db->prepare("
-            INSERT INTO support_tickets (ticket_number, user_id, subject, message, category, priority, booking_id, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'open', NOW())
-        ");
-        $stmt->execute([$ticketNumber, $userId, $subject, $message, $category, $priority, $bookingId]);
+        $cols = 'ticket_number, user_id, subject, message, category, priority, booking_id, status, created_at';
+        $vals = '?, ?, ?, ?, ?, ?, ?, \'open\', NOW()';
+        if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
+        $stmt = $this->db->prepare("INSERT INTO support_tickets ($cols) VALUES ($vals)");
+        $params = [$ticketNumber, $userId, $subject, $message, $category, $priority, $bookingId];
+        if ($tid) { $params[] = $tid; }
+        $stmt->execute($params);
         $ticketId = (int) $this->db->lastInsertId();
 
-        $stmt2 = $this->db->prepare("
-            INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin, created_at)
-            VALUES (?, ?, ?, 0, NOW())
-        ");
-        $stmt2->execute([$ticketId, $userId, $message]);
+        $cols2 = 'ticket_id, user_id, message, is_admin, created_at';
+        $vals2 = '?, ?, ?, 0, NOW()';
+        if ($tid) { $cols2 .= ', tenant_id'; $vals2 .= ', ?'; }
+        $stmt2 = $this->db->prepare("INSERT INTO support_ticket_replies ($cols2) VALUES ($vals2)");
+        $params2 = [$ticketId, $userId, $message];
+        if ($tid) { $params2[] = $tid; }
+        $stmt2->execute($params2);
 
-        $this->db->prepare("UPDATE support_tickets SET reply_count = 1, last_reply_by = ?, last_reply_at = NOW() WHERE id = ?")
-            ->execute([$userId, $ticketId]);
+        $sql = "UPDATE support_tickets SET reply_count = 1, last_reply_by = ?, last_reply_at = NOW() WHERE id = ?";
+        $params3 = [$userId, $ticketId];
+        if ($tid) { $sql .= " AND tenant_id = ?"; $params3[] = $tid; }
+        $this->db->prepare($sql)->execute($params3);
 
         return $this->getTicket($ticketId);
     }
@@ -123,21 +132,22 @@ class SupportTicketService
     public function addReply(int $ticketId, int $userId, string $message, bool $isStaff = false): array
     {
         $isStaffFlag = $isStaff ? 1 : 0;
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
 
-        $stmt = $this->db->prepare("
-            INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin, created_at)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        $stmt->execute([$ticketId, $userId, $message, $isStaffFlag]);
+        $cols = 'ticket_id, user_id, message, is_admin, created_at';
+        $vals = '?, ?, ?, ?, NOW()';
+        if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
+        $stmt = $this->db->prepare("INSERT INTO support_ticket_replies ($cols) VALUES ($vals)");
+        $params = [$ticketId, $userId, $message, $isStaffFlag];
+        if ($tid) { $params[] = $tid; }
+        $stmt->execute($params);
         $replyId = (int) $this->db->lastInsertId();
 
         $newStatus = $isStaff ? 'waiting_customer' : 'in_progress';
-        $this->db->prepare("
-            UPDATE support_tickets
-            SET reply_count = reply_count + 1, last_reply_by = ?, last_reply_at = NOW(),
-                status = IF(status IN ('resolved','closed'), status, ?)
-            WHERE id = ?
-        ")->execute([$userId, $newStatus, $ticketId]);
+        $sql = "UPDATE support_tickets SET reply_count = reply_count + 1, last_reply_by = ?, last_reply_at = NOW(), status = IF(status IN ('resolved','closed'), status, ?) WHERE id = ?";
+        $params2 = [$userId, $newStatus, $ticketId];
+        if ($tid) { $sql .= " AND tenant_id = ?"; $params2[] = $tid; }
+        $this->db->prepare($sql)->execute($params2);
 
         $stmt2 = $this->db->prepare("SELECT * FROM support_ticket_replies WHERE id = ?");
         $stmt2->execute([$replyId]);
@@ -146,24 +156,36 @@ class SupportTicketService
 
     public function updateStatus(int $ticketId, string $status): bool
     {
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
         $extra = '';
         if ($status === 'resolved') {
             $extra = ', resolved_at = NOW()';
         }
-        $stmt = $this->db->prepare("UPDATE support_tickets SET status = ?$extra WHERE id = ?");
-        return $stmt->execute([$status, $ticketId]);
+        $sql = "UPDATE support_tickets SET status = ?$extra WHERE id = ?";
+        $params = [$status, $ticketId];
+        if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 
     public function assignTicket(int $ticketId, int $staffId): bool
     {
-        $stmt = $this->db->prepare("UPDATE support_tickets SET assigned_to = ? WHERE id = ?");
-        return $stmt->execute([$staffId, $ticketId]);
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $sql = "UPDATE support_tickets SET assigned_to = ? WHERE id = ?";
+        $params = [$staffId, $ticketId];
+        if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 
     public function updatePriority(int $ticketId, string $priority): bool
     {
-        $stmt = $this->db->prepare("UPDATE support_tickets SET priority = ? WHERE id = ?");
-        return $stmt->execute([$priority, $ticketId]);
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $sql = "UPDATE support_tickets SET priority = ? WHERE id = ?";
+        $params = [$priority, $ticketId];
+        if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 
     public function getStats(): array

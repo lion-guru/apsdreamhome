@@ -8,6 +8,8 @@ namespace App\Services;
  */
 class CashCollectionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct($db = null)
@@ -34,11 +36,9 @@ class CashCollectionService
 
         try {
             $collectionNumber = 'CC-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $stmt = $this->db->prepare("INSERT INTO cash_collections
-                (collection_number, booking_id, installment_id, collector_id, customer_name, amount, collection_date,
-                 payment_method, reference_number, receipt_photo, notes, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted')");
-            $stmt->execute([
+            $ccCols = "collection_number, booking_id, installment_id, collector_id, customer_name, amount, collection_date, payment_method, reference_number, receipt_photo, notes, status";
+            $ccVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted'";
+            $ccParams = [
                 $collectionNumber,
                 !empty($data['booking_id']) ? (int)$data['booking_id'] : null,
                 !empty($data['installment_id']) ? (int)$data['installment_id'] : null,
@@ -50,16 +50,25 @@ class CashCollectionService
                 $data['reference_number'] ?? null,
                 $data['receipt_photo'] ?? null,
                 $data['notes'] ?? null
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $ccCols .= ", tenant_id";
+                $ccVals .= ", ?";
+                $ccParams[] = $this->tenantId();
+            }
+            $stmt = $this->db->prepare("INSERT INTO cash_collections ({$ccCols}) VALUES ({$ccVals})");
+            $stmt->execute($ccParams);
             $id = (int)$this->db->lastInsertId();
 
             // If linked to a booking, record payment
             if (!empty($data['booking_id']) && !empty($data['installment_id'])) {
                 try {
-                    $this->db->prepare("UPDATE booking_payment_schedules
+                    $bpsSql = "UPDATE booking_payment_schedules
                         SET paid_amount = paid_amount + ?, payment_date = ?, payment_method = ?
-                        WHERE id = ? AND paid_amount < emi_amount")
-                        ->execute([$amount, $data['collection_date'], $data['payment_method'] ?? 'cash', $data['installment_id']]);
+                        WHERE id = ? AND paid_amount < emi_amount" . $this->tenantSql();
+                    $bpsParams = [$amount, $data['collection_date'], $data['payment_method'] ?? 'cash', $data['installment_id']];
+                    if ($this->tenantId() > 1) $bpsParams[] = $this->tenantId();
+                    $this->db->prepare($bpsSql)->execute($bpsParams);
                 } catch (\Throwable $e) {
                     error_log("[CashCollection] Failed to update installment: " . $e->getMessage());
                 }
@@ -125,10 +134,13 @@ class CashCollectionService
     public function verifyCollection(int $id, int $verifiedBy): bool
     {
         try {
-            $stmt = $this->db->prepare("UPDATE cash_collections
+            $vcSql = "UPDATE cash_collections
                 SET status = 'verified', verified_by = ?, verified_at = NOW()
-                WHERE id = ? AND status = 'submitted'");
-            $stmt->execute([$verifiedBy, $id]);
+                WHERE id = ? AND status = 'submitted'" . $this->tenantSql();
+            $vcParams = [$verifiedBy, $id];
+            if ($this->tenantId() > 1) $vcParams[] = $this->tenantId();
+            $stmt = $this->db->prepare($vcSql);
+            $stmt->execute($vcParams);
             return $stmt->rowCount() > 0;
         } catch (\Throwable $e) {
             return false;
@@ -141,10 +153,13 @@ class CashCollectionService
     public function rejectCollection(int $id, int $verifiedBy, string $reason): bool
     {
         try {
-            $stmt = $this->db->prepare("UPDATE cash_collections
+            $rcSql = "UPDATE cash_collections
                 SET status = 'rejected', verified_by = ?, verified_at = NOW(), rejection_reason = ?
-                WHERE id = ? AND status = 'submitted'");
-            $stmt->execute([$verifiedBy, $reason, $id]);
+                WHERE id = ? AND status = 'submitted'" . $this->tenantSql();
+            $rcParams = [$verifiedBy, $reason, $id];
+            if ($this->tenantId() > 1) $rcParams[] = $this->tenantId();
+            $stmt = $this->db->prepare($rcSql);
+            $stmt->execute($rcParams);
             return $stmt->rowCount() > 0;
         } catch (\Throwable $e) {
             return false;

@@ -12,6 +12,8 @@ use Exception;
  */
 class EMIAutomationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
     protected $notificationService;
     protected $rootPath;
@@ -81,12 +83,12 @@ class EMIAutomationService
     public function updateInstallmentStatus(): bool
     {
         try {
-            $this->db->exec(
-                "UPDATE booking_payment_schedules
-                 SET status = 'overdue', updated_at = NOW()
-                 WHERE status = 'pending'
-                   AND due_date < CURDATE()"
-            );
+            $sql = "UPDATE booking_payment_schedules
+                    SET status = 'overdue', updated_at = NOW()
+                    WHERE status = 'pending'
+                      AND due_date < CURDATE()"
+                  . $this->tenantSql();
+            $this->db->exec($sql);
             return true;
         } catch (\Exception $e) {
             error_log("updateInstallmentStatus: " . $e->getMessage());
@@ -163,17 +165,23 @@ class EMIAutomationService
 
                 $currentAccrued = (float)($row['accrued_penalty'] ?? 0);
                 if ($isInterestFree || $penalty > $currentAccrued) {
-                    $this->db->prepare(
+                    $uStmt = $this->db->prepare(
                         "UPDATE booking_payment_schedules
                          SET accrued_penalty = ?, status = 'overdue', updated_at = NOW()
-                         WHERE id = ?"
-                    )->execute([$penalty, $row['id']]);
+                         WHERE id = ?" . $this->tenantSql()
+                    );
+                    $uParams = [$penalty, $row['id']];
+                    if ($this->tenantId() > 1) $uParams[] = $this->tenantId();
+                    $uStmt->execute($uParams);
                 } else {
-                    $this->db->prepare(
+                    $uStmt = $this->db->prepare(
                         "UPDATE booking_payment_schedules
                          SET status = 'overdue', updated_at = NOW()
-                         WHERE id = ?"
-                    )->execute([$row['id']]);
+                         WHERE id = ?" . $this->tenantSql()
+                    );
+                    $uParams = [$row['id']];
+                    if ($this->tenantId() > 1) $uParams[] = $this->tenantId();
+                    $uStmt->execute($uParams);
                 }
             }
             return true;
@@ -239,11 +247,14 @@ class EMIAutomationService
                     $this->renderEmail('dunning_reminder', $row)
                 );
                 if ($sent) {
-                    $this->db->prepare(
+                    $upStmt = $this->db->prepare(
                         "UPDATE booking_payment_schedules
                          SET reminder_count = reminder_count + 1, last_reminder_at = NOW()
-                         WHERE id = ?"
-                    )->execute([$row['id']]);
+                         WHERE id = ?" . $this->tenantSql()
+                    );
+                    $upParams = [$row['id']];
+                    if ($this->tenantId() > 1) $upParams[] = $this->tenantId();
+                    $upStmt->execute($upParams);
                     $this->logDunning($row, 'reminder', 'email');
                 }
             }
@@ -317,20 +328,26 @@ class EMIAutomationService
                     $this->renderEmail($tier['template'], $emailData)
                 );
 
-                $this->db->prepare(
+                $esStmt = $this->db->prepare(
                     "UPDATE booking_payment_schedules
                      SET escalation_level = ?, reminder_count = reminder_count + 1, last_reminder_at = NOW()
-                     WHERE id = ?"
-                )->execute([$this->tierLevel($tier['tier']), $row['id']]);
+                     WHERE id = ?" . $this->tenantSql()
+                );
+                $esParams = [$this->tierLevel($tier['tier']), $row['id']];
+                if ($this->tenantId() > 1) $esParams[] = $this->tenantId();
+                $esStmt->execute($esParams);
 
                 $this->logDunning($row, $tier['tier'], 'email', $sent ? 'sent' : 'failed');
 
                 // At 90+ days, mark as defaulted in the booking (RERA compliance: 'cancelled' hides from regulatory tracking)
                 if ($tier['tier'] === 'overdue_90') {
-                    $this->db->prepare(
+                    $pbStmt = $this->db->prepare(
                         "UPDATE plot_bookings SET status = 'defaulted', updated_at = NOW()
-                         WHERE id = ? AND status = 'emi_active'"
-                    )->execute([$row['booking_id']]);
+                         WHERE id = ? AND status = 'emi_active'" . $this->tenantSql()
+                    );
+                    $pbParams = [$row['booking_id']];
+                    if ($this->tenantId() > 1) $pbParams[] = $this->tenantId();
+                    $pbStmt->execute($pbParams);
                 }
             }
             return true;
@@ -440,11 +457,9 @@ class EMIAutomationService
     private function logDunning(array $row, string $tier, string $channel, string $status = 'sent'): void
     {
         try {
-            $this->db->prepare(
-                "INSERT INTO dunning_log
-                 (booking_id, installment_id, customer_id, dunning_tier, channel, subject, status, days_overdue, penalty_amount, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
-            )->execute([
+            $dlCols = "booking_id, installment_id, customer_id, dunning_tier, channel, subject, status, days_overdue, penalty_amount, created_at";
+            $dlVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()";
+            $dlParams = [
                 $row['booking_id'],
                 $row['id'],
                 $row['customer_id'] ?? null,
@@ -454,7 +469,15 @@ class EMIAutomationService
                 $status,
                 $row['days_overdue'] ?? 0,
                 $row['accrued_penalty'] ?? 0,
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $dlCols .= ", tenant_id";
+                $dlVals .= ", ?";
+                $dlParams[] = $this->tenantId();
+            }
+            $this->db->prepare(
+                "INSERT INTO dunning_log ({$dlCols}) VALUES ({$dlVals})"
+            )->execute($dlParams);
         } catch (\Exception $e) {
             error_log("logDunning: " . $e->getMessage());
         }

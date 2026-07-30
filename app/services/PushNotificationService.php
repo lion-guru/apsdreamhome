@@ -7,6 +7,8 @@ namespace App\Services;
  */
 class PushNotificationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private \App\Services\Communication\PushNotificationService $fcm;
 
     public function __construct()
@@ -19,8 +21,14 @@ class PushNotificationService
     {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $st = $db->prepare("INSERT INTO push_subscriptions (user_id, endpoint, p256dh_key, auth_key, active, created_at) VALUES (?, ?, ?, ?, 1, NOW()) ON DUPLICATE KEY UPDATE active = 1, p256dh_key = VALUES(p256dh_key), auth_key = VALUES(auth_key)");
-            $st->execute([$userId, $endpoint, $p256dh, $auth]);
+            $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+            $cols = 'user_id, endpoint, p256dh_key, auth_key, active, created_at';
+            $vals = '?, ?, ?, ?, 1, NOW()';
+            if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
+            $st = $db->prepare("INSERT INTO push_subscriptions ($cols) VALUES ($vals) ON DUPLICATE KEY UPDATE active = 1, p256dh_key = VALUES(p256dh_key), auth_key = VALUES(auth_key)" . ($tid ? ', tenant_id = VALUES(tenant_id)' : ''));
+            $params = [$userId, $endpoint, $p256dh, $auth];
+            if ($tid) { $params[] = $tid; }
+            $st->execute($params);
             return ['success' => true];
         } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -32,8 +40,12 @@ class PushNotificationService
     {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $st = $db->prepare("UPDATE push_subscriptions SET active = 0 WHERE user_id = ? AND endpoint = ?");
-            $st->execute([$userId, $endpoint]);
+            $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+            $sql = "UPDATE push_subscriptions SET active = 0 WHERE user_id = ? AND endpoint = ?";
+            $params = [$userId, $endpoint];
+            if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $st = $db->prepare($sql);
+            $st->execute($params);
             return ['success' => true];
         } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];

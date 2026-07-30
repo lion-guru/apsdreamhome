@@ -16,6 +16,8 @@ use App\Services\Gateway\RazorpayService;
  */
 class PaymentGatewayService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $gateway;
     private $config;
@@ -222,9 +224,11 @@ class PaymentGatewayService
     {
         try {
             // Get transaction details
-            $sql = "SELECT * FROM payment_transactions WHERE transaction_id = ?";
+            $sql = "SELECT * FROM payment_transactions WHERE transaction_id = ?" . $this->tenantSql();
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([$transactionId]);
+            $params = [$transactionId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $transaction = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if (!$transaction) {
@@ -250,10 +254,12 @@ class PaymentGatewayService
                 refund_amount = ?,
                 refund_reason = ?,
                 refunded_at = NOW()
-                WHERE transaction_id = ?";
+                WHERE transaction_id = ?" . $this->tenantSql();
             
             $updateStmt = $this->database->prepare($updateSql);
-            $updateStmt->execute([$newStatus, $newRefundAmount, $reason, $transactionId]);
+            $updateParams = [$newStatus, $newRefundAmount, $reason, $transactionId];
+            if ($this->tenantId() > 1) $updateParams[] = $this->tenantId();
+            $updateStmt->execute($updateParams);
             
             return [
                 'success' => true,
@@ -322,10 +328,12 @@ class PaymentGatewayService
             COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_payments,
             AVG(CASE WHEN status = 'captured' THEN amount END) as avg_transaction_value
             FROM payment_transactions 
-            WHERE DATE(created_at) BETWEEN ? AND ?";
+            WHERE DATE(created_at) BETWEEN ? AND ?" . $this->tenantSql();
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$dateFrom, $dateTo]);
+        $params = [$dateFrom, $dateTo];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
@@ -336,12 +344,14 @@ class PaymentGatewayService
     public function getUserPaymentHistory(int $userId, string $userType, int $limit = 20): array
     {
         $sql = "SELECT * FROM payment_transactions 
-            WHERE user_id = ? AND user_type = ? 
+            WHERE user_id = ? AND user_type = ?" . $this->tenantSql() . "
             ORDER BY created_at DESC 
             LIMIT ?";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType, $limit]);
+        $params = [$userId, $userType, $limit];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -352,16 +362,10 @@ class PaymentGatewayService
     public function savePaymentMethod(int $userId, string $userType, array $methodData): array
     {
         try {
-            $sql = "INSERT INTO user_payment_methods 
-                (user_id, user_type, gateway, method_type, method_token, last_four, 
-                 card_brand, expiry_month, expiry_year, upi_id, bank_name, wallet_name, is_default)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE
-                last_four = VALUES(last_four),
-                is_active = 1";
-            
-            $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $columns = "user_id, user_type, gateway, method_type, method_token, last_four, 
+                 card_brand, expiry_month, expiry_year, upi_id, bank_name, wallet_name, is_default";
+            $placeholders = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $values = [
                 $userId,
                 $userType,
                 $this->gateway,
@@ -375,7 +379,21 @@ class PaymentGatewayService
                 $methodData['bank_name'] ?? null,
                 $methodData['wallet_name'] ?? null,
                 $methodData['is_default'] ?? 0
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $columns .= ", tenant_id";
+                $placeholders .= ", ?";
+                $values[] = $this->tenantId();
+            }
+            $sql = "INSERT INTO user_payment_methods 
+                ({$columns})
+                VALUES ({$placeholders})
+                ON DUPLICATE KEY UPDATE
+                last_four = VALUES(last_four),
+                is_active = 1";
+            
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute($values);
             
             return ['success' => true, 'method_id' => $this->database->lastInsertId()];
             
@@ -389,17 +407,10 @@ class PaymentGatewayService
      */
     private function recordPayment(array $data): void
     {
-        $sql = "INSERT INTO payment_transactions 
-            (transaction_id, gateway, order_id, user_id, user_type, entity_type, entity_id,
-             amount, currency, status, payment_method, gateway_response, metadata, ip_address, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-            status = VALUES(status),
-            gateway_response = VALUES(gateway_response),
-            updated_at = NOW()";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+        $columns = "transaction_id, gateway, order_id, user_id, user_type, entity_type, entity_id,
+             amount, currency, status, payment_method, gateway_response, metadata, ip_address, user_agent";
+        $placeholders = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+        $values = [
             $data['transaction_id'],
             $data['gateway'],
             $data['order_id'] ?? null,
@@ -415,7 +426,22 @@ class PaymentGatewayService
             json_encode($data['metadata'] ?? []),
             $_SERVER['REMOTE_ADDR'] ?? null,
             $_SERVER['HTTP_USER_AGENT'] ?? null
-        ]);
+        ];
+        if ($this->tenantId() > 1) {
+            $columns .= ", tenant_id";
+            $placeholders .= ", ?";
+            $values[] = $this->tenantId();
+        }
+        $sql = "INSERT INTO payment_transactions 
+            ({$columns})
+            VALUES ({$placeholders})
+            ON DUPLICATE KEY UPDATE
+            status = VALUES(status),
+            gateway_response = VALUES(gateway_response),
+            updated_at = NOW()";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($values);
     }
     
     /**
@@ -423,17 +449,25 @@ class PaymentGatewayService
      */
     private function logWebhook(string $gateway, array $payload, string $signature): void
     {
-        $sql = "INSERT INTO payment_webhook_logs 
-            (gateway, event_type, payload, signature)
-            VALUES (?, ?, ?, ?)";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+        $columns = "gateway, event_type, payload, signature";
+        $placeholders = "?, ?, ?, ?";
+        $values = [
             $gateway,
             $payload['event'] ?? 'unknown',
             json_encode($payload),
             $signature
-        ]);
+        ];
+        if ($this->tenantId() > 1) {
+            $columns .= ", tenant_id";
+            $placeholders .= ", ?";
+            $values[] = $this->tenantId();
+        }
+        $sql = "INSERT INTO payment_webhook_logs 
+            ({$columns})
+            VALUES ({$placeholders})";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($values);
     }
     
     /**

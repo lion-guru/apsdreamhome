@@ -8,6 +8,8 @@ use PDO;
  */
 class CommissionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
@@ -27,9 +29,17 @@ class CommissionService
     public function setAgentRate(int $agentId, string $tier, float $rate, string $effectiveFrom = null): array
     {
         $eff = $effectiveFrom ?: date('Y-m-d');
-        $st = $this->db->prepare("INSERT INTO agent_commission_rates (agent_id, tier, commission_rate, effective_from, created_at) VALUES (:a, :t, :r, :e, NOW())
+        $acrCols = "agent_id, tier, commission_rate, effective_from, created_at";
+        $acrVals = ":a, :t, :r, :e, NOW()";
+        $acrParams = [':a' => $agentId, ':t' => $tier, ':r' => $rate, ':e' => $eff];
+        if ($this->tenantId() > 1) {
+            $acrCols .= ", tenant_id";
+            $acrVals .= ", :stid";
+            $acrParams[':stid'] = $this->tenantId();
+        }
+        $st = $this->db->prepare("INSERT INTO agent_commission_rates ({$acrCols}) VALUES ({$acrVals})
                                   ON DUPLICATE KEY UPDATE commission_rate = VALUES(commission_rate), effective_from = VALUES(effective_from)");
-        $st->execute([':a' => $agentId, ':t' => $tier, ':r' => $rate, ':e' => $eff]);
+        $st->execute($acrParams);
         return ['ok' => true];
     }
 
@@ -50,15 +60,31 @@ class CommissionService
     public function recordAgentCommission(int $agentId, int $bookingId, float $saleAmount, string $tier = 'standard'): array
     {
         $amt = $this->calculateAgentCommission($agentId, $saleAmount, $tier);
-        $st = $this->db->prepare("INSERT INTO hybrid_commission_records (agent_id, booking_id, sale_amount, commission_rate, commission_amount, tier, status, created_at) VALUES (:a, :b, :s, NULL, :c, :t, 'pending', NOW())");
-        $st->execute([':a' => $agentId, ':b' => $bookingId, ':s' => $saleAmount, ':c' => $amt, ':t' => $tier]);
+        $hcrCols = "agent_id, booking_id, sale_amount, commission_rate, commission_amount, tier, status, created_at";
+        $hcrVals = ":a, :b, :s, NULL, :c, :t, 'pending', NOW()";
+        $hcrParams = [':a' => $agentId, ':b' => $bookingId, ':s' => $saleAmount, ':c' => $amt, ':t' => $tier];
+        if ($this->tenantId() > 1) {
+            $hcrCols .= ", tenant_id";
+            $hcrVals .= ", :stid";
+            $hcrParams[':stid'] = $this->tenantId();
+        }
+        $st = $this->db->prepare("INSERT INTO hybrid_commission_records ({$hcrCols}) VALUES ({$hcrVals})");
+        $st->execute($hcrParams);
         return ['ok' => true, 'amount' => $amt, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function createHybridPlan(int $agentId, float $fixedAmount, float $variableRate, float $threshold, string $validFrom, ?string $validTo = null): array
     {
-        $st = $this->db->prepare("INSERT INTO hybrid_commission_plans (agent_id, fixed_amount, variable_rate, sales_threshold, valid_from, valid_to, status, created_at) VALUES (:a, :f, :v, :t, :frm, :to, 'active', NOW())");
-        $st->execute([':a' => $agentId, ':f' => $fixedAmount, ':v' => $variableRate, ':t' => $threshold, ':frm' => $validFrom, ':to' => $validTo]);
+        $hcpCols = "agent_id, fixed_amount, variable_rate, sales_threshold, valid_from, valid_to, status, created_at";
+        $hcpVals = ":a, :f, :v, :t, :frm, :to, 'active', NOW()";
+        $hcpParams = [':a' => $agentId, ':f' => $fixedAmount, ':v' => $variableRate, ':t' => $threshold, ':frm' => $validFrom, ':to' => $validTo];
+        if ($this->tenantId() > 1) {
+            $hcpCols .= ", tenant_id";
+            $hcpVals .= ", :stid";
+            $hcpParams[':stid'] = $this->tenantId();
+        }
+        $st = $this->db->prepare("INSERT INTO hybrid_commission_plans ({$hcpCols}) VALUES ({$hcpVals})");
+        $st->execute($hcpParams);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -81,9 +107,17 @@ class CommissionService
 
     public function setFarmerStructure(string $tier, float $baseRate, float $bonusRate, float $minSales): array
     {
-        $st = $this->db->prepare("INSERT INTO farmer_commission_structures (tier, base_rate, bonus_rate, min_sales, active, created_at) VALUES (:t, :b, :bo, :m, 1, NOW())
+        $fcsCols = "tier, base_rate, bonus_rate, min_sales, active, created_at";
+        $fcsVals = ":t, :b, :bo, :m, 1, NOW()";
+        $fcsParams = [':t' => $tier, ':b' => $baseRate, ':bo' => $bonusRate, ':m' => $minSales];
+        if ($this->tenantId() > 1) {
+            $fcsCols .= ", tenant_id";
+            $fcsVals .= ", :stid";
+            $fcsParams[':stid'] = $this->tenantId();
+        }
+        $st = $this->db->prepare("INSERT INTO farmer_commission_structures ({$fcsCols}) VALUES ({$fcsVals})
                                   ON DUPLICATE KEY UPDATE base_rate = VALUES(base_rate), bonus_rate = VALUES(bonus_rate), min_sales = VALUES(min_sales)");
-        $st->execute([':t' => $tier, ':b' => $baseRate, ':bo' => $bonusRate, ':m' => $minSales]);
+        $st->execute($fcsParams);
         return ['ok' => true];
     }
 
@@ -120,8 +154,16 @@ class CommissionService
         $bonus = (float)$struct['bonus_rate'];
         $total = $base + $bonus;
 
-        $st2 = $this->db->prepare("INSERT INTO farmer_commissions (farmer_id, referral_id, sale_amount, tier, base_commission, bonus_amount, total_commission, status, created_at) VALUES (:f, :r, :s, :t, :b, :bo, :tot, 'pending', NOW())");
-        $st2->execute([':f' => $farmerId, ':r' => $referralId, ':s' => $saleAmount, ':t' => $tier, ':b' => $base, ':bo' => $bonus, ':tot' => $total]);
+        $fcCols = "farmer_id, referral_id, sale_amount, tier, base_commission, bonus_amount, total_commission, status, created_at";
+        $fcVals = ":f, :r, :s, :t, :b, :bo, :tot, 'pending', NOW()";
+        $fcParams = [':f' => $farmerId, ':r' => $referralId, ':s' => $saleAmount, ':t' => $tier, ':b' => $base, ':bo' => $bonus, ':tot' => $total];
+        if ($this->tenantId() > 1) {
+            $fcCols .= ", tenant_id";
+            $fcVals .= ", :stid";
+            $fcParams[':stid'] = $this->tenantId();
+        }
+        $st2 = $this->db->prepare("INSERT INTO farmer_commissions ({$fcCols}) VALUES ({$fcVals})");
+        $st2->execute($fcParams);
         return ['ok' => true, 'amount' => $total, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -178,8 +220,16 @@ class CommissionService
 
     public function addRule(string $type, string $name, array $conditions, float $amount, int $priority = 100): array
     {
-        $st = $this->db->prepare("INSERT INTO commission_calculation_rules (rule_type, rule_name, conditions, output_amount, priority, active, created_at) VALUES (:t, :n, :c, :a, :p, 1, NOW())");
-        $st->execute([':t' => $type, ':n' => $name, ':c' => json_encode($conditions, JSON_UNESCAPED_UNICODE), ':a' => $amount, ':p' => $priority]);
+        $ccrCols = "rule_type, rule_name, conditions, output_amount, priority, active, created_at";
+        $ccrVals = ":t, :n, :c, :a, :p, 1, NOW()";
+        $ccrParams = [':t' => $type, ':n' => $name, ':c' => json_encode($conditions, JSON_UNESCAPED_UNICODE), ':a' => $amount, ':p' => $priority];
+        if ($this->tenantId() > 1) {
+            $ccrCols .= ", tenant_id";
+            $ccrVals .= ", :stid";
+            $ccrParams[':stid'] = $this->tenantId();
+        }
+        $st = $this->db->prepare("INSERT INTO commission_calculation_rules ({$ccrCols}) VALUES ({$ccrVals})");
+        $st->execute($ccrParams);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -196,8 +246,12 @@ class CommissionService
 
     public function approveCommission(int $id, int $approverId): array
     {
-        $st = $this->db->prepare("UPDATE hybrid_commission_records SET status = 'approved', approved_by = :a, approved_at = NOW() WHERE id = :id");
-        $st->execute([':a' => $approverId, ':id' => $id]);
+        $hcruSql = "UPDATE hybrid_commission_records SET status = 'approved', approved_by = :a, approved_at = NOW() WHERE id = :id";
+        $hcruSql .= $this->tenantSql();
+        $hcruParams = [':a' => $approverId, ':id' => $id];
+        if ($this->tenantId() > 1) $hcruParams[':stid'] = $this->tenantId();
+        $st = $this->db->prepare($hcruSql);
+        $st->execute($hcruParams);
         return ['ok' => true];
     }
 }

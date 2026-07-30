@@ -11,6 +11,8 @@ use Exception;
  */
 class AutoPayoutService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
     protected $logger;
 
@@ -73,28 +75,34 @@ class AutoPayoutService
         $periodMonth = (int) date('n');
         $periodStart = date('Y-m-01');
         $periodEnd = date('Y-m-t');
-        $batchSql = "INSERT INTO mlm_payout_batches
-                        (batch_number, period_year, period_month, period_start, period_end,
-                         total_associates, total_gross_amount, total_net_amount, status, prepared_by, created_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'processing', ?, NOW())";
-        $this->db->query($batchSql, [
-            $batchNumber, $periodYear, $periodMonth, $periodStart, $periodEnd,
-            $totalAgents, $totalAmount, $totalAmount, $initiatedBy
-        ]);
+        $mpbCols = "batch_number, period_year, period_month, period_start, period_end, total_associates, total_gross_amount, total_net_amount, status, prepared_by, created_at";
+        $mpbVals = "?, ?, ?, ?, ?, ?, ?, ?, 'processing', ?, NOW()";
+        $mpbParams = [$batchNumber, $periodYear, $periodMonth, $periodStart, $periodEnd, $totalAgents, $totalAmount, $totalAmount, $initiatedBy];
+        if ($this->tenantId() > 1) {
+            $mpbCols .= ", tenant_id";
+            $mpbVals .= ", ?";
+            $mpbParams[] = $this->tenantId();
+        }
+        $batchSql = "INSERT INTO mlm_payout_batches ({$mpbCols}) VALUES ({$mpbVals})";
+        $this->db->query($batchSql, $mpbParams);
         $batchId = $this->db->lastInsertId();
 
         // Mark all pending commissions as paid
         $agentIds = array_column($pending, 'user_id');
         $placeholders = implode(',', array_fill(0, count($agentIds), '?'));
-        $updateSql = "UPDATE mlm_commission_ledger SET status = 'paid', updated_at = NOW()
-                      WHERE beneficiary_user_id IN ($placeholders) AND status = 'pending'";
-        $this->db->query($updateSql, $agentIds);
+        $updateMclSql = "UPDATE mlm_commission_ledger SET status = 'paid', updated_at = NOW()
+                         WHERE beneficiary_user_id IN ($placeholders) AND status = 'pending'"
+                       . $this->tenantSql();
+        $mclParams = $agentIds;
+        if ($this->tenantId() > 1) $mclParams[] = $this->tenantId();
+        $this->db->query($updateMclSql, $mclParams);
 
         // Update batch as completed
-        $this->db->query(
-            "UPDATE mlm_payout_batches SET status = 'completed', processed_by = ?, payment_date = CURDATE(), updated_at = NOW() WHERE id = ?",
-            [$initiatedBy, $batchId]
-        );
+        $mpbUpdateSql = "UPDATE mlm_payout_batches SET status = 'completed', processed_by = ?, payment_date = CURDATE(), updated_at = NOW() WHERE id = ?";
+        $mpbUpdateSql .= $this->tenantSql();
+        $mpbUpParams = [$initiatedBy, $batchId];
+        if ($this->tenantId() > 1) $mpbUpParams[] = $this->tenantId();
+        $this->db->query($mpbUpdateSql, $mpbUpParams);
 
         $this->logger->info("Auto payout processed: Batch #$batchId — $totalAgents users, ₹$totalAmount");
 

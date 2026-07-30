@@ -8,13 +8,15 @@ use PDO;
  */
 class NotificationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
 
     private function getTenantId(): int
     {
-        return (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
+        return $this->tenantId();
     }
 
     public function send(int $userId, string $channel, string $subject, string $message, array $data = []): array
@@ -78,8 +80,13 @@ class NotificationService
     {
         if ($id <= 0) return;
         try {
-            $this->db->prepare("UPDATE realtime_notifications SET delivered_at = NOW() WHERE id = :id")
-                ->execute([':id' => $id]);
+            $tid = $this->getTenantId();
+            $sql = "UPDATE realtime_notifications SET delivered_at = NOW() WHERE id = :id";
+            if ($tid > 1) { $sql .= " AND tenant_id = :tid"; }
+            $st = $this->db->prepare($sql);
+            $params = [':id' => $id];
+            if ($tid > 1) { $params[':tid'] = $tid; }
+            $st->execute($params);
         } catch (\Throwable $e) {
         // ignore
         error_log($e->getMessage());
@@ -296,10 +303,16 @@ class NotificationService
     public function saveSmsTemplate(string $code, string $body, string $templateName = ''): array
     {
         try {
+            $tid = $this->getTenantId();
             $name = $templateName !== '' ? $templateName : $code;
-            $st = $this->db->prepare("INSERT INTO sms_templates (template_code, template_name, body, is_active, created_at) VALUES (:c, :n, :b, 1, NOW())
-                                      ON DUPLICATE KEY UPDATE template_name = VALUES(template_name), body = VALUES(body), is_active = 1");
-            $st->execute([':c' => $code, ':n' => $name, ':b' => $body]);
+            $cols = 'template_code, template_name, body, is_active, created_at';
+            $vals = ':c, :n, :b, 1, NOW()';
+            $updateCols = 'template_name = VALUES(template_name), body = VALUES(body), is_active = 1';
+            if ($tid > 1) { $cols .= ', tenant_id'; $vals .= ', :tid'; $updateCols .= ', tenant_id = VALUES(tenant_id)'; }
+            $st = $this->db->prepare("INSERT INTO sms_templates ($cols) VALUES ($vals) ON DUPLICATE KEY UPDATE $updateCols");
+            $params = [':c' => $code, ':n' => $name, ':b' => $body];
+            if ($tid > 1) { $params[':tid'] = $tid; }
+            $st->execute($params);
             return ['ok' => true];
         } catch (\Throwable $e) {
             error_log('NotificationService::saveSmsTemplate error: ' . $e->getMessage());
@@ -413,7 +426,12 @@ class NotificationService
     public function markRead(int $id): bool
     {
         try {
-            $this->db->prepare('UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?')->execute([(int)$id]);
+            $tid = $this->getTenantId();
+            $sql = 'UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?';
+            if ($tid > 1) { $sql .= ' AND tenant_id = ?'; }
+            $params = [(int)$id];
+            if ($tid > 1) { $params[] = $tid; }
+            $this->db->prepare($sql)->execute($params);
             return true;
         } catch (\Throwable $e) {
             return false;
@@ -678,9 +696,13 @@ class NotificationService
     {
         if (empty($ids)) return 0;
         try {
+            $tid = $this->getTenantId();
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $st = $this->db->prepare("UPDATE realtime_notifications SET delivered_at = NOW() WHERE id IN ($placeholders) AND delivered_at IS NULL");
-            $st->execute($ids);
+            $sql = "UPDATE realtime_notifications SET delivered_at = NOW() WHERE id IN ($placeholders) AND delivered_at IS NULL";
+            $params = $ids;
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
             return $st->rowCount();
         } catch (\Throwable $e) {
             return 0;

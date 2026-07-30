@@ -9,6 +9,8 @@ use PDO;
 
 class TaskService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $auth;
 
@@ -157,11 +159,14 @@ class TaskService
                 return false;
             }
 
+            $cols = 'title, description, assigned_to, created_by, priority, status, due_date, related_type, related_id, notes, created_at';
+            $vals = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()';
+            $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+            if ($tid) { $cols .= ', tenant_id'; $vals .= ', ?'; }
             $stmt = $this->db->prepare(
-                "INSERT INTO tasks (title, description, assigned_to, created_by, priority, status, due_date, related_type, related_id, notes, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
+                "INSERT INTO tasks ($cols) VALUES ($vals)"
             );
-            $stmt->execute([
+            $params = [
                 $data['title'],
                 $data['description'] ?? '',
                 $data['assigned_to'] ?? null,
@@ -172,7 +177,9 @@ class TaskService
                 $data['related_type'] ?? null,
                 $data['related_id'] ?? null,
                 $data['notes'] ?? null
-            ]);
+            ];
+            if ($tid) { $params[] = $tid; }
+            $stmt->execute($params);
             return $this->db->lastInsertId();
         } catch (Exception $e) {
             error_log("TaskService::createTask Error: " . $e->getMessage());
@@ -212,6 +219,8 @@ class TaskService
             $fields[] = "updated_at = NOW()";
             $sql = "UPDATE tasks SET " . implode(', ', $fields) . " WHERE id = ?";
             $params[] = $id;
+            $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+            if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
@@ -242,8 +251,12 @@ class TaskService
                 return false; // Only creator or admin can delete
             }
 
-            $stmt = $this->db->prepare("DELETE FROM tasks WHERE id = ?");
-            $stmt->execute([$id]);
+            $sql = "DELETE FROM tasks WHERE id = ?";
+            $params = [$id];
+            $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+            if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
             error_log("TaskService::deleteTask Error: " . $e->getMessage());

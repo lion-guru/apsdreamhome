@@ -3,7 +3,6 @@
 namespace App\Services\Payment;
 
 use App\Core\Database\Database;
-use App\Core\Middleware\TenantContext;
 use App\Services\Gateway\RazorpayService;
 use PDO;
 use Exception;
@@ -21,18 +20,11 @@ use Exception;
  */
 class EMIAutoPaymentService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private ?PDO $db;
     private RazorpayService $razorpay;
     private bool $testMode;
-
-    private function getTenantId(): int
-    {
-        try {
-            return TenantContext::getId();
-        } catch (\Throwable $e) {
-            return 1;
-        }
-    }
 
     public function __construct(?PDO $pdo = null)
     {
@@ -239,8 +231,8 @@ class EMIAutoPaymentService
             if ($result['success']) {
                 // Update local DB status
                 $this->db->prepare(
-                    "UPDATE customer_mandates SET status = 'cancelled', updated_at = NOW() WHERE subscription_id = ?"
-                )->execute([$subscriptionId]);
+                    "UPDATE customer_mandates SET status = 'cancelled', updated_at = NOW() WHERE subscription_id = ?" . $this->tenantSql()
+                )->execute($this->tenantId() > 1 ? [$subscriptionId, $this->tenantId()] : [$subscriptionId]);
 
                 $this->logPaymentAttempt(null, 'mandate_cancelled', [
                     'subscription_id' => $subscriptionId,
@@ -273,9 +265,9 @@ class EMIAutoPaymentService
 
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM customer_mandates WHERE subscription_id = ? LIMIT 1"
+                "SELECT * FROM customer_mandates WHERE subscription_id = ?" . $this->tenantSql() . " LIMIT 1"
             );
-            $stmt->execute([$subscriptionId]);
+            $stmt->execute($this->tenantId() > 1 ? [$subscriptionId, $this->tenantId()] : [$subscriptionId]);
             $mandate = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$mandate) {
@@ -303,6 +295,8 @@ class EMIAutoPaymentService
     public function getUpcomingEmis(int $bookingId, int $limit = 3): array
     {
         try {
+            $tid = $this->tenantId();
+            $bpsTenant = $tid > 1 ? " AND bps.tenant_id = {$tid}" : "";
             $stmt = $this->db->prepare(
                 "SELECT bps.*, pb.booking_number,
                         u.name AS customer_name, u.email AS customer_email,
@@ -312,10 +306,14 @@ class EMIAutoPaymentService
                  JOIN users u ON u.id = pb.customer_id
                  JOIN plots p ON p.id = pb.plot_id
                  WHERE bps.booking_id = ? AND bps.status IN ('pending','upcoming')
+                 {$bpsTenant}
                  ORDER BY bps.due_date ASC
                  LIMIT ?"
             );
-            $stmt->execute([$bookingId, $limit]);
+            $params = [$bookingId];
+            if ($tid > 1) $params[] = $tid;
+            $params[] = $limit;
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             error_log("EMIAutoPaymentService::getUpcomingEmis: " . $e->getMessage());
@@ -336,6 +334,8 @@ class EMIAutoPaymentService
     public function getFailedPayments(int $limit = 100): array
     {
         try {
+            $tid = $this->tenantId();
+            $glTenant = $tid > 1 ? " AND gl.tenant_id = {$tid}" : "";
             $stmt = $this->db->prepare(
                 "SELECT gl.*, cm.booking_id, cm.customer_id,
                         pb.booking_number,
@@ -346,7 +346,8 @@ class EMIAutoPaymentService
                  LEFT JOIN users u ON u.id = cm.customer_id
                  WHERE gl.gateway = 'razorpay'
                    AND gl.status = 'failed'
-                   AND gl.endpoint LIKE '%subscription%' OR gl.endpoint LIKE '%auto_debit%'
+                   AND (gl.endpoint LIKE '%subscription%' OR gl.endpoint LIKE '%auto_debit%')
+                   {$glTenant}
                  ORDER BY gl.created_at DESC
                  LIMIT ?"
             );
@@ -383,7 +384,7 @@ class EMIAutoPaymentService
                     COUNT(*) AS total,
                     SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active,
                     SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS failed
-                 FROM customer_mandates"
+                 FROM customer_mandates WHERE 1=1" . $this->tenantSql()
             )->fetch(PDO::FETCH_ASSOC);
             if ($row) {
                 $stats['total_mandates']  = (int)$row['total'];
@@ -399,7 +400,7 @@ class EMIAutoPaymentService
             $row = $this->db->query(
                 "SELECT COUNT(*) AS cnt, COALESCE(SUM(amount), 0) AS total_due
                  FROM booking_payment_schedules
-                 WHERE status IN ('pending','upcoming') AND due_date >= CURDATE()"
+                 WHERE status IN ('pending','upcoming') AND due_date >= CURDATE()" . $this->tenantSql()
             )->fetch(PDO::FETCH_ASSOC);
             if ($row) {
                 $stats['upcoming_emis']    = (int)$row['cnt'];
@@ -410,7 +411,7 @@ class EMIAutoPaymentService
         try {
             $row = $this->db->query(
                 "SELECT COUNT(*) AS cnt FROM booking_payment_schedules
-                 WHERE status IN ('pending','upcoming') AND due_date = CURDATE()"
+                 WHERE status IN ('pending','upcoming') AND due_date = CURDATE()" . $this->tenantSql()
             )->fetch(PDO::FETCH_ASSOC);
             if ($row) {
                 $stats['today_due'] = (int)$row['cnt'];
@@ -420,7 +421,7 @@ class EMIAutoPaymentService
         try {
             $row = $this->db->query(
                 "SELECT COUNT(*) AS cnt FROM booking_payment_schedules
-                 WHERE status = 'paid' AND due_date = CURDATE()"
+                 WHERE status = 'paid' AND due_date = CURDATE()" . $this->tenantSql()
             )->fetch(PDO::FETCH_ASSOC);
             if ($row) {
                 $stats['today_collected'] = (int)$row['cnt'];
@@ -436,6 +437,8 @@ class EMIAutoPaymentService
     public function listMandates(): array
     {
         try {
+            $tid = $this->tenantId();
+            $whereTenant = $tid > 1 ? " WHERE cm.tenant_id = {$tid}" : "";
             $stmt = $this->db->query(
                 "SELECT cm.*, pb.booking_number, pb.customer_id,
                         u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
@@ -448,6 +451,7 @@ class EMIAutoPaymentService
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
                  LEFT JOIN colonies col ON col.id = p.colony_id
+                 {$whereTenant}
                  ORDER BY cm.created_at DESC"
             );
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -467,6 +471,8 @@ class EMIAutoPaymentService
     private function getDueInstallments(): array
     {
         try {
+            $tid = $this->tenantId();
+            $bpsTenant = $tid > 1 ? " AND bps.tenant_id = {$tid}" : "";
             $stmt = $this->db->query(
                 "SELECT bps.id, bps.booking_id, bps.installment_no, bps.amount, bps.due_date,
                         bps.status,
@@ -481,6 +487,7 @@ class EMIAutoPaymentService
                  LEFT JOIN customer_mandates cm ON cm.booking_id = bps.booking_id AND cm.status = 'active'
                  WHERE bps.status IN ('pending','upcoming')
                    AND bps.due_date <= CURDATE()
+                   {$bpsTenant}
                  ORDER BY bps.due_date ASC, bps.booking_id ASC"
             );
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -524,8 +531,8 @@ class EMIAutoPaymentService
         if ($captureResult['success']) {
             // Mark installment as paid
             $this->db->prepare(
-                "UPDATE booking_payment_schedules SET status = 'paid', paid_amount = amount, paid_at = NOW(), updated_at = NOW() WHERE id = ?"
-            )->execute([(int)$installment['id']]);
+                "UPDATE booking_payment_schedules SET status = 'paid', paid_amount = amount, paid_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql()
+            )->execute($this->tenantId() > 1 ? [(int)$installment['id'], $this->tenantId()] : [(int)$installment['id']]);
 
             $this->logPaymentAttempt((int)$installment['id'], 'processed', array_merge($base, [
                 'payment_id' => $captureResult['payment_id'],
@@ -567,9 +574,8 @@ class EMIAutoPaymentService
             }
 
             // Fetch user details
-            $tid = $this->getTenantId();
-            $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
-            $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
+            $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?" . $this->tenantSql());
+            $stmt->execute($this->tenantId() > 1 ? [$userId, $this->tenantId()] : [$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$user) {
                 return ['success' => false, 'customer_id' => null, 'error' => 'User not found'];
@@ -600,11 +606,17 @@ class EMIAutoPaymentService
     private function saveMandateRecord(int $bookingId, int $customerId, string $subscriptionId, string $mandateId, float $amount, string $razorpayCustomerId): void
     {
         try {
+            $columns = "booking_id, customer_id, subscription_id, mandate_id, razorpay_customer_id, amount, status, created_at, updated_at";
+            $placeholders = "?, ?, ?, ?, ?, ?, 'active', NOW(), NOW()";
+            $values = [$bookingId, $customerId, $subscriptionId, $mandateId, $razorpayCustomerId, $amount];
+            if ($this->tenantId() > 1) {
+                $columns .= ", tenant_id";
+                $placeholders .= ", ?";
+                $values[] = $this->tenantId();
+            }
             $this->db->prepare(
-                "INSERT INTO customer_mandates
-                    (booking_id, customer_id, subscription_id, mandate_id, razorpay_customer_id, amount, status, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, ?, ?, 'active', NOW(), NOW())"
-            )->execute([$bookingId, $customerId, $subscriptionId, $mandateId, $razorpayCustomerId, $amount]);
+                "INSERT INTO customer_mandates ({$columns}) VALUES ({$placeholders})"
+            )->execute($values);
         } catch (Exception $e) {
             error_log("EMIAutoPaymentService::saveMandateRecord: " . $e->getMessage());
         }
@@ -642,8 +654,8 @@ class EMIAutoPaymentService
 
             // Increment reminder count
             $this->db->prepare(
-                "UPDATE booking_payment_schedules SET reminder_count = reminder_count + 1, last_reminder_at = NOW() WHERE id = ?"
-            )->execute([$installmentId]);
+                "UPDATE booking_payment_schedules SET reminder_count = reminder_count + 1, last_reminder_at = NOW() WHERE id = ?" . $this->tenantSql()
+            )->execute($this->tenantId() > 1 ? [$installmentId, $this->tenantId()] : [$installmentId]);
         } catch (Exception $e) {
             error_log("EMIAutoPaymentService::sendEmiReminder: " . $e->getMessage());
         }
@@ -655,11 +667,9 @@ class EMIAutoPaymentService
     private function logPaymentAttempt(?int $installmentId, string $status, array $details = []): void
     {
         try {
-            $this->db->prepare(
-                "INSERT INTO gateway_logs
-                    (gateway, method, endpoint, request_payload, response_payload, response_code, status, amount_paise, transaction_id, duration_ms, retry_count, error_message, created_at)
-                 VALUES ('razorpay', 'EMI_AUTO', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
-            )->execute([
+            $columns = "gateway, method, endpoint, request_payload, response_payload, response_code, status, amount_paise, transaction_id, duration_ms, retry_count, error_message, created_at";
+            $placeholders = "'razorpay', 'EMI_AUTO', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()";
+            $values = [
                 '/emi-auto-pay/' . $status,
                 json_encode(array_merge(['installment_id' => $installmentId], $details)),
                 json_encode(['status' => $status]),
@@ -669,7 +679,15 @@ class EMIAutoPaymentService
                 $details['subscription_id'] ?? $details['payment_id'] ?? null,
                 0,
                 $details['error'] ?? null,
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $columns .= ", tenant_id";
+                $placeholders .= ", ?";
+                $values[] = $this->tenantId();
+            }
+            $this->db->prepare(
+                "INSERT INTO gateway_logs ({$columns}) VALUES ({$placeholders})"
+            )->execute($values);
         } catch (Exception $e) {
             error_log("EMIAutoPaymentService::logPaymentAttempt: " . $e->getMessage());
         }
