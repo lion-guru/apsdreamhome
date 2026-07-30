@@ -16,6 +16,7 @@
 namespace App\Services\AI;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class AIGateway
 {
@@ -44,7 +45,8 @@ class AIGateway
     private function loadConfig()
     {
         try {
-            $this->config = $this->db->fetch("SELECT * FROM ai_settings WHERE is_active = 1") ?: [];
+            $tid = TenantContext::getId();
+            $this->config = $this->db->fetch("SELECT * FROM ai_settings WHERE is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []) ?: [];
         } catch (\Throwable $e) {
             $this->config = [];
         }
@@ -396,8 +398,8 @@ class AIGateway
         $elapsed = round((microtime(true) - $startTime) * 1000, 2);
         try {
             $this->db->getConnection()->prepare(
-                "INSERT INTO ai_api_logs (task_type, engine_used, confidence, response_time_ms, input_summary, created_at) VALUES (?, ?, ?, ?, ?, NOW())"
-            )->execute([$task, $engine, $result['confidence'] ?? 0, $elapsed, substr(json_encode($result['result'] ?? []), 0, 500)]);
+                "INSERT INTO ai_api_logs (task_type, engine_used, confidence, response_time_ms, input_summary, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())"
+            )->execute([$task, $engine, $result['confidence'] ?? 0, $elapsed, substr(json_encode($result['result'] ?? []), 0, 500), TenantContext::getId()]);
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
 
         $result['engine'] = $engine;
