@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Employee;
 require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -13,6 +14,8 @@ use Exception;
  */
 class EmployeeController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
 
     public function __construct()
@@ -59,8 +62,9 @@ class EmployeeController extends BaseController
             }
 
             // Authenticate against unified users table (include manager role too)
-            $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager') AND status = 'active' LIMIT 1";
-            $employee = $this->db->fetchOne($query, [$email]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager') AND status = 'active'{$tidSql} LIMIT 1";
+            $employee = $this->db->fetchOne($query, array_merge([$email], $tidParams));
 
             if ($employee && password_verify($password, $employee['password'])) {
                 $_SESSION['employee_id'] = $employee['id'];
@@ -1350,8 +1354,9 @@ class EmployeeController extends BaseController
                     $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='open' THEN 1 ELSE 0 END) as active, SUM(CASE WHEN status='negotiation' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN status='won' THEN 1 ELSE 0 END) as completed FROM lead_deals");
                     $stmt->execute(); return $stmt->fetch() + $default;
                 case 'employees':
-                    $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active, SUM(CASE WHEN status='on_leave' THEN 1 ELSE 0 END) as pending, 0 as completed FROM users WHERE role IN ('employee','telecaller','backoffice_staff')");
-                    $stmt->execute(); return $stmt->fetch() + $default;
+                    [$tidSql, $tidParams] = $this->tenantWhere();
+                    $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active, SUM(CASE WHEN status='on_leave' THEN 1 ELSE 0 END) as pending, 0 as completed FROM users WHERE role IN ('employee','telecaller','backoffice_staff'){$tidSql}");
+                    $stmt->execute($tidParams); return $stmt->fetch() + $default;
                 case 'campaigns':
                     $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active, SUM(CASE WHEN status='draft' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) as completed FROM marketing_campaigns");
                     $stmt->execute(); return $stmt->fetch() + $default;
@@ -1359,8 +1364,9 @@ class EmployeeController extends BaseController
                     $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='open' THEN 1 ELSE 0 END) as active, SUM(CASE WHEN status='in_progress' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN status='resolved' THEN 1 ELSE 0 END) as completed FROM support_tickets WHERE type='complaint'");
                     $stmt->execute(); return $stmt->fetch() + $default;
                 case 'compliance':
-                    $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN kyc_verified=1 THEN 1 ELSE 0 END) as active, SUM(CASE WHEN kyc_verified=0 OR kyc_verified IS NULL THEN 1 ELSE 0 END) as pending, 0 as completed FROM users WHERE role='customer'");
-                    $stmt->execute(); return $stmt->fetch() + $default;
+                    [$tidSql, $tidParams] = $this->tenantWhere();
+                    $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN kyc_verified=1 THEN 1 ELSE 0 END) as active, SUM(CASE WHEN kyc_verified=0 OR kyc_verified IS NULL THEN 1 ELSE 0 END) as pending, 0 as completed FROM users WHERE role='customer'{$tidSql}");
+                    $stmt->execute($tidParams); return $stmt->fetch() + $default;
                 case 'vendors':
                     $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active, 0 as pending, 0 as completed FROM vendors");
                     $stmt->execute(); return $stmt->fetch() + $default;
@@ -1616,7 +1622,8 @@ class EmployeeController extends BaseController
         $assignees = [];
         try {
             $sources = $this->db->fetchAll("SELECT id, name FROM lead_sources ORDER BY name") ?: [];
-            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('employee','admin','manager') AND deleted_at IS NULL ORDER BY name") ?: [];
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('employee','admin','manager') AND deleted_at IS NULL{$tidSql} ORDER BY name", $tidParams) ?: [];
             $assignees = $users;
         } catch (\Throwable $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 

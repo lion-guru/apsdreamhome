@@ -12,9 +12,11 @@ use App\Core\Database\Database;
 use App\Services\AI\SelfLearningAI;
 use App\Services\AI\RAGAgent;
 use App\Services\AI\ConversationEngine;
+use App\Traits\TenantAwareTrait;
 
 class SmartAIController extends BaseController
 {
+    use TenantAwareTrait;
     private $geminiApiKey;
     private $geminiEndpoint;
     private $openrouterApiKey;
@@ -401,9 +403,10 @@ class SmartAIController extends BaseController
             $data = [];
 
             // Get network stats
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $networkStats = $this->db->fetch(
-                "SELECT COUNT(*) as total FROM users WHERE referrer_id = ?",
-                [$associateId]
+                "SELECT COUNT(*) as total FROM users WHERE referrer_id = ?{$tidSql}",
+                array_merge([$associateId], $tidParams)
             );
             $data['network_size'] = $networkStats['total'] ?? 0;
 

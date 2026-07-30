@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
+use \App\Traits\TenantAwareTrait;
 
 class AnalyticsController extends BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -20,9 +23,11 @@ class AnalyticsController extends BaseController
     {
         header('Content-Type: application/json');
         try {
+            $tid = $this->tenantId();
+            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
             $stmt = $this->db->query("SELECT COUNT(*) FROM properties WHERE status = 'active'");
             $properties = (int)$stmt->fetchColumn();
-            $stmt = $this->db->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE()");
+            $stmt = $this->db->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE(){$tidFilter}");
             $newUsers = (int)$stmt->fetchColumn();
             $stmt = $this->db->query("SELECT COUNT(*) FROM leads WHERE DATE(created_at) = CURDATE()");
             $newLeads = (int)$stmt->fetchColumn();
@@ -74,9 +79,12 @@ class AnalyticsController extends BaseController
     {
         header('Content-Type: application/json');
         try {
-            $stmt = $this->db->query("SELECT COUNT(*) FROM users");
+            $tid = $this->tenantId();
+            $tidWhere = $tid > 1 ? " WHERE tenant_id = $tid" : '';
+            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
+            $stmt = $this->db->query("SELECT COUNT(*) FROM users{$tidWhere}");
             $total = (int)$stmt->fetchColumn();
-            $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+            $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users WHERE 1=1{$tidFilter} GROUP BY role");
             $byRole = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode(['success' => true, 'data' => [

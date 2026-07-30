@@ -18,10 +18,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Core\Security;
+use App\Traits\TenantAwareTrait;
 use Exception;
 
 class TeamManagementController extends BaseController
 {
+    use TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -81,11 +83,12 @@ class TeamManagementController extends BaseController
 
             // Get active members (last 30 days)
             // fetchOne() method exists in Database class at line 102-105
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $activeMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
-                 WHERE (m.sponsor_id = ? OR u.id = ?) AND u.last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
-                [$userId, $userId]
+                 WHERE (m.sponsor_id = ? OR u.id = ?) AND u.last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY){$tidSql}",
+                array_merge([$userId, $userId], $tidParams)
             );
 
             // Get new members this month
@@ -141,6 +144,7 @@ class TeamManagementController extends BaseController
     private function getRecentTeamActivities($userId)
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $activities = $this->db->fetchAll(
                 "SELECT 
                     u.name as user_name,
@@ -150,10 +154,10 @@ class TeamManagementController extends BaseController
                     m.created_at
                  FROM user_activities m 
                  JOIN users u ON m.user_id = u.id 
-                 WHERE m.user_id = ? OR m.related_user_id = ?
+                 WHERE (m.user_id = ? OR m.related_user_id = ?){$tidSql}
                  ORDER BY m.created_at DESC 
                  LIMIT 10",
-                [$userId, $userId]
+                array_merge([$userId, $userId], $tidParams)
             );
 
             return $activities;
@@ -170,6 +174,7 @@ class TeamManagementController extends BaseController
     {
         try {
             // fetchOne() method exists in Database class at line 102-105
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $performers = $this->db->fetchOne(
                 "SELECT 
                     u.name,
@@ -179,10 +184,10 @@ class TeamManagementController extends BaseController
                     (SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_id = u.id) as team_size
                  FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
-                 WHERE m.sponsor_id = ? OR u.id = ?
+                 WHERE (m.sponsor_id = ? OR u.id = ?){$tidSql}
                  ORDER BY commission DESC, team_size DESC 
                  LIMIT 5",
-                [$userId, $userId]
+                array_merge([$userId, $userId], $tidParams)
             );
 
             return $performers;
@@ -214,9 +219,10 @@ class TeamManagementController extends BaseController
             ];
 
             // Insert user
+            $tidInsert = $this->tenantInsertData();
             $this->db->execute(
-                "INSERT INTO users (name, email, phone, created_at) VALUES (?, ?, ?)",
-                [$memberData['name'], $memberData['email'], $memberData['phone'], $memberData['created_at']]
+                "INSERT INTO users (name, email, phone, created_at" . ($tidInsert ? ", tenant_id" : "") . ") VALUES (?, ?, ?" . ($tidInsert ? ", ?" : "") . ")",
+                $tidInsert ? array_merge([$memberData['name'], $memberData['email'], $memberData['phone'], $memberData['created_at']], [$tidInsert['tenant_id']]) : [$memberData['name'], $memberData['email'], $memberData['phone'], $memberData['created_at']]
             );
 
             $newUserId = $this->db->lastInsertId();
@@ -249,6 +255,7 @@ class TeamManagementController extends BaseController
 
         try {
             // fetchOne() method exists in Database class at line 102-105
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $member = $this->db->fetchOne(
                 "SELECT 
                     u.id,
@@ -263,8 +270,8 @@ class TeamManagementController extends BaseController
                  FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
                  LEFT JOIN users sp ON sp.id = m.sponsor_id 
-                 WHERE u.id = ?",
-                [$memberId]
+                 WHERE u.id = ?{$tidSql}",
+                array_merge([$memberId], $tidParams)
             );
 
             return $this->jsonResponse([
@@ -298,9 +305,10 @@ class TeamManagementController extends BaseController
             ];
 
             // Update user
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $this->db->execute(
-                "UPDATE users SET name = ?, email = ?, phone = ?, updated_at = ? WHERE id = ?",
-                [$updateData['name'], $updateData['email'], $updateData['phone'], $updateData['updated_at'], $memberId]
+                "UPDATE users SET name = ?, email = ?, phone = ?, updated_at = ? WHERE id = ?{$tidSql}",
+                array_merge([$updateData['name'], $updateData['email'], $updateData['phone'], $updateData['updated_at'], $memberId], $tidParams)
             );
 
             return $this->jsonResponse([
@@ -339,9 +347,10 @@ class TeamManagementController extends BaseController
             );
 
             // Delete user
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $this->db->execute(
-                "DELETE FROM users WHERE id = ?",
-                [$memberId]
+                "DELETE FROM users WHERE id = ?{$tidSql}",
+                array_merge([$memberId], $tidParams)
             );
 
             return $this->jsonResponse([

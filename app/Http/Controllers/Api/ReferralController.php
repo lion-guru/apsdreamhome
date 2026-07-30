@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
+use \App\Traits\TenantAwareTrait;
 
 class ReferralController extends BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -26,11 +29,12 @@ class ReferralController extends BaseController
             return;
         }
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
-            $stmt->execute([$userId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?{$tidSql}");
+            $stmt->execute(array_merge([$userId], $tidParams));
             $total = (int)$stmt->fetchColumn();
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ? AND DATE(created_at) = CURDATE()");
-            $stmt->execute([$userId]);
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ? AND DATE(created_at) = CURDATE(){$tidSql}");
+            $stmt->execute(array_merge([$userId], $tidParams));
             $today = (int)$stmt->fetchColumn();
 
             echo json_encode(['success' => true, 'data' => [
@@ -54,8 +58,9 @@ class ReferralController extends BaseController
             return;
         }
         try {
-            $stmt = $this->db->prepare("SELECT DATE(created_at) as date, COUNT(*) as count FROM users WHERE referred_by = ? GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30");
-            $stmt->execute([$userId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT DATE(created_at) as date, COUNT(*) as count FROM users WHERE referred_by = ?{$tidSql} GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30");
+            $stmt->execute(array_merge([$userId], $tidParams));
             $referrals = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode(['success' => true, 'data' => $referrals]);
@@ -75,8 +80,9 @@ class ReferralController extends BaseController
             return;
         }
         try {
-            $stmt = $this->db->prepare("SELECT id, name, email, phone, role, created_at FROM users WHERE referred_by = ? ORDER BY created_at DESC");
-            $stmt->execute([$userId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT id, name, email, phone, role, created_at FROM users WHERE referred_by = ?{$tidSql} ORDER BY created_at DESC");
+            $stmt->execute(array_merge([$userId], $tidParams));
             $referrals = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode(['success' => true, 'data' => $referrals]);

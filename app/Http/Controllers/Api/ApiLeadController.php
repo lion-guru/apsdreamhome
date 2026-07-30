@@ -13,6 +13,7 @@ use App\Models\LeadSource;
 use App\Models\User\User;
 use App\Core\Security;
 use UploadValidator;
+use \App\Traits\TenantAwareTrait;
 
 /**
  * API Lead Controller - Custom Framework Version
@@ -20,6 +21,7 @@ use UploadValidator;
  */
 class ApiLeadController extends BaseController
 {
+    use TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -657,7 +659,9 @@ class ApiLeadController extends BaseController
             $statuses = $conn->query("SELECT * FROM lead_statuses ORDER BY status_name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $sources = $conn->query("SELECT * FROM lead_sources ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $tags = $conn->query("SELECT * FROM lead_tags ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
-            $users = $conn->query("SELECT id, name, email, role FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
+            $tid = $this->tenantId();
+            $tidWhere = $tid > 1 ? " WHERE tenant_id = $tid" : '';
+            $users = $conn->query("SELECT id, name, email, role FROM users{$tidWhere} ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
 
             $response = [
                 'success' => true,

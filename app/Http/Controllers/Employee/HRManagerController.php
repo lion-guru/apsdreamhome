@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -12,6 +13,8 @@ use Exception;
  */
 class HRManagerController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
     protected $employeeId;
 
@@ -108,6 +111,10 @@ class HRManagerController extends BaseController
         $departmentStats = $this->db->fetchAll($deptQuery);
         
         // Overall employee statistics
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        if ($tidSql) {
+            $tidSql = ' WHERE tenant_id = ?';
+        }
         $overallQuery = "SELECT 
                             COUNT(*) as total_employees,
                             SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_employees,
@@ -116,17 +123,21 @@ class HRManagerController extends BaseController
                             SUM(CASE WHEN hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as new_hires_this_month,
                             SUM(CASE WHEN hire_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) as new_hires_this_quarter,
                             AVG(performance_score) as avg_performance_score
-                         FROM users";
+                         FROM users{$tidSql}";
         
-        $overallStats = $this->db->fetchOne($overallQuery);
+        $overallStats = $this->db->fetchOne($overallQuery, $tidParams);
         
         // Employee turnover rate
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        if ($tidSql) {
+            $tidSql = ' WHERE tenant_id = ?';
+        }
         $turnoverQuery = "SELECT 
                              (SUM(CASE WHEN status = 'terminated' AND termination_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END) / 
                               SUM(CASE WHEN hire_date <= DATE_SUB(CURDATE(), INTERVAL 90 DAY) THEN 1 ELSE 0 END)) * 100 as turnover_rate
-                          FROM users";
+                          FROM users{$tidSql}";
         
-        $turnoverRate = $this->db->fetchOne($turnoverQuery);
+        $turnoverRate = $this->db->fetchOne($turnoverQuery, $tidParams);
         
         return [
             'department_stats' => $departmentStats,
@@ -292,14 +303,15 @@ class HRManagerController extends BaseController
             }
             
             // Get all active users
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $employeesQuery = "SELECT e.*, d.name as department_name,
                                       p.base_salary, p.allowances, p.deductions
                                FROM users e
                                JOIN departments d ON e.department_id = d.id
                                JOIN payroll_settings p ON e.id = p.employee_id
-                               WHERE e.status = 'active'";
+                               WHERE e.status = 'active'{$tidSql}";
             
-            $users = $this->db->fetchAll($employeesQuery);
+            $users = $this->db->fetchAll($employeesQuery, $tidParams);
             
             $processedCount = 0;
             $totalAmount = 0;
@@ -411,8 +423,9 @@ class HRManagerController extends BaseController
     {
         try {
             // Validate employee
-            $employeeQuery = "SELECT name, department FROM users WHERE id = ? AND status = 'active'";
-            $employee = $this->db->fetchOne($employeeQuery, [$employeeId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $employeeQuery = "SELECT name, department FROM users WHERE id = ? AND status = 'active'{$tidSql}";
+            $employee = $this->db->fetchOne($employeeQuery, array_merge([$employeeId], $tidParams));
             
             if (!$employee) {
                 throw new Exception("Employee not found or not active");
@@ -506,19 +519,24 @@ class HRManagerController extends BaseController
         // Generate employee ID
         $employeeId = 'EMP' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
         
+        $tidData = $this->tenantInsertData();
+        $tidCol = !empty($tidData) ? ', tenant_id' : '';
+        $tidVal = !empty($tidData) ? ', ?' : '';
+        $tidParams = !empty($tidData) ? [current($tidData)] : [];
+        
         $query = "INSERT INTO users (
                     employee_id, name, email, phone, position_id, department_id,
-                    hire_date, status, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, CURDATE(), 'active', NOW())";
+                    hire_date, status, created_at{$tidCol}
+                ) VALUES (?, ?, ?, ?, ?, ?, CURDATE(), 'active', NOW(){$tidVal})";
         
-        $this->db->execute($query, [
+        $this->db->execute($query, array_merge([
             $employeeId,
             $application['name'],
             $application['email'],
             $application['phone'],
             $application['position_id'],
             $application['department_id'] ?? null
-        ]);
+        ], $tidParams));
     }
 
     /**

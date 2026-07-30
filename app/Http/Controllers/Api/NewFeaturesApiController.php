@@ -13,9 +13,11 @@ use App\Services\AnalyticsService;
 use App\Services\AgentOrchestrator;
 use App\Services\OcrService;
 use App\Services\PropertyMarketplaceService;
+use \App\Traits\TenantAwareTrait;
 
 class NewFeaturesApiController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct() { parent::__construct(); }
 
     private function reg(): ProgressiveRegistrationService { return new ProgressiveRegistrationService($this->db); }
@@ -321,7 +323,9 @@ class NewFeaturesApiController extends BaseController
         } catch (\Throwable $e) { $data['revenue_30d'] = 0; }
 
         try {
-            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer'");
+            $tid = $this->tenantId();
+            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
+            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer'{$tidFilter}");
             $data['total_customers'] = (int)$st->fetchColumn();
         } catch (\Throwable $e) { $data['total_customers'] = 0; }
 
@@ -387,7 +391,9 @@ class NewFeaturesApiController extends BaseController
         } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         try {
-            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+            $tid = $this->tenantId();
+            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
+            $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY){$tidFilter}");
             $newUsers = (int)$st->fetchColumn();
             if ($newUsers > 0) {
                 $insights[] = ['type' => 'success', 'title' => 'New Customers', 'message' => "{$newUsers} new customers this week"];

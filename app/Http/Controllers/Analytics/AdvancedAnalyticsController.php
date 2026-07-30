@@ -8,9 +8,11 @@
 namespace App\Http\Controllers\Analytics;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Traits\TenantAwareTrait;
 
 class AdvancedAnalyticsController extends AdminController
 {
+    use TenantAwareTrait;
 
     public function __construct()
     {
@@ -196,13 +198,13 @@ class AdvancedAnalyticsController extends AdminController
             $data = [];
 
             // User registration trends
-            $sql = "SELECT DATE(created_at) as date, COUNT(*) as count
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT DATE(created_at) as date, COUNT(*) as count
                     FROM users
-                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH){$tidSql}
                     GROUP BY DATE(created_at)
-                    ORDER BY date";
-
-            $stmt = $this->db->query($sql);
+                    ORDER BY date");
+            $stmt->execute($tidParams);
             $data['registration_trends'] = $stmt->fetchAll();
 
             // User activity analysis
@@ -363,7 +365,9 @@ class AdvancedAnalyticsController extends AdminController
     private function getTotalUsers()
     {
         try {
-            $stmt = $this->db->query("SELECT COUNT(*) as total FROM users");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM users{$tidSql}");
+            $stmt->execute($tidParams);
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
         } catch (\Throwable $e) {
             return 0;
@@ -373,7 +377,9 @@ class AdvancedAnalyticsController extends AdminController
     private function getActiveUsers()
     {
         try {
-            $stmt = $this->db->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT COUNT(*) as active FROM users WHERE status = 'active'{$tidSql}");
+            $stmt->execute($tidParams);
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active'];
         } catch (\Throwable $e) {
             return 0;
@@ -558,13 +564,13 @@ class AdvancedAnalyticsController extends AdminController
     private function getGeographicDistribution()
     {
         try {
-            $sql = "SELECT state, COUNT(*) as user_count
-                    FROM users
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT state, COUNT(*) as user_count
+                    FROM users{$tidSql}
                     GROUP BY state
                     ORDER BY user_count DESC
-                    LIMIT 10";
-
-            $stmt = $this->db->query($sql);
+                    LIMIT 10");
+            $stmt->execute($tidParams);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return [];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Associate;
 
 use App\Core\Database\Database;
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 /**
  * ExportController - Associate Export Functions
@@ -11,6 +12,8 @@ use App\Http\Controllers\BaseController;
  */
 class ExportController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
 
     public function __construct()
@@ -91,8 +94,9 @@ class ExportController extends BaseController
 
         $total = 0; $active = 0;
         try {
-            $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE referred_by = ? AND role = 'associate'", [$associate_id])['cnt'] ?? 0);
-            $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE referred_by = ? AND role = 'associate' AND status = 'active'", [$associate_id])['cnt'] ?? 0);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE referred_by = ? AND role = 'associate'{$tidSql}", array_merge([$associate_id], $tidParams))['cnt'] ?? 0);
+            $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE referred_by = ? AND role = 'associate' AND status = 'active'{$tidSql}", array_merge([$associate_id], $tidParams))['cnt'] ?? 0);
         } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
         $active_pct = ($total > 0) ? round(($active / $total) * 100, 1) : 0;
 
@@ -151,9 +155,10 @@ class ExportController extends BaseController
         fputcsv($out, ['Level', 'Name', 'Phone', 'Join Date', 'Status']);
 
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $members = $this->db->fetchAll(
-                "SELECT name, phone, created_at, status FROM users WHERE referred_by = ? AND role = 'associate' ORDER BY created_at DESC",
-                [$associate_id]
+                "SELECT name, phone, created_at, status FROM users WHERE referred_by = ? AND role = 'associate'{$tidSql} ORDER BY created_at DESC",
+                array_merge([$associate_id], $tidParams)
             );
             foreach ($members as $i => $row) {
                 fputcsv($out, [$i+1, $row['name'], $row['phone'], $row['created_at'], $row['status'] ?? 'active']);
@@ -169,9 +174,10 @@ class ExportController extends BaseController
      */
     private function exportDownlineCSV($parent_id, $level)
     {
+        [$tidSql, $tidParams] = $this->tenantWhere();
         $users = $this->db->fetchAll(
-            "SELECT id, name, post, business_volume, join_date, phone FROM users WHERE parent_id = ? ORDER BY join_date DESC",
-            [$parent_id]
+            "SELECT id, name, post, business_volume, join_date, phone FROM users WHERE parent_id = ?{$tidSql} ORDER BY join_date DESC",
+            array_merge([$parent_id], $tidParams)
         );
 
         foreach ($users as $row) {
@@ -204,9 +210,10 @@ class ExportController extends BaseController
         $to = $_GET['to'] ?? date('Y-m-d');
 
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll(
-                "SELECT name, created_at as join_date, status FROM users WHERE parent_id = ? AND created_at >= ? AND created_at <= ? ORDER BY created_at DESC",
-                [$associate_id, $from, $to]
+                "SELECT name, created_at as join_date, status FROM users WHERE parent_id = ? AND created_at >= ? AND created_at <= ?{$tidSql} ORDER BY created_at DESC",
+                array_merge([$associate_id, $from, $to], $tidParams)
             );
             foreach ($users as $row) {
                 fputcsv($out, [$row['name'], $row['join_date'], ucfirst($row['status'] ?? 'active')]);

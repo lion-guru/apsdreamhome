@@ -103,8 +103,9 @@ class MobileApiController extends BaseController
             $pdo = $this->db->getConnection();
 
             // Check if email already exists
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
-            $stmt->execute([$email]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?{$tidSql} LIMIT 1");
+            $stmt->execute(array_merge([$email], $tidParams));
             if ($stmt->fetch()) {
                 http_response_code(409);
                 echo json_encode(['success' => false, 'message' => 'Email already registered']);
@@ -2075,7 +2076,9 @@ class MobileApiController extends BaseController
             }
 
             // Auto-assign an available agent (round-robin from associates)
-            $agentStmt = $pdo->prepare("SELECT id FROM users WHERE role = 'associate' AND status = 'active' ORDER BY RAND() LIMIT 1");
+            $agentTid = $this->tenantId();
+            $agentTidFilter = $agentTid > 1 ? " AND tenant_id = $agentTid" : '';
+            $agentStmt = $pdo->prepare("SELECT id FROM users WHERE role = 'associate' AND status = 'active'{$agentTidFilter} ORDER BY RAND() LIMIT 1");
             $agentStmt->execute();
             $agent = $agentStmt->fetch(PDO::FETCH_ASSOC);
             if ($agent) {
@@ -2887,8 +2890,9 @@ class MobileApiController extends BaseController
 
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare('SELECT id, name, email, role, status, password FROM users WHERE email = ? LIMIT 1');
-            $stmt->execute([$email]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $pdo->prepare('SELECT id, name, email, role, status, password FROM users WHERE email = ?'.$tidSql.' LIMIT 1');
+            $stmt->execute(array_merge([$email], $tidParams));
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
@@ -4098,8 +4102,9 @@ class MobileApiController extends BaseController
 
             // Check email uniqueness if changing
             if ($email !== '') {
-                $check = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ? LIMIT 1");
-                $check->execute([$email, $userId]);
+                [$tidSql, $tidParams] = $this->tenantWhere();
+                $check = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?{$tidSql} LIMIT 1");
+                $check->execute(array_merge([$email, $userId], $tidParams));
                 if ($check->fetch()) {
                     http_response_code(409);
                     echo json_encode(['success' => false, 'error' => 'Email already in use', 'code' => 409]);
@@ -5918,8 +5923,9 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Referral code required']); return;
         }
         try {
-            $stmt = $this->db->prepare("SELECT id, name, phone FROM users WHERE referral_code = ? LIMIT 1");
-            $stmt->execute([$code]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT id, name, phone FROM users WHERE referral_code = ?{$tidSql} LIMIT 1");
+            $stmt->execute(array_merge([$code], $tidParams));
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'found'=>!!$user,'data'=>$user ?: null]);
         } catch (\Exception $e) {
@@ -5936,8 +5942,9 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Phone required']); return;
         }
         try {
-            $stmt = $this->db->prepare("SELECT id, name, email, phone, role, status FROM users WHERE phone = ? LIMIT 1");
-            $stmt->execute([$phone]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT id, name, email, phone, role, status FROM users WHERE phone = ?{$tidSql} LIMIT 1");
+            $stmt->execute(array_merge([$phone], $tidParams));
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$user) {
                 $name = $input['name'] ?? 'User';

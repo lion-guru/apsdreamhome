@@ -6,6 +6,7 @@ use App\Services\Associate\AssociateService;
 use App\Http\Controllers\Admin\AdminController;
 use Exception;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Associate Controller - APS Dream Home
@@ -14,6 +15,8 @@ use App\Core\Database\Database;
  */
 class AssociateController extends AdminController
 {
+    use TenantAwareTrait;
+
     private $associateService;
 
     public function __construct()
@@ -63,15 +66,16 @@ class AssociateController extends AdminController
             );
             
             // Get network by level
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $networkByLevel = $this->db->fetchAll(
                 "SELECT level, COUNT(*) as members,
-                        SUM(CASE WHEN nt.associate_id IN (SELECT id FROM users WHERE status = 'active') THEN 1 ELSE 0 END) as active,
+                        SUM(CASE WHEN nt.associate_id IN (SELECT id FROM users WHERE status = 'active'{$tidSql}) THEN 1 ELSE 0 END) as active,
                         COALESCE(SUM((SELECT SUM(amount) FROM mlm_commission_ledger WHERE beneficiary_user_id = nt.associate_id)), 0) as commission
                  FROM mlm_network_tree nt
                  WHERE nt.parent_id = ?
                  GROUP BY level
                  ORDER BY level",
-                [$associateId]
+                array_merge([$associateId], $tidParams)
             );
             
             // Get recent commissions

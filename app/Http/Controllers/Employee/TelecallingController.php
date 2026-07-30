@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -12,6 +13,8 @@ use Exception;
  */
 class TelecallingController extends AdminController
 {
+    use TenantAwareTrait;
+
     protected $db;
     protected $employeeId;
 
@@ -581,7 +584,8 @@ class TelecallingController extends AdminController
         $telecallers = [];
         try {
             $leads = $this->db->fetchAll("SELECT id, name, phone, source, status, created_at FROM leads ORDER BY created_at DESC LIMIT 50");
-            $telecallers = $this->db->fetchAll("SELECT u.id, u.name FROM users u WHERE u.role = 'employee' ORDER BY u.name");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $telecallers = $this->db->fetchAll("SELECT u.id, u.name FROM users u WHERE u.role = 'employee'{$tidSql} ORDER BY u.name", $tidParams);
         } catch (\Exception $e) {
             error_log("Telecalling assign error: " . $e->getMessage());
         }

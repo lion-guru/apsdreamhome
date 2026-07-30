@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\BaseController;
 use App\Services\Auth\ApiAuthService;
 use App\Services\Auth\JWTAuthService;
+use \App\Traits\TenantAwareTrait;
 
 class AuthController extends BaseController
 {
+    use TenantAwareTrait;
     protected $apiAuthService;
     protected $jwtService;
 
@@ -85,8 +87,9 @@ class AuthController extends BaseController
         if (!$payload || !isset($payload['sub'])) return null;
         try {
             $pdo = $this->db->getConnection();
-            $stmt = $pdo->prepare("SELECT id, name, email, phone, role FROM users WHERE id = ? LIMIT 1");
-            $stmt->execute([$payload['sub']]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $pdo->prepare("SELECT id, name, email, phone, role FROM users WHERE id = ?{$tidSql} LIMIT 1");
+            $stmt->execute(array_merge([$payload['sub']], $tidParams));
             return $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return null;

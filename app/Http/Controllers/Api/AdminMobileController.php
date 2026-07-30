@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 require_once __DIR__ . '/../BaseController.php';
+use \App\Traits\TenantAwareTrait;
 
 /**
  * AdminMobileController — JSON API endpoints for Flutter admin pages.
@@ -10,6 +11,8 @@ require_once __DIR__ . '/../BaseController.php';
  */
 class AdminMobileController extends \App\Http\Controllers\BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -324,7 +327,9 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
         try {
             $revenue = $this->db->fetchOne("SELECT COALESCE(SUM(total_amount),0) as total FROM bookings WHERE status!='cancelled'");
             $bookings = $this->db->fetchOne("SELECT COUNT(*) as total FROM bookings WHERE status!='cancelled'");
-            $users = $this->db->fetchOne("SELECT COUNT(*) as total FROM users WHERE status='active'");
+            $tid = $this->tenantId();
+            $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
+            $users = $this->db->fetchOne("SELECT COUNT(*) as total FROM users WHERE status='active'{$tidFilter}");
             $leads = $this->db->fetchOne("SELECT COUNT(*) as total FROM leads");
             return $this->jsonResponse(['success'=>true,'data'=>[
                 'total_revenue' => (float)($revenue['total']??0),

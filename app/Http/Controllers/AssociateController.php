@@ -103,7 +103,8 @@ class AssociateController extends BaseController
 
         try {
             // Check duplicate email
-            $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?{$tidSql}", array_merge([$email], $tidParams));
             if ($existing) {
                 $_SESSION['error'] = 'This email is already registered. Please login.';
                 $this->redirect('/associate/login');
@@ -111,7 +112,8 @@ class AssociateController extends BaseController
             }
 
             // Check duplicate phone
-            $existing = $this->db->fetchOne("SELECT id FROM users WHERE phone = ?", [$phone]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $existing = $this->db->fetchOne("SELECT id FROM users WHERE phone = ?{$tidSql}", array_merge([$phone], $tidParams));
             if ($existing) {
                 $_SESSION['error'] = 'This phone number is already registered. Please login.';
                 $this->redirect('/associate/login');
@@ -121,7 +123,8 @@ class AssociateController extends BaseController
             // Resolve referrer from sponsor code
             $referredBy = null;
             if (!empty($sponsorCode)) {
-                $referrer = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ?", [$sponsorCode]);
+                [$tidSql, $tidParams] = $this->tenantWhere();
+                $referrer = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ?{$tidSql}", array_merge([$sponsorCode], $tidParams));
                 if ($referrer) {
                     $referredBy = $referrer['id'];
                 }
@@ -133,10 +136,11 @@ class AssociateController extends BaseController
             $referralCode = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
+            $tidInsert = $this->tenantInsertData();
             $this->db->execute(
-                "INSERT INTO users (customer_id, name, email, phone, password, referral_code, referred_by, role, status, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, 'associate', 'active', NOW(), NOW())",
-                [$customerId, $name, $email, $phone, $passwordHash, $referralCode, $referredBy]
+                "INSERT INTO users (customer_id, name, email, phone, password, referral_code, referred_by, role, status, created_at, updated_at" . ($tidInsert ? ", tenant_id" : "") . ")
+                 VALUES (?, ?, ?, ?, ?, ?, ?, 'associate', 'active', NOW(), NOW()" . ($tidInsert ? ", ?" : "") . ")",
+                $tidInsert ? array_merge([$customerId, $name, $email, $phone, $passwordHash, $referralCode, $referredBy], [$tidInsert['tenant_id']]) : [$customerId, $name, $email, $phone, $passwordHash, $referralCode, $referredBy]
             );
 
             $newUserId = (int)$this->db->lastInsertId();
@@ -255,10 +259,10 @@ class AssociateController extends BaseController
 
         // Also count direct referrals from users table
         if ($directReferrals == 0) {
-            try { $directReferrals = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+            try { [$tidSql1, $tidParams1] = $this->tenantWhere(); $directReferrals = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?{$tidSql1}", array_merge([$userId], $tidParams1)); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         }
         if ($networkSize == 0) {
-            try { $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+            try { [$tidSql2, $tidParams2] = $this->tenantWhere(); $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?{$tidSql2}", array_merge([$userId], $tidParams2)); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         }
 
         // Recent leads from `leads` table (CRM)
@@ -300,6 +304,7 @@ class AssociateController extends BaseController
 
         // Bookings by associate's referred users
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $recentBookings = $this->db->fetchAll(
                 "SELECT pb.id, pb.booking_number, pb.total_plot_value, pb.status as booking_status, pb.created_at,
                         u.name as customer_name, p.name as plot_name, c.name as colony_name
@@ -307,14 +312,15 @@ class AssociateController extends BaseController
                  LEFT JOIN users u ON u.id = pb.user_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
                  LEFT JOIN colonies c ON c.id = pb.colony_id
-                 WHERE pb.user_id IN (SELECT id FROM users WHERE referred_by = ?)
+                 WHERE pb.user_id IN (SELECT id FROM users WHERE referred_by = ?{$tidSql})
                  ORDER BY pb.created_at DESC LIMIT 5",
-                [$userId]
+                array_merge([$userId], $tidParams)
             ) ?: [];
         } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // EMI summary for associate's referrals
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $emiRow = $this->db->fetchOne(
                 "SELECT 
                     COUNT(*) as total_emi,
@@ -322,8 +328,8 @@ class AssociateController extends BaseController
                     SUM(CASE WHEN status IN ('pending','overdue') THEN 1 ELSE 0 END) as pending_emi,
                     SUM(CASE WHEN status = 'overdue' OR (status = 'pending' AND due_date < CURDATE()) THEN 1 ELSE 0 END) as overdue_emi
                  FROM booking_payment_schedules 
-                 WHERE booking_id IN (SELECT id FROM plot_bookings WHERE user_id IN (SELECT id FROM users WHERE referred_by = ?))",
-                [$userId]
+                 WHERE booking_id IN (SELECT id FROM plot_bookings WHERE user_id IN (SELECT id FROM users WHERE referred_by = ?{$tidSql}))",
+                array_merge([$userId], $tidParams)
             );
             if ($emiRow) {
                 $emiSummary['total_emi'] = (int)($emiRow['total_emi'] ?? 0);
@@ -1481,6 +1487,7 @@ class AssociateController extends BaseController
         $teamMembers = [];
         $teamStats = ['total' => 0, 'active' => 0, 'total_sales' => 0, 'total_commission' => 0];
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $teamMembers = $db->fetchAll(
                 "SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at,
                         COALESCE(ml.current_level, 'associate') as rank,
@@ -1490,9 +1497,9 @@ class AssociateController extends BaseController
                         (SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = u.id) as total_earned
                  FROM users u
                  LEFT JOIN mlm_profiles ml ON ml.user_id = u.id
-                 WHERE u.referred_by = ? AND u.role = 'associate'
+                 WHERE u.referred_by = ? AND u.role = 'associate'{$tidSql}
                  ORDER BY u.created_at DESC",
-                [$associateId]
+                array_merge([$associateId], $tidParams)
             );
             $teamStats['total'] = count($teamMembers);
             foreach ($teamMembers as $m) {
@@ -1557,9 +1564,10 @@ class AssociateController extends BaseController
                 "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ?",
                 [$userId]
             );
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $userTeamSize = (int)$this->db->fetchColumn(
-                "SELECT COUNT(*) FROM users WHERE referred_by = ?",
-                [$userId]
+                "SELECT COUNT(*) FROM users WHERE referred_by = ?{$tidSql}",
+                array_merge([$userId], $tidParams)
             );
         } catch (\Exception $e) { error_log("AssociateController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
@@ -2274,14 +2282,15 @@ class AssociateController extends BaseController
         $shareClicks = [];
         $referredUsers = [];
         try {
-            $stmt = $pdo->prepare("SELECT referral_code, share_clicks FROM users WHERE id = ?");
-            $stmt->execute([$userId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $pdo->prepare("SELECT referral_code, share_clicks FROM users WHERE id = ?{$tidSql}");
+            $stmt->execute(array_merge([$userId], $tidParams));
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             $referralCode = $row['referral_code'] ?? '';
             $shareClicks = json_decode($row['share_clicks'] ?? '{}', true) ?: [];
 
-            $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
-            $stmt2->execute([$referralCode]);
+            $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?{$tidSql}");
+            $stmt2->execute(array_merge([$referralCode], $tidParams));
             $referralCount = (int) $stmt2->fetchColumn();
 
             $stmt3 = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE user_id = ? AND type = 'referral_bonus'");
@@ -2804,8 +2813,9 @@ class AssociateController extends BaseController
                 }
 
                 // Find or create customer
-                $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ? LIMIT 1");
-                $stmt->execute([$customerPhone]);
+                [$tidSql, $tidParams] = $this->tenantWhere();
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ?{$tidSql} LIMIT 1");
+                $stmt->execute(array_merge([$customerPhone], $tidParams));
                 $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
 
                 if ($existing) {
@@ -2814,8 +2824,9 @@ class AssociateController extends BaseController
                     // Create new customer with secure random password
                     // Customer will receive a "Complete Registration" email to set their own password
                     $tempPassword = bin2hex(random_bytes(12)); // 24-char secure random
-                    $pdo->prepare("INSERT INTO users (name, phone, email, role, password, created_at) VALUES (?, ?, ?, 'customer', ?, NOW())")
-                        ->execute([$customerName, $customerPhone, $customerEmail, password_hash($tempPassword, PASSWORD_DEFAULT)]);
+                    $tidInsert = $this->tenantInsertData();
+                    $pdo->prepare("INSERT INTO users (name, phone, email, role, password, created_at" . ($tidInsert ? ", tenant_id" : "") . ") VALUES (?, ?, ?, 'customer', ?, NOW()" . ($tidInsert ? ", ?" : "") . ")")
+                        ->execute($tidInsert ? array_merge([$customerName, $customerPhone, $customerEmail, password_hash($tempPassword, PASSWORD_DEFAULT)], [$tidInsert['tenant_id']]) : [$customerName, $customerPhone, $customerEmail, password_hash($tempPassword, PASSWORD_DEFAULT)]);
                     $customerId = $pdo->lastInsertId();
 
                     // Generate password reset token so customer can set their own password

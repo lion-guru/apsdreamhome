@@ -11,6 +11,7 @@ use App\Core\Security;
 use App\Core\Database\Database as DB;
 use App\Services\ReferralService;
 use App\Services\EmailService;
+use App\Traits\TenantAwareTrait;
 
 // IDE Refresh: All Database methods including fetchOne() are available in Database class
 
@@ -20,6 +21,7 @@ use App\Services\EmailService;
  */
 class RegistrationController extends BaseController
 {
+    use TenantAwareTrait;
     protected $mlmReferralService;
     protected $emailService;
     private $recaptchaSecret;
@@ -115,9 +117,10 @@ class RegistrationController extends BaseController
             $db = DB::getInstance();
 
             // Check if email already exists
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $existingUser = $db->fetchOne(
-                "SELECT id FROM users WHERE email = ?",
-                [$_POST['email']]
+                "SELECT id FROM users WHERE email = ?{$tidSql}",
+                array_merge([$_POST['email']], $tidParams)
             );
 
             if ($existingUser) {
@@ -128,9 +131,10 @@ class RegistrationController extends BaseController
             }
 
             // Check if phone already exists
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $existingPhone = $db->fetchOne(
-                "SELECT id FROM users WHERE phone = ?",
-                [$_POST['phone']]
+                "SELECT id FROM users WHERE phone = ?{$tidSql}",
+                array_merge([$_POST['phone']], $tidParams)
             );
 
             if ($existingPhone) {
@@ -145,10 +149,21 @@ class RegistrationController extends BaseController
 
             try {
                 // Create user account
+                $tidInsert = $this->tenantInsertData();
                 $userId = $db->execute(
-                    "INSERT INTO users (name, email, phone, password, address, city, state, pincode, country, created_at, updated_at) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
-                    [
+                    "INSERT INTO users (name, email, phone, password, address, city, state, pincode, country, created_at, updated_at" . ($tidInsert ? ", tenant_id" : "") . ") 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()" . ($tidInsert ? ", ?" : "") . ")",
+                    $tidInsert ? array_merge([
+                        $_POST['name'],
+                        $_POST['email'],
+                        $_POST['phone'],
+                        password_hash($_POST['password'], PASSWORD_ARGON2ID),
+                        $_POST['address'] ?? '',
+                        $_POST['city'] ?? '',
+                        $_POST['state'] ?? '',
+                        $_POST['pincode'] ?? '',
+                        $_POST['country'] ?? 'India'
+                    ], [$tidInsert['tenant_id']]) : [
                         $_POST['name'],
                         $_POST['email'],
                         $_POST['phone'],
@@ -314,12 +329,13 @@ class RegistrationController extends BaseController
 
         // Get referrer information
         // fetchOne() method exists in Database class at line 102-105
+        [$tidSql, $tidParams] = $this->tenantWhere();
         $referrer = $db->fetchOne(
             "SELECT u.id, m.id as mlm_profile_id 
              FROM users u 
              JOIN mlm_profiles m ON u.id = m.user_id 
-             WHERE u.referral_code = ?",
-            [$referralCode]
+             WHERE u.referral_code = ?{$tidSql}",
+            array_merge([$referralCode], $tidParams)
         );
 
         if ($referrer) {
@@ -344,9 +360,10 @@ class RegistrationController extends BaseController
             $this->addToNetworkTree($referrer['mlm_profile_id'], $userId);
 
             // Set referred_by in users table
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $db->execute(
-                "UPDATE users SET referred_by = ? WHERE id = ?",
-                [$referrer['id'], $userId]
+                "UPDATE users SET referred_by = ? WHERE id = ?{$tidSql}",
+                array_merge([$referrer['id'], $userId], $tidParams)
             );
 
             // Log to customer_referrals
@@ -502,12 +519,13 @@ class RegistrationController extends BaseController
         }
 
         $db = DB::getInstance();
+        [$tidSql, $tidParams] = $this->tenantWhere();
         $referrer = $db->fetchOne(
             "SELECT u.name, u.email, m.level, m.total_referrals 
              FROM users u 
              JOIN mlm_profiles m ON u.id = m.user_id 
-             WHERE u.referral_code = ? AND u.status = 'active'",
-            [$referralCode]
+             WHERE u.referral_code = ? AND u.status = 'active'{$tidSql}",
+            array_merge([$referralCode], $tidParams)
         );
 
         if ($referrer) {
@@ -533,16 +551,25 @@ class RegistrationController extends BaseController
             $db = DB::getInstance();
 
             // Total registrations
-            $totalUsers = $db->fetchOne("SELECT COUNT(*) as count FROM users");
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $totalUsers = $db->fetchOne("SELECT COUNT(*) as count FROM users WHERE tenant_id = ?", [$tid]);
+            } else {
+                $totalUsers = $db->fetchOne("SELECT COUNT(*) as count FROM users");
+            }
 
             // Today's registrations
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $todayUsers = $db->fetchOne(
-                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()"
+                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE(){$tidSql}",
+                $tidParams
             );
 
             // This month's registrations
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $monthUsers = $db->fetchOne(
-                "SELECT COUNT(*) as count FROM users WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())"
+                "SELECT COUNT(*) as count FROM users WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()){$tidSql}",
+                $tidParams
             );
 
             // MLM statistics
@@ -578,13 +605,26 @@ class RegistrationController extends BaseController
         try {
             $db = DB::getInstance();
 
-            $registrations = $db->fetchAll(
-                "SELECT u.id, u.name, u.email, u.phone, u.city, u.state, u.created_at,
-                        m.level, m.total_referrals
-                 FROM users u 
-                 LEFT JOIN mlm_profiles m ON u.id = m.user_id 
-                 ORDER BY u.created_at DESC"
-            );
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $registrations = $db->fetchAll(
+                    "SELECT u.id, u.name, u.email, u.phone, u.city, u.state, u.created_at,
+                            m.level, m.total_referrals
+                     FROM users u 
+                     LEFT JOIN mlm_profiles m ON u.id = m.user_id
+                     WHERE u.tenant_id = ?
+                     ORDER BY u.created_at DESC",
+                    [$tid]
+                );
+            } else {
+                $registrations = $db->fetchAll(
+                    "SELECT u.id, u.name, u.email, u.phone, u.city, u.state, u.created_at,
+                            m.level, m.total_referrals
+                     FROM users u 
+                     LEFT JOIN mlm_profiles m ON u.id = m.user_id
+                     ORDER BY u.created_at DESC"
+                );
+            }
 
             // Convert to CSV
             $csv = "ID,Name,Email,Phone,City,State,Registration Date,MLM Level,Total Referrals\n";
