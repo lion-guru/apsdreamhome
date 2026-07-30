@@ -63,15 +63,17 @@ class MoneyWorkflowService
 
     public function listBankAccounts(bool $activeOnly = true): array
     {
-        $sql = "SELECT * FROM bank_accounts_master" . ($activeOnly ? " WHERE active = 1" : "") . " ORDER BY account_name";
-        return $this->db->fetchAll($sql) ?: [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM bank_accounts_master WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "") . ($activeOnly ? " AND active = 1" : "") . " ORDER BY account_name";
+        return $this->db->fetchAll($sql, $tid > 1 ? [$tid] : []) ?: [];
     }
 
     public function getBankBalance(int $bankAccountId, ?string $asOfDate = null): float
     {
         $asOfDate = $asOfDate ?? date('Y-m-d');
+        $tid = TenantContext::getId();
 
-        $bank = $this->db->fetchOne("SELECT current_balance FROM bank_accounts_master WHERE id = ?", [$bankAccountId]);
+        $bank = $this->db->fetchOne("SELECT current_balance FROM bank_accounts_master WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$bankAccountId, $tid] : [$bankAccountId]);
         if (!$bank) {
             return 0.0;
         }
@@ -239,7 +241,8 @@ class MoneyWorkflowService
 
     public function getPettyCashBalance(): float
     {
-        $row = $this->db->fetchOne("SELECT balance_after FROM petty_cash ORDER BY id DESC LIMIT 1");
+        $tid = TenantContext::getId();
+        $row = $this->db->fetchOne("SELECT balance_after FROM petty_cash" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " ORDER BY id DESC LIMIT 1", $tid > 1 ? [$tid] : []);
         return (float)($row['balance_after'] ?? 0);
     }
 
@@ -691,7 +694,8 @@ class MoneyWorkflowService
      */
     public function getVendor(int $id): ?array
     {
-        $row = $this->db->fetchOne("SELECT * FROM vendors WHERE id = ?", [$id]);
+        $tid = TenantContext::getId();
+        $row = $this->db->fetchOne("SELECT * FROM vendors WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$id, $tid] : [$id]);
         return $row ?: null;
     }
 
