@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use \App\Traits\TenantAwareTrait;
 
 class TelecallerController extends AdminController
 {
+    use TenantAwareTrait;
     public function index()
     {
         $this->requireAdmin();
@@ -27,7 +29,8 @@ class TelecallerController extends AdminController
 
             $tasks = $this->db->fetchAll("SELECT t.*, u.name as telecaller_name, u.email, u.phone FROM telecaller_daily_tasks t LEFT JOIN users u ON t.user_id = u.id $where ORDER BY t.created_at DESC", $params);
 
-            $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent') ORDER BY name");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent'){$tidSql} ORDER BY name", $tidParams);
 
         } catch (\Exception $e) {
             $todayStats = ['total_calls' => 0, 'connected' => 0, 'converted' => 0, 'pending' => 0];
@@ -64,7 +67,8 @@ class TelecallerController extends AdminController
 
             $records = $this->db->fetchAll("SELECT p.*, u.name as telecaller_name, u.email FROM telecaller_performance p LEFT JOIN users u ON p.telecaller_id = u.id $where ORDER BY p.period_start DESC", $params);
 
-            $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent') ORDER BY name");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent'){$tidSql} ORDER BY name", $tidParams);
 
         } catch (\Exception $e) {
             $overallStats = ['total_calls' => 0, 'connected' => 0, 'converted' => 0, 'total_commission' => 0];

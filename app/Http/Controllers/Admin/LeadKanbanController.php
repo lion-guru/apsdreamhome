@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Services\CRMService;
 use App\Services\CRMGuard;
+use \App\Traits\TenantAwareTrait;
 
 /**
  * Lead Kanban Controller — Professional Pipeline Board
@@ -11,6 +12,7 @@ use App\Services\CRMGuard;
  */
 class LeadKanbanController extends AdminController
 {
+    use TenantAwareTrait;
     /** @var CRMService */
     private $crm;
 
@@ -67,8 +69,10 @@ class LeadKanbanController extends AdminController
         // Assignable users (for filter dropdown)
         $users = [];
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll(
-                "SELECT id, name FROM users WHERE status = 'active' ORDER BY name"
+                "SELECT id, name FROM users WHERE status = 'active'{$tidSql} ORDER BY name",
+                $tidParams
             ) ?: [];
         } catch (\Throwable $e) {
             // fallback

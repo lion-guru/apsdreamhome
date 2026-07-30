@@ -8,9 +8,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\RBACManager;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 class AdminBaseController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
     protected $currentUser;
     protected $currentRole;
@@ -429,8 +432,10 @@ class AdminBaseController extends BaseController
         $stats = [];
         
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            
             // Total Users
-            $stats['total_users'] = $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
+            $stats['total_users'] = $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE 1=1{$tidSql}", $tidParams)['count'] ?? 0;
             
             // Total Properties
             $stats['total_properties'] = $this->db->fetch("SELECT COUNT(*) as count FROM properties")['count'] ?? 0;
@@ -448,7 +453,7 @@ class AdminBaseController extends BaseController
             
             // Total users
             $stats['total_associates'] = $this->db->fetch(
-                "SELECT COUNT(*) as count FROM users WHERE role IN ('associate', 'agent')"
+                "SELECT COUNT(*) as count FROM users WHERE role IN ('associate', 'agent'){$tidSql}", $tidParams
             )['count'] ?? 0;
             
             // Commission Paid
@@ -462,7 +467,7 @@ class AdminBaseController extends BaseController
             )['total'] ?? 0;
             
             // users
-            $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
+            $stats['total_employees'] = $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE 1=1{$tidSql}", $tidParams)['count'] ?? 0;
             
             // Pending Bookings
             $stats['pending_bookings'] = $this->db->fetch(

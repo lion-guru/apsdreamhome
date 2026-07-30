@@ -132,7 +132,8 @@ class AdminMenuPermissionController extends AdminController
         }
 
         $db = \App\Core\Database\Database::getInstance();
-        $users = $db->fetchAll("SELECT id, name, email, role FROM users WHERE role IS NOT NULL ORDER BY role, name");
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        $users = $db->fetchAll("SELECT id, name, email, role FROM users WHERE role IS NOT NULL{$tidSql} ORDER BY role, name", $tidParams);
 
         echo json_encode(['success' => true, 'users' => $users]);
         exit;

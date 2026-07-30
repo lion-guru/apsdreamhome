@@ -231,7 +231,9 @@ class CashCollectionController extends AdminController
     private function getUsers(): array
     {
         try {
-            $stmt = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin','agent','associate','employee') ORDER BY name ASC");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT id, name, email FROM users WHERE role IN ('admin','agent','associate','employee'){$tidSql} ORDER BY name ASC");
+            $stmt->execute($tidParams);
             return $stmt->fetchAll();
         } catch (\Throwable $e) { return []; }
     }

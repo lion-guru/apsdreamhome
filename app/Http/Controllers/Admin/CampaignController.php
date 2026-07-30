@@ -325,6 +325,7 @@ class CampaignController extends AdminController
     private function getTargetUsers($targetAudience)
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $query = "SELECT id FROM users";
             $params = [];
 
@@ -347,7 +348,13 @@ class CampaignController extends AdminController
                     break;
             }
 
-            return $this->db->fetchAll($query, $params);
+            if (strpos($query, 'WHERE') !== false) {
+                $query .= $tidSql;
+            } else {
+                $query .= " WHERE 1=1{$tidSql}";
+            }
+
+            return $this->db->fetchAll($query, array_merge($params, $tidParams));
         } catch (\Exception $e) {
             error_log("Error getting target users: " . $e->getMessage());
             return [];
@@ -516,7 +523,10 @@ class CampaignController extends AdminController
 
             $templates = $db->query("SELECT template_name, language FROM whatsapp_templates WHERE status = 'approved' ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
 
-            $stats['users'] = $db->query("SELECT COUNT(*) as cnt FROM users WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmtUsers = $db->prepare("SELECT COUNT(*) as cnt FROM users WHERE phone IS NOT NULL AND phone != ''{$tidSql}");
+            $stmtUsers->execute($tidParams);
+            $stats['users'] = $stmtUsers->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
             $stats['leads'] = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE phone IS NOT NULL AND phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
             $stats['users'] = $db->query("SELECT COUNT(*) as cnt FROM mlm_associates ma JOIN users u ON ma.user_id = u.id WHERE u.phone IS NOT NULL AND u.phone != ''")->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
 
@@ -530,7 +540,9 @@ class CampaignController extends AdminController
                 if ($audience === 'custom') {
                     $phones = array_filter(array_map('trim', explode("\n", $customPhones)));
                 } elseif ($audience === 'all_customers') {
-                    $rows = $db->query("SELECT phone FROM users WHERE phone IS NOT NULL AND phone != ''")->fetchAll(\PDO::FETCH_ASSOC);
+                    $stmtPhones = $db->prepare("SELECT phone FROM users WHERE phone IS NOT NULL AND phone != ''{$tidSql}");
+                    $stmtPhones->execute($tidParams);
+                    $rows = $stmtPhones->fetchAll(\PDO::FETCH_ASSOC);
                     $phones = array_column($rows, 'phone');
                 } elseif ($audience === 'all_leads') {
                     $rows = $db->query("SELECT phone FROM leads WHERE phone IS NOT NULL AND phone != ''")->fetchAll(\PDO::FETCH_ASSOC);

@@ -55,11 +55,12 @@ class NetworkController extends AdminController
                 $networkData = $this->getNetworkTree($associateId);
             } else {
                 // Get root users (those without sponsors)
+                [$tidSql, $tidParams] = $this->tenantWhere();
                 $sql = "SELECT u.* FROM users u 
                         LEFT JOIN users s ON u.sponsor_id = s.id
-                        WHERE u.role = 'associate' AND u.sponsor_id IS NULL
+                        WHERE u.role = 'associate' AND u.sponsor_id IS NULL{$tidSql}
                         ORDER BY u.created_at ASC";
-                $rootAssociates = $this->db->fetchAll($sql);
+                $rootAssociates = $this->db->fetchAll($sql, $tidParams);
                 $networkData = ['root_associates' => $rootAssociates];
             }
 
@@ -162,22 +163,24 @@ class NetworkController extends AdminController
         try {
             $stats = [];
 
+            [$tidSql, $tidParams] = $this->tenantWhere();
+
             // Total users
-            $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate'";
-            $result = $this->db->fetchOne($sql);
+            $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate'{$tidSql}";
+            $result = $this->db->fetch($sql, $tidParams);
             $stats['total_associates'] = (int)($result['total'] ?? 0);
 
             // Active users
-            $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate' AND status = 'active'";
-            $result = $this->db->fetchOne($sql);
+            $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate' AND status = 'active'{$tidSql}";
+            $result = $this->db->fetch($sql, $tidParams);
             $stats['active_associates'] = (int)($result['total'] ?? 0);
 
             // This month's joins
             $sql = "SELECT COUNT(*) as total FROM users 
                     WHERE role = 'associate' 
                     AND MONTH(created_at) = MONTH(CURRENT_DATE) 
-                    AND YEAR(created_at) = YEAR(CURRENT_DATE)";
-            $result = $this->db->fetchOne($sql);
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE){$tidSql}";
+            $result = $this->db->fetch($sql, $tidParams);
             $stats['monthly_joins'] = (int)($result['total'] ?? 0);
 
             // Total commissions paid
@@ -186,14 +189,16 @@ class NetworkController extends AdminController
             $stats['total_commissions'] = (float)($result['total'] ?? 0);
 
             // Average team size
+            $tid = (int)$this->tenantId();
+            $avgTidSql = $tid > 1 ? " AND u1.tenant_id = ?" : "";
             $sql = "SELECT AVG(team_size) as avg_size FROM (
                         SELECT COUNT(*) as team_size
                         FROM users u1
                         JOIN users u2 ON u1.id = u2.sponsor_id
-                        WHERE u1.role = 'associate'
+                        WHERE u1.role = 'associate'{$avgTidSql}
                         GROUP BY u1.id
                     ) as team_sizes";
-            $result = $this->db->fetchOne($sql);
+            $result = $this->db->fetch($sql, $tid > 1 ? [$tid] : []);
             $stats['avg_team_size'] = round((float)($result['avg_size'] ?? 0), 2);
 
             return $stats;
@@ -209,6 +214,7 @@ class NetworkController extends AdminController
     private function getTopPerformers(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT u.*, 
                            COUNT(DISTINCT u2.id) as direct_referrals,
                            COALESCE(SUM(mcl.amount), 0) as total_commissions,
@@ -216,11 +222,11 @@ class NetworkController extends AdminController
                     FROM users u
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
                     LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
-                    WHERE u.role = 'associate' AND u.status = 'active'
+                    WHERE u.role = 'associate' AND u.status = 'active'{$tidSql}
                     GROUP BY u.id
                     ORDER BY total_commissions DESC, direct_referrals DESC
                     LIMIT 10";
-            return $this->db->fetchAll($sql) ?: [];
+            return $this->db->fetchAll($sql, $tidParams) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Top Performers error: " . $e->getMessage());
             return [];
@@ -233,13 +239,14 @@ class NetworkController extends AdminController
     private function getRecentJoins(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT u.*, s.name as sponsor_name
                     FROM users u
                     LEFT JOIN users s ON u.sponsor_id = s.id
-                    WHERE u.role = 'associate'
+                    WHERE u.role = 'associate'{$tidSql}
                     ORDER BY u.created_at DESC
                     LIMIT 10";
-            return $this->db->fetchAll($sql) ?: [];
+            return $this->db->fetchAll($sql, $tidParams) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Recent Joins error: " . $e->getMessage());
             return [];
@@ -285,17 +292,20 @@ class NetworkController extends AdminController
         }
 
         try {
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $sql = "SELECT u.*, 
                            COUNT(DISTINCT u2.id) as direct_referrals,
                            COALESCE(SUM(mcl.amount), 0) as total_commissions
                     FROM users u
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
                     LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
-                    WHERE u.sponsor_id = ? AND u.role = 'associate'
+                    WHERE u.sponsor_id = ? AND u.role = 'associate'{$tidSql}
                     GROUP BY u.id
                     ORDER BY u.created_at ASC";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$sponsorId]);
+            $params = $tid > 1 ? [$sponsorId, $tid] : [$sponsorId];
+            $stmt->execute($params);
             $referrals = $stmt->fetchAll();
 
             foreach ($referrals as &$referral) {
@@ -377,12 +387,13 @@ class NetworkController extends AdminController
     private function getRankDistribution(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT u.mlm_rank, COUNT(*) as count
                     FROM users u
-                    WHERE u.role = 'associate' AND u.status = 'active'
+                    WHERE u.role = 'associate' AND u.status = 'active'{$tidSql}
                     GROUP BY u.mlm_rank
                     ORDER BY count DESC";
-            return $this->db->fetchAll($sql) ?: [];
+            return $this->db->fetchAll($sql, $tidParams) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Distribution error: " . $e->getMessage());
             return [];
@@ -395,17 +406,18 @@ class NetworkController extends AdminController
     private function getRankProgression(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT u.name, u.mlm_rank, u.created_at,
                            COUNT(DISTINCT u2.id) as team_size,
                            COALESCE(SUM(mcl.amount), 0) as total_earnings
                     FROM users u
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
                     LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
-                    WHERE u.role = 'associate' AND u.status = 'active'
+                    WHERE u.role = 'associate' AND u.status = 'active'{$tidSql}
                     GROUP BY u.id
                     ORDER BY total_earnings DESC
                     LIMIT 20";
-            return $this->db->fetchAll($sql) ?: [];
+            return $this->db->fetchAll($sql, $tidParams) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Progression error: " . $e->getMessage());
             return [];
@@ -527,6 +539,7 @@ class NetworkController extends AdminController
     private function getNetworkOverviewExport(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT u.id, u.name, u.email, u.phone, u.mlm_rank, u.status,
                            u.created_at, u.sponsor_id,
                            s.name as sponsor_name,
@@ -536,10 +549,10 @@ class NetworkController extends AdminController
                     LEFT JOIN users s ON u.sponsor_id = s.id
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
                     LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
-                    WHERE u.role = 'associate'
+                    WHERE u.role = 'associate'{$tidSql}
                     GROUP BY u.id
                     ORDER BY u.created_at DESC";
-            return $this->db->fetchAll($sql) ?: [];
+            return $this->db->fetchAll($sql, $tidParams) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Network Overview Export error: " . $e->getMessage());
             return [];
@@ -592,13 +605,14 @@ class NetworkController extends AdminController
     private function getRankExport(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT u.mlm_rank, COUNT(*) as count,
                            AVG(DATEDIFF(CURRENT_DATE, u.created_at)) as avg_days_in_rank
                     FROM users u
-                    WHERE u.role = 'associate' AND u.status = 'active'
+                    WHERE u.role = 'associate' AND u.status = 'active'{$tidSql}
                     GROUP BY u.mlm_rank
                     ORDER BY count DESC";
-            return $this->db->fetchAll($sql) ?: [];
+            return $this->db->fetchAll($sql, $tidParams) ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Export error: " . $e->getMessage());
             return [];

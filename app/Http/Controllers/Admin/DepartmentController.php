@@ -6,9 +6,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\DepartmentService;
+use \App\Traits\TenantAwareTrait;
 
 class DepartmentController extends AdminController
 {
+    use TenantAwareTrait;
+
     private DepartmentService $deptService;
 
     public function __construct()
@@ -39,7 +42,8 @@ class DepartmentController extends AdminController
     {
         $this->requireAdmin();
         $departments = $this->deptService->getActive();
-        $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('admin','manager','employee') ORDER BY name") ?? [];
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('admin','manager','employee'){$tidSql} ORDER BY name", $tidParams) ?? [];
         return $this->render('admin/departments/form', [
             'page_title' => 'Create Department',
             'department' => null,
@@ -89,7 +93,8 @@ class DepartmentController extends AdminController
             exit;
         }
         $departments = $this->deptService->getActive();
-        $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('admin','manager','employee') ORDER BY name") ?? [];
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('admin','manager','employee'){$tidSql} ORDER BY name", $tidParams) ?? [];
         return $this->render('admin/departments/form', [
             'page_title' => 'Edit Department: ' . $department['name'],
             'department' => $department,

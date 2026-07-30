@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\Gateway\TwilioService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Admin Gateway Manager
@@ -20,6 +21,8 @@ use App\Services\Gateway\TwilioService;
  */
 class GatewayTestController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -258,7 +261,10 @@ class GatewayTestController extends AdminController
     {
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getPdo();
-            $row = $pdo->query("SELECT phone FROM users WHERE role IN ('admin','superadmin') AND phone IS NOT NULL AND phone != '' ORDER BY id LIMIT 1")->fetch(\PDO::FETCH_ASSOC);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $pdo->prepare("SELECT phone FROM users WHERE role IN ('admin','superadmin') AND phone IS NOT NULL AND phone != ''{$tidSql} ORDER BY id LIMIT 1");
+            $stmt->execute($tidParams);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row['phone'] ?? '';
         } catch (\Throwable $e) {
             return '';

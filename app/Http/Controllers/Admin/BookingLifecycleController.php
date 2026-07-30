@@ -864,12 +864,13 @@ class BookingLifecycleController extends AdminController
     private function fetchCustomers(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $s = $this->db->prepare(
                 "SELECT id, name, email, phone FROM users
-                 WHERE role = 'customer'
+                 WHERE role = 'customer'{$tidSql}
                  ORDER BY name LIMIT 500"
             );
-            $s->execute();
+            $s->execute($tidParams);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -891,12 +892,13 @@ class BookingLifecycleController extends AdminController
     private function fetchSalesManagers(): array
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $s = $this->db->prepare(
                 "SELECT id, name, email FROM users
-                 WHERE role IN ('admin','manager','employee')
+                 WHERE role IN ('admin','manager','employee'){$tidSql}
                  ORDER BY name LIMIT 100"
             );
-            $s->execute();
+            $s->execute($tidParams);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());

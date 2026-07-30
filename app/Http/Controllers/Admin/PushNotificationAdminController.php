@@ -1,8 +1,11 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use \App\Traits\TenantAwareTrait;
+
 class PushNotificationAdminController extends AdminController
 {
+    use TenantAwareTrait;
     public function skipCsrfProtection(): bool
     {
         return false;
@@ -375,18 +378,20 @@ class PushNotificationAdminController extends AdminController
         $targetType = $campaign['target_type'];
         $targetValue = $campaign['target_value'];
         $userIds = [];
+        [$tidSql, $tidParams] = $this->tenantWhere();
 
         switch ($targetType) {
             case 'all_users':
-                $rows = $db->fetchAll("SELECT id FROM users WHERE status = 'active'");
+                $tidWhere = $tidSql ? ' WHERE tenant_id = ?' : '';
+                $rows = $db->fetchAll("SELECT id FROM users{$tidWhere} AND status = 'active'", $tidParams);
                 $userIds = array_column($rows, 'id');
                 break;
             case 'role':
-                $rows = $db->fetchAll("SELECT id FROM users WHERE role = ? AND status = 'active'", [$targetValue]);
+                $rows = $db->fetchAll("SELECT id FROM users WHERE role = ? AND status = 'active'{$tidSql}", array_merge([$targetValue], $tidParams));
                 $userIds = array_column($rows, 'id');
                 break;
             case 'segment':
-                $rows = $db->fetchAll("SELECT id FROM users WHERE FIND_IN_SET(?, COALESCE(tags, '')) AND status = 'active'", [$targetValue]);
+                $rows = $db->fetchAll("SELECT id FROM users WHERE FIND_IN_SET(?, COALESCE(tags, '')) AND status = 'active'{$tidSql}", array_merge([$targetValue], $tidParams));
                 $userIds = array_column($rows, 'id');
                 break;
             case 'individual':

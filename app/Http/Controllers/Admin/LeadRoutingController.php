@@ -7,9 +7,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\LeadRoutingService;
+use \App\Traits\TenantAwareTrait;
 
 class LeadRoutingController extends AdminController
 {
+    use TenantAwareTrait;
+
     private $routing;
 
     public function __construct() {
@@ -39,7 +42,8 @@ class LeadRoutingController extends AdminController
         $this->requireAdmin();
         $db = \App\Core\Database::getInstance();
         $departments = $db->fetchAll("SELECT id, name FROM departments WHERE status = 'active' ORDER BY name") ?: [];
-        $users = $db->fetchAll("SELECT id, name, email FROM users WHERE deleted_at IS NULL ORDER BY name") ?: [];
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        $users = $db->fetchAll("SELECT id, name, email FROM users WHERE deleted_at IS NULL{$tidSql} ORDER BY name", $tidParams) ?: [];
 
         return $this->render('admin/crm/routing_rule_form', [
             'page_title' => 'Create Routing Rule',
@@ -79,7 +83,8 @@ class LeadRoutingController extends AdminController
 
         $db = \App\Core\Database::getInstance();
         $departments = $db->fetchAll("SELECT id, name FROM departments WHERE status = 'active' ORDER BY name") ?: [];
-        $users = $db->fetchAll("SELECT id, name, email FROM users WHERE deleted_at IS NULL ORDER BY name") ?: [];
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        $users = $db->fetchAll("SELECT id, name, email FROM users WHERE deleted_at IS NULL{$tidSql} ORDER BY name", $tidParams) ?: [];
 
         return $this->render('admin/crm/routing_rule_form', [
             'page_title' => 'Edit Routing Rule',

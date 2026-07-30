@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
+
 class AgentController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
         try {
             $db = $this->db;
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $this->data['agents'] = $db->fetchAll(
                 "SELECT u.id, u.name, u.email, u.phone, u.status,
                     (SELECT COUNT(*) FROM plot_bookings pb WHERE pb.agent_id = u.id) as deals_count,
                     (SELECT COALESCE(SUM(ml.commission_amount), 0) FROM mlm_commission_ledger ml WHERE ml.user_id = u.id) as total_commission
-                 FROM users u WHERE u.role = 'agent' ORDER BY u.name ASC"
+                 FROM users u WHERE u.role = 'agent'{$tidSql} ORDER BY u.name ASC",
+                $tidParams
             ) ?: [];
             $this->data['totalAgents'] = count($this->data['agents']);
             $this->data['activeAgents'] = count(array_filter($this->data['agents'], fn($a) => ($a['status'] ?? 'active') === 'active'));

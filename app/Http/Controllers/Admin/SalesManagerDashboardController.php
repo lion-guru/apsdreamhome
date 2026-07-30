@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use \App\Traits\TenantAwareTrait;
+
 // AdminController resolved via namespace
 
 /**
@@ -10,6 +12,7 @@ namespace App\Http\Controllers\Admin;
  */
 class SalesManagerDashboardController extends AdminController
 {
+    use TenantAwareTrait;
     public function index()
     {
         $this->requireAdmin();
@@ -71,9 +74,10 @@ class SalesManagerDashboardController extends AdminController
     private function getLeaderboard(): array
     {
         try {
-            $sql = "SELECT u.id, u.name, COUNT(l.id) as lead_count, SUM(CASE WHEN l.status = 'closed_won' THEN 1 ELSE 0 END) as won_count FROM users u LEFT JOIN leads l ON l.user_id = u.id AND l.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) WHERE u.role IN ('agent', 'associate', 'employee') GROUP BY u.id, u.name HAVING lead_count > 0 ORDER BY won_count DESC, lead_count DESC LIMIT 10";
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $sql = "SELECT u.id, u.name, COUNT(l.id) as lead_count, SUM(CASE WHEN l.status = 'closed_won' THEN 1 ELSE 0 END) as won_count FROM users u LEFT JOIN leads l ON l.user_id = u.id AND l.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) WHERE u.role IN ('agent', 'associate', 'employee'){$tidSql} GROUP BY u.id, u.name HAVING lead_count > 0 ORDER BY won_count DESC, lead_count DESC LIMIT 10";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($tidParams);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return [];

@@ -124,8 +124,9 @@ class AdminController extends BaseController
         } catch (\Exception $e) { $stats['database_tables'] = 0; }
 
         try {
-            $totalUsers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role IN ('admin','super_admin','manager','employee','telecaller','associate','agent','customer')")['cnt'] ?? 0);
-            $activeUsers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role IN ('admin','super_admin','manager','employee','telecaller','associate','agent','customer') AND is_active = 1")['cnt'] ?? 0);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $totalUsers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role IN ('admin','super_admin','manager','employee','telecaller','associate','agent','customer'){$tidSql}", $tidParams)['cnt'] ?? 0);
+            $activeUsers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role IN ('admin','super_admin','manager','employee','telecaller','associate','agent','customer') AND is_active = 1{$tidSql}", $tidParams)['cnt'] ?? 0);
             $stats['total_users'] = $totalUsers;
             $stats['active_users'] = $activeUsers;
             $stats['active_users_pct'] = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 1) : 0;
@@ -280,7 +281,9 @@ class AdminController extends BaseController
     {
         try {
             return Cache::remember('admin_dash_total_users', function () {
-                return $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
+                $tid = (int)$this->tenantId();
+                $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+                return $this->db->fetch("SELECT COUNT(*) as count FROM users{$tidWhere}", $tid > 1 ? [$tid] : [])['count'] ?? 0;
             }, 300);
         } catch (\Exception $e) {
             return 0;
@@ -350,7 +353,9 @@ class AdminController extends BaseController
     {
         try {
             return Cache::remember('admin_dash_new_users_today', function () {
-                return $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()")['count'] ?? 0;
+                $tid = (int)$this->tenantId();
+                $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+                return $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE(){$tidSql}", $tid > 1 ? [$tid] : [])['count'] ?? 0;
             }, 120);
         } catch (\Exception $e) {
             return 0;
@@ -390,13 +395,14 @@ class AdminController extends BaseController
     public function getRecentActivities()
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             return $this->db->fetchAll("
                 SELECT 'user' as type, name, created_at as date, 'registered' as action 
                 FROM users 
-                WHERE DATE(created_at) = CURDATE() 
+                WHERE DATE(created_at) = CURDATE(){$tidSql}
                 ORDER BY created_at DESC 
                 LIMIT 5
-            ");
+            ", $tidParams);
         } catch (\Exception $e) {
             return [];
         }
@@ -411,7 +417,9 @@ class AdminController extends BaseController
         try {
             $stats = [
                 'total_users' => Cache::remember('admin_api_total_users', function () {
-                    return $this->db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
+                    $tid = (int)$this->tenantId();
+                    $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM users{$tidWhere}", $tid > 1 ? [$tid] : [])['c'] ?? 0;
                 }, 300),
                 'total_properties' => Cache::remember('admin_api_total_properties', function () {
                     return $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
@@ -439,11 +447,12 @@ class AdminController extends BaseController
     {
         // User registrations per month (last 6 months)
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $userData = $this->db->fetchAll("
                 SELECT DATE_FORMAT(created_at, '%b') as label, COUNT(*) as count
-                FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH){$tidSql}
                 GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY MIN(created_at)
-            ");
+            ", $tidParams);
         } catch (\Exception $e) {
             $userData = [];
         }
@@ -529,7 +538,9 @@ class AdminController extends BaseController
     public function getUsersList()
     {
         try {
-            return $this->db->fetchAll("SELECT id, name, email, role, status, created_at FROM users ORDER BY created_at DESC LIMIT 50");
+            $tid = (int)$this->tenantId();
+            $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+            return $this->db->fetchAll("SELECT id, name, email, role, status, created_at FROM users{$tidWhere} ORDER BY created_at DESC LIMIT 50", $tid > 1 ? [$tid] : []);
         } catch (\Exception $e) {
             return [];
         }

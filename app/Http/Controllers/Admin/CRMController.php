@@ -11,8 +11,9 @@ class CRMController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $stats = [
-                'total_customers' => (int)$db->query("SELECT COUNT(*) FROM users WHERE role='customer'")->fetchColumn(),
+                'total_customers' => (int)$this->db->fetch("SELECT COUNT(*) as c FROM users WHERE role='customer'{$tidSql}", $tidParams)['c'] ?? 0,
                 'active_leads' => (int)$db->query("SELECT COUNT(*) FROM leads WHERE status NOT IN ('converted','closed','dead') AND deleted_at IS NULL")->fetchColumn(),
                 'open_tickets' => (int)$db->query("SELECT COUNT(*) FROM support_tickets WHERE status IN ('open','in_progress','pending')")->fetchColumn(),
                 'total_inquiries' => (int)$db->query("SELECT COUNT(*) FROM inquiries")->fetchColumn(),
@@ -33,8 +34,8 @@ class CRMController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $customers = $db->query("SELECT u.*, (SELECT COUNT(*) FROM leads WHERE email=u.email AND deleted_at IS NULL) as lead_count, (SELECT COUNT(*) FROM inquiries WHERE user_id=u.id) as inquiry_count FROM users u WHERE u.role='customer' ORDER BY u.created_at DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $customers = $this->db->fetchAll("SELECT u.*, (SELECT COUNT(*) FROM leads WHERE email=u.email AND deleted_at IS NULL) as lead_count, (SELECT COUNT(*) FROM inquiries WHERE user_id=u.id) as inquiry_count FROM users u WHERE u.role='customer'{$tidSql} ORDER BY u.created_at DESC", $tidParams) ?: [];
         } catch (\Exception $e) {
             $customers = [];
         }
@@ -68,7 +69,8 @@ class CRMController extends AdminController
         }
 
         try {
-            $exists = $this->db->fetch("SELECT id FROM users WHERE email=?", [$email]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $exists = $this->db->fetch("SELECT id FROM users WHERE email=?{$tidSql}", array_merge([$email], $tidParams));
             if ($exists) {
                 $this->setFlash('error', 'A user with this email already exists');
                 header('Location: ' . BASE_URL . '/admin/crm/users/create');

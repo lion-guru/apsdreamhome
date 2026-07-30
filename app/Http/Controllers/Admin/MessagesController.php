@@ -1,8 +1,12 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use \App\Traits\TenantAwareTrait;
+
 class MessagesController extends \App\Http\Controllers\Admin\AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -97,18 +101,21 @@ class MessagesController extends \App\Http\Controllers\Admin\AdminController
     public function compose()
     {
         $search = trim($_GET['search'] ?? '');
+        [$tidSql, $tidParams] = $this->tenantWhere();
 
         $users = [];
         if (strlen($search) >= 2) {
             $users = $this->db->fetchAll(
                 "SELECT id, name, email, role, phone FROM users
-                 WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?
+                 WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?){$tidSql}
                  ORDER BY name ASC LIMIT 20",
-                ["%$search%", "%$search%", "%$search%"]
+                array_merge(["%$search%", "%$search%", "%$search%"], $tidParams)
             );
         } else {
+            $tidWhere = $tidSql ? str_replace(' AND ', ' WHERE ', $tidSql) : '';
             $users = $this->db->fetchAll(
-                "SELECT id, name, email, role, phone FROM users ORDER BY name ASC LIMIT 50"
+                "SELECT id, name, email, role, phone FROM users{$tidWhere} ORDER BY name ASC LIMIT 50",
+                $tidParams
             );
         }
 
@@ -127,11 +134,12 @@ class MessagesController extends \App\Http\Controllers\Admin\AdminController
             echo json_encode([]);
             exit;
         }
+        [$tidSql, $tidParams] = $this->tenantWhere();
         $users = $this->db->fetchAll(
             "SELECT id, name, email, role, phone FROM users
-             WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?
+             WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?){$tidSql}
              ORDER BY name ASC LIMIT 10",
-            ["%$search%", "%$search%", "%$search%"]
+            array_merge(["%$search%", "%$search%", "%$search%"], $tidParams)
         );
         header('Content-Type: application/json');
         echo json_encode($users ?: []);

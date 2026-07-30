@@ -155,8 +155,11 @@ class DealController extends AdminController
 
         try {
             $leads = $this->db->fetchAll("SELECT id, name, email, phone FROM leads WHERE status = 'open' ORDER BY created_at DESC LIMIT 50") ?: [];
-            $users = $this->db->fetchAll("SELECT id, name, email, phone FROM users ORDER BY created_at DESC LIMIT 50") ?: [];
-            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' ORDER BY name ASC") ?: [];
+            $tid = (int)$this->tenantId();
+            $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+            $users = $this->db->fetchAll("SELECT id, name, email, phone FROM users{$tidWhere} ORDER BY created_at DESC LIMIT 50", $tid > 1 ? [$tid] : []) ?: [];
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active'{$tidSql} ORDER BY name ASC", $tidParams) ?: [];
             $stages = [['id' => 1, 'stage_name' => 'New'], ['id' => 2, 'stage_name' => 'Contacted'], ['id' => 3, 'stage_name' => 'Qualified'], ['id' => 4, 'stage_name' => 'Negotiation'], ['id' => 5, 'stage_name' => 'Closed Won']];
         } catch (\Exception $e) {
             error_log("DealController create error: " . $e->getMessage());

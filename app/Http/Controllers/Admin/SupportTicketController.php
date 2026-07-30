@@ -240,7 +240,9 @@ class SupportTicketController extends AdminController
             }
 
             // Get staff members for assignment dropdown
-            $staffStmt = $this->db->query("SELECT id, name, email FROM users WHERE role IN ('admin','employee') ORDER BY name");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $staffStmt = $this->db->prepare("SELECT id, name, email FROM users WHERE role IN ('admin','employee'){$tidSql} ORDER BY name");
+            $staffStmt->execute($tidParams);
             $staffMembers = $staffStmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $data = [

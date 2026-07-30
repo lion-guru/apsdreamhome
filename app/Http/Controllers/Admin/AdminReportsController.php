@@ -242,9 +242,10 @@ class AdminReportsController extends AdminController
     private function getNewCustomersCount($date)
     {
         try {
-            $sql = "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = ?";
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $sql = "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = ?{$tidSql}";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$date]);
+            $stmt->execute(array_merge([$date], $tidParams));
             $result = $stmt->fetch();
             return $result['count'] ?? 0;
         } catch (\Exception $e) {
@@ -270,6 +271,7 @@ class AdminReportsController extends AdminController
     private function getTopPerformers($startDate, $endDate)
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $sql = "SELECT 
                         u.name, 
                         u.email,
@@ -279,12 +281,13 @@ class AdminReportsController extends AdminController
                     LEFT JOIN sales s ON u.id = s.created_by 
                         AND DATE(s.created_at) >= ? 
                         AND DATE(s.created_at) <= ?
+                    WHERE 1=1{$tidSql}
                     GROUP BY u.id, u.name, u.email
                     ORDER BY sales_count DESC
                     LIMIT 10";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
+            $stmt->execute(array_merge([$startDate, $endDate], $tidParams));
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];

@@ -79,7 +79,8 @@ class BookingController extends AdminController
             $stmt->execute($params);
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            $allAssociates = $this->db->query("SELECT id, name FROM users WHERE role IN ('associate','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $allAssociates = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate','agent'){$tidSql} ORDER BY name", $tidParams) ?: [];
             $colonies = $this->db->query("SELECT id, name FROM colonies WHERE is_active=1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $statuses = ['token_paid','agreement_signed','emi_active','partially_paid','fully_paid','cancelled','transferred','registration_done'];
 
@@ -106,7 +107,8 @@ class BookingController extends AdminController
     public function create()
     {
         try {
-            $users = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $users = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent'){$tidSql} ORDER BY name", $tidParams) ?: [];
             $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
             return $this->render('admin/bookings/create', ['users' => $users, 'properties' => $properties]);
         } catch (\Exception $e) {
@@ -201,7 +203,8 @@ class BookingController extends AdminController
             $stmt = $this->db->prepare("SELECT b.*, pl.plot_number, pl.colony_id, u.name as customer_name FROM plot_bookings b LEFT JOIN plots pl ON b.plot_id = pl.id LEFT JOIN users u ON b.customer_id = u.id WHERE b.id = ?");
             $stmt->execute([$id]);
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $customers = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','user') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $customers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('customer','user'){$tidSql} ORDER BY name", $tidParams) ?: [];
             $plots = $this->db->query("SELECT pl.id, pl.plot_number, c.name as colony_name FROM plots pl LEFT JOIN colonies c ON pl.colony_id = c.id WHERE pl.status IN ('available','booked') ORDER BY c.name, pl.plot_number")->fetchAll(\PDO::FETCH_ASSOC);
             return $this->render('admin/bookings/edit', ['booking' => $booking, 'customers' => $customers, 'plots' => $plots]);
         } catch (\Exception $e) {

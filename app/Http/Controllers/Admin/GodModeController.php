@@ -8,9 +8,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 class GodModeController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -230,6 +233,12 @@ class GodModeController extends AdminController
         $where = ['status = ?'];
         $params[] = 'active';
 
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        if (!empty($tidSql)) {
+            $where[] = 'tenant_id = ?';
+            $params[] = $tidParams[0];
+        }
+
         if ($search) {
             $where[] = '(name LIKE ? OR email LIKE ? OR phone LIKE ?)';
             $params[] = "%$search%";
@@ -357,8 +366,9 @@ class GodModeController extends AdminController
                 return 0;
             }
         };
+        [$tidSql, $tidParams] = $this->tenantWhere();
         return [
-            'total_users' => $safeCount('users'),
+            'total_users' => $safeCount('users', '1=1' . $tidSql, $tidParams),
             'total_leads' => $safeCount('leads'),
             'total_properties' => $safeCount('user_properties'),
             'total_commissions' => $safeCount('commissions'),
@@ -372,12 +382,14 @@ class GodModeController extends AdminController
      */
     private function getAllUsersForImpersonation()
     {
+        [$tidSql, $tidParams] = $this->tenantWhere();
         return $this->db->fetchAll(
             "SELECT id, name, email, role, status 
              FROM users 
-             WHERE status = 'active' 
+             WHERE status = 'active'{$tidSql} 
              ORDER BY created_at DESC 
-             LIMIT 20"
+             LIMIT 20",
+            $tidParams
         );
     }
 

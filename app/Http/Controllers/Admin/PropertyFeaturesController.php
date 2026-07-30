@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Traits\TenantAwareTrait;
 
 class PropertyFeaturesController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function ratings()
     {
         $this->requireAdmin();
@@ -130,7 +133,8 @@ class PropertyFeaturesController extends AdminController
             $this->redirect('/admin/property-features/maintenance');
         }
 
-        $staff = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('employee', 'admin') ORDER BY name") ?: [];
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        $staff = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('employee', 'admin'){$tidSql} ORDER BY name", $tidParams) ?: [];
 
         return $this->render('admin/property-features/maintenance-show', [
             'page_title' => 'Maintenance #' . $id,

@@ -62,8 +62,9 @@ class VisitController extends AdminController
             $properties = $stmt->fetchAll();
         } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }
         try {
-            $stmt = $this->db->prepare("SELECT id, name FROM users WHERE role IN ('admin','agent','employee') ORDER BY name ASC");
-            $stmt->execute();
+            list($tSql, $tParams) = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT id, name FROM users WHERE role IN ('admin','agent','employee'){$tSql} ORDER BY name ASC");
+            $stmt->execute($tParams);
             $users = $stmt->fetchAll();
         } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }
         return $this->render('admin/visits/create', [
@@ -132,8 +133,9 @@ class VisitController extends AdminController
         }
         $users = [];
         try {
-            $stmt = $this->db->prepare("SELECT id, name FROM users WHERE role IN ('admin','agent','employee') ORDER BY name ASC");
-            $stmt->execute();
+            list($tSql, $tParams) = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT id, name FROM users WHERE role IN ('admin','agent','employee'){$tSql} ORDER BY name ASC");
+            $stmt->execute($tParams);
             $users = $stmt->fetchAll();
         } catch (\Throwable $e) { error_log('VisitController::edit error: ' . $e->getMessage()); }
         return $this->render('admin/visits/edit', [

@@ -7,9 +7,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Database;
 use App\Services\CRMService;
+use App\Traits\TenantAwareTrait;
 
 class AgenticCRMController extends AdminController
 {
+    use TenantAwareTrait;
+
     /**
      * Dashboard — Agentic AI status and actions
      */
@@ -53,17 +56,21 @@ class AgenticCRMController extends AdminController
         $results = ['processed' => 0, 'reminders_sent' => 0, 'details' => []];
 
         // Find leads with overdue or due-today follow-ups
-        $overdue = $db->query(
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ' AND l.tenant_id = ?' : '';
+        $tidParams = $tid > 1 ? [$tid] : [];
+        $overdue = $this->db->fetchAll(
             "SELECT l.id, l.name, l.phone, l.status, l.assigned_to, l.last_activity_date,
                     u.name as assignee_name
              FROM leads l
              LEFT JOIN users u ON l.assigned_to = u.id
              WHERE l.deleted_at IS NULL
                AND l.status NOT IN ('converted','closed','dead','won')
-               AND (l.last_activity_date IS NULL OR l.last_activity_date < DATE_SUB(NOW(), INTERVAL 3 DAY))
+               AND (l.last_activity_date IS NULL OR l.last_activity_date < DATE_SUB(NOW(), INTERVAL 3 DAY)){$tidSql}
              ORDER BY l.last_activity_date ASC
-             LIMIT 50"
-        )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+             LIMIT 50",
+            $tidParams
+        ) ?: [];
 
         foreach ($overdue as $lead) {
             // Create a follow-up task
@@ -97,7 +104,10 @@ class AgenticCRMController extends AdminController
         $db = Database::getInstance()->getConnection();
         $service = new CRMService();
 
-        $leads = $db->query("SELECT id, name FROM leads WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $tidParams = $tid > 1 ? [$tid] : [];
+        $leads = $this->db->fetchAll("SELECT id, name FROM leads WHERE deleted_at IS NULL{$tidSql} ORDER BY updated_at DESC LIMIT 100", $tidParams) ?: [];
 
         $adjusted = 0;
         foreach ($leads as $lead) {
@@ -136,9 +146,12 @@ class AgenticCRMController extends AdminController
         $service = new CRMService();
 
         $insights = [];
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $tidParams = $tid > 1 ? [$tid] : [];
 
         // Pipeline health
-        $pipeline = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $pipeline = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL{$tidSql} GROUP BY status", $tidParams) ?: [];
         $total = array_sum(array_column($pipeline, 'cnt'));
         $newLeads = 0;
         $stuckLeads = 0;
@@ -148,7 +161,7 @@ class AgenticCRMController extends AdminController
         }
 
         // Conversion analysis
-        $won = $db->query("SELECT COUNT(*) FROM leads WHERE status='won' AND deleted_at IS NULL")->fetchColumn();
+        $won = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads WHERE status='won' AND deleted_at IS NULL{$tidSql}", $tidParams)['cnt'] ?? 0;
         $convRate = $total > 0 ? round(($won / $total) * 100, 1) : 0;
 
         if ($newLeads > 50) {
@@ -164,8 +177,8 @@ class AgenticCRMController extends AdminController
         }
 
         // Score distribution
-        $hotCount = (int)$db->query("SELECT COUNT(*) FROM leads WHERE lead_score >= 70 AND deleted_at IS NULL")->fetchColumn();
-        $coldCount = (int)$db->query("SELECT COUNT(*) FROM leads WHERE lead_score < 30 AND deleted_at IS NULL")->fetchColumn();
+        $hotCount = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads WHERE lead_score >= 70 AND deleted_at IS NULL{$tidSql}", $tidParams)['cnt'] ?? 0;
+        $coldCount = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads WHERE lead_score < 30 AND deleted_at IS NULL{$tidSql}", $tidParams)['cnt'] ?? 0;
 
         if ($hotCount > 0) {
             $insights[] = ['type' => 'success', 'icon' => 'fa-fire', 'title' => 'Hot Leads Ready', 'detail' => "{$hotCount} leads with score ≥70 are ready for conversion."];
@@ -225,17 +238,26 @@ class AgenticCRMController extends AdminController
 
     private function getHotLeads($db): array
     {
-        return $db->query("SELECT l.id, l.name, l.phone, l.lead_score, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.lead_score >= 70 AND l.deleted_at IS NULL ORDER BY l.lead_score DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ' AND l.tenant_id = ?' : '';
+        $tidParams = $tid > 1 ? [$tid] : [];
+        return $this->db->fetchAll("SELECT l.id, l.name, l.phone, l.lead_score, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.lead_score >= 70 AND l.deleted_at IS NULL{$tidSql} ORDER BY l.lead_score DESC LIMIT 10", $tidParams) ?: [];
     }
 
     private function getColdLeads($db): array
     {
-        return $db->query("SELECT COUNT(*) as cnt FROM leads WHERE lead_score < 30 AND deleted_at IS NULL")->fetchAll(\PDO::FETCH_ASSOC);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $tidParams = $tid > 1 ? [$tid] : [];
+        return $this->db->fetchAll("SELECT COUNT(*) as cnt FROM leads WHERE lead_score < 30 AND deleted_at IS NULL{$tidSql}", $tidParams);
     }
 
     private function getDormantLeads($db): array
     {
-        return $db->query("SELECT l.id, l.name, l.phone, l.last_activity_date, DATEDIFF(NOW(), l.last_activity_date) as days_inactive FROM leads l WHERE l.deleted_at IS NULL AND l.status NOT IN ('converted','closed','dead') AND (l.last_activity_date IS NULL OR l.last_activity_date < DATE_SUB(NOW(), INTERVAL 7 DAY)) ORDER BY l.last_activity_date ASC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ' AND l.tenant_id = ?' : '';
+        $tidParams = $tid > 1 ? [$tid] : [];
+        return $this->db->fetchAll("SELECT l.id, l.name, l.phone, l.last_activity_date, DATEDIFF(NOW(), l.last_activity_date) as days_inactive FROM leads l WHERE l.deleted_at IS NULL AND l.status NOT IN ('converted','closed','dead') AND (l.last_activity_date IS NULL OR l.last_activity_date < DATE_SUB(NOW(), INTERVAL 7 DAY)){$tidSql} ORDER BY l.last_activity_date ASC LIMIT 10", $tidParams) ?: [];
     }
 
     private function getRecentActions($db): array

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use \App\Traits\TenantAwareTrait;
 
 class CompanyController extends AdminController
 {
+    use TenantAwareTrait;
     protected $db;
 
     public function __construct()
@@ -75,7 +77,8 @@ class CompanyController extends AdminController
 
         $employeeUsers = [];
         try {
-            $employeeUsers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'employee' ORDER BY name") ?: [];
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $employeeUsers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'employee'{$tidSql} ORDER BY name", $tidParams) ?: [];
         } catch (\Throwable $e) {
             // Gracefully handle missing table
         }

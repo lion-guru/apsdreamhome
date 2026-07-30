@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
 use Exception;
+use \App\Traits\TenantAwareTrait;
 
 class ScheduleController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -37,8 +40,9 @@ class ScheduleController extends AdminController
             );
 
             // Total users (active)
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $totalEmployees = $this->db->fetch(
-                "SELECT COUNT(*) as count FROM users WHERE status = 'active'"
+                "SELECT COUNT(*) as count FROM users WHERE status = 'active'{$tidSql}", $tidParams
             )['count'] ?? 0;
 
             // users on shift today
@@ -72,15 +76,16 @@ class ScheduleController extends AdminController
             );
 
             // Department-wise coverage
+            [$tidSql2, $tidParams2] = $this->tenantWhere();
             $deptCoverage = $this->db->fetchAll(
                 "SELECT e.department,
                         COUNT(DISTINCT e.id) as total,
                         COUNT(DISTINCT es.id) as scheduled
                  FROM users e
                  LEFT JOIN employee_shifts es ON e.id = es.employee_id AND es.shift_date = ?
-                 WHERE e.status = 'active'
+                 WHERE e.status = 'active'{$tidSql2}
                  GROUP BY e.department",
-                [$today]
+                array_merge([$today], $tidParams2)
             );
 
             // Recent schedule changes
@@ -292,8 +297,9 @@ class ScheduleController extends AdminController
             );
 
             // For filters
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll(
-                "SELECT id, name, department FROM users WHERE status = 'active' ORDER BY name"
+                "SELECT id, name, department FROM users WHERE status = 'active'{$tidSql} ORDER BY name", $tidParams
             );
             $shiftTypes = $this->db->fetchAll(
                 "SELECT id, name FROM shift_types WHERE is_active = 1 ORDER BY name"
@@ -491,11 +497,12 @@ class ScheduleController extends AdminController
             }
 
             // Get users
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll(
                 "SELECT e.id, e.name, e.department, e.designation
                  FROM users e
-                 WHERE e.status = 'active'
-                 ORDER BY e.name"
+                 WHERE e.status = 'active'{$tidSql}
+                 ORDER BY e.name", $tidParams
             );
 
             // Get shifts for this week
@@ -612,9 +619,10 @@ class ScheduleController extends AdminController
             }
 
             // Get users in department
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll(
-                "SELECT id FROM users WHERE department = ? AND status = 'active'",
-                [$department]
+                "SELECT id FROM users WHERE department = ? AND status = 'active'{$tidSql}",
+                array_merge([$department], $tidParams)
             );
 
             if (empty($users)) {
@@ -675,9 +683,12 @@ class ScheduleController extends AdminController
             $where = '';
             $params = [];
 
+            [$tidSql, $tidParams] = $this->tenantWhere();
             if (!empty($department)) {
                 $where = "WHERE e.department = ?";
                 $params[] = $department;
+            } else {
+                $where = ''; // will rely on $tidSql
             }
 
             $users = $this->db->fetchAll(
@@ -685,13 +696,13 @@ class ScheduleController extends AdminController
                         ws.id as ws_id, ws.shift_start, ws.shift_end, ws.work_days, ws.is_active as ws_active
                  FROM users e
                  LEFT JOIN work_schedules ws ON e.id = ws.employee_id
-                 $where
+                 " . ($where ?: 'WHERE 1=1') . "{$tidSql}
                  ORDER BY e.name",
-                $params
+                array_merge($params, $tidParams)
             );
 
             $departments = $this->db->fetchAll(
-                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
+                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != ''{$tidSql} ORDER BY department", $tidParams
             );
 
             $dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -803,13 +814,14 @@ class ScheduleController extends AdminController
                 $where = "AND e.department = ?";
                 $params[] = $department;
             }
+            [$tidSql, $tidParams] = $this->tenantWhere();
 
             $users = $this->db->fetchAll(
                 "SELECT e.id, e.name, e.department, e.designation
                  FROM users e
-                 WHERE e.status = 'active' $where
+                 WHERE e.status = 'active' {$where}{$tidSql}
                  ORDER BY e.name",
-                $params
+                array_merge($params, $tidParams)
             );
 
             // Get all shifts for this week
@@ -841,7 +853,7 @@ class ScheduleController extends AdminController
             }
 
             $departments = $this->db->fetchAll(
-                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
+                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != ''{$tidSql} ORDER BY department", $tidParams
             );
 
             return $this->render('admin/schedule/weekly_view', [
@@ -880,8 +892,9 @@ class ScheduleController extends AdminController
                 "SELECT id, name, start_time, end_time, color FROM shift_types WHERE is_active = 1 ORDER BY name"
             );
 
+            [$tidSql, $tidParams] = $this->tenantWhere();
             $departments = $this->db->fetchAll(
-                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != '' ORDER BY department"
+                "SELECT DISTINCT department FROM users WHERE status = 'active' AND department IS NOT NULL AND department != ''{$tidSql} ORDER BY department", $tidParams
             );
 
             return $this->render('admin/schedule/rotation', [

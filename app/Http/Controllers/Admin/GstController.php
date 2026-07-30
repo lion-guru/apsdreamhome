@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Traits\TenantAwareTrait;
 
 class GstController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -58,8 +61,9 @@ class GstController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $custStmt = $this->db->prepare("SELECT id, name, email, phone, gstin FROM users WHERE role = 'customer' ORDER BY name ASC LIMIT 200");
-            $custStmt->execute();
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $custStmt = $this->db->prepare("SELECT id, name, email, phone, gstin FROM users WHERE role = 'customer'{$tidSql} ORDER BY name ASC LIMIT 200");
+            $custStmt->execute($tidParams);
             $users = $custStmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $users = [];

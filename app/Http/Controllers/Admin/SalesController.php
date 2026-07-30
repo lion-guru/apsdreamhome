@@ -7,6 +7,7 @@ use App\Services\CoreFunctionsServiceCustom;
 use App\Services\LoggingService;
 use App\Core\Database;
 use Exception;
+use \App\Traits\TenantAwareTrait;
 
 /**
  * Sales Controller - Custom MVC Implementation
@@ -14,6 +15,7 @@ use Exception;
  */
 class SalesController extends AdminController
 {
+    use TenantAwareTrait;
     private $loggingService;
 
     public function __construct()
@@ -116,7 +118,8 @@ class SalesController extends AdminController
             $sales = $stmt->fetchAll();
 
             // Get users for filter
-            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate'{$tidSql} ORDER BY name", $tidParams);
 
             $data = [
                 'page_title' => 'Sales Management - APS Dream Home',
@@ -148,14 +151,16 @@ class SalesController extends AdminController
     public function create()
     {
         try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
+
             // Fetch users with their names from users table
-            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate'{$tidSql} ORDER BY name", $tidParams);
 
             // Get available properties
             $properties = $this->db->fetchAll("SELECT id, title, price, location FROM properties WHERE status = 'available' ORDER BY title");
 
             // Get users
-            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer'{$tidSql} ORDER BY name", $tidParams);
 
             $data = [
                 'page_title' => 'Create Sale - APS Dream Home',
@@ -354,9 +359,10 @@ class SalesController extends AdminController
             }
 
             // Get dropdown options
-            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate'{$tidSql} ORDER BY name", $tidParams);
             $properties = $this->db->fetchAll("SELECT id, title, price FROM properties ORDER BY title");
-            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+            $users = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer'{$tidSql} ORDER BY name", $tidParams);
 
             $data = [
                 'page_title' => 'Edit Sale - APS Dream Home',
