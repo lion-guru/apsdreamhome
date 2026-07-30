@@ -267,18 +267,20 @@ class MoneyWorkflowService
 
     public function markChequeCleared(int $id, string $date): bool
     {
+        $tid = TenantContext::getId();
         $this->db->execute(
-            "UPDATE cheque_register SET status = 'cleared', clearance_date = ? WHERE id = ?",
-            [$date, $id]
+            "UPDATE cheque_register SET status = 'cleared', clearance_date = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            $tid > 1 ? [$date, $tid, $id] : [$date, $id]
         );
         return true;
     }
 
     public function markChequeBounced(int $id, string $reason): bool
     {
+        $tid = TenantContext::getId();
         $this->db->execute(
-            "UPDATE cheque_register SET status = 'bounced', bounce_reason = ? WHERE id = ?",
-            [$reason, $id]
+            "UPDATE cheque_register SET status = 'bounced', bounce_reason = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            $tid > 1 ? [$reason, $tid, $id] : [$reason, $id]
         );
         $this->db->insert('cheque_bounce_log', [
             'cheque_id'    => $id,
@@ -310,9 +312,10 @@ class MoneyWorkflowService
 
     public function reconcileItem(int $id, string $status): bool
     {
+        $tid = TenantContext::getId();
         $this->db->execute(
-            "UPDATE bank_reconciliation_items SET status = ? WHERE id = ?",
-            [$status, $id]
+            "UPDATE bank_reconciliation_items SET status = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            $tid > 1 ? [$status, $tid, $id] : [$status, $id]
         );
         return true;
     }
@@ -704,8 +707,9 @@ class MoneyWorkflowService
      */
     public function listVendors(array $filters = []): array
     {
-        $sql = "SELECT * FROM vendors WHERE 1=1";
-        $params = [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM vendors WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
 
         if (!empty($filters['status'])) {
             $sql .= " AND status = ?";
@@ -978,17 +982,21 @@ class MoneyWorkflowService
 
     public function getLedger(int $accountId, string $fromDate, string $toDate): array
     {
-        $account = $this->db->fetchOne("SELECT * FROM chart_of_accounts WHERE id = ?", [$accountId]);
+        $tid = TenantContext::getId();
+        $account = $this->db->fetchOne("SELECT * FROM chart_of_accounts WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$accountId, $tid] : [$accountId]);
         if (!$account) {
             return ['account' => null, 'lines' => [], 'opening' => 0.0, 'closing' => 0.0];
         }
+
+        $tenantJoin = $tid > 1 ? " AND je.tenant_id = ?" : "";
+        $tenantParam = $tid > 1 ? [$accountId, $fromDate, $tid] : [$accountId, $fromDate];
 
         $opening = (float)$this->db->fetchColumn(
             "SELECT COALESCE(SUM(debit_amount - credit_amount), 0)
              FROM journal_entry_lines jel
              JOIN journal_entries je ON je.id = jel.journal_entry_id
-             WHERE jel.account_id = ? AND je.entry_date < ?",
-            [$accountId, $fromDate]
+             WHERE jel.account_id = ? AND je.entry_date < ?" . $tenantJoin,
+            $tenantParam
         );
 
         $rows = $this->db->fetchAll(
@@ -998,9 +1006,8 @@ class MoneyWorkflowService
              JOIN journal_entries je ON je.id = jel.journal_entry_id
              WHERE jel.account_id = ?
                AND je.entry_date BETWEEN ? AND ?
-               AND je.status = 'approved'
-             ORDER BY je.entry_date, je.id, jel.line_order",
-            [$accountId, $fromDate, $toDate]
+               AND je.status = 'approved'" . $tenantJoin,
+            $tid > 1 ? [$accountId, $fromDate, $toDate, $tid] : [$accountId, $fromDate, $toDate]
         ) ?: [];
 
         $running = $opening;
@@ -1024,6 +1031,8 @@ class MoneyWorkflowService
     public function getTrialBalance(?string $asOfDate = null): array
     {
         $asOfDate = $asOfDate ?? date('Y-m-d');
+        $tid = TenantContext::getId();
+        $tenantJoin = $tid > 1 ? " AND je.tenant_id = ?" : "";
 
         $rows = $this->db->fetchAll(
             "SELECT a.id, a.account_code, a.account_name, a.account_type, a.account_category,
@@ -1034,11 +1043,8 @@ class MoneyWorkflowService
              LEFT JOIN journal_entry_lines jel ON jel.account_id = a.id
              LEFT JOIN journal_entries je ON je.id = jel.journal_entry_id
                 AND je.entry_date <= ?
-                AND je.status = 'approved'
-             WHERE a.is_active = 1
-             GROUP BY a.id
-             ORDER BY a.account_code",
-            [$asOfDate]
+                AND je.status = 'approved'" . $tenantJoin,
+            $tid > 1 ? [$asOfDate, $tid] : [$asOfDate]
         ) ?: [];
 
         $totDr = 0.0; $totCr = 0.0;
@@ -1065,6 +1071,9 @@ class MoneyWorkflowService
 
     public function getProfitLoss(string $fromDate, string $toDate): array
     {
+        $tid = TenantContext::getId();
+        $tenantJoin = $tid > 1 ? " AND je.tenant_id = ?" : "";
+
         $rows = $this->db->fetchAll(
             "SELECT a.id, a.account_code, a.account_name, a.account_type,
                     COALESCE(SUM(jel.credit_amount), 0) AS total_credit,
@@ -1073,12 +1082,8 @@ class MoneyWorkflowService
              LEFT JOIN journal_entry_lines jel ON jel.account_id = a.id
              LEFT JOIN journal_entries je ON je.id = jel.journal_entry_id
                 AND je.entry_date BETWEEN ? AND ?
-                AND je.status = 'approved'
-             WHERE a.is_active = 1
-               AND a.account_type IN ('income','expense')
-             GROUP BY a.id
-             ORDER BY a.account_type, a.account_code",
-            [$fromDate, $toDate]
+                AND je.status = 'approved'" . $tenantJoin,
+            $tid > 1 ? [$fromDate, $toDate, $tid] : [$fromDate, $toDate]
         ) ?: [];
 
         $income = 0.0; $expense = 0.0;
@@ -1115,6 +1120,8 @@ class MoneyWorkflowService
     public function getBalanceSheet(?string $asOfDate = null): array
     {
         $asOfDate = $asOfDate ?? date('Y-m-d');
+        $tid = TenantContext::getId();
+        $tenantJoin = $tid > 1 ? " AND je.tenant_id = ?" : "";
 
         $rows = $this->db->fetchAll(
             "SELECT a.id, a.account_code, a.account_name, a.account_type, a.account_category,
@@ -1125,12 +1132,8 @@ class MoneyWorkflowService
              LEFT JOIN journal_entry_lines jel ON jel.account_id = a.id
              LEFT JOIN journal_entries je ON je.id = jel.journal_entry_id
                 AND je.entry_date <= ?
-                AND je.status = 'approved'
-             WHERE a.is_active = 1
-               AND a.account_type IN ('asset','liability','equity')
-             GROUP BY a.id
-             ORDER BY a.account_type, a.account_code",
-            [$asOfDate]
+                AND je.status = 'approved'" . $tenantJoin,
+            $tid > 1 ? [$asOfDate, $tid] : [$asOfDate]
         ) ?: [];
 
         $assets    = ['rows' => [], 'total' => 0.0];
@@ -1167,6 +1170,10 @@ class MoneyWorkflowService
 
     public function getCashFlowStatement(string $fromDate, string $toDate): array
     {
+        $tid = TenantContext::getId();
+        $tenantJoin = $tid > 1 ? " AND je.tenant_id = ?" : "";
+        $params = $tid > 1 ? [$fromDate, $toDate, $tid] : [$fromDate, $toDate];
+
         // Operating = receipts - payments to operating accounts (income, expense)
         // Investing = changes in fixed assets, land
         // Financing = changes in equity, loans
@@ -1180,8 +1187,8 @@ class MoneyWorkflowService
              JOIN chart_of_accounts a ON a.id = jel.account_id
              WHERE je.entry_date BETWEEN ? AND ?
                AND je.status = 'approved'
-               AND a.account_type IN ('income','expense')",
-            [$fromDate, $toDate]
+               AND a.account_type IN ('income','expense')" . $tenantJoin,
+            $params
         ) ?: ['inflow' => 0, 'outflow' => 0];
 
         $investing = $this->db->fetchOne(
@@ -1193,8 +1200,8 @@ class MoneyWorkflowService
              JOIN chart_of_accounts a ON a.id = jel.account_id
              WHERE je.entry_date BETWEEN ? AND ?
                AND je.status = 'approved'
-               AND a.account_category = 'fixed_asset'",
-            [$fromDate, $toDate]
+               AND a.account_category = 'fixed_asset'" . $tenantJoin,
+            $params
         ) ?: ['inflow' => 0, 'outflow' => 0];
 
         $financing = $this->db->fetchOne(
@@ -1207,8 +1214,8 @@ class MoneyWorkflowService
              WHERE je.entry_date BETWEEN ? AND ?
                AND je.status = 'approved'
                AND a.account_type IN ('liability','equity')
-               AND a.account_category IN ('long_term_liability','owner_equity')",
-            [$fromDate, $toDate]
+               AND a.account_category IN ('long_term_liability','owner_equity')" . $tenantJoin,
+            $params
         ) ?: ['inflow' => 0, 'outflow' => 0];
 
         $operatingNet = (float)$operating['inflow'] - (float)$operating['outflow'];
@@ -1244,7 +1251,10 @@ class MoneyWorkflowService
     public function threeWayReconciliation(int $trustAccountId, ?string $asOfDate = null): array
     {
         $asOfDate = $asOfDate ?? date('Y-m-d');
-        $bank = $this->db->fetchOne("SELECT * FROM bank_accounts_master WHERE id = ?", [$trustAccountId]);
+        $tid = TenantContext::getId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+
+        $bank = $this->db->fetchOne("SELECT * FROM bank_accounts_master WHERE id = ?" . $tenantFilter, $tid > 1 ? [$trustAccountId, $tid] : [$trustAccountId]);
         if (!$bank) {
             throw new Exception('Bank account not found');
         }
@@ -1253,7 +1263,7 @@ class MoneyWorkflowService
         $bankBalance = (float)$bank['current_balance'];
 
         // (2) Ledger (book) balance from journal entries on this bank account
-        $bankAcct = $this->db->fetchOne("SELECT id FROM chart_of_accounts WHERE account_code = '1200'");
+        $bankAcct = $this->db->fetchOne("SELECT id FROM chart_of_accounts WHERE account_code = '1200'" . $tenantFilter, $tid > 1 ? [$tid] : []);
         $bookBalance = 0.0;
         if ($bankAcct) {
             $bookBalance = (float)$this->db->fetchColumn(
@@ -1262,8 +1272,8 @@ class MoneyWorkflowService
                  JOIN journal_entries je ON je.id = jel.journal_entry_id
                  WHERE jel.account_id = ?
                    AND je.entry_date <= ?
-                   AND je.status = 'approved'",
-                [$bankAcct['id'], $asOfDate]
+                   AND je.status = 'approved'" . ($tid > 1 ? " AND je.tenant_id = ?" : ""),
+                $tid > 1 ? [$bankAcct['id'], $asOfDate, $tid] : [$bankAcct['id'], $asOfDate]
             );
         }
 
@@ -1271,13 +1281,14 @@ class MoneyWorkflowService
         $propertyRows = $this->db->fetchAll(
             "SELECT b.id AS booking_id, b.booking_number, b.total_amount,
                     c.name AS colony_name, p.plot_number,
-                    COALESCE((SELECT SUM(amount) FROM payments WHERE booking_id = b.id AND status = 'completed'), 0) AS collected
-             FROM bookings b
+                    COALESCE((SELECT SUM(amount) FROM payments WHERE booking_id = b.id AND status = 'completed'" . ($tid > 1 ? " AND tenant_id = ?" : "") . "), 0) AS collected
+             FROM bookings b" . ($tid > 1 ? " LEFT JOIN users u_t ON u_t.id = b.customer_id AND u_t.tenant_id = ?" : "") . "
              LEFT JOIN plots p ON p.id = b.plot_id
              LEFT JOIN colonies c ON c.id = b.colony_id
-             WHERE b.colony_id IS NOT NULL
+             WHERE b.colony_id IS NOT NULL" . ($tid > 1 ? " AND b.tenant_id = ?" : "") . "
              ORDER BY b.created_at DESC
-             LIMIT 50"
+             LIMIT 50",
+            $tid > 1 ? [$tid, $tid, $tid] : []
         ) ?: [];
 
         $expected  = 0.0; $collected = 0.0; $pending = 0.0;
@@ -1319,13 +1330,17 @@ class MoneyWorkflowService
         ];
 
         try {
+            $tid = TenantContext::getId();
+            $tenantJoin = $tid > 1 ? " AND pb.tenant_id = ?" : "";
+            $tenantParam = $tid > 1 ? [$tid] : [];
             $rows = $this->db->fetchAll(
                 "SELECT bps.*, pb.plot_id, pb.booking_number, pb.booking_date,
                         DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
                  FROM booking_payment_schedules bps
-                 LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
+                 LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id" . $tenantJoin . "
                  WHERE bps.status IN ('pending','overdue')
-                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)"
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)",
+                $tenantParam
             ) ?: [];
 
             $advanceCache = [];
@@ -1388,8 +1403,8 @@ class MoneyWorkflowService
 
                 // Update accrued_penalty on the installment
                 $this->db->execute(
-                    "UPDATE booking_payment_schedules SET accrued_penalty = ?, status = 'overdue' WHERE id = ?",
-                    [$totalAccrued, $row['id']]
+                    "UPDATE booking_payment_schedules SET accrued_penalty = ?, status = 'overdue' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                    $tid > 1 ? [$totalAccrued, $row['id'], $tid] : [$totalAccrued, $row['id']]
                 );
 
                 if ($newPenalty > 0.0) {
@@ -1665,28 +1680,31 @@ class MoneyWorkflowService
 
     public function verifyCollection(int $id, int $verifiedBy): bool
     {
+        $tid = TenantContext::getId();
         $this->db->execute(
-            "UPDATE cash_collections SET status = 'verified', verified_by = ?, verified_at = NOW() WHERE id = ? AND status = 'submitted'",
-            [$verifiedBy, $id]
+            "UPDATE cash_collections SET status = 'verified', verified_by = ?, verified_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ? AND status = 'submitted'",
+            $tid > 1 ? [$verifiedBy, $tid, $id] : [$verifiedBy, $id]
         );
         return true;
     }
 
     public function rejectCollection(int $id, int $rejectedBy, string $reason): bool
     {
+        $tid = TenantContext::getId();
         $this->db->execute(
-            "UPDATE cash_collections SET status = 'rejected', verified_by = ?, verified_at = NOW(), rejection_reason = ? WHERE id = ? AND status = 'submitted'",
-            [$rejectedBy, $reason, $id]
+            "UPDATE cash_collections SET status = 'rejected', verified_by = ?, verified_at = NOW(), rejection_reason = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ? AND status = 'submitted'",
+            $tid > 1 ? [$rejectedBy, $reason, $tid, $id] : [$rejectedBy, $reason, $id]
         );
         return true;
     }
 
     public function startReconciliation(int $collectorId, string $date): array
     {
+        $tid = TenantContext::getId();
         // Check for existing open session for this collector+date
         $existing = $this->db->fetchOne(
-            "SELECT id FROM reconciliation_collections WHERE collector_id = ? AND session_date = ? AND status = 'open'",
-            [$collectorId, $date]
+            "SELECT id FROM reconciliation_collections WHERE collector_id = ? AND session_date = ? AND status = 'open'" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$collectorId, $date, $tid] : [$collectorId, $date]
         );
         if ($existing) {
             return ['success' => false, 'error' => 'Open reconciliation session already exists for this collector on this date'];
@@ -1699,8 +1717,8 @@ class MoneyWorkflowService
                 COALESCE(SUM(CASE WHEN status = 'verified' THEN amount ELSE 0 END), 0) AS verified,
                 COALESCE(SUM(CASE WHEN status = 'rejected' THEN amount ELSE 0 END), 0) AS rejected
              FROM cash_collections
-             WHERE collector_id = ? AND collection_date = ?",
-            [$collectorId, $date]
+             WHERE collector_id = ? AND collection_date = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$collectorId, $date, $tid] : [$collectorId, $date]
         );
 
         $submitted = (float)($totals['submitted'] ?? 0);
@@ -1724,9 +1742,10 @@ class MoneyWorkflowService
 
     public function closeReconciliation(int $sessionId, int $closedBy): bool
     {
+        $tid = TenantContext::getId();
         $this->db->execute(
-            "UPDATE reconciliation_collections SET status = 'closed', closed_by = ?, closed_at = NOW() WHERE id = ?",
-            [$closedBy, $sessionId]
+            "UPDATE reconciliation_collections SET status = 'closed', closed_by = ?, closed_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            $tid > 1 ? [$closedBy, $tid, $sessionId] : [$closedBy, $sessionId]
         );
         return true;
     }
@@ -2025,7 +2044,8 @@ class MoneyWorkflowService
 
     public function getBankAccount(int $id): ?array
     {
-        $row = $this->db->fetchOne("SELECT * FROM bank_accounts_master WHERE id = ?", [$id]);
+        $tid = TenantContext::getId();
+        $row = $this->db->fetchOne("SELECT * FROM bank_accounts_master WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$id, $tid] : [$id]);
         return $row ?: null;
     }
 
@@ -2036,8 +2056,10 @@ class MoneyWorkflowService
 
     public function getDailyCashBook(string $fromDate, string $toDate, ?int $bankAccountId = null): array
     {
-        $sql = "SELECT * FROM daily_cash_book WHERE transaction_date BETWEEN ? AND ?";
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM daily_cash_book WHERE transaction_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [$fromDate, $toDate];
+        if ($tid > 1) $params[] = $tid;
         if ($bankAccountId) {
             $sql .= " AND (bank_account_id = ? OR bank_account_id IS NULL)";
             $params[] = $bankAccountId;
@@ -2048,10 +2070,11 @@ class MoneyWorkflowService
 
     public function getCashBookSummary(string $fromDate, string $toDate): array
     {
+        $tid = TenantContext::getId();
         $rows = $this->db->fetchAll(
             "SELECT transaction_type, SUM(amount) total FROM daily_cash_book
-             WHERE transaction_date BETWEEN ? AND ? GROUP BY transaction_type",
-            [$fromDate, $toDate]
+             WHERE transaction_date BETWEEN ? AND ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " GROUP BY transaction_type",
+            $tid > 1 ? [$fromDate, $toDate, $tid] : [$fromDate, $toDate]
         ) ?: [];
         $out = ['receipt' => 0.0, 'payment' => 0.0, 'contra' => 0.0, 'net' => 0.0];
         foreach ($rows as $r) {
@@ -2068,6 +2091,7 @@ class MoneyWorkflowService
 
     public function markChequeStatus(int $id, string $status, string $reason = ''): bool
     {
+        $tid = TenantContext::getId();
         $status = strtolower($status);
         if ($status === 'cleared' || $status === 'realized') {
             return $this->markChequeCleared($id, date('Y-m-d'));
@@ -2076,17 +2100,18 @@ class MoneyWorkflowService
             return $this->markChequeBounced($id, $reason);
         }
         return $this->db->execute(
-            "UPDATE cheque_register SET status = ?, updated_at = NOW() WHERE id = ?",
-            [$status, $id]
+            "UPDATE cheque_register SET status = ?, updated_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            $tid > 1 ? [$status, $tid, $id] : [$status, $id]
         ) > 0;
     }
 
     public function getChequeRegister(array $filters = []): array
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT c.*, b.account_name, b.bank_name FROM cheque_register c
                 LEFT JOIN bank_accounts_master b ON c.bank_account_id = b.id
-                WHERE 1=1";
-        $params = [];
+                WHERE 1=1" . ($tid > 1 ? " AND c.tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if (!empty($filters['status'])) {
             $sql .= " AND c.status = ?";
             $params[] = $filters['status'];
@@ -2112,12 +2137,13 @@ class MoneyWorkflowService
 
     public function getChequeById(int $id): ?array
     {
+        $tid = TenantContext::getId();
         $row = $this->db->fetchOne(
             "SELECT c.*, b.account_name, b.account_number, b.ifsc_code, b.bank_name, b.branch, b.signatory_name
              FROM cheque_register c
              LEFT JOIN bank_accounts_master b ON c.bank_account_id = b.id
-             WHERE c.id = ?",
-            [$id]
+             WHERE c.id = ?" . ($tid > 1 ? " AND c.tenant_id = ?" : ""),
+            $tid > 1 ? [$id, $tid] : [$id]
         );
         return $row ?: null;
     }
@@ -2137,10 +2163,11 @@ class MoneyWorkflowService
 
     public function getReconciliations(?int $bankAccountId = null): array
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT r.*, b.account_name, b.bank_name FROM bank_reconciliation r
                 LEFT JOIN bank_accounts_master b ON r.bank_account_id = b.id
-                WHERE 1=1";
-        $params = [];
+                WHERE 1=1" . ($tid > 1 ? " AND r.tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if ($bankAccountId) {
             $sql .= " AND r.bank_account_id = ?";
             $params[] = $bankAccountId;
@@ -2151,10 +2178,11 @@ class MoneyWorkflowService
 
     public function matchTransaction(int $itemId, string $status, ?int $cashBookId = null): bool
     {
+        $tid = TenantContext::getId();
         if ($cashBookId !== null) {
             $this->db->execute(
-                "UPDATE bank_reconciliation_items SET status = ?, matched_cashbook_id = ? WHERE id = ?",
-                [$status, $cashBookId, $itemId]
+                "UPDATE bank_reconciliation_items SET status = ?, matched_cashbook_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+                $tid > 1 ? [$status, $cashBookId, $tid, $itemId] : [$status, $cashBookId, $itemId]
             );
         }
         return $this->reconcileItem($itemId, $status);
@@ -2162,9 +2190,10 @@ class MoneyWorkflowService
 
     public function completeReconciliation(int $id): bool
     {
+        $tid = TenantContext::getId();
         return $this->db->execute(
-            "UPDATE bank_reconciliation SET status = 'completed', completed_at = NOW() WHERE id = ?",
-            [$id]
+            "UPDATE bank_reconciliation SET status = 'completed', completed_at = NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . " WHERE id = ?",
+            $tid > 1 ? [$tid, $id] : [$id]
         ) > 0;
     }
 
@@ -2213,10 +2242,11 @@ class MoneyWorkflowService
 
     public function getTdsRegister(array $filters = []): array
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT t.*, b.account_name FROM tds_register t
                 LEFT JOIN bank_accounts_master b ON t.deposited_in_bank = b.id
-                WHERE 1=1";
-        $params = [];
+                WHERE 1=1" . ($tid > 1 ? " AND t.tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if (!empty($filters['fy'])) {
             $sql .= " AND t.financial_year = ?";
             $params[] = $filters['fy'];
@@ -2238,10 +2268,11 @@ class MoneyWorkflowService
 
     public function getTdsSummary(string $fy): array
     {
+        $tid = TenantContext::getId();
         $rows = $this->db->fetchAll(
             "SELECT section_code, SUM(tds_amount) total_tds, SUM(gross_amount) total_gross
-             FROM tds_register WHERE financial_year = ? GROUP BY section_code",
-            [$fy]
+             FROM tds_register WHERE financial_year = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " GROUP BY section_code",
+            $tid > 1 ? [$fy, $tid] : [$fy]
         ) ?: [];
         $bySection = [];
         $grand = 0.0;
@@ -2269,8 +2300,9 @@ class MoneyWorkflowService
 
     public function getTdsCertificatesIssued(string $fy = ''): array
     {
-        $sql = "SELECT * FROM tds_certificates_issued WHERE 1=1";
-        $params = [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM tds_certificates_issued WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if ($fy !== '') {
             $sql .= " AND financial_year = ?";
             $params[] = $fy;
@@ -2323,8 +2355,9 @@ class MoneyWorkflowService
 
     public function getGstTransactions(array $filters = []): array
     {
-        $sql = "SELECT * FROM gst_transactions WHERE 1=1";
-        $params = [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM gst_transactions WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if (!empty($filters['fy'])) {
             $sql .= " AND financial_year = ?";
             $params[] = $filters['fy'];
@@ -2346,11 +2379,12 @@ class MoneyWorkflowService
 
     public function getGstSummary(string $fy): array
     {
+        $tid = TenantContext::getId();
         $rows = $this->db->fetchAll(
             "SELECT transaction_type, SUM(cgst) total_cgst, SUM(sgst) total_sgst, SUM(igst) total_igst,
                     SUM(taxable_amount) total_taxable, SUM(total_tax) total_tax
-             FROM gst_transactions WHERE financial_year = ? GROUP BY transaction_type",
-            [$fy]
+             FROM gst_transactions WHERE financial_year = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " GROUP BY transaction_type",
+            $tid > 1 ? [$fy, $tid] : [$fy]
         ) ?: [];
         $out = [
             'output' => ['cgst' => 0, 'sgst' => 0, 'igst' => 0, 'taxable' => 0, 'tax' => 0],
@@ -2386,13 +2420,20 @@ class MoneyWorkflowService
 
     public function getDemandLetterTemplates(bool $activeOnly = false): array
     {
-        $sql = "SELECT * FROM demand_letter_template" . ($activeOnly ? " WHERE active = 1" : "") . " ORDER BY template_name";
-        return $this->db->fetchAll($sql) ?: [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM demand_letter_template WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
+        if ($activeOnly) {
+            $sql .= " AND active = 1";
+        }
+        $sql .= " ORDER BY template_name";
+        return $this->db->fetchAll($sql, $params) ?: [];
     }
 
     public function getDemandLetterTemplate(int $id): ?array
     {
-        $row = $this->db->fetchOne("SELECT * FROM demand_letter_template WHERE id = ?", [$id]);
+        $tid = TenantContext::getId();
+        $row = $this->db->fetchOne("SELECT * FROM demand_letter_template WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$id, $tid] : [$id]);
         return $row ?: null;
     }
 
@@ -2462,8 +2503,9 @@ class MoneyWorkflowService
 
     public function getExpenses(array $filters = []): array
     {
-        $sql = "SELECT * FROM expenses WHERE 1=1";
-        $params = [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM expenses WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if (!empty($filters['status'])) {
             $sql .= " AND status = ?";
             $params[] = $filters['status'];
@@ -2481,7 +2523,8 @@ class MoneyWorkflowService
 
     public function getExpense(int $id): ?array
     {
-        $row = $this->db->fetchOne("SELECT * FROM expense_approvals WHERE id = ?", [$id]);
+        $tid = TenantContext::getId();
+        $row = $this->db->fetchOne("SELECT * FROM expense_approvals WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$id, $tid] : [$id]);
         return $row ?: null;
     }
 
@@ -2502,8 +2545,9 @@ class MoneyWorkflowService
 
     public function getVendorPayments(array $filters = []): array
     {
-        $sql = "SELECT * FROM vendor_payments WHERE 1=1";
-        $params = [];
+        $tid = TenantContext::getId();
+        $sql = "SELECT * FROM vendor_payments WHERE 1=1" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$tid] : [];
         if (!empty($filters['vendor_id'])) {
             $sql .= " AND vendor_id = ?";
             $params[] = (int)$filters['vendor_id'];
@@ -2525,6 +2569,8 @@ class MoneyWorkflowService
 
     public function getVendorOutstanding(): array
     {
+        $tid = TenantContext::getId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         return $this->db->fetchAll(
             "SELECT vendor_id, vendor_name, vendor_type,
                     SUM(gross_amount) total_payable,
@@ -2532,26 +2578,30 @@ class MoneyWorkflowService
                     SUM(gst_amount) total_gst,
                     COUNT(*) bills
              FROM vendor_payments
-             WHERE status IN ('pending','partial')
+             WHERE status IN ('pending','partial')" . $tenantFilter . "
              GROUP BY vendor_id, vendor_name, vendor_type
-             ORDER BY total_payable DESC"
+             ORDER BY total_payable DESC",
+            $tid > 1 ? [$tid] : []
         ) ?: [];
     }
 
     public function getVoucherLog(int $limit = 100): array
     {
+        $tid = TenantContext::getId();
         return $this->db->fetchAll(
-            "SELECT * FROM payment_voucher_log ORDER BY id DESC LIMIT ?",
-            [(int)$limit]
+            "SELECT * FROM payment_voucher_log" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " ORDER BY id DESC LIMIT ?",
+            $tid > 1 ? [$tid, (int)$limit] : [(int)$limit]
         ) ?: [];
     }
 
     public function getDashboardStats(): array
     {
+        $tid = TenantContext::getId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $totalBalance = 0.0;
         $escrowBalance = 0.0;
         try {
-            $rows = $this->db->fetchAll("SELECT current_balance, is_escrow FROM bank_accounts_master WHERE active = 1") ?: [];
+            $rows = $this->db->fetchAll("SELECT current_balance, is_escrow FROM bank_accounts_master WHERE active = 1" . $tenantFilter, $tid > 1 ? [$tid] : []) ?: [];
             foreach ($rows as $r) {
                 $totalBalance += (float)$r['current_balance'];
                 if ((int)$r['is_escrow'] === 1) {
@@ -2571,7 +2621,7 @@ class MoneyWorkflowService
                 SUM(CASE WHEN status='issued' THEN 1 ELSE 0 END) issued,
                 SUM(CASE WHEN status='pending' THEN 1 ELSE 0 END) pending,
                 SUM(CASE WHEN status='bounced' THEN 1 ELSE 0 END) bounced
-                FROM cheque_register") ?: [];
+                FROM cheque_register WHERE 1=1" . $tenantFilter, $tid > 1 ? [$tid] : []) ?: [];
             $chequesIssued = (int)($row['issued'] ?? 0);
             $chequesPending = (int)($row['pending'] ?? 0);
             $chequesBounced = (int)($row['bounced'] ?? 0);
@@ -2585,8 +2635,8 @@ class MoneyWorkflowService
             $row = $this->db->fetchOne(
                 "SELECT SUM(CASE WHEN transaction_type='receipt' THEN amount ELSE 0 END) r,
                         SUM(CASE WHEN transaction_type='payment' THEN amount ELSE 0 END) p
-                 FROM daily_cash_book WHERE transaction_date BETWEEN ? AND ?",
-                [$monthFrom, $monthTo]
+                 FROM daily_cash_book WHERE transaction_date BETWEEN ? AND ?" . $tenantFilter,
+                $tid > 1 ? [$monthFrom, $monthTo, $tid] : [$monthFrom, $monthTo]
             ) ?: [];
             $receipts = (float)($row['r'] ?? 0);
             $payments = (float)($row['p'] ?? 0);
@@ -2595,7 +2645,7 @@ class MoneyWorkflowService
         $tdsThisQtr = 0.0;
         try {
             $row = $this->db->fetchOne("SELECT SUM(tds_amount) s FROM tds_register
-                WHERE quarter = CONCAT('Q', QUARTER(CURDATE())) AND financial_year = CONCAT(YEAR(CURDATE())-1,'-',YEAR(CURDATE()))") ?: [];
+                WHERE quarter = CONCAT('Q', QUARTER(CURDATE())) AND financial_year = CONCAT(YEAR(CURDATE())-1,'-',YEAR(CURDATE()))" . $tenantFilter, $tid > 1 ? [$tid] : []) ?: [];
             $tdsThisQtr = (float)($row['s'] ?? 0);
         } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
@@ -2605,13 +2655,13 @@ class MoneyWorkflowService
                 SUM(CASE WHEN transaction_type='output' THEN total_tax ELSE 0 END) -
                 SUM(CASE WHEN transaction_type='input'  THEN total_tax ELSE 0 END) net
                 FROM gst_transactions
-                WHERE financial_year = CONCAT(YEAR(CURDATE())-1,'-',YEAR(CURDATE()))") ?: [];
+                WHERE financial_year = CONCAT(YEAR(CURDATE())-1,'-',YEAR(CURDATE()))" . $tenantFilter, $tid > 1 ? [$tid] : []) ?: [];
             $gstNet = (float)($row['net'] ?? 0);
         } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $pendingExpenses = 0;
         try {
-            $row = $this->db->fetchOne("SELECT COUNT(*) c FROM expense_approvals WHERE status='pending'") ?: [];
+            $row = $this->db->fetchOne("SELECT COUNT(*) c FROM expense_approvals WHERE status='pending'" . $tenantFilter, $tid > 1 ? [$tid] : []) ?: [];
             $pendingExpenses = (int)($row['c'] ?? 0);
         } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
