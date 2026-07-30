@@ -8,6 +8,8 @@ namespace App\Services\AI;
  * Handles Investment Plans, ROI Calculations, and Plan Automation.
  */
 class InvestmentManager {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {
@@ -29,17 +31,31 @@ class InvestmentManager {
         $end = $data['end_date'] ?? null;
         $doc = $data['document_path'] ?? null;
 
-        if ($id) {
+if ($id) {
             try {
-                $sql = "UPDATE investment_plans SET name=?, description=?, min_amount=?, expected_roi_percentage=?, duration_months=?, plan_type=?, start_date=?, end_date=?, document_path=? WHERE id=?";
+                $tenantSql = $this->tenantSql();
+                $tenantVal = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+                $sql = "UPDATE investment_plans SET name=?, description=?, min_amount=?, expected_roi_percentage=?, duration_months=?, plan_type=?, start_date=?, end_date=?, document_path=? WHERE id=?" . $tenantSql;
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-            return $this->db->execute($sql, [$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc, $id]);
+            return $this->db->execute($sql, array_merge([$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc, $id], $tenantVal));
         } else {
-            $sql = "INSERT INTO investment_plans (name, description, min_amount, expected_roi_percentage, duration_months, plan_type, start_date, end_date, document_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            return $this->db->execute($sql, [$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc]);
+            try {
+                $tenantData = $this->tenantInsertData();
+                $tenantCols = array_keys($tenantData);
+                $tenantVals = array_values($tenantData);
+                $columns = array_merge(['name', 'description', 'min_amount', 'expected_roi_percentage', 'duration_months', 'plan_type', 'start_date', 'end_date', 'document_path'], $tenantCols);
+                $values  = array_merge([$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc], $tenantVals);
+                $colStr = implode(', ', $columns);
+                $placeholders = implode(', ', array_fill(0, count($values), '?'));
+                $sql = "INSERT INTO investment_plans ($colStr) VALUES ($placeholders)";
+            } catch (\Throwable $e) {
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+            }
+return $this->db->execute($sql, $values);
         }
     }
 
@@ -50,14 +66,21 @@ class InvestmentManager {
         $active = ($status == 'active') ? 1 : 0;
         $planIdInt = intval($planId);
         $this->db->execute("UPDATE investment_plans SET is_active = ? WHERE id = ?", [$active, $planIdInt]);
-        
+
         try {
-            $sql = "INSERT INTO plan_status_history (plan_id, status, changed_by, reason) VALUES (?, ?, ?, ?)";
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['plan_id', 'status', 'changed_by', 'reason'], $tenantCols);
+            $values  = array_merge([$planIdInt, $active, $userId, $reason], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $sql = "INSERT INTO plan_status_history ($colStr) VALUES ($placeholders)";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        return $this->db->execute($sql, [$planId, $status, $userId, $reason]);
+        return $this->db->execute($sql, $values);
     }
 
     /**

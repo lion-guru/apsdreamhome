@@ -17,6 +17,7 @@ class InteractionService
 
     public function getInteractions($filters = []) {
         try {
+            $tid = $this->tenantId();
             $where = ["i.deleted_at IS NULL"];
             $params = [];
 
@@ -43,6 +44,10 @@ class InteractionService
             if (!empty($filters['date_to'])) {
                 $where[] = "i.created_at <= ?";
                 $params[] = $filters['date_to'] . ' 23:59:59';
+            }
+            if ($tid > 1) {
+                $where[] = "i.tenant_id = ?";
+                $params[] = $tid;
             }
 
             $whereClause = 'WHERE ' . implode(' AND ', $where);
@@ -79,13 +84,15 @@ class InteractionService
 
     public function getById($id) {
         try {
-            $stmt = $this->db->query(
-                "SELECT i.*, u.name as user_name, l.name as lead_name
+            $tid = $this->tenantId();
+            $sql = "SELECT i.*, u.name as user_name, l.name as lead_name
                  FROM crm_interactions i
                  LEFT JOIN users u ON u.id = i.user_id
                  LEFT JOIN leads l ON l.id = i.lead_id
-                 WHERE i.id = ?", [$id]
-            );
+                 WHERE i.id = ?" . ($tid > 1 ? " AND i.tenant_id = ?" : "");
+            $params = [$id];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetch() ?: null;
         } catch (\Exception $e) {
             return null;
@@ -94,11 +101,14 @@ class InteractionService
 
     public function create($data) {
         try {
+            $tid = $this->tenantId();
+            $extraCol = $tid > 1 ? ', tenant_id' : '';
+            $extraVal = $tid > 1 ? ', ?' : '';
             $stmt = $this->db->prepare(
-                "INSERT INTO crm_interactions (lead_id, type, direction, subject, content, outcome, user_id, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())"
+                "INSERT INTO crm_interactions (lead_id, type, direction, subject, content, outcome, user_id, created_at{$extraCol})
+                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW(){$extraVal})"
             );
-            $stmt->execute([
+            $params = [
                 $data['lead_id'],
                 $data['type'] ?? 'note',
                 $data['direction'] ?? 'outbound',
@@ -106,7 +116,9 @@ class InteractionService
                 $data['content'] ?? '',
                 $data['outcome'] ?? '',
                 $data['user_id'] ?? null,
-            ]);
+            ];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
             error_log('InteractionService::create error: ' . $e->getMessage());
@@ -116,6 +128,7 @@ class InteractionService
 
     public function update($id, $data) {
         try {
+            $tid = $this->tenantId();
             $allowed = ['type', 'direction', 'subject', 'content', 'outcome', 'user_id'];
             $fields = [];
             $params = [];
@@ -127,7 +140,8 @@ class InteractionService
             }
             if (empty($fields)) return false;
             $params[] = $id;
-            $stmt = $this->db->prepare("UPDATE crm_interactions SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ?");
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->prepare("UPDATE crm_interactions SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
@@ -137,8 +151,11 @@ class InteractionService
 
     public function delete($id) {
         try {
-            $stmt = $this->db->prepare("UPDATE crm_interactions SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$id]);
+            $tid = $this->tenantId();
+            $params = [$id];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->prepare("UPDATE crm_interactions SET deleted_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $stmt->execute($params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -147,13 +164,15 @@ class InteractionService
 
     public function getLeadInteractions($leadId, $limit = 50) {
         try {
-            $stmt = $this->db->query(
-                "SELECT i.*, u.name as user_name
+            $tid = $this->tenantId();
+            $sql = "SELECT i.*, u.name as user_name
                  FROM crm_interactions i
                  LEFT JOIN users u ON u.id = i.user_id
-                 WHERE i.lead_id = ? AND i.deleted_at IS NULL
-                 ORDER BY i.created_at DESC LIMIT ?", [$leadId, $limit]
-            );
+                 WHERE i.lead_id = ? AND i.deleted_at IS NULL" . ($tid > 1 ? " AND i.tenant_id = ?" : "") . "
+                 ORDER BY i.created_at DESC LIMIT ?";
+            $params = [$leadId, $limit];
+            if ($tid > 1) array_splice($params, 1, 0, $tid);
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             return [];
@@ -183,11 +202,14 @@ class InteractionService
 
     public function getStats($leadId = null) {
         try {
-            $where = $leadId ? "WHERE lead_id = ?" : "";
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $where = $leadId ? "WHERE lead_id = ?" : "WHERE 1=1";
             $params = $leadId ? [$leadId] : [];
+            if ($tid > 1) $params[] = $tid;
 
             $stmt = $this->db->query(
-                "SELECT type, COUNT(*) as count FROM crm_interactions $where GROUP BY type", $params
+                "SELECT type, COUNT(*) as count FROM crm_interactions $where{$tenantWhere} GROUP BY type", $params
             );
             $byType = [];
             foreach ($stmt->fetchAll() as $row) {
@@ -195,7 +217,7 @@ class InteractionService
             }
 
             $stmt = $this->db->query(
-                "SELECT direction, COUNT(*) as count FROM crm_interactions $where GROUP BY direction", $params
+                "SELECT direction, COUNT(*) as count FROM crm_interactions $where{$tenantWhere} GROUP BY direction", $params
             );
             $byDirection = [];
             foreach ($stmt->fetchAll() as $row) {
@@ -203,7 +225,7 @@ class InteractionService
             }
 
             $stmt = $this->db->query(
-                "SELECT DATE(created_at) as date, COUNT(*) as count FROM crm_interactions $where GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30", $params
+                "SELECT DATE(created_at) as date, COUNT(*) as count FROM crm_interactions $where{$tenantWhere} GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30", $params
             );
             $byDate = $stmt->fetchAll() ?: [];
 

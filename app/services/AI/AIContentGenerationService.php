@@ -4,6 +4,7 @@ namespace App\Services\AI;
 
 use App\Core\Database\Database;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * AI Content Generation Service
@@ -11,6 +12,8 @@ use Exception;
  */
 class AIContentGenerationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $templates = [];
     
@@ -401,16 +404,14 @@ class AIContentGenerationService
     private function saveGeneratedContent(string $type, ?int $propertyId, string $content, array $metadata): int
     {
         try {
-            $this->db->query("
-                INSERT INTO generated_content (content_type, property_id, generated_content, metadata, status, created_by)
-                VALUES (?, ?, ?, ?, 'draft', ?)
-            ", [
-                $type,
-                $propertyId,
-                $content,
-                json_encode($metadata),
-                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0
-            ]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['content_type', 'property_id', 'generated_content', 'metadata', 'status', 'created_by'], $tenantCols);
+            $values  = array_merge([$type, $propertyId, $content, json_encode($metadata), 'draft', $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $this->db->query("INSERT INTO generated_content ($colStr) VALUES ($placeholders)", $values);
             return $this->db->lastInsertId();
         } catch (Exception $e) {
             return 0;

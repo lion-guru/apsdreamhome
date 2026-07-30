@@ -4913,3 +4913,16 @@ $router->get('/pricing',                                    'App\\Http\\Controll
 $router->get('/saas-home',                                  'App\\Http\\Controllers\\Front\\PageController@saasHome');
 $router->get('/tenant-signup',                              'App\\Http\\Controllers\\Front\\PageController@tenantSignup');
 $router->post('/tenant-signup',                             'App\\Http\\Controllers\\Front\\PageController@tenantSignup');
+
+// ============================================================
+// CROSS-DEPARTMENT REQUEST WORKFLOW
+// ============================================================
+$router->get('/admin/department-requests',                    'App\\Http\\Controllers\\Admin\\DepartmentRequestController@dashboard');
+$router->get('/admin/department-requests/list',               'App\\Http\\Controllers\\Admin\\DepartmentRequestController@index');
+$router->get('/admin/department-requests/submit',             'App\\Http\\Controllers\\Admin\\DepartmentRequestController@submit');
+$router->post('/admin/department-requests/submit',            'App\\Http\\Controllers\\Admin\\DepartmentRequestController@submit');
+$router->get('/admin/department-requests/{id}',               'App\\Http\\Controllers\\Admin\\DepartmentRequestController@show');
+$router->post('/admin/department-requests/{id}/status',       'App\\Http\\Controllers\\Admin\\DepartmentRequestController@updateStatus');
+$router->post('/admin/department-requests/{id}/assign',       'App\\Http\\Controllers\\Admin\\DepartmentRequestController@assign');
+$router->post('/admin/department-requests/{id}/comment',      'App\\Http\\Controllers\\Admin\\DepartmentRequestController@addComment');
+$router->get('/admin/department-requests/my-requests',        'App\\Http\\Controllers\\Admin\\DepartmentRequestController@myRequests');

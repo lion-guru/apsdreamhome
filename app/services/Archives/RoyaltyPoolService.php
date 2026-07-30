@@ -21,6 +21,8 @@ use Exception;
  */
 class RoyaltyPoolService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** Minimum rank slugs eligible for royalty distribution (inclusive). */
     private const ELIGIBLE_RANKS = ['vice_president', 'president', 'site_manager'];
 
@@ -61,11 +63,13 @@ class RoyaltyPoolService
 
         try {
             // Ensure table exists (fail silently if not — migration pending)
-            $stmt = $this->pdo->prepare("
-                INSERT INTO royalty_pool_contributions (booking_id, amount, contributed_at)
-                VALUES (?, ?, NOW())
-            ");
-            $stmt->execute([$bookingId, $contribution]);
+            $tenantIns = $this->tenantInsertData();
+            $insCols = array_merge(['booking_id', 'amount', 'contributed_at'], array_keys($tenantIns));
+            $insVals = array_merge([$bookingId, $contribution], array_values($tenantIns));
+            $colStr = implode(', ', $insCols);
+            $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+            $stmt = $this->pdo->prepare("INSERT INTO royalty_pool_contributions ($colStr) VALUES ($placeholders)");
+            $stmt->execute($insVals);
         } catch (Exception $e) {
             error_log("[RoyaltyPoolService] contributeToPool failed: " . $e->getMessage());
         }
@@ -84,11 +88,13 @@ class RoyaltyPoolService
     {
         try {
             // Total contributed
-            $contribStmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM royalty_pool_contributions");
+            $tenantSql = $this->tenantSql();
+            $contribStmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM royalty_pool_contributions{$tenantSql}");
             $totalContrib = (float)$contribStmt->fetchColumn();
 
             // Total already distributed
-            $distStmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM royalty_pool_distributions");
+            $tenantSql2 = $this->tenantSql();
+            $distStmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM royalty_pool_distributions{$tenantSql2}");
             $totalDist = (float)$distStmt->fetchColumn();
 
             return max(0.0, $totalContrib - $totalDist);
@@ -118,10 +124,12 @@ class RoyaltyPoolService
 
         try {
             // Guard: already distributed for this month?
+            $tenantSql = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $guard = $this->pdo->prepare("
-                SELECT COUNT(*) FROM royalty_pool_distributions WHERE month_year = ?
+                SELECT COUNT(*) FROM royalty_pool_distributions WHERE month_year = ?{$tenantSql}
             ");
-            $guard->execute([$monthYear]);
+            $guard->execute(array_merge([$monthYear], $tenantParam));
             if ((int)$guard->fetchColumn() > 0) {
                 return [
                     'success'     => false,
@@ -199,17 +207,26 @@ class RoyaltyPoolService
 
                 $note = "Royalty Pool Distribution — {$monthYear} — {$sharePct}% share";
 
-                // Write to royalty_pool_distributions
-                $insStmt->execute([$agent['user_id'], $monthYear, $sharePct, $shareAmt]);
+                // Write to royalty_pool_distributions with tenant scoping
+                $tenantIns = $this->tenantInsertData();
+                $insTenantCols = array_keys($tenantIns);
+                $insTenantVals = array_values($tenantIns);
+                $distInsCols = array_merge(['user_id', 'month_year', 'share_pct', 'amount', 'distributed_at'], $insTenantCols);
+                $distInsVals = array_merge([$agent['user_id'], $monthYear, $sharePct, $shareAmt], $insTenantVals);
+                $distColStr = implode(', ', $distInsCols);
+                $distPlaceholders = implode(', ', array_fill(0, count($distInsVals), '?'));
+                $insStmt->execute($distInsVals);
 
-                // Write to mlm_commission_ledger
-                $ledgerStmt->execute([
-                    $agent['user_id'],
-                    $shareAmt,
-                    $poolBalance,  // sale_amount = total pool for reference
-                    $sharePct,
-                    $note,
-                ]);
+                // Write to mlm_commission_ledger with tenant scoping
+                $ledgerTenantCols = array_keys($tenantIns);
+                $ledgerTenantVals = array_values($tenantIns);
+                $ledgerInsCols = array_merge(['beneficiary_user_id', 'source_user_id', 'commission_type', 'amount',
+                    'level', 'sale_amount', 'commission_percentage', 'status', 'notes', 'property_id', 'created_at'], $ledgerTenantCols);
+                $ledgerInsVals = array_merge([$agent['user_id'], 0, 'royalty_pool', $shareAmt,
+                    0, $poolBalance, $sharePct, 'approved', $note, null], $ledgerTenantVals);
+                $ledgerColStr = implode(', ', $ledgerInsCols);
+                $ledgerPlaceholders = implode(', ', array_fill(0, count($ledgerInsVals), '?'));
+                $ledgerStmt->execute($ledgerInsVals);
 
                 // Broadcast notification
                 try {
@@ -271,8 +288,13 @@ class RoyaltyPoolService
             ";
             $params = [];
             if ($monthYear) {
-                $sql    .= " WHERE rpd.month_year = ?";
-                $params[] = $monthYear;
+                $sql    .= " WHERE rpd.month_year = ?{$this->tenantSql()}";
+                $params = array_merge([$monthYear], $this->tenantId() > 1 ? [$this->tenantId()] : []);
+            } else {
+                $sql .= "{$this->tenantSql()}";
+                if ($this->tenantId() > 1) {
+                    $params[] = $this->tenantId();
+                }
             }
             $sql .= " ORDER BY rpd.distributed_at DESC LIMIT 500";
             $stmt = $this->pdo->prepare($sql);
@@ -290,9 +312,10 @@ class RoyaltyPoolService
     public function getPoolStats(): array
     {
         try {
-            $contrib = (float)$this->pdo->query("SELECT COALESCE(SUM(amount),0) FROM royalty_pool_contributions")->fetchColumn();
-            $dist    = (float)$this->pdo->query("SELECT COALESCE(SUM(amount),0) FROM royalty_pool_distributions")->fetchColumn();
-            $months  = (int)$this->pdo->query("SELECT COUNT(DISTINCT month_year) FROM royalty_pool_distributions")->fetchColumn();
+            $tenantSql = $this->tenantSql();
+            $contrib = (float)$this->pdo->query("SELECT COALESCE(SUM(amount),0) FROM royalty_pool_contributions{$tenantSql}")->fetchColumn();
+            $dist    = (float)$this->pdo->query("SELECT COALESCE(SUM(amount),0) FROM royalty_pool_distributions{$tenantSql}")->fetchColumn();
+            $months  = (int)$this->pdo->query("SELECT COUNT(DISTINCT month_year) FROM royalty_pool_distributions{$tenantSql}")->fetchColumn();
 
             return [
                 'total_contributed' => $contrib,

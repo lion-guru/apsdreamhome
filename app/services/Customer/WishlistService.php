@@ -3,6 +3,7 @@
 namespace App\Services\Customer;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Wishlist & Favorites Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class WishlistService
 {
+    use ServiceTenantTrait;
+
     private $database;
     
     public function __construct()
@@ -47,18 +50,14 @@ class WishlistService
     public function addToWishlist(int $userId, int $propertyId, array $data = []): array
     {
         try {
-            $sql = "INSERT INTO wishlists (user_id, property_id, notes, priority) 
-                    VALUES (?, ?, ?, ?)
+            $tenantData = $this->tenantInsertData();
+            $columns = array_merge(['user_id', 'property_id', 'notes', 'priority'], array_keys($tenantData));
+            $values = array_merge([$userId, $propertyId, $data['notes'] ?? null, $data['priority'] ?? 'medium'], array_values($tenantData));
+            $placeholders = implode(',', array_fill(0, count($values), '?'));
+            $sql = "INSERT INTO wishlists ({$columns}) 
+                    VALUES ({$placeholders})
                     ON DUPLICATE KEY UPDATE 
                     notes = VALUES(notes), priority = VALUES(priority), updated_at = NOW()";
-            
-            $stmt = $this->database->prepare($sql);
-            $stmt->execute([
-                $userId,
-                $propertyId,
-                $data['notes'] ?? null,
-                $data['priority'] ?? 'medium'
-            ]);
             
             return [
                 'success' => true,
@@ -75,9 +74,11 @@ class WishlistService
      */
     public function removeFromWishlist(int $userId, int $propertyId): array
     {
-        $sql = "DELETE FROM wishlists WHERE user_id = ? AND property_id = ?";
+        $sql = "DELETE FROM wishlists WHERE user_id = ? AND property_id = ?" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $propertyId]);
+        $params = [$userId, $propertyId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         
         return [
             'success' => $stmt->rowCount() > 0,
@@ -90,17 +91,17 @@ class WishlistService
      */
     public function getWishlist(int $userId, array $options = []): array
     {
-        $sql = "SELECT w.*, p.*, pi.image_path as primary_image,
-            (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as total_images,
-            (SELECT AVG(rating) FROM property_reviews WHERE property_id = p.id) as avg_rating
-            FROM wishlists w
-            JOIN properties p ON w.property_id = p.id
-            LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE w.user_id = ? AND p.status = 'available'
-            ORDER BY w.updated_at DESC";
-        
+$sql = "SELECT w.*, p.*, pi.image_path as primary_image,
+             (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as total_images,
+             (SELECT AVG(rating) FROM property_reviews WHERE property_id = p.id) as avg_rating
+             FROM wishlists w
+             JOIN properties p ON w.property_id = p.id
+             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
+             WHERE w.user_id = ? AND w.tenant_id = ? AND p.status = 'available'
+             ORDER BY w.updated_at DESC";
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId]);
+        $stmt->execute([$userId, $this->tenantId()]);
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -110,9 +111,9 @@ class WishlistService
      */
     public function isInWishlist(int $userId, int $propertyId): bool
     {
-        $sql = "SELECT COUNT(*) as count FROM wishlists WHERE user_id = ? AND property_id = ?";
+        $sql = "SELECT COUNT(*) as count FROM wishlists WHERE user_id = ? AND property_id = ? AND tenant_id = ?";
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $propertyId]);
+        $stmt->execute([$userId, $propertyId, $this->tenantId()]);
         
         return $stmt->fetch(\PDO::FETCH_ASSOC)['count'] > 0;
     }
@@ -122,7 +123,7 @@ class WishlistService
      */
     public function getWishlistStats(int $userId): array
     {
-        $sql = "SELECT 
+$sql = "SELECT 
             COUNT(*) as total_items,
             SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high_priority,
             SUM(CASE WHEN priority = 'medium' THEN 1 ELSE 0 END) as medium_priority,
@@ -132,10 +133,10 @@ class WishlistService
             MIN(p.price) as min_price
             FROM wishlists w
             JOIN properties p ON w.property_id = p.id
-            WHERE w.user_id = ? AND p.status = 'available'";
-        
+            WHERE w.user_id = ? AND w.tenant_id = ? AND p.status = 'available'";
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId]);
+        $stmt->execute([$userId, $this->tenantId()]);
         
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
@@ -145,13 +146,17 @@ class WishlistService
      */
     public function trackView(int $userId, int $propertyId): void
     {
-        $sql = "INSERT INTO recently_viewed (user_id, property_id, view_count) 
-                VALUES (?, ?, 1)
+$tenantData = $this->tenantInsertData();
+        $columns = array_merge(['user_id', 'property_id', 'view_count'], array_keys($tenantData));
+        $values = array_merge([$userId, $propertyId, 1], array_values($tenantData));
+        $placeholders = implode(',', array_fill(0, count($values), '?'));
+        $sql = "INSERT INTO recently_viewed ({$columns}) 
+                VALUES ({$placeholders})
                 ON DUPLICATE KEY UPDATE 
                 view_count = view_count + 1, last_viewed = NOW()";
-        
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $propertyId]);
+        $stmt->execute($values);
     }
     
     /**
@@ -159,16 +164,16 @@ class WishlistService
      */
     public function getRecentlyViewed(int $userId, int $limit = 10): array
     {
-        $sql = "SELECT rv.*, p.*, pi.image_path as primary_image
+$sql = "SELECT rv.*, p.*, pi.image_path as primary_image
             FROM recently_viewed rv
             JOIN properties p ON rv.property_id = p.id
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE rv.user_id = ? AND p.status = 'available'
+            WHERE rv.user_id = ? AND rv.tenant_id = ? AND p.status = 'available'
             ORDER BY rv.last_viewed DESC
             LIMIT ?";
-        
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $limit]);
+        $stmt->execute([$userId, $this->tenantId(), $limit]);
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -179,8 +184,11 @@ class WishlistService
     public function createPriceAlert(int $userId, int $propertyId, float $targetPrice, string $type = 'below'): array
     {
         try {
-            $sql = "INSERT INTO price_alerts (user_id, property_id, target_price, alert_type) 
-                    VALUES (?, ?, ?, ?)";
+            $tenantData = $this->tenantInsertData();
+        $columns = array_merge(['user_id', 'property_id', 'target_price', 'alert_type'], array_keys($tenantData));
+        $values = array_merge([$userId, $propertyId, $targetPrice, $type], array_values($tenantData));
+        $placeholders = implode(',', array_fill(0, count($values), '?'));
+        $sql = "INSERT INTO price_alerts ({$columns}) VALUES ({$placeholders})";
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute([$userId, $propertyId, $targetPrice, $type]);
@@ -200,15 +208,15 @@ class WishlistService
      */
     public function getPriceAlerts(int $userId): array
     {
-        $sql = "SELECT pa.*, p.title, p.price as current_price, pi.image_path as primary_image
+$sql = "SELECT pa.*, p.title, p.price as current_price, pi.image_path as primary_image
             FROM price_alerts pa
             JOIN properties p ON pa.property_id = p.id
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE pa.user_id = ? AND pa.is_active = 1
+            WHERE pa.user_id = ? AND pa.tenant_id = ? AND pa.is_active = 1
             ORDER BY pa.created_at DESC";
-        
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId]);
+        $stmt->execute([$userId, $this->tenantId()]);
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -221,24 +229,24 @@ class WishlistService
         $triggered = [];
         
         // Find triggered alerts
-        $sql = "SELECT pa.*, p.price as current_price
+$sql = "SELECT pa.*, p.price as current_price
             FROM price_alerts pa
             JOIN properties p ON pa.property_id = p.id
-            WHERE pa.is_active = 1 AND pa.triggered_at IS NULL
+            WHERE pa.is_active = 1 AND pa.tenant_id = ? AND pa.triggered_at IS NULL
             AND (
                 (pa.alert_type = 'below' AND p.price <= pa.target_price)
                 OR (pa.alert_type = 'above' AND p.price >= pa.target_price)
             )";
-        
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([$this->tenantId()]);
         $alerts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($alerts as $alert) {
             // Mark as triggered
-            $updateSql = "UPDATE price_alerts SET triggered_at = NOW() WHERE id = ?";
+            $updateSql = "UPDATE price_alerts SET triggered_at = NOW() WHERE id = ? AND tenant_id = ?";
             $updateStmt = $this->database->prepare($updateSql);
-            $updateStmt->execute([$alert['id']]);
+            $updateStmt->execute([$alert['id'], $this->tenantId()]);
             
             $triggered[] = [
                 'alert_id' => $alert['id'],
@@ -267,15 +275,20 @@ class WishlistService
         
         $placeholders = implode(',', array_fill(0, count($propertyIds), '?'));
         
+        $tenantSql = $this->tenantSql();
+        $tenantParams = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        
         $sql = "SELECT p.*, pi.image_path as primary_image,
             (SELECT AVG(rating) FROM property_reviews WHERE property_id = p.id) as avg_rating,
             (SELECT COUNT(*) FROM property_reviews WHERE property_id = p.id) as review_count
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE p.id IN ({$placeholders})";
+            WHERE p.id IN ({$placeholders}) AND p.tenant_id = ? {$tenantSql}";
+        
+        $params = array_merge($propertyIds, [$this->tenantId()], $tenantParams);
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute($propertyIds);
+        $stmt->execute($params);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Build comparison matrix
@@ -333,14 +346,14 @@ class WishlistService
     public function getRecommendations(int $userId, int $limit = 6): array
     {
         // Get user's wishlist property types and locations
-        $sql = "SELECT p.type, p.city, p.locality
+$sql = "SELECT p.type, p.city, p.locality
             FROM wishlists w
             JOIN properties p ON w.property_id = p.id
-            WHERE w.user_id = ?
+            WHERE w.user_id = ? AND w.tenant_id = ?
             GROUP BY p.type, p.city";
-        
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId]);
+        $stmt->execute([$userId, $this->tenantId()]);
         $preferences = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         if (empty($preferences)) {
@@ -349,8 +362,8 @@ class WishlistService
         }
         
         // Build recommendation query
-        $where = ['p.status = ?', 'p.id NOT IN (SELECT property_id FROM wishlists WHERE user_id = ?)'];
-        $params = ['available', $userId];
+        $where = ['p.status = ?', 'p.tenant_id = ?', 'p.id NOT IN (SELECT property_id FROM wishlists WHERE user_id = ?)'];
+        $params = ['available', $this->tenantId(), $userId];
         
         $typeConditions = [];
         foreach ($preferences as $pref) {
@@ -370,10 +383,11 @@ class WishlistService
             (SELECT AVG(rating) FROM property_reviews WHERE property_id = p.id) as avg_rating
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE {$whereClause}
+            WHERE {$whereClause} AND p.tenant_id = ?
             ORDER BY p.views DESC
             LIMIT ?";
         
+        $params[] = $this->tenantId();
         $params[] = $limit;
         
         $stmt = $this->database->prepare($sql);
@@ -387,16 +401,16 @@ class WishlistService
      */
     private function getTrendingProperties(int $limit): array
     {
-        $sql = "SELECT p.*, pi.image_path as primary_image,
+$sql = "SELECT p.*, pi.image_path as primary_image,
             (SELECT AVG(rating) FROM property_reviews WHERE property_id = p.id) as avg_rating
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE p.status = 'available'
+            WHERE p.status = 'available' AND p.tenant_id = ?
             ORDER BY p.views DESC
             LIMIT ?";
-        
+         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$limit]);
+        $stmt->execute([$this->tenantId(), $limit]);
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

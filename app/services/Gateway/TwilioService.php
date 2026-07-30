@@ -4,6 +4,7 @@ namespace App\Services\Gateway;
 
 use App\Core\Database\Database;
 use App\Services\ServiceConfigService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * APS Dream Home - Unified Twilio Gateway
@@ -25,6 +26,8 @@ use App\Services\ServiceConfigService;
  */
 class TwilioService
 {
+    use ServiceTenantTrait;
+
     /** @var string|null */
     protected $accountSid;
 
@@ -392,12 +395,12 @@ class TwilioService
         try {
             if ($gateway) {
                 $stmt = $this->pdo->prepare(
-                    'SELECT * FROM gateway_logs WHERE gateway = ? ORDER BY id DESC LIMIT ' . (int)$limit
+                    'SELECT * FROM gateway_logs WHERE gateway = ?' . $this->tenantSql() . ' ORDER BY id DESC LIMIT ' . (int)$limit
                 );
                 $stmt->execute([$gateway]);
             } else {
                 $stmt = $this->pdo->prepare(
-                    'SELECT * FROM gateway_logs ORDER BY id DESC LIMIT ' . (int)$limit
+                    'SELECT * FROM gateway_logs WHERE 1=1' . $this->tenantSql() . ' ORDER BY id DESC LIMIT ' . (int)$limit
                 );
                 $stmt->execute();
             }
@@ -414,15 +417,15 @@ class TwilioService
     {
         if (!$this->pdo) return [];
         try {
-            $sql = "SELECT gateway,
-                           COUNT(*) AS total,
-                           SUM(CASE WHEN status='success' THEN 1 ELSE 0 END) AS success_count,
-                           SUM(CASE WHEN status='error' THEN 1 ELSE 0 END)   AS error_count,
-                           COALESCE(SUM(cost), 0)                            AS total_cost,
-                           MAX(created_at)                                   AS last_call_at
-                      FROM gateway_logs
-                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? HOUR)
-                     GROUP BY gateway";
+$sql = "SELECT gateway,
+                            COUNT(*) AS total,
+                            SUM(CASE WHEN status='success' THEN 1 ELSE 0 END) AS success_count,
+                            SUM(CASE WHEN status='error' THEN 1 ELSE 0 END)   AS error_count,
+                            COALESCE(SUM(cost), 0)                            AS total_cost,
+                            MAX(created_at)                                   AS last_call_at
+                       FROM gateway_logs
+                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? HOUR)" . $this->tenantSql() . "
+                      GROUP BY gateway";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([(int)$hours]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -601,8 +604,8 @@ class TwilioService
         try {
             $stmt = $this->pdo->prepare(
                 'INSERT INTO gateway_logs
-                    (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, cost, error_message, created_at)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,NOW())'
+                    (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, cost, error_message, created_at, tenant_id)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,NOW(),?)'
             );
             $stmt->execute([
                 $gateway,
@@ -615,6 +618,7 @@ class TwilioService
                 (int)$durationMs,
                 (float)$cost,
                 $error !== null ? (string)substr($error, 0, 1000) : null,
+                $this->tenantId(),
             ]);
         } catch (\Throwable $e) {
             // DB might be down; fall back to file

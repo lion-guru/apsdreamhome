@@ -11,6 +11,8 @@ use Exception;
  */
 class WorkflowEngine
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $nodes = [];
     private $connections = [];
@@ -213,7 +215,7 @@ private function executeAiNode(array $config): array
         
         try {
             // Use existing AIGateway for AI processing
-            $aiGateway = new \App\Services\AI\AIGateway();
+            $aiGateway = \App\Services\AI\AIGateway::getInstance();
             $result = $aiGateway->process($prompt, $task, ['type' => 'analysis']);
             
             $outputVar = $config['output_variable'] ?? 'ai_result';
@@ -253,13 +255,14 @@ private function executeAiNode(array $config): array
         $leadId = $this->replaceVariables($config['lead_id'] ?? '');
         $phone = $this->replaceVariables($config['phone'] ?? '');
         
-        try {
-            // Schedule a call via existing system
-            $this->db->query("
-                INSERT INTO ai_calling_schedule (lead_id, script_id, phone, scheduled_date, scheduled_time, priority, status)
-                VALUES (?, ?, ?, CURDATE(), CURTIME(), 'high', 'pending')
-            ", [$leadId, $scriptId, $phone]);
-            
+try {
+            $tenantIns = $this->tenantInsertData();
+            $insCols = array_merge(['lead_id', 'script_id', 'phone', 'scheduled_date', 'scheduled_time', 'priority', 'status'], array_keys($tenantIns));
+            $insVals = array_merge([$leadId, $scriptId, $phone, 'CURDATE()', 'CURTIME()', 'high', 'pending'], array_values($tenantIns));
+            $colStr = implode(', ', $insCols);
+            $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+            $this->db->query("INSERT INTO ai_calling_schedule ($colStr) VALUES ($placeholders)", $insVals);
+
             return ['success' => true, 'call_id' => $this->db->lastInsertId()];
         } catch (Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -412,55 +415,59 @@ private function executeAiNode(array $config): array
         return $text;
     }
     
-    private function createExecution(int $workflowId, array $triggerData): int
+private function createExecution(int $workflowId, array $triggerData): int
     {
-        $this->db->query("
-            INSERT INTO workflow_executions (workflow_id, trigger_data, status, context, started_at)
-            VALUES (?, ?, 'running', ?, NOW())
-        ", [$workflowId, json_encode($triggerData), json_encode($triggerData)]);
-        
+        $tenantIns = $this->tenantInsertData();
+        $insCols = array_merge(['workflow_id', 'trigger_data', 'status', 'context', 'started_at'], array_keys($tenantIns));
+        $insVals = array_merge([$workflowId, json_encode($triggerData), 'running', json_encode($triggerData)], array_values($tenantIns));
+        $colStr = implode(', ', $insCols);
+        $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+        $this->db->query("INSERT INTO workflow_executions ($colStr) VALUES ($placeholders)", $insVals);
+
         return $this->db->lastInsertId();
     }
-    
+
     private function updateExecution(int $executionId, string $status, string $log, array $context): void
     {
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $this->db->query("
-            UPDATE workflow_executions 
+            UPDATE workflow_executions
             SET status = ?, log = CONCAT(IFNULL(log, ''), ?, '\\n'), context = ?, updated_at = NOW()
-            WHERE id = ?
-        ", [$status, $log, json_encode($context), $executionId]);
+            WHERE id = ?{$tenantSql}
+        ", array_merge([$status, $log, json_encode($context), $executionId], $tenantParam));
     }
-    
+
     private function getWorkflow(int $id): ?array
     {
-        return $this->db->fetch("SELECT * FROM workflows WHERE id = ? AND is_active = 1", [$id]);
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        return $this->db->fetch("SELECT * FROM workflows WHERE id = ? AND is_active = 1{$tenantSql}" . ($tenantParam ? ' LIMIT 1' : ' LIMIT 1'), array_merge([$id], $tenantParam));
     }
     
     // CRUD methods for workflow definitions
-    public function createWorkflow(array $data): array
+public function createWorkflow(array $data): array
     {
         try {
-            $this->db->query("
-                INSERT INTO workflows (name, description, nodes_json, connections_json, is_active, created_by)
-                VALUES (?, ?, ?, ?, 1, ?)
-            ", [
-                $data['name'],
-                $data['description'] ?? '',
-                json_encode($data['nodes'] ?? []),
-                json_encode($data['connections'] ?? []),
-                $data['created_by'] ?? 0
-            ]);
-            
+            $tenantIns = $this->tenantInsertData();
+            $insCols = array_merge(['name', 'description', 'nodes_json', 'connections_json', 'is_active', 'created_by'], array_keys($tenantIns));
+            $insVals = array_merge([$data['name'], $data['description'] ?? '', json_encode($data['nodes'] ?? []), json_encode($data['connections'] ?? []), 1, $data['created_by'] ?? 0], array_values($tenantIns));
+            $colStr = implode(', ', $insCols);
+            $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+            $this->db->query("INSERT INTO workflows ($colStr) VALUES ($placeholders)", $insVals);
+
             return ['success' => true, 'id' => $this->db->lastInsertId()];
         } catch (Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
-    
+
     public function getAllWorkflows(): array
     {
         try {
-            return $this->db->fetchAll("SELECT * FROM workflows WHERE is_active = 1 ORDER BY created_at DESC") ?? [];
+            $tenantSql = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+            return $this->db->fetchAll("SELECT * FROM workflows WHERE is_active = 1{$tenantSql} ORDER BY created_at DESC", $tenantParam) ?? [];
         } catch (Exception $e) {
             return [];
         }

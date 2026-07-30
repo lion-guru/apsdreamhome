@@ -3,6 +3,7 @@
 namespace App\Services\Gateway;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * APS Dream Home - Unified Communication Gateway
@@ -27,6 +28,8 @@ use App\Core\Database\Database;
  */
 class CommunicationGateway
 {
+    use ServiceTenantTrait;
+
     /** @var string */
     protected $configPath;
 

@@ -12,6 +12,8 @@ use App\Core\Database\Database;
 
 class ConversationEngine
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $sessionId;
     private $userId;
@@ -170,8 +172,8 @@ class ConversationEngine
         // Load active conversation if exists (ONLY 'active' — 'confirm' is handled by controller)
         try {
             $active = $this->db->fetch(
-                "SELECT * FROM ai_chat_conversations WHERE session_id = ? AND status = 'active' ORDER BY id DESC LIMIT 1",
-                [$this->sessionId]
+                "SELECT * FROM ai_chat_conversations WHERE session_id = ?{$this->tenantSql()} AND status = 'active' ORDER BY id DESC LIMIT 1",
+                array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
         } catch (\Exception $e) {
             $active = null;
@@ -795,20 +797,24 @@ class ConversationEngine
         try {
             // Check for existing active conversation
             $existing = $this->db->fetch(
-                "SELECT id FROM ai_chat_conversations WHERE session_id = ? AND status = 'active' ORDER BY id DESC LIMIT 1",
-                [$this->sessionId]
+                "SELECT id FROM ai_chat_conversations WHERE session_id = ?{$this->tenantSql()} AND status = 'active' ORDER BY id DESC LIMIT 1",
+                array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
 
             if ($existing) {
                 $this->db->query(
-                    "UPDATE ai_chat_conversations SET current_action = ?, collected_data = ?, current_step = ?, step_count = ?, status = ?, updated_at = NOW() WHERE id = ?",
-                    [$action, json_encode($data), $step, $stepCount, $status, $existing['id']]
+                    "UPDATE ai_chat_conversations SET current_action = ?, collected_data = ?, current_step = ?, step_count = ?, status = ?, updated_at = NOW() WHERE id = ?{$this->tenantSql()}",
+                    array_merge([$action, json_encode($data), $step, $stepCount, $status, $existing['id']], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                 );
             } else {
-                $this->db->query(
-                    "INSERT INTO ai_chat_conversations (session_id, user_id, user_role, current_action, collected_data, current_step, step_count, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    [$this->sessionId, $this->userId, $this->userRole, $action, json_encode($data), $step, $stepCount, $status]
-                );
+                $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['session_id', 'user_id', 'user_role', 'current_action', 'collected_data', 'current_step', 'step_count', 'status'], $tenantCols);
+            $values  = array_merge([$this->sessionId, $this->userId, $this->userRole, $action, json_encode($data), $step, $stepCount, $status], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $this->db->query("INSERT INTO ai_chat_conversations ($colStr) VALUES ($placeholders)", $values);
             }
         } catch (\Exception $e) {
             error_log("ConversationEngine save error: " . $e->getMessage());
@@ -819,8 +825,8 @@ class ConversationEngine
     {
         try {
             return $this->db->fetch(
-                "SELECT * FROM ai_chat_conversations WHERE session_id = ? AND status IN ('active', 'confirm') ORDER BY id DESC LIMIT 1",
-                [$this->sessionId]
+                "SELECT * FROM ai_chat_conversations WHERE session_id = ?{$this->tenantSql()} AND status IN ('active', 'confirm') ORDER BY id DESC LIMIT 1",
+                array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
         } catch (\Exception $e) {
             return null;
@@ -830,10 +836,10 @@ class ConversationEngine
     private function updateStatus(int $id, string $status): void
     {
         try {
-            $this->db->query(
-                "UPDATE ai_chat_conversations SET status = ?, updated_at = NOW() WHERE id = ?",
-                [$status, $id]
-            );
+$this->db->query(
+                    "UPDATE ai_chat_conversations SET status = ?, updated_at = NOW() WHERE id = ?{$this->tenantSql()}",
+                    array_merge([$status, $id], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                );
         } catch (\Exception $e) {
             error_log("ConversationEngine update error: " . $e->getMessage());
         }
@@ -842,10 +848,10 @@ class ConversationEngine
     private function clearConversation(): void
     {
         try {
-            $this->db->query(
-                "UPDATE ai_chat_conversations SET status = 'cancelled' WHERE session_id = ? AND status IN ('active', 'confirm')",
-                [$this->sessionId]
-            );
+$this->db->query(
+                    "UPDATE ai_chat_conversations SET status = 'cancelled' WHERE session_id = ?{$this->tenantSql()} AND status IN ('active', 'confirm')",
+                    array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                );
         } catch (\Exception $e) {
             error_log("ConversationEngine clear error: " . $e->getMessage());
         }

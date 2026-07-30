@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 class AgreementGenerationService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $company;
     private $assetsPath;
@@ -48,7 +51,8 @@ class AgreementGenerationService
 
     public function getBookingData($bookingId)
     {
-        $stmt = $this->db->prepare("
+        $tid = $this->tenantId();
+        $sql = "
             SELECT b.*, 
                    u.name as customer_name, u.email as customer_email, u.phone as customer_phone, u.address as customer_address,
                    p.plot_number, p.block, p.sector, p.area_sqft, p.total_price as plot_price, 
@@ -59,17 +63,17 @@ class AgreementGenerationService
             LEFT JOIN users u ON b.customer_id = u.id
             LEFT JOIN plots p ON b.plot_id = p.id
             LEFT JOIN colonies c ON b.colony_id = c.id
-            WHERE b.id = ?
-        ");
-        $stmt->execute([$bookingId]);
+            WHERE b.id = ?" . ($tid > 1 ? " AND b.tenant_id = ?" : "");
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$data) {
             throw new Exception("Booking not found with ID: $bookingId");
         }
 
-        $payments = $this->db->prepare("SELECT * FROM booking_payments WHERE booking_id = ? ORDER BY payment_date");
-        $payments->execute([$bookingId]);
+        $payments = $this->db->prepare("SELECT * FROM booking_payments WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $payments->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $data['payments'] = $payments->fetchAll(\PDO::FETCH_ASSOC);
 
         return $data;
@@ -77,6 +81,7 @@ class AgreementGenerationService
 
     public function generateDocumentCode($type, $colonyName)
     {
+        $tid = $this->tenantId();
         $prefix = 'APS';
         $colonyCode = '';
         $words = preg_split('/[\s-]+/', $colonyName);
@@ -94,8 +99,8 @@ class AgreementGenerationService
             default: $typePrefix = 'AG';
         }
 
-        $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM generated_documents WHERE document_code LIKE ? AND YEAR(generated_at) = ?");
-        $stmt->execute(["$prefix/$colonyCode/$typePrefix/$year/%", $year]);
+        $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM generated_documents WHERE document_code LIKE ? AND YEAR(generated_at) = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? ["$prefix/$colonyCode/$typePrefix/$year/%", $year, $tid] : ["$prefix/$colonyCode/$typePrefix/$year/%", $year]);
         $count = intval($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0) + 1;
 
         return "$prefix/$colonyCode/$typePrefix/$year/" . str_pad($count, 4, '0', STR_PAD_LEFT);
@@ -536,6 +541,7 @@ class AgreementGenerationService
     private function saveDocumentRecord($data, $type, $docCode, $title, $filePath)
     {
         $db = Database::getInstance();
+        $tid = $this->tenantId();
 
         $fullPath = defined('APS_ROOT') ? APS_ROOT . $filePath : (defined('APP_ROOT') ? APP_ROOT . $filePath : __DIR__ . '/../..' . $filePath);
         $fileSize = file_exists($fullPath) ? filesize($fullPath) : 0;
@@ -552,12 +558,14 @@ class AgreementGenerationService
             'generated_by' => $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null,
         ]);
 
+        $extraCol = $tid > 1 ? ', tenant_id' : '';
+        $extraVal = $tid > 1 ? ', ?' : '';
         $stmt = $db->prepare("
             INSERT INTO generated_documents 
-            (document_code, document_type, entity_type, entity_id, title, variables_data, file_path, file_size, status, generated_by, generated_at, created_at, updated_at)
-            VALUES (?, ?, 'booking', ?, ?, ?, ?, ?, 'draft', ?, NOW(), NOW(), NOW())
+            (document_code, document_type, entity_type, entity_id, title, variables_data, file_path, file_size, status, generated_by, generated_at, created_at, updated_at{$extraCol})
+            VALUES (?, ?, 'booking', ?, ?, ?, ?, ?, 'draft', ?, NOW(), NOW(), NOW(){$extraVal})
         ");
-        $stmt->execute([
+        $params = [
             $docCode,
             'agreement',
             intval($data['id']),
@@ -566,13 +574,16 @@ class AgreementGenerationService
             $filePath,
             intval($fileSize),
             $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
 
         return $db->lastInsertId();
     }
 
     public function getHtmlPreview($bookingId, $type)
     {
+        $tid = $this->tenantId();
         $data = $this->getBookingData($bookingId);
         $companyName = $this->company['company_name'] ?? 'APS Dream Home';
         $companyAddress = $this->company['address'] ?? '';
@@ -593,21 +604,27 @@ class AgreementGenerationService
 
     public function getDocumentById($documentId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM generated_documents WHERE id = ?");
-        $stmt->execute([$documentId]);
+        $tid = $this->tenantId();
+        $sql = "SELECT * FROM generated_documents WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($tid > 1 ? [$documentId, $tid] : [$documentId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getDocumentsByBooking($bookingId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM generated_documents WHERE entity_type = 'booking' AND entity_id = ? ORDER BY generated_at DESC");
-        $stmt->execute([$bookingId]);
+        $tid = $this->tenantId();
+        $sql = "SELECT * FROM generated_documents WHERE entity_type = 'booking' AND entity_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY generated_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function markAsSent($documentId)
     {
-        $stmt = $this->db->prepare("UPDATE generated_documents SET sent_at = NOW(), status = 'signed' WHERE id = ?");
-        return $stmt->execute([$documentId]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE generated_documents SET sent_at = NOW(), status = 'signed' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($tid > 1 ? [$documentId, $tid] : [$documentId]);
     }
 }

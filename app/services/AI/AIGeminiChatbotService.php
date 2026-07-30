@@ -10,6 +10,8 @@ use App\Core\Database\Database;
  */
 class AIGeminiChatbotService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $geminiApiKey;
     private $geminiApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
@@ -249,12 +251,15 @@ PROMPT;
     {
         try {
             $db = $this->database->getConnection();
-            $stmt = $db->prepare("
-                INSERT INTO ai_conversations 
-                (user_id, user_message, bot_response, intent, created_at) 
-                VALUES (?, ?, ?, ?, NOW())
-            ");
-            return $stmt->execute([$userId, $userMessage, $botResponse, $intent]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['user_id', 'user_message', 'bot_response', 'intent', 'created_at'], $tenantCols);
+            $values  = array_merge([$userId, $userMessage, $botResponse, $intent], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $db->prepare("INSERT INTO ai_conversations ($colStr) VALUES ($placeholders)");
+            return $stmt->execute($values);
         } catch (\Exception $e) {
             return false;
         }

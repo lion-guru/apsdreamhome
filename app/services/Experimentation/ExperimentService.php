@@ -5,6 +5,7 @@ namespace App\Services\Experimentation;
 use App\Core\Database\Database;
 use PDO;
 use Throwable;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * ExperimentService — A/B testing engine.
@@ -28,6 +29,8 @@ use Throwable;
  */
 class ExperimentService
 {
+    use ServiceTenantTrait;
+
     /** @var PDO */
     protected $pdo;
 
@@ -55,8 +58,8 @@ class ExperimentService
         $trafficAllocation = max(0, min(100, $trafficAllocation));
 
         $sql = "INSERT INTO ab_experiments
-                    (name, description, variants, traffic_allocation, status, started_at, created_at)
-                VALUES (?, ?, ?, ?, 'running', NOW(), NOW())";
+                    (name, description, variants, traffic_allocation, status, started_at, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, 'running', NOW(), NOW(), ?)";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
@@ -64,6 +67,7 @@ class ExperimentService
             $description,
             json_encode(array_values($variants)),
             $trafficAllocation,
+            $this->tenantId(),
         ]);
 
         return (int) $this->pdo->lastInsertId();
@@ -141,8 +145,8 @@ class ExperimentService
 
         try {
             $sql = "INSERT INTO ab_events
-                        (experiment_id, user_id, variant, event_type, metadata, created_at)
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+                        (experiment_id, user_id, variant, event_type, metadata, tenant_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 (int) $exp['id'],
@@ -150,6 +154,7 @@ class ExperimentService
                 $variant,
                 $eventType,
                 $metadata ? json_encode($metadata) : null,
+                $this->tenantId(),
             ]);
             return true;
         } catch (Throwable $e) {
@@ -165,9 +170,9 @@ class ExperimentService
     {
         $sql = "UPDATE ab_experiments
                    SET status = 'ended', ended_at = NOW(), winner = ?
-                 WHERE name = ?";
+                 WHERE name = ? AND tenant_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$winner, $experimentName]);
+        return $stmt->execute([$winner, $experimentName, $this->tenantId()]);
     }
 
     /**
@@ -177,8 +182,8 @@ class ExperimentService
     {
         try {
             $this->pdo->beginTransaction();
-            $this->pdo->prepare("DELETE FROM ab_events WHERE experiment_id = ?")->execute([$experimentId]);
-            $this->pdo->prepare("DELETE FROM ab_experiments WHERE id = ?")->execute([$experimentId]);
+            $this->pdo->prepare("DELETE FROM ab_events WHERE experiment_id = ? AND tenant_id = ?")->execute([$experimentId, $this->tenantId()]);
+            $this->pdo->prepare("DELETE FROM ab_experiments WHERE id = ? AND tenant_id = ?")->execute([$experimentId, $this->tenantId()]);
             $this->pdo->commit();
             return true;
         } catch (Throwable $e) {
@@ -212,17 +217,17 @@ class ExperimentService
             // Distinct users assigned to this variant (any event counts)
             $userStmt = $this->pdo->prepare(
                 "SELECT COUNT(DISTINCT user_id) FROM ab_events
-                  WHERE experiment_id = ? AND variant = ?"
+                  WHERE experiment_id = ? AND tenant_id = ? AND variant = ?"
             );
-            $userStmt->execute([$expId, $variantName]);
+            $userStmt->execute([$expId, $this->tenantId(), $variantName]);
             $users = (int) $userStmt->fetchColumn();
 
             // Distinct conversions (user_id may convert multiple times — count once)
             $convStmt = $this->pdo->prepare(
                 "SELECT COUNT(DISTINCT user_id) FROM ab_events
-                  WHERE experiment_id = ? AND variant = ? AND event_type = 'conversion'"
+                  WHERE experiment_id = ? AND tenant_id = ? AND variant = ? AND event_type = 'conversion'"
             );
-            $convStmt->execute([$expId, $variantName]);
+            $convStmt->execute([$expId, $this->tenantId(), $variantName]);
             $conversions = (int) $convStmt->fetchColumn();
 
             $rate = $users > 0 ? ($conversions / $users) : 0.0;
@@ -289,12 +294,12 @@ class ExperimentService
      */
     public function listExperiments(): array
     {
-        $stmt = $this->pdo->query(
-            "SELECT id, name, description, variants, traffic_allocation, status, winner,
+$stmt = $this->pdo->prepare("SELECT id, name, description, variants, traffic_allocation, status, winner,
                     started_at, ended_at, created_at
                FROM ab_experiments
-              ORDER BY created_at DESC"
-        );
+               WHERE tenant_id = ?
+               ORDER BY created_at DESC");
+        $stmt->execute([$this->tenantId()]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
         // Augment with quick counts
@@ -302,12 +307,12 @@ class ExperimentService
             $row['variants_decoded'] = $this->decodeVariants($row['variants']);
             $row['variant_count'] = count($row['variants_decoded']);
 
-            $cnt = $this->pdo->prepare("SELECT COUNT(DISTINCT user_id) FROM ab_events WHERE experiment_id = ?");
-            $cnt->execute([(int) $row['id']]);
+            $cnt = $this->pdo->prepare("SELECT COUNT(DISTINCT user_id) FROM ab_events WHERE experiment_id = ? AND tenant_id = ?");
+            $cnt->execute([(int) $row['id'], $this->tenantId()]);
             $row['unique_users'] = (int) $cnt->fetchColumn();
 
-            $cv = $this->pdo->prepare("SELECT COUNT(DISTINCT user_id) FROM ab_events WHERE experiment_id = ? AND event_type = 'conversion'");
-            $cv->execute([(int) $row['id']]);
+            $cv = $this->pdo->prepare("SELECT COUNT(DISTINCT user_id) FROM ab_events WHERE experiment_id = ? AND tenant_id = ? AND event_type = 'conversion'");
+            $cv->execute([(int) $row['id'], $this->tenantId()]);
             $row['total_conversions'] = (int) $cv->fetchColumn();
         }
         return $rows;
@@ -380,8 +385,8 @@ class ExperimentService
      */
     public function getExperimentById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM ab_experiments WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->pdo->prepare("SELECT * FROM ab_experiments WHERE id = ? AND tenant_id = ?");
+        $stmt->execute([$id, $this->tenantId()]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
@@ -391,7 +396,8 @@ class ExperimentService
      */
     public function getRunningExperiments(): array
     {
-        $stmt = $this->pdo->query("SELECT name FROM ab_experiments WHERE status = 'running'");
+        $stmt = $this->pdo->prepare("SELECT name FROM ab_experiments WHERE status = 'running' AND tenant_id = ?");
+        $stmt->execute([$this->tenantId()]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
     }
 
@@ -410,8 +416,8 @@ class ExperimentService
 
     protected function getExperimentByName(string $name): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM ab_experiments WHERE name = ?");
-        $stmt->execute([$name]);
+        $stmt = $this->pdo->prepare("SELECT * FROM ab_experiments WHERE name = ? AND tenant_id = ?");
+        $stmt->execute([$name, $this->tenantId()]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }

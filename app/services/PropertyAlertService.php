@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Property Alert Service
@@ -10,6 +11,8 @@ use PDO;
  */
 class PropertyAlertService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -53,7 +56,7 @@ class PropertyAlertService
             !empty($data['notify_whatsapp']) ? 1 : 0,
             $data['frequency'] ?? 'daily',
             $token,
-            $this->getTenantId()
+            $this->tenantId()
         ]);
         return (int)$this->pdo->lastInsertId();
     }
@@ -61,14 +64,18 @@ class PropertyAlertService
     public function unsubscribe(string $token): bool
     {
         $stmt = $this->pdo->prepare("UPDATE property_alert_subscriptions SET is_active = 0 WHERE unsubscribe_token = ? AND tenant_id = ?");
-        $stmt->execute([$token, $this->getTenantId()]);
+        $stmt->execute([$token, $this->tenantId()]);
         return $stmt->rowCount() > 0;
     }
 
     public function getByUser(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM property_alert_subscriptions WHERE user_id = ? ORDER BY created_at DESC");
-        $stmt->execute([$userId]);
+        $tid = $this->tenantId();
+        $sql = "SELECT * FROM property_alert_subscriptions WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at DESC";
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -118,11 +125,16 @@ class PropertyAlertService
 
     public function getActiveSubscriptions(string $frequency = ''): array
     {
-        $sql = "SELECT * FROM property_alert_subscriptions WHERE is_active = 1";
+        $tid = $this->tenantId();
+        $sql = "SELECT * FROM property_alert_subscriptions WHERE is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [];
         if ($frequency) {
             $sql .= " AND frequency = ?";
             $params[] = $frequency;
+        }
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
         }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -132,32 +144,35 @@ class PropertyAlertService
     public function logNotification(int $subId, int $propId, ?int $userId, string $channel, string $status, ?string $message = null): int
     {
         $stmt = $this->pdo->prepare("INSERT INTO property_alert_log (subscription_id, property_id, user_id, channel, status, message, sent_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$subId, $propId, $userId, $channel, $status, $message, $status === 'sent' ? date('Y-m-d H:i:s') : null, $this->getTenantId()]);
+        $stmt->execute([$subId, $propId, $userId, $channel, $status, $message, $status === 'sent' ? date('Y-m-d H:i:s') : null, $this->tenantId()]);
         return (int)$this->pdo->lastInsertId();
     }
 
     public function markNotified(int $subId): void
     {
         $stmt = $this->pdo->prepare("UPDATE property_alert_subscriptions SET last_notified_at = NOW(), total_notifications = total_notifications + 1 WHERE id = ? AND tenant_id = ?");
-        $stmt->execute([$subId, $this->getTenantId()]);
+        $stmt->execute([$subId, $this->tenantId()]);
     }
 
     public function getStats(): array
     {
+        $tid = $this->tenantId();
+        $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
         $stats = [
             'total' => 0, 'active' => 0, 'instant' => 0, 'daily' => 0, 'weekly' => 0,
             'notifications_sent' => 0, 'top_property_types' => []
         ];
         try {
-            $stats['total'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_alert_subscriptions")->fetchColumn();
-            $stats['active'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_alert_subscriptions WHERE is_active = 1")->fetchColumn();
+            $stats['total'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_alert_subscriptions{$tenantWhere}", $tid > 1 ? [$tid] : [])->fetchColumn();
+            $stats['active'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_alert_subscriptions WHERE is_active = 1{$tenantWhere}", $tid > 1 ? [$tid] : [])->fetchColumn();
             foreach (['instant', 'daily', 'weekly'] as $f) {
-                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM property_alert_subscriptions WHERE frequency = ? AND is_active = 1");
-                $stmt->execute([$f]);
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM property_alert_subscriptions WHERE frequency = ? AND is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+                $stmt->execute($tid > 1 ? [$f, $tid] : [$f]);
                 $stats[$f] = (int)$stmt->fetchColumn();
             }
-            $stats['notifications_sent'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_alert_log WHERE status = 'sent'")->fetchColumn();
-            $stmt = $this->pdo->query("SELECT property_type, COUNT(*) as count FROM property_alert_subscriptions WHERE is_active = 1 GROUP BY property_type ORDER BY count DESC LIMIT 5");
+            $stats['notifications_sent'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_alert_log WHERE status = 'sent'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : [])->fetchColumn();
+            $stmt = $this->pdo->prepare("SELECT property_type, COUNT(*) as count FROM property_alert_subscriptions WHERE is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : "") . " GROUP BY property_type ORDER BY count DESC LIMIT 5");
+            $stmt->execute($tid > 1 ? [$tid] : []);
             $stats['top_property_types'] = $stmt->fetchAll();
         } catch (\Throwable $e) {
         // ignore

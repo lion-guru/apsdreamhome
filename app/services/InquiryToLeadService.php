@@ -8,6 +8,7 @@
 namespace App\Services;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 class InquiryToLeadService
 {
@@ -22,6 +23,7 @@ class InquiryToLeadService
     {
         try {
             $db = Database::getInstance();
+            $tid = class_exists('\App\Core\Middleware\TenantContext') ? (int)TenantContext::getId() : 1;
             $phone = trim($data['phone'] ?? '');
             $email = trim($data['email'] ?? '');
             $name = trim($data['name'] ?? '');
@@ -46,10 +48,10 @@ class InquiryToLeadService
             // Check if lead already exists with same phone or email
             $existingLead = null;
             if (!empty($phone)) {
-                $existingLead = $db->fetchOne("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1", [$phone]);
+                $existingLead = $db->fetchOne("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at DESC LIMIT 1", $tid > 1 ? [$phone, $tid] : [$phone]);
             }
             if (!$existingLead && !empty($email)) {
-                $existingLead = $db->fetchOne("SELECT id FROM leads WHERE email = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1", [$email]);
+                $existingLead = $db->fetchOne("SELECT id FROM leads WHERE email = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at DESC LIMIT 1", $tid > 1 ? [$email, $tid] : [$email]);
             }
 
             if ($existingLead) {
@@ -81,16 +83,16 @@ class InquiryToLeadService
                 $updates[] = "updated_at = NOW()";
 
                 if (!empty($updates)) {
-                    $params[] = $leadId;
-                    $db->query("UPDATE leads SET " . implode(', ', $updates) . " WHERE id = ?", $params);
+                $params[] = $leadId;
+                $db->query("UPDATE leads SET " . implode(', ', $updates) . " WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? $params : $params);
                 }
 
                 // Log activity
                 try {
-                    $db->query(
-                        "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'inquiry', ?, ?, NOW())",
-                        [$leadId, "New {$inquiryType} inquiry received", $data['created_by'] ?? null]
-                    );
+                $db->query(
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at" . ($tid > 1 ? ", tenant_id" : "") . ") VALUES (?, 'inquiry', ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")",
+                    $tid > 1 ? [$leadId, "New {$inquiryType} inquiry received", $data['created_by'] ?? null, $tid] : [$leadId, "New {$inquiryType} inquiry received", $data['created_by'] ?? null]
+                );
                 } catch (\Exception $e) { error_log($e->getMessage()); }
 
                 return $leadId;
@@ -100,30 +102,38 @@ class InquiryToLeadService
             $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $db->query(
                 "INSERT INTO leads (lead_number, name, email, phone, source, status, priority, property_interest,
-                    location_preference, notes, budget, budget_range, assigned_to, created_by, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, ?, 'new', 'medium', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
-                [
-                    $leadNumber,
-                    $name,
-                    $email ?: null,
-                    $phone,
-                    $source,
-                    $data['property_interest'] ?? $data['property_name'] ?? null,
-                    $data['location_preference'] ?? $data['location'] ?? null,
-                    mb_substr($data['message'] ?? '', 0, 500),
-                    $data['budget'] ?? null,
-                    $data['budget_range'] ?? null,
-                    $data['assigned_to'] ?? null,
-                    $data['created_by'] ?? null,
-                ]
+                    location_preference, notes, budget, budget_range, assigned_to, created_by, created_at, updated_at" . ($tid > 1 ? ", tenant_id" : "") . ")
+                 VALUES (?, ?, ?, ?, ?, 'new', 'medium', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()" . ($tid > 1 ? ", ?" : "") . ")",
+                $tid > 1
+                    ? [
+                        $leadNumber, $name, $email ?: null, $phone, $source,
+                        $data['property_interest'] ?? $data['property_name'] ?? null,
+                        $data['location_preference'] ?? $data['location'] ?? null,
+                        mb_substr($data['message'] ?? '', 0, 500),
+                        $data['budget'] ?? null,
+                        $data['budget_range'] ?? null,
+                        $data['assigned_to'] ?? null,
+                        $data['created_by'] ?? null,
+                        $tid,
+                    ]
+                    : [
+                        $leadNumber, $name, $email ?: null, $phone, $source,
+                        $data['property_interest'] ?? $data['property_name'] ?? null,
+                        $data['location_preference'] ?? $data['location'] ?? null,
+                        mb_substr($data['message'] ?? '', 0, 500),
+                        $data['budget'] ?? null,
+                        $data['budget_range'] ?? null,
+                        $data['assigned_to'] ?? null,
+                        $data['created_by'] ?? null,
+                    ]
             );
             $leadId = $db->lastInsertId();
 
             // Log creation activity
             try {
                 $db->query(
-                    "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'created', ?, ?, NOW())",
-                    [$leadId, "Lead auto-created from {$inquiryType} inquiry", $data['created_by'] ?? null]
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at" . ($tid > 1 ? ", tenant_id" : "") . ") VALUES (?, 'created', ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")",
+                    $tid > 1 ? [$leadId, "Lead auto-created from {$inquiryType} inquiry", $data['created_by'] ?? null, $tid] : [$leadId, "Lead auto-created from {$inquiryType} inquiry", $data['created_by'] ?? null]
                 );
             } catch (\Exception $e) { error_log($e->getMessage()); }
 

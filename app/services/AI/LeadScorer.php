@@ -11,6 +11,8 @@ use PDO;
 
 class LeadScorer
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -106,7 +108,7 @@ class LeadScorer
 
         // Count activities
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM lead_activities WHERE lead_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM lead_activities WHERE lead_id = ?{$this->tenantSql()}");
             $stmt->execute([$leadId]);
             $activityCount = (int)$stmt->fetchColumn();
             $score += min(15, $activityCount * 3);
@@ -114,7 +116,7 @@ class LeadScorer
 
         // Count notes
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM lead_notes WHERE lead_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM lead_notes WHERE lead_id = ?{$this->tenantSql()}");
             $stmt->execute([$leadId]);
             $noteCount = (int)$stmt->fetchColumn();
             $score += min(10, $noteCount * 2);
@@ -158,7 +160,7 @@ class LeadScorer
 
         // Last activity recency
         try {
-            $stmt = $this->db->prepare("SELECT MAX(created_at) FROM lead_activities WHERE lead_id = ?");
+            $stmt = $this->db->prepare("SELECT MAX(created_at) FROM lead_activities WHERE lead_id = ?{$this->tenantSql()}");
             $stmt->execute([$lead['id']]);
             $lastActivity = $stmt->fetchColumn();
             if ($lastActivity) {
@@ -194,23 +196,15 @@ class LeadScorer
 
     private function saveScore(int $leadId, int $total, string $grade, array $factors, string $action, float $confidence): void
     {
-        $stmt = $this->db->prepare("
-            INSERT INTO ai_lead_scores
-            (lead_id, score, factors, intent_score, engagement_score, budget_score, timing_score, grade, predicted_action, confidence)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([
-            $leadId,
-            $total,
-            json_encode($factors),
-            $factors['intent'] ?? 0,
-            $factors['engagement'] ?? 0,
-            $factors['budget'] ?? 0,
-            $factors['timing'] ?? 0,
-            $grade,
-            $action,
-            $confidence
-        ]);
+        $tenantData = $this->tenantInsertData();
+        $tenantCols = array_keys($tenantData);
+        $tenantVals = array_values($tenantData);
+        $columns = array_merge(['lead_id', 'score', 'factors', 'intent_score', 'engagement_score', 'budget_score', 'timing_score', 'grade', 'predicted_action', 'confidence'], $tenantCols);
+        $values  = array_merge([$leadId, $total, json_encode($factors), $factors['intent'] ?? 0, $factors['engagement'] ?? 0, $factors['budget'] ?? 0, $factors['timing'] ?? 0, $grade, $action, $confidence], $tenantVals);
+        $colStr = implode(', ', $columns);
+        $placeholders = implode(', ', array_fill(0, count($values), '?'));
+        $stmt = $this->db->prepare("INSERT INTO ai_lead_scores ($colStr) VALUES ($placeholders)");
+        $stmt->execute($values);
     }
 
     /**
@@ -218,10 +212,12 @@ class LeadScorer
      */
     public function scoreAllUnscored(int $limit = 100): int
     {
+        $tenantSql = $this->tenantSql();
+        $tenantVal = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $stmt = $this->db->query("
             SELECT l.id FROM leads l
             LEFT JOIN ai_lead_scores s ON l.id = s.lead_id AND s.scored_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
-            WHERE s.id IS NULL
+            WHERE s.id IS NULL{$tenantSql}
             LIMIT $limit
         ");
         $count = 0;

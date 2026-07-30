@@ -16,6 +16,8 @@ use App\Services\AI\PricePredictor;
 
 class AIManager
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     private PatternLearner $learner;
@@ -104,21 +106,15 @@ class AIManager
      */
     public function track(?int $userId, string $action, ?string $pageUrl = null, ?string $targetType = null, ?int $targetId = null, array $metadata = [], ?string $sessionId = null, int $durationMs = 0): void
     {
-        $stmt = $this->db->prepare("
-            INSERT INTO user_behavior_tracking
-            (user_id, session_id, page_url, action_type, target_type, target_id, metadata, duration_ms)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([
-            $userId,
-            $sessionId,
-            $pageUrl,
-            $action,
-            $targetType,
-            $targetId,
-            json_encode($metadata),
-            $durationMs
-        ]);
+        $tenantData = $this->tenantInsertData();
+        $tenantCols = array_keys($tenantData);
+        $tenantVals = array_values($tenantData);
+        $columns = array_merge(['user_id', 'session_id', 'page_url', 'action_type', 'target_type', 'target_id', 'metadata', 'duration_ms'], $tenantCols);
+        $values  = array_merge([$userId, $sessionId, $pageUrl, $action, $targetType, $targetId, json_encode($metadata), $durationMs], $tenantVals);
+        $colStr = implode(', ', $columns);
+        $placeholders = implode(', ', array_fill(0, count($values), '?'));
+        $stmt = $this->db->prepare("INSERT INTO user_behavior_tracking ($colStr) VALUES ($placeholders)");
+        $stmt->execute($values);
     }
 
     /**
@@ -145,11 +141,10 @@ class AIManager
 
         // Lead anomaly: too many inquiries from same source in short time
         if ($entityType === 'lead' && isset($data['phone'])) {
-            $stmt = $this->db->prepare("
-                SELECT COUNT(*) FROM leads
-                WHERE phone = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
-            ");
-            $stmt->execute([$data['phone']]);
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM leads WHERE phone = ?{$this->tenantSql()}");
+            $params = [$data['phone']];
+            if ($this->tenantId() > 1) { $params[] = $this->tenantId(); }
+            $stmt->execute($params);
             $recent = (int)$stmt->fetchColumn();
             if ($recent > 5) {
                 $anomalies[] = [
@@ -162,18 +157,15 @@ class AIManager
 
         // Save anomalies
         foreach ($anomalies as $a) {
-            $ins = $this->db->prepare("
-                INSERT INTO ai_anomalies (entity_type, entity_id, anomaly_type, severity, description, data_snapshot)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
-            $ins->execute([
-                $entityType,
-                $entityId,
-                $a['type'],
-                $a['severity'],
-                $a['description'],
-                json_encode($data)
-            ]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['entity_type', 'entity_id', 'anomaly_type', 'severity', 'description', 'data_snapshot'], $tenantCols);
+            $values  = array_merge([$entityType, $entityId, $a['type'], $a['severity'], $a['description'], json_encode($data)], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $ins = $this->db->prepare("INSERT INTO ai_anomalies ($colStr) VALUES ($placeholders)");
+            $ins->execute($values);
         }
 
         return $anomalies;
@@ -192,13 +184,20 @@ class AIManager
 
     private function getOrCreateSession(string $sessionId, ?int $userId, string $channel): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM ai_chat_sessions WHERE session_id = ?");
+        $stmt = $this->db->prepare("SELECT * FROM ai_chat_sessions WHERE session_id = ?{$this->tenantSql()}");
         $stmt->execute([$sessionId]);
         $session = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$session) {
-            $ins = $this->db->prepare("INSERT INTO ai_chat_sessions (session_id, user_id, channel) VALUES (?, ?, ?)");
-            $ins->execute([$sessionId, $userId, $channel]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['session_id', 'user_id', 'channel'], $tenantCols);
+            $values  = array_merge([$sessionId, $userId, $channel], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $ins = $this->db->prepare("INSERT INTO ai_chat_sessions ($colStr) VALUES ($placeholders)");
+            $ins->execute($values);
             $session = ['session_id' => $sessionId, 'user_id' => $userId, 'channel' => $channel];
         }
         return $session;
@@ -206,18 +205,15 @@ class AIManager
 
     private function saveMessage(string $sessionId, string $sender, string $message, array $detection, int $responseTimeMs = 0): void
     {
-        $stmt = $this->db->prepare("
-            INSERT INTO ai_chat_messages (session_id, sender, message, detected_intent, confidence, response_time_ms)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([
-            $sessionId,
-            $sender,
-            $message,
-            $detection['intent'] ?? null,
-            $detection['confidence'] ?? 0,
-            $responseTimeMs
-        ]);
+        $tenantData = $this->tenantInsertData();
+        $tenantCols = array_keys($tenantData);
+        $tenantVals = array_values($tenantData);
+        $columns = array_merge(['session_id', 'sender', 'message', 'detected_intent', 'confidence', 'response_time_ms'], $tenantCols);
+        $values  = array_merge([$sessionId, $sender, $message, $detection['intent'] ?? null, $detection['confidence'] ?? 0, $responseTimeMs], $tenantVals);
+        $colStr = implode(', ', $columns);
+        $placeholders = implode(', ', array_fill(0, count($values), '?'));
+        $stmt = $this->db->prepare("INSERT INTO ai_chat_messages ($colStr) VALUES ($placeholders)");
+        $stmt->execute($values);
     }
 
     /**

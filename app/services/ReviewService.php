@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Review & Testimonial Service
  * Customer reviews with moderation workflow
  */
 class ReviewService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -24,26 +28,33 @@ class ReviewService
 
     public function createReview(array $data): int
     {
+        $tid = $this->tenantId();
+        $extraCol = $tid > 1 ? ', tenant_id' : '';
+        $extraVal = $tid > 1 ? ', ?' : '';
         $stmt = $this->pdo->prepare("INSERT INTO property_reviews
-            (customer_id, property_id, rating, review_text, anonymous, status)
-            VALUES (?, ?, ?, ?, ?, 'pending')");
-        $stmt->execute([
+            (customer_id, property_id, rating, review_text, anonymous, status{$extraCol})
+            VALUES (?, ?, ?, ?, ?, 'pending'{$extraVal})");
+        $params = [
             $data['customer_id'] ?? null,
             $data['property_id'],
             $data['rating'],
             $data['review_text'] ?? null,
             !empty($data['anonymous']) ? 1 : 0
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
     public function getReviewsByProperty(int $propertyId, int $limit = 20, string $status = 'approved'): array
     {
+        $tid = $this->tenantId();
         $sql = "SELECT r.*, u.name as customer_name, u.email as customer_email
                 FROM property_reviews r
                 LEFT JOIN users u ON u.id = r.customer_id
-                WHERE r.property_id = ?";
+                WHERE r.property_id = ?" . ($tid > 1 ? " AND r.tenant_id = ?" : "");
         $params = [$propertyId];
+        if ($tid > 1) $params[] = $tid;
         if ($status) {
             $sql .= " AND r.status = ?";
             $params[] = $status;
@@ -61,15 +72,24 @@ class ReviewService
 
     public function getAllReviews(string $status = '', int $limit = 50): array
     {
+        $tid = $this->tenantId();
         $sql = "SELECT r.*, u.name as customer_name, u.email as customer_email,
                 COALESCE(p.title, CONCAT('Property #', r.property_id)) as property_title
                 FROM property_reviews r
                 LEFT JOIN users u ON u.id = r.customer_id
                 LEFT JOIN user_properties p ON p.id = r.property_id";
         $params = [];
+        $conditions = [];
         if ($status) {
-            $sql .= " WHERE r.status = ?";
+            $conditions[] = "r.status = ?";
             $params[] = $status;
+        }
+        if ($tid > 1) {
+            $conditions[] = "r.tenant_id = ?";
+            $params[] = $tid;
+        }
+        if ($conditions) {
+            $sql .= " WHERE " . implode(' AND ', $conditions);
         }
         $sql .= " ORDER BY r.created_at DESC LIMIT ?";
         $params[] = $limit;
@@ -84,50 +104,75 @@ class ReviewService
 
     public function getReviewById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT r.*, u.name as customer_name FROM property_reviews r LEFT JOIN users u ON u.id = r.customer_id WHERE r.id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "SELECT r.*, u.name as customer_name FROM property_reviews r LEFT JOIN users u ON u.id = r.customer_id WHERE r.id = ?" . ($tid > 1 ? " AND r.tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
     }
 
     public function approve(int $id): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE property_reviews SET status = 'approved' WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE property_reviews SET status = 'approved' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function reject(int $id, string $reason = null): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE property_reviews SET status = 'rejected' WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE property_reviews SET status = 'rejected' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function addAdminResponse(int $id, string $response): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE property_reviews SET admin_response = ?, admin_response_at = NOW() WHERE id = ?");
-        $stmt->execute([$response, $id]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE property_reviews SET admin_response = ?, admin_response_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$response, $id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function delete(int $id): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM property_reviews WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "DELETE FROM property_reviews WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function markHelpful(int $id, ?int $userId, string $ip): bool
     {
+        $tid = $this->tenantId();
         try {
-            $check = $this->pdo->prepare("SELECT id FROM review_helpful_votes WHERE review_id = ? AND (user_id = ? OR ip_address = ?)");
-            $check->execute([$id, $userId, $ip]);
+            $check = $this->pdo->prepare("SELECT id FROM review_helpful_votes WHERE review_id = ? AND (user_id = ? OR ip_address = ?)" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $checkParams = [$id, $userId, $ip];
+            if ($tid > 1) $checkParams[] = $tid;
+            $check->execute($checkParams);
             if ($check->fetch()) return false;
-            $this->pdo->prepare("INSERT INTO review_helpful_votes (review_id, user_id, ip_address) VALUES (?, ?, ?)")
-                ->execute([$id, $userId, $ip]);
-            $this->pdo->prepare("UPDATE property_reviews SET helpful_count = helpful_count + 1 WHERE id = ?")
-                ->execute([$id]);
+            $insertParams = [$id, $userId, $ip];
+            if ($tid > 1) $insertParams[] = $tid;
+            $this->pdo->prepare("INSERT INTO review_helpful_votes (review_id, user_id, ip_address" . ($tid > 1 ? ", tenant_id" : "") . ") VALUES (?, ?, ?" . ($tid > 1 ? ", ?" : "") . ")")
+                ->execute($insertParams);
+            $this->pdo->prepare("UPDATE property_reviews SET helpful_count = helpful_count + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))
+                ->execute($tid > 1 ? [$id, $tid] : [$id]);
             return true;
         } catch (\Throwable $e) {
             return false;
@@ -136,15 +181,21 @@ class ReviewService
 
     public function report(int $id, ?int $userId, string $reason, ?string $description): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO review_reports (review_id, user_id, reason, description) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$id, $userId, $reason, $description]);
+        $tid = $this->tenantId();
+        $extraCol = $tid > 1 ? ', tenant_id' : '';
+        $extraVal = $tid > 1 ? ', ?' : '';
+        $stmt = $this->pdo->prepare("INSERT INTO review_reports (review_id, user_id, reason, description{$extraCol}) VALUES (?, ?, ?, ?{$extraVal})");
+        $params = [$id, $userId, $reason, $description];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
     public function getPropertyRating(int $propertyId): array
     {
+        $tid = $this->tenantId();
         try {
-            $stmt = $this->pdo->prepare("SELECT
+            $sql = "SELECT
                 COUNT(*) as total,
                 AVG(rating) as avg_rating,
                 SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) as five_star,
@@ -152,8 +203,11 @@ class ReviewService
                 SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as three_star,
                 SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
                 SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
-                FROM property_reviews WHERE property_id = ? AND status = 'approved'");
-            $stmt->execute([$propertyId]);
+                FROM property_reviews WHERE property_id = ? AND status = 'approved'" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $params = [$propertyId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             $row = $stmt->fetch();
             return [
                 'total' => (int)($row['total'] ?? 0),
@@ -171,8 +225,10 @@ class ReviewService
 
     public function getTestimonials(int $limit = 20, bool $featuredOnly = false): array
     {
-        $sql = "SELECT * FROM testimonials WHERE status = 'approved'";
+        $tid = $this->tenantId();
+        $sql = "SELECT * FROM testimonials WHERE status = 'approved'" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [];
+        if ($tid > 1) $params[] = $tid;
         if ($featuredOnly) {
             $sql .= " AND is_featured = 1";
         }
@@ -189,11 +245,20 @@ class ReviewService
 
     public function getAllTestimonials(string $status = '', int $limit = 50): array
     {
+        $tid = $this->tenantId();
         $sql = "SELECT * FROM testimonials";
         $params = [];
+        $conditions = [];
         if ($status) {
-            $sql .= " WHERE status = ?";
+            $conditions[] = "status = ?";
             $params[] = $status;
+        }
+        if ($tid > 1) {
+            $conditions[] = "tenant_id = ?";
+            $params[] = $tid;
+        }
+        if ($conditions) {
+            $sql .= " WHERE " . implode(' AND ', $conditions);
         }
         $sql .= " ORDER BY created_at DESC LIMIT ?";
         $params[] = $limit;
@@ -208,51 +273,69 @@ class ReviewService
 
     public function toggleFeaturedTestimonial(int $id): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE testimonials SET is_featured = NOT is_featured WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE testimonials SET is_featured = NOT is_featured WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function approveTestimonial(int $id): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE testimonials SET status = 'approved', approved_at = NOW() WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE testimonials SET status = 'approved', approved_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function rejectTestimonial(int $id): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE testimonials SET status = 'rejected' WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE testimonials SET status = 'rejected' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function deleteTestimonial(int $id): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM testimonials WHERE id = ?");
-        $stmt->execute([$id]);
+        $tid = $this->tenantId();
+        $sql = "DELETE FROM testimonials WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function getStats(): array
     {
+        $tid = $this->tenantId();
+        $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
         $stats = [
             'total_reviews' => 0, 'pending_reviews' => 0, 'approved_reviews' => 0, 'rejected_reviews' => 0,
             'avg_rating' => 0, '5_star' => 0, 'total_testimonials' => 0, 'featured_testimonials' => 0,
             'pending_testimonials' => 0
         ];
         try {
-            $stats['total_reviews'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_reviews")->fetchColumn();
+            $stats['total_reviews'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_reviews{$tenantWhere}", $tid > 1 ? [$tid] : [])->fetchColumn();
             foreach (['pending', 'approved', 'rejected'] as $s) {
-                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM property_reviews WHERE status = ?");
-                $stmt->execute([$s]);
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM property_reviews WHERE status = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+                $stmt->execute($tid > 1 ? [$s, $tid] : [$s]);
                 $stats[$s . '_reviews'] = (int)$stmt->fetchColumn();
             }
-            $stats['avg_rating'] = round((float)$this->pdo->query("SELECT AVG(rating) FROM property_reviews WHERE status = 'approved'")->fetchColumn(), 2);
-            $stats['5_star'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_reviews WHERE rating = 5 AND status = 'approved'")->fetchColumn();
-            $stats['total_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials")->fetchColumn();
-            $stats['featured_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials WHERE is_featured = 1")->fetchColumn();
-            $stats['pending_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials WHERE status = 'pending'")->fetchColumn();
+            $stats['avg_rating'] = round((float)$this->pdo->query("SELECT AVG(rating) FROM property_reviews WHERE status = 'approved'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : [])->fetchColumn(), 2);
+            $stats['5_star'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_reviews WHERE rating = 5 AND status = 'approved'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : [])->fetchColumn();
+            $stats['total_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials{$tenantWhere}", $tid > 1 ? [$tid] : [])->fetchColumn();
+            $stats['featured_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials WHERE is_featured = 1" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : [])->fetchColumn();
+            $stats['pending_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials WHERE status = 'pending'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : [])->fetchColumn();
         } catch (\Throwable $e) {
         // ignore
         error_log($e->getMessage());

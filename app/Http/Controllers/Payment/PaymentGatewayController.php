@@ -11,6 +11,7 @@ use App\Http\Controllers\BaseController;
 use App\Core\Security;
 use App\Services\Payment\RazorpayGateway;
 use App\Services\Communication\NotificationService;
+use App\Services\DepartmentRequestService;
 use Exception;
 use PDO;
 
@@ -172,6 +173,25 @@ class PaymentGatewayController extends BaseController
                 } catch (\Exception $e) {
                     error_log("PaymentGatewayController: notification failed: " . $e->getMessage());
                 }
+
+                try {
+                    if ((float)$payment_data['amount'] >= 500000) {
+                        $reqSvc = new DepartmentRequestService();
+                        $bookingId = $booking['id'] ?? 0;
+                        $reqSvc->submitRequest([
+                            'request_type'      => 'verification',
+                            'department_code'   => 'FIN',
+                            'title'             => 'Large Payment Verification Required',
+                            'description'       => "Payment of ₹" . number_format((float)$payment_data['amount']) . " received for booking #{$bookingId}. Amount exceeds ₹500,000 threshold. Please verify and reconcile.",
+                            'priority'          => 'high',
+                            'requester_id'      => 0,
+                            'requester_role'    => 'system',
+                            'requester_name'    => 'Payment Gateway',
+                            'related_entity_type' => 'payment',
+                            'related_entity_id'   => $transaction_id,
+                        ]);
+                    }
+                } catch (\Throwable $e) { error_log('PaymentGatewayController: department request error: ' . $e->getMessage()); }
 
                 $this->setFlash('success', 'Payment processed successfully! Transaction ID: ' . $transaction_id);
                 $this->redirect(BASE_URL . 'payment/success');

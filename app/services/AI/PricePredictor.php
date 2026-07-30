@@ -11,6 +11,8 @@ use PDO;
 
 class PricePredictor
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -216,7 +218,7 @@ class PricePredictor
                 $colList = implode(',', array_filter($cols, fn($c) => $this->columnExists($table, $c)));
                 if (empty($colList)) continue;
 
-                $sql = "SELECT $colList FROM $table WHERE " . ($cols[0] . ' IS NOT NULL AND ' . $cols[0] . ' > 0');
+                $sql = "SELECT $colList FROM $table WHERE " . ($cols[0] . ' IS NOT NULL AND ' . $cols[0] . ' > 0') . $this->tenantSql();
                 if ($districtId && $this->columnExists($table, 'district_id')) {
                     $sql .= " AND district_id = " . (int)$districtId;
                 }
@@ -302,18 +304,15 @@ class PricePredictor
     private function saveModel(string $type, ?int $districtId, array $coeff, float $r2, int $size): void
     {
         try {
-            $stmt = $this->db->prepare("
-                INSERT INTO ai_price_models (property_type, location_id, model_data, coefficients, r_squared, sample_size, is_active)
-                VALUES (?, ?, ?, ?, ?, ?, 1)
-            ");
-            $stmt->execute([
-                $type,
-                $districtId,
-                json_encode(['algorithm' => 'linear_regression', 'features' => ['area', 'bedrooms', 'bathrooms', 'seasonal', 'amenities', 'facing']]),
-                json_encode($coeff),
-                $r2,
-                $size
-            ]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['property_type', 'location_id', 'model_data', 'coefficients', 'r_squared', 'sample_size', 'is_active'], $tenantCols);
+            $values  = array_merge([$type, $districtId, json_encode(['algorithm' => 'linear_regression', 'features' => ['area', 'bedrooms', 'bathrooms', 'seasonal', 'amenities', 'facing']]), json_encode($coeff), $r2, $size, 1], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $this->db->prepare("INSERT INTO ai_price_models ($colStr) VALUES ($placeholders)");
+            $stmt->execute($values);
         } catch (\Exception $e) {
         // Model save is best-effort
         error_log($e->getMessage());

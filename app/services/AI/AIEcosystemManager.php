@@ -6,6 +6,8 @@ namespace App\Services\AI;
  * Manages Open-Source tools integration, data pipelines, and model training simulations.
  */
 class AIEcosystemManager {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {

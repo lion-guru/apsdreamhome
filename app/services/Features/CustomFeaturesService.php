@@ -3,6 +3,7 @@
 namespace App\Services\Features;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Custom Features Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class CustomFeaturesService
 {
+    use ServiceTenantTrait;
+
     private Database $db;
 
     // Feature Types
@@ -90,16 +93,17 @@ class CustomFeaturesService
     public function createVirtualTour(array $tourData): int
     {
         try {
-            $sql = "INSERT INTO virtual_tours 
-                    (property_id, title, description, tour_data, created_by, created_at) 
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+$sql = "INSERT INTO virtual_tours 
+                    (property_id, title, description, tour_data, created_by, tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
             $this->db->execute($sql, [
                 $tourData['property_id'],
                 $tourData['title'],
                 $tourData['description'] ?? '',
                 json_encode($tourData['tour_data'] ?? []),
-                $tourData['created_by']
+                $tourData['created_by'],
+                $this->tenantId(),
             ]);
 
             $tourId = $this->db->lastInsertId();
@@ -120,8 +124,8 @@ class CustomFeaturesService
     public function getVirtualTour(int $propertyId): ?array
     {
         try {
-            $sql = "SELECT * FROM virtual_tours WHERE property_id = ? AND status = 'active'";
-            $tour = $this->db->fetchOne($sql, [$propertyId]);
+            $sql = "SELECT * FROM virtual_tours WHERE property_id = ? AND tenant_id = ? AND status = 'active'";
+            $tour = $this->db->fetchOne($sql, [$propertyId, $this->tenantId()]);
 
             if ($tour) {
                 $tour['tour_data'] = json_decode($tour['tour_data'], true) ?: [];
@@ -145,8 +149,9 @@ class CustomFeaturesService
             }
 
             $placeholders = str_repeat('?,', count($propertyIds) - 1) . '?';
-            $sql = "SELECT * FROM properties WHERE id IN ($placeholders) AND status = 'active'";
-            $properties = $this->db->fetchAll($sql, $propertyIds);
+            $sql = "SELECT * FROM properties WHERE id IN ($placeholders) AND status = 'active' AND tenant_id = ?";
+            $params = array_merge($propertyIds, [$this->tenantId()]);
+            $properties = $this->db->fetchAll($sql, $params);
 
             $comparison = [
                 'properties' => $properties,
@@ -173,7 +178,7 @@ class CustomFeaturesService
     public function getNeighborhoodAnalytics(int $propertyId): array
     {
         try {
-            $property = $this->db->fetchOne("SELECT * FROM properties WHERE id = ?", [$propertyId]);
+            $property = $this->db->fetchOne("SELECT * FROM properties WHERE id = ? AND tenant_id = ?", [$propertyId, $this->tenantId()]);
 
             if (!$property) {
                 throw new \Exception('Property not found');
@@ -307,13 +312,13 @@ class CustomFeaturesService
             $stats = [];
 
             // Virtual tours count
-            $stats['virtual_tours'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM virtual_tours WHERE status = 'active'")['count'] ?? 0;
+            $stats['virtual_tours'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM virtual_tours WHERE status = 'active' AND tenant_id = ?", [$this->tenantId()])['count'] ?? 0;
 
-            // Properties count
-            $stats['properties'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
+            // Properties count (shared config table - not scoped)
+            $stats['properties'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM properties WHERE status = 'active' AND tenant_id = ?", [$this->tenantId()])['count'] ?? 0;
 
             // Recent activities
-            $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_logs_unified WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10");
+            $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_logs_unified WHERE tenant_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10", [$this->tenantId()]);
 
             return $stats;
         } catch (\Exception $e) {
@@ -328,7 +333,7 @@ class CustomFeaturesService
     public function toggleFeatureStatus(int $tourId): array
     {
         try {
-            $tour = $this->db->fetchOne("SELECT * FROM virtual_tours WHERE id = ?", [$tourId]);
+            $tour = $this->db->fetchOne("SELECT * FROM virtual_tours WHERE id = ? AND tenant_id = ?", [$tourId, $this->tenantId()]);
 
             if (!$tour) {
                 throw new \Exception('Virtual tour not found');
@@ -336,7 +341,7 @@ class CustomFeaturesService
 
             $newStatus = $tour['status'] === 'active' ? 'inactive' : 'active';
 
-            $this->db->execute("UPDATE virtual_tours SET status = ?, updated_at = NOW() WHERE id = ?", [$newStatus, $tourId]);
+            $this->db->execute("UPDATE virtual_tours SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$newStatus, $tourId, $this->tenantId()]);
 
             return [
                 'id' => $tourId,
@@ -361,17 +366,17 @@ class CustomFeaturesService
                 try {
                     switch ($operation) {
                         case 'activate':
-                            $this->db->execute("UPDATE virtual_tours SET status = 'active', updated_at = NOW() WHERE id = ?", [$featureId]);
+                            $this->db->execute("UPDATE virtual_tours SET status = 'active', updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$featureId, $this->tenantId()]);
                             $results[] = ['id' => $featureId, 'success' => true, 'action' => 'activated'];
                             break;
 
                         case 'deactivate':
-                            $this->db->execute("UPDATE virtual_tours SET status = 'inactive', updated_at = NOW() WHERE id = ?", [$featureId]);
+                            $this->db->execute("UPDATE virtual_tours SET status = 'inactive', updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$featureId, $this->tenantId()]);
                             $results[] = ['id' => $featureId, 'success' => true, 'action' => 'deactivated'];
                             break;
 
                         case 'delete':
-                            $this->db->execute("DELETE FROM virtual_tours WHERE id = ?", [$featureId]);
+                            $this->db->execute("DELETE FROM virtual_tours WHERE id = ? AND tenant_id = ?", [$featureId, $this->tenantId()]);
                             $results[] = ['id' => $featureId, 'success' => true, 'action' => 'deleted'];
                             break;
 
@@ -396,7 +401,7 @@ class CustomFeaturesService
     public function exportFeatures(string $format = 'json'): array
     {
         try {
-            $features = $this->db->fetchAll("SELECT * FROM virtual_tours ORDER BY created_at DESC");
+            $features = $this->db->fetchAll("SELECT * FROM virtual_tours WHERE tenant_id = ? ORDER BY created_at DESC", [$this->tenantId()]);
 
             switch ($format) {
                 case 'json':
@@ -482,8 +487,8 @@ class CustomFeaturesService
     private function logActivity(string $action, string $description, string $entityType, int $entityId): void
     {
         try {
-            $sql = "INSERT INTO activity_logs_unified (action, description, entity_type, entity_id, created_at) VALUES (?, ?, ?, ?, NOW())";
-            $this->db->execute($sql, [$action, $description, $entityType, $entityId]);
+            $sql = "INSERT INTO activity_logs_unified (action, description, entity_type, entity_id, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+            $this->db->execute($sql, [$action, $description, $entityType, $entityId, $this->tenantId()]);
         } catch (\Exception $e) {
             error_log('Failed to log activity: ' . $e->getMessage());
         }
@@ -492,8 +497,8 @@ class CustomFeaturesService
     private function logFeatureUsage(string $featureType, array $data): void
     {
         try {
-            $sql = "INSERT INTO feature_usage (feature_type, usage_data, created_at) VALUES (?, ?, NOW())";
-            $this->db->execute($sql, [$featureType, json_encode($data)]);
+            $sql = "INSERT INTO feature_usage (feature_type, usage_data, tenant_id, created_at) VALUES (?, ?, ?, NOW())";
+            $this->db->execute($sql, [$featureType, json_encode($data), $this->tenantId()]);
         } catch (\Exception $e) {
             error_log('Failed to log feature usage: ' . $e->getMessage());
         }
@@ -551,8 +556,8 @@ class CustomFeaturesService
             if (!$property) return [];
 
             return $this->db->fetchAll(
-                "SELECT * FROM properties WHERE location = ? AND id != ? AND status = 'active' LIMIT 10",
-                [$property['location'], $propertyId]
+                "SELECT * FROM properties WHERE location = ? AND id != ? AND status = 'active' AND tenant_id = ? LIMIT 10",
+                [$property['location'], $propertyId, $this->tenantId()]
             );
         } catch (\Exception $e) {
             return [];

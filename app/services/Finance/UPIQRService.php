@@ -4,9 +4,12 @@ namespace App\Services\Finance;
 
 use PDO;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class UPIQRService
 {
+    use ServiceTenantTrait;
+
     /** @var PDO */
     protected $db;
 

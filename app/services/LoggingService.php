@@ -12,9 +12,18 @@ use Exception;
  */
 class LoggingService
 {
+    private static $instance = null;
     private $db;
     private $logFile;
     private $logLevel;
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     public function __construct()
     {

@@ -17,6 +17,8 @@ use App\Core\Database\Database;
 
 class RAGAgent
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $stopWords;
 
@@ -228,13 +230,15 @@ class RAGAgent
             }
 
             $where = implode(' AND ', $conditions);
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
                 "SELECT p.id, p.title, p.type, p.price, p.location, p.area_sqft, p.bedrooms, p.bathrooms
                  FROM properties p
-                 WHERE $where
+                 WHERE $where $tenantFilter
                  ORDER BY p.featured DESC, p.updated_at DESC
                  LIMIT 5",
-                $params
+                array_merge($params, $tenantParam)
             );
 
             $results = [];
@@ -287,14 +291,16 @@ class RAGAgent
             }
 
             $where = implode(' AND ', $conditions);
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
                 "SELECT p.id, p.plot_number, p.area_sqft, p.colony_id, c.name as colony_name
                  FROM plots p
                  LEFT JOIN colonies c ON p.colony_id = c.id
-                 WHERE $where
+                 WHERE $where $tenantFilter
                  ORDER BY p.area_sqft ASC
                  LIMIT 5",
-                $params
+                array_merge($params, $tenantParam)
             );
 
             $results = [];
@@ -322,7 +328,9 @@ class RAGAgent
     private function searchColonies(array $parsed): array
     {
         try {
-            $rows = $this->db->fetchAll("SELECT id, name, is_active FROM colonies WHERE is_active = 1");
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+            $rows = $this->db->fetchAll("SELECT id, name, is_active FROM colonies WHERE is_active = 1{$tenantFilter}", $tenantParam);
 
             $results = [];
             $queryLower = strtolower(implode(' ', $parsed['tokens']));
@@ -341,8 +349,8 @@ class RAGAgent
                 if ($match || !empty($parsed['entities']['colony'])) {
                     // Count available plots
                     $plotCount = $this->db->fetch(
-                        "SELECT COUNT(*) as cnt FROM plots WHERE colony_id = ? AND status = 'available'",
-                        [$row['id']]
+                        "SELECT COUNT(*) as cnt FROM plots WHERE colony_id = ? AND status = 'available'{$this->tenantSql()}",
+                        array_merge([$row['id']], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                     );
 
                     $results[] = [
@@ -371,13 +379,14 @@ class RAGAgent
         if ($parsed['intent'] !== 'pricing') return [];
 
         try {
-            $rows = $this->db->fetchAll(
+$rows = $this->db->fetchAll(
                 "SELECT p.plot_number, p.area_sqft, c.name as colony_name, ph.old_price, ph.new_price, ph.effective_date
-                 FROM price_history ph
-                 JOIN plots p ON ph.plot_id = p.id
-                 LEFT JOIN colonies c ON p.colony_id = c.id
-                 ORDER BY ph.effective_date DESC
-                 LIMIT 5"
+                  FROM price_history ph
+                  JOIN plots p ON ph.plot_id = p.id
+                  LEFT JOIN colonies c ON p.colony_id = c.id
+                  WHERE ph.plot_id IN (SELECT id FROM plots{$this->tenantSql()})
+                  ORDER BY ph.effective_date DESC
+                  LIMIT 5"
             );
 
             $results = [];
@@ -581,10 +590,12 @@ class RAGAgent
     public function getStats(): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $kbCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM ai_knowledge_base")['cnt'] ?? 0;
-            $propCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM properties WHERE status = 'active'")['cnt'] ?? 0;
-            $plotCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM plots WHERE status = 'available'")['cnt'] ?? 0;
-            $colonyCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM colonies WHERE is_active = 1")['cnt'] ?? 0;
+            $propCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM properties WHERE status = 'active'{$tenantFilter}", $tenantParam)['cnt'] ?? 0;
+            $plotCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM plots WHERE status = 'available'{$tenantFilter}", $tenantParam)['cnt'] ?? 0;
+            $colonyCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM colonies WHERE is_active = 1{$tenantFilter}", $tenantParam)['cnt'] ?? 0;
 
             return [
                 'knowledge_base_entries' => $kbCount,

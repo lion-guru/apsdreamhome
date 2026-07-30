@@ -3,6 +3,7 @@ namespace App\Services\Filing;
 
 use PDO;
 use App\Services\ServiceConfigService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * GSTNApiService — GSTN portal API client
@@ -13,6 +14,8 @@ use App\Services\ServiceConfigService;
  */
 class GSTNApiService
 {
+    use ServiceTenantTrait;
+
     private $pdo;
     private $gstin;
     private $username;
@@ -242,7 +245,7 @@ class GSTNApiService
         try {
             $status = ($response['success'] ?? false) ? 'success' : 'failed';
             $this->pdo->prepare(
-                'INSERT INTO gateway_logs (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, error_message, context_json, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,NOW())'
+                'INSERT INTO gateway_logs (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, error_message, context_json, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())'
             )->execute([
                 'gstn-api',
                 $action,
@@ -254,6 +257,7 @@ class GSTNApiService
                 $response['duration_ms'] ?? 0,
                 ($response['error'] ?? null) ? substr($response['error'], 0, 1000) : null,
                 $context ? json_encode(['context' => $context]) : null,
+                $this->tenantId(),
             ]);
         } catch (\Exception $e) {
             error_log("[GSTNApiService] logApiCall() failed: " . $e->getMessage());

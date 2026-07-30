@@ -4,6 +4,7 @@ namespace App\Services\Esign;
 
 use App\Core\Database\Database;
 use App\Services\ServiceConfigService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Leegality E-Signature Gateway
@@ -20,6 +21,8 @@ use App\Services\ServiceConfigService;
  */
 class LeegalityService
 {
+    use ServiceTenantTrait;
+
     private const API_BASE = 'https://api.leegality.com/v2';
     private const TIMEOUT = 30;
 
@@ -294,8 +297,8 @@ class LeegalityService
             $stmt = $this->pdo->prepare(
                 'INSERT INTO gateway_logs
                     (gateway, action, method, endpoint, request_payload, response_payload,
-                     http_code, status, duration_ms, error_message, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())'
+                     http_code, status, duration_ms, error_message, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())'
             );
             $stmt->execute([
                 $gateway,
@@ -308,6 +311,7 @@ class LeegalityService
                 $status,
                 $duration,
                 $error,
+                $this->tenantId(),
             ]);
         } catch (\Throwable $e) {
             error_log('[LeegalityService::logRequest] ' . $e->getMessage());

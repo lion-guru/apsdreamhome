@@ -7,6 +7,8 @@ use Exception;
 
 class AgentOrchestrator
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     private $agents = [
@@ -52,10 +54,12 @@ class AgentOrchestrator
     private function executeLeadgen(): array
     {
         $actions = [];
-        $newLeads = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE status='new'")->fetchColumn();
-        $totalLeads = $this->pdo->query("SELECT COUNT(*) FROM leads")->fetchColumn();
-        $todayLeads = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE DATE(created_at)=CURDATE()")->fetchColumn();
-        $unassigned = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL AND status='new'")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $newLeads = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE status='new'{$tenantSql}")->fetchColumn();
+        $totalLeads = $this->pdo->query("SELECT COUNT(*) FROM leads{$tenantSql}")->fetchColumn();
+        $todayLeads = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE DATE(created_at)=CURDATE(){$tenantSql}")->fetchColumn();
+        $unassigned = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL AND status='new'{$tenantSql}")->fetchColumn();
 
         if ($newLeads > 0) {
             $actions[] = $this->logTask('lead_gen', 'lead_pipeline_scan',
@@ -71,7 +75,7 @@ class AgentOrchestrator
             }
         }
 
-        $remaining = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL AND status='new'")->fetchColumn();
+        $remaining = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL AND status='new'{$tenantSql}")->fetchColumn();
         if ($remaining > 0) {
             $this->createEscalation('lead_gen', 'lead_backlog',
                 "Lead backlog: $remaining unassigned leads (assigned what we could)",
@@ -96,9 +100,11 @@ class AgentOrchestrator
     private function executeSales(): array
     {
         $actions = [];
-        $overdue = $this->pdo->query("SELECT COUNT(*) FROM booking_payment_schedules WHERE status='pending' AND due_date < CURDATE()")->fetchColumn();
-        $pendingCommissions = $this->pdo->query("SELECT COUNT(*) FROM mlm_commission_ledger WHERE status='pending'")->fetchColumn();
-        $todayBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings WHERE DATE(created_at)=CURDATE()")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $overdue = $this->pdo->query("SELECT COUNT(*) FROM booking_payment_schedules WHERE status='pending' AND due_date < CURDATE(){$tenantSql}")->fetchColumn();
+        $pendingCommissions = $this->pdo->query("SELECT COUNT(*) FROM mlm_commission_ledger WHERE status='pending'{$tenantSql}")->fetchColumn();
+        $todayBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings WHERE DATE(created_at)=CURDATE(){$tenantSql}")->fetchColumn();
 
         if ($overdue > 0) {
             $actions[] = $this->logTask('sales', 'overdue_check',
@@ -118,7 +124,7 @@ class AgentOrchestrator
                 ['count' => $todayBookings], 'completed');
         }
 
-        $totalValue = $this->pdo->query("SELECT COALESCE(SUM(total_price),0) FROM plots WHERE status='available'")->fetchColumn();
+        $totalValue = $this->pdo->query("SELECT COALESCE(SUM(total_price),0) FROM plots WHERE status='available'{$tenantSql}")->fetchColumn();
         $actions[] = $this->logTask('sales', 'inventory_value',
             ['available_inventory_value' => round($totalValue, 2)], 'completed');
 
@@ -128,10 +134,12 @@ class AgentOrchestrator
     private function executeFinance(): array
     {
         $actions = [];
-        $totalDevCost = $this->pdo->query("SELECT COALESCE(SUM(amount + COALESCE(gst_amount,0)),0) FROM colony_development_costs")->fetchColumn();
-        $unpaidDevCost = $this->pdo->query("SELECT COALESCE(SUM(balance_amount),0) FROM colony_development_costs WHERE payment_status IN ('unpaid','partial')")->fetchColumn();
-        $ledgerTotal = $this->pdo->query("SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger")->fetchColumn();
-        $ledgerCount = $this->pdo->query("SELECT COUNT(*) FROM mlm_commission_ledger")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $totalDevCost = $this->pdo->query("SELECT COALESCE(SUM(amount + COALESCE(gst_amount,0)),0) FROM colony_development_costs{$tenantSql}")->fetchColumn();
+        $unpaidDevCost = $this->pdo->query("SELECT COALESCE(SUM(balance_amount),0) FROM colony_development_costs WHERE payment_status IN ('unpaid','partial'){$tenantSql}")->fetchColumn();
+        $ledgerTotal = $this->pdo->query("SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger{$tenantSql}")->fetchColumn();
+        $ledgerCount = $this->pdo->query("SELECT COUNT(*) FROM mlm_commission_ledger{$tenantSql}")->fetchColumn();
 
         $actions[] = $this->logTask('finance', 'cost_summary',
             ['dev_cost_total' => round($totalDevCost, 2), 'unpaid_balance' => round($unpaidDevCost, 2)], 'completed');
@@ -151,12 +159,14 @@ class AgentOrchestrator
     private function executeCeo(): array
     {
         $actions = [];
-        $totalLeads = $this->pdo->query("SELECT COUNT(*) FROM leads")->fetchColumn();
-        $newLeads = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE status='new'")->fetchColumn();
-        $totalPlots = $this->pdo->query("SELECT COUNT(*) FROM plots")->fetchColumn();
-        $availPlots = $this->pdo->query("SELECT COUNT(*) FROM plots WHERE status='available'")->fetchColumn();
-        $totalBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings")->fetchColumn();
-        $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $totalLeads = $this->pdo->query("SELECT COUNT(*) FROM leads{$tenantSql}")->fetchColumn();
+        $newLeads = $this->pdo->query("SELECT COUNT(*) FROM leads WHERE status='new'{$tenantSql}")->fetchColumn();
+        $totalPlots = $this->pdo->query("SELECT COUNT(*) FROM plots{$tenantSql}")->fetchColumn();
+        $availPlots = $this->pdo->query("SELECT COUNT(*) FROM plots WHERE status='available'{$tenantSql}")->fetchColumn();
+        $totalBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings{$tenantSql}")->fetchColumn();
+        $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'{$tenantSql}")->fetchColumn();
 
         $insights = [];
         $leadConvPct = $totalLeads > 0 ? round(($totalLeads - $newLeads) / $totalLeads * 100, 1) : 0;
@@ -187,11 +197,13 @@ class AgentOrchestrator
     private function executeHr(): array
     {
         $actions = [];
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $activeEmployees = 0;
         $pendingLeave = 0;
-        try { $activeEmployees = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE status='active'")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
-        try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
-        $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'")->fetchColumn();
+        try { $activeEmployees = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE status='active'{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'{$tenantSql}")->fetchColumn();
 
         $actions[] = $this->logTask('hr', 'workforce_summary',
             ['active_employees' => $activeEmployees, 'active_associates' => $activeAssociates,
@@ -209,9 +221,11 @@ class AgentOrchestrator
     private function executeMarketing(): array
     {
         $actions = [];
-        $properties = $this->pdo->query("SELECT COUNT(*) FROM properties WHERE status='active'")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $properties = $this->pdo->query("SELECT COUNT(*) FROM properties WHERE status='active'{$tenantSql}")->fetchColumn();
         $incompleteReg = 0;
-        try { $incompleteReg = $this->pdo->query("SELECT COUNT(*) FROM incomplete_registrations")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        try { $incompleteReg = $this->pdo->query("SELECT COUNT(*) FROM incomplete_registrations{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
 
         $actions[] = $this->logTask('marketing', 'inventory_marketing',
             ['active_properties' => $properties, 'incomplete_registrations' => $incompleteReg], 'completed');
@@ -228,9 +242,11 @@ class AgentOrchestrator
     private function executeOperations(): array
     {
         $actions = [];
-        $colonies = $this->pdo->query("SELECT COUNT(*) FROM colonies WHERE is_active=1")->fetchColumn();
-        $totalDevCost = $this->pdo->query("SELECT COALESCE(SUM(balance_amount),0) FROM colony_development_costs WHERE payment_status IN ('unpaid','partial')")->fetchColumn();
-        $layoutCount = $this->pdo->query("SELECT COUNT(*) FROM colony_layouts WHERE status='draft'")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $colonies = $this->pdo->query("SELECT COUNT(*) FROM colonies WHERE is_active=1{$tenantSql}")->fetchColumn();
+        $totalDevCost = $this->pdo->query("SELECT COALESCE(SUM(balance_amount),0) FROM colony_development_costs WHERE payment_status IN ('unpaid','partial'){$tenantSql}")->fetchColumn();
+        $layoutCount = $this->pdo->query("SELECT COUNT(*) FROM colony_layouts WHERE status='draft'{$tenantSql}")->fetchColumn();
 
         $actions[] = $this->logTask('operations', 'site_overview',
             ['active_colonies' => $colonies, 'outstanding_dev_payments' => round($totalDevCost, 2),
@@ -248,9 +264,11 @@ class AgentOrchestrator
     private function executeCustomer(): array
     {
         $actions = [];
-        $totalBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings")->fetchColumn();
-        $cancelled = $this->pdo->query("SELECT COUNT(*) FROM bookings WHERE status='cancelled'")->fetchColumn();
-        $pendingSupport = $this->pdo->query("SELECT COUNT(*) FROM support_tickets WHERE status='open'")->fetchColumn();
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $totalBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings{$tenantSql}")->fetchColumn();
+        $cancelled = $this->pdo->query("SELECT COUNT(*) FROM bookings WHERE status='cancelled'{$tenantSql}")->fetchColumn();
+        $pendingSupport = $this->pdo->query("SELECT COUNT(*) FROM support_tickets WHERE status='open'{$tenantSql}")->fetchColumn();
 
         $actions[] = $this->logTask('customer', 'customer_health',
             ['total_bookings' => $totalBookings, 'cancelled' => $cancelled,
@@ -274,31 +292,32 @@ class AgentOrchestrator
 
     private function logTask(string $agentType, string $taskName, array $data, string $status = 'completed'): array
     {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO agent_task_logs (agent_type, task_name, task_data, status, created_at, completed_at)
-             VALUES (?, ?, ?, ?, NOW(), NOW())"
-        );
-        $stmt->execute([$agentType, $taskName, json_encode($data), $status]);
+        $tenantIns = $this->tenantInsertData();
+        $insCols = array_merge(['agent_type', 'task_name', 'task_data', 'status', 'created_at', 'completed_at'], array_keys($tenantIns));
+        $insVals = array_merge([$agentType, $taskName, json_encode($data), $status], array_values($tenantIns));
+        $colStr = implode(', ', $insCols);
+        $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+        $this->pdo->prepare("INSERT INTO agent_task_logs ($colStr) VALUES ($placeholders)")->execute($insVals);
         return ['task_id' => $this->pdo->lastInsertId(), 'task' => $taskName, 'status' => $status, 'data' => $data];
     }
 
     private function createInsight(string $agentType, string $insightType, string $summary, array $data, string $priority = 'normal'): void
     {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO agent_insights (agent_type, insight_type, title, summary, data, priority, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())"
-        );
-        $title = ucwords(str_replace('_', ' ', $insightType));
-        $stmt->execute([$agentType, $insightType, $title, $summary, json_encode($data), $priority]);
+        $tenantIns = $this->tenantInsertData();
+        $insCols = array_merge(['agent_type', 'insight_type', 'title', 'summary', 'data', 'priority', 'created_at'], array_keys($tenantIns));
+        $insVals = array_merge([$agentType, $insightType, ucwords(str_replace('_', ' ', $insightType)), $summary, json_encode($data), $priority], array_values($tenantIns));
+        $colStr = implode(', ', $insCols);
+        $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+        $this->pdo->prepare("INSERT INTO agent_insights ($colStr) VALUES ($placeholders)")->execute($insVals);
     }
 
     private function createEscalation(string $agentType, string $type, string $description, array $context, string $status = 'pending'): void
     {
-        $title = ucwords(str_replace('_', ' ', $type));
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO agent_escalations (agent_type, escalation_type, title, description, context, status, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())"
-        );
-        $stmt->execute([$agentType, $type, $title, $description, json_encode($context), $status]);
+        $tenantIns = $this->tenantInsertData();
+        $insCols = array_merge(['agent_type', 'escalation_type', 'title', 'description', 'context', 'status', 'created_at'], array_keys($tenantIns));
+        $insVals = array_merge([$agentType, $type, ucwords(str_replace('_', ' ', $type)), $description, json_encode($context), $status], array_values($tenantIns));
+        $colStr = implode(', ', $insCols);
+        $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+        $this->pdo->prepare("INSERT INTO agent_escalations ($colStr) VALUES ($placeholders)")->execute($insVals);
     }
 }

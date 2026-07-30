@@ -19,9 +19,12 @@ namespace App\Services\Gateway;
 use App\Core\Database\Database;
 use App\Services\ServiceConfigService;
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 class RazorpayService
 {
+    use ServiceTenantTrait;
+
     public const VERSION = '1.0.0';
     private const API_BASE = 'https://api.razorpay.com/v1';
     private const MAX_RETRIES = 3;

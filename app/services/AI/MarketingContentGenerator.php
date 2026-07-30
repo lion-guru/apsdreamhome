@@ -17,6 +17,8 @@ namespace App\Services\AI;
 
 class MarketingContentGenerator
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $aiGateway;
 
     public function __construct()

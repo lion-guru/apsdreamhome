@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Property;
 use App\Core\Database;
 use App\Services\LoggingService;
+use App\Services\DepartmentRequestService;
 use Exception;
 
 class BookingController extends AdminController
@@ -132,7 +133,43 @@ class BookingController extends AdminController
                 $data['booking_date'] ?? date('Y-m-d'),
                 $data['notes'] ?? ''
             ]);
+            $bookingId = (int)$this->db->lastInsertId();
             $_SESSION['success'] = 'Booking created successfully.';
+
+            try {
+                $bookingStmt = $this->db->prepare("SELECT b.customer_id, b.total_plot_value, u.name as customer_name FROM plot_bookings b LEFT JOIN users u ON b.customer_id = u.id WHERE b.id = ?");
+                $bookingStmt->execute([$bookingId]);
+                $booking = $bookingStmt->fetch(\PDO::FETCH_ASSOC);
+
+                if ($booking) {
+                    $reqSvc = new DepartmentRequestService();
+                    $reqSvc->submitRequest([
+                        'request_type'      => 'approval',
+                        'department_code'   => 'LEGAL',
+                        'title'             => 'Agreement Draft Required',
+                        'description'       => "New booking #{$bookingId} created for {$booking['customer_name']} (₹" . number_format((float)$booking['total_plot_value']) . "). Please prepare sale agreement and coordinate with finance for payment terms.",
+                        'priority'          => 'high',
+                        'requester_id'      => $_SESSION['admin_id'] ?? 0,
+                        'requester_role'    => 'admin',
+                        'requester_name'    => $_SESSION['admin_name'] ?? 'Admin',
+                        'related_entity_type' => 'booking',
+                        'related_entity_id'   => $bookingId,
+                    ]);
+                    $reqSvc->submitRequest([
+                        'request_type'      => 'approval',
+                        'department_code'   => 'FIN',
+                        'title'             => 'EMI Schedule Setup',
+                        'description'       => "New booking #{$bookingId} created for {$booking['customer_name']}. Please set up EMI payment schedule and update accounting records.",
+                        'priority'          => 'medium',
+                        'requester_id'      => $_SESSION['admin_id'] ?? 0,
+                        'requester_role'    => 'admin',
+                        'requester_name'    => $_SESSION['admin_name'] ?? 'Admin',
+                        'related_entity_type' => 'booking',
+                        'related_entity_id'   => $bookingId,
+                    ]);
+                }
+            } catch (\Throwable $e) { error_log('BookingController::store department request error: ' . $e->getMessage()); }
+
             $this->redirect('/admin/bookings');
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -261,6 +298,39 @@ class BookingController extends AdminController
             );
             $stmt->execute([$id, $data['amount'] ?? 0, $data['payment_method'] ?? 'cash', $data['transaction_id'] ?? '', $data['notes'] ?? '']);
             $_SESSION['success'] = 'Payment processed successfully.';
+
+            try {
+                $this->db->prepare(
+                    "UPDATE plot_bookings SET status = 'partially_paid' WHERE id = ? AND status = 'pending'"
+                )->execute([$id]);
+            } catch (\Throwable $e) { error_log('BookingController::processPayment status update error: ' . $e->getMessage()); }
+
+            try {
+                $bookingStmt = $this->db->prepare("SELECT b.customer_id, b.total_plot_value, u.name as customer_name FROM plot_bookings b LEFT JOIN users u ON b.customer_id = u.id WHERE b.id = ?");
+                $bookingStmt->execute([$id]);
+                $booking = $bookingStmt->fetch(\PDO::FETCH_ASSOC);
+
+                if ($booking && $booking['total_plot_value'] > 0) {
+                    $paidAmount = (float)($data['amount'] ?? 0);
+                    $remaining = (float)$booking['total_plot_value'] - $paidAmount;
+
+                    if ($remaining > 0) {
+                        $reqSvc = new DepartmentRequestService();
+                        $reqSvc->submitRequest([
+                            'request_type'      => 'approval',
+                            'department_code'   => 'FIN',
+                            'title'             => 'Payment Received — EMI Schedule Setup',
+                            'description'       => "Payment of ₹" . number_format($paidAmount) . " received for booking #{$id} by {$booking['customer_name']}. Remaining: ₹" . number_format($remaining) . ". Please generate EMI schedule and update accounting records.",
+                            'priority'          => 'medium',
+                            'requester_id'      => $_SESSION['admin_id'] ?? 0,
+                            'requester_role'    => 'admin',
+                            'requester_name'    => $_SESSION['admin_name'] ?? 'Admin',
+                            'related_entity_type' => 'booking',
+                            'related_entity_id'   => $id,
+                        ]);
+                    }
+                }
+            } catch (\Throwable $e) { error_log('BookingController::processPayment department request error: ' . $e->getMessage()); }
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }

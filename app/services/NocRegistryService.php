@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * NocRegistryService — NOC (No Objection Certificate) & Registry pipeline
@@ -10,6 +11,8 @@ use PDO;
  */
 class NocRegistryService
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct($pdo = null)
@@ -52,9 +55,10 @@ class NocRegistryService
         ];
 
         // 2. No overdue installments
+        $tid = $this->tenantId();
         $overdue = $pdo->prepare("SELECT COUNT(*) as cnt, COALESCE(SUM(amount - paid_amount), 0) as balance
-            FROM booking_payment_schedules WHERE booking_id = ? AND status IN ('pending','overdue') AND due_date < CURDATE()");
-        $overdue->execute([$bookingId]);
+            FROM booking_payment_schedules WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status IN ('pending','overdue') AND due_date < CURDATE()");
+        $overdue->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $overdueData = $overdue->fetch(PDO::FETCH_ASSOC);
         $overdueCount = (int)$overdueData['cnt'];
         $overdueBalance = (float)$overdueData['balance'];
@@ -69,8 +73,8 @@ class NocRegistryService
 
         // 3. No unpaid penalties
         $penalty = $pdo->prepare("SELECT COALESCE(SUM(accrued_penalty), 0) as total
-            FROM booking_payment_schedules WHERE booking_id = ? AND accrued_penalty > 0 AND status != 'paid'");
-        $penalty->execute([$bookingId]);
+            FROM booking_payment_schedules WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND accrued_penalty > 0 AND status != 'paid'");
+        $penalty->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $penaltyData = $penalty->fetch(PDO::FETCH_ASSOC);
         $penaltyBalance = (float)$penaltyData['total'];
         $checks[] = [
@@ -83,8 +87,8 @@ class NocRegistryService
         ];
 
         // 4. No existing active NOC
-        $nocCheck = $pdo->prepare("SELECT id, status FROM noc_requests WHERE booking_id = ? AND status IN ('pending','processing','approved')");
-        $nocCheck->execute([$bookingId]);
+        $nocCheck = $pdo->prepare("SELECT id, status FROM noc_requests WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status IN ('pending','processing','approved')");
+        $nocCheck->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $activeNoc = $nocCheck->fetch(PDO::FETCH_ASSOC);
         $checks[] = [
             'name' => 'No Active NOC Request',
@@ -98,8 +102,8 @@ class NocRegistryService
         // 5. All commissions settled
         $commCheck = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) as total,
             COALESCE(SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END), 0) as paid
-            FROM mlm_commission_ledger WHERE property_id = ?");
-        $commCheck->execute([$booking['plot_id']]);
+            FROM mlm_commission_ledger WHERE property_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $commCheck->execute($tid > 1 ? [$booking['plot_id'], $tid] : [$booking['plot_id']]);
         $commData = $commCheck->fetch(PDO::FETCH_ASSOC);
         $commBalance = (float)($commData['total'] ?? 0) - (float)($commData['paid'] ?? 0);
         $checks[] = [
@@ -127,14 +131,15 @@ class NocRegistryService
     public function checkRegistryEligibility(int $bookingId): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
 
         // First run NOC eligibility
         $nocResult = $this->checkNocEligibility($bookingId);
         $checks = $nocResult['checks'];
 
         // 6. NOC must be approved
-        $approvedNoc = $pdo->prepare("SELECT id FROM noc_requests WHERE booking_id = ? AND status = 'approved' ORDER BY id DESC LIMIT 1");
-        $approvedNoc->execute([$bookingId]);
+        $approvedNoc = $pdo->prepare("SELECT id FROM noc_requests WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status = 'approved' ORDER BY id DESC LIMIT 1");
+        $approvedNoc->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $nocRow = $approvedNoc->fetch(PDO::FETCH_ASSOC);
         $checks[] = [
             'name' => 'NOC Approved',
@@ -146,8 +151,8 @@ class NocRegistryService
         ];
 
         // 7. No existing registry in progress
-        $regCheck = $pdo->prepare("SELECT id, status FROM registries WHERE booking_id = ? AND status NOT IN ('rejected','cancelled')");
-        $regCheck->execute([$bookingId]);
+        $regCheck = $pdo->prepare("SELECT id, status FROM registries WHERE booking_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status NOT IN ('rejected','cancelled')");
+        $regCheck->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $activeReg = $regCheck->fetch(PDO::FETCH_ASSOC);
         $checks[] = [
             'name' => 'No Active Registry',
@@ -185,17 +190,20 @@ class NocRegistryService
         }
 
         $booking = $eligibility['booking'];
+        $tid = $this->tenantId();
 
-        $stmt = $pdo->prepare("INSERT INTO noc_requests (booking_id, plot_id, user_id, requested_by, purpose, notes, status)
-            VALUES (?, ?, ?, ?, ?, ?, 'pending')");
-        $stmt->execute([
+        $stmt = $pdo->prepare("INSERT INTO noc_requests (booking_id, plot_id, user_id, requested_by, purpose, notes, status" . ($tid > 1 ? ", tenant_id" : "") . ")
+            VALUES (?, ?, ?, ?, ?, ?, 'pending'" . ($tid > 1 ? ", ?" : "") . ")");
+        $params = [
             $bookingId,
             $booking['plot_id'],
             $booking['customer_id'],
             $data['requested_by'] ?? null,
             $data['purpose'] ?? 'Property transfer / Registry',
             $data['notes'] ?? null,
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
 
         $nocId = (int)$pdo->lastInsertId();
         return ['success' => true, 'noc_id' => $nocId, 'message' => "NOC request #{$nocId} created"];
@@ -204,6 +212,7 @@ class NocRegistryService
     public function approveNoc(int $nocId, int $approvedBy, ?string $remarks = null): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
 
         $noc = $this->getNoc($nocId);
         if (!$noc) return ['success' => false, 'error' => 'NOC not found'];
@@ -211,8 +220,8 @@ class NocRegistryService
             return ['success' => false, 'error' => "Cannot approve NOC in '{$noc['status']}' status"];
         }
 
-        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'approved', approved_by = ?, processed_at = NOW(), notes = IFNULL(CONCAT(notes, '\n'), '') WHERE id = ?");
-        $stmt->execute([$approvedBy, $nocId]);
+        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'approved', approved_by = ?, processed_at = NOW(), notes = IFNULL(CONCAT(notes, '\n'), '') WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$approvedBy, $nocId, $tid] : [$approvedBy, $nocId]);
 
         return ['success' => true, 'message' => "NOC #{$nocId} approved"];
     }
@@ -220,12 +229,13 @@ class NocRegistryService
     public function rejectNoc(int $nocId, int $rejectedBy, string $reason): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
 
         $noc = $this->getNoc($nocId);
         if (!$noc) return ['success' => false, 'error' => 'NOC not found'];
 
-        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'rejected', rejection_reason = ?, processed_at = NOW(), approved_by = ? WHERE id = ?");
-        $stmt->execute([$reason, $rejectedBy, $nocId]);
+        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'rejected', rejection_reason = ?, processed_at = NOW(), approved_by = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$reason, $rejectedBy, $nocId, $tid] : [$reason, $rejectedBy, $nocId]);
 
         return ['success' => true, 'message' => "NOC #{$nocId} rejected"];
     }
@@ -233,8 +243,9 @@ class NocRegistryService
     public function blockNoc(int $nocId, string $reason): array
     {
         $pdo = $this->getPdo();
-        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'blocked', rejection_reason = ? WHERE id = ?");
-        $stmt->execute([$reason, $nocId]);
+        $tid = $this->tenantId();
+        $stmt = $pdo->prepare("UPDATE noc_requests SET status = 'blocked', rejection_reason = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$reason, $nocId, $tid] : [$reason, $nocId]);
         return ['success' => true, 'message' => "NOC #{$nocId} blocked"];
     }
 
@@ -254,6 +265,7 @@ class NocRegistryService
         }
 
         $booking = $eligibility['booking'];
+        $tid = $this->tenantId();
 
         // Calculate stamp duty (4% of property value for UP)
         $plotValue = (float)$booking['total_plot_value'];
@@ -261,9 +273,9 @@ class NocRegistryService
         $registrationFee = min(round($plotValue * 0.01, 2), 30000); // max ₹30K
         $otherCharges = 1000; // nominal typing/nomination
 
-        $stmt = $pdo->prepare("INSERT INTO registries (booking_id, plot_id, user_id, associate_id, sub_registrar_office, stamp_duty_amount, registration_fee, other_charges, total_registry_cost, status, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)");
-        $stmt->execute([
+        $stmt = $pdo->prepare("INSERT INTO registries (booking_id, plot_id, user_id, associate_id, sub_registrar_office, stamp_duty_amount, registration_fee, other_charges, total_registry_cost, status, notes" . ($tid > 1 ? ", tenant_id" : "") . ")
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?" . ($tid > 1 ? ", ?" : "") . ")");
+        $params = [
             $bookingId,
             $booking['plot_id'],
             $booking['customer_id'],
@@ -274,7 +286,9 @@ class NocRegistryService
             $otherCharges,
             $stampDuty + $registrationFee + $otherCharges,
             $data['notes'] ?? null,
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
 
         $regId = (int)$pdo->lastInsertId();
         return [
@@ -290,6 +304,7 @@ class NocRegistryService
     public function updateRegistryStatus(int $registryId, string $newStatus, ?string $notes = null, ?string $regNo = null): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
         $validTransitions = [
             'pending' => ['appointment_scheduled', 'cancelled'],
             'appointment_scheduled' => ['documents_submitted', 'cancelled'],
@@ -320,13 +335,14 @@ class NocRegistryService
             $params[] = $v;
         }
         $params[] = $registryId;
+        if ($tid > 1) $params[] = $tid;
 
-        $stmt = $pdo->prepare("UPDATE registries SET " . implode(', ', $setClauses) . " WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE registries SET " . implode(', ', $setClauses) . " WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
         $stmt->execute($params);
 
         // If completed, update booking status
         if ($newStatus === 'completed') {
-            $pdo->prepare("UPDATE plot_bookings SET status = 'registration_done' WHERE id = ?")->execute([$reg['booking_id']]);
+            $pdo->prepare("UPDATE plot_bookings SET status = 'registration_done' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$reg['booking_id'], $tid] : [$reg['booking_id']]);
         }
 
         return ['success' => true, 'message' => "Registry #{$registryId} updated to '{$newStatus}'"];
@@ -364,16 +380,33 @@ class NocRegistryService
     public function getDashboardStats(): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
 
-        $nocPending = (int)$pdo->query("SELECT COUNT(*) FROM noc_requests WHERE status IN ('pending','processing')")->fetchColumn();
-        $nocApproved = (int)$pdo->query("SELECT COUNT(*) FROM noc_requests WHERE status = 'approved'")->fetchColumn();
-        $nocRejected = (int)$pdo->query("SELECT COUNT(*) FROM noc_requests WHERE status IN ('rejected','blocked')")->fetchColumn();
-        $nocTotal = (int)$pdo->query("SELECT COUNT(*) FROM noc_requests")->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM noc_requests WHERE status IN ('pending','processing')" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $nocPending = (int)$s->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM noc_requests WHERE status = 'approved'" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $nocApproved = (int)$s->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM noc_requests WHERE status IN ('rejected','blocked')" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $nocRejected = (int)$s->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM noc_requests" . ($tid > 1 ? " WHERE tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $nocTotal = (int)$s->fetchColumn();
 
-        $regPending = (int)$pdo->query("SELECT COUNT(*) FROM registries WHERE status IN ('pending','appointment_scheduled','documents_submitted','in_progress')")->fetchColumn();
-        $regCompleted = (int)$pdo->query("SELECT COUNT(*) FROM registries WHERE status = 'completed'")->fetchColumn();
-        $regTotal = (int)$pdo->query("SELECT COUNT(*) FROM registries")->fetchColumn();
-        $regTotalCost = (float)$pdo->query("SELECT COALESCE(SUM(total_registry_cost), 0) FROM registries WHERE status = 'completed'")->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM registries WHERE status IN ('pending','appointment_scheduled','documents_submitted','in_progress')" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $regPending = (int)$s->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM registries WHERE status = 'completed'" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $regCompleted = (int)$s->fetchColumn();
+        $s = $pdo->prepare("SELECT COUNT(*) FROM registries" . ($tid > 1 ? " WHERE tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $regTotal = (int)$s->fetchColumn();
+        $s = $pdo->prepare("SELECT COALESCE(SUM(total_registry_cost), 0) FROM registries WHERE status = 'completed'" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $s->execute($tid > 1 ? [$tid] : []);
+        $regTotalCost = (float)$s->fetchColumn();
 
         return compact('nocPending', 'nocApproved', 'nocRejected', 'nocTotal', 'regPending', 'regCompleted', 'regTotal', 'regTotalCost');
     }
@@ -383,13 +416,14 @@ class NocRegistryService
     public function getBooking(int $id): ?array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
         $stmt = $pdo->prepare("SELECT pb.*, p.plot_number as plot_no, p.colony_id, c.name as colony_name, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
             FROM plot_bookings pb
             JOIN plots p ON pb.plot_id = p.id
             JOIN colonies c ON p.colony_id = c.id
             JOIN users u ON pb.customer_id = u.id
-            WHERE pb.id = ?");
-        $stmt->execute([$id]);
+            WHERE pb.id = ?" . ($tid > 1 ? " AND pb.tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$id, $tid] : [$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
@@ -397,14 +431,15 @@ class NocRegistryService
     public function getNoc(int $id): ?array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
         $stmt = $pdo->prepare("SELECT n.*, pb.booking_number, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
             FROM noc_requests n
             JOIN plot_bookings pb ON n.booking_id = pb.id
             JOIN plots p ON n.plot_id = p.id
             JOIN colonies c ON p.colony_id = c.id
             JOIN users u ON n.user_id = u.id
-            WHERE n.id = ?");
-        $stmt->execute([$id]);
+            WHERE n.id = ?" . ($tid > 1 ? " AND n.tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$id, $tid] : [$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
@@ -412,14 +447,15 @@ class NocRegistryService
     public function getRegistry(int $id): ?array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
         $stmt = $pdo->prepare("SELECT r.*, pb.booking_number, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
             FROM registries r
             JOIN plot_bookings pb ON r.booking_id = pb.id
             JOIN plots p ON r.plot_id = p.id
             JOIN colonies c ON p.colony_id = c.id
             JOIN users u ON r.user_id = u.id
-            WHERE r.id = ?");
-        $stmt->execute([$id]);
+            WHERE r.id = ?" . ($tid > 1 ? " AND r.tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$id, $tid] : [$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
@@ -427,9 +463,14 @@ class NocRegistryService
     public function listNocs(array $filters = []): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
         $where = [];
         $params = [];
 
+        if ($tid > 1) {
+            $where[] = "n.tenant_id = ?";
+            $params[] = $tid;
+        }
         if (!empty($filters['status'])) {
             $where[] = "n.status = ?";
             $params[] = $filters['status'];
@@ -452,9 +493,14 @@ class NocRegistryService
     public function listRegistries(array $filters = []): array
     {
         $pdo = $this->getPdo();
+        $tid = $this->tenantId();
         $where = [];
         $params = [];
 
+        if ($tid > 1) {
+            $where[] = "r.tenant_id = ?";
+            $params[] = $tid;
+        }
         if (!empty($filters['status'])) {
             $where[] = "r.status = ?";
             $params[] = $filters['status'];
@@ -477,13 +523,16 @@ class NocRegistryService
     public function listEligibleBookings(): array
     {
         $pdo = $this->getPdo();
-        $stmt = $pdo->query("SELECT pb.id, pb.booking_number, pb.status, pb.total_plot_value, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
+        $tid = $this->tenantId();
+        $sql = "SELECT pb.id, pb.booking_number, pb.status, pb.total_plot_value, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
             FROM plot_bookings pb
             JOIN plots p ON pb.plot_id = p.id
             JOIN colonies c ON p.colony_id = c.id
             JOIN users u ON pb.customer_id = u.id
-            WHERE pb.status IN ('fully_paid', 'registration_done')
-            ORDER BY pb.booking_number");
+            WHERE pb.status IN ('fully_paid', 'registration_done')" . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
+            ORDER BY pb.booking_number";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($tid > 1 ? [$tid] : []);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

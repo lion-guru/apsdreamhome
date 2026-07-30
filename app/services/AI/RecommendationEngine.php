@@ -11,6 +11,8 @@ use PDO;
 
 class RecommendationEngine
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -25,34 +27,33 @@ class RecommendationEngine
      */
     public function recommend(int $userId, int $limit = 10): array
     {
-        // 1. Get or create user profile
+        // Update profile from recent behavior first
+        $this->updateProfileFromBehavior($userId);
+        
         $profile = $this->getOrCreateProfile($userId);
-
-        // 2. Get user behavior history
         $behavior = $this->getUserBehavior($userId);
-
-        // 3. Generate candidate items
-        $candidates = $this->getCandidates($profile, $behavior, $limit * 3);
-
-        // 4. Score each candidate
+        $candidates = $this->getCandidates($profile, $behavior, $limit);
+        
         $scored = [];
         foreach ($candidates as $item) {
             $score = $this->scoreItem($item, $profile, $behavior);
-            $scored[] = [
-                'item' => $item,
-                'score' => $score,
-                'reason' => $this->explainScore($item, $profile)
-            ];
+            if ($score > 0) {
+                $scored[] = [
+                    'item' => $item,
+                    'score' => $score,
+                    'reason' => $this->explainScore($item, $profile)
+                ];
+            }
         }
-
-        // 5. Sort by score
+        
+        // Sort by score descending
         usort($scored, fn($a, $b) => $b['score'] <=> $a['score']);
-
-        // 6. Save top recommendations
-        $top = array_slice($scored, 0, $limit);
-        $this->saveRecommendations($userId, 'property', $top);
-
-        return $top;
+        $scored = array_slice($scored, 0, $limit);
+        
+        // Save recommendations
+        $this->saveRecommendations($userId, 'property', $scored);
+        
+        return $scored;
     }
 
     /**
@@ -60,13 +61,22 @@ class RecommendationEngine
      */
     public function getOrCreateProfile(int $userId): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM ai_user_profiles WHERE user_id = ?");
-        $stmt->execute([$userId]);
+        $tenantSql = $this->tenantSql();
+        $tenantVal = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $stmt = $this->db->prepare("SELECT * FROM ai_user_profiles WHERE user_id = ?{$tenantSql}");
+        $stmt->execute(array_merge([$userId], $tenantVal));
         $profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$profile) {
-            $stmt = $this->db->prepare("INSERT INTO ai_user_profiles (user_id) VALUES (?)");
-            $stmt->execute([$userId]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['user_id'], $tenantCols);
+            $values  = array_merge([$userId], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $this->db->prepare("INSERT INTO ai_user_profiles ($colStr) VALUES ($placeholders)");
+            $stmt->execute($values);
             $profile = ['user_id' => $userId, 'preferred_locations' => null, 'preferred_types' => null, 'budget_min' => null, 'budget_max' => null];
         }
 
@@ -84,13 +94,13 @@ class RecommendationEngine
         $stmt = $this->db->prepare("
             SELECT page_url, COUNT(*) as cnt
             FROM user_behavior_tracking
-            WHERE user_id = ? AND action_type IN ('view_property', 'inquiry', 'favorite')
+            WHERE user_id = ?{$this->tenantSql()} AND action_type IN ('view_property', 'inquiry', 'favorite')
               AND tracked_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY page_url
             ORDER BY cnt DESC
             LIMIT 50
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute(array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Extract preferred locations from URLs
@@ -110,13 +120,13 @@ class RecommendationEngine
                 preferred_types = ?,
                 interaction_count = interaction_count + 1,
                 last_interaction_at = NOW()
-            WHERE user_id = ?
+            WHERE user_id = ?{$this->tenantSql()}
         ");
-        $upd->execute([
+        $upd->execute(array_merge([
             json_encode(array_slice(array_keys($locations), 0, 5)),
             json_encode(array_slice(array_keys($types), 0, 5)),
             $userId
-        ]);
+        ], $this->tenantId() > 1 ? [$this->tenantId()] : []));
     }
 
     /**
@@ -188,7 +198,9 @@ class RecommendationEngine
                 foreach (['title', 'name', 'property_type', 'type', 'location', 'address', 'city', 'price', 'amount', 'created_at'] as $c) {
                     if (in_array($c, $cols)) $select[] = $c;
                 }
-                $stmt = $this->db->query("SELECT " . implode(',', $select) . " FROM $t ORDER BY id DESC LIMIT $limit");
+                $tenantFilter = $this->tenantSql();
+                $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+                $stmt = $this->db->query("SELECT " . implode(',', $select) . " FROM $t WHERE 1=1{$tenantFilter} ORDER BY id DESC LIMIT $limit");
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $row['__source'] = $t;
                     $candidates[] = $row;
@@ -204,31 +216,27 @@ class RecommendationEngine
 
     private function getUserBehavior(int $userId): array
     {
+        $tenantSql = $this->tenantSql();
+        $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $stmt = $this->db->prepare("
             SELECT action_type, target_type, target_id, COUNT(*) as cnt
             FROM user_behavior_tracking
-            WHERE user_id = ? AND tracked_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
+            WHERE user_id = ?{$tenantSql} AND tracked_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY action_type, target_type, target_id
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute(array_merge([$userId], $tenantParam));
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     private function saveRecommendations(int $userId, string $itemType, array $items): void
     {
-        $stmt = $this->db->prepare("
-            INSERT INTO ai_recommendations (user_id, item_type, item_id, score, reason)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        foreach ($items as $r) {
-            $stmt->execute([
-                $userId,
-                $itemType,
-                $r['item']['id'] ?? 0,
-                $r['score'],
-                $r['reason']
-            ]);
-        }
+        $tenantIns = $this->tenantInsertData();
+        $insCols = array_merge(['user_id', 'item_type', 'item_id', 'score', 'reason'], array_keys($tenantIns));
+        $insVals = array_merge([$userId, $itemType], array_map(fn($r) => $r['item']['id'] ?? 0, $items), array_map(fn($r) => $r['score'], $items), array_map(fn($r) => $r['reason'], $items), array_values($tenantIns));
+        $colStr = implode(', ', $insCols);
+        $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+        $stmt = $this->db->prepare("INSERT INTO ai_recommendations ($colStr) VALUES ($placeholders)");
+        $stmt->execute($insVals);
     }
 
     /**
@@ -244,8 +252,10 @@ class RecommendationEngine
             default => null
         };
         if ($col) {
-            $stmt = $this->db->prepare("UPDATE ai_recommendations SET $col = NOW() WHERE id = ?");
-            $stmt->execute([$recommendationId]);
+            $stmt = $this->db->prepare("UPDATE ai_recommendations SET $col = NOW() WHERE id = ?{$this->tenantSql()}");
+            $params = [$recommendationId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
         }
     }
 }

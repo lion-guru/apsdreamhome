@@ -2,6 +2,7 @@
 namespace App\Services\Filing;
 
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * GSTFilingService — GST-specific e-filing operations
@@ -9,6 +10,8 @@ use PDO;
  */
 class GSTFilingService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $efiling;
 
@@ -54,8 +57,9 @@ class GSTFilingService
                 AND transaction_type = 'output'
                 AND party_gstin IS NOT NULL AND party_gstin != ''
                 AND gstr1_status != 'filed'
+                AND tenant_id = ?
                 ORDER BY invoice_date ASC");
-            $b2bStmt->execute([$startDate, $endDate]);
+            $b2bStmt->execute([$startDate, $endDate, $this->tenantId()]);
             $b2bRecords = $b2bStmt->fetchAll(PDO::FETCH_ASSOC);
 
             // B2C invoices (no GSTIN)
@@ -64,8 +68,9 @@ class GSTFilingService
                 AND transaction_type = 'output'
                 AND (party_gstin IS NULL OR party_gstin = '')
                 AND gstr1_status != 'filed'
+                AND tenant_id = ?
                 ORDER BY invoice_date ASC");
-            $b2cStmt->execute([$startDate, $endDate]);
+            $b2cStmt->execute([$startDate, $endDate, $this->tenantId()]);
             $b2cRecords = $b2cStmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Group B2B by GSTIN
@@ -122,8 +127,9 @@ class GSTFilingService
                 FROM gst_transactions
                 WHERE transaction_date BETWEEN ? AND ? AND transaction_type = 'output'
                 AND gstr1_status != 'filed'
+                AND tenant_id = ?
                 GROUP BY hsn_sac_code, gst_rate ORDER BY total_taxable DESC");
-            $hsnStmt->execute([$startDate, $endDate]);
+            $hsnStmt->execute([$startDate, $endDate, $this->tenantId()]);
             $hsnSummary = $hsnStmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Totals
@@ -237,8 +243,9 @@ class GSTFilingService
                 COUNT(*) as count
                 FROM gst_transactions
                 WHERE transaction_date BETWEEN ? AND ? AND transaction_type = 'input'
-                AND itc_eligible = 1 AND itc_claimed = 0");
-            $inStmt->execute([$startDate, $endDate]);
+                AND itc_eligible = 1 AND itc_claimed = 0
+                AND tenant_id = ?");
+            $inStmt->execute([$startDate, $endDate, $this->tenantId()]);
             $input = $inStmt->fetch(PDO::FETCH_ASSOC);
 
             $outTax = (float)($output['cgst'] ?? 0) + (float)($output['sgst'] ?? 0) + (float)($output['igst'] ?? 0);
@@ -340,12 +347,13 @@ class GSTFilingService
             foreach ($months as $period) {
                 $startDate = sprintf('%04d-%02d-01', $period['year'], $period['month']);
                 $endDate = date('Y-m-t', strtotime($startDate));
-                $stmt = $pdo->prepare("SELECT
+$stmt = $pdo->prepare("SELECT
                     SUM(taxable_value) as taxable, SUM(cgst_amount) as cgst,
                     SUM(sgst_amount) as sgst, SUM(igst_amount) as igst,
                     COUNT(*) as count
-                    FROM gst_transactions WHERE transaction_date BETWEEN ? AND ?");
-                $stmt->execute([$startDate, $endDate]);
+                    FROM gst_transactions WHERE transaction_date BETWEEN ? AND ?
+                    AND tenant_id = ?");
+                $stmt->execute([$startDate, $endDate, $this->tenantId()]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $annual['monthly_summary'][] = ['period' => $period['month'] . '-' . $period['year']] + ($row ?: []);
                 $annual['total']['taxable'] += (float)($row['taxable'] ?? 0);
@@ -385,8 +393,9 @@ class GSTFilingService
                     SUM(total_tax) as tax,
                     COUNT(*) as count
                     FROM gst_transactions WHERE transaction_date BETWEEN ? AND ?
+                    AND tenant_id = ?
                     GROUP BY transaction_type");
-                $stmt->execute([$startDate, $endDate]);
+                $stmt->execute([$startDate, $endDate, $this->tenantId()]);
                 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 $output = $input = ['taxable' => 0, 'cgst' => 0, 'sgst' => 0, 'igst' => 0, 'tax' => 0, 'count' => 0];
@@ -456,8 +465,9 @@ class GSTFilingService
         try {
             $stmt = $this->getPdo()->prepare("UPDATE gst_transactions
                 SET gstr1_status = 'filed'
-                WHERE transaction_date BETWEEN ? AND ? AND gstr1_status != 'filed'");
-            $stmt->execute([$startDate, $endDate]);
+                WHERE transaction_date BETWEEN ? AND ? AND gstr1_status != 'filed'
+                AND tenant_id = ?");
+            $stmt->execute([$startDate, $endDate, $this->tenantId()]);
             return $stmt->rowCount();
         } catch (\Exception $e) {
             error_log("[GSTFilingService] markTransactionsFiled() exception: " . $e->getMessage());

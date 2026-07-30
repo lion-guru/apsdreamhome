@@ -7,6 +7,8 @@ use Exception;
 
 class PropertyImageTaggingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var array */
     protected $tagCategories = [
         'room_types' => [
@@ -291,29 +293,29 @@ class PropertyImageTaggingService
 
         try {
             // Save main image record
-            $stmt = $this->db->prepare("
-                INSERT INTO property_images 
-                (property_id, image_url, uploaded_by, is_primary, created_at)
-                VALUES (?, ?, ?, 0, NOW())
-            ");
-            $stmt->execute([$propertyId, $imageUrl, $uploadedBy]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = array_merge(['property_id', 'image_url', 'uploaded_by', 'is_primary', 'created_at'], $tenantCols);
+            $values  = array_merge([$propertyId, $imageUrl, $uploadedBy, 0], $tenantVals);
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $this->db->prepare("INSERT INTO property_images ($colStr) VALUES ($placeholders)");
+            $stmt->execute($values);
             $imageId = (int)$this->db->lastInsertId();
 
             // Save tags
-            $tagStmt = $this->db->prepare("
-                INSERT INTO property_image_tags 
-                (image_id, tag_name, category, confidence, created_at)
-                VALUES (?, ?, ?, ?, NOW())
-            ");
-
             foreach ($categorized as $category => $categoryTags) {
+                $tagTenantData = $this->tenantInsertData();
+                $tagTenantCols = array_keys($tagTenantData);
+                $tagTenantVals = array_values($tagTenantData);
+                $tagColumns = array_merge(['image_id', 'tag_name', 'category', 'confidence', 'created_at'], $tagTenantCols);
+                $tagStmt = $this->db->prepare(
+                    "INSERT INTO property_image_tags (" . implode(', ', $tagColumns) . ") VALUES (" . implode(', ', array_fill(0, count($tagColumns), '?')) . ")"
+                );
                 foreach ($categoryTags as $tag) {
-                    $tagStmt->execute([
-                        $imageId,
-                        $tag,
-                        $category,
-                        $this->calculateConfidence([$tag]),
-                    ]);
+                    $tagValues = array_merge([$imageId, $tag, $category, $this->calculateConfidence([$tag])], $tagTenantVals);
+                    $tagStmt->execute($tagValues);
                 }
             }
         } catch (Exception $e) {
@@ -333,10 +335,12 @@ class PropertyImageTaggingService
                 SELECT pit.tag_name, pit.category, pit.confidence, pi.image_url
                 FROM property_image_tags pit
                 JOIN property_images pi ON pit.image_id = pi.id
-                WHERE pi.property_id = ?
+                WHERE pi.property_id = ? {$this->tenantSql()}
                 ORDER BY pi.created_at DESC, pit.confidence DESC
             ");
-            $stmt->execute([$propertyId]);
+            $params = [$propertyId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             return [];
@@ -358,14 +362,15 @@ class PropertyImageTaggingService
                 FROM property_images pi
                 JOIN properties p ON pi.property_id = p.id
                 JOIN property_image_tags pit ON pi.id = pit.image_id
-                WHERE pit.tag_name IN ($placeholders)
+                WHERE pit.tag_name IN ($placeholders) {$this->tenantSql()}
                 GROUP BY pi.property_id
                 HAVING COUNT(DISTINCT pit.tag_name) >= ?
                 ORDER BY COUNT(DISTINCT pit.tag_name) DESC, p.created_at DESC
                 LIMIT ?
             ";
 
-            $params = array_merge($tags, [count($tags), $limit]);
+            $params = array_merge($tags, [$this->tenantId() > 1 ? $this->tenantId() : null, count($tags), $limit]);
+            $params = array_filter($params, fn($v) => $v !== null);
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
