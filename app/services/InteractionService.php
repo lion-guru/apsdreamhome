@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Core\Database;
+use App\Traits\ServiceTenantTrait;
 
 class InteractionService
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {

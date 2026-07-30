@@ -6,6 +6,7 @@ use App\Core\Database;
 
 class DealService
 {
+    use \App\Traits\ServiceTenantTrait;
     private $db;
 
     public function __construct() {
@@ -51,6 +52,12 @@ class DealService
                 $params[] = $filters['date_to'] . ' 23:59:59';
             }
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $where[] = "d.tenant_id = ?";
+                $params[] = $tid;
+            }
+
             $whereClause = 'WHERE ' . implode(' AND ', $where);
             $page = max(1, $filters['page'] ?? 1);
             $perPage = min(100, max(10, $filters['per_page'] ?? 25));
@@ -89,14 +96,19 @@ class DealService
 
     public function getDealById($id) {
         try {
-            $stmt = $this->db->query(
-                "SELECT d.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
-                        u.name as assigned_name
-                 FROM lead_deals d
-                 LEFT JOIN leads l ON l.id = d.lead_id
-                 LEFT JOIN users u ON u.id = d.assigned_to
-                 WHERE d.id = ?", [$id]
-            );
+            $sql = "SELECT d.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
+                           u.name as assigned_name
+                    FROM lead_deals d
+                    LEFT JOIN leads l ON l.id = d.lead_id
+                    LEFT JOIN users u ON u.id = d.assigned_to
+                    WHERE d.id = ?";
+            $params = [$id];
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND d.tenant_id = ?";
+                $params[] = $tid;
+            }
+            $stmt = $this->db->query($sql, $params);
             $deal = $stmt->fetch();
             if (!$deal) return null;
 
@@ -109,11 +121,9 @@ class DealService
 
     public function createDeal($data) {
         try {
-            $stmt = $this->db->prepare(
-                "INSERT INTO lead_deals (lead_id, title, stage, deal_value, probability, expected_close_date, assigned_to, created_by, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())"
-            );
-            $stmt->execute([
+            $columns = "lead_id, title, stage, deal_value, probability, expected_close_date, assigned_to, created_by, created_at";
+            $placeholders = "?, ?, ?, ?, ?, ?, ?, ?, NOW()";
+            $values = [
                 $data['lead_id'],
                 $data['title'] ?? '',
                 $data['stage'] ?? 'qualification',
@@ -122,7 +132,14 @@ class DealService
                 $data['expected_close_date'] ?? null,
                 $data['assigned_to'] ?? null,
                 $data['created_by'] ?? null,
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $columns .= ", tenant_id";
+                $placeholders .= ", ?";
+                $values[] = $this->tenantId();
+            }
+            $stmt = $this->db->prepare("INSERT INTO lead_deals ({$columns}) VALUES ({$placeholders})");
+            $stmt->execute($values);
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
             error_log('DealService::createDeal error: ' . $e->getMessage());
@@ -143,7 +160,12 @@ class DealService
             }
             if (empty($fields)) return false;
             $params[] = $id;
-            $stmt = $this->db->prepare("UPDATE lead_deals SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ?");
+            $sql = "UPDATE lead_deals SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ?";
+            if ($this->tenantId() > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $this->tenantId();
+            }
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
@@ -154,10 +176,14 @@ class DealService
     public function closeDeal($id, $won, $reason, $reasonDetail = '') {
         try {
             $stage = $won ? 'won' : 'lost';
-            $stmt = $this->db->prepare(
-                "UPDATE lead_deals SET stage = ?, close_reason = ?, close_reason_detail = ?, closed_at = NOW(), updated_at = NOW() WHERE id = ?"
-            );
-            $stmt->execute([$stage, $reason, $reasonDetail, $id]);
+            $sql = "UPDATE lead_deals SET stage = ?, close_reason = ?, close_reason_detail = ?, closed_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $params = [$stage, $reason, $reasonDetail, $id];
+            if ($this->tenantId() > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $this->tenantId();
+            }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -166,8 +192,14 @@ class DealService
 
     public function deleteDeal($id) {
         try {
-            $stmt = $this->db->prepare("UPDATE lead_deals SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$id]);
+            $sql = "UPDATE lead_deals SET deleted_at = NOW() WHERE id = ?";
+            $params = [$id];
+            if ($this->tenantId() > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $this->tenantId();
+            }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -176,13 +208,19 @@ class DealService
 
     public function getDealActivities($dealId, $limit = 50) {
         try {
-            $stmt = $this->db->query(
-                "SELECT a.*, u.name as user_name FROM crm_interactions a
-                 LEFT JOIN users u ON u.id = a.user_id
-                 WHERE a.lead_id IN (SELECT lead_id FROM lead_deals WHERE id = ?)
-                 AND a.deleted_at IS NULL
-                 ORDER BY a.created_at DESC LIMIT ?", [$dealId, $limit]
-            );
+            $sql = "SELECT a.*, u.name as user_name FROM crm_interactions a
+                     LEFT JOIN users u ON u.id = a.user_id
+                     WHERE a.lead_id IN (SELECT lead_id FROM lead_deals WHERE id = ?)
+                     AND a.deleted_at IS NULL";
+            $params = [$dealId];
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND a.tenant_id = ?";
+                $params[] = $tid;
+            }
+            $sql .= " ORDER BY a.created_at DESC LIMIT ?";
+            $params[] = $limit;
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             return [];
@@ -191,13 +229,16 @@ class DealService
 
     public function getPipelineValue() {
         try {
-            $stmt = $this->db->query(
-                "SELECT stage, COUNT(*) as count, SUM(deal_value) as total_value
-                 FROM lead_deals
-                 WHERE deleted_at IS NULL AND stage NOT IN ('won', 'lost')
-                 GROUP BY stage
-                 ORDER BY FIELD(stage, 'qualification', 'proposal', 'negotiation', 'closing')"
-            );
+            $sql = "SELECT stage, COUNT(*) as count, SUM(deal_value) as total_value
+                     FROM lead_deals
+                     WHERE deleted_at IS NULL AND stage NOT IN ('won', 'lost')";
+            $params = [];
+            if ($this->tenantId() > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $this->tenantId();
+            }
+            $sql .= " GROUP BY stage ORDER BY FIELD(stage, 'qualification', 'proposal', 'negotiation', 'closing')";
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             return [];
@@ -206,11 +247,15 @@ class DealService
 
     public function getWeightedPipeline() {
         try {
-            $stmt = $this->db->query(
-                "SELECT SUM(deal_value * probability / 100) as weighted_value
-                 FROM lead_deals
-                 WHERE deleted_at IS NULL AND stage NOT IN ('won', 'lost')"
-            );
+            $sql = "SELECT SUM(deal_value * probability / 100) as weighted_value
+                     FROM lead_deals
+                     WHERE deleted_at IS NULL AND stage NOT IN ('won', 'lost')";
+            $params = [];
+            if ($this->tenantId() > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $this->tenantId();
+            }
+            $stmt = $this->db->query($sql, $params);
             return (float)($stmt->fetch()['weighted_value'] ?? 0);
         } catch (\Exception $e) {
             return 0;
@@ -224,14 +269,18 @@ class DealService
                 $monthStart = date('Y-m-01', strtotime("+$i months"));
                 $monthEnd = date('Y-m-t', strtotime("+$i months"));
 
-                $stmt = $this->db->prepare(
-                    "SELECT SUM(deal_value * probability / 100) as forecast
-                     FROM lead_deals
-                     WHERE deleted_at IS NULL
-                     AND stage NOT IN ('won', 'lost')
-                     AND expected_close_date BETWEEN ? AND ?"
-                );
-                $stmt->execute([$monthStart, $monthEnd]);
+                $sql = "SELECT SUM(deal_value * probability / 100) as forecast
+                         FROM lead_deals
+                         WHERE deleted_at IS NULL
+                         AND stage NOT IN ('won', 'lost')
+                         AND expected_close_date BETWEEN ? AND ?";
+                $params = [$monthStart, $monthEnd];
+                if ($this->tenantId() > 1) {
+                    $sql .= " AND tenant_id = ?";
+                    $params[] = $this->tenantId();
+                }
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute($params);
                 $forecast[] = [
                     'month' => date('Y-m', strtotime("+$i months")),
                     'forecast' => (float)($stmt->fetch()['forecast'] ?? 0),
@@ -245,27 +294,38 @@ class DealService
 
     public function getWinLossStats() {
         try {
-            $stmt = $this->db->query(
-                "SELECT close_reason, COUNT(*) as count, SUM(deal_value) as total_value
-                 FROM lead_deals
-                 WHERE deleted_at IS NULL AND stage = 'lost'
-                 GROUP BY close_reason
-                 ORDER BY count DESC"
-            );
+            $sql1 = "SELECT close_reason, COUNT(*) as count, SUM(deal_value) as total_value
+                      FROM lead_deals
+                      WHERE deleted_at IS NULL AND stage = 'lost'";
+            $params1 = [];
+            if ($this->tenantId() > 1) {
+                $sql1 .= " AND tenant_id = ?";
+                $params1[] = $this->tenantId();
+            }
+            $sql1 .= " GROUP BY close_reason ORDER BY count DESC";
+            $stmt = $this->db->query($sql1, $params1);
             $lossReasons = $stmt->fetchAll() ?: [];
 
-            $stmt = $this->db->query(
-                "SELECT COUNT(*) as won_count, SUM(deal_value) as won_value
-                 FROM lead_deals
-                 WHERE deleted_at IS NULL AND stage = 'won'"
-            );
+            $sql2 = "SELECT COUNT(*) as won_count, SUM(deal_value) as won_value
+                      FROM lead_deals
+                      WHERE deleted_at IS NULL AND stage = 'won'";
+            $params2 = [];
+            if ($this->tenantId() > 1) {
+                $sql2 .= " AND tenant_id = ?";
+                $params2[] = $this->tenantId();
+            }
+            $stmt = $this->db->query($sql2, $params2);
             $won = $stmt->fetch() ?: ['won_count' => 0, 'won_value' => 0];
 
-            $stmt = $this->db->query(
-                "SELECT COUNT(*) as lost_count, SUM(deal_value) as lost_value
-                 FROM lead_deals
-                 WHERE deleted_at IS NULL AND stage = 'lost'"
-            );
+            $sql3 = "SELECT COUNT(*) as lost_count, SUM(deal_value) as lost_value
+                      FROM lead_deals
+                      WHERE deleted_at IS NULL AND stage = 'lost'";
+            $params3 = [];
+            if ($this->tenantId() > 1) {
+                $sql3 .= " AND tenant_id = ?";
+                $params3[] = $this->tenantId();
+            }
+            $stmt = $this->db->query($sql3, $params3);
             $lost = $stmt->fetch() ?: ['lost_count' => 0, 'lost_value' => 0];
 
             return [

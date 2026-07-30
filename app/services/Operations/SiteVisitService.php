@@ -3,7 +3,7 @@
 namespace App\Services\Operations;
 
 use App\Core\Database\Database;
-use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Site Visit Scheduler Service
@@ -11,20 +11,14 @@ use App\Core\Middleware\TenantContext;
  */
 class SiteVisitService
 {
+    use ServiceTenantTrait;
+
     private $database;
     
     public function __construct()
     {
         $this->database = Database::getInstance();
         $this->ensureTablesExist();
-    }
-
-    /**
-     * Get current tenant ID (> 1 means multi-tenant scoping active).
-     */
-    private function getTenantId(): int
-    {
-        return TenantContext::getId();
     }
     
     /**
@@ -61,7 +55,7 @@ class SiteVisitService
                 return ['success' => false, 'error' => 'Selected time slot is not available'];
             }
 
-            $tid = $this->getTenantId();
+            $tid = $this->tenantId();
             $tenantCol = $tid > 1 ? ', tenant_id' : '';
             $tenantVal = $tid > 1 ? ', ?' : '';
             
@@ -121,7 +115,7 @@ class SiteVisitService
      */
     public function isSlotAvailable(int $propertyId, string $date, string $time): bool
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         // Check availability setting
         $availSql = "SELECT * FROM site_availability 
             WHERE property_id = ? AND available_date = ? 
@@ -169,7 +163,7 @@ class SiteVisitService
     public function getAvailableSlots(int $propertyId, string $date): array
     {
         $slots = [];
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $businessHours = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
         
         // Get availability for date
@@ -215,7 +209,7 @@ class SiteVisitService
      */
     private function createDefaultChecklist(int $visitId): void
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $items = [
             ['name' => 'Verify site location and accessibility', 'category' => 'site'],
             ['name' => 'Check plot boundaries and dimensions', 'category' => 'site'],
@@ -266,7 +260,7 @@ class SiteVisitService
     private function createReminder(int $visitId, string $type, string $time): void
     {
         try {
-            $tid = $this->getTenantId();
+            $tid = $this->tenantId();
             $tenantCol = $tid > 1 ? ', tenant_id' : '';
             $tenantVal = $tid > 1 ? ', ?' : '';
             $sql = "INSERT INTO visit_reminders (visit_id, reminder_type, reminder_time{$tenantCol}) VALUES (?, ?, ?{$tenantVal})";
@@ -288,7 +282,7 @@ class SiteVisitService
      */
     private function sendConfirmation(int $visitId, array $data): void
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         // Get property details
         $propSql = "SELECT title, address, location FROM properties WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $propParams = [$data['property_id']];
@@ -318,7 +312,7 @@ class SiteVisitService
      */
     public function getVisits(string $dateFrom, string $dateTo, ?int $assignedTo = null, ?int $propertyId = null): array
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $where = ['visit_date BETWEEN ? AND ?'];
         $params = [$dateFrom, $dateTo];
         
@@ -358,7 +352,7 @@ class SiteVisitService
      */
     public function getVisit(int $visitId): ?array
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $sql = "SELECT sv.*, p.title as property_title, p.address as property_address,
             l.name as lead_name, l.email as lead_email, l.phone as lead_phone
             FROM site_visits sv
@@ -403,7 +397,7 @@ class SiteVisitService
             return ['success' => false, 'error' => 'Invalid status'];
         }
         
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $updates = ['status = ?'];
         $params = [$status];
         
@@ -441,7 +435,7 @@ class SiteVisitService
      */
     public function updateChecklistItem(int $checklistId, bool $isCompleted, ?string $notes = null): array
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $sql = "UPDATE visit_checklists SET is_completed = ?, notes = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [$isCompleted ? 1 : 0, $notes, $checklistId];
         if ($tid > 1) {
@@ -468,7 +462,7 @@ class SiteVisitService
             return ['success' => false, 'error' => 'New time slot is not available'];
         }
         
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $sql = "UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [$newDate, $newTime, $visitId];
         if ($tid > 1) {
@@ -489,7 +483,7 @@ class SiteVisitService
      */
     public function cancelVisit(int $visitId, string $reason): array
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $sql = "UPDATE site_visits SET status = 'cancelled', notes = CONCAT(notes, '\\n\\nCancelled: ', ?) WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [$reason, $visitId];
         if ($tid > 1) {
@@ -510,7 +504,7 @@ class SiteVisitService
     private function clearReminders(int $visitId): void
     {
         try {
-            $tid = $this->getTenantId();
+            $tid = $this->tenantId();
             $sql = "DELETE FROM visit_reminders WHERE visit_id = ? AND is_sent = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
@@ -560,7 +554,7 @@ class SiteVisitService
      */
     private function updateVisitAnalytics(int $visitId): void
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $sql = "SELECT property_id, visit_date, status, rating FROM site_visits WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $params = [$visitId];
         if ($tid > 1) {
@@ -598,7 +592,7 @@ class SiteVisitService
      */
     public function getStatistics(string $dateFrom, string $dateTo): array
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         
         $sql = "SELECT 
