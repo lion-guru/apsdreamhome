@@ -11,6 +11,7 @@ require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class UnifiedRegisterController extends BaseController
 {
@@ -82,9 +83,10 @@ class UnifiedRegisterController extends BaseController
 
         try {
             $db = Database::getInstance();
+            $tid = TenantContext::getId();
 
             // Check duplicate email
-            $exists = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email]);
+            $exists = $db->fetchOne("SELECT id FROM users WHERE email = ? AND tenant_id = ? LIMIT 1", [$email, $tid]);
             if ($exists) {
                 $_SESSION['errors'] = ["Email already registered. Please login."];
                 $_SESSION['old_input'] = $_POST;
@@ -96,7 +98,7 @@ class UnifiedRegisterController extends BaseController
             // Find referrer
             $referrer_id = null;
             if (!empty($referral)) {
-                $ref = $db->fetchOne("SELECT id FROM users WHERE referral_code = ? LIMIT 1", [$referral]);
+                $ref = $db->fetchOne("SELECT id FROM users WHERE referral_code = ? AND tenant_id = ? LIMIT 1", [$referral, $tid]);
                 if ($ref) $referrer_id = $ref['id'];
             }
 
@@ -141,7 +143,8 @@ class UnifiedRegisterController extends BaseController
                 'registration_status' => $registration_status,
                 'approved_at' => $approved_at,
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'tenant_id' => $tid
             ];
 
             // Agent gets experience field
@@ -151,7 +154,7 @@ class UnifiedRegisterController extends BaseController
 
             $db->insert('users', $userData);
 
-            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email])['id'];
+            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? AND tenant_id = ? LIMIT 1", [$email, $tid])['id'];
 
             // Create wallet entry
             $db->insert('wallet_points', [
@@ -165,7 +168,8 @@ class UnifiedRegisterController extends BaseController
                 'bonus_earnings' => 0.00,
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'tenant_id' => $tid
             ]);
 
             // Associate-specific tables
@@ -233,6 +237,8 @@ class UnifiedRegisterController extends BaseController
      */
     private function createAssociateRecords($db, $userId, $name, $email, $phone, $referralCode, $referrerId, $sponsorCode)
     {
+        $tid = TenantContext::getId();
+
         // Associates extension record
         $db->insert('associates', [
             'user_id' => $userId,
@@ -245,7 +251,8 @@ class UnifiedRegisterController extends BaseController
             'status' => 'active',
             'joining_date' => date('Y-m-d'),
             'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => date('Y-m-d H:i:s'),
+            'tenant_id' => $tid
         ]);
 
         // MLM profile
@@ -264,7 +271,8 @@ class UnifiedRegisterController extends BaseController
             'verification_status' => 'pending',
             'status' => 'active',
             'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => date('Y-m-d H:i:s'),
+            'tenant_id' => $tid
         ]);
 
         // Network tree entry
@@ -298,7 +306,8 @@ class UnifiedRegisterController extends BaseController
             'personal_bv' => 0.00,
             'is_active' => 1,
             'joined_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => date('Y-m-d H:i:s'),
+            'tenant_id' => $tid
         ]);
 
         // Also insert into mlm_network_tree (used by commission engines)
@@ -308,13 +317,14 @@ class UnifiedRegisterController extends BaseController
             'sponsor_id' => $referrerId,
             'parent_id' => $mlmParentId,
             'level' => $level,
+            'tenant_id' => $tid
         ]);
 
         // Update referrer's team counts
         if ($referrerId) {
             $db->query(
-                "UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1, total_team_size = total_team_size + 1, updated_at = ? WHERE user_id = ?",
-                [date('Y-m-d H:i:s'), $referrerId]
+                "UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1, total_team_size = total_team_size + 1, updated_at = ? WHERE user_id = ? AND tenant_id = ?",
+                [date('Y-m-d H:i:s'), $referrerId, $tid]
             );
         }
     }
@@ -324,6 +334,7 @@ class UnifiedRegisterController extends BaseController
      */
     private function awardReferralReward($db, $referrerId, $newUserId, $newUserName, $referralCode, $role)
     {
+        $tid = TenantContext::getId();
         $rewardPoints = match($role) {
             'customer' => 100.00,
             'agent' => 250.00,
@@ -333,7 +344,7 @@ class UnifiedRegisterController extends BaseController
 
         if ($rewardPoints <= 0) return;
 
-        $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrerId]);
+        $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? AND tenant_id = ? LIMIT 1", [$referrerId, $tid]);
         if (!$referrerWallet) return;
 
         $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
@@ -341,8 +352,8 @@ class UnifiedRegisterController extends BaseController
         $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
 
         $db->query(
-            "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
-            [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrerId]
+            "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ? AND tenant_id = ?",
+            [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrerId, $tid]
         );
 
         $db->insert('wallet_transactions', [
@@ -357,7 +368,8 @@ class UnifiedRegisterController extends BaseController
             'reference_type' => 'user',
             'related_user_id' => $newUserId,
             'status' => 'completed',
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => date('Y-m-d H:i:s'),
+            'tenant_id' => $tid
         ]);
 
         $db->insert('referral_rewards', [
@@ -369,7 +381,8 @@ class UnifiedRegisterController extends BaseController
             'referral_code' => $referralCode,
             'status' => 'credited',
             'credited_at' => date('Y-m-d H:i:s'),
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => date('Y-m-d H:i:s'),
+            'tenant_id' => $tid
         ]);
     }
 }

@@ -40,8 +40,16 @@ class AuthMiddleware {
 
         try {
             $db = \App\Core\App::database();
-            $sql = "SELECT * FROM users WHERE name = :username OR email = :email";
-            $user = $db->fetch($sql, ['username' => $username, 'email' => $username]);
+            $tid = 1;
+            try {
+                $tid = \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+            }
+            $tenantSql = $tid > 1 ? " AND tenant_id = :tid" : "";
+            $sql = "SELECT * FROM users WHERE (name = :username OR email = :email)" . $tenantSql;
+            $params = ['username' => $username, 'email' => $username];
+            if ($tid > 1) $params['tid'] = $tid;
+            $user = $db->fetch($sql, $params);
 
             if (!$user) {
                 $sqlAdmin = "SELECT * FROM admin WHERE auser = :username OR email = :email";

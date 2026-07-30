@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use App\Core\Security;
 use PDO;
 use Exception;
@@ -16,14 +17,26 @@ class ApiAuthService
         $this->db = Database::getInstance()->getPdo();
     }
 
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Authenticate a user and generate an API token
      */
     public function login($email, $password)
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
-            $stmt->execute([$email]);
+            $tid = $this->getTenantId();
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $params = [$email];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$user || !Security::verifyPassword($password, $user['password'])) {
@@ -34,27 +47,31 @@ class ApiAuthService
             $token = Security::generateRandomString(64);
             $expiresAt = date('Y-m-d H:i:s', strtotime('+30 days'));
 
-            $stmt = $this->db->prepare("
-                INSERT INTO api_tokens (user_id, token, expires_at, created_at)
-                VALUES (?, ?, ?, NOW())
-            ");
-            $stmt->execute([$user['id'], $token, $expiresAt]);
+            $stmt = $this->db->prepare(
+                "INSERT INTO api_tokens (user_id, token, expires_at, created_at" . ($tid > 1 ? ", tenant_id" : "") . ")
+                 VALUES (?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")"
+            );
+            $apiParams = [$user['id'], $token, $expiresAt];
+            if ($tid > 1) $apiParams[] = $tid;
+            $stmt->execute($apiParams);
 
             try {
                 // Fetch full profile info for initial app state
-                $stmt = $this->db->prepare("
-                    SELECT u.id as userId, u.name, u.email, u.phone, u.role,
-                           COALESCE(u.created_at, NOW()) as createdAt, 
-                           COALESCE(u.updated_at, NOW()) as updatedAt,
-                           COALESCE(mp.current_level, 'Customer') as rank
-                    FROM users u
-                    LEFT JOIN mlm_profiles mp ON u.id = mp.user_id
-                    WHERE u.id = ?
-                ");
+                $stmt = $this->db->prepare(
+                    "SELECT u.id as userId, u.name, u.email, u.phone, u.role,
+                            COALESCE(u.created_at, NOW()) as createdAt, 
+                            COALESCE(u.updated_at, NOW()) as updatedAt,
+                            COALESCE(mp.current_level, 'Customer') as rank
+                     FROM users u
+                     LEFT JOIN mlm_profiles mp ON u.id = mp.user_id
+                     WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : "")
+                );
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $stmt->execute([$user['id']]);
+            $profileParams = [$user['id']];
+            if ($tid > 1) $profileParams[] = $tid;
+            $stmt->execute($profileParams);
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
             $userData['avatar'] = null;
@@ -81,12 +98,15 @@ class ApiAuthService
     public function logout($token)
     {
         try {
+            $tid = $this->getTenantId();
             try {
-                $stmt = $this->db->prepare("DELETE FROM api_tokens WHERE token = ?");
+                $stmt = $this->db->prepare("DELETE FROM api_tokens WHERE token = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }
-            $stmt->execute([$token]);
+            $params = [$token];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             return ['success' => true];
         } catch (Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\BaseController;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\PasswordOtpService;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Custom Authentication Controller - APS Dream Home
@@ -579,20 +580,30 @@ class AuthenticationController extends BaseController
     private function getUserByResetToken($token)
     {
         $database = \App\Core\Database::getInstance();
+        $tid = 1;
+        try { $tid = TenantContext::getId(); } catch (\Throwable $e) {}
         return $database->fetchOne(
-            "SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW() AND deleted_at IS NULL",
-            [$token]
+            "SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW() AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            ($tid > 1 ? [$token, $tid] : [$token])
         );
     }
 
     private function clearResetToken($userId)
     {
         $database = \App\Core\Database::getInstance();
+        $tid = 1;
+        try { $tid = TenantContext::getId(); } catch (\Throwable $e) {}
+        $whereClause = 'id = ?';
+        $whereParams = [$userId];
+        if ($tid > 1) {
+            $whereClause .= ' AND tenant_id = ?';
+            $whereParams[] = $tid;
+        }
         return $database->update(
             'users',
             ['reset_token' => null, 'reset_token_expiry' => null, 'updated_at' => date('Y-m-d H:i:s')],
-            'id = ?',
-            [$userId]
+            $whereClause,
+            $whereParams
         );
     }
 }

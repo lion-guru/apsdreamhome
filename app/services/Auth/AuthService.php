@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use Psr\Log\LoggerInterface;
 use App\Models\User;
 
@@ -17,6 +18,18 @@ class AuthService
     private array $config;
     private int $maxLoginAttempts = 5;
     private int $lockoutDuration = 900; // 15 minutes
+
+    /**
+     * Get current tenant ID for multi-tenant scoping.
+     */
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct(Database $db, LoggerInterface $logger, array $config = [])
     {
@@ -185,15 +198,20 @@ class AuthService
             $hashedPassword = password_hash($userData['password'], PASSWORD_DEFAULT);
 
             // Insert user
-            $sql = "INSERT INTO users (name, email, password, phone, role, status, created_at) 
-                    VALUES (?, ?, ?, ?, 'customer', 'active', NOW())";
-            
-            $this->db->execute($sql, [
+            $tid = TenantContext::getId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $sql = "INSERT INTO users (name, email, password, phone, role, status, created_at{$tenantCol}) 
+                    VALUES (?, ?, ?, ?, 'customer', 'active', NOW(){$tenantVal})";
+            $params = [
                 $userData['name'],
                 $userData['email'],
                 $hashedPassword,
                 $userData['phone']
-            ]);
+            ];
+            if ($tid > 1) $params[] = $tid;
+            
+            $this->db->execute($sql, $params);
 
             $userId = $this->db->lastInsertId();
 
@@ -340,8 +358,9 @@ class AuthService
 
             // Update password
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
-            $this->db->execute($sql, [$hashedPassword, $user['id']]);
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $this->db->execute($sql, $tid > 1 ? [$hashedPassword, $user['id'], $tid] : [$hashedPassword, $user['id']]);
 
             $this->logger->info('Password changed successfully', ['user_id' => $user['id']]);
 
@@ -377,15 +396,21 @@ class AuthService
             $token = bin2hex(random_bytes(32));
             $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
 
-            $user = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
+            $tid = $this->getTenantId();
+            $user = $this->db->fetchOne("SELECT id FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$email, $tid] : [$email]);
             if (!$user) {
                 return ['success' => false, 'message' => 'Email not found'];
             }
-            $sql = "INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at) 
-                    VALUES (?, ?, ?, NOW())
-                    ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
+            $sql = "INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at" . ($tid > 1 ? ", tenant_id" : "") . ") 
+                     VALUES (?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")
+                     ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()" . ($tid > 1 ? ", tenant_id = ?" : "");
             
-            $this->db->execute($sql, [$user['id'], $token, $expires, $token, $expires]);
+            $params = [$user['id'], $token, $expires, $token, $expires];
+            if ($tid > 1) {
+                $params[] = $tid;
+                $params[] = $tid;
+            }
+            $this->db->execute($sql, $params);
 
             // Log reset link (email sending placeholder - integrate with EmailService when SMTP configured)
             $resetLink = (rtrim(BASE_URL, '/')) . '/reset-password?token=' . $token;
@@ -420,10 +445,16 @@ class AuthService
     public function resetPassword(string $token, string $newPassword): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT prt.*, u.email FROM password_reset_tokens prt
                     JOIN users u ON prt.user_id = u.id
-                    WHERE prt.token = ? AND prt.expires_at > NOW()";
-            $reset = $this->db->fetchOne($sql, [$token]);
+                    WHERE prt.token = ? AND prt.expires_at > NOW()" . ($tid > 1 ? " AND prt.tenant_id = ? AND u.tenant_id = ?" : "");
+            $params = [$token];
+            if ($tid > 1) {
+                $params[] = $tid;
+                $params[] = $tid;
+            }
+            $reset = $this->db->fetchOne($sql, $params);
             
             if (!$reset) {
                 return [
@@ -444,10 +475,12 @@ class AuthService
 
             // Update user password
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE email = ?";
-            $this->db->execute($sql, [$hashedPassword, $reset['email']]);
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $this->db->execute($sql, $tid > 1 ? [$hashedPassword, $reset['email'], $tid] : [$hashedPassword, $reset['email']]);
 
-            $this->db->execute("DELETE FROM password_reset_tokens WHERE token = ?", [$token]);
+            $tid = $this->getTenantId();
+            $this->db->execute("DELETE FROM password_reset_tokens WHERE token = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$token, $tid] : [$token]);
 
             $this->logger->info('Password reset successful', ['email' => $reset['email']]);
 
@@ -474,28 +507,33 @@ class AuthService
             $stats = [];
 
             // Total users
-            $stats['total_users'] = $this->db->fetchOne("SELECT COUNT(*) FROM users") ?? 0;
+            $tid = $this->getTenantId();
+            $stats['total_users'] = $this->db->fetchOne("SELECT COUNT(*) FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : ""), $tid > 1 ? [$tid] : []) ?? 0;
 
             // Users by role
-            $roleStats = $this->db->fetchAll("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+            $roleStats = $this->db->fetchAll("SELECT role, COUNT(*) as count FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " GROUP BY role", $tid > 1 ? [$tid] : []);
             $stats['by_role'] = [];
             foreach ($roleStats as $stat) {
                 $stats['by_role'][$stat['role']] = $stat['count'];
             }
 
             // Active users (logged in last 24 hours)
+            $tid = $this->getTenantId();
             $stats['active_today'] = $this->db->fetchOne(
-                "SELECT COUNT(*) FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+                "SELECT COUNT(*) FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 24 HOUR)" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$tid] : []
             ) ?? 0;
 
             // Failed login attempts today
             $stats['failed_logins_today'] = $this->db->fetchOne(
-                "SELECT COUNT(*) FROM activity_logs_unified WHERE success = 0 AND DATE(created_at) = CURDATE()"
+                "SELECT COUNT(*) FROM activity_logs_unified WHERE success = 0 AND DATE(created_at) = CURDATE()" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$tid] : []
             ) ?? 0;
 
             // Locked accounts
             $stats['locked_accounts'] = $this->db->fetchOne(
-                "SELECT COUNT(*) FROM users WHERE status = 'locked'"
+                "SELECT COUNT(*) FROM users WHERE status = 'locked'" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$tid] : []
             ) ?? 0;
 
             return $stats;
@@ -511,36 +549,44 @@ class AuthService
      */
     private function getUserByEmail(string $email): ?array
     {
-        $sql = "SELECT * FROM users WHERE email = ? AND status != 'deleted'";
-        return $this->db->fetchOne($sql, [$email]);
+        $tid = $this->getTenantId();
+        $sql = "SELECT * FROM users WHERE email = ? AND status != 'deleted'" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        return $this->db->fetchOne($sql, $tid > 1 ? [$email, $tid] : [$email]);
     }
 
     private function getUserById(int $id): ?array
     {
-        $sql = "SELECT * FROM users WHERE id = ? AND status != 'deleted'";
-        return $this->db->fetchOne($sql, [$id]);
+        $tid = $this->getTenantId();
+        $sql = "SELECT * FROM users WHERE id = ? AND status != 'deleted'" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        return $this->db->fetchOne($sql, $tid > 1 ? [$id, $tid] : [$id]);
     }
 
     private function checkRateLimit(string $email): bool
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT COUNT(*) as attempts FROM activity_logs_unified 
-                WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0";
+                WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
         
-        $attempts = $this->db->fetchOne($sql, [$email]) ?? 0;
+        $attempts = $this->db->fetchOne($sql, $tid > 1 ? [$email, $tid] : [$email]) ?? 0;
         return $attempts < $this->maxLoginAttempts;
     }
 
     private function recordLoginAttempt(string $email, bool $success): void
     {
-        $sql = "INSERT INTO activity_logs_unified (email, success, ip_address, user_agent, created_at) 
-                VALUES (?, ?, ?, ?, NOW())";
+        $tid = $this->getTenantId();
+        $tenantCol = $tid > 1 ? ", tenant_id" : "";
+        $tenantVal = $tid > 1 ? ", ?" : "";
+        $sql = "INSERT INTO activity_logs_unified (email, success, ip_address, user_agent, created_at{$tenantCol}) 
+                VALUES (?, ?, ?, ?, NOW(){$tenantVal})";
         
-        $this->db->execute($sql, [
+        $params = [
             $email,
             $success ? 1 : 0,
             $_SERVER['REMOTE_ADDR'] ?? 'unknown',
             $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        $this->db->execute($sql, $params);
     }
 
     private function isAccountLocked(int $userId): bool
@@ -595,15 +641,17 @@ class AuthService
 
     private function updateLastLogin(int $userId): void
     {
-        $sql = "UPDATE users SET last_login = NOW() WHERE id = ?";
-        $this->db->execute($sql, [$userId]);
+        $tid = $this->getTenantId();
+        $sql = "UPDATE users SET last_login = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $this->db->execute($sql, $tid > 1 ? [$userId, $tid] : [$userId]);
     }
 
     private function updatePasswordHash(int $userId, string $password): void
     {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
-        $this->db->execute($sql, [$hashedPassword, $userId]);
+        $tid = $this->getTenantId();
+        $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $this->db->execute($sql, $tid > 1 ? [$hashedPassword, $userId, $tid] : [$hashedPassword, $userId]);
     }
 
     private function clearRememberToken(string $token): void

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
-use App\Core\Database;
+use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class QuickAuthController extends BaseController
 {
@@ -18,6 +19,20 @@ class QuickAuthController extends BaseController
     public function skipCsrfProtection(): bool
     {
         return true;
+    }
+
+private function getTenantSql(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        return ["", []];
+    }
+
+    private function getTenantInsert(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return ["tenant_id" => $tid];
+        return [];
     }
 
     /**
@@ -39,8 +54,11 @@ class QuickAuthController extends BaseController
                 exit;
             }
 
+            [$tSql, $tParams] = $this->getTenantSql();
+            [$tInsert] = $this->getTenantInsert();
+            
             // Check if user already exists
-            $existingUser = $this->db->fetchOne("SELECT id FROM users WHERE email = ? OR phone = ? LIMIT 1", [$email, $phone]);
+            $existingUser = $this->db->fetchOne("SELECT id FROM users WHERE (email = ? OR phone = ?)" . $tSql . " LIMIT 1", array_merge([$email, $phone], $tParams));
             if ($existingUser) {
                 echo json_encode(['success' => false, 'message' => 'User already exists with this email or phone']);
                 exit;
@@ -49,7 +67,7 @@ class QuickAuthController extends BaseController
             // Find referrer if referral code provided
             $referrerId = null;
             if (!empty($referralCode)) {
-                $ref = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ? LIMIT 1", [$referralCode]);
+                $ref = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ?" . $tSql . " LIMIT 1", array_merge([$referralCode], $tParams));
                 if ($ref) $referrerId = $ref['id'];
             }
 
@@ -59,7 +77,7 @@ class QuickAuthController extends BaseController
             $password = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
 
             // Insert user (default to customer role)
-            $this->db->insert('users', [
+            $userData = array_merge([
                 'customer_id' => $customerId,
                 'name' => $name,
                 'email' => $email,
@@ -73,9 +91,11 @@ class QuickAuthController extends BaseController
                 'approved_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $tInsert);
+            
+            $this->db->insert('users', $userData);
 
-            $newUserId = $this->db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email])['id'];
+            $newUserId = $this->db->fetchOne("SELECT id FROM users WHERE email = ?" . $tSql . " LIMIT 1", array_merge([$email], $tParams))['id'];
 
             // Create wallet entry
             $this->db->insert('wallet_points', [
@@ -94,7 +114,7 @@ class QuickAuthController extends BaseController
 
             // Handle referral rewards if referral code was used
             if ($referrerId) {
-                $referrerWallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrerId]);
+                $referrerWallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$referrerId], $tParams));
 
                 if ($referrerWallet) {
                     $rewardPoints = 100; // 100 points for customer referral
@@ -103,10 +123,10 @@ class QuickAuthController extends BaseController
                     $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
                     $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
 
-                    $this->db->query("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
-                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrerId]);
+                    $this->db->query("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?" . $tSql,
+                        array_merge([$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrerId], $tParams));
 
-                    $this->db->insert('wallet_transactions', [
+                    $this->db->insert('wallet_transactions', array_merge([
                         'user_id' => $referrerId,
                         'transaction_type' => 'credit',
                         'transaction_category' => 'referral',
@@ -119,9 +139,9 @@ class QuickAuthController extends BaseController
                         'related_user_id' => $newUserId,
                         'status' => 'completed',
                         'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    ], $tInsert));
 
-                    $this->db->insert('referral_rewards', [
+                    $this->db->insert('referral_rewards', array_merge([
                         'referrer_id' => $referrerId,
                         'referred_id' => $newUserId,
                         'reward_amount' => $rewardPoints,
@@ -131,7 +151,7 @@ class QuickAuthController extends BaseController
                         'status' => 'credited',
                         'credited_at' => date('Y-m-d H:i:s'),
                         'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    ], $tInsert));
                 }
             }
 
@@ -170,12 +190,15 @@ class QuickAuthController extends BaseController
                 exit;
             }
 
+            [$tSql, $tParams] = $this->getTenantSql();
+            [$tInsert] = $this->getTenantInsert();
+
             // Generate company referral code for this request
             $requestId = 'REQ' . date('YmdHis') . rand(100, 999);
             $companyReferralCode = 'APS2025COMP';
 
             // Save referral request
-            $this->db->insert('referral_requests', [
+            $this->db->insert('referral_requests', array_merge([
                 'request_id' => $requestId,
                 'name' => $name,
                 'email' => $email,
@@ -183,7 +206,7 @@ class QuickAuthController extends BaseController
                 'company_referral_code' => $companyReferralCode,
                 'status' => 'pending',
                 'created_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $tInsert));
 
             // Create table if not exists
             $tableExists = $this->db->fetchOne("SHOW TABLES LIKE 'referral_requests'");
@@ -233,8 +256,11 @@ class QuickAuthController extends BaseController
                 exit;
             }
 
+            [$tSql, $tParams] = $this->getTenantSql();
+            [$tInsert] = $this->getTenantInsert();
+
             // Check if user already exists by phone
-            $existingUser = $this->db->fetchOne("SELECT * FROM users WHERE phone = ? LIMIT 1", [$phone]);
+            $existingUser = $this->db->fetchOne("SELECT * FROM users WHERE phone = ?" . $tSql . " LIMIT 1", array_merge([$phone], $tParams));
 
             if ($existingUser) {
                 // Update lead with existing user
@@ -248,7 +274,7 @@ class QuickAuthController extends BaseController
             }
 
             // Get associate referral code
-            $associate = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ? LIMIT 1", [$associateId]);
+            $associate = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?" . $tSql . " LIMIT 1", array_merge([$associateId], $tParams));
             $referralCode = $associate ? $associate['referral_code'] : '';
 
             // Generate customer_id
@@ -257,7 +283,7 @@ class QuickAuthController extends BaseController
             $password = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
 
             // Insert user
-            $this->db->insert('users', [
+            $this->db->insert('users', array_merge([
                 'customer_id' => $customerId,
                 'name' => $name,
                 'email' => $email,
@@ -269,12 +295,12 @@ class QuickAuthController extends BaseController
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $tInsert));
 
-            $newUserId = $this->db->fetchOne("SELECT id FROM users WHERE phone = ? LIMIT 1", [$phone])['id'];
+            $newUserId = $this->db->fetchOne("SELECT id FROM users WHERE phone = ?" . $tSql . " LIMIT 1", array_merge([$phone], $tParams))['id'];
 
             // Create wallet entry
-            $this->db->insert('wallet_points', [
+            $this->db->insert('wallet_points', array_merge([
                 'user_id' => $newUserId,
                 'points_balance' => 0.00,
                 'total_earned' => 0.00,
@@ -286,11 +312,11 @@ class QuickAuthController extends BaseController
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $tInsert));
 
             // Credit referral to associate
             if ($associateId && $referralCode) {
-                $associateWallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$associateId]);
+                $associateWallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$associateId], $tParams));
 
                 if ($associateWallet) {
                     $rewardPoints = 100;
@@ -298,10 +324,10 @@ class QuickAuthController extends BaseController
                     $newTotalEarned = $associateWallet['total_earned'] + $rewardPoints;
                     $newReferralEarnings = $associateWallet['referral_earnings'] + $rewardPoints;
 
-                    $this->db->query("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
-                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $associateId]);
+                    $this->db->query("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?" . $tSql,
+                        array_merge([$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $associateId], $tParams));
 
-                    $this->db->insert('wallet_transactions', [
+                    $this->db->insert('wallet_transactions', array_merge([
                         'user_id' => $associateId,
                         'transaction_type' => 'credit',
                         'transaction_category' => 'referral',
@@ -314,9 +340,9 @@ class QuickAuthController extends BaseController
                         'related_user_id' => $newUserId,
                         'status' => 'completed',
                         'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    ], $tInsert));
 
-                    $this->db->insert('referral_rewards', [
+                    $this->db->insert('referral_rewards', array_merge([
                         'referrer_id' => $associateId,
                         'referred_id' => $newUserId,
                         'reward_amount' => $rewardPoints,
@@ -326,7 +352,7 @@ class QuickAuthController extends BaseController
                         'status' => 'credited',
                         'credited_at' => date('Y-m-d H:i:s'),
                         'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    ], $tInsert));
                 }
             }
 

@@ -1,15 +1,26 @@
 <?php
 namespace App\Services\MLM;
 
+use App\Core\Middleware\TenantContext;
+
 class MLMNetworkService
 {
     private $db;
-    
+
     public function __construct()
     {
         $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
-    
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Register a Networker (paid onboarding)
      */
@@ -26,9 +37,14 @@ class MLMNetworkService
                 throw new \Exception('Invalid or inactive package');
             }
             
-            // Create user
-            $stmt = $this->db->prepare("INSERT INTO users (name, email, phone, role, onboarding_track, current_package_id, status, created_at) VALUES (?, ?, ?, 'associate', 'networker', ?, 'active', NOW())");
-            $stmt->execute([$userData['name'], $userData['email'], $userData['phone'] ?? '', $packageId]);
+             // Create user
+             $tid = $this->getTenantId();
+             $tenantCol = $tid > 1 ? ", tenant_id" : "";
+             $tenantVal = $tid > 1 ? ", ?" : "";
+             $stmt = $this->db->prepare("INSERT INTO users (name, email, phone, role, onboarding_track, current_package_id, status, created_at$tenantCol) VALUES (?, ?, ?, 'associate', 'networker', ?, 'active', NOW()$tenantVal)");
+             $params = [$userData['name'], $userData['email'], $userData['phone'] ?? '', $packageId];
+             if ($tid > 1) $params[] = $tid;
+             $stmt->execute($params);
             $userId = $this->db->lastInsertId();
             
             // Create wallet
@@ -81,9 +97,15 @@ class MLMNetworkService
     {
         try {
             $this->db->beginTransaction();
-            
-            $stmt = $this->db->prepare("INSERT INTO users (name, email, phone, role, onboarding_track, status, associate_payout_slab, created_at) VALUES (?, ?, ?, 'associate', 'free_consultant', 'active', '5%', NOW())");
-            $stmt->execute([$userData['name'], $userData['email'], $userData['phone'] ?? '']);
+
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+
+            $stmt = $this->db->prepare("INSERT INTO users (name, email, phone, role, onboarding_track, status, associate_payout_slab, created_at$tenantCol) VALUES (?, ?, ?, 'associate', 'free_consultant', 'active', '5%', NOW()$tenantVal)");
+            $params = [$userData['name'], $userData['email'], $userData['phone'] ?? ''];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $userId = $this->db->lastInsertId();
             
             // Create wallet
@@ -138,9 +160,14 @@ class MLMNetworkService
             
             if (!$upline || empty($upline['sponsor_id'])) break;
             
-            // Check if upline is Free Consultant (excluded from level income)
-            $stmt = $this->db->prepare("SELECT onboarding_track, current_package_id FROM users WHERE id = ?");
-            $stmt->execute([$upline['sponsor_id']]);
+             // Check if upline is Free Consultant (excluded from level income)
+             $tid = $this->getTenantId();
+             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+             $stmt = $this->db->prepare("SELECT onboarding_track, current_package_id FROM users WHERE id = ?$tenantWhere");
+             $params = [$upline['sponsor_id']];
+             if ($tid > 1) $params[] = $tid;
+             $stmt->execute($params);
+             $uplineUser = $stmt->fetch(\PDO::FETCH_ASSOC);
             $uplineUser = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if ($uplineUser && $uplineUser['onboarding_track'] === 'free_consultant') {
@@ -179,8 +206,12 @@ class MLMNetworkService
      */
     public function calculateAssociatePayout(int $userId, float $saleAmount): float
     {
-        $stmt = $this->db->prepare("SELECT cumulative_sales, associate_payout_slab FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->db->prepare("SELECT cumulative_sales, associate_payout_slab FROM users WHERE id = ?$tenantWhere");
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$user) return 0;
         
@@ -188,8 +219,10 @@ class MLMNetworkService
         $slab = $this->getSlabPercentage($cumulative);
         
         // Update slab
-        $stmt = $this->db->prepare("UPDATE users SET cumulative_sales = ?, associate_payout_slab = ? WHERE id = ?");
-        $stmt->execute([$cumulative, $slab['label'], $userId]);
+        $stmt = $this->db->prepare("UPDATE users SET cumulative_sales = ?, associate_payout_slab = ? WHERE id = ?$tenantWhere");
+        $updParams = [$cumulative, $slab['label'], $userId];
+        if ($tid > 1) $updParams[] = $tid;
+        $stmt->execute($updParams);
         
         return $saleAmount * ($slab['percent'] / 100);
     }
@@ -219,8 +252,8 @@ class MLMNetworkService
     {
         if ($depth >= $maxDepth) return;
         
-        $stmt = $this->db->prepare("SELECT mnt.associate_id, u.name, u.email, u.onboarding_track FROM mlm_network_tree mnt JOIN users u ON u.id = mnt.associate_id WHERE mnt.parent_id = ?");
-        $stmt->execute([$userId]);
+        $stmt = $this->db->prepare("SELECT mnt.associate_id, u.name, u.email, u.onboarding_track FROM mlm_network_tree mnt JOIN users u ON u.id = mnt.associate_id AND u.tenant_id = ? WHERE mnt.parent_id = ?");
+        $stmt->execute([$this->getTenantId(), $userId]);
         $children = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($children as $child) {

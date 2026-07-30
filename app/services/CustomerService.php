@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Core\Middleware\TenantContext;
 use PDO;
 
 /**
@@ -17,6 +18,24 @@ class CustomerService
         $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
 
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    private function tenantWhere(): array
+    {
+        $tid = $this->getTenantId();
+        if ($tid > 1) {
+            return [" AND tenant_id = ?", [$tid]];
+        }
+        return ["", []];
+    }
+
     /**
      * Register a new customer user.
      */
@@ -27,16 +46,22 @@ class CustomerService
         try {
             $userId = (int)($data["user_id"] ?? 0);
             $customerCode = 'CUST-' . strtoupper(bin2hex(random_bytes(4)));
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $tenantParam = $tid > 1 ? [$tid] : [];
 
-            $userSql = "INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
+            $userSql = "INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at{$tenantCol})
                         VALUES (:name, :email, :phone, :password, 'customer', 'active', NOW(), NOW())";
             $userStmt = $this->db->prepare($userSql);
-            $userStmt->execute([
+            $params = [
                 ":name" => ($data["first_name"] ?? '') . ' ' . ($data["last_name"] ?? ''),
                 ":email" => $data["email"],
                 ":phone" => $data["phone"],
                 ":password" => password_hash($data["password"] ?? 'default123', PASSWORD_DEFAULT),
-            ]);
+            ];
+            if ($tid > 1) $params[":tenant_id"] = $tid;
+            $userStmt->execute($params);
             $userId = (int)$this->db->lastInsertId();
 
             $customerSql = "INSERT INTO customers (user_id, customer_code, first_name, last_name, email, phone)
@@ -93,27 +118,37 @@ class CustomerService
 
     public function getCustomer($id)
     {
-        $stmt = $this->db->prepare("SELECT u.* FROM users c JOIN users u ON c.user_id = u.id WHERE c.id = :id");
-        $stmt->execute([":id" => $id]);
+        [$tSql, $tParams] = $this->tenantWhere();
+        $stmt = $this->db->prepare("SELECT u.* FROM customers c JOIN users u ON c.user_id = u.id WHERE c.id = :id" . $tSql);
+        $params = [":id" => $id];
+        if (!empty($tParams)) $params = array_merge($params, $tParams);
+        $stmt->execute($params);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getCustomerByEmail($email)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email AND role = 'customer'");
-        $stmt->execute([":email" => $email]);
+        [$tSql, $tParams] = $this->tenantWhere();
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email AND role = 'customer'" . $tSql);
+        $params = [":email" => $email];
+        if (!empty($tParams)) $params = array_merge($params, $tParams);
+        $stmt->execute($params);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function getCustomerByUserId($userId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :userId");
-        $stmt->execute([":userId" => $userId]);
+        [$tSql, $tParams] = $this->tenantWhere();
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :userId" . $tSql);
+        $params = [":userId" => $userId];
+        if (!empty($tParams)) $params = array_merge($params, $tParams);
+        $stmt->execute($params);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function updateProfile($id, $data)
     {
+        [$tSql, $tParams] = $this->tenantWhere();
         $sql = "UPDATE users SET ";
         $params = [];
         $updates = [];
@@ -123,8 +158,11 @@ class CustomerService
             $params[":$key"] = $value;
         }
 
-        $sql .= implode(", ", $updates) . " WHERE id = (SELECT user_id FROM users WHERE id = :customer_id)";
+        $sql .= implode(", ", $updates) . " WHERE id = :customer_id" . $tSql;
         $params[":customer_id"] = $id;
+        if (!empty($tParams)) {
+            $params = array_merge($params, $tParams);
+        }
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
@@ -192,13 +230,13 @@ class CustomerService
 
     public function updatePreference($customerId, $key, $value, $type = "string")
     {
-        $stmt = $this->db->prepare("INSERT INTO users (customer_id, preference_key, preference_value, preference_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE preference_value = VALUES(preference_value), updated_at = NOW()");
+        $stmt = $this->db->prepare("INSERT INTO user_preferences (customer_id, preference_key, preference_value, preference_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE preference_value = VALUES(preference_value), updated_at = NOW()");
         return $stmt->execute([$customerId, $key, $value, $type]);
     }
 
     public function getPreferences($customerId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE customer_id = ?");
+        $stmt = $this->db->prepare("SELECT * FROM user_preferences WHERE customer_id = ?");
         $stmt->execute([$customerId]);
 
         $preferences = [];
@@ -224,14 +262,20 @@ class CustomerService
 
     public function verifyEmail($email)
     {
-        $stmt = $this->db->prepare("UPDATE users SET email_verified = 1 WHERE email = ? AND role = 'customer'");
-        return $stmt->execute([$email]);
+        [$tSql, $tParams] = $this->tenantWhere();
+        $stmt = $this->db->prepare("UPDATE users SET email_verified = 1 WHERE email = ? AND role = 'customer'" . $tSql);
+        $params = [$email];
+        if (!empty($tParams)) $params = array_merge($params, $tParams);
+        return $stmt->execute($params);
     }
 
     public function verifyPhone($phone)
     {
-        $stmt = $this->db->prepare("UPDATE users SET phone_verified = 1 WHERE phone = ? AND role = 'customer'");
-        return $stmt->execute([$phone]);
+        [$tSql, $tParams] = $this->tenantWhere();
+        $stmt = $this->db->prepare("UPDATE users SET phone_verified = 1 WHERE phone = ? AND role = 'customer'" . $tSql);
+        $params = [$phone];
+        if (!empty($tParams)) $params = array_merge($params, $tParams);
+        return $stmt->execute($params);
     }
 
     public function completeKYC($customerId, $documents)
@@ -239,9 +283,13 @@ class CustomerService
         $this->db->beginTransaction();
 
         try {
+            [$tSql, $tParams] = $this->tenantWhere();
+            
             // Update customer KYC status
-            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = (SELECT user_id FROM users WHERE id = ?)");
-            $stmt->execute([json_encode($documents), $customerId]);
+            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = (SELECT user_id FROM customers WHERE id = ?)" . $tSql);
+            $params = [json_encode($documents), $customerId];
+            if (!empty($tParams)) $params = array_merge($params, $tParams);
+            $stmt->execute($params);
 
             // Mark documents as verified
             foreach ($documents as $docType) {

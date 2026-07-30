@@ -8,6 +8,7 @@
 namespace App\Services\AI;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class ActionHandlers
 {
@@ -56,6 +57,7 @@ class ActionHandlers
      */
     private function postProperty(array $data, ?int $userId, string $userRole): array
     {
+        $tid = TenantContext::getId();
         $typeMap = [
             'plot' => 'plot', 'house' => 'house', 'flat' => 'flat',
             'shop' => 'shop', 'land' => 'land', 'farmhouse' => 'farmhouse',
@@ -63,8 +65,8 @@ class ActionHandlers
         $propertyType = $typeMap[strtolower($data['property_type'] ?? '')] ?? 'plot';
 
         $this->db->query(
-            "INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, property_type, listing_type, price, location, description, status, created_at) 
-             VALUES (?, ?, ?, ?, ?, ?, 'sell', ?, ?, ?, 'pending', NOW())",
+            "INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, property_type, listing_type, price, location, description, status, tenant_id, created_at) 
+             VALUES (?, ?, ?, ?, ?, ?, 'sell', ?, ?, ?, 'pending', ?, NOW())",
             [
                 $userId,
                 $userId,
@@ -75,6 +77,7 @@ class ActionHandlers
                 $data['price'] ?? null,
                 $data['location'] ?? null,
                 $data['description'] ?? null,
+                $tid,
             ]
         );
 
@@ -102,6 +105,7 @@ class ActionHandlers
      */
     private function addLead(array $data, ?int $userId, string $userRole): array
     {
+        $tid = TenantContext::getId();
         // Generate lead number
         $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
@@ -112,8 +116,8 @@ class ActionHandlers
         }
 
         $this->db->query(
-            "INSERT INTO leads (lead_number, name, phone, email, source, status, budget, location_preference, property_interest, priority, lead_category, lead_score, created_by, assigned_to, notes, created_at, updated_at) 
-             VALUES (?, ?, ?, ?, 'chatbot', 'new', ?, ?, ?, 'medium', 'warm', 50, ?, ?, ?, NOW(), NOW())",
+            "INSERT INTO leads (lead_number, name, phone, email, source, status, budget, location_preference, property_interest, priority, lead_category, lead_score, created_by, assigned_to, notes, tenant_id, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, 'chatbot', 'new', ?, ?, ?, 'medium', 'warm', 50, ?, ?, ?, ?, NOW(), NOW())",
             [
                 $leadNumber,
                 $data['name'],
@@ -125,6 +129,7 @@ class ActionHandlers
                 $userId,
                 $assignedTo,
                 "Auto-created via AI chatbot on " . date('Y-m-d H:i'),
+                $tid,
             ]
         );
 
@@ -133,8 +138,8 @@ class ActionHandlers
         // Auto-response: log activity for the lead
         try {
             $this->db->query(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, created_at) VALUES (?, 'auto_response', 'Lead created via AI chatbot. Auto-welcome message queued.', ?, NOW())",
-                [$leadId, $userId]
+                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, tenant_id, created_at) VALUES (?, 'auto_response', 'Lead created via AI chatbot. Auto-welcome message queued.', ?, ?, NOW())",
+                [$leadId, $userId, $tid]
             );
         } catch (\Exception $e) {
             // Graceful — table might not exist
@@ -164,6 +169,7 @@ class ActionHandlers
      */
     private function bookSiteVisit(array $data, ?int $userId): array
     {
+        $tid = TenantContext::getId();
         $visitDate = $data['date'] ?? date('Y-m-d', strtotime('+1 day'));
 
         // Try VisitService first
@@ -191,16 +197,16 @@ class ActionHandlers
         // Fallback: insert directly
         try {
             $this->db->query(
-                "INSERT INTO site_visits (user_id, visitor_name, visitor_phone, notes, visit_date, status, created_at) VALUES (?, ?, ?, ?, ?, 'scheduled', NOW())",
-                [$userId, $data['name'], $data['phone'], $data['property'], $visitDate]
+                "INSERT INTO site_visits (user_id, visitor_name, visitor_phone, notes, visit_date, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'scheduled', ?, NOW())",
+                [$userId, $data['name'], $data['phone'], $data['property'], $visitDate, $tid]
             );
 
             // Auto-response: log activity
             try {
                 $visitId = $this->db->lastInsertId();
                 $this->db->query(
-                    "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, created_at) VALUES (0, 'site_visit_booked', 'Site visit booked via AI chatbot: {$data['property']} on {$visitDate}', ?, NOW())",
-                    [$userId]
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, tenant_id, created_at) VALUES (0, 'site_visit_booked', 'Site visit booked via AI chatbot: {$data['property']} on {$visitDate}', ?, ?, NOW())",
+                    [$userId, $tid]
                 );
             } catch (\Exception $e) {
                 // Graceful
@@ -224,6 +230,7 @@ class ActionHandlers
      */
     private function searchProperty(array $data): array
     {
+        $tid = TenantContext::getId();
         $location = $data['location'] ?? '';
         $budget = $data['budget'] ?? null;
         $type = $data['type'] ?? null;
@@ -231,8 +238,8 @@ class ActionHandlers
         $sql = "SELECT p.*, c.name as colony_name 
                 FROM plots p 
                 LEFT JOIN colonies c ON p.colony_id = c.id 
-                WHERE p.status = 'available'";
-        $params = [];
+                WHERE p.status = 'available' AND p.tenant_id = ?";
+        $params = [$tid];
 
         if ($location) {
             $sql .= " AND (c.name LIKE ? OR p.location LIKE ? OR p.district LIKE ?)";
@@ -256,12 +263,12 @@ class ActionHandlers
             $results = $this->db->fetchAll($sql, $params);
         } catch (\Exception $e) {
             // Table might not exist or have different schema — try user_properties
-            $sql = "SELECT * FROM user_properties WHERE status IN ('approved', 'verified')";
-            $params = [];
+            $sql = "SELECT * FROM user_properties WHERE status IN ('approved', 'verified') AND tenant_id = ?";
+            $params = [$tid];
             if ($location) {
                 $sql .= " AND (location LIKE ? OR city_name LIKE ?)";
                 $loc = "%{$location}%";
-                $params = [$loc, $loc];
+                $params = [$tid, $loc, $loc];
             }
             if ($budget) {
                 $sql .= " AND price <= ?";
@@ -302,13 +309,14 @@ class ActionHandlers
      */
     private function registerUser(array $data): array
     {
+        $tid = TenantContext::getId();
         $roleMap = ['customer' => 'customer', 'associate' => 'associate', 'agent' => 'agent'];
         $role = $roleMap[strtolower($data['role'] ?? '')] ?? 'customer';
 
         // Check if user already exists
         $existing = $this->db->fetch(
-            "SELECT id FROM users WHERE email = ? OR phone = ?",
-            [$data['email'], $data['phone']]
+            "SELECT id FROM users WHERE (email = ? OR phone = ?) AND tenant_id = ?",
+            [$data['email'], $data['phone'], $tid]
         );
         if ($existing) {
             return [
@@ -343,8 +351,8 @@ class ActionHandlers
         // Fallback: direct DB insert
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
         $this->db->query(
-            "INSERT INTO users (name, email, phone, password, role, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', NOW())",
-            [$data['name'], $data['email'], $data['phone'], $hashedPassword, $role]
+            "INSERT INTO users (name, email, phone, password, role, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'active', ?, NOW())",
+            [$data['name'], $data['email'], $data['phone'], $hashedPassword, $role, $tid]
         );
 
         $userId = $this->db->lastInsertId();
@@ -360,13 +368,15 @@ class ActionHandlers
      */
     private function fileComplaint(array $data, ?int $userId): array
     {
+        $tid = TenantContext::getId();
         $this->db->query(
-            "INSERT INTO support_tickets (user_id, subject, description, category, priority, status, created_at) VALUES (?, ?, ?, ?, 'high', 'open', NOW())",
+            "INSERT INTO support_tickets (user_id, subject, description, category, priority, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'high', 'open', ?, NOW())",
             [
                 $userId,
                 "Complaint: " . ($data['type'] ?? 'General'),
                 "Type: {$data['type']}\n\n" . ($data['description'] ?? ''),
                 $data['type'] ?? 'general',
+                $tid,
             ]
         );
 
@@ -375,8 +385,8 @@ class ActionHandlers
         // Auto-response: log activity
         try {
             $this->db->query(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, created_at) VALUES (0, 'complaint_filed', 'Complaint filed via AI chatbot: {$data['type']} (Ticket #{$ticketId})', ?, NOW())",
-                [$userId]
+                "INSERT INTO lead_activities (lead_id, activity_type, description, performed_by, tenant_id, created_at) VALUES (0, 'complaint_filed', 'Complaint filed via AI chatbot: {$data['type']} (Ticket #{$ticketId})', ?, ?, NOW())",
+                [$userId, $tid]
             );
         } catch (\Exception $e) {
             // Graceful
@@ -403,6 +413,7 @@ class ActionHandlers
      */
     private function checkBooking(array $data): array
     {
+        $tid = TenantContext::getId();
         $identifier = $data['identifier'] ?? '';
 
         // Try booking number first
@@ -411,9 +422,9 @@ class ActionHandlers
              FROM plot_bookings pb 
              LEFT JOIN colonies c ON pb.colony_id = c.id 
              LEFT JOIN plots p ON pb.plot_id = p.id 
-             WHERE pb.booking_number = ? OR pb.customer_phone = ? OR pb.customer_email = ?
+             WHERE (pb.booking_number = ? OR pb.customer_phone = ? OR pb.customer_email = ?) AND pb.tenant_id = ?
              ORDER BY pb.created_at DESC LIMIT 1",
-            [$identifier, $identifier, $identifier]
+            [$identifier, $identifier, $identifier, $tid]
         );
 
         if (!$booking) {

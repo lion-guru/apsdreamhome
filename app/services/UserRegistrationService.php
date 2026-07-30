@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class UserRegistrationService
 {
@@ -27,6 +28,18 @@ class UserRegistrationService
         $this->db = Database::getInstance();
         $this->walletService = new WalletService();
         $this->referralService = new ReferralService();
+    }
+
+    /**
+     * Get current tenant ID for multi-tenant scoping.
+     */
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -92,11 +105,12 @@ class UserRegistrationService
         if (strlen($password) < 6) return ['success' => false, 'message' => 'Password must be at least 6 characters'];
 
         try {
-            $exists = $this->db->fetchOne("SELECT id, role FROM users WHERE email = ? LIMIT 1", [$email]);
+            $tid = $this->getTenantId();
+            $exists = $this->db->fetchOne("SELECT id, role FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1", $tid > 1 ? [$email, $tid] : [$email]);
             if ($exists) {
                 return ['success' => false, 'message' => 'Email already registered', 'existing_user_id' => (int)$exists['id']];
             }
-            $existsPhone = $this->db->fetchOne("SELECT id FROM users WHERE phone = ? LIMIT 1", [$phone]);
+            $existsPhone = $this->db->fetchOne("SELECT id FROM users WHERE phone = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1", $tid > 1 ? [$phone, $tid] : [$phone]);
             if ($existsPhone) {
                 return ['success' => false, 'message' => 'Phone number already registered', 'existing_user_id' => (int)$existsPhone['id']];
             }
@@ -133,7 +147,8 @@ class UserRegistrationService
             // Generate unique referral code
             $finalRefCode = $refCode;
             $counter = 0;
-            while ($this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referral_code = ?", [$finalRefCode]) > 0) {
+            $tid = $this->getTenantId();
+            while ($this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referral_code = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$finalRefCode, $tid] : [$finalRefCode]) > 0) {
                 $counter++;
                 $finalRefCode = $refCode . $counter;
             }
@@ -157,6 +172,7 @@ class UserRegistrationService
                 'commission_rate' => 5.00,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
+                'tenant_id' => $tid,
             ]);
 
             // Create wallet
@@ -394,9 +410,10 @@ class UserRegistrationService
         $params[] = $userId;
 
         try {
+            $tid = $this->getTenantId();
             $this->db->query(
-                "UPDATE users SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = ?",
-                $params
+                "UPDATE users SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? array_merge($params, [$tid]) : $params
             );
             return ['success' => true, 'message' => 'Profile updated successfully'];
         } catch (\Exception $e) {
@@ -420,7 +437,8 @@ class UserRegistrationService
         }
 
         try {
-            $row = $this->db->fetchOne("SELECT password FROM users WHERE id = ?", [$userId]);
+            $tid = $this->getTenantId();
+            $row = $this->db->fetchOne("SELECT password FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$userId, $tid] : [$userId]);
             if (!$row) {
                 return ['success' => false, 'message' => 'User not found'];
             }
@@ -429,7 +447,8 @@ class UserRegistrationService
             }
 
             $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
-            $this->db->query("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?", [$hashed, $userId]);
+            $tid = $this->getTenantId();
+            $this->db->query("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$hashed, $userId, $tid] : [$hashed, $userId]);
             return ['success' => true, 'message' => 'Password changed successfully'];
         } catch (\Exception $e) {
             error_log("UserRegistrationService::changePassword error: " . $e->getMessage());

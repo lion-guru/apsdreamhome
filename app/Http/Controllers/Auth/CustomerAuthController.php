@@ -143,13 +143,23 @@ class CustomerAuthController extends BaseController
         }
 
         try {
+            $db = Database::getInstance();
+            $tid = 1;
+            try {
+                $tid = \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+            }
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$email, $email];
+            if ($tid > 1) $params[] = $tid;
+
             // ── Generic error message (prevents email enumeration) ──
             $genericError = 'Invalid email/phone or password.';
 
             // ── Find user ──
             $user = $db->fetchOne(
-                "SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' AND registration_status = 'approved' LIMIT 1",
-                [$email, $email]
+                "SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' AND registration_status = 'approved'" . $tenantSql . " LIMIT 1",
+                $params
             );
 
             if (!$user || !password_verify($password, $user['password'])) {
@@ -205,10 +215,10 @@ class CustomerAuthController extends BaseController
             // ── Role-specific session IDs ──
             $role = $_SESSION['role'];
             if ($role === 'employee') {
-                $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$user['id']]);
+                $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                 if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
             } elseif (in_array($role, ['agent', 'associate'], true)) {
-                $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ? LIMIT 1", [$user['id']]);
+                $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                 if ($ass) {
                     $_SESSION['associate_id'] = (int)$ass['id'];
                     if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
@@ -482,6 +492,19 @@ class CustomerAuthController extends BaseController
 
     // ─── Rate Limiting Helpers ─────────────────────────────
 
+    private function getTenantSql(): array
+    {
+        $tid = 1;
+        try {
+            $tid = \App\Core\Middleware\TenantContext::getId();
+        } catch (\Throwable $e) {
+        }
+        if ($tid > 1) {
+            return [" AND tenant_id = ?", [$tid]];
+        }
+        return ["", []];
+    }
+
     /**
      * Check if account is locked out due to too many failed attempts.
      */
@@ -497,9 +520,11 @@ class CustomerAuthController extends BaseController
     private function getLockoutRemaining($db, string $identifier): int
     {
         try {
+            [$tSql, $tParams] = $this->getTenantSql();
+            $params = array_merge([$identifier], $tParams);
             $row = $db->fetchOne(
-                "SELECT MAX(created_at) AS last_fail FROM login_attempts WHERE identifier = ? AND success = 0",
-                [$identifier]
+                "SELECT MAX(created_at) AS last_fail FROM login_attempts WHERE identifier = ? AND success = 0" . $tSql,
+                $params
             );
             if (!$row || !$row['last_fail']) return 15;
             $elapsed = time() - strtotime($row['last_fail']);
@@ -516,9 +541,11 @@ class CustomerAuthController extends BaseController
     private function getRecentAttempts($db, string $identifier): int
     {
         try {
+            [$tSql, $tParams] = $this->getTenantSql();
+            $params = array_merge([$identifier, self::LOCKOUT_WINDOW], $tParams);
             $row = $db->fetchOne(
-                "SELECT COUNT(*) AS cnt FROM login_attempts WHERE identifier = ? AND success = 0 AND created_at > DATE_SUB(NOW(), INTERVAL ? SECOND)",
-                [$identifier, self::LOCKOUT_WINDOW]
+                "SELECT COUNT(*) AS cnt FROM login_attempts WHERE identifier = ? AND success = 0 AND created_at > DATE_SUB(NOW(), INTERVAL ? SECOND)" . $tSql,
+                $params
             );
             return (int)($row['cnt'] ?? 0);
         } catch (\Throwable $e) {
@@ -532,9 +559,13 @@ class CustomerAuthController extends BaseController
     private function logAttempt($db, string $identifier, bool $success): void
     {
         try {
+            [$tSql, $tParams] = $this->getTenantSql();
+            $tenantCol = $tSql ? ", tenant_id" : "";
+            $tenantVal = $tSql ? ", ?" : "";
+            $params = array_merge([$identifier, $success ? 1 : 0, $_SERVER['REMOTE_ADDR'] ?? '', substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)], $tParams);
             $db->execute(
-                "INSERT INTO login_attempts (identifier, success, ip_address, user_agent, created_at) VALUES (?, ?, ?, ?, NOW())",
-                [$identifier, $success ? 1 : 0, $_SERVER['REMOTE_ADDR'] ?? '', substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)]
+                "INSERT INTO login_attempts (identifier, success, ip_address, user_agent, created_at" . $tenantCol . ") VALUES (?, ?, ?, ?, NOW()" . $tenantVal . ")",
+                $params
             );
         } catch (\Throwable $e) {
             // Table may not exist — degrade gracefully
@@ -547,7 +578,9 @@ class CustomerAuthController extends BaseController
     private function clearAttempts($db, string $identifier): void
     {
         try {
-            $db->execute("DELETE FROM login_attempts WHERE identifier = ?", [$identifier]);
+            [$tSql, $tParams] = $this->getTenantSql();
+            $params = array_merge([$identifier], $tParams);
+            $db->execute("DELETE FROM login_attempts WHERE identifier = ?" . $tSql, $params);
         } catch (\Throwable $e) { error_log("CustomerAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
     }
 

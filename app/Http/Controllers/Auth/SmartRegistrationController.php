@@ -19,6 +19,7 @@ use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Services\OTPService;
 use App\Services\ProgressiveRegistrationService;
+use App\Core\Middleware\TenantContext;
 
 class SmartRegistrationController extends BaseController
 {
@@ -30,6 +31,20 @@ class SmartRegistrationController extends BaseController
         parent::__construct();
         $this->otpService = new OTPService();
         $this->progressiveService = new ProgressiveRegistrationService($this->db ?? \App\Core\Database::getInstance()->getConnection());
+    }
+
+    private function getTenantSql(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        return ["", []];
+    }
+    
+    private function getTenantInsert(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return ["tenant_id" => $tid];
+        return [];
     }
 
     public function skipCsrfProtection(): bool
@@ -97,9 +112,10 @@ class SmartRegistrationController extends BaseController
         
         try {
             $db = Database::getInstance();
+            [$tSql, $tParams] = $this->getTenantSql();
             
             // Check if phone already registered
-            $existingUser = $db->fetchOne("SELECT id, email, role FROM users WHERE phone = ? LIMIT 1", [$phone]);
+            $existingUser = $db->fetchOne("SELECT id, email, role FROM users WHERE phone = ?" . $tSql . " LIMIT 1", array_merge([$phone], $tParams));
             if ($existingUser) {
                 $_SESSION['error'] = 'This phone number is already registered. Please login instead.';
                 $_SESSION['show_login_prompt'] = true;
@@ -113,18 +129,18 @@ class SmartRegistrationController extends BaseController
             
             // Create or update session
             $existingSession = $db->fetchOne(
-                "SELECT id FROM smart_registration_sessions WHERE phone = ? AND registration_status NOT IN ('profile_complete', 'abandoned') ORDER BY id DESC LIMIT 1",
-                [$phone]
+                "SELECT id FROM smart_registration_sessions WHERE phone = ? AND registration_status NOT IN ('profile_complete', 'abandoned')" . $tSql . " ORDER BY id DESC LIMIT 1",
+                array_merge([$phone], $tParams)
             );
             
             if ($existingSession) {
                 $sessionId = $existingSession['id'];
                 $db->query(
-                    "UPDATE smart_registration_sessions SET otp_code = ?, otp_channel = ?, otp_sent_at = NOW(), registration_status = 'otp_sent', email = COALESCE(?, email), updated_at = NOW() WHERE id = ?",
-                    [$otp, $channel, !empty($email) ? $email : null, $sessionId]
+                    "UPDATE smart_registration_sessions SET otp_code = ?, otp_channel = ?, otp_sent_at = NOW(), registration_status = 'otp_sent', email = COALESCE(?, email), updated_at = NOW() WHERE id = ?" . $tSql,
+                    array_merge([$otp, $channel, !empty($email) ? $email : null, $sessionId], $tParams)
                 );
             } else {
-                $db->insert('smart_registration_sessions', [
+                $db->insert('smart_registration_sessions', array_merge([
                     'session_token' => $sessionToken,
                     'phone' => $phone,
                     'email' => !empty($email) ? $email : null,
@@ -138,7 +154,7 @@ class SmartRegistrationController extends BaseController
                     'landing_page' => $_SERVER['REQUEST_URI'] ?? null,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                ], $this->getTenantInsert()));
                 $sessionId = $db->lastInsertId();
                 $sessionToken = $sessionToken;
             }
@@ -247,6 +263,8 @@ class SmartRegistrationController extends BaseController
         
         try {
             $db = Database::getInstance();
+            [$tSql, $tParams] = $this->getTenantSql();
+            $tInsert = $this->getTenantInsert();
             $session = $this->getSessionByToken($token);
             
             if (!$session) {
@@ -257,8 +275,8 @@ class SmartRegistrationController extends BaseController
             
             // Check OTP attempts (max 5)
             $attempts = $db->fetchColumn(
-                "SELECT COUNT(*) FROM smart_registration_behavior WHERE session_id = ? AND event_type = 'otp_verify_attempt'",
-                [$session['id']]
+                "SELECT COUNT(*) FROM smart_registration_behavior WHERE session_id = ?" . $tSql . " AND event_type = 'otp_verify_attempt'",
+                array_merge([$session['id']], $tParams)
             );
             
             if ($attempts >= 5) {
@@ -268,12 +286,12 @@ class SmartRegistrationController extends BaseController
             }
             
             // Log attempt
-            $db->insert('smart_registration_behavior', [
+            $db->insert('smart_registration_behavior', array_merge([
                 'session_id' => $session['id'],
                 'event_type' => 'otp_verify_attempt',
                 'event_data' => json_encode(['otp_submitted' => $otp]),
                 'created_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $tInsert));
             
             // Verify OTP
             if ($session['otp_code'] !== $otp) {
@@ -303,7 +321,7 @@ class SmartRegistrationController extends BaseController
             $hashedPassword = password_hash($autoPassword, PASSWORD_DEFAULT);
             
             // Create user
-            $userData = [
+            $userData = array_merge([
                 'customer_id' => $unique_id,
                 'name' => 'User ' . substr($phone, -4),
                 'email' => $email ?: $phone . '@temp.apsdreamhome.com',
@@ -316,13 +334,13 @@ class SmartRegistrationController extends BaseController
                 'registration_method' => 'smart_otp',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ];
+            ], $tInsert);
             
             $db->insert('users', $userData);
             $newUserId = $db->lastInsertId();
             
             // Create wallet
-            $db->insert('wallet_points', [
+            $db->insert('wallet_points', array_merge([
                 'user_id' => $newUserId,
                 'points_balance' => 0.00,
                 'total_earned' => 0.00,
@@ -334,12 +352,12 @@ class SmartRegistrationController extends BaseController
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $tInsert));
             
             // Update session
             $db->query(
-                "UPDATE smart_registration_sessions SET user_id = ?, user_created = 1, otp_verified = 1, otp_verified_at = NOW(), registration_status = 'account_created', updated_at = NOW() WHERE id = ?",
-                [$newUserId, $session['id']]
+                "UPDATE smart_registration_sessions SET user_id = ?, user_created = 1, otp_verified = 1, otp_verified_at = NOW(), registration_status = 'account_created', updated_at = NOW() WHERE id = ?" . $tSql,
+                array_merge([$newUserId, $session['id']], $tParams)
             );
             
             // Auto-login
@@ -390,7 +408,8 @@ class SmartRegistrationController extends BaseController
         
         // Get user data
         $db = Database::getInstance();
-        $user = $db->fetchOne("SELECT * FROM users WHERE id = ?", [$session['user_id']]);
+        [$tSql, $tParams] = $this->getTenantSql();
+        $user = $db->fetchOne("SELECT * FROM users WHERE id = ?" . $tSql, array_merge([$session['user_id']], $tParams));
         
         if (!$user) {
             header('Location: ' . BASE_URL . '/');
@@ -418,6 +437,7 @@ class SmartRegistrationController extends BaseController
         
         try {
             $db = Database::getInstance();
+            [$tSql, $tParams] = $this->getTenantSql();
             $session = $this->getSessionByToken($token);
             
             if (!$session || !$session['user_id']) {
@@ -436,15 +456,15 @@ class SmartRegistrationController extends BaseController
             
             // Update session
             $db->query(
-                "UPDATE smart_registration_sessions SET profile_data = ?, profile_completion_pct = ?, registration_status = CASE WHEN ? >= 80 THEN 'profile_complete' ELSE 'profile_incomplete' END, updated_at = NOW() WHERE id = ?",
-                [json_encode($data), $completionPct, $completionPct, $session['id']]
+                "UPDATE smart_registration_sessions SET profile_data = ?, profile_completion_pct = ?, registration_status = CASE WHEN ? >= 80 THEN 'profile_complete' ELSE 'profile_incomplete' END, updated_at = NOW() WHERE id = ?" . $tSql,
+                array_merge([json_encode($data), $completionPct, $completionPct, $session['id']], $tParams)
             );
             
             // Update user if profile is complete
             if ($completionPct >= 80 && !empty($data['name'])) {
                 $db->query(
-                    "UPDATE users SET name = ?, city = ?, occupation = ?, updated_at = NOW() WHERE id = ?",
-                    [$data['name'] ?? '', $data['city'] ?? '', $data['occupation'] ?? '', $session['user_id']]
+                    "UPDATE users SET name = ?, city = ?, occupation = ?, updated_at = NOW() WHERE id = ?" . $tSql,
+                    array_merge([$data['name'] ?? '', $data['city'] ?? '', $data['occupation'] ?? '', $session['user_id']], $tParams)
                 );
             }
             
@@ -485,6 +505,7 @@ class SmartRegistrationController extends BaseController
         
         try {
             $db = Database::getInstance();
+            [$tSql, $tParams] = $this->getTenantSql();
             $session = $this->getSessionByToken($token);
             
             if (!$session) {
@@ -494,24 +515,24 @@ class SmartRegistrationController extends BaseController
             }
             
             // Track behavior
-            $db->insert('smart_registration_behavior', [
+            $db->insert('smart_registration_behavior', array_merge([
                 'session_id' => $session['id'],
                 'user_id' => $session['user_id'],
                 'event_type' => $eventType,
                 'event_data' => is_array($eventData) ? json_encode($eventData) : null,
                 'page_url' => $pageUrl,
                 'created_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $this->getTenantInsert()));
             
             // Update counters
             $updates = ['last_activity_at' => date('Y-m-d H:i:s')];
             
             if ($eventType === 'property_view') {
-                $updates['properties_viewed'] = $session['properties_viewed'] + 1;
+                $updates['properties_viewed'] = ($session['properties_viewed'] ?? 0) + 1;
             } elseif ($eventType === 'page_view') {
-                $updates['pages_viewed'] = $session['pages_viewed'] + 1;
+                $updates['pages_viewed'] = ($session['pages_viewed'] ?? 0) + 1;
             } elseif ($eventType === 'search') {
-                $updates['search_count'] = $session['search_count'] + 1;
+                $updates['search_count'] = ($session['search_count'] ?? 0) + 1;
             }
             
             $setClauses = [];
@@ -523,8 +544,8 @@ class SmartRegistrationController extends BaseController
             $values[] = $session['id'];
             
             $db->query(
-                "UPDATE smart_registration_sessions SET " . implode(', ', $setClauses) . " WHERE id = ?",
-                $values
+                "UPDATE smart_registration_sessions SET " . implode(', ', $setClauses) . " WHERE id = ?" . $tSql,
+                array_merge($values, $tParams)
             );
             
             // Auto-detect role based on behavior

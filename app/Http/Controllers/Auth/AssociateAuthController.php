@@ -14,12 +14,20 @@ require_once __DIR__ . '/../BaseController.php';
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Services\UserRegistrationService;
+use App\Core\Middleware\TenantContext;
 
 class AssociateAuthController extends BaseController
 {
     protected function skipCsrfProtection(): bool
     {
         return true;
+    }
+
+    private function getTenantSql(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        return ["", []];
     }
 
     private function getPublicStats(): array
@@ -151,7 +159,8 @@ class AssociateAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'associate' LIMIT 1", [$email, $email]);
+            [$tSql, $tParams] = $this->getTenantSql();
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'associate'" . $tSql . " LIMIT 1", array_merge([$email, $email], $tParams));
             if ($user && password_verify($password, $user['password'])) {
                 // Check registration status first
                 if (($user['registration_status'] ?? 'approved') === 'pending') {

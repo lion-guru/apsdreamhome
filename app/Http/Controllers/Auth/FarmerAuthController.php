@@ -4,12 +4,20 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class FarmerAuthController extends BaseController
 {
     protected function skipCsrfProtection(): bool
     {
         return true;
+    }
+
+    private function getTenantSql(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        return ["", []];
     }
 
     public function loginForm()

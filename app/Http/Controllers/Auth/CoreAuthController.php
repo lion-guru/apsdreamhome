@@ -201,9 +201,18 @@ class CoreAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
+            $tid = 1;
+            try {
+                $tid = \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+            }
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$identity, $identity];
+            if ($tid > 1) $params[] = $tid;
+            
             $user = $db->fetchOne(
-                "SELECT * FROM users WHERE (email = ? OR phone = ?) AND status != 'deleted' LIMIT 1",
-                [$identity, $identity]
+                "SELECT * FROM users WHERE (email = ? OR phone = ?) AND status != 'deleted'" . $tenantSql . " LIMIT 1",
+                $params
             );
 
             if (!$user || !password_verify($password, $user['password'])) {
@@ -268,7 +277,7 @@ class CoreAuthController extends BaseController
             // Load role-specific IDs
             if (in_array($role, ['agent', 'associate'], true)) {
                 try {
-                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ? LIMIT 1", [$user['id']]);
+                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                     if ($ass) {
                         $_SESSION['associate_id'] = (int)$ass['id'];
                         if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
@@ -276,7 +285,7 @@ class CoreAuthController extends BaseController
                 } catch (\Throwable $e) { error_log("CoreAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
             } elseif ($role === 'employee' || $role === 'telecaller') {
                 try {
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$user['id']]);
+                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                     if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
                 } catch (\Throwable $e) { error_log("CoreAuthController::" . __FUNCTION__ . " error: " . $e->getMessage()); }
             }
@@ -378,9 +387,17 @@ class CoreAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
+            $tid = 1;
+            try {
+                $tid = \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+            }
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
             $session = $db->fetchOne(
-                "SELECT * FROM smart_registration_sessions WHERE session_token = ? LIMIT 1",
-                [$token]
+                "SELECT * FROM smart_registration_sessions WHERE session_token = ?" . $tenantSql . " LIMIT 1",
+                array_merge([$token], $tenantParams)
             );
             if (!$session || !$session['user_id']) {
                 header('Location: ' . BASE_URL . '/register/smart');
@@ -388,16 +405,22 @@ class CoreAuthController extends BaseController
             }
 
             // Update user role
+            $userParams = [$role, $session['user_id']];
+            if ($tid > 1) $userParams[] = $tid;
             $db->query(
-                "UPDATE users SET role = ?, updated_at = NOW() WHERE id = ?",
-                [$role, $session['user_id']]
+                "UPDATE users SET role = ?, updated_at = NOW() WHERE id = ?" . $tenantSql,
+                $userParams
             );
 
             // If MLM role, create mlm_profiles + network_tree + associates (if not already created)
             if (in_array($role, ['associate', 'agent'], true)) {
-                $existingProfile = $db->fetchOne("SELECT id FROM mlm_profiles WHERE user_id = ? LIMIT 1", [$session['user_id']]);
+                $profileParams = [$session['user_id']];
+                if ($tid > 1) $profileParams[] = $tid;
+                $existingProfile = $db->fetchOne("SELECT id FROM mlm_profiles WHERE user_id = ?" . $tenantSql . " LIMIT 1", $profileParams);
                 if (!$existingProfile) {
-                    $user = $db->fetchOne("SELECT name, email, phone, referral_code, referred_by FROM users WHERE id = ?", [$session['user_id']]);
+                    $userParams = [$session['user_id']];
+                    if ($tid > 1) $userParams[] = $tid;
+                    $user = $db->fetchOne("SELECT name, email, phone, referral_code, referred_by FROM users WHERE id = ?" . $tenantSql, $userParams);
                     if ($user) {
                         $this->regService = new UserRegistrationService();
                         // We need to call the private methods... Let's use reflection or just inline

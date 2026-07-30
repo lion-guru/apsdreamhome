@@ -3,6 +3,7 @@
 namespace App\Services\User;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
 
 /**
@@ -21,15 +22,27 @@ class UserService
         $this->logger = new LoggingService();
     }
 
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Get all users
      */
     public function getAllUsers()
     {
         try {
-            $sql = "SELECT * FROM users ORDER BY created_at DESC";
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? "WHERE tenant_id = ?" : "";
+            $sql = "SELECT * FROM users $tenantWhere ORDER BY created_at DESC";
             $stmt = $this->database->prepare($sql);
-            $stmt->execute();
+            if ($tid > 1) $stmt->execute([$tid]);
+            else $stmt->execute();
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             $this->logger->error("Error getting all users: " . $e->getMessage());
@@ -43,9 +56,11 @@ class UserService
     public function getUserById($id)
     {
         try {
-            $sql = "SELECT * FROM users WHERE id = :id";
+            $tid = $this->getTenantId();
+            $sql = "SELECT * FROM users WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
+            if ($tid > 1) $stmt->bindParam(':tid', $tid);
             $stmt->execute();
             return $stmt->fetch();
         } catch (\Exception $e) {
@@ -60,9 +75,11 @@ class UserService
     public function getUserByEmail($email)
     {
         try {
-            $sql = "SELECT * FROM users WHERE email = :email";
+            $tid = $this->getTenantId();
+            $sql = "SELECT * FROM users WHERE email = :email" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':email', $email);
+            if ($tid > 1) $stmt->bindParam(':tid', $tid);
             $stmt->execute();
             return $stmt->fetch();
         } catch (\Exception $e) {
@@ -77,11 +94,10 @@ class UserService
     public function createUser($data)
     {
         try {
-            // Hash password
             $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-            
-            $sql = "INSERT INTO users (name, email, password, phone, role, status, created_at) 
-                    VALUES (:name, :email, :password, :phone, :role, :status, NOW())";
+            $tid = $this->getTenantId();
+            $sql = "INSERT INTO users (name, email, password, phone, role, status, tenant_id, created_at) 
+                    VALUES (:name, :email, :password, :phone, :role, :status, :tid, NOW())";
             $stmt = $this->database->prepare($sql);
             
             $stmt->bindParam(':name', $data['name']);
@@ -90,6 +106,7 @@ class UserService
             $stmt->bindParam(':phone', $data['phone']);
             $stmt->bindParam(':role', $data['role'] ?? 'user');
             $stmt->bindParam(':status', $data['status'] ?? 'active');
+            $stmt->bindParam(':tid', $tid);
             
             $result = $stmt->execute();
             
@@ -112,14 +129,16 @@ class UserService
     public function updateUser($id, $data)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE users SET 
                         name = :name, 
                         email = :email, 
                         phone = :phone, 
                         role = :role, 
                         status = :status, 
+                        tenant_id = :tid,
                         updated_at = NOW() 
-                    WHERE id = :id";
+                    WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             
             $stmt->bindParam(':id', $id);
@@ -128,6 +147,7 @@ class UserService
             $stmt->bindParam(':phone', $data['phone']);
             $stmt->bindParam(':role', $data['role']);
             $stmt->bindParam(':status', $data['status']);
+            $stmt->bindParam(':tid', $tid);
             
             $result = $stmt->execute();
             
@@ -150,11 +170,12 @@ class UserService
     {
         try {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            
-            $sql = "UPDATE users SET password = :password, updated_at = NOW() WHERE id = :id";
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET password = :password, tenant_id = :tid, updated_at = NOW() WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':password', $hashedPassword);
+            $stmt->bindParam(':tid', $tid);
             $result = $stmt->execute();
             
             if ($result) {
@@ -175,9 +196,11 @@ class UserService
     public function deleteUser($id)
     {
         try {
-            $sql = "DELETE FROM users WHERE id = :id";
+            $tid = $this->getTenantId();
+            $sql = "DELETE FROM users WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
+            if ($tid > 1) $stmt->bindParam(':tid', $tid);
             $result = $stmt->execute();
             
             if ($result) {
@@ -219,9 +242,12 @@ class UserService
     public function getActiveUsers()
     {
         try {
-            $sql = "SELECT * FROM users WHERE status = 'active' ORDER BY name";
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? "AND tenant_id = ?" : "";
+            $sql = "SELECT * FROM users WHERE status = 'active' $tenantWhere ORDER BY name";
             $stmt = $this->database->prepare($sql);
-            $stmt->execute();
+            if ($tid > 1) $stmt->execute([$tid]);
+            else $stmt->execute();
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             $this->logger->error("Error getting active users: " . $e->getMessage());
@@ -235,10 +261,13 @@ class UserService
     public function getUsersByRole($role)
     {
         try {
-            $sql = "SELECT * FROM users WHERE role = :role ORDER BY name";
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? "AND tenant_id = ?" : "";
+            $sql = "SELECT * FROM users WHERE role = :role $tenantWhere ORDER BY name";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':role', $role);
-            $stmt->execute();
+            if ($tid > 1) $stmt->execute([$tid]);
+            else $stmt->execute();
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             $this->logger->error("Error getting users by role: " . $e->getMessage());
@@ -252,10 +281,12 @@ class UserService
     public function updateUserStatus($id, $status)
     {
         try {
-            $sql = "UPDATE users SET status = :status, updated_at = NOW() WHERE id = :id";
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET status = :status, tenant_id = :tid, updated_at = NOW() WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':status', $status);
+            $stmt->bindParam(':tid', $tid);
             $result = $stmt->execute();
             
             if ($result) {
@@ -276,10 +307,13 @@ class UserService
     public function emailExists($email)
     {
         try {
-            $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email";
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? "AND tenant_id = ?" : "";
+            $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email $tenantWhere";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':email', $email);
-            $stmt->execute();
+            if ($tid > 1) $stmt->execute([$email, $tid]);
+            else $stmt->execute([$email]);
             $result = $stmt->fetch();
             return $result['count'] > 0;
         } catch (\Exception $e) {
@@ -294,15 +328,18 @@ class UserService
     public function getUserStatistics()
     {
         try {
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? "WHERE tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
             $sql = "SELECT 
                         COUNT(*) as total_users,
                         COUNT(CASE WHEN status = 'active' THEN 1 END) as active_users,
                         COUNT(CASE WHEN role = 'admin' THEN 1 END) as users,
                         COUNT(CASE WHEN role = 'user' THEN 1 END) as regular_users,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users
-                    FROM users";
+                    FROM users $tenantWhere";
             $stmt = $this->database->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($params);
             return $stmt->fetch();
         } catch (\Exception $e) {
             $this->logger->error("Error getting user statistics: " . $e->getMessage());
@@ -316,16 +353,19 @@ class UserService
     public function updateUserProfile($id, $data)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE users SET 
                         name = :name, 
                         phone = :phone, 
+                        tenant_id = :tid,
                         updated_at = NOW() 
-                    WHERE id = :id";
+                    WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $stmt = $this->database->prepare($sql);
             
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':name', $data['name']);
             $stmt->bindParam(':phone', $data['phone']);
+            $stmt->bindParam(':tid', $tid);
             
             $result = $stmt->execute();
             

@@ -11,9 +11,17 @@ require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class AdminAuthController extends BaseController
 {
+    private function getTenantSql(): array
+    {
+        $tid = TenantContext::getId();
+        if ($tid > 1) return [" AND tenant_id = ?", [$tid]];
+        return ["", []];
+    }
+
     public function adminLogin()
     {
         @session_start();
@@ -36,26 +44,27 @@ class AdminAuthController extends BaseController
             $loginMode = $_GET['test_login'];
 
             // test_login=1 → admin/manager, test_login=2 → super_admin
+            [$tSql, $tParams] = $this->getTenantSql();
             if ($loginMode == '2') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             } elseif ($loginMode == '1') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin','manager') ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin','manager') $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             }
             // test_login=3 → telecaller, =4 → employee, =5 → associate, =6 → agent, =7 → customer
             elseif ($loginMode == '3') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'telecaller' ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'telecaller' $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             } elseif ($loginMode == '4') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'employee' ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'employee' $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             } elseif ($loginMode == '5') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'associate' ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'associate' $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             } elseif ($loginMode == '6') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'agent' ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'agent' $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             } elseif ($loginMode == '7') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'customer' ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'customer' $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
             }
 
             if (!$admin) {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
                 if (!$admin) {
                     $admin = ['id' => 1, 'name' => 'Admin User', 'email' => 'admin@apsdreamhome.com', 'password' => '', 'role' => 'super_admin'];
                 }
@@ -156,10 +165,11 @@ class AdminAuthController extends BaseController
         if (getenv('TEST_MODE') === 'true') {
             @session_start();
             $db = Database::getInstance();
-            $admin = $db->fetchOne("SELECT * FROM users WHERE (name = 'testadmin' OR email = 'testadmin@example.com') AND role IN ('super_admin','admin','manager') LIMIT 1");
+            [$tSql, $tParams] = $this->getTenantSql();
+            $admin = $db->fetchOne("SELECT * FROM users WHERE (name = 'testadmin' OR email = 'testadmin@example.com') AND role IN ('super_admin','admin','manager') $tSql LIMIT 1", array_merge([], $tParams));
 
             if (!$admin) {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') ORDER BY id LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') $tSql ORDER BY id LIMIT 1", array_merge([], $tParams));
                 if (!$admin) {
                     $admin = ['id' => 1, 'name' => 'Admin User', 'email' => 'admin@apsdreamhome.com', 'password' => '', 'role' => 'super_admin'];
                 }
@@ -210,7 +220,8 @@ class AdminAuthController extends BaseController
             // Check database
             $db = Database::getInstance();
 
-            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','associate','agent','employee','telecaller','ceo','cfo','cto','coo','cmo','chro','sales_director','marketing_director','construction_director','finance_director','hr_director','operations_director','legal_director','legal_head','finance_head','hr_head','operations_head','department_manager','project_manager','sales_manager','hr_manager','marketing_manager','finance_manager','property_manager','it_manager','operations_manager','legal_advisor','chartered_accountant','senior_developer') LIMIT 1", [$email, $email]);
+            [$tSql, $tParams] = $this->getTenantSql();
+            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','associate','agent','employee','telecaller','ceo','cfo','cto','coo','cmo','chro','sales_director','marketing_director','construction_director','finance_director','hr_director','operations_director','legal_director','legal_head','finance_head','hr_head','operations_head','department_manager','project_manager','sales_manager','hr_manager','marketing_manager','finance_manager','property_manager','it_manager','operations_manager','legal_advisor','chartered_accountant','senior_developer') $tSql LIMIT 1", array_merge([$email, $email], $tParams));
             if ($user && password_verify($password, $user['password'])) {
                 // Prevent session fixation: rotate session ID on successful login
                 session_regenerate_id(true);
@@ -232,7 +243,8 @@ class AdminAuthController extends BaseController
                 // For employee/telecaller: also set employee_id for EmployeeDashboardController
                 if (in_array($user['role'], ['employee', 'telecaller'])) {
                     try {
-                        $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$user['id']]);
+                        [$tSql2, $tParams2] = $this->getTenantSql();
+                        $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? $tSql2", array_merge([$user['id']], $tParams2));
                         if ($emp) {
                             $_SESSION['employee_id'] = $emp['id'];
                         }

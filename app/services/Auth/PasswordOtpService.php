@@ -2,6 +2,7 @@
 namespace App\Services\Auth;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\Communication\EmailSenderService;
 use App\Services\NotificationService;
 
@@ -28,6 +29,18 @@ class PasswordOtpService
     }
 
     /**
+     * Get current tenant ID for multi-tenant scoping.
+     */
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    /**
      * Send OTP for password reset (forgot password flow)
      * @param string $identifier email or phone
      * @param string $purpose forgot_password | change_password | email_verification
@@ -44,10 +57,11 @@ class PasswordOtpService
             }
 
             // Rate limit: max 5 OTPs per email per hour
+            $tid = $this->getTenantId();
             $recent = $this->db->fetchOne(
                 "SELECT COUNT(*) as cnt FROM otp_verifications
-                 WHERE identifier = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)",
-                [$identifier]
+                 WHERE identifier = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$identifier, $tid] : [$identifier]
             );
             if (($recent['cnt'] ?? 0) >= $this->maxPerHour) {
                 return ['success' => false, 'message' => 'Too many OTP requests. Please try again after 1 hour.'];
@@ -55,9 +69,10 @@ class PasswordOtpService
 
             // For forgot password, verify user exists
             if ($purpose === 'password_reset' || $purpose === 'change_password') {
+                $tid = $this->getTenantId();
                 $user = $this->db->fetchOne(
-                    "SELECT id, name, email FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1",
-                    [$identifier]
+                    "SELECT id, name, email FROM users WHERE email = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1",
+                    $tid > 1 ? [$identifier, $tid] : [$identifier]
                 );
                 if (!$user) {
                     // Don't reveal if email exists; just say "if account exists, OTP sent"
@@ -79,12 +94,12 @@ class PasswordOtpService
             // Mark previous OTPs as used (single-active-OTP per identifier+purpose)
             $this->db->query(
                 "UPDATE otp_verifications SET used_at = NOW()
-                 WHERE identifier = ? AND purpose = ? AND used_at IS NULL",
-                [$identifier, $purpose]
+                 WHERE identifier = ? AND purpose = ? AND used_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$identifier, $purpose, $tid] : [$identifier, $purpose]
             );
 
             // Insert new OTP
-            $this->db->insert('otp_verifications', [
+            $otpData = [
                 'identifier' => $identifier,
                 'otp_code' => $otp,
                 'type' => 'email',
@@ -92,7 +107,9 @@ class PasswordOtpService
                 'expires_at' => $expiresAt,
                 'attempts' => 0,
                 'created_at' => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            if ($tid > 1) $otpData['tenant_id'] = $tid;
+            $this->db->insert('otp_verifications', $otpData);
 
             // Send OTP via email
             $sent = $this->sendOtpEmail($identifier, $name, $otp, $purpose);
@@ -131,12 +148,13 @@ class PasswordOtpService
             }
 
             // Find active OTP
+            $tid = $this->getTenantId();
             $record = $this->db->fetchOne(
                 "SELECT * FROM otp_verifications
                  WHERE identifier = ? AND purpose = ? AND used_at IS NULL
-                   AND expires_at >= NOW()
+                   AND expires_at >= NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
                  ORDER BY created_at DESC LIMIT 1",
-                [$identifier, $purpose]
+                $tid > 1 ? [$identifier, $purpose, $tid] : [$identifier, $purpose]
             );
 
             if (!$record) {
@@ -152,8 +170,8 @@ class PasswordOtpService
             if (!hash_equals($record['otp_code'], $otp)) {
                 // Increment attempts
                 $this->db->query(
-                    "UPDATE otp_verifications SET attempts = attempts + 1 WHERE id = ?",
-                    [$record['id']]
+                    "UPDATE otp_verifications SET attempts = attempts + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                    $tid > 1 ? [$record['id'], $tid] : [$record['id']]
                 );
                 $remaining = $this->maxAttempts - ((int)$record['attempts'] + 1);
                 return [
@@ -164,17 +182,18 @@ class PasswordOtpService
 
             // Mark OTP as used
             $this->db->query(
-                "UPDATE otp_verifications SET used_at = NOW() WHERE id = ?",
-                [$record['id']]
+                "UPDATE otp_verifications SET used_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$record['id'], $tid] : [$record['id']]
             );
 
             // Generate a short-lived reset token (valid 30 min) so user can change password
             $resetToken = bin2hex(random_bytes(32));
 
             // Get user
+            $tid = $this->getTenantId();
             $user = $this->db->fetchOne(
-                "SELECT id FROM users WHERE email = ? LIMIT 1",
-                [$identifier]
+                "SELECT id FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1",
+                $tid > 1 ? [$identifier, $tid] : [$identifier]
             );
 
             if (!$user) {
@@ -182,10 +201,11 @@ class PasswordOtpService
             }
 
             // Store reset token in users table
+            $tid = $this->getTenantId();
             $this->db->query(
                 "UPDATE users SET reset_token = ?, reset_token_expiry = DATE_ADD(NOW(), INTERVAL 30 MINUTE), updated_at = NOW()
-                 WHERE id = ?",
-                [$resetToken, $user['id']]
+                 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$resetToken, $user['id'], $tid] : [$resetToken, $user['id']]
             );
 
             return [
@@ -213,9 +233,10 @@ class PasswordOtpService
                 return ['success' => false, 'message' => 'Password must be at least 6 characters'];
             }
 
+            $tid = $this->getTenantId();
             $user = $this->db->fetchOne(
-                "SELECT id, name, email FROM users WHERE reset_token = ? AND reset_token_expiry > NOW() AND deleted_at IS NULL LIMIT 1",
-                [$token]
+                "SELECT id, name, email FROM users WHERE reset_token = ? AND reset_token_expiry > NOW() AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1",
+                $tid > 1 ? [$token, $tid] : [$token]
             );
 
             if (!$user) {
@@ -224,11 +245,12 @@ class PasswordOtpService
 
             // Hash new password
             $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+            $tid = $this->getTenantId();
 
             // Update password and clear token
             $this->db->query(
-                "UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL, updated_at = NOW() WHERE id = ?",
-                [$hash, $user['id']]
+                "UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$hash, $user['id'], $tid] : [$hash, $user['id']]
             );
 
             return [

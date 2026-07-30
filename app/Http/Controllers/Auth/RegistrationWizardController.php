@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class RegistrationWizardController extends BaseController
 {
@@ -39,13 +40,14 @@ class RegistrationWizardController extends BaseController
      */
     private function getState(): array
     {
+        $tid = TenantContext::getId();
         if (!isset($_SESSION['wizard']['session_id'])) {
             $_SESSION['wizard']['session_id'] = session_id();
         }
         $sessionId = $_SESSION['wizard']['session_id'];
         $row = $this->db->fetchOne(
-            "SELECT * FROM incomplete_registrations WHERE session_id = ? ORDER BY id DESC LIMIT 1",
-            [$sessionId]
+            "SELECT * FROM incomplete_registrations WHERE session_id = ? AND tenant_id = ? ORDER BY id DESC LIMIT 1",
+            [$sessionId, $tid]
         );
         if (!$row) {
             return [
@@ -73,6 +75,7 @@ class RegistrationWizardController extends BaseController
      */
     private function saveState(string $step, int $progress, array $formData, ?string $email = null, ?string $phone = null): int
     {
+        $tid = TenantContext::getId();
         $state = $this->getState();
         $payload = json_encode($formData, JSON_UNESCAPED_UNICODE);
         $sessionId = $state['session_id'];
@@ -83,17 +86,17 @@ class RegistrationWizardController extends BaseController
                  SET current_step = ?, progress_percent = ?, form_data = ?,
                      email = COALESCE(?, email), phone = COALESCE(?, phone),
                      last_activity_at = NOW(), source = COALESCE(source, 'web_wizard')
-                 WHERE id = ?",
-                [$step, $progress, $payload, $email, $phone, $state['id']]
+                 WHERE id = ? AND tenant_id = ?",
+                [$step, $progress, $payload, $email, $phone, $state['id'], $tid]
             );
             return $state['id'];
         }
 
         $this->db->execute(
             "INSERT INTO incomplete_registrations
-                (session_id, email, phone, form_data, current_step, progress_percent, last_activity_at, source)
-             VALUES (?, ?, ?, ?, ?, ?, NOW(), 'web_wizard')",
-            [$sessionId, $email, $phone, $payload, $step, $progress]
+                (session_id, email, phone, form_data, current_step, progress_percent, last_activity_at, source, tenant_id)
+             VALUES (?, ?, ?, ?, ?, ?, NOW(), 'web_wizard', ?)",
+            [$sessionId, $email, $phone, $payload, $step, $progress, $tid]
         );
         return (int)$this->db->lastInsertId();
     }
@@ -132,6 +135,7 @@ class RegistrationWizardController extends BaseController
 
     public function saveStep1()
     {
+        $tid = TenantContext::getId();
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
@@ -145,7 +149,7 @@ class RegistrationWizardController extends BaseController
         if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters';
         if ($password !== $confirm) $errors[] = 'Passwords do not match';
 
-        if ($existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email])) {
+        if ($existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ? AND tenant_id = ?", [$email, $tid])) {
             $errors[] = 'Email already registered';
         }
 
@@ -280,15 +284,17 @@ class RegistrationWizardController extends BaseController
 
     private function logOtpSend(string $gateway, string $recipient, string $otp): void
     {
+        $tid = TenantContext::getId();
         try {
             $this->db->execute(
-                "INSERT INTO gateway_logs (gateway, action, recipient, status, request_body, response_body, created_at)
-                 VALUES (?, 'otp_send', ?, 'success', ?, ?, NOW())",
+                "INSERT INTO gateway_logs (gateway, action, recipient, status, request_body, response_body, created_at, tenant_id)
+                 VALUES (?, 'otp_send', ?, 'success', ?, ?, NOW(), ?)",
                 [
                     $gateway,
                     $recipient,
                     json_encode(['type' => $gateway]),
-                    json_encode(['sent' => true, 'masked_otp' => substr($otp, 0, 2) . '****'])
+                    json_encode(['sent' => true, 'masked_otp' => substr($otp, 0, 2) . '****']),
+                    $tid
                 ]
             );
         } catch (\Throwable $e) {
@@ -325,6 +331,7 @@ class RegistrationWizardController extends BaseController
 
     public function complete()
     {
+        $tid = TenantContext::getId();
         $state = $this->getState();
         if (empty($state['form_data']['email']) || empty($state['form_data']['password_hash'])) {
             header('Location: ' . BASE_URL . '/register/step1');
@@ -333,8 +340,8 @@ class RegistrationWizardController extends BaseController
         $data = $state['form_data'];
         try {
             $this->db->execute(
-                "INSERT INTO users (name, email, phone, password, role, status, city, address, created_at)
-                 VALUES (?, ?, ?, ?, 'customer', 'active', ?, ?, NOW())",
+                "INSERT INTO users (name, email, phone, password, role, status, city, address, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, 'customer', 'active', ?, ?, ?, NOW())",
                 [
                     $data['name'],
                     $data['email'],
@@ -342,13 +349,14 @@ class RegistrationWizardController extends BaseController
                     $data['password_hash'],
                     $data['city'] ?? null,
                     $data['location_preference'] ?? null,
+                    $tid,
                 ]
             );
             $userId = (int)$this->db->lastInsertId();
             if (!empty($state['id'])) {
                 $this->db->execute(
-                    "UPDATE incomplete_registrations SET recovered_at = NOW(), recovered_user_id = ? WHERE id = ?",
-                    [$userId, $state['id']]
+                    "UPDATE incomplete_registrations SET recovered_at = NOW(), recovered_user_id = ? WHERE id = ? AND tenant_id = ?",
+                    [$userId, $state['id'], $tid]
                 );
             }
             $_SESSION['user_id'] = $userId;

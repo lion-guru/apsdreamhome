@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 class LeadService
 {
@@ -10,6 +11,15 @@ class LeadService
 
     public function __construct() {
         $this->db = Database::getInstance();
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -263,6 +273,9 @@ class LeadService
             $referralCode = strtoupper(substr($lead['name'], 0, 3)) . date('ymd') . rand(100, 999);
             
             // Insert into users table first
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->query(
                 "INSERT INTO users (
                     name, email, phone, password, customer_id, referral_code,
@@ -271,8 +284,10 @@ class LeadService
                     rera_deduction_wallet, cumulative_sales, associate_payout_slab,
                     mlm_points, wallet_balance, mlm_rank, commission_rate,
                     mlm_target, experience_years, country, created_at, updated_at
+                    $tenantCol
                 ) VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+                    $tenantVal
                 )",
                 [
                     $lead['name'],
@@ -346,7 +361,9 @@ class LeadService
      */
     public function getAssignableUsers() {
         try {
-            $stmt = $this->db->query("SELECT id, name FROM users WHERE status = 'active' ORDER BY name");
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $this->db->query("SELECT id, name FROM users WHERE status = 'active' $tenantWhere ORDER BY name");
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];

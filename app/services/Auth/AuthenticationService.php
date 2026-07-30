@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Core\Database\Database;
 use App\Core\Session\Session;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Custom Authentication Service - APS Dream Home
@@ -24,6 +25,18 @@ class AuthenticationService
     }
 
     /**
+     * Get current tenant ID for multi-tenant scoping.
+     */
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    /**
      * Check if user is authenticated
      */
     public function isAuthenticated()
@@ -41,9 +54,10 @@ class AuthenticationService
         }
 
         $userId = $this->session->get('user_id');
+        $tid = $this->getTenantId();
         return $this->db->fetchOne(
-            "SELECT id, name, email, role, created_at FROM users WHERE id = ? AND deleted_at IS NULL",
-            [$userId]
+            "SELECT id, name, email, role, created_at FROM users WHERE id = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            ($tid > 1 ? [$userId, $tid] : [$userId])
         );
     }
 
@@ -89,9 +103,10 @@ class AuthenticationService
             }
 
             // Get user by email
+            $tid = $this->getTenantId();
             $user = $this->db->fetchOne(
-                "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
-                [$email]
+                "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                ($tid > 1 ? [$email, $tid] : [$email])
             );
 
             if (!$user) {
@@ -146,9 +161,10 @@ class AuthenticationService
             }
 
             // Check if email already exists
+            $tid = $this->getTenantId();
             $existing = $this->db->fetchOne(
-                "SELECT id FROM users WHERE email = ? AND deleted_at IS NULL",
-                [$userData['email']]
+                "SELECT id FROM users WHERE email = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                ($tid > 1 ? [$userData['email'], $tid] : [$userData['email']])
             );
 
             if ($existing) {
@@ -162,7 +178,7 @@ class AuthenticationService
             $hashedPassword = password_hash($userData['password'], PASSWORD_ARGON2ID);
 
             // Insert user
-            $userId = $this->db->insert('users', [
+            $insertData = [
                 'name' => $userData['name'],
                 'email' => $userData['email'],
                 'password' => $hashedPassword,
@@ -171,7 +187,11 @@ class AuthenticationService
                 'address' => $userData['address'] ?? null,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ];
+            if ($tid > 1) {
+                $insertData['tenant_id'] = $tid;
+            }
+            $userId = $this->db->insert('users', $insertData);
 
             if ($userId) {
                 return [
@@ -212,9 +232,10 @@ class AuthenticationService
     public function resetPassword($email)
     {
         try {
+            $tid = $this->getTenantId();
             $user = $this->db->fetchOne(
-                "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
-                [$email]
+                "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                ($tid > 1 ? [$email, $tid] : [$email])
             );
 
             if (!$user) {
@@ -228,8 +249,8 @@ class AuthenticationService
             $token = bin2hex(random_bytes(32));
 
             // Update user with reset token (use DB NOW() for timezone-safe expiry)
-            $sql = "UPDATE users SET reset_token = ?, reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR), updated_at = NOW() WHERE id = ?";
-            $updated = $this->db->execute($sql, [$token, $user['id']])->rowCount();
+            $sql = "UPDATE users SET reset_token = ?, reset_token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR), updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $updated = $this->db->execute($sql, ($tid > 1 ? [$token, $user['id'], $tid] : [$token, $user['id']]))->rowCount();
 
             if ($updated) {
                 // Log reset link (email sending placeholder - integrate with EmailService when SMTP configured)
@@ -268,9 +289,10 @@ class AuthenticationService
     {
         try {
             // Get user
+            $tid = $this->getTenantId();
             $user = $this->db->fetchOne(
-                "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
-                [$userId]
+                "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                ($tid > 1 ? [$userId, $tid] : [$userId])
             );
 
             if (!$user) {
@@ -292,10 +314,17 @@ class AuthenticationService
             $hashedPassword = password_hash($newPassword, PASSWORD_ARGON2ID);
 
             // Update password
-            $updated = $this->db->update('users', [
+            $updateData = [
                 'password' => $hashedPassword,
                 'updated_at' => date('Y-m-d H:i:s')
-            ], 'id = ?', [$userId]);
+            ];
+            $whereClause = 'id = ?';
+            $whereParams = [$userId];
+            if ($tid > 1) {
+                $whereClause .= ' AND tenant_id = ?';
+                $whereParams[] = $tid;
+            }
+            $updated = $this->db->update('users', $updateData, $whereClause, $whereParams);
 
             if ($updated) {
                 return [
@@ -336,10 +365,11 @@ class AuthenticationService
      */
     private function checkRateLimit($email)
     {
+        $tid = $this->getTenantId();
         $recentAttempts = $this->db->fetchOne(
             "SELECT COUNT(*) as count FROM activity_logs_unified 
-             WHERE email = ? AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0",
-            [$email]
+             WHERE email = ? AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            ($tid > 1 ? [$email, $tid] : [$email])
         )['count'];
 
         return $recentAttempts < $this->maxLoginAttempts;
@@ -350,13 +380,18 @@ class AuthenticationService
      */
     private function recordLoginAttempt($email, $success)
     {
-        $this->db->insert('activity_logs_unified', [
+        $tid = $this->getTenantId();
+        $logData = [
             'email' => $email,
             'success' => $success ? 1 : 0,
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ];
+        if ($tid > 1) {
+            $logData['tenant_id'] = $tid;
+        }
+        $this->db->insert('activity_logs_unified', $logData);
     }
 
     /**

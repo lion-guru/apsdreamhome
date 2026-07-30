@@ -3,6 +3,7 @@
 namespace App\Services\Associate;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
 use Exception;
 
@@ -22,15 +23,34 @@ class AssociateService
         $this->logger = new LoggingService();
     }
 
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    private function tenantWhere(): array
+    {
+        $tid = $this->getTenantId();
+        if ($tid > 1) {
+            return [" AND tenant_id = ?", [$tid]];
+        }
+        return ["", []];
+    }
+
     /**
      * Get all users
      */
     public function getAllAssociates()
     {
         try {
-            $sql = "SELECT * FROM users ORDER BY created_at DESC";
+            [$tSql, $tParams] = $this->tenantWhere();
+            $sql = "SELECT * FROM users WHERE 1=1 $tSql ORDER BY created_at DESC";
             $stmt = $this->database->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($tParams);
             return $stmt->fetchAll();
         } catch (Exception $e) {
             $this->logger->error("Error getting all users: " . $e->getMessage());
@@ -44,9 +64,13 @@ class AssociateService
     public function getAssociateById($id)
     {
         try {
-            $sql = "SELECT * FROM users WHERE id = :id";
+            [$tSql, $tParams] = $this->tenantWhere();
+            $sql = "SELECT * FROM users WHERE id = :id $tSql";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
+            foreach ($tParams as $i => $param) {
+                $stmt->bindValue($i + 1, $param);
+            }
             $stmt->execute();
             return $stmt->fetch();
         } catch (Exception $e) {
@@ -61,8 +85,11 @@ class AssociateService
     public function createAssociate($data)
     {
         try {
-            $sql = "INSERT INTO users (name, email, phone, address, commission_rate, status, created_at) 
-                    VALUES (:name, :email, :phone, :address, :commission_rate, :status, NOW())";
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", :tid" : "";
+            $sql = "INSERT INTO users (name, email, phone, address, commission_rate, status, created_at$tenantCol) 
+                    VALUES (:name, :email, :phone, :address, :commission_rate, :status, NOW()$tenantVal)";
             $stmt = $this->database->prepare($sql);
             
             $stmt->bindParam(':name', $data['name']);
@@ -71,6 +98,7 @@ class AssociateService
             $stmt->bindParam(':address', $data['address']);
             $stmt->bindParam(':commission_rate', $data['commission_rate']);
             $stmt->bindParam(':status', $data['status'] ?? 'active');
+            if ($tid > 1) $stmt->bindParam(':tid', $tid);
             
             $result = $stmt->execute();
             
@@ -93,6 +121,8 @@ class AssociateService
     public function updateAssociate($id, $data)
     {
         try {
+            [$tSql, $tParams] = $this->tenantWhere();
+            $tid = $this->getTenantId();
             $sql = "UPDATE users SET 
                         name = :name, 
                         email = :email, 
@@ -101,7 +131,7 @@ class AssociateService
                         commission_rate = :commission_rate, 
                         status = :status, 
                         updated_at = NOW() 
-                    WHERE id = :id";
+                    WHERE id = :id $tSql";
             $stmt = $this->database->prepare($sql);
             
             $stmt->bindParam(':id', $id);
@@ -111,6 +141,9 @@ class AssociateService
             $stmt->bindParam(':address', $data['address']);
             $stmt->bindParam(':commission_rate', $data['commission_rate']);
             $stmt->bindParam(':status', $data['status']);
+            foreach ($tParams as $i => $param) {
+                $stmt->bindValue($i + 1, $param);
+            }
             
             $result = $stmt->execute();
             
@@ -132,9 +165,13 @@ class AssociateService
     public function deleteAssociate($id)
     {
         try {
-            $sql = "DELETE FROM users WHERE id = :id";
+            [$tSql, $tParams] = $this->tenantWhere();
+            $sql = "DELETE FROM users WHERE id = :id $tSql";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
+            foreach ($tParams as $i => $param) {
+                $stmt->bindValue($i + 1, $param);
+            }
             $result = $stmt->execute();
             
             if ($result) {
@@ -155,9 +192,13 @@ class AssociateService
     public function calculateCommission($associateId, $propertyId, $saleAmount)
     {
         try {
-            $sql = "SELECT commission_rate FROM users WHERE id = :id";
+            [$tSql, $tParams] = $this->tenantWhere();
+            $sql = "SELECT commission_rate FROM users WHERE id = :id $tSql";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $associateId);
+            foreach ($tParams as $i => $param) {
+                $stmt->bindValue($i + 1, $param);
+            }
             $stmt->execute();
             $associate = $stmt->fetch();
             
@@ -208,9 +249,10 @@ class AssociateService
     public function getActiveAssociates()
     {
         try {
-            $sql = "SELECT * FROM users WHERE status = 'active' ORDER BY name";
+            [$tSql, $tParams] = $this->tenantWhere();
+            $sql = "SELECT * FROM users WHERE status = 'active' $tSql ORDER BY name";
             $stmt = $this->database->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($tParams);
             return $stmt->fetchAll();
         } catch (Exception $e) {
             $this->logger->error("Error getting active users: " . $e->getMessage());
@@ -224,10 +266,15 @@ class AssociateService
     public function updateAssociateStatus($id, $status)
     {
         try {
-            $sql = "UPDATE users SET status = :status, updated_at = NOW() WHERE id = :id";
+            [$tSql, $tParams] = $this->tenantWhere();
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET status = :status, updated_at = NOW() WHERE id = :id $tSql";
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':status', $status);
+            foreach ($tParams as $i => $param) {
+                $stmt->bindValue($i + 1, $param);
+            }
             $result = $stmt->execute();
             
             if ($result) {

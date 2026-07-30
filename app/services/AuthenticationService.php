@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Core\Config;
+use App\Core\Middleware\TenantContext;
 use App\Services\CoreFunctionsServiceCustom;
 use Exception;
 
@@ -18,6 +19,18 @@ class AuthenticationService
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
+    }
+
+    /**
+     * Get current tenant ID for multi-tenant scoping.
+     */
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -37,9 +50,10 @@ class AuthenticationService
             }
 
             // Find user
-            $sql = "SELECT id, name, email, password, role, status, created_at FROM users WHERE email = ?";
+            $tid = $this->getTenantId();
+            $sql = "SELECT id, name, email, password, role, status, created_at FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$email]);
+            $stmt->execute($tid > 1 ? [$email, $tid] : [$email]);
             $user = $stmt->fetch();
 
             if (!$user) {
@@ -85,9 +99,10 @@ class AuthenticationService
                 $expires = time() + (30 * 24 * 60 * 60); // 30 days
 
                 // Store remember token
-                $sql = "UPDATE users SET remember_token = ?, remember_expires = ? WHERE id = ?";
+                $tid = $this->getTenantId();
+                $sql = "UPDATE users SET remember_token = ?, remember_expires = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$token, date('Y-m-d H:i:s', $expires), $user['id']]);
+                $stmt->execute($tid > 1 ? [$token, date('Y-m-d H:i:s', $expires), $user['id'], $tid] : [$token, date('Y-m-d H:i:s', $expires), $user['id']]);
 
                 setcookie('remember_token', $token, $expires, '/', '', false, true);
             }
@@ -150,9 +165,10 @@ class AuthenticationService
             }
 
             // Check if email already exists
-            $sql = "SELECT id FROM users WHERE email = ?";
+            $tid = $this->getTenantId();
+            $sql = "SELECT id FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$email]);
+            $stmt->execute($tid > 1 ? [$email, $tid] : [$email]);
             if ($stmt->fetch()) {
                 return [
                     'success' => false,
@@ -175,14 +191,19 @@ class AuthenticationService
             $hashedPassword = CoreFunctionsServiceCustom::hashPassword($password);
 
             // Create user
-            $sql = "INSERT INTO users (name, email, password, role, status, created_at) VALUES (?, ?, ?, ?, 'active', NOW())";
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $sql = "INSERT INTO users (name, email, password, role, status, created_at{$tenantCol}) VALUES (?, ?, ?, ?, 'active', NOW(){$tenantVal})";
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([
+            $params = [
                 CoreFunctionsServiceCustom::validateInput($userData['name'], 'string'),
                 $email,
                 $hashedPassword,
                 $userData['role']
-            ]);
+            ];
+            if ($tid > 1) $params[] = $tid;
+            $result = $stmt->execute($params);
 
             if (!$result) {
                 throw new Exception('Failed to create user');
@@ -262,9 +283,10 @@ class AuthenticationService
         }
 
         try {
-            $sql = "SELECT id, name, email, role, status, created_at FROM users WHERE id = ?";
+            $tid = $this->getTenantId();
+            $sql = "SELECT id, name, email, role, status, created_at FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$_SESSION['user_id']]);
+            $stmt->execute($tid > 1 ? [$_SESSION['user_id'], $tid] : [$_SESSION['user_id']]);
             return $stmt->fetch() ?: null;
         } catch (Exception $e) {
             error_log("Get current user error: " . $e->getMessage());
@@ -279,9 +301,10 @@ class AuthenticationService
     {
         try {
             // Get current user
-            $sql = "SELECT password FROM users WHERE id = ?";
+            $tid = $this->getTenantId();
+            $sql = "SELECT password FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
+            $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
             $user = $stmt->fetch();
 
             if (!$user) {
@@ -312,9 +335,10 @@ class AuthenticationService
 
             // Update password
             $hashedPassword = CoreFunctionsServiceCustom::hashPassword($newPassword);
-            $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$hashedPassword, $userId]);
+            $result = $stmt->execute($tid > 1 ? [$hashedPassword, $userId, $tid] : [$hashedPassword, $userId]);
 
             if (!$result) {
                 throw new Exception('Failed to update password');
@@ -347,9 +371,10 @@ class AuthenticationService
     {
         try {
             // Find user
-            $sql = "SELECT id, name FROM users WHERE email = ?";
+            $tid = $this->getTenantId();
+            $sql = "SELECT id, name FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$email]);
+            $stmt->execute($tid > 1 ? [$email, $tid] : [$email]);
             $user = $stmt->fetch();
 
             if (!$user) {
@@ -365,9 +390,10 @@ class AuthenticationService
             $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
 
             // Store reset token
-            $sql = "UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?";
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$token, $expires, $user['id']]);
+            $result = $stmt->execute($tid > 1 ? [$token, $expires, $user['id'], $tid] : [$token, $expires, $user['id']]);
 
             if (!$result) {
                 throw new Exception('Failed to store reset token');
@@ -411,9 +437,10 @@ class AuthenticationService
     private function updateLastLogin(int $userId): void
     {
         try {
-            $sql = "UPDATE users SET last_login = NOW() WHERE id = ?";
+            $tid = $this->getTenantId();
+            $sql = "UPDATE users SET last_login = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
+            $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         } catch (Exception $e) {
             error_log("Failed to update last login: " . $e->getMessage());
         }

@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-29 — Session 61)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-29 — Session 62)
 
 ---
 
@@ -71,8 +71,12 @@ Complete multi-tenant SaaS isolation — ensure ALL models with business-critica
 | **E2E Stability Fix**         | Changed `waitUntil: 'load'` to `waitUntil: 'domcontentloaded'` in `E2E_MASTER_TEST.mjs` (6 instances) to prevent CDN timeouts from causing flaky failures                                                                                                                                                                                                                                                                                                                                                                                 |
 | **Admin Layout Preconnect**   | Added `<link rel="preconnect">` hints for 4 CDN origins (jsdelivr,cdnjs,googleapis,gstatic) in `admin.php` layout for faster resource loading                                                                                                                                                                                                                                                                                                                                                                                             |
 | **View Cleanup**              | Updated stale cron reference in `royalty-pool.php`, archived dead `business/associates/` views (4 files)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **Auth Controller Scoping**   | Added `TenantContext::getId()` + `$tenantSql` + `tenant_id` filtering to ALL auth controllers (12 files): CustomerAuthController, CoreAuthController, AdminAuthController, AssociateAuthController, AgentAuthController, FarmerAuthController, GoogleAuthController, QuickAuthController, SmartRegistrationController, RegistrationWizardController, UnifiedRegisterController, AuthenticationController. Every login/register/password-reset query now scoped.                                                                           |
+| **Auth Service Scoping**      | Added `TenantContext::getId()` + tenant_id filtering to 15 services: AuthService, ApiAuthService, AuthenticationService, PasswordOtpService, SocialLoginService, UserRegistrationService, UserService, CustomerService, LeadService, MLMNetworkService, ReferralService, AssociateService, AI/ActionHandlers, AuthenticationService (root). Every user INSERT/UPDATE/SELECT now tenant-scoped.                                                                                                                                            |
+| **AuthMiddleware Scoped**     | `AuthMiddleware.php` now applies tenant_id filtering to user auth checks.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **AuthManager Dead Service**  | Archived 351-line `AuthManager.php` (Legacy namespace, zero references, no tenant scoping). All functionality replaced by modern AuthService/ApiAuthService/AuthenticationService which now have tenant_id support.                                                                                                                                                                                                                                                                                                                       |
 
-## Architecture — 6-Layer Tenant Enforcement (Updated)
+## Architecture — 7-Layer Tenant Enforcement (Updated)
 
 1. **Global (BaseController)** — `enforceTenantStatus()` blocks suspended/cancelled tenants
 2. **Controller (TenantAwareTrait)** — `tenantWhere()`/`tenantInsertData()` for raw SQL
@@ -80,19 +84,31 @@ Complete multi-tenant SaaS isolation — ensure ALL models with business-critica
 4. **Model (Model::$tenantScoped)** — Global tenant scoping on all models — **NOW 39 models have explicit `$tenantScoped = true`**
 5. **Cache (CacheService)** — `tenantKey()` prefixes all cache keys with `t{N}_`
 6. **Cron (TenantContext)** — All standalone cron scripts now initialize TenantContext
+7. **Auth (All Controllers & Services)** — Every auth flow (login, register, password reset, social login, OTP) applies `tenant_id` to user queries
 
 ## Files Changed
 
-| File                                       | Changes                                                 |
-| :----------------------------------------- | :------------------------------------------------------ |
-| `app/Models/User.php`                      | +`protected static $tenantScoped = true;`               |
-| `app/Models/Payment/Payment.php`           | +`protected static $tenantScoped = true;`               |
-| 32 more model files                        | +`protected static $tenantScoped = true;` each          |
-| `scripts/cron_emi_dunning.php`             | +TenantContext + `$tenantSql`/`$tenantCol`/`$tenantVal` |
-| `scripts/cron_process_notifications.php`   | +TenantContext + `$tenantSql` to 4 queries              |
-| `app/views/layouts/admin.php`              | +4 `<link rel="preconnect">` CDN hints                  |
-| `testing/visual_tests/E2E_MASTER_TEST.mjs` | 6x `waitUntil: 'load'` → `domcontentloaded`             |
-| `app/views/admin/mlm/royalty-pool.php`     | Updated stale cron reference                            |
+| File                                       | Changes                                                  |
+| :----------------------------------------- | :------------------------------------------------------- |
+| `app/Models/User.php`                      | +`protected static $tenantScoped = true;`                |
+| `app/Models/Payment/Payment.php`           | +`protected static $tenantScoped = true;`                |
+| 32 more model files                        | +`protected static $tenantScoped = true;` each           |
+| `scripts/cron_emi_dunning.php`             | +TenantContext + `$tenantSql`/`$tenantCol`/`$tenantVal`  |
+| `scripts/cron_process_notifications.php`   | +TenantContext + `$tenantSql` to 4 queries               |
+| `app/views/layouts/admin.php`              | +4 `<link rel="preconnect">` CDN hints                   |
+| `testing/visual_tests/E2E_MASTER_TEST.mjs` | 6x `waitUntil: 'load'` → `domcontentloaded`              |
+| `app/views/admin/mlm/royalty-pool.php`     | Updated stale cron reference                             |
+| `app/Http/Controllers/Auth/*` (12 files)   | +TenantContext + `getTenantSql()` + tenant_id in queries |
+| `app/Services/Auth/*` (12 files)           | +TenantContext::getId() + tenant_id in queries           |
+| `app/Services/UserRegistrationService.php` | +tenant_id in user INSERT                                |
+| `app/Services/CustomerService.php`         | +tenant_id in user SELECT/UPDATE                         |
+| `app/Services/LeadService.php`             | +tenant_id in lead queries                               |
+| `app/Services/MLM/MLMNetworkService.php`   | +tenant_id in network tree queries                       |
+| `app/Services/ReferralService.php`         | +tenant_id in referral queries                           |
+| `app/Services/AssociateService.php`        | +tenant_id in associate queries                          |
+| `app/Services/AI/ActionHandlers.php`       | +tenant_id in AI action queries                          |
+| `app/Core/Middleware/AuthMiddleware.php`   | +tenant_id in auth check queries                         |
+| `app/Services/AuthManager.php`             | Archived (351 lines, dead code, no tenant scoping)       |
 
 ## E2E Tests
 
@@ -107,6 +123,12 @@ _62. **Cron scripts need TenantContext before any DB operations** — Standalone
 _63. **Duplicate cron scripts waste resources and lack tenant isolation** — 5 scripts duplicated tasks already in `run_all_crons.php` but without TenantContext. Archiving them reduces maintenance surface and prevents accidental standalone execution with wrong tenant context._
 
 _64. **`domcontentloaded` beats `load` for E2E stability** — CDN resources (Bootstrap, Font Awesome, Google Fonts) can take 2-5 seconds to load. `waitUntil: 'load'` blocks on these, causing timeouts. `domcontentloaded` fires when HTML is parsed, which is sufficient for route-testing. Preconnect hints further reduce CDN latency._
+
+_65. **Auth controllers must skip CSRF** — Public login/registration endpoints MUST have `skipCsrfProtection(): bool { return true; }` in the controller. Without it, POST requests return 403. Found in AssociateAuthController, AgentAuthController, UnifiedRegisterController — all fixed. Always test auth POST endpoints after controller changes._
+
+_66. **AuthManager was 351 lines of dead code** — Legacy namespace (`App\Services\Legacy`), zero references from any controller/service/view. All functionality replaced by modern AuthService/ApiAuthService/AuthenticationService which now have proper tenant_id support. Archive, don't keep dead code._
+
+_67. **Every auth query must be tenant-scoped** — Login, register, password-reset, OTP verification, social login, profile updates — ANY SQL touching `users` table must include tenant_id. One unscoped query is a data leak._
 
 **Full details:** `DELETION_RULE.md`
 

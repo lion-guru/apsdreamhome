@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\RankService;
 use Exception;
 use PDO;
@@ -447,8 +448,12 @@ class ReferralService
      */
     public function getReferralCode(int $userId): string
     {
-        $stmt = $this->conn->prepare("SELECT referral_code, name, phone FROM users WHERE id = ? LIMIT 1");
-        $stmt->execute([$userId]);
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->conn->prepare("SELECT referral_code, name, phone FROM users WHERE id = ?$tenantWhere LIMIT 1");
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$row) {
@@ -466,14 +471,21 @@ class ReferralService
         $code = 'APS-' . $prefix . $last4;
 
         // Ensure uniqueness
-        $check = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referral_code = ? AND id != ?");
-        $check->execute([$code, $userId]);
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $check = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referral_code = ? AND id != ?$tenantWhere");
+        $checkParams = [$code, $userId];
+        if ($tid > 1) $checkParams[] = $tid;
+        $check->execute($checkParams);
         if ((int)$check->fetchColumn() > 0) {
             $code = $code . strtoupper(substr(uniqid(), -3));
         }
 
-        $stmt = $this->conn->prepare("UPDATE users SET referral_code = ? WHERE id = ? AND (referral_code IS NULL OR referral_code = '')");
-        $stmt->execute([$code, $userId]);
+        $tenantUpdWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->conn->prepare("UPDATE users SET referral_code = ? WHERE id = ?$tenantUpdWhere AND (referral_code IS NULL OR referral_code = '')");
+        $updParams = [$code, $userId];
+        if ($tid > 1) $updParams[] = $tid;
+        $stmt->execute($updParams);
 
         return $code;
     }
@@ -491,8 +503,12 @@ class ReferralService
         ];
 
         try {
-            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
-            $stmt->execute([$userId]);
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?$tenantWhere");
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $stats['total_referrals'] = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) {}
 
@@ -551,8 +567,12 @@ class ReferralService
     public function processReferralCommission(int $referredUserId, int $bookingId, float $bookingAmount): array
     {
         try {
-            $stmt = $this->conn->prepare("SELECT referred_by FROM users WHERE id = ? LIMIT 1");
-            $stmt->execute([$referredUserId]);
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $this->conn->prepare("SELECT referred_by FROM users WHERE id = ?$tenantWhere LIMIT 1");
+            $params = [$referredUserId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$row || empty($row['referred_by'])) {
@@ -581,8 +601,12 @@ class ReferralService
             $bookingNumber = $booking['booking_number'] ?? "#{$bookingId}";
 
             // Get referrer name
-            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ? LIMIT 1");
-            $stmt->execute([$referrerId]);
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere LIMIT 1");
+            $params = [$referrerId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $referrer = $stmt->fetch(PDO::FETCH_ASSOC);
 
             $this->conn->prepare("
@@ -635,8 +659,12 @@ class ReferralService
      */
     public function validateUserReferralCode(string $code): ?array
     {
-        $stmt = $this->conn->prepare("SELECT id, name FROM users WHERE referral_code = ? LIMIT 1");
-        $stmt->execute([$code]);
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->conn->prepare("SELECT id, name FROM users WHERE referral_code = ?$tenantWhere LIMIT 1");
+        $params = [$code];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
@@ -651,15 +679,23 @@ class ReferralService
             return false;
         }
 
-        $stmt = $this->conn->prepare("UPDATE users SET referred_by = ? WHERE id = ? AND (referred_by IS NULL OR referred_by = 0)");
-        $stmt->execute([(int)$referrer['id'], $newUserId]);
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->conn->prepare("UPDATE users SET referred_by = ? WHERE id = ?$tenantWhere AND (referred_by IS NULL OR referred_by = 0)");
+        $params = [(int)$referrer['id'], $newUserId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     private function userExists(int $userId): bool
     {
-        $stmt = $this->conn->prepare('SELECT 1 FROM users WHERE id = ? LIMIT 1');
-        $stmt->execute([$userId]);
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->conn->prepare("SELECT 1 FROM users WHERE id = ?$tenantWhere LIMIT 1");
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         return (bool) $stmt->fetch(PDO::FETCH_NUM);
     }
 
@@ -840,8 +876,12 @@ class ReferralService
         // Count total referrals (signups + customer_referrals)
         $signupCount = 0;
         try {
-            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
-            $stmt->execute([$userId]);
+            $tid = $this->getTenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?$tenantWhere");
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $signupCount = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) {}
 
@@ -912,23 +952,29 @@ class ReferralService
         } catch (\Throwable $e) {}
 
         try {
-            $referrerName = '';
-            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?");
-            $stmt->execute([$referrerId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $referrerName = $row['name'] ?? 'User';
+             $referrerName = '';
+             $tid = $this->getTenantId();
+             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere");
+             $params = [$referrerId];
+             if ($tid > 1) $params[] = $tid;
+             $stmt->execute($params);
+             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+             $referrerName = $row['name'] ?? 'User';
 
-            $referredName = '';
-            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?");
-            $stmt->execute([$referredUserId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $referredName = $row['name'] ?? 'User';
+             $referredName = '';
+             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere");
+             $params2 = [$referredUserId];
+             if ($tid > 1) $params2[] = $tid;
+             $stmt->execute($params2);
+             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+             $referredName = $row['name'] ?? 'User';
 
-            $this->conn->prepare("
-                INSERT INTO mlm_commission_ledger 
-                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, tenant_id, created_at)
-                VALUES (?, ?, 'referral_signup', ?, 'approved', ?, ?, NOW())
-            ")->execute([
+             $this->conn->prepare("
+                 INSERT INTO mlm_commission_ledger 
+                     (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, tenant_id, created_at)
+                 VALUES (?, ?, 'referral_signup', ?, 'approved', ?, ?, NOW())
+             ")->execute([
                 $referrerId,
                 $referredUserId,
                 $bonusAmount,
@@ -971,14 +1017,18 @@ class ReferralService
             }
         } catch (\Throwable $e) {}
 
-        try {
-            $referredName = '';
-            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?");
-            $stmt->execute([$referredUserId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $referredName = $row['name'] ?? 'User';
+         try {
+             $referredName = '';
+             $tid = $this->getTenantId();
+             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere");
+             $params = [$referredUserId];
+             if ($tid > 1) $params[] = $tid;
+             $stmt->execute($params);
+             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+             $referredName = $row['name'] ?? 'User';
 
-            $bookingNumber = "#{$bookingId}";
+             $bookingNumber = "#{$bookingId}";
             $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ?");
             $stmt->execute([$bookingId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);

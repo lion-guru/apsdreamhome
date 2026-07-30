@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\BaseController;
 use App\Models\User;
 use App\Services\GoogleAuthService;
+use App\Core\Middleware\TenantContext;
 
 class GoogleAuthController extends BaseController
 {
@@ -93,11 +94,12 @@ class GoogleAuthController extends BaseController
 
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = TenantContext::getId();
 
             $referrerId = null;
             if (!empty($referralCode)) {
-                $ref = $db->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
-                $ref->execute([$referralCode]);
+                $ref = $db->prepare("SELECT id FROM users WHERE referral_code = ? AND tenant_id = ? LIMIT 1");
+                $ref->execute([$referralCode, $tid]);
                 $refRow = $ref->fetch(\PDO::FETCH_ASSOC);
                 if ($refRow) $referrerId = $refRow['id'];
             }
@@ -107,19 +109,19 @@ class GoogleAuthController extends BaseController
             $newReferralCode = strtoupper(substr($googleUserData['name'], 0, 3)) . date('ymd') . rand(100, 999);
             $password = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
 
-            $stmt = $db->prepare("INSERT INTO users (customer_id, name, email, phone, password, referral_code, referred_by, role, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW(), NOW())");
-            $stmt->execute([$customerId, $googleUserData['name'], $googleUserData['email'], $phone, $password, $newReferralCode, $referrerId, $role]);
+            $stmt = $db->prepare("INSERT INTO users (customer_id, name, email, phone, password, referral_code, referred_by, role, status, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, NOW(), NOW())");
+            $stmt->execute([$customerId, $googleUserData['name'], $googleUserData['email'], $phone, $password, $newReferralCode, $referrerId, $role, $tid]);
 
-            $idStmt = $db->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
-            $idStmt->execute([$googleUserData['email']]);
+            $idStmt = $db->prepare("SELECT id FROM users WHERE email = ? AND tenant_id = ? LIMIT 1");
+            $idStmt->execute([$googleUserData['email'], $tid]);
             $newUserId = $idStmt->fetch(\PDO::FETCH_ASSOC)['id'];
 
-            $walletStmt = $db->prepare("INSERT INTO wallet_points (user_id, points_balance, total_earned, total_used, total_transferred_to_emi, referral_earnings, commission_earnings, bonus_earnings, status, created_at, updated_at) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 'active', NOW(), NOW())");
-            $walletStmt->execute([$newUserId]);
+            $walletStmt = $db->prepare("INSERT INTO wallet_points (user_id, points_balance, total_earned, total_used, total_transferred_to_emi, referral_earnings, commission_earnings, bonus_earnings, status, tenant_id, created_at, updated_at) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 'active', ?, NOW(), NOW())");
+            $walletStmt->execute([$newUserId, $tid]);
 
             if ($referrerId) {
-                $rwStmt = $db->prepare("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1");
-                $rwStmt->execute([$referrerId]);
+                $rwStmt = $db->prepare("SELECT * FROM wallet_points WHERE user_id = ? AND tenant_id = ? LIMIT 1");
+                $rwStmt->execute([$referrerId, $tid]);
                 $referrerWallet = $rwStmt->fetch(\PDO::FETCH_ASSOC);
 
                 if ($referrerWallet) {
@@ -128,14 +130,14 @@ class GoogleAuthController extends BaseController
                     $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
                     $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
 
-                    $updStmt = $db->prepare("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = NOW() WHERE user_id = ?");
-                    $updStmt->execute([$newBalance, $newTotalEarned, $newReferralEarnings, $referrerId]);
+                    $updStmt = $db->prepare("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?");
+                    $updStmt->execute([$newBalance, $newTotalEarned, $newReferralEarnings, $referrerId, $tid]);
 
-                    $txnStmt = $db->prepare("INSERT INTO wallet_transactions (user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, related_user_id, status, created_at) VALUES (?, 'credit', 'referral', ?, ?, ?, ?, ?, 'user', ?, 'completed', NOW())");
-                    $txnStmt->execute([$referrerId, $rewardPoints, $referrerWallet['points_balance'], $newBalance, "Google signup referral reward: " . $googleUserData['name'], $newUserId, $newUserId]);
+                    $txnStmt = $db->prepare("INSERT INTO wallet_transactions (user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, related_user_id, status, tenant_id, created_at) VALUES (?, 'credit', 'referral', ?, ?, ?, ?, ?, 'user', ?, 'completed', ?, NOW())");
+                    $txnStmt->execute([$referrerId, $rewardPoints, $referrerWallet['points_balance'], $newBalance, "Google signup referral reward: " . $googleUserData['name'], $newUserId, $newUserId, $tid]);
 
-                    $refStmt = $db->prepare("INSERT INTO referral_rewards (referrer_id, referred_id, reward_amount, reward_type, reward_percentage, referral_code, status, credited_at, created_at) VALUES (?, ?, ?, 'points', 0, ?, 'credited', NOW(), NOW())");
-                    $refStmt->execute([$referrerId, $newUserId, $rewardPoints, $referralCode]);
+                    $refStmt = $db->prepare("INSERT INTO referral_rewards (referrer_id, referred_id, reward_amount, reward_type, reward_percentage, referral_code, status, tenant_id, credited_at, created_at) VALUES (?, ?, ?, 'points', 0, ?, 'credited', ?, NOW(), NOW())");
+                    $refStmt->execute([$referrerId, $newUserId, $rewardPoints, $referralCode, $tid]);
                 }
             }
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Exception;
 
 class SocialLoginService
@@ -16,6 +17,7 @@ class SocialLoginService
         $baseUrl = rtrim(BASE_URL, '/');
         $this->providers = [
             'google' => [
+
                 'client_id' => getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? 'your-google-client-id'),
                 'client_secret' => getenv('GOOGLE_CLIENT_SECRET') ?: ($_ENV['GOOGLE_CLIENT_SECRET'] ?? 'your-google-client-secret'),
                 'redirect_uri' => $baseUrl . '/auth/google/callback',
@@ -40,6 +42,18 @@ class SocialLoginService
                 'user_info_url' => 'https://api.linkedin.com/v2/people/~'
             ]
         ];
+    }
+
+    /**
+     * Get current tenant ID for multi-tenant scoping.
+     */
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -163,8 +177,11 @@ class SocialLoginService
      */
     private function getSocialAccount($provider, $providerId)
     {
-        $query = "SELECT * FROM social_accounts WHERE provider = ? AND provider_id = ?";
-        return $this->db->fetch($query, [$provider, $providerId]);
+        $tid = $this->getTenantId();
+        $query = "SELECT * FROM social_accounts WHERE provider = ? AND provider_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$provider, $providerId];
+        if ($tid > 1) $params[] = $tid;
+        return $this->db->fetch($query, $params);
     }
 
     /**
@@ -177,8 +194,11 @@ class SocialLoginService
             $expiresAt = date('Y-m-d H:i:s', time() + $expiresIn);
         }
 
-        $query = "UPDATE social_accounts SET access_token = ?, refresh_token = ?, expires_at = ? WHERE id = ?";
-        $this->db->execute($query, [$accessToken, $refreshToken, $expiresAt, $socialAccountId]);
+        $tid = $this->getTenantId();
+        $query = "UPDATE social_accounts SET access_token = ?, refresh_token = ?, expires_at = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$accessToken, $refreshToken, $expiresAt, $socialAccountId];
+        if ($tid > 1) $params[] = $tid;
+        $this->db->execute($query, $params);
     }
 
     /**
@@ -191,10 +211,11 @@ class SocialLoginService
             $expiresAt = date('Y-m-d H:i:s', time() + $expiresIn);
         }
 
-        $query = "INSERT INTO social_accounts (user_id, provider, provider_id, provider_email, provider_name, provider_avatar, access_token, refresh_token, expires_at) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $tid = $this->getTenantId();
+        $query = "INSERT INTO social_accounts (user_id, provider, provider_id, provider_email, provider_name, provider_avatar, access_token, refresh_token, expires_at" . ($tid > 1 ? ", tenant_id" : "") . ") 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?" . ($tid > 1 ? ", ?" : "") . ")";
         
-        $this->db->execute($query, [
+        $params = [
             $userId,
             $provider,
             $userData['provider_id'],
@@ -204,7 +225,10 @@ class SocialLoginService
             $accessToken,
             $refreshToken,
             $expiresAt
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        
+        $this->db->execute($query, $params);
     }
 
     /**
@@ -212,8 +236,11 @@ class SocialLoginService
      */
     private function getUserById($userId)
     {
-        $query = "SELECT * FROM users WHERE id = ?";
-        return $this->db->fetch($query, [$userId]);
+        $tid = $this->getTenantId();
+        $query = "SELECT * FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
+        return $this->db->fetch($query, $params);
     }
 
     /**
@@ -221,8 +248,11 @@ class SocialLoginService
      */
     private function getUserByEmail($email)
     {
-        $query = "SELECT * FROM users WHERE email = ?";
-        return $this->db->fetch($query, [$email]);
+        $tid = $this->getTenantId();
+        $query = "SELECT * FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$email];
+        if ($tid > 1) $params[] = $tid;
+        return $this->db->fetch($query, $params);
     }
 
     /**
@@ -230,11 +260,14 @@ class SocialLoginService
      */
     private function createUserFromSocialData($userData)
     {
-        $query = "INSERT INTO users (name, email, role, status, created_at) VALUES (?, ?, 'customer', 'active', NOW())";
-        $this->db->execute($query, [
+        $tid = $this->getTenantId();
+        $query = "INSERT INTO users (name, email, role, status, created_at" . ($tid > 1 ? ", tenant_id" : "") . ") VALUES (?, ?, 'customer', 'active', NOW()" . ($tid > 1 ? ", ?" : "") . ")";
+        $params = [
             $userData['name'] ?? 'Social User',
             $userData['email'] ?? null
-        ]);
+        ];
+        if ($tid > 1) $params[] = $tid;
+        $this->db->execute($query, $params);
 
         return $this->db->getLastInsertId();
     }
@@ -349,8 +382,11 @@ class SocialLoginService
      */
     public function getUserSocialAccounts($userId)
     {
-        $query = "SELECT * FROM social_accounts WHERE user_id = ?";
-        return $this->db->fetchAll($query, [$userId]);
+        $tid = $this->getTenantId();
+        $query = "SELECT * FROM social_accounts WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$userId];
+        if ($tid > 1) $params[] = $tid;
+        return $this->db->fetchAll($query, $params);
     }
 
     /**
@@ -358,8 +394,11 @@ class SocialLoginService
      */
     public function unlinkSocialAccount($userId, $provider)
     {
-        $query = "DELETE FROM social_accounts WHERE user_id = ? AND provider = ?";
-        $this->db->execute($query, [$userId, $provider]);
+        $tid = $this->getTenantId();
+        $query = "DELETE FROM social_accounts WHERE user_id = ? AND provider = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$userId, $provider];
+        if ($tid > 1) $params[] = $tid;
+        $this->db->execute($query, $params);
         return true;
     }
 }
