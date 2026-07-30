@@ -301,6 +301,8 @@ class SMSService
         
         // Save new OTP
         $this->db->insert('notifications_unified', [
+            
+            'tenant_id' => TenantContext::getId(),
             'mobile' => $mobile,
             'otp' => $otp,
             'status' => 'pending',
@@ -316,6 +318,8 @@ class SMSService
     {
         try {
             $this->db->insert('notifications_unified', [
+                
+                'tenant_id' => TenantContext::getId(),
                 'mobile' => $mobile,
                 'type' => $type,
                 'message' => substr($message, 0, 500),

@@ -121,7 +121,8 @@ class MarketplaceController extends BaseController
                 echo '<h2>Listing not found</h2>';
                 exit;
             }
-            $this->db->execute("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$prop['tenant_id'] ?? $id]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE user_properties SET views = views + 1 WHERE id = ? AND tenant_id = ?", [$id, $tid]);
         } catch (\Exception $e) {
             error_log('Marketplace detail error: ' . $e->getMessage());
             header('HTTP/1.0 404 Not Found');

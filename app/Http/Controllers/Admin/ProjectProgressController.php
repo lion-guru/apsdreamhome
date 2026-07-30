@@ -85,8 +85,9 @@ class ProjectProgressController extends AdminController
                 ];
             }
             $milestone_json = json_encode($milestones);
-            $updateStmt = $this->db->prepare("UPDATE projects SET progress_pct = ?, milestone_json = ?, progress_last_updated = NOW() WHERE id = ?");
-            $updateStmt->execute([$progress_pct, $milestone_json, $id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $updateStmt = $this->db->prepare("UPDATE projects SET progress_pct = ?, milestone_json = ?, progress_last_updated = NOW() WHERE id = ?" . $tenantSql);
+            $updateStmt->execute(array_merge([$progress_pct, $milestone_json, $id], $tenantParams));
             $this->setFlash('success', 'Project progress updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update progress: ' . $e->getMessage());
@@ -103,8 +104,9 @@ class ProjectProgressController extends AdminController
         $site_supervisor = $_POST['site_supervisor'] ?? '';
         $contractor_name = $_POST['contractor_name'] ?? '';
         try {
-            $stmt = $this->db->prepare("UPDATE projects SET project_budget = ?, amount_spent = ?, project_manager = ?, site_supervisor = ?, contractor_name = ? WHERE id = ?");
-            $stmt->execute([$project_budget, $amount_spent, $project_manager, $site_supervisor, $contractor_name, $id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE projects SET project_budget = ?, amount_spent = ?, project_manager = ?, site_supervisor = ?, contractor_name = ? WHERE id = ?" . $tenantSql);
+            $stmt->execute(array_merge([$project_budget, $amount_spent, $project_manager, $site_supervisor, $contractor_name, $id], $tenantParams));
             $this->setFlash('success', 'Project budget & team updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update budget: ' . $e->getMessage());

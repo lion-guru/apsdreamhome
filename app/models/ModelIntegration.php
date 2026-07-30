@@ -50,15 +50,7 @@ class ModelIntegration {
 
     public static function ensureDatabaseIntegrity() {
         try {
-            $pdo = new PDO(
-                'mysql:host=' . (getenv('DB_HOST') ?: 'localhost') . ';' .
-                'dbname=' . (getenv('DB_NAME') ?: 'apsdreamhome') . ';' .
-                'charset=utf8mb4',
-                getenv('DB_USER') ?: 'root',
-                getenv('DB_PASS') ?: ''
-            );
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             
             // Check if tables exist and create if needed
             $tables = [

@@ -55,15 +55,7 @@ if (!empty($lead_data['email']) && !filter_var($lead_data['email'], FILTER_VALID
 
 try {
     // Database connection
-    $pdo = new PDO(
-        'mysql:host=127.0.0.1;dbname=apsdreamhome;charset=utf8mb4',
-        'root',
-        '',
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
-    );
+    $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
     // Check if lead already exists (by phone)
     $check_sql = "SELECT id FROM leads WHERE phone = :phone AND date = :date";

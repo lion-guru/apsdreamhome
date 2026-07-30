@@ -35,8 +35,8 @@ class BlogController extends AdminController
         $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower(trim($title)));
         $slug = trim($slug, '-');
         try {
-            $stmt = $this->db->prepare("INSERT INTO blog_posts (title, slug, content, status, created_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$title, $slug, $content, $status]);
+            $stmt = $this->db->prepare("INSERT INTO blog_posts (title, slug, content, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$title, $slug, $content, $status, $this->tenantId()]);
             $_SESSION['success'] = 'Blog post created successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -67,8 +67,9 @@ class BlogController extends AdminController
         $content = $_POST['content'] ?? '';
         $status = $_POST['status'] ?? 'draft';
         try {
-            $stmt = $this->db->prepare("UPDATE blog_posts SET title = ?, content = ?, status = ? WHERE id = ?");
-            $stmt->execute([$title, $content, $status, $id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE blog_posts SET title = ?, content = ?, status = ? WHERE id = ? $tenantSql");
+            $stmt->execute(array_merge([$title, $content, $status, $id], $tenantParams));
             $_SESSION['success'] = 'Blog post updated successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
@@ -79,8 +80,9 @@ class BlogController extends AdminController
     public function destroy($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM blog_posts WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("DELETE FROM blog_posts WHERE id = ? $tenantSql");
+            $stmt->execute(array_merge([$id], $tenantParams));
             $_SESSION['success'] = 'Blog post deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();

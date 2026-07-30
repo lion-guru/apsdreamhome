@@ -11,11 +11,28 @@ use App\Core\Database\Database;
 class TaskSchedulerService
 {
     private $database;
+    private $tenantId;
     
-    public function __construct()
+public function __construct()
     {
         $this->database = Database::getInstance();
+        $this->tenantId = (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
         $this->ensureTablesExist();
+    }
+    
+private function getTenantId(): int
+    {
+        return $this->tenantId;
+    }
+    
+    private function tenantFilter(): string
+    {
+        return $this->tenantId > 1 ? " AND tenant_id = " . $this->tenantId : "";
+    }
+    
+    private function tenantFilterParams(): array
+    {
+        return $this->tenantId > 1 ? [$this->tenantId] : [];
     }
     
     /**
@@ -28,6 +45,7 @@ class TaskSchedulerService
         // Scheduled tasks
         $pdo->exec("CREATE TABLE IF NOT EXISTS scheduled_tasks (
             id INT AUTO_INCREMENT PRIMARY KEY,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             name VARCHAR(100) NOT NULL,
             description TEXT NULL,
             command VARCHAR(255) NOT NULL,
@@ -44,15 +62,17 @@ class TaskSchedulerService
             timeout_seconds INT DEFAULT 300,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_name (name),
+            UNIQUE KEY unique_name (name, tenant_id),
             INDEX idx_active (is_active),
-            INDEX idx_next_run (next_run_at)
+            INDEX idx_next_run (next_run_at),
+            INDEX idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Task execution logs
         $pdo->exec("CREATE TABLE IF NOT EXISTS task_execution_logs (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
             task_id INT NOT NULL,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             finished_at TIMESTAMP NULL,
             status ENUM('success', 'failed', 'timeout', 'killed') NOT NULL,
@@ -62,7 +82,8 @@ class TaskSchedulerService
             memory_usage_mb INT NULL,
             INDEX idx_task (task_id),
             INDEX idx_status (status),
-            INDEX idx_started (started_at)
+            INDEX idx_started (started_at),
+            INDEX idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Task dependencies
@@ -70,9 +91,11 @@ class TaskSchedulerService
             id INT AUTO_INCREMENT PRIMARY KEY,
             task_id INT NOT NULL,
             depends_on_task_id INT NOT NULL,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_dep (task_id, depends_on_task_id),
-            INDEX idx_task (task_id)
+            UNIQUE KEY unique_dep (task_id, depends_on_task_id, tenant_id),
+            INDEX idx_task (task_id),
+            INDEX idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Seed default tasks
@@ -84,6 +107,7 @@ class TaskSchedulerService
      */
     private function seedDefaultTasks(): void
     {
+        $tid = $this->getTenantId();
         $tasks = [
             [
                 'backup_database',
@@ -153,15 +177,17 @@ class TaskSchedulerService
         
         try {
             $sql = "INSERT IGNORE INTO scheduled_tasks 
-                (task_name, task_type, schedule_expression, configuration)
-                VALUES (?, ?, ?, ?)";
+                (name, description, command, schedule, timeout_seconds, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $this->database->prepare($sql);
             foreach ($tasks as $task) {
                 $stmt->execute([
                     $task[0],
-                    'notification',
+                    $task[2],
+                    $task[3],
                     $task[4],
-                    json_encode(['description' => $task[1], 'command' => $task[3], 'timeout' => $task[5]])
+                    $task[5],
+                    $tid
                 ]);
             }
         } catch (\Exception $e) {
@@ -176,13 +202,24 @@ class TaskSchedulerService
     public function getTasks(bool $activeOnly = true): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT * FROM scheduled_tasks";
+            $params = [];
+            $where = [];
             if ($activeOnly) {
-                $sql .= " WHERE status = 'active'";
+                $where[] = "status = 'active'";
             }
-            $sql .= " ORDER BY task_name ASC";
+            if ($tid > 1) {
+                $where[] = "tenant_id = ?";
+                $params[] = $tid;
+            }
+            if ($where) {
+                $sql .= " WHERE " . implode(" AND ", $where);
+            }
+            $sql .= " ORDER BY name ASC";
             
-            $stmt = $this->database->query($sql);
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
@@ -195,13 +232,20 @@ class TaskSchedulerService
     public function getDueTasks(): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT * FROM scheduled_tasks 
                 WHERE status = 'active' 
                 AND (next_run IS NULL OR next_run <= NOW())
-                AND (last_run IS NULL OR status != 'running')
-                ORDER BY next_run ASC";
+                AND (last_run IS NULL OR status != 'running')";
+            $params = [];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
+            $sql .= " ORDER BY next_run ASC";
             
-            $stmt = $this->database->query($sql);
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
@@ -297,15 +341,16 @@ class TaskSchedulerService
         ];
     }
     
-    /**
+/**
      * Create new task
      */
     public function createTask(string $name, string $command, string $schedule, array $options = []): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "INSERT INTO scheduled_tasks 
-                (task_name, task_type, schedule_expression, status, configuration)
-                VALUES (?, ?, ?, ?, ?)";
+                (task_name, task_type, schedule_expression, status, configuration, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute([
@@ -318,7 +363,8 @@ class TaskSchedulerService
                     'command' => $command,
                     'timezone' => $options['timezone'] ?? 'Asia/Kolkata',
                     'timeout' => $options['timeout'] ?? 300
-                ])
+                ]),
+                $tid
             ]);
             
             $taskId = $this->database->lastInsertId();
@@ -331,7 +377,7 @@ class TaskSchedulerService
                 'task_id' => $taskId
             ];
             
-        } catch (\Exception $e) {
+} catch (\Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -339,12 +385,13 @@ class TaskSchedulerService
         }
     }
     
-    /**
+/**
      * Update task
      */
     public function updateTask(int $taskId, array $data): array
     {
-        $allowed = ['task_name', 'task_type', 'schedule_expression', 'status'];
+        $tid = $this->getTenantId();
+        $allowed = ['name', 'description', 'command', 'schedule', 'is_active', 'timeout_seconds'];
         $updates = [];
         $values = [];
         
@@ -360,8 +407,10 @@ class TaskSchedulerService
         }
         
         $values[] = $taskId;
+        if ($tid > 1) $values[] = $tid;
         
         $sql = "UPDATE scheduled_tasks SET " . implode(', ', $updates) . " WHERE id = ?";
+        if ($tid > 1) $sql .= " AND tenant_id = ?";
         $stmt = $this->database->prepare($sql);
         
         return [
@@ -369,30 +418,36 @@ class TaskSchedulerService
         ];
     }
     
-    /**
+/**
      * Delete task
      */
     public function deleteTask(int $taskId): bool
     {
-        try {
-            // Delete dependencies first
-            $depSql = "DELETE FROM task_dependencies WHERE task_id = ? OR depends_on_task_id = ?";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $tid = $this->getTenantId();
+        
+        // Delete dependencies first
+        $depSql = "DELETE FROM task_dependencies WHERE (task_id = ? OR depends_on_task_id = ?)";
+        if ($tid > 1) $depSql .= " AND tenant_id = ?";
+        $depParams = [$taskId, $taskId];
+        if ($tid > 1) $depParams[] = $tid;
         $depStmt = $this->database->prepare($depSql);
-        $depStmt->execute([$taskId, $taskId]);
+        $depStmt->execute($depParams);
         
         // Delete logs
         $logSql = "DELETE FROM task_execution_logs WHERE task_id = ?";
+        if ($tid > 1) $logSql .= " AND tenant_id = ?";
+        $logParams = [$taskId];
+        if ($tid > 1) $logParams[] = $tid;
         $logStmt = $this->database->prepare($logSql);
-        $logStmt->execute([$taskId]);
+        $logStmt->execute($logParams);
         
         // Delete task
         $sql = "DELETE FROM scheduled_tasks WHERE id = ?";
+        if ($tid > 1) $sql .= " AND tenant_id = ?";
+        $params = [$taskId];
+        if ($tid > 1) $params[] = $tid;
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([$taskId]);
+        return $stmt->execute($params);
     }
     
     /**
@@ -400,13 +455,19 @@ class TaskSchedulerService
      */
     public function getExecutionHistory(int $taskId, int $limit = 50): array
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT * FROM task_execution_logs 
-            WHERE task_id = ? 
-            ORDER BY started_at DESC 
-            LIMIT ?";
+            WHERE task_id = ?";
+        $params = [$taskId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
+        $sql .= " ORDER BY started_at DESC LIMIT ?";
+        $params[] = $limit;
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$taskId, $limit]);
+        $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
@@ -415,6 +476,7 @@ class TaskSchedulerService
      */
     public function getTaskStats(int $taskId): array
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT 
             COUNT(*) as total_runs,
             SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success_count,
@@ -423,9 +485,14 @@ class TaskSchedulerService
             MAX(execution_time_seconds) as max_execution_time
             FROM task_execution_logs 
             WHERE task_id = ?";
+        $params = [$taskId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$taskId]);
+        $stmt->execute($params);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
     
@@ -434,14 +501,10 @@ class TaskSchedulerService
      */
     public function addDependency(int $taskId, int $dependsOnTaskId): bool
     {
-        try {
-            $sql = "INSERT IGNORE INTO task_dependencies (task_id, depends_on_task_id) VALUES (?, ?)";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        $tid = $this->getTenantId();
+        $sql = "INSERT IGNORE INTO task_dependencies (task_id, depends_on_task_id, tenant_id) VALUES (?, ?, ?)";
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([$taskId, $dependsOnTaskId]);
+        return $stmt->execute([$taskId, $dependsOnTaskId, $tid]);
     }
     
     /**
@@ -449,25 +512,34 @@ class TaskSchedulerService
      */
     public function removeDependency(int $taskId, int $dependsOnTaskId): bool
     {
+        $tid = $this->getTenantId();
         $sql = "DELETE FROM task_dependencies WHERE task_id = ? AND depends_on_task_id = ?";
+        if ($tid > 1) $sql .= " AND tenant_id = ?";
+        $params = [$taskId, $dependsOnTaskId];
+        if ($tid > 1) $params[] = $tid;
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([$taskId, $dependsOnTaskId]);
+        return $stmt->execute($params);
     }
     
-    /**
+/**
      * Get task dependencies
      */
     private function getDependencies(int $taskId): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT * FROM task_dependencies WHERE task_id = ?";
+            if ($tid > 1) $sql .= " AND tenant_id = ?";
+            $params = [$taskId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
+            return [];
         }
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$taskId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     /**
@@ -475,9 +547,15 @@ class TaskSchedulerService
      */
     private function getTask(int $taskId): ?array
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT * FROM scheduled_tasks WHERE id = ?";
+        $params = [$taskId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$taskId]);
+        $stmt->execute($params);
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
     
@@ -487,9 +565,15 @@ class TaskSchedulerService
     private function updateTaskStatus(int $taskId, string $status): void
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE scheduled_tasks SET status = ? WHERE id = ?";
+            $params = [$status, $taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([$status, $taskId]);
+            $stmt->execute($params);
         } catch (\Exception $e) {
             // Schema mismatch - skip
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
@@ -502,13 +586,19 @@ class TaskSchedulerService
     private function updateTaskAfterRun(int $taskId, string $status, ?string $output, ?string $error): void
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE scheduled_tasks SET 
                 last_run = NOW(),
                 status = ?
                 WHERE id = ?";
+            $params = [$status, $taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([$status, $taskId]);
+            $stmt->execute($params);
         } catch (\Exception $e) {
             // Schema mismatch - skip
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
@@ -527,9 +617,15 @@ class TaskSchedulerService
         $nextRun = $this->getNextRunDate($cronExpression);
         
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE scheduled_tasks SET next_run = ? WHERE id = ?";
+            $params = [$nextRun, $taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([$nextRun, $taskId]);
+            $stmt->execute($params);
         } catch (\Exception $e) {
             // Schema mismatch - skip
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
@@ -551,9 +647,10 @@ class TaskSchedulerService
      */
     private function logExecutionStart(int $taskId): int
     {
-        $sql = "INSERT INTO task_execution_logs (task_id) VALUES (?)";
+        $tid = $this->getTenantId();
+        $sql = "INSERT INTO task_execution_logs (task_id, tenant_id) VALUES (?, ?)";
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$taskId]);
+        $stmt->execute([$taskId, $tid]);
         return $this->database->lastInsertId();
     }
     
@@ -563,6 +660,7 @@ class TaskSchedulerService
     private function logExecutionComplete(int $logId, string $status, ?string $output, 
         ?string $error, int $executionTime, int $memoryUsage): void
     {
+        $tid = $this->getTenantId();
         $sql = "UPDATE task_execution_logs SET 
             finished_at = NOW(),
             status = ?,
@@ -571,9 +669,14 @@ class TaskSchedulerService
             execution_time_seconds = ?,
             memory_usage_mb = ?
             WHERE id = ?";
+        $params = [$status, $output, $error, $executionTime, $memoryUsage, $logId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$status, $output, $error, $executionTime, $memoryUsage, $logId]);
+        $stmt->execute($params);
     }
     
     /**
@@ -595,12 +698,18 @@ class TaskSchedulerService
     public function getHealth(): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT 
                 COUNT(*) as total_tasks,
                 SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_tasks,
                 SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_tasks,
                 SUM(CASE WHEN last_run < DATE_SUB(NOW(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) as stale_tasks
                 FROM scheduled_tasks";
+            $params = [];
+            if ($tid > 1) {
+                $sql .= " WHERE tenant_id = ?";
+                $params[] = $tid;
+            }
             
             $stmt = $this->database->query($sql);
             $stats = $stmt->fetch(\PDO::FETCH_ASSOC);

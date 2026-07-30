@@ -383,11 +383,8 @@ $router->get('/admin/user-properties', 'App\\Http\\Controllers\\Admin\\UserPrope
 $router->get('/admin/user-properties/verify/{id}', 'App\\Http\\Controllers\\Admin\\UserPropertyController@verify');
 $router->post('/admin/user-properties/action', 'App\\Http\\Controllers\\Admin\\UserPropertyController@action');
 
-// Admin API Keys Management
-// /admin/api-keys is also defined at line 3119 (Admin\ApiKeyController@index shorthand) - the LATER route wins
+// Admin API Keys Management - additional routes (index/create/revoke/activate/delete defined at line ~4380)
 $router->get('/admin/api-keys/guide', 'App\\Http\\Controllers\\Admin\\ApiKeyController@guide');
-$router->get('/admin/api-keys/create', 'App\\Http\\Controllers\\Admin\\ApiKeyController@create');
-$router->post('/admin/api-keys/store', 'App\\Http\\Controllers\\Admin\\ApiKeyController@store');
 
 // Bulk Property Import (CSV)
 if (file_exists(__DIR__ . '/../app/Services/Bulk/PropertyImportService.php')) {
@@ -399,7 +396,6 @@ if (file_exists(__DIR__ . '/../app/Services/Bulk/PropertyImportService.php')) {
 }
 $router->get('/admin/api-keys/edit/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@edit');
 $router->post('/admin/api-keys/update/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@update');
-$router->get('/admin/api-keys/delete/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@delete');
 $router->get('/admin/api-keys/toggle/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@toggle');
 $router->get('/admin/api-keys/test/{id}', 'App\Http\Controllers\Admin\ApiKeyController@test');
 

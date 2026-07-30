@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use \App\Traits\TenantAwareTrait;
 
 class VendorController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -116,6 +119,7 @@ class VendorController extends AdminController
                 // Fallback: direct insert without auto-detection
                 $data['tds_section'] = '194C';
                 $data['kyc_status'] = 'pending';
+                $data['tenant_id'] = (int)$this->tenantId();
                 $this->db->insert('vendors', $data);
                 $vendorId = (int)$this->db->lastInsertId();
             }
@@ -222,7 +226,8 @@ class VendorController extends AdminController
             }
             $data['tds_section'] = '194C';
 
-            $this->db->update('vendors', $data, ['id' => $id]);
+            $tid = (int)$this->tenantId();
+            $this->db->update('vendors', $data, ['id' => $id, 'tenant_id' => $tid]);
             $this->setFlash('success', 'Vendor updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error updating vendor: ' . $e->getMessage());
@@ -235,8 +240,9 @@ class VendorController extends AdminController
     {
         $this->requireAdmin();
 
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->update('vendors', ['status' => 'inactive'], ['id' => $id]);
+            $this->db->update('vendors', ['status' => 'inactive'], ['id' => $id, 'tenant_id' => $tid]);
             $this->setFlash('success', 'Vendor deactivated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Error deactivating vendor: ' . $e->getMessage());

@@ -158,10 +158,11 @@ class LandController extends AdminController
             }
 
             // Insert land record
+            $tid = $this->tenantId();
             $sql = "INSERT INTO land_records 
                     (land_title, location, owner_name, total_area, land_type, description,
-                     latitude, longitude, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'available', NOW())";
+                     latitude, longitude, status, created_at, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'available', NOW(), ?)";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -172,7 +173,8 @@ class LandController extends AdminController
                 CoreFunctionsServiceCustom::validateInput($data['land_type'], 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
                 $latitude,
-                $longitude
+                $longitude,
+                $tid
             ]);
 
             if ($result) {
@@ -395,7 +397,9 @@ class LandController extends AdminController
             $updateFields[] = "updated_at = NOW()";
             $updateValues[] = $landId;
 
-            $sql = "UPDATE land_records SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $sql = "UPDATE land_records SET " . implode(', ', $updateFields) . " WHERE id = ? $tenantSql";
+            $updateValues = array_merge($updateValues, $tenantParams);
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute($updateValues);
 
@@ -455,9 +459,10 @@ class LandController extends AdminController
             }
 
             // Delete land record
-            $sql = "DELETE FROM land_records WHERE id = ?";
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $sql = "DELETE FROM land_records WHERE id = ? $tenantSql";
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$landId]);
+            $result = $stmt->execute(array_merge([$landId], $tenantParams));
 
             if ($result) {
                 // Log activity
@@ -516,9 +521,10 @@ class LandController extends AdminController
             }
 
             // Insert transaction
+            $tid = $this->tenantId();
             $sql = "INSERT INTO land_transactions 
-                    (land_id, transaction_type, amount, description, transaction_date, created_at)
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+                    (land_id, transaction_type, amount, description, transaction_date, created_at, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, NOW(), ?)";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -526,7 +532,8 @@ class LandController extends AdminController
                 $data['transaction_type'],
                 $amount,
                 CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
-                $data['transaction_date']
+                $data['transaction_date'],
+                $tid
             ]);
 
             if ($result) {
@@ -648,8 +655,9 @@ class LandController extends AdminController
         $status = $_POST['status'] ?? 'active';
         $created_by = $_SESSION['admin_id'] ?? ($_SESSION['user_id'] ?? null);
         try {
-            $stmt = $this->db->prepare("INSERT INTO land_acquisitions (acquisition_number, farmer_id, land_area, land_area_unit, location, village, tehsil, district, state, acquisition_date, acquisition_cost, payment_status, land_type, soil_type, water_source, electricity_available, road_access, documents, remarks, status, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$acquisition_number, $farmer_id, $land_area, $land_area_unit, $location, $village, $tehsil, $district, $state, $acquisition_date, $acquisition_cost, $payment_status, $land_type, $soil_type, $water_source, $electricity_available, $road_access, $documents, $remarks, $status, $created_by]);
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO land_acquisitions (acquisition_number, farmer_id, land_area, land_area_unit, location, village, tehsil, district, state, acquisition_date, acquisition_cost, payment_status, land_type, soil_type, water_source, electricity_available, road_access, documents, remarks, status, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
+            $stmt->execute([$acquisition_number, $farmer_id, $land_area, $land_area_unit, $location, $village, $tehsil, $district, $state, $acquisition_date, $acquisition_cost, $payment_status, $land_type, $soil_type, $water_source, $electricity_available, $road_access, $documents, $remarks, $status, $created_by, $tid]);
             $this->setFlash('success', 'Land acquisition recorded successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to record acquisition: ' . $e->getMessage());
@@ -687,8 +695,9 @@ class LandController extends AdminController
         $area = (float)($_POST['area'] ?? 0);
         $owner_name = $_POST['owner_name'] ?? '';
         try {
-            $stmt = $this->db->prepare("INSERT INTO land_records (land_title, location, area, owner_name, created_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$land_title, $location, $area, $owner_name]);
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO land_records (land_title, location, area, owner_name, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
+            $stmt->execute([$land_title, $location, $area, $owner_name, $tid]);
             $this->setFlash('success', 'Land record added successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to add land record: ' . $e->getMessage());

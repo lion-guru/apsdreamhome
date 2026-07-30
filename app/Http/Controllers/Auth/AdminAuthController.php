@@ -221,7 +221,8 @@ class AdminAuthController extends BaseController
             $db = Database::getInstance();
 
             [$tSql, $tParams] = $this->getTenantSql();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','associate','agent','employee','telecaller','ceo','cfo','cto','coo','cmo','chro','sales_director','marketing_director','construction_director','finance_director','hr_director','operations_director','legal_director','legal_head','finance_head','hr_head','operations_head','department_manager','project_manager','sales_manager','hr_manager','marketing_manager','finance_manager','property_manager','it_manager','operations_manager','legal_advisor','chartered_accountant','senior_developer') $tSql LIMIT 1", array_merge([$email, $email], $tParams));
+            $roleList = "'" . implode("','", BaseController::ADMIN_ROLES) . "'";
+            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ($roleList) $tSql LIMIT 1", array_merge([$email, $email], $tParams));
             if ($user && password_verify($password, $user['password'])) {
                 // Prevent session fixation: rotate session ID on successful login
                 session_regenerate_id(true);

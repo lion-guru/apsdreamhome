@@ -22,12 +22,7 @@ class TDSFilingService
     private function getPdo(): PDO
     {
         if ($this->db instanceof PDO) return $this->db;
-        $config = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-        $this->db = new PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'], $config['password'],
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        $this->db = \App\Core\Database\Database::getInstance()->getConnection();
         return $this->db;
     }
 

@@ -13,13 +13,7 @@ class CompanyCredentialsService
             return;
         }
         try {
-            $config = require dirname(__DIR__, 2) . '/config/database.php';
-            $this->db = new PDO(
-                "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-                $config['username'],
-                $config['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $this->db = \App\Core\Database\Database::getInstance()->getConnection();
         } catch (\Exception $e) {
             error_log("[CompanyCredentials] DB connection failed: " . $e->getMessage());
             $this->db = null;

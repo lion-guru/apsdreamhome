@@ -7,8 +7,8 @@
     </div>
 
     <?php if (isset($_SESSION['flash_message'])): ?>
-        <div class="alert alert-<?php echo $_SESSION['flash_type'] ?? 'info'; ?> alert-dismissible fade show">
-            <?php echo $_SESSION['flash_message']; unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
+        <div class="alert alert-<?php echo htmlspecialchars($_SESSION['flash_type'] ?? 'info', ENT_QUOTES, 'UTF-8'); ?> alert-dismissible fade show">
+            <?php echo htmlspecialchars($_SESSION['flash_message'] ?? '', ENT_QUOTES, 'UTF-8'); unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

@@ -54,9 +54,9 @@ class CRMFormController extends AdminController
             }
 
             $db->query(
-                "INSERT INTO crm_lead_forms (name, description, fields, settings, created_by, created_at)
-                 VALUES (?, ?, ?, ?, ?, NOW())",
-                [$name, $description, $fields, json_encode($settings), $_SESSION['admin_id'] ?? 0]
+                "INSERT INTO crm_lead_forms (name, description, fields, settings, created_by, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
+                [$name, $description, $fields, json_encode($settings), $_SESSION['admin_id'] ?? 0, $this->tenantId()]
             );
             $this->setFlash('success', 'Form created successfully');
         } catch (\Throwable $e) {
@@ -101,9 +101,10 @@ class CRMFormController extends AdminController
                 'tags' => array_filter(explode(',', $_POST['tags'] ?? '')),
             ];
 
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $db->query(
-                "UPDATE crm_lead_forms SET name=?, description=?, fields=?, settings=?, updated_at=NOW() WHERE id=?",
-                [$name, $description, $fields, json_encode($settings), $id]
+                "UPDATE crm_lead_forms SET name=?, description=?, fields=?, settings=?, updated_at=NOW() WHERE id=? $tenantSql",
+                array_merge([$name, $description, $fields, json_encode($settings), $id], $tenantParams)
             );
             $this->setFlash('success', 'Form updated successfully');
         } catch (\Throwable $e) {
@@ -117,7 +118,8 @@ class CRMFormController extends AdminController
         $this->requireAdmin();
         try {
             $db = Database::getInstance()->getConnection();
-            $db->query("DELETE FROM crm_lead_forms WHERE id = ?", [$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $db->query("DELETE FROM crm_lead_forms WHERE id = ? $tenantSql", array_merge([$id], $tenantParams));
             $this->setFlash('success', 'Form deleted');
         } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to delete form');

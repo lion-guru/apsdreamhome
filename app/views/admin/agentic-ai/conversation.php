@@ -10,7 +10,7 @@ $_ag = $agents ?? [];
                 <div class="col-sm-6">
                     <h1 class="m-0"><i class="fas fa-comment-dots" style="color:#3b82f6"></i> Conversation #<?= $_conv['id'] ?? '?' ?></h1>
                     <small class="text-muted">
-                        Lead: <?= htmlspecialchars($_conv['lead_name'] ?? 'Unknown') ?> | Channel: <?= $_conv['channel'] ?? '' ?>
+                        Lead: <?= htmlspecialchars($_conv['lead_name'] ?? 'Unknown') ?> | Channel: <?= htmlspecialchars($_conv['channel'] ?? '', ENT_QUOTES, 'UTF-8') ?>
                     </small>
                 </div>
                 <div class="col-sm-6 text-right">
@@ -61,11 +61,11 @@ $_ag = $agents ?? [];
                     <div class="card card-outline">
                         <div class="card-header"><h3 class="card-title">Details</h3></div>
                         <div class="card-body">
-                            <p><strong>Status:</strong> <?= $_conv['status'] ?? 'unknown' ?></p>
+                            <p><strong>Status:</strong> <?= htmlspecialchars($_conv['status'] ?? 'unknown', ENT_QUOTES, 'UTF-8') ?></p>
                             <p><strong>Lead:</strong> <?= htmlspecialchars($_conv['lead_name'] ?? 'Unknown') ?></p>
                             <p><strong>Phone:</strong> <?= htmlspecialchars($_conv['lead_phone'] ?? '') ?></p>
-                            <p><strong>Channel:</strong> <?= $_conv['channel'] ?? '' ?></p>
-                            <p><strong>Created:</strong> <?= $_conv['created_at'] ?? '' ?></p>
+                            <p><strong>Channel:</strong> <?= htmlspecialchars($_conv['channel'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                            <p><strong>Created:</strong> <?= htmlspecialchars($_conv['created_at'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
                         </div>
                     </div>
                 </div>

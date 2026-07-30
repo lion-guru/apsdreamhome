@@ -3,6 +3,7 @@ namespace App\Services\Communication;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
+use App\Core\Middleware\TenantContext;
 use App\Core\Database\Database;
 
 class EmailSenderService
@@ -119,6 +120,7 @@ class EmailSenderService
     {
         try {
             $this->db->insert('email_queue', [
+                'tenant_id' => TenantContext::getId(),
                 'to_email' => $to,
                 'subject' => $subject,
                 'body_html' => $bodyHtml,

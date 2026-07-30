@@ -50,12 +50,14 @@ class LeadService
 
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $offset = ($filters['page'] - 1) * $filters['per_page'];
+            $page = max(1, (int)($filters['page'] ?? 1));
+            $perPage = min(100, max(1, (int)($filters['per_page'] ?? 25)));
+            $offset = ($page - 1) * $perPage;
             $stmt = $this->db->query("
                 SELECT * FROM leads
                 $whereClause
                 ORDER BY created_at DESC
-                LIMIT $offset, {$filters['per_page']}
+                LIMIT $offset, $perPage
             ", $params);
 
             return $stmt->fetchAll();

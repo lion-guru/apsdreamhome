@@ -2,8 +2,12 @@
 
 namespace App\Services\Voice;
 
+use App\Traits\ServiceTenantTrait;
+
 class VoiceCallService
 {
+    use ServiceTenantTrait;
+
     protected $db;
 
     public function __construct()
@@ -21,17 +25,18 @@ class VoiceCallService
             return ['success' => false, 'message' => 'Lead already has a pending schedule', 'schedule_id' => $existing['id']];
         }
 
+        $tid = $this->tenantId();
         $this->db->execute(
-            "INSERT INTO ai_calling_schedule (lead_id, phone, priority, scheduled_date, scheduled_time, timezone, script_template, max_attempts, attempt_count, status, ai_agent_id, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?, 'Asia/Kolkata', ?, 3, 0, 'pending', ?, NOW(), NOW())",
-            [$leadId, $phone, $priority, $scheduledDate, $scheduledTime, $scriptTemplate, $agentId]
+            "INSERT INTO ai_calling_schedule (lead_id, phone, priority, scheduled_date, scheduled_time, timezone, script_template, max_attempts, attempt_count, status, ai_agent_id, tenant_id, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, 'Asia/Kolkata', ?, 3, 0, 'pending', ?, ?, NOW(), NOW())",
+            [$leadId, $phone, $priority, $scheduledDate, $scheduledTime, $scriptTemplate, $agentId, $tid > 1 ? $tid : 1]
         );
 
         $scheduleId = $this->db->lastInsertId();
 
         $this->db->execute(
-            "UPDATE leads SET next_activity_date = ? WHERE id = ?",
-            [$scheduledDate . ' ' . $scheduledTime, $leadId]
+            "UPDATE leads SET next_activity_date = ? WHERE id = ?" . $this->tenantSql(),
+            array_merge([$scheduledDate . ' ' . $scheduledTime, $leadId], $tid > 1 ? [$tid] : [])
         );
 
         $this->logActivity('CALL_SCHEDULED', "Lead #$leadId scheduled for $scheduledDate $scheduledTime with agent $agentId", $leadId);
@@ -66,8 +71,8 @@ class VoiceCallService
         }
 
         $this->db->execute(
-            "UPDATE ai_calling_schedule SET status = 'processing', attempt_count = attempt_count + 1, last_attempt_at = NOW(), updated_at = NOW() WHERE id = ?",
-            [$scheduleId]
+            "UPDATE ai_calling_schedule SET status = 'processing', attempt_count = attempt_count + 1, last_attempt_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([$scheduleId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 
         try {
@@ -80,6 +85,7 @@ class VoiceCallService
         error_log($e->getMessage());
         }
 
+        $tid = $this->tenantId();
         $sessionData = [
             'lead_id' => $schedule['lead_id'],
             'phone' => $schedule['phone'] ?: ($schedule['lead_phone'] ?? ''),
@@ -90,6 +96,7 @@ class VoiceCallService
             'scheduled_at' => $schedule['scheduled_date'] . ' ' . ($schedule['scheduled_time'] ?? '10:00:00'),
             'started_at' => date('Y-m-d H:i:s'),
             'duration_seconds' => 0,
+            'tenant_id' => $tid > 1 ? $tid : 1,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ];
@@ -98,13 +105,13 @@ class VoiceCallService
         $sessionId = $this->db->lastInsertId();
 
         $this->db->execute(
-            "UPDATE ai_calling_schedule SET call_session_id = ?, updated_at = NOW() WHERE id = ?",
-            [$sessionId, $scheduleId]
+            "UPDATE ai_calling_schedule SET call_session_id = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([$sessionId, $scheduleId], $tid > 1 ? [$tid] : [])
         );
 
         $this->db->execute(
-            "UPDATE ai_calling_agents SET current_calls = current_calls + 1, total_calls_made = total_calls_made + 1, last_active_at = NOW() WHERE agent_id = ?",
-            [$schedule['ai_agent_id']]
+            "UPDATE ai_calling_agents SET current_calls = current_calls + 1, total_calls_made = total_calls_made + 1, last_active_at = NOW() WHERE agent_id = ?" . $this->tenantSql(),
+            array_merge([$schedule['ai_agent_id']], $tid > 1 ? [$tid] : [])
         );
 
         $greeting = $script['greeting_text'] ?? 'Hello, this is an automated call from APS Dream Home.';
@@ -186,18 +193,15 @@ class VoiceCallService
         $responseText = $this->generateResponse($detectedIntent, $session);
         $updatedTranscript .= "\n[AI]: " . $responseText;
 
+        $tid = $this->tenantId();
         $this->db->execute(
-            "UPDATE ai_call_sessions SET call_transcript = ?, sentiment_score = ?, ai_summary = ?, updated_at = NOW() WHERE id = ?",
-            [$updatedTranscript, $sentiment, $responseText, $sessionId]
+            "UPDATE ai_call_sessions SET call_transcript = ?, sentiment_score = ?, ai_summary = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([$updatedTranscript, $sentiment, $responseText, $sessionId], $tid > 1 ? [$tid] : [])
         );
 
         $this->db->execute(
-            "UPDATE ai_call_sessions SET call_sid = ?, sentiment = ? WHERE id = ?",
-            [
-                'SES-' . $sessionId,
-                $sentiment,
-                $sessionId
-            ]
+            "UPDATE ai_call_sessions SET call_sid = ?, sentiment = ? WHERE id = ?" . $this->tenantSql(),
+            array_merge(['SES-' . $sessionId, $sentiment, $sessionId], $tid > 1 ? [$tid] : [])
         );
 
         $nextAction = 'continue';
@@ -221,28 +225,29 @@ class VoiceCallService
         }
 
         $duration = $session['started_at'] ? time() - strtotime($session['started_at']) : 0;
+        $tid = $this->tenantId();
 
         $this->db->execute(
-            "UPDATE ai_call_sessions SET status = 'completed', ended_at = NOW(), duration_seconds = ?, ai_summary = COALESCE(?, ai_summary), updated_at = NOW() WHERE id = ?",
-            [$duration, $summary, $sessionId]
+            "UPDATE ai_call_sessions SET status = 'completed', ended_at = NOW(), duration_seconds = ?, ai_summary = COALESCE(?, ai_summary), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([$duration, $summary, $sessionId], $tid > 1 ? [$tid] : [])
         );
 
         if ($session['ai_agent_id']) {
             $this->db->execute(
-                "UPDATE ai_calling_agents SET current_calls = GREATEST(current_calls - 1, 0), successful_calls = successful_calls + 1, avg_call_duration = ? WHERE agent_id = ?",
-                [$duration, $session['ai_agent_id']]
+                "UPDATE ai_calling_agents SET current_calls = GREATEST(current_calls - 1, 0), successful_calls = successful_calls + 1, avg_call_duration = ? WHERE agent_id = ?" . $this->tenantSql(),
+                array_merge([$duration, $session['ai_agent_id']], $tid > 1 ? [$tid] : [])
             );
         }
 
         $this->db->execute(
-            "UPDATE ai_calling_schedule SET status = 'completed', result_notes = ?, updated_at = NOW() WHERE call_session_id = ?",
-            [$summary, $sessionId]
+            "UPDATE ai_calling_schedule SET status = 'completed', result_notes = ?, updated_at = NOW() WHERE call_session_id = ?" . $this->tenantSql(),
+            array_merge([$summary, $sessionId], $tid > 1 ? [$tid] : [])
         );
 
         if ($session['lead_id']) {
             $this->db->execute(
-                "UPDATE leads SET last_activity_date = NOW(), status = CASE WHEN ? IN ('interested','followup_needed') THEN 'contacted' ELSE status END WHERE id = ?",
-                [$outcome, $session['lead_id']]
+                "UPDATE leads SET last_activity_date = NOW(), status = CASE WHEN ? IN ('interested','followup_needed') THEN 'contacted' ELSE status END WHERE id = ?" . $this->tenantSql(),
+                array_merge([$outcome, $session['lead_id']], $tid > 1 ? [$tid] : [])
             );
         }
 
@@ -250,8 +255,8 @@ class VoiceCallService
             $lead = $this->db->fetch("SELECT name, phone, email, property_interest, budget_range FROM leads WHERE id = ?", [$session['lead_id']]);
             if ($lead) {
                 $this->db->execute(
-                    "INSERT INTO ai_call_extracted_leads (call_session_id, lead_id, extracted_name, extracted_phone, extracted_email, interest_level, quality_score, created_at, updated_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+                    "INSERT INTO ai_call_extracted_leads (call_session_id, lead_id, extracted_name, extracted_phone, extracted_email, interest_level, quality_score, tenant_id, created_at, updated_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
                     [
                         $sessionId,
                         $session['lead_id'],
@@ -259,7 +264,8 @@ class VoiceCallService
                         $lead['phone'],
                         $lead['email'] ?? '',
                         $outcome === 'interested' ? 'hot' : 'warm',
-                        75
+                        75,
+                        $tid > 1 ? $tid : 1
                     ]
                 );
             }
@@ -421,8 +427,8 @@ class VoiceCallService
     public function rescheduleCall($scheduleId, $newDate, $newTime = '10:00:00')
     {
         $this->db->execute(
-            "UPDATE ai_calling_schedule SET scheduled_date = ?, scheduled_time = ?, status = 'pending', attempt_count = 0, updated_at = NOW() WHERE id = ?",
-            [$newDate, $newTime, $scheduleId]
+            "UPDATE ai_calling_schedule SET scheduled_date = ?, scheduled_time = ?, status = 'pending', attempt_count = 0, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([$newDate, $newTime, $scheduleId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
         return ['success' => true, 'message' => 'Call rescheduled'];
     }
@@ -430,8 +436,8 @@ class VoiceCallService
     public function cancelSchedule($scheduleId)
     {
         $this->db->execute(
-            "UPDATE ai_calling_schedule SET status = 'cancelled', updated_at = NOW() WHERE id = ?",
-            [$scheduleId]
+            "UPDATE ai_calling_schedule SET status = 'cancelled', updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([$scheduleId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
         return ['success' => true, 'message' => 'Call cancelled'];
     }
@@ -454,10 +460,11 @@ class VoiceCallService
     {
         if (!$leadId) return;
         try {
+            $tid = $this->tenantId();
             $this->db->execute(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, created_at)
-                 VALUES (?, ?, ?, NOW())",
-                [$leadId, $type, $description]
+                "INSERT INTO lead_activities (lead_id, activity_type, description, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, NOW())",
+                [$leadId, $type, $description, $tid > 1 ? $tid : 1]
             );
         } catch (\Exception $e) {
                     error_log("VoiceCallService.php: " . $e->getMessage());

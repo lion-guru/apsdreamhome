@@ -214,13 +214,6 @@ class GamificationService
 
     private function resolvePdo(): PDO
     {
-        $cfg = [
-            'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
-            'port' => $_ENV['DB_PORT'] ?? '3307',
-            'dbname' => $_ENV['DB_DATABASE'] ?? 'apsdreamhome',
-            'user' => $_ENV['DB_USERNAME'] ?? 'root',
-            'pass' => $_ENV['DB_PASSWORD'] ?? '',
-        ];
-        return new PDO("mysql:host={$cfg['host']};port={$cfg['port']};dbname={$cfg['dbname']}", $cfg['user'], $cfg['pass'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        return \App\Core\Database\Database::getInstance()->getConnection();
     }
 }

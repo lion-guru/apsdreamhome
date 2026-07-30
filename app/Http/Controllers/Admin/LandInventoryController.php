@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\Land\LandAcquisitionService;
+use \App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -17,6 +18,8 @@ use Exception;
  */
 class LandInventoryController extends AdminController
 {
+    use TenantAwareTrait;
+
     protected $db;
     private $service;
     private $uploadPath;
@@ -485,14 +488,15 @@ class LandInventoryController extends AdminController
             ];
 
             // Optional mutation / RERA fields
+            $tid = (int)$this->tenantId();
             if (!empty($_POST['mutation_filed_date'])) {
-                $this->db->execute("UPDATE land_deals SET mutation_filed_date = ?, mutation_number = ? WHERE id = ?", [
-                    $_POST['mutation_filed_date'], $_POST['mutation_number'] ?? '', $dealId,
+                $this->db->execute("UPDATE land_deals SET mutation_filed_date = ?, mutation_number = ? WHERE id = ? AND tenant_id = ?", [
+                    $_POST['mutation_filed_date'], $_POST['mutation_number'] ?? '', $dealId, $tid,
                 ]);
             }
             if (!empty($_POST['rera_registration'])) {
-                $this->db->execute("UPDATE land_deals SET rera_registration = ? WHERE id = ?", [
-                    $_POST['rera_registration'], $dealId,
+                $this->db->execute("UPDATE land_deals SET rera_registration = ? WHERE id = ? AND tenant_id = ?", [
+                    $_POST['rera_registration'], $dealId, $tid,
                 ]);
             }
 

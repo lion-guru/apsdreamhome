@@ -58,10 +58,7 @@ class CampaignService
     public function __construct($db = null, ?AuditService $audit = null, ?TwilioService $twilio = null)
     {
         if ($db === null) {
-            $db = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
         } elseif (is_object($db) && method_exists($db, 'getPdo')) {
             $db = $db->getPdo();
         }
@@ -469,7 +466,9 @@ class CampaignService
         $delivered = $byStatus['delivered'] ?? 0;
         $opened    = $byStatus['opened'] ?? 0;
         $clicked   = $byStatus['clicked'] ?? 0;
-        $unsubscribed = $this->pdo->query("SELECT COUNT(*) FROM marketing_unsubscribes WHERE channel = '" . addslashes($campaign['type']) . "'")->fetchColumn();
+        $unsubStmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_unsubscribes WHERE channel = ?");
+        $unsubStmt->execute([$campaign['type']]);
+        $unsubscribed = $unsubStmt->fetchColumn();
         return [
             'campaign'      => $campaign,
             'total'         => count($recipients),

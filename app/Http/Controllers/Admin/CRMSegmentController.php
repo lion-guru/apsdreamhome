@@ -66,8 +66,8 @@ class CRMSegmentController extends AdminController
             if (!empty($_POST['min_budget'])) $criteria['min_budget'] = (float)$_POST['min_budget'];
             if (!empty($_POST['max_budget'])) $criteria['max_budget'] = (float)$_POST['max_budget'];
 
-            $db->query("INSERT INTO crm_segments (name, description, filter_criteria, created_by, created_at) VALUES (?, ?, ?, ?, NOW())", [
-                $name, $description, json_encode($criteria), $_SESSION['admin_id'] ?? 0
+            $db->query("INSERT INTO crm_segments (name, description, filter_criteria, created_by, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())", [
+                $name, $description, json_encode($criteria), $_SESSION['admin_id'] ?? 0, $this->tenantId()
             ]);
             $this->setFlash('success', 'Segment created');
         } catch (\Throwable $e) {
@@ -81,7 +81,8 @@ class CRMSegmentController extends AdminController
         $this->requireAdmin();
         try {
             $db = Database::getInstance()->getConnection();
-            $db->query("DELETE FROM crm_segments WHERE id = ?", [$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $db->query("DELETE FROM crm_segments WHERE id = ? $tenantSql", array_merge([$id], $tenantParams));
             $this->setFlash('success', 'Segment deleted');
         } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to delete segment');

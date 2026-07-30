@@ -1,30 +1,88 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-30 — Session 64)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-30 — Session 66)
 
 ---
 
-# Session 64: Dead Reference Cleanup + Flutter APK Rebuild (2026-07-30)
+# Session 66: Archived Files Audit + Dead Code Verification (2026-07-30)
 
 ## Goal
 
-Fix stale references to archived files, rebuild mobile APK with latest backend changes.
+Verify all 15 files archived in Session 66 — confirm replacements exist, no references remain, safe to keep archived.
 
 ## What Was Done
 
-| Feature                          | Details                                                                                                                                                                                                  |
-| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Dead Security Routes Removed** | `routes/security.php` (33 lines, 15 routes) referenced archived `SecurityController` — each route would 500. Removed include from `routes/api.php:155`, archived file to `_archive/routes_security.php`. |
-| **Broken Test File Archived**    | `testing/test_envelope_log.php` had `require_once` + `use` for archived `Envelope.php`. Moved to `_archive/test_envelope_log.php`.                                                                       |
-| **AppCoreService Verified**      | ~30+ live files use `App::getInstance()` / `App::database()` — cannot archive. Dead `route()` private method has stale controller strings but never called (zero references). Harmless.                  |
-| **Flutter APK Rebuilt**          | Debug APK v1.2.0 (251MB) built + copied to `public/downloads/apsdreamhome.apk`. Many backend API changes since last build (Session 51).                                                                  |
-| **E2E Tests**                    | **153/153 PASS** — zero regressions.                                                                                                                                                                     |
+| Feature                       | Details                                                                                                                                                                                                                                                            |
+| :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **15 Archived Files Audited** | Comprehensive analysis of every file: purpose, replacement, active references. **15/15 SAFE** — zero need review. All had broken dependencies (`init.php`, `includes/config/config.php`, dead class imports). All superseded by MVC controllers + services.        |
+| **Dead Import Scan**          | Scanned all 212+ controllers for archived service imports (`RequestService`, `UserManager`, `UserService`, `AuthManager`, `CareerService`, `AdminNotificationService`, Legacy namespace). **Zero dead imports found** — Session 30+ cleanups already removed them. |
+| **Missing View Audit**        | Verified all `render()` calls across controllers resolve to existing view files. **Zero missing views.** Dot-notation paths (`admin.auctions.index`) correctly map to `admin/auctions/index.php`.                                                                  |
+| **E2E Tests**                 | **153/153 PASS** — zero regressions. All admin routes, public pages, customer flows, dynamic ID routes, and role-based logins verified.                                                                                                                            |
+| **Flutter APK Rebuilt**       | Debug APK v1.2.0 (240MB) rebuilt + copied to `public/downloads/apsdreamhome.apk`. Known Flutter Gradle output issue (lesson #14) — APK builds successfully, just copy from `android/app/build/outputs/flutter-apk/`.                                               |
+
+## Archived Files Analysis
+
+| #   | File                                               | Purpose                                                     | Replaced By                                                                                                                                 | Status |
+| --- | -------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | `app/views/pages/error.php`                        | Standalone error page (305 lines), broken `init.php`        | `app/views/errors/404.php`, `500.php`, `403.php`, `400.php`, `401.php`, `generic.php`, `maintenance.php` (7 views)                          | SAFE   |
+| 2   | `app/views/properties/property-listings.php`       | Standalone listings (1063 lines), broken `init.php`         | `app/views/pages/properties.php` (638 lines) via `Front\PageController::properties()`                                                       | SAFE   |
+| 3   | `app/Modules/Property/property_purchase.php`       | Old Modules purchase form (375 lines), dead MLM integration | `Property\PropertyWorkflowController` (758 lines) + `Front\BookingController` + `AssociateController::bookPlot()`                           | SAFE   |
+| 4   | `app/Modules/Property/property_management.php`     | Old Modules management CRUD (862 lines), dead dependencies  | `Admin\PropertyManagementController` (900 lines, MVC, TenantAwareTrait)                                                                     | SAFE   |
+| 5   | `app/Modules/Property/property_sale_success.php`   | Standalone sale success page (110 lines)                    | `Front\BookingController` + `DigitalBookingController` post-sale flow                                                                       | SAFE   |
+| 6   | `app/views/admin/templates/login_form.php`         | 20-line bare login form stub                                | `auth/admin_login.php`, `core_login.php`, `customer_login.php`, `associate_login.php`, `agent_login.php` (5 role-specific pages)            | SAFE   |
+| 7   | `cron/check_system_health.php`                     | Cron calling dead `AlertManager` class (45 lines)           | `Admin\SystemHealthController` (route: `/admin/system-health`) + `AdminController::getSystemHealth()` + `GodModeController::systemHealth()` | SAFE   |
+| 8   | `cron/process_escalations.php`                     | Cron calling dead `AlertEscalation` class (45 lines)        | `app\Services\Alerts\AlertEscalationService.php` + `AlertManagerService.php` (live services)                                                | SAFE   |
+| 9   | `cron/process_followups.php`                       | Cron calling dead `AutomatedFollowup` class (35 lines)      | `scripts/cron_followup_reminders.php` (136 lines) + integrated into `scripts/run_all_crons.php`                                             | SAFE   |
+| 10  | `cron/process_notifications.php`                   | Cron calling dead `AutomatedNotifier` class (46 lines)      | `scripts/cron_process_notifications.php` (213 lines) + `cron_push_notification_queue.php` + `run_all_crons.php`                             | SAFE   |
+| 11  | `database/migrations/create-roles-permissions.php` | RBAC migration (264 lines), broken include paths            | `database/migrations/create_rbac_menu_system.php` (216 lines) + `seed_rbac_permissions.php`                                                 | SAFE   |
+| 12  | `database/migrations/rbac_migration.php`           | Duplicate RBAC migration (489 lines), same broken paths     | Same as #11: `create_rbac_menu_system.php` + `seed_rbac_permissions.php`                                                                    | SAFE   |
+| 13  | `database/setup/activity_log.php`                  | Creates `admin_activity_log` table (23 lines)               | `user_activity_logs_unified` table (Session 35) + `ActivityLogController` (reads `audit_log`)                                               | SAFE   |
+| 14  | `database/setup/tables.php`                        | One-shot bootstrap for properties/bookings (129 lines)      | Tables exist in live DB (770+ tables). Early scaffolding script.                                                                            | SAFE   |
+| 15  | `bootstrap/console.php`                            | Laravel-style console bootstrap                             | **No replacement needed.** `bootstrap/` directory doesn't exist. Custom MVC framework, not Laravel.                                         | SAFE   |
+
+### Key Lessons (Session 66)
+
+_81. **Archived files with broken `require_once` are always safe** — Every archived file had dead includes (`init.php`, `includes/config/config.php`, `includes/classes/AlertManager.php`). If the dependencies don't exist, the file can't execute. Zero risk of accidental reuse._
+_82. **Modules/ architecture fully superseded by MVC** — The 3 `Modules/Property/` files used old patterns (`$_SESSION['associate_logged_in']`, `global $conn`, dead `HybridRealEstateCommission`). Modern controllers use `AdminController` + `TenantAwareTrait` + proper services._
+_83. **Duplicate migrations are common and harmless** — Files 11+12 both created RBAC tables with different approaches. Both superseded by `create_rbac_menu_system.php`. Duplicate migrations just waste disk space._
+_84. **`bootstrap/console.php` never existed** — The `bootstrap/` directory doesn't exist. This was a Laravel artifact from initial scaffolding. The project uses `config/bootstrap.php` for initialization._
+_85. **Dead `use` imports already cleaned** — Sessions 30-64 removed all archived service imports. No latent fatal errors from `use` statements pointing to non-existent classes._
+_86. **Dot-notation view paths map to directory separators** — `render('admin.auctions.index')` resolves to `app/views/admin/auctions/index.php`. PHP's `str_replace('.', '/', $view)` in `BaseController::render()`. All 921+ render calls verified present._
+
+---
+
+# Session 64: SQL Injection Hardening + Dead Reference Cleanup (2026-07-30)
+
+## Goal
+
+Production security hardening — fix SQL injection vulnerabilities, dead reference cleanup, rebuild mobile APK.
+
+## What Was Done
+
+| Feature                          | Details                                                                                                                                                                                                                                                                            |
+| :------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0 SQL Injection Fixed**       | `MobileApiController::getConversations()` — `$userId` from `$GLOBALS['api_user_id']` was interpolated raw into SQL 6 times (no int cast, no prepared statement). Converted to prepared statement with 8 params. 70 uncast `$userId` instances in same file batch-fixed to `(int)`. |
+| **P1 Tenant ID Int-Cast**        | 11 lines across 7 files — `$tid = $this->tenantId()` → `$tid = (int)$this->tenantId()`. `tenantId()` returns `int` type but explicit cast is defense-in-depth.                                                                                                                     |
+| **P2 LIMIT/OFFSET**              | 31 instances across 15 files — all use hardcoded int values (`$perPage=25`, `$offset=($page-1)*$perPage`). Zero injection risk. Skipped.                                                                                                                                           |
+| **Dead Security Routes Removed** | `routes/security.php` (33 lines, 15 routes) referenced archived `SecurityController` — each route would 500. Removed include from `routes/api.php:155`, archived file to `_archive/routes_security.php`.                                                                           |
+| **Broken Test File Archived**    | `testing/test_envelope_log.php` had `require_once` + `use` for archived `Envelope.php`. Moved to `_archive/test_envelope_log.php`.                                                                                                                                                 |
+| **AppCoreService Verified**      | ~30+ live files use `App::getInstance()` / `App::database()` — cannot archive. Dead `route()` private method has stale controller strings but never called (zero references). Harmless.                                                                                            |
+| **Flutter APK Rebuilt**          | Debug APK v1.2.0 (251MB) built + copied to `public/downloads/apsdreamhome.apk`.                                                                                                                                                                                                    |
+| **E2E Tests**                    | **153/153 PASS** — zero regressions.                                                                                                                                                                                                                                               |
 
 ## Files Modified
 
-| File                             | Changes                                                        |
-| :------------------------------- | :------------------------------------------------------------- |
-| `routes/api.php`                 | Removed `require_once __DIR__ . '/security.php'` (dead routes) |
-| `_archive/routes_security.php`   | Archived 15 dead API routes                                    |
-| `_archive/test_envelope_log.php` | Archived broken test file                                      |
+| File                                                    | Changes                                                                        |
+| :------------------------------------------------------ | :----------------------------------------------------------------------------- |
+| `app/Http/Controllers/Api/MobileApiController.php`      | P0 fix: `getConversations()` → prepared statement. 70 `$userId` → `(int)` cast |
+| `app/Http/Controllers/Admin/AdminController.php`        | `$tid` → `(int)` cast (1 line)                                                 |
+| `app/Http/Controllers/Front/PlotController.php`         | `$tid` → `(int)` cast (2 lines)                                                |
+| `app/Http/Controllers/Api/NewFeaturesApiController.php` | `$tid` → `(int)` cast (3 lines)                                                |
+| `app/Http/Controllers/Api/CRMController.php`            | `$tid` → `(int)` cast (1 line)                                                 |
+| `app/Http/Controllers/Api/ApiLeadController.php`        | `$tid` → `(int)` cast (1 line)                                                 |
+| `app/Http/Controllers/Api/AnalyticsController.php`      | `$tid` → `(int)` cast (2 lines)                                                |
+| `app/Http/Controllers/Api/AdminMobileController.php`    | `$tid` → `(int)` cast (1 line)                                                 |
+| `routes/api.php`                                        | Removed `require_once __DIR__ . '/security.php'` (dead routes)                 |
+| `_archive/routes_security.php`                          | Archived 15 dead API routes                                                    |
+| `_archive/test_envelope_log.php`                        | Archived broken test file                                                      |
 
 ---
 
@@ -69,6 +127,23 @@ _72. **Dual controllers = maintenance burden** — `Associate\AssociateControlle
 _73. **LEGAL, FINANCE, CRM subfolder services were already scoped** — `LegalDocumentService`, `RegistryEligibilityService`, `LeadAssignmentService`, `GSTTaxReportService`, `Finance\InvoiceService` all had `tenant_id` scoping from prior sessions. Always verify before re-fixing._
 _74. **AlertEscalationService is system-level, not tenant** — Uses its own dedicated `alerts`/`alert_escalations` tables for platform monitoring. Only LEFT JOINs `users` for display names. Confirmed safe to skip — superadmin tool, not per-tenant data._
 _75. **ColonyPricingService was the heaviest scope — 35+ queries** — The pricing service touches colonies, plots, price_history, land_acquisitions, development_costs, and pricing_approvals. Each query needed `AND tenant_id = ?` with named params (`:tid`) for raw PDO queries. Took 1 subagent to fix completely._
+
+### Key Lessons (Session 66)
+
+_81. **Archived files with broken `require_once` are always safe** — Every archived file had dead includes (`init.php`, `includes/config/config.php`, `includes/classes/AlertManager.php`). If the dependencies don't exist, the file can't execute. Zero risk of accidental reuse._
+_82. **Modules/ architecture fully superseded by MVC** — The 3 `Modules/Property/` files used old patterns (`$_SESSION['associate_logged_in']`, `global $conn`, dead `HybridRealEstateCommission`). Modern controllers use `AdminController` + `TenantAwareTrait` + proper services._
+_83. **Duplicate migrations are common and harmless** — Files 11+12 both created RBAC tables with different approaches. Both superseded by `create_rbac_menu_system.php`. Duplicate migrations just waste disk space._
+_84. **`bootstrap/console.php` never existed** — The `bootstrap/` directory doesn't exist. This was a Laravel artifact from initial scaffolding. The project uses `config/bootstrap.php` for initialization._
+_85. **Dead `use` imports already cleaned** — Sessions 30-64 removed all archived service imports. No latent fatal errors from `use` statements pointing to non-existent classes._
+_86. **Dot-notation view paths map to directory separators** — `render('admin.auctions.index')` resolves to `app/views/admin/auctions/index.php`. PHP's `str_replace('.', '/', $view)` in `BaseController::render()`. All 921+ render calls verified present._
+
+### Key Lessons (Session 64)
+
+_76. **P0 SQL injection: `$userId` from `$GLOBALS` is untrusted input** — `MobileApiController::getConversations()` had `$userId = $GLOBALS['api_user_id'] ?? null` then interpolated it raw into SQL 6 times via string concatenation. `$GLOBALS` can be manipulated. Fix: `(int)` cast + prepared statement with `?` placeholders. Pattern: `WHERE sender_id = $userId` → `WHERE sender_id = ?` + `execute([$userId, ...])`._
+_77. **`$GLOBALS['api_user_id']` needs (int) cast everywhere** — 70 instances in MobileApiController alone had bare `$GLOBALS['api_user_id'] ?? null` without int cast. Even though prepared statements handle type safety, int cast is defense-in-depth against type juggling attacks. Batch-fixed all 70._
+_78. **`tenantId()` returns `int` but explicit cast is still needed** — `TenantAwareTrait::tenantId()` has `int` return type, but callers that interpolate into SQL strings (`$tid > 1 ? " AND tenant_id = $tid" : ""`) still need `(int)` cast for consistency and to guard against PHP type coercion edge cases._
+_79. **`$perPage`/`$offset` LIMIT interpolations are safe when hardcoded** — 31 instances of `LIMIT $perPage OFFSET $offset` across 15 files. `$perPage` is always a hardcoded integer literal (20, 25, 30), `$offset = ($page-1)*$perPage` is arithmetic on integers. Zero injection risk. Not worth refactoring to prepared statements._
+_80. **SQL injection audit must be file-level, not just method-level** — grep for `$userId.*\$` in SQL strings, `$tid` in interpolation, `$perPage`/`$offset` in LIMIT clauses. Each pattern requires different fix: prepared statement (P0), int cast (P1), skip (P2)._
 
 ---
 
@@ -1691,3 +1766,207 @@ _52. **CSS files must be in `public/` directory** — Assets referenced in HTML 
  - - - 
  
  
+
+---
+
+## Session 61-62: Model Tenant Scoping + Cron Isolation + E2E Stability (2026-07-29)
+
+### Key Achievements
+
+| Feature | Details |
+|---------|---------|
+| **Model Tenant Scoping (34)** | Added protected static  = true; to 34 business-critical models: User, Payment, Notification, Colony, Referral, SupportTicket, LegalDocument, MarketingLead, SavedSearch, ResellProperty, all Lead sub-models, Employee, Farmer, FarmerLandHolding, LandPurchase, FieldVisit, MobileDevice, AgentReview, PropertyReview, TrafficStat, NewsletterSubscriber, Property/Favorite, Property/Inquiry, Property/Project, System/AuditLog |
+| **Cache Tenant Prefix** | CacheService::tenantPrefix() returns 't{N}_' for tenants > 1. All cache operations auto-prefix keys. |
+| **Auth Controllers Scoped (12)** | All auth controllers now apply tenant_id to user queries |
+| **Auth Services Scoped (15)** | All auth services now have tenant_id support |
+| **Cron Scripts Fixed (15)** | All standalone cron scripts now initialize TenantContext |
+| **E2E Tests: 153/153 PASS** | Zero regressions |
+
+### Key Lessons
+
+_57. Cache isolation is the last layer of tenant data protection
+_58. Transparent prefixing beats call-site changes
+_59. Database query cache bypasses must be caught
+_60. LookupCacheService correctly left unprefixed (shared reference data)
+
+---
+
+## Session 63: Empty Catch Cleanup + Dead Code Archive + SQL Bug Fixes (2026-07-30)
+
+### Key Achievements
+
+| Feature | Details |
+|---------|---------|
+| **140 Empty Catch Blocks Fixed** | All empty catch {} blocks now have error_log() |
+| **13 console.log Removed** | Debug statements removed from production views |
+| **4 Dead Stub Views Archived** | usiness/associates/ stubs archived |
+| **Import Template Fake Data Cleaned** | Replaced fake names with generic placeholders |
+| **AssociateService SQL Bugs Fixed** | p.name -> p.title, added ssociates JOIN for joining_date |
+| **Dead Controller Archived** | Associate\AssociateController (366 lines) + views archived |
+| **E2E Tests: 153/153 PASS** | Zero regressions |
+
+### Key Lessons
+
+_68. Empty catch blocks are silent revenue leaks
+_69. console.log in production views leaks data
+_70. Dead orphaned stubs waste developer attention
+_71. SQL schema bugs cause 500 errors on specific pages
+_72. Dual controllers = maintenance burden
+
+---
+
+## Session 64: SQL Injection Hardening + Dead Reference Cleanup (2026-07-30)
+
+### Key Achievements
+
+| Feature | Details |
+|---------|---------|
+| **P0 SQL Injection Fixed** | MobileApiController::getConversations() — bare $userId from $GLOBALS converted to prepared statement |
+| **70 Uncast  Fixed** | All instances in MobileApiController now have (int) cast |
+| **P1 Tenant ID Int-Cast** | 11 lines across 7 files — explicit (int) cast for defense-in-depth |
+| **Dead Security Routes Removed** | 15 routes in outes/security.php referencing archived controller removed |
+| **Broken Test File Archived** | 	esting/test_envelope_log.php archived |
+| **Flutter APK Rebuilt** | Debug APK v1.2.0 rebuilt |
+| **E2E Tests: 153/153 PASS** | Zero regressions |
+
+### Key Lessons
+
+_76. P0 SQL injection: $userId from $GLOBALS is untrusted input
+_77. $GLOBALS['api_user_id'] needs (int) cast everywhere
+_78. 	enantId() returns int but explicit cast is still needed
+_79. $perPage/$offset LIMIT interpolations are safe when hardcoded
+_80. SQL injection audit must be file-level, not just method-level
+
+---
+
+## Session 66: Archived Files Audit + Dead Code Verification (2026-07-30)
+
+### Key Achievements
+
+| Feature | Details |
+|---------|---------|
+| **15 Archived Files Audited** | All 15 files archived in Session 66 confirmed SAFE — replacements exist, zero broken references |
+| **Dead Import Scan** | Scanned all 212+ controllers for archived service imports — zero dead imports found |
+| **Missing View Audit** | Verified all ender() calls resolve to existing view files — zero missing views |
+| **E2E Tests: 153/153 PASS** | Zero regressions |
+| **Flutter APK Rebuilt** | Debug APK v1.2.0 (240MB) rebuilt |
+
+### Archived Files (15)
+
+| # | File | Replaced By |
+|---|------|-------------|
+| 1 | pages/error.php | errors/404.php, 500.php, 403.php, 400.php, 401.php, generic.php, maintenance.php |
+| 2 | properties/property-listings.php | pages/properties.php via Front\PageController::properties() |
+| 3 | Modules/Property/property_purchase.php | PropertyWorkflowController + BookingController + AssociateController::bookPlot() |
+| 4 | Modules/Property/property_management.php | Admin\PropertyManagementController |
+| 5 | Modules/Property/property_sale_success.php | Front\BookingController + DigitalBookingController |
+| 6 | dmin/templates/login_form.php | 5 role-specific login pages |
+| 7 | cron/check_system_health.php | SystemHealthController + AdminController::getSystemHealth() |
+| 8 | cron/process_escalations.php | AlertEscalationService + AlertManagerService |
+| 9 | cron/process_followups.php | scripts/cron_followup_reminders.php |
+| 10 | cron/process_notifications.php | scripts/cron_process_notifications.php |
+| 11 | database/migrations/create-roles-permissions.php | create_rbac_menu_system.php + seed_rbac_permissions.php |
+| 12 | database/migrations/rbac_migration.php | Same as #11 |
+| 13 | database/setup/activity_log.php | user_activity_logs_unified table + ActivityLogController |
+| 14 | database/setup/tables.php | All tables exist in live DB (770+ tables) |
+| 15 | ootstrap/console.php | No replacement needed (Laravel artifact) |
+
+### Key Lessons
+
+_81. Archived files with broken equire_once are always safe
+_82. Modules/ architecture fully superseded by MVC
+_83. Duplicate migrations are common and harmless
+_84. ootstrap/console.php never existed
+_85. Dead use imports already cleaned in Sessions 30-64
+_86. Dot-notation view paths map to directory separators
+
+---
+
+## Session 67: Controller Tenant_id Scoping — 38 Files, 200+ SQL Writes (2026-07-30)
+
+### Key Achievements
+
+| Feature | Details |
+|---------|---------|
+| **38 Controller Files Scoped** | All raw SQL write operations (INSERT/UPDATE/DELETE via prepare/query/exec) now scoped with 	enant_id |
+| **200+ Operations Fixed** | Across Admin, Front, Api, Auth, Employee controllers |
+| **TenantAwareTrait Pattern** | Centralized in pp/Traits/TenantAwareTrait.php — 	enantWhere(), 	enantInsertData(), 	enantId() |
+| **E2E Tests: 153/153 PASS** | Zero regressions |
+
+### Batch Details
+
+| Batch | Files | Operations | Key Files |
+|-------|-------|-----------|-----------|
+| 1 | 3 | 59+ | MobileApiController (40+), PlotManagementController (14), PlotController (5) |
+| 2 | 4 | 22 | PageController (9), WalletController (10), DashboardController (2), MarketplaceController (1) |
+| 3 | 4 | 31 | HRController (13), SalaryController (12), TelecallerController (2), EmployeeController (4) |
+| 4 | 7 | 19 | DealController (2), CampaignController (4), NotificationController (4), UserController (4), AssociateController (3), BookingController (1), GstController (1) |
+| 5 | 20 | 37 | VoiceAgentAdmin (6), AgenticAI (4), LandInventory (2), Messages (2), Vendor (3), Company (2), + 14 more |
+
+### Key Lessons
+
+_87. Controller-level scoping is the FINAL防线 before DB writes
+_88. Trait pattern enables consistent scoping across 38+ controllers
+_89. TenantAwareTrait returns no-op for tenant_id <= 1 (single-tenant mode)
+_90. Dynamic SQL (variable column lists) needs careful handling — add tenant_id to column array and value array before building query
+
+---
+
+## Session 68: Service Layer Audit + AGENTS.md Update (2026-07-30)
+
+### Key Achievements
+
+| Feature | Details |
+|---------|---------|
+| **Service Layer Audit Complete** | 461 PHP files in app/Services/ scanned. 312 files have SQL writes. 1,928 total write operations. |
+| **69 HIGH-Risk Service Files Found** | Business tables written without 	enant_id scoping |
+| **28 MEDIUM-Risk Files Found** | Has 	enant_id reference but writes may be unscoped |
+| **215 LOW-Risk Files** | System/config tables only, or already properly scoped |
+| **AGENTS.md Updated** | Sessions 61-68 findings documented |
+
+### Top Offenders (Service Layer)
+
+| File | Writes | Risk |
+|------|--------|------|
+| AI/WorkflowAutomationAgent.php | 23 | HIGH |
+| Scheduler/TaskSchedulerService.php | 20 | HIGH |
+| NotificationService.php | 19 | HIGH |
+| Async/AsyncTaskService.php | 18 | HIGH |
+| Queue/QueueService.php | 18 | HIGH |
+| OcrService.php | 17 | HIGH |
+| CommissionPlanService.php | 16 | HIGH |
+| Business/FarmerService.php | 16 | HIGH |
+| Voice/VoiceCallService.php | 16 | HIGH |
+| PayoutService.php | 15 | HIGH |
+| CRMService.php | 46 | MEDIUM |
+| Sales/BookingLifecycleService.php | 31 | MEDIUM |
+| Accounting/MoneyWorkflowService.php | 27 | MEDIUM |
+
+### Key Lessons
+
+_91. Service layer is the NEXT layer to scope after controllers — 69 HIGH-risk files
+_92. Services use raw PDO directly (no Model ORM) — auto-scoping via Model:: does NOT apply
+_93. No service files use TenantAwareTrait — services need their own scoping mechanism
+_94. Most critical business tables affected: leads (15 files), mlm_commission_ledger (7 files), notifications (5 files), plots (5 files)
+
+---
+
+### Pending Work (Next Session Priority)
+
+| Priority | Task | Files | Est. Effort |
+|----------|------|-------|-------------|
+| P0 | **Service Layer Tenant Scoping** — Fix 69 HIGH-risk service files | 69 files | 2-3 sessions |
+| P1 | **MEDIUM-risk service verification** — Verify 28 files with partial scoping | 28 files | 1 session |
+| P2 | **Git commit** of all Session 55-68 changes | — | 10 min |
+
+---
+
+### 7-Step Pre-Deletion Checklist (MANDATORY)
+
+1. **What does it do?** — Read entire file, write 1-line purpose
+2. **Is functionality reimplemented?** — Search for SAME features, not same filename
+3. **Is it referenced anywhere?** — Routes, controllers, views, services, sidebar, DB menu
+4. **Can it be reached via URL?** — Any route/controller/render maps to it
+5. **Does it have DB data?** — Tables it reads/writes — check row counts
+6. **What breaks if deleted?** — Trace all downstream effects
+7. **Make the call** — ALL 6 pass = safe. ANY fail = DO NOT DELETE

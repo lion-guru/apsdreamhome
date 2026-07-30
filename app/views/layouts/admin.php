@@ -300,7 +300,7 @@ $GLOBALS['_html_doc_started'] = true;
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success alert-dismissible fade show">
                     <i class="fas fa-check-circle me-2"></i>
-                    <?php echo $_SESSION['success'];
+                    <?php echo htmlspecialchars($_SESSION['success'], ENT_QUOTES, 'UTF-8');
                     unset($_SESSION['success']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -309,7 +309,7 @@ $GLOBALS['_html_doc_started'] = true;
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show">
                     <i class="fas fa-exclamation-circle me-2"></i>
-                    <?php echo $_SESSION['error'];
+                    <?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8');
                     unset($_SESSION['error']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>

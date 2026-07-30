@@ -441,8 +441,6 @@
     document.querySelectorAll(SELECTORS.ifscLookup).forEach(btn => {
       btn.addEventListener('click', () => handleIfscLookup(btn));
     });
-
-    console.log('APS Location Autofill initialized');
   }
 
   // Auto-init on DOM ready

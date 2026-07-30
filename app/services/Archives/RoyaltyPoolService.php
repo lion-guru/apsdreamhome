@@ -34,13 +34,7 @@ class RoyaltyPoolService
     {
         if ($pdo === null) {
             $root   = dirname(__DIR__, 2);
-            $config = require $root . '/config/database.php';
-            $pdo    = new PDO(
-                "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-                $config['username'],
-                $config['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
         }
         $this->pdo    = $pdo;
         $this->engine = new HybridCommissionEngine($pdo);

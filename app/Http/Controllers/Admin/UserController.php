@@ -896,16 +896,17 @@ class UserController extends AdminController
                 $this->db->execute($sql, $upParams);
 
                 // 2. Update mlm_profiles
-                $this->db->execute("UPDATE mlm_profiles SET sponsor_user_id = ?, updated_at = NOW() WHERE user_id = ?", [$newSponsorId, $userId]);
+                $tid = (int)$this->tenantId();
+                $this->db->execute("UPDATE mlm_profiles SET sponsor_user_id = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?", [$newSponsorId, $userId, $tid]);
 
                 // 3. Update associates
-                $this->db->execute("UPDATE associates SET sponsor_id = ?, updated_at = NOW() WHERE user_id = ?", [$newSponsorId, $userId]);
+                $this->db->execute("UPDATE associates SET sponsor_id = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?", [$newSponsorId, $userId, $tid]);
 
                 // 4. Update mlm_network_tree
-                $this->db->execute("UPDATE mlm_network_tree SET sponsor_id = ?, parent_id = ? WHERE associate_id = ?", [$newSponsorId, $newSponsorId, $userId]);
+                $this->db->execute("UPDATE mlm_network_tree SET sponsor_id = ?, parent_id = ? WHERE associate_id = ? AND tenant_id = ?", [$newSponsorId, $newSponsorId, $userId, $tid]);
 
                 // 5. Update network_tree parent
-                $this->db->execute("UPDATE network_tree SET parent_id = ? WHERE associate_id = ?", [$newSponsorId, $userId]);
+                $this->db->execute("UPDATE network_tree SET parent_id = ? WHERE associate_id = ? AND tenant_id = ?", [$newSponsorId, $userId, $tid]);
 
                 $this->db->commit();
             } catch (\Exception $e) {
@@ -942,7 +943,8 @@ class UserController extends AdminController
             $upParams = [$newCode, $userId];
             if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
             $this->db->execute($sql, $upParams);
-            $this->db->execute("UPDATE mlm_profiles SET referral_code = ?, updated_at = NOW() WHERE user_id = ?", [$newCode, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE mlm_profiles SET referral_code = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?", [$newCode, $userId, $tid]);
 
             $this->loggingService->logUserActivity($adminId, 'referral_code_changed', ['user_id' => $userId, 'new_code' => $newCode]);
             return $this->jsonResponse(['success' => true, 'message' => "Referral code changed to {$newCode}"]);

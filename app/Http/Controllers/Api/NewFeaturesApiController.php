@@ -278,7 +278,7 @@ class NewFeaturesApiController extends BaseController
 
     private function generateReportData(string $type, array $params): array
     {
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         $tidFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $tidParam = $tid > 1 ? [$tid] : [];
 
@@ -356,7 +356,7 @@ class NewFeaturesApiController extends BaseController
         } catch (\Throwable $e) { $data['revenue_30d'] = 0; }
 
         try {
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
             $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer'{$tidFilter}");
             $data['total_customers'] = (int)$st->fetchColumn();
@@ -424,7 +424,7 @@ class NewFeaturesApiController extends BaseController
         } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         try {
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
             $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY){$tidFilter}");
             $newUsers = (int)$st->fetchColumn();

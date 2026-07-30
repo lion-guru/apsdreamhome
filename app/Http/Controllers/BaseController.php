@@ -9,6 +9,17 @@ namespace App\Http\Controllers;
  */
 class BaseController
 {
+    /** Canonical list of roles with admin panel access */
+    const ADMIN_ROLES = [
+        'super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller',
+        'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro',
+        'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director',
+        'legal_head', 'finance_head', 'hr_head', 'operations_head',
+        'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager',
+        'finance_manager', 'property_manager', 'it_manager', 'operations_manager',
+        'legal_advisor', 'chartered_accountant', 'senior_developer',
+    ];
+
     protected $models = [];
     protected $layout = 'layouts/base';
     protected $db;

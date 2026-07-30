@@ -194,7 +194,6 @@ class APSApiClient {
 
       await this.delay(this.retryDelay * options.retryCount);
 
-      console.log(`Retrying request (${options.retryCount}/${this.retryAttempts}):`, endpoint);
       return this.request(endpoint, options);
     }
 

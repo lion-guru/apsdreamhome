@@ -8,6 +8,8 @@ use Exception;
 
 class CampaignController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $campaignService;
 
     public function __construct()
@@ -249,17 +251,18 @@ class CampaignController extends AdminController
      */
     private function deleteCampaign($campaignId)
     {
+        $tid = (int)$this->tenantId();
         try {
             try {
                 // Delete campaign members first
-                $this->db->execute("DELETE FROM campaign_members WHERE campaign_id = ?", [$campaignId]);
+                $this->db->execute("DELETE FROM campaign_members WHERE campaign_id = ? AND tenant_id = ?", [$campaignId, $tid]);
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
 
             // Delete campaign
-            $this->db->execute("DELETE FROM campaigns WHERE campaign_id = ?", [$campaignId]);
+            $this->db->execute("DELETE FROM campaigns WHERE campaign_id = ? AND tenant_id = ?", [$campaignId, $tid]);
 
             return true;
         } catch (\Exception $e) {
@@ -425,13 +428,15 @@ class CampaignController extends AdminController
             $check->execute([$templateCode]);
             $existing = $check->fetch(\PDO::FETCH_ASSOC);
 
+            $tid = (int)$this->tenantId();
+
             if ($existing) {
-                $stmt = $this->db->prepare("UPDATE email_templates SET template_name = ?, subject = ?, body_html = ?, updated_at = NOW() WHERE template_code = ?");
-                $stmt->execute([$templateName, $subject, $bodyHtml, $templateCode]);
+                $stmt = $this->db->prepare("UPDATE email_templates SET template_name = ?, subject = ?, body_html = ?, updated_at = NOW() WHERE template_code = ? AND tenant_id = ?");
+                $stmt->execute([$templateName, $subject, $bodyHtml, $templateCode, $tid]);
                 $this->data['success'] = 'Template updated successfully!';
             } else {
-                $stmt = $this->db->prepare("INSERT INTO email_templates (template_code, template_name, subject, body_html, html_content, template_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'general', NOW(), NOW())");
-                $stmt->execute([$templateCode, $templateName, $subject, $bodyHtml, $bodyHtml]);
+                $stmt = $this->db->prepare("INSERT INTO email_templates (template_code, template_name, subject, body_html, html_content, template_type, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'general', ?, NOW(), NOW())");
+                $stmt->execute([$templateCode, $templateName, $subject, $bodyHtml, $bodyHtml, $tid]);
                 $this->data['success'] = 'Template created successfully!';
             }
         } catch (\Exception $e) {

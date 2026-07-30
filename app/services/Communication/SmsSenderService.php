@@ -2,6 +2,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class SmsSenderService
 {
@@ -134,6 +135,8 @@ class SmsSenderService
     {
         try {
             $this->db->insert('sms_queue', [
+                
+                'tenant_id' => TenantContext::getId(),
                 'recipient' => $phone,
                 'message' => substr($message, 0, 500),
                 'status' => $status,

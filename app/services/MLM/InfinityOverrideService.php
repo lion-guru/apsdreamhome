@@ -177,17 +177,17 @@ class InfinityOverrideService
             $ledgerStmt = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount,
-                     status, sale_amount, commission_percentage, notes, booking_id, created_at)
+                     status, sale_amount, commission_percentage, notes, booking_id, created_at, tenant_id)
                 VALUES
-                    (?, ?, 'infinity_override', 0, ?, 'pending', ?, ?, 'Monthly infinity override', 0, NOW())
+                    (?, ?, 'infinity_override', 0, ?, 'pending', ?, ?, 'Monthly infinity override', 0, NOW(), ?)
             ");
 
             $infStmt = $this->db->prepare("
                 INSERT INTO mlm_infinity_overrides
                     (beneficiary_user_id, source_user_id, depth_level, sale_amount,
-                     override_pct, commission_amount, period_start, period_end, status, created_at)
+                     override_pct, commission_amount, period_start, period_end, status, created_at, tenant_id)
                 VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                    (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
             ");
 
             foreach ($entries as $e) {
@@ -200,10 +200,10 @@ class InfinityOverrideService
                 $periodEnd = $e['period_end'] ?? date('Y-m-t');
 
                 // Ledger entry — source_user_id = beneficiary (aggregate monthly bonus)
-                $ledgerStmt->execute([$beneficiary, $beneficiary, $amount, $volume, $pct]);
+                $ledgerStmt->execute([$beneficiary, $beneficiary, $amount, $volume, $pct, $this->getTenantId()]);
                 $result['created_ids'][] = (int)$this->db->lastInsertId();
 
-                $infStmt->execute([$beneficiary, 0, $depth, $volume, $pct, $amount, $periodStart, $periodEnd]);
+                $infStmt->execute([$beneficiary, 0, $depth, $volume, $pct, $amount, $periodStart, $periodEnd, $this->getTenantId()]);
 
                 $result['total'] += $amount;
             }

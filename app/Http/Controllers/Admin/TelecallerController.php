@@ -145,7 +145,7 @@ class TelecallerController extends AdminController
         $notes = $_POST['notes'] ?? '';
 
         try {
-            $this->db->query("INSERT INTO telecaller_daily_tasks (user_id, task_date, total_leads_assigned, calls_made, calls_connected, leads_converted, leads_callback, leads_not_interested, pending_calls, target_calls, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())", [$userId, $taskDate, $leadsAssigned, $callsMade, $callsConnected, $leadsConverted, $leadsCallback, $leadsNotInterested, $pendingCalls, $targetCalls, $notes]);
+            $this->db->query("INSERT INTO telecaller_daily_tasks (user_id, task_date, total_leads_assigned, calls_made, calls_connected, leads_converted, leads_callback, leads_not_interested, pending_calls, target_calls, notes, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())", [$userId, $taskDate, $leadsAssigned, $callsMade, $callsConnected, $leadsConverted, $leadsCallback, $leadsNotInterested, $pendingCalls, $targetCalls, $notes, (int)$this->tenantId()]);
             $this->setFlash('success', 'Daily task saved successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to save task: ' . $e->getMessage());
@@ -167,7 +167,7 @@ class TelecallerController extends AdminController
         $rating = $_POST['rating'] ?? 'average';
 
         try {
-            $this->db->query("UPDATE telecaller_performance SET total_calls = ?, connected_calls = ?, leads_converted = ?, total_commission = ?, target_achieved = ?, rating = ?, updated_at = NOW() WHERE id = ?", [$totalCalls, $connectedCalls, $leadsConverted, $totalCommission, $targetAchieved, $rating, $id]);
+            $this->db->query("UPDATE telecaller_performance SET total_calls = ?, connected_calls = ?, leads_converted = ?, total_commission = ?, target_achieved = ?, rating = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$totalCalls, $connectedCalls, $leadsConverted, $totalCommission, $targetAchieved, $rating, $id, (int)$this->tenantId()]);
             $this->setFlash('success', 'Performance updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update performance: ' . $e->getMessage());

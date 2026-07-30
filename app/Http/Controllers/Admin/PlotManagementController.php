@@ -336,6 +336,8 @@ class PlotManagementController extends AdminController
                 return $this->jsonError('Invalid parameters', 400);
             }
 
+            $tid = (int)$this->tenantId();
+
             $this->db->beginTransaction();
 
             try {
@@ -358,21 +360,21 @@ class PlotManagementController extends AdminController
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
                             SET status = 'approved', processed_by = ?, processed_at = NOW(), notes = ?
-                            WHERE id = ?";
+                            WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
+                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId, $tid]);
 
                     // Update plot status
-                    $sql = "UPDATE plots SET status = 'allocated', updated_at = NOW() WHERE id = ?";
+                    $sql = "UPDATE plots SET status = 'allocated', updated_at = NOW() WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$allocation['plot_id']]);
+                    $stmt->execute([$allocation['plot_id'], $tid]);
                 } elseif ($action === 'reject') {
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
                             SET status = 'rejected', processed_by = ?, processed_at = NOW(), notes = ?
-                            WHERE id = ?";
+                            WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
+                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId, $tid]);
                 } else {
                     $this->db->rollBack();
                     return $this->jsonError('Invalid action', 400);
@@ -502,14 +504,15 @@ class PlotManagementController extends AdminController
                 return $this->jsonError('Invalid status', 400);
             }
 
+            $tid = (int)$this->tenantId();
             $updated = 0;
             $failed = 0;
 
             foreach ($plotIds as $plotId) {
                 try {
-                    $sql = "UPDATE plots SET status = ?, updated_at = NOW() WHERE id = ?";
+                    $sql = "UPDATE plots SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
-                    $result = $stmt->execute([$status, (int)$plotId]);
+                    $result = $stmt->execute([$status, (int)$plotId, $tid]);
 
                     if ($result) {
                         $updated++;
@@ -865,6 +868,8 @@ class PlotManagementController extends AdminController
             $pricePerSqft = floatval($data['price_per_sqft'] ?? $old['price_per_sqft']);
             $totalPrice = floatval($data['total_price'] ?? ($areaSqft * $pricePerSqft));
 
+            $tid = (int)$this->tenantId();
+
             $this->db->execute("UPDATE plots SET 
                 plot_number = ?, block = ?, sector = ?, plot_type = ?, 
                 area_sqft = ?, area_sqm = ?, width_ft = ?, length_ft = ?, dimension_label = ?,
@@ -874,7 +879,7 @@ class PlotManagementController extends AdminController
                 facing = ?, corner_plot = ?, park_facing = ?,
                 booking_amount = ?, total_paid = ?, payment_status = ?,
                 description = ?
-                WHERE id = ?", [
+                WHERE id = ? AND tenant_id = ?", [
                 $data['plot_number'], $data['block'] ?? '', $data['sector'] ?? '', $data['plot_type'] ?? 'residential',
                 $areaSqft, floatval($data['area_sqm'] ?? 0), $width, $length, $dimLabel,
                 floatval($data['frontage_ft'] ?? 0), floatval($data['depth_ft'] ?? 0), floatval($data['road_width_ft'] ?? 0),
@@ -883,7 +888,7 @@ class PlotManagementController extends AdminController
                 $data['price_override_reason'] ?? '', $data['status'] ?? 'available',
                 $data['facing'] ?? '', !empty($data['corner_plot']) ? 1 : 0, !empty($data['park_facing']) ? 1 : 0,
                 floatval($data['booking_amount'] ?? 0), floatval($data['total_paid'] ?? 0), $data['payment_status'] ?? 'pending',
-                $data['description'] ?? '', $id
+                $data['description'] ?? '', $id, $tid
             ]);
 
             // Log price change to price_history
@@ -900,6 +905,7 @@ class PlotManagementController extends AdminController
                     'reason' => $data['price_override_reason'] ?? 'Price updated by admin',
                     'changed_by' => $_SESSION['user_id'] ?? 1,
                     'created_at' => date('Y-m-d H:i:s'),
+                    'tenant_id' => $tid,
                 ]);
             }
 
@@ -936,7 +942,8 @@ class PlotManagementController extends AdminController
     public function destroy($id)
     {
         try {
-            $this->db->execute("UPDATE plots SET is_active = 0 WHERE id = ?", [$id]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE plots SET is_active = 0 WHERE id = ? AND tenant_id = ?", [$id, $tid]);
             $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_deactivated', ['plot_id' => $id]);
             $this->setFlash('success', 'Plot deactivated successfully');
         } catch (\Exception $e) {
@@ -967,8 +974,9 @@ class PlotManagementController extends AdminController
             exit;
         }
         try {
+            $tid = (int)$this->tenantId();
             $old = $this->db->fetchOne("SELECT status FROM plots WHERE id = ?", [$id]);
-            $this->db->execute("UPDATE plots SET status = ? WHERE id = ?", [$status, $id]);
+            $this->db->execute("UPDATE plots SET status = ? WHERE id = ? AND tenant_id = ?", [$status, $id, $tid]);
             try {
                 $this->db->insert('plot_status_log', [
                     'plot_id' => $id, 'old_status' => $old, 'new_status' => $status,
@@ -1006,16 +1014,18 @@ class PlotManagementController extends AdminController
 
             list($tSql, $tParams) = $this->tenantWhere();
             $plots = $this->db->fetchAll("SELECT id, total_price, price_per_sqft, area_sqft FROM plots WHERE $where" . $tSql, array_merge($params, $tParams));
+            $tid = (int)$this->tenantId();
             $count = 0;
             foreach ($plots as $p) {
                 $oldTotal = $p['total_price'];
                 $newTotal = $p['area_sqft'] * $newPps;
-                $this->db->execute("UPDATE plots SET price_per_sqft = ?, total_price = ?, base_price_per_sqft = COALESCE(base_price_per_sqft, price_per_sqft) WHERE id = ?", [$newPps, $newTotal, $p['id']]);
+                $this->db->execute("UPDATE plots SET price_per_sqft = ?, total_price = ?, base_price_per_sqft = COALESCE(base_price_per_sqft, price_per_sqft) WHERE id = ? AND tenant_id = ?", [$newPps, $newTotal, $p['id'], $tid]);
                 $this->db->insert('price_history', [
                     'plot_id' => $p['id'], 'old_price' => $oldTotal, 'new_price' => $newTotal,
                     'old_price_per_sqft' => $p['price_per_sqft'], 'new_price_per_sqft' => $newPps,
                     'change_type' => 'bulk_update', 'reason' => $reason,
                     'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
+                    'tenant_id' => $tid,
                 ]);
                 $count++;
             }
@@ -1108,6 +1118,8 @@ class PlotManagementController extends AdminController
             $this->db->beginTransaction();
 
             try {
+                $tid = (int)$this->tenantId();
+
                 // Create booking in bookings table
                 $bookingData = [
                     'plot_id' => $id,
@@ -1140,14 +1152,15 @@ class PlotManagementController extends AdminController
                         'notes' => $notes,
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s'),
+                        'tenant_id' => $tid,
                     ]);
                 } catch (\Exception $e) {
                     $this->loggingService->error("plot_allocations insert skipped: " . $e->getMessage());
                 }
 
                 // Update plot status to booked
-                $this->db->execute("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ?, negotiated_price = ?, total_paid = ?, updated_at = NOW() WHERE id = ?",
-                    [$customerId, $bookingDate, $negotiatedPrice, $tokenAmount, $id]);
+                $this->db->execute("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ?, negotiated_price = ?, total_paid = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?",
+                    [$customerId, $bookingDate, $negotiatedPrice, $tokenAmount, $id, $tid]);
 
                 // Log status change
                 try {
@@ -1245,6 +1258,8 @@ class PlotManagementController extends AdminController
             $this->db->beginTransaction();
 
             try {
+                $tid = (int)$this->tenantId();
+
                 // Ensure plot_transfers table exists
                 try {
                     $this->db->execute("ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -1267,11 +1282,12 @@ class PlotManagementController extends AdminController
                     'remarks' => $remarks,
                     'processed_by' => $_SESSION['user_id'] ?? 1,
                     'created_at' => date('Y-m-d H:i:s'),
+                    'tenant_id' => $tid,
                 ]);
 
                 // Update plot ownership
-                $this->db->execute("UPDATE plots SET customer_id = ?, status = ?, sale_date = ?, updated_at = NOW() WHERE id = ?",
-                    [$newOwnerId, $newStatus, $transferDate, $id]);
+                $this->db->execute("UPDATE plots SET customer_id = ?, status = ?, sale_date = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?",
+                    [$newOwnerId, $newStatus, $transferDate, $id, $tid]);
 
                 // Log status change
                 try {

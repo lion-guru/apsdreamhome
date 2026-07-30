@@ -119,22 +119,24 @@ class AdminLoyaltyController extends AdminController
                 $db = \App\Core\Database\Database::getInstance();
                 
                 // Add transaction
+                $tid = $this->tenantId();
                 $sql = "INSERT INTO loyalty_transactions 
-                    (user_id, user_type, transaction_type, points, description, balance_after)
+                    (user_id, user_type, transaction_type, points, description, balance_after, tenant_id)
                     VALUES (?, 'customer', 'adjusted', ?, ?, 
-                        (SELECT points + ? FROM loyalty_points WHERE user_id = ? AND user_type = 'customer'))";
+                        (SELECT points + ? FROM loyalty_points WHERE user_id = ? AND user_type = 'customer'), ?)";
                 
                 $stmt = $db->prepare($sql);
-                $stmt->execute([$userId, $points, $reason, $points, $userId]);
+                $stmt->execute([$userId, $points, $reason, $points, $userId, $tid]);
                 
                 // Update points
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
                 $updateSql = "UPDATE loyalty_points SET 
                     points = points + ?,
                     lifetime_points = lifetime_points + ?
-                    WHERE user_id = ? AND user_type = 'customer'";
+                    WHERE user_id = ? AND user_type = 'customer' $tenantSql";
                 
                 $updateStmt = $db->prepare($updateSql);
-                $updateStmt->execute([$points, $points, $userId]);
+                $updateStmt->execute(array_merge([$points, $points, $userId], $tenantParams));
                 
                 $_SESSION['success'] = "Added $points points to member";
             }
@@ -187,30 +189,32 @@ class AdminLoyaltyController extends AdminController
                 'is_active' => isset($_POST['is_active']) ? 1 : 0
             ];
             
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             if ($id) {
                 // Update
                 $sql = "UPDATE rewards_catalog SET 
                     name = ?, description = ?, points_required = ?, reward_type = ?,
                     reward_value = ?, stock_quantity = ?, is_limited = ?, is_active = ?
-                    WHERE id = ?";
+                    WHERE id = ? $tenantSql";
                 $stmt = $db->prepare($sql);
-                $stmt->execute([
+                $stmt->execute(array_merge([
                     $data['name'], $data['description'], $data['points_required'],
                     $data['reward_type'], $data['reward_value'], $data['stock_quantity'],
                     $data['is_limited'], $data['is_active'], $id
-                ]);
+                ], $tenantParams));
                 
                 $_SESSION['success'] = 'Reward updated successfully';
             } else {
                 // Create
+                $tid = $this->tenantId();
                 $sql = "INSERT INTO rewards_catalog 
-                    (name, description, points_required, reward_type, reward_value, stock_quantity, is_limited, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    (name, description, points_required, reward_type, reward_value, stock_quantity, is_limited, is_active, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $db->prepare($sql);
                 $stmt->execute([
                     $data['name'], $data['description'], $data['points_required'],
                     $data['reward_type'], $data['reward_value'], $data['stock_quantity'],
-                    $data['is_limited'], $data['is_active']
+                    $data['is_limited'], $data['is_active'], $tid
                 ]);
                 
                 $_SESSION['success'] = 'Reward created successfully';
@@ -284,13 +288,14 @@ class AdminLoyaltyController extends AdminController
             
             $db = \App\Core\Database\Database::getInstance();
             try {
-                $sql = "UPDATE reward_redemptions SET status = ? WHERE id = ?";
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
+                $sql = "UPDATE reward_redemptions SET status = ? WHERE id = ? $tenantSql";
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
             $stmt = $db->prepare($sql);
-            $stmt->execute([$status, $id]);
+            $stmt->execute(array_merge([$status, $id], $tenantParams));
             
             $_SESSION['success'] = 'Redemption status updated';
             redirect('/admin/loyalty/redemptions');

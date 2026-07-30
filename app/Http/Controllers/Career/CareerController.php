@@ -12,8 +12,12 @@ use App\Core\ViewRenderer;
  * Custom MVC implementation without Laravel dependencies
  * IDE Cache Refresh: Methods added to CareerService
  */
+use \App\Traits\TenantAwareTrait;
+
 class CareerController extends BaseController
 {
+    use TenantAwareTrait;
+
     private $careerService;
     private $authService;
     private $viewRenderer;
@@ -148,7 +152,8 @@ class CareerController extends BaseController
         }
 
         try {
-            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, resume_path, cover_letter, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')");
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, resume_path, cover_letter, status, tenant_id) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)");
 
             $careerId = 0;
             $stmtCareer = $this->db->prepare("SELECT id FROM careers WHERE title = ? LIMIT 1");
@@ -158,7 +163,7 @@ class CareerController extends BaseController
                 $careerId = $careerRow['id'];
             }
 
-            $stmt->execute([$careerId, $fullName, $email, $phone, $resumePath, $coverLetter]);
+            $stmt->execute([$careerId, $fullName, $email, $phone, $resumePath, $coverLetter, $tid]);
 
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'message' => 'Your application has been submitted successfully! We will review it and get back to you soon.']);

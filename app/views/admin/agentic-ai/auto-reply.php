@@ -19,7 +19,7 @@
     <section class="content">
         <div class="container-fluid">
             <?php if (!empty($_SESSION['flash_success'])): ?>
-            <div class="alert alert-success alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button><?= $_SESSION['flash_success'] ?></div>
+            <div class="alert alert-success alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button><?= htmlspecialchars($_SESSION['flash_success'], ENT_QUOTES, 'UTF-8') ?></div>
             <?php unset($_SESSION['flash_success']); endif; ?>
 
             <div class="row">

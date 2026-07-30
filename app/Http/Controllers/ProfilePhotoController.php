@@ -16,9 +16,12 @@ namespace App\Http\Controllers;
 require_once __DIR__ . '/BaseController.php';
 
 use App\Core\Database\Database;
+use \App\Traits\TenantAwareTrait;
 
 class ProfilePhotoController extends BaseController
 {
+    use TenantAwareTrait;
+
     private const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     private const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
     private const MAX_WIDTH = 1024;
@@ -119,9 +122,10 @@ class ProfilePhotoController extends BaseController
             }
 
             // Update DB
+            $tid = (int)$this->tenantId();
             $db->query(
-                "UPDATE users SET profile_image = ?, updated_at = NOW() WHERE id = ?",
-                ['uploads/profiles/' . $filename, $userId]
+                "UPDATE users SET profile_image = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?",
+                ['uploads/profiles/' . $filename, $userId, $tid]
             );
 
             $photoUrl = BASE_URL . '/' . self::UPLOAD_DIR . $filename;
@@ -176,7 +180,8 @@ class ProfilePhotoController extends BaseController
                 }
             }
 
-            $db->query("UPDATE users SET profile_image = NULL, updated_at = NOW() WHERE id = ?", [$userId]);
+            $tid = (int)$this->tenantId();
+            $db->query("UPDATE users SET profile_image = NULL, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$userId, $tid]);
             unset($_SESSION['profile_image']);
 
             parent::jsonResponse(['success' => true, 'message' => 'Profile photo removed']);

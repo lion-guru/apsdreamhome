@@ -190,17 +190,17 @@ class GenerationBonusEngine
             $ledgerStmt = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount,
-                     status, sale_amount, commission_percentage, notes, booking_id, created_at)
+                     status, sale_amount, commission_percentage, notes, booking_id, created_at, tenant_id)
                 VALUES
-                    (?, ?, 'generation_bonus', ?, ?, 'pending', ?, ?, 'Monthly generation bonus', 0, NOW())
+                    (?, ?, 'generation_bonus', ?, ?, 'pending', ?, ?, 'Monthly generation bonus', 0, NOW(), ?)
             ");
 
             $genStmt = $this->db->prepare("
                 INSERT INTO mlm_generation_commissions
                     (beneficiary_user_id, source_user_id, generation_number, team_volume,
-                     generation_pct, commission_amount, period_start, period_end, status, created_at)
+                     generation_pct, commission_amount, period_start, period_end, status, created_at, tenant_id)
                 VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                    (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
             ");
 
             foreach ($entries as $e) {
@@ -214,14 +214,14 @@ class GenerationBonusEngine
 
                 // Ledger entry — source_user_id = beneficiary (aggregate monthly bonus)
                 $ledgerStmt->execute([
-                    $beneficiary, $beneficiary, $level, $amount, $volume, $pct,
+                    $beneficiary, $beneficiary, $level, $amount, $volume, $pct, $this->getTenantId(),
                 ]);
                 $ledgerId = (int)$this->db->lastInsertId();
                 $result['created_ids'][] = $ledgerId;
 
                 // Generation commissions table
                 $genStmt->execute([
-                    $beneficiary, 0, $level, $volume, $pct, $amount, $periodStart, $periodEnd,
+                    $beneficiary, 0, $level, $volume, $pct, $amount, $periodStart, $periodEnd, $this->getTenantId(),
                 ]);
 
                 $result['total'] += $amount;

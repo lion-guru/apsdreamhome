@@ -8,6 +8,7 @@ use UploadValidator;
 
 class BankImportController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     protected $service;
 
     public function __construct()
@@ -119,11 +120,12 @@ class BankImportController extends AdminController
             try {
                 $pdo = $this->db instanceof \PDO ? $this->db : \App\Core\Database\Database::getInstance();
                 if (method_exists($pdo, 'getPdo')) $pdo = $pdo->getPdo();
-                $stmt = $pdo->prepare("UPDATE bank_statement_imports SET bank_account_id = ? WHERE id = ?");
-                $stmt->execute([$bankAccountId, $result['import_id']]);
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
+                $stmt = $pdo->prepare("UPDATE bank_statement_imports SET bank_account_id = ? WHERE id = ? {$tenantSql}");
+                $stmt->execute(array_merge([$bankAccountId, $result['import_id']], $tenantParams));
                 // Also set on individual transactions
-                $stmt2 = $pdo->prepare("UPDATE bank_transactions SET bank_account_id = ? WHERE import_id = ?");
-                $stmt2->execute([$bankAccountId, $result['import_id']]);
+                $stmt2 = $pdo->prepare("UPDATE bank_transactions SET bank_account_id = ? WHERE import_id = ? {$tenantSql}");
+                $stmt2->execute(array_merge([$bankAccountId, $result['import_id']], $tenantParams));
             } catch (\Exception $e) {
             // non-fatal
             error_log($e->getMessage());

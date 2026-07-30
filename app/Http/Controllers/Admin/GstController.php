@@ -96,8 +96,9 @@ class GstController extends AdminController
         $e_way_bill = $_POST['e_way_bill'] ?? '';
         $status = $_POST['status'] ?? 'draft';
         try {
-            $stmt = $this->db->prepare("INSERT INTO invoices (user_id, invoice_number, invoice_date, due_date, client_name, gstin, total_amount, gst_type, gst_rate, cgst_amount, sgst_amount, igst_amount, hsn_code, place_of_supply, e_invoice_number, e_way_bill, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$user_id, $invoice_number, $invoice_date, $due_date, $client_name, $client_gstin, $total_amount, $gst_type, $gst_rate, $cgst_amount, $sgst_amount, $igst_amount, $hsn_code, $place_of_supply, $e_invoice_number, $e_way_bill, $status]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO invoices (user_id, invoice_number, invoice_date, due_date, client_name, gstin, total_amount, gst_type, gst_rate, cgst_amount, sgst_amount, igst_amount, hsn_code, place_of_supply, e_invoice_number, e_way_bill, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$user_id, $invoice_number, $invoice_date, $due_date, $client_name, $client_gstin, $total_amount, $gst_type, $gst_rate, $cgst_amount, $sgst_amount, $igst_amount, $hsn_code, $place_of_supply, $e_invoice_number, $e_way_bill, $status, $tid]);
             $this->setFlash('success', 'GST invoice created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create GST invoice: ' . $e->getMessage());

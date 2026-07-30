@@ -12,6 +12,11 @@ class NotificationService
     private $pdo;
     public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
 
+    private function getTenantId(): int
+    {
+        return (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
+    }
+
     public function send(int $userId, string $channel, string $subject, string $message, array $data = []): array
     {
         // Respect customer notification preferences. If the caller passes
@@ -49,8 +54,9 @@ class NotificationService
     {
         $payload = json_encode(['subject' => $subject, 'message' => $message, 'data' => $data, 'status' => $status], JSON_UNESCAPED_UNICODE);
         $eventType = $data['event_type'] ?? ('pref_' . $status);
-        $sql = "INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, delivered_at, created_at)
-                VALUES (:c, :u, :e, :p, :d, NOW())";
+        $tid = $this->getTenantId();
+        $sql = "INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, tenant_id, delivered_at, created_at)
+                VALUES (:c, :u, :e, :p, :tid, :d, NOW())";
         try {
             $st = $this->db->prepare($sql);
             $st->execute([
@@ -58,6 +64,7 @@ class NotificationService
                 ':u' => $userId,
                 ':e' => $eventType,
                 ':p' => $payload,
+                ':tid' => $tid,
                 ':d' => $status === 'sent' || $status === 'pending' ? date('Y-m-d H:i:s') : null,
             ]);
             return (int) $this->db->lastInsertId();
@@ -192,8 +199,9 @@ class NotificationService
             $st->execute([':u' => $userId]);
             $u = $st->fetch(PDO::FETCH_ASSOC);
             $to = $data['email'] ?? $u['email'] ?? '';
-            $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (:n, :e, 'sent', :ip, :ua, NOW())");
-            $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]);
+            $tid = $this->getTenantId();
+            $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, tenant_id, event_at) VALUES (:n, :e, 'sent', :ip, :ua, :tid, NOW())");
+            $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null, ':tid' => $tid]);
         } catch (\Throwable $e) {
         // table might not have the columns we expect; ignore
         error_log($e->getMessage());
@@ -207,8 +215,9 @@ class NotificationService
             $st->execute([':u' => $userId]);
             $u = $st->fetch(PDO::FETCH_ASSOC);
             $to = $data['phone'] ?? $u['phone'] ?? '';
-            $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (:n, :e, 'sms_sent', :ip, :ua, NOW())");
-            $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]);
+            $tid = $this->getTenantId();
+            $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, tenant_id, event_at) VALUES (:n, :e, 'sms_sent', :ip, :ua, :tid, NOW())");
+            $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null, ':tid' => $tid]);
         } catch (\Throwable $e) {
         // ignore
         error_log($e->getMessage());
@@ -221,8 +230,9 @@ class NotificationService
         $st->execute([':u' => $userId]);
         $subs = $st->fetchAll(PDO::FETCH_ASSOC);
 
-        $st2 = $this->db->prepare("INSERT INTO push_notifications (user_id, title, body, data, sent_at, created_at) VALUES (:u, :t, :b, :d, NOW(), NOW())");
-        $st2->execute([':u' => $userId, ':t' => $title, ':b' => $body, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE)]);
+        $tid = $this->getTenantId();
+        $st2 = $this->db->prepare("INSERT INTO push_notifications (user_id, title, body, data, tenant_id, sent_at, created_at) VALUES (:u, :t, :b, :d, :tid, NOW(), NOW())");
+        $st2->execute([':u' => $userId, ':t' => $title, ':b' => $body, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':tid' => $tid]);
     }
 
     private function sendWhatsapp(int $userId, string $message, array $data): void
@@ -231,14 +241,16 @@ class NotificationService
         $st->execute([':u' => $userId]);
         $u = $st->fetch(PDO::FETCH_ASSOC);
         $to = $data['phone'] ?? $u['phone'] ?? '';
-        $st2 = $this->db->prepare("INSERT INTO whatsapp_messages (user_id, to_phone, message, status, sent_at, created_at) VALUES (:u, :p, :m, 'sent', NOW(), NOW())");
-        try { $st2->execute([':u' => $userId, ':p' => $to, ':m' => $message]); } catch (\Throwable $e) { error_log($e->getMessage()); }
+        $tid = $this->getTenantId();
+        $st2 = $this->db->prepare("INSERT INTO whatsapp_messages (user_id, to_phone, message, status, tenant_id, sent_at, created_at) VALUES (:u, :p, :m, 'sent', :tid, NOW(), NOW())");
+        try { $st2->execute([':u' => $userId, ':p' => $to, ':m' => $message, ':tid' => $tid]); } catch (\Throwable $e) { error_log($e->getMessage()); }
     }
 
     public function shareLead(int $userId, int $leadId, string $to, string $channel = 'whatsapp'): array
     {
-        $st = $this->db->prepare("INSERT INTO whatsapp_lead_shares (user_id, lead_id, shared_to, channel, shared_at) VALUES (:u, :l, :t, :c, NOW())");
-        $st->execute([':u' => $userId, ':l' => $leadId, ':t' => $to, ':c' => $channel]);
+        $tid = $this->getTenantId();
+        $st = $this->db->prepare("INSERT INTO whatsapp_lead_shares (user_id, lead_id, shared_to, channel, tenant_id, shared_at) VALUES (:u, :l, :t, :c, :tid, NOW())");
+        $st->execute([':u' => $userId, ':l' => $leadId, ':t' => $to, ':c' => $channel, ':tid' => $tid]);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -306,9 +318,10 @@ class NotificationService
     public function notify(string $type, string $message, ?int $userId = null, ?string $actionUrl = null, ?string $title = null): bool
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->prepare(
-                'INSERT INTO notifications (user_id, type, title, message, action_url, is_read, status, created_at) VALUES (?, ?, ?, ?, ?, 0, ?, NOW())'
-            )->execute([$userId, $type, $title ?? ucfirst($type), $message, $actionUrl, 'unread']);
+                'INSERT INTO notifications (user_id, type, title, message, action_url, is_read, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 0, ?, ?, NOW())'
+            )->execute([$userId, $type, $title ?? ucfirst($type), $message, $actionUrl, 'unread', $tid]);
             return true;
         } catch (\Throwable $e) {
             error_log('NotificationService::notify error: ' . $e->getMessage());
@@ -423,11 +436,16 @@ class NotificationService
     public function markAllRead(?int $userId = null): bool
     {
         try {
+            $tid = $this->getTenantId();
             $sql = 'UPDATE notifications SET is_read = 1, read_at = NOW() WHERE is_read = 0';
             $params = [];
             if ($userId) {
                 $sql .= ' AND (user_id = ? OR user_id IS NULL)';
                 $params[] = $userId;
+            }
+            if ($tid > 1) {
+                $sql .= ' AND tenant_id = ?';
+                $params[] = $tid;
             }
             $this->db->prepare($sql)->execute($params);
             return true;
@@ -606,9 +624,10 @@ class NotificationService
     public function publish(string $channel, string $eventType, ?int $userId, array $payload, ?int $ttlSeconds = null): int
     {
         $expires = $ttlSeconds ? date('Y-m-d H:i:s', time() + $ttlSeconds) : null;
+        $tid = $this->getTenantId();
         try {
-            $st = $this->db->prepare("INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, expires_at) VALUES (:c, :u, :e, :p, :exp)");
-            $st->execute([':c' => $channel, ':u' => $userId, ':e' => $eventType, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE), ':exp' => $expires]);
+            $st = $this->db->prepare("INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, tenant_id, expires_at) VALUES (:c, :u, :e, :p, :tid, :exp)");
+            $st->execute([':c' => $channel, ':u' => $userId, ':e' => $eventType, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE), ':tid' => $tid, ':exp' => $expires]);
             $id = (int)$this->db->lastInsertId();
         } catch (\Throwable $e) {
             error_log('NotificationService::publish error: ' . $e->getMessage());
@@ -675,8 +694,15 @@ class NotificationService
     public function cleanup(int $daysToKeep = 30): int
     {
         try {
-            $st = $this->db->prepare("DELETE FROM realtime_notifications WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)");
-            $st->execute([$daysToKeep]);
+            $tid = $this->getTenantId();
+            $sql = "DELETE FROM realtime_notifications WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+            $params = [$daysToKeep];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
             return $st->rowCount();
         } catch (\Throwable $e) {
             return 0;

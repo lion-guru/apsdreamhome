@@ -298,7 +298,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
                         <p class="nav-description">
                             <?php echo __('nav_properties_desc', 'Browse all available properties with advanced search and filtering options'); ?>
                         </p>
-                        <a href="property-listings.php" class="nav-link">
+                        <a href="/apsdreamhome/properties" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_properties', 'View Properties'); ?>
                         </a>
                     </div>

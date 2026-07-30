@@ -5,9 +5,8 @@
  */
 
 // STATIC routes before parameterized {id} routes
-$router->get('/api/container/test/functionality', 'ContainerController@test');
-$router->get('/api/container/stats/info', 'ContainerController@stats');
-$router->get('/api/container', 'ContainerController@index');
+$router->get('/api/container/check', 'ContainerController@check');
+$router->get('/api/container/stats', 'ContainerController@stats');
 $router->post('/api/container/register', 'ContainerController@register');
 $router->delete('/api/container', 'ContainerController@clear');
 

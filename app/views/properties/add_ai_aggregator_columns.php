@@ -12,7 +12,7 @@ $username = 'root';
 $password = '';
 
 try {
-    $conn = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $username, $password);
+    $conn = \App\Core\Database\Database::getInstance()->getConnection();
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     echo "Adding AI Aggregator columns to properties table...\n";

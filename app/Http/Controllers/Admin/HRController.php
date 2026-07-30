@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
+
 class HRController extends AdminController
 {
+    use TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();
@@ -156,6 +159,7 @@ class HRController extends AdminController
     public function updateEmployee($id)
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $phone = $_POST['phone'] ?? '';
@@ -173,7 +177,7 @@ class HRController extends AdminController
             $empData['designation'] = $designation;
             $empData['salary'] = $salary;
             $empData['join_date'] = $joinDate;
-            $this->db->execute("UPDATE users SET name=?, email=?, phone=?, employee_data=?, status=? WHERE id=?", [$name, $email, $phone, json_encode($empData), $status, $id]);
+            $this->db->execute("UPDATE users SET name=?, email=?, phone=?, employee_data=?, status=? WHERE id=? AND tenant_id=?", [$name, $email, $phone, json_encode($empData), $status, $id, $tid]);
             $this->setFlash('success', 'Employee updated successfully');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -187,8 +191,9 @@ class HRController extends AdminController
     public function deleteEmployee($id)
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE users SET status='deleted' WHERE id=?", [$id]);
+            $this->db->execute("UPDATE users SET status='deleted' WHERE id=? AND tenant_id=?", [$id, $tid]);
             $this->setFlash('success', 'Employee deleted');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -256,6 +261,7 @@ class HRController extends AdminController
     public function markAttendance()
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $date = $_POST['date'] ?? date('Y-m-d');
         $status = $_POST['status'] ?? 'present';
@@ -263,11 +269,11 @@ class HRController extends AdminController
         $notes = $_POST['notes'] ?? '';
         if (!$employeeId) { $this->setFlash('error', 'Select an employee'); header('Location: ' . BASE_URL . '/admin/hr/attendance'); exit; }
         try {
-            $existing = $this->db->fetch("SELECT id FROM employee_attendance WHERE employee_id=? AND attendance_date=?", [$employeeId, $date]);
+            $existing = $this->db->fetch("SELECT id FROM employee_attendance WHERE employee_id=? AND attendance_date=? AND tenant_id=?", [$employeeId, $date, $tid]);
             if ($existing) {
-                $this->db->execute("UPDATE employee_attendance SET attendance_status=?, check_in_time=?, remarks=? WHERE id=?", [$status, $checkIn, $notes, $existing['id']]);
+                $this->db->execute("UPDATE employee_attendance SET attendance_status=?, check_in_time=?, remarks=? WHERE id=? AND tenant_id=?", [$status, $checkIn, $notes, $existing['id'], $tid]);
             } else {
-                $this->db->execute("INSERT INTO employee_attendance (employee_id, attendance_date, attendance_status, check_in_time, remarks, created_at) VALUES (?,?,?,?,?,NOW())", [$employeeId, $date, $status, $checkIn, $notes]);
+                $this->db->execute("INSERT INTO employee_attendance (employee_id, attendance_date, attendance_status, check_in_time, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,NOW())", [$employeeId, $date, $status, $checkIn, $notes, $tid]);
             }
             $this->setFlash('success', 'Attendance marked');
         } catch (\Exception $e) {
@@ -363,8 +369,9 @@ class HRController extends AdminController
     public function approveLeave($id)
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE employee_leaves SET status='approved', approved_by=?, approved_at=NOW() WHERE id=?", [(int)($_SESSION['admin_id'] ?? 0), $id]);
+            $this->db->execute("UPDATE employee_leaves SET status='approved', approved_by=?, approved_at=NOW() WHERE id=? AND tenant_id=?", [(int)($_SESSION['admin_id'] ?? 0), $id, $tid]);
             $this->setFlash('success', 'Leave approved');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -378,9 +385,10 @@ class HRController extends AdminController
     public function rejectLeave($id)
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         try {
             $reason = $_POST['rejection_reason'] ?? '';
-            $this->db->execute("UPDATE employee_leaves SET status='rejected', rejection_reason=?, approved_by=?, approved_at=NOW() WHERE id=?", [$reason, (int)($_SESSION['admin_id'] ?? 0), $id]);
+            $this->db->execute("UPDATE employee_leaves SET status='rejected', rejection_reason=?, approved_by=?, approved_at=NOW() WHERE id=? AND tenant_id=?", [$reason, (int)($_SESSION['admin_id'] ?? 0), $id, $tid]);
             $this->setFlash('success', 'Leave rejected');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -394,6 +402,7 @@ class HRController extends AdminController
     public function storeLeave()
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $leaveTypeId = (int)($_POST['leave_type_id'] ?? 0);
         $startDate = $_POST['start_date'] ?? '';
@@ -402,7 +411,7 @@ class HRController extends AdminController
         if (!$employeeId || !$startDate || !$endDate) { $this->setFlash('error', 'All fields required'); header('Location: ' . BASE_URL . '/admin/hr/leaves'); exit; }
         $days = max(1, (strtotime($endDate) - strtotime($startDate)) / 86400 + 1);
         try {
-            $this->db->execute("INSERT INTO employee_leaves (employee_id, leave_type_id, leave_type, start_date, end_date, total_days, reason, status, created_at) VALUES (?,?,?,?,?,?,?,'pending',NOW())", [$employeeId, $leaveTypeId, '', $startDate, $endDate, $days, $reason]);
+            $this->db->execute("INSERT INTO employee_leaves (employee_id, leave_type_id, leave_type, start_date, end_date, total_days, reason, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'pending',?,NOW())", [$employeeId, $leaveTypeId, '', $startDate, $endDate, $days, $reason, $tid]);
             $this->setFlash('success', 'Leave application submitted');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -517,7 +526,8 @@ class HRController extends AdminController
             try {
                 $duration = 0;
                 if ($startTime && $endTime) { $duration = round((strtotime($endTime) - strtotime($startTime)) / 3600, 2); if ($duration < 0) $duration += 24; }
-                $this->db->execute("INSERT INTO employee_shifts (employee_id, shift_type_id, shift_date, start_time, end_time, duration_hours, status, created_at) VALUES (?,?,?,?,?,?,'scheduled',NOW())", [$employeeId, $shiftTypeId, $shiftDate, $startTime, $endTime, $duration]);
+                $tid = (int)$this->tenantId();
+                $this->db->execute("INSERT INTO employee_shifts (employee_id, shift_type_id, shift_date, start_time, end_time, duration_hours, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'scheduled',?,NOW())", [$employeeId, $shiftTypeId, $shiftDate, $startTime, $endTime, $duration, $tid]);
                 $this->setFlash('success', 'Shift assigned');
             } catch (\Exception $e) {
                 error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -633,6 +643,7 @@ class HRController extends AdminController
     public function storeReview()
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $kpiId = (int)($_POST['kpi_id'] ?? 0);
         $targetValue = $_POST['target_value'] ?? 0;
@@ -643,7 +654,7 @@ class HRController extends AdminController
         try {
             $achievement = $targetValue > 0 ? round(($actualValue / $targetValue) * 100, 2) : 0;
             $score = round($achievement / 100, 2);
-            $this->db->execute("INSERT INTO employee_kpis (employee_id, kpi_id, period_start, period_end, target_value, actual_value, achievement_percentage, score, status, created_at) VALUES (?,?,?,?,?,?,?,?,'completed',NOW())", [$employeeId, $kpiId, $periodStart, $periodEnd, $targetValue, $actualValue, $achievement, $score]);
+            $this->db->execute("INSERT INTO employee_kpis (employee_id, kpi_id, period_start, period_end, target_value, actual_value, achievement_percentage, score, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,'completed',?,NOW())", [$employeeId, $kpiId, $periodStart, $periodEnd, $targetValue, $actualValue, $achievement, $score, $tid]);
             $this->setFlash('success', 'Review created');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -690,6 +701,7 @@ class HRController extends AdminController
     public function storeBonus()
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $bonusType = $_POST['bonus_type'] ?? 'performance';
         $amount = $_POST['bonus_amount'] ?? 0;
@@ -699,7 +711,7 @@ class HRController extends AdminController
         if (!$employeeId || !$amount) { $this->setFlash('error', 'Employee and amount required'); header('Location: ' . BASE_URL . '/admin/hr/bonuses'); exit; }
         try {
             $bn = 'BNS-' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $employeeId . '-' . time();
-            $this->db->execute("INSERT INTO employee_bonuses (employee_id, bonus_number, bonus_type, bonus_amount, bonus_month, bonus_year, reason, payment_status, created_by, created_at) VALUES (?,?,?,?,?,?,?,'pending',?,NOW())", [$employeeId, $bn, $bonusType, $amount, $month, $year, $reason, (int)($_SESSION['admin_id'] ?? 0)]);
+            $this->db->execute("INSERT INTO employee_bonuses (employee_id, bonus_number, bonus_type, bonus_amount, bonus_month, bonus_year, reason, payment_status, created_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'pending',?,?,NOW())", [$employeeId, $bn, $bonusType, $amount, $month, $year, $reason, (int)($_SESSION['admin_id'] ?? 0), $tid]);
             $this->setFlash('success', 'Bonus recorded');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -746,6 +758,7 @@ class HRController extends AdminController
     public function storeSalaryStructure()
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $basic = $_POST['basic_salary'] ?? 0;
         $hraPct = $_POST['hra_percent'] ?? 0;
@@ -763,7 +776,7 @@ class HRController extends AdminController
             $pf = $basic * ($pfPct / 100);
             $gross = $basic + $hra + $da + $ta + $medical + $special;
             $net = $gross - $pf - $tds;
-            $this->db->execute("INSERT INTO employee_salary_structure (employee_id, basic_salary, hra, da, ta, medical_allowance, special_allowance, pf_deduction, tds_deduction, gross_salary, net_salary, effective_from, is_active, created_by, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,NOW())", [$employeeId, $basic, $hra, $da, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, (int)($_SESSION['admin_id'] ?? 0)]);
+            $this->db->execute("INSERT INTO employee_salary_structure (employee_id, basic_salary, hra, da, ta, medical_allowance, special_allowance, pf_deduction, tds_deduction, gross_salary, net_salary, effective_from, is_active, created_by, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,NOW())", [$employeeId, $basic, $hra, $da, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, (int)($_SESSION['admin_id'] ?? 0), $tid]);
             $this->setFlash('success', 'Salary structure created');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -787,6 +800,7 @@ class HRController extends AdminController
     public function updateSalaryStructure($id)
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $basic = $_POST['basic_salary'] ?? 0;
         $hraPct = $_POST['hra_percent'] ?? 0;
         $ta = $_POST['travel_allowance'] ?? 0;
@@ -800,7 +814,7 @@ class HRController extends AdminController
             $pf = $basic * ($pfPct / 100);
             $gross = $basic + $hra + $ta + $medical + $special;
             $net = $gross - $pf - $tds;
-            $this->db->execute("UPDATE employee_salary_structure SET basic_salary=?, hra=?, ta=?, medical_allowance=?, special_allowance=?, pf_deduction=?, tds_deduction=?, gross_salary=?, net_salary=?, effective_from=? WHERE id=?", [$basic, $hra, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, $id]);
+            $this->db->execute("UPDATE employee_salary_structure SET basic_salary=?, hra=?, ta=?, medical_allowance=?, special_allowance=?, pf_deduction=?, tds_deduction=?, gross_salary=?, net_salary=?, effective_from=? WHERE id=? AND tenant_id=?", [$basic, $hra, $ta, $medical, $special, $pf, $tds, $gross, $net, $effFrom, $id, $tid]);
             $this->setFlash('success', 'Salary structure updated');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -845,6 +859,7 @@ class HRController extends AdminController
     public function uploadEmployeeDocument()
     {
         $this->requireAdmin();
+        $tid = (int)$this->tenantId();
         $employeeId = (int)($_POST['employee_id'] ?? 0);
         $docType = $_POST['document_type'] ?? '';
         $docName = $_POST['document_name'] ?? '';
@@ -865,7 +880,7 @@ class HRController extends AdminController
             }
         }
         try {
-            $this->db->execute("INSERT INTO documents (entity_type, entity_id, document_type, url, uploaded_on) VALUES ('employee',?,?,?,?,NOW())", [$employeeId, $docType, $filePath]);
+            $this->db->execute("INSERT INTO documents (entity_type, entity_id, document_type, url, tenant_id, uploaded_on) VALUES ('employee',?,?,?, ?,NOW())", [$employeeId, $docType, $filePath, $tid]);
             $this->setFlash('success', 'Document uploaded');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());

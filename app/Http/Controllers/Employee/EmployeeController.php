@@ -1024,7 +1024,7 @@ class EmployeeController extends BaseController
                 $this->redirect('/employee/leaves');
                 return;
             }
-            $this->db->update('employee_leaves', ['status' => 'cancelled'], ['id' => $id]);
+            $this->db->update('employee_leaves', ['status' => 'cancelled'], ['id' => $id, 'tenant_id' => (int)$this->tenantId()]);
             $_SESSION['flash_success'] = 'Leave application cancelled successfully.';
         } catch (\Exception $e) {
             error_log("Leave cancel error: " . $e->getMessage());
@@ -1164,10 +1164,11 @@ class EmployeeController extends BaseController
         $status = $statusMap[$action] ?? 'verified';
 
         try {
+            $tid = (int)$this->tenantId();
             if ($action === 'mark_sold') {
-                $this->db->execute("UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), sold_at = NOW(), admin_notes = ?, updated_at = NOW() WHERE id = ?", [$status, $employeeId, $adminNotes, $id]);
+                $this->db->execute("UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), sold_at = NOW(), admin_notes = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$status, $employeeId, $adminNotes, $id, $tid]);
             } else {
-                $this->db->execute("UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), admin_notes = ?, updated_at = NOW() WHERE id = ?", [$status, $employeeId, $adminNotes, $id]);
+                $this->db->execute("UPDATE user_properties SET status = ?, verified_by = ?, verified_at = NOW(), admin_notes = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$status, $employeeId, $adminNotes, $id, $tid]);
             }
 
             // Notify property owner
@@ -1718,7 +1719,7 @@ class EmployeeController extends BaseController
                 return;
             }
 
-            $this->db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            $this->db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ? AND tenant_id = ?", [$id, (int)$this->tenantId()]);
             $this->db->execute(
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
                  VALUES (?, 'delete', 'Lead soft-deleted by employee', ?, NOW())",

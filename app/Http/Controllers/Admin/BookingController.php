@@ -241,8 +241,9 @@ class BookingController extends AdminController
     public function destroy($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM plot_bookings WHERE id = ?");
-            $stmt->execute([$id]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("DELETE FROM plot_bookings WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $tid]);
             $_SESSION['success'] = 'Booking deleted successfully.';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();

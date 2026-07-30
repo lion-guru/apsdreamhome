@@ -481,6 +481,16 @@ abstract class Model implements ArrayAccess, JsonSerializable
      */
     public function __call($method, $parameters)
     {
+        $dangerous = ['update', 'destroy', 'truncate', 'insert', 'insertGetId'];
+        if (in_array($method, $dangerous)) {
+            throw new \BadMethodCallException(
+                sprintf(
+                    'Call to undefined method %s::%s() — write methods must be explicitly defined.',
+                    static::class,
+                    $method
+                )
+            );
+        }
         return $this->newQuery()->$method(...$parameters);
     }
 

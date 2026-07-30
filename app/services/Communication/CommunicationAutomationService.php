@@ -3,6 +3,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\AI\AIChatbotService;
 use App\Services\AI\AIGateway;
 use Exception;
@@ -225,6 +226,8 @@ class CommunicationAutomationService
         $name = $this->extractName($text, $messageData);
         
         $leadId = $this->db->insert('leads', [
+            
+            'tenant_id' => TenantContext::getId(),
             'name' => $name,
             'phone' => $phone,
             'whatsapp_number' => ($channel === 'whatsapp') ? $phone : null,
@@ -242,6 +245,8 @@ class CommunicationAutomationService
         if ($leadId) {
             // Log lead creation activity
             $this->db->insert('lead_activities', [
+                
+                'tenant_id' => TenantContext::getId(),
                 'lead_id' => $leadId,
                 'type' => 'created',
                 'description' => "Lead auto-created from $channel inbound message",
@@ -429,6 +434,8 @@ class CommunicationAutomationService
     {
         try {
             $this->db->insert('communication_logs', [
+                
+                'tenant_id' => TenantContext::getId(),
                 'channel' => $channel,
                 'contact_identifier' => $from,
                 'message_text' => $text,
@@ -654,6 +661,8 @@ class CommunicationAutomationService
     {
         try {
             $this->db->insert('automated_messages_log', [
+                
+                'tenant_id' => TenantContext::getId(),
                 'lead_id' => $leadId,
                 'message_type' => $type,
                 'message_content' => $message,

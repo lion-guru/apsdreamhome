@@ -4,6 +4,7 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Payout Batch Service
@@ -29,15 +30,18 @@ class PayoutBatchService
         $this->pdo = $pdo ?: $this->getDb();
     }
 
+    protected function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     private function getDb(): PDO
     {
-        $config = require dirname(__DIR__, 2) . '/config/database.php';
-        return new PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'],
-            $config['password'],
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        return \App\Core\Database\Database::getInstance()->getConnection();
     }
 
     // ── BATCH CRUD ──
@@ -50,8 +54,8 @@ class PayoutBatchService
         try {
             $stmt = $this->pdo->prepare("
                 INSERT INTO payout_batches
-                    (batch_name, batch_type, period_from, period_to, notes, created_by, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, 'draft', NOW())
+                    (batch_name, batch_type, period_from, period_to, notes, created_by, status, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, 'draft', NOW(), ?)
             ");
             $stmt->execute([
                 $data['batch_name'],
@@ -60,6 +64,7 @@ class PayoutBatchService
                 $data['period_to'] ?? null,
                 $data['notes'] ?? null,
                 $data['created_by'],
+                $this->getTenantId(),
             ]);
 
             $batchId = (int)$this->pdo->lastInsertId();
@@ -155,8 +160,8 @@ class PayoutBatchService
             $ins = $this->pdo->prepare("
                 INSERT INTO payout_entries
                     (batch_id, ledger_id, beneficiary_user_id, beneficiary_name,
-                     commission_type, amount, tds_amount, net_amount, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                     commission_type, amount, tds_amount, net_amount, status, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
             ");
 
             foreach ($entries as $entry) {
@@ -177,6 +182,7 @@ class PayoutBatchService
                     $amount,
                     $tds,
                     round($net, 2),
+                    $this->getTenantId(),
                 ]);
 
                 $totalAmount += $amount;
@@ -187,8 +193,8 @@ class PayoutBatchService
             $this->pdo->prepare("
                 UPDATE payout_batches
                 SET total_entries = total_entries + ?, total_amount = total_amount + ?, updated_at = NOW()
-                WHERE id = ?
-            ")->execute([$inserted, $totalAmount, $batchId]);
+                WHERE id = ? AND tenant_id = ?
+            ")->execute([$inserted, $totalAmount, $batchId, $this->getTenantId()]);
 
             $this->pdo->commit();
 
@@ -216,7 +222,7 @@ class PayoutBatchService
         if ($batch['status'] !== 'draft') return ['success' => false, 'error' => 'Only draft batches can be submitted'];
         if ($batch['total_entries'] == 0) return ['success' => false, 'error' => 'Batch has no entries'];
 
-        $this->pdo->prepare("UPDATE payout_batches SET status = 'pending_approval', updated_at = NOW() WHERE id = ?")->execute([$batchId]);
+        $this->pdo->prepare("UPDATE payout_batches SET status = 'pending_approval', updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$batchId, $this->getTenantId()]);
         return ['success' => true];
     }
 
@@ -232,8 +238,8 @@ class PayoutBatchService
         $this->pdo->prepare("
             UPDATE payout_batches
             SET status = 'approved', approved_by = ?, approved_at = NOW(), updated_at = NOW()
-            WHERE id = ?
-        ")->execute([$approvedBy, $batchId]);
+            WHERE id = ? AND tenant_id = ?
+        ")->execute([$approvedBy, $batchId, $this->getTenantId()]);
 
         return ['success' => true];
     }
@@ -250,17 +256,18 @@ class PayoutBatchService
         $this->pdo->prepare("
             UPDATE payout_batches
             SET status = 'rejected', notes = CONCAT(COALESCE(notes, ''), '\nRejected: ', ?), updated_at = NOW()
-            WHERE id = ?
-        ")->execute([$reason, $batchId]);
+            WHERE id = ? AND tenant_id = ?
+        ")->execute([$reason, $batchId, $this->getTenantId()]);
 
         // Cancel all pending entries
-        $this->pdo->prepare("UPDATE payout_entries SET status = 'cancelled' WHERE batch_id = ? AND status = 'pending'")->execute([$batchId]);
+        $this->pdo->prepare("UPDATE payout_entries SET status = 'cancelled' WHERE batch_id = ? AND status = 'pending' AND tenant_id = ?")->execute([$batchId, $this->getTenantId()]);
 
         // Return entries to pending in ledger
+        $tid = $this->getTenantId();
         $ledgerIds = $this->pdo->prepare("SELECT ledger_id FROM payout_entries WHERE batch_id = ? AND status = 'cancelled' AND ledger_id IS NOT NULL");
         $ledgerIds->execute([$batchId]);
         foreach ($ledgerIds->fetchAll(PDO::FETCH_COLUMN) as $lid) {
-            $this->pdo->prepare("UPDATE mlm_commission_ledger SET status = 'pending' WHERE id = ? AND status = 'processing'")->execute([$lid]);
+            $this->pdo->prepare("UPDATE mlm_commission_ledger SET status = 'pending' WHERE id = ? AND status = 'processing' AND tenant_id = ?")->execute([$lid, $tid]);
         }
 
         return ['success' => true];
@@ -281,14 +288,15 @@ class PayoutBatchService
             $this->pdo->prepare("
                 UPDATE payout_batches
                 SET status = 'processing', processed_by = ?, processed_at = NOW(), updated_at = NOW()
-                WHERE id = ?
-            ")->execute([$processedBy, $batchId]);
+                WHERE id = ? AND tenant_id = ?
+            ")->execute([$processedBy, $batchId, $this->getTenantId()]);
 
             // Mark ledger entries as processing
+            $tid = $this->getTenantId();
             $ledgerIds = $this->pdo->prepare("SELECT ledger_id FROM payout_entries WHERE batch_id = ? AND ledger_id IS NOT NULL");
             $ledgerIds->execute([$batchId]);
             foreach ($ledgerIds->fetchAll(PDO::FETCH_COLUMN) as $lid) {
-                $this->pdo->prepare("UPDATE mlm_commission_ledger SET status = 'processing' WHERE id = ? AND status = 'pending'")->execute([$lid]);
+                $this->pdo->prepare("UPDATE mlm_commission_ledger SET status = 'processing' WHERE id = ? AND status = 'pending' AND tenant_id = ?")->execute([$lid, $tid]);
             }
 
             $this->pdo->commit();
@@ -307,9 +315,9 @@ class PayoutBatchService
         $stmt = $this->pdo->prepare("
             UPDATE payout_entries
             SET status = 'completed', payment_reference = ?, processed_at = NOW()
-            WHERE id = ? AND status IN ('pending', 'processing')
+            WHERE id = ? AND status IN ('pending', 'processing') AND tenant_id = ?
         ");
-        $stmt->execute([$paymentRef, $entryId]);
+        $stmt->execute([$paymentRef, $entryId, $this->getTenantId()]);
 
         if ($stmt->rowCount() === 0) {
             return ['success' => false, 'error' => 'Entry not found or not in processable status'];
@@ -321,11 +329,13 @@ class PayoutBatchService
         $ledgerId = $entry->fetchColumn();
 
         if ($ledgerId) {
-            $this->pdo->prepare("UPDATE mlm_commission_ledger SET status = 'paid' WHERE id = ? AND status = 'processing'")->execute([$ledgerId]);
+            $this->pdo->prepare("UPDATE mlm_commission_ledger SET status = 'paid' WHERE id = ? AND status = 'processing' AND tenant_id = ?")->execute([$ledgerId, $this->getTenantId()]);
         }
 
         // Check if batch is complete
-        $batchId = $this->pdo->query("SELECT batch_id FROM payout_entries WHERE id = $entryId")->fetchColumn();
+        $batchStmt = $this->pdo->prepare("SELECT batch_id FROM payout_entries WHERE id = ?");
+        $batchStmt->execute([$entryId]);
+        $batchId = $batchStmt->fetchColumn();
         $this->checkBatchCompletion($batchId);
 
         return ['success' => true];
@@ -340,16 +350,18 @@ class PayoutBatchService
         if (!$batch) return ['success' => false, 'error' => 'Batch not found'];
 
         // Check all entries are completed
-        $pending = $this->pdo->query("
+        $pendingStmt = $this->pdo->prepare("
             SELECT COUNT(*) FROM payout_entries
-            WHERE batch_id = $batchId AND status NOT IN ('completed', 'cancelled')
-        ")->fetchColumn();
+            WHERE batch_id = ? AND status NOT IN ('completed', 'cancelled')
+        ");
+        $pendingStmt->execute([$batchId]);
+        $pending = $pendingStmt->fetchColumn();
 
         if ((int)$pending > 0) {
             return ['success' => false, 'error' => "$pending entries still pending"];
         }
 
-        $this->pdo->prepare("UPDATE payout_batches SET status = 'completed', updated_at = NOW() WHERE id = ?")->execute([$batchId]);
+        $this->pdo->prepare("UPDATE payout_batches SET status = 'completed', updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$batchId, $this->getTenantId()]);
         return ['success' => true];
     }
 
@@ -378,7 +390,9 @@ class PayoutBatchService
      */
     public function getBatchEntries(int $batchId, int $page = 1, int $perPage = 50): array
     {
-        $total = $this->pdo->query("SELECT COUNT(*) FROM payout_entries WHERE batch_id = $batchId")->fetchColumn();
+        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM payout_entries WHERE batch_id = ?");
+        $countStmt->execute([$batchId]);
+        $total = $countStmt->fetchColumn();
         $totalPages = max(1, ceil($total / $perPage));
         $page = max(1, min($page, $totalPages));
         $offset = ($page - 1) * $perPage;
@@ -389,9 +403,9 @@ class PayoutBatchService
             LEFT JOIN mlm_commission_ledger ml ON ml.id = pe.ledger_id
             WHERE pe.batch_id = ?
             ORDER BY pe.beneficiary_name
-            LIMIT $perPage OFFSET $offset
+            LIMIT ? OFFSET ?
         ");
-        $stmt->execute([$batchId]);
+        $stmt->execute([$batchId, $perPage, $offset]);
 
         return [
             'items'       => $stmt->fetchAll(PDO::FETCH_ASSOC),
@@ -412,11 +426,6 @@ class PayoutBatchService
         if ($type) { $where[] = "b.batch_type = ?"; $params[] = $type; }
         $whereStr = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        $total = $this->pdo->query("SELECT COUNT(*) FROM payout_batches b $whereStr")->execute($params) ?
-                 $this->pdo->query("SELECT COUNT(*) FROM payout_batches b $whereStr")->execute($params) :
-                 $this->pdo->query("SELECT COUNT(*) FROM payout_batches b")->fetchColumn();
-
-        // Simpler approach
         $countSql = "SELECT COUNT(*) FROM payout_batches b $whereStr";
         $countStmt = $this->pdo->prepare($countSql);
         $countStmt->execute($params);
@@ -433,10 +442,10 @@ class PayoutBatchService
             LEFT JOIN users a ON a.id = b.approved_by
             $whereStr
             ORDER BY b.created_at DESC
-            LIMIT $perPage OFFSET $offset
+            LIMIT ? OFFSET ?
         ";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute(array_merge($params, [$perPage, $offset]));
 
         return [
             'items'       => $stmt->fetchAll(PDO::FETCH_ASSOC),
@@ -506,7 +515,7 @@ class PayoutBatchService
         }
         fclose($fp);
 
-        $this->pdo->prepare("UPDATE payout_batches SET bank_export_file = ?, updated_at = NOW() WHERE id = ?")->execute([$filename, $batchId]);
+        $this->pdo->prepare("UPDATE payout_batches SET bank_export_file = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$filename, $batchId, $this->getTenantId()]);
 
         return ['success' => true, 'file' => $filename, 'path' => $filepath, 'entries' => count($rows)];
     }
@@ -515,12 +524,14 @@ class PayoutBatchService
 
     private function checkBatchCompletion(int $batchId): void
     {
-        $pending = $this->pdo->query("
-            SELECT COUNT(*) FROM payout_entries WHERE batch_id = $batchId AND status NOT IN ('completed', 'cancelled')
-        ")->fetchColumn();
+        $pendingStmt = $this->pdo->prepare("
+            SELECT COUNT(*) FROM payout_entries WHERE batch_id = ? AND status NOT IN ('completed', 'cancelled')
+        ");
+        $pendingStmt->execute([$batchId]);
+        $pending = $pendingStmt->fetchColumn();
 
         if ((int)$pending === 0) {
-            $this->pdo->prepare("UPDATE payout_batches SET status = 'completed', updated_at = NOW() WHERE id = ? AND status = 'processing'")->execute([$batchId]);
+            $this->pdo->prepare("UPDATE payout_batches SET status = 'completed', updated_at = NOW() WHERE id = ? AND status = 'processing' AND tenant_id = ?")->execute([$batchId, $this->getTenantId()]);
         }
     }
 }

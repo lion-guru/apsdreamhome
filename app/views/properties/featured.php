@@ -7,7 +7,7 @@ if (!defined('BASE_URL')) {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     define('BASE_URL', $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $basePath);
 }
-require_once __DIR__ . '/../../../layouts/header.php';
+require_once __DIR__ . '/../../layouts/header.php';
 
 // Helper function to get status badge class
 if (!function_exists('getStatusBadgeClass')) {
@@ -338,4 +338,4 @@ $page_description = 'Discover exceptional featured properties handpicked for you
     }
 </style>
 
-<?php require_once __DIR__ . '/../../../layouts/footer.php'; ?>
+<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

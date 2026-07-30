@@ -1,0 +1,11 @@
+/* Image Uploader dropzone styles */
+.upload-dropzone { transition: all 0.2s ease; cursor: pointer; }
+.upload-dropzone:hover { border-color: #667eea !important; background: #f9fafb !important; }
+.upload-dropzone.border-primary { border-color: #667eea !important; }
+
+.thumb-item .thumb-actions { opacity: 0; transition: opacity 0.2s; }
+.thumb-item:hover .thumb-actions { opacity: 1; }
+
+.thumb-item .thumb-actions .btn { margin: 2px; }
+.thumb-item img { transition: transform 0.2s; }
+.thumb-item:hover img { transform: scale(1.05); }

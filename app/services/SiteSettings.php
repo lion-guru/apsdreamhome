@@ -30,8 +30,7 @@ class SiteSettings
             'footer_html' => ''
         ];
         try {
-            $pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             $pdo->exec("CREATE TABLE IF NOT EXISTS site_settings (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 brand_name VARCHAR(255) NULL,
@@ -58,8 +57,7 @@ class SiteSettings
     public static function update(array $data): bool
     {
         try {
-            $pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             $stmt = $pdo->prepare("INSERT INTO site_settings (brand_name, logo_url, favicon_url, nav_json, social_json, footer_html) VALUES (:brand_name, :logo_url, :favicon_url, :nav_json, :social_json, :footer_html)");
             $ok = $stmt->execute([
                 ':brand_name' => $data['brand_name'] ?? null,

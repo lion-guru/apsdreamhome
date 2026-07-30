@@ -3,6 +3,7 @@
 namespace App\Services\Business;
 
 use App\Core\Database;
+use App\Traits\ServiceTenantTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -11,6 +12,7 @@ use Psr\Log\LoggerInterface;
  */
 class FarmerService
 {
+    use ServiceTenantTrait;
     private Database $db;
     private LoggerInterface $logger;
     private array $config;
@@ -196,9 +198,11 @@ class FarmerService
                            (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved') as total_land_acres,
                            (SELECT COUNT(*) FROM documents WHERE entity_type = 'farmer' AND entity_id = f.id) as document_count
                     FROM farmers f 
-                    WHERE f.id = ?";
+                    WHERE f.id = ?" . $this->tenantSql();
             
-            $farmer = $this->db->fetchOne($sql, [$id]);
+            $params = [$id];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $farmer = $this->db->fetchOne($sql, $params);
             
             if ($farmer) {
                 $farmer['documents'] = $this->getFarmerDocuments($id);
@@ -221,11 +225,17 @@ class FarmerService
     public function getFarmers(array $filters = []): array
     {
         try {
+            $tid = $this->tenantId();
             $sql = "SELECT f.*, 
                            (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved') as total_land_acres
                     FROM farmers f 
                     WHERE 1=1";
             $params = [];
+
+            if ($tid > 1) {
+                $sql .= " AND f.tenant_id = ?";
+                $params[] = $tid;
+            }
 
             // Add filters
             if (!empty($filters['status'])) {
@@ -314,9 +324,11 @@ class FarmerService
             // Update status
             $sql = "UPDATE farmers 
                     SET status = ?, status_reason = ?, updated_at = NOW() 
-                    WHERE id = ?";
+                    WHERE id = ?" . $this->tenantSql();
+            $params = [$status, $reason, $id];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             
-            $this->db->execute($sql, [$status, $reason, $id]);
+            $this->db->execute($sql, $params);
 
             // Handle status-specific actions
             if ($status === self::STATUS_SUSPENDED || $status === self::STATUS_BLACKLISTED) {
@@ -417,22 +429,29 @@ class FarmerService
             $stats = [];
 
             // Total farmers
-            $sql = "SELECT COUNT(*) as total FROM farmers";
+            $tid = $this->tenantId();
             $params = [];
-            
+            $fromSql = "SELECT COUNT(*) as total FROM farmers";
+            if ($tid > 1) {
+                $fromSql .= " WHERE tenant_id = ?";
+                $params[] = $tid;
+            }
             if (!empty($filters['date_from'])) {
-                $sql .= " WHERE created_at >= ?";
+                $fromSql .= ($tid > 1 ? " AND" : " WHERE") . " created_at >= ?";
                 $params[] = $filters['date_from'];
             }
             
-            $stats['total_farmers'] = $this->db->fetchOne($sql, $params) ?? 0;
+            $stats['total_farmers'] = $this->db->fetchOne($fromSql, $params) ?? 0;
 
             // Farmers by status
-            $statusSql = "SELECT status, COUNT(*) as count FROM farmers";
             $statusParams = [];
-            
+            $statusSql = "SELECT status, COUNT(*) as count FROM farmers";
+            if ($tid > 1) {
+                $statusSql .= " WHERE tenant_id = ?";
+                $statusParams[] = $tid;
+            }
             if (!empty($filters['date_from'])) {
-                $statusSql .= " WHERE created_at >= ?";
+                $statusSql .= ($tid > 1 ? " AND" : " WHERE") . " created_at >= ?";
                 $statusParams[] = $filters['date_from'];
             }
             
@@ -445,29 +464,34 @@ class FarmerService
             }
 
             // Land allocation statistics
-            $landSql = "SELECT COUNT(*) as total_allocations, SUM(size_acres) as total_acres FROM land_allocations WHERE status = 'approved'";
-            $landStats = $this->db->fetchOne($landSql);
+            $landSql = "SELECT COUNT(*) as total_allocations, SUM(size_acres) as total_acres FROM land_allocations WHERE status = 'approved'" . $this->tenantSql();
+            $landParams = [];
+            if ($tid > 1) $landParams[] = $tid;
+            $landStats = $this->db->fetchOne($landSql, $landParams);
             $stats['land_allocations'] = $landStats ?? [
                 'total_allocations' => 0,
                 'total_acres' => 0
             ];
 
+            // Commission statistics (farmer_commissions may not exist)
+            $commissionStats = ['total_commissions' => 0, 'total_amount' => 0];
             try {
-                // Commission statistics
                 $commissionSql = "SELECT COUNT(*) as total_commissions, SUM(amount) as total_amount FROM farmer_commissions WHERE status = 'paid'";
+                $commissionStats = $this->db->fetchOne($commissionSql) ?? $commissionStats;
             } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
+                error_log("FarmerService commission stats: " . $e->getMessage());
             }
-            $commissionStats = $this->db->fetchOne($commissionSql);
-            $stats['commissions'] = $commissionStats ?? [
-                'total_commissions' => 0,
-                'total_amount' => 0
-            ];
+            $stats['commissions'] = $commissionStats;
 
             // Regional distribution
-            $regionSql = "SELECT region, COUNT(*) as count FROM farmers GROUP BY region ORDER BY count DESC";
-            $stats['by_region'] = $this->db->fetchAll($regionSql);
+            $regionSql = "SELECT region, COUNT(*) as count FROM farmers";
+            $regionParams = [];
+            if ($tid > 1) {
+                $regionSql .= " WHERE tenant_id = ?";
+                $regionParams[] = $tid;
+            }
+            $regionSql .= " GROUP BY region ORDER BY count DESC";
+            $stats['by_region'] = $this->db->fetchAll($regionSql, $regionParams);
 
             // Recent activities
             $stats['recent_activities'] = $this->getRecentActivities($filters);
@@ -554,18 +578,17 @@ class FarmerService
 
     private function isDuplicateFarmer(string $email, ?string $phone): bool
     {
-        $sql = "SELECT COUNT(*) as count FROM farmers WHERE email = ? OR phone = ?";
-        $count = $this->db->fetchOne($sql, [$email, $phone]) ?? 0;
+        $sql = "SELECT COUNT(*) as count FROM farmers WHERE (email = ? OR phone = ?)" . $this->tenantSql();
+        $params = [$email, $phone];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $count = $this->db->fetchOne($sql, $params) ?? 0;
         return $count > 0;
     }
 
     private function createFarmerRecord(array $data): string
     {
-        $sql = "INSERT INTO farmers 
-                (full_name, email, phone, address, region, district, state, pin_code, aadhaar_number, pan_number, bank_account_number, bank_ifsc, status, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
-        
-        $this->db->execute($sql, [
+        $columns = ['full_name', 'email', 'phone', 'address', 'region', 'district', 'state', 'pin_code', 'aadhaar_number', 'pan_number', 'bank_account_number', 'bank_ifsc', 'status', 'created_at'];
+        $values = [
             $data['full_name'],
             $data['email'],
             $data['phone'] ?? null,
@@ -578,7 +601,15 @@ class FarmerService
             $data['pan_number'] ?? null,
             $data['bank_account_number'] ?? null,
             $data['bank_ifsc'] ?? null
-        ]);
+        ];
+        if ($this->tenantId() > 1) {
+            $columns[] = 'tenant_id';
+            $values[] = $this->tenantId();
+        }
+        $placeholders = rtrim(str_repeat('?, ', count($values)), ', ');
+        $sql = "INSERT INTO farmers (" . implode(', ', $columns) . ") VALUES ($placeholders)";
+        
+        $this->db->execute($sql, $values);
         
         return $this->db->lastInsertId();
     }
@@ -586,34 +617,36 @@ class FarmerService
     private function processFarmerDocuments(int $farmerId, array $documents): void
     {
         foreach ($documents as $docType => $docData) {
-            $sql = "INSERT INTO documents 
-                    (entity_type, entity_id, document_type, url, uploaded_on) 
-                    VALUES ('farmer', ?, ?, ?, NOW())";
+            $columns = ['entity_type', 'entity_id', 'document_type', 'url', 'uploaded_on'];
+            $values = ['farmer', $farmerId, $docType, $docData['path'] ?? ''];
+            if ($this->tenantId() > 1) {
+                $columns[] = 'tenant_id';
+                $values[] = $this->tenantId();
+            }
+            $placeholders = rtrim(str_repeat('?, ', count($values)), ', ');
+            $sql = "INSERT INTO documents (" . implode(', ', $columns) . ") VALUES ($placeholders)";
             
-            $this->db->execute($sql, [
-                $farmerId,
-                $docType,
-                $docData['path'] ?? ''
-            ]);
+            $this->db->execute($sql, $values);
         }
     }
 
     private function createCommissionStructure(int $farmerId): void
     {
         try {
-            $sql = "INSERT INTO farmer_commission_structures 
-                    (farmer_id, commission_type, rate, effective_from, created_at) 
-                    VALUES (?, ?, ?, NOW(), NOW())";
+            $columns = ['farmer_id', 'commission_type', 'rate', 'effective_from', 'created_at'];
+            $values = [$farmerId, self::COMMISSION_LAND_SALE, $this->config['commission_rate']];
+            if ($this->tenantId() > 1) {
+                $columns[] = 'tenant_id';
+                $values[] = $this->tenantId();
+            }
+            $placeholders = rtrim(str_repeat('?, ', count($values)), ', ');
+            $sql = "INSERT INTO farmer_commission_structures (" . implode(', ', $columns) . ") VALUES ($placeholders)";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         
-        $this->db->execute($sql, [
-            $farmerId,
-            self::COMMISSION_LAND_SALE,
-            $this->config['commission_rate']
-        ]);
+        $this->db->execute($sql, $values);
     }
 
     private function sendWelcomeNotification(int $farmerId, array $farmerData): void
@@ -649,8 +682,10 @@ class FarmerService
 
     private function isLandAvailable(string $plotId): bool
     {
-        $sql = "SELECT COUNT(*) as count FROM land_allocations WHERE plot_id = ? AND status = 'approved'";
-        $count = $this->db->fetchOne($sql, [$plotId]) ?? 0;
+        $sql = "SELECT COUNT(*) as count FROM land_allocations WHERE plot_id = ? AND status = 'approved'" . $this->tenantSql();
+        $params = [$plotId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $count = $this->db->fetchOne($sql, $params) ?? 0;
         return $count === 0;
     }
 
@@ -663,11 +698,8 @@ class FarmerService
 
     private function createLandAllocation(int $farmerId, array $data): string
     {
-        $sql = "INSERT INTO land_allocations 
-                (farmer_id, plot_id, survey_number, size_acres, land_type, location, coordinates, allocation_date, expiry_date, allocation_amount, commission_rate, status, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-        
-        $this->db->execute($sql, [
+        $columns = ['farmer_id', 'plot_id', 'survey_number', 'size_acres', 'land_type', 'location', 'coordinates', 'allocation_date', 'expiry_date', 'allocation_amount', 'commission_rate', 'status', 'created_at'];
+        $values = [
             $farmerId,
             $data['plot_id'],
             $data['survey_number'] ?? null,
@@ -680,15 +712,27 @@ class FarmerService
             $data['allocation_amount'] ?? 0,
             $this->config['commission_rate'],
             $this->config['auto_approve'] ? self::ALLOCATION_APPROVED : self::ALLOCATION_PENDING
-        ]);
+        ];
+        if ($this->tenantId() > 1) {
+            $columns[] = 'tenant_id';
+            $values[] = $this->tenantId();
+        }
+        $placeholders = rtrim(str_repeat('?, ', count($values)), ', ');
+        $sql = "INSERT INTO land_allocations (" . implode(', ', $columns) . ") VALUES ($placeholders)";
+        
+        $this->db->execute($sql, $values);
         
         return $this->db->lastInsertId();
     }
 
     private function updateLandStatus(string $plotId, string $status): void
     {
-        $sql = "UPDATE land_plots SET status = ?, updated_at = NOW() WHERE plot_id = ?";
-        $this->db->execute($sql, [$status, $plotId]);
+        try {
+            $sql = "UPDATE land_plots SET status = ?, updated_at = NOW() WHERE plot_id = ?";
+            $this->db->execute($sql, [$status, $plotId]);
+        } catch (\Throwable $e) {
+            error_log("FarmerService::updateLandStatus - " . $e->getMessage());
+        }
     }
 
     private function sendAllocationNotification(int $farmerId, int $allocationId, array $data): void
@@ -747,8 +791,10 @@ class FarmerService
 
     private function revokeAllLandAllocations(int $farmerId): void
     {
-        $sql = "UPDATE land_allocations SET status = ?, updated_at = NOW() WHERE farmer_id = ?";
-        $this->db->execute($sql, [self::ALLOCATION_REVOKED, $farmerId]);
+        $sql = "UPDATE land_allocations SET status = ?, updated_at = NOW() WHERE farmer_id = ?" . $this->tenantSql();
+        $params = [self::ALLOCATION_REVOKED, $farmerId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $this->db->execute($sql, $params);
     }
 
     private function logFarmerActivity(int $farmerId, string $type, string $description, string $data = ''): void
@@ -844,13 +890,15 @@ class FarmerService
                         WHERE farmer_id = ? AND status = 'paid'
                     ),
                     updated_at = NOW()
-                    WHERE f.id = ?";
+                    WHERE f.id = ?" . $this->tenantSql();
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         
-        $this->db->execute($sql, [$farmerId, $farmerId]);
+        $params = [$farmerId, $farmerId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $this->db->execute($sql, $params);
     }
 
     private function sendCommissionNotification(int $farmerId, int $commissionId, float $amount): void
@@ -866,16 +914,21 @@ class FarmerService
     private function getRecentActivities(array $filters): array
     {
         try {
+            $tid = $this->tenantId();
             $sql = "SELECT fa.*, f.full_name, f.email 
                     FROM farmer_activities fa 
                     JOIN farmers f ON fa.farmer_id = f.id 
-                    ORDER BY fa.created_at DESC 
-                    LIMIT 20";
+                    WHERE 1=1";
+            $params = [];
+            if ($tid > 1) {
+                $sql .= " AND f.tenant_id = ?";
+                $params[] = $tid;
+            }
+            $sql .= " ORDER BY fa.created_at DESC LIMIT 20";
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log("FarmerService::getRecentActivities - " . $e->getMessage());
         }
         
-        return $this->db->fetchAll($sql);
+        return $this->db->fetchAll($sql, $params ?? []);
     }
 }

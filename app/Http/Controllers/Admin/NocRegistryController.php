@@ -290,11 +290,6 @@ class NocRegistryController extends AdminController
 
     private function getPdoLocal(): \PDO
     {
-        $config = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-        return new \PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'], $config['password'],
-            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-        );
+        return \App\Core\Database\Database::getInstance()->getConnection();
     }
 }

@@ -34,12 +34,7 @@ class GSTNApiService
         $this->apiKey = $config['api_key'] ?? $dbConfig['api_key'] ?? ($_ENV['GSTN_API_KEY'] ?? '');
 
         try {
-            $dbCfg = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-            $this->pdo = new PDO(
-                "mysql:host={$dbCfg['host']};port={$dbCfg['port']};dbname={$dbCfg['database']};charset=utf8mb4",
-                $dbCfg['username'], $dbCfg['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
         } catch (\Exception $e) {
             error_log("[GSTNApiService] DB connection failed: " . $e->getMessage());
         }

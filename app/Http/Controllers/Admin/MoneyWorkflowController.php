@@ -104,6 +104,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $id = (int)($_POST['id'] ?? 0);
             if ($id > 0) {
+                $tid = (int)$this->tenantId();
                 $this->db->update('bank_accounts_master', [
                     'account_name'         => trim($_POST['account_name'] ?? ''),
                     'account_number'       => trim($_POST['account_number'] ?? ''),
@@ -117,7 +118,7 @@ class MoneyWorkflowController extends AdminController
                     'signatory_name'       => $_POST['signatory_name'] ?? null,
                     'signatory_pan'        => strtoupper($_POST['signatory_pan'] ?? ''),
                     'active'               => isset($_POST['active']) ? 1 : 0,
-                ], 'id = ?', [$id]);
+                ], ['id' => $id, 'tenant_id' => $tid]);
                 $this->setFlash('success', 'Bank account updated');
             } else {
                 $this->service->createBankAccount($_POST);

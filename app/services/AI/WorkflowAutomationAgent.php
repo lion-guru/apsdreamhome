@@ -3,11 +3,11 @@
  * WorkflowAutomationAgent - Smart event-driven automation
  * 
  * Triggers actions based on business events:
- * - Lead created → score + assign + welcome
- * - Payment received → update balance + receipt + commission
- * - Booking completed → contract + follow-up + notify
- * - EMI overdue → reminder + penalty + escalation
- * - Site visit → confirmation + follow-up
+ * - Lead created -> score + assign + welcome
+ * - Payment received -> update balance + receipt + commission
+ * - Booking completed -> contract + follow-up + notify
+ * - EMI overdue -> reminder + penalty + escalation
+ * - Site visit -> confirmation + follow-up
  * 
  * "Chota packet bada dhamaka" — event-driven, zero manual work
  */
@@ -19,6 +19,7 @@ use App\Core\Database\Database;
 class WorkflowAutomationAgent
 {
     private $db;
+    private $tenantId;
 
     private $eventHandlers = [
         'lead.created' => ['scoreLead', 'sendWelcome', 'notifyAssociate'],
@@ -38,6 +39,12 @@ class WorkflowAutomationAgent
     public function __construct()
     {
         $this->db = Database::getInstance();
+        $this->tenantId = (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
+    }
+
+    private function getTenantId(): int
+    {
+        return $this->tenantId;
     }
 
     /**
@@ -87,12 +94,13 @@ class WorkflowAutomationAgent
             $score = $scorer->score($leadId);
 
             // Store score
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO ai_lead_scores (lead_id, score, grade, factors, scored_at)
-                 VALUES (?, ?, ?, ?, NOW())
+                "INSERT INTO ai_lead_scores (lead_id, score, grade, factors, tenant_id, scored_at)
+                 VALUES (?, ?, ?, ?, ?, NOW())
                  ON DUPLICATE KEY UPDATE score = ?, grade = ?, factors = ?, scored_at = NOW()",
                 [$leadId, $score['score'], $score['grade'], json_encode($score['breakdown'] ?? []),
-                 $score['score'], $score['grade'], json_encode($score['breakdown'] ?? [])]
+                 $tid, $score['score'], $score['grade'], json_encode($score['breakdown'] ?? [])]
             );
 
             return ['success' => true, 'message' => "Lead scored: {$score['score']}/100 (Grade: {$score['grade']})"];
@@ -108,10 +116,11 @@ class WorkflowAutomationAgent
         if (!$phone) return ['success' => false, 'message' => 'No phone'];
 
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Welcome!', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Namaste $name! Welcome to APS Dream Home. 🏠\n\nI'm your AI assistant. How can I help you today?"]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'whatsapp', 'Welcome!', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Namaste $name! Welcome to APS Dream Home.\n\nI'm your AI assistant. How can I help you today?", $tid]
             );
             return ['success' => true, 'message' => "Welcome message queued for $name"];
         } catch (\Exception $e) {
@@ -125,10 +134,11 @@ class WorkflowAutomationAgent
         if (!$assignedTo) return ['success' => false, 'message' => 'No associate'];
 
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'push', 'New Lead Assigned', ?, 'queued', NOW())",
-                [$assignedTo, "A new lead has been assigned to you. Please follow up within 24 hours."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'push', 'New Lead Assigned', ?, 'queued', ?, NOW())",
+                [$assignedTo, "A new lead has been assigned to you. Please follow up within 24 hours.", $tid]
             );
             return ['success' => true, 'message' => "Associate notified"];
         } catch (\Exception $e) {
@@ -157,10 +167,11 @@ class WorkflowAutomationAgent
         if (!$leadId) return ['success' => false, 'message' => 'No lead_id'];
 
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO crm_tasks (lead_id, assigned_to, title, description, priority, due_date, status, created_at)
-                 VALUES (?, ?, 'Follow up with lead', 'Auto-scheduled follow-up after qualification', 'high', DATE_ADD(NOW(), INTERVAL 1 DAY), 'queued', NOW())",
-                [$leadId, $assignedTo]
+                "INSERT INTO crm_tasks (lead_id, assigned_to, title, description, priority, due_date, status, tenant_id, created_at)
+                 VALUES (?, ?, 'Follow up with lead', 'Auto-scheduled follow-up after qualification', 'high', DATE_ADD(NOW(), INTERVAL 1 DAY), 'queued', ?, NOW())",
+                [$leadId, $assignedTo, $tid]
             );
             return ['success' => true, 'message' => "Follow-up scheduled"];
         } catch (\Exception $e) {
@@ -172,10 +183,11 @@ class WorkflowAutomationAgent
     {
         try {
             $leadId = $data['lead_id'] ?? '?';
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (1, 'push', 'Lead Qualified', ?, 'queued', NOW())",
-                ["Lead #$leadId has been qualified and needs attention."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (1, 'push', 'Lead Qualified', ?, 'queued', ?, NOW())",
+                ["Lead #$leadId has been qualified and needs attention.", $tid]
             );
             return ['success' => true, 'message' => "Manager notified"];
         } catch (\Exception $e) {
@@ -194,10 +206,11 @@ class WorkflowAutomationAgent
         if (!$phone) return ['success' => false, 'message' => 'No phone'];
 
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Congratulations!', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "🎉 Congratulations! Your booking is confirmed. Welcome to APS Dream Home family!"]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'whatsapp', 'Congratulations!', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Congratulations! Your booking is confirmed. Welcome to APS Dream Home family!", $tid]
             );
             return ['success' => true, 'message' => "Congrats message sent"];
         } catch (\Exception $e) {
@@ -211,10 +224,10 @@ class WorkflowAutomationAgent
         if (!$bookingId) return ['success' => false, 'message' => 'No booking_id'];
 
         try {
-            // Update booking total paid
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "UPDATE plot_bookings SET total_paid = COALESCE(total_paid, 0) + ? WHERE id = ?",
-                [$data['amount'] ?? 0, $bookingId]
+                "UPDATE plot_bookings SET total_paid = COALESCE(total_paid, 0) + ? WHERE id = ? AND tenant_id = ?",
+                [$data['amount'] ?? 0, $bookingId, $tid]
             );
             return ['success' => true, 'message' => "Balance updated"];
         } catch (\Exception $e) {
@@ -251,10 +264,11 @@ class WorkflowAutomationAgent
     private function sendReminder(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'email', 'Payment Reminder', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Your payment is overdue. Please clear the dues to avoid penalties."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'email', 'Payment Reminder', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Your payment is overdue. Please clear the dues to avoid penalties.", $tid]
             );
             return ['success' => true, 'message' => "Reminder sent"];
         } catch (\Exception $e) {
@@ -274,10 +288,11 @@ class WorkflowAutomationAgent
 
         try {
             $bookingId = $data['booking_id'] ?? '?';
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (1, 'email', 'CRITICAL: Overdue Payment', ?, 'queued', NOW())",
-                ["CRITICAL: Booking #$bookingId is $daysOverdue days overdue!"]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (1, 'email', 'CRITICAL: Overdue Payment', ?, 'queued', ?, NOW())",
+                ["CRITICAL: Booking #$bookingId is $daysOverdue days overdue!", $tid]
             );
             return ['success' => true, 'message' => "Escalated to management"];
         } catch (\Exception $e) {
@@ -310,7 +325,11 @@ class WorkflowAutomationAgent
         if (!$plotId) return ['success' => false, 'message' => 'No plot_id'];
 
         try {
-            $this->db->execute("UPDATE plots SET status = 'available' WHERE id = ?", [$plotId]);
+            $tid = $this->getTenantId();
+            $this->db->execute(
+                "UPDATE plots SET status = 'available' WHERE id = ? AND tenant_id = ?",
+                [$plotId, $tid]
+            );
             return ['success' => true, 'message' => "Plot released"];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -321,10 +340,11 @@ class WorkflowAutomationAgent
     {
         try {
             $bookingId = $data['booking_id'] ?? '?';
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (1, 'push', 'Team Notification', ?, 'queued', NOW())",
-                ["Booking #$bookingId status changed."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (1, 'push', 'Team Notification', ?, 'queued', ?, NOW())",
+                ["Booking #$bookingId status changed.", $tid]
             );
             return ['success' => true, 'message' => "Team notified"];
         } catch (\Exception $e) {
@@ -349,10 +369,11 @@ class WorkflowAutomationAgent
     private function scheduleReminder(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'sms', 'EMI Reminder', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Your EMI installment is due soon. Please ensure timely payment."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'sms', 'EMI Reminder', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Your EMI installment is due soon. Please ensure timely payment.", $tid]
             );
             return ['success' => true, 'message' => "Reminder scheduled"];
         } catch (\Exception $e) {
@@ -363,10 +384,11 @@ class WorkflowAutomationAgent
     private function sendPenaltyNotice(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'email', 'Penalty Notice', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Your EMI payment is overdue. A penalty of ₹" . ($data['penalty'] ?? '500') . " has been applied."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'email', 'Penalty Notice', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Your EMI payment is overdue. A penalty of Rs. " . ($data['penalty'] ?? '500') . " has been applied.", $tid]
             );
             return ['success' => true, 'message' => "Penalty notice sent"];
         } catch (\Exception $e) {
@@ -377,10 +399,11 @@ class WorkflowAutomationAgent
     private function sendConfirmation(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Visit Confirmed', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Your site visit has been confirmed! 📅\nDate: " . ($data['visit_date'] ?? 'TBD')]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'whatsapp', 'Visit Confirmed', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Your site visit has been confirmed!\nDate: " . ($data['visit_date'] ?? 'TBD'), $tid]
             );
             return ['success' => true, 'message' => "Confirmation sent"];
         } catch (\Exception $e) {
@@ -396,10 +419,11 @@ class WorkflowAutomationAgent
     private function sendFollowUp(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Follow Up', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Thank you for visiting our project! Did you like what you saw? Any questions? 😊"]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'whatsapp', 'Follow Up', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Thank you for visiting our project! Did you like what you saw? Any questions?", $tid]
             );
             return ['success' => true, 'message' => "Follow-up sent"];
         } catch (\Exception $e) {
@@ -413,9 +437,10 @@ class WorkflowAutomationAgent
         if (!$leadId) return ['success' => false, 'message' => 'No lead_id'];
 
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "UPDATE leads SET status = 'contacted', updated_at = NOW() WHERE id = ? AND status = 'new'",
-                [$leadId]
+                "UPDATE leads SET status = 'contacted', updated_at = NOW() WHERE id = ? AND status = 'new' AND tenant_id = ?",
+                [$leadId, $tid]
             );
             return ['success' => true, 'message' => "Lead status updated"];
         } catch (\Exception $e) {
@@ -429,10 +454,11 @@ class WorkflowAutomationAgent
         if (!$leadId) return ['success' => false, 'message' => 'No lead_id'];
 
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO crm_tasks (lead_id, assigned_to, title, description, priority, due_date, status, created_at)
-                 VALUES (?, ?, 'Post-visit follow-up', 'Check if customer wants to proceed', 'high', DATE_ADD(NOW(), INTERVAL 2 DAY), 'queued', NOW())",
-                [$leadId, $data['assigned_to'] ?? null]
+                "INSERT INTO crm_tasks (lead_id, assigned_to, title, description, priority, due_date, status, tenant_id, created_at)
+                 VALUES (?, ?, 'Post-visit follow-up', 'Check if customer wants to proceed', 'high', DATE_ADD(NOW(), INTERVAL 2 DAY), 'queued', ?, NOW())",
+                [$leadId, $data['assigned_to'] ?? null, $tid]
             );
             return ['success' => true, 'message' => "Next action scheduled"];
         } catch (\Exception $e) {
@@ -443,10 +469,11 @@ class WorkflowAutomationAgent
     private function sendWelcomeKit(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'email', 'Welcome Kit', ?, 'queued', NOW())",
-                [$data['user_id'] ?? 0, "Welcome to APS Dream Home! Here's your onboarding guide and commission structure."]
+                "INSERT INTO notification_queue (user_id, type, title, message, status, tenant_id, created_at)
+                 VALUES (?, 'email', 'Welcome Kit', ?, 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, "Welcome to APS Dream Home! Here's your onboarding guide and commission structure.", $tid]
             );
             return ['success' => true, 'message' => "Welcome kit sent"];
         } catch (\Exception $e) {
@@ -457,10 +484,11 @@ class WorkflowAutomationAgent
     private function assignOnboarding(array $data): array
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO crm_tasks (assigned_to, title, description, priority, due_date, status, created_at)
-                 VALUES (?, 'Onboarding: New Associate', 'Complete KYC, training, and first sale guidance', 'medium', DATE_ADD(NOW(), INTERVAL 7 DAY), 'queued', NOW())",
-                [$data['user_id'] ?? 0]
+                "INSERT INTO crm_tasks (assigned_to, title, description, priority, due_date, status, tenant_id, created_at)
+                 VALUES (?, 'Onboarding: New Associate', 'Complete KYC, training, and first sale guidance', 'medium', DATE_ADD(NOW(), INTERVAL 7 DAY), 'queued', ?, NOW())",
+                [$data['user_id'] ?? 0, $tid]
             );
             return ['success' => true, 'message' => "Onboarding task assigned"];
         } catch (\Exception $e) {
@@ -474,10 +502,11 @@ class WorkflowAutomationAgent
     private function logEvent(string $eventType, array $data): void
     {
         try {
+            $tid = $this->getTenantId();
             $this->db->execute(
-                "INSERT INTO audit_log (action, details, created_at)
-                 VALUES (?, ?, NOW())",
-                ["workflow_event:$eventType", json_encode($data)]
+                "INSERT INTO audit_log (action, details, tenant_id, created_at)
+                 VALUES (?, ?, ?, NOW())",
+                ["workflow_event:$eventType", json_encode($data), $tid]
             );
         } catch (\Exception $e) { error_log($e->getMessage()); }
     }

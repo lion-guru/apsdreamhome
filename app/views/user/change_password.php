@@ -20,11 +20,11 @@ if (!defined('BASE_URL')) {
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (isset($_SESSION['error'])): ?>
-                        <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                        <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); unset($_SESSION['error']); ?></div>
                     <?php endif; ?>
 
                     <?php if (isset($_SESSION['success'])): ?>
-                        <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
+                        <div class="alert alert-success"><?php echo htmlspecialchars($_SESSION['success'], ENT_QUOTES, 'UTF-8'); unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
                     <form action="<?= BASE_URL ?>/change-password" method="POST">

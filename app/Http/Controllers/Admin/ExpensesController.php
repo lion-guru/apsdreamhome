@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 class ExpensesController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function index()
     {
         $this->requireAdmin();
@@ -33,13 +34,15 @@ class ExpensesController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("INSERT INTO expenses (category, amount, description, payment_mode, expense_date, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
+            $tid = $this->tenantId();
+            $stmt = $db->prepare("INSERT INTO expenses (category, amount, description, payment_mode, expense_date, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?, NOW())");
             $stmt->execute([
                 $_POST['category'] ?? '',
                 $_POST['amount'] ?? 0,
                 $_POST['description'] ?? '',
                 $_POST['payment_mode'] ?? 'cash',
-                $_POST['expense_date'] ?? date('Y-m-d')
+                $_POST['expense_date'] ?? date('Y-m-d'),
+                $tid
             ]);
             $this->setFlash('success', 'Expense recorded successfully');
         } catch (\Exception $e) {

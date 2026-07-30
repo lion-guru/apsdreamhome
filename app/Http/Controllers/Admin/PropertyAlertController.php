@@ -67,8 +67,9 @@ class PropertyAlertController extends AdminController
         $id = (int)($_GET['id'] ?? 0);
         if ($id > 0 && $this->alerts) {
             try {
-                $stmt = $this->getPdo()->prepare("DELETE FROM property_alert_subscriptions WHERE id = ?");
-                $stmt->execute([$id]);
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
+                $stmt = $this->getPdo()->prepare("DELETE FROM property_alert_subscriptions WHERE id = ? $tenantSql");
+                $stmt->execute(array_merge([$id], $tenantParams));
                 if ($this->audit) {
                     $this->audit->log('property_alert.delete', $this->getUserId(), $this->getUserRole(), 'subscription', $id, "Deleted subscription #$id");
                 }
@@ -86,10 +87,12 @@ class PropertyAlertController extends AdminController
         $active = (int)($_POST['active'] ?? 0);
         if ($id > 0 && $this->alerts) {
             try {
-                $stmt = $this->getPdo()->prepare("UPDATE property_alert_subscriptions SET is_active = ? WHERE id = ?");
-                $stmt->execute([$active, $id]);
-                $this->getPdo()->prepare("INSERT INTO property_alert_log (subscription_id, property_id, user_id, channel, status, message) VALUES (?, 0, NULL, 'admin', 'sent', ?)")
-                    ->execute([$id, $active ? 'Subscription activated' : 'Subscription paused']);
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
+                $stmt = $this->getPdo()->prepare("UPDATE property_alert_subscriptions SET is_active = ? WHERE id = ? $tenantSql");
+                $stmt->execute(array_merge([$active, $id], $tenantParams));
+                $tid = $this->tenantId();
+                $this->getPdo()->prepare("INSERT INTO property_alert_log (subscription_id, property_id, user_id, channel, status, message, tenant_id) VALUES (?, 0, NULL, 'admin', 'sent', ?, ?)")
+                    ->execute([$id, $active ? 'Subscription activated' : 'Subscription paused', $tid]);
             } catch (\Throwable $e) {
                 return $this->json(['error' => $e->getMessage()], 500);
             }

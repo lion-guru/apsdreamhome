@@ -23,7 +23,7 @@ class AnalyticsController extends BaseController
     {
         header('Content-Type: application/json');
         try {
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
             $stmt = $this->db->query("SELECT COUNT(*) FROM properties WHERE status = 'active'");
             $properties = (int)$stmt->fetchColumn();
@@ -79,7 +79,7 @@ class AnalyticsController extends BaseController
     {
         header('Content-Type: application/json');
         try {
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidWhere = $tid > 1 ? " WHERE tenant_id = $tid" : '';
             $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
             $stmt = $this->db->query("SELECT COUNT(*) FROM users{$tidWhere}");

@@ -13,8 +13,12 @@ use UploadValidator;
  * Enhanced Property Workflow Controller
  * Property Buy/Sell workflow for all user types
  */
+use \App\Traits\TenantAwareTrait;
+
 class PropertyWorkflowController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
     protected $agentAssignmentService;
     protected $referralService;
@@ -700,8 +704,9 @@ class PropertyWorkflowController extends BaseController
 
     private function updatePropertyStatus(int $propertyId, string $status): void
     {
-        $stmt = $this->db->prepare("UPDATE properties SET status = :status, updated_at = NOW() WHERE id = :id");
-        $stmt->execute(['status' => $status, 'id' => $propertyId]);
+        $tid = (int)$this->tenantId();
+        $stmt = $this->db->prepare("UPDATE properties SET status = :status, updated_at = NOW() WHERE id = :id AND tenant_id = :tenant_id");
+        $stmt->execute(['status' => $status, 'id' => $propertyId, 'tenant_id' => $tid]);
     }
 
     private function createNotification($userId, string $type, string $message): void

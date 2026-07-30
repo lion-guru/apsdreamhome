@@ -41,7 +41,8 @@ class TrainingController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $this->db->query("INSERT INTO training_courses (course_title, course_description, course_category, difficulty_level, course_duration_hours, course_objectives, prerequisites, target_audience, is_mandatory, is_active, max_enrollments, passing_score_percentage, points_reward, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", [
+            $this->db->query("INSERT INTO training_courses (tenant_id, course_title, course_description, course_category, difficulty_level, course_duration_hours, course_objectives, prerequisites, target_audience, is_mandatory, is_active, max_enrollments, passing_score_percentage, points_reward, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", [
+                $this->tenantId(),
                 $_POST['course_title'] ?? '',
                 $_POST['course_description'] ?? '',
                 $_POST['course_category'] ?? 'sales',
@@ -87,7 +88,8 @@ class TrainingController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $this->db->query("UPDATE training_courses SET course_title = ?, course_description = ?, course_category = ?, difficulty_level = ?, course_duration_hours = ?, course_objectives = ?, prerequisites = ?, target_audience = ?, is_mandatory = ?, is_active = ?, max_enrollments = ?, passing_score_percentage = ?, points_reward = ? WHERE id = ?", [
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $this->db->query("UPDATE training_courses SET course_title = ?, course_description = ?, course_category = ?, difficulty_level = ?, course_duration_hours = ?, course_objectives = ?, prerequisites = ?, target_audience = ?, is_mandatory = ?, is_active = ?, max_enrollments = ?, passing_score_percentage = ?, points_reward = ? WHERE id = ?" . $tenantSql, array_merge([
                 $_POST['course_title'] ?? '',
                 $_POST['course_description'] ?? '',
                 $_POST['course_category'] ?? 'sales',
@@ -102,7 +104,7 @@ class TrainingController extends AdminController
                 (int)($_POST['passing_score_percentage'] ?? 0),
                 (int)($_POST['points_reward'] ?? 0),
                 (int)$id
-            ]);
+            ], $tenantParams));
             $this->setFlash('success', 'Course updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update course: ' . $e->getMessage());
@@ -233,7 +235,8 @@ class TrainingController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $this->db->query("INSERT INTO training_modules (course_id, title, description, order_index, content_type, content_url, duration_minutes, is_required) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
+            $this->db->query("INSERT INTO training_modules (tenant_id, course_id, title, description, order_index, content_type, content_url, duration_minutes, is_required) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+                $this->tenantId(),
                 (int)($_POST['course_id'] ?? 0),
                 $_POST['title'] ?? '',
                 $_POST['description'] ?? '',

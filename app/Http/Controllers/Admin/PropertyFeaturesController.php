@@ -57,7 +57,8 @@ class PropertyFeaturesController extends AdminController
             $this->redirect('/admin/property-features/ratings');
         }
 
-        $this->db->update('property_reviews', ['status' => $status], ['id' => (int)$id]);
+        $tid = (int)$this->tenantId();
+        $this->db->update('property_reviews', ['status' => $status], ['id' => (int)$id, 'tenant_id' => $tid]);
         $this->setFlash('success', 'Review status updated to ' . $status);
         $this->redirect('/admin/property-features/ratings');
     }
@@ -159,7 +160,8 @@ class PropertyFeaturesController extends AdminController
             $data['completed_at'] = date('Y-m-d H:i:s');
         }
 
-        $this->db->update('property_maintenance', $data, ['id' => (int)$id]);
+        $tid = (int)$this->tenantId();
+        $this->db->update('property_maintenance', $data, ['id' => (int)$id, 'tenant_id' => $tid]);
         $this->setFlash('success', 'Maintenance status updated');
         $this->redirect('/admin/property-features/maintenance/' . $id);
     }
@@ -174,7 +176,8 @@ class PropertyFeaturesController extends AdminController
             $this->redirect('/admin/property-features/maintenance/' . $id);
         }
 
-        $this->db->update('property_maintenance', ['assigned_to' => $assignedTo], ['id' => (int)$id]);
+        $tid = (int)$this->tenantId();
+        $this->db->update('property_maintenance', ['assigned_to' => $assignedTo], ['id' => (int)$id, 'tenant_id' => $tid]);
         $this->setFlash('success', 'Maintenance request assigned');
         $this->redirect('/admin/property-features/maintenance/' . $id);
     }
@@ -242,6 +245,8 @@ class PropertyFeaturesController extends AdminController
             $this->redirect('/admin/property-features/market-data');
         }
 
+        $tid = (int)$this->tenantId();
+        $data['tenant_id'] = $tid;
         $this->db->insert('property_market_data', $data);
         $this->setFlash('success', 'Market data entry added');
         $this->redirect('/admin/property-features/market-data');

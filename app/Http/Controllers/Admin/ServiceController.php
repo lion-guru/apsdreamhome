@@ -219,8 +219,9 @@ class ServiceController extends AdminController
             $notes = $_POST['notes'] ?? '';
 
             try {
-                $stmt = $this->db->prepare("UPDATE service_interests SET status = ?, notes = ?, updated_at = NOW() WHERE id = ?");
-                $stmt->execute([$status, $notes, $id]);
+                [$tenantSql, $tenantParams] = $this->tenantWhere();
+                $stmt = $this->db->prepare("UPDATE service_interests SET status = ?, notes = ?, updated_at = NOW() WHERE id = ? $tenantSql");
+                $stmt->execute(array_merge([$status, $notes, $id], $tenantParams));
                 $this->setFlash('success', 'Status updated successfully');
             } catch (\Exception $e) {
                 $this->setFlash('error', 'Failed to update status');

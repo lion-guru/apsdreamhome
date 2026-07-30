@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Traits\TenantAwareTrait;
 
 class DashboardController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();
@@ -323,7 +325,8 @@ class DashboardController extends BaseController
             }
 
             // Insert into favorites
-            $this->db->execute("INSERT INTO favorites (user_id, property_id, created_at) VALUES (?, ?, NOW())", [$userId, $propertyId]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("INSERT INTO favorites (user_id, property_id, tenant_id, created_at) VALUES (?, ?, ?, NOW())", [$userId, $propertyId, $tid]);
 
             echo json_encode(['success' => true, 'message' => 'Property added to favorites']);
             exit;
@@ -358,7 +361,8 @@ class DashboardController extends BaseController
             }
 
             // Remove from favorites
-            $this->db->execute("DELETE FROM favorites WHERE user_id = ? AND property_id = ?", [$userId, $propertyId]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("DELETE FROM favorites WHERE user_id = ? AND property_id = ? AND tenant_id = ?", [$userId, $propertyId, $tid]);
 
             echo json_encode(['success' => true, 'message' => 'Property removed from favorites']);
             exit;

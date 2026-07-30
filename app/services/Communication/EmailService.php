@@ -431,6 +431,8 @@ class EmailService
     {
         try {
             $this->db->insert('notifications_unified', [
+                
+                'tenant_id' => TenantContext::getId(),
                 'recipient' => $to,
                 'subject' => $subject,
                 'body' => substr($body, 0, 1000), // Truncate for storage

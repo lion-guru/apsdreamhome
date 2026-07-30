@@ -10,13 +10,7 @@ class SupportTicketService
 
     public function __construct()
     {
-        $config = require dirname(__DIR__, 2) . '/config/database.php';
-        $this->db = new PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'],
-            $config['password'],
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
-        );
+        $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
 
     public function createTicket(int $userId, string $subject, string $message, string $category = 'general', string $priority = 'medium', ?int $bookingId = null): array

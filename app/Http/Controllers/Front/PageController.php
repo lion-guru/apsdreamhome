@@ -1146,7 +1146,8 @@ public function userPropertyDetail($id = null)
 
         // Increment view count
         try {
-            $this->db->query("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$id]);
+            $tid = (int)$this->tenantId();
+            $this->db->query("UPDATE user_properties SET views = views + 1 WHERE id = ? AND tenant_id = ?", [$id, $tid]);
         } catch (\Exception $e) {
             error_log("PageController.php: " . $e->getMessage());
         }
@@ -1282,8 +1283,9 @@ public function propertyInquiry()
         }
 
         try {
-            $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'property_inquiry', 'user_property', 'new', 'high', NOW())");
-            $stmt->execute([$propertyId, $name, $email, $phone, $message]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'property_inquiry', 'user_property', 'new', 'high', ?, NOW())");
+            $stmt->execute([$propertyId, $name, $email, $phone, $message, $tid]);
 
             // Auto-wire to CRM lead
             try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_inquiry','property_id'=>$propertyId]); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
@@ -1407,16 +1409,17 @@ public function contact()
                 $error = 'Please enter a valid email address.';
             } else {
                 try {
-                    $stmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                    $tid = (int)$this->tenantId();
+                    $stmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
                     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-                    $stmt->execute([$name, $email, $phone, $subject, $message, $ip]);
+                    $stmt->execute([$name, $email, $phone, $subject, $message, $ip, $tid]);
                     $success = true;
                     $_POST = [];
 
                     // Also save to inquiries table for CRM
                     try {
-                        $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'medium', NOW())");
-                        $inqStmt->execute([$name, $email, $phone, $subject . ': ' . $message, 'contact']);
+                        $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'medium', ?, NOW())");
+                        $inqStmt->execute([$name, $email, $phone, $subject . ': ' . $message, 'contact', $tid]);
                     } catch (\Exception $e2) {
                         error_log("Inquiry save error: " . $e2->getMessage());
                     }
@@ -1695,16 +1698,17 @@ public function constructionInquiry()
         }
 
         try {
-            $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
-            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ╬ô├⌐Γòú{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, tenant_id, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', ?, NOW())");
+            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ╬ô├⌐Γòú{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : ''), $tid]);
 
             // Auto-wire to CRM lead
             try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) { error_log("PageController::" . __FUNCTION__ . " lead wiring failed: " . $e3->getMessage()); }
 
             // Also save to service_interests if table exists
             try {
-                $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
-                $sStmt->execute([$this->db->lastInsertId(), "Budget: ╬ô├⌐Γòú{$budget}, Location: {$location}, Type: {$project_type}"]);
+                $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, tenant_id, created_at) VALUES (?, 'construction', 'pending', ?, ?, NOW())");
+                $sStmt->execute([$this->db->lastInsertId(), "Budget: ╬ô├⌐Γòú{$budget}, Location: {$location}, Type: {$project_type}", $tid]);
             } catch (\Exception $e) {
                 error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
             }
@@ -1830,8 +1834,8 @@ public function reviewSubmit()
                 $customerId = $this->db->lastInsertId();
             }
 
-            $stmt = $this->db->prepare("INSERT INTO property_reviews (customer_id, property_id, rating, review_text, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
-            $stmt->execute([$customerId, $propertyId, $rating, $reviewText]);
+            $stmt = $this->db->prepare("INSERT INTO property_reviews (customer_id, property_id, rating, review_text, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'pending', ?, NOW())");
+            $stmt->execute([$customerId, $propertyId, $rating, $reviewText, (int)$this->tenantId()]);
 
             $_SESSION['success'] = 'Thank you! Your review has been submitted and is pending approval.';
         } catch (\Exception $e) {
@@ -2291,8 +2295,9 @@ public function handleQuickInquiry()
                     $fullMessage .= "Message: " . $message;
                 }
 
-                $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'high', NOW())");
-                $stmt->execute([$name, $email, $phone, $fullMessage, $formType]);
+                $tid = (int)$this->tenantId();
+                $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'high', ?, NOW())");
+                $stmt->execute([$name, $email, $phone, $fullMessage, $formType, $tid]);
                 $inquiryId = $this->db->lastInsertId();
 
                 // Auto-wire to CRM lead
@@ -2300,8 +2305,8 @@ public function handleQuickInquiry()
 
                 // Also save to contacts table
                 try {
-                    $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-                    $contactStmt->execute([$name, $email, $phone, 'Quick Inquiry - ' . ucfirst(str_replace('_', ' ', $requirement)), $fullMessage, $_SERVER['REMOTE_ADDR'] ?? 'unknown']);
+                    $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+                    $contactStmt->execute([$name, $email, $phone, 'Quick Inquiry - ' . ucfirst(str_replace('_', ' ', $requirement)), $fullMessage, $_SERVER['REMOTE_ADDR'] ?? 'unknown', $tid]);
                 } catch (\Exception $e2) {
                     error_log('PageController handleQuickInquiry contacts: ' . $e2->getMessage());
                 }

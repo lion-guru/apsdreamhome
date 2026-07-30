@@ -555,13 +555,14 @@ class UserController extends BaseController
         }
 
         try {
-            $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, message, priority, booking_id, status, category, created_at) VALUES (?, ?, ?, ?, ?, 'open', 'general', NOW())");
-            $stmt->execute([$user['id'], $subject, $message, $priority, $bookingId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, message, priority, booking_id, status, category, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'open', 'general', ?, NOW())");
+            $stmt->execute([$user['id'], $subject, $message, $priority, $bookingId, $tid]);
             $ticketId = $this->db->lastInsertId();
 
             // Add initial message as reply
-            $stmt = $this->db->prepare("INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin) VALUES (?, ?, ?, 0)");
-            $stmt->execute([$ticketId, $user['id'], $message]);
+            $stmt = $this->db->prepare("INSERT INTO support_ticket_replies (ticket_id, user_id, message, is_admin, tenant_id) VALUES (?, ?, ?, 0, ?)");
+            $stmt->execute([$ticketId, $user['id'], $message, $tid]);
 
             // Send confirmation email
             try {
@@ -773,8 +774,9 @@ class UserController extends BaseController
                     $error = 'Passwords do not match.';
                 } else {
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                    $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ?, password = ? WHERE id = ?");
-                    $stmt->execute([$name, $phone, $hashedPassword, $_SESSION['user_id']]);
+                    $tid = (int)$this->tenantId();
+                    $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ?, password = ? WHERE id = ? AND tenant_id = ?");
+                    $stmt->execute([$name, $phone, $hashedPassword, $_SESSION['user_id'], $tid]);
 
                     $_SESSION['user_name'] = $name;
                     $success = true;
@@ -1305,8 +1307,9 @@ class UserController extends BaseController
 
             $bookingId = (int)$this->db->lastInsertId();
 
-            $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ?")
-                ->execute([$userId, $plotId]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ? AND tenant_id = ?")
+                ->execute([$userId, $plotId, $tid]);
 
             $this->db->commit();
         } catch (\Throwable $e) {

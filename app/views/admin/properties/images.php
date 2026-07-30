@@ -44,7 +44,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success'];
+            <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($_SESSION['success'], ENT_QUOTES, 'UTF-8');
                                                     unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -52,7 +52,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     <?php if (isset($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error'];
+            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8');
                                                             unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -63,7 +63,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
             <i class="fas fa-exclamation-triangle me-2"></i>
             <ul class="mb-0">
                 <?php foreach ($_SESSION['errors'] as $error): ?>
-                    <li><?php echo $error; ?></li>
+                    <li><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></li>
                 <?php endforeach;
                 unset($_SESSION['errors']); ?>
             </ul>

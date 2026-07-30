@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use \App\Traits\TenantAwareTrait;
+
 class VoiceAgentAdminController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -426,6 +430,7 @@ class VoiceAgentAdminController extends AdminController
             exit;
         }
 
+        $tid = (int)$this->tenantId();
         try {
             $extracted = $this->db->fetch("SELECT * FROM ai_call_extracted_leads WHERE id = ?", [$extractedId]);
             if (!$extracted) {
@@ -442,7 +447,7 @@ class VoiceAgentAdminController extends AdminController
             if ($existingLead) {
                 $leadId = $existingLead['id'];
             } else {
-                $this->db->execute("INSERT INTO leads (name, phone, email, budget_range, location_preference, property_interest, status, source, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 'new', 'voice_agent', ?, NOW(), NOW())", [
+                $this->db->execute("INSERT INTO leads (name, phone, email, budget_range, location_preference, property_interest, status, source, notes, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, 'new', 'voice_agent', ?, NOW(), NOW(), ?)", [
                     $extracted['extracted_name'],
                     $extracted['extracted_phone'],
                     $extracted['extracted_email'] ?? '',
@@ -450,14 +455,16 @@ class VoiceAgentAdminController extends AdminController
                     $extracted['extracted_location'] ?? '',
                     $extracted['property_type_interest'] ?? '',
                     $extracted['extracted_requirements'] ?? '',
+                    $tid,
                 ]);
                 $leadId = $this->db->lastInsertId();
             }
 
-            $this->db->execute("UPDATE ai_call_extracted_leads SET is_verified = 1, verified_by = ?, verified_at = NOW(), auto_created_lead_id = ? WHERE id = ?", [
+            $this->db->execute("UPDATE ai_call_extracted_leads SET is_verified = 1, verified_by = ?, verified_at = NOW(), auto_created_lead_id = ? WHERE id = ? AND tenant_id = ?", [
                 $_SESSION['admin_id'] ?? 0,
                 $leadId,
                 $extractedId,
+                $tid,
             ]);
 
             echo json_encode(['success' => true, 'message' => 'Lead converted successfully', 'lead_id' => $leadId]);
@@ -480,8 +487,9 @@ class VoiceAgentAdminController extends AdminController
             $this->redirect('/admin/voice-users/schedule');
         }
 
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE ai_calling_schedule SET scheduled_date = ?, scheduled_time = ?, status = 'pending', attempt_count = 0 WHERE id = ?", [$newDate, $newTime, $scheduleId]);
+            $this->db->execute("UPDATE ai_calling_schedule SET scheduled_date = ?, scheduled_time = ?, status = 'pending', attempt_count = 0 WHERE id = ? AND tenant_id = ?", [$newDate, $newTime, $scheduleId, $tid]);
             $_SESSION['success'] = 'Call rescheduled';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error rescheduling: ' . $e->getMessage();
@@ -500,8 +508,9 @@ class VoiceAgentAdminController extends AdminController
             $this->redirect('/admin/voice-users/schedule');
         }
 
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE ai_calling_schedule SET status = 'cancelled' WHERE id = ?", [$scheduleId]);
+            $this->db->execute("UPDATE ai_calling_schedule SET status = 'cancelled' WHERE id = ? AND tenant_id = ?", [$scheduleId, $tid]);
             $_SESSION['success'] = 'Call cancelled';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error cancelling: ' . $e->getMessage();
@@ -524,6 +533,7 @@ class VoiceAgentAdminController extends AdminController
             $this->redirect('/admin/voice-users/schedule');
         }
 
+        $tid = (int)$this->tenantId();
         $success = 0;
         foreach ((array)$leadIds as $leadId) {
             try {
@@ -533,13 +543,14 @@ class VoiceAgentAdminController extends AdminController
                 $existing = $this->db->fetch("SELECT id FROM ai_calling_schedule WHERE lead_id = ? AND status='pending'", [(int)$leadId]);
                 if ($existing) continue;
 
-                $this->db->execute("INSERT INTO ai_calling_schedule (lead_id, phone, priority, scheduled_date, scheduled_time, ai_agent_id, status, max_attempts, created_by, created_at) VALUES (?, ?, 'medium', ?, ?, ?, 'pending', 3, ?, NOW())", [
+                $this->db->execute("INSERT INTO ai_calling_schedule (lead_id, phone, priority, scheduled_date, scheduled_time, ai_agent_id, status, max_attempts, created_by, created_at, tenant_id) VALUES (?, ?, 'medium', ?, ?, ?, 'pending', 3, ?, NOW(), ?)", [
                     $lead['id'],
                     $lead['phone'],
                     $scheduleDate,
                     $scheduleTime,
                     $agentId,
                     $_SESSION['admin_id'] ?? 0,
+                    $tid,
                 ]);
                 $success++;
             } catch (\Exception $e) { error_log('VoiceAgentAdminController bulkSchedule: ' . $e->getMessage()); }
@@ -565,6 +576,7 @@ class VoiceAgentAdminController extends AdminController
             $this->redirect('/admin/voice-users/schedule');
         }
 
+        $tid = (int)$this->tenantId();
         $assigned = 0;
         $agentIndex = 0;
         $agentCount = count($users);
@@ -574,11 +586,12 @@ class VoiceAgentAdminController extends AdminController
             $agentIndex++;
 
             try {
-                $this->db->execute("INSERT INTO ai_calling_schedule (lead_id, phone, priority, scheduled_date, scheduled_time, ai_agent_id, status, max_attempts, created_by, created_at) VALUES (?, ?, 'medium', CURDATE(), '10:00:00', ?, 'pending', 3, ?, NOW())", [
+                $this->db->execute("INSERT INTO ai_calling_schedule (lead_id, phone, priority, scheduled_date, scheduled_time, ai_agent_id, status, max_attempts, created_by, created_at, tenant_id) VALUES (?, ?, 'medium', CURDATE(), '10:00:00', ?, 'pending', 3, ?, NOW(), ?)", [
                     $lead['id'],
                     $lead['phone'],
                     $agent['agent_id'],
                     $_SESSION['admin_id'] ?? 0,
+                    $tid,
                 ]);
                 $assigned++;
             } catch (\Exception $e) { error_log('VoiceAgentAdminController autoAssign: ' . $e->getMessage()); }

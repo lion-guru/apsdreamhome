@@ -66,10 +66,11 @@ class TestimonialController extends AdminController
         ];
 
         try {
-            $sql = "INSERT INTO testimonials (customer_name, customer_email, customer_phone, rating, content, status, is_featured, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO testimonials (tenant_id, customer_name, customer_email, customer_phone, rating, content, status, is_featured, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
+                $this->tenantId(),
                 $data['customer_name'],
                 $data['customer_email'],
                 $data['customer_phone'],
@@ -162,12 +163,13 @@ class TestimonialController extends AdminController
         ];
 
         try {
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $sql = "UPDATE testimonials 
                     SET customer_name = ?, customer_email = ?, customer_phone = ?, 
                         rating = ?, content = ?, status = ?, is_featured = ? 
-                    WHERE id = ?";
+                    WHERE id = ?" . $tenantSql;
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([
+            $stmt->execute(array_merge([
                 $data['customer_name'],
                 $data['customer_email'],
                 $data['customer_phone'],
@@ -176,7 +178,7 @@ class TestimonialController extends AdminController
                 $data['status'],
                 $data['is_featured'],
                 $id
-            ]);
+            ], $tenantParams));
 
             $_SESSION['success'] = 'Testimonial updated successfully!';
             header('Location: ' . BASE_URL . '/admin/testimonials');
@@ -194,8 +196,9 @@ class TestimonialController extends AdminController
     public function delete($id)
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM testimonials WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("DELETE FROM testimonials WHERE id = ?" . $tenantSql);
+            $stmt->execute(array_merge([$id], $tenantParams));
 
             $_SESSION['success'] = 'Testimonial deleted successfully!';
         } catch (\Exception $e) {

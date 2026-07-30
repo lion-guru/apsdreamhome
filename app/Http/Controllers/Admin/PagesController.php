@@ -30,8 +30,8 @@ class PagesController extends AdminController
         $meta_keywords = $_POST['meta_keywords'] ?? '';
         $status = $_POST['status'] ?? 'draft';
         try {
-            $stmt = $this->db->prepare("INSERT INTO pages (title, slug, content, meta_description, meta_keywords, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$title, $slug, $content, $meta_description, $meta_keywords, $status]);
+            $stmt = $this->db->prepare("INSERT INTO pages (title, slug, content, meta_description, meta_keywords, status, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([$title, $slug, $content, $meta_description, $meta_keywords, $status, $this->tenantId()]);
         } catch (\Exception $e) { error_log('PagesController exception: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/pages');
         exit;
@@ -62,8 +62,9 @@ class PagesController extends AdminController
         $meta_keywords = $_POST['meta_keywords'] ?? '';
         $status = $_POST['status'] ?? 'draft';
         try {
-            $stmt = $this->db->prepare("UPDATE pages SET title = ?, content = ?, meta_description = ?, meta_keywords = ?, status = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$title, $content, $meta_description, $meta_keywords, $status, $id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE pages SET title = ?, content = ?, meta_description = ?, meta_keywords = ?, status = ?, updated_at = NOW() WHERE id = ? $tenantSql");
+            $stmt->execute(array_merge([$title, $content, $meta_description, $meta_keywords, $status, $id], $tenantParams));
         } catch (\Exception $e) { error_log('PagesController exception: ' . $e->getMessage()); }
         header('Location: ' . BASE_URL . '/admin/pages');
         exit;

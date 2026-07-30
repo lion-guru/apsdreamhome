@@ -17,10 +17,7 @@ class FieldCollectionService
     public function __construct($db = null)
     {
         if ($db === null) {
-            $db = new \PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-            ]);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
         } elseif (is_object($db) && method_exists($db, 'getPdo')) {
             $db = $db->getPdo();
         }

@@ -42,8 +42,7 @@ class AdminController extends BaseController
         error_log("enterpriseDashboard: admin_id=" . ($_SESSION['admin_id'] ?? 'NOT SET') . ", admin_role=" . ($_SESSION['admin_role'] ?? 'NOT SET') . ", role=" . ($_SESSION['role'] ?? 'NOT SET') . ", session_id=" . session_id());
 
         // Check if admin is logged in — allow any role with RBAC menu permissions
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', self::ADMIN_ROLES)) {
             error_log("enterpriseDashboard: FAILED auth check, redirecting to login");
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
@@ -72,7 +71,7 @@ class AdminController extends BaseController
             // Get recent leads for dashboard widget
             $recentLeads = [];
             try {
-                $tid = $this->tenantId();
+                $tid = (int)$this->tenantId();
                 $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
                 $recentLeads = $this->db->fetchAll("SELECT * FROM leads WHERE 1=1{$tidSql} ORDER BY created_at DESC LIMIT 5") ?: [];
             } catch (\Exception $e) {
@@ -205,7 +204,8 @@ class AdminController extends BaseController
         } catch (\Exception $e) { $stats['mlm_commissions_paid'] = 0; }
 
         try {
-            $stats['mlm_pending_payouts'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_payouts WHERE status='pending'")['cnt'] ?? 0);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stats['mlm_pending_payouts'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_payouts WHERE status='pending'{$tidSql}", $tidParams)['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['mlm_pending_payouts'] = 0; }
 
         // Module 5: Backoffice + Daily Operations
@@ -615,8 +615,7 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', self::ADMIN_ROLES)) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -668,9 +667,8 @@ class AdminController extends BaseController
     public function requireAdmin()
     {
         // Allow any role with RBAC menu permissions — sidebar handles item-level filtering
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head', 'operations_head', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
         $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
-        if (!$this->isLoggedIn() || !in_array($role, $allowedRoles)) {
+        if (!$this->isLoggedIn() || !in_array($role, self::ADMIN_ROLES)) {
             $this->setFlash('error', 'Admin access required');
             $this->redirect('/admin/login');
             return;

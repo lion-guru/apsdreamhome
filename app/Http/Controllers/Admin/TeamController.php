@@ -74,8 +74,9 @@ class TeamController extends AdminController
             }
         }
 
-        $stmt = $this->db->prepare("INSERT INTO team_members (name, position, bio, photo, email, phone, linkedin, facebook_url, instagram_url, expertise, experience, category, group_name, sort_order, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $facebook_url, $instagram_url, $expertise, $experience, $category, $group_name, $sortOrder, $status]);
+        $tid = $this->tenantId();
+        $stmt = $this->db->prepare("INSERT INTO team_members (name, position, bio, photo, email, phone, linkedin, facebook_url, instagram_url, expertise, experience, category, group_name, sort_order, status, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)");
+        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $facebook_url, $instagram_url, $expertise, $experience, $category, $group_name, $sortOrder, $status, $tid]);
 
         $_SESSION['success'] = 'Team member added successfully.';
         header('Location: ' . BASE_URL . '/admin/team');
@@ -154,8 +155,9 @@ class TeamController extends AdminController
             }
         }
 
-        $stmt = $this->db->prepare("UPDATE team_members SET name=?, position=?, bio=?, photo=?, email=?, phone=?, linkedin=?, facebook_url=?, instagram_url=?, expertise=?, experience=?, category=?, group_name=?, sort_order=?, status=?, updated_at=NOW() WHERE id=?");
-        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $facebook_url, $instagram_url, $expertise, $experience, $category, $group_name, $sortOrder, $status, $id]);
+        [$tenantSql, $tenantParams] = $this->tenantWhere();
+        $stmt = $this->db->prepare("UPDATE team_members SET name=?, position=?, bio=?, photo=?, email=?, phone=?, linkedin=?, facebook_url=?, instagram_url=?, expertise=?, experience=?, category=?, group_name=?, sort_order=?, status=?, updated_at=NOW() WHERE id=? $tenantSql");
+        $stmt->execute(array_merge([$name, $position, $bio, $photo, $email, $phone, $linkedin, $facebook_url, $instagram_url, $expertise, $experience, $category, $group_name, $sortOrder, $status, $id], $tenantParams));
 
         $_SESSION['success'] = 'Team member updated successfully.';
         header('Location: ' . BASE_URL . '/admin/team');
@@ -173,7 +175,8 @@ class TeamController extends AdminController
                 $path = __DIR__ . '/../../../../assets/images/' . $member['photo'];
                 if (file_exists($path)) unlink($path);
             }
-            $this->db->prepare("DELETE FROM team_members WHERE id = ?")->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $this->db->prepare("DELETE FROM team_members WHERE id = ? $tenantSql")->execute(array_merge([$id], $tenantParams));
             $_SESSION['success'] = 'Team member deleted successfully.';
         }
 

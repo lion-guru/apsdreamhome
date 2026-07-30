@@ -31,13 +31,7 @@ class RetroactiveRecalculationService
 
     private function getDb(): PDO
     {
-        $config = require dirname(__DIR__, 2) . '/config/database.php';
-        return new PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'],
-            $config['password'],
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        return \App\Core\Database\Database::getInstance()->getConnection();
     }
 
     /**

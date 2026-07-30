@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 
 class KhatabookSalesController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     public function index()
     {
         $this->requireAdmin();
@@ -148,8 +149,9 @@ class KhatabookSalesController extends AdminController
 
         try {
             $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("DELETE FROM khatabook_sales WHERE id = ?");
-            $stmt->execute([$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $db->prepare("DELETE FROM khatabook_sales WHERE id = ? {$tenantSql}");
+            $stmt->execute(array_merge([$id], $tenantParams));
             $this->flashMessage('Sale record deleted', 'success');
         } catch (\Exception $e) {
             $this->flashMessage('Delete failed: ' . $e->getMessage(), 'error');

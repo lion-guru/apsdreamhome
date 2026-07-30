@@ -83,8 +83,8 @@ class TaskService
 
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $page = $filters['page'] ?? 1;
-            $perPage = $filters['per_page'] ?? 20;
+            $page = max(1, (int)($filters['page'] ?? 1));
+            $perPage = min(100, max(1, (int)($filters['per_page'] ?? 20)));
             $offset = ($page - 1) * $perPage;
 
             $sql = "

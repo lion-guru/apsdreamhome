@@ -42,7 +42,7 @@ class Database
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'port' => 3307, // XAMPP MySQL port
+            'port' => 3306, // XAMPP MySQL port (service listens on 3306)
             'socket' => null,
             'options' => extension_loaded('pdo') ? [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

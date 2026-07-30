@@ -10,12 +10,7 @@ class NewsletterController extends BaseApiController
     public function __construct()
     {
         parent::__construct();
-        $this->db = new PDO(
-            "mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome",
-            "root",
-            "",
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
 
     public function subscribe() 

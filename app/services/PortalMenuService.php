@@ -482,17 +482,7 @@ class PortalMenuService
         // Get PDO via the project's global config
         try {
             if (!$pdo) {
-                $configFile = $root . '/config/database.php';
-                if (file_exists($configFile)) {
-                    $config = require $configFile;
-                    if (isset($config['host']) && isset($config['port'])) {
-                        $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4";
-                        $pdo = new \PDO($dsn, $config['username'], $config['password'], [
-                            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                        ]);
-                    }
-                }
+                $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             }
         } catch (\Throwable $e) {
             $pdo = null;

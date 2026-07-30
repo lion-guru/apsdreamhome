@@ -458,7 +458,7 @@ class AdminBaseController extends BaseController
             
             // Commission Paid
             $stats['commission_paid'] = $this->db->fetch(
-                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_payouts WHERE status = 'completed'"
+                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_payouts WHERE status = 'completed'{$tidSql}", $tidParams
             )['total'] ?? 0;
             
             // Revenue This Month

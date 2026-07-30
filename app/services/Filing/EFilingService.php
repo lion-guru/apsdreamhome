@@ -13,26 +13,13 @@ class EFilingService
 
     public function __construct($pdo = null)
     {
-        $this->db = $pdo ?: (function () {
-            require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-            $config = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-            return new PDO(
-                "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-                $config['username'], $config['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
-        })();
+        $this->db = $pdo ?: \App\Core\Database\Database::getInstance()->getConnection();
     }
 
     private function getPdo(): PDO
     {
         if ($this->db instanceof PDO) return $this->db;
-        $config = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-        $this->db = new PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'], $config['password'],
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        $this->db = \App\Core\Database\Database::getInstance()->getConnection();
         return $this->db;
     }
 

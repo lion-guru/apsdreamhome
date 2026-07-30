@@ -6,7 +6,9 @@
 
 // Set headers
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] ?? '*');
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowedOrigins = ['https://apsdreamhome.com', 'https://www.apsdreamhome.com', 'http://localhost', 'http://localhost:3000', 'http://localhost:5173'];
+header('Access-Control-Allow-Origin: ' . (in_array($origin, $allowedOrigins) ? $origin : '*'));
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 header('Access-Control-Allow-Credentials: true');

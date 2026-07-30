@@ -215,7 +215,7 @@ class AutonomousTriggerSystem
     {
         try {
             // Simple database test
-            $pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             return true;
         } catch (\Exception $e) {
             return false;
@@ -346,7 +346,7 @@ class AutonomousTriggerSystem
     private function optimizeDatabase()
     {
         try {
-            $pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
             // Optimize tables
             $tables = ['users', 'properties', 'leads'];

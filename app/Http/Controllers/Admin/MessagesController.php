@@ -66,7 +66,8 @@ class MessagesController extends \App\Http\Controllers\Admin\AdminController
             exit;
         }
 
-        $this->db->exec("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL", [$otherUserId, $userId]);
+        $tid = (int)$this->tenantId();
+        $this->db->exec("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL AND tenant_id = ?", [$otherUserId, $userId, $tid]);
 
         $data = [
             'page_title' => 'Messages - ' . ($otherUser['name'] ?? 'Unknown'),
@@ -88,9 +89,10 @@ class MessagesController extends \App\Http\Controllers\Admin\AdminController
             exit;
         }
 
+        $tid = (int)$this->tenantId();
         $this->db->exec(
-            "INSERT INTO messages (sender_id, receiver_id, content, message_type, sender_type, sent_at) VALUES (?, ?, ?, 'text', 'admin', NOW())",
-            [$userId, $receiverId, $message]
+            "INSERT INTO messages (sender_id, receiver_id, content, message_type, sender_type, sent_at, tenant_id) VALUES (?, ?, ?, 'text', 'admin', NOW(), ?)",
+            [$userId, $receiverId, $message, $tid]
         );
 
         $_SESSION['success_message'] = 'Message sent successfully.';

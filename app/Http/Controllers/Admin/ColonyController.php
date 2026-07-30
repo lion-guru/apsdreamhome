@@ -41,7 +41,8 @@ class ColonyController extends AdminController
         $existing = $this->db->fetch("SELECT id FROM colonies WHERE slug = ? AND id != ?", [$slug, 0]);
         if ($existing) $slug .= '-' . time();
 
-        $this->db->query("INSERT INTO colonies (district_id, name, slug, description, amenities, key_highlights, nearby_places, map_link, total_plots, available_plots, starting_price, image_path, banner_image, brochure_path, gallery_images, youtube_video_url, contact_phone, contact_email, meta_title, meta_description, show_plots_publicly, is_featured, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+        $tid = $this->tenantId();
+        $this->db->query("INSERT INTO colonies (district_id, name, slug, description, amenities, key_highlights, nearby_places, map_link, total_plots, available_plots, starting_price, image_path, banner_image, brochure_path, gallery_images, youtube_video_url, contact_phone, contact_email, meta_title, meta_description, show_plots_publicly, is_featured, is_active, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
             $districtId, $name, $slug,
             $_POST['description'] ?? '', $_POST['amenities'] ?? '', $_POST['key_highlights'] ?? '', $_POST['nearby_places'] ?? '',
             $_POST['map_link'] ?? '', (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
@@ -52,6 +53,7 @@ class ColonyController extends AdminController
             isset($_POST['show_plots_publicly']) ? 1 : 0,
             isset($_POST['is_featured']) ? 1 : 0,
             isset($_POST['is_active']) ? 1 : 0,
+            $tid,
         ]);
         $newId = $this->db->lastInsertId();
         $this->setFlash('success', 'Colony "' . htmlspecialchars($name) . '" created! Next: add plots to start bookings.');
@@ -184,7 +186,8 @@ class ColonyController extends AdminController
         $existing = $this->db->fetch("SELECT id FROM colonies WHERE slug = ? AND id != ?", [$slug, $id]);
         if ($existing) $slug .= '-' . $id;
 
-        $this->db->query("UPDATE colonies SET district_id=?, name=?, slug=?, description=?, amenities=?, key_highlights=?, nearby_places=?, map_link=?, total_plots=?, available_plots=?, starting_price=?, image_path=?, banner_image=?, brochure_path=?, gallery_images=?, youtube_video_url=?, contact_phone=?, contact_email=?, meta_title=?, meta_description=?, show_plots_publicly=?, is_featured=?, is_active=? WHERE id=?", [
+        [$tenantSql, $tenantParams] = $this->tenantWhere();
+        $this->db->query("UPDATE colonies SET district_id=?, name=?, slug=?, description=?, amenities=?, key_highlights=?, nearby_places=?, map_link=?, total_plots=?, available_plots=?, starting_price=?, image_path=?, banner_image=?, brochure_path=?, gallery_images=?, youtube_video_url=?, contact_phone=?, contact_email=?, meta_title=?, meta_description=?, show_plots_publicly=?, is_featured=?, is_active=? WHERE id=? $tenantSql", array_merge([
             (int)($_POST['district_id'] ?? 0), $_POST['name'] ?? '', $slug,
             $_POST['description'] ?? '', $_POST['amenities'] ?? '', $_POST['key_highlights'] ?? '', $_POST['nearby_places'] ?? '',
             $_POST['map_link'] ?? '', (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
@@ -196,7 +199,7 @@ class ColonyController extends AdminController
             isset($_POST['is_featured']) ? 1 : 0,
             isset($_POST['is_active']) ? 1 : 0,
             $id,
-        ]);
+        ], $tenantParams));
         $this->setFlash('success', 'Colony updated successfully');
         $this->redirect('/admin/colonies');
     }
@@ -204,7 +207,8 @@ class ColonyController extends AdminController
     public function destroy($id)
     {
         $this->requireAdmin();
-        $this->db->query("DELETE FROM colonies WHERE id = ?", [$id]);
+        [$tenantSql, $tenantParams] = $this->tenantWhere();
+        $this->db->query("DELETE FROM colonies WHERE id = ? $tenantSql", array_merge([$id], $tenantParams));
         $this->setFlash('success', 'Colony deleted');
         $this->redirect('/admin/colonies');
     }

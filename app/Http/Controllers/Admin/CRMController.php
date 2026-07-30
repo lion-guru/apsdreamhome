@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Services\CRMService;
 
+use \App\Traits\TenantAwareTrait;
+
 class CRMController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -105,7 +109,8 @@ class CRMController extends AdminController
             if (in_array('address', $extra, true)) { $updates[] = 'address=?'; $params[] = $address; }
             if ($updates) {
                 $params[] = $userId;
-                $this->db->execute("UPDATE users SET " . implode(',', $updates) . " WHERE id=?", $params);
+                $tid = (int)$this->tenantId();
+                $this->db->execute("UPDATE users SET " . implode(',', $updates) . " WHERE id=? AND tenant_id=?", array_merge($params, [$tid]));
             }
 
             $this->setFlash('success', 'Customer created successfully. ID: ' . $userId);

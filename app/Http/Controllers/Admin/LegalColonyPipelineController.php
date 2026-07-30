@@ -9,6 +9,7 @@ use App\Services\Land\ColonyAnalyticsService;
 use App\Services\Land\ColonyFeasibilityService;
 use App\Services\Land\LandAcquisitionService;
 use App\Services\Land\ColonyHealthService;
+use \App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -18,6 +19,8 @@ use Exception;
  */
 class LegalColonyPipelineController extends AdminController
 {
+    use TenantAwareTrait;
+
     /** @var LegalColonyDevelopmentService */
     private $service;
 
@@ -780,9 +783,10 @@ class LegalColonyPipelineController extends AdminController
                 $updateData['notes'] = $notes;
             }
 
+            $tid = (int)$this->tenantId();
             $this->db->execute(
-                "UPDATE rera_milestones SET status = ?, actual_date = IF(? = 'completed', CURDATE(), actual_date), remarks = IF(? != '', ?, remarks) WHERE id = ?",
-                [$status, $status, $notes, $notes, $milestoneId]
+                "UPDATE rera_milestones SET status = ?, actual_date = IF(? = 'completed', CURDATE(), actual_date), remarks = IF(? != '', ?, remarks) WHERE id = ? AND tenant_id = ?",
+                [$status, $status, $notes, $notes, $milestoneId, $tid]
             );
 
             // Log activity
@@ -793,6 +797,7 @@ class LegalColonyPipelineController extends AdminController
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
                 'created_at' => date('Y-m-d H:i:s'),
+                'tenant_id'  => $tid,
             ]);
 
             echo json_encode(['success' => true, 'milestone_id' => $milestoneId, 'status' => $status]);

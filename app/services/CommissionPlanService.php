@@ -4,6 +4,7 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Commission Plan Service — Versioned Plan Management
@@ -15,6 +16,8 @@ use Exception;
  */
 class CommissionPlanService
 {
+    use ServiceTenantTrait;
+
     /** @var PDO */
     private $pdo;
 
@@ -22,13 +25,7 @@ class CommissionPlanService
     {
         $this->pdo = $pdo;
         if ($this->pdo === null) {
-            $config = require dirname(__DIR__, 2) . '/config/database.php';
-            $this->pdo = new PDO(
-                "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-                $config['username'],
-                $config['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
         }
     }
 

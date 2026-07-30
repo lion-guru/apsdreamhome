@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\AdminController;
 
 class NotificationController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -166,9 +168,10 @@ class NotificationController extends AdminController
             echo json_encode(['success' => false, 'message' => 'Missing notification id']);
             exit;
         }
+        $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL)");
-            $stmt->execute([$id, $userId]);
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL) AND tenant_id = ?");
+            $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -230,9 +233,10 @@ class NotificationController extends AdminController
             echo json_encode(['success' => false, 'message' => 'Missing popup id']);
             exit;
         }
+        $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL)");
-            $stmt->execute([$id, $userId]);
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL) AND tenant_id = ?");
+            $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -256,9 +260,10 @@ class NotificationController extends AdminController
             echo json_encode(['success' => false, 'message' => 'Missing required fields (user_id, title)']);
             exit;
         }
+        $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("INSERT INTO notifications (user_id, type, title, message, status, is_read, created_at) VALUES (?, ?, ?, ?, 'delivered', 0, NOW())");
-            $stmt->execute([$userId, $type, $title, $message]);
+            $stmt = $this->db->prepare("INSERT INTO notifications (user_id, type, title, message, status, is_read, tenant_id, created_at) VALUES (?, ?, ?, ?, 'delivered', 0, ?, NOW())");
+            $stmt->execute([$userId, $type, $title, $message, $tid]);
             echo json_encode(['success' => true, 'message' => 'Notification created']);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -282,9 +287,10 @@ class NotificationController extends AdminController
             echo json_encode(['success' => false, 'message' => 'Missing required fields (user_id, title)']);
             exit;
         }
+        $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("INSERT INTO notifications (user_id, type, title, message, status, is_read, is_important, created_at) VALUES (?, ?, ?, ?, 'delivered', 0, 1, NOW())");
-            $stmt->execute([$userId, $type, $title, $message]);
+            $stmt = $this->db->prepare("INSERT INTO notifications (user_id, type, title, message, status, is_read, is_important, tenant_id, created_at) VALUES (?, ?, ?, ?, 'delivered', 0, 1, ?, NOW())");
+            $stmt->execute([$userId, $type, $title, $message, $tid]);
             echo json_encode(['success' => true, 'message' => 'Popup created']);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);

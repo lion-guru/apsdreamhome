@@ -23,8 +23,12 @@ namespace App\Http\Controllers\Admin;
  * - Full audit trail in agent_logs table
  * - RBAC-aware responses
  */
+use \App\Traits\TenantAwareTrait;
+
 class AgenticAIController extends AdminController
 {
+    use TenantAwareTrait;
+
     private $agents = [
         'lead_gen'     => ['name' => 'Lead Generation Agent',  'icon' => 'fa-magnet',              'color' => '#3b82f6', 'description' => 'Auto-qualifies, scores, and nurtures leads 24/7'],
         'sales'        => ['name' => 'Sales Agent',            'icon' => 'fa-handshake',            'color' => '#10b981', 'description' => 'Booking follow-ups, payment reminders, closing deals'],
@@ -328,11 +332,12 @@ class AgenticAIController extends AdminController
             return;
         }
 
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("INSERT INTO agent_messages (conversation_id, sender_type, sender_id, message, created_at) VALUES (?, 'agent', ?, ?, NOW())",
-                [$convId, $agentId, $message]);
-            $this->db->execute("UPDATE agent_conversations SET last_message_at = NOW(), last_message = ? WHERE id = ?",
-                [mb_substr($message, 0, 200), $convId]);
+            $this->db->execute("INSERT INTO agent_messages (conversation_id, sender_type, sender_id, message, created_at, tenant_id) VALUES (?, 'agent', ?, ?, NOW(), ?)",
+                [$convId, $agentId, $message, $tid]);
+            $this->db->execute("UPDATE agent_conversations SET last_message_at = NOW(), last_message = ? WHERE id = ? AND tenant_id = ?",
+                [mb_substr($message, 0, 200), $convId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -347,9 +352,10 @@ class AgenticAIController extends AdminController
         $convId = $input['conversation_id'] ?? 0;
         $agentId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE agent_conversations SET agent_id = ?, claimed_at = NOW() WHERE id = ? AND agent_id IS NULL",
-                [$agentId, $convId]);
+            $this->db->execute("UPDATE agent_conversations SET agent_id = ?, claimed_at = NOW() WHERE id = ? AND agent_id IS NULL AND tenant_id = ?",
+                [$agentId, $convId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -363,8 +369,9 @@ class AgenticAIController extends AdminController
         $input = json_decode(file_get_contents('php://input'), true);
         $convId = $input['conversation_id'] ?? 0;
 
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE agent_conversations SET status = 'resolved', resolved_at = NOW() WHERE id = ?", [$convId]);
+            $this->db->execute("UPDATE agent_conversations SET status = 'resolved', resolved_at = NOW() WHERE id = ? AND tenant_id = ?", [$convId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             http_response_code(500);

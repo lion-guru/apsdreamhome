@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Services\NotificationService;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 use PDO;
 use PDOStatement;
@@ -15,6 +16,7 @@ use PDOStatement;
 
 class PayoutService
 {
+    use ServiceTenantTrait;
     private PDO $conn;
     private NotificationService $notifier;
 
@@ -50,10 +52,16 @@ class PayoutService
             $minAmount = isset($filters['min_amount']) ? (float)$filters['min_amount'] : 0;
             $requiredApprovals = max(1, (int) ($filters['required_approvals'] ?? 1));
 
+            $tid = $this->tenantId();
             $sql = "SELECT id, beneficiary_user_id, amount
                     FROM mlm_commission_ledger
                     WHERE status = 'approved'";
             $params = [];
+
+            if ($tid > 1) {
+                $sql .= ' AND tenant_id = ?';
+                $params[] = $tid;
+            }
 
             if (!empty($filters['date_from'])) {
                 $sql .= ' AND created_at >= ?';
@@ -91,10 +99,10 @@ class PayoutService
             }
 
             $insertBatch = $this->conn->prepare(
-                "INSERT INTO mlm_payout_batches (batch_reference, status, total_amount, total_records, required_approvals, created_at)
-                 VALUES (?, 'pending_approval', ?, ?, ?, NOW())"
+                "INSERT INTO mlm_payout_batches (batch_reference, status, total_amount, total_records, required_approvals, tenant_id, created_at)
+                 VALUES (?, 'pending_approval', ?, ?, ?, ?, NOW())"
             );
-            $insertBatch->execute([$batchReference, $totalAmount, $totalRecords, $requiredApprovals]);
+            $insertBatch->execute([$batchReference, $totalAmount, $totalRecords, $requiredApprovals, $tid > 1 ? $tid : 1]);
             $batchId = (int)$this->conn->lastInsertId();
 
             $insertItem = $this->conn->prepare(
@@ -151,13 +159,18 @@ class PayoutService
             return ['success' => false, 'message' => 'Invalid decision supplied.'];
         }
 
+        $tid = $this->tenantId();
+        $tenantWhere = $tid > 1 ? ' AND tenant_id = ?' : '';
+
         $this->conn->beginTransaction();
         try {
             $stmt = $this->conn->prepare(
                 "SELECT id, status, required_approvals, approval_count, approved_by_user_id, processed_notes
-                 FROM mlm_payout_batches WHERE id = ? FOR UPDATE"
+                 FROM mlm_payout_batches WHERE id = ?" . $tenantWhere . " FOR UPDATE"
             );
-            $stmt->execute([$batchId]);
+            $params = [$batchId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $batch = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$batch) {
@@ -190,9 +203,11 @@ class PayoutService
             $approvedCount = (int)($counts['approved_count'] ?? 0);
 
             $updateCount = $this->conn->prepare(
-                'UPDATE mlm_payout_batches SET approval_count = ? WHERE id = ?'
+                'UPDATE mlm_payout_batches SET approval_count = ? WHERE id = ?' . $tenantWhere
             );
-            $updateCount->execute([$approvedCount, $batchId]);
+            $updateParams = [$approvedCount, $batchId];
+            if ($tid > 1) $updateParams[] = $tid;
+            $updateCount->execute($updateParams);
 
             $previousStatus = $batch['status'];
             $finalStatus = $previousStatus;
@@ -204,17 +219,21 @@ class PayoutService
                 $processedNotes = trim($existingNotes ? ($existingNotes . PHP_EOL . $reason) : $reason);
 
                 $updateStatus = $this->conn->prepare(
-                    "UPDATE mlm_payout_batches SET status = 'cancelled', processed_notes = ? WHERE id = ?"
+                    "UPDATE mlm_payout_batches SET status = 'cancelled', processed_notes = ? WHERE id = ?" . $tenantWhere
                 );
-                $updateStatus->execute([$processedNotes, $batchId]);
+                $statusParams = [$processedNotes, $batchId];
+                if ($tid > 1) $statusParams[] = $tid;
+                $updateStatus->execute($statusParams);
             } elseif ($approvedCount >= (int)$batch['required_approvals']) {
                 $finalStatus = 'processing';
                 $statusUpdate = $this->conn->prepare(
                     "UPDATE mlm_payout_batches
                      SET status = 'processing', approved_by_user_id = ?, approved_at = NOW()
-                     WHERE id = ?"
+                     WHERE id = ?" . $tenantWhere
                 );
-                $statusUpdate->execute([$approverUserId, $batchId]);
+                $statusParams2 = [$approverUserId, $batchId];
+                if ($tid > 1) $statusParams2[] = $tid;
+                $statusUpdate->execute($statusParams2);
 
                 $itemUpdate = $this->conn->prepare(
                     "UPDATE mlm_payout_batch_items SET status = 'approved' WHERE batch_id = ?"
@@ -269,14 +288,19 @@ class PayoutService
 
     public function recordDisbursement(int $batchId, int $processedByUserId, ?string $reference = null, ?string $notes = null): bool
     {
+        $tid = $this->tenantId();
+        $tenantWhere = $tid > 1 ? ' AND tenant_id = ?' : '';
+
         $this->conn->beginTransaction();
         try {
             $updateBatch = $this->conn->prepare(
                 "UPDATE mlm_payout_batches
                  SET status = 'completed', processed_by_user_id = ?, processed_at = NOW(), disbursement_reference = ?, processed_notes = ?
-                 WHERE id = ? AND status IN ('processing','draft')"
+                 WHERE id = ? AND status IN ('processing','draft')" . $tenantWhere
             );
-            $updateBatch->execute([$processedByUserId, $reference, $notes, $batchId]);
+            $updateParams = [$processedByUserId, $reference, $notes, $batchId];
+            if ($tid > 1) $updateParams[] = $tid;
+            $updateBatch->execute($updateParams);
 
             if ($updateBatch->rowCount() === 0) {
                 $this->conn->rollBack();
@@ -284,13 +308,19 @@ class PayoutService
             }
 
             // Update commission ledger to paid
-            $commUpdate = $this->conn->prepare(
-                "UPDATE mlm_commission_ledger l
-                 JOIN mlm_payout_batch_items bi ON l.id = bi.commission_id
-                 SET l.status = 'paid', bi.status = 'paid', l.updated_at = NOW()
-                 WHERE bi.batch_id = ?"
-            );
-            $commUpdate->execute([$batchId]);
+            try {
+                $commUpdate = $this->conn->prepare(
+                    "UPDATE mlm_commission_ledger l
+                     JOIN mlm_payout_batch_items bi ON l.id = bi.commission_id
+                     SET l.status = 'paid', bi.status = 'paid', l.updated_at = NOW()
+                     WHERE bi.batch_id = ?" . ($tid > 1 ? " AND l.tenant_id = ?" : "")
+                );
+                $commParams = [$batchId];
+                if ($tid > 1) $commParams[] = $tid;
+                $commUpdate->execute($commParams);
+            } catch (\Throwable $e) {
+                error_log("PayoutService recordDisbursement commission ledger: " . $e->getMessage());
+            }
 
             $this->conn->commit();
 
@@ -333,10 +363,14 @@ class PayoutService
     public function cancelBatch(int $batchId, ?string $reason = null): bool
     {
         try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? ' AND tenant_id = ?' : '';
             $stmt = $this->conn->prepare(
-                "UPDATE mlm_payout_batches SET status = 'cancelled', processed_notes = ? WHERE id = ? AND status = 'draft'"
+                "UPDATE mlm_payout_batches SET status = 'cancelled', processed_notes = ? WHERE id = ? AND status = 'draft'" . $tenantWhere
             );
-            $stmt->execute([$reason, $batchId]);
+            $params = [$reason, $batchId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $success = $stmt->rowCount() > 0;
 
             if ($success) {
@@ -361,6 +395,12 @@ class PayoutService
     {
         $where = [];
         $params = [];
+
+        $tid = $this->tenantId();
+        if ($tid > 1) {
+            $where[] = 'tenant_id = ?';
+            $params[] = $tid;
+        }
 
         if (!empty($filters['status'])) {
             $where[] = 'status = ?';
@@ -390,44 +430,67 @@ class PayoutService
 
     public function getBatchSummary(int $batchId): ?array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM mlm_payout_batches WHERE id = ?');
-        $stmt->execute([$batchId]);
+        $tid = $this->tenantId();
+        $tenantWhere = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $stmt = $this->conn->prepare('SELECT * FROM mlm_payout_batches WHERE id = ?' . $tenantWhere);
+        $params = [$batchId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         $batch = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$batch) {
             return null;
         }
 
-        $itemStmt = $this->conn->prepare(
-            'SELECT status, COUNT(*) AS items, SUM(amount) AS amount FROM mlm_payout_batch_items WHERE batch_id = ? GROUP BY status'
-        );
-        $itemStmt->execute([$batchId]);
-        $batch['items_breakdown'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $itemStmt = $this->conn->prepare(
+                'SELECT status, COUNT(*) AS items, SUM(amount) AS amount FROM mlm_payout_batch_items WHERE batch_id = ? GROUP BY status'
+            );
+            $itemStmt->execute([$batchId]);
+            $batch['items_breakdown'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $batch['items_breakdown'] = [];
+            error_log("PayoutService::getBatchSummary items: " . $e->getMessage());
+        }
 
-        $approvalStmt = $this->conn->prepare(
-            'SELECT a.*, u.name AS approver_name, u.email AS approver_email
-             FROM mlm_payout_batch_approvals a
-             JOIN users u ON a.approver_user_id = u.id
-             WHERE a.batch_id = ?
-             ORDER BY a.created_at ASC'
-        );
-        $approvalStmt->execute([$batchId]);
-        $batch['approvals'] = $approvalStmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $approvalStmt = $this->conn->prepare(
+                'SELECT a.*, u.name AS approver_name, u.email AS approver_email
+                 FROM mlm_payout_batch_approvals a
+                 JOIN users u ON a.approver_user_id = u.id
+                 WHERE a.batch_id = ?
+                 ORDER BY a.created_at ASC'
+            );
+            $approvalStmt->execute([$batchId]);
+            $batch['approvals'] = $approvalStmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $batch['approvals'] = [];
+            error_log("PayoutService::getBatchSummary approvals: " . $e->getMessage());
+        }
 
         return $batch;
     }
 
     public function getBatchItems(int $batchId): array
     {
-        $stmt = $this->conn->prepare(
-            'SELECT bi.*, u.name AS beneficiary_name, u.email AS beneficiary_email
-             FROM mlm_payout_batch_items bi
-             JOIN users u ON bi.beneficiary_user_id = u.id
-             WHERE batch_id = ?
-             ORDER BY bi.created_at ASC'
-        );
-        $stmt->execute([$batchId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? ' AND bi.tenant_id = ?' : '';
+            $stmt = $this->conn->prepare(
+                'SELECT bi.*, u.name AS beneficiary_name, u.email AS beneficiary_email
+                 FROM mlm_payout_batch_items bi
+                 JOIN users u ON bi.beneficiary_user_id = u.id
+                 WHERE bi.batch_id = ?' . $tenantWhere . '
+                 ORDER BY bi.created_at ASC'
+            );
+            $params = [$batchId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("PayoutService::getBatchItems: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function getBatchExportData(int $batchId): ?array

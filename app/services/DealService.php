@@ -57,6 +57,8 @@ class DealService
             $offset = ($page - 1) * $perPage;
             $orderBy = $filters['sort'] ?? 'd.created_at';
             $orderDir = strtoupper($filters['direction'] ?? 'DESC');
+            $allowedSort = ['d.created_at','d.updated_at','d.deal_value','d.stage','d.probability','d.expected_close_date','l.name','u.name'];
+            if (!in_array($orderBy, $allowedSort)) $orderBy = 'd.created_at';
 
             $countStmt = $this->db->query("SELECT COUNT(*) as total FROM lead_deals d $whereClause", $params);
             $total = (int)($countStmt->fetch()['total'] ?? 0);

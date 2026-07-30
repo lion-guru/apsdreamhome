@@ -103,16 +103,16 @@ class CRMBulkController extends AdminController
                 if ($channel === 'email' && !empty($lead['email'])) {
                     $personalizedBody = str_replace(['{{name}}', '{{phone}}'], [$lead['name'], $lead['phone'] ?? ''], $body);
                     try {
-                        $db->query("INSERT INTO email_queue (to_email, subject, body, status, created_at) VALUES (?, ?, ?, 'queued', NOW())", [
-                            $lead['email'], $subject, $personalizedBody
+                        $db->query("INSERT INTO email_queue (to_email, subject, body, status, tenant_id, created_at) VALUES (?, ?, ?, 'queued', ?, NOW())", [
+                            $lead['email'], $subject, $personalizedBody, $this->tenantId()
                         ]);
                         $sent++;
                     } catch (\Throwable $e) { $failed++; }
                 } elseif ($channel === 'sms' && !empty($lead['phone'])) {
                     $personalizedBody = str_replace(['{{name}}', '{{phone}}'], [$lead['name'], $lead['phone'] ?? ''], $body);
                     try {
-                        $db->query("INSERT INTO sms_queue (phone, message, status, created_at) VALUES (?, ?, 'queued', NOW())", [
-                            $lead['phone'], $personalizedBody
+                        $db->query("INSERT INTO sms_queue (phone, message, status, tenant_id, created_at) VALUES (?, ?, 'queued', ?, NOW())", [
+                            $lead['phone'], $personalizedBody, $this->tenantId()
                         ]);
                         $sent++;
                     } catch (\Throwable $e) { $failed++; }
@@ -120,12 +120,13 @@ class CRMBulkController extends AdminController
             }
 
             // Log campaign
-            $db->query("INSERT INTO campaigns (name, campaign_type, status, recipient_count, sent_count, created_by, created_at) VALUES (?, ?, 'sent', ?, ?, ?, NOW())", [
+            $db->query("INSERT INTO campaigns (name, campaign_type, status, recipient_count, sent_count, created_by, tenant_id, created_at) VALUES (?, ?, 'sent', ?, ?, ?, ?, NOW())", [
                 "Bulk " . ucfirst($channel) . " - " . date('d M Y H:i'),
                 $channel,
                 count($leads),
                 $sent,
                 $_SESSION['admin_id'] ?? 0,
+                $this->tenantId(),
             ]);
 
             $this->setFlash('success', "Bulk $channel sent: $sent queued, $failed failed");

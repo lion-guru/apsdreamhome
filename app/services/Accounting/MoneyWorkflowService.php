@@ -55,6 +55,7 @@ class MoneyWorkflowService
             'signatory_pan'        => strtoupper($data['signatory_pan'] ?? ''),
             'cancelled_cheque_path'=> $data['cancelled_cheque_path'] ?? null,
             'active'               => isset($data['active']) ? (int)$data['active'] : 1,
+            'tenant_id'            => TenantContext::getId(),
         ];
         $this->db->insert('bank_accounts_master', $payload);
         return (int)$this->db->lastInsertId();
@@ -118,6 +119,7 @@ class MoneyWorkflowService
                 'bank_account_id'  => $bankId,
                 'recorded_by'      => $data['recorded_by'] ?? ($_SESSION['admin_id'] ?? null),
                 'approved_by'      => $data['approved_by'] ?? null,
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             // Voucher log
@@ -130,6 +132,7 @@ class MoneyWorkflowService
                 'generated_for'  => 'cash_book',
                 'reference_id'   => $cbId,
                 'created_by'     => $data['recorded_by'] ?? ($_SESSION['admin_id'] ?? null),
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             // Auto-create journal entry: Dr/Cr pair on bank or cash
@@ -204,6 +207,7 @@ class MoneyWorkflowService
             'balance_after'    => $newBalance,
             'custodian_id'     => $data['custodian_id'] ?? null,
             'approved_by'      => $data['approved_by'] ?? null,
+        'tenant_id' => TenantContext::getId(),
         ]);
     }
 
@@ -229,6 +233,7 @@ class MoneyWorkflowService
             'balance_after'    => $newBalance,
             'custodian_id'     => $data['custodian_id'] ?? null,
             'approved_by'      => $data['approved_by'] ?? null,
+        'tenant_id' => TenantContext::getId(),
         ]);
     }
 
@@ -253,6 +258,7 @@ class MoneyWorkflowService
             'purpose'          => $data['purpose'] ?? null,
             'status'           => 'issued',
             'voucher_id'       => $data['voucher_id'] ?? null,
+        'tenant_id' => TenantContext::getId(),
         ]);
     }
 
@@ -276,6 +282,7 @@ class MoneyWorkflowService
             'bounce_date'  => date('Y-m-d'),
             'bounce_reason'=> $reason,
             'recovery_status' => 'pending',
+        'tenant_id' => TenantContext::getId(),
         ]);
         return true;
     }
@@ -294,6 +301,7 @@ class MoneyWorkflowService
             'reconciled_by'     => $data['reconciled_by'] ?? null,
             'status'            => 'in_progress',
             'notes'             => $data['notes'] ?? null,
+        'tenant_id' => TenantContext::getId(),
         ]);
     }
 
@@ -338,6 +346,7 @@ class MoneyWorkflowService
                 'deposit_date'    => $data['deposit_date'] ?? null,
                 'return_period'   => $data['return_period'] ?? null,
                 'status'          => $data['status'] ?? 'pending',
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             // Auto-post journal: Dr Expense / Cr TDS Payable
@@ -401,6 +410,7 @@ class MoneyWorkflowService
             'return_period'    => $data['return_period'] ?? null,
             'itc_eligible'     => !empty($data['transaction_type']) && $data['transaction_type'] === 'input' ? 1 : 0,
             'itc_claimed'      => !empty($data['itc_claimed']) ? 1 : 0,
+        'tenant_id' => TenantContext::getId(),
         ]);
     }
 
@@ -606,6 +616,7 @@ class MoneyWorkflowService
             'status'            => $data['status'] ?? 'active',
             'notes'             => $data['notes'] ?? null,
             'created_by'        => $data['created_by'] ?? ($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null),
+            'tenant_id'         => TenantContext::getId(),
         ];
 
         $this->db->insert('vendors', $payload);
@@ -776,6 +787,7 @@ class MoneyWorkflowService
                 'bank_account_id'=> !empty($data['bank_account_id']) ? (int)$data['bank_account_id'] : null,
                 'transaction_ref'=> $data['transaction_ref'] ?? null,
                 'status'         => $data['status'] ?? 'paid',
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             // Voucher
@@ -789,6 +801,7 @@ class MoneyWorkflowService
                 'generated_for'  => 'vendor_payments',
                 'reference_id'   => $vpId,
                 'created_by'     => $data['created_by'] ?? ($_SESSION['admin_id'] ?? null),
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             // Journal: Dr Vendor / Cr Bank, with TDS + GST split
@@ -880,6 +893,7 @@ class MoneyWorkflowService
             'total_tds'          => (float)($row['total'] ?? 0),
             'certificate_number' => $certNumber,
             'issued_date'        => date('Y-m-d'),
+        'tenant_id' => TenantContext::getId(),
         ]);
     }
 
@@ -920,6 +934,7 @@ class MoneyWorkflowService
                 'approved_by'     => !empty($data['auto_approve']) ? (int)($data['created_by'] ?? ($_SESSION['admin_id'] ?? 1)) : null,
                 'approval_date'   => !empty($data['auto_approve']) ? date('Y-m-d H:i:s') : null,
                 'status'          => !empty($data['auto_approve']) ? 'approved' : 'draft',
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             $order = 1;
@@ -931,6 +946,7 @@ class MoneyWorkflowService
                     'credit_amount'    => (float)($l['credit'] ?? 0),
                     'description'      => $l['desc'] ?? null,
                     'line_order'       => $order++,
+                'tenant_id' => TenantContext::getId(),
                 ]);
 
                 // Update account current balance
@@ -1380,6 +1396,7 @@ class MoneyWorkflowService
                         'days_overdue'   => $daysOverdue,
                         'penalty_amount' => $newPenalty,
                         'total_accrued'  => $totalAccrued,
+                    'tenant_id' => TenantContext::getId(),
                     ]);
 
                     $result['penalties_applied']++;
@@ -1571,6 +1588,7 @@ class MoneyWorkflowService
             'receipt_photo'   => $data['receipt_photo'] ?? null,
             'notes'           => $data['notes'] ?? null,
             'status'          => 'submitted',
+        'tenant_id' => TenantContext::getId(),
         ]);
 
         // If linked to a booking installment, update the EMI schedule paid_amount
@@ -1694,6 +1712,7 @@ class MoneyWorkflowService
             'total_rejected'    => $rejected,
             'discrepancy_amount'=> abs($discrepancy),
             'status'            => $discrepancy > 0.01 ? 'discrepancy' : 'open',
+        'tenant_id' => TenantContext::getId(),
         ]);
 
         return ['success' => true, 'id' => $id, 'discrepancy' => $discrepancy];
@@ -1929,6 +1948,7 @@ class MoneyWorkflowService
                 'priority'    => 'medium',
                 'status'      => 'completed',
                 'created_by'  => $generatedBy,
+            'tenant_id' => TenantContext::getId(),
             ]);
 
             return [
@@ -2355,6 +2375,7 @@ class MoneyWorkflowService
             'placeholders'  => $data['placeholders'] ?? null,
             'active'        => isset($data['active']) ? (int)$data['active'] : 1,
             'created_by'    => $data['created_by'] ?? ($_SESSION['admin_id'] ?? null),
+        'tenant_id' => TenantContext::getId(),
         ]);
         return (int)$this->db->lastInsertId();
     }
@@ -2430,6 +2451,7 @@ class MoneyWorkflowService
             'payment_mode'     => $data['payment_mode'] ?? 'cash',
             'proof_file'       => $data['proof_file'] ?? $data['supporting_doc'] ?? null,
             'status'           => $data['status'] ?? 'pending',
+        'tenant_id' => TenantContext::getId(),
         ]);
         return (int)$this->db->lastInsertId();
     }

@@ -42,7 +42,8 @@ class CommissionAdminController extends AdminController
 
             // Pending payouts
             try {
-                $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total FROM mlm_payouts WHERE status='pending'");
+                [$tidSql, $tidParams] = $this->tenantWhere();
+                $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total FROM mlm_payouts WHERE status='pending'{$tidSql}", $tidParams);
                 $stats['pending_payouts'] = $r[0] ?? ['c'=>0,'total'=>0];
             } catch (\Throwable $e) {
                 $stats['pending_payouts'] = ['c'=>0,'total'=>0];

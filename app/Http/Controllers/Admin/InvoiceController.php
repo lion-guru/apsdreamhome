@@ -7,6 +7,7 @@ use Exception;
 
 class InvoiceController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
     protected $db;
     protected $service;
 
@@ -236,10 +237,11 @@ class InvoiceController extends AdminController
             $set = implode(', ', array_map(fn($k) => "{$k} = ?", array_keys($data)));
             $vals = array_values($data);
             $vals[] = (int)$id;
-            $pdo->prepare("UPDATE invoices SET {$set} WHERE id = ?")->execute($vals);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $pdo->prepare("UPDATE invoices SET {$set} WHERE id = ? {$tenantSql}")->execute(array_merge($vals, $tenantParams));
 
             if (!empty($_POST['item_name']) && is_array($_POST['item_name'])) {
-                $pdo->prepare("DELETE FROM invoice_items WHERE invoice_id = ?")->execute([(int)$id]);
+                $pdo->prepare("DELETE FROM invoice_items WHERE invoice_id = ? {$tenantSql}")->execute(array_merge([(int)$id], $tenantParams));
                 $count = count($_POST['item_name']);
                 for ($i = 0; $i < $count; $i++) {
                     if (empty($_POST['item_name'][$i])) continue;

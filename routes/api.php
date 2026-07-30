@@ -142,17 +142,8 @@ $router->post('/api/gemini/social-media', 'Api\GeminiApiController@socialMediaCo
 $router->get('/api/gemini/test', 'Api\GeminiApiController@testConnection');
 $router->get('/api/gemini/status', 'Api\GeminiApiController@getStatus');
 
-// Dependency Injection Container Routes
-require_once __DIR__ . '/container.php';
-
-// Request Middleware Routes
-require_once __DIR__ . '/request-middleware.php';
-
 // Farmer Management Routes
 require_once __DIR__ . '/farmers.php';
-
-// Performance Cache Management Routes
-require_once __DIR__ . '/performance-cache.php';
 
 // Event Bus Management Routes
 require_once __DIR__ . '/events.php';
@@ -721,3 +712,10 @@ $router->get('/api/esign/status/{transactionId}', 'Api\ESignController@getStatus
 $router->get('/api/esign/document/{transactionId}', 'Api\ESignController@getDocument');
 $router->get('/api/esign/booking/{bookingId}', 'Api\ESignController@getByBooking');
 $router->post('/api/esign/callback', 'Api\ESignController@callback');
+
+// ============================================================
+// INFRASTRUCTURE & DEBUGGING API (Admin Tools)
+// ============================================================
+require_once __DIR__ . '/container.php';
+require_once __DIR__ . '/performance-cache.php';
+require_once __DIR__ . '/request-middleware.php';

@@ -89,7 +89,7 @@ class PlotController extends BaseController
         // Build filter query
         $where = "p.colony_id = ? AND p.is_active = 1";
         $params = [$colony['id']];
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         if ($tid > 1) { $where .= " AND p.tenant_id = ?"; $params[] = $tid; }
 
         // Status filter
@@ -298,7 +298,7 @@ class PlotController extends BaseController
         }
 
         $plotId = intval($_POST['plot_id'] ?? 0);
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND is_active = 1 AND status = 'available'" . ($tid > 1 ? " AND tenant_id = $tid" : ""), [$plotId]);
         if (!$plot) {
             $this->setFlash('error', 'Plot not found or no longer available');
@@ -325,11 +325,12 @@ class PlotController extends BaseController
                 'amount' => 0,
                 'negotiated_price' => $dealPrice,
                 'notes' => $_POST['notes'] ?? '',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
 
             // 2. Update plot status to hold
-            $this->db->execute("UPDATE plots SET status = 'hold' WHERE id = ?", [$plot['id']]);
+            $this->db->execute("UPDATE plots SET status = 'hold' WHERE id = ? AND tenant_id = ?", [$plot['id'], $tid]);
 
             // 3. Create initial EMI schedule (25% token within 15 days)
             $tokenAmount = $dealPrice * 0.25;
@@ -339,6 +340,7 @@ class PlotController extends BaseController
                 'due_date' => date('Y-m-d', strtotime('+15 days')),
                 'amount' => $tokenAmount,
                 'status' => 'pending',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
 
@@ -517,6 +519,7 @@ class PlotController extends BaseController
         $amount = (float)($_POST['amount'] ?? 0);
         $mode = $_POST['mode'] ?? 'online';
         $reference = $_POST['reference'] ?? '';
+        $tid = (int)$this->tenantId();
 
         if ($amount <= 0) {
             $this->setFlash('error', 'Invalid payment amount');
@@ -535,7 +538,7 @@ class PlotController extends BaseController
             $newPaid = $paidSoFar + $amount;
             $paymentStatus = ($newPaid >= $requiredToken) ? 'partial' : 'pending';
 
-            $this->db->execute("UPDATE bookings SET amount = ?, payment_status = ? WHERE id = ?", [$newPaid, $paymentStatus, $bookingId]);
+            $this->db->execute("UPDATE bookings SET amount = ?, payment_status = ? WHERE id = ? AND tenant_id = ?", [$newPaid, $paymentStatus, $bookingId, $tid]);
 
             $this->db->insert('booking_emis', [
                 'booking_id' => $bookingId,
@@ -547,6 +550,7 @@ class PlotController extends BaseController
                 'payment_mode' => $mode,
                 'transaction_ref' => $reference,
                 'status' => 'paid',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
 

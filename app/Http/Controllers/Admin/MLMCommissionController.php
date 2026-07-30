@@ -266,8 +266,9 @@ class MLMCommissionController extends AdminController
         $this->requireAdmin();
         $payout = [];
         try {
-            $stmt = $this->db->prepare("SELECT p.*, u.name AS associate_name, a.level AS associate_rank, b.batch_number FROM mlm_payouts p LEFT JOIN users u ON p.associate_user_id = u.id LEFT JOIN associates a ON a.user_id = p.associate_user_id LEFT JOIN mlm_payout_batches b ON p.batch_id = b.id WHERE p.id = ?");
-            $stmt->execute([(int)$payoutId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT p.*, u.name AS associate_name, a.level AS associate_rank, b.batch_number FROM mlm_payouts p LEFT JOIN users u ON p.associate_user_id = u.id LEFT JOIN associates a ON a.user_id = p.associate_user_id LEFT JOIN mlm_payout_batches b ON p.batch_id = b.id WHERE p.id = ?{$tidSql}");
+            $stmt->execute(array_merge([(int)$payoutId], $tidParams));
             $payout = $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             error_log('payoutPaidForm: ' . $e->getMessage());
@@ -299,8 +300,9 @@ class MLMCommissionController extends AdminController
         // Redirect back to the batch view
         $batchId = 0;
         try {
-            $stmt = $this->db->prepare("SELECT batch_id FROM mlm_payouts WHERE id = ?");
-            $stmt->execute([(int)$payoutId]);
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("SELECT batch_id FROM mlm_payouts WHERE id = ?{$tidSql}");
+            $stmt->execute(array_merge([(int)$payoutId], $tidParams));
             $batchId = (int)($stmt->fetchColumn() ?: 0);
         } catch (\Exception $e) {
             $batchId = 0;

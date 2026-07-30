@@ -568,7 +568,7 @@ class CRMController extends BaseController
         $where = "deleted_at IS NULL AND (name LIKE ? OR phone LIKE ? OR email LIKE ? OR lead_number LIKE ?)";
         $params = [$s, $s, $s, $s];
 
-        $tid = $this->tenantId();
+        $tid = (int)$this->tenantId();
         if ($tid > 1) {
             $where .= " AND tenant_id = ?";
             $params[] = $tid;

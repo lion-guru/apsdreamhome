@@ -56,8 +56,8 @@ class PayrollController extends AdminController
         $payment_status = $_POST['payment_status'] ?? 'pending';
         $notes = $_POST['notes'] ?? '';
         try {
-            $stmt = $this->db->prepare("INSERT INTO employee_payroll (employee_id, basic_salary, hra, allowance, deduction, net_salary, payment_date, payment_status, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$employee_id, $basic_salary, $hra, $allowance, $deduction, $net_salary, $payment_date, $payment_status, $notes]);
+            $stmt = $this->db->prepare("INSERT INTO employee_payroll (employee_id, basic_salary, hra, allowance, deduction, net_salary, payment_date, payment_status, notes, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$employee_id, $basic_salary, $hra, $allowance, $deduction, $net_salary, $payment_date, $payment_status, $notes, $this->tenantId()]);
             $this->setFlash('success', 'Payroll record created successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create payroll record: ' . $e->getMessage());
@@ -106,8 +106,9 @@ class PayrollController extends AdminController
         $payment_status = $_POST['payment_status'] ?? 'pending';
         $notes = $_POST['notes'] ?? '';
         try {
-            $stmt = $this->db->prepare("UPDATE employee_payroll SET employee_id = ?, basic_salary = ?, hra = ?, allowance = ?, deduction = ?, net_salary = ?, payment_date = ?, payment_status = ?, notes = ? WHERE id = ?");
-            $stmt->execute([$employee_id, $basic_salary, $hra, $allowance, $deduction, $net_salary, $payment_date, $payment_status, $notes, $id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $this->db->prepare("UPDATE employee_payroll SET employee_id = ?, basic_salary = ?, hra = ?, allowance = ?, deduction = ?, net_salary = ?, payment_date = ?, payment_status = ?, notes = ? WHERE id = ?" . $tenantSql);
+            $stmt->execute(array_merge([$employee_id, $basic_salary, $hra, $allowance, $deduction, $net_salary, $payment_date, $payment_status, $notes, $id], $tenantParams));
             $this->setFlash('success', 'Payroll record updated successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update: ' . $e->getMessage());
@@ -147,8 +148,8 @@ class PayrollController extends AdminController
         $advance_repay_emi = $_POST['advance_repay_emi'] ?? 0;
         if (!$employee_id) { $this->setFlash('error', 'Employee ID required'); $this->redirect('/admin/payroll/advances'); }
         try {
-            $stmt = $this->db->prepare("INSERT INTO employee_payroll (employee_id, advance_amount, advance_reason, advance_approved_by, advance_repay_emi, payment_status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
-            $stmt->execute([$employee_id, $advance_amount, $advance_reason, $advance_approved_by, $advance_repay_emi]);
+            $stmt = $this->db->prepare("INSERT INTO employee_payroll (employee_id, advance_amount, advance_reason, advance_approved_by, advance_repay_emi, payment_status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'pending', ?, NOW())");
+            $stmt->execute([$employee_id, $advance_amount, $advance_reason, $advance_approved_by, $advance_repay_emi, $this->tenantId()]);
             $this->setFlash('success', 'Advance added successfully');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to add advance: ' . $e->getMessage());

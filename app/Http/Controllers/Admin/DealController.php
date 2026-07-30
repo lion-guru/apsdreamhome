@@ -11,6 +11,8 @@ use PDO;
  */
 class DealController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -474,9 +476,10 @@ class DealController extends AdminController
     {
         $base = BASE_URL;
         $dealId = intval($id);
+        $tid = (int)$this->tenantId();
 
         try {
-            $this->db->query("DELETE FROM deals WHERE id = ?", [$dealId]);
+            $this->db->query("DELETE FROM deals WHERE id = ? AND tenant_id = ?", [$dealId, $tid]);
             $_SESSION['success'] = 'Deal deleted successfully';
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Failed to delete deal: ' . $e->getMessage();
@@ -581,5 +584,5 @@ class DealController extends AdminController
         }
     }
 
-    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $this->db->query("UPDATE deals SET stage = ? WHERE id = ?", [$stage, $id]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
+    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
 }

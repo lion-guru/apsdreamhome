@@ -338,23 +338,23 @@ class MLMCommissionEngine
             // Update associates.level (preserves legacy values that aren't in our 6-tier set;
             // we only update if the value already conforms to one of the 6 ranks OR is null/legacy)
             $safeOldRank = in_array($oldRank, self::RANK_ORDER, true) ? $oldRank : 'associate';
-            $upd = $this->db->prepare("UPDATE associates SET level = ? WHERE id = ?");
-            $upd->execute([$newRank, $associateId]);
+            $upd = $this->db->prepare("UPDATE associates SET level = ? WHERE id = ? AND tenant_id = ?");
+            $upd->execute([$newRank, $associateId, $this->getTenantId()]);
 
             // Sync mlm_profiles.current_level (GamificationService reads this column)
             $syncStmt = $this->db->prepare("
                 UPDATE mlm_profiles SET current_level = ?, updated_at = NOW() WHERE user_id = (
                     SELECT user_id FROM associates WHERE id = ?
-                )
+                ) AND tenant_id = ?
             ");
-            $syncStmt->execute([$newRank, $associateId]);
+            $syncStmt->execute([$newRank, $associateId, $this->getTenantId()]);
 
             $isManual = $promotedBy !== null ? 1 : 0;
             $ins = $this->db->prepare("
                 INSERT INTO mlm_rank_history
-                    (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_by, is_manual, reason, promoted_at)
+                    (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_by, is_manual, reason, promoted_at, tenant_id)
                 VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)
             ");
             $ins->execute([
                 $associateId,
@@ -365,6 +365,7 @@ class MLMCommissionEngine
                 $promotedBy,
                 $isManual,
                 $isManual ? 'Manual promotion by admin' : 'Auto promotion by cron',
+                $this->getTenantId(),
             ]);
 
             // ── RANK ADVANCEMENT BONUS ──
@@ -722,10 +723,10 @@ class MLMCommissionEngine
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, booking_id, receipt_id, hold_until, created_at,
-                     plan_id, plan_version, plan_snapshot, calculation_engine)
+                     plan_id, plan_version, plan_snapshot, calculation_engine, tenant_id)
                 VALUES
                     (?, ?, ?, ?, ?, 'pending', NULL, ?, ?, ?, ?, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), NOW(),
-                     ?, ?, ?, 'legacy')
+                     ?, ?, ?, 'legacy', ?)
             ");
             foreach ($entries as &$e) {
                 try {
@@ -742,6 +743,7 @@ class MLMCommissionEngine
                         $planSnapshot['plan_id'] ?? null,
                         $planSnapshot['plan_version'] ?? null,
                         $planSnapshot ? json_encode($planSnapshot) : null,
+                        $this->getTenantId(),
                     ]);
                     $e['id'] = (int)$this->db->lastInsertId();
                     $result['created_ids'][] = $e['id'];
@@ -856,17 +858,17 @@ class MLMCommissionEngine
             }
 
             $ins = $this->db->prepare("
-                INSERT INTO mlm_rank_bonuses (user_id, from_rank, to_rank, bonus_amount, status, created_at)
-                VALUES (?, ?, ?, ?, 'pending', NOW())
+                INSERT INTO mlm_rank_bonuses (user_id, from_rank, to_rank, bonus_amount, status, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, 'pending', NOW(), ?)
             ");
-            $ins->execute([$userId, $fromRank, $toRank, $bonus]);
+            $ins->execute([$userId, $fromRank, $toRank, $bonus, $this->getTenantId()]);
 
             $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, booking_id, created_at,
-                     plan_id, plan_version, plan_snapshot, calculation_engine)
+                     plan_id, plan_version, plan_snapshot, calculation_engine, tenant_id)
                 VALUES (?, ?, 'rank_bonus', ?, 'pending', ?, NULL, NOW(),
-                        ?, ?, ?, 'legacy')
+                        ?, ?, ?, 'legacy', ?)
             ")->execute([
                 $userId,
                 $userId,
@@ -875,6 +877,7 @@ class MLMCommissionEngine
                 ($planSnapshot['plan_id'] ?? null),
                 ($planSnapshot['plan_version'] ?? null),
                 ($planSnapshot ? json_encode($planSnapshot) : null),
+                $this->getTenantId(),
             ]);
         } catch (\Throwable $e) {
             error_log("[MLMCommissionEngine] awardRankBonus() error: " . $e->getMessage());
@@ -960,9 +963,9 @@ class MLMCommissionEngine
                             INSERT INTO mlm_clawback_log
                                 (original_ledger_id, beneficiary_user_id, source_user_id,
                                  emi_installment_id, default_date, original_amount, clawback_amount,
-                                 reason, status, created_at)
+                                 reason, status, created_at, tenant_id)
                             VALUES
-                                (?, ?, ?, ?, ?, ?, ?, ?, 'debited', NOW())
+                                (?, ?, ?, ?, ?, ?, ?, ?, 'debited', NOW(), ?)
                         ");
                         $insCb->execute([
                             $pr['id'],
@@ -973,6 +976,7 @@ class MLMCommissionEngine
                             $cbAmt,
                             $cbAmt,
                             "EMI default {$daysOverdue}d on booking #{$bookingId}",
+                            $this->getTenantId(),
                         ]);
                         $cbId = (int)$this->db->lastInsertId();
 
@@ -1074,13 +1078,14 @@ class MLMCommissionEngine
 
             $insB = $this->db->prepare("
                 INSERT INTO mlm_payout_batches
-                    (batch_number, period_year, period_month, period_start, period_end, status, prepared_by, notes, created_at)
+                    (batch_number, period_year, period_month, period_start, period_end, status, prepared_by, notes, created_at, tenant_id)
                 VALUES
-                    (?, ?, ?, ?, ?, 'draft', ?, ?, NOW())
+                    (?, ?, ?, ?, ?, 'draft', ?, ?, NOW(), ?)
             ");
             $insB->execute([
                 $batchNumber, $year, $month, $periodStart, $periodEnd, $preparedBy,
                 "Auto-created batch for {$year}-{$month}",
+                $this->getTenantId(),
             ]);
             $batchId = (int)$this->db->lastInsertId();
 
@@ -1098,9 +1103,9 @@ class MLMCommissionEngine
 
             $insP = $this->db->prepare("
                 INSERT INTO mlm_payouts
-                    (batch_id, associate_id, associate_user_id, gross_amount, tds_amount, other_deductions, net_amount, status, created_at)
+                    (tenant_id, batch_id, associate_id, associate_user_id, gross_amount, tds_amount, other_deductions, net_amount, status, created_at)
                 VALUES
-                    (?, ?, ?, ?, ?, 0, ?, 'pending', NOW())
+                    (?, ?, ?, ?, ?, ?, 0, ?, 'pending', NOW())
             ");
 
             $resolveAssoc = $this->db->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
@@ -1117,7 +1122,7 @@ class MLMCommissionEngine
                 $net = $gross - $tds;
                 $resolveAssoc->execute([$benUserId]);
                 $assocId = (int)$resolveAssoc->fetchColumn();
-                $insP->execute([$batchId, $assocId, $benUserId, $gross, $tds, $net]);
+                $insP->execute([$this->getTenantId(), $batchId, $assocId, $benUserId, $gross, $tds, $net]);
                 $count++;
                 $totalGross += $gross;
                 $totalTds += $tds;
@@ -1188,7 +1193,7 @@ class MLMCommissionEngine
                     cheque_number = ?,
                     paid_date = CURDATE(),
                     processed_by = ?
-                WHERE id = ? AND status IN ('pending', 'processing')
+                WHERE id = ? AND status IN ('pending', 'processing') AND tenant_id = ?
             ");
             $stmt->execute([
                 $mode,
@@ -1199,12 +1204,15 @@ class MLMCommissionEngine
                 $txnMeta['cheque_number'] ?? null,
                 $processedBy,
                 $payoutId,
+                $this->getTenantId(),
             ]);
             if ($stmt->rowCount() === 0) {
                 return false;
             }
             // Recalculate batch totals based on paid status
-            $this->refreshBatchTotals((int)$this->db->query("SELECT batch_id FROM mlm_payouts WHERE id = {$payoutId}")->fetchColumn());
+            $stmt2 = $this->db->prepare("SELECT batch_id FROM mlm_payouts WHERE id = ? AND tenant_id = ?");
+            $stmt2->execute([$payoutId, $this->getTenantId()]);
+            $this->refreshBatchTotals((int)$stmt2->fetchColumn());
             return true;
         } catch (Exception $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
@@ -1334,9 +1342,11 @@ class MLMCommissionEngine
             $row = $this->db->query("SELECT COALESCE(SUM(clawback_amount), 0) AS s FROM mlm_clawback_log WHERE status IN ('debited', 'pending')")->fetch(PDO::FETCH_ASSOC);
             $stats['total_clawback'] = (float)($row['s'] ?? 0);
 
-            $row = $this->db->query("SELECT COUNT(*) AS c, COALESCE(SUM(net_amount), 0) AS s FROM mlm_payouts WHERE status IN ('pending', 'processing')")->fetch(PDO::FETCH_ASSOC);
-            $stats['pending_payouts'] = (int)($row['c'] ?? 0);
-            $stats['pending_payout_amount'] = (float)($row['s'] ?? 0);
+            $pStmt = $this->db->prepare("SELECT COUNT(*) AS c, COALESCE(SUM(net_amount), 0) AS s FROM mlm_payouts WHERE status IN ('pending', 'processing') AND tenant_id = ?");
+            $pStmt->execute([$this->getTenantId()]);
+            $pRow = $pStmt->fetch(PDO::FETCH_ASSOC);
+            $stats['pending_payouts'] = (int)($pRow['c'] ?? 0);
+            $stats['pending_payout_amount'] = (float)($pRow['s'] ?? 0);
 
             // Rank distribution (from associates table, with sane fallback)
             $stats['rank_distribution'] = $this->getRankDistribution();

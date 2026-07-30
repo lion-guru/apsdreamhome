@@ -53,6 +53,7 @@ class CompanyController extends AdminController
             $this->db->update('company_settings', $data, ['id' => $company['id']]);
         } else {
             $data['created_at'] = date('Y-m-d H:i:s');
+            $data['tenant_id'] = (int)$this->tenantId();
             $this->db->insert('company_settings', $data);
         }
 
@@ -117,7 +118,8 @@ class CompanyController extends AdminController
             'position' => $_POST['position'] ?? '',
             'salary' => floatval($_POST['salary'] ?? 0),
             'join_date' => $_POST['join_date'] ?? date('Y-m-d'),
-            'status' => $_POST['status'] ?? 'active'
+            'status' => $_POST['status'] ?? 'active',
+            'tenant_id' => (int)$this->tenantId(),
         ]);
 
         $_SESSION['success'] = 'Employee added successfully!';

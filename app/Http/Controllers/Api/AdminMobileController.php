@@ -86,7 +86,8 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             }
 
             $dbStatus = $statusMap[$status];
-            $this->db->execute("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?", [$dbStatus, $id]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$dbStatus, $id, $tid]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Booking status updated']);
         } catch (\Exception $e) {
@@ -327,7 +328,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
         try {
             $revenue = $this->db->fetchOne("SELECT COALESCE(SUM(total_amount),0) as total FROM bookings WHERE status!='cancelled'");
             $bookings = $this->db->fetchOne("SELECT COUNT(*) as total FROM bookings WHERE status!='cancelled'");
-            $tid = $this->tenantId();
+            $tid = (int)$this->tenantId();
             $tidFilter = $tid > 1 ? " AND tenant_id = $tid" : '';
             $users = $this->db->fetchOne("SELECT COUNT(*) as total FROM users WHERE status='active'{$tidFilter}");
             $leads = $this->db->fetchOne("SELECT COUNT(*) as total FROM leads");

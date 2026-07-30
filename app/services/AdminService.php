@@ -235,8 +235,9 @@ class AdminService {
 
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $offset = ($filters['page'] - 1) * $filters['per_page'];
-            $limit = $filters['per_page'];
+            $page = max(1, (int)($filters['page'] ?? 1));
+            $perPage = min(100, max(1, (int)($filters['per_page'] ?? 25)));
+            $offset = ($page - 1) * $perPage;
 
             $sql = "
                 SELECT u.*, COUNT(p.id) as property_count
@@ -245,7 +246,7 @@ class AdminService {
                 $whereClause
                 GROUP BY u.id
                 ORDER BY u.created_at DESC
-                LIMIT $offset, $limit
+                LIMIT $offset, $perPage
             ";
             $stmt = $this->db->query($sql, null, \PDO::FETCH_ASSOC);
             $stmt->execute($params);

@@ -47,12 +47,7 @@ class Database
                 $this->config['charset']
             );
 
-            $this->pdo = new PDO(
-                $dsn,
-                $this->config['username'],
-                $this->config['password'],
-                $this->config['options']
-            );
+            $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
         } catch (PDOException $e) {
             throw new \RuntimeException("Database connection failed: " . $e->getMessage());
         }

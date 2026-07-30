@@ -165,7 +165,7 @@ class MobileApiController extends BaseController
     {
         $this->setCorsHeaders();
         
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         $lastSync = \App\Core\Security::sanitize($_GET['last_sync'] ?? null) ?? '2000-01-01 00:00:00';
 
         try {
@@ -1004,17 +1004,19 @@ class MobileApiController extends BaseController
                 break;
                 
             case 'update':
+                $tid = (int)$this->tenantId();
                 $stmt = $this->db->prepare("
                     UPDATE leads 
                     SET name = ?, email = ?, phone = ?, status = ?, updated_at = NOW()
-                    WHERE id = ?
+                    WHERE id = ? AND tenant_id = ?
                 ");
                 $stmt->execute([
                     $data['name'] ?? '',
                     $data['email'] ?? '',
                     $data['phone'] ?? '',
                     $data['status'] ?? 'new',
-                    $lead_id
+                    $lead_id,
+                    $tid
                 ]);
                 break;
         }
@@ -1026,14 +1028,16 @@ class MobileApiController extends BaseController
     private function processPropertyChange($property_id, $action, $data)
     {
         if ($action === 'update') {
+            $tid = (int)$this->tenantId();
             $stmt = $this->db->prepare("
                 UPDATE properties 
                 SET status = ?, updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ? AND tenant_id = ?
             ");
             $stmt->execute([
                 $data['status'] ?? 'available',
-                $property_id
+                $property_id,
+                $tid
             ]);
         }
     }
@@ -1059,12 +1063,13 @@ class MobileApiController extends BaseController
             if (!$this->db) {
                 return false;
             }
+            $tid = (int)$this->tenantId();
 
             $sql = "
                 INSERT INTO property_inquiries (
                     property_id, guest_name, guest_email, guest_phone,
-                    subject, message, inquiry_type, status, priority, created_at
-                ) VALUES (:propertyId, :name, :email, :phone, :subject, :message, :inquiryType, :status, :priority, NOW())
+                    subject, message, inquiry_type, status, priority, tenant_id, created_at
+                ) VALUES (:propertyId, :name, :email, :phone, :subject, :message, :inquiryType, :status, :priority, :tenantId, NOW())
             ";
 
             $stmt = $this->db->prepare($sql);
@@ -1077,7 +1082,8 @@ class MobileApiController extends BaseController
                 'message' => $data['message'],
                 'inquiryType' => $data['inquiry_type'] ?? 'general',
                 'status' => 'new',
-                'priority' => $data['priority'] ?? 'medium'
+                'priority' => $data['priority'] ?? 'medium',
+                'tenantId' => $tid
             ]);
 
             if ($result) {
@@ -1119,9 +1125,10 @@ class MobileApiController extends BaseController
             if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
+            $tid = (int)$this->tenantId();
 
-            $stmt = $this->db->prepare("INSERT INTO property_favorites (user_id, property_id) VALUES (:userId, :propertyId)");
-            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
+            $stmt = $this->db->prepare("INSERT INTO property_favorites (user_id, property_id, tenant_id) VALUES (:userId, :propertyId, :tenantId)");
+            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id, 'tenantId' => $tid]);
         } catch (\Exception $e) {
             error_log('Add favorite error: ' . $e->getMessage());
             throw $e;
@@ -1137,9 +1144,10 @@ class MobileApiController extends BaseController
             if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
+            $tid = (int)$this->tenantId();
 
-            $stmt = $this->db->prepare("DELETE FROM property_favorites WHERE user_id = :userId AND property_id = :propertyId");
-            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
+            $stmt = $this->db->prepare("DELETE FROM property_favorites WHERE user_id = :userId AND property_id = :propertyId AND tenant_id = :tenantId");
+            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id, 'tenantId' => $tid]);
         } catch (\Exception $e) {
             error_log('Remove favorite error: ' . $e->getMessage());
             throw $e;
@@ -1346,7 +1354,7 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
         $input = json_decode(file_get_contents('php://input'), true);
         $leads = $input['leads'] ?? [];
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('Authentication required', 401);
@@ -1412,7 +1420,7 @@ class MobileApiController extends BaseController
     {
         $this->setCorsHeaders();
         $data = json_decode(file_get_contents('php://input'), true);
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('User ID not found in session', 401);
@@ -1453,7 +1461,7 @@ class MobileApiController extends BaseController
     public function getMlmSummary()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1477,7 +1485,7 @@ class MobileApiController extends BaseController
     public function getMlmPayouts()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1508,7 +1516,7 @@ class MobileApiController extends BaseController
     public function getUserProfile()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('Unauthorized', 401);
@@ -1565,7 +1573,7 @@ class MobileApiController extends BaseController
     public function getMlmIncentives()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1589,7 +1597,7 @@ class MobileApiController extends BaseController
     public function getDocuments()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1614,7 +1622,7 @@ class MobileApiController extends BaseController
     {
         $this->setCorsHeaders();
         
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_POST['user_id']) ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_POST['user_id']) ?? 0);
         $documentType = \App\Core\Security::sanitize($_POST['document_type']) ?? 'general';
         
         if (!$userId) {
@@ -1679,7 +1687,7 @@ class MobileApiController extends BaseController
     public function getCustomerDocuments()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             http_response_code(401);
@@ -1800,7 +1808,7 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
         $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
         
-        $agentId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($input['user_id'] ?? null) ?? null;
+        $agentId = (int)($GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($input['user_id'] ?? null) ?? 0);
         $leadId = \App\Core\Security::sanitize($input['lead_id'] ?? null) ?? null;
         $propertyId = \App\Core\Security::sanitize($input['property_id'] ?? null) ?? null;
         $destLat = \App\Core\Security::sanitize($input['dest_lat'] ?? null) ?? null;
@@ -2026,7 +2034,7 @@ class MobileApiController extends BaseController
         }
 
         // Get user_id from auth token if available
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         try {
             $pdo = $this->db;
@@ -2109,7 +2117,7 @@ class MobileApiController extends BaseController
     public function getMySiteVisits()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             http_response_code(401);
@@ -2181,7 +2189,7 @@ class MobileApiController extends BaseController
 
         try {
             $pdo = $this->db;
-            $userId = $GLOBALS['api_user_id'] ?? null;
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
             // Verify ownership
             $stmt = $pdo->prepare("SELECT id, customer_id, visit_date, visit_time FROM property_visits WHERE id = ?");
@@ -2233,7 +2241,7 @@ class MobileApiController extends BaseController
 
         try {
             $pdo = $this->db;
-            $userId = $GLOBALS['api_user_id'] ?? null;
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
             // Verify ownership
             $stmt = $pdo->prepare("SELECT id, customer_id, visit_date, visit_time FROM property_visits WHERE id = ?");
@@ -2313,7 +2321,7 @@ class MobileApiController extends BaseController
     public function processPayouts()
     {
         $this->setCorsHeaders();
-        $adminId = $GLOBALS['api_user_id'] ?? null;
+        $adminId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$adminId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -2356,7 +2364,7 @@ class MobileApiController extends BaseController
     public function getGenealogy()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             http_response_code(401);
@@ -2382,7 +2390,7 @@ class MobileApiController extends BaseController
     public function getBusinessBreakdown()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             http_response_code(401);
@@ -2408,7 +2416,7 @@ class MobileApiController extends BaseController
     public function getMyTeam()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             http_response_code(400);
@@ -2488,7 +2496,7 @@ class MobileApiController extends BaseController
     public function getRankProgress()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         if (!$userId) {
             http_response_code(400);
@@ -2579,7 +2587,7 @@ class MobileApiController extends BaseController
     public function requestPayout()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_POST['user_id']) ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? Security::sanitize($_POST['user_id']) ?? 0);
         $amount = Security::sanitize($_POST['amount']) ?? 0;
         $remarks = Security::sanitize($_POST['remarks'] ?? 'Mobile app request');
 
@@ -2601,8 +2609,8 @@ class MobileApiController extends BaseController
                 return;
             }
 
-            $sql = "INSERT INTO mlm_payout_requests (user_id, amount, status, remarks) VALUES (?, ?, 'pending', ?)";
-            $this->db->query($sql, [$userId, $amount, $remarks]);
+            $sql = "INSERT INTO mlm_payout_requests (user_id, amount, status, remarks, tenant_id) VALUES (?, ?, 'pending', ?, ?)";
+            $this->db->query($sql, [$userId, $amount, $remarks, (int)$this->tenantId()]);
 
             echo json_encode(['success' => true, 'message' => 'Payout request submitted successfully']);
         } catch (\Exception $e) {
@@ -2619,7 +2627,7 @@ class MobileApiController extends BaseController
     public function getCustomerBookings()
     {
         $this->setCorsHeaders();
-        $customerId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['customer_id']) ?? null;
+        $customerId = (int)($GLOBALS['api_user_id'] ?? Security::sanitize($_GET['customer_id']) ?? 0);
 
         if (!$customerId) {
             http_response_code(400);
@@ -2702,7 +2710,7 @@ class MobileApiController extends BaseController
         $input = json_decode(file_get_contents('php://input'), true);
         if (!$input) $input = $_POST;
 
-        $userId = $GLOBALS['api_user_id'] ?? $input['user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? $input['user_id'] ?? 0);
         if (!$userId) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'User identification required']);
@@ -2744,7 +2752,7 @@ class MobileApiController extends BaseController
     public function getSubmissions()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
 
         try {
             $submissionService = new \App\Services\PropertySubmissionService();
@@ -3198,16 +3206,17 @@ class MobileApiController extends BaseController
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
             // 1. Write to push_tokens (used by JWTAuthService path)
+            $tid = (int)$this->tenantId();
             $stmt = $pdo->prepare("
-                INSERT INTO push_tokens (user_id, user_type, device_token, platform, is_active, last_used_at, created_at, updated_at)
-                VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW())
+                INSERT INTO push_tokens (user_id, user_type, device_token, platform, is_active, tenant_id, last_used_at, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 1, ?, NOW(), NOW(), NOW())
                 ON DUPLICATE KEY UPDATE
                     is_active = 1,
                     platform = VALUES(platform),
                     last_used_at = NOW(),
                     updated_at = NOW()
             ");
-            $stmt->execute([$userId, $userRole, $deviceToken, $platform]);
+            $stmt->execute([$userId, $userRole, $deviceToken, $platform, $tid]);
 
             // 2. Also write to mobile_devices (used by PushNotificationService::sendToUser)
             try {
@@ -3216,11 +3225,11 @@ class MobileApiController extends BaseController
                 $existingDevice = $existing->fetchColumn();
 
                 if ($existingDevice) {
-                    $upd = $pdo->prepare("UPDATE mobile_devices SET user_id = ?, platform = ?, last_used_at = NOW(), is_active = 1 WHERE device_token = ?");
-                    $upd->execute([$userId, $platform, $deviceToken]);
+                    $upd = $pdo->prepare("UPDATE mobile_devices SET user_id = ?, platform = ?, last_used_at = NOW(), is_active = 1 WHERE device_token = ? AND tenant_id = ?");
+                    $upd->execute([$userId, $platform, $deviceToken, $tid]);
                 } else {
-                    $ins = $pdo->prepare("INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, created_at) VALUES (?, ?, ?, NOW(), 1, NOW())");
-                    $ins->execute([$userId, $deviceToken, $platform]);
+                    $ins = $pdo->prepare("INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, tenant_id, created_at) VALUES (?, ?, ?, NOW(), 1, ?, NOW())");
+                    $ins->execute([$userId, $deviceToken, $platform, $tid]);
                 }
             } catch (\Throwable $e) {
                 // mobile_devices table might not exist — push_tokens is sufficient
@@ -3880,10 +3889,11 @@ class MobileApiController extends BaseController
             $receiptNumber = 'APS-RCP-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(4)));
 
             // Insert receipt
+            $tid = (int)$this->tenantId();
             $receiptStmt = $pdo->prepare("
                 INSERT INTO booking_payment_receipts
-                    (booking_id, installment_id, receipt_number, receipt_date, amount, payment_mode, transaction_ref, status, created_at)
-                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'cleared', NOW())
+                    (booking_id, installment_id, receipt_number, receipt_date, amount, payment_mode, transaction_ref, status, tenant_id, created_at)
+                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'cleared', ?, NOW())
             ");
             $receiptStmt->execute([
                 $installment['booking_id'],
@@ -3892,6 +3902,7 @@ class MobileApiController extends BaseController
                 $amount,
                 $method,
                 $transactionRef ?: null,
+                $tid,
             ]);
 
             // Update installment
@@ -3899,6 +3910,7 @@ class MobileApiController extends BaseController
             $newStatus = $newPaidAmount >= (float) $installment['amount'] ? 'paid' : 'partial';
             $paidDate = $newStatus === 'paid' ? date('Y-m-d') : null;
 
+            $tid = (int)$this->tenantId();
             $updateStmt = $pdo->prepare("
                 UPDATE booking_payment_schedules
                 SET paid_amount = ?, paid_date = COALESCE(?, paid_date), status = ?, updated_at = NOW()
@@ -3917,11 +3929,11 @@ class MobileApiController extends BaseController
             $check = $checkStmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($check && $check['total'] == $check['paid_count']) {
-                $pdo->prepare("UPDATE plot_bookings SET status = 'fully_paid', updated_at = NOW() WHERE id = ?")
-                    ->execute([$installment['booking_id']]);
+                $pdo->prepare("UPDATE plot_bookings SET status = 'fully_paid', updated_at = NOW() WHERE id = ? AND tenant_id = ?")
+                    ->execute([$installment['booking_id'], $tid]);
             } elseif ($newPaidAmount > 0) {
-                $pdo->prepare("UPDATE plot_bookings SET status = 'partially_paid', updated_at = NOW() WHERE id = ? AND status = 'emi_active'")
-                    ->execute([$installment['booking_id']]);
+                $pdo->prepare("UPDATE plot_bookings SET status = 'partially_paid', updated_at = NOW() WHERE id = ? AND status = 'emi_active' AND tenant_id = ?")
+                    ->execute([$installment['booking_id'], $tid]);
             }
 
             $pdo->commit();
@@ -3992,11 +4004,12 @@ class MobileApiController extends BaseController
                 $email = $uStmt->fetchColumn() ?? '';
             }
 
+            $tid = (int)$this->tenantId();
             $stmt = $pdo->prepare("
-                INSERT INTO inquiries (user_id, name, email, phone, message, property_id, project_id, type, status, priority, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'medium', NOW())
+                INSERT INTO inquiries (user_id, name, email, phone, message, property_id, project_id, type, status, priority, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'medium', ?, NOW())
             ");
-            $stmt->execute([$userId, $name, $email, $phone, $message, $propertyId, $projectId, $type]);
+            $stmt->execute([$userId, $name, $email, $phone, $message, $propertyId, $projectId, $type, $tid]);
             $inquiryId = (int) $pdo->lastInsertId();
 
             // Auto-wire to CRM lead
@@ -4136,7 +4149,9 @@ class MobileApiController extends BaseController
             $updates[] = "updated_at = NOW()";
             $params[] = $userId;
 
-            $sql = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = ?";
+            $tid = (int)$this->tenantId();
+            $sql = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = ? AND tenant_id = ?";
+            $params[] = $tid;
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
 
@@ -4205,8 +4220,9 @@ class MobileApiController extends BaseController
     
             $avatarUrl = '/uploads/avatars/' . $filename;
     
-            $stmt = $this->db->prepare("UPDATE users SET profile_image = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$avatarUrl, $userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("UPDATE users SET profile_image = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$avatarUrl, $userId, $tid]);
     
             echo json_encode([
                 'success' => true,
@@ -4373,11 +4389,12 @@ class MobileApiController extends BaseController
                 return;
             }
 
+            $tid = (int)$this->tenantId();
             $stmt = $pdo->prepare(
-                "INSERT INTO employee_attendance (employee_id, attendance_date, check_in_time, status)
-                 VALUES (?, CURDATE(), NOW(), 'present')"
+                "INSERT INTO employee_attendance (employee_id, attendance_date, check_in_time, status, tenant_id)
+                 VALUES (?, CURDATE(), NOW(), 'present', ?)"
             );
-            $stmt->execute([$userId]);
+            $stmt->execute([$userId, $tid]);
 
             echo json_encode([
                 'success' => true,
@@ -4430,10 +4447,11 @@ class MobileApiController extends BaseController
             $now = new \DateTime();
             $hoursWorked = round($now->diff($inTime)->h + $now->diff($inTime)->i / 60, 2);
 
+            $tid = (int)$this->tenantId();
             $stmt = $pdo->prepare(
-                "UPDATE employee_attendance SET check_out_time = NOW(), hours_worked = ? WHERE id = ?"
+                "UPDATE employee_attendance SET check_out_time = NOW(), hours_worked = ? WHERE id = ? AND tenant_id = ?"
             );
-            $stmt->execute([$hoursWorked, $row['id']]);
+            $stmt->execute([$hoursWorked, $row['id'], $tid]);
 
             echo json_encode([
                 'success' => true,
@@ -4754,10 +4772,11 @@ class MobileApiController extends BaseController
                 return;
             }
 
+            $tid = (int)$this->tenantId();
             $stmt = $pdo->prepare(
                 "INSERT INTO customer_referrals
-                    (referrer_user_id, referral_code, property_id, source, status, ip_address, user_agent, created_at)
-                 VALUES (?, ?, ?, ?, 'pending', ?, ?, NOW())"
+                    (referrer_user_id, referral_code, property_id, source, status, ip_address, user_agent, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, 'pending', ?, ?, ?, NOW())"
             );
             $stmt->execute([
                 $referrerUserId,
@@ -4766,6 +4785,7 @@ class MobileApiController extends BaseController
                 $source,
                 $_SERVER['REMOTE_ADDR'] ?? null,
                 $_SERVER['HTTP_USER_AGENT'] ?? null,
+                $tid,
             ]);
 
             echo json_encode([
@@ -5336,15 +5356,16 @@ class MobileApiController extends BaseController
      */
     public function holdPlot($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Authentication required']);
             return;
         }
+        $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("SELECT status FROM plots WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("SELECT status FROM plots WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $tid]);
             $plot = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$plot) {
                 http_response_code(404);
@@ -5356,8 +5377,8 @@ class MobileApiController extends BaseController
                 echo json_encode(['success' => false, 'error' => 'Plot is not available']);
                 return;
             }
-            $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW() WHERE id = ?");
-            $stmt->execute([$userId, $id]);
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$userId, $id, $tid]);
             echo json_encode(['success' => true, 'message' => 'Plot held successfully']);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -5370,15 +5391,16 @@ class MobileApiController extends BaseController
      */
     public function releasePlot($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Authentication required']);
             return;
         }
+        $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL WHERE id = ? AND held_by = ?");
-            $stmt->execute([$id, $userId]);
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL WHERE id = ? AND held_by = ? AND tenant_id = ?");
+            $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Plot released successfully']);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -5391,7 +5413,7 @@ class MobileApiController extends BaseController
      */
     public function getCustomerNotifications() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Authentication required']);
@@ -5418,15 +5440,16 @@ class MobileApiController extends BaseController
      */
     public function markNotificationsRead() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Authentication required']);
             return;
         }
         try {
-            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0");
-            $stmt->execute([$userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0 AND tenant_id = ?");
+            $stmt->execute([$userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Notifications marked as read']);
         } catch (\Exception $e) {
             echo json_encode(['success' => true, 'message' => 'Done']);
@@ -5438,7 +5461,7 @@ class MobileApiController extends BaseController
      */
     public function createBookingRequest() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Authentication required']);
@@ -5468,13 +5491,14 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $tid = (int)$this->tenantId();
             $bookingNumber = 'BK-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $bookingAmount = ($plot['total_price'] ?? 0) * 0.10;
-            $stmt = $this->db->prepare("INSERT INTO plot_bookings (booking_number, plot_id, colony_id, customer_id, customer_name, customer_email, customer_phone, total_plot_value, booking_amount, status, channel, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'mobile_app', NOW())");
-            $stmt->execute([$bookingNumber, $plotId, $plot['colony_id'], $userId, $user['name'] ?? '', $user['email'] ?? '', $user['phone'] ?? '', $plot['total_price'] ?? 0, $bookingAmount]);
+            $stmt = $this->db->prepare("INSERT INTO plot_bookings (booking_number, plot_id, colony_id, customer_id, customer_name, customer_email, customer_phone, total_plot_value, booking_amount, status, channel, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'mobile_app', ?, NOW())");
+            $stmt->execute([$bookingNumber, $plotId, $plot['colony_id'], $userId, $user['name'] ?? '', $user['email'] ?? '', $user['phone'] ?? '', $plot['total_price'] ?? 0, $bookingAmount, $tid]);
             $bookingId = $this->db->lastInsertId();
-            $stmt = $this->db->prepare("UPDATE plots SET status = 'booked' WHERE id = ?");
-            $stmt->execute([$plotId]);
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'booked' WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$plotId, $tid]);
             echo json_encode(['success' => true, 'data' => ['booking_id' => $bookingId, 'booking_number' => $bookingNumber, 'plot_id' => $plotId, 'booking_amount' => $bookingAmount, 'total_plot_value' => $plot['total_price'] ?? 0, 'status' => 'pending']]);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -5487,7 +5511,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function getUserBankAccounts() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT id, bank_name, account_holder_name, account_number, ifsc_code, branch_name, is_primary, created_at FROM user_bank_accounts WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC");
@@ -5506,7 +5530,7 @@ class MobileApiController extends BaseController
 
     public function saveUserBankAccount() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $id = $input['id'] ?? null;
@@ -5525,15 +5549,16 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'All fields required']); return;
         }
         try {
+            $tid = (int)$this->tenantId();
             if ($isPrimary) {
-                $this->db->prepare("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
+                $this->db->prepare("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?")->execute([$userId, $tid]);
             }
             if ($id) {
-                $stmt = $this->db->prepare("UPDATE user_bank_accounts SET bank_name=?, account_holder_name=?, account_number=?, ifsc_code=?, branch_name=?, is_primary=? WHERE id=? AND user_id=?");
-                $stmt->execute([$bankName, $accountHolder, $accountNumber, $ifscCode, $branch, $isPrimary, $id, $userId]);
+                $stmt = $this->db->prepare("UPDATE user_bank_accounts SET bank_name=?, account_holder_name=?, account_number=?, ifsc_code=?, branch_name=?, is_primary=? WHERE id=? AND user_id=? AND tenant_id=?");
+                $stmt->execute([$bankName, $accountHolder, $accountNumber, $ifscCode, $branch, $isPrimary, $id, $userId, $tid]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO user_bank_accounts (user_id, bank_name, account_holder_name, account_number, ifsc_code, branch_name, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$userId, $bankName, $accountHolder, $accountNumber, $ifscCode, $branch, $isPrimary]);
+                $stmt = $this->db->prepare("INSERT INTO user_bank_accounts (user_id, bank_name, account_holder_name, account_number, ifsc_code, branch_name, is_primary, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->execute([$userId, $bankName, $accountHolder, $accountNumber, $ifscCode, $branch, $isPrimary, $tid]);
                 $id = $this->db->lastInsertId();
             }
             echo json_encode(['success' => true, 'data' => ['id' => $id]]);
@@ -5544,14 +5569,15 @@ class MobileApiController extends BaseController
 
     public function deleteUserBankAccount() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $id = $input['id'] ?? null;
         if (!$id) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'ID required']); return; }
         try {
-            $stmt = $this->db->prepare("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?");
-            $stmt->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => true]);
@@ -5563,7 +5589,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function getUserAddresses() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT id, address_line1 AS address, address_line2, city, state, pincode, address_type AS type, label, is_primary, created_at FROM user_addresses WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC");
@@ -5576,7 +5602,7 @@ class MobileApiController extends BaseController
 
     public function saveUserAddress() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $id = $input['id'] ?? null;
@@ -5590,18 +5616,19 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Address and city required']); return;
         }
         try {
+            $tid = (int)$this->tenantId();
             if ($isPrimary) {
-                $this->db->prepare("UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
+                $this->db->prepare("UPDATE user_addresses SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?")->execute([$userId, $tid]);
             }
             $validTypes = ['home', 'office', 'billing', 'shipping', 'other'];
             $addressType = in_array($type, $validTypes, true) ? $type : 'home';
             $label = ucfirst($addressType);
             if ($id) {
-                $stmt = $this->db->prepare("UPDATE user_addresses SET address_line1=?, city=?, state=?, pincode=?, address_type=?, label=?, is_primary=? WHERE id=? AND user_id=?");
-                $stmt->execute([$address, $city, $state, $pincode, $addressType, $label, $isPrimary, $id, $userId]);
+                $stmt = $this->db->prepare("UPDATE user_addresses SET address_line1=?, city=?, state=?, pincode=?, address_type=?, label=?, is_primary=? WHERE id=? AND user_id=? AND tenant_id=?");
+                $stmt->execute([$address, $city, $state, $pincode, $addressType, $label, $isPrimary, $id, $userId, $tid]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, address_line1, city, state, pincode, address_type, label, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$userId, $address, $city, $state, $pincode, $addressType, $label, $isPrimary]);
+                $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, address_line1, city, state, pincode, address_type, label, is_primary, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->execute([$userId, $address, $city, $state, $pincode, $addressType, $label, $isPrimary, $tid]);
                 $id = $this->db->lastInsertId();
             }
             echo json_encode(['success' => true, 'data' => ['id' => $id]]);
@@ -5612,14 +5639,15 @@ class MobileApiController extends BaseController
 
     public function deleteUserAddress() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $id = $input['id'] ?? null;
         if (!$id) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'ID required']); return; }
         try {
-            $stmt = $this->db->prepare("DELETE FROM user_addresses WHERE id = ? AND user_id = ?");
-            $stmt->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("DELETE FROM user_addresses WHERE id = ? AND user_id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => true]);
@@ -5631,7 +5659,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function getPaymentHistory() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT p.payment_id AS id, p.booking_id, b.booking_number, b.plot_id, p.payment_amount AS amount, p.payment_method, p.transaction_id, p.payment_notes, p.payment_date FROM booking_payments p JOIN plot_bookings b ON p.booking_id = b.id WHERE b.customer_id = ? ORDER BY p.payment_date DESC LIMIT 50");
@@ -5725,7 +5753,7 @@ class MobileApiController extends BaseController
 
     public function submitJobApplication() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $jobId = $input['job_id'] ?? null;
@@ -5739,8 +5767,9 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Required fields missing']); return;
         }
         try {
-            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, cover_letter, experience_years, current_company, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'new', NOW())");
-            $stmt->execute([$jobId, $name, $email, $phone, $coverLetter, $experience, $company]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, cover_letter, experience_years, current_company, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'new', ?, NOW())");
+            $stmt->execute([$jobId, $name, $email, $phone, $coverLetter, $experience, $company, $tid]);
             echo json_encode(['success' => true, 'message' => 'Application submitted successfully']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -5874,7 +5903,7 @@ class MobileApiController extends BaseController
 
     public function changePassword() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $currentPassword = $input['current_password'] ?? '';
@@ -5975,14 +6004,15 @@ class MobileApiController extends BaseController
     // ============================================================
     public function changeLeadStatus($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $status = $input['status'] ?? '';
         if (empty($status)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Status required']); return; }
         try {
-            $stmt = $this->db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$status, $id]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$status, $id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Status updated']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -5991,15 +6021,16 @@ class MobileApiController extends BaseController
 
     public function scheduleLeadFollowup($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $followupDate = $input['followup_date'] ?? '';
         $notes = $input['notes'] ?? '';
         if (empty($followupDate)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Follow-up date required']); return; }
         try {
-            $stmt = $this->db->prepare("UPDATE leads SET next_followup = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$followupDate, "\n[Follow-up: $notes]", $id]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("UPDATE leads SET next_followup = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$followupDate, "\n[Follow-up: $notes]", $id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Follow-up scheduled']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6008,15 +6039,16 @@ class MobileApiController extends BaseController
 
     public function addLeadActivity($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $type = $input['type'] ?? 'note';
         $description = $input['description'] ?? '';
         if (empty($description)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Description required']); return; }
         try {
-            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$id, $userId, $type, $description]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$id, $userId, $type, $description, $tid]);
             echo json_encode(['success'=>true,'message'=>'Activity logged']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6025,14 +6057,15 @@ class MobileApiController extends BaseController
 
     public function convertLead($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $dealValue = $input['deal_value'] ?? 0;
         try {
-            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_won', converted_at = NOW(), deal_value = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$dealValue, $id]);
-            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', NOW())")->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_won', converted_at = NOW(), deal_value = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$dealValue, $id, $tid]);
+            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', ?, NOW())")->execute([$id, $userId, $tid]);
             echo json_encode(['success'=>true,'message'=>'Lead converted']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6041,14 +6074,15 @@ class MobileApiController extends BaseController
 
     public function markLeadLost($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $reason = $input['reason'] ?? '';
         try {
-            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_lost', lost_reason = ?, lost_at = NOW(), updated_at = NOW() WHERE id = ?");
-            $stmt->execute([$reason, $id]);
-            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'lost', 'Lead lost: $reason', NOW())")->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_lost', lost_reason = ?, lost_at = NOW(), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$reason, $id, $tid]);
+            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, 'lost', ?, ?, NOW())")->execute([$id, $userId, 'Lead lost: ' . $reason, $tid]);
             echo json_encode(['success'=>true,'message'=>'Lead marked as lost']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6057,7 +6091,7 @@ class MobileApiController extends BaseController
 
     public function getLeadStatistics() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->query("SELECT status, COUNT(*) as count FROM leads GROUP BY status");
@@ -6079,17 +6113,18 @@ class MobileApiController extends BaseController
 
     public function logLeadCall($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $duration = $input['duration'] ?? 0;
         $notes = $input['notes'] ?? '';
         $callType = $input['call_type'] ?? 'outbound';
         try {
-            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'call', ?, NOW())");
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, tenant_id, created_at) VALUES (?, ?, 'call', ?, ?, NOW())");
             $desc = "Call ($callType, " . ($duration ? "{$duration}s" : 'no duration') . "): $notes";
-            $stmt->execute([$id, $userId, $desc]);
-            $this->db->prepare("UPDATE leads SET call_count = COALESCE(call_count, 0) + 1, updated_at = NOW() WHERE id = ?")->execute([$id]);
+            $stmt->execute([$id, $userId, $desc, $tid]);
+            $this->db->prepare("UPDATE leads SET call_count = COALESCE(call_count, 0) + 1, updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Call logged']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6101,7 +6136,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function updateBooking($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         try {
@@ -6111,8 +6146,9 @@ class MobileApiController extends BaseController
                 if (isset($input[$f])) { $fields[] = "$f = ?"; $params[] = $input[$f]; }
             }
             if (empty($fields)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'No fields to update']); return; }
+            $tid = (int)$this->tenantId();
             $params[] = $id;
-            $this->db->prepare("UPDATE plot_bookings SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND customer_id = ?")->execute([...$params, $userId]);
+            $this->db->prepare("UPDATE plot_bookings SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND customer_id = ? AND tenant_id = ?")->execute([...$params, $userId, $tid]);
             echo json_encode(['success'=>true,'message'=>'Booking updated']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6121,15 +6157,16 @@ class MobileApiController extends BaseController
 
     public function cancelBooking($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $stmt = $this->db->prepare("SELECT plot_id FROM plot_bookings WHERE id = ? AND customer_id = ?");
-            $stmt->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("SELECT plot_id FROM plot_bookings WHERE id = ? AND customer_id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $userId, $tid]);
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$booking) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Booking not found']); return; }
-            $this->db->prepare("UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW() WHERE id = ?")->execute([$id]);
-            $this->db->prepare("UPDATE plots SET status = 'available' WHERE id = ?")->execute([$booking['plot_id']]);
+            $this->db->prepare("UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
+            $this->db->prepare("UPDATE plots SET status = 'available' WHERE id = ? AND tenant_id = ?")->execute([$booking['plot_id'], $tid]);
             echo json_encode(['success'=>true,'message'=>'Booking cancelled, plot released']);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6172,10 +6209,11 @@ class MobileApiController extends BaseController
     // ============================================================
     public function markNotificationRead($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?")->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ? AND tenant_id = ?")->execute([$id, $userId, $tid]);
             echo json_encode(['success'=>true]);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6184,10 +6222,11 @@ class MobileApiController extends BaseController
 
     public function deleteNotification($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $this->db->prepare("DELETE FROM notifications WHERE id = ? AND user_id = ?")->execute([$id, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("DELETE FROM notifications WHERE id = ? AND user_id = ? AND tenant_id = ?")->execute([$id, $userId, $tid]);
             echo json_encode(['success'=>true]);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6199,7 +6238,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function getReferralDashboard() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT id, name, email, phone, referral_code FROM users WHERE id = ?");
@@ -6225,7 +6264,7 @@ class MobileApiController extends BaseController
 
     public function trackReferralShare() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $platform = $input['platform'] ?? 'unknown';
@@ -6243,7 +6282,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function getSupportTickets() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT id, subject, category, priority, status, created_at, updated_at FROM support_tickets WHERE user_id = ? ORDER BY created_at DESC");
@@ -6257,7 +6296,7 @@ class MobileApiController extends BaseController
 
     public function createSupportTicket() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $subject = $input['subject'] ?? '';
@@ -6268,8 +6307,9 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Subject and message required']); return;
         }
         try {
-            $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, category, message, priority, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'open', NOW(), NOW())");
-            $stmt->execute([$userId, $subject, $category, $message, $priority]);
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, category, message, priority, status, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'open', ?, NOW(), NOW())");
+            $stmt->execute([$userId, $subject, $category, $message, $priority, $tid]);
             echo json_encode(['success'=>true,'ticket_id'=>$this->db->lastInsertId()]);
         } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6278,7 +6318,7 @@ class MobileApiController extends BaseController
 
     public function getSupportTicketDetail($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT * FROM support_tickets WHERE id = ? AND user_id = ?");
@@ -6299,7 +6339,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function updateNotificationPreferences() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         try {
@@ -6313,7 +6353,7 @@ class MobileApiController extends BaseController
 
     public function updateUserPreferences() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         try {
@@ -6327,7 +6367,7 @@ class MobileApiController extends BaseController
 
     public function deleteAccount() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $password = $input['password'] ?? '';
@@ -6355,7 +6395,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function processMlmSale() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $saleAmount = $input['sale_amount'] ?? 0;
@@ -6364,10 +6404,11 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Sale amount and plot ID required']); return;
         }
         try {
+            $tid = (int)$this->tenantId();
             $commissionPct = 5.00;
             $commissionAmt = $saleAmount * ($commissionPct / 100);
-            $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount, commission_percentage, status, notes, created_at) VALUES (?, ?, 'direct_sale', ?, ?, ?, 'pending', 'Mobile app sale submission', NOW())");
-            $stmt->execute([$userId, $userId, $commissionAmt, $saleAmount, $commissionPct]);
+            $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount, commission_percentage, status, notes, tenant_id, created_at) VALUES (?, ?, 'direct_sale', ?, ?, ?, 'pending', 'Mobile app sale submission', ?, NOW())");
+            $stmt->execute([$userId, $userId, $commissionAmt, $saleAmount, $commissionPct, $tid]);
             echo json_encode(['success'=>true,'message'=>'Sale submitted for commission processing','commission_estimate'=>round($saleAmount * 0.05, 2)]);
         } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6376,7 +6417,7 @@ class MobileApiController extends BaseController
 
     public function upgradeMlmRank() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             // Resolve associate row for this user
@@ -6406,8 +6447,9 @@ class MobileApiController extends BaseController
                 http_response_code(400); echo json_encode(['success'=>false,'error'=>'Already at highest rank']); return;
             }
 
-            $this->db->prepare("INSERT INTO mlm_rank_history (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_by, is_manual, reason, created_at) VALUES (?, ?, ?, 0, 0, ?, 1, 'Requested via mobile app', NOW())")
-                ->execute([$associateId, $fromRank, $newRank, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("INSERT INTO mlm_rank_history (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_by, is_manual, reason, tenant_id, created_at) VALUES (?, ?, ?, 0, 0, ?, 1, 'Requested via mobile app', ?, NOW())")
+                ->execute([$associateId, $fromRank, $newRank, $userId, $tid]);
             echo json_encode(['success'=>true,'message'=>"Rank upgraded to $newRank",'from_rank'=>$fromRank,'to_rank'=>$newRank]);
         } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
@@ -6416,7 +6458,7 @@ class MobileApiController extends BaseController
 
     public function getForm16() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $year = (int)($_GET['year'] ?? date('Y'));
@@ -6446,7 +6488,7 @@ class MobileApiController extends BaseController
 
     public function getTaxSummary() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT commission_type, SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status IN ('approved','paid') GROUP BY commission_type");
@@ -6473,7 +6515,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function createNotification() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         $targetUserId = $input['user_id'] ?? null;
@@ -6484,7 +6526,8 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'user_id and message required']); return;
         }
         try {
-            $this->db->prepare("INSERT INTO notifications (user_id, title, message, type, is_read, created_at) VALUES (?, ?, ?, ?, 0, NOW())")->execute([$targetUserId, $title, $message, $type]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("INSERT INTO notifications (user_id, title, message, type, is_read, tenant_id, created_at) VALUES (?, ?, ?, ?, 0, ?, NOW())")->execute([$targetUserId, $title, $message, $type, $tid]);
             echo json_encode(['success'=>true]);
         } catch (\Throwable $e) {
             echo json_encode(['success'=>true]);
@@ -6496,7 +6539,7 @@ class MobileApiController extends BaseController
     // ============================================================
     public function getLoans() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
@@ -6509,7 +6552,7 @@ class MobileApiController extends BaseController
 
     public function getLoanDetail($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
@@ -6526,7 +6569,7 @@ class MobileApiController extends BaseController
 
     public function getLoanInstallments($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
@@ -6539,7 +6582,7 @@ class MobileApiController extends BaseController
 
     public function applyLoan() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         $input = json_decode(file_get_contents('php://input'), true);
         if (empty($input)) $input = $_POST;
@@ -6584,7 +6627,7 @@ class MobileApiController extends BaseController
 
     public function getEarlySettlement($id) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
@@ -6619,36 +6662,38 @@ class MobileApiController extends BaseController
             return (int)$existing;
         }
         // Create new direct conversation + participants
-        $this->db->prepare("INSERT INTO conversations (conversation_type, created_by, is_active, created_at) VALUES ('direct', ?, 1, NOW())")
-            ->execute([$userId]);
+        $tid = (int)$this->tenantId();
+        $this->db->prepare("INSERT INTO conversations (conversation_type, created_by, is_active, tenant_id, created_at) VALUES ('direct', ?, 1, ?, NOW())")
+            ->execute([$userId, $tid]);
         $conversationId = (int)$this->db->lastInsertId();
-        $ins = $this->db->prepare("INSERT INTO conversation_participants (conversation_id, user_id, joined_at) VALUES (?, ?, NOW())");
-        $ins->execute([$conversationId, $userId]);
-        $ins->execute([$conversationId, $otherUserId]);
+        $ins = $this->db->prepare("INSERT INTO conversation_participants (conversation_id, user_id, tenant_id, joined_at) VALUES (?, ?, ?, NOW())");
+        $ins->execute([$conversationId, $userId, $tid]);
+        $ins->execute([$conversationId, $otherUserId, $tid]);
         return $conversationId;
     }
 
     public function getConversations() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $stmt = $this->db->query("
+            $stmt = $this->db->prepare("
                 SELECT 
-                    CASE WHEN m.sender_id = $userId THEN m.receiver_id ELSE m.sender_id END AS other_user_id,
+                    CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END AS other_user_id,
                     MAX(m.sent_at) AS last_message_time,
-                    (SELECT content FROM messages WHERE (sender_id = $userId AND receiver_id = m.receiver_id) OR (sender_id = m.receiver_id AND receiver_id = $userId) ORDER BY sent_at DESC LIMIT 1) AS last_message,
-                    (SELECT CASE WHEN read_at IS NOT NULL THEN 1 ELSE 0 END FROM messages WHERE sender_id = m.receiver_id AND receiver_id = $userId ORDER BY sent_at DESC LIMIT 1) AS is_read,
-                    (SELECT COUNT(*) FROM messages WHERE receiver_id = $userId AND sender_id = m.receiver_id AND read_at IS NULL) AS unread_count,
+                    (SELECT content FROM messages WHERE (sender_id = ? AND receiver_id = m.receiver_id) OR (sender_id = m.receiver_id AND receiver_id = ?) ORDER BY sent_at DESC LIMIT 1) AS last_message,
+                    (SELECT CASE WHEN read_at IS NOT NULL THEN 1 ELSE 0 END FROM messages WHERE sender_id = m.receiver_id AND receiver_id = ? ORDER BY sent_at DESC LIMIT 1) AS is_read,
+                    (SELECT COUNT(*) FROM messages WHERE receiver_id = ? AND sender_id = m.receiver_id AND read_at IS NULL) AS unread_count,
                     u.name AS other_user_name,
                     u.email AS other_user_email,
                     u.role AS other_user_role
                 FROM messages m
-                JOIN users u ON u.id = (CASE WHEN m.sender_id = $userId THEN m.receiver_id ELSE m.sender_id END)
-                WHERE m.sender_id = $userId OR m.receiver_id = $userId
+                JOIN users u ON u.id = (CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
+                WHERE m.sender_id = ? OR m.receiver_id = ?
                 GROUP BY other_user_id
                 ORDER BY last_message_time DESC
             ");
+            $stmt->execute([$userId, $userId, $userId, $userId, $userId, $userId, $userId, $userId]);
             $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true, 'data'=>$conversations]);
         } catch (\Exception $e) {
@@ -6658,7 +6703,7 @@ class MobileApiController extends BaseController
 
     public function getMessages($otherUserId) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("
@@ -6680,7 +6725,7 @@ class MobileApiController extends BaseController
 
     public function sendMessage() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $input = json_decode(file_get_contents('php://input'), true);
@@ -6692,13 +6737,14 @@ class MobileApiController extends BaseController
             }
             // messages.conversation_id is NOT NULL — resolve/create the direct conversation
             $conversationId = $this->getOrCreateDirectConversation((int)$userId, $receiverId);
-            $this->db->prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, content, message_type, sent_at) VALUES (?, ?, ?, ?, 'text', NOW())")
-                ->execute([$conversationId, $userId, $receiverId, $message]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, content, message_type, tenant_id, sent_at) VALUES (?, ?, ?, ?, 'text', ?, NOW())")
+                ->execute([$conversationId, $userId, $receiverId, $message, $tid]);
             $msgId = $this->db->lastInsertId();
             // Update conversation last-message metadata
             try {
-                $this->db->prepare("UPDATE conversations SET last_message_at = NOW(), last_message_preview = ? WHERE id = ?")
-                    ->execute([mb_substr($message, 0, 500), $conversationId]);
+                $this->db->prepare("UPDATE conversations SET last_message_at = NOW(), last_message_preview = ? WHERE id = ? AND tenant_id = ?")
+                    ->execute([mb_substr($message, 0, 500), $conversationId, $tid]);
             } catch (\Throwable $t) { error_log("MobileApiController::" . __FUNCTION__ . " query failed: " . $t->getMessage()); }
             $resp = [
                 'id'=>(int)$msgId, 'sender_id'=>$userId, 'receiver_id'=>$receiverId,
@@ -6714,11 +6760,12 @@ class MobileApiController extends BaseController
 
     public function markMessagesRead($otherUserId) {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $this->db->prepare("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL")
-                ->execute([(int)$otherUserId, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->prepare("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL AND tenant_id = ?")
+                ->execute([(int)$otherUserId, $userId, $tid]);
             echo json_encode(['success'=>true]);
         } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
@@ -6727,7 +6774,7 @@ class MobileApiController extends BaseController
 
     public function getUnreadCount() {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? null;
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
             $stmt = $this->db->prepare("SELECT COUNT(*) FROM messages WHERE receiver_id = ? AND read_at IS NULL");

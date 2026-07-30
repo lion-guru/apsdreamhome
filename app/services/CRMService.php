@@ -122,6 +122,8 @@ class CRMService
             $orderBy = $filters['sort'] ?? 'l.created_at';
             $orderDir = strtoupper($filters['direction'] ?? 'DESC');
             if (!in_array($orderDir, ['ASC', 'DESC'])) $orderDir = 'DESC';
+            $allowedSort = ['l.created_at','l.updated_at','l.lead_score','l.name','l.status','l.source','l.priority','l.budget'];
+            if (!in_array($orderBy, $allowedSort)) $orderBy = 'l.created_at';
 
             $countStmt = $this->db->query("SELECT COUNT(*) as total FROM leads l $whereClause", $params);
             $total = (int)($countStmt->fetch()['total'] ?? 0);

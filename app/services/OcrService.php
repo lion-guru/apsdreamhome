@@ -7,6 +7,7 @@ class OcrService
 {
     private $db;
     private $pdo;
+    private $tenantId;
 
     private const DOC_TYPE_PATTERNS = [
         'aadhaar' => [
@@ -81,6 +82,12 @@ class OcrService
         } else {
             $this->pdo = $db;
         }
+        $this->tenantId = (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
+    }
+
+    private function getTenantId(): int
+    {
+        return $this->tenantId;
     }
 
     public function getDocTypeLabel(string $type): string
@@ -148,9 +155,10 @@ class OcrService
         $relativePath = '/uploads/ocr/' . $safeName;
 
         try {
+            $tid = $this->getTenantId();
             $stmt = $this->db->prepare("
-                INSERT INTO ocr_documents (document_type, file_path, file_name, original_name, file_size, mime_type, ocr_status, validation_status, uploaded_by, created_at)
-                VALUES (:doctype, :filepath, :filename, :origname, :filesize, :mime, 'pending', 'pending', :userid, NOW())
+                INSERT INTO ocr_documents (document_type, file_path, file_name, original_name, file_size, mime_type, ocr_status, validation_status, uploaded_by, tenant_id, created_at)
+                VALUES (:doctype, :filepath, :filename, :origname, :filesize, :mime, 'pending', 'pending', :userid, :tid, NOW())
             ");
             $stmt->execute([
                 ':doctype' => $documentType,
@@ -160,6 +168,7 @@ class OcrService
                 ':filesize' => $file['size'],
                 ':mime' => $file['type'],
                 ':userid' => $userId,
+                ':tid' => $tid,
             ]);
             $docId = (int)$this->db->lastInsertId();
             return ['ok' => true, 'id' => $docId, 'file_path' => $relativePath];

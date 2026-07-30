@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MLM;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
 
 /**
@@ -350,15 +351,18 @@ class MLMDashboardController extends BaseController
             }
 
             // Get payout history
+            $tid = (int)TenantContext::getId();
             $stmt = $pdo->prepare("
                 SELECT p.*, b.account_number, b.bank_name, b.ifsc_code
                 FROM mlm_payouts p
                 LEFT JOIN mlm_bank_details b ON p.bank_detail_id = b.id
-                WHERE p.associate_id = ?
+                WHERE p.associate_id = ?" . ($tid > 1 ? " AND p.tenant_id = ?" : "") . "
                 ORDER BY p.created_at DESC
                 LIMIT 50
             ");
-            $stmt->execute([$associate['id']]);
+            $params = [$associate['id']];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             $payouts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Get pending payout amount
@@ -444,10 +448,10 @@ class MLMDashboardController extends BaseController
 
             // Create payout request
             $stmt = $pdo->prepare("
-                INSERT INTO mlm_payouts (associate_id, amount, bank_detail_id, status, created_at)
-                VALUES (?, ?, ?, 'requested', NOW())
+                INSERT INTO mlm_payouts (tenant_id, associate_id, amount, bank_detail_id, status, created_at)
+                VALUES (?, ?, ?, ?, 'requested', NOW())
             ");
-            $stmt->execute([$associate['id'], $amount, $bank['id']]);
+            $stmt->execute([TenantContext::getId() ?? 1, $associate['id'], $amount, $bank['id']]);
             $payoutId = $pdo->lastInsertId();
 
             // Update commissions to 'processing'
@@ -636,13 +640,16 @@ class MLMDashboardController extends BaseController
     {
         $pdo = $this->db->getConnection();
 
+        $tid = (int)TenantContext::getId();
         $stmt = $pdo->prepare("
             SELECT * FROM mlm_payouts
-            WHERE associate_id = ?
+            WHERE associate_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
             ORDER BY created_at DESC
             LIMIT 5
         ");
-        $stmt->execute([$associateId]);
+        $params = [$associateId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 

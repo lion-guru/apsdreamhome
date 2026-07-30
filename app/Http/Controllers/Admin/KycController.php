@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use \App\Traits\TenantAwareTrait;
 
 class KycController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function index()
     {
         $this->requireAdmin();
@@ -92,7 +95,8 @@ class KycController extends AdminController
                 try {
                     $row0 = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
                     if (!empty($row0['user_id'])) {
-                        $this->db->execute("UPDATE users SET kyc_status = 'verified' WHERE id = ?", [(int)$row0['user_id']]);
+                        $tid = (int)$this->tenantId();
+                        $this->db->execute("UPDATE users SET kyc_status = 'verified' WHERE id = ? AND tenant_id = ?", [(int)$row0['user_id'], $tid]);
                     }
                 } catch (\Throwable $e) {
                     error_log("[KycController] kyc_status sync failed: " . $e->getMessage());
@@ -155,7 +159,8 @@ class KycController extends AdminController
                 try {
                     $row0 = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
                     if (!empty($row0['user_id'])) {
-                        $this->db->execute("UPDATE users SET kyc_status = 'rejected' WHERE id = ?", [(int)$row0['user_id']]);
+                        $tid = (int)$this->tenantId();
+                        $this->db->execute("UPDATE users SET kyc_status = 'rejected' WHERE id = ? AND tenant_id = ?", [(int)$row0['user_id'], $tid]);
                     }
                 } catch (\Throwable $e) {
                     error_log("[KycController] kyc_status sync failed: " . $e->getMessage());

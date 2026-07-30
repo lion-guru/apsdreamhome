@@ -1586,7 +1586,8 @@ class AssociateController extends BaseController
             $currentRank = ucwords(str_replace('_', ' ', $computedRank));
             // Auto-update if stale
             if ($userProfile && strtolower($computedRank) !== strtolower($userProfile['current_level'] ?? '')) {
-                $this->db->execute("UPDATE mlm_profiles SET current_level = ? WHERE user_id = ?", [$computedRank, $userId]);
+                $tid = (int)$this->tenantId();
+                $this->db->execute("UPDATE mlm_profiles SET current_level = ? WHERE user_id = ? AND tenant_id = ?", [$computedRank, $userId, $tid]);
             }
         } catch (\Exception $e) { error_log('MLM Plan rank recalc: ' . $e->getMessage()); }
 
@@ -2061,7 +2062,8 @@ class AssociateController extends BaseController
                     );
 
                     // Update lead's next_activity_date
-                    $db->query("UPDATE leads SET next_activity_date = ?, updated_at = NOW() WHERE id = ?", [$followupDate, $id]);
+                    $tid = (int)$this->tenantId();
+                    $db->query("UPDATE leads SET next_activity_date = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$followupDate, $id, $tid]);
 
                     $_SESSION['success'] = 'Note added & follow-up scheduled for ' . date('M d, Y', strtotime($followupDate)) . '.';
                 } else {
@@ -2069,7 +2071,8 @@ class AssociateController extends BaseController
                 }
 
                 // Update last activity
-                $db->query("UPDATE leads SET last_activity_date = NOW(), updated_at = NOW() WHERE id = ?", [$id]);
+                $tid2 = (int)$this->tenantId();
+                $db->query("UPDATE leads SET last_activity_date = NOW(), updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$id, $tid2]);
             }
         } catch (\Exception $e) {
             error_log('Add lead note error: ' . $e->getMessage());

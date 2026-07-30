@@ -212,10 +212,10 @@ class PushNotificationService
         // Write to push_tokens (primary table for mobile app)
         try {
             $this->db->query(
-                "INSERT INTO push_tokens (user_id, user_type, device_token, platform, is_active, last_used_at, created_at, updated_at)
-                 VALUES (?, 'customer', ?, ?, 1, NOW(), NOW(), NOW())
+                "INSERT INTO push_tokens (user_id, user_type, device_token, platform, is_active, last_used_at, created_at, updated_at, tenant_id)
+                 VALUES (?, 'customer', ?, ?, 1, NOW(), NOW(), NOW(), ?)
                  ON DUPLICATE KEY UPDATE is_active = 1, platform = VALUES(platform), last_used_at = NOW(), updated_at = NOW()",
-                [$userId, $deviceToken, $platform]
+                [$userId, $deviceToken, $platform, $this->getTenantId()]
             );
         } catch (\Throwable $e) {
         // Table might not exist
@@ -236,8 +236,8 @@ class PushNotificationService
                 );
             } else {
                 $this->db->query(
-                    "INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, created_at) VALUES (?, ?, ?, NOW(), 1, NOW())",
-                    [$userId, $deviceToken, $platform]
+                    "INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, created_at, tenant_id) VALUES (?, ?, ?, NOW(), 1, NOW(), ?)",
+                    [$userId, $deviceToken, $platform, $this->getTenantId()]
                 );
             }
         } catch (\Throwable $e) {
@@ -556,8 +556,8 @@ class PushNotificationService
     {
         try {
             $this->db->query(
-                "INSERT INTO notification_logs (type, recipient_token, title, body, payload, response, status, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())",
+                "INSERT INTO notification_logs (type, recipient_token, title, body, payload, response, status, created_at, tenant_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)",
                 [
                     'push',
                     $data['to'] ?? $data['registration_ids'][0] ?? null,
@@ -566,6 +566,7 @@ class PushNotificationService
                     json_encode($data),
                     json_encode($result),
                     $status,
+                    $this->getTenantId(),
                 ]
             );
         } catch (\Throwable $e) {

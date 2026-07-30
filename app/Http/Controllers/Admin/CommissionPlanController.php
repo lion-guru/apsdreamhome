@@ -15,13 +15,7 @@ class CommissionPlanController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $config = require dirname(__DIR__, 3) . '/config/database.php';
-        $pdo = new \PDO(
-            "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-            $config['username'],
-            $config['password'],
-            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-        );
+        $pdo = \App\Core\Database\Database::getInstance()->getConnection();
         $this->planService = new CommissionPlanService($pdo);
         $this->simulator = new CommissionSimulator($pdo);
     }

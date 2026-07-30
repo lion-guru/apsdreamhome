@@ -251,11 +251,12 @@ class ColonyPipelineController extends AdminController
                 throw new Exception($result['message'] ?? 'Plot generation failed');
             }
 
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $this->db->query(
                 "UPDATE colonies SET total_plots = (SELECT COUNT(*) FROM plots WHERE colony_id = ?),
                         available_plots = (SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'available')
-                 WHERE id = ?",
-                [$id, $id, $id]
+                 WHERE id = ? $tenantSql",
+                array_merge([$id, $id, $id], $tenantParams)
             );
 
             $this->setFlash('success', $generated . ' plots generated successfully in block ' . $blockName);
@@ -348,11 +349,12 @@ class ColonyPipelineController extends AdminController
                 $this->redirect('/admin/colony-pipeline/' . $id . '/layout');
             }
 
-            $this->db->query("DELETE FROM plots WHERE colony_id = ?", [$id]);
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $this->db->query("DELETE FROM plots WHERE colony_id = ? $tenantSql", array_merge([$id], $tenantParams));
 
             $this->db->query(
-                "UPDATE colonies SET total_plots = 0, available_plots = 0 WHERE id = ?",
-                [$id]
+                "UPDATE colonies SET total_plots = 0, available_plots = 0 WHERE id = ? $tenantSql",
+                array_merge([$id], $tenantParams)
             );
 
             $this->setFlash('success', 'All available plots deleted for ' . ($colony['name'] ?? 'colony'));
@@ -381,18 +383,20 @@ class ColonyPipelineController extends AdminController
 
             $plotMap = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status FROM plots WHERE colony_id = ?", [$id]);
 
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
             $this->db->query(
-                "UPDATE colony_layouts SET is_current = 0 WHERE colony_id = ?",
-                [$id]
+                "UPDATE colony_layouts SET is_current = 0 WHERE colony_id = ? $tenantSql",
+                array_merge([$id], $tenantParams)
             );
 
+            $tid = $this->tenantId();
             $this->db->query(
                 "INSERT INTO colony_layouts (
                     colony_id, layout_name, version, layout_type,
                     road_area_pct, common_area_pct, is_current,
                     plot_map_json, notes, total_plots, total_area_sqft,
-                    status, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, 'draft', NOW())",
+                    status, created_at, tenant_id
+                ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, 'draft', NOW(), ?)",
                 [
                     $id,
                     trim($_POST['layout_name'] ?? 'Layout v1'),
@@ -403,7 +407,8 @@ class ColonyPipelineController extends AdminController
                     json_encode($plotMap),
                     trim($_POST['notes'] ?? ''),
                     count($plotMap),
-                    array_sum(array_column($plotMap, 'area_sqft'))
+                    array_sum(array_column($plotMap, 'area_sqft')),
+                    $tid
                 ]
             );
 
@@ -815,13 +820,14 @@ class ColonyPipelineController extends AdminController
 
             $balanceAmount = $amount + $gstAmount - floatval($_POST['paid_amount'] ?? 0);
 
+            $tid = $this->tenantId();
             $this->db->query(
                 "INSERT INTO colony_development_costs (
                     colony_id, cost_type, vendor_id, vendor_name, work_description,
                     invoice_number, invoice_date, amount, gst_amount, tds_section,
                     payment_status, paid_amount, balance_amount, completion_date,
-                    status, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+                    status, created_at, tenant_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)",
                 [
                     $id,
                     $costType,
@@ -837,7 +843,8 @@ class ColonyPipelineController extends AdminController
                     floatval($_POST['paid_amount'] ?? 0),
                     max($balanceAmount, 0),
                     !empty($_POST['completion_date']) ? $_POST['completion_date'] : null,
-                    trim($_POST['status'] ?? 'planned')
+                    trim($_POST['status'] ?? 'planned'),
+                    $tid
                 ]
             );
 

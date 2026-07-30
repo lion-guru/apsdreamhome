@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 #[\AllowDynamicProperties]
 class WalletController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
 
     public function __construct()
@@ -33,6 +36,7 @@ class WalletController extends BaseController
 
         if (!$wallet) {
             // Create wallet if not exists
+            $tid = (int)$this->tenantId();
             $this->db->insert('wallet_points', [
                 'user_id' => $userId,
                 'points_balance' => 0.00,
@@ -43,6 +47,7 @@ class WalletController extends BaseController
                 'commission_earnings' => 0.00,
                 'bonus_earnings' => 0.00,
                 'status' => 'active',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -226,9 +231,10 @@ class WalletController extends BaseController
             $newUsed = $wallet['total_used'] + $amount;
             $newTransferred = $wallet['total_transferred_to_emi'] + $amount;
 
+            $tid = (int)$this->tenantId();
             $this->db->query(
-                "UPDATE wallet_points SET points_balance = ?, total_used = ?, total_transferred_to_emi = ?, updated_at = ? WHERE user_id = ?",
-                [$newBalance, $newUsed, $newTransferred, date('Y-m-d H:i:s'), $userId]
+                "UPDATE wallet_points SET points_balance = ?, total_used = ?, total_transferred_to_emi = ?, updated_at = ? WHERE user_id = ? AND tenant_id = ?",
+                [$newBalance, $newUsed, $newTransferred, date('Y-m-d H:i:s'), $userId, $tid]
             );
 
             // Create transaction record
@@ -243,6 +249,7 @@ class WalletController extends BaseController
                 'reference_id' => $emiId,
                 'reference_type' => 'emi',
                 'status' => 'completed',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
@@ -254,6 +261,7 @@ class WalletController extends BaseController
                 'wallet_amount_used' => $amount,
                 'transaction_id' => $transactionId,
                 'transfer_status' => 'completed',
+                'tenant_id' => $tid,
                 'transferred_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s')
             ]);
@@ -351,11 +359,13 @@ class WalletController extends BaseController
             }
 
             // Create withdrawal request
+            $tid = (int)$this->tenantId();
             $this->db->insert('withdrawal_requests', [
                 'user_id' => $userId,
                 'bank_account_id' => $bankAccountId,
                 'amount' => $amount,
                 'status' => 'pending',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
@@ -444,8 +454,9 @@ class WalletController extends BaseController
             }
 
             // If setting as primary, unset other primary accounts
+            $tid = (int)$this->tenantId();
             if ($isPrimary) {
-                $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?", [$userId]);
+                $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?", [$userId, $tid]);
             }
 
             // Add bank account
@@ -457,6 +468,7 @@ class WalletController extends BaseController
                 'account_holder' => $accountHolder,
                 'is_primary' => $isPrimary,
                 'status' => 'active',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -491,8 +503,9 @@ class WalletController extends BaseController
         }
 
         try {
-            $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?", [$userId]);
-            $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ?", [$accountId, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?", [$userId, $tid]);
+            $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ? AND tenant_id = ?", [$accountId, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Primary account updated']);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
@@ -522,7 +535,8 @@ class WalletController extends BaseController
         }
 
         try {
-            $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$accountId, $userId]);
+            $tid = (int)$this->tenantId();
+            $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ? AND tenant_id = ?", [$accountId, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Bank account deleted']);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
@@ -714,6 +728,7 @@ class WalletController extends BaseController
 
         if (!$wallet) {
             // Create wallet if not exists
+            $tid = (int)$this->tenantId();
             $this->db->insert('wallet_points', [
                 'user_id' => $associateId,
                 'points_balance' => 0.00,
@@ -724,6 +739,7 @@ class WalletController extends BaseController
                 'commission_earnings' => 0.00,
                 'bonus_earnings' => 0.00,
                 'status' => 'active',
+                'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);

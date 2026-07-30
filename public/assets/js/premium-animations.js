@@ -435,8 +435,6 @@ document.documentElement.classList.add('js-animations');
     initParticles();
     initNavbarScroll();
     initPageTransitions();
-
-    console.log('🎨 Premium Animations initialized');
   }
 
   // ============================================================

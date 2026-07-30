@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use \App\Traits\TenantAwareTrait;
 
 class ApiIntegrationController extends AdminController
 {
+    use TenantAwareTrait;
+
     public function developers()
     {
         $this->requireAdmin();
@@ -59,6 +62,7 @@ class ApiIntegrationController extends AdminController
                 'email' => $email,
                 'api_key' => $apiKey,
                 'status' => in_array($status, ['active', 'inactive', 'suspended'], true) ? $status : 'active',
+                'tenant_id' => (int)$this->tenantId(),
             ]);
             $this->setFlash('success', 'Developer created successfully. API Key: ' . $apiKey);
         } catch (\Throwable $e) {

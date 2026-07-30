@@ -126,6 +126,8 @@ class ReportService {
             
             $sort = $filters['sort'] ?? 'last_activity';
             $order = isset($filters['order']) && strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
+            $allowedSort = ['last_activity','u.name','u.email','u.role','visits','interactions'];
+            if (!in_array($sort, $allowedSort)) $sort = 'last_activity';
             $query .= " ORDER BY $sort $order";
             
             $page = max(1, $filters['page'] ?? 1);

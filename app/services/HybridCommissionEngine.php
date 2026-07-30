@@ -4,6 +4,7 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Hybrid MLM & Salary Commission Engine
@@ -165,14 +166,16 @@ class HybridCommissionEngine
     {
         $this->pdo = $pdo;
         if ($this->pdo === null) {
-            $root   = dirname(__DIR__, 2);
-            $config = require $root . '/config/database.php';
-            $this->pdo = new PDO(
-                "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-                $config['username'],
-                $config['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
+        }
+    }
+
+    protected function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
         }
     }
 
@@ -1297,9 +1300,9 @@ class HybridCommissionEngine
                 (beneficiary_user_id, source_user_id, commission_type, amount,
                  level, sale_amount, commission_percentage, status, notes,
                  property_id, booking_id, receipt_id, hold_until, created_at,
-                 plan_id, plan_version, plan_snapshot, calculation_engine)
+                 plan_id, plan_version, plan_snapshot, calculation_engine, tenant_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW(),
-                    ?, ?, ?, 'hybrid')
+                    ?, ?, ?, 'hybrid', ?)
         ");
         $stmt->execute([
             $beneficiaryId,
@@ -1316,6 +1319,7 @@ class HybridCommissionEngine
             $planSnapshot['plan_id'] ?? null,
             $planSnapshot['plan_version'] ?? null,
             $planSnapshot ? json_encode($planSnapshot) : null,
+            $this->getTenantId(),
         ]);
         $ledgerId = (int) $this->pdo->lastInsertId();
 
@@ -1500,11 +1504,11 @@ class HybridCommissionEngine
 
             // Upsert the monthly pool accumulator
             $stmt = $this->pdo->prepare("
-                INSERT INTO mlm_royalty_pool (month_year, total_pool_amount)
-                VALUES (?, ?)
+                INSERT INTO mlm_royalty_pool (month_year, total_pool_amount, tenant_id)
+                VALUES (?, ?, ?)
                 ON DUPLICATE KEY UPDATE total_pool_amount = total_pool_amount + VALUES(total_pool_amount)
             ");
-            $stmt->execute([$monthYear, $contribution]);
+            $stmt->execute([$monthYear, $contribution, $this->getTenantId()]);
 
             // Log the individual contribution for audit trail (skip if already contributed this month)
             $stmt = $this->pdo->prepare("
@@ -1513,10 +1517,10 @@ class HybridCommissionEngine
             $stmt->execute([$monthYear, $bookingId]);
             if ((int)$stmt->fetchColumn() === 0) {
                 $stmt = $this->pdo->prepare("
-                    INSERT INTO mlm_royalty_contributions (month_year, booking_id, payment_amount, contribution_amount)
-                    VALUES (?, ?, ?, ?)
+                    INSERT INTO mlm_royalty_contributions (month_year, booking_id, payment_amount, contribution_amount, tenant_id)
+                    VALUES (?, ?, ?, ?, ?)
                 ");
-                $stmt->execute([$monthYear, $bookingId, $amountReceived, $contribution]);
+                $stmt->execute([$monthYear, $bookingId, $amountReceived, $contribution, $this->getTenantId()]);
             }
 
             // Fetch updated pool total
@@ -1598,9 +1602,9 @@ class HybridCommissionEngine
                     INSERT INTO mlm_commission_ledger
                         (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount,
                          commission_percentage, status, notes, created_at,
-                         plan_id, plan_version, plan_snapshot, calculation_engine)
+                         plan_id, plan_version, plan_snapshot, calculation_engine, tenant_id)
                     VALUES (?, ?, 'royalty_pool', ?, ?, 0, 'pending', ?, NOW(),
-                            ?, ?, ?, 'hybrid')
+                            ?, ?, ?, 'hybrid', ?)
                 ");
                 $note = "Site Manager Royalty Pool — {$monthYear} share (Pool: ₹" . number_format($poolAmount) . " ÷ {$managerCount} managers)";
                 $stmt->execute([
@@ -1608,6 +1612,7 @@ class HybridCommissionEngine
                     $planSnapshot['plan_id'] ?? null,
                     $planSnapshot['plan_version'] ?? null,
                     $planSnapshot ? json_encode($planSnapshot) : null,
+                    $this->getTenantId(),
                 ]);
                 $ledgerIds[] = $this->pdo->lastInsertId();
             }
@@ -1619,9 +1624,9 @@ class HybridCommissionEngine
                     distributed_at = NOW(),
                     total_qualified_managers = ?,
                     per_manager_share = ?
-                WHERE month_year = ?
+                WHERE month_year = ? AND tenant_id = ?
             ");
-            $stmt->execute([$managerCount, $perShare, $monthYear]);
+            $stmt->execute([$managerCount, $perShare, $monthYear, $this->getTenantId()]);
 
             $this->pdo->commit();
 
@@ -1698,10 +1703,10 @@ class HybridCommissionEngine
             // Check if reward already awarded for this rank
             $stmt = $this->pdo->prepare("
                 SELECT id FROM mlm_career_rewards
-                WHERE user_id = ? AND rank_slug = ? AND status != 'cancelled'
+                WHERE user_id = ? AND rank_slug = ? AND status != 'cancelled' AND tenant_id = ?
                 LIMIT 1
             ");
-            $stmt->execute([$agentId, $currentRank]);
+            $stmt->execute([$agentId, $currentRank, $this->getTenantId()]);
             if ($stmt->fetch()) {
                 return ['success' => true, 'new_rank' => false, 'reward' => null, 'message' => 'Reward already awarded for ' . $currentRank];
             }
@@ -1716,10 +1721,11 @@ class HybridCommissionEngine
 
             // Award the reward
             $stmt = $this->pdo->prepare("
-                INSERT INTO mlm_career_rewards (user_id, rank_slug, reward_name, reward_value, gbv_at_award, status, awarded_at)
-                VALUES (?, ?, ?, ?, ?, 'awarded', NOW())
+                INSERT INTO mlm_career_rewards (tenant_id, user_id, rank_slug, reward_name, reward_value, gbv_at_award, status, awarded_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'awarded', NOW())
             ");
             $stmt->execute([
+                $this->getTenantId(),
                 $agentId,
                 $currentRank,
                 $slab['reward_name'],

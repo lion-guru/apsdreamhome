@@ -488,7 +488,8 @@ class BookingController extends BaseController
 
         // Release expired locks on this plot
         try {
-            $this->db->execute("DELETE FROM plot_locks WHERE plot_id = ? AND expires_at <= NOW()", [$id]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("DELETE FROM plot_locks WHERE plot_id = ? AND expires_at <= NOW() AND tenant_id = ?", [$id, $tid]);
         } catch (\Throwable $e) {
         // table may not exist
         error_log($e->getMessage());

@@ -32,12 +32,7 @@ class TINApiService
         $this->password = $config['password'] ?? $dbCfg['password'] ?? ($_ENV['TIN_PASSWORD'] ?? '');
 
         try {
-            $dbConfig = require 'C:/xampp/htdocs/apsdreamhome/config/database.php';
-            $this->pdo = new PDO(
-                "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['database']};charset=utf8mb4",
-                $dbConfig['username'], $dbConfig['password'],
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
         } catch (\Exception $e) {
             error_log("[TINApiService] DB connection failed: " . $e->getMessage());
         }

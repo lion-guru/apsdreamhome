@@ -16,8 +16,12 @@ use App\Core\Database;
 use App\Core\Security;
 use Exception;
 
+use \App\Traits\TenantAwareTrait;
+
 class AgentDashboardController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
     protected $agentType;
     protected $associateId;
@@ -704,8 +708,9 @@ class AgentDashboardController extends BaseController
         $userId = $this->userId;
         $name = trim($_POST['name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
+        $tid = (int)$this->tenantId();
         try {
-            $this->db->query("UPDATE users SET name = ?, phone = ? WHERE id = ?", [$name, $phone, $userId]);
+            $this->db->query("UPDATE users SET name = ?, phone = ? WHERE id = ? AND tenant_id = ?", [$name, $phone, $userId, $tid]);
             $_SESSION['user_name'] = $name;
             $this->setFlash('success', 'Profile updated');
         } catch (\Throwable $e) {
@@ -1010,7 +1015,8 @@ class AgentDashboardController extends BaseController
                 return;
             }
 
-            $this->db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            $tid = (int)$this->tenantId();
+            $this->db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ? AND tenant_id = ?", [$id, $tid]);
             $this->db->execute(
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
                  VALUES (?, 'delete', 'Lead soft-deleted by agent', ?, NOW())",

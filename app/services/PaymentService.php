@@ -10,12 +10,7 @@ class PaymentService
         if ($pdo) {
             $this->db = $pdo;
         } else {
-            $config = require APP_ROOT . '/config/database.php';
-            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['charset']}";
-            $this->db = new PDO($dsn, $config['username'], $config['password'], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]);
+            $this->db = \App\Core\Database\Database::getInstance()->getConnection();
         }
         $this->loadSettings();
     }

@@ -176,17 +176,17 @@ class MatchingBonusService
             $ledgerStmt = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount,
-                     status, sale_amount, commission_percentage, notes, booking_id, created_at)
+                     status, sale_amount, commission_percentage, notes, booking_id, created_at, tenant_id)
                 VALUES
-                    (?, ?, 'matching_bonus', ?, ?, 'pending', ?, ?, ?, 0, NOW())
+                    (?, ?, 'matching_bonus', ?, ?, 'pending', ?, ?, ?, 0, NOW(), ?)
             ");
 
             $matchStmt = $this->db->prepare("
                 INSERT INTO mlm_matching_bonuses
                     (beneficiary_user_id, matched_user_id, match_level, matched_commission_type,
-                     matched_amount, match_pct, bonus_amount, period_start, period_end, status, created_at)
+                     matched_amount, match_pct, bonus_amount, period_start, period_end, status, created_at, tenant_id)
                 VALUES
-                    (?, ?, ?, 'combined', ?, ?, ?, ?, ?, 'pending', NOW())
+                    (?, ?, ?, 'combined', ?, ?, ?, ?, ?, 'pending', NOW(), ?)
             ");
 
             // Per-entry dedup check
@@ -211,10 +211,10 @@ class MatchingBonusService
 
                 $notes = "Match of user #{$matched} at {$pct}% (Gen {$level})";
 
-                $ledgerStmt->execute([$beneficiary, $matched, $level, $amount, $matchedAmount, $pct, $notes]);
+                $ledgerStmt->execute([$beneficiary, $matched, $level, $amount, $matchedAmount, $pct, $notes, $this->getTenantId()]);
                 $result['created_ids'][] = (int)$this->db->lastInsertId();
 
-                $matchStmt->execute([$beneficiary, $matched, $level, $matchedAmount, $pct, $amount, $periodStart, $periodEnd]);
+                $matchStmt->execute([$beneficiary, $matched, $level, $matchedAmount, $pct, $amount, $periodStart, $periodEnd, $this->getTenantId()]);
 
                 $result['total'] += $amount;
             }

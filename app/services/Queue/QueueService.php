@@ -12,12 +12,29 @@ class QueueService
 {
     private $database;
     private $defaultQueue;
+    private $tenantId;
     
     public function __construct(string $defaultQueue = 'default')
     {
         $this->database = Database::getInstance();
         $this->defaultQueue = $defaultQueue;
+        $this->tenantId = (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
         $this->ensureTablesExist();
+    }
+    
+    private function getTenantId(): int
+    {
+        return $this->tenantId;
+    }
+    
+    private function tenantFilter(): string
+    {
+        return $this->tenantId > 1 ? " AND tenant_id = " . $this->tenantId : "";
+    }
+    
+    private function tenantFilterParams(): array
+    {
+        return $this->tenantId > 1 ? [$this->tenantId] : [];
     }
     
     /**
@@ -50,17 +67,19 @@ class QueueService
     {
         $queue = $queue ?? $this->defaultQueue;
         $availableAt = date('Y-m-d H:i:s', time() + $delay);
+        $tid = $this->getTenantId();
         
         $sql = "INSERT INTO queue_jobs 
-            (queue, job_class, job_data, available_at)
-            VALUES (?, ?, ?, ?)";
+            (queue, job_class, job_data, available_at, tenant_id)
+            VALUES (?, ?, ?, ?, ?)";
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([
             $queue,
             $jobClass,
             json_encode($data),
-            $availableAt
+            $availableAt,
+            $tid
         ]);
         
         return $this->database->lastInsertId();
@@ -88,28 +107,24 @@ class QueueService
     public function pop(?string $queue = null): ?array
     {
         $queue = $queue ?? $this->defaultQueue;
+        $tid = $this->getTenantId();
         
         // Find and reserve next available job
         $sql = "SELECT * FROM queue_jobs 
             WHERE queue = ? 
             AND reserved_at IS NULL 
             AND available_at <= NOW()
-            AND attempts < max_attempts
-            ORDER BY id ASC
-            LIMIT 1
-            FOR UPDATE SKIP LOCKED";
+            AND attempts < max_attempts";
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+        }
+        $sql .= " ORDER BY id ASC LIMIT 1";
         
-        // For MySQL < 8.0, use different approach
-        $sql = "SELECT * FROM queue_jobs 
-            WHERE queue = ? 
-            AND reserved_at IS NULL 
-            AND available_at <= NOW()
-            AND attempts < max_attempts
-            ORDER BY id ASC
-            LIMIT 1";
+        $params = [$queue];
+        if ($tid > 1) $params[] = $tid;
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$queue]);
+        $stmt->execute($params);
         $job = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$job) {
@@ -121,9 +136,14 @@ class QueueService
             reserved_at = NOW(),
             attempts = attempts + 1
             WHERE id = ? AND reserved_at IS NULL";
+        if ($tid > 1) {
+            $reserveSql .= " AND tenant_id = ?";
+        }
         
         $reserveStmt = $this->database->prepare($reserveSql);
-        $reserveStmt->execute([$job['id']]);
+        $reserveParams = [$job['id']];
+        if ($tid > 1) $reserveParams[] = $tid;
+        $reserveStmt->execute($reserveParams);
         
         if ($reserveStmt->rowCount() === 0) {
             // Job was taken by another worker
@@ -138,9 +158,15 @@ class QueueService
      */
     public function complete(int $jobId): bool
     {
+        $tid = $this->getTenantId();
         $sql = "DELETE FROM queue_jobs WHERE id = ?";
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+        }
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([$jobId]);
+        $params = [$jobId];
+        if ($tid > 1) $params[] = $tid;
+        return $stmt->execute($params);
     }
     
     /**
@@ -148,10 +174,17 @@ class QueueService
      */
     public function fail(int $jobId, string $exception, ?string $queue = null): bool
     {
+        $tid = $this->getTenantId();
+        
         // Get job data
         $sql = "SELECT * FROM queue_jobs WHERE id = ?";
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$jobId]);
+        $params = [$jobId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         $job = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$job) {
@@ -160,21 +193,27 @@ class QueueService
         
         // Add to failed jobs
         $failSql = "INSERT INTO failed_jobs 
-            (queue, job_class, job_data, exception)
-            VALUES (?, ?, ?, ?)";
+            (queue, job_class, job_data, exception, tenant_id)
+            VALUES (?, ?, ?, ?, ?)";
         
         $failStmt = $this->database->prepare($failSql);
         $failStmt->execute([
             $job['queue'],
             $job['job_class'],
             $job['job_data'],
-            $exception
+            $exception,
+            $tid
         ]);
         
         // Remove from queue
         $deleteSql = "DELETE FROM queue_jobs WHERE id = ?";
+        if ($tid > 1) {
+            $deleteSql .= " AND tenant_id = ?";
+        }
         $deleteStmt = $this->database->prepare($deleteSql);
-        return $deleteStmt->execute([$jobId]);
+        $deleteParams = [$jobId];
+        if ($tid > 1) $deleteParams[] = $tid;
+        return $deleteStmt->execute($deleteParams);
     }
     
     /**
@@ -183,14 +222,20 @@ class QueueService
     public function release(int $jobId, int $delay = 0): bool
     {
         $availableAt = date('Y-m-d H:i:s', time() + $delay);
+        $tid = $this->getTenantId();
         
         $sql = "UPDATE queue_jobs SET 
             reserved_at = NULL,
             available_at = ?
             WHERE id = ?";
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+        }
         
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([$availableAt, $jobId]);
+        $params = [$availableAt, $jobId];
+        if ($tid > 1) $params[] = $tid;
+        return $stmt->execute($params);
     }
     
     /**
@@ -198,10 +243,17 @@ class QueueService
      */
     public function retryFailed(int $failedJobId): bool
     {
+        $tid = $this->getTenantId();
+        
         // Get failed job
         $sql = "SELECT * FROM failed_jobs WHERE id = ?";
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$failedJobId]);
+        $params = [$failedJobId];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         $job = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$job) {
@@ -213,8 +265,13 @@ class QueueService
         
         // Remove from failed
         $deleteSql = "DELETE FROM failed_jobs WHERE id = ?";
+        if ($tid > 1) {
+            $deleteSql .= " AND tenant_id = ?";
+        }
         $deleteStmt = $this->database->prepare($deleteSql);
-        return $deleteStmt->execute([$failedJobId]);
+        $deleteParams = [$failedJobId];
+        if ($tid > 1) $deleteParams[] = $tid;
+        return $deleteStmt->execute($deleteParams);
     }
     
     /**
@@ -223,14 +280,20 @@ class QueueService
     public function size(?string $queue = null): int
     {
         $queue = $queue ?? $this->defaultQueue;
+        $tid = $this->getTenantId();
         
         $sql = "SELECT COUNT(*) FROM queue_jobs 
             WHERE queue = ? 
             AND reserved_at IS NULL 
             AND available_at <= NOW()";
+        $params = [$queue];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$queue]);
+        $stmt->execute($params);
         
         return (int) $stmt->fetchColumn();
     }
@@ -240,16 +303,24 @@ class QueueService
      */
     public function getStats(): array
     {
+        $tid = $this->getTenantId();
+        
         $sql = "SELECT 
             queue,
             COUNT(*) as total,
             SUM(CASE WHEN reserved_at IS NULL AND available_at <= NOW() THEN 1 ELSE 0 END) as pending,
             SUM(CASE WHEN reserved_at IS NOT NULL THEN 1 ELSE 0 END) as reserved,
             SUM(CASE WHEN available_at > NOW() THEN 1 ELSE 0 END) as delayed
-            FROM queue_jobs
-            GROUP BY queue";
+            FROM queue_jobs";
+        $params = [];
+        if ($tid > 1) {
+            $sql .= " WHERE tenant_id = ?";
+            $params[] = $tid;
+        }
+        $sql .= " GROUP BY queue";
         
-        $stmt = $this->database->query($sql);
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
         
         return [
             'queues' => $stmt->fetchAll(\PDO::FETCH_ASSOC),
@@ -262,8 +333,15 @@ class QueueService
      */
     private function getFailedCount(): int
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT COUNT(*) FROM failed_jobs";
-        $stmt = $this->database->query($sql);
+        $params = [];
+        if ($tid > 1) {
+            $sql .= " WHERE tenant_id = ?";
+            $params[] = $tid;
+        }
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
         return (int) $stmt->fetchColumn();
     }
     
@@ -273,10 +351,16 @@ class QueueService
     public function clear(?string $queue = null): int
     {
         $queue = $queue ?? $this->defaultQueue;
+        $tid = $this->getTenantId();
         
         $sql = "DELETE FROM queue_jobs WHERE queue = ?";
+        $params = [$queue];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$queue]);
+        $stmt->execute($params);
         
         return $stmt->rowCount();
     }
@@ -286,8 +370,16 @@ class QueueService
      */
     public function flushFailed(): int
     {
+        $tid = $this->getTenantId();
+        
         $sql = "DELETE FROM failed_jobs";
-        $stmt = $this->database->query($sql);
+        $params = [];
+        if ($tid > 1) {
+            $sql .= " WHERE tenant_id = ?";
+            $params[] = $tid;
+        }
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount();
     }
     

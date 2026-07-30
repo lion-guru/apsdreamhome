@@ -15,6 +15,7 @@ class AsyncTaskService
     private $database;
     private $logger;
     private $config;
+    private $tenantId;
     
     // Task Priorities
     const PRIORITY_LOW = 1;
@@ -34,10 +35,16 @@ class AsyncTaskService
         $this->database = Database::getInstance();
         $this->logger = new Logger();
         $this->config = Config::getInstance();
+        $this->tenantId = (int)(\App\Core\Middleware\TenantContext::getId() ?? 0);
         
         $this->createTaskTables();
     }
     
+    private function getTenantId(): int
+    {
+        return $this->tenantId;
+    }
+
     /**
      * Create task tables
      */
@@ -69,15 +76,17 @@ class AsyncTaskService
     public function createTask($taskName, $taskType, array $parameters = [], $priority = self::PRIORITY_NORMAL, $maxRetries = 3)
     {
         try {
-            $sql = "INSERT INTO async_tasks (task_name, task_type, parameters, priority, max_retries)
-                    VALUES (?, ?, ?, ?, ?)";
+            $tid = $this->getTenantId();
+            $sql = "INSERT INTO async_tasks (task_name, task_type, parameters, priority, max_retries, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, ?)";
             
             $params = [
                 $taskName,
                 $taskType,
                 json_encode($parameters),
                 $priority,
-                $maxRetries
+                $maxRetries,
+                $tid
             ];
             
             $this->database->query($sql, $params);
@@ -118,12 +127,12 @@ class AsyncTaskService
     private function addToQueue($taskId, $queueName = 'default')
     {
         try {
-            $sql = "INSERT INTO task_queue (task_id, queue_name) VALUES (?, ?)";
+            $tid = $this->getTenantId();
+            $sql = "INSERT INTO task_queue (task_id, queue_name, tenant_id) VALUES (?, ?, ?)";
+            $this->database->query($sql, [$taskId, $queueName, $tid]);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
-        $this->database->query($sql, [$taskId, $queueName]);
     }
     
     /**
@@ -132,13 +141,18 @@ class AsyncTaskService
     public function getNextTask($workerName = null, $queueName = 'default')
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT t.* FROM async_tasks t
                     JOIN task_queue q ON t.id = q.task_id
-                    WHERE t.status = ? AND q.queue_name = ?
-                    ORDER BY t.priority DESC, t.created_at ASC
-                    LIMIT 1";
+                    WHERE t.status = ? AND q.queue_name = ?";
+            $params = [self::STATUS_PENDING, $queueName];
+            if ($tid > 1) {
+                $sql .= " AND t.tenant_id = ?";
+                $params[] = $tid;
+            }
+            $sql .= " ORDER BY t.priority DESC, t.created_at ASC LIMIT 1";
             
-            $task = $this->database->selectOne($sql, [self::STATUS_PENDING, $queueName]);
+            $task = $this->database->selectOne($sql, $params);
             
             if (!$task) {
                 return [
@@ -190,8 +204,13 @@ class AsyncTaskService
                 $updates[] = "retry_count = retry_count + 1";
             }
 
+            $tid = $this->getTenantId();
             $params[] = $taskId;
             $sql = "UPDATE async_tasks SET " . implode(', ', $updates) . " WHERE id = ?";
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
             $this->database->query($sql, $params);
             
@@ -226,10 +245,15 @@ class AsyncTaskService
     public function updateTaskProgress($taskId, $progressPercentage, $result = null)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE async_tasks SET progress_percentage = ?, result = ?, updated_at = NOW() WHERE id = ?";
-            $resultJson = $result ? json_encode($result) : null;
+            $params = [$progressPercentage, $result ? json_encode($result) : null, $taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $this->database->query($sql, [$progressPercentage, $resultJson, $taskId]);
+            $this->database->query($sql, $params);
             
             $this->logger->info('Task progress updated', [
                 'task_id' => $taskId,
@@ -261,10 +285,16 @@ class AsyncTaskService
     public function completeTask($taskId, $result = null)
     {
         try {
+            $tid = $this->getTenantId();
             $resultJson = $result ? json_encode($result) : null;
             $sql = "UPDATE async_tasks SET status = ?, result = ?, completed_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $params = [self::STATUS_COMPLETED, $resultJson, $taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $this->database->query($sql, [self::STATUS_COMPLETED, $resultJson, $taskId]);
+            $this->database->query($sql, $params);
             
             $this->logger->info('Task completed', [
                 'task_id' => $taskId,
@@ -295,9 +325,15 @@ class AsyncTaskService
     public function failTask($taskId, $errorMessage)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE async_tasks SET status = ?, error_message = ?, updated_at = NOW() WHERE id = ?";
+            $params = [self::STATUS_FAILED, $errorMessage, $taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $this->database->query($sql, [self::STATUS_FAILED, $errorMessage, $taskId]);
+            $this->database->query($sql, $params);
             
             $this->logger->error('Task failed', [
                 'task_id' => $taskId,
@@ -328,10 +364,16 @@ class AsyncTaskService
     public function getTaskStatus($taskId)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT status, progress_percentage, result, error_message, retry_count, created_at, started_at, completed_at
                     FROM async_tasks WHERE id = ?";
+            $params = [$taskId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $task = $this->database->selectOne($sql, [$taskId]);
+            $task = $this->database->selectOne($sql, $params);
             
             if (!$task) {
                 return [
@@ -369,8 +411,14 @@ class AsyncTaskService
     public function getTasks($filters = [], $limit = 50, $offset = 0)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT * FROM async_tasks WHERE 1=1";
             $params = [];
+
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
 
             if (!empty($filters['status'])) {
                 $sql .= " AND status = ?";
@@ -588,26 +636,29 @@ class AsyncTaskService
     public function getTaskStats()
     {
         try {
+            $tid = $this->getTenantId();
             $stats = [];
+            
+            $tenantFilter = $tid > 1 ? " WHERE tenant_id = $tid" : "";
             
             // Total tasks by status
             $stats['by_status'] = $this->database->select(
-                "SELECT status, COUNT(*) as count FROM async_tasks GROUP BY status"
+                "SELECT status, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY status"
             );
             
             // Total tasks by type
             $stats['by_type'] = $this->database->select(
-                "SELECT task_type, COUNT(*) as count FROM async_tasks GROUP BY task_type"
+                "SELECT task_type, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY task_type"
             );
             
             // Total tasks by priority
             $stats['by_priority'] = $this->database->select(
-                "SELECT priority, COUNT(*) as count FROM async_tasks GROUP BY priority"
+                "SELECT priority, COUNT(*) as count FROM async_tasks{$tenantFilter} GROUP BY priority"
             );
             
             // Recent tasks
             $stats['recent'] = $this->database->select(
-                "SELECT * FROM async_tasks ORDER BY created_at DESC LIMIT 10"
+                "SELECT * FROM async_tasks{$tenantFilter} ORDER BY created_at DESC LIMIT 10"
             );
             
             // Performance metrics
@@ -618,7 +669,7 @@ class AsyncTaskService
                     SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_tasks,
                     AVG(CASE WHEN completed_at IS NOT NULL AND started_at IS NOT NULL 
                         THEN TIMESTAMPDIFF(SECOND, started_at, completed_at) ELSE NULL END) as avg_completion_time
-                 FROM async_tasks"
+                 FROM async_tasks{$tenantFilter}"
             );
             
             return [
@@ -644,11 +695,17 @@ class AsyncTaskService
     public function cleanupOldTasks($daysOld = 30)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "DELETE FROM async_tasks
                     WHERE status = 'completed'
                     AND completed_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+            $params = [$daysOld];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $this->database->query($sql, [$daysOld]);
+            $this->database->query($sql, $params);
             
             $deletedCount = $this->database->rowCount();
             
@@ -682,9 +739,15 @@ class AsyncTaskService
     public function cancelTask($taskId)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE async_tasks SET status = ?, updated_at = NOW() WHERE id = ? AND status IN (?, ?)";
+            $params = [self::STATUS_CANCELLED, $taskId, self::STATUS_PENDING, self::STATUS_RUNNING];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $this->database->query($sql, [self::STATUS_CANCELLED, $taskId, self::STATUS_PENDING, self::STATUS_RUNNING]);
+            $this->database->query($sql, $params);
             
             $this->logger->info('Task cancelled', [
                 'task_id' => $taskId
@@ -714,10 +777,16 @@ class AsyncTaskService
     public function retryTask($taskId)
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "UPDATE async_tasks SET status = ?, error_message = NULL, updated_at = NOW() 
                     WHERE id = ? AND status = ? AND retry_count < max_retries";
+            $params = [self::STATUS_PENDING, $taskId, self::STATUS_FAILED];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             
-            $this->database->query($sql, [self::STATUS_PENDING, $taskId, self::STATUS_FAILED]);
+            $this->database->query($sql, $params);
             
             $this->logger->info('Task retry initiated', [
                 'task_id' => $taskId
