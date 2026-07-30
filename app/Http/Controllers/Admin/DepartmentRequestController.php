@@ -63,6 +63,7 @@ class DepartmentRequestController extends AdminController
         $this->render('admin/department_requests/index', [
             'title' => 'Department Requests',
             'department_code' => $departmentCode,
+            'statusFilter' => $statusFilter,
             'requests' => $requests,
             'stats' => $stats
         ]);
