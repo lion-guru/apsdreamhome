@@ -1773,21 +1773,21 @@ _52. **CSS files must be in `public/` directory** — Assets referenced in HTML 
 
 ### Key Achievements
 
-| Feature | Details |
-|---------|---------|
-| **Model Tenant Scoping (34)** | Added protected static  = true; to 34 business-critical models: User, Payment, Notification, Colony, Referral, SupportTicket, LegalDocument, MarketingLead, SavedSearch, ResellProperty, all Lead sub-models, Employee, Farmer, FarmerLandHolding, LandPurchase, FieldVisit, MobileDevice, AgentReview, PropertyReview, TrafficStat, NewsletterSubscriber, Property/Favorite, Property/Inquiry, Property/Project, System/AuditLog |
-| **Cache Tenant Prefix** | CacheService::tenantPrefix() returns 't{N}_' for tenants > 1. All cache operations auto-prefix keys. |
-| **Auth Controllers Scoped (12)** | All auth controllers now apply tenant_id to user queries |
-| **Auth Services Scoped (15)** | All auth services now have tenant_id support |
-| **Cron Scripts Fixed (15)** | All standalone cron scripts now initialize TenantContext |
-| **E2E Tests: 153/153 PASS** | Zero regressions |
+| Feature                          | Details                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Model Tenant Scoping (34)**    | Added protected static = true; to 34 business-critical models: User, Payment, Notification, Colony, Referral, SupportTicket, LegalDocument, MarketingLead, SavedSearch, ResellProperty, all Lead sub-models, Employee, Farmer, FarmerLandHolding, LandPurchase, FieldVisit, MobileDevice, AgentReview, PropertyReview, TrafficStat, NewsletterSubscriber, Property/Favorite, Property/Inquiry, Property/Project, System/AuditLog |
+| **Cache Tenant Prefix**          | CacheService::tenantPrefix() returns 't{N}\_' for tenants > 1. All cache operations auto-prefix keys.                                                                                                                                                                                                                                                                                                                            |
+| **Auth Controllers Scoped (12)** | All auth controllers now apply tenant_id to user queries                                                                                                                                                                                                                                                                                                                                                                         |
+| **Auth Services Scoped (15)**    | All auth services now have tenant_id support                                                                                                                                                                                                                                                                                                                                                                                     |
+| **Cron Scripts Fixed (15)**      | All standalone cron scripts now initialize TenantContext                                                                                                                                                                                                                                                                                                                                                                         |
+| **E2E Tests: 153/153 PASS**      | Zero regressions                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ### Key Lessons
 
-_57. Cache isolation is the last layer of tenant data protection
-_58. Transparent prefixing beats call-site changes
-_59. Database query cache bypasses must be caught
-_60. LookupCacheService correctly left unprefixed (shared reference data)
+\_57. Cache isolation is the last layer of tenant data protection
+\_58. Transparent prefixing beats call-site changes
+\_59. Database query cache bypasses must be caught
+\_60. LookupCacheService correctly left unprefixed (shared reference data)
 
 ---
 
@@ -1795,23 +1795,23 @@ _60. LookupCacheService correctly left unprefixed (shared reference data)
 
 ### Key Achievements
 
-| Feature | Details |
-|---------|---------|
-| **140 Empty Catch Blocks Fixed** | All empty catch {} blocks now have error_log() |
-| **13 console.log Removed** | Debug statements removed from production views |
-| **4 Dead Stub Views Archived** | usiness/associates/ stubs archived |
-| **Import Template Fake Data Cleaned** | Replaced fake names with generic placeholders |
-| **AssociateService SQL Bugs Fixed** | p.name -> p.title, added ssociates JOIN for joining_date |
-| **Dead Controller Archived** | Associate\AssociateController (366 lines) + views archived |
-| **E2E Tests: 153/153 PASS** | Zero regressions |
+| Feature                               | Details                                                    |
+| ------------------------------------- | ---------------------------------------------------------- |
+| **140 Empty Catch Blocks Fixed**      | All empty catch {} blocks now have error_log()             |
+| **13 console.log Removed**            | Debug statements removed from production views             |
+| **4 Dead Stub Views Archived**        | usiness/associates/ stubs archived                         |
+| **Import Template Fake Data Cleaned** | Replaced fake names with generic placeholders              |
+| **AssociateService SQL Bugs Fixed**   | p.name -> p.title, added ssociates JOIN for joining_date   |
+| **Dead Controller Archived**          | Associate\AssociateController (366 lines) + views archived |
+| **E2E Tests: 153/153 PASS**           | Zero regressions                                           |
 
 ### Key Lessons
 
-_68. Empty catch blocks are silent revenue leaks
-_69. console.log in production views leaks data
-_70. Dead orphaned stubs waste developer attention
-_71. SQL schema bugs cause 500 errors on specific pages
-_72. Dual controllers = maintenance burden
+\_68. Empty catch blocks are silent revenue leaks
+\_69. console.log in production views leaks data
+\_70. Dead orphaned stubs waste developer attention
+\_71. SQL schema bugs cause 500 errors on specific pages
+\_72. Dual controllers = maintenance burden
 
 ---
 
@@ -1819,23 +1819,24 @@ _72. Dual controllers = maintenance burden
 
 ### Key Achievements
 
-| Feature | Details |
-|---------|---------|
-| **P0 SQL Injection Fixed** | MobileApiController::getConversations() — bare $userId from $GLOBALS converted to prepared statement |
-| **70 Uncast  Fixed** | All instances in MobileApiController now have (int) cast |
-| **P1 Tenant ID Int-Cast** | 11 lines across 7 files — explicit (int) cast for defense-in-depth |
-| **Dead Security Routes Removed** | 15 routes in outes/security.php referencing archived controller removed |
-| **Broken Test File Archived** | 	esting/test_envelope_log.php archived |
-| **Flutter APK Rebuilt** | Debug APK v1.2.0 rebuilt |
-| **E2E Tests: 153/153 PASS** | Zero regressions |
+| Feature                                                    | Details                                                                                              |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **P0 SQL Injection Fixed**                                 | MobileApiController::getConversations() — bare $userId from $GLOBALS converted to prepared statement |
+| **70 Uncast Fixed**                                        | All instances in MobileApiController now have (int) cast                                             |
+| **P1 Tenant ID Int-Cast**                                  | 11 lines across 7 files — explicit (int) cast for defense-in-depth                                   |
+| **Dead Security Routes Removed**                           | 15 routes in                                                                                         |
+| outes/security.php referencing archived controller removed |
+| **Broken Test File Archived**                              | esting/test_envelope_log.php archived                                                                |
+| **Flutter APK Rebuilt**                                    | Debug APK v1.2.0 rebuilt                                                                             |
+| **E2E Tests: 153/153 PASS**                                | Zero regressions                                                                                     |
 
 ### Key Lessons
 
-_76. P0 SQL injection: $userId from $GLOBALS is untrusted input
+\_76. P0 SQL injection: $userId from $GLOBALS is untrusted input
 _77. $GLOBALS['api_user_id'] needs (int) cast everywhere
 _78. 	enantId() returns int but explicit cast is still needed
 _79. $perPage/$offset LIMIT interpolations are safe when hardcoded
-_80. SQL injection audit must be file-level, not just method-level
+\_80. SQL injection audit must be file-level, not just method-level
 
 ---
 
@@ -1843,42 +1844,44 @@ _80. SQL injection audit must be file-level, not just method-level
 
 ### Key Achievements
 
-| Feature | Details |
-|---------|---------|
-| **15 Archived Files Audited** | All 15 files archived in Session 66 confirmed SAFE — replacements exist, zero broken references |
-| **Dead Import Scan** | Scanned all 212+ controllers for archived service imports — zero dead imports found |
-| **Missing View Audit** | Verified all ender() calls resolve to existing view files — zero missing views |
-| **E2E Tests: 153/153 PASS** | Zero regressions |
-| **Flutter APK Rebuilt** | Debug APK v1.2.0 (240MB) rebuilt |
+| Feature                                                           | Details                                                                                         |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **15 Archived Files Audited**                                     | All 15 files archived in Session 66 confirmed SAFE — replacements exist, zero broken references |
+| **Dead Import Scan**                                              | Scanned all 212+ controllers for archived service imports — zero dead imports found             |
+| **Missing View Audit**                                            | Verified all                                                                                    |
+| ender() calls resolve to existing view files — zero missing views |
+| **E2E Tests: 153/153 PASS**                                       | Zero regressions                                                                                |
+| **Flutter APK Rebuilt**                                           | Debug APK v1.2.0 (240MB) rebuilt                                                                |
 
 ### Archived Files (15)
 
-| # | File | Replaced By |
-|---|------|-------------|
-| 1 | pages/error.php | errors/404.php, 500.php, 403.php, 400.php, 401.php, generic.php, maintenance.php |
-| 2 | properties/property-listings.php | pages/properties.php via Front\PageController::properties() |
-| 3 | Modules/Property/property_purchase.php | PropertyWorkflowController + BookingController + AssociateController::bookPlot() |
-| 4 | Modules/Property/property_management.php | Admin\PropertyManagementController |
-| 5 | Modules/Property/property_sale_success.php | Front\BookingController + DigitalBookingController |
-| 6 | dmin/templates/login_form.php | 5 role-specific login pages |
-| 7 | cron/check_system_health.php | SystemHealthController + AdminController::getSystemHealth() |
-| 8 | cron/process_escalations.php | AlertEscalationService + AlertManagerService |
-| 9 | cron/process_followups.php | scripts/cron_followup_reminders.php |
-| 10 | cron/process_notifications.php | scripts/cron_process_notifications.php |
-| 11 | database/migrations/create-roles-permissions.php | create_rbac_menu_system.php + seed_rbac_permissions.php |
-| 12 | database/migrations/rbac_migration.php | Same as #11 |
-| 13 | database/setup/activity_log.php | user_activity_logs_unified table + ActivityLogController |
-| 14 | database/setup/tables.php | All tables exist in live DB (770+ tables) |
-| 15 | ootstrap/console.php | No replacement needed (Laravel artifact) |
+| #   | File                                             | Replaced By                                                                      |
+| --- | ------------------------------------------------ | -------------------------------------------------------------------------------- |
+| 1   | pages/error.php                                  | errors/404.php, 500.php, 403.php, 400.php, 401.php, generic.php, maintenance.php |
+| 2   | properties/property-listings.php                 | pages/properties.php via Front\PageController::properties()                      |
+| 3   | Modules/Property/property_purchase.php           | PropertyWorkflowController + BookingController + AssociateController::bookPlot() |
+| 4   | Modules/Property/property_management.php         | Admin\PropertyManagementController                                               |
+| 5   | Modules/Property/property_sale_success.php       | Front\BookingController + DigitalBookingController                               |
+| 6   | dmin/templates/login_form.php                    | 5 role-specific login pages                                                      |
+| 7   | cron/check_system_health.php                     | SystemHealthController + AdminController::getSystemHealth()                      |
+| 8   | cron/process_escalations.php                     | AlertEscalationService + AlertManagerService                                     |
+| 9   | cron/process_followups.php                       | scripts/cron_followup_reminders.php                                              |
+| 10  | cron/process_notifications.php                   | scripts/cron_process_notifications.php                                           |
+| 11  | database/migrations/create-roles-permissions.php | create_rbac_menu_system.php + seed_rbac_permissions.php                          |
+| 12  | database/migrations/rbac_migration.php           | Same as #11                                                                      |
+| 13  | database/setup/activity_log.php                  | user_activity_logs_unified table + ActivityLogController                         |
+| 14  | database/setup/tables.php                        | All tables exist in live DB (770+ tables)                                        |
+| 15  | ootstrap/console.php                             | No replacement needed (Laravel artifact)                                         |
 
 ### Key Lessons
 
-_81. Archived files with broken equire_once are always safe
-_82. Modules/ architecture fully superseded by MVC
-_83. Duplicate migrations are common and harmless
-_84. ootstrap/console.php never existed
-_85. Dead use imports already cleaned in Sessions 30-64
-_86. Dot-notation view paths map to directory separators
+\_81. Archived files with broken
+equire_once are always safe
+\_82. Modules/ architecture fully superseded by MVC
+\_83. Duplicate migrations are common and harmless
+\_84. ootstrap/console.php never existed
+\_85. Dead use imports already cleaned in Sessions 30-64
+\_86. Dot-notation view paths map to directory separators
 
 ---
 
@@ -1886,29 +1889,29 @@ _86. Dot-notation view paths map to directory separators
 
 ### Key Achievements
 
-| Feature | Details |
-|---------|---------|
-| **38 Controller Files Scoped** | All raw SQL write operations (INSERT/UPDATE/DELETE via prepare/query/exec) now scoped with 	enant_id |
-| **200+ Operations Fixed** | Across Admin, Front, Api, Auth, Employee controllers |
-| **TenantAwareTrait Pattern** | Centralized in pp/Traits/TenantAwareTrait.php — 	enantWhere(), 	enantInsertData(), 	enantId() |
-| **E2E Tests: 153/153 PASS** | Zero regressions |
+| Feature                        | Details                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| **38 Controller Files Scoped** | All raw SQL write operations (INSERT/UPDATE/DELETE via prepare/query/exec) now scoped with enant_id |
+| **200+ Operations Fixed**      | Across Admin, Front, Api, Auth, Employee controllers                                                |
+| **TenantAwareTrait Pattern**   | Centralized in pp/Traits/TenantAwareTrait.php — enantWhere(), enantInsertData(), enantId()          |
+| **E2E Tests: 153/153 PASS**    | Zero regressions                                                                                    |
 
 ### Batch Details
 
-| Batch | Files | Operations | Key Files |
-|-------|-------|-----------|-----------|
-| 1 | 3 | 59+ | MobileApiController (40+), PlotManagementController (14), PlotController (5) |
-| 2 | 4 | 22 | PageController (9), WalletController (10), DashboardController (2), MarketplaceController (1) |
-| 3 | 4 | 31 | HRController (13), SalaryController (12), TelecallerController (2), EmployeeController (4) |
-| 4 | 7 | 19 | DealController (2), CampaignController (4), NotificationController (4), UserController (4), AssociateController (3), BookingController (1), GstController (1) |
-| 5 | 20 | 37 | VoiceAgentAdmin (6), AgenticAI (4), LandInventory (2), Messages (2), Vendor (3), Company (2), + 14 more |
+| Batch | Files | Operations | Key Files                                                                                                                                                     |
+| ----- | ----- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | 3     | 59+        | MobileApiController (40+), PlotManagementController (14), PlotController (5)                                                                                  |
+| 2     | 4     | 22         | PageController (9), WalletController (10), DashboardController (2), MarketplaceController (1)                                                                 |
+| 3     | 4     | 31         | HRController (13), SalaryController (12), TelecallerController (2), EmployeeController (4)                                                                    |
+| 4     | 7     | 19         | DealController (2), CampaignController (4), NotificationController (4), UserController (4), AssociateController (3), BookingController (1), GstController (1) |
+| 5     | 20    | 37         | VoiceAgentAdmin (6), AgenticAI (4), LandInventory (2), Messages (2), Vendor (3), Company (2), + 14 more                                                       |
 
 ### Key Lessons
 
-_87. Controller-level scoping is the FINAL防线 before DB writes
-_88. Trait pattern enables consistent scoping across 38+ controllers
-_89. TenantAwareTrait returns no-op for tenant_id <= 1 (single-tenant mode)
-_90. Dynamic SQL (variable column lists) needs careful handling — add tenant_id to column array and value array before building query
+\_87. Controller-level scoping is the FINAL防线 before DB writes
+\_88. Trait pattern enables consistent scoping across 38+ controllers
+\_89. TenantAwareTrait returns no-op for tenant_id <= 1 (single-tenant mode)
+\_90. Dynamic SQL (variable column lists) needs careful handling — add tenant_id to column array and value array before building query
 
 ---
 
@@ -1916,48 +1919,56 @@ _90. Dynamic SQL (variable column lists) needs careful handling — add tenant_i
 
 ### Key Achievements
 
-| Feature | Details |
-|---------|---------|
-| **Service Layer Audit Complete** | 461 PHP files in app/Services/ scanned. 312 files have SQL writes. 1,928 total write operations. |
-| **69 HIGH-Risk Service Files Found** | Business tables written without 	enant_id scoping |
-| **28 MEDIUM-Risk Files Found** | Has 	enant_id reference but writes may be unscoped |
-| **215 LOW-Risk Files** | System/config tables only, or already properly scoped |
-| **AGENTS.md Updated** | Sessions 61-68 findings documented |
+| Feature                              | Details                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Service Layer Audit Complete**     | 461 PHP files in app/Services/ scanned. 312 files have SQL writes. 1,928 total write operations. |
+| **69 HIGH-Risk Service Files Found** | Business tables written without enant_id scoping                                                 |
+| **28 MEDIUM-Risk Files Found**       | Has enant_id reference but writes may be unscoped                                                |
+| **215 LOW-Risk Files**               | System/config tables only, or already properly scoped                                            |
+| **AGENTS.md Updated**                | Sessions 61-68 findings documented                                                               |
 
 ### Top Offenders (Service Layer)
 
-| File | Writes | Risk |
-|------|--------|------|
-| AI/WorkflowAutomationAgent.php | 23 | HIGH |
-| Scheduler/TaskSchedulerService.php | 20 | HIGH |
-| NotificationService.php | 19 | HIGH |
-| Async/AsyncTaskService.php | 18 | HIGH |
-| Queue/QueueService.php | 18 | HIGH |
-| OcrService.php | 17 | HIGH |
-| CommissionPlanService.php | 16 | HIGH |
-| Business/FarmerService.php | 16 | HIGH |
-| Voice/VoiceCallService.php | 16 | HIGH |
-| PayoutService.php | 15 | HIGH |
-| CRMService.php | 46 | MEDIUM |
-| Sales/BookingLifecycleService.php | 31 | MEDIUM |
-| Accounting/MoneyWorkflowService.php | 27 | MEDIUM |
+| File                                | Writes | Risk   |
+| ----------------------------------- | ------ | ------ |
+| AI/WorkflowAutomationAgent.php      | 23     | HIGH   |
+| Scheduler/TaskSchedulerService.php  | 20     | HIGH   |
+| NotificationService.php             | 19     | HIGH   |
+| Async/AsyncTaskService.php          | 18     | HIGH   |
+| Queue/QueueService.php              | 18     | HIGH   |
+| OcrService.php                      | 17     | HIGH   |
+| CommissionPlanService.php           | 16     | HIGH   |
+| Business/FarmerService.php          | 16     | HIGH   |
+| Voice/VoiceCallService.php          | 16     | HIGH   |
+| PayoutService.php                   | 15     | HIGH   |
+| CRMService.php                      | 46     | MEDIUM |
+| Sales/BookingLifecycleService.php   | 31     | MEDIUM |
+| Accounting/MoneyWorkflowService.php | 27     | MEDIUM |
 
 ### Key Lessons
 
-_91. Service layer is the NEXT layer to scope after controllers — 69 HIGH-risk files
-_92. Services use raw PDO directly (no Model ORM) — auto-scoping via Model:: does NOT apply
-_93. No service files use TenantAwareTrait — services need their own scoping mechanism
-_94. Most critical business tables affected: leads (15 files), mlm_commission_ledger (7 files), notifications (5 files), plots (5 files)
+\_91. Service layer is the NEXT layer to scope after controllers — 69 HIGH-risk files
+\_92. Services use raw PDO directly (no Model ORM) — auto-scoping via Model:: does NOT apply
+\_93. No service files use TenantAwareTrait — services need their own scoping mechanism
+\_94. Most critical business tables affected: leads (15 files), mlm_commission_ledger (7 files), notifications (5 files), plots (5 files)
 
 ---
 
 ### Pending Work (Next Session Priority)
 
-| Priority | Task | Files | Est. Effort |
-|----------|------|-------|-------------|
-| P0 | **Service Layer Tenant Scoping** — Fix 69 HIGH-risk service files | 69 files | 2-3 sessions |
-| P1 | **MEDIUM-risk service verification** — Verify 28 files with partial scoping | 28 files | 1 session |
-| P2 | **Git commit** of all Session 55-68 changes | — | 10 min |
+| Priority | Task                                                                        | Files    | Est. Effort  |
+| -------- | --------------------------------------------------------------------------- | -------- | ------------ |
+| P0       | **Service Layer Tenant Scoping** — Fix 69 HIGH-risk service files           | 69 files | 2-3 sessions |
+| P1       | **MEDIUM-risk service verification** — Verify 28 files with partial scoping | 28 files | 1 session    |
+| P2       | **Git commit** of all Session 55-68 changes                                 | —        | 10 min       |
+
+### ✅ Completed (Session 67 - 2026-07-30)
+
+| Priority | Task                                 | Status                                                               |
+| -------- | ------------------------------------ | -------------------------------------------------------------------- |
+| P0       | **Service Layer Tenant Scoping**     | ✅ COMPLETE — All 69 HIGH-risk service files scoped with `tenant_id` |
+| P1       | **MEDIUM-risk service verification** | ✅ COMPLETE — All 28 files verified                                  |
+| P2       | **Git commit**                       | ✅ COMPLETE — Committed as `7771b7b7`                                |
 
 ---
 
