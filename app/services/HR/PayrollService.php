@@ -448,6 +448,7 @@ class PayrollService
         // PDF generation logic
         // Return file path
         $filename = "payslip_{$data['employee_code']}_{$data['month']}_{$data['year']}.pdf";
-        return storage_path('payslips/' . $filename);
+        $storage = defined('STORAGE_PATH') ? STORAGE_PATH : (defined('APP_ROOT') ? APP_ROOT . '/storage' : __DIR__ . '/../../../storage');
+        return $storage . '/payslips/' . $filename;
     }
 }

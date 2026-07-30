@@ -271,9 +271,42 @@ class NewFeaturesApiController extends BaseController
     public function executeReport()
     {
         $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-        $userId = (int)($_SESSION['user_id'] ?? 0);
-        $result = $this->ocr()->executeReport($userId, $data['report_type'] ?? 'leads', $data);
+        $reportType = $data['report_type'] ?? 'leads';
+        $result = $this->generateReportData($reportType, $data);
         return $this->jsonResponse($result);
+    }
+
+    private function generateReportData(string $type, array $params): array
+    {
+        $tid = $this->tenantId();
+        $tidFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
+
+        switch ($type) {
+            case 'leads':
+                $st = $this->db->query(
+                    "SELECT COUNT(*) as total, SUM(CASE WHEN status = 'won' THEN 1 ELSE 0 END) as won FROM leads WHERE 1=1{$tidFilter}",
+                    $tid > 1 ? [$tid] : []
+                );
+                $row = $st->fetch(\PDO::FETCH_ASSOC);
+                return ['ok' => true, 'type' => 'leads', 'total' => (int)($row['total'] ?? 0), 'won' => (int)($row['won'] ?? 0)];
+            case 'bookings':
+                $st = $this->db->query(
+                    "SELECT COUNT(*) as total, COALESCE(SUM(total_amount), 0) as revenue FROM bookings WHERE 1=1{$tidFilter}",
+                    $tid > 1 ? [$tid] : []
+                );
+                $row = $st->fetch(\PDO::FETCH_ASSOC);
+                return ['ok' => true, 'type' => 'bookings', 'total' => (int)($row['total'] ?? 0), 'revenue' => (float)($row['revenue'] ?? 0)];
+            case 'payments':
+                $st = $this->db->query(
+                    "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as collected FROM payments WHERE status = 'completed'{$tidFilter}",
+                    $tid > 1 ? [$tid] : []
+                );
+                $row = $st->fetch(\PDO::FETCH_ASSOC);
+                return ['ok' => true, 'type' => 'payments', 'total' => (int)($row['total'] ?? 0), 'collected' => (float)($row['collected'] ?? 0)];
+            default:
+                return ['ok' => false, 'error' => 'Unknown report type'];
+        }
     }
 
     public function scheduleMaintenance()
