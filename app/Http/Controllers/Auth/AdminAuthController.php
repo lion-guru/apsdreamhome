@@ -98,7 +98,7 @@ class AdminAuthController extends BaseController
             // For employee/telecaller: also set employee_id session key
             if (in_array($admin['role'], ['employee', 'telecaller'])) {
                 try {
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$admin['id']]);
+                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? $tSql", array_merge([$admin['id']], $tParams));
                     if ($emp) {
                         $_SESSION['employee_id'] = $emp['id'];
                     } else {

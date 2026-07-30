@@ -58,7 +58,8 @@ class FarmerAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $farmer = $db->fetchOne("SELECT * FROM farmers WHERE phone = ? LIMIT 1", [$phone]);
+            [$tSql, $tParams] = $this->getTenantSql();
+            $farmer = $db->fetchOne("SELECT * FROM farmers WHERE phone = ? $tSql LIMIT 1", array_merge([$phone], $tParams));
 
             if ($farmer) {
                 $_SESSION['farmer_id'] = $farmer['id'];

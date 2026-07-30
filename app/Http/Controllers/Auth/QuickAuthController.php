@@ -98,7 +98,7 @@ private function getTenantSql(): array
             $newUserId = $this->db->fetchOne("SELECT id FROM users WHERE email = ?" . $tSql . " LIMIT 1", array_merge([$email], $tParams))['id'];
 
             // Create wallet entry
-            $this->db->insert('wallet_points', [
+            $this->db->insert('wallet_points', array_merge([
                 'user_id' => $newUserId,
                 'points_balance' => 0.00,
                 'total_earned' => 0.00,
@@ -110,50 +110,7 @@ private function getTenantSql(): array
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // Handle referral rewards if referral code was used
-            if ($referrerId) {
-                $referrerWallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$referrerId], $tParams));
-
-                if ($referrerWallet) {
-                    $rewardPoints = 100; // 100 points for customer referral
-
-                    $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
-                    $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
-                    $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
-
-                    $this->db->query("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?" . $tSql,
-                        array_merge([$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrerId], $tParams));
-
-                    $this->db->insert('wallet_transactions', array_merge([
-                        'user_id' => $referrerId,
-                        'transaction_type' => 'credit',
-                        'transaction_category' => 'referral',
-                        'amount' => $rewardPoints,
-                        'balance_before' => $referrerWallet['points_balance'],
-                        'balance_after' => $newBalance,
-                        'description' => "Quick signup referral reward for Customer: $name",
-                        'reference_id' => $newUserId,
-                        'reference_type' => 'user',
-                        'related_user_id' => $newUserId,
-                        'status' => 'completed',
-                        'created_at' => date('Y-m-d H:i:s')
-                    ], $tInsert));
-
-                    $this->db->insert('referral_rewards', array_merge([
-                        'referrer_id' => $referrerId,
-                        'referred_id' => $newUserId,
-                        'reward_amount' => $rewardPoints,
-                        'reward_type' => 'points',
-                        'reward_percentage' => 0.00,
-                        'referral_code' => $referralCode,
-                        'status' => 'credited',
-                        'credited_at' => date('Y-m-d H:i:s'),
-                        'created_at' => date('Y-m-d H:i:s')
-                    ], $tInsert));
-                }
-            }
+            ], $tInsert));
 
             // Set session
             $_SESSION['user_id'] = $newUserId;
@@ -165,71 +122,6 @@ private function getTenantSql(): array
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
             echo json_encode(['success' => true, 'redirect' => '/user/dashboard']);
-            exit;
-
-        } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
-    /**
-     * Request referral code for Google search visitors
-     */
-    public function requestReferralCode()
-    {
-        @session_start();
-
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $phone = $_POST['phone'] ?? '';
-
-        try {
-            if (empty($name) || empty($email) || empty($phone)) {
-                echo json_encode(['success' => false, 'message' => 'All fields are required']);
-                exit;
-            }
-
-            [$tSql, $tParams] = $this->getTenantSql();
-            [$tInsert] = $this->getTenantInsert();
-
-            // Generate company referral code for this request
-            $requestId = 'REQ' . date('YmdHis') . rand(100, 999);
-            $companyReferralCode = 'APS2025COMP';
-
-            // Save referral request
-            $this->db->insert('referral_requests', array_merge([
-                'request_id' => $requestId,
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'company_referral_code' => $companyReferralCode,
-                'status' => 'pending',
-                'created_at' => date('Y-m-d H:i:s')
-            ], $tInsert));
-
-            // Create table if not exists
-            $tableExists = $this->db->fetchOne("SHOW TABLES LIKE 'referral_requests'");
-            if (!$tableExists) {
-                $this->db->query("
-                    CREATE TABLE referral_requests (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        request_id VARCHAR(50) NOT NULL,
-                        name VARCHAR(100) NOT NULL,
-                        email VARCHAR(100) NOT NULL,
-                        phone VARCHAR(20) NOT NULL,
-                        company_referral_code VARCHAR(50) NOT NULL,
-                        status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-                ");
-            }
-
-            echo json_encode([
-                'success' => true,
-                'referral_code' => $companyReferralCode,
-                'message' => 'Referral code sent! Use this code to join as Associate/Agent.'
-            ]);
             exit;
 
         } catch (\Exception $e) {
