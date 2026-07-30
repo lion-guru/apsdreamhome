@@ -23,6 +23,15 @@ class CRMManager
     private $propertyManager;
     private $plottingManager;
 
+    private function tid(): int
+    {
+        static $tid = null;
+        if ($tid === null) {
+            $tid = \App\Core\Middleware\TenantContext::getId();
+        }
+        return $tid;
+    }
+
     public function __construct($db = null, $logger = null)
     {
         $this->db = $db ?: \App\Core\App::database();
@@ -268,6 +277,7 @@ class CRMManager
      */
     public function addLead($leadData)
     {
+        $tid = $this->tid();
         $sql = "INSERT INTO leads (
             lead_number, lead_source_id, name, email, phone, alternate_phone,
             date_of_birth, gender, marital_status, occupation, company, designation,
@@ -281,6 +291,22 @@ class CRMManager
             :budget_min, :budget_max, :preferred_location, :property_type, :requirement_details,
             :lead_score, :assigned_to, :created_by
         )";
+
+        if ($tid > 1) {
+            $sql = "INSERT INTO leads (
+                lead_number, lead_source_id, name, email, phone, alternate_phone,
+                date_of_birth, gender, marital_status, occupation, company, designation,
+                annual_income, address, city, state, pincode, property_interest,
+                budget_min, budget_max, preferred_location, property_type, requirement_details,
+                lead_score, assigned_to, created_by, tenant_id
+            ) VALUES (
+                :lead_number, :lead_source_id, :name, :email, :phone, :alternate_phone,
+                :date_of_birth, :gender, :marital_status, :occupation, :company, :designation,
+                :annual_income, :address, :city, :state, :pincode, :property_interest,
+                :budget_min, :budget_max, :preferred_location, :property_type, :requirement_details,
+                :lead_score, :assigned_to, :created_by, :tenant_id
+            )";
+        }
 
         $params = [
             ':lead_number' => $leadData['lead_number'],
@@ -310,6 +336,7 @@ class CRMManager
             ':assigned_to' => $leadData['assigned_to'],
             ':created_by' => $leadData['created_by']
         ];
+        if ($tid > 1) { $params[':tenant_id'] = $tid; }
 
         try {
             if ($this->db->execute($sql, $params)) {
@@ -379,9 +406,11 @@ class CRMManager
      */
     private function calculateLeadScore($leadId)
     {
+        $tid = $this->tid();
         $sql = "SELECT budget_min, email, alternate_phone, property_interest, preferred_location, annual_income FROM leads WHERE id = :id";
+        if ($tid > 1) { $sql .= " AND tenant_id = :tenant_id"; }
         try {
-            $lead = $this->db->fetch($sql, [':id' => $leadId]);
+            $lead = $this->db->fetch($sql, [':id' => $leadId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
 
             if (!$lead) return;
 
@@ -406,13 +435,16 @@ class CRMManager
             elseif ($lead['annual_income'] >= 500000) $score += 10;
 
             // Update lead score
+            $tid = $this->tid();
             $updateSql = "UPDATE leads SET lead_score = :score WHERE id = :id";
-            $this->db->execute($updateSql, [':score' => $score, ':id' => $leadId]);
+            if ($tid > 1) { $updateSql .= " AND tenant_id = :tenant_id"; }
+            $this->db->execute($updateSql, [':score' => $score, ':id' => $leadId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
 
             // Update conversion probability based on score
             $probability = min($score * 2, 100); // Max 100%
             $probabilitySql = "UPDATE leads SET conversion_probability = :probability WHERE id = :id";
-            $this->db->execute($probabilitySql, [':probability' => $probability, ':id' => $leadId]);
+            if ($tid > 1) { $probabilitySql .= " AND tenant_id = :tenant_id"; }
+            $this->db->execute($probabilitySql, [':probability' => $probability, ':id' => $leadId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error calculating lead score: " . $e->getMessage(), 'error', 'crm');
@@ -425,9 +457,11 @@ class CRMManager
      */
     private function sendLeadWelcomeEmail($leadId)
     {
+        $tid = $this->tid();
         $sql = "SELECT name, email FROM leads WHERE id = :id";
+        if ($tid > 1) { $sql .= " AND tenant_id = :tenant_id"; }
         try {
-            $lead = $this->db->fetch($sql, [':id' => $leadId]);
+            $lead = $this->db->fetch($sql, [':id' => $leadId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
 
             if ($lead && $lead['email']) {
                 $this->emailManager->send($lead['email'], 'lead_welcome_email', ['name' => $lead['name']]);
@@ -444,6 +478,7 @@ class CRMManager
      */
     public function getLeads($filters = [], $limit = 50, $offset = 0)
     {
+        $tid = $this->tid();
         $sql = "SELECT l.*, ls.source_name, u.name as assigned_to_name
                 FROM leads l
                 LEFT JOIN lead_sources ls ON l.lead_source_id = ls.id
@@ -451,6 +486,7 @@ class CRMManager
                 WHERE 1=1";
 
         $params = [];
+        if ($tid > 1) { $sql .= " AND l.tenant_id = :tenant_id"; $params[':tenant_id'] = $tid; }
 
         if (!empty($filters['lead_status'])) {
             $sql .= " AND l.lead_status = :lead_status";
@@ -518,10 +554,21 @@ class CRMManager
      */
     public function addLeadActivity($activityData)
     {
+        $tid = $this->tid();
         $sql = "INSERT INTO lead_activities (
             lead_id, activity_type, activity_date, subject, description, duration,
             outcome, next_action, next_action_date, created_by
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $extraCols = '';
+        $extraVals = '';
+        if ($tid > 1) { $extraCols = ', tenant_id'; $extraVals = ', ?'; }
+        if ($extraCols) {
+            $sql = "INSERT INTO lead_activities (
+                lead_id, activity_type, activity_date, subject, description, duration,
+                outcome, next_action, next_action_date, created_by$extraCols
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?$extraVals)";
+        }
 
         try {
             $params = [
@@ -536,14 +583,19 @@ class CRMManager
                 $activityData['next_action_date'],
                 $activityData['created_by']
             ];
+            if ($tid > 1) { $params[] = $tid; }
 
             if ($this->db->execute($sql, $params)) {
                 $activityId = $this->db->lastInsertId();
 
                 if ($activityId) {
                     // Update last contact date
+                    $tidUpd = $this->tid();
                     $updateSql = "UPDATE leads SET last_contact_date = ? WHERE id = ?";
-                    $this->db->execute($updateSql, [$activityData['activity_date'], $activityData['lead_id']]);
+                    if ($tidUpd > 1) { $updateSql .= " AND tenant_id = ?"; }
+                    $updParams = [$activityData['activity_date'], $activityData['lead_id']];
+                    if ($tidUpd > 1) { $updParams[] = $tidUpd; }
+                    $this->db->execute($updateSql, $updParams);
 
                     // Schedule next follow-up if specified
                     if (!empty($activityData['next_action_date'])) {
@@ -570,9 +622,13 @@ class CRMManager
      */
     private function scheduleFollowUp($leadId, $followUpDate, $nextAction)
     {
+        $tid = $this->tid();
         $sql = "UPDATE leads SET next_follow_up_date = ?, lead_status = 'nurturing' WHERE id = ?";
+        if ($tid > 1) { $sql .= " AND tenant_id = ?"; }
         try {
-            $this->db->execute($sql, [$followUpDate, $leadId]);
+            $params = [$followUpDate, $leadId];
+            if ($tid > 1) { $params[] = $tid; }
+            $this->db->execute($sql, $params);
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error scheduling follow-up: " . $e->getMessage(), 'error', 'crm');
@@ -585,11 +641,23 @@ class CRMManager
      */
     public function createOpportunity($opportunityData)
     {
+        $tid = $this->tid();
         $sql = "INSERT INTO opportunities (
             opportunity_number, lead_id, opportunity_title, opportunity_type, pipeline_stage_id,
             property_id, plot_id, expected_value, probability_percentage, expected_closure_date,
             assigned_to, created_by
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $extraCols = '';
+        $extraVals = '';
+        if ($tid > 1) { $extraCols = ', tenant_id'; $extraVals = ', ?'; }
+        if ($extraCols) {
+            $sql = "INSERT INTO opportunities (
+                opportunity_number, lead_id, opportunity_title, opportunity_type, pipeline_stage_id,
+                property_id, plot_id, expected_value, probability_percentage, expected_closure_date,
+                assigned_to, created_by$extraCols
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?$extraVals)";
+        }
 
         try {
             $params = [
@@ -606,14 +674,19 @@ class CRMManager
                 $opportunityData['assigned_to'],
                 $opportunityData['created_by']
             ];
+            if ($tid > 1) { $params[] = $tid; }
 
             if ($this->db->execute($sql, $params)) {
                 $opportunityId = $this->db->lastInsertId();
 
                 if ($opportunityId) {
                     // Update lead status
+                    $tidUpd = $this->tid();
                     $updateSql = "UPDATE leads SET lead_status = 'proposal_sent' WHERE id = ?";
-                    $this->db->execute($updateSql, [$opportunityData['lead_id']]);
+                    if ($tidUpd > 1) { $updateSql .= " AND tenant_id = ?"; }
+                    $updParams = [$opportunityData['lead_id']];
+                    if ($tidUpd > 1) { $updParams[] = $tidUpd; }
+                    $this->db->execute($updateSql, $updParams);
 
                     if ($this->logger) {
                         $this->logger->log("Opportunity created: {$opportunityData['opportunity_title']} ({$opportunityData['opportunity_number']})", 'info', 'crm');
@@ -635,6 +708,7 @@ class CRMManager
      */
     public function getOpportunities($filters = [], $limit = 50, $offset = 0)
     {
+        $tid = $this->tid();
         $sql = "SELECT o.*, l.name, l.phone, l.email, 
                        s.stage_name, s.probability_percentage as stage_probability,
                        u.name as assigned_to_name, p.title as property_title,
@@ -648,6 +722,7 @@ class CRMManager
                 WHERE 1=1";
 
         $params = [];
+        if ($tid > 1) { $sql .= " AND o.tenant_id = :tenant_id"; $params[':tenant_id'] = $tid; }
 
         if (!empty($filters['assigned_to'])) {
             $sql .= " AND o.assigned_to = :assigned_to";
@@ -699,22 +774,27 @@ class CRMManager
     public function convertLeadToCustomer($leadId, $customerData = [])
     {
         try {
+            $tid = $this->tid();
             // Get lead details
             $sql = "SELECT * FROM leads WHERE id = :id";
-            $lead = $this->db->fetch($sql, [':id' => $leadId]);
+            if ($tid > 1) { $sql .= " AND tenant_id = :tenant_id"; }
+            $lead = $this->db->fetch($sql, [':id' => $leadId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
 
             if (!$lead) return false;
 
             // Check if customer already exists
             if (!empty($lead['email'])) {
+                $tidChk = $this->tid();
                 $checkSql = "SELECT id FROM users WHERE email = :email OR phone = :phone";
-                $existingCustomer = $this->db->fetch($checkSql, [':email' => $lead['email'], ':phone' => $lead['phone']]);
+                if ($tidChk > 1) { $checkSql .= " AND tenant_id = :tenant_id"; }
+                $existingCustomer = $this->db->fetch($checkSql, [':email' => $lead['email'], ':phone' => $lead['phone']] + ($tidChk > 1 ? [':tenant_id' => $tidChk] : []));
                 if ($existingCustomer) {
                     return $existingCustomer['id'];
                 }
             }
 
             // Create customer profile
+            $tidIns = $this->tid();
             $customerSql = "INSERT INTO users (
                 customer_number, name, email, phone, alternate_phone,
                 date_of_birth, gender, marital_status, occupation, company, designation, annual_income,
@@ -724,6 +804,21 @@ class CRMManager
                 :date_of_birth, :gender, :marital_status, :occupation, :company, :designation, :annual_income,
                 :address, :city, :state, :pincode, :user_id, :lead_id
             )";
+
+            $extraCols = '';
+            $extraVals = '';
+            if ($tidIns > 1) { $extraCols = ', tenant_id'; $extraVals = ', :tenant_id'; }
+            if ($extraCols) {
+                $customerSql = "INSERT INTO users (
+                    customer_number, name, email, phone, alternate_phone,
+                    date_of_birth, gender, marital_status, occupation, company, designation, annual_income,
+                    address, city, state, pincode, user_id, lead_id$extraCols
+                ) VALUES (
+                    :customer_number, :name, :email, :phone, :alternate_phone,
+                    :date_of_birth, :gender, :marital_status, :occupation, :company, :designation, :annual_income,
+                    :address, :city, :state, :pincode, :user_id, :lead_id$extraVals
+                )";
+            }
 
             $customerNumber = 'CUST' . date('Y') . str_pad($leadId, 4, '0', STR_PAD_LEFT);
             $params = [
@@ -746,14 +841,17 @@ class CRMManager
                 ':user_id' => $lead['assigned_to'],
                 ':lead_id' => $leadId
             ];
+            if ($tidIns > 1) { $params[':tenant_id'] = $tidIns; }
 
             if ($this->db->execute($customerSql, $params)) {
                 $customerId = $this->db->lastInsertId();
 
                 if ($customerId) {
                     // Update lead status
+                    $tidUpd = $this->tid();
                     $updateSql = "UPDATE leads SET lead_status = 'won' WHERE id = :id";
-                    $this->db->execute($updateSql, [':id' => $leadId]);
+                    if ($tidUpd > 1) { $updateSql .= " AND tenant_id = :tenant_id"; }
+                    $this->db->execute($updateSql, [':id' => $leadId] + ($tidUpd > 1 ? [':tenant_id' => $tidUpd] : []));
 
                     if ($this->logger) {
                         $this->logger->log("Lead converted to customer: Lead ID $leadId, Customer ID $customerId", 'info', 'crm');
@@ -775,6 +873,7 @@ class CRMManager
      */
     public function createSupportTicket($ticketData)
     {
+        $tid = $this->tid();
         $sql = "INSERT INTO support_tickets (
             ticket_number, customer_id, ticket_type, priority, subject, description,
             status, assigned_to, created_by
@@ -782,6 +881,19 @@ class CRMManager
             :ticket_number, :customer_id, :ticket_type, :priority, :subject, :description,
             :status, :assigned_to, :created_by
         )";
+
+        $extraCols = '';
+        $extraVals = '';
+        if ($tid > 1) { $extraCols = ', tenant_id'; $extraVals = ', :tenant_id'; }
+        if ($extraCols) {
+            $sql = "INSERT INTO support_tickets (
+                ticket_number, customer_id, ticket_type, priority, subject, description,
+                status, assigned_to, created_by$extraCols
+            ) VALUES (
+                :ticket_number, :customer_id, :ticket_type, :priority, :subject, :description,
+                :status, :assigned_to, :created_by$extraVals
+            )";
+        }
 
         try {
             $params = [
@@ -795,6 +907,7 @@ class CRMManager
                 ':assigned_to' => $ticketData['assigned_to'],
                 ':created_by' => $ticketData['created_by']
             ];
+            if ($tid > 1) { $params[':tenant_id'] = $tid; }
 
             if ($this->db->execute($sql, $params)) {
                 $ticketId = $this->db->lastInsertId();
@@ -823,12 +936,14 @@ class CRMManager
      */
     private function sendTicketAcknowledgment($ticketId)
     {
+        $tid = $this->tid();
         $sql = "SELECT st.*, cp.name, cp.email
                 FROM support_tickets st
                 JOIN users cp ON st.customer_id = cp.id
                 WHERE st.id = :id";
+        if ($tid > 1) { $sql .= " AND st.tenant_id = :tenant_id"; }
         try {
-            $ticket = $this->db->fetch($sql, [':id' => $ticketId]);
+            $ticket = $this->db->fetch($sql, [':id' => $ticketId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
 
             if ($ticket && $ticket['email']) {
                 $this->emailManager->send($ticket['email'], 'support_ticket_acknowledgment', ['ticket_number' => $ticket['ticket_number'], 'name' => $ticket['name']]);
@@ -846,6 +961,9 @@ class CRMManager
     public function getCRMDashboard()
     {
         $dashboard = [];
+        $tid = $this->tid();
+        $tw = $tid > 1 ? " WHERE tenant_id = :tenant_id" : "";
+        $tp = $tid > 1 ? [':tenant_id' => $tid] : [];
 
         try {
             // Lead statistics
@@ -855,8 +973,8 @@ class CRMManager
                 SUM(CASE WHEN lead_status = 'qualified' THEN 1 ELSE 0 END) as qualified_leads,
                 SUM(CASE WHEN lead_status = 'won' THEN 1 ELSE 0 END) as converted_leads,
                 AVG(lead_score) as avg_lead_score
-                FROM leads";
-            $dashboard['lead_stats'] = $this->db->fetch($sql);
+                FROM leads$tw";
+            $dashboard['lead_stats'] = $this->db->fetch($sql, $tp);
 
             // Opportunity statistics
             $sql = "SELECT
@@ -865,8 +983,8 @@ class CRMManager
                 SUM(CASE WHEN pipeline_stage_id = 6 THEN 1 ELSE 0 END) as lost_opportunities,
                 SUM(expected_value) as total_pipeline_value,
                 AVG(probability_percentage) as avg_probability
-                FROM opportunities";
-            $dashboard['opportunity_stats'] = $this->db->fetch($sql);
+                FROM opportunities$tw";
+            $dashboard['opportunity_stats'] = $this->db->fetch($sql, $tp);
 
             // Customer statistics
             $sql = "SELECT
@@ -874,8 +992,8 @@ class CRMManager
                 SUM(CASE WHEN customer_status = 'active' THEN 1 ELSE 0 END) as active_customers,
                 SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
                 AVG(total_purchase_value) as avg_customer_value
-                FROM users";
-            $dashboard['customer_stats'] = $this->db->fetch($sql);
+                FROM users$tw";
+            $dashboard['customer_stats'] = $this->db->fetch($sql, $tp);
 
             // Support ticket statistics
             $sql = "SELECT
@@ -883,34 +1001,40 @@ class CRMManager
                 SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open_tickets,
                 SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_tickets,
                 AVG(satisfaction_rating) as avg_satisfaction
-                FROM support_tickets";
-            $dashboard['support_stats'] = $this->db->fetch($sql);
+                FROM support_tickets$tw";
+            $dashboard['support_stats'] = $this->db->fetch($sql, $tp);
 
             // Recent activities
-            $sql = "SELECT la.*, l.name
+            $tidAct = $this->tid();
+            $actSql = "SELECT la.*, l.name
                     FROM lead_activities la
-                    LEFT JOIN leads l ON la.lead_id = l.id
-                    ORDER BY la.created_at DESC
-                    LIMIT 10";
-            $dashboard['recent_activities'] = $this->db->fetchAll($sql);
+                    LEFT JOIN leads l ON la.lead_id = l.id";
+            $actParams = [];
+            if ($tidAct > 1) { $actSql .= " WHERE l.tenant_id = :tenant_id"; $actParams[':tenant_id'] = $tidAct; }
+            $actSql .= " ORDER BY la.created_at DESC LIMIT 10";
+            $dashboard['recent_activities'] = $this->db->fetchAll($actSql, $actParams);
 
             // Sales pipeline
-            $sql = "SELECT s.stage_name, COUNT(o.id) as opportunity_count,
+            $tidPipe = $this->tid();
+            $pipeSql = "SELECT s.stage_name, COUNT(o.id) as opportunity_count,
                            SUM(o.expected_value) as total_value, AVG(o.probability_percentage) as avg_probability
                     FROM sales_pipeline_stages s
-                    LEFT JOIN opportunities o ON s.id = o.pipeline_stage_id
-                    GROUP BY s.id, s.stage_name
-                    ORDER BY s.stage_order";
-            $dashboard['sales_pipeline'] = $this->db->fetchAll($sql);
+                    LEFT JOIN opportunities o ON s.id = o.pipeline_stage_id";
+            $pipeParams = [];
+            if ($tidPipe > 1) { $pipeSql .= " AND o.tenant_id = :tenant_id"; $pipeParams[':tenant_id'] = $tidPipe; }
+            $pipeSql .= " GROUP BY s.id, s.stage_name ORDER BY s.stage_order";
+            $dashboard['sales_pipeline'] = $this->db->fetchAll($pipeSql, $pipeParams);
 
             // Lead sources performance
-            $sql = "SELECT ls.source_name, COUNT(l.id) as lead_count,
+            $tidSrc = $this->tid();
+            $srcSql = "SELECT ls.source_name, COUNT(l.id) as lead_count,
                            SUM(CASE WHEN l.lead_status = 'won' THEN 1 ELSE 0 END) as converted_count
                     FROM lead_sources ls
-                    LEFT JOIN leads l ON ls.id = l.lead_source_id
-                    GROUP BY ls.id, ls.source_name
-                    ORDER BY lead_count DESC";
-            $dashboard['lead_sources'] = $this->db->fetchAll($sql);
+                    LEFT JOIN leads l ON ls.id = l.lead_source_id";
+            $srcParams = [];
+            if ($tidSrc > 1) { $srcSql .= " AND l.tenant_id = :tenant_id"; $srcParams[':tenant_id'] = $tidSrc; }
+            $srcSql .= " GROUP BY ls.id, ls.source_name ORDER BY lead_count DESC";
+            $dashboard['lead_sources'] = $this->db->fetchAll($srcSql, $srcParams);
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error getting CRM dashboard: " . $e->getMessage(), 'error', 'crm');
@@ -941,14 +1065,18 @@ class CRMManager
      */
     public function getLead($leadId)
     {
+        $tid = $this->tid();
         $sql = "SELECT l.*, ls.source_name, u.name as assigned_to_name
                 FROM leads l
                 LEFT JOIN lead_sources ls ON l.lead_source_id = ls.id
                 LEFT JOIN users u ON l.assigned_to = u.id
                 WHERE l.id = ?";
+        if ($tid > 1) { $sql .= " AND l.tenant_id = ?"; }
 
         try {
-            $lead = $this->db->fetch($sql, [$leadId]);
+            $leadParams = [$leadId];
+            if ($tid > 1) { $leadParams[] = $tid; }
+            $lead = $this->db->fetch($sql, $leadParams);
 
             if ($lead) {
                 $lead['tags'] = json_decode($lead['tags'] ?? '[]', true);
@@ -984,9 +1112,12 @@ class CRMManager
      */
     public function updateOpportunityStage($opportunityId, $stageId, $notes = '')
     {
+        $tid = $this->tid();
         $sql = "UPDATE opportunities SET pipeline_stage_id = ?, updated_at = NOW() WHERE id = ?";
+        $params = [$stageId, $opportunityId];
+        if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
         try {
-            $this->db->execute($sql, [$stageId, $opportunityId]);
+            $this->db->execute($sql, $params);
 
             // Add stage change activity
             $activityData = [
@@ -1018,9 +1149,12 @@ class CRMManager
      */
     private function getOpportunityLeadId($opportunityId)
     {
+        $tid = $this->tid();
         $sql = "SELECT lead_id FROM opportunities WHERE id = ?";
+        $params = [$opportunityId];
+        if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
         try {
-            $row = $this->db->fetch($sql, [$opportunityId]);
+            $row = $this->db->fetch($sql, $params);
             return $row['lead_id'] ?? 0;
         } catch (\Exception $e) {
             if ($this->logger) {
@@ -1040,11 +1174,13 @@ class CRMManager
         $year = date('Y');
         $month = date('m');
 
+        $tid = $this->tid();
         $sql = "SELECT MAX(CAST(SUBSTRING(lead_number, 9) AS UNSIGNED)) as max_num
                 FROM leads WHERE lead_number LIKE ?";
-        $pattern = $prefix . $year . $month . '%';
+        $params = [$pattern = $prefix . $year . $month . '%'];
+        if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
         try {
-            $row = $this->db->fetch($sql, [$pattern]);
+            $row = $this->db->fetch($sql, $params);
             $maxNum = $row['max_num'] ?? 0;
 
             $nextNum = $maxNum + 1;
@@ -1066,11 +1202,13 @@ class CRMManager
         $year = date('Y');
         $month = date('m');
 
+        $tid = $this->tid();
         $sql = "SELECT MAX(CAST(SUBSTRING(opportunity_number, 8) AS UNSIGNED)) as max_num
                 FROM opportunities WHERE opportunity_number LIKE ?";
-        $pattern = $prefix . $year . $month . '%';
+        $params = [$pattern = $prefix . $year . $month . '%'];
+        if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
         try {
-            $row = $this->db->fetch($sql, [$pattern]);
+            $row = $this->db->fetch($sql, $params);
             $maxNum = $row['max_num'] ?? 0;
 
             $nextNum = $maxNum + 1;

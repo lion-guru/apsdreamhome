@@ -11,6 +11,7 @@
 namespace App\Services\AI;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class DocumentGeneratorAgent
 {
@@ -24,16 +25,17 @@ class DocumentGeneratorAgent
     public function generatePaymentReceipt(int $paymentId): array
     {
         try {
+            $tid = TenantContext::getId();
             $payment = $this->db->fetch(
                 "SELECT p.*, b.booking_number, u.name as customer_name, u.email, u.phone,
                         pl.plot_number, c.name as colony_name
                  FROM payments p
                  LEFT JOIN bookings b ON p.booking_id = b.id
-                 LEFT JOIN users u ON p.user_id = u.id
+                 LEFT JOIN users u ON p.user_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                  LEFT JOIN plots pl ON b.plot_id = pl.id
                  LEFT JOIN colonies c ON pl.colony_id = c.id
                  WHERE p.id = ?",
-                [$paymentId]
+                $tid > 1 ? [$paymentId, $tid] : [$paymentId]
             );
             if (!$payment) return ['success' => false, 'error' => 'Payment not found'];
 
@@ -69,16 +71,17 @@ class DocumentGeneratorAgent
     public function generateDemandLetter(int $installmentId): array
     {
         try {
+            $tid = TenantContext::getId();
             $inst = $this->db->fetch(
                 "SELECT ips.*, pp.booking_number, u.name as customer_name,
                         pl.plot_number, c.name as colony_name
                  FROM booking_payment_schedules ips
                  LEFT JOIN plot_bookings pp ON ips.booking_id = pp.id
-                 LEFT JOIN users u ON pp.customer_id = u.id
+                 LEFT JOIN users u ON pp.customer_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                  LEFT JOIN plots pl ON pp.plot_id = pl.id
                  LEFT JOIN colonies c ON pl.colony_id = c.id
                  WHERE ips.id = ?",
-                [$installmentId]
+                $tid > 1 ? [$installmentId, $tid] : [$installmentId]
             );
             if (!$inst) return ['success' => false, 'error' => 'Installment not found'];
 
@@ -111,14 +114,15 @@ class DocumentGeneratorAgent
     public function generateBookingConfirmation(int $bookingId): array
     {
         try {
+            $tid = TenantContext::getId();
             $bk = $this->db->fetch(
                 "SELECT pb.*, u.name as customer_name, pl.plot_number, pl.area_sqft, c.name as colony_name
                  FROM plot_bookings pb
-                 LEFT JOIN users u ON pb.customer_id = u.id
+                 LEFT JOIN users u ON pb.customer_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                  LEFT JOIN plots pl ON pb.plot_id = pl.id
                  LEFT JOIN colonies c ON pl.colony_id = c.id
                  WHERE pb.id = ?",
-                [$bookingId]
+                $tid > 1 ? [$bookingId, $tid] : [$bookingId]
             );
             if (!$bk) return ['success' => false, 'error' => 'Booking not found'];
 
@@ -154,7 +158,8 @@ class DocumentGeneratorAgent
     public function generateCommissionStatement(int $userId, string $month): array
     {
         try {
-            $user = $this->db->fetch("SELECT * FROM users WHERE id = ?", [$userId]);
+            $tid = TenantContext::getId();
+            $user = $this->db->fetch("SELECT * FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$userId, $tid] : [$userId]);
             if (!$user) return ['success' => false, 'error' => 'User not found'];
 
             $commissions = $this->db->fetchAll(
@@ -202,7 +207,8 @@ class DocumentGeneratorAgent
     public function generateLeadSummary(int $associateId): array
     {
         try {
-            $assoc = $this->db->fetch("SELECT * FROM users WHERE id = ?", [$associateId]);
+            $tid = TenantContext::getId();
+            $assoc = $this->db->fetch("SELECT * FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$associateId, $tid] : [$associateId]);
             $leads = $this->db->fetchAll(
                 "SELECT l.*, la.activity_type, la.description as last_activity
                  FROM leads l LEFT JOIN lead_activities la ON l.id = la.lead_id

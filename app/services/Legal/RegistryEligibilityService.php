@@ -2,6 +2,7 @@
 
 namespace App\Services\Legal;
 
+use App\Core\Middleware\TenantContext;
 use PDO;
 use Exception;
 
@@ -21,10 +22,12 @@ use Exception;
 class RegistryEligibilityService
 {
     protected PDO $db;
+    protected int $tenantId;
 
     public function __construct(?PDO $pdo = null)
     {
         $this->db = $pdo ?? (\App\Core\Database::getInstance()->getConnection() ?? $GLOBALS['db']);
+        $this->tenantId = TenantContext::getId();
     }
 
     /**
@@ -128,18 +131,20 @@ class RegistryEligibilityService
     public function getOutstandingDues(int $bookingId): array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT id, installment_no, due_date, amount, paid_amount,
+            $tid = $this->tenantId;
+            $sql = "SELECT id, installment_no, due_date, amount, paid_amount,
                         status, accrued_penalty, late_fee,
                         DATEDIFF(CURDATE(), due_date) AS days_overdue
                  FROM booking_payment_schedules
-                 WHERE booking_id = ?
-                   AND (status IN ('pending', 'overdue', 'partial')
+                 WHERE booking_id = ?";
+            $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " AND (status IN ('pending', 'overdue', 'partial')
                         OR (accrued_penalty > 0)
                         OR (paid_amount < amount))
-                 ORDER BY due_date ASC"
-            );
-            $stmt->execute([$bookingId]);
+                 ORDER BY due_date ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('[RegistryEligibilityService::getOutstandingDues] ' . $e->getMessage());
@@ -153,14 +158,16 @@ class RegistryEligibilityService
     public function getPaymentSchedule(int $bookingId): array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT id, installment_no, due_date, amount, paid_amount, paid_date,
+            $tid = $this->tenantId;
+            $sql = "SELECT id, installment_no, due_date, amount, paid_amount, paid_date,
                         status, accrued_penalty, late_fee
                  FROM booking_payment_schedules
-                 WHERE booking_id = ?
-                 ORDER BY due_date ASC"
-            );
-            $stmt->execute([$bookingId]);
+                 WHERE booking_id = ?";
+            $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " ORDER BY due_date ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('[RegistryEligibilityService::getPaymentSchedule] ' . $e->getMessage());
@@ -194,15 +201,16 @@ class RegistryEligibilityService
     public function getRegistryStatus(int $bookingId): ?array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT id, registration_no, sub_registrar_office,
+            $tid = $this->tenantId;
+            $sql = "SELECT id, registration_no, sub_registrar_office,
                         registration_date, status, rejection_reason
                  FROM registries
-                 WHERE booking_id = ?
-                 ORDER BY id DESC
-                 LIMIT 1"
-            );
-            $stmt->execute([$bookingId]);
+                 WHERE booking_id = ?";
+            $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " ORDER BY id DESC LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
@@ -211,20 +219,18 @@ class RegistryEligibilityService
         }
     }
 
-    /**
-     * Returns existing NOC status for a booking, if any.
-     */
     public function getNocStatus(int $bookingId): ?array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT id, requested_by, approved_by, status, rejection_reason
+            $tid = $this->tenantId;
+            $sql = "SELECT id, requested_by, approved_by, status, rejection_reason
                  FROM noc_requests
-                 WHERE booking_id = ?
-                 ORDER BY id DESC
-                 LIMIT 1"
-            );
-            $stmt->execute([$bookingId]);
+                 WHERE booking_id = ?";
+            $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " ORDER BY id DESC LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
@@ -240,8 +246,8 @@ class RegistryEligibilityService
     private function getBookingSummary(int $bookingId): ?array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT pb.id, pb.booking_number, pb.customer_id, pb.plot_id,
+            $tid = $this->tenantId;
+            $sql = "SELECT pb.id, pb.booking_number, pb.customer_id, pb.plot_id,
                         pb.total_plot_value AS total_amount, pb.status AS booking_status,
                         u.name AS customer_name, u.phone AS customer_phone,
                         p.plot_number, c.name AS colony_name
@@ -249,10 +255,12 @@ class RegistryEligibilityService
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
                  LEFT JOIN colonies c ON c.id = p.colony_id
-                 WHERE pb.id = ?
-                 LIMIT 1"
-            );
-            $stmt->execute([$bookingId]);
+                 WHERE pb.id = ?";
+            $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND pb.tenant_id = ?"; $params[] = $tid; }
+            $sql .= " LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$row) {
                 return null;
@@ -276,10 +284,12 @@ class RegistryEligibilityService
     private function hasRegistry(int $bookingId): bool
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT COUNT(*) FROM registries WHERE booking_id = ?"
-            );
-            $stmt->execute([$bookingId]);
+            $tid = $this->tenantId;
+            $sql = "SELECT COUNT(*) FROM registries WHERE booking_id = ?";
+            $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return (int)$stmt->fetchColumn() > 0;
         } catch (Exception $e) {
             return false;
@@ -289,8 +299,10 @@ class RegistryEligibilityService
     private function hasNoc(int $bookingId, ?string $statusFilter = null): bool
     {
         try {
+            $tid = $this->tenantId;
             $sql = "SELECT COUNT(*) FROM noc_requests WHERE booking_id = ?";
             $params = [$bookingId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
             if ($statusFilter) {
                 $sql .= " AND status = ?";
                 $params[] = $statusFilter;

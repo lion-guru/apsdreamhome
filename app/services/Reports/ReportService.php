@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
 
 /**
@@ -14,6 +15,16 @@ class ReportService
 {
     private $database;
     private $logger;
+
+    private function getTenantId(): int
+    {
+        try {
+            $tid = TenantContext::getId();
+            return $tid > 0 ? $tid : 1;
+        } catch (\Exception $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -158,12 +169,15 @@ class ReportService
                     FROM users a
                     LEFT JOIN sales s ON a.id = s.associate_id 
                         AND s.sale_date BETWEEN :start_date AND :end_date
+                    WHERE a.tenant_id = :tenant_id
                     GROUP BY a.id
                     ORDER BY total_revenue DESC";
             
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':start_date', $startDate);
             $stmt->bindParam(':end_date', $endDate);
+            $tid = $this->getTenantId();
+            $stmt->bindValue(':tenant_id', $tid, \PDO::PARAM_INT);
             $stmt->execute();
             
             $data = $stmt->fetchAll();
@@ -212,6 +226,7 @@ class ReportService
                     FROM users c
                     LEFT JOIN sales s ON c.id = s.customer_id
                     WHERE c.role = 'customer' 
+                        AND c.tenant_id = :tenant_id
                         AND s.sale_date BETWEEN :start_date AND :end_date
                     GROUP BY c.id
                     ORDER BY total_spent DESC";
@@ -219,6 +234,8 @@ class ReportService
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':start_date', $startDate);
             $stmt->bindParam(':end_date', $endDate);
+            $tid = $this->getTenantId();
+            $stmt->bindValue(':tenant_id', $tid, \PDO::PARAM_INT);
             $stmt->execute();
             
             $data = $stmt->fetchAll();
@@ -290,11 +307,13 @@ class ReportService
             $customerSql = "SELECT 
                               COUNT(*) as new_customers
                           FROM users 
-                          WHERE role = 'customer' AND created_at BETWEEN :start_date AND :end_date";
+                          WHERE role = 'customer' AND tenant_id = :tenant_id AND created_at BETWEEN :start_date AND :end_date";
             
             $stmt = $this->database->prepare($customerSql);
             $stmt->bindParam(':start_date', $startDate);
             $stmt->bindParam(':end_date', $endDate);
+            $tid = $this->getTenantId();
+            $stmt->bindValue(':tenant_id', $tid, \PDO::PARAM_INT);
             $stmt->execute();
             $customerData = $stmt->fetch();
             

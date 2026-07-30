@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\MLM;
 
+use App\Core\Middleware\TenantContext;
+
 class RERAComplianceService
 {
     private $db;
@@ -11,6 +13,15 @@ class RERAComplianceService
         $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
     
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Process commission payout with RERA interception
      * When a Free Consultant or agent closes a booking:
@@ -26,8 +37,9 @@ class RERAComplianceService
             $this->db->beginTransaction();
             
             // Get agent
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
-            $stmt->execute([$agentId]);
+            $tid = $this->getTenantId();
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $stmt->execute($tid > 1 ? [$agentId, $tid] : [$agentId]);
             $agent = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$agent) throw new \Exception('Agent not found');
             
@@ -44,8 +56,9 @@ class RERAComplianceService
                 $netPayout = $grossCommission - $reraDeducted;
                 
                 // Route RERA fee to deduction wallet
-                $stmt = $this->db->prepare("UPDATE users SET rera_deduction_wallet = rera_deduction_wallet + ? WHERE id = ?");
-                $stmt->execute([$reraDeducted, $agentId]);
+                $tid = $this->getTenantId();
+                $stmt = $this->db->prepare("UPDATE users SET rera_deduction_wallet = rera_deduction_wallet + ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+                $stmt->execute($tid > 1 ? [$reraDeducted, $agentId, $tid] : [$reraDeducted, $agentId]);
                 
                 try {
                     // Create RERA request
@@ -56,8 +69,8 @@ class RERAComplianceService
                 $stmt->execute([$agentId, $bookingId, $reraDeducted]);
                 
                 // Upgrade to Gold package configuration
-                $stmt = $this->db->prepare("UPDATE users SET is_rera_approved = 1, current_package_id = (SELECT id FROM packages WHERE name = 'Gold' LIMIT 1) WHERE id = ?");
-                $stmt->execute([$agentId]);
+                $stmt = $this->db->prepare("UPDATE users SET is_rera_approved = 1, current_package_id = (SELECT id FROM packages WHERE name = 'Gold' LIMIT 1) WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+                $stmt->execute($tid > 1 ? [$agentId, $tid] : [$agentId]);
                 
                 // Notify admin (log)
                 error_log("RERA Compliance: Agent #$agentId RERA fee deducted. Amount: $reraDeducted. Booking #$bookingId");
@@ -118,8 +131,9 @@ class RERAComplianceService
             $req = $stmt->fetch(\PDO::FETCH_ASSOC);
             
             if ($req) {
-                $stmt = $this->db->prepare("UPDATE users SET is_rera_approved = 1, rera_number = ? WHERE id = ?");
-                $stmt->execute([$reraNumber, $req['user_id']]);
+                $tid = $this->getTenantId();
+                $stmt = $this->db->prepare("UPDATE users SET is_rera_approved = 1, rera_number = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+                $stmt->execute($tid > 1 ? [$reraNumber, $req['user_id'], $tid] : [$reraNumber, $req['user_id']]);
             }
             
             return ['success' => true, 'message' => 'RERA approved'];
@@ -135,7 +149,8 @@ class RERAComplianceService
     {
         try {
             try {
-                $stmt = $this->db->query("SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id WHERE r.status = 'pending' ORDER BY r.created_at DESC");
+                $tid = $this->getTenantId();
+                $stmt = $this->db->query("SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . " WHERE r.status = 'pending' ORDER BY r.created_at DESC");
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
             }

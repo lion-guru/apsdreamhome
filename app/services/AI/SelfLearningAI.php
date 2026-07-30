@@ -19,6 +19,7 @@
 namespace App\Services\AI;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class SelfLearningAI
 {
@@ -731,12 +732,13 @@ class SelfLearningAI
         if (!$this->userId) return [];
 
         try {
+            $tid = TenantContext::getId();
             $profile = $this->db->fetch(
                 "SELECT u.name, up.preferred_types as preferred_property_type, up.budget_max as preferred_budget, up.preferred_locations as preferred_location
                  FROM users u
                  LEFT JOIN ai_user_profiles up ON u.id = up.user_id
-                 WHERE u.id = ?",
-                [$this->userId]
+                 WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : ""),
+                $tid > 1 ? [$this->userId, $tid] : [$this->userId]
             );
             return $profile ?: [];
         } catch (\Exception $e) {

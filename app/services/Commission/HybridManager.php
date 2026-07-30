@@ -3,6 +3,7 @@
 namespace App\Services\Commission;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * APS Dream Home - Hybrid Commission System
@@ -19,11 +20,13 @@ class HybridCommissionManager
 {
     private $db;
     private $logger;
+    private int $tenantId;
 
     public function __construct($db = null, $logger = null)
     {
         $this->db = $db ?: Database::getInstance();
         $this->logger = $logger;
+        $this->tenantId = TenantContext::getId();
         $this->createHybridTables();
     }
 
@@ -164,14 +167,9 @@ class HybridCommissionManager
         $currentQuarter = date('Y-m');
         $currentYear = date('Y');
 
-        try {
-            // Get current quarter performance
-            $sql = "SELECT total_sales FROM regional_performance
-                    WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ?";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $performance = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear]);
+        $sql = "SELECT total_sales FROM regional_performance
+                WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+        $performance = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear, $this->tenantId]);
 
         if ($performance) {
             $totalSales = $performance['total_sales'];
@@ -193,30 +191,22 @@ class HybridCommissionManager
         $currentQuarter = "Q" . ceil(date('n') / 3);
         $currentYear = date('Y');
 
-        try {
-            // Check if performance record exists
-            $sql = "SELECT id FROM regional_performance
-                    WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ?";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $existing = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear]);
+        $sql = "SELECT id FROM regional_performance
+                WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+        $existing = $this->db->fetch($sql, [$userId, $region, $currentQuarter, $currentYear, $this->tenantId]);
 
         if ($existing) {
-            // Update existing record
             $sql = "UPDATE regional_performance
                     SET total_sales = total_sales + ?,
                         total_commission = total_commission + ?
-                    WHERE id = ?";
-            $this->db->execute($sql, [$saleAmount, $commissionAmount, $existing['id']]);
+                    WHERE id = ? AND tenant_id = ?";
+            $this->db->execute($sql, [$saleAmount, $commissionAmount, $existing['id'], $this->tenantId]);
         } else {
-            // Create new record
-            $sql = "INSERT INTO regional_performance (agent_id, region, total_sales, total_commission, quarter, year)
-                    VALUES (?, ?, ?, ?, ?, ?)";
-            $this->db->execute($sql, [$userId, $region, $saleAmount, $commissionAmount, $currentQuarter, $currentYear]);
+            $sql = "INSERT INTO regional_performance (agent_id, region, total_sales, total_commission, quarter, year, tenant_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $this->db->execute($sql, [$userId, $region, $saleAmount, $commissionAmount, $currentQuarter, $currentYear, $this->tenantId]);
         }
 
-        // Recalculate bonus for the quarter
         $this->updatePerformanceBonus($userId, $region, $currentQuarter, $currentYear);
     }
 
@@ -225,13 +215,9 @@ class HybridCommissionManager
      */
     private function updatePerformanceBonus($userId, $region, $quarter, $year)
     {
-        try {
-            $sql = "SELECT total_sales FROM regional_performance
-                    WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ?";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $performance = $this->db->fetch($sql, [$userId, $region, $quarter, $year]);
+        $sql = "SELECT total_sales FROM regional_performance
+                WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+        $performance = $this->db->fetch($sql, [$userId, $region, $quarter, $year, $this->tenantId]);
 
         if ($performance) {
             $totalSales = $performance['total_sales'];
@@ -243,8 +229,8 @@ class HybridCommissionManager
 
             if ($bonus > 0) {
                 $sql = "UPDATE regional_performance SET performance_bonus = ?
-                        WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ?";
-                $this->db->execute($sql, [$bonus, $userId, $region, $quarter, $year]);
+                        WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ? AND tenant_id = ?";
+                $this->db->execute($sql, [$bonus, $userId, $region, $quarter, $year, $this->tenantId]);
             }
         }
     }
@@ -293,15 +279,11 @@ class HybridCommissionManager
      */
     private function getUserData($userId)
     {
-        try {
-            $sql = "SELECT u.*, cp.commission_preference, cp.preferred_region
-                    FROM users u
-                    LEFT JOIN commission_preferences cp ON u.id = cp.user_id
-                    WHERE u.id = ?";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        return $this->db->fetch($sql, [$userId]) ?? [];
+        $sql = "SELECT u.*, cp.commission_preference, cp.preferred_region
+                FROM users u
+                LEFT JOIN commission_preferences cp ON u.id = cp.user_id
+                WHERE u.id = ? AND u.tenant_id = ?";
+        return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
     }
 
     /**
@@ -309,15 +291,14 @@ class HybridCommissionManager
      */
     private function getMLMAnalytics($userId)
     {
-        // Fallback MLM analytics using common mlm_commissions table
         $sql = "SELECT
                 COUNT(*) as total_commissions,
                 COALESCE(SUM(commission_amount), 0) as total_earnings,
                 COALESCE(AVG(commission_amount), 0) as average_commission
                 FROM mlm_commissions
-                WHERE associate_id = ? AND status = 'paid'";
+                WHERE associate_id = ? AND status = 'paid' AND tenant_id = ?";
 
-        return $this->db->fetch($sql, [$userId]) ?? [];
+        return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
     }
 
     /**
@@ -325,19 +306,15 @@ class HybridCommissionManager
      */
     private function getTraditionalAnalytics($userId)
     {
-        try {
-            $sql = "SELECT
-                    COUNT(*) as total_commissions,
-                    COALESCE(SUM(commission_amount), 0) as total_earnings,
-                    COALESCE(AVG(commission_amount), 0) as average_commission,
-                    COUNT(DISTINCT region) as regions_covered
-                    FROM traditional_commissions
-                    WHERE agent_id = ? AND status = 'paid'";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
+        $sql = "SELECT
+                COUNT(*) as total_commissions,
+                COALESCE(SUM(commission_amount), 0) as total_earnings,
+                COALESCE(AVG(commission_amount), 0) as average_commission,
+                COUNT(DISTINCT region) as regions_covered
+                FROM traditional_commissions
+                WHERE agent_id = ? AND status = 'paid' AND tenant_id = ?";
 
-        return $this->db->fetch($sql, [$userId]) ?? [];
+        return $this->db->fetch($sql, [$userId, $this->tenantId]) ?? [];
     }
 
     /**
@@ -345,22 +322,18 @@ class HybridCommissionManager
      */
     private function getRegionalAnalytics($userId)
     {
-        try {
-            $sql = "SELECT
-                    region,
-                    COUNT(*) as total_sales,
-                    COALESCE(SUM(total_sales), 0) as sales_volume,
-                    COALESCE(SUM(total_commission), 0) as total_commission,
-                    COALESCE(SUM(performance_bonus), 0) as total_bonus
-                    FROM regional_performance
-                    WHERE agent_id = ?
-                    GROUP BY region
-                    ORDER BY sales_volume DESC";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
+        $sql = "SELECT
+                region,
+                COUNT(*) as total_sales,
+                COALESCE(SUM(total_sales), 0) as sales_volume,
+                COALESCE(SUM(total_commission), 0) as total_commission,
+                COALESCE(SUM(performance_bonus), 0) as total_bonus
+                FROM regional_performance
+                WHERE agent_id = ? AND tenant_id = ?
+                GROUP BY region
+                ORDER BY sales_volume DESC";
 
-        return $this->db->fetchAll($sql, [$userId]);
+        return $this->db->fetchAll($sql, [$userId, $this->tenantId]);
     }
 
     /**
@@ -368,23 +341,18 @@ class HybridCommissionManager
      */
     public function updateCommissionPreference($userId, $preference, $region = null)
     {
-        try {
-            $sql = "INSERT INTO commission_preferences
-                    (user_id, commission_preference, preferred_region)
-                    VALUES (?, ?, ?)
-                    ON DUPLICATE KEY UPDATE
-                    commission_preference = VALUES(commission_preference),
-                    preferred_region = VALUES(preferred_region)";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
+        $sql = "INSERT INTO commission_preferences
+                (user_id, commission_preference, preferred_region, tenant_id)
+                VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                commission_preference = VALUES(commission_preference),
+                preferred_region = VALUES(preferred_region)";
 
         try {
-            $this->db->execute($sql, [$userId, $preference, $region]);
+            $this->db->execute($sql, [$userId, $preference, $region, $this->tenantId]);
 
-            // Also update user table
-            $sql = "UPDATE users SET commission_preference = ? WHERE id = ?";
-            $this->db->execute($sql, [$preference, $userId]);
+            $sql = "UPDATE users SET commission_preference = ? WHERE id = ? AND tenant_id = ?";
+            $this->db->execute($sql, [$preference, $userId, $this->tenantId]);
 
             return ['success' => true, 'message' => 'Commission preference updated successfully'];
         } catch (\Exception $e) {

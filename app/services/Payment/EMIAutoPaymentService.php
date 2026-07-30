@@ -3,6 +3,7 @@
 namespace App\Services\Payment;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\Gateway\RazorpayService;
 use PDO;
 use Exception;
@@ -23,6 +24,15 @@ class EMIAutoPaymentService
     private ?PDO $db;
     private RazorpayService $razorpay;
     private bool $testMode;
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct(?PDO $pdo = null)
     {
@@ -556,8 +566,9 @@ class EMIAutoPaymentService
             }
 
             // Fetch user details
-            $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?");
-            $stmt->execute([$userId]);
+            $tid = $this->getTenantId();
+            $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+            $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$user) {
                 return ['success' => false, 'customer_id' => null, 'error' => 'User not found'];

@@ -8,6 +8,7 @@
 namespace App\Services\Business;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use App\Core\Session\SessionManager;
 use App\Core\Logger\Logger;
 
@@ -24,6 +25,31 @@ class ReportService
         $this->logger = new Logger();
     }
 
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    private function tJoin(string $alias): string
+    {
+        return $this->getTenantId() > 1 ? " AND {$alias}.tenant_id = ?" : '';
+    }
+
+    private function tEnd(): string
+    {
+        return $this->getTenantId() > 1 ? ' AND tenant_id = ?' : '';
+    }
+
+    private function tVal(): array
+    {
+        $tid = $this->getTenantId();
+        return $tid > 1 ? [$tid] : [];
+    }
+
     /**
      * Generate property sales report
      */
@@ -37,11 +63,11 @@ class ReportService
                 u.name as buyer_name, u.email as buyer_email,
                 (p.price * a.commission_rate / 100) as commission_amount
                 FROM properties p
-                LEFT JOIN users a ON p.associate_id = a.id
-                LEFT JOIN users u ON p.buyer_id = u.id
+                LEFT JOIN users a ON p.associate_id = a.id{$this->tJoin('a')}
+                LEFT JOIN users u ON p.buyer_id = u.id{$this->tJoin('u')}
                 WHERE 1=1";
             
-            $params = [];
+            $params = array_merge($this->tVal(), $this->tVal());
             
             if (!empty($filters['start_date'])) {
                 $sql .= " AND p.sold_date >= ?";
@@ -96,9 +122,9 @@ class ReportService
                 LEFT JOIN inquiries e ON u.id = e.user_id
                 LEFT JOIN favorites f ON u.id = f.user_id
                 LEFT JOIN activity_logs_unified al ON u.id = al.user_id
-                WHERE 1=1";
+                WHERE 1=1{$this->tEnd()}";
             
-            $params = [];
+            $params = $this->tVal();
             
             if (!empty($filters['start_date'])) {
                 $sql .= " AND u.registered_date >= ?";
@@ -196,9 +222,9 @@ class ReportService
                 COALESCE(SUM(CASE WHEN p.sold_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END), 0) as sales_this_month
                 FROM users a
                 LEFT JOIN properties p ON a.id = p.associate_id
-                WHERE 1=1";
+                WHERE 1=1{$this->tJoin('a')}";
             
-            $params = [];
+            $params = $this->tVal();
             
             if (!empty($filters['start_date'])) {
                 $sql .= " AND a.join_date >= ?";
@@ -395,7 +421,8 @@ class ReportService
                     COUNT(CASE WHEN role = 'associate' THEN 1 END) as associate_users,
                     COUNT(CASE WHEN registered_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users_month
                 FROM users
-            ");
+                WHERE 1=1{$this->tEnd()}
+            ", $this->tVal());
 
             // Associate statistics
             $associateStats = $this->db->fetch("
@@ -406,7 +433,8 @@ class ReportService
                     SUM(total_commissions) as total_commissions,
                     SUM(properties_sold) as total_properties_sold
                 FROM users
-            ");
+                WHERE 1=1{$this->tEnd()}
+            ", $this->tVal());
 
             // Financial statistics
             $financialStats = $this->db->fetch("

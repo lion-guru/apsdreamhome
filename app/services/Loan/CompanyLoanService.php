@@ -3,11 +3,13 @@
 namespace App\Services\Loan;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use PDO;
 
 class CompanyLoanService
 {
     protected PDO $db;
+    protected int $tenantId;
     protected const EMI_PENALTY_RATE = 18.0;
     protected const PENALTY_GRACE_DAYS = 5;
     protected const INTEREST_FREE_MISSED_LIMIT = 3;
@@ -19,6 +21,7 @@ class CompanyLoanService
         } else {
             $this->db = Database::getInstance()->getConnection();
         }
+        $this->tenantId = TenantContext::getId();
     }
 
     public function createLoan(array $data): array
@@ -42,7 +45,7 @@ class CompanyLoanService
             $totalPayable = $emiAmount * $tenureMonths;
             $totalInterest = $totalPayable - $loanAmount;
 
-            $stmt = $this->db->prepare("INSERT INTO company_loans (customer_id, plot_booking_id, property_id, offer_id, loan_number, loan_amount, interest_rate, interest_type, tenure_months, emi_amount, total_payable, total_interest, amount_paid, balance_amount, interest_free_months, interest_free_active, start_date, end_date, status, purpose, notes, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO company_loans (customer_id, plot_booking_id, property_id, offer_id, loan_number, loan_amount, interest_rate, interest_type, tenure_months, emi_amount, total_payable, total_interest, amount_paid, balance_amount, interest_free_months, interest_free_active, start_date, end_date, status, purpose, notes, created_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             $startDate = $data['start_date'] ?? date('Y-m-d');
             $endDate = date('Y-m-d', strtotime($startDate . ' + ' . $tenureMonths . ' months'));
@@ -68,7 +71,8 @@ class CompanyLoanService
                 'pending',
                 $data['purpose'] ?? null,
                 $data['notes'] ?? null,
-                isset($data['created_by']) ? (int)$data['created_by'] : null
+                isset($data['created_by']) ? (int)$data['created_by'] : null,
+                $this->tenantId
             ]);
 
             $loanId = (int)$this->db->lastInsertId();
@@ -89,15 +93,19 @@ class CompanyLoanService
     public function getLoanById(int $id): ?array
     {
         try {
-            $stmt = $this->db->prepare("SELECT l.*, u.name as customer_name, u.phone as customer_phone, u.email as customer_email,
+            $tid = $this->tenantId;
+            $sql = "SELECT l.*, u.name as customer_name, u.phone as customer_phone, u.email as customer_email,
                 p.plot_number as plot_no, c.name as colony_name, o.name as offer_name, o.offer_type
                 FROM company_loans l
                 LEFT JOIN users u ON l.customer_id = u.id
                 LEFT JOIN plots p ON l.property_id = p.id
                 LEFT JOIN colonies c ON p.colony_id = c.id
                 LEFT JOIN loan_offers o ON l.offer_id = o.id
-                WHERE l.id = ?");
-            $stmt->execute([$id]);
+                WHERE l.id = ?";
+            $params = [$id];
+            if ($tid > 1) { $sql .= " AND l.tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $loan = $stmt->fetch(PDO::FETCH_ASSOC);
             return $loan ?: null;
         } catch (\Exception $e) {
@@ -109,9 +117,14 @@ class CompanyLoanService
     public function listLoans(array $filters = []): array
     {
         try {
+            $tid = $this->tenantId;
             $where = [];
             $params = [];
 
+            if ($tid > 1) {
+                $where[] = 'l.tenant_id = ?';
+                $params[] = $tid;
+            }
             if (!empty($filters['status'])) {
                 $where[] = 'l.status = ?';
                 $params[] = $filters['status'];
@@ -154,31 +167,63 @@ class CompanyLoanService
     public function getDashboardStats(): array
     {
         try {
+            $tid = $this->tenantId;
             $stats = [];
-            $queries = [
-                'total_loans' => "SELECT COUNT(*) FROM company_loans",
-                'active_loans' => "SELECT COUNT(*) FROM company_loans WHERE status = 'active'",
-                'completed_loans' => "SELECT COUNT(*) FROM company_loans WHERE status = 'completed'",
-                'defaulted_loans' => "SELECT COUNT(*) FROM company_loans WHERE status = 'defaulted'",
-                'pending_loans' => "SELECT COUNT(*) FROM company_loans WHERE status = 'pending'",
-                'total_disbursed' => "SELECT COALESCE(SUM(loan_amount),0) FROM company_loans WHERE status IN ('active','completed')",
-                'total_outstanding' => "SELECT COALESCE(SUM(balance_amount),0) FROM company_loans WHERE status IN ('active','defaulted')",
-                'total_collected' => "SELECT COALESCE(SUM(amount_paid),0) FROM company_loans WHERE status IN ('active','completed','defaulted')",
-                'overdue_count' => "SELECT COUNT(DISTINCT loan_id) FROM loan_installments WHERE status = 'overdue'",
-                'overdue_amount' => "SELECT COALESCE(SUM(total_amount - paid_amount),0) FROM loan_installments WHERE status = 'overdue'",
-                'total_penalty' => "SELECT COALESCE(SUM(accrued_penalty),0) FROM loan_installments WHERE accrued_penalty > 0",
-            ];
 
-            foreach ($queries as $key => $sql) {
-                $stats[$key] = (float)$this->db->query($sql)->fetchColumn();
+            $tWhere = '';
+            $tParams = [];
+            if ($tid > 1) { $tWhere = " AND tenant_id = ?"; $tParams[] = $tid; }
+
+            $iWhere = '';
+            $iParams = [];
+            if ($tid > 1) {
+                $iWhere = " AND li.tenant_id = ?";
+                $iParams[] = $tid;
             }
 
-            $stats['total_loans'] = (int)$stats['total_loans'];
-            $stats['active_loans'] = (int)$stats['active_loans'];
-            $stats['completed_loans'] = (int)$stats['completed_loans'];
-            $stats['defaulted_loans'] = (int)$stats['defaulted_loans'];
-            $stats['pending_loans'] = (int)$stats['pending_loans'];
-            $stats['overdue_count'] = (int)$stats['overdue_count'];
+            $stmt1 = $this->db->prepare("SELECT COUNT(*) FROM company_loans WHERE 1=1" . $tWhere);
+            $stmt1->execute($tParams);
+            $stats['total_loans'] = (int)$stmt1->fetchColumn();
+
+            $stmt2 = $this->db->prepare("SELECT COUNT(*) FROM company_loans WHERE status = 'active'" . $tWhere);
+            $stmt2->execute($tParams);
+            $stats['active_loans'] = (int)$stmt2->fetchColumn();
+
+            $stmt3 = $this->db->prepare("SELECT COUNT(*) FROM company_loans WHERE status = 'completed'" . $tWhere);
+            $stmt3->execute($tParams);
+            $stats['completed_loans'] = (int)$stmt3->fetchColumn();
+
+            $stmt4 = $this->db->prepare("SELECT COUNT(*) FROM company_loans WHERE status = 'defaulted'" . $tWhere);
+            $stmt4->execute($tParams);
+            $stats['defaulted_loans'] = (int)$stmt4->fetchColumn();
+
+            $stmt5 = $this->db->prepare("SELECT COUNT(*) FROM company_loans WHERE status = 'pending'" . $tWhere);
+            $stmt5->execute($tParams);
+            $stats['pending_loans'] = (int)$stmt5->fetchColumn();
+
+            $stmt6 = $this->db->prepare("SELECT COALESCE(SUM(loan_amount),0) FROM company_loans WHERE status IN ('active','completed')" . $tWhere);
+            $stmt6->execute($tParams);
+            $stats['total_disbursed'] = (float)$stmt6->fetchColumn();
+
+            $stmt7 = $this->db->prepare("SELECT COALESCE(SUM(balance_amount),0) FROM company_loans WHERE status IN ('active','defaulted')" . $tWhere);
+            $stmt7->execute($tParams);
+            $stats['total_outstanding'] = (float)$stmt7->fetchColumn();
+
+            $stmt8 = $this->db->prepare("SELECT COALESCE(SUM(amount_paid),0) FROM company_loans WHERE status IN ('active','completed','defaulted')" . $tWhere);
+            $stmt8->execute($tParams);
+            $stats['total_collected'] = (float)$stmt8->fetchColumn();
+
+            $stmt9 = $this->db->prepare("SELECT COUNT(DISTINCT loan_id) FROM loan_installments li WHERE status = 'overdue'" . $iWhere);
+            $stmt9->execute($iParams);
+            $stats['overdue_count'] = (int)$stmt9->fetchColumn();
+
+            $stmt10 = $this->db->prepare("SELECT COALESCE(SUM(total_amount - paid_amount),0) FROM loan_installments li WHERE status = 'overdue'" . $iWhere);
+            $stmt10->execute($iParams);
+            $stats['overdue_amount'] = (float)$stmt10->fetchColumn();
+
+            $stmt11 = $this->db->prepare("SELECT COALESCE(SUM(accrued_penalty),0) FROM loan_installments li WHERE accrued_penalty > 0" . $iWhere);
+            $stmt11->execute($iParams);
+            $stats['total_penalty'] = (float)$stmt11->fetchColumn();
 
             return $stats;
         } catch (\Exception $e) {
@@ -211,8 +256,12 @@ class CompanyLoanService
     public function generateInstallmentSchedule(int $loanId, float $amount, float $rate, int $tenureMonths, string $startDate, string $type = 'reducing', int $interestFreeMonths = 0): array
     {
         try {
+            $tid = $this->tenantId;
             // Delete existing schedule if regenerating
-            $this->db->prepare("DELETE FROM loan_installments WHERE loan_id = ?")->execute([$loanId]);
+            $delSql = "DELETE FROM loan_installments WHERE loan_id = ?";
+            $delParams = [$loanId];
+            if ($tid > 1) { $delSql .= " AND tenant_id = ?"; $delParams[] = $tid; }
+            $this->db->prepare($delSql)->execute($delParams);
 
             $emiAmount = $this->calculateEMI($amount, $rate, $tenureMonths, $type, $interestFreeMonths);
             $installments = [];
@@ -273,7 +322,7 @@ class CompanyLoanService
             }
 
             // Batch insert
-            $stmt = $this->db->prepare("INSERT INTO loan_installments (loan_id, installment_no, due_date, principal_amount, interest_amount, total_amount, waived_interest) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO loan_installments (loan_id, installment_no, due_date, principal_amount, interest_amount, total_amount, waived_interest, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             foreach ($installments as $inst) {
                 $stmt->execute([
                     $inst['loan_id'],
@@ -282,7 +331,8 @@ class CompanyLoanService
                     $inst['principal_amount'],
                     $inst['interest_amount'],
                     $inst['total_amount'],
-                    $inst['waived_interest']
+                    $inst['waived_interest'],
+                    $this->tenantId
                 ]);
             }
 
@@ -296,8 +346,13 @@ class CompanyLoanService
     public function getInstallments(int $loanId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM loan_installments WHERE loan_id = ? ORDER BY installment_no ASC");
-            $stmt->execute([$loanId]);
+            $tid = $this->tenantId;
+            $sql = "SELECT * FROM loan_installments WHERE loan_id = ?";
+            $params = [$loanId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " ORDER BY installment_no ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             error_log('CompanyLoanService::getInstallments error: ' . $e->getMessage());
@@ -308,10 +363,14 @@ class CompanyLoanService
     public function recordPayment(int $installmentId, array $data): array
     {
         try {
+            $tid = $this->tenantId;
             $this->db->beginTransaction();
 
-            $stmt = $this->db->prepare("SELECT * FROM loan_installments WHERE id = ?");
-            $stmt->execute([$installmentId]);
+            $sqlSel = "SELECT * FROM loan_installments WHERE id = ?";
+            $selParams = [$installmentId];
+            if ($tid > 1) { $sqlSel .= " AND tenant_id = ?"; $selParams[] = $tid; }
+            $stmt = $this->db->prepare($sqlSel);
+            $stmt->execute($selParams);
             $installment = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$installment) {
                 throw new \Exception('Installment not found');
@@ -321,24 +380,26 @@ class CompanyLoanService
             $newPaid = $installment['paid_amount'] + $paidAmount;
             $status = ($newPaid >= $installment['total_amount']) ? 'paid' : 'partial';
 
-            $stmt = $this->db->prepare("UPDATE loan_installments SET paid_amount = ?, status = ?, paid_at = NOW(), payment_method = ?, transaction_id = ?, notes = CONCAT(COALESCE(notes,''), ?) WHERE id = ?");
-            $stmt->execute([
-                $newPaid,
-                $status,
-                $data['payment_method'] ?? null,
-                $data['transaction_id'] ?? null,
-                ($data['notes'] ?? '') ? ' | ' . $data['notes'] : '',
-                $installmentId
-            ]);
+            $updInstSql = "UPDATE loan_installments SET paid_amount = ?, status = ?, paid_at = NOW(), payment_method = ?, transaction_id = ?, notes = CONCAT(COALESCE(notes,''), ?) WHERE id = ?";
+            $updInstParams = [$newPaid, $status, $data['payment_method'] ?? null, $data['transaction_id'] ?? null, ($data['notes'] ?? '') ? ' | ' . $data['notes'] : '', $installmentId];
+            if ($tid > 1) { $updInstSql .= " AND tenant_id = ?"; $updInstParams[] = $tid; }
+            $stmt = $this->db->prepare($updInstSql);
+            $stmt->execute($updInstParams);
 
             // Update loan balance
-            $loanStmt = $this->db->prepare("UPDATE company_loans SET amount_paid = amount_paid + ?, balance_amount = loan_amount - amount_paid WHERE id = ?");
-            $loanStmt->execute([$paidAmount, $installment['loan_id']]);
+            $updLoanSql = "UPDATE company_loans SET amount_paid = amount_paid + ?, balance_amount = loan_amount - amount_paid WHERE id = ?";
+            $updLoanParams = [$paidAmount, $installment['loan_id']];
+            if ($tid > 1) { $updLoanSql .= " AND tenant_id = ?"; $updLoanParams[] = $tid; }
+            $loanStmt = $this->db->prepare($updLoanSql);
+            $loanStmt->execute($updLoanParams);
 
             // Check if loan is fully paid
             $loan = $this->getLoanById($installment['loan_id']);
             if ($loan && $loan['balance_amount'] <= 0) {
-                $this->db->prepare("UPDATE company_loans SET status = 'completed', closed_at = NOW() WHERE id = ?")->execute([$installment['loan_id']]);
+                $compSql = "UPDATE company_loans SET status = 'completed', closed_at = NOW() WHERE id = ?";
+                $compParams = [$installment['loan_id']];
+                if ($tid > 1) { $compSql .= " AND tenant_id = ?"; $compParams[] = $tid; }
+                $this->db->prepare($compSql)->execute($compParams);
             }
 
             $this->db->commit();
@@ -356,12 +417,15 @@ class CompanyLoanService
     public function disburseLoan(int $loanId, int $userId): array
     {
         try {
+            $tid = $this->tenantId;
             $loan = $this->getLoanById($loanId);
             if (!$loan) return ['success' => false, 'error' => 'Loan not found'];
             if ($loan['status'] !== 'pending') return ['success' => false, 'error' => 'Loan is not in pending status'];
 
-            $this->db->prepare("UPDATE company_loans SET status = 'active', disbursed_at = NOW(), disbursed_by = ? WHERE id = ?")
-                ->execute([$userId, $loanId]);
+            $sql = "UPDATE company_loans SET status = 'active', disbursed_at = NOW(), disbursed_by = ? WHERE id = ?";
+            $params = [$userId, $loanId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->prepare($sql)->execute($params);
 
             $this->logActivity($loanId, 'loan_disbursed', 'Loan disbursed of ₹' . number_format($loan['loan_amount']));
 
@@ -375,7 +439,11 @@ class CompanyLoanService
     public function markDefault(int $loanId): array
     {
         try {
-            $this->db->prepare("UPDATE company_loans SET status = 'defaulted' WHERE id = ?")->execute([$loanId]);
+            $tid = $this->tenantId;
+            $sql = "UPDATE company_loans SET status = 'defaulted' WHERE id = ?";
+            $params = [$loanId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->prepare($sql)->execute($params);
             $this->logActivity($loanId, 'loan_defaulted', 'Loan marked as defaulted');
             return ['success' => true];
         } catch (\Exception $e) {
@@ -386,14 +454,19 @@ class CompanyLoanService
     public function forecloseLoan(int $loanId, float $settlementAmount): array
     {
         try {
+            $tid = $this->tenantId;
             $this->db->beginTransaction();
 
-            $this->db->prepare("UPDATE company_loans SET status = 'foreclosed', amount_paid = amount_paid + ?, balance_amount = 0, closed_at = NOW() WHERE id = ?")
-                ->execute([$settlementAmount, $loanId]);
+            $fcSql = "UPDATE company_loans SET status = 'foreclosed', amount_paid = amount_paid + ?, balance_amount = 0, closed_at = NOW() WHERE id = ?";
+            $fcParams = [$settlementAmount, $loanId];
+            if ($tid > 1) { $fcSql .= " AND tenant_id = ?"; $fcParams[] = $tid; }
+            $this->db->prepare($fcSql)->execute($fcParams);
 
             // Mark remaining installments as paid
-            $this->db->prepare("UPDATE loan_installments SET status = 'paid', paid_amount = total_amount WHERE loan_id = ? AND status = 'pending'")
-                ->execute([$loanId]);
+            $instSql = "UPDATE loan_installments SET status = 'paid', paid_amount = total_amount WHERE loan_id = ? AND status = 'pending'";
+            $instParams = [$loanId];
+            if ($tid > 1) { $instSql .= " AND tenant_id = ?"; $instParams[] = $tid; }
+            $this->db->prepare($instSql)->execute($instParams);
 
             $this->db->commit();
             $this->logActivity($loanId, 'loan_foreclosed', 'Loan foreclosed with settlement of ₹' . number_format($settlementAmount));
@@ -408,11 +481,15 @@ class CompanyLoanService
     public function applyDailyPenalties(): array
     {
         try {
+            $tid = $this->tenantId;
             $today = date('Y-m-d');
             $graceDate = date('Y-m-d', strtotime('-' . self::PENALTY_GRACE_DAYS . ' days'));
 
-            $stmt = $this->db->prepare("SELECT id, loan_id, total_amount, paid_amount, accrued_penalty FROM loan_installments WHERE due_date <= ? AND status IN ('pending','overdue') AND total_amount > paid_amount");
-            $stmt->execute([$graceDate]);
+            $selSql = "SELECT id, loan_id, total_amount, paid_amount, accrued_penalty FROM loan_installments WHERE due_date <= ? AND status IN ('pending','overdue') AND total_amount > paid_amount";
+            $selParams = [$graceDate];
+            if ($tid > 1) { $selSql .= " AND tenant_id = ?"; $selParams[] = $tid; }
+            $stmt = $this->db->prepare($selSql);
+            $stmt->execute($selParams);
             $overdue = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $count = 0;
@@ -421,25 +498,39 @@ class CompanyLoanService
                 $dailyPenalty = round($outstanding * (self::EMI_PENALTY_RATE / 100) / 365, 2);
                 $newPenalty = round((float)$inst['accrued_penalty'] + $dailyPenalty, 2);
 
-                $this->db->prepare("UPDATE loan_installments SET accrued_penalty = ?, status = 'overdue' WHERE id = ?")
-                    ->execute([$newPenalty, $inst['id']]);
+                $updSql = "UPDATE loan_installments SET accrued_penalty = ?, status = 'overdue' WHERE id = ?";
+                $updParams = [$newPenalty, $inst['id']];
+                if ($tid > 1) { $updSql .= " AND tenant_id = ?"; $updParams[] = $tid; }
+                $this->db->prepare($updSql)->execute($updParams);
                 $count++;
             }
 
             // Check 3-consecutive-missed rule for interest-free loans
-            $activeLoans = $this->db->query("SELECT id, interest_free_active, interest_free_months FROM company_loans WHERE status = 'active' AND interest_free_active = 1")->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($activeLoans as $loan) {
-                $stmt = $this->db->prepare("SELECT COUNT(*) FROM loan_installments WHERE loan_id = ? AND status IN ('pending','overdue') AND due_date < ? ORDER BY installment_no DESC LIMIT ?");
-                $stmt->execute([$loan['id'], $today, self::INTEREST_FREE_MISSED_LIMIT]);
-                $missedCount = (int)$stmt->fetchColumn();
+            $clSql = "SELECT id, interest_free_active, interest_free_months FROM company_loans WHERE status = 'active' AND interest_free_active = 1";
+            $clParams = [];
+            if ($tid > 1) { $clSql .= " AND tenant_id = ?"; $clParams[] = $tid; }
+            $activeLoans = $this->db->prepare($clSql);
+            $activeLoans->execute($clParams);
+            $activeLoansArr = $activeLoans->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($activeLoansArr as $loan) {
+                $cntSql = "SELECT COUNT(*) FROM loan_installments WHERE loan_id = ? AND status IN ('pending','overdue') AND due_date < ?";
+                $cntParams = [$loan['id'], $today];
+                if ($tid > 1) { $cntSql .= " AND tenant_id = ?"; $cntParams[] = $tid; }
+                $stmt2 = $this->db->prepare($cntSql);
+                $stmt2->execute($cntParams);
+                $missedCount = (int)$stmt2->fetchColumn();
 
                 if ($missedCount >= self::INTEREST_FREE_MISSED_LIMIT) {
-                    $this->db->prepare("UPDATE company_loans SET interest_free_active = 0, missed_consecutive_emis = ?, interest_start_date = ? WHERE id = ?")
-                        ->execute([$missedCount, $today, $loan['id']]);
+                    $revSql = "UPDATE company_loans SET interest_free_active = 0, missed_consecutive_emis = ?, interest_start_date = ? WHERE id = ?";
+                    $revParams = [$missedCount, $today, $loan['id']];
+                    if ($tid > 1) { $revSql .= " AND tenant_id = ?"; $revParams[] = $tid; }
+                    $this->db->prepare($revSql)->execute($revParams);
                     $this->logActivity($loan['id'], 'interest_free_revoked', 'Interest-free period revoked due to ' . $missedCount . ' consecutive missed EMIs');
                 } else {
-                    $this->db->prepare("UPDATE company_loans SET missed_consecutive_emis = ? WHERE id = ?")
-                        ->execute([$missedCount, $loan['id']]);
+                    $misSql = "UPDATE company_loans SET missed_consecutive_emis = ? WHERE id = ?";
+                    $misParams = [$missedCount, $loan['id']];
+                    if ($tid > 1) { $misSql .= " AND tenant_id = ?"; $misParams[] = $tid; }
+                    $this->db->prepare($misSql)->execute($misParams);
                 }
             }
 
@@ -535,8 +626,13 @@ class CompanyLoanService
     public function getGuarantors(int $loanId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM loan_guarantors WHERE loan_id = ? ORDER BY id ASC");
-            $stmt->execute([$loanId]);
+            $tid = $this->tenantId;
+            $sql = "SELECT * FROM loan_guarantors WHERE loan_id = ?";
+            $params = [$loanId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " ORDER BY id ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
@@ -546,7 +642,7 @@ class CompanyLoanService
     public function addGuarantor(int $loanId, array $data): array
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO loan_guarantors (loan_id, name, phone, email, address, pan_number, aadhar_number, occupation, annual_income, relationship) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO loan_guarantors (loan_id, name, phone, email, address, pan_number, aadhar_number, occupation, annual_income, relationship, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $loanId,
                 $data['name'],
@@ -557,7 +653,8 @@ class CompanyLoanService
                 $data['aadhar_number'] ?? null,
                 $data['occupation'] ?? null,
                 (float)($data['annual_income'] ?? 0),
-                $data['relationship'] ?? null
+                $data['relationship'] ?? null,
+                $this->tenantId
             ]);
             return ['success' => true, 'id' => (int)$this->db->lastInsertId()];
         } catch (\Exception $e) {
@@ -632,8 +729,8 @@ class CompanyLoanService
     public function getDocuments(int $loanId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM loan_documents WHERE loan_id = ? ORDER BY created_at DESC");
-            $stmt->execute([$loanId]);
+            $stmt = $this->db->prepare("SELECT * FROM loan_documents WHERE loan_id = ? AND tenant_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$loanId, $this->tenantId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
@@ -643,8 +740,8 @@ class CompanyLoanService
     public function getActivityLog(int $loanId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM loan_activity_log WHERE loan_id = ? ORDER BY created_at DESC");
-            $stmt->execute([$loanId]);
+            $stmt = $this->db->prepare("SELECT * FROM loan_activity_log WHERE loan_id = ? AND tenant_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$loanId, $this->tenantId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
@@ -654,8 +751,8 @@ class CompanyLoanService
     public function logActivity(int $loanId, string $action, string $description, ?string $oldValue = null, ?string $newValue = null, ?int $userId = null): void
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO loan_activity_log (loan_id, action, description, old_value, new_value, performed_by) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$loanId, $action, $description, $oldValue, $newValue, $userId ?? ($_SESSION['admin_id'] ?? null)]);
+            $stmt = $this->db->prepare("INSERT INTO loan_activity_log (loan_id, action, description, old_value, new_value, performed_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$loanId, $action, $description, $oldValue, $newValue, $userId ?? ($_SESSION['admin_id'] ?? null), $this->tenantId]);
         } catch (\Exception $e) {
             error_log('CompanyLoanService::logActivity error: ' . $e->getMessage());
         }
@@ -664,7 +761,9 @@ class CompanyLoanService
     public function getCustomers(): array
     {
         try {
-            return $this->db->query("SELECT id, name, phone, email FROM users WHERE role IN ('customer','associate','agent') ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare("SELECT id, name, phone, email FROM users WHERE role IN ('customer','associate','agent') AND tenant_id = ? ORDER BY name ASC");
+            $stmt->execute([$this->tenantId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
@@ -673,7 +772,9 @@ class CompanyLoanService
     public function getPlots(): array
     {
         try {
-            return $this->db->query("SELECT p.id, p.plot_number, p.total_price, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.status IN ('available','booked') ORDER BY c.name, p.plot_number")->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare("SELECT p.id, p.plot_number, p.total_price, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.status IN ('available','booked') AND p.tenant_id = ? ORDER BY c.name, p.plot_number");
+            $stmt->execute([$this->tenantId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }

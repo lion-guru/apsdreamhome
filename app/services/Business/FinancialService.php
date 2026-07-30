@@ -8,6 +8,7 @@
 namespace App\Services\Business;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use App\Core\Security\CSRFProtection;
 use App\Core\Security\InputValidation;
 use App\Core\Session\SessionManager;
@@ -30,6 +31,31 @@ class FinancialService
         $this->logger = new Logger();
     }
 
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    private function tJoin(string $alias): string
+    {
+        return $this->getTenantId() > 1 ? " AND {$alias}.tenant_id = ?" : '';
+    }
+
+    private function tEnd(): string
+    {
+        return $this->getTenantId() > 1 ? ' AND tenant_id = ?' : '';
+    }
+
+    private function tVal(): array
+    {
+        $tid = $this->getTenantId();
+        return $tid > 1 ? [$tid] : [];
+    }
+
     /**
      * Get all transactions with pagination
      */
@@ -45,12 +71,12 @@ class FinancialService
                 p.title as property_title, p.id as property_id,
                 a.name as associate_name
                 FROM transactions t
-                LEFT JOIN users u ON t.user_id = u.id
+                LEFT JOIN users u ON t.user_id = u.id{$this->tJoin('u')}
                 LEFT JOIN properties p ON t.property_id = p.id
-                LEFT JOIN users a ON t.associate_id = a.id
+                LEFT JOIN users a ON t.associate_id = a.id{$this->tJoin('a')}
                 WHERE 1=1";
             
-            $params = [];
+            $params = array_merge($this->tVal(), $this->tVal());
             
             // Apply filters
             if (!empty($filters['type'])) {
@@ -92,12 +118,12 @@ class FinancialService
             // Get total count for pagination
             $countSql = "SELECT COUNT(t.id) as total
                          FROM transactions t
-                         LEFT JOIN users u ON t.user_id = u.id
+                         LEFT JOIN users u ON t.user_id = u.id{$this->tJoin('u')}
                          LEFT JOIN properties p ON t.property_id = p.id
-                         LEFT JOIN users a ON t.associate_id = a.id
+                         LEFT JOIN users a ON t.associate_id = a.id{$this->tJoin('a')}
                          WHERE 1=1";
             
-            $countParams = [];
+            $countParams = array_merge($this->tVal(), $this->tVal());
             
             if (!empty($filters['type'])) {
                 $countSql .= " AND t.type = ?";
@@ -274,9 +300,9 @@ class FinancialService
                 MAX(p.sold_date) as last_sale_date
                 FROM users a
                 LEFT JOIN properties p ON a.id = p.associate_id AND p.status = 'sold'
-                WHERE a.status = 'active'";
+                WHERE a.status = 'active'{$this->tJoin('a')}";
             
-            $params = [];
+            $params = $this->tVal();
             
             if (!empty($filters['associate_id'])) {
                 $sql .= " AND a.id = ?";
@@ -374,7 +400,7 @@ class FinancialService
                 t.id as transaction_id, t.status as payment_status,
                 t.created_at as commission_paid_date
                 FROM properties p
-                JOIN users a ON p.associate_id = a.id
+                JOIN users a ON p.associate_id = a.id{$this->tJoin('a')}
                 LEFT JOIN transactions t ON p.id = t.property_id AND t.type = 'commission'
                 WHERE p.associate_id = ? AND p.status = 'sold'";
             
@@ -407,8 +433,8 @@ class FinancialService
     {
         try {
             $associate = $this->db->fetch(
-                "SELECT name, commission_rate FROM users WHERE id = ?",
-                [$associateId]
+                "SELECT name, commission_rate FROM users WHERE id = ?{$this->tEnd()}",
+                array_merge([$associateId], $this->tVal())
             );
 
             if (!$associate) {

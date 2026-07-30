@@ -3,6 +3,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Push Notification Service — FCM HTTP v1 API
@@ -30,6 +31,15 @@ class PushNotificationService
     private static $accessToken = null;
     /** @var int|null token expiry timestamp */
     private static $accessTokenExpiry = null;
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -232,9 +242,11 @@ class PushNotificationService
         }
 
         // Subscribe to user role topic
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $user = $this->db->query(
-            "SELECT role FROM users WHERE id = ?",
-            [$userId]
+            "SELECT role FROM users WHERE id = ?{$tenantSql}",
+            $tid > 1 ? [$userId, $tid] : [$userId]
         )->fetchColumn();
 
         if ($user) {
@@ -673,12 +685,14 @@ class PushNotificationService
     public function getLog(int $limit = 50): array
     {
         try {
+            $tid = $this->getTenantId();
+            $tenantJoin = $tid > 1 ? " AND u.tenant_id = ?" : "";
             return $this->db->fetchAll(
                 "SELECT pl.*, u.name as user_name 
                  FROM push_notification_logs pl
-                 LEFT JOIN users u ON pl.user_id = u.id
+                 LEFT JOIN users u ON pl.user_id = u.id{$tenantJoin}
                  ORDER BY pl.created_at DESC LIMIT ?",
-                [$limit]
+                $tid > 1 ? [$tid, $limit] : [$limit]
             );
         } catch (\Exception $e) {
             return [];

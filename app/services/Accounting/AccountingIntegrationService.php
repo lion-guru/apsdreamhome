@@ -2,6 +2,7 @@
 namespace App\Services\Accounting;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 class AccountingIntegrationService
 {
@@ -18,7 +19,8 @@ class AccountingIntegrationService
      */
     public function recordBookingPayment($bookingId, $amount, $paymentMethod = 'bank_transfer', $notes = '')
     {
-        $booking = $this->db->fetchRow("SELECT b.*, u.wallet_balance FROM bookings b LEFT JOIN users u ON b.customer_id = u.id WHERE b.id = ?", [$bookingId]);
+        $tid = TenantContext::getId();
+        $booking = $this->db->fetchRow("SELECT b.*, u.wallet_balance FROM bookings b LEFT JOIN users u ON b.customer_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . " WHERE b.id = ?", $tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         if (!$booking) return ['success' => false, 'error' => 'Booking not found'];
 
         $this->db->beginTransaction();
@@ -99,10 +101,11 @@ class AccountingIntegrationService
             ]);
 
             // 2. Credit user wallet
-            $user = $this->db->fetchRow("SELECT wallet_balance FROM users WHERE id = ?", [$associateId]);
+            $tid = TenantContext::getId();
+            $user = $this->db->fetchRow("SELECT wallet_balance FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$associateId, $tid] : [$associateId]);
             $oldBalance = $user['wallet_balance'] ?? 0;
             $newBalance = $oldBalance + $amount;
-            $this->db->execute("UPDATE users SET wallet_balance = ? WHERE id = ?", [$newBalance, $associateId]);
+            $this->db->execute("UPDATE users SET wallet_balance = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$newBalance, $associateId, $tid] : [$newBalance, $associateId]);
 
             // 3. Record wallet transaction
             $this->db->insert('wallet_transactions', [
@@ -167,10 +170,11 @@ class AccountingIntegrationService
 
         $this->db->beginTransaction();
         try {
-            $user = $this->db->fetchRow("SELECT rera_deduction_wallet FROM users WHERE id = ?", [$userId]);
+            $tid = TenantContext::getId();
+            $user = $this->db->fetchRow("SELECT rera_deduction_wallet FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$userId, $tid] : [$userId]);
             $oldRera = $user['rera_deduction_wallet'] ?? 0;
             $newRera = $oldRera + $reraFee;
-            $this->db->execute("UPDATE users SET rera_deduction_wallet = ? WHERE id = ?", [$newRera, $userId]);
+            $this->db->execute("UPDATE users SET rera_deduction_wallet = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$newRera, $userId, $tid] : [$newRera, $userId]);
 
             $this->db->insert('rera_requests', [
                 'user_id' => $userId,

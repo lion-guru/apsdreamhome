@@ -1,8 +1,68 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-29 — Session 62)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-30 — Session 63)
 
 ---
 
-# Session 61: Tenant-Aware Cache Key Prefixing (2026-07-29)
+# Session 63: Empty Catch Cleanup + Dead Code Archive + SQL Bug Fixes (2026-07-30)
+
+## Goal
+
+Production hardening — fix silent error suppression, archive dead code, fix SQL schema bugs.
+
+## What Was Done
+
+| Feature                               | Details                                                                                                                                                                                                                                                  |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **140 Empty Catch Blocks Fixed**      | All 140 completely empty `catch {}` blocks across 31 controller files now have `error_log()` — errors are at least logged instead of silently swallowed. Worst offenders: `CRMController` (24), `AssociateController` (18), `ToolsAdminController` (16). |
+| **13 console.log Removed**            | Removed 13 debug `console.log` statements from production views. Kept 5 intentional (Service Worker registration, WebSocket lifecycle, analytics catch).                                                                                                 |
+| **4 Dead Stub Views Archived**        | `app/views/business/associates/` (index/show/edit/create) — orphaned "under construction" placeholders, never rendered by any controller. Moved to `_archive/dead_views/`.                                                                               |
+| **Import Template Fake Data Cleaned** | Replaced fake names/phones (Ravi Kumar, Geeta Devi, Rahul Sharma, Priya Patel) with generic placeholders (John Doe, Jane Smith) in 3 import template files.                                                                                              |
+| **AssociateService SQL Bugs Fixed**   | `p.name` → `p.title` (properties table has no `name` column). Added `associates` JOIN for `joining_date` (users table has no `joining_date`).                                                                                                            |
+| **Dead Controller Archived**          | `Associate\AssociateController` (366 lines) + `Associate\AssociateService` + 5 orphaned admin views archived. Duplicate of `Business\AssociateController`, zero sidebar links, all 10 routes orphaned from UI.                                           |
+| **E2E Tests**                         | **153/153 PASS** — zero regressions.                                                                                                                                                                                                                     |
+
+## Files Modified
+
+| File                                             | Changes                                                                                                                                                                                                                    |
+| :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 31 controller files                              | Empty catches → `error_log()` with function name + message                                                                                                                                                                 |
+| 13 view files                                    | Removed `console.log` debug statements                                                                                                                                                                                     |
+| 3 import template files                          | Replaced fake data with generic placeholders                                                                                                                                                                               |
+| `app/Services/Business/AssociateService.php`     | Fixed `p.name` → `p.title`, added `associates` JOIN for `joining_date`                                                                                                                                                     |
+| `_archive/dead_views/business_associates_stubs/` | 4 archived stub views                                                                                                                                                                                                      |
+| `_archive/dead_views/associate_admin_views/`     | 5 archived orphaned admin views                                                                                                                                                                                            |
+| `_archive/dead_controllers/associate_namespace/` | 1 archived dead controller + 1 service                                                                                                                                                                                     |
+| **Batch 4 Tenant Scoping (60+ service files)**   | All remaining service files now have `tenant_id` scoping on every business data query. Deleted/archived files: AssociateController, AssociateService, 5 views. AlertEscalationService confirmed as system-level (skipped). |
+
+### Key Lessons (Session 63)
+
+_68. **Empty catch blocks are silent revenue leaks** — 140 empty `catch {}` blocks across 31 controllers meant DB errors returned 0/null instead of failing visibly. A missing table, a schema change, or a connection issue would silently degrade the UI. Adding `error_log()` ensures errors appear in PHP error log for diagnosis._
+_69. **console.log in production views leaks data** — `console.log(data)` in `admin/godmode/dashboard.php` dumped the entire system health response object to browser console. In production, any user with DevTools open could see server internals. Remove all debug logging._
+_70. **Dead orphaned stubs waste developer attention** — 4 "under construction" views in `business/associates/` were never rendered by any controller. They existed since initial scaffolding and confused anyone navigating the codebase. Archive immediately._
+_71. **SQL schema bugs cause 500 errors on specific pages** — `p.name` in `AssociateService` would throw "Unknown column" on the associate detail page. These bugs only surface when the specific code path is hit. Always verify column names against actual DB schema._
+_72. **Dual controllers = maintenance burden** — `Associate\AssociateController` and `Business\AssociateController` did the same thing under different URL prefixes. Neither was linked from the sidebar. Keep the more complete one (Business, 14 methods), archive the other._
+_73. **LEGAL, FINANCE, CRM subfolder services were already scoped** — `LegalDocumentService`, `RegistryEligibilityService`, `LeadAssignmentService`, `GSTTaxReportService`, `Finance\InvoiceService` all had `tenant_id` scoping from prior sessions. Always verify before re-fixing._
+_74. **AlertEscalationService is system-level, not tenant** — Uses its own dedicated `alerts`/`alert_escalations` tables for platform monitoring. Only LEFT JOINs `users` for display names. Confirmed safe to skip — superadmin tool, not per-tenant data._
+_75. **ColonyPricingService was the heaviest scope — 35+ queries** — The pricing service touches colonies, plots, price_history, land_acquisitions, development_costs, and pricing_approvals. Each query needed `AND tenant_id = ?` with named params (`:tid`) for raw PDO queries. Took 1 subagent to fix completely._
+
+---
+
+## Batch 4 — Tenant Scoping Completion (2026-07-30)
+
+After Session 63, the remaining Batch 4 service files were fixed (or verified already scoped):
+
+| Group                                 | Files                                                                                                                 | Status                                |
+| :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
+| **CRM/Sales/Finance** (5)             | `LeadAssignmentService`, `ManagerService`, `BookingLifecycleService`, `GSTTaxReportService`, `Finance\InvoiceService` | ✅ All scoped (3 were already scoped) |
+| **Legal/Loan/Commission** (4)         | `LegalDocumentService`, `RegistryEligibilityService`, `CompanyLoanService`, `HybridManager`                           | ✅ All scoped (2 were already scoped) |
+| **Farmer/Land** (3)                   | `FarmerServiceEnhanced`, `ColonyFeasibilityService`, `ColonyPricingService`                                           | ✅ All scoped                         |
+| **Notification/Operations/Voice** (3) | `PropertyAlertService`, `SiteVisitService`, `OLNService`                                                              | ✅ All scoped                         |
+| **Skipped (verified)** (1)            | `AlertEscalationService`                                                                                              | ✅ System-level, no scoping needed    |
+
+**Grand total: ~66 service files now tenant-scoped** across all business data layers.
+
+---
+
+# Session 62: Model-Level Tenant Scoping + Cron Isolation + E2E Stability (2026-07-29)
 
 ## Goal
 

@@ -3,6 +3,7 @@
 namespace App\Services\Accounting;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Exception;
 
 /**
@@ -409,16 +410,17 @@ class MoneyWorkflowService
 
     public function generateDemandLetter(int $bookingId, string $type): array
     {
+        $tid = TenantContext::getId();
         $booking = $this->db->fetchOne(
             "SELECT b.*, u.name AS customer_name, u.email, u.phone,
                     p.plot_number, p.total_price, p.area_sqft,
                     c.name AS colony_name
              FROM bookings b
-             LEFT JOIN users u ON u.id = b.user_id
+             LEFT JOIN users u ON u.id = b.user_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
              LEFT JOIN plots p ON p.id = b.plot_id
              LEFT JOIN colonies c ON c.id = b.colony_id
              WHERE b.id = ?",
-            [$bookingId]
+            $tid > 1 ? [$bookingId, $tid] : [$bookingId]
         );
         if (!$booking) {
             throw new Exception('Booking not found');
@@ -834,9 +836,10 @@ class MoneyWorkflowService
 
     public function issueTDSCertificate(int $deducteeUserId, string $fy, string $quarter): int
     {
+        $tid = TenantContext::getId();
         $deductee = $this->db->fetchOne(
-            "SELECT id, name, pan FROM users WHERE id = ?",
-            [$deducteeUserId]
+            "SELECT id, name, pan FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$deducteeUserId, $tid] : [$deducteeUserId]
         );
         if (!$deductee) {
             throw new Exception('Deductee not found');
@@ -1432,6 +1435,7 @@ class MoneyWorkflowService
         ];
 
         try {
+            $tid = TenantContext::getId();
             $rows = $this->db->fetchAll(
                 "SELECT bps.*, pb.plot_id, pb.booking_number, pb.booking_date,
                         p.plot_number,
@@ -1440,7 +1444,7 @@ class MoneyWorkflowService
                  FROM booking_payment_schedules bps
                  LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
-                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN users u ON u.id = pb.customer_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                  WHERE bps.status IN ('pending','overdue')
                    AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
                  ORDER BY bps.due_date ASC"
@@ -1587,11 +1591,13 @@ class MoneyWorkflowService
 
     public function getCollections(array $filters = []): array
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT cc.*, u.name AS collector_name
                 FROM cash_collections cc
-                LEFT JOIN users u ON u.id = cc.collector_id
+                LEFT JOIN users u ON u.id = cc.collector_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE 1=1";
         $params = [];
+        if ($tid > 1) $params[] = $tid;
 
         if (!empty($filters['status'])) {
             $sql .= " AND cc.status = ?";
@@ -1623,12 +1629,13 @@ class MoneyWorkflowService
 
     public function getCollection(int $id): ?array
     {
+        $tid = TenantContext::getId();
         $row = $this->db->fetchOne(
             "SELECT cc.*, u.name AS collector_name
              FROM cash_collections cc
-             LEFT JOIN users u ON u.id = cc.collector_id
+             LEFT JOIN users u ON u.id = cc.collector_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
              WHERE cc.id = ?",
-            [$id]
+            $tid > 1 ? [$id, $tid] : [$id]
         );
         return $row ?: null;
     }
@@ -1702,11 +1709,13 @@ class MoneyWorkflowService
 
     public function getReconciliationSessions(array $filters = []): array
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT rc.*, u.name AS collector_name
                 FROM reconciliation_collections rc
-                LEFT JOIN users u ON u.id = rc.collector_id
+                LEFT JOIN users u ON u.id = rc.collector_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE 1=1";
         $params = [];
+        if ($tid > 1) $params[] = $tid;
 
         if (!empty($filters['status'])) {
             $sql .= " AND rc.status = ?";
@@ -1787,10 +1796,12 @@ class MoneyWorkflowService
 
     public function listCollectors(): array
     {
+        $tid = TenantContext::getId();
         return $this->db->fetchAll(
             "SELECT u.id, u.name FROM users u
-             WHERE u.role IN ('associate','agent','employee','admin')
-             ORDER BY u.name"
+             WHERE u.role IN ('associate','agent','employee','admin')" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
+             ORDER BY u.name",
+            $tid > 1 ? [$tid] : []
         ) ?: [];
     }
 
@@ -1810,14 +1821,15 @@ class MoneyWorkflowService
         ];
 
         try {
+            $tid = TenantContext::getId();
             $booking = $this->db->fetchOne(
                 "SELECT pb.*, u.name AS customer_name, p.plot_number, c.name AS colony_name
                  FROM plot_bookings pb
-                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN users u ON u.id = pb.customer_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                  LEFT JOIN plots p ON p.id = pb.plot_id
                  LEFT JOIN colonies c ON c.id = p.colony_id
                  WHERE pb.id = ?",
-                [$bookingId]
+                $tid > 1 ? [$bookingId, $tid] : [$bookingId]
             );
             $result['booking'] = $booking;
 
@@ -1870,14 +1882,15 @@ class MoneyWorkflowService
     public function generateNoc(int $bookingId, int $generatedBy): array
     {
         try {
+            $tid = TenantContext::getId();
             $booking = $this->db->fetchOne(
                 "SELECT pb.*, u.name AS customer_name, p.plot_number, c.name AS colony_name
                  FROM plot_bookings pb
-                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN users u ON u.id = pb.customer_id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                  LEFT JOIN plots p ON p.id = pb.plot_id
                  LEFT JOIN colonies c ON c.id = p.colony_id
                  WHERE pb.id = ?",
-                [$bookingId]
+                $tid > 1 ? [$bookingId, $tid] : [$bookingId]
             );
             if (!$booking) {
                 return ['success' => false, 'error' => 'Booking not found'];

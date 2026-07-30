@@ -11,6 +11,7 @@ use App\Models\Property;
 use App\Core\Database\Database;
 use App\Services\SystemLogger;
 use App\Core\Security;
+use App\Core\Middleware\TenantContext;
 
 class PropertyService
 {
@@ -21,6 +22,15 @@ class PropertyService
     {
         $this->db = Database::getInstance();
         $this->logger = new SystemLogger();
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -78,14 +88,17 @@ class PropertyService
             $whereClause = implode(' AND ', $where);
 
             // Get properties
+            $tid = $this->getTenantId();
+            $tenantJoin = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN users a ON p.associate_id = a.id
+                    LEFT JOIN users a ON p.associate_id = a.id{$tenantJoin}
                     WHERE $whereClause
                     ORDER BY p.created_at DESC
                     LIMIT ? OFFSET ?";
 
-            $properties = $this->db->fetchAll($sql, array_merge($params, [$limit, $offset]));
+            $propertyParams = $tid > 1 ? array_merge($params, [$tid, $limit, $offset]) : array_merge($params, [$limit, $offset]);
+            $properties = $this->db->fetchAll($sql, $propertyParams);
 
             // Get total count
             $countSql = "SELECT COUNT(*) as count FROM properties p WHERE $whereClause";
@@ -116,12 +129,15 @@ class PropertyService
     public function getPropertyById($id)
     {
         try {
+            $tid = $this->getTenantId();
+            $tenantJoin = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN users a ON p.associate_id = a.id
+                    LEFT JOIN users a ON p.associate_id = a.id{$tenantJoin}
                     WHERE p.id = ? AND p.status != 'deleted'";
 
-            $property = $this->db->fetchOne($sql, [$id]);
+            $propertyParams = $tid > 1 ? [$id, $tid] : [$id];
+            $property = $this->db->fetchOne($sql, $propertyParams);
 
             if ($property) {
                 // Get property images
@@ -372,14 +388,17 @@ class PropertyService
 
             $whereClause = implode(' AND ', $where);
 
+            $tid = $this->getTenantId();
+            $tenantJoin = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT p.*, a.name as associate_name, a.email as associate_email
                     FROM properties p
-                    LEFT JOIN users a ON p.associate_id = a.id
+                    LEFT JOIN users a ON p.associate_id = a.id{$tenantJoin}
                     WHERE $whereClause
                     ORDER BY p.created_at DESC
                     LIMIT 50";
 
-            return $this->db->fetchAll($sql, $params);
+            $searchParams = $tid > 1 ? array_merge($params, [$tid]) : $params;
+            return $this->db->fetchAll($sql, $searchParams);
         } catch (\Exception $e) {
             $this->logger->error("PropertyService::searchProperties - Error: " . $e->getMessage());
             return [];

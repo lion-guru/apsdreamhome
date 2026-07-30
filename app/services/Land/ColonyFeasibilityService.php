@@ -3,6 +3,7 @@
 namespace App\Services\Land;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\SystemLogger;
 use Exception;
 
@@ -176,15 +177,21 @@ class ColonyFeasibilityService
     public function getFeasibilityHistory(int $colonyId, int $limit = 20): array
     {
         try {
+            $tid = TenantContext::getId();
+            $tenantWhere = ($tid > 1) ? " AND f.tenant_id = :tid" : "";
+
             $stmt = $this->pdo->prepare("
                 SELECT f.*, u.name AS created_by_name
                 FROM colony_pricing_feasibility f
                 LEFT JOIN users u ON u.id = f.created_by
-                WHERE f.colony_id = :cid
+                WHERE f.colony_id = :cid{$tenantWhere}
                 ORDER BY f.created_at DESC
                 LIMIT :lim
             ");
             $stmt->bindValue(':cid', $colonyId, \PDO::PARAM_INT);
+            if ($tid > 1) {
+                $stmt->bindValue(':tid', $tid, \PDO::PARAM_INT);
+            }
             $stmt->bindValue(':lim', $limit, \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -255,8 +262,12 @@ class ColonyFeasibilityService
     public function getAllColoniesFeasibility(): array
     {
         try {
+            $tid = TenantContext::getId();
+            $tenantSql = ($tid > 1) ? " AND tenant_id = ?" : "";
+            $params = ($tid > 1) ? [$tid] : [];
             $colonies = $this->db->fetchAll(
-                "SELECT id, name, total_plots, available_plots, starting_price FROM colonies WHERE is_active = 1 ORDER BY name"
+                "SELECT id, name, total_plots, available_plots, starting_price FROM colonies WHERE is_active = 1{$tenantSql} ORDER BY name",
+                $params
             );
 
             $results = [];
@@ -290,19 +301,34 @@ class ColonyFeasibilityService
      */
     private function getLandCost(int $colonyId): float
     {
+        $tid = TenantContext::getId();
+
+        $params = ['cid' => $colonyId];
+        $tenantJoin = '';
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+            $tenantJoin = ' AND tenant_id = :tid';
+        }
+
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(acquisition_cost), 0) AS total
-             FROM land_acquisitions WHERE colony_id = :cid AND status IN ('registered', 'active', 'sold', 'under_development')",
-            ['cid' => $colonyId]
+             FROM land_acquisitions WHERE colony_id = :cid AND status IN ('registered', 'active', 'sold', 'under_development'){$tenantJoin}",
+            $params
         );
         if ($row && (float) $row['total'] > 0) {
             return (float) $row['total'];
         }
 
         // Fallback: colony land_cost column
+        $params2 = ['cid' => $colonyId];
+        $tenantJoin2 = '';
+        if ($tid > 1) {
+            $params2['tid'] = $tid;
+            $tenantJoin2 = ' AND tenant_id = :tid';
+        }
         $row = $this->tryFetch(
-            "SELECT COALESCE(land_cost, 0) AS total FROM colonies WHERE id = :cid",
-            ['cid' => $colonyId]
+            "SELECT COALESCE(land_cost, 0) AS total FROM colonies WHERE id = :cid{$tenantJoin2}",
+            $params2
         );
         return $row ? (float) $row['total'] : 0.0;
     }
@@ -317,13 +343,19 @@ class ColonyFeasibilityService
      */
     private function getRegistryCost(int $colonyId): float
     {
+        $tid = TenantContext::getId();
+
         // Try explicit registry/legal costs from development_costs
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(amount), 0) AS total
              FROM colony_development_costs
              WHERE colony_id = :cid
-               AND cost_type IN ('approval_fee', 'legal')",
-            ['cid' => $colonyId]
+               AND cost_type IN ('approval_fee', 'legal')" . ($tid > 1 ? " AND tenant_id = :tid" : ""),
+            $params
         );
 
         if ($row && (float) $row['total'] > 0) {
@@ -348,12 +380,17 @@ class ColonyFeasibilityService
      */
     private function getDevCostsByCategory(int $colonyId): array
     {
+        $tid = TenantContext::getId();
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         $rows = $this->tryFetchAll(
             "SELECT cost_type, amount
              FROM colony_development_costs
-             WHERE colony_id = :cid
+             WHERE colony_id = :cid" . ($tid > 1 ? " AND tenant_id = :tid" : "") . "
              ORDER BY cost_type",
-            ['cid' => $colonyId]
+            $params
         ) ?: [];
 
         $byType = [];
@@ -375,11 +412,16 @@ class ColonyFeasibilityService
      */
     private function getApprovalCost(int $colonyId): float
     {
+        $tid = TenantContext::getId();
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(amount), 0) AS total
              FROM colony_development_costs
-             WHERE colony_id = :cid AND cost_type = 'approval_fee'",
-            ['cid' => $colonyId]
+             WHERE colony_id = :cid AND cost_type = 'approval_fee'" . ($tid > 1 ? " AND tenant_id = :tid" : ""),
+            $params
         );
         return $row ? (float) $row['total'] : 0.0;
     }
@@ -389,12 +431,17 @@ class ColonyFeasibilityService
      */
     private function getGACost(int $colonyId): float
     {
+        $tid = TenantContext::getId();
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(amount), 0) AS total
              FROM colony_development_costs
              WHERE colony_id = :cid
-               AND cost_type IN ('brokerage', 'marketing', 'office_setup', 'staff', 'other')",
-            ['cid' => $colonyId]
+               AND cost_type IN ('brokerage', 'marketing', 'office_setup', 'staff', 'other')" . ($tid > 1 ? " AND tenant_id = :tid" : ""),
+            $params
         );
         return $row ? (float) $row['total'] : 0.0;
     }
@@ -404,11 +451,17 @@ class ColonyFeasibilityService
      */
     private function getRawLandArea(int $colonyId): float
     {
+        $tid = TenantContext::getId();
+
         // Try land_acquisitions first
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(land_area), 0) AS total
-             FROM land_acquisitions WHERE colony_id = :cid AND status != 'cancelled'",
-            ['cid' => $colonyId]
+             FROM land_acquisitions WHERE colony_id = :cid AND status != 'cancelled'" . ($tid > 1 ? " AND tenant_id = :tid" : ""),
+            $params
         );
         if ($row && (float) $row['total'] > 0) {
             return (float) $row['total'];
@@ -428,9 +481,14 @@ class ColonyFeasibilityService
      */
     private function getTotalPlotArea(int $colonyId): float
     {
+        $tid = TenantContext::getId();
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         $row = $this->tryFetch(
-            "SELECT COALESCE(SUM(area_sqft), 0) AS total FROM plots WHERE colony_id = :cid",
-            ['cid' => $colonyId]
+            "SELECT COALESCE(SUM(area_sqft), 0) AS total FROM plots WHERE colony_id = :cid" . ($tid > 1 ? " AND tenant_id = :tid" : ""),
+            $params
         );
         return $row ? (float) $row['total'] : 0.0;
     }
@@ -440,11 +498,16 @@ class ColonyFeasibilityService
      */
     private function getLatestFeasibility(int $colonyId): ?array
     {
+        $tid = TenantContext::getId();
+        $params = ['cid' => $colonyId];
+        if ($tid > 1) {
+            $params['tid'] = $tid;
+        }
         return $this->tryFetch(
             "SELECT * FROM colony_pricing_feasibility
-             WHERE colony_id = :cid
+             WHERE colony_id = :cid" . ($tid > 1 ? " AND tenant_id = :tid" : "") . "
              ORDER BY created_at DESC LIMIT 1",
-            ['cid' => $colonyId]
+            $params
         );
     }
 
@@ -459,18 +522,21 @@ class ColonyFeasibilityService
     {
         try {
             $createdBy = (int) ($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+            $tid = TenantContext::getId();
 
             $stmt = $this->pdo->prepare("
                 INSERT INTO colony_pricing_feasibility
                 (colony_id, total_raw_area_sqft, saleable_area_yield_pct, saleable_area_sqft,
                  land_cost_total, registry_cost_total, development_cost_total, approvals_cost_total,
                  raw_cost_basis_ppsf, target_profit_pct, office_overhead_pct, mlm_budget_pct,
-                 markup_factor, recommended_price_ppsf, applied_price_ppsf, notes, created_by)
+                 markup_factor, recommended_price_ppsf, applied_price_ppsf, notes, created_by,
+                 tenant_id)
                 VALUES
                 (:cid, :raw_area, :yield_pct, :saleable,
                  :land, :registry, :dev, :approval,
                  :cost_ppsf, :profit_pct, :ga_pct, :mlm_pct,
-                 :markup, :rec_ppsf, :applied_ppsf, :notes, :created_by)
+                 :markup, :rec_ppsf, :applied_ppsf, :notes, :created_by,
+                 :tid)
             ");
 
             $stmt->execute([
@@ -491,6 +557,7 @@ class ColonyFeasibilityService
                 ':applied_ppsf' => $data['recommended_price_ppsf'],
                 ':notes'       => $overrides['_notes'] ?? null,
                 ':created_by'  => $createdBy,
+                ':tid'         => $tid,
             ]);
         } catch (Exception $e) {
             $this->logError('logFeasibility failed', ['error' => $e->getMessage()]);

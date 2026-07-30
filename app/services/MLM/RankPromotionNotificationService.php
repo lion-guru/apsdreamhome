@@ -15,6 +15,7 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 class RankPromotionNotificationService
 {
@@ -46,6 +47,15 @@ class RankPromotionNotificationService
             }
         }
         $this->db = $pdo;
+    }
+
+    protected function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -284,8 +294,10 @@ class RankPromotionNotificationService
     private function getUser(int $userId): ?array
     {
         try {
-            $stmt = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ? LIMIT 1");
-            $stmt->execute([$userId]);
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?{$tenantSql} LIMIT 1");
+            $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         } catch (Exception $e) {
             return null;

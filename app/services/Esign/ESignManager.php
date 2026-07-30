@@ -3,6 +3,7 @@
 namespace App\Services\Esign;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * E-Sign Manager — Facade for initiating and tracking document signing.
@@ -193,8 +194,15 @@ class ESignManager
             return null;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = ?');
-            $stmt->execute([$userId]);
+            $tid = $this->getTenantId();
+            $sql = 'SELECT * FROM users WHERE id = ?';
+            $params = [$userId];
+            if ($tid > 1) {
+                $sql .= ' AND tenant_id = ?';
+                $params[] = $tid;
+            }
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) {
             return null;
@@ -242,6 +250,15 @@ class ESignManager
             $this->pdo->prepare($sql)->execute($params);
         } catch (\Throwable $e) {
             error_log('[ESignManager::updateEsignStatus] ' . $e->getMessage());
+        }
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
         }
     }
 

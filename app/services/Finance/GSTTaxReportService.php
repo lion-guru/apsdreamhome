@@ -6,6 +6,7 @@
 namespace App\Services\Finance;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * GST and Tax Reports Service
@@ -30,6 +31,7 @@ class GSTTaxReportService
         $endDate = sprintf('%04d-%02d-%02d', $year, $month, date('t', strtotime($startDate)));
 
         // B2C - Business to Consumer
+        $tid = TenantContext::getId();
         $b2c = $this->db->query(
             "SELECT i.invoice_number, i.invoice_date, u.name as customer_name,
                     u.gstin as customer_gstin, i.total as invoice_value,
@@ -39,9 +41,9 @@ class GSTTaxReportService
              JOIN users u ON i.user_id = u.id
              LEFT JOIN properties p ON i.property_id = p.id
              WHERE i.invoice_date BETWEEN ? AND ?
-             AND i.status = 'paid'
+             AND i.status = 'paid'" . ($tid > 1 ? " AND i.tenant_id = ?" : "") . "
              ORDER BY i.invoice_date",
-            [$startDate, $endDate]
+            $tid > 1 ? [$startDate, $endDate, $tid] : [$startDate, $endDate]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         // Summary
@@ -107,6 +109,7 @@ class GSTTaxReportService
         $startDate = sprintf('%04d-%02d-01', $year, $month);
         $endDate = sprintf('%04d-%02d-%02d', $year, $month, date('t', strtotime($startDate)));
 
+        $tid = TenantContext::getId();
         try {
             $itc = $this->db->query(
                 "SELECT 
@@ -115,8 +118,8 @@ class GSTTaxReportService
                     SUM(igst) as igst
                  FROM purchase_invoices
                  WHERE invoice_date BETWEEN ? AND ?
-                 AND itc_claimed = 1",
-                [$startDate, $endDate]
+                 AND itc_claimed = 1" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$startDate, $endDate, $tid] : [$startDate, $endDate]
             )->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
@@ -138,6 +141,7 @@ class GSTTaxReportService
         $startDate = sprintf('%04d-%02d-01', $year, $month);
         $endDate = sprintf('%04d-%02d-%02d', $year, $month, date('t', strtotime($startDate)));
 
+        $tid = TenantContext::getId();
         // TDS deducted from payments
         $tds = $this->db->query(
             "SELECT p.id as payment_id, p.transaction_id, p.amount,
@@ -147,9 +151,9 @@ class GSTTaxReportService
              FROM payments p
              JOIN users u ON p.user_id = u.id
              WHERE p.completed_at BETWEEN ? AND ?
-             AND p.tds_amount > 0
+             AND p.tds_amount > 0" . ($tid > 1 ? " AND p.tenant_id = ?" : "") . "
              ORDER BY p.completed_at",
-            [$startDate, $endDate]
+            $tid > 1 ? [$startDate, $endDate, $tid] : [$startDate, $endDate]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $summary = [
@@ -175,6 +179,7 @@ class GSTTaxReportService
         $startDate = sprintf('%04d-%02d-01', $year, $month);
         $endDate = sprintf('%04d-%02d-%02d', $year, $month, date('t', strtotime($startDate)));
 
+        $tid = TenantContext::getId();
         // TCS collected on property sales above 50 lakhs
         $tcs = $this->db->query(
             "SELECT s.id as sale_id, s.sale_value, s.tcs_amount,
@@ -185,9 +190,9 @@ class GSTTaxReportService
              JOIN properties p ON s.property_id = p.id
              WHERE s.sale_date BETWEEN ? AND ?
              AND s.sale_value >= 5000000
-             AND s.tcs_amount > 0
+             AND s.tcs_amount > 0" . ($tid > 1 ? " AND s.tenant_id = ?" : "") . "
              ORDER BY s.sale_date",
-            [$startDate, $endDate]
+            $tid > 1 ? [$startDate, $endDate, $tid] : [$startDate, $endDate]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $summary = [
@@ -246,14 +251,15 @@ class GSTTaxReportService
      */
     public function generateTaxComputation(int $year): array
     {
+        $tid = TenantContext::getId();
         // Income from operations
         $income = $this->db->query(
             "SELECT 
                 SUM(total) as total_revenue,
                 SUM(cgst + sgst + igst) as gst_collected
              FROM invoices
-             WHERE YEAR(invoice_date) = ? AND status = 'paid'",
-            [$year]
+             WHERE YEAR(invoice_date) = ? AND status = 'paid'" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$year, $tid] : [$year]
         )->fetch(\PDO::FETCH_ASSOC);
 
         // Expenses
@@ -262,9 +268,9 @@ class GSTTaxReportService
                 category,
                 SUM(amount) as total_amount
              FROM expenses
-             WHERE YEAR(expense_date) = ?
+             WHERE YEAR(expense_date) = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
              GROUP BY category",
-            [$year]
+            $tid > 1 ? [$year, $tid] : [$year]
         )->fetchAll(\PDO::FETCH_KEY_PAIR);
 
         // Taxable income
@@ -309,6 +315,7 @@ class GSTTaxReportService
             'farmhouse' => ['hsn' => '996412', 'rate' => 1]
         ];
 
+        $tid = TenantContext::getId();
         $summary = $this->db->query(
             "SELECT pt.name as property_type, 
                     COUNT(i.id) as invoice_count,
@@ -318,9 +325,9 @@ class GSTTaxReportService
              JOIN properties p ON i.property_id = p.id
              JOIN property_types pt ON p.property_type_id = pt.id
              WHERE i.invoice_date BETWEEN ? AND ?
-             AND i.status = 'paid'
+             AND i.status = 'paid'" . ($tid > 1 ? " AND i.tenant_id = ?" : "") . "
              GROUP BY pt.name",
-            [$startDate, $endDate]
+            $tid > 1 ? [$startDate, $endDate, $tid] : [$startDate, $endDate]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($summary as &$row) {

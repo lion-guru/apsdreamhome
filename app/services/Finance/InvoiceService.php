@@ -6,6 +6,7 @@
 namespace App\Services\Finance;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use App\Models\Payment\Payment;
 
 /**
@@ -49,6 +50,7 @@ class InvoiceService
         // Calculate tax breakdown
         $taxBreakdown = $this->calculateTaxBreakdown($payment['amount']);
 
+        $tid = TenantContext::getId();
         // Create invoice record
         $invoiceData = [
             'invoice_number' => $invoiceNumber,
@@ -66,6 +68,7 @@ class InvoiceService
             'status' => $payment['status'] === 'completed' ? 'paid' : 'pending',
             'created_at' => date('Y-m-d H:i:s')
         ];
+        if ($tid > 1) { $invoiceData['tenant_id'] = $tid; }
 
         $sql = "INSERT INTO invoices (" . implode(', ', array_keys($invoiceData)) . ") 
                 VALUES (" . implode(', ', array_fill(0, count($invoiceData), '?')) . ")";
@@ -95,10 +98,11 @@ class InvoiceService
         $month = date('m');
 
         // Get last invoice number for this month
+        $tid = TenantContext::getId();
         $sql = "SELECT invoice_number FROM invoices 
-                WHERE invoice_number LIKE ? 
+                WHERE invoice_number LIKE ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " 
                 ORDER BY id DESC LIMIT 1";
-        $last = $this->db->query($sql, ["{$prefix}{$year}{$month}%"])->fetchColumn();
+        $last = $this->db->query($sql, $tid > 1 ? ["{$prefix}{$year}{$month}%", $tid] : ["{$prefix}{$year}{$month}%"])->fetchColumn();
 
         if ($last) {
             $sequence = (int)substr($last, -4) + 1;
@@ -137,16 +141,17 @@ class InvoiceService
      */
     private function generateInvoicePDF(int $invoiceId, array $invoice, array $payment): string
     {
+        $tid = TenantContext::getId();
         // Get customer details
         $customer = $this->db->query(
-            "SELECT * FROM users WHERE id = ?",
-            [$payment['user_id']]
+            "SELECT * FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$payment['user_id'], $tid] : [$payment['user_id']]
         )->fetch(\PDO::FETCH_ASSOC);
 
         // Get property details
         $property = $this->db->query(
-            "SELECT * FROM properties WHERE id = ?",
-            [$payment['property_id']]
+            "SELECT * FROM properties WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$payment['property_id'], $tid] : [$payment['property_id']]
         )->fetch(\PDO::FETCH_ASSOC);
 
         // Build HTML for PDF
@@ -284,14 +289,15 @@ class InvoiceService
      */
     public function getInvoice(int $invoiceId): ?array
     {
+        $tid = TenantContext::getId();
         return $this->db->query(
             "SELECT i.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
                     p.title as property_title, p.location as property_location
              FROM invoices i
              JOIN users u ON i.user_id = u.id
              LEFT JOIN properties p ON i.property_id = p.id
-             WHERE i.id = ?",
-            [$invoiceId]
+             WHERE i.id = ?" . ($tid > 1 ? " AND i.tenant_id = ?" : ""),
+            $tid > 1 ? [$invoiceId, $tid] : [$invoiceId]
         )->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
@@ -300,13 +306,14 @@ class InvoiceService
      */
     public function getUserInvoices(int $userId): array
     {
+        $tid = TenantContext::getId();
         return $this->db->query(
             "SELECT i.*, p.title as property_title
              FROM invoices i
              LEFT JOIN properties p ON i.property_id = p.id
-             WHERE i.user_id = ?
+             WHERE i.user_id = ?" . ($tid > 1 ? " AND i.tenant_id = ?" : "") . "
              ORDER BY i.created_at DESC",
-            [$userId]
+            $tid > 1 ? [$userId, $tid] : [$userId]
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 

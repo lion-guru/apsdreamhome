@@ -2,8 +2,8 @@
 
 namespace App\Services\Business;
 
-use App\Models\Associate;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\SystemLogger;
 
 /**
@@ -19,6 +19,15 @@ class AssociateService
     {
         $this->database = Database::getInstance();
         $this->logger = new SystemLogger();
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -43,6 +52,9 @@ class AssociateService
                 $params[] = "%{$filters['search']}%";
                 $params[] = "%{$filters['search']}%";
             }
+
+            $tid = $this->getTenantId();
+            if ($tid > 1) { $where[] = "a.tenant_id = ?"; $params[] = $tid; }
 
             $whereClause = implode(' AND ', $where);
 
@@ -91,47 +103,47 @@ class AssociateService
     public function createAssociate(array $data)
     {
         try {
-            // Validate data
-            $errors = Associate::validate($data);
+            $errors = [];
+            if (empty($data['name'])) $errors[] = 'Name is required';
+            if (empty($data['email'])) $errors[] = 'Email is required';
+            if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format';
+            if (empty($data['phone'])) $errors[] = 'Phone is required';
             if (!empty($errors)) {
-                return [
-                    'success' => false,
-                    'errors' => $errors
-                ];
+                return ['success' => false, 'errors' => $errors];
             }
 
-            // Check if email already exists
-            if (Associate::findByEmail($data['email'])) {
-                return [
-                    'success' => false,
-                    'message' => 'Email already exists'
-                ];
+            $tid = $this->getTenantId();
+            $existing = $this->database->fetchOne(
+                "SELECT id FROM users WHERE email = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$data['email'], $tid] : [$data['email']]
+            );
+            if ($existing) {
+                return ['success' => false, 'message' => 'Email already exists'];
             }
 
-            $associate = new Associate();
-            $associate->create($data);
+            $passwordHash = password_hash('Aps@2026', PASSWORD_DEFAULT);
+            $userId = $this->database->insert(
+                "INSERT INTO users (name, email, phone, password, role, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'associate', ?, ?, NOW())",
+                array_merge([$data['name'], $data['email'], $data['phone'], $passwordHash, $data['status'] ?? 'active'], $tid > 1 ? [$tid] : [])
+            );
 
-            $this->logger->info('Associate created', [
-                'associate_id' => $associate->id,
-                'name' => $associate->name,
-                'email' => $associate->email
-            ]);
+            if ($userId) {
+                $this->database->insert(
+                    "INSERT INTO associates (user_id, joining_date, commission_rate, tenant_id, created_at) VALUES (?, ?, ?, ?, NOW())",
+                    array_merge([$userId, $data['joining_date'] ?? date('Y-m-d'), $data['commission_rate'] ?? 0], $tid > 1 ? [$tid] : [])
+                );
+            }
+
+            $this->logger->info('Associate created', ['associate_id' => $userId, 'name' => $data['name']]);
 
             return [
                 'success' => true,
-                'data' => $associate->toArray(),
+                'data' => ['id' => $userId, 'name' => $data['name'], 'email' => $data['email']],
                 'message' => 'Associate created successfully'
             ];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to create associate', [
-                'error' => $e->getMessage(),
-                'data' => $data
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to create associate: ' . $e->getMessage()
-            ];
+            $this->logger->error('Failed to create associate', ['error' => $e->getMessage(), 'data' => $data]);
+            return ['success' => false, 'message' => 'Failed to create associate: ' . $e->getMessage()];
         }
     }
 
@@ -141,45 +153,45 @@ class AssociateService
     public function updateAssociate($id, array $data)
     {
         try {
-            $associate = Associate::find($id);
-            if (!$associate) {
-                return [
-                    'success' => false,
-                    'message' => 'Associate not found'
-                ];
+            $tid = $this->getTenantId();
+            $user = $this->database->fetchOne(
+                "SELECT id, name, email FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
+            );
+            if (!$user) {
+                return ['success' => false, 'message' => 'Associate not found'];
             }
 
-            // Validate data
-            $errors = Associate::validate($data);
-            if (!empty($errors)) {
-                return [
-                    'success' => false,
-                    'errors' => $errors
-                ];
+            $setClauses = [];
+            $params = [];
+            $allowedFields = ['name', 'email', 'phone', 'address', 'status', 'commission_rate'];
+            foreach ($allowedFields as $field) {
+                if (array_key_exists($field, $data)) {
+                    $setClauses[] = "{$field} = ?";
+                    $params[] = $data[$field];
+                }
             }
 
-            $associate->update($data);
+            if (!empty($setClauses)) {
+                $setClauses[] = "updated_at = NOW()";
+                $params[] = $id;
+                $sql = "UPDATE users SET " . implode(', ', $setClauses) . " WHERE id = ?";
+                if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+                $this->database->query($sql, $params);
+            }
 
-            $this->logger->info('Associate updated', [
-                'associate_id' => $associate->id,
-                'updated_fields' => array_keys($data)
-            ]);
+            if (isset($data['commission_rate'])) {
+                $assocParams = [$data['commission_rate'], $id];
+                $assocSql = "UPDATE associates SET commission_rate = ?, updated_at = NOW() WHERE user_id = ?";
+                if ($tid > 1) { $assocSql .= " AND tenant_id = ?"; $assocParams[] = $tid; }
+                $this->database->query($assocSql, $assocParams);
+            }
 
-            return [
-                'success' => true,
-                'data' => $associate->toArray(),
-                'message' => 'Associate updated successfully'
-            ];
+            $this->logger->info('Associate updated', ['associate_id' => $id, 'updated_fields' => array_keys($data)]);
+            return ['success' => true, 'message' => 'Associate updated successfully'];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to update associate', [
-                'error' => $e->getMessage(),
-                'associate_id' => $id
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to update associate: ' . $e->getMessage()
-            ];
+            $this->logger->error('Failed to update associate', ['error' => $e->getMessage(), 'associate_id' => $id]);
+            return ['success' => false, 'message' => 'Failed to update associate: ' . $e->getMessage()];
         }
     }
 
@@ -189,49 +201,33 @@ class AssociateService
     public function deleteAssociate($id)
     {
         try {
-            $associate = Associate::find($id);
-            if (!$associate) {
-                return [
-                    'success' => false,
-                    'message' => 'Associate not found'
-                ];
+            $tid = $this->getTenantId();
+            $user = $this->database->fetchOne(
+                "SELECT id, name FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
+            );
+            if (!$user) {
+                return ['success' => false, 'message' => 'Associate not found'];
             }
 
-            // Check if associate has active sales
             $activeSales = $this->database->fetchOne(
-                "SELECT COUNT(*) as count FROM sales 
-                 WHERE associate_id = ? AND status IN ('pending', 'processing')",
-                [$id]
+                "SELECT COUNT(*) as count FROM plot_bookings WHERE associate_id = ? AND status IN ('pending', 'processing')" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
+            );
+            if ($activeSales && $activeSales['count'] > 0) {
+                return ['success' => false, 'message' => 'Cannot delete associate with active sales'];
+            }
+
+            $this->database->query(
+                "UPDATE users SET status = 'deleted', updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
             );
 
-            if ($activeSales && $activeSales['count'] > 0) {
-                return [
-                    'success' => false,
-                    'message' => 'Cannot delete associate with active sales'
-                ];
-            }
-
-            $associate->delete();
-
-            $this->logger->info('Associate deleted', [
-                'associate_id' => $id,
-                'name' => $associate->name
-            ]);
-
-            return [
-                'success' => true,
-                'message' => 'Associate deleted successfully'
-            ];
+            $this->logger->info('Associate deleted', ['associate_id' => $id, 'name' => $user['name']]);
+            return ['success' => true, 'message' => 'Associate deleted successfully'];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to delete associate', [
-                'error' => $e->getMessage(),
-                'associate_id' => $id
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to delete associate: ' . $e->getMessage()
-            ];
+            $this->logger->error('Failed to delete associate', ['error' => $e->getMessage(), 'associate_id' => $id]);
+            return ['success' => false, 'message' => 'Failed to delete associate: ' . $e->getMessage()];
         }
     }
 
@@ -241,68 +237,61 @@ class AssociateService
     public function getAssociateDetails($id)
     {
         try {
-            $associate = Associate::find($id);
-            if (!$associate) {
-                return [
-                    'success' => false,
-                    'message' => 'Associate not found'
-                ];
+            $tid = $this->getTenantId();
+            $user = $this->database->fetchOne(
+                "SELECT u.*, a.joining_date, a.commission_rate 
+                 FROM users u 
+                 LEFT JOIN associates a ON a.user_id = u.id 
+                 WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
+            );
+            if (!$user) {
+                return ['success' => false, 'message' => 'Associate not found'];
             }
 
-            // Get associate's recent sales
             $recentSales = $this->database->fetchAll(
-                "SELECT s.*, p.name as property_name 
+                "SELECT s.*, p.title as property_name 
                  FROM sales s 
                  LEFT JOIN properties p ON s.property_id = p.id 
-                 WHERE s.associate_id = ? 
-                 ORDER BY s.created_at DESC 
-                 LIMIT 10",
-                [$id]
+                 WHERE s.associate_id = ?" . ($tid > 1 ? " AND s.tenant_id = ?" : "") . "
+                 ORDER BY s.created_at DESC LIMIT 10",
+                $tid > 1 ? [$id, $tid] : [$id]
             );
 
-            // Get performance metrics
             $metrics = $this->database->fetchOne(
                 "SELECT COUNT(s.id) as total_sales,
                         SUM(s.sale_amount) as total_sales_amount,
                         SUM(s.commission_amount) as total_commission,
                         AVG(s.sale_amount) as avg_sale_amount
                  FROM sales s 
-                 WHERE s.associate_id = ? AND s.status = 'completed'",
-                [$id]
+                 WHERE s.associate_id = ? AND s.status = 'completed'" . ($tid > 1 ? " AND s.tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
             );
 
-            // Get monthly performance
             $monthlyPerformance = $this->database->fetchAll(
                 "SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
                         COUNT(*) as sales_count,
                         SUM(sale_amount) as total_sales
                  FROM sales 
                  WHERE associate_id = ? AND status = 'completed'
-                 AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                 AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
                  GROUP BY DATE_FORMAT(created_at, '%Y-%m')
                  ORDER BY month DESC",
-                [$id]
+                $tid > 1 ? [$id, $tid] : [$id]
             );
 
             return [
                 'success' => true,
                 'data' => [
-                    'associate' => $associate->toArray(),
+                    'associate' => $user,
                     'recent_sales' => $recentSales,
                     'metrics' => $metrics,
                     'monthly_performance' => $monthlyPerformance
                 ]
             ];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to get associate details', [
-                'error' => $e->getMessage(),
-                'associate_id' => $id
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to get associate details'
-            ];
+            $this->logger->error('Failed to get associate details', ['error' => $e->getMessage(), 'associate_id' => $id]);
+            return ['success' => false, 'message' => 'Failed to get associate details'];
         }
     }
 
@@ -325,6 +314,9 @@ class AssociateService
                 $where[] = "s.created_at <= ?";
                 $params[] = $filters['end_date'];
             }
+
+            $tid = $this->getTenantId();
+            if ($tid > 1) { $where[] = "a.tenant_id = ?"; $params[] = $tid; }
 
             $whereClause = implode(' AND ', $where);
 
@@ -383,43 +375,29 @@ class AssociateService
     public function updateCommissionRate($id, $rate)
     {
         try {
-            $associate = Associate::find($id);
-            if (!$associate) {
-                return [
-                    'success' => false,
-                    'message' => 'Associate not found'
-                ];
-            }
-
             if ($rate < 0 || $rate > 100) {
-                return [
-                    'success' => false,
-                    'message' => 'Commission rate must be between 0 and 100'
-                ];
+                return ['success' => false, 'message' => 'Commission rate must be between 0 and 100'];
             }
 
-            $associate->updateCommissionRate($rate);
+            $tid = $this->getTenantId();
+            $user = $this->database->fetchOne(
+                "SELECT id FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$id, $tid] : [$id]
+            );
+            if (!$user) {
+                return ['success' => false, 'message' => 'Associate not found'];
+            }
 
-            $this->logger->info('Commission rate updated', [
-                'associate_id' => $id,
-                'new_rate' => $rate
-            ]);
+            $assocParams = [$rate, $id];
+            $assocSql = "UPDATE associates SET commission_rate = ?, updated_at = NOW() WHERE user_id = ?";
+            if ($tid > 1) { $assocSql .= " AND tenant_id = ?"; $assocParams[] = $tid; }
+            $this->database->query($assocSql, $assocParams);
 
-            return [
-                'success' => true,
-                'message' => 'Commission rate updated successfully'
-            ];
+            $this->logger->info('Commission rate updated', ['associate_id' => $id, 'new_rate' => $rate]);
+            return ['success' => true, 'message' => 'Commission rate updated successfully'];
         } catch (\Exception $e) {
-            $this->logger->error('Failed to update commission rate', [
-                'error' => $e->getMessage(),
-                'associate_id' => $id,
-                'rate' => $rate
-            ]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to update commission rate'
-            ];
+            $this->logger->error('Failed to update commission rate', ['error' => $e->getMessage(), 'associate_id' => $id, 'rate' => $rate]);
+            return ['success' => false, 'message' => 'Failed to update commission rate'];
         }
     }
 
@@ -438,6 +416,8 @@ class AssociateService
                 $dateCondition = "AND s.created_at >= DATE_SUB(NOW(), INTERVAL 1 YEAR)";
             }
 
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? ' AND a.tenant_id = ?' : '';
             $performers = $this->database->fetchAll(
                 "SELECT a.id, a.name, a.email, a.commission_rate,
                         COUNT(s.id) as sales_count,
@@ -446,12 +426,12 @@ class AssociateService
                         AVG(s.sale_amount) as avg_sale_amount
                  FROM users a
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed' $dateCondition
-                 WHERE a.status = 'active'
+                 WHERE a.status = 'active'{$tenantSql}
                  GROUP BY a.id
                  HAVING sales_count > 0
                  ORDER BY total_sales_amount DESC
                  LIMIT ?",
-                [$limit]
+                $tid > 1 ? [$tid, $limit] : [$limit]
             );
 
             return [
@@ -487,13 +467,18 @@ class AssociateService
                 $params[] = $filters['status'];
             }
 
+            $tid = $this->getTenantId();
+            if ($tid > 1) { $where[] = "a.tenant_id = ?"; $params[] = $tid; }
+
             $whereClause = implode(' AND ', $where);
 
             $users = $this->database->fetchAll(
                 "SELECT a.*, 
+                        a2.joining_date,
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount
                  FROM users a
+                 LEFT JOIN associates a2 ON a2.user_id = a.id
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
                  WHERE $whereClause
                  GROUP BY a.id

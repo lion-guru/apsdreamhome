@@ -28,6 +28,7 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 class MLMCommissionEngine
 {
@@ -62,6 +63,11 @@ class MLMCommissionEngine
         $this->db = $pdo;
     }
 
+    protected function getTenantId(): int
+    {
+        return TenantContext::getId() ?? 1;
+    }
+
     /* =============================================================
      *  UPLINE WALK
      * ============================================================= */
@@ -77,9 +83,9 @@ class MLMCommissionEngine
         }
         $upline = [];
         $current = $userId;
-        $stmt = $this->db->prepare("SELECT id, name, role, referred_by FROM users WHERE id = ? LIMIT 1");
+        $stmt = $this->db->prepare("SELECT id, name, role, referred_by FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
         for ($level = 1; $level <= $maxLevels; $level++) {
-            if (!$stmt->execute([$current])) {
+            if (!$stmt->execute([$current, $this->getTenantId()])) {
                 break;
             }
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -87,8 +93,8 @@ class MLMCommissionEngine
                 break;
             }
             $parentId = (int)$row['referred_by'];
-            $parentStmt = $this->db->prepare("SELECT id, name, role, referred_by FROM users WHERE id = ? LIMIT 1");
-            $parentStmt->execute([$parentId]);
+            $parentStmt = $this->db->prepare("SELECT id, name, role, referred_by FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
+            $parentStmt->execute([$parentId, $this->getTenantId()]);
             $parent = $parentStmt->fetch(PDO::FETCH_ASSOC);
             if (!$parent) {
                 break;
@@ -208,8 +214,8 @@ class MLMCommissionEngine
             if ($legs === 0 && $userId > 0) {
                 // Fallback: count direct referrals via users.referred_by
                 try {
-                    $rStmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
-                    $rStmt->execute([$userId]);
+                    $rStmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ? AND tenant_id = ?");
+                    $rStmt->execute([$userId, $this->getTenantId()]);
                     $legs = (int)$rStmt->fetchColumn();
                 } catch (Exception $e) {
                     error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
@@ -1256,12 +1262,12 @@ class MLMCommissionEngine
             $p = $this->db->prepare("
                 SELECT p.*, u.name AS associate_name, u.email AS associate_email, a.level AS associate_rank
                 FROM mlm_payouts p
-                LEFT JOIN users u ON u.id = p.associate_user_id
+                LEFT JOIN users u ON u.id = p.associate_user_id AND u.tenant_id = ?
                 LEFT JOIN associates a ON a.id = p.associate_id
                 WHERE p.batch_id = ?
                 ORDER BY p.gross_amount DESC
             ");
-            $p->execute([$batchId]);
+            $p->execute([$this->getTenantId(), $batchId]);
             $payouts = $p->fetchAll(PDO::FETCH_ASSOC) ?: [];
             return ['batch' => $batch, 'payouts' => $payouts];
         } catch (Exception $e) {

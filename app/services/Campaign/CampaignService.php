@@ -6,6 +6,7 @@ use PDO;
 use App\Services\AuditService;
 use App\Services\Gateway\TwilioService;
 use App\Services\MarketingCampaignService;
+use App\Core\Middleware\TenantContext;
 
 /**
  * CampaignService
@@ -404,6 +405,11 @@ class CampaignService
                 }
                 break;
         }
+        $tid = $this->getTenantId();
+        if ($tid > 1) {
+            $where[] = 'tenant_id = ?';
+            $params[] = $tid;
+        }
         $where[] = "id IS NOT NULL";
         $sql = "SELECT id, name, first_name, email, phone, role FROM users WHERE " . implode(' AND ', $where) . " LIMIT 1000";
         $stmt = $this->pdo->prepare($sql);
@@ -535,6 +541,15 @@ class CampaignService
     // ----------------------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------------------
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     private function appendUnsubscribe(string $body, string $channel): string
     {

@@ -3,6 +3,7 @@
 namespace App\Services\Land;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\SystemLogger;
 use Exception;
 
@@ -184,9 +185,10 @@ class ColonyPricingService
             }
 
             // ── Minimum rate guard ─────────────────────────────
+            $tenantId = TenantContext::getId();
             $colony = $this->db->fetch(
-                "SELECT id, name, min_price_per_sqft FROM colonies WHERE id = :cid",
-                ['cid' => $colonyId]
+                "SELECT id, name, min_price_per_sqft FROM colonies WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             if (!$colony) {
                 return ['success' => false, 'error' => 'Colony not found'];
@@ -211,8 +213,8 @@ class ColonyPricingService
             // Fetch all plots for this colony
             $plots = $this->db->fetchAll(
                 "SELECT id, area_sqft, corner_plot, park_facing, road_width_ft, block, phase
-                 FROM plots WHERE colony_id = :cid",
-                ['cid' => $colonyId]
+                 FROM plots WHERE colony_id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
 
             if (empty($plots)) {
@@ -226,7 +228,7 @@ class ColonyPricingService
                 price_per_sqft      = :price,
                 total_price         = :total,
                 updated_at          = NOW()
-                WHERE id = :id";
+                WHERE id = :id" . ($tenantId > 1 ? " AND tenant_id = :tid" : "");
 
             $stmt = $this->pdo->prepare($updateSql);
 
@@ -264,18 +266,18 @@ class ColonyPricingService
 
                 // Get old prices before update
                 $oldPlot = $this->db->fetch(
-                    "SELECT price_per_sqft, total_price FROM plots WHERE id = ?",
-                    [$plot['id']]
+                    "SELECT price_per_sqft, total_price FROM plots WHERE id = ?" . ($tenantId > 1 ? " AND tenant_id = ?" : ""),
+                    $tenantId > 1 ? [$plot['id'], $tenantId] : [$plot['id']]
                 );
                 $oldPricePerSqft = (float) ($oldPlot['price_per_sqft'] ?? 0);
                 $oldTotalPrice   = (float) ($oldPlot['total_price'] ?? 0);
 
-                $stmt->execute([
+                $stmt->execute(array_merge([
                     ':base'  => $basePricePerSqft,
                     ':price' => $pricePerSqft,
                     ':total' => $totalPrice,
                     ':id'    => $plot['id'],
-                ]);
+                ], $tenantId > 1 ? [':tid' => $tenantId] : []));
 
                 if ($totalPrice < $minPrice) {
                     $minPrice = $totalPrice;
@@ -303,8 +305,8 @@ class ColonyPricingService
 
             // Update colony starting_price with the minimum plot price
             $this->db->execute(
-                "UPDATE colonies SET starting_price = :sp WHERE id = :cid",
-                ['sp' => $minPrice, 'cid' => $colonyId]
+                "UPDATE colonies SET starting_price = :sp WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['sp' => $minPrice, 'cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
 
             $this->db->commit();
@@ -359,10 +361,11 @@ class ColonyPricingService
     {
         try {
             // ── Colony info ───────────────────────────────────
+            $tenantId = TenantContext::getId();
             $colony = $this->db->fetch(
                 "SELECT id, colony_name, total_area_acres, total_plots, available_plots, starting_price
-                 FROM colonies WHERE id = :cid",
-                ['cid' => $colonyId]
+                 FROM colonies WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
 
             if (!$colony) {
@@ -395,8 +398,8 @@ class ColonyPricingService
                     COALESCE(SUM(total_price), 0)     AS total_plot_value,
                     COALESCE(MIN(total_price), 0)     AS min_plot_price,
                     COALESCE(MAX(total_price), 0)     AS max_plot_price
-                 FROM plots WHERE colony_id = :cid",
-                ['cid' => $colonyId]
+                 FROM plots WHERE colony_id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
 
             $totalInvestment = $landCost + $totalDev;
@@ -474,11 +477,12 @@ class ColonyPricingService
     public function getPlotPriceHistory(int $plotId): array
     {
         try {
+            $tenantId = TenantContext::getId();
             return $this->db->fetchAll(
                 "SELECT * FROM price_history
-                 WHERE entity_type = 'plot' AND entity_id = :pid
+                 WHERE entity_type = 'plot' AND entity_id = :pid" . ($tenantId > 1 ? " AND tenant_id = :tid" : "") . "
                  ORDER BY created_at DESC",
-                ['pid' => $plotId]
+                array_merge(['pid' => $plotId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
         } catch (Exception $e) {
             $this->logger->error('getPlotPriceHistory failed', ['error' => $e->getMessage()]);
@@ -494,21 +498,26 @@ class ColonyPricingService
     public function getAllColoniesPricingComparison(): array
     {
         try {
+            $tenantId = TenantContext::getId();
+            $whereClause = $tenantId > 1 ? " WHERE c.tenant_id = :tid" : "";
             return $this->db->fetchAll(
                 "SELECT
-                    c.id,
-                    c.colony_name,
-                    c.total_plots,
-                    c.available_plots,
-                    c.starting_price,
-                    COALESCE(SUM(p.area_sqft), 0)     AS total_saleable,
-                    COALESCE(AVG(p.price_per_sqft), 0) AS avg_price_per_sqft,
-                    COALESCE(SUM(p.total_price), 0)    AS total_project_value,
-                    COUNT(p.id)                        AS plots_with_price
-                 FROM colonies c
-                 LEFT JOIN plots p ON p.colony_id = c.id AND p.price_per_sqft > 0
-                 GROUP BY c.id, c.colony_name, c.total_plots, c.available_plots, c.starting_price
-                 ORDER BY c.colony_name"
+                     c.id,
+                     c.colony_name,
+                     c.total_plots,
+                     c.available_plots,
+                     c.starting_price,
+                     COALESCE(SUM(p.area_sqft), 0)     AS total_saleable,
+                     COALESCE(AVG(p.price_per_sqft), 0) AS avg_price_per_sqft,
+                     COALESCE(SUM(p.total_price), 0)    AS total_project_value,
+                     COUNT(p.id)                        AS plots_with_price
+                  FROM colonies c
+                  LEFT JOIN plots p ON p.colony_id = c.id AND p.price_per_sqft > 0" .
+                  ($tenantId > 1 ? " AND p.tenant_id = :tid" : "") . "
+                  {$whereClause}
+                  GROUP BY c.id, c.colony_name, c.total_plots, c.available_plots, c.starting_price
+                  ORDER BY c.colony_name",
+                $tenantId > 1 ? ['tid' => $tenantId] : []
             );
         } catch (Exception $e) {
             $this->logger->error('getAllColoniesPricingComparison failed', ['error' => $e->getMessage()]);
@@ -531,10 +540,11 @@ class ColonyPricingService
     public function updatePlotPrice(int $plotId, float $newPricePerSqft, string $reason = ''): array
     {
         try {
+            $tenantId = TenantContext::getId();
             $plot = $this->tryFetch(
                 "SELECT id, colony_id, area_sqft, price_per_sqft, total_price
-                 FROM plots WHERE id = :pid",
-                ['pid' => $plotId]
+                 FROM plots WHERE id = :pid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['pid' => $plotId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             if (!$plot) {
                 return ['success' => false, 'error' => 'Plot not found'];
@@ -548,8 +558,8 @@ class ColonyPricingService
 
             // Minimum rate guard
             $colony = $this->tryFetch(
-                "SELECT min_price_per_sqft FROM colonies WHERE id = :cid",
-                ['cid' => $colonyId]
+                "SELECT min_price_per_sqft FROM colonies WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             $minPpsf = (float) ($colony['min_price_per_sqft'] ?? 0);
             if ($minPpsf > 0 && $newPricePerSqft < $minPpsf) {
@@ -565,14 +575,14 @@ class ColonyPricingService
                     negotiated_price = :tot, price_override_reason = :reason,
                     price_overridden_by = :by, price_overridden_at = NOW(),
                     updated_at = NOW()
-                 WHERE id = :pid",
-                [
+                 WHERE id = :pid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge([
                     'pps'    => $newPricePerSqft,
                     'tot'    => $newTotal,
                     'reason' => $reason,
                     'by'     => $_SESSION['user_id'] ?? 0,
                     'pid'    => $plotId,
-                ]
+                ], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
 
             $this->insertPriceHistory(
@@ -611,10 +621,11 @@ class ColonyPricingService
     public function requestDiscount(int $plotId, float $requestedPricePerSqft, string $reason = ''): array
     {
         try {
+            $tenantId = TenantContext::getId();
             $plot = $this->tryFetch(
                 "SELECT id, colony_id, area_sqft, price_per_sqft, total_price
-                 FROM plots WHERE id = :pid",
-                ['pid' => $plotId]
+                 FROM plots WHERE id = :pid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['pid' => $plotId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             if (!$plot) {
                 return ['success' => false, 'error' => 'Plot not found'];
@@ -625,8 +636,8 @@ class ColonyPricingService
 
             // Check if it's actually below min price
             $colony = $this->tryFetch(
-                "SELECT min_price_per_sqft FROM colonies WHERE id = :cid",
-                ['cid' => $colonyId]
+                "SELECT min_price_per_sqft FROM colonies WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             $minPpsf = (float) ($colony['min_price_per_sqft'] ?? 0);
             if ($minPpsf <= 0 || $requestedPricePerSqft >= $minPpsf) {
@@ -638,9 +649,9 @@ class ColonyPricingService
 
             $existingApproval = $this->tryFetch(
                 "SELECT id, status FROM pricing_approvals
-                 WHERE plot_id = :pid AND status = 'pending'
+                 WHERE plot_id = :pid AND status = 'pending'" . ($tenantId > 1 ? " AND tenant_id = :tid" : "") . "
                  ORDER BY id DESC LIMIT 1",
-                ['pid' => $plotId]
+                array_merge(['pid' => $plotId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             if ($existingApproval) {
                 return [
@@ -649,7 +660,7 @@ class ColonyPricingService
                 ];
             }
 
-            $this->db->insert('pricing_approvals', [
+            $approvalData = [
                 'plot_id'               => $plotId,
                 'colony_id'             => $colonyId,
                 'request_type'          => 'discount',
@@ -662,7 +673,11 @@ class ColonyPricingService
                 'requested_at'          => date('Y-m-d H:i:s'),
                 'status'                => 'pending',
                 'created_at'            => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            if ($tenantId > 1) {
+                $approvalData['tenant_id'] = $tenantId;
+            }
+            $this->db->insert('pricing_approvals', $approvalData);
 
             $this->logger->info('Discount request created', [
                 'plot_id' => $plotId, 'requested' => $requestedPricePerSqft,
@@ -708,17 +723,22 @@ class ColonyPricingService
     public function getPendingApprovals(?int $colonyId = null): array
     {
         try {
+            $tenantId = TenantContext::getId();
             $sql = "SELECT pa.*, p.plot_number, p.block, p.area_sqft,
                            c.name AS colony_name,
                            u1.name AS requested_by_name,
                            u2.name AS approved_by_name
-                    FROM pricing_approvals pa
-                    LEFT JOIN plots p ON pa.plot_id = p.id
-                    LEFT JOIN colonies c ON pa.colony_id = c.id
-                    LEFT JOIN users u1 ON pa.requested_by = u1.id
-                    LEFT JOIN users u2 ON pa.approved_by = u2.id
-                    WHERE pa.status = 'pending'";
+                     FROM pricing_approvals pa
+                     LEFT JOIN plots p ON pa.plot_id = p.id
+                     LEFT JOIN colonies c ON pa.colony_id = c.id
+                     LEFT JOIN users u1 ON pa.requested_by = u1.id
+                     LEFT JOIN users u2 ON pa.approved_by = u2.id
+                     WHERE pa.status = 'pending'";
             $params = [];
+            if ($tenantId > 1) {
+                $sql .= " AND pa.tenant_id = :tid";
+                $params['tid'] = $tenantId;
+            }
             if ($colonyId) {
                 $sql .= " AND pa.colony_id = :cid";
                 $params['cid'] = $colonyId;
@@ -741,17 +761,22 @@ class ColonyPricingService
     public function getAllApprovals(?string $status = null, ?int $colonyId = null): array
     {
         try {
+            $tenantId = TenantContext::getId();
             $sql = "SELECT pa.*, p.plot_number, p.block, p.area_sqft,
                            c.name AS colony_name,
                            u1.name AS requested_by_name,
                            u2.name AS approved_by_name
-                    FROM pricing_approvals pa
-                    LEFT JOIN plots p ON pa.plot_id = p.id
-                    LEFT JOIN colonies c ON pa.colony_id = c.id
-                    LEFT JOIN users u1 ON pa.requested_by = u1.id
-                    LEFT JOIN users u2 ON pa.approved_by = u2.id
-                    WHERE 1=1";
+                     FROM pricing_approvals pa
+                     LEFT JOIN plots p ON pa.plot_id = p.id
+                     LEFT JOIN colonies c ON pa.colony_id = c.id
+                     LEFT JOIN users u1 ON pa.requested_by = u1.id
+                     LEFT JOIN users u2 ON pa.approved_by = u2.id
+                     WHERE 1=1";
             $params = [];
+            if ($tenantId > 1) {
+                $sql .= " AND pa.tenant_id = :tid";
+                $params['tid'] = $tenantId;
+            }
             if ($status) {
                 $sql .= " AND pa.status = :status";
                 $params['status'] = $status;
@@ -778,9 +803,10 @@ class ColonyPricingService
     private function processApproval(int $approvalId, string $action, string $notes = ''): array
     {
         try {
+            $tenantId = TenantContext::getId();
             $approval = $this->tryFetch(
-                "SELECT * FROM pricing_approvals WHERE id = :aid",
-                ['aid' => $approvalId]
+                "SELECT * FROM pricing_approvals WHERE id = :aid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge(['aid' => $approvalId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
             if (!$approval) {
                 return ['success' => false, 'error' => 'Approval request not found'];
@@ -799,14 +825,14 @@ class ColonyPricingService
                 "UPDATE pricing_approvals SET
                     status = :status, approved_by = :by,
                     approved_at = :at, notes = :notes, updated_at = NOW()
-                 WHERE id = :aid",
-                [
+                 WHERE id = :aid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge([
                     'status' => $action,
                     'by'     => $userId,
                     'at'     => $now,
                     'notes'  => $notes,
                     'aid'    => $approvalId,
-                ]
+                ], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
 
             // If approved, update the plot price
@@ -814,7 +840,8 @@ class ColonyPricingService
                 $plotId = (int) $approval['plot_id'];
                 $newPpsf = (float) ($approval['requested_price_per_sqft'] ?? 0);
                 $areaSqft = (float) ($this->tryFetch(
-                    "SELECT area_sqft FROM plots WHERE id = :pid", ['pid' => $plotId]
+                    "SELECT area_sqft FROM plots WHERE id = :pid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                    array_merge(['pid' => $plotId], $tenantId > 1 ? ['tid' => $tenantId] : [])
                 )['area_sqft'] ?? 0);
                 $newTotal = round($newPpsf * $areaSqft, 2);
 
@@ -825,14 +852,14 @@ class ColonyPricingService
                         negotiated_price_approved_at = :at,
                         price_override_reason = CONCAT(COALESCE(price_override_reason,''), ' | Discount approved #', :aid),
                         updated_at = NOW()
-                     WHERE id = :pid",
-                    [
+                     WHERE id = :pid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                    array_merge([
                         'tot'  => $newTotal,
                         'by'   => $userId,
                         'at'   => $now,
                         'aid'  => $approvalId,
                         'pid'  => $plotId,
-                    ]
+                    ], $tenantId > 1 ? ['tid' => $tenantId] : [])
                 );
             }
 
@@ -862,13 +889,14 @@ class ColonyPricingService
     private function storeMinPrice(int $colonyId, float $landCost, float $totalDev, float $saleableArea, float $rawCostPerSqft): void
     {
         try {
+            $tenantId = TenantContext::getId();
             $this->db->execute(
-                "UPDATE colonies SET land_cost = :lc, min_price_per_sqft = :mp WHERE id = :cid",
-                [
+                "UPDATE colonies SET land_cost = :lc, min_price_per_sqft = :mp WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+                array_merge([
                     'lc'  => round($landCost + $totalDev, 2),
                     'mp'  => round($rawCostPerSqft, 2),
                     'cid' => $colonyId,
-                ]
+                ], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
         } catch (Exception $e) {
             $this->logger->warning('storeMinPrice failed', ['error' => $e->getMessage()]);
@@ -885,11 +913,12 @@ class ColonyPricingService
      */
     private function getLandCost(int $colonyId): float
     {
+        $tenantId = TenantContext::getId();
         // Try land_acquisitions table first
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(acquisition_cost), 0) AS total
-             FROM land_acquisitions WHERE colony_id = :cid AND status = 'registered'",
-            ['cid' => $colonyId]
+             FROM land_acquisitions WHERE colony_id = :cid AND status = 'registered'" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+            array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
         );
 
         if ($row && (float) $row['total'] > 0) {
@@ -899,8 +928,8 @@ class ColonyPricingService
         // Fallback: try the acquisitions table
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(acquisition_cost), 0) AS total
-             FROM acquisitions WHERE colony_id = :cid",
-            ['cid' => $colonyId]
+             FROM acquisitions WHERE colony_id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+            array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
         );
 
         if ($row && (float) $row['total'] > 0) {
@@ -909,8 +938,8 @@ class ColonyPricingService
 
         // Second fallback: check if colony has a land_cost column directly
         $row = $this->tryFetch(
-            "SELECT COALESCE(land_cost, 0) AS total FROM colonies WHERE id = :cid",
-            ['cid' => $colonyId]
+            "SELECT COALESCE(land_cost, 0) AS total FROM colonies WHERE id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+            array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
         );
 
         return $row ? (float) $row['total'] : 0.0;
@@ -924,12 +953,13 @@ class ColonyPricingService
      */
     private function getDevelopmentCosts(int $colonyId): array
     {
+        $tenantId = TenantContext::getId();
         return $this->tryFetchAll(
             "SELECT cost_type, amount, description
              FROM colony_development_costs
-             WHERE colony_id = :cid
+             WHERE colony_id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : "") . "
              ORDER BY cost_type",
-            ['cid' => $colonyId]
+            array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
         ) ?? [];
     }
 
@@ -941,10 +971,11 @@ class ColonyPricingService
      */
     private function getTotalSaleableArea(int $colonyId): float
     {
+        $tenantId = TenantContext::getId();
         $row = $this->tryFetch(
             "SELECT COALESCE(SUM(area_sqft), 0) AS total
-             FROM plots WHERE colony_id = :cid",
-            ['cid' => $colonyId]
+             FROM plots WHERE colony_id = :cid" . ($tenantId > 1 ? " AND tenant_id = :tid" : ""),
+            array_merge(['cid' => $colonyId], $tenantId > 1 ? ['tid' => $tenantId] : [])
         );
 
         return $row ? (float) $row['total'] : 0.0;
@@ -979,7 +1010,8 @@ class ColonyPricingService
         int $changedBy = 0
     ): void {
         try {
-            $this->db->insert('price_history', [
+            $tenantId = TenantContext::getId();
+            $historyData = [
                 'plot_id'           => $plotId,
                 'colony_id'         => $colonyId,
                 'old_price'         => $oldTotalPrice,
@@ -992,7 +1024,11 @@ class ColonyPricingService
                 'reference_type'    => 'colony_pricing',
                 'reference_id'      => $colonyId,
                 'created_at'        => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            if ($tenantId > 1) {
+                $historyData['tenant_id'] = $tenantId;
+            }
+            $this->db->insert('price_history', $historyData);
         } catch (Exception $e) {
             // Price history failure is non-critical — log and continue
             $this->logger->warning('price_history insert failed', [

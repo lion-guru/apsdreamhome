@@ -21,6 +21,7 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 class MatchingBonusService
 {
@@ -50,6 +51,15 @@ class MatchingBonusService
             }
         }
         $this->db = $pdo;
+    }
+
+    protected function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -309,14 +319,18 @@ class MatchingBonusService
         if (!$this->db) return [];
         try {
             $placeholders = implode(',', array_fill(0, count(self::QUALIFYING_RANKS), '?'));
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $stmt = $this->db->prepare("
                 SELECT u.id AS user_id, a.level AS rank
                 FROM users u
                 INNER JOIN associates a ON a.user_id = u.id
                 WHERE a.status = 'active'
-                  AND a.level IN ({$placeholders})
+                  AND a.level IN ({$placeholders}){$tenantSql}
             ");
-            $stmt->execute(self::QUALIFYING_RANKS);
+            $params = self::QUALIFYING_RANKS;
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             return [];

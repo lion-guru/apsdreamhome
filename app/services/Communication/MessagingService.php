@@ -6,6 +6,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * In-app Messaging Service
@@ -18,6 +19,15 @@ class MessagingService
     public function __construct()
     {
         $this->db = Database::getInstance();
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -102,14 +112,18 @@ class MessagingService
             return [];
         }
 
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
+        $params = $tid > 1 ? [$conversationId, $limit, $offset, $tid] : [$conversationId, $limit, $offset];
+
         $messages = $this->db->query(
             "SELECT m.*, u.name as sender_name, u.avatar as sender_avatar
              FROM messages m
-             JOIN users u ON m.sender_id = u.id
+             JOIN users u ON m.sender_id = u.id{$tenantSql}
              WHERE m.conversation_id = ?
              ORDER BY m.created_at DESC
              LIMIT ? OFFSET ?",
-            [$conversationId, $limit, $offset]
+            $params
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         // Mark as read
@@ -123,18 +137,22 @@ class MessagingService
      */
     public function getUserConversations(int $userId): array
     {
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
+        $params = [$userId, $userId, $userId, $userId, $userId];
+        if ($tid > 1) { $params[] = $tid; }
         return $this->db->query(
             "SELECT c.id, c.type, c.last_message_at,
                     (SELECT m.message FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
                     (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.receiver_id = ? AND m.status != 'read') as unread_count,
-                    (SELECT u.name FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ? LIMIT 1) as other_user_name,
-                    (SELECT u.id FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ? LIMIT 1) as other_user_id,
-                    (SELECT u.avatar FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ? LIMIT 1) as other_user_avatar
+                    (SELECT u.name FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_name,
+                    (SELECT u.id FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_id,
+                    (SELECT u.avatar FROM conversation_participants cp JOIN users u ON cp.user_id = u.id WHERE cp.conversation_id = c.id AND cp.user_id != ?{$tenantSql} LIMIT 1) as other_user_avatar
              FROM conversations c
              JOIN conversation_participants cp ON c.id = cp.conversation_id
              WHERE cp.user_id = ?
              ORDER BY c.last_message_at DESC",
-            [$userId, $userId, $userId, $userId, $userId]
+            $params
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -303,15 +321,18 @@ class MessagingService
      */
     public function searchMessages(int $userId, string $query): array
     {
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
+        $params = $tid > 1 ? [$userId, "%{$query}%", $tid] : [$userId, "%{$query}%"];
         return $this->db->query(
             "SELECT m.*, u.name as sender_name
              FROM messages m
              JOIN conversation_participants cp ON m.conversation_id = cp.conversation_id
-             JOIN users u ON m.sender_id = u.id
+             JOIN users u ON m.sender_id = u.id{$tenantSql}
              WHERE cp.user_id = ? AND m.message LIKE ?
              ORDER BY m.created_at DESC
              LIMIT 50",
-            [$userId, "%{$query}%"]
+            $params
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

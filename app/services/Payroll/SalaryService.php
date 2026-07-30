@@ -3,6 +3,7 @@
 namespace App\Services\Payroll;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -13,6 +14,16 @@ class SalaryService
 {
     private Database $db;
     private LoggerInterface $logger;
+
+    private function getTenantId(): int
+    {
+        try {
+            $tid = TenantContext::getId();
+            return $tid > 0 ? $tid : 1;
+        } catch (\Exception $e) {
+            return 1;
+        }
+    }
 
     public function __construct(Database $db, LoggerInterface $logger)
     {
@@ -106,7 +117,7 @@ class SalaryService
             $result = $this->db->fetchOne("SELECT COUNT(*) as count FROM employee_salary_structure");
             
             if ($result['count'] == 0) {
-                $admin = $this->db->fetchOne("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
+                $admin = $this->db->fetchOne("SELECT id FROM users WHERE role = 'admin' AND tenant_id = ? LIMIT 1", [$this->getTenantId()]);
                 
                 if ($admin) {
                     $sampleStructure = [

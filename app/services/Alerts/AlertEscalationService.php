@@ -3,6 +3,7 @@
 namespace App\Services\Alerts;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
 use App\Services\Communication\NotificationService;
 use Exception;

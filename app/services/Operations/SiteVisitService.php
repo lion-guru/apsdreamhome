@@ -3,6 +3,7 @@
 namespace App\Services\Operations;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Site Visit Scheduler Service
@@ -16,6 +17,14 @@ class SiteVisitService
     {
         $this->database = Database::getInstance();
         $this->ensureTablesExist();
+    }
+
+    /**
+     * Get current tenant ID (> 1 means multi-tenant scoping active).
+     */
+    private function getTenantId(): int
+    {
+        return TenantContext::getId();
     }
     
     /**
@@ -51,15 +60,18 @@ class SiteVisitService
             if (!$this->isSlotAvailable($data['property_id'], $data['visit_date'], $data['visit_time'])) {
                 return ['success' => false, 'error' => 'Selected time slot is not available'];
             }
+
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ', tenant_id' : '';
+            $tenantVal = $tid > 1 ? ', ?' : '';
             
             $sql = "INSERT INTO site_visits 
                 (property_id, lead_id, user_id, visitor_name, visitor_phone, visitor_email,
                  visit_date, visit_time, duration_minutes, visit_type, assigned_to,
-                 pickup_required, pickup_location, notes) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                 pickup_required, pickup_location, notes{$tenantCol}) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?{$tenantVal})";
             
-            $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $params = [
                 $data['property_id'],
                 $data['lead_id'] ?? null,
                 $data['user_id'] ?? null,
@@ -74,7 +86,13 @@ class SiteVisitService
                 $data['pickup_required'] ?? 0,
                 $data['pickup_location'] ?? null,
                 $data['notes'] ?? null
-            ]);
+            ];
+            if ($tid > 1) {
+                $params[] = $tid;
+            }
+            
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute($params);
             
             $visitId = $this->database->lastInsertId();
             
@@ -103,13 +121,19 @@ class SiteVisitService
      */
     public function isSlotAvailable(int $propertyId, string $date, string $time): bool
     {
+        $tid = $this->getTenantId();
         // Check availability setting
         $availSql = "SELECT * FROM site_availability 
             WHERE property_id = ? AND available_date = ? 
-            AND start_time <= ? AND end_time > ? AND is_blocked = 0";
+            AND start_time <= ? AND end_time > ? AND is_blocked = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        
+        $availParams = [$propertyId, $date, $time, $time];
+        if ($tid > 1) {
+            $availParams[] = $tid;
+        }
         
         $availStmt = $this->database->prepare($availSql);
-        $availStmt->execute([$propertyId, $date, $time, $time]);
+        $availStmt->execute($availParams);
         $availability = $availStmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$availability) {
@@ -123,10 +147,15 @@ class SiteVisitService
         // Check existing bookings
         $bookingSql = "SELECT COUNT(*) as count FROM site_visits 
             WHERE property_id = ? AND visit_date = ? AND visit_time = ? 
-            AND status NOT IN ('cancelled', 'no_show')";
+            AND status NOT IN ('cancelled', 'no_show')" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        
+        $bookingParams = [$propertyId, $date, $time];
+        if ($tid > 1) {
+            $bookingParams[] = $tid;
+        }
         
         $bookingStmt = $this->database->prepare($bookingSql);
-        $bookingStmt->execute([$propertyId, $date, $time]);
+        $bookingStmt->execute($bookingParams);
         $existingBookings = $bookingStmt->fetch(\PDO::FETCH_ASSOC)['count'];
         
         $maxVisits = $availability['max_visits_per_slot'] ?? 1;
@@ -140,14 +169,20 @@ class SiteVisitService
     public function getAvailableSlots(int $propertyId, string $date): array
     {
         $slots = [];
+        $tid = $this->getTenantId();
         $businessHours = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
         
         // Get availability for date
         $availSql = "SELECT * FROM site_availability 
-            WHERE property_id = ? AND available_date = ? AND is_blocked = 0";
+            WHERE property_id = ? AND available_date = ? AND is_blocked = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        
+        $availParams = [$propertyId, $date];
+        if ($tid > 1) {
+            $availParams[] = $tid;
+        }
         
         $availStmt = $this->database->prepare($availSql);
-        $availStmt->execute([$propertyId, $date]);
+        $availStmt->execute($availParams);
         $availability = $availStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         if (!empty($availability)) {
@@ -180,6 +215,7 @@ class SiteVisitService
      */
     private function createDefaultChecklist(int $visitId): void
     {
+        $tid = $this->getTenantId();
         $items = [
             ['name' => 'Verify site location and accessibility', 'category' => 'site'],
             ['name' => 'Check plot boundaries and dimensions', 'category' => 'site'],
@@ -190,11 +226,17 @@ class SiteVisitService
             ['name' => 'Verify security arrangements', 'category' => 'security'],
         ];
         
-        $sql = "INSERT INTO visit_checklists (visit_id, item_name, category) VALUES (?, ?, ?)";
+        $tenantCol = $tid > 1 ? ', tenant_id' : '';
+        $tenantVal = $tid > 1 ? ', ?' : '';
+        $sql = "INSERT INTO visit_checklists (visit_id, item_name, category{$tenantCol}) VALUES (?, ?, ?{$tenantVal})";
         $stmt = $this->database->prepare($sql);
         
         foreach ($items as $item) {
-            $stmt->execute([$visitId, $item['name'], $item['category']]);
+            $params = [$visitId, $item['name'], $item['category']];
+            if ($tid > 1) {
+                $params[] = $tid;
+            }
+            $stmt->execute($params);
         }
     }
     
@@ -224,12 +266,20 @@ class SiteVisitService
     private function createReminder(int $visitId, string $type, string $time): void
     {
         try {
-            $sql = "INSERT INTO visit_reminders (visit_id, reminder_type, reminder_time) VALUES (?, ?, ?)";
+            $tid = $this->getTenantId();
+            $tenantCol = $tid > 1 ? ', tenant_id' : '';
+            $tenantVal = $tid > 1 ? ', ?' : '';
+            $sql = "INSERT INTO visit_reminders (visit_id, reminder_type, reminder_time{$tenantCol}) VALUES (?, ?, ?{$tenantVal})";
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
+        if (!isset($sql)) return;
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$visitId, $type, $time]);
+        $params = [$visitId, $type, $time];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
+        $stmt->execute($params);
     }
     
     /**
@@ -237,10 +287,15 @@ class SiteVisitService
      */
     private function sendConfirmation(int $visitId, array $data): void
     {
+        $tid = $this->getTenantId();
         // Get property details
-        $propSql = "SELECT title, address, location FROM properties WHERE id = ?";
+        $propSql = "SELECT title, address, location FROM properties WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $propParams = [$data['property_id']];
+        if ($tid > 1) {
+            $propParams[] = $tid;
+        }
         $propStmt = $this->database->prepare($propSql);
-        $propStmt->execute([$data['property_id']]);
+        $propStmt->execute($propParams);
         $property = $propStmt->fetch(\PDO::FETCH_ASSOC);
         
         $message = "Your site visit for {$property['title']} is confirmed on {$data['visit_date']} at {$data['visit_time']}. ";
@@ -262,17 +317,23 @@ class SiteVisitService
      */
     public function getVisits(string $dateFrom, string $dateTo, ?int $assignedTo = null, ?int $propertyId = null): array
     {
+        $tid = $this->getTenantId();
         $where = ['visit_date BETWEEN ? AND ?'];
         $params = [$dateFrom, $dateTo];
         
         if ($assignedTo) {
-            $where[] = 'assigned_to = ?';
+            $where[] = 'sv.assigned_to = ?';
             $params[] = $assignedTo;
         }
         
         if ($propertyId) {
-            $where[] = 'property_id = ?';
+            $where[] = 'sv.property_id = ?';
             $params[] = $propertyId;
+        }
+        
+        if ($tid > 1) {
+            $where[] = 'sv.tenant_id = ?';
+            $params[] = $tid;
         }
         
         $whereClause = implode(' AND ', $where);
@@ -296,15 +357,21 @@ class SiteVisitService
      */
     public function getVisit(int $visitId): ?array
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT sv.*, p.title as property_title, p.address as property_address,
             l.name as lead_name, l.email as lead_email, l.phone as lead_phone
             FROM site_visits sv
             JOIN properties p ON sv.property_id = p.id
             LEFT JOIN leads l ON sv.lead_id = l.id
-            WHERE sv.id = ?";
+            WHERE sv.id = ?" . ($tid > 1 ? " AND sv.tenant_id = ?" : "");
+        
+        $params = [$visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$visitId]);
+        $stmt->execute($params);
         $visit = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$visit) {
@@ -312,9 +379,13 @@ class SiteVisitService
         }
         
         // Get checklist
-        $checklistSql = "SELECT * FROM visit_checklists WHERE visit_id = ?";
+        $checklistSql = "SELECT * FROM visit_checklists WHERE visit_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $checklistParams = [$visitId];
+        if ($tid > 1) {
+            $checklistParams[] = $tid;
+        }
         $checklistStmt = $this->database->prepare($checklistSql);
-        $checklistStmt->execute([$visitId]);
+        $checklistStmt->execute($checklistParams);
         $visit['checklist'] = $checklistStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return $visit;
@@ -331,6 +402,7 @@ class SiteVisitService
             return ['success' => false, 'error' => 'Invalid status'];
         }
         
+        $tid = $this->getTenantId();
         $updates = ['status = ?'];
         $params = [$status];
         
@@ -349,8 +421,11 @@ class SiteVisitService
         }
         
         $params[] = $visitId;
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         
-        $sql = "UPDATE site_visits SET " . implode(', ', $updates) . " WHERE id = ?";
+        $sql = "UPDATE site_visits SET " . implode(', ', $updates) . " WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
         $stmt = $this->database->prepare($sql);
         $stmt->execute($params);
         
@@ -365,9 +440,14 @@ class SiteVisitService
      */
     public function updateChecklistItem(int $checklistId, bool $isCompleted, ?string $notes = null): array
     {
-        $sql = "UPDATE visit_checklists SET is_completed = ?, notes = ? WHERE id = ?";
+        $tid = $this->getTenantId();
+        $sql = "UPDATE visit_checklists SET is_completed = ?, notes = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$isCompleted ? 1 : 0, $notes, $checklistId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$isCompleted ? 1 : 0, $notes, $checklistId]);
+        $stmt->execute($params);
         
         return ['success' => $stmt->rowCount() > 0];
     }
@@ -387,9 +467,14 @@ class SiteVisitService
             return ['success' => false, 'error' => 'New time slot is not available'];
         }
         
-        $sql = "UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?";
+        $tid = $this->getTenantId();
+        $sql = "UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$newDate, $newTime, $visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$newDate, $newTime, $visitId]);
+        $stmt->execute($params);
         
         // Update reminders
         $this->clearReminders($visitId);
@@ -403,9 +488,14 @@ class SiteVisitService
      */
     public function cancelVisit(int $visitId, string $reason): array
     {
-        $sql = "UPDATE site_visits SET status = 'cancelled', notes = CONCAT(notes, '\\n\\nCancelled: ', ?) WHERE id = ?";
+        $tid = $this->getTenantId();
+        $sql = "UPDATE site_visits SET status = 'cancelled', notes = CONCAT(notes, '\\n\\nCancelled: ', ?) WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$reason, $visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$reason, $visitId]);
+        $stmt->execute($params);
         
         // Clear reminders
         $this->clearReminders($visitId);
@@ -419,12 +509,18 @@ class SiteVisitService
     private function clearReminders(int $visitId): void
     {
         try {
-            $sql = "DELETE FROM visit_reminders WHERE visit_id = ? AND is_sent = 0";
+            $tid = $this->getTenantId();
+            $sql = "DELETE FROM visit_reminders WHERE visit_id = ? AND is_sent = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
+        if (!isset($sql)) return;
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$visitId]);
+        $params = [$visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
+        $stmt->execute($params);
     }
     
     /**
@@ -462,25 +558,37 @@ class SiteVisitService
      */
     private function updateVisitAnalytics(int $visitId): void
     {
-        $sql = "SELECT property_id, visit_date, status, rating FROM site_visits WHERE id = ?";
+        $tid = $this->getTenantId();
+        $sql = "SELECT property_id, visit_date, status, rating FROM site_visits WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = [$visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$visitId]);
+        $stmt->execute($params);
         $visit = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$visit) return;
         
         // Update or insert analytics
+        $tenantCol = $tid > 1 ? ', tenant_id' : '';
+        $tenantVal = $tid > 1 ? ', ?' : '';
         $updateSql = "INSERT INTO visit_analytics 
-            (property_id, visit_date, total_visits, completed_visits) 
-            VALUES (?, ?, 1, ?)
+            (property_id, visit_date, total_visits, completed_visits{$tenantCol}) 
+            VALUES (?, ?, 1, ?{$tenantVal})
             ON DUPLICATE KEY UPDATE
             total_visits = total_visits + 1,
             completed_visits = completed_visits + VALUES(completed_visits)";
         
         $completed = ($visit['status'] === 'completed') ? 1 : 0;
         
+        $updateParams = [$visit['property_id'], $visit['visit_date'], $completed];
+        if ($tid > 1) {
+            $updateParams[] = $tid;
+        }
+        
         $updateStmt = $this->database->prepare($updateSql);
-        $updateStmt->execute([$visit['property_id'], $visit['visit_date'], $completed]);
+        $updateStmt->execute($updateParams);
     }
     
     /**
@@ -488,6 +596,9 @@ class SiteVisitService
      */
     public function getStatistics(string $dateFrom, string $dateTo): array
     {
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        
         $sql = "SELECT 
             COUNT(*) as total_visits,
             SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
@@ -497,23 +608,31 @@ class SiteVisitService
             COUNT(DISTINCT property_id) as unique_properties,
             COUNT(DISTINCT assigned_to) as unique_agents
             FROM site_visits 
-            WHERE visit_date BETWEEN ? AND ?";
+            WHERE visit_date BETWEEN ? AND ?{$tenantWhere}";
         
+        $params = [$dateFrom, $dateTo];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$dateFrom, $dateTo]);
+        $stmt->execute($params);
         $stats = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         // Top properties
         $topSql = "SELECT p.title, COUNT(*) as visit_count
             FROM site_visits sv
             JOIN properties p ON sv.property_id = p.id
-            WHERE sv.visit_date BETWEEN ? AND ?
+            WHERE sv.visit_date BETWEEN ? AND ?{$tenantWhere}
             GROUP BY sv.property_id
             ORDER BY visit_count DESC
             LIMIT 5";
         
+        $topParams = [$dateFrom, $dateTo];
+        if ($tid > 1) {
+            $topParams[] = $tid;
+        }
         $topStmt = $this->database->prepare($topSql);
-        $topStmt->execute([$dateFrom, $dateTo]);
+        $topStmt->execute($topParams);
         $topProperties = $topStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [

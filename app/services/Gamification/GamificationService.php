@@ -6,6 +6,7 @@
 namespace App\Services\Gamification;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Gamification Service
@@ -22,6 +23,15 @@ class GamificationService
     const CATEGORY_TRAINING = 'training';
     const CATEGORY_ENGAGEMENT = 'engagement';
     const CATEGORY_MILESTONE = 'milestone';
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -84,9 +94,10 @@ class GamificationService
         }
 
         // Update total points
+        $tid = $this->getTenantId();
         $this->db->query(
-            "UPDATE users SET total_points = total_points + ? WHERE id = ?",
-            [$points, $userId]
+            "UPDATE users SET total_points = total_points + ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$points, $userId, $tid] : [$points, $userId]
         );
 
         return [
@@ -101,9 +112,10 @@ class GamificationService
      */
     private function checkLevelUp(int $userId): ?array
     {
+        $tid = $this->getTenantId();
         $user = $this->db->query(
-            "SELECT total_points, current_level FROM users WHERE id = ?",
-            [$userId]
+            "SELECT total_points, current_level FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$userId, $tid] : [$userId]
         )->fetch(\PDO::FETCH_ASSOC);
 
         if (!$user) return null;
@@ -112,8 +124,8 @@ class GamificationService
 
         if ($newLevel > $user['current_level']) {
             $this->db->query(
-                "UPDATE users SET current_level = ? WHERE id = ?",
-                [$newLevel, $userId]
+                "UPDATE users SET current_level = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$newLevel, $userId, $tid] : [$newLevel, $userId]
             );
 
             return [
@@ -221,9 +233,14 @@ class GamificationService
                 $sql .= ", u.total_points as score";
         }
 
+        $tid = $this->getTenantId();
         $sql .= " FROM users u LEFT JOIN user_badges ub ON u.id = ub.user_id WHERE u.status = 'active'";
 
         $params = [];
+        if ($tid > 1) {
+            $sql .= " AND u.tenant_id = ?";
+            $params[] = $tid;
+        }
         if ($departmentId) {
             $sql .= " AND u.department_id = ?";
             $params[] = $departmentId;
@@ -322,9 +339,10 @@ class GamificationService
         )->fetchColumn();
 
         // Login streak
+        $tid = $this->getTenantId();
         $stats['login_streak'] = $this->db->query(
-            "SELECT login_streak FROM users WHERE id = ?",
-            [$userId]
+            "SELECT login_streak FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$userId, $tid] : [$userId]
         )->fetchColumn() ?: 0;
 
         return $stats;
@@ -335,14 +353,15 @@ class GamificationService
      */
     public function getUserRank(int $userId): int
     {
+        $tid = $this->getTenantId();
         return $this->db->query(
             "SELECT rank FROM (
                 SELECT id, @rank := @rank + 1 as rank
                 FROM users, (SELECT @rank := 0) r
-                WHERE status = 'active'
+                WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
                 ORDER BY total_points DESC
             ) ranked WHERE id = ?",
-            [$userId]
+            $tid > 1 ? [$tid, $userId] : [$userId]
         )->fetchColumn() ?: 0;
     }
 

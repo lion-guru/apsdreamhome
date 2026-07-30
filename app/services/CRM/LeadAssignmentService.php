@@ -2,6 +2,7 @@
 namespace App\Services\CRM;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Exception;
 
 class LeadAssignmentService
@@ -23,10 +24,12 @@ class LeadAssignmentService
             return ['assigned' => 0, 'message' => 'No available handlers found'];
         }
 
+        $tid = TenantContext::getId();
         $unassigned = $this->pdo->prepare(
-            "SELECT id FROM leads WHERE assigned_to IS NULL AND status='new' ORDER BY created_at ASC LIMIT ?"
+            "SELECT id FROM leads WHERE assigned_to IS NULL AND status='new'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at ASC LIMIT ?"
         );
-        $unassigned->execute([$batchSize]);
+        $params = $tid > 1 ? [$tid, $batchSize] : [$batchSize];
+        $unassigned->execute($params);
         $leads = $unassigned->fetchAll(\PDO::FETCH_COLUMN);
 
         if (empty($leads)) {
@@ -35,13 +38,14 @@ class LeadAssignmentService
 
         $assignments = [];
         $idx = 0;
-        $stmt = $this->pdo->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
 
         $this->pdo->beginTransaction();
         try {
             foreach ($leads as $leadId) {
                 $handler = $handlers[$idx % count($handlers)];
-                $stmt->execute([$handler['id'], $leadId]);
+                $updParams = $tid > 1 ? [$handler['id'], $leadId, $tid] : [$handler['id'], $leadId];
+                $stmt->execute($updParams);
                 $assignments[] = ['lead_id' => $leadId, 'assigned_to' => $handler['id'], 'handler_name' => $handler['name']];
                 $idx++;
             }
@@ -64,12 +68,16 @@ class LeadAssignmentService
     public function getAvailableHandlers(): array
     {
         $roles = "'employee','telecaller','agent','sales'";
+        $tid = TenantContext::getId();
+        $subSql = "SELECT COUNT(*) FROM leads WHERE assigned_to = u.id AND status = 'new'";
+        if ($tid > 1) { $subSql .= " AND tenant_id = ?"; }
         $sql = "SELECT u.id, u.name, u.role,
-                       (SELECT COUNT(*) FROM leads WHERE assigned_to = u.id AND status = 'new') as workload
+                       ($subSql) as workload
                 FROM users u
-                WHERE u.role IN ($roles) AND u.status = 'active'
+                WHERE u.role IN ($roles) AND u.status = 'active'" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 ORDER BY workload ASC";
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($tid > 1 ? [$tid, $tid] : []);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
     }
 
@@ -78,11 +86,30 @@ class LeadAssignmentService
      */
     public function getStats(): array
     {
+        $tid = TenantContext::getId();
+        $total = $new = $unassigned = $assigned = 0;
+
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads" . ($tid > 1 ? " WHERE tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$tid] : []);
+        $total = (int)$stmt->fetchColumn();
+
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE status='new'" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$tid] : []);
+        $new = (int)$stmt->fetchColumn();
+
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$tid] : []);
+        $unassigned = (int)$stmt->fetchColumn();
+
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE assigned_to IS NOT NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""));
+        $stmt->execute($tid > 1 ? [$tid] : []);
+        $assigned = (int)$stmt->fetchColumn();
+
         return [
-            'total' => $this->pdo->query("SELECT COUNT(*) FROM leads")->fetchColumn(),
-            'new' => $this->pdo->query("SELECT COUNT(*) FROM leads WHERE status='new'")->fetchColumn(),
-            'unassigned' => $this->pdo->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL")->fetchColumn(),
-            'assigned' => $this->pdo->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NOT NULL")->fetchColumn(),
+            'total' => $total,
+            'new' => $new,
+            'unassigned' => $unassigned,
+            'assigned' => $assigned,
             'handlers' => count($this->getAvailableHandlers()),
         ];
     }

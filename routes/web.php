@@ -4091,18 +4091,6 @@ $router->get('/admin/analytics/reports/sales', 'App\\Http\\Controllers\\Reports\
 $router->get('/admin/analytics/reports/properties', 'App\\Http\\Controllers\\Reports\\ReportController@property');
 $router->get('/admin/analytics/reports/user-activity', 'App\\Http\\Controllers\\Reports\\ReportController@userActivity');
 
-// --- Associate\AssociateController ---
-$router->get('/admin/associate/manage', 'Associate\\AssociateController@dashboard');
-$router->get('/admin/associate/manage/list', 'Associate\\AssociateController@index');
-$router->get('/admin/associate/manage/create', 'Associate\\AssociateController@create');
-$router->post('/admin/associate/manage/store', 'Associate\\AssociateController@store');
-$router->get('/admin/associate/manage/edit/{id}', 'Associate\\AssociateController@edit');
-$router->post('/admin/associate/manage/update/{id}', 'Associate\\AssociateController@update');
-$router->get('/admin/associate/manage/show/{id}', 'Associate\\AssociateController@show');
-$router->get('/admin/associate/manage/metrics/{id}', 'Associate\\AssociateController@metrics');
-$router->post('/admin/associate/manage/delete/{id}', 'Associate\\AssociateController@delete');
-$router->post('/admin/associate/manage/update-status/{id}', 'Associate\\AssociateController@updateStatus');
-
 // --- Business\AssociateController ---
 $router->get('/admin/business/associates', 'Business\\AssociateController@index');
 $router->get('/admin/business/associates/show/{id}', 'Business\\AssociateController@show');

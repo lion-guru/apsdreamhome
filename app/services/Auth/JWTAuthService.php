@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * JWT Authentication Service for Mobile API V2
@@ -13,6 +14,15 @@ class JWTAuthService
     private $secret;
     private $database;
     private $inMemory = [];
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -229,8 +239,13 @@ class JWTAuthService
     {
         try {
             $pdo = $this->database->getConnection();
+            $tid = $this->getTenantId();
             $sql = "SELECT id, name, email, phone, role, status FROM users WHERE id = ?";
             $params = [(int) $userId];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
             if ($role) {
                 $sql .= " AND role = ?";
                 $params[] = $role;

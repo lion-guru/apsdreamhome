@@ -6,6 +6,7 @@
 namespace App\Services\HR;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use App\Models\Employee;
 use App\Models\EmployeeAttendance;
 
@@ -28,6 +29,15 @@ class PayrollService
     const COMPONENT_ESI = 'esi';
     const COMPONENT_TDS = 'tds';
     const COMPONENT_PROFESSIONAL_TAX = 'professional_tax';
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -343,9 +353,14 @@ class PayrollService
      */
     private function getActiveEmployees(?int $departmentId): array
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT id, name, employee_code FROM users WHERE status = 'active'";
         $params = [];
 
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         if ($departmentId) {
             $sql .= " AND department_id = ?";
             $params[] = $departmentId;
@@ -401,17 +416,18 @@ class PayrollService
     public function generatePayslip(int $payrollId): string
     {
         try {
+            $tid = $this->getTenantId();
             $sql = "SELECT p.*, e.name, e.employee_code, e.department_id, e.designation,
                            d.name as department_name
                     FROM employee_payrolls p
                     JOIN users e ON p.employee_id = e.id
                     LEFT JOIN departments d ON e.department_id = d.id
-                    WHERE p.id = ?";
+                    WHERE p.id = ?" . ($tid > 1 ? " AND e.tenant_id = ?" : "");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
 
-        $payroll = $this->db->query($sql, [$payrollId])->fetch(\PDO::FETCH_ASSOC);
+        $payroll = $this->db->query($sql, $tid > 1 ? [$payrollId, $tid] : [$payrollId])->fetch(\PDO::FETCH_ASSOC);
 
         if (!$payroll) {
             throw new \Exception('Payroll not found');

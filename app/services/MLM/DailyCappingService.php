@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\MLM;
 
+use App\Core\Middleware\TenantContext;
+
 class DailyCappingService
 {
     private $db;
@@ -10,6 +12,15 @@ class DailyCappingService
         $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
     
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Apply daily capping rule for level rewards
      * Checks SUM(amount) of 'level' transactions today
@@ -60,8 +71,10 @@ class DailyCappingService
      */
     public function getCapStatus(int $userId): array
     {
-        $stmt = $this->db->prepare("SELECT u.current_package_id, p.daily_capping, p.name as package_name FROM users u LEFT JOIN packages p ON p.id = u.current_package_id WHERE u.id = ?");
-        $stmt->execute([$userId]);
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
+        $stmt = $this->db->prepare("SELECT u.current_package_id, p.daily_capping, p.name as package_name FROM users u LEFT JOIN packages p ON p.id = u.current_package_id WHERE u.id = ?{$tenantSql}");
+        $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         $dailyCap = $user ? (float)$user['daily_capping'] : 0;

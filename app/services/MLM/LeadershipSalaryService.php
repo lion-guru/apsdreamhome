@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\MLM;
 
+use App\Core\Middleware\TenantContext;
+
 class LeadershipSalaryService
 {
     private $db;
@@ -24,6 +26,15 @@ class LeadershipSalaryService
         $this->db = \App\Core\Database\Database::getInstance()->getConnection();
     }
     
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Evaluate a user's eligibility for leadership salary targets
      * Called after a booking/commission event
@@ -171,8 +182,10 @@ class LeadershipSalaryService
     
     private function getUserRegisteredDate(int $userId): ?string
     {
-        $stmt = $this->db->prepare("SELECT created_at FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->db->prepare("SELECT created_at FROM users WHERE id = ?{$tenantSql}");
+        $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $user ? $user['created_at'] : null;
     }

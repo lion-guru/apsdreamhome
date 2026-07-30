@@ -17,6 +17,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\AI\AIGateway;
 
 class LoginNotificationService
@@ -27,6 +28,15 @@ class LoginNotificationService
     private $pushService;
     private $whatsappService;
     private $gateway;
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -102,7 +112,9 @@ class LoginNotificationService
         $results = [];
 
         // Fetch user details
-        $user = $this->db->fetchOne("SELECT name, email, phone FROM users WHERE id = ?", [$userId]);
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $user = $this->db->fetchOne("SELECT name, email, phone FROM users WHERE id = ?{$tenantSql}", $tid > 1 ? [$userId, $tid] : [$userId]);
         if (!$user) return ['error' => 'User not found'];
 
         $deviceInfo = $this->parseDevice($userAgent);
@@ -565,9 +577,11 @@ HTML;
 
         try {
             $hash = md5($ua);
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $row = $this->db->fetchOne(
-                "SELECT id FROM login_attempts WHERE identifier = (SELECT email FROM users WHERE id = ? LIMIT 1) AND user_agent LIKE ? AND success = 1 LIMIT 1",
-                [$userId, '%' . substr($hash, 0, 8) . '%']
+                "SELECT id FROM login_attempts WHERE identifier = (SELECT email FROM users WHERE id = ?{$tenantSql} LIMIT 1) AND user_agent LIKE ? AND success = 1 LIMIT 1",
+                $tid > 1 ? [$userId, $tid, '%' . substr($hash, 0, 8) . '%'] : [$userId, '%' . substr($hash, 0, 8) . '%']
             );
             return empty($row); // new if no previous successful login with similar UA
         } catch (\Throwable $e) {

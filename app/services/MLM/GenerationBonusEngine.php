@@ -25,6 +25,7 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 class GenerationBonusEngine
 {
@@ -63,6 +64,15 @@ class GenerationBonusEngine
             }
         }
         $this->db = $pdo;
+    }
+
+    protected function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -240,6 +250,7 @@ class GenerationBonusEngine
                 INNER JOIN mlm_network_tree nt ON nt.associate_id = a.id
                 WHERE a.status = 'active'
                   AND a.level != 'associate'
+                {$this->getTenantWhere()}u
                 ORDER BY FIELD(a.level, 'site_manager','president','vice_president','sr_bdm','bdm','senior_associate')
             ");
             return $r->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -355,6 +366,14 @@ class GenerationBonusEngine
         $rates = self::DEFAULT_GEN_RATES;
         // Could read from mlm_settings if needed
         return $rates;
+    }
+
+    protected function getTenantWhere(string $alias = ''): string
+    {
+        $tid = $this->getTenantId();
+        if ($tid <= 1) return '';
+        $a = $alias ? $alias . '.' : '';
+        return " AND {$a}tenant_id = {$tid}";
     }
 
     protected function getSetting(string $key, string $default = ''): string

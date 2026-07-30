@@ -3,6 +3,7 @@
 namespace App\Services\AI;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Exception;
 
 /**
@@ -297,21 +298,22 @@ class AIFraudDetectionService
     {
         try {
             // Check for same email/phone across multiple users
-            $user = $this->db->fetch("SELECT email, phone FROM users WHERE id = ?", [$userId]);
+            $tid = TenantContext::getId();
+            $user = $this->db->fetch("SELECT email, phone FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$userId, $tid] : [$userId]);
             
             if ($user) {
                 $sameEmail = $this->db->fetch("
                     SELECT COUNT(*) as cnt FROM users 
-                    WHERE email = ? AND id != ? AND role = ?
-                ", [$user['email'], $userId, $userType]);
+                    WHERE email = ? AND id != ? AND role = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
+                ", $tid > 1 ? [$user['email'], $userId, $userType, $tid] : [$user['email'], $userId, $userType]);
                 
                 if (($sameEmail['cnt'] ?? 0) > 0) return 30;
                 
                 if ($user['phone']) {
                     $samePhone = $this->db->fetch("
                         SELECT COUNT(*) as cnt FROM users 
-                        WHERE phone = ? AND id != ? AND role = ?
-                    ", [$user['phone'], $userId, $userType]);
+                        WHERE phone = ? AND id != ? AND role = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
+                    ", $tid > 1 ? [$user['phone'], $userId, $userType, $tid] : [$user['phone'], $userId, $userType]);
                     
                     if (($samePhone['cnt'] ?? 0) > 0) return 30;
                 }
@@ -461,14 +463,15 @@ class AIFraudDetectionService
     public function getPendingAlerts(int $limit = 50): array
     {
         try {
+            $tid = TenantContext::getId();
             return $this->db->fetchAll("
                 SELECT fa.*, u.name as reviewer_name 
                 FROM fraud_alerts fa
-                LEFT JOIN users u ON fa.reviewed_by = u.id
+                LEFT JOIN users u ON fa.reviewed_by = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE fa.status = 'pending'
                 ORDER BY fa.risk_score DESC, fa.created_at DESC
                 LIMIT ?
-            ", [$limit]) ?? [];
+            ", $tid > 1 ? [$tid, $limit] : [$limit]) ?? [];
         } catch (Exception $e) {
             error_log('Get pending alerts error: ' . $e->getMessage());
             return [];

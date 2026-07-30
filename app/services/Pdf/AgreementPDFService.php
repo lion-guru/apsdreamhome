@@ -4,11 +4,22 @@ namespace App\Services\PDF;
 
 use TCPDF;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 class AgreementPDFService
 {
     private $db;
     private $storageDir;
+
+    private function getTenantId(): int
+    {
+        try {
+            $tid = TenantContext::getId();
+            return $tid > 0 ? $tid : 1;
+        } catch (\Exception $e) {
+            return 1;
+        }
+    }
 
     private static $companyName = 'APS Dream Home Pvt. Ltd.';
     private static $cin = 'U70109UP2020PTC123456';
@@ -743,8 +754,14 @@ class AgreementPDFService
     {
         if (!$this->db || !$userId) return null;
         try {
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ? LIMIT 1");
-            $stmt->execute([$userId]);
+            $tid = $this->getTenantId();
+            if ($tid > 1) {
+                $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
+                $stmt->execute([$userId, $tid]);
+            } else {
+                $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ? LIMIT 1");
+                $stmt->execute([$userId]);
+            }
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {

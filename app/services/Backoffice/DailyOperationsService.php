@@ -6,6 +6,8 @@
 
 namespace App\Services\Backoffice;
 
+use App\Core\Middleware\TenantContext;
+
 class DailyOperationsService
 {
     private $pdo;
@@ -21,6 +23,31 @@ class DailyOperationsService
                 $this->pdo = null;
             }
         }
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    private function tJoin(string $alias): string
+    {
+        return $this->getTenantId() > 1 ? " AND {$alias}.tenant_id = ?" : '';
+    }
+
+    private function tEnd(): string
+    {
+        return $this->getTenantId() > 1 ? ' AND tenant_id = ?' : '';
+    }
+
+    private function tVal(): array
+    {
+        $tid = $this->getTenantId();
+        return $tid > 1 ? [$tid] : [];
     }
 
     private function fetchAll($sql, $params = [])
@@ -96,7 +123,7 @@ class DailyOperationsService
 
     public function getMonthlyAttendance($month)
     {
-        return $this->fetchAll("SELECT ea.*,u.name AS employee_name FROM employee_attendance ea LEFT JOIN users u ON ea.employee_id=u.id WHERE DATE_FORMAT(ea.attendance_date,'%Y-%m')=? ORDER BY ea.attendance_date,u.name", [$month]);
+        return $this->fetchAll("SELECT ea.*,u.name AS employee_name FROM employee_attendance ea LEFT JOIN users u ON ea.employee_id=u.id{$this->tJoin('u')} WHERE DATE_FORMAT(ea.attendance_date,'%Y-%m')=? ORDER BY ea.attendance_date,u.name", array_merge($this->tVal(), [$month]));
     }
 
     /* ── LEAVES ────────────────────────────────────────── */
@@ -126,13 +153,13 @@ class DailyOperationsService
 
     public function getPendingLeaves()
     {
-        return $this->fetchAll("SELECT lr.*,u.name AS employee_name FROM employee_leave_requests lr LEFT JOIN users u ON lr.employee_id=u.id WHERE lr.status='pending' ORDER BY lr.created_at DESC");
+        return $this->fetchAll("SELECT lr.*,u.name AS employee_name FROM employee_leave_requests lr LEFT JOIN users u ON lr.employee_id=u.id{$this->tJoin('u')} WHERE lr.status='pending' ORDER BY lr.created_at DESC", $this->tVal());
     }
 
     public function getAllLeaves($status = '')
     {
-        $sql = "SELECT lr.*,u.name AS employee_name,a.name AS approver_name FROM employee_leave_requests lr LEFT JOIN users u ON lr.employee_id=u.id LEFT JOIN users a ON lr.approved_by=a.id";
-        $params = [];
+        $sql = "SELECT lr.*,u.name AS employee_name,a.name AS approver_name FROM employee_leave_requests lr LEFT JOIN users u ON lr.employee_id=u.id{$this->tJoin('u')} LEFT JOIN users a ON lr.approved_by=a.id{$this->tJoin('a')}";
+        $params = array_merge($this->tVal(), $this->tVal());
         if ($status) { $sql .= " WHERE lr.status=?"; $params[] = $status; }
         $sql .= " ORDER BY lr.created_at DESC";
         return $this->fetchAll($sql, $params);
@@ -142,7 +169,7 @@ class DailyOperationsService
 
     public function generatePayslip($employeeId, $month, $year)
     {
-        $emp = $this->fetchOne("SELECT * FROM users WHERE id=?", [$employeeId]);
+        $emp = $this->fetchOne("SELECT * FROM users WHERE id=?{$this->tEnd()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return ['error' => 'Employee not found'];
 
         $empExt = $this->fetchOne("SELECT * FROM employees WHERE user_id=?", [$employeeId]);
@@ -203,8 +230,8 @@ class DailyOperationsService
 
     public function getAllPayslips($month = '', $year = '')
     {
-        $sql = "SELECT ep.*,u.name AS employee_name FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id";
-        $params = [];
+        $sql = "SELECT ep.*,u.name AS employee_name FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')}";
+        $params = $this->tVal();
         if ($month && $year) { $sql .= " WHERE ep.period_month=? AND ep.period_year=?"; $params[] = $month; $params[] = $year; }
         $sql .= " ORDER BY ep.period_year DESC,ep.period_month DESC,u.name";
         return $this->fetchAll($sql, $params);
@@ -212,7 +239,7 @@ class DailyOperationsService
 
     public function getPayslipById($id)
     {
-        return $this->fetchOne("SELECT ep.*,u.name AS employee_name,u.email AS employee_email FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id WHERE ep.id=?", [$id]);
+        return $this->fetchOne("SELECT ep.*,u.name AS employee_name,u.email AS employee_email FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} WHERE ep.id=?", array_merge($this->tVal(), [$id]));
     }
 
     public function payPayslip($payslipId, $paymentMode, $bankAccountId = null)
@@ -318,13 +345,13 @@ class DailyOperationsService
 
     public function getLeadById($id)
     {
-        return $this->fetchOne("SELECT lp.*,u.name AS assigned_name,c.name AS creator_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id LEFT JOIN users c ON lp.created_by=c.id WHERE lp.id=?", [$id]);
+        return $this->fetchOne("SELECT lp.*,u.name AS assigned_name,c.name AS creator_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id{$this->tJoin('u')} LEFT JOIN users c ON lp.created_by=c.id{$this->tJoin('c')} WHERE lp.id=?", array_merge($this->tVal(), $this->tVal(), [$id]));
     }
 
     public function listLeads(array $filters = [])
     {
-        $sql = "SELECT lp.*,u.name AS assigned_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id";
-        $params = [];
+        $sql = "SELECT lp.*,u.name AS assigned_name FROM lead_pipeline lp LEFT JOIN users u ON lp.assigned_to=u.id{$this->tJoin('u')}";
+        $params = $this->tVal();
         $wh = [];
         if (!empty($filters['status'])) { $wh[]="lp.status=?"; $params[]=$filters['status']; }
         if (!empty($filters['source'])) { $wh[]="lp.lead_source=?"; $params[]=$filters['source']; }
@@ -359,7 +386,7 @@ class DailyOperationsService
 
     public function getLeadTimeline($leadId)
     {
-        return $this->fetchAll("SELECT lpa.*,u.name AS creator_name FROM lead_pipeline_activities lpa LEFT JOIN users u ON lpa.created_by=u.id WHERE lpa.lead_id=? ORDER BY lpa.activity_date DESC", [$leadId]);
+        return $this->fetchAll("SELECT lpa.*,u.name AS creator_name FROM lead_pipeline_activities lpa LEFT JOIN users u ON lpa.created_by=u.id{$this->tJoin('u')} WHERE lpa.lead_id=? ORDER BY lpa.activity_date DESC", array_merge($this->tVal(), [$leadId]));
     }
 
     public function advanceLeadStage($leadId, $newStage)
@@ -410,8 +437,8 @@ class DailyOperationsService
 
     public function getOperationsLog($date = '', array $filters = [])
     {
-        $sql = "SELECT dol.*,u.name AS assigned_name,c.name AS colony_name FROM daily_operations_log dol LEFT JOIN users u ON dol.assigned_to=u.id LEFT JOIN colonies c ON dol.colony_id=c.id";
-        $params = []; $wh = [];
+        $sql = "SELECT dol.*,u.name AS assigned_name,c.name AS colony_name FROM daily_operations_log dol LEFT JOIN users u ON dol.assigned_to=u.id{$this->tJoin('u')} LEFT JOIN colonies c ON dol.colony_id=c.id";
+        $params = $this->tVal(); $wh = [];
         if ($date) { $wh[]="dol.log_date=?"; $params[]=$date; }
         if (!empty($filters['log_type'])) { $wh[]="dol.log_type=?"; $params[]=$filters['log_type']; }
         if (!empty($filters['status'])) { $wh[]="dol.status=?"; $params[]=$filters['status']; }
@@ -449,7 +476,7 @@ class DailyOperationsService
 
     public function getReportHistory($reportId, $limit = 20)
     {
-        return $this->fetchAll("SELECT re.*,u.name AS executed_by_name FROM report_executions re LEFT JOIN users u ON re.executed_by=u.id WHERE re.report_id=? ORDER BY re.created_at DESC LIMIT $limit", [$reportId]);
+        return $this->fetchAll("SELECT re.*,u.name AS executed_by_name FROM report_executions re LEFT JOIN users u ON re.executed_by=u.id{$this->tJoin('u')} WHERE re.report_id=? ORDER BY re.created_at DESC LIMIT $limit", array_merge($this->tVal(), [$reportId]));
     }
 
     /* ── DASHBOARD ─────────────────────────────────────── */
@@ -462,7 +489,7 @@ class DailyOperationsService
         $activeLeads = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE status NOT IN ('closed_won','closed_lost')");
         $pendingLeaves = $this->fetchOne("SELECT COUNT(*) AS cnt FROM employee_leave_requests WHERE status='pending'");
         $presentToday = $this->fetchOne("SELECT COUNT(*) AS cnt FROM employee_attendance WHERE attendance_date=? AND status='present'", [$today]);
-        $totalEmp = $this->fetchOne("SELECT COUNT(*) AS cnt FROM users WHERE role='employee'");
+        $totalEmp = $this->fetchOne("SELECT COUNT(*) AS cnt FROM users WHERE role='employee'{$this->tEnd()}", $this->tVal());
         $reportsMonth = $this->fetchOne("SELECT COUNT(*) AS cnt FROM report_executions WHERE DATE_FORMAT(created_at,'%Y-%m')=?", [$month]);
         $attendancePct = ($totalEmp['cnt']??0) > 0 ? round(($presentToday['cnt']??0)/($totalEmp['cnt']??1)*100,1) : 0;
 
@@ -476,7 +503,7 @@ class DailyOperationsService
 
     public function getEmployees()
     {
-        return $this->fetchAll("SELECT id,name,email FROM users WHERE role='employee' ORDER BY name");
+        return $this->fetchAll("SELECT id,name,email FROM users WHERE role='employee'{$this->tEnd()} ORDER BY name", $this->tVal());
     }
 
     public function getColonies()

@@ -3,6 +3,7 @@
 namespace App\Services\Accounting;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Exception;
 
 class InvoiceService
@@ -233,14 +234,15 @@ class InvoiceService
     {
         $pdo = $this->pdo();
 
+        $tid = TenantContext::getId();
         $booking = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, p.area_sqft, p.total_price AS plot_price,
                 u.name AS client_name, u.email AS client_email, u.phone AS client_phone
             FROM plot_bookings pb
             LEFT JOIN inventory_plots p ON pb.plot_id = p.id
-            LEFT JOIN users u ON pb.user_id = u.id
+            LEFT JOIN users u ON pb.user_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
             WHERE pb.id = ?");
         $stmt = $booking;
-        $stmt->execute([$bookingId]);
+        $stmt->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$row) {
@@ -499,7 +501,16 @@ class InvoiceService
     {
         $pdo = $this->pdo();
         try {
-            $stmt = $pdo->query("SELECT id, name, email, phone, role FROM users WHERE role IN ('customer','associate','agent','employee') ORDER BY name ASC");
+            $tid = TenantContext::getId();
+            $sql = "SELECT id, name, email, phone, role FROM users WHERE role IN ('customer','associate','agent','employee')";
+            $params = [];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
+            $sql .= " ORDER BY name ASC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];
@@ -510,12 +521,15 @@ class InvoiceService
     {
         $pdo = $this->pdo();
         try {
-            $stmt = $pdo->query("SELECT pb.id, pb.booking_number, pb.total_amount, pb.status,
+            $tid = TenantContext::getId();
+            $sql = "SELECT pb.id, pb.booking_number, pb.total_amount, pb.status,
                     p.plot_no, u.name AS client_name
                 FROM plot_bookings pb
                 LEFT JOIN inventory_plots p ON pb.plot_id = p.id
-                LEFT JOIN users u ON pb.user_id = u.id
-                ORDER BY pb.created_at DESC LIMIT 200");
+                LEFT JOIN users u ON pb.user_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
+                ORDER BY pb.created_at DESC LIMIT 200";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$tid] : []);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];

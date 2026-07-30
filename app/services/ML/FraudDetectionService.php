@@ -3,6 +3,7 @@
 namespace App\Services\ML;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * FraudDetectionService - ML-based Fraud Detection
@@ -11,6 +12,15 @@ use App\Core\Database\Database;
 class FraudDetectionService
 {
     private $db;
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     public function __construct()
     {
@@ -24,14 +34,15 @@ class FraudDetectionService
      */
     public function analyzeUserBehavior($userId)
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT DATEDIFF(NOW(), created_at) as account_age, 
                        status as verification_status, 
                        COALESCE(activity_logs_unified, 0) as activity_logs_unified,
                        '' as last_login_ip,
                        status
-                FROM users WHERE id = ?";
+                FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
 
-        $user = $this->db->fetch($sql, [$userId]);
+        $user = $this->db->fetch($sql, $tid > 1 ? [$userId, $tid] : [$userId]);
         
         if (!$user) {
             return [
@@ -104,12 +115,13 @@ class FraudDetectionService
      */
     public function analyzePropertyListing($propertyId)
     {
+        $tid = $this->getTenantId();
         $sql = "SELECT p.*, u.name as owner_name, u.created_at as owner_since 
                 FROM properties p 
-                LEFT JOIN users u ON p.user_id = u.id 
+                LEFT JOIN users u ON p.user_id = u.id AND u.deleted_at IS NULL" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 WHERE p.id = ?";
         
-        $property = $this->db->fetch($sql, [$propertyId]);
+        $property = $this->db->fetch($sql, $tid > 1 ? [$tid, $propertyId] : [$propertyId]);
 
         if (!$property) {
             return [
@@ -198,12 +210,13 @@ class FraudDetectionService
     public function analyzeTransaction($transactionId)
     {
         // Fetch transaction details
+        $tid = $this->getTenantId();
         $transaction = $this->db->fetch(
             "SELECT t.*, u.name as user_name, u.verification_status 
              FROM transactions t 
-             LEFT JOIN users u ON t.user_id = u.id 
+             LEFT JOIN users u ON t.user_id = u.id AND u.deleted_at IS NULL" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
              WHERE t.id = ?",
-            [$transactionId]
+            $tid > 1 ? [$tid, $transactionId] : [$transactionId]
         );
 
         if (!$transaction) {
@@ -290,7 +303,8 @@ class FraudDetectionService
     public function getHighRiskUsers($threshold = 0.6)
     {
         // Get all users and analyze them
-        $users = $this->db->fetchAll("SELECT id FROM users WHERE status = 'active' LIMIT 1000");
+        $tid = $this->getTenantId();
+        $users = $this->db->fetchAll("SELECT id FROM users WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1000", $tid > 1 ? [$tid] : []);
         
         $highRiskUsers = [];
         foreach ($users as $user) {

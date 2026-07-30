@@ -7,6 +7,7 @@
 namespace App\Services\Payment;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class RazorpayService
 {
@@ -15,6 +16,15 @@ class RazorpayService
     private $keySecret;
     private $baseUrl = 'https://api.razorpay.com/v1';
     
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     public function __construct()
     {
         $this->db = Database::getInstance();
@@ -252,14 +262,16 @@ class RazorpayService
         $currentId = $userId;
         $level = 0;
         
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
         while ($level < $maxLevel) {
-            $user = $this->db->fetchOne("SELECT id, referred_by FROM users WHERE id = ?", [$currentId]);
+            $user = $this->db->fetchOne("SELECT id, referred_by FROM users WHERE id = ?" . $tenantSql, $tid > 1 ? [$currentId, $tid] : [$currentId]);
             
             if (!$user || !$user['referred_by']) {
                 break;
             }
             
-            $referrer = $this->db->fetchOne("SELECT id, name, email FROM users WHERE id = ?", [$user['referred_by']]);
+            $referrer = $this->db->fetchOne("SELECT id, name, email FROM users WHERE id = ?" . $tenantSql, $tid > 1 ? [$user['referred_by'], $tid] : [$user['referred_by']]);
             
             if ($referrer) {
                 $referrers[] = $referrer;

@@ -4,6 +4,8 @@
 
 namespace App\Services\Legacy;
 
+use App\Core\Middleware\TenantContext;
+
 /**
  * CRM Analytics and Reporting System
  * Advanced analytics and reporting for CRM data
@@ -18,6 +20,15 @@ class CRMAnalyticsManager
     {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     /**
@@ -144,6 +155,8 @@ class CRMAnalyticsManager
         $analytics['pipeline_analysis'] = $this->db->fetchAll($sql);
 
         // Sales performance by user
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " WHERE u.tenant_id = ?" : "";
         $sql = "SELECT u.name as user_name,
                        COUNT(o.id) as opportunity_count,
                        SUM(CASE WHEN o.stage = 'won' OR o.stage = 'closed_won' THEN 1 ELSE 0 END) as won_count,
@@ -151,10 +164,12 @@ class CRMAnalyticsManager
                        AVG(o.probability_percentage) as avg_probability
                 FROM users u
                 LEFT JOIN opportunities o ON u.id = o.assigned_to
+                {$tenantWhere}
                 GROUP BY u.id, u.name
                 ORDER BY won_count DESC";
 
-        $results = $this->db->fetchAll($sql);
+        $results = $tid > 1 ? $this->db->fetchAll($sql, [$tid]) : $this->db->fetchAll($sql);
+
         $analytics['sales_performance'] = [];
         foreach ($results as $row) {
             $row['win_rate'] = $row['opportunity_count'] > 0 ? round(($row['won_count'] / $row['opportunity_count']) * 100, 2) : 0;
@@ -207,6 +222,10 @@ class CRMAnalyticsManager
     {
         $analytics = [];
 
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+        $tenantWhereCp = $tid > 1 ? " WHERE cp.tenant_id = ?" : "";
+
         // Customer acquisition
         $sql = "SELECT
             COUNT(*) as total_customers,
@@ -214,9 +233,9 @@ class CRMAnalyticsManager
             SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
             AVG(total_purchase_value) as avg_customer_value,
             AVG(DATEDIFF(NOW(), created_at)/365) as avg_customer_lifespan_years
-            FROM users";
+            FROM users{$tenantWhere}";
 
-        $analytics['customer_acquisition'] = $this->db->fetch($sql);
+        $analytics['customer_acquisition'] = $tid > 1 ? $this->db->fetch($sql, [$tid]) : $this->db->fetch($sql);
 
         // Customer segmentation
         $sql = "SELECT
@@ -224,10 +243,10 @@ class CRMAnalyticsManager
             COUNT(*) as customer_count,
             AVG(total_purchase_value) as avg_value,
             SUM(total_purchase_value) as total_value
-            FROM users
+            FROM users{$tenantWhere}
             GROUP BY customer_type";
 
-        $analytics['customer_segmentation'] = $this->db->fetchAll($sql);
+        $analytics['customer_segmentation'] = $tid > 1 ? $this->db->fetchAll($sql, [$tid]) : $this->db->fetchAll($sql);
 
         // Customer lifetime value
         $sql = "SELECT
@@ -235,7 +254,7 @@ class CRMAnalyticsManager
             COUNT(*) as customer_count,
             AVG(cp.total_purchase_value) as avg_clv,
             AVG(DATEDIFF(NOW(), cp.created_at)/365) as avg_lifespan_years
-            FROM users cp
+            FROM users cp{$tenantWhereCp}
             GROUP BY cp.customer_type";
 
         $results = $this->db->fetchAll($sql);
@@ -260,13 +279,15 @@ class CRMAnalyticsManager
         $analytics['customer_satisfaction'] = $satisfaction;
 
         // Repeat users
+        $tidRu = $this->getTenantId();
+        $tenantWhereRu = $tidRu > 1 ? " WHERE cp.tenant_id = ?" : "";
         $sql = "SELECT
             COUNT(DISTINCT cp.id) as total_customers,
             COUNT(DISTINCT CASE WHEN cp.total_purchases > 1 THEN cp.id END) as repeat_customers,
             AVG(cp.total_purchases) as avg_purchases_per_customer
-            FROM users cp";
+            FROM users cp{$tenantWhereRu}";
 
-        $repeatCustomers = $this->db->fetch($sql);
+        $repeatCustomers = $tidRu > 1 ? $this->db->fetch($sql, [$tidRu]) : $this->db->fetch($sql);
         $repeatCustomers['repeat_customer_rate'] = ($repeatCustomers['total_customers'] ?? 0) > 0 ?
             round(($repeatCustomers['repeat_customers'] / $repeatCustomers['total_customers']) * 100, 2) : 0;
         $analytics['repeat_customers'] = $repeatCustomers;
@@ -345,6 +366,9 @@ class CRMAnalyticsManager
     {
         $analytics = [];
 
+        $tidPerf = $this->getTenantId();
+        $tenantWherePerf = $tidPerf > 1 ? " WHERE u.tenant_id = ?" : "";
+
         // User performance
         $sql = "SELECT
             u.name as user_name,
@@ -357,10 +381,11 @@ class CRMAnalyticsManager
             FROM users u
             LEFT JOIN leads l ON u.id = l.assigned_to
             LEFT JOIN opportunities o ON u.id = o.assigned_to
+            {$tenantWherePerf}
             GROUP BY u.id, u.name, u.role
             ORDER BY revenue_generated DESC";
 
-        $results = $this->db->fetchAll($sql);
+        $results = $tidPerf > 1 ? $this->db->fetchAll($sql, [$tidPerf]) : $this->db->fetchAll($sql);
         $analytics['user_performance'] = [];
         foreach ($results as $row) {
             $row['conversion_rate'] = ($row['opportunities_created'] ?? 0) > 0 ?
@@ -379,9 +404,10 @@ class CRMAnalyticsManager
             FROM users u
             LEFT JOIN leads l ON u.id = l.assigned_to
             LEFT JOIN opportunities o ON u.id = o.assigned_to
+            {$tenantWherePerf}
             GROUP BY u.role";
 
-        $results = $this->db->fetchAll($sql);
+        $results = $tidPerf > 1 ? $this->db->fetchAll($sql, [$tidPerf]) : $this->db->fetchAll($sql);
         $analytics['team_performance'] = [];
         foreach ($results as $row) {
             $row['avg_performance'] = ($row['team_size'] ?? 0) > 0 ? round($row['total_wins'] / $row['team_size'], 2) : 0;
@@ -391,6 +417,8 @@ class CRMAnalyticsManager
         }
 
         // Response time analysis
+        $tidRt = $this->getTenantId();
+        $tenantWhereRt = $tidRt > 1 ? " WHERE u.tenant_id = ?" : "";
         $sql = "SELECT
             u.name as user_name,
             AVG(TIMESTAMPDIFF(HOUR, la.created_at, l.updated_at)) as avg_response_time_hours,
@@ -398,10 +426,11 @@ class CRMAnalyticsManager
             FROM users u
             LEFT JOIN lead_activities la ON u.id = la.created_by
             LEFT JOIN leads l ON la.lead_id = l.id
+            {$tenantWhereRt}
             GROUP BY u.id, u.name
             ORDER BY avg_response_time_hours";
 
-        $analytics['response_time_analysis'] = $this->db->fetchAll($sql);
+        $analytics['response_time_analysis'] = $tidRt > 1 ? $this->db->fetchAll($sql, [$tidRt]) : $this->db->fetchAll($sql);
 
         return $analytics;
     }
@@ -453,17 +482,19 @@ class CRMAnalyticsManager
         }
 
         // Customer acquisition trends
+        $tidCt = $this->getTenantId();
+        $tenantWhereCt = $tidCt > 1 ? " AND tenant_id = ?" : "";
         $sql = "SELECT
             DATE_FORMAT(created_at, '%Y-%m-%d') as date,
             COUNT(*) as customers_acquired,
             AVG(total_purchase_value) as avg_purchase_value,
             SUM(total_purchase_value) as total_revenue
             FROM users
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY){$tenantWhereCt}
             GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
             ORDER BY date";
 
-        $analytics['customer_trends'] = $this->db->fetchAll($sql);
+        $analytics['customer_trends'] = $tidCt > 1 ? $this->db->fetchAll($sql, [$tidCt]) : $this->db->fetchAll($sql);
 
         // Support ticket trends
         $sql = "SELECT
@@ -586,14 +617,17 @@ class CRMAnalyticsManager
         $report['pipeline_stages'] = $this->db->fetchAll($sql);
 
         // Sales by user
+        $tidSbu = $this->getTenantId();
+        $tenantWhereSbu = $tidSbu > 1 ? " WHERE u.tenant_id = ?" : "";
         $sql = "SELECT u.name as user_name, COUNT(o.id) as opportunities, SUM(CASE WHEN o.status = 'won' THEN 1 ELSE 0 END) as won_deals
                 FROM users u
                 LEFT JOIN opportunities o ON u.id = o.assigned_to
+                {$tenantWhereSbu}
                 GROUP BY u.id, u.name
                 ORDER BY won_deals DESC
                 LIMIT 5";
 
-        $report['sales_by_user'] = $this->db->fetchAll($sql);
+        $report['sales_by_user'] = $tidSbu > 1 ? $this->db->fetchAll($sql, [$tidSbu]) : $this->db->fetchAll($sql);
 
         return $report;
     }
@@ -609,30 +643,33 @@ class CRMAnalyticsManager
             'filters' => $filters
         ];
 
+        $tidCr = $this->getTenantId();
+        $tenantWhereCr = $tidCr > 1 ? " WHERE tenant_id = ?" : "";
+
         // Customer summary
         $sql = "SELECT
             COUNT(*) as total_customers,
             SUM(CASE WHEN customer_status = 'active' THEN 1 ELSE 0 END) as active_customers,
             SUM(CASE WHEN customer_status = 'vip' THEN 1 ELSE 0 END) as vip_customers,
             AVG(total_purchase_value) as avg_customer_value
-            FROM users";
+            FROM users{$tenantWhereCr}";
 
-        $report['summary'] = $this->db->fetch($sql);
+        $report['summary'] = $tidCr > 1 ? $this->db->fetch($sql, [$tidCr]) : $this->db->fetch($sql);
 
         // Customer segmentation
         $sql = "SELECT customer_type, COUNT(*) as count, SUM(total_purchase_value) as total_value
-                FROM users
+                FROM users{$tenantWhereCr}
                 GROUP BY customer_type";
 
-        $report['customer_segments'] = $this->db->fetchAll($sql);
+        $report['customer_segments'] = $tidCr > 1 ? $this->db->fetchAll($sql, [$tidCr]) : $this->db->fetchAll($sql);
 
         // Top users
         $sql = "SELECT first_name, last_name, total_purchase_value, total_purchases, customer_type
-                FROM users
+                FROM users{$tenantWhereCr}
                 ORDER BY total_purchase_value DESC
                 LIMIT 10";
 
-        $report['top_customers'] = $this->db->fetchAll($sql);
+        $report['top_customers'] = $tidCr > 1 ? $this->db->fetchAll($sql, [$tidCr]) : $this->db->fetchAll($sql);
 
         return $report;
     }
@@ -701,6 +738,9 @@ class CRMAnalyticsManager
         $totalStats = $this->db->fetch($sql);
         $report['overall_performance'] = $totalStats;
 
+        $tidPr = $this->getTenantId();
+        $tenantWherePr = $tidPr > 1 ? " WHERE u.tenant_id = ?" : "";
+
         // User comparison
         $sql = "SELECT
             u.name as user_name,
@@ -710,9 +750,10 @@ class CRMAnalyticsManager
             SUM(CASE WHEN o.status = 'won' THEN o.expected_value END) as revenue_generated
             FROM users u
             LEFT JOIN opportunities o ON u.id = o.assigned_to
+            {$tenantWherePr}
             GROUP BY u.id, u.name, u.role";
 
-        $results = $this->db->fetchAll($sql);
+        $results = $tidPr > 1 ? $this->db->fetchAll($sql, [$tidPr]) : $this->db->fetchAll($sql);
         $report['user_performance'] = [];
         foreach ($results as $row) {
             $row['market_share'] = ($totalStats['total_wins'] ?? 0) > 0 ?
@@ -728,9 +769,10 @@ class CRMAnalyticsManager
             SUM(CASE WHEN o.status = 'won' THEN o.expected_value END) as total_revenue
             FROM users u
             LEFT JOIN opportunities o ON u.id = o.assigned_to
+            {$tenantWherePr}
             GROUP BY u.role";
 
-        $report['team_performance'] = $this->db->fetchAll($sql);
+        $report['team_performance'] = $tidPr > 1 ? $this->db->fetchAll($sql, [$tidPr]) : $this->db->fetchAll($sql);
 
         return $report;
     }

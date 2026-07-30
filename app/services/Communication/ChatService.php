@@ -3,6 +3,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Real-time Chat Service
@@ -16,6 +17,15 @@ class ChatService
     {
         $this->database = Database::getInstance();
         $this->ensureTablesExist();
+    }
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
     
     /**
@@ -180,6 +190,9 @@ class ChatService
             }
             
             // Get messages
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND c.tenant_id = ?" : "";
+            $agentTenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
             $sql = "SELECT m.*, 
                 CASE 
                     WHEN m.sender_type = 'customer' THEN u.name
@@ -187,8 +200,8 @@ class ChatService
                     ELSE 'System'
                 END as sender_name
                 FROM chat_messages m
-                LEFT JOIN users u ON m.sender_type = 'customer' AND u.id = (SELECT c.user_id FROM users c WHERE c.id = m.sender_id)
-                LEFT JOIN users a ON m.sender_id = a.id AND m.sender_type = 'agent'
+                LEFT JOIN users u ON m.sender_type = 'customer' AND u.id = (SELECT c.user_id FROM users c WHERE c.id = m.sender_id{$tenantSql})
+                LEFT JOIN users a ON m.sender_id = a.id AND m.sender_type = 'agent'{$agentTenantSql}
                 WHERE m.conversation_id = ? 
                 " . ($beforeId ? "AND m.id < ?" : "") . "
                 ORDER BY m.id DESC
@@ -198,6 +211,7 @@ class ChatService
             $params = [$conversationId];
             if ($beforeId) $params[] = $beforeId;
             $params[] = $limit;
+            if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
             $stmt->execute($params);
             
             $messages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -222,6 +236,9 @@ class ChatService
     public function getConversations(int $userId, string $userType, string $status = 'active'): array
     {
         $column = $userType === 'customer' ? 'customer_id' : 'agent_id';
+        $tid = $this->getTenantId();
+        $custTenantSql = $tid > 1 ? " AND cust.tenant_id = ?" : "";
+        $agentTenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         
         $sql = "SELECT c.*,
             CASE 
@@ -234,14 +251,16 @@ class ChatService
             END as other_party_phone,
             p.title as property_title
             FROM chat_conversations c
-            LEFT JOIN users u ON u.id = (SELECT cust.user_id FROM users cust WHERE cust.id = c.customer_id)
-            LEFT JOIN users a ON c.agent_id = a.id
+            LEFT JOIN users u ON u.id = (SELECT cust.user_id FROM users cust WHERE cust.id = c.customer_id{$custTenantSql})
+            LEFT JOIN users a ON c.agent_id = a.id{$agentTenantSql}
             LEFT JOIN properties p ON c.property_id = p.id
             WHERE c.{$column} = ? AND c.status = ?
             ORDER BY c.last_message_at DESC";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userType, $userType, $userId, $status]);
+        $params = [$userType, $userType, $userId, $status];
+        if ($tid > 1) { $params[] = $tid; $params[] = $tid; }
+        $stmt->execute($params);
         
         return [
             'success' => true,

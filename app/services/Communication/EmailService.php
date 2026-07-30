@@ -9,6 +9,7 @@ namespace App\Services\Communication;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 class EmailService
 {
@@ -21,6 +22,15 @@ class EmailService
     private $smtpUser;
     private $smtpPass;
     private $smtpSecure;
+    
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
     
     public function __construct()
     {
@@ -72,7 +82,9 @@ class EmailService
     public function sendWelcomeEmail($userId)
     {
         try {
-            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?{$tenantSql}", $tid > 1 ? [$userId, $tid] : [$userId]);
             if (!$user) return false;
 
             $subject = "Welcome to APS Dream Home - Your Dream Property Awaits!";
@@ -131,7 +143,9 @@ class EmailService
     public function sendAssociateWelcomeEmail($userId, $referralCode)
     {
         try {
-            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?{$tenantSql}", $tid > 1 ? [$userId, $tid] : [$userId]);
             if (!$user) return false;
             
             $subject = "Welcome to APS Dream Home Associate Program!";
@@ -161,14 +175,16 @@ class EmailService
     public function sendPaymentConfirmation($paymentId)
     {
         try {
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $payment = $this->db->fetchOne(
                 "SELECT p.*, u.name, u.email, b.property_id, pr.title as property_title 
                  FROM payments p 
-                 JOIN users u ON p.user_id = u.id 
+                 JOIN users u ON p.user_id = u.id{$tenantSql} 
                  JOIN bookings b ON p.booking_id = b.id 
                  JOIN properties pr ON b.property_id = pr.id 
                  WHERE p.id = ?",
-                [$paymentId]
+                $tid > 1 ? [$paymentId, $tid] : [$paymentId]
             );
             
             if (!$payment) return false;
@@ -200,12 +216,14 @@ class EmailService
     public function sendPropertyApprovalNotification($propertyId)
     {
         try {
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $property = $this->db->fetchOne(
                 "SELECT up.*, u.name, u.email 
                  FROM user_properties up 
-                 JOIN users u ON up.user_id = u.id 
+                 JOIN users u ON up.user_id = u.id{$tenantSql} 
                  WHERE up.id = ?",
-                [$propertyId]
+                $tid > 1 ? [$propertyId, $tid] : [$propertyId]
             );
             
             if (!$property) return false;
@@ -237,13 +255,15 @@ class EmailService
     public function sendCommissionCreditNotification($commissionId)
     {
         try {
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND u.tenant_id = ? AND u2.tenant_id = ?" : "";
             $commission = $this->db->fetchOne(
                 "SELECT c.*, u.name, u.email, u2.name as referred_name 
                  FROM commissions c 
-                 JOIN users u ON c.associate_id = u.id 
+                 JOIN users u ON c.associate_id = u.id{$tenantSql} 
                  JOIN users u2 ON c.referred_user_id = u2.id 
                  WHERE c.id = ?",
-                [$commissionId]
+                $tid > 1 ? [$commissionId, $tid, $tid] : [$commissionId]
             );
             
             if (!$commission) return false;
@@ -324,13 +344,16 @@ class EmailService
     {
         try {
             // Get daily stats
+            $tid = $this->getTenantId();
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $stats = $this->db->fetchOne(
                 "SELECT 
-                    (SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE()) as new_users,
+                    (SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE(){$tenantSql}) as new_users,
                     (SELECT COUNT(*) FROM leads WHERE DATE(created_at) = CURDATE()) as new_leads,
                     (SELECT COUNT(*) FROM bookings WHERE DATE(created_at) = CURDATE()) as new_bookings,
                     (SELECT SUM(amount) FROM payments WHERE DATE(created_at) = CURDATE() AND status = 'completed') as revenue
-                "
+                ",
+                $tid > 1 ? [$tid] : []
             );
             
             $subject = "Daily Report - " . date('d M Y');

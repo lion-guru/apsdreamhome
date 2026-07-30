@@ -3,6 +3,7 @@
 namespace App\Services\Notification;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Property Alert & Notification Service
@@ -41,11 +42,12 @@ class PropertyAlertService
     public function createAlert(int $userId, array $criteria): array
     {
         try {
+            $tid = TenantContext::getId();
             $sql = "INSERT INTO property_alerts 
                 (user_id, alert_name, property_type, location, city, 
                  min_price, max_price, min_area, max_area, bedrooms, 
-                 furnishing, amenities, frequency) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                 furnishing, amenities, frequency, tenant_id) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute([
@@ -61,7 +63,8 @@ class PropertyAlertService
                 $criteria['bedrooms'] ?? null,
                 $criteria['furnishing'] ?? null,
                 !empty($criteria['amenities']) ? json_encode($criteria['amenities']) : null,
-                $criteria['frequency'] ?? 'daily'
+                $criteria['frequency'] ?? 'daily',
+                $tid
             ]);
             
             $alertId = $this->database->lastInsertId();
@@ -86,17 +89,24 @@ class PropertyAlertService
      */
     public function getUserAlerts(int $userId): array
     {
+        $tid = TenantContext::getId();
+        $tenantWhere = ($tid > 1) ? " AND pa.tenant_id = ?" : "";
+
         $sql = "SELECT pa.*, 
             COUNT(am.id) as total_matches,
             SUM(CASE WHEN am.notification_sent = 1 THEN 1 ELSE 0 END) as notified_matches
             FROM property_alerts pa
             LEFT JOIN alert_matches am ON pa.id = am.alert_id
-            WHERE pa.user_id = ?
+            WHERE pa.user_id = ?{$tenantWhere}
             GROUP BY pa.id
             ORDER BY pa.created_at DESC";
         
+        $params = [$userId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId]);
+        $stmt->execute($params);
         
         $alerts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
@@ -112,10 +122,17 @@ class PropertyAlertService
      */
     public function checkMatches(int $alertId, bool $notify = false): array
     {
+        $tid = TenantContext::getId();
+
         // Get alert criteria
         $alertSql = "SELECT * FROM property_alerts WHERE id = ? AND is_active = 1";
+        $alertParams = [$alertId];
+        if ($tid > 1) {
+            $alertSql .= " AND tenant_id = ?";
+            $alertParams[] = $tid;
+        }
         $alertStmt = $this->database->prepare($alertSql);
-        $alertStmt->execute([$alertId]);
+        $alertStmt->execute($alertParams);
         $alert = $alertStmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$alert) {
@@ -125,6 +142,10 @@ class PropertyAlertService
         // Build match query
         $where = ['p.status = ?', 'p.created_at >= ?'];
         $params = ['available', $alert['created_at']];
+        if ($tid > 1) {
+            $where[] = 'p.tenant_id = ?';
+            $params[] = $tid;
+        }
         
         if ($alert['property_type']) {
             $where[] = 'p.type = ?';
@@ -179,12 +200,12 @@ class PropertyAlertService
         $matches = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Log matches
-        $insertSql = "INSERT IGNORE INTO alert_matches (alert_id, property_id, match_score) VALUES (?, ?, ?)";
+        $insertSql = "INSERT IGNORE INTO alert_matches (alert_id, property_id, match_score, tenant_id) VALUES (?, ?, ?, ?)";
         $insertStmt = $this->database->prepare($insertSql);
         
         foreach ($matches as $property) {
             $score = $this->calculateMatchScore($alert, $property);
-            $insertStmt->execute([$alertId, $property['id'], $score]);
+            $insertStmt->execute([$alertId, $property['id'], $score, $tid]);
         }
         
         // Update total matches count
@@ -231,15 +252,20 @@ class PropertyAlertService
      */
     public function processPendingAlerts(): array
     {
+        $tid = TenantContext::getId();
+        $tenantWhere = ($tid > 1) ? " AND tenant_id = ?" : "";
+
         $sql = "SELECT * FROM property_alerts 
-            WHERE is_active = 1 
+            WHERE is_active = 1{$tenantWhere}
             AND (
                 last_sent IS NULL 
                 OR (frequency = 'daily' AND last_sent < DATE_SUB(NOW(), INTERVAL 1 DAY))
                 OR (frequency = 'weekly' AND last_sent < DATE_SUB(NOW(), INTERVAL 7 DAY))
             )";
         
-        $alerts = $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($tid > 1 ? [$tid] : []);
+        $alerts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         $processed = 0;
         $notifications = 0;
@@ -253,8 +279,13 @@ class PropertyAlertService
             
             // Update last_sent
             $updateSql = "UPDATE property_alerts SET last_sent = NOW() WHERE id = ?";
+            $updateParams = [$alert['id']];
+            if ($tid > 1) {
+                $updateSql .= " AND tenant_id = ?";
+                $updateParams[] = $tid;
+            }
             $updateStmt = $this->database->prepare($updateSql);
-            $updateStmt->execute([$alert['id']]);
+            $updateStmt->execute($updateParams);
             
             $processed++;
         }
@@ -270,14 +301,21 @@ class PropertyAlertService
      */
     private function sendAlertNotification(int $alertId, array $matches): void
     {
+        $tid = TenantContext::getId();
+
         // Get user details
         $userSql = "SELECT pa.*, u.email, u.phone, u.name 
             FROM property_alerts pa
             JOIN users u ON pa.user_id = u.id
             WHERE pa.id = ?";
+        $userParams = [$alertId];
+        if ($tid > 1) {
+            $userSql .= " AND pa.tenant_id = ?";
+            $userParams[] = $tid;
+        }
         
         $userStmt = $this->database->prepare($userSql);
-        $userStmt->execute([$alertId]);
+        $userStmt->execute($userParams);
         $user = $userStmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$user) return;
@@ -312,8 +350,13 @@ class PropertyAlertService
         $matchIds = array_column($matches, 'id');
         $updateSql = "UPDATE alert_matches SET notification_sent = 1, sent_at = NOW() 
             WHERE alert_id = ? AND property_id IN (" . implode(',', $matchIds) . ")";
+        $updateParams = [$alertId];
+        if ($tid > 1) {
+            $updateSql .= " AND tenant_id = ?";
+            $updateParams[] = $tid;
+        }
         $updateStmt = $this->database->prepare($updateSql);
-        $updateStmt->execute([$alertId]);
+        $updateStmt->execute($updateParams);
     }
     
     /**
@@ -321,9 +364,10 @@ class PropertyAlertService
      */
     public function queueNotification(int $userId, string $type, string $title, string $message, ?array $data = null): int
     {
+        $tid = TenantContext::getId();
         $sql = "INSERT INTO notification_queue 
-            (user_id, type, title, message, data, scheduled_at) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+            (user_id, type, title, message, data, scheduled_at, tenant_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([
@@ -332,7 +376,8 @@ class PropertyAlertService
             $title,
             $message,
             $data ? json_encode($data) : null,
-            date('Y-m-d H:i:s')
+            date('Y-m-d H:i:s'),
+            $tid
         ]);
         
         return $this->database->lastInsertId();
@@ -343,12 +388,18 @@ class PropertyAlertService
      */
     private function updateAlertStats(int $alertId): void
     {
+        $tid = TenantContext::getId();
         $sql = "UPDATE property_alerts 
             SET total_matches = (SELECT COUNT(*) FROM alert_matches WHERE alert_id = ?)
             WHERE id = ?";
+        $params = [$alertId, $alertId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$alertId, $alertId]);
+        $stmt->execute($params);
     }
     
     /**
@@ -356,9 +407,15 @@ class PropertyAlertService
      */
     public function deleteAlert(int $alertId, int $userId): array
     {
+        $tid = TenantContext::getId();
         $sql = "DELETE FROM property_alerts WHERE id = ? AND user_id = ?";
+        $params = [$alertId, $userId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$alertId, $userId]);
+        $stmt->execute($params);
         
         return [
             'success' => $stmt->rowCount() > 0,
@@ -371,18 +428,22 @@ class PropertyAlertService
      */
     public function getPopularCriteria(int $limit = 10): array
     {
+        $tid = TenantContext::getId();
+        $tenantWhere = ($tid > 1) ? " AND tenant_id = ?" : "";
+
         $sql = "SELECT 
             property_type, city, location,
             COUNT(*) as alert_count,
             AVG(max_price) as avg_max_price
             FROM property_alerts 
-            WHERE is_active = 1
+            WHERE is_active = 1{$tenantWhere}
             GROUP BY property_type, city
             ORDER BY alert_count DESC
             LIMIT ?";
         
+        $params = ($tid > 1) ? [$tid, $limit] : [$limit];
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$limit]);
+        $stmt->execute($params);
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

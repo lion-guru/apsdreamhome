@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\Core\Database;
 use App\Core\Logger;
 use App\Core\Config\Config;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Admin Dashboard Service - APS Dream Home
@@ -32,8 +33,10 @@ class AdminDashboardService
             $stats = [];
             
             // Total users
+            $tid = TenantContext::getId();
             $result = $this->database->selectOne(
-                "SELECT COUNT(*) as total_users FROM users"
+                "SELECT COUNT(*) as total_users FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : ""),
+                $tid > 1 ? [$tid] : []
             );
             $stats['total_users'] = $result['total_users'] ?? 0;
             
@@ -90,7 +93,8 @@ class AdminDashboardService
             
             // Total users
             $result = $this->database->selectOne(
-                "SELECT COUNT(*) as total_associates FROM users WHERE status = 'active'"
+                "SELECT COUNT(*) as total_associates FROM users WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$tid] : []
             );
             $stats['total_associates'] = $result['total_associates'] ?? 0;
             
@@ -128,13 +132,14 @@ class AdminDashboardService
             $activities = [];
             
             // Recent user registrations
+            $tid = TenantContext::getId();
             $users = $this->database->select(
                 "SELECT 'user_registered' as activity_type, name as description,
                         created_at as activity_time, id as reference_id, 'user' as entity_type
                  FROM users 
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
                  ORDER BY created_at DESC LIMIT ?",
-                [$limit]
+                $tid > 1 ? [$tid, $limit] : [$limit]
             );
             
             // Recent property additions
@@ -272,28 +277,33 @@ class AdminDashboardService
             $data = [];
             
             // Users by role
+            $tid = TenantContext::getId();
             $data['users_by_role'] = $this->database->select(
-                "SELECT role, COUNT(*) as count FROM users GROUP BY role ORDER BY count DESC"
+                "SELECT role, COUNT(*) as count FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " GROUP BY role ORDER BY count DESC",
+                $tid > 1 ? [$tid] : []
             );
             
             // Users by status
             $data['users_by_status'] = $this->database->select(
-                "SELECT status, COUNT(*) as count FROM users GROUP BY status ORDER BY count DESC"
+                "SELECT status, COUNT(*) as count FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " GROUP BY status ORDER BY count DESC",
+                $tid > 1 ? [$tid] : []
             );
             
             // Recent users
             $data['recent_users'] = $this->database->select(
                 "SELECT id, name as username, name as full_name, role, status, created_at
-                 FROM users ORDER BY created_at DESC LIMIT 10"
+                 FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " ORDER BY created_at DESC LIMIT 10",
+                $tid > 1 ? [$tid] : []
             );
             
             // User registration trends
             $data['user_registration_trends'] = $this->database->select(
                 "SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count
                  FROM users 
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
                  GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-                 ORDER BY month DESC"
+                 ORDER BY month DESC",
+                $tid > 1 ? [$tid] : []
             );
             
             return [
@@ -459,7 +469,8 @@ class AdminDashboardService
             ];
             
             // Total users check
-            $result = $this->database->selectOne("SELECT COUNT(*) as count FROM users");
+            $tid = TenantContext::getId();
+            $result = $this->database->selectOne("SELECT COUNT(*) as count FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : ""), $tid > 1 ? [$tid] : []);
             $totalUsers = $result['count'] ?? 0;
             $health['checks']['users'] = [
                 'status' => $totalUsers > 0 ? 'ok' : 'warning',
@@ -621,9 +632,10 @@ class AdminDashboardService
             $today = date('Y-m-d');
             
             // New users today
+            $tid = TenantContext::getId();
             $result = $this->database->selectOne(
-                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = ?",
-                [$today]
+                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$today, $tid] : [$today]
             );
             $stats['new_users_today'] = $result['count'] ?? 0;
             
@@ -660,8 +672,8 @@ class AdminDashboardService
             $weekStart = date('Y-m-d', strtotime('this week'));
             
             $result = $this->database->selectOne(
-                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) >= ?",
-                [$weekStart]
+                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) >= ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$weekStart, $tid] : [$weekStart]
             );
             $stats['new_users_week'] = $result['count'] ?? 0;
             

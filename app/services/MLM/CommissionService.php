@@ -4,6 +4,7 @@ namespace App\Services\MLM;
 
 use App\Core\Database;
 use Exception;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Multi-Level Commission Service
@@ -25,6 +26,11 @@ class CommissionService
     public function __construct()
     {
         $this->db = Database::getInstance();
+    }
+
+    private function getTenantId(): int
+    {
+        return TenantContext::getId() ?? 1;
     }
     
     /**
@@ -112,9 +118,9 @@ class CommissionService
             $stmt = $this->db->prepare("
                 SELECT u.id, u.name, u.customer_id, u.referrer_id 
                 FROM users u 
-                WHERE u.id = ? AND u.role = 'associate' AND u.status = 'active'
+                WHERE u.id = ? AND u.role = 'associate' AND u.status = 'active' AND u.tenant_id = ?
             ");
-            $stmt->execute([$currentAssociateId]);
+            $stmt->execute([$currentAssociateId, $this->getTenantId()]);
             $currentAssociate = $stmt->fetch();
             
             if (!$currentAssociate || empty($currentAssociate['referrer_id'])) {
@@ -125,9 +131,9 @@ class CommissionService
             $stmt = $this->db->prepare("
                 SELECT id, name, customer_id, email, phone 
                 FROM users 
-                WHERE id = ? AND role = 'associate' AND status = 'active'
+                WHERE id = ? AND role = 'associate' AND status = 'active' AND tenant_id = ?
             ");
-            $stmt->execute([$currentAssociate['referrer_id']]);
+            $stmt->execute([$currentAssociate['referrer_id'], $this->getTenantId()]);
             $sponsor = $stmt->fetch();
             
             if ($sponsor) {
@@ -181,9 +187,9 @@ class CommissionService
                 total_sales = COALESCE(total_sales, 0) + ?,
                 last_sale_date = NOW(),
                 updated_at = NOW()
-            WHERE id = ?
+            WHERE id = ? AND tenant_id = ?
         ");
-        $stmt->execute([$saleAmount, $associateId]);
+        $stmt->execute([$saleAmount, $associateId, $this->getTenantId()]);
         
         // Update team sales for all upline
         $upline = $this->getUplineHierarchy($associateId, 5);
@@ -192,9 +198,9 @@ class CommissionService
                 UPDATE users SET 
                     team_sales = COALESCE(team_sales, 0) + ?,
                     updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ? AND tenant_id = ?
             ");
-            $stmt->execute([$saleAmount, $associate['id']]);
+            $stmt->execute([$saleAmount, $associate['id'], $this->getTenantId()]);
         }
     }
     
@@ -248,16 +254,6 @@ class CommissionService
         $team = [];
         
         for ($level = 1; $level <= $maxLevels; $level++) {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    u.id, u.name, u.email, u.phone, u.customer_id,
-                    u.created_at, u.total_sales, u.team_sales,
-                    (SELECT COUNT(*) FROM users WHERE referrer_id = u.id AND role = 'associate') as direct_count
-                FROM users u
-                WHERE u.referrer_id = ? AND u.role = 'associate' AND u.status = 'active'
-                ORDER BY u.created_at DESC
-            ");
-            
             $parentIds = $level === 1 ? [$associateId] : array_column($team[$level - 1] ?? [], 'id');
             
             if (empty($parentIds)) {
@@ -265,17 +261,18 @@ class CommissionService
             }
             
             $placeholders = str_repeat('?,', count($parentIds) - 1) . '?';
+            $tid = $this->getTenantId();
             $stmt = $this->db->prepare("
                 SELECT 
                     u.id, u.name, u.email, u.phone, u.customer_id,
                     u.created_at, u.total_sales, u.team_sales,
-                    (SELECT COUNT(*) FROM users WHERE referrer_id = u.id AND role = 'associate' AND status = 'active') as direct_count
+                    (SELECT COUNT(*) FROM users WHERE referrer_id = u.id AND role = 'associate' AND status = 'active' AND tenant_id = ?) as direct_count
                 FROM users u
-                WHERE u.referrer_id IN ($placeholders) AND u.role = 'associate' AND u.status = 'active'
+                WHERE u.referrer_id IN ($placeholders) AND u.role = 'associate' AND u.status = 'active' AND u.tenant_id = ?
                 ORDER BY u.created_at DESC
             ");
             
-            $stmt->execute($parentIds);
+            $stmt->execute(array_merge([$tid], $parentIds, [$tid]));
             $team[$level] = $stmt->fetchAll();
         }
         

@@ -3,6 +3,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * APS Dream Home - WhatsApp Integration Manager
@@ -13,6 +14,15 @@ class WhatsAppManager
 {
     private $db;
     private $logger;
+
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
 
     // WhatsApp API Configuration
     private $apiUrl = 'https://graph.facebook.com/v18.0/';
@@ -599,8 +609,10 @@ class WhatsAppManager
 
     private function getCustomer($customerId)
     {
-        $sql = "SELECT * FROM users WHERE id = ?";
-        return $this->db->fetch($sql, [$customerId]);
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM users WHERE id = ?{$tenantSql}";
+        return $this->db->fetch($sql, $tid > 1 ? [$customerId, $tid] : [$customerId]);
     }
 
     private function getFarmer($farmerId)
@@ -611,11 +623,14 @@ class WhatsAppManager
 
     private function getAssociate($associateId)
     {
+        $tid = $this->getTenantId();
+        $tenantJoin = $tid > 1 ? " AND u.tenant_id = ?" : "";
+        $tenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         $sql = "SELECT a.*, u.name as name, u.phone as phone
                 FROM users a
-                LEFT JOIN users u ON a.user_id = u.id
-                WHERE a.id = ?";
-        return $this->db->fetch($sql, [$associateId]);
+                LEFT JOIN users u ON a.user_id = u.id{$tenantJoin}
+                WHERE a.id = ?{$tenantSql}";
+        return $this->db->fetch($sql, $tid > 1 ? [$tid, $associateId, $tid] : [$associateId]);
     }
 
     private function getCurrentUserName()

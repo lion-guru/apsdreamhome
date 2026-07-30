@@ -3,6 +3,7 @@
 namespace App\Services\Farmer;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
 use Exception;
 use InvalidArgumentException;
@@ -133,12 +134,15 @@ class FarmerServiceEnhanced
             throw new InvalidArgumentException("Missing required fields for farmer registration");
         }
 
+        $tid = TenantContext::getId();
+
         $sql = "INSERT INTO farmer_profiles (
             farmer_number, full_name, father_name, spouse_name, date_of_birth, gender,
             phone, alternate_phone, email, address, village, post_office, tehsil, district, state,
             pin_code, aadhar_number, pan_number, bank_account_number, bank_name, ifsc_code,
-            land_holdings_acres, irrigation_source, farming_type, status, associate_id, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            land_holdings_acres, irrigation_source, farming_type, status, associate_id, created_by,
+            tenant_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $data['farmer_number'],
@@ -167,7 +171,8 @@ class FarmerServiceEnhanced
             $data['farming_type'] ?? 'traditional',
             $data['status'] ?? 'active',
             $data['associate_id'] ?? null,
-            $data['created_by'] ?? null
+            $data['created_by'] ?? null,
+            $tid
         ];
 
         try {
@@ -190,11 +195,14 @@ class FarmerServiceEnhanced
             throw new InvalidArgumentException("Farmer ID and land area are required");
         }
 
+        $tid = TenantContext::getId();
+
         $sql = "INSERT INTO farmer_land_holdings (
             farmer_id, land_area, land_area_unit, survey_number, khasra_number,
             village, tehsil, district, state, land_type, soil_type, irrigation_available,
-            electricity_available, road_access, ownership_type, acquisition_date, market_value, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            electricity_available, road_access, ownership_type, acquisition_date, market_value, status,
+            tenant_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $farmerId,
@@ -214,7 +222,8 @@ class FarmerServiceEnhanced
             $landData['ownership_type'] ?? 'owned',
             $landData['acquisition_date'] ?? null,
             $landData['market_value'] ?? null,
-            $landData['status'] ?? 'active'
+            $landData['status'] ?? 'active',
+            $tid
         ];
 
         try {
@@ -233,12 +242,19 @@ class FarmerServiceEnhanced
      */
     public function getFarmers($filters = [], $limit = 50, $offset = 0)
     {
+        $tid = TenantContext::getId();
+
         $sql = "SELECT f.*, a.name as associate_name
                 FROM farmer_profiles f
                 LEFT JOIN users a ON f.associate_id = a.id
                 WHERE 1=1";
 
         $params = [];
+
+        if ($tid > 1) {
+            $sql .= " AND f.tenant_id = ?";
+            $params[] = $tid;
+        }
 
         if (!empty($filters['status'])) {
             $sql .= " AND f.status = ?";
@@ -288,13 +304,21 @@ class FarmerServiceEnhanced
             throw new InvalidArgumentException('Farmer ID is required');
         }
 
+        $tid = TenantContext::getId();
+
         $sql = "SELECT f.*, a.name as associate_name
                 FROM farmer_profiles f
                 LEFT JOIN users a ON f.associate_id = a.id
                 WHERE f.id = ?";
 
+        $params = [$id];
+        if ($tid > 1) {
+            $sql .= " AND f.tenant_id = ?";
+            $params[] = $tid;
+        }
+
         try {
-            $farmer = $this->database->fetchOne($sql, [$id]);
+            $farmer = $this->database->fetchOne($sql, $params);
 
             if ($farmer) {
                 // Get land holdings
@@ -315,9 +339,15 @@ class FarmerServiceEnhanced
      */
     private function getFarmerLandHoldings($farmerId)
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT * FROM farmer_land_holdings WHERE farmer_id = ? AND status = 'active'";
+        $params = [$farmerId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         try {
-            return $this->database->fetchAll($sql, [$farmerId]);
+            return $this->database->fetchAll($sql, $params);
         } catch (Exception $e) {
             $this->logger->log("Error fetching land holdings for farmer $farmerId: " . $e->getMessage(), 'error', 'farmer');
             return [];
@@ -329,9 +359,15 @@ class FarmerServiceEnhanced
      */
     private function getFarmerAgreements($farmerId)
     {
+        $tid = TenantContext::getId();
         $sql = "SELECT * FROM farmer_agreements WHERE farmer_id = ? ORDER BY agreement_date DESC";
+        $params = [$farmerId];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
         try {
-            return $this->database->fetchAll($sql, [$farmerId]);
+            return $this->database->fetchAll($sql, $params);
         } catch (Exception $e) {
             $this->logger->log("Error fetching agreements for farmer $farmerId: " . $e->getMessage(), 'error', 'farmer');
             return [];
@@ -346,6 +382,8 @@ class FarmerServiceEnhanced
         if (empty($id)) {
             throw new InvalidArgumentException('Farmer ID is required');
         }
+
+        $tid = TenantContext::getId();
 
         $sql = "UPDATE farmer_profiles SET 
                 full_name = ?, father_name = ?, spouse_name = ?, date_of_birth = ?, gender = ?,
@@ -384,6 +422,11 @@ class FarmerServiceEnhanced
             $id
         ];
 
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
+
         try {
             $this->database->execute($sql, $params);
             $this->logger->log("Farmer updated: $id", 'info', 'farmer');
@@ -400,26 +443,28 @@ class FarmerServiceEnhanced
     public function getFarmerStats()
     {
         $stats = [];
+        $tid = TenantContext::getId();
+        $tenantSql = ($tid > 1) ? " AND tenant_id = " . (int)$tid : "";
 
         try {
             // Total farmers
-            $result = $this->database->fetchOne("SELECT COUNT(*) as total FROM farmer_profiles WHERE status = 'active'");
+            $result = $this->database->fetchOne("SELECT COUNT(*) as total FROM farmer_profiles WHERE status = 'active'{$tenantSql}");
             $stats['total_farmers'] = $result['total'] ?? 0;
 
             // By state
-            $results = $this->database->fetchAll("SELECT state, COUNT(*) as count FROM farmer_profiles WHERE status = 'active' GROUP BY state");
+            $results = $this->database->fetchAll("SELECT state, COUNT(*) as count FROM farmer_profiles WHERE status = 'active'{$tenantSql} GROUP BY state");
             $stats['by_state'] = [];
             foreach ($results as $row) {
                 $stats['by_state'][$row['state']] = $row['count'];
             }
 
             // Total land holdings
-            $result = $this->database->fetchOne("SELECT SUM(land_area) as total_land, COUNT(*) as total_holdings FROM farmer_land_holdings WHERE status = 'active'");
+            $result = $this->database->fetchOne("SELECT SUM(land_area) as total_land, COUNT(*) as total_holdings FROM farmer_land_holdings WHERE status = 'active'{$tenantSql}");
             $stats['total_land_holdings'] = $result['total_land'] ?? 0;
             $stats['total_holdings_count'] = $result['total_holdings'] ?? 0;
 
             // Recent registrations
-            $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM farmer_profiles WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM farmer_profiles WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY){$tenantSql}");
             $stats['recent_registrations'] = $result['recent'] ?? 0;
         } catch (Exception $e) {
             $this->logger->log("Error fetching farmer stats: " . $e->getMessage(), 'error', 'farmer');
@@ -437,10 +482,13 @@ class FarmerServiceEnhanced
             throw new InvalidArgumentException("Farmer ID and agreement number are required");
         }
 
+        $tid = TenantContext::getId();
+
         $sql = "INSERT INTO farmer_agreements (
             farmer_id, agreement_number, agreement_type, land_acquisition_id, total_land_area,
-            agreement_amount, payment_terms, payment_status, agreement_date, expiry_date, status, remarks, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            agreement_amount, payment_terms, payment_status, agreement_date, expiry_date, status, remarks, created_by,
+            tenant_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
             $farmerId,
@@ -455,7 +503,8 @@ class FarmerServiceEnhanced
             $agreementData['expiry_date'] ?? null,
             $agreementData['status'] ?? 'active',
             $agreementData['remarks'] ?? null,
-            $agreementData['created_by'] ?? null
+            $agreementData['created_by'] ?? null,
+            $tid
         ];
 
         try {

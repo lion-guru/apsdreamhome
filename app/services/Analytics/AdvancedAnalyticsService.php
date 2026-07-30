@@ -3,6 +3,7 @@
 namespace App\Services\Analytics;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
 /**
  * Advanced Analytics Service
@@ -41,6 +42,15 @@ class AdvancedAnalyticsService
         // $pdo->exec("ENGINE=InnoDB..."); // Managed by migrations
     }
     
+    private function getTenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
     /**
      * Track event
      */
@@ -258,13 +268,16 @@ class AdvancedAnalyticsService
         $byType = $typeStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Top users
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         $agentSql = "SELECT a.name, COUNT(b.id) as bookings, SUM(b.total_amount) as revenue
             FROM bookings b
             JOIN users a ON b.agent_id = a.id
-            WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?
+            WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?{$tenantSql}
             GROUP BY a.id ORDER BY revenue DESC LIMIT 5";
+        $params = $tid > 1 ? [$dateFrom, $dateTo, $tid] : [$dateFrom, $dateTo];
         $agentStmt = $this->database->prepare($agentSql);
-        $agentStmt->execute([$dateFrom, $dateTo]);
+        $agentStmt->execute($params);
         $topAgents = $agentStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [
@@ -304,6 +317,8 @@ class AdvancedAnalyticsService
     private function getTopPerformers(string $dateFrom, string $dateTo): array
     {
         // Top users by sales
+        $tid = $this->getTenantId();
+        $tenantWhere = $tid > 1 ? " WHERE a.tenant_id = ?" : "";
         $agentSql = "SELECT 
             a.id,
             a.name,
@@ -314,13 +329,15 @@ class AdvancedAnalyticsService
             LEFT JOIN bookings b ON a.id = b.agent_id 
                 AND b.status = 'confirmed' 
                 AND DATE(b.created_at) BETWEEN ? AND ?
+            {$tenantWhere}
             GROUP BY a.id
             HAVING bookings > 0
             ORDER BY revenue DESC
             LIMIT 5";
         
+        $agentParams = $tid > 1 ? [$dateFrom, $dateTo, $tid] : [$dateFrom, $dateTo];
         $agentStmt = $this->database->prepare($agentSql);
-        $agentStmt->execute([$dateFrom, $dateTo]);
+        $agentStmt->execute($agentParams);
         $users = $agentStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Top properties

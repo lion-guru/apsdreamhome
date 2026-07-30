@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Core\Database;
+use App\Core\Middleware\TenantContext;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -40,9 +41,10 @@ class DashboardService
         }
 
         try {
+            $tid = TenantContext::getId();
             $user = $this->db->fetchOne(
-                "SELECT role FROM users WHERE id = ? AND status = 'active'",
-                [$userId]
+                "SELECT role FROM users WHERE id = ? AND status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$userId, $tid] : [$userId]
             );
 
             return $user && in_array($user['role'], self::ADMIN_ROLES, true);
@@ -87,22 +89,25 @@ class DashboardService
     {
         $stats = [];
 
+        $tid = TenantContext::getId();
+
         // Total users
-        $result = $this->db->fetchOne("SELECT COUNT(*) as total FROM users");
+        $result = $this->db->fetchOne("SELECT COUNT(*) as total FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : ""), $tid > 1 ? [$tid] : []);
         $stats['total'] = (int)($result['total'] ?? 0);
 
         // Active users
-        $result = $this->db->fetchOne("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
+        $result = $this->db->fetchOne("SELECT COUNT(*) as active FROM users WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []);
         $stats['active'] = (int)($result['active'] ?? 0);
 
         // New users this month
         $result = $this->db->fetchOne(
-            "SELECT COUNT(*) as new_users FROM users WHERE created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')"
+            "SELECT COUNT(*) as new_users FROM users WHERE created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            $tid > 1 ? [$tid] : []
         );
         $stats['new_this_month'] = (int)($result['new_users'] ?? 0);
 
         // Users by role
-        $roles = $this->db->fetchAll("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+        $roles = $this->db->fetchAll("SELECT role, COUNT(*) as count FROM users" . ($tid > 1 ? " WHERE tenant_id = ?" : "") . " GROUP BY role", $tid > 1 ? [$tid] : []);
         $stats['by_role'] = [];
         foreach ($roles as $role) {
             $stats['by_role'][$role['role']] = (int)$role['count'];

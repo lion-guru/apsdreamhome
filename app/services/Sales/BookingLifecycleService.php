@@ -103,8 +103,10 @@ class BookingLifecycleService
         
         try {
             $sql = "UPDATE plot_bookings SET status = ? WHERE id = ?";
+            $params = [$status, $bookingId];
+            if ($tid = $this->tid()) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$status, $bookingId]);
+            $result = $stmt->execute($params);
             
             if ($result && $notes) {
                 $this->logStatusHistory($bookingId, null, $status, null, $notes);
@@ -313,17 +315,22 @@ class BookingLifecycleService
             $this->db->prepare("DELETE FROM booking_payment_schedules WHERE booking_id = ? AND status IN ('pending','overdue')")
                      ->execute([$bookingId]);
 
+            $bpsCols = "booking_id, installment_no, due_date, amount, principal, interest,
+                        opening_balance, closing_balance, status";
+            $bpsVals = "?, ?, ?, ?, ?, ?, ?, ?, 'pending'";
+            $bpsBaseParamsFn = function ($row) use ($bookingId) {
+                return [$bookingId, $row['installment_no'], $row['due_date'], $row['amount'],
+                        $row['principal'], $row['interest'], $row['opening_balance'], $row['closing_balance']];
+            };
+            $tidBpsIns = $this->tid();
+            if ($tidBpsIns) { $bpsCols .= ", tenant_id"; $bpsVals .= ", ?"; }
             $ins = $this->db->prepare(
-                "INSERT INTO booking_payment_schedules
-                 (booking_id, installment_no, due_date, amount, principal, interest,
-                  opening_balance, closing_balance, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')"
+                "INSERT INTO booking_payment_schedules ($bpsCols) VALUES ($bpsVals)"
             );
             foreach ($installments as $row) {
-                $ins->execute([
-                    $bookingId, $row['installment_no'], $row['due_date'], $row['amount'],
-                    $row['principal'], $row['interest'], $row['opening_balance'], $row['closing_balance']
-                ]);
+                $params = $bpsBaseParamsFn($row);
+                if ($tidBpsIns) { $params[] = $tidBpsIns; }
+                $ins->execute($params);
             }
 
             // Bump booking to emi_active (if not already beyond)
@@ -362,21 +369,23 @@ class BookingLifecycleService
     {
         try {
             $sql = "SELECT pb.*,
-                           p.plot_number, p.plot_code, p.area_sqft, p.total_price AS plot_total_price,
-                           c.name AS colony_name, c.slug AS colony_slug,
-                           u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
-                           sm.name AS sales_manager_name,
-                           a.name AS associate_name, a.referral_code
-                    FROM plot_bookings pb
-                    LEFT JOIN plots p ON p.id = pb.plot_id
-                    LEFT JOIN colonies c ON c.id = p.colony_id
-                    LEFT JOIN users u ON u.id = pb.customer_id
-                    LEFT JOIN users sm ON sm.id = pb.sales_manager_id
-                    LEFT JOIN associates a ON a.id = pb.associate_id
-                    WHERE pb.id = ?
-                    LIMIT 1";
+                            p.plot_number, p.plot_code, p.area_sqft, p.total_price AS plot_total_price,
+                            c.name AS colony_name, c.slug AS colony_slug,
+                            u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
+                            sm.name AS sales_manager_name,
+                            a.name AS associate_name, a.referral_code
+                     FROM plot_bookings pb
+                     LEFT JOIN plots p ON p.id = pb.plot_id
+                     LEFT JOIN colonies c ON c.id = p.colony_id
+                     LEFT JOIN users u ON u.id = pb.customer_id
+                     LEFT JOIN users sm ON sm.id = pb.sales_manager_id
+                     LEFT JOIN associates a ON a.id = pb.associate_id
+                     WHERE pb.id = ?";
+            $params = [$id];
+            if ($tid = $this->tid()) { $sql .= " AND pb.tenant_id = ?"; $params[] = $tid; }
+            $sql .= " LIMIT 1";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$id]);
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
@@ -506,13 +515,14 @@ class BookingLifecycleService
     public function recordPayment(int $installmentId, array $paymentData): array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT bps.*, pb.id AS pb_id, pb.booking_amount, pb.total_plot_value
-                 FROM booking_payment_schedules bps
-                 JOIN plot_bookings pb ON pb.id = bps.booking_id
-                 WHERE bps.id = ?"
-            );
-            $stmt->execute([$installmentId]);
+            $instSql = "SELECT bps.*, pb.id AS pb_id, pb.booking_amount, pb.total_plot_value
+                        FROM booking_payment_schedules bps
+                        JOIN plot_bookings pb ON pb.id = bps.booking_id
+                        WHERE bps.id = ?";
+            $instParams = [$installmentId];
+            if ($tid = $this->tid()) { $instSql .= " AND pb.tenant_id = ?"; $instParams[] = $tid; }
+            $stmt = $this->db->prepare($instSql);
+            $stmt->execute($instParams);
             $inst = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$inst) {
                 return ['success' => false, 'error' => 'Installment not found'];
@@ -600,8 +610,11 @@ class BookingLifecycleService
             try {
                 $booking = $this->getBookingById((int)$inst['booking_id']);
                 if (!empty($booking['customer_id'])) {
-                    $user = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?");
-                    $user->execute([(int)$booking['customer_id']]);
+                    $userSql = "SELECT id, name, email, phone FROM users WHERE id = ?";
+                    $userParams = [(int)$booking['customer_id']];
+                    if ($tid = $this->tid()) { $userSql .= " AND tenant_id = ?"; $userParams[] = $tid; }
+                    $user = $this->db->prepare($userSql);
+                    $user->execute($userParams);
                     $userData = $user->fetch(PDO::FETCH_ASSOC);
 
                     if ($userData) {
@@ -712,15 +725,16 @@ class BookingLifecycleService
     public function generateDemandLetter(int $installmentId): array
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT bps.*, pb.booking_number, pb.id AS pb_id,
-                        u.name AS customer_name, u.email AS customer_email
-                 FROM booking_payment_schedules bps
-                 JOIN plot_bookings pb ON pb.id = bps.booking_id
-                 LEFT JOIN users u ON u.id = pb.customer_id
-                 WHERE bps.id = ?"
-            );
-            $stmt->execute([$installmentId]);
+            $dlSql = "SELECT bps.*, pb.booking_number, pb.id AS pb_id,
+                             u.name AS customer_name, u.email AS customer_email
+                      FROM booking_payment_schedules bps
+                      JOIN plot_bookings pb ON pb.id = bps.booking_id
+                      LEFT JOIN users u ON u.id = pb.customer_id
+                      WHERE bps.id = ?";
+            $dlParams = [$installmentId];
+            if ($tid = $this->tid()) { $dlSql .= " AND pb.tenant_id = ?"; $dlParams[] = $tid; }
+            $stmt = $this->db->prepare($dlSql);
+            $stmt->execute($dlParams);
             $inst = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$inst) {
                 return ['success' => false, 'error' => 'Installment not found'];
@@ -796,18 +810,21 @@ class BookingLifecycleService
 
             $this->db->beginTransaction();
             $prevStatus = (string)$booking['status'];
-            $upd = $this->db->prepare(
-                "UPDATE plot_bookings SET status='cancelled' WHERE id = ?"
-            );
-            $upd->execute([$bookingId]);
+            $cancelSql = "UPDATE plot_bookings SET status='cancelled' WHERE id = ?";
+            $cancelParams = [$bookingId];
+            if ($tidCancel = $this->tid()) { $cancelSql .= " AND tenant_id = ?"; $cancelParams[] = $tidCancel; }
+            $upd = $this->db->prepare($cancelSql);
+            $upd->execute($cancelParams);
             $this->logStatusHistory($bookingId, $prevStatus, 'cancelled', null, $reason);
 
+            $refundCols = "booking_id, refund_amount, cancellation_charge, deduction_reason, refund_mode, status";
+            $refundVals = "?, ?, ?, ?, 'neft', 'pending'";
+            $refundParams = [$bookingId, $refundAmt, $cancellationCharge, $reason];
+            if ($tidRefund = $this->tid()) { $refundCols .= ", tenant_id"; $refundVals .= ", ?"; $refundParams[] = $tidRefund; }
             $ins = $this->db->prepare(
-                "INSERT INTO booking_refunds
-                 (booking_id, refund_amount, cancellation_charge, deduction_reason, refund_mode, status)
-                 VALUES (?, ?, ?, ?, 'neft', 'pending')"
+                "INSERT INTO booking_refunds ($refundCols) VALUES ($refundVals)"
             );
-            $ins->execute([$bookingId, $refundAmt, $cancellationCharge, $reason]);
+            $ins->execute($refundParams);
             $refundId = (int)$this->db->lastInsertId();
 
             // Claw back all commissions associated with this booking
@@ -827,8 +844,11 @@ class BookingLifecycleService
                     'refund_amount' => number_format($refundAmt, 2),
                 ]);
 
-                $user = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?");
-                $user->execute([(int)$booking['customer_id']]);
+                $userSql = "SELECT id, name, email, phone FROM users WHERE id = ?";
+                $userParams = [(int)$booking['customer_id']];
+                if ($tidUser = $this->tid()) { $userSql .= " AND tenant_id = ?"; $userParams[] = $tidUser; }
+                $user = $this->db->prepare($userSql);
+                $user->execute($userParams);
                 $userData = $user->fetch(PDO::FETCH_ASSOC);
                 if ($userData) {
                     $notifSvc = new \App\Services\BookingNotificationService();
@@ -884,16 +904,20 @@ class BookingLifecycleService
             }
             $prevStatus = (string)$booking['status'];
             $this->db->beginTransaction();
+            $transferCols = "original_booking_id, new_customer_id, transfer_reason, transfer_date, transfer_charge, status";
+            $transferVals = "?, ?, ?, CURDATE(), ?, 'initiated'";
+            $transferParams = [$bookingId, $newCustomerId, $reason, $transferCharge];
+            if ($tidTf = $this->tid()) { $transferCols .= ", tenant_id"; $transferVals .= ", ?"; $transferParams[] = $tidTf; }
             $ins = $this->db->prepare(
-                "INSERT INTO booking_transfers
-                 (original_booking_id, new_customer_id, transfer_reason, transfer_date, transfer_charge, status)
-                 VALUES (?, ?, ?, CURDATE(), ?, 'initiated')"
+                "INSERT INTO booking_transfers ($transferCols) VALUES ($transferVals)"
             );
-            $ins->execute([$bookingId, $newCustomerId, $reason, $transferCharge]);
+            $ins->execute($transferParams);
             $transferId = (int)$this->db->lastInsertId();
 
-            $this->db->prepare("UPDATE plot_bookings SET status='transferred' WHERE id = ?")
-                     ->execute([$bookingId]);
+            $tfUpdSql = "UPDATE plot_bookings SET status='transferred' WHERE id = ?";
+            $tfUpdParams = [$bookingId];
+            if ($tidTfUpd = $this->tid()) { $tfUpdSql .= " AND tenant_id = ?"; $tfUpdParams[] = $tidTfUpd; }
+            $this->db->prepare($tfUpdSql)->execute($tfUpdParams);
             $this->logStatusHistory($bookingId, $prevStatus, 'transferred', null, $reason);
             $this->db->commit();
 
@@ -1054,27 +1078,31 @@ class BookingLifecycleService
         try {
             $tid = $this->tid();
             $tenantSql = $tid ? " WHERE tenant_id = $tid" : "";
+            $tenJoin = $tid ? " JOIN plot_bookings pb ON pb.id = bps.booking_id AND pb.tenant_id = $tid" : "";
+            $tenJoinRcpt = $tid ? " JOIN plot_bookings pb ON pb.id = bpr.booking_id AND pb.tenant_id = $tid" : "";
+            $tenJoinRef = $tid ? " JOIN plot_bookings pb ON pb.id = br.booking_id AND pb.tenant_id = $tid" : "";
             $totalBookings = (int)$this->db->query("SELECT COUNT(*) FROM plot_bookings$tenantSql")->fetchColumn();
             $activeEmi = (int)$this->db->query(
-                "SELECT COUNT(DISTINCT booking_id) FROM booking_payment_schedules
-                 WHERE status IN ('pending','overdue','partial')"
+                "SELECT COUNT(DISTINCT bps.booking_id) FROM booking_payment_schedules bps$tenJoin
+                 WHERE bps.status IN ('pending','overdue','partial')"
             )->fetchColumn();
             $overdueCount = (int)$this->db->query(
-                "SELECT COUNT(*) FROM booking_payment_schedules
-                 WHERE status = 'overdue'
-                    OR (status = 'pending' AND due_date < CURDATE())"
+                "SELECT COUNT(*) FROM booking_payment_schedules bps$tenJoin
+                 WHERE bps.status = 'overdue'
+                    OR (bps.status = 'pending' AND bps.due_date < CURDATE())"
             )->fetchColumn();
+            $mlmWhere = "commission_type IN ('direct_sale','l1_override','l2_override','l3_override','team_bonus')
+                   AND status IN ('approved','paid')";
+            if ($tid) { $mlmWhere .= " AND tenant_id = $tid"; }
             $commissionEarned = (float)$this->db->query(
-                "SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger
-                 WHERE commission_type IN ('direct_sale','l1_override','l2_override','l3_override','team_bonus')
-                   AND status IN ('approved','paid')"
+                "SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger WHERE $mlmWhere"
             )->fetchColumn();
             $refundPending = (int)$this->db->query(
-                "SELECT COUNT(*) FROM booking_refunds WHERE status = 'pending'"
+                "SELECT COUNT(*) FROM booking_refunds br$tenJoinRef WHERE br.status = 'pending'"
             )->fetchColumn();
             $totalRevenue = (float)$this->db->query(
-                "SELECT COALESCE(SUM(amount),0) FROM booking_payment_receipts
-                 WHERE status = 'cleared'"
+                "SELECT COALESCE(SUM(bpr.amount),0) FROM booking_payment_receipts bpr$tenJoinRcpt
+                 WHERE bpr.status = 'cleared'"
             )->fetchColumn();
             $byStatus = [];
             $rows = $this->db->query(
@@ -1123,8 +1151,11 @@ class BookingLifecycleService
     private function getBookingCustomerId(int $bookingId): ?int
     {
         try {
-            $stmt = $this->db->prepare("SELECT customer_id FROM plot_bookings WHERE id = ?");
-            $stmt->execute([$bookingId]);
+            $sql = "SELECT customer_id FROM plot_bookings WHERE id = ?";
+            $params = [$bookingId];
+            if ($tid = $this->tid()) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $id = $stmt->fetchColumn();
             return $id ? (int)$id : null;
         } catch (\Throwable $e) {
@@ -1135,11 +1166,13 @@ class BookingLifecycleService
     private function totalPaid(int $bookingId): float
     {
         try {
-            $stmt = $this->db->prepare(
-                "SELECT COALESCE(SUM(amount),0) FROM booking_payment_receipts
-                 WHERE booking_id = ? AND status = 'cleared'"
-            );
-            $stmt->execute([$bookingId]);
+            $sql = "SELECT COALESCE(SUM(bpr.amount),0) FROM booking_payment_receipts bpr
+                    JOIN plot_bookings pb ON pb.id = bpr.booking_id
+                    WHERE bpr.booking_id = ? AND bpr.status = 'cleared'";
+            $params = [$bookingId];
+            if ($tid = $this->tid()) { $sql .= " AND pb.tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             return (float)$stmt->fetchColumn();
         } catch (Exception $e) {
             return 0.0;
@@ -1156,11 +1189,13 @@ class BookingLifecycleService
 
             $totalValue = (float)$row['total_plot_value'];
             $paid       = $this->totalPaid($bookingId);
-            $stmt       = $this->db->prepare(
-                "SELECT COUNT(*) FROM booking_payment_schedules
-                 WHERE booking_id = ? AND status IN ('pending','overdue','partial')"
-            );
-            $stmt->execute([$bookingId]);
+            $bpsSql = "SELECT COUNT(*) FROM booking_payment_schedules bps
+                       JOIN plot_bookings pb ON pb.id = bps.booking_id
+                       WHERE bps.booking_id = ? AND bps.status IN ('pending','overdue','partial')";
+            $bpsParams = [$bookingId];
+            if ($tidBps = $this->tid()) { $bpsSql .= " AND pb.tenant_id = ?"; $bpsParams[] = $tidBps; }
+            $stmt = $this->db->prepare($bpsSql);
+            $stmt->execute($bpsParams);
             $pendingCount = (int)$stmt->fetchColumn();
 
             $new = $cur;
@@ -1182,8 +1217,10 @@ class BookingLifecycleService
     private function setBookingStatus(int $bookingId, ?string $from, string $to, ?int $changedBy, ?string $reason): void
     {
         try {
-            $this->db->prepare("UPDATE plot_bookings SET status = ? WHERE id = ?")
-                     ->execute([$to, $bookingId]);
+            $sql = "UPDATE plot_bookings SET status = ? WHERE id = ?";
+            $params = [$to, $bookingId];
+            if ($tidStat = $this->tid()) { $sql .= " AND tenant_id = ?"; $params[] = $tidStat; }
+            $this->db->prepare($sql)->execute($params);
             $this->logStatusHistory($bookingId, $from, $to, $changedBy, $reason);
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::setBookingStatus] ' . $e->getMessage());
@@ -1253,20 +1290,26 @@ class BookingLifecycleService
     public function clawbackBookingCommissions(int $bookingId): void
     {
         try {
+            $tidClaw = $this->tid();
+            $tClawSql = $tidClaw ? " AND tenant_id = ?" : "";
             // 1. Mark pending commissions as cancelled in mlm_commission_ledger
             $stmt = $this->db->prepare("
                 UPDATE mlm_commission_ledger
                 SET status = 'cancelled'
-                WHERE booking_id = ? AND status = 'pending'
+                WHERE booking_id = ? AND status = 'pending'$tClawSql
             ");
-            $stmt->execute([$bookingId]);
+            $paramsUpd = [$bookingId];
+            if ($tidClaw) { $paramsUpd[] = $tidClaw; }
+            $stmt->execute($paramsUpd);
 
             // 2. Query all commissions related to this booking that are approved or paid
             $stmt = $this->db->prepare("
                 SELECT * FROM mlm_commission_ledger
-                WHERE booking_id = ? AND status IN ('approved', 'paid')
+                WHERE booking_id = ? AND status IN ('approved', 'paid')$tClawSql
             ");
-            $stmt->execute([$bookingId]);
+            $paramsSel = [$bookingId];
+            if ($tidClaw) { $paramsSel[] = $tidClaw; }
+            $stmt->execute($paramsSel);
             $commissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($commissions as $comm) {
@@ -1276,22 +1319,24 @@ class BookingLifecycleService
                 if ($amount <= 0) continue;
 
                 // Create a clawback debit entry
+                $ledgerCols = "beneficiary_user_id, source_user_id, commission_type, amount, level, sale_amount, commission_percentage, status, notes, created_at";
+                $ledgerVals = "?, ?, 'clawback', ?, ?, 0.00, 0.00, 'approved', ?, NOW()";
+                $ledgerParams = [$beneficiary, $comm['source_user_id'], -$amount, $comm['level'], "Clawback - Booking #$bookingId Cancelled"];
+                if ($tidClaw) { $ledgerCols .= ", tenant_id"; $ledgerVals .= ", ?"; $ledgerParams[] = $tidClaw; }
                 $ledgerStmt = $this->db->prepare("
-                    INSERT INTO mlm_commission_ledger
-                    (beneficiary_user_id, source_user_id, commission_type, amount, level, sale_amount, commission_percentage, status, notes, created_at)
-                    VALUES (?, ?, 'clawback', ?, ?, 0.00, 0.00, 'approved', ?, NOW())
+                    INSERT INTO mlm_commission_ledger ($ledgerCols) VALUES ($ledgerVals)
                 ");
-                $note = "Clawback - Booking #" . $bookingId . " Cancelled";
-                $ledgerStmt->execute([$beneficiary, $comm['source_user_id'], -$amount, $comm['level'], $note]);
+                $ledgerStmt->execute($ledgerParams);
 
                 // Deduct from wallet balance (allows negative balance)
-                $walletStmt = $this->db->prepare("
-                    UPDATE user_wallets
+                $walletSql = "UPDATE user_wallets
                     SET balance = balance - ?,
                         updated_at = NOW()
-                    WHERE user_id = ? AND user_type = 'associate'
-                ");
-                $walletStmt->execute([$amount, $beneficiary]);
+                    WHERE user_id = ? AND user_type = 'associate'";
+                $walletParams = [$amount, $beneficiary];
+                if ($tidClaw) { $walletSql .= " AND tenant_id = ?"; $walletParams[] = $tidClaw; }
+                $walletStmt = $this->db->prepare($walletSql);
+                $walletStmt->execute($walletParams);
             }
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::clawbackBookingCommissions] Error: ' . $e->getMessage());
@@ -1324,14 +1369,11 @@ class BookingLifecycleService
             $startDate = date('Y-m-d');
             $endDate = date('Y-m-d', strtotime('+5 years'));
 
-            $stmt = $this->db->prepare("
-                INSERT INTO nach_mandates
-                (booking_id, customer_id, mandate_type, bank_name, bank_account_number, 
-                 ifsc_code, account_holder_name, mandate_amount, frequency, start_date, end_date, 
-                 next_debit_date, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'monthly', ?, ?, ?, 'submitted')
-            ");
-            $stmt->execute([
+            $nachCols = "booking_id, customer_id, mandate_type, bank_name, bank_account_number, 
+                         ifsc_code, account_holder_name, mandate_amount, frequency, start_date, end_date, 
+                         next_debit_date, status";
+            $nachVals = "?, ?, ?, ?, ?, ?, ?, ?, 'monthly', ?, ?, ?, 'submitted'";
+            $nachParams = [
                 $bookingId,
                 $customerId,
                 $mandateData['mandate_type'] ?? 'emandate',
@@ -1343,7 +1385,12 @@ class BookingLifecycleService
                 $startDate,
                 $endDate,
                 $startDate, // first debit on registration day
-            ]);
+            ];
+            if ($tidNach = $this->tid()) { $nachCols .= ", tenant_id"; $nachVals .= ", ?"; $nachParams[] = $tidNach; }
+            $stmt = $this->db->prepare("
+                INSERT INTO nach_mandates ($nachCols) VALUES ($nachVals)
+            ");
+            $stmt->execute($nachParams);
 
             $mandateId = (int)$this->db->lastInsertId();
             return ['success' => true, 'mandate_id' => $mandateId, 'status' => 'submitted'];
@@ -1459,10 +1506,14 @@ class BookingLifecycleService
      */
     public function getNachMandate(int $bookingId): ?array
     {
-        $stmt = $this->db->prepare("
-            SELECT * FROM nach_mandates WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1
-        ");
-        $stmt->execute([$bookingId]);
+        $sql = "SELECT nm.* FROM nach_mandates nm
+                JOIN plot_bookings pb ON pb.id = nm.booking_id
+                WHERE nm.booking_id = ?";
+        $params = [$bookingId];
+        if ($tidNm = $this->tid()) { $sql .= " AND pb.tenant_id = ?"; $params[] = $tidNm; }
+        $sql .= " ORDER BY nm.created_at DESC LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
