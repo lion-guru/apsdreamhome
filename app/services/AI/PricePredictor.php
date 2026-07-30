@@ -315,7 +315,8 @@ class PricePredictor
                 $size
             ]);
         } catch (\Exception $e) {
-            // Model save is best-effort
+        // Model save is best-effort
+        error_log($e->getMessage());
         }
     }
 }

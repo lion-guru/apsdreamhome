@@ -34,7 +34,8 @@ class PropertySubmissionService
                         property_type, location, images, commission_split_json
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $params = [
@@ -78,7 +79,8 @@ class PropertySubmissionService
         try {
             $submission = $this->db->fetchOne("SELECT * FROM property_submissions WHERE id = ?", [$submissionId]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!$submission) return ['success' => false, 'message' => 'Submission not found'];
 

@@ -267,7 +267,8 @@ class PerformanceConfigService
                         (event, event_data, execution_time_ms, level, created_at) 
                         VALUES (?, ?, ?, ?, NOW())";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             $this->db->execute($sql, [
@@ -298,7 +299,8 @@ class PerformanceConfigService
                 // Recent performance logs
                 $sql = "SELECT * FROM performance_logs";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $params = [];
             
@@ -331,7 +333,8 @@ class PerformanceConfigService
                         FROM performance_logs 
                         WHERE execution_time_ms IS NOT NULL";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             $summaryParams = [];
@@ -358,7 +361,8 @@ class PerformanceConfigService
                 // Events by level
                 $levelSql = "SELECT level, COUNT(*) as count FROM performance_logs";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $levelParams = [];
             
@@ -709,7 +713,8 @@ class PerformanceConfigService
             $sql = "DELETE FROM performance_logs 
                     WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $deletedRows = $this->db->execute($sql, [$this->config['metrics_retention_days']]);

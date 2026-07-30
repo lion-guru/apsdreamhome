@@ -456,7 +456,8 @@ class FarmerService
                 // Commission statistics
                 $commissionSql = "SELECT COUNT(*) as total_commissions, SUM(amount) as total_amount FROM farmer_commissions WHERE status = 'paid'";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $commissionStats = $this->db->fetchOne($commissionSql);
             $stats['commissions'] = $commissionStats ?? [
@@ -604,7 +605,8 @@ class FarmerService
                     (farmer_id, commission_type, rate, effective_from, created_at) 
                     VALUES (?, ?, ?, NOW(), NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [
@@ -716,7 +718,8 @@ class FarmerService
         try {
             $sql = "SELECT * FROM farmer_commissions WHERE farmer_id = ? ORDER BY created_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->fetchAll($sql, [$farmerId]);
     }
@@ -726,7 +729,8 @@ class FarmerService
         try {
             $sql = "SELECT * FROM farmer_activities WHERE farmer_id = ? ORDER BY created_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->fetchAll($sql, [$farmerId]);
     }
@@ -753,7 +757,8 @@ class FarmerService
             $sql = "INSERT INTO farmer_activities (farmer_id, activity_type, description, data, created_by, created_at) 
                     VALUES (?, ?, ?, ?, 'system', NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [
@@ -813,7 +818,8 @@ class FarmerService
                     (farmer_id, commission_type, amount, commission_rate, reference_id, reference_data, status, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [
@@ -840,7 +846,8 @@ class FarmerService
                     updated_at = NOW()
                     WHERE f.id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [$farmerId, $farmerId]);
@@ -865,7 +872,8 @@ class FarmerService
                     ORDER BY fa.created_at DESC 
                     LIMIT 20";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         return $this->db->fetchAll($sql);

@@ -746,7 +746,7 @@ class LandAcquisitionService
     private function log(string $level, string $msg, string $detail = ''): void
     {
         if ($this->logger && method_exists($this->logger, $level)) {
-            try { $this->logger->{$level}($msg, ['detail' => $detail]); } catch (Exception $e) {}
+            try { $this->logger->{$level}($msg, ['detail' => $detail]); } catch (Exception $e) { error_log($e->getMessage()); }
         } else {
             @error_log("[LandAcquisitionService] [$level] $msg :: $detail");
         }

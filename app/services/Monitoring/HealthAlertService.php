@@ -264,7 +264,8 @@ class HealthAlertService
                 return false;
             }
         } catch (Throwable $e) {
-            // ignore; proceed to insert
+        // ignore; proceed to insert
+        error_log($e->getMessage());
         }
 
         try {
@@ -284,7 +285,7 @@ class HealthAlertService
             $this->emailAdmin($severity, $source, $message);
             try {
                 $db->execute("UPDATE monitoring_alerts SET notified_email = 1 WHERE id = ?", [(int)$id]);
-            } catch (Throwable $e) { /* ignore */ }
+            } catch (Throwable $e) { /* ignore */ error_log($e->getMessage()); }
         }
 
         return (int)$id;

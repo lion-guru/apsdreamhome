@@ -421,7 +421,8 @@ class DocumentController extends AdminController
             try {
                 $sql = "SELECT r.*, d.title as document_title, u.name as reviewer_name FROM document_reviews r LEFT JOIN documents d ON r.document_id = d.id LEFT JOIN users u ON r.reviewer_id = u.id";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $params = [];
             if (!empty($statusFilter)) {
@@ -450,7 +451,8 @@ class DocumentController extends AdminController
                     $tid = $this->tenantId();
                     $stmt = $db->prepare("INSERT INTO document_reviews (document_id, reviewer_id, review_status, comments, reviewed_at, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), NOW(), ?)");
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
                 $stmt->execute([
                     (int)$_POST['document_id'],

@@ -3237,7 +3237,8 @@ class MobileApiController extends BaseController
                     $pushSvc->subscribeToTopic($deviceToken, 'all');
                 }
             } catch (\Throwable $e) {
-                // Non-critical — token is already saved
+            // Non-critical — token is already saved
+            error_log($e->getMessage());
             }
 
             echo json_encode([
@@ -4250,7 +4251,7 @@ class MobileApiController extends BaseController
                     'total' => (int) ($row['total'] ?? 0),
                     'active' => (int) ($row['active'] ?? 0),
                 ];
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             // Bookings
             try {
@@ -4269,7 +4270,7 @@ class MobileApiController extends BaseController
                     'active' => (int) ($row['active'] ?? 0),
                     'total_value' => (float) ($row['total_value'] ?? 0),
                 ];
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             // Inquiries
             try {
@@ -4284,7 +4285,7 @@ class MobileApiController extends BaseController
                     'total' => (int) ($row['total'] ?? 0),
                     'pending' => (int) ($row['pending'] ?? 0),
                 ];
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             // Wallet
             try {
@@ -4297,14 +4298,14 @@ class MobileApiController extends BaseController
                         'mlm_points' => (int) ($row['mlm_points'] ?? 0),
                     ];
                 }
-            } catch (\Throwable $e) { /* column may not exist */ }
+            } catch (\Throwable $e) { /* column may not exist */ error_log($e->getMessage()); }
 
             // Notifications
             try {
                 $stmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0");
                 $stmt->execute([$userId]);
                 $stats['notifications'] = ['unread' => (int) $stmt->fetchColumn()];
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             echo json_encode([
                 'success' => true,
@@ -4531,7 +4532,7 @@ class MobileApiController extends BaseController
                         'overdue' => (int) ($row['overdue'] ?? 0),
                     ];
                 }
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             // Today's attendance
             try {
@@ -4553,7 +4554,7 @@ class MobileApiController extends BaseController
                         'status' => $record['status'],
                     ];
                 }
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             // Recent announcements (from daily_operations_log, last 5)
             try {
@@ -4578,7 +4579,7 @@ class MobileApiController extends BaseController
                         'time' => $timeAgo,
                     ];
                 }
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (\Throwable $e) {

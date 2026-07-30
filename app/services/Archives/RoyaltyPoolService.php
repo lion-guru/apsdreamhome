@@ -225,7 +225,8 @@ class RoyaltyPoolService
                         'month'   => $monthYear,
                     ]);
                 } catch (\Throwable $ex) {
-                    // non-fatal
+                // non-fatal
+                error_log($ex->getMessage());
                 }
 
                 $totalDistributed += $shareAmt;

@@ -78,7 +78,8 @@ class PageController extends BaseController
                         $priceText = 'Starting from ' . "\xE2\x82\xB9" . number_format($minPrice) . '/sqft';
                     }
                 } catch (\Exception $e) {
-                    // fallback to generic text
+                // fallback to generic text
+                error_log($e->getMessage());
                 }
 
                 $featured_properties[] = [
@@ -128,7 +129,8 @@ class PageController extends BaseController
         try {
             $siteContent = \App\Services\SiteContentService::getInstance()->getSection('about');
         } catch (\Exception $e) {
-            // fallback: empty, view will use __() lang keys
+        // fallback: empty, view will use __() lang keys
+        error_log($e->getMessage());
         }
 
         $data = [
@@ -611,7 +613,8 @@ public function navigation()
                         ->execute([$leadRow['id'], $serviceId]);
                 }
             } catch (\Exception $e) {
-                // Non-critical — service interest already saved
+            // Non-critical — service interest already saved
+            error_log($e->getMessage());
             }
 
             echo json_encode(['success' => true, 'message' => 'Thank you! Our financial team will contact you shortly.']);
@@ -1195,14 +1198,14 @@ public function propertyInterest()
         try {
             $prop = $this->db->fetch("SELECT name FROM user_properties WHERE id = ?", [$propertyId]);
             $propName = $prop['name'] ?? '';
-        } catch (\Exception $e) { /* skip */ }
+        } catch (\Exception $e) { /* skip */ error_log($e->getMessage()); }
 
         // Check if lead already exists for this phone
         $existingLead = null;
         try {
             list($tSql, $tParams) = $this->tenantWhere();
             $existingLead = $this->db->fetch("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL{$tSql} ORDER BY id DESC LIMIT 1", array_merge([$phoneClean], $tParams));
-        } catch (\Exception $e) { /* skip */ }
+        } catch (\Exception $e) { /* skip */ error_log($e->getMessage()); }
 
         $userId = $_SESSION['user_id'] ?? 0;
 
@@ -1241,7 +1244,7 @@ public function propertyInterest()
                         $leadId
                     ]
                 );
-            } catch (\Exception $e) { /* skip */ }
+            } catch (\Exception $e) { /* skip */ error_log($e->getMessage()); }
 
             // Notify property owner
             try {
@@ -1250,7 +1253,7 @@ public function propertyInterest()
                     $ownerMsg = "New interest in your property '{$prop['name']}'!\n\nFrom: " . ($name ?: 'Unknown') . " ($phoneClean)\nBudget: $budget\n\nAPS Dream Home";
                     @mail($prop['email'], "Interest in your property: {$prop['name']}", $ownerMsg, "From: info@apsdreamhome.com\r\nReply-To: $phoneClean@aps.local");
                 }
-            } catch (\Exception $e) { /* skip */ }
+            } catch (\Exception $e) { /* skip */ error_log($e->getMessage()); }
 
             echo json_encode(['success' => true, 'message' => 'Interest recorded! Our team will contact you shortly.', 'lead_id' => $leadId]);
         } catch (\Exception $e) {

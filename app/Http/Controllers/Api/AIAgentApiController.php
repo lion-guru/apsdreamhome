@@ -134,7 +134,8 @@ class AIAgentApiController extends BaseController
                 $text = "$name $phone $notes";
                 $intent = $intentDetector->detect($text);
             } catch (\Throwable $e) {
-                // Intent detection is optional
+            // Intent detection is optional
+            error_log($e->getMessage());
             }
 
             $score = $scoreResult['score'] ?? 50;
@@ -272,7 +273,8 @@ class AIAgentApiController extends BaseController
                         $recommendations[] = is_string($rec) ? $rec : ($rec['title'] ?? $rec['name'] ?? 'View property');
                     }
                 } catch (\Throwable $e) {
-                    // Fallback
+                // Fallback
+                error_log($e->getMessage());
                 }
             }
 
@@ -407,7 +409,8 @@ class AIAgentApiController extends BaseController
                         [$userId, 'feedback', $agentId, $feedback, "rating:$rating", $rating / 5.0, 0]
                     );
                 } catch (\Throwable $e2) {
-                    // Silently fail — feedback is non-critical
+                // Silently fail — feedback is non-critical
+                error_log($e2->getMessage());
                 }
             }
 
@@ -457,7 +460,8 @@ class AIAgentApiController extends BaseController
                     $stats['averageResponseTime'] = round(floatval($row['avg_time'])) . 'ms';
                 }
             } catch (\Throwable $e) {
-                // Use defaults
+            // Use defaults
+            error_log($e->getMessage());
             }
 
             // Get lead processing stats
@@ -470,7 +474,8 @@ class AIAgentApiController extends BaseController
                     $stats['leadsProcessed'] = intval($leadRow['total']);
                 }
             } catch (\Throwable $e) {
-                // Use defaults
+            // Use defaults
+            error_log($e->getMessage());
             }
 
             // Get call stats
@@ -482,7 +487,8 @@ class AIAgentApiController extends BaseController
                     $stats['callsHandled'] = intval($callRow['total']);
                 }
             } catch (\Throwable $e) {
-                // Use defaults
+            // Use defaults
+            error_log($e->getMessage());
             }
 
             // Get feedback count
@@ -495,7 +501,8 @@ class AIAgentApiController extends BaseController
                     $stats['feedbackCount'] = intval($fbRow['total']);
                 }
             } catch (\Throwable $e) {
-                // Use defaults
+            // Use defaults
+            error_log($e->getMessage());
             }
 
             return $this->jsonResponse([
@@ -648,7 +655,8 @@ class AIAgentApiController extends BaseController
                 ]
             );
         } catch (\Throwable $e) {
-            // Silently fail — logging shouldn't break the response
+        // Silently fail — logging shouldn't break the response
+        error_log($e->getMessage());
         }
     }
 

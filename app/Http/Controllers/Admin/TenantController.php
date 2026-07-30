@@ -368,7 +368,8 @@ class TenantController extends AdminController
                                 ON DUPLICATE KEY UPDATE role = 'admin', is_primary = 1
                             ")->execute([$tenantId, $adminId]);
                         } catch (\Throwable $e) {
-                            // tenant_users table may not exist
+                        // tenant_users table may not exist
+                        error_log($e->getMessage());
                         }
                     }
                 } catch (\Throwable $e) {
@@ -410,7 +411,8 @@ class TenantController extends AdminController
                         'admin'
                     );
                 } catch (\Throwable $e) {
-                    // Non-critical
+                // Non-critical
+                error_log($e->getMessage());
                 }
             }
 

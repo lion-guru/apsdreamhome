@@ -95,7 +95,8 @@ class PropertyComparisonService
                     LEFT JOIN builders b ON p.builder_id = b.id
                     WHERE p.id IN ($placeholders)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $properties = $this->db->query($sql, $ids)->fetchAll(\PDO::FETCH_ASSOC);
@@ -362,7 +363,8 @@ class PropertyComparisonService
                 [$propertyId]
             )->fetchAll(\PDO::FETCH_COLUMN);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
     }
 
@@ -390,7 +392,8 @@ class PropertyComparisonService
                 [$userId]
             )->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
     }
 }

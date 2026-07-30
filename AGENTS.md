@@ -1,4 +1,30 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-30 — Session 63)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-30 — Session 64)
+
+---
+
+# Session 64: Dead Reference Cleanup + Flutter APK Rebuild (2026-07-30)
+
+## Goal
+
+Fix stale references to archived files, rebuild mobile APK with latest backend changes.
+
+## What Was Done
+
+| Feature                          | Details                                                                                                                                                                                                  |
+| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dead Security Routes Removed** | `routes/security.php` (33 lines, 15 routes) referenced archived `SecurityController` — each route would 500. Removed include from `routes/api.php:155`, archived file to `_archive/routes_security.php`. |
+| **Broken Test File Archived**    | `testing/test_envelope_log.php` had `require_once` + `use` for archived `Envelope.php`. Moved to `_archive/test_envelope_log.php`.                                                                       |
+| **AppCoreService Verified**      | ~30+ live files use `App::getInstance()` / `App::database()` — cannot archive. Dead `route()` private method has stale controller strings but never called (zero references). Harmless.                  |
+| **Flutter APK Rebuilt**          | Debug APK v1.2.0 (251MB) built + copied to `public/downloads/apsdreamhome.apk`. Many backend API changes since last build (Session 51).                                                                  |
+| **E2E Tests**                    | **153/153 PASS** — zero regressions.                                                                                                                                                                     |
+
+## Files Modified
+
+| File                             | Changes                                                        |
+| :------------------------------- | :------------------------------------------------------------- |
+| `routes/api.php`                 | Removed `require_once __DIR__ . '/security.php'` (dead routes) |
+| `_archive/routes_security.php`   | Archived 15 dead API routes                                    |
+| `_archive/test_envelope_log.php` | Archived broken test file                                      |
 
 ---
 

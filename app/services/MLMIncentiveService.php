@@ -138,7 +138,8 @@ class MLMIncentiveService
                           WHERE agent_id IN ($placeholders) 
                           AND created_at BETWEEN ? AND ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $legacyVolume = (float)$this->db->fetchOne($sqlLegacy, $params)['SUM(sale_amount)'] ?: 0;
 

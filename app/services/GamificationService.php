@@ -48,7 +48,7 @@ class GamificationService
                 $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commissions WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
                 $stmt->execute([$userId]);
                 $teamSales = (float)$stmt->fetchColumn();
-            } catch (\Throwable $e2) {}
+            } catch (\Throwable $e2) { error_log($e2->getMessage()); }
         }
 
         $networkSize = 0;
@@ -56,7 +56,7 @@ class GamificationService
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_user_id = ?");
             $stmt->execute([$userId]);
             $networkSize = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $thresholds = [
             ['name' => 'Associate',       'min' => 0,          'color' => 'secondary'],
@@ -78,7 +78,7 @@ class GamificationService
             $stmt->execute([$agentId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row) { $deals = (int)$row['c']; $revenue = (float)$row['s']; }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $thresholds = [
             ['name' => 'Rookie',    'min' => 0,       'color' => 'secondary'],

@@ -288,7 +288,7 @@ class PushSender
         try {
             $this->db->prepare('UPDATE push_subscriptions SET last_used_at = NOW() WHERE id = ?')
                      ->execute([$id]);
-        } catch (\Throwable $e) { /* best-effort */ }
+        } catch (\Throwable $e) { /* best-effort */ error_log($e->getMessage()); }
     }
 
     private function deactivateSubscription(int $id): void
@@ -296,7 +296,7 @@ class PushSender
         try {
             $this->db->prepare('UPDATE push_subscriptions SET is_active = 0 WHERE id = ?')
                      ->execute([$id]);
-        } catch (\Throwable $e) { /* best-effort */ }
+        } catch (\Throwable $e) { /* best-effort */ error_log($e->getMessage()); }
     }
 
     /**

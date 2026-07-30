@@ -60,7 +60,8 @@ class AIAdvancedAgent {
         try {
             $profile = $this->db->fetch("SELECT * FROM user_ai_profiles WHERE user_id = ?", [$userId]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $plan = [

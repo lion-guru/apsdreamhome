@@ -747,7 +747,8 @@ class MoneyWorkflowService
                     $amountInr = round($gross * $fxRate, 2);
                 }
             } catch (Exception $e) {
-                // Keep manual rate on failure
+            // Keep manual rate on failure
+            error_log($e->getMessage());
             }
         }
 
@@ -2182,7 +2183,7 @@ class MoneyWorkflowService
                     $this->db->execute('UPDATE tds_register SET ' . implode(', ', $set) . ' WHERE id = ?', $params);
                 }
             }
-        } catch (Exception $e) { /* column may not exist - swallow */ }
+        } catch (Exception $e) { /* column may not exist - swallow */ error_log($e->getMessage()); }
         return $tdsId;
     }
 
@@ -2292,7 +2293,7 @@ class MoneyWorkflowService
             if ($fy) {
                 $this->db->execute('UPDATE gst_transactions SET financial_year = ? WHERE id = ?', [$fy, $gstId]);
             }
-        } catch (Exception $e) { /* column may not exist - swallow */ }
+        } catch (Exception $e) { /* column may not exist - swallow */ error_log($e->getMessage()); }
         return $gstId;
     }
 

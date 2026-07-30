@@ -194,7 +194,8 @@ class RecommendationEngine
                     $candidates[] = $row;
                 }
             } catch (\Exception $e) {
-                // table may not exist
+            // table may not exist
+            error_log($e->getMessage());
             }
         }
 

@@ -201,7 +201,7 @@ class SmartSchedulerAgent
                 "INSERT INTO crm_tasks (lead_id, assigned_to, task_type, title, priority, due_date, status, created_at)
                  VALUES (?, ?, 'site_visit_reminder', ?, 'high', ?, 'pending', NOW())"
             )->execute([$leadId, $agentId, "Site visit at $time — check plot availability", $date]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 
     private function optimizeRoute(array $visits): array
@@ -217,6 +217,6 @@ class SmartSchedulerAgent
             $this->db->getConnection()->prepare(
                 "INSERT INTO sms_queue (phone, message, status, created_at) VALUES (?, ?, 'pending', NOW())"
             )->execute([$phone, $message]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

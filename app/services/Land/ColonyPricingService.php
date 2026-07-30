@@ -1084,7 +1084,8 @@ class ColonyPricingService
                 $this->db->rollBack();
             }
         } catch (Exception $ignored) {
-            // Swallow
+        // Swallow
+        error_log($ignored->getMessage());
         }
     }
 
@@ -1098,7 +1099,8 @@ class ColonyPricingService
                 $this->logger->log($level, $message, $context);
             }
         } catch (Exception $ignored) {
-            // Never let logging break the caller
+        // Never let logging break the caller
+        error_log($ignored->getMessage());
         }
     }
 }

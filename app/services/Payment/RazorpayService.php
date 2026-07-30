@@ -173,7 +173,8 @@ class RazorpayService
                 // Get commission rules
                 $rules = $this->db->fetchAll("SELECT * FROM commission_rules WHERE is_active = 1 ORDER BY level ASC");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             foreach ($referrers as $index => $referrer) {

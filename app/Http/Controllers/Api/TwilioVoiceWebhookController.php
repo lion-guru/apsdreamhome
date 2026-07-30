@@ -169,7 +169,8 @@ class TwilioVoiceWebhookController extends Controller
                 $stmt->execute([$recordingUrl, $recordingSid, $duration !== null ? (int)$duration : null, $callSid]);
             }
         } catch (\Throwable $e) {
-            // Best-effort; never fail the webhook.
+        // Best-effort; never fail the webhook.
+        error_log($e->getMessage());
         }
 
         header('Content-Type: text/xml; charset=utf-8');
@@ -209,7 +210,8 @@ class TwilioVoiceWebhookController extends Controller
                 $stmt->execute([$digits ?: null, $speech ?: null, $callSid]);
             }
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
 
         $builder = new TwiMLBuilder();

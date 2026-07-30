@@ -197,7 +197,7 @@ class PropertyMatchmakerAgent
             $this->db->getConnection()->prepare(
                 "UPDATE leads SET last_recommendation_date = NOW(), recommended_plots = ? WHERE id = ?"
             )->execute([json_encode($plotIds), $leadId]);
-        } catch (\Throwable $e) { /* column may not exist */ }
+        } catch (\Throwable $e) { /* column may not exist */ error_log($e->getMessage()); }
     }
 
     private function sendRecommendation(int $leadId, array $match): void
@@ -211,6 +211,6 @@ class PropertyMatchmakerAgent
                 "Recommended: {$match['colony']} {$match['block']} - {$match['area']} sqft @ ₹" . number_format($match['price']),
                 json_encode($match),
             ]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

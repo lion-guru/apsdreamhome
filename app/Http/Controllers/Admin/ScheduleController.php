@@ -750,7 +750,8 @@ class ScheduleController extends AdminController
                         [$shiftStart, $shiftEnd, $workDays, $isActive, $wsId, $employeeId]
                     );
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
             } else {
                 // Check if employee already has a schedule
@@ -771,7 +772,8 @@ class ScheduleController extends AdminController
                             [$employeeId, $shiftStart, $shiftEnd, $workDays, $isActive]
                         );
                     } catch (\Throwable $e) {
-                        // Gracefully handle dropped table ref
+                    // Gracefully handle dropped table ref
+                    error_log($e->getMessage());
                     }
                 }
             }
@@ -846,7 +848,8 @@ class ScheduleController extends AdminController
                     "SELECT * FROM work_schedules WHERE is_active = 1"
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             foreach ($wsData as $ws) {
                 $workSchedules[$ws['employee_id']] = $ws;

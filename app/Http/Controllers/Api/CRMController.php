@@ -50,7 +50,8 @@ class CRMController extends BaseController
                         $role = $u['role'] ?? 'associate';
                     }
                 } catch (\Throwable $e) {
-                    // ignore
+                // ignore
+                error_log($e->getMessage());
                 }
             }
         }

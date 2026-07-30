@@ -35,7 +35,8 @@ class FarmerAdminController extends AdminController
         try {
             $farmer = $this->db->fetch("SELECT * FROM farmer_land_management WHERE id = ?", [$id]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!$farmer) {
             $this->setFlash('error', 'Farmer not found');
@@ -68,7 +69,8 @@ class FarmerAdminController extends AdminController
                 ORDER BY a.created_at DESC
             ");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $totalAgreements = count($agreements ?? []);
         $activeCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_agreements WHERE status = 'active'");
@@ -95,7 +97,8 @@ class FarmerAdminController extends AdminController
                 WHERE a.id = ?
             ", [$id]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!$agreement) {
             $this->setFlash('error', 'Agreement not found');
@@ -165,7 +168,8 @@ class FarmerAdminController extends AdminController
                 ORDER BY l.created_at DESC
             ");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $totalLoans = count($loans ?? []);
         $sanctionedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status = 'sanctioned'");
@@ -192,7 +196,8 @@ class FarmerAdminController extends AdminController
                 WHERE l.id = ?
             ", [$id]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!$loan) {
             $this->setFlash('error', 'Loan not found');
@@ -264,7 +269,8 @@ class FarmerAdminController extends AdminController
                 ORDER BY g.gata_id DESC
             ");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->render('admin/farmers/gata', [
             'page_title' => 'Gata Records',
@@ -284,7 +290,8 @@ class FarmerAdminController extends AdminController
                 $siteId, $gataNo, $area, $availableArea, $this->tenantId(),
             ]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->setFlash('success', 'Gata record added');
         $this->redirect('/admin/farmers/gata');

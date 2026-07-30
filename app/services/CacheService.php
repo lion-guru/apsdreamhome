@@ -46,7 +46,8 @@ class CacheService
                 return 't' . $tid . '_';
             }
         } catch (\Throwable $e) {
-            // fail open — no prefix
+        // fail open — no prefix
+        error_log($e->getMessage());
         }
         return '';
     }

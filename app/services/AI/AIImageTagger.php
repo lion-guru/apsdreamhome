@@ -57,7 +57,8 @@ class AIImageTagger
                 }
             }
         } catch (\Throwable $e) {
-            // fall through to template
+        // fall through to template
+        error_log($e->getMessage());
         }
 
         $alt = ucfirst($type) . ' in ' . $location . ($title ? ' — ' . $title : '');

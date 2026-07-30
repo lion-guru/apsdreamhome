@@ -55,7 +55,8 @@ class SalesManagerDashboardController extends AdminController
             $stats['active_agents'] = (int)$this->fetchScalar("SELECT COUNT(DISTINCT user_id) FROM leads WHERE user_id IS NOT NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $stats['commissions_month'] = (float)$this->fetchScalar("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) AND status = 'paid'");
         } catch (\Throwable $e) {
-            // Tables may be missing
+        // Tables may be missing
+        error_log($e->getMessage());
         }
         return $stats;
     }
@@ -130,7 +131,8 @@ class SalesManagerDashboardController extends AdminController
                 $months[$r['month']] = (int)$r['count'];
             }
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         $result = [];
         for ($i = 5; $i >= 0; $i--) {

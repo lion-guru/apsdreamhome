@@ -342,7 +342,8 @@ class ServiceConfigService
                 }
             }
         } catch (\Throwable $e) {
-            // fallback below
+        // fallback below
+        error_log($e->getMessage());
         }
 
         try {

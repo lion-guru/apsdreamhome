@@ -192,7 +192,8 @@ class AgentAssignmentService
                     LEFT JOIN properties p ON a.user_id = p.assigned_agent_id
                     WHERE a.status = 'active' AND a.workload < a.max_workload";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $params = [];

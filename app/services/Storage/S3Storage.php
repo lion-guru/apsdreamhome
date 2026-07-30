@@ -772,7 +772,8 @@ class S3Storage implements StorageInterface
             $stmt = $pdo->prepare("INSERT INTO gateway_logs (gateway, level, action, endpoint, context_json, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute(['s3', $level, $action, $key, json_encode($context)]);
         } catch (\Throwable $e) {
-            // swallow - logging must never break the main path
+        // swallow - logging must never break the main path
+        error_log($e->getMessage());
         }
     }
 }

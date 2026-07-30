@@ -598,6 +598,6 @@ class ColonyFeasibilityService
             if ($this->logger) {
                 $this->logger->error($msg, $ctx);
             }
-        } catch (Exception $ignored) {}
+        } catch (Exception $ignored) { error_log($ignored->getMessage()); }
     }
 }

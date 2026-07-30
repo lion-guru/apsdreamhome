@@ -378,7 +378,8 @@ class TaskSchedulerService
             // Delete dependencies first
             $depSql = "DELETE FROM task_dependencies WHERE task_id = ? OR depends_on_task_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $depStmt = $this->database->prepare($depSql);
         $depStmt->execute([$taskId, $taskId]);
@@ -436,7 +437,8 @@ class TaskSchedulerService
         try {
             $sql = "INSERT IGNORE INTO task_dependencies (task_id, depends_on_task_id) VALUES (?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         return $stmt->execute([$taskId, $dependsOnTaskId]);
@@ -460,7 +462,8 @@ class TaskSchedulerService
         try {
             $sql = "SELECT * FROM task_dependencies WHERE task_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$taskId]);

@@ -266,7 +266,8 @@ class BackupRestoreService
         try {
             $sql = "SELECT * FROM system_backups ORDER BY started_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $backups = $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         
@@ -315,7 +316,8 @@ class BackupRestoreService
         try {
             $sql = "SELECT * FROM system_backups WHERE started_at < ? AND status = 'completed'";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$cutoff]);
@@ -339,7 +341,8 @@ class BackupRestoreService
             $sql = "INSERT INTO system_backups (backup_type, file_path, file_size, checksum, created_by) 
                     VALUES (?, '', 0, '', ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$type, $createdBy]);
@@ -371,7 +374,8 @@ class BackupRestoreService
                     SET status = 'failed', error_message = ? 
                     WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$error, $backupId]);

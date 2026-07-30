@@ -148,7 +148,8 @@ class LegalAdvisorController extends BaseController
                      ORDER BY ld.created_at DESC
                      LIMIT 10";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->db->fetchAll($query, [$this->employeeId]);
@@ -193,7 +194,8 @@ class LegalAdvisorController extends BaseController
                                    WHERE assigned_lawyer = ?
                                    AND YEAR(created_at) = YEAR(CURDATE())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $disputeMetrics = $this->db->fetchOne($disputeMetricsQuery, [$this->employeeId]);
@@ -217,7 +219,8 @@ class LegalAdvisorController extends BaseController
                       ORDER BY created_at DESC
                       LIMIT 10";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->db->fetchAll($query, [$this->employeeId]);
@@ -350,7 +353,8 @@ class LegalAdvisorController extends BaseController
                 // Get dispute details
                 $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $dispute = $this->db->fetchOne($disputeQuery, [$disputeId]);
 
@@ -607,7 +611,8 @@ class LegalAdvisorController extends BaseController
                      WHERE {$whereClause}
                      ORDER BY dr.submitted_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $reportData = $this->db->fetchAll($query, $params);
@@ -743,7 +748,8 @@ class LegalAdvisorController extends BaseController
                         performed_by, created_at
                     ) VALUES (?, ?, ?, ?, NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);

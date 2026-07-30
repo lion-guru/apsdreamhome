@@ -344,7 +344,8 @@ class CommissionController extends AdminController
             try {
                 $sql = "SELECT * FROM commission_calculation_rules WHERE is_active = 1 ORDER BY priority";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Exception $e) {
@@ -423,7 +424,8 @@ class CommissionController extends AdminController
                         FROM commission_calculation_rules 
                         WHERE rule_name = ? AND mlm_rank = ? AND is_active = 1";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$rule, $rank]);

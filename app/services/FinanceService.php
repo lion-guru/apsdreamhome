@@ -234,12 +234,12 @@ class FinanceService
             $out['spent'] = (float)($b['total_spent'] ?? 0);
             $out['remaining'] = $out['budgets'] - $out['spent'];
             $out['utilization'] = $out['budgets'] > 0 ? round(($out['spent'] / $out['budgets']) * 100, 1) : 0;
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         try {
             $st2 = $this->db->prepare("SELECT COUNT(*) as c FROM budget_expenses e LEFT JOIN budgets b ON e.budget_id = b.id WHERE b.fiscal_year = :y");
             $st2->execute([':y' => (string)$fiscalYear]);
             $out['expense_count'] = (int)$st2->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         return $out;
     }
 }

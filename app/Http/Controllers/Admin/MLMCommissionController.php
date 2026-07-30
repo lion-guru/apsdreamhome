@@ -696,7 +696,8 @@ class MLMCommissionController extends AdminController
                     );
                     $saved++;
                 } catch (\Throwable $e) {
-                    // mlm_settings may not exist — skip gracefully
+                // mlm_settings may not exist — skip gracefully
+                error_log($e->getMessage());
                 }
             }
         }

@@ -147,8 +147,7 @@ class CustomerAuthController extends BaseController
             $tid = 1;
             try {
                 $tid = \App\Core\Middleware\TenantContext::getId();
-            } catch (\Throwable $e) {
-            }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
             $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $params = [$email, $email];
             if ($tid > 1) $params[] = $tid;
@@ -497,8 +496,7 @@ class CustomerAuthController extends BaseController
         $tid = 1;
         try {
             $tid = \App\Core\Middleware\TenantContext::getId();
-        } catch (\Throwable $e) {
-        }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         if ($tid > 1) {
             return [" AND tenant_id = ?", [$tid]];
         }
@@ -568,7 +566,8 @@ class CustomerAuthController extends BaseController
                 $params
             );
         } catch (\Throwable $e) {
-            // Table may not exist — degrade gracefully
+        // Table may not exist — degrade gracefully
+        error_log($e->getMessage());
         }
     }
 

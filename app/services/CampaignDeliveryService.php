@@ -323,7 +323,8 @@ class CampaignDeliveryService
         try {
             $query = "INSERT INTO campaign_deliveries (campaign_id, user_id, delivery_type, status, sent_at) VALUES (?, ?, ?, 'pending', NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->db->execute($query, [$campaignId, $userId, $deliveryType]);
         return $this->db->getLastInsertId();
@@ -371,7 +372,8 @@ class CampaignDeliveryService
                     GROUP BY delivery_type, status
                     ORDER BY delivery_type, status";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         return $this->db->fetchAll($query, [$campaignId]);
@@ -401,7 +403,8 @@ class CampaignDeliveryService
         try {
             $query = "UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $status = 'sent';
@@ -444,7 +447,8 @@ class CampaignDeliveryService
                     GROUP BY c.campaign_id, cd.delivery_type, cd.status
                     ORDER BY c.name, cd.delivery_type";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         return $this->db->fetchAll($query, $params);

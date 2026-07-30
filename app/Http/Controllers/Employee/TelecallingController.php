@@ -170,7 +170,8 @@ class TelecallingController extends AdminController
                      ORDER BY l.priority DESC, l.created_at ASC
                      LIMIT 20";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         return $this->db->fetchAll($query, [$this->employeeId]);
@@ -380,7 +381,8 @@ class TelecallingController extends AdminController
                     ON DUPLICATE KEY UPDATE 
                     scheduled_date = ?, status = 'scheduled', updated_at = NOW()";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($query, [$leadId, $this->employeeId, $followUpDate, $followUpDate]);
@@ -524,7 +526,8 @@ class TelecallingController extends AdminController
                      AND fu.status = 'scheduled'
                      ORDER BY fu.scheduled_date ASC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         return $this->db->fetchAll($query, [$this->employeeId]);
@@ -542,7 +545,8 @@ class TelecallingController extends AdminController
                           SET status = 'completed', completed_at = NOW(), result = ?
                           WHERE lead_id = ? AND employee_id = ? AND status = 'scheduled'";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             $this->db->execute($query, [$result, $leadId, $this->employeeId]);

@@ -199,7 +199,8 @@ class DealPipelineController extends AdminController
                 // Get deal history/timeline
                 $history = $conn->prepare("SELECT * FROM deal_history WHERE deal_id = ? ORDER BY created_at DESC LIMIT 20");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $history->execute([$id]);
             $dealHistory = $history->fetchAll(\PDO::FETCH_ASSOC);
@@ -250,7 +251,8 @@ class DealPipelineController extends AdminController
                 $historySql = "INSERT INTO deal_history (deal_id, action, old_value, new_value, tenant_id, created_at)
                               VALUES (?, 'stage_change', ?, ?, ?, NOW())";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $conn->prepare($historySql)->execute([$id, $currentStage, $newStage, $tid]);
             

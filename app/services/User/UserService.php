@@ -390,7 +390,8 @@ class UserService
             try {
                 $sql = "SELECT * FROM user_preferences WHERE user_id = :user_id";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $this->database->prepare($sql);
             $stmt->bindParam(':user_id', $userId);
@@ -414,7 +415,8 @@ class UserService
                             VALUES (:user_id, :preference_key, :preference_value, NOW())
                             ON DUPLICATE KEY UPDATE preference_value = :preference_value, updated_at = NOW()";
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
                 $stmt = $this->database->prepare($sql);
                 $stmt->bindParam(':user_id', $userId);

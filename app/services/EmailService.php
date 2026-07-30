@@ -69,7 +69,8 @@ class EmailService
                         \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'emails');
                     }
                 } catch (\Throwable $e) {
-                    // usage tracking should never break email sending
+                // usage tracking should never break email sending
+                error_log($e->getMessage());
                 }
             }
 

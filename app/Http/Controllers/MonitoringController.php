@@ -404,7 +404,8 @@ class MonitoringController extends AdminController
                 }
             }
         } catch (\Throwable $e) {
-            // fallback to log file
+        // fallback to log file
+        error_log($e->getMessage());
         }
 
         if (empty($alerts) && file_exists($this->logFile)) {
@@ -445,7 +446,8 @@ class MonitoringController extends AdminController
                 $metrics['this_month'] = ['page_views' => (int)($row['pv'] ?? 0), 'unique_visitors' => (int)($row['uv'] ?? 0)];
             }
         } catch (\Throwable $e) {
-            // visitor_logs table may not exist
+        // visitor_logs table may not exist
+        error_log($e->getMessage());
         }
 
         // Add execution time from current request

@@ -186,7 +186,8 @@ class VirtualTourController extends BaseController
                 $this->db->query("SELECT 1 FROM property_panoramas LIMIT 1");
                 $tablesExist = true;
             } catch (\Throwable $e) {
-                // Tables don't exist yet
+            // Tables don't exist yet
+            error_log($e->getMessage());
             }
 
             if (!$tablesExist) {

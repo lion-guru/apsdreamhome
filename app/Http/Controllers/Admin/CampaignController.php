@@ -254,7 +254,8 @@ class CampaignController extends AdminController
                 // Delete campaign members first
                 $this->db->execute("DELETE FROM campaign_members WHERE campaign_id = ?", [$campaignId]);
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             // Delete campaign

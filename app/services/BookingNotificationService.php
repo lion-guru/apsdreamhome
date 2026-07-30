@@ -201,27 +201,27 @@ class BookingNotificationService
         try {
             $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log");
             $stats['total'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE channel = 'email' AND status = 'sent'");
             $stats['email_sent'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE channel = 'sms' AND status = 'sent'");
             $stats['sms_sent'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE status = 'failed'");
             $stats['failed'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE DATE(created_at) = CURDATE()");
             $stats['today'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return $stats;
     }

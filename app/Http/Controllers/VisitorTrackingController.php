@@ -119,7 +119,8 @@ class VisitorTrackingController extends AdminController
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 ");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             echo json_encode([

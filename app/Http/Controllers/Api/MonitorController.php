@@ -76,7 +76,8 @@ class MonitorController extends BaseApiController
                 $includedFiles = $metrics['included_files'] ?? count(get_included_files());
                 $loadedExtensions = $metrics['loaded_extensions'] ?? count(get_loaded_extensions());
             } catch (\Throwable $e) {
-                // Fall through to inline metrics
+            // Fall through to inline metrics
+            error_log($e->getMessage());
             }
         }
 

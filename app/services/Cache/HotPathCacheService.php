@@ -277,7 +277,8 @@ class HotPathCacheService
                     return $value;
                 });
             } catch (\Throwable $e) {
-                // best-effort write
+            // best-effort write
+            error_log($e->getMessage());
             }
         } else {
             self::$localStats[$path]['hits']++;

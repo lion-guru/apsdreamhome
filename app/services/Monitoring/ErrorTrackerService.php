@@ -181,7 +181,8 @@ class ErrorTrackerService
                 $stats['_total'] += (int)$r['cnt'];
             }
         } catch (Throwable $e) {
-            // swallow
+        // swallow
+        error_log($e->getMessage());
         }
         return $stats;
     }

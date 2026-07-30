@@ -76,7 +76,8 @@ class VoiceCallService
                 [$schedule['script_template']]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $sessionData = [
@@ -399,7 +400,8 @@ class VoiceCallService
                 "SELECT id, script_code, script_name, is_active, usage_count FROM ai_call_scripts ORDER BY script_name"
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
     }
 

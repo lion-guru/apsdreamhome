@@ -74,7 +74,8 @@ class NotificationService
             $this->db->prepare("UPDATE realtime_notifications SET delivered_at = NOW() WHERE id = :id")
                 ->execute([':id' => $id]);
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
     }
 
@@ -194,7 +195,8 @@ class NotificationService
             $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (:n, :e, 'sent', :ip, :ua, NOW())");
             $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]);
         } catch (\Throwable $e) {
-            // table might not have the columns we expect; ignore
+        // table might not have the columns we expect; ignore
+        error_log($e->getMessage());
         }
     }
 
@@ -208,7 +210,8 @@ class NotificationService
             $st2 = $this->db->prepare("INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (:n, :e, 'sms_sent', :ip, :ua, NOW())");
             $st2->execute([':n' => $notifId, ':e' => $to, ':ip' => $_SERVER['REMOTE_ADDR'] ?? null, ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]);
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
     }
 
@@ -229,7 +232,7 @@ class NotificationService
         $u = $st->fetch(PDO::FETCH_ASSOC);
         $to = $data['phone'] ?? $u['phone'] ?? '';
         $st2 = $this->db->prepare("INSERT INTO whatsapp_messages (user_id, to_phone, message, status, sent_at, created_at) VALUES (:u, :p, :m, 'sent', NOW(), NOW())");
-        try { $st2->execute([':u' => $userId, ':p' => $to, ':m' => $message]); } catch (\Throwable $e) {}
+        try { $st2->execute([':u' => $userId, ':p' => $to, ':m' => $message]); } catch (\Throwable $e) { error_log($e->getMessage()); }
     }
 
     public function shareLead(int $userId, int $leadId, string $to, string $channel = 'whatsapp'): array
@@ -620,7 +623,8 @@ class NotificationService
                 ], $channel);
             }
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
 
         return $id;

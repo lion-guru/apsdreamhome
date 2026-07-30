@@ -28,7 +28,7 @@ class PropertyService
                 $id = \App\Core\Middleware\TenantContext::getId();
                 if ($id > 0) return $id;
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         return 1;
     }
     

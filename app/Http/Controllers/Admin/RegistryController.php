@@ -336,7 +336,8 @@ class RegistryController extends AdminController
             try {
                 $activities = $this->db->prepare("SELECT * FROM registry_activity_log WHERE booking_id = ? ORDER BY created_at DESC");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $activities->execute([$bookingId]);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC);
@@ -369,7 +370,8 @@ class RegistryController extends AdminController
                 $tid = $this->tenantId();
                 $stmt = $this->db->prepare("INSERT INTO registry_activity_log (booking_id, action, details, performed_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null, $tid]);
         } catch (\Exception $e) {

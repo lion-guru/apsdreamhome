@@ -189,7 +189,8 @@ class LeadImportController extends AdminController
                             'created_at'    => date('Y-m-d H:i:s'),
                         ]);
                     } catch (\Throwable $e) {
-                        // Activity logging is non-critical
+                    // Activity logging is non-critical
+                    error_log($e->getMessage());
                     }
 
                     // Auto-score the lead
@@ -197,7 +198,8 @@ class LeadImportController extends AdminController
                         $scorer = new \App\Services\CRM\LeadScoringService();
                         $scorer->calculateScore($leadId);
                     } catch (\Throwable $e) {
-                        // Scoring is non-critical
+                    // Scoring is non-critical
+                    error_log($e->getMessage());
                     }
 
                     $imported++;

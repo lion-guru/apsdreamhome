@@ -575,7 +575,8 @@ class SecurityConfigurationService
                     (category, config_key, old_value, new_value, updated_by, ip_address, user_agent, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [

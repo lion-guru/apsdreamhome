@@ -392,7 +392,8 @@ class AIController extends AdminController
                     ORDER BY pv.created_at DESC
                     LIMIT 10";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $pdo->query($sql);
         $recentValuations = $stmt->fetchAll(\PDO::FETCH_ASSOC);

@@ -270,7 +270,8 @@ class ESignManager
                 return method_exists($db, 'getConnection') ? $db->getConnection() : null;
             }
         } catch (\Throwable $e) {
-            // fallback
+        // fallback
+        error_log($e->getMessage());
         }
         return null;
     }

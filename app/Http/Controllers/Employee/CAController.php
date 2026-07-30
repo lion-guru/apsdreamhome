@@ -163,7 +163,8 @@ class CAController extends BaseController
                      ORDER BY tr.due_date ASC
                      LIMIT 20";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->db->fetchAll($query);
@@ -185,7 +186,8 @@ class CAController extends BaseController
                      ORDER BY ABS(variance) DESC
                      LIMIT 10";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->db->fetchAll($query);
@@ -270,7 +272,8 @@ class CAController extends BaseController
                       WHERE fiscal_year = YEAR(CURDATE())
                       ORDER BY scheduled_date ASC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->db->fetchAll($query);
@@ -628,7 +631,8 @@ class CAController extends BaseController
                      WHERE db.fiscal_year = ?
                      ORDER BY ABS(variance) DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $reportData = $this->db->fetchAll($query, [$fiscalYear]);
@@ -661,7 +665,8 @@ class CAController extends BaseController
                      WHERE YEAR(tr.due_date) = ?
                      ORDER BY tr.due_date ASC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $reportData = $this->db->fetchAll($query, [$year]);

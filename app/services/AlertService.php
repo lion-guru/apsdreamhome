@@ -68,7 +68,8 @@ class AlertService
                        AND acknowledged_at IS NULL
                        AND created_at <= DATE_SUB(NOW(), INTERVAL 4 HOUR)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $results = $this->db->fetchAll($query);
@@ -134,7 +135,8 @@ class AlertService
                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                      GROUP BY level";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $results = $this->db->fetchAll($query);
@@ -312,7 +314,8 @@ class AlertService
             $query = "INSERT INTO system_alerts (level, title, message, system, created_at)
                      VALUES (?, ?, ?, ?, NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $this->db->execute($query, [$level, $title, $message, $system]);
@@ -362,7 +365,8 @@ class AlertService
     
             $results = $this->db->fetchAll($query);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         foreach ($results as $alert) {
             $this->escalateAlert($alert);

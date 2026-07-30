@@ -67,7 +67,8 @@ class ApiAuthService
                      WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : "")
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $profileParams = [$user['id']];
             if ($tid > 1) $profileParams[] = $tid;
@@ -102,7 +103,8 @@ class ApiAuthService
             try {
                 $stmt = $this->db->prepare("DELETE FROM api_tokens WHERE token = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $params = [$token];
             if ($tid > 1) $params[] = $tid;

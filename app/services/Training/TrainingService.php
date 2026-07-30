@@ -372,7 +372,8 @@ class TrainingService
                     ]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
         }
 
@@ -390,7 +391,8 @@ class TrainingService
                 [$lessonId]
             )->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $score = 0;

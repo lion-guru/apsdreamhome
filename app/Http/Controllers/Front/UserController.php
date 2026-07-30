@@ -993,7 +993,8 @@ class UserController extends BaseController
         try {
             $stmt = $this->db->prepare("SELECT * FROM user_notification_preferences WHERE user_id = ?");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$user['id']]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -1053,7 +1054,8 @@ class UserController extends BaseController
                     updated_at = NOW()
                 ");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([
                 $user['id'],

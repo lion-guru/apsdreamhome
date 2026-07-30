@@ -74,7 +74,8 @@ class AdvancedAnalytics {
                     (session_id, user_id, page_url, page_title, referrer, user_agent, ip_address) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [$sessionId, $userId, $pageUrl, $pageTitle, $referrer, $userAgent, $ipAddress]);
@@ -94,7 +95,8 @@ class AdvancedAnalytics {
                     (session_id, user_id, action_type, action_data, element_clicked) 
                     VALUES (?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $actionDataJson = json_encode($actionData);
@@ -118,7 +120,8 @@ class AdvancedAnalytics {
                     (session_id, user_id, conversion_type, conversion_value, property_id, funnel_stage, source, medium, campaign) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $this->db->execute($sql, [$sessionId, $userId, $conversionType, $conversionValue, $propertyId, $funnelStage, $source, $medium, $campaign]);
@@ -152,7 +155,8 @@ class AdvancedAnalytics {
                     FROM analytics_page_views 
                     WHERE DATE(visit_time) = CURDATE()";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $row = $this->db->fetch($sql);
         return $row['count'] ?? 0;
@@ -180,7 +184,8 @@ class AdvancedAnalytics {
                     FROM analytics_conversions 
                     WHERE DATE(conversion_time) = CURDATE()";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $row = $this->db->fetch($sql);
         return $row['count'] ?? 0;
@@ -209,7 +214,8 @@ class AdvancedAnalytics {
                     WHERE DATE(visit_time) = CURDATE() 
                     AND duration_seconds > 0";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $row = $this->db->fetch($sql);
         return round($row['duration'] ?? 0, 0);
@@ -241,7 +247,8 @@ class AdvancedAnalytics {
                     GROUP BY funnel_stage 
                     ORDER BY conversions DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->fetchAll($sql);
     }

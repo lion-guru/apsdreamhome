@@ -294,7 +294,8 @@ class PlotsAdminController extends AdminController
             $stmt->execute([$id]);
             $history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle missing table
+        // Gracefully handle missing table
+        error_log($e->getMessage());
         }
 
         $images = [];
@@ -303,7 +304,8 @@ class PlotsAdminController extends AdminController
             $stmt->execute([$id]);
             $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle missing table
+        // Gracefully handle missing table
+        error_log($e->getMessage());
         }
 
         include __DIR__ . '/../../../views/admin/plots/show.php';
@@ -456,7 +458,8 @@ class PlotsAdminController extends AdminController
             $tid = $this->tenantId();
             $stmt = $this->db->prepare("INSERT INTO plot_status_history (plot_id, old_status, new_status, changed_by, change_reason, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$plot_id, $old_status, $new_status, $changed_by, $reason, $tid]);
     }

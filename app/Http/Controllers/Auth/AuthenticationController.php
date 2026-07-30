@@ -581,7 +581,7 @@ class AuthenticationController extends BaseController
     {
         $database = \App\Core\Database::getInstance();
         $tid = 1;
-        try { $tid = TenantContext::getId(); } catch (\Throwable $e) {}
+        try { $tid = TenantContext::getId(); } catch (\Throwable $e) { error_log($e->getMessage()); }
         return $database->fetchOne(
             "SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW() AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""),
             ($tid > 1 ? [$token, $tid] : [$token])
@@ -592,7 +592,7 @@ class AuthenticationController extends BaseController
     {
         $database = \App\Core\Database::getInstance();
         $tid = 1;
-        try { $tid = TenantContext::getId(); } catch (\Throwable $e) {}
+        try { $tid = TenantContext::getId(); } catch (\Throwable $e) { error_log($e->getMessage()); }
         $whereClause = 'id = ?';
         $whereParams = [$userId];
         if ($tid > 1) {

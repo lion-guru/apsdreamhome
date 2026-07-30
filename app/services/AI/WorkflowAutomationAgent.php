@@ -479,7 +479,7 @@ class WorkflowAutomationAgent
                  VALUES (?, ?, NOW())",
                 ["workflow_event:$eventType", json_encode($data)]
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log($e->getMessage()); }
     }
 
     /**

@@ -262,7 +262,8 @@ class ExchangeRateService
         try {
             Cache::set($key, $data, $ttl);
         } catch (Exception $e) {
-            // Silently fail — next request will re-fetch
+        // Silently fail — next request will re-fetch
+        error_log($e->getMessage());
         }
     }
 }

@@ -246,7 +246,8 @@ class PortalMenuService
                         return $items;
                     }
                 } catch (\Throwable $e) {
-                    // Fall through to hardcoded fallback
+                // Fall through to hardcoded fallback
+                error_log($e->getMessage());
                 }
             }
         }

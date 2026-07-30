@@ -120,7 +120,7 @@ class VisitService
                         $pstmt->execute([$data['property_id']]);
                         $prow = $pstmt->fetch();
                         $propertyTitle = $prow['title'] ?? '';
-                    } catch (\Throwable $e) {}
+                    } catch (\Throwable $e) { error_log($e->getMessage()); }
                     $emailSvc->sendSiteVisitConfirmed($customerId, [
                         'property_name' => $propertyTitle,
                         'visit_date' => date('d M Y', strtotime($data['visit_date'])),
@@ -275,7 +275,8 @@ class VisitService
             $stats['avg_rating'] = round((float)$this->pdo->query("SELECT AVG(feedback_rating) FROM property_visits WHERE feedback_rating IS NOT NULL")->fetchColumn(), 1);
             $stats['available_slots'] = (int)$this->pdo->query("SELECT COUNT(*) FROM visit_time_slots WHERE date >= CURDATE() AND is_available = 1 AND current_bookings < max_bookings")->fetchColumn();
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         return $stats;
     }

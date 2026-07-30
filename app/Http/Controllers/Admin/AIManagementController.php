@@ -200,7 +200,8 @@ class AIManagementController extends AdminController
                     LIMIT 100
                 ") ?: [];
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
         } catch (\Exception $e) {
             $entries = [];

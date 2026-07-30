@@ -279,6 +279,6 @@ class HindiConversationalBot
                 "INSERT INTO ai_chat_messages (session_id, user_id, role, content, created_at)
                  VALUES (?, ?, 'assistant', ?, NOW())"
             )->execute([$sessionId, $userId, $response]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

@@ -1427,7 +1427,7 @@ class CRMService
                 $interactionCount = (int)$this->db->query(
                     "SELECT COUNT(*) FROM crm_interactions WHERE $icWhere", $icParams
                 )->fetchColumn();
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log($e->getMessage()); }
             $engagementScore = min(25, $interactionCount * 5);
             $breakdown['engagement'] = ['score' => $engagementScore, 'max' => 25, 'label' => "Interactions: $interactionCount"];
 
@@ -2101,11 +2101,11 @@ class CRMService
             // Move notes
             try {
                 $db->prepare("UPDATE lead_notes SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
             // Move scores
             try {
                 $db->prepare("UPDATE lead_scores SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
-            } catch (\Throwable $e) { /* table may not exist */ }
+            } catch (\Throwable $e) { /* table may not exist */ error_log($e->getMessage()); }
 
             // Soft-delete the removed lead
             $delWhere = "id = ?"; $delParams = [$removeId];

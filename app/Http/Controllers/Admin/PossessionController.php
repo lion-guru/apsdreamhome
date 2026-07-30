@@ -168,7 +168,8 @@ class PossessionController extends AdminController
                     LEFT JOIN users ru ON d.resolved_by = ru.id
                     WHERE d.booking_id = ? ORDER BY d.created_at DESC");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $defects->execute([$id]);
             $defects = $defects->fetchAll(\PDO::FETCH_ASSOC);
@@ -403,7 +404,8 @@ class PossessionController extends AdminController
                     LEFT JOIN users ru ON d.resolved_by = ru.id
                     WHERE d.booking_id = ? ORDER BY d.created_at DESC");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $defects->execute([$id]);
             $defects = $defects->fetchAll(\PDO::FETCH_ASSOC);
@@ -439,7 +441,8 @@ class PossessionController extends AdminController
                 $tid = $this->tenantId();
                 $stmt = $this->db->prepare("INSERT INTO defect_reports (booking_id, reported_by, defect_type, description, priority, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$id, $_SESSION['admin_id'] ?? null, $defectType, $description, $priority, $tid]);
 
@@ -465,7 +468,8 @@ class PossessionController extends AdminController
             try {
                 $stmt = $this->db->prepare("SELECT booking_id FROM defect_reports WHERE id = ?");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$defectId]);
             $defect = $stmt->fetch(\PDO::FETCH_ASSOC);

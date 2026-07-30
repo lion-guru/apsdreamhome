@@ -261,7 +261,8 @@ class MarketingCampaignService
             $stmt = $this->pdo->query("SELECT type, COUNT(*) as count, SUM(sent_count) as sent FROM marketing_campaigns GROUP BY type ORDER BY count DESC");
             $stats['by_type'] = $stmt->fetchAll();
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         return $stats;
     }

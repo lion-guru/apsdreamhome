@@ -496,7 +496,8 @@ class MarketingController extends BaseController
                             GROUP BY c.id, c.name, c.type 
                             ORDER BY c.created_at DESC";
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
 
                 $performance = Database::getInstance()->fetchAll($sql);

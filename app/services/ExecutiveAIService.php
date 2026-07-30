@@ -391,7 +391,8 @@ class ExecutiveAIService
                 VALUES (?, 'executive_ai', 'chat', ?, ?, 0, NOW())
             ")->execute([$userId, mb_strlen($message), mb_strlen($response)]);
         } catch (\Throwable $e) {
-            // Non-critical — don't break the flow
+        // Non-critical — don't break the flow
+        error_log($e->getMessage());
         }
     }
 

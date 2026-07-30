@@ -1071,7 +1071,8 @@ class MoneyWorkflowController extends AdminController
                     $payStmt->execute([$id]);
                     $invoice['paid_amount'] = $payStmt->fetchColumn() ?: 0;
                 } catch (\Exception $e) {
-                    // invoice_payments table may not exist
+                // invoice_payments table may not exist
+                error_log($e->getMessage());
                 }
 
                 $itemsStmt = $this->db->prepare("SELECT * FROM invoice_items WHERE invoice_id = ? ORDER BY sort_order");

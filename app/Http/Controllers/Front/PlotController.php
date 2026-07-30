@@ -386,7 +386,8 @@ class PlotController extends BaseController
         try {
             $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $this->layout = 'layouts/customer';
@@ -438,7 +439,8 @@ class PlotController extends BaseController
             try {
                 $emis = $this->db->fetchAll("SELECT * FROM booking_emis WHERE booking_id = ? ORDER BY installment_no", [$bookingId]);
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $currentStatus = $booking['status'] ?? 'pending';
 

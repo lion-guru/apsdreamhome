@@ -465,7 +465,8 @@ class WhatsAppManager
                      status, total_recipients, created_by)
                     VALUES (?, ?, ?, ?, ?, 'draft', ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $params = [
@@ -496,7 +497,8 @@ class WhatsAppManager
         try {
             $sql = "SELECT * FROM whatsapp_campaigns WHERE 1=1";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $params = [];
 
@@ -523,7 +525,8 @@ class WhatsAppManager
         try {
             $sql = "SELECT * FROM whatsapp_campaigns WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->fetch($sql, [$campaignId]);
     }
@@ -665,7 +668,8 @@ class WhatsAppManager
                 AVG(CASE WHEN sent_count > 0 THEN (read_count / sent_count) * 100 END) as avg_read_rate
                 FROM whatsapp_campaigns";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $dashboard['campaign_stats'] = $this->db->fetch($sql);
 

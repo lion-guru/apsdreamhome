@@ -341,7 +341,8 @@ class MarketingAutomationService
             try {
                 $sql = "SELECT * FROM marketing_campaigns WHERE 1=1";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $params = [];
             
@@ -687,7 +688,8 @@ class MarketingAutomationService
                     ORDER BY converted_count DESC
                     LIMIT 5";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->database->select($sql);
     }

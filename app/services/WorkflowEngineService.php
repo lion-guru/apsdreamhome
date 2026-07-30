@@ -251,7 +251,8 @@ class WorkflowEngineService
                         (instance_id, step_id, action_type, action_by, action_by_type, comments) 
                         VALUES (?, ?, ?, ?, ?, ?)";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             $stmt = $this->database->prepare($sql);
@@ -370,7 +371,8 @@ class WorkflowEngineService
         try {
             $sql = "SELECT * FROM workflow_definitions WHERE workflow_code = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$code]);
@@ -457,7 +459,8 @@ class WorkflowEngineService
         try {
             $sql = "SELECT * FROM workflow_definitions WHERE is_active = 1";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }

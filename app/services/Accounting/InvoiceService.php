@@ -111,7 +111,8 @@ class InvoiceService
                 $details['email'] = $row['email'] ?? $details['email'];
             }
         } catch (Exception $e) {
-            // graceful fallback
+        // graceful fallback
+        error_log($e->getMessage());
         }
 
         try {
@@ -134,7 +135,8 @@ class InvoiceService
                 }
             }
         } catch (Exception $e) {
-            // graceful fallback
+        // graceful fallback
+        error_log($e->getMessage());
         }
 
         return $details;
@@ -491,7 +493,8 @@ class InvoiceService
                 }
             }
         } catch (Exception $e) {
-            // graceful fallback to zeros
+        // graceful fallback to zeros
+        error_log($e->getMessage());
         }
 
         return $stats;

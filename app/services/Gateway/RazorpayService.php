@@ -528,7 +528,7 @@ class RazorpayService
             $this->info("logCall: " . $e->getMessage());
         }
         if ($this->logger) {
-            try { ($this->logger)($method, $path, $status, $code, $duration); } catch (\Throwable $e) {}
+            try { ($this->logger)($method, $path, $status, $code, $duration); } catch (\Throwable $e) { error_log($e->getMessage()); }
         }
     }
 

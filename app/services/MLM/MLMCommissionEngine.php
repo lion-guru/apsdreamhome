@@ -786,7 +786,8 @@ class MLMCommissionEngine
                 }
             }
         } catch (\Throwable $e) {
-            // fall through to defaults
+        // fall through to defaults
+        error_log($e->getMessage());
         }
         return $rates;
     }
@@ -807,7 +808,8 @@ class MLMCommissionEngine
                 return $row['level'];
             }
         } catch (\Throwable $e) {
-            // fall through
+        // fall through
+        error_log($e->getMessage());
         }
         return 'associate';
     }

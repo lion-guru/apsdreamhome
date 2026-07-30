@@ -347,7 +347,8 @@ class EmployeeController extends BaseController
             try {
                 $query = "SELECT * FROM employee_activities WHERE employee_id = ? ORDER BY created_at DESC LIMIT 10";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             return $this->db->fetchAll($query, [$employeeId]);
         } catch (\Exception $e) {

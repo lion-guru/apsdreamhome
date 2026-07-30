@@ -21,7 +21,8 @@ class MlmRewardsController extends AdminController
         try {
             $criteria = $this->db->fetchAll("SELECT * FROM mlm_rank_criteria ORDER BY FIELD(rank, 'bronze','silver','gold','platinum','diamond','crown')") ?: [];
         } catch (\Exception $e) {
-            // Table may not exist
+        // Table may not exist
+        error_log($e->getMessage());
         }
 
         return $this->render('admin/mlm-rewards/rank-criteria', [
@@ -69,7 +70,8 @@ class MlmRewardsController extends AdminController
                 ORDER BY ru.upgrade_date DESC
             ") ?: [];
         } catch (\Exception $e) {
-            // Table may not exist
+        // Table may not exist
+        error_log($e->getMessage());
         }
 
         return $this->render('admin/mlm-rewards/upgrades', [
@@ -101,7 +103,8 @@ class MlmRewardsController extends AdminController
                 $stats['total'] += intval($row['cnt']);
             }
         } catch (\Exception $e) {
-            // Table may not exist
+        // Table may not exist
+        error_log($e->getMessage());
         }
 
         return $this->render('admin/mlm-rewards/withdrawals', [
@@ -148,7 +151,8 @@ class MlmRewardsController extends AdminController
                 ORDER BY rh.reward_date DESC
             ") ?: [];
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $this->render('admin/mlm-rewards/rewards', [

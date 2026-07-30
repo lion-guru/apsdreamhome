@@ -98,7 +98,8 @@ class KnowledgeBaseController extends AdminController
                 [$tw, $tp] = $this->tenantWhere();
                 $stmt = $this->db->prepare("UPDATE knowledge_base SET views = views + 1 WHERE id = ?" . $tw);
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$id, ...$tp]);
 
@@ -133,7 +134,8 @@ class KnowledgeBaseController extends AdminController
             try {
                 $stmt = $this->db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$id]);
             $article = $stmt->fetch();
@@ -201,7 +203,8 @@ class KnowledgeBaseController extends AdminController
                 [$tw, $tp] = $this->tenantWhere();
                 $stmt = $this->db->prepare("DELETE FROM knowledge_base WHERE id = ?" . $tw);
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$id, ...$tp]);
 

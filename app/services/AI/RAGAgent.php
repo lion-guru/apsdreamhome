@@ -570,7 +570,8 @@ class RAGAgent
                 ]
             );
         } catch (\Exception $e) {
-            // Silent fail
+        // Silent fail
+        error_log($e->getMessage());
         }
     }
 

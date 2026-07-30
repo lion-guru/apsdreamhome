@@ -27,7 +27,8 @@ class PerformanceCacheService
                 return 't' . $tid . '_';
             }
         } catch (\Throwable $e) {
-            // fail open
+        // fail open
+        error_log($e->getMessage());
         }
         return '';
     }

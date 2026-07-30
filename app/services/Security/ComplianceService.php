@@ -201,8 +201,7 @@ class ComplianceService
                     return $candidate;
                 }
             }
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) { error_log($e->getMessage()); }
         return null;
     }
 
@@ -218,8 +217,7 @@ class ComplianceService
             foreach ($rows as $row) {
                 $encrypted[$row['TABLE_NAME']][] = $row['COLUMN_NAME'];
             }
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) { error_log($e->getMessage()); }
         return $encrypted;
     }
 
@@ -317,14 +315,12 @@ class ComplianceService
         $roleCount = 0;
         try {
             $roleCount = (int)$this->db->fetchColumn("SELECT COUNT(DISTINCT role) FROM admin_role_menu_permissions");
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) { error_log($e->getMessage()); }
 
         $adminCount = 0;
         try {
             $adminCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM admin WHERE is_active = 1");
-        } catch (\Exception $e) {
-        }
+        } catch (\Exception $e) { error_log($e->getMessage()); }
 
         $score = 50;
         if ($totalRoutes > 0) {
@@ -400,8 +396,7 @@ class ComplianceService
                         [$sevenYearsAgo]
                     );
                 }
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) { error_log($e->getMessage()); }
         }
 
         if ($oldRecordCount === 0) {
@@ -516,8 +511,7 @@ class ComplianceService
                     $kycTotal = max($kycTotal, (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table}"));
                     $kycVerified = max($kycVerified, (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'verified'"));
                 }
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) { error_log($e->getMessage()); }
         }
 
         if ($kycTotal > 0) {
@@ -559,8 +553,7 @@ class ComplianceService
                 if (in_array('aadhaar_number', $colNames) || in_array('aadhaar', $colNames)) {
                     $aadhaarCheck = true;
                 }
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) { error_log($e->getMessage()); }
         }
 
         if ($panCheck) {
@@ -611,8 +604,7 @@ class ComplianceService
                     $findings[] = "Table '{$table}' has raw card fields: " . implode(', ', $cardFields);
                     $recommendations[] = "Remove raw card data from {$table} — use tokenized payment references only";
                 }
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) { error_log($e->getMessage()); }
         }
 
         if ($noRawCardData) {
@@ -646,8 +638,7 @@ class ComplianceService
                     $tokenized = true;
                     break;
                 }
-            } catch (\Exception $e) {
-            }
+            } catch (\Exception $e) { error_log($e->getMessage()); }
         }
 
         if ($tokenized) {

@@ -146,7 +146,8 @@ class EmailTemplateController extends AdminController
                 return $row['setting_value'];
             }
         } catch (\Exception $e) {
-            // ignore - fall through to empty string
+        // ignore - fall through to empty string
+        error_log($e->getMessage());
         }
         return '';
     }

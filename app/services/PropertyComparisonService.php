@@ -122,7 +122,8 @@ class PropertyComparisonService
             $stats['total_views'] = (int)$this->pdo->query("SELECT COALESCE(SUM(view_count), 0) FROM property_comparisons")->fetchColumn();
             $stats['avg_properties_per_list'] = round((float)$this->pdo->query("SELECT AVG(JSON_LENGTH(property_ids)) FROM property_comparisons")->fetchColumn(), 1);
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         return $stats;
     }

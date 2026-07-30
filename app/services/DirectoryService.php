@@ -189,7 +189,7 @@ class DirectoryService
     {
         try {
             $this->db->prepare("UPDATE directory_listings SET views = views + 1 WHERE id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log($e->getMessage()); }
     }
 
     public function addReview(array $data): bool

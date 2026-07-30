@@ -75,7 +75,8 @@ class LeadKanbanController extends AdminController
                 $tidParams
             ) ?: [];
         } catch (\Throwable $e) {
-            // fallback
+        // fallback
+        error_log($e->getMessage());
         }
 
         // Source list

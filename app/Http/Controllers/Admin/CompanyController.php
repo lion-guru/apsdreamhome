@@ -22,7 +22,8 @@ class CompanyController extends AdminController
         try {
             $company = $this->db->fetch("SELECT * FROM company_settings LIMIT 1");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->render('admin/company/settings', [
             'page_title' => 'Company Settings',
@@ -72,7 +73,8 @@ class CompanyController extends AdminController
                 ORDER BY ce.join_date DESC
             ") ?: [];
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $employeeUsers = [];
@@ -80,7 +82,8 @@ class CompanyController extends AdminController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $employeeUsers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'employee'{$tidSql} ORDER BY name", $tidParams) ?: [];
         } catch (\Throwable $e) {
-            // Gracefully handle missing table
+        // Gracefully handle missing table
+        error_log($e->getMessage());
         }
 
         $this->render('admin/company/users', [
@@ -100,7 +103,8 @@ class CompanyController extends AdminController
         try {
             $company = $this->db->fetch("SELECT id FROM company_settings LIMIT 1");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!$company) {
             $_SESSION['error'] = 'Please save company settings first.';

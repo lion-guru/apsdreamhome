@@ -167,7 +167,8 @@ class MaintenanceService
                 $st->execute([$key, $value]);
             }
         } catch (\Throwable $e) {
-            // table may be missing
+        // table may be missing
+        error_log($e->getMessage());
         }
     }
 }

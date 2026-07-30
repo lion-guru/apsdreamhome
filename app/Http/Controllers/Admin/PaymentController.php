@@ -172,7 +172,8 @@ class PaymentController extends AdminController
                         WHERE payment_id = ? 
                         ORDER BY created_at DESC";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$paymentId]);
@@ -241,7 +242,8 @@ class PaymentController extends AdminController
                             (payment_id, action, amount, method, transaction_id, notes, created_by, created_at)
                             VALUES (?, 'processed', ?, ?, ?, ?, ?, NOW())";
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$paymentId, $amount, $method, $transactionId, $notes, $_SESSION['user_id'] ?? 0]);
@@ -322,7 +324,8 @@ class PaymentController extends AdminController
                             (payment_id, action, amount, method, notes, created_by, created_at)
                             VALUES (?, 'refunded', ?, ?, ?, ?, NOW())";
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$paymentId, $refundAmount, $payment['payment_method'], $reason, $_SESSION['user_id'] ?? 0]);

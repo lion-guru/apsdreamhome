@@ -90,7 +90,8 @@ class GamificationService
                 [$userId, $points, $reason]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         // Update total points

@@ -193,7 +193,8 @@ class SmartLeadQualifierAgent
                 }
             }
         } catch (\Throwable $e) {
-            // non-critical — scoring falls back to base signals
+        // non-critical — scoring falls back to base signals
+        error_log($e->getMessage());
         }
         return $ctx;
     }
@@ -239,7 +240,7 @@ class SmartLeadQualifierAgent
                 "Follow up: {$lead['name']} ($qualification lead)",
                 $priority,
             ]);
-        } catch (\Throwable $e) { /* table may not have all columns */ }
+        } catch (\Throwable $e) { /* table may not have all columns */ error_log($e->getMessage()); }
     }
 
     private function logQualification(int $leadId, string $qualification, int $score, string $action, string $engine): void
@@ -249,7 +250,7 @@ class SmartLeadQualifierAgent
                 "INSERT INTO agent_task_logs (agent_type, action_type, lead_id, details, status, created_at)
                  VALUES ('smart_qualifier', 'qualify', ?, ?, 'completed', NOW())"
             )->execute([$leadId, "Qualified as $qualification (score: $score) — $action [engine: $engine]"]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 
     private function escalateHotLead(int $leadId, array $lead, int $score): void
@@ -262,6 +263,6 @@ class SmartLeadQualifierAgent
                 $leadId,
                 "HOT LEAD: {$lead['name']} ({$lead['phone']}) — Score: $score. Immediate action required."
             ]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

@@ -366,7 +366,8 @@ class ReportBuilderService
                     (report_name, report_type, data_source, filters, columns, chart_type, created_by) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
@@ -393,7 +394,8 @@ class ReportBuilderService
                     WHERE (created_by = ? OR is_public = 1) AND is_active = 1 
                     ORDER BY created_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
@@ -420,7 +422,8 @@ class ReportBuilderService
                     SET schedule_frequency = ?, schedule_day = ?, schedule_time = ? 
                     WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);

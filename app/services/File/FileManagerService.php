@@ -174,7 +174,8 @@ class FileManagerService
                 WHERE f.uuid = ?
                 GROUP BY f.id";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
@@ -320,7 +321,8 @@ class FileManagerService
         try {
             $sql = "SELECT * FROM file_versions WHERE file_id = ? ORDER BY version_number DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$fileId]);
@@ -539,7 +541,8 @@ class FileManagerService
                 (file_id, user_id, user_type, action, ip_address, user_agent)
                 VALUES (?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
@@ -563,7 +566,8 @@ class FileManagerService
                 // Get or create tag
                 $tagSql = "SELECT id FROM file_tags WHERE name = ?";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $tagStmt = $this->database->prepare($tagSql);
             $tagStmt->execute([$tagName]);
@@ -605,7 +609,8 @@ class FileManagerService
                 (file_id, version_number, file_name, file_path, size_bytes, checksum, change_notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
@@ -642,7 +647,8 @@ class FileManagerService
         try {
             $sql = "SELECT * FROM file_versions WHERE file_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$fileId]);
@@ -674,7 +680,8 @@ class FileManagerService
             // Delete shares
             $shareSql = "DELETE FROM file_shares WHERE file_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $shareStmt = $this->database->prepare($shareSql);
         $shareStmt->execute([$fileId]);

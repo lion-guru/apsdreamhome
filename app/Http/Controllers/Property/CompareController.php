@@ -171,7 +171,8 @@ class CompareController extends BaseController
                 $sql = "DELETE FROM property_comparison_sessions 
                         WHERE id = ? AND user_id = ?";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$sessionId, $_SESSION['user_id']]);
@@ -326,7 +327,8 @@ class CompareController extends BaseController
                     ORDER BY pcs.created_at DESC
                     LIMIT 10";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $stmt = $this->pdo->prepare($sql);
@@ -342,7 +344,8 @@ class CompareController extends BaseController
         try {
             $sql = "SELECT * FROM property_comparison_sessions WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$sessionId]);

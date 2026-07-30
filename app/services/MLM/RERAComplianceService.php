@@ -64,7 +64,8 @@ class RERAComplianceService
                     // Create RERA request
                     $stmt = $this->db->prepare("INSERT INTO rera_requests (user_id, booking_id, deducted_amount, status, notes, created_at) VALUES (?, ?, ?, 'pending', 'Auto-deducted from commission payout', NOW())");
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
                 $stmt->execute([$agentId, $bookingId, $reraDeducted]);
                 
@@ -117,7 +118,8 @@ class RERAComplianceService
             try {
                 $stmt = $this->db->prepare("UPDATE rera_requests SET status = 'approved', rera_number = ?, processed_by = ?, processed_at = NOW() WHERE id = ?");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$reraNumber, $processedBy, $reraRequestId]);
             
@@ -125,7 +127,8 @@ class RERAComplianceService
                 // Get user ID from request
                 $stmt = $this->db->prepare("SELECT user_id FROM rera_requests WHERE id = ?");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$reraRequestId]);
             $req = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -152,7 +155,8 @@ class RERAComplianceService
                 $tid = $this->getTenantId();
                 $stmt = $this->db->query("SELECT r.*, u.name as user_name, u.email as user_email FROM rera_requests r JOIN users u ON u.id = r.user_id" . ($tid > 1 ? " AND u.tenant_id = $tid" : "") . " WHERE r.status = 'pending' ORDER BY r.created_at DESC");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {

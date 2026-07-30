@@ -83,7 +83,8 @@ class SeoController extends BaseApiController
                 try {
                     $conn->prepare("UPDATE seo_metadata SET " . implode(', ', $sets) . " WHERE id = ?")->execute($params);
                 } catch (\Throwable $e) {
-                    // Gracefully handle dropped table ref
+                // Gracefully handle dropped table ref
+                error_log($e->getMessage());
                 }
             } else {
                 $cols = array_keys($data);

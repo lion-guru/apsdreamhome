@@ -113,8 +113,7 @@ class OcrService
             foreach ($default as $k => $v) {
                 $default[$k] = (int)($row[$k] ?? $v);
             }
-        } catch (\Throwable $e) {
-        }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         return $default;
     }
 
@@ -280,8 +279,7 @@ class OcrService
                     }
                 }
             }
-        } catch (\Throwable $e) {
-        }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return $fields;
     }
@@ -607,8 +605,7 @@ class OcrService
         foreach ($stmts as $sql) {
             try {
                 $this->db->prepare($sql)->execute();
-            } catch (\Throwable $e) {
-            }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
         }
 
         $columnsToCheck = [
@@ -642,12 +639,10 @@ class OcrService
                     if (!in_array($col, $existingNames)) {
                         try {
                             $this->db->prepare($sql)->execute();
-                        } catch (\Throwable $e) {
-                        }
+                        } catch (\Throwable $e) { error_log($e->getMessage()); }
                     }
                 }
-            } catch (\Throwable $e) {
-            }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
         }
     }
 }

@@ -160,7 +160,8 @@ class IntentDetector
                         ");
                         $ins->execute([$intent, $p, $lang]);
                     } catch (\Exception $e) {
-                        // ignore dupes
+                    // ignore dupes
+                    error_log($e->getMessage());
                     }
                 }
             }

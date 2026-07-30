@@ -307,7 +307,8 @@ class PasswordOtpService
             );
             @file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX);
         } catch (\Exception $e) {
-            // Silently fail
+        // Silently fail
+        error_log($e->getMessage());
         }
     }
 

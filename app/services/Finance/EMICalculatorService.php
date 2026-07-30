@@ -336,7 +336,8 @@ class EMICalculatorService
                 GROUP BY pp.id
                 ORDER BY pp.created_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
@@ -355,7 +356,8 @@ class EMICalculatorService
                 // Get plan details
                 $planSql = "SELECT * FROM payment_plans WHERE id = ?";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $planStmt = $this->database->prepare($planSql);
             $planStmt->execute([$planId]);

@@ -391,7 +391,8 @@ class EMIAutoPaymentService
                 $stats['failed_mandates'] = (int)$row['failed'];
             }
         } catch (Exception $e) {
-            // table may not exist
+        // table may not exist
+        error_log($e->getMessage());
         }
 
         try {
@@ -404,7 +405,7 @@ class EMIAutoPaymentService
                 $stats['upcoming_emis']    = (int)$row['cnt'];
                 $stats['total_due_amount'] = (float)$row['total_due'];
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->query(
@@ -414,7 +415,7 @@ class EMIAutoPaymentService
             if ($row) {
                 $stats['today_due'] = (int)$row['cnt'];
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->query(
@@ -424,7 +425,7 @@ class EMIAutoPaymentService
             if ($row) {
                 $stats['today_collected'] = (int)$row['cnt'];
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) { error_log($e->getMessage()); }
 
         return $stats;
     }

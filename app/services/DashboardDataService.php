@@ -203,7 +203,8 @@ class AdminDashboard
                 // Recent error count
                 $errorCount = $this->db->fetch("SELECT COUNT(*) as count FROM error_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             // Active user count

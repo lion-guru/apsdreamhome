@@ -105,7 +105,8 @@ class AchievementController extends BaseController
                     FROM user_points 
                     WHERE user_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId]);
@@ -163,7 +164,8 @@ class AchievementController extends BaseController
                     ORDER BY total_points DESC
                     LIMIT ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$limit]);
@@ -178,7 +180,8 @@ class AchievementController extends BaseController
         try {
             $sql = "SELECT * FROM user_points WHERE user_id = ? ORDER BY created_at DESC LIMIT ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId, $limit]);
@@ -268,7 +271,8 @@ class AchievementController extends BaseController
                     FROM user_points 
                     WHERE user_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId]);

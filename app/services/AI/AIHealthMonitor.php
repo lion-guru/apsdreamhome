@@ -156,7 +156,8 @@ class AIHealthMonitor
         try {
             $sql = "SELECT COUNT(*) as cnt FROM ai_jobs WHERE status = 'pending'";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);
@@ -182,7 +183,8 @@ class AIHealthMonitor
         try {
             $sql = "SELECT COUNT(*) as cnt FROM ai_knowledge_graph";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $row = $this->db->fetch($sql);
         $count = (int)($row['cnt'] ?? 0);

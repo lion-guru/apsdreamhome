@@ -356,7 +356,7 @@ class LoginNotificationService
             $svc = new TemplateService();
             $result = $svc->renderHtmlTemplate($code, $vars);
             if ($result['ok'] ?? false) return $result['html'] ?? '';
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         // Fallback: inline template
         return $this->getInlineTemplate($code, $vars);
@@ -500,7 +500,8 @@ HTML;
                 return $out;
             }
         } catch (\Throwable $e) {
-            // keep original message
+        // keep original message
+        error_log($e->getMessage());
         }
         return $message;
     }
@@ -566,7 +567,7 @@ HTML;
                     return implode(', ', $parts) ?: '';
                 }
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return '';
     }
@@ -610,7 +611,7 @@ HTML;
                         $sent ? 'sent' : 'failed',
                     ]
                 );
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
         }
     }
 }

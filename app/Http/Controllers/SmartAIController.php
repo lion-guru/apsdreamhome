@@ -886,7 +886,8 @@ EOT;
                     $selfLearning = new SelfLearningAI($sessionId, $userId);
                     $selfLearning->processFeedback($messageId, $positive, $comment);
                 } catch (\Exception $e) {
-                    // Graceful — message might not exist in ai_chat_messages
+                // Graceful — message might not exist in ai_chat_messages
+                error_log($e->getMessage());
                 }
             }
 

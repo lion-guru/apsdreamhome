@@ -43,7 +43,8 @@ class DigiLockerService
                 $this->config = $config;
             }
         } catch (Exception $e) {
-            // Use defaults
+        // Use defaults
+        error_log($e->getMessage());
         }
     }
 

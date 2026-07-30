@@ -1006,7 +1006,8 @@ class LegalColonyDevelopmentService
                 'created_at'  => date('Y-m-d H:i:s'),
             ]);
         } catch (Exception $e) {
-            // Activity logging is best-effort
+        // Activity logging is best-effort
+        error_log($e->getMessage());
         }
     }
 
@@ -1025,7 +1026,8 @@ class LegalColonyDevelopmentService
                 $this->db->rollBack();
             }
         } catch (Exception $e) {
-            // Rollback failure is non-fatal
+        // Rollback failure is non-fatal
+        error_log($e->getMessage());
         }
     }
 }

@@ -244,7 +244,8 @@ class AdminLoyaltyController extends AdminController
                 ORDER BY rr.redemption_date DESC
                 LIMIT ? OFFSET ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $stmt = $db->prepare($sql);
@@ -260,7 +261,8 @@ class AdminLoyaltyController extends AdminController
                 COALESCE(SUM(points_spent), 0) as total_points
                 FROM reward_redemptions";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stats = $db->query($statsSql)->fetch(\PDO::FETCH_ASSOC);
         
@@ -284,7 +286,8 @@ class AdminLoyaltyController extends AdminController
             try {
                 $sql = "UPDATE reward_redemptions SET status = ? WHERE id = ?";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $db->prepare($sql);
             $stmt->execute([$status, $id]);
@@ -324,7 +327,8 @@ class AdminLoyaltyController extends AdminController
             try {
                 $sql = "SELECT * FROM tier_benefits WHERE tier_name = ? ORDER BY sort_order";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $db->prepare($sql);
             $stmt->execute([$tier]);

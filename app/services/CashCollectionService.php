@@ -272,7 +272,7 @@ class CashCollectionService
             $stats['pending_count'] = (int)$this->db->query("SELECT COUNT(*) FROM cash_collections WHERE status='submitted'")->fetchColumn();
             $stats['pending_amount'] = (float)$this->db->query("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE status='submitted'")->fetchColumn();
             $stats['active_collectors'] = (int)$this->db->query("SELECT COUNT(DISTINCT collector_id) FROM cash_collections WHERE collection_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)")->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         return $stats;
     }
 

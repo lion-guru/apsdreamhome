@@ -68,7 +68,8 @@ class AutomationTriggerService
                 );
                 $stmt->execute([$leadId, $oldStatus, $newStatus]);
             } catch (\Exception $e) {
-                // Table may not exist
+            // Table may not exist
+            error_log($e->getMessage());
             }
 
             if ($newStatus === 'closed_won') {
@@ -184,7 +185,8 @@ class AutomationTriggerService
                 $map->execute([$leadId, $tagId]);
             }
         } catch (\Exception $e) {
-            // Tables may not exist — silent fail
+        // Tables may not exist — silent fail
+        error_log($e->getMessage());
         }
     }
 
@@ -236,7 +238,8 @@ class AutomationTriggerService
                 $ins->execute([$campaign['id'], $leadId]);
             }
         } catch (\Exception $e) {
-            // Tables may not exist — silent fail
+        // Tables may not exist — silent fail
+        error_log($e->getMessage());
         }
     }
 

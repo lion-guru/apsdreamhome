@@ -407,7 +407,8 @@ class EmployeeDashboardController extends BaseController
                               WHERE assigned_to = ?
                               GROUP BY status";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $campaignStatus = $this->db->fetchAll($campaignQuery, [$this->employeeId]);
@@ -559,7 +560,8 @@ class EmployeeDashboardController extends BaseController
                       AND status = 'pending'
                       ORDER BY due_date ASC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         return $this->db->fetchAll($query);

@@ -102,7 +102,7 @@ class ApiKeyService
             $stats['active'] = (int)$this->db->query("SELECT COUNT(*) FROM api_keys WHERE is_active = 1")->fetchColumn();
             $stats['revoked'] = $stats['total'] - $stats['active'];
             $stats['used_today'] = (int)$this->db->query("SELECT COUNT(*) FROM api_keys WHERE last_used_at >= CURDATE()")->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         return $stats;
     }
 }

@@ -289,7 +289,7 @@ class TemplateService
             $contact['company_phone'] = $settings['contact_phone'] ?? $contact['company_phone'];
             $contact['company_email'] = $settings['contact_email'] ?? $contact['company_email'];
             $contact['company_name']  = $settings['company_name'] ?? $contact['company_name'];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         switch ($code) {
             case 'welcome':
                 return array_merge($contact, [

@@ -47,7 +47,8 @@ class AdminAIController extends AdminController
                 "SELECT * FROM ai_knowledge_base ORDER BY category, usage_count DESC, created_at DESC"
             ) ?: [];
         } catch (\Exception $e) {
-            // Table might not exist
+        // Table might not exist
+        error_log($e->getMessage());
         }
 
         try {
@@ -65,7 +66,8 @@ class AdminAIController extends AdminController
             $total = $this->db->fetch("SELECT COUNT(*) as count FROM ai_conversations");
             $analytics['total_conversations'] = $total['count'] ?? 0;
         } catch (\Exception $e) {
-            // Ignore errors
+        // Ignore errors
+        error_log($e->getMessage());
         }
 
         return $this->render('admin/ai/training', [

@@ -244,7 +244,8 @@ class DripCampaignService
                 $stats['avg_completion_rate'] = round(($stats['completed_enrollments'] / $stats['total_enrollments']) * 100, 1);
             }
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         return $stats;
     }

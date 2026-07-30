@@ -52,7 +52,8 @@ class AIBotController extends BaseController
                 $aiResponse['engine'] = 'llm';
             }
         } catch (\Throwable $e) {
-            // keep pattern-based reply on any LLM failure
+        // keep pattern-based reply on any LLM failure
+        error_log($e->getMessage());
         }
 
         // Also save to legacy ai_conversations for backward compatibility
@@ -113,7 +114,8 @@ class AIBotController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO ai_conversations ($cols) VALUES ($vals)");
             $stmt->execute($params);
         } catch (\Exception $e) {
-            // table may not exist; ignore
+        // table may not exist; ignore
+        error_log($e->getMessage());
         }
     }
 

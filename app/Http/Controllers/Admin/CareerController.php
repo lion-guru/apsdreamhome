@@ -233,7 +233,8 @@ class CareerController extends AdminController
                         ORDER BY ca.created_at DESC
                         LIMIT 10";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$careerId]);
@@ -489,7 +490,8 @@ class CareerController extends AdminController
                         LEFT JOIN users u ON ca.applicant_id = u.id
                         WHERE 1=1";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $params = [];
 
@@ -516,7 +518,8 @@ class CareerController extends AdminController
             try {
                 $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM career_applications ca WHERE 1=1" . (!empty($status) ? " AND ca.status = ?" : "") . ($careerId > 0 ? " AND ca.career_id = ?" : ""));
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $countParams = [];
             if (!empty($status)) $countParams[] = $status;
@@ -589,7 +592,8 @@ class CareerController extends AdminController
                 $sql = "SELECT COUNT(*) as this_month FROM career_applications 
                         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $result = $this->db->fetchOne($sql);
             $stats['applications_this_month'] = (int)($result['this_month'] ?? 0);

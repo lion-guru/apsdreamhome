@@ -189,8 +189,8 @@ class AgentOrchestrator
         $actions = [];
         $activeEmployees = 0;
         $pendingLeave = 0;
-        try { $activeEmployees = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE status='active'")->fetchColumn(); } catch (Exception $e) {}
-        try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'")->fetchColumn(); } catch (Exception $e) {}
+        try { $activeEmployees = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE status='active'")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
         $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'")->fetchColumn();
 
         $actions[] = $this->logTask('hr', 'workforce_summary',
@@ -211,7 +211,7 @@ class AgentOrchestrator
         $actions = [];
         $properties = $this->pdo->query("SELECT COUNT(*) FROM properties WHERE status='active'")->fetchColumn();
         $incompleteReg = 0;
-        try { $incompleteReg = $this->pdo->query("SELECT COUNT(*) FROM incomplete_registrations")->fetchColumn(); } catch (Exception $e) {}
+        try { $incompleteReg = $this->pdo->query("SELECT COUNT(*) FROM incomplete_registrations")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
 
         $actions[] = $this->logTask('marketing', 'inventory_marketing',
             ['active_properties' => $properties, 'incomplete_registrations' => $incompleteReg], 'completed');

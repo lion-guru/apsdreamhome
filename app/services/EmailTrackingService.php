@@ -61,7 +61,7 @@ class EmailTrackingService
                     $this->db->query("UPDATE leads SET lead_score = ? WHERE id = ?", [$newScore, $lead['id']]);
                 }
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log($e->getMessage()); }
     }
 
     public function getOverallStats($days = 30) {

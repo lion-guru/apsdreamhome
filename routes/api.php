@@ -151,9 +151,6 @@ require_once __DIR__ . '/request-middleware.php';
 // Farmer Management Routes
 require_once __DIR__ . '/farmers.php';
 
-// Security Management Routes
-require_once __DIR__ . '/security.php';
-
 // Performance Cache Management Routes
 require_once __DIR__ . '/performance-cache.php';
 

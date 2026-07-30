@@ -246,7 +246,8 @@ class SelfLearningAI
                 }
             }
         } catch (\Exception $e) {
-            // Table might not have source column
+        // Table might not have source column
+        error_log($e->getMessage());
         }
 
         return null;
@@ -492,7 +493,7 @@ class SelfLearningAI
                     'suggestions' => $this->getFollowUpSuggestions($intent)
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log($e->getMessage()); }
 
         return null;
     }
@@ -519,7 +520,7 @@ class SelfLearningAI
                     'suggestions' => $this->getFollowUpSuggestions($intent)
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) { error_log($e->getMessage()); }
 
         return null;
     }
@@ -682,7 +683,8 @@ class SelfLearningAI
                 [$this->sessionId]
             );
         } catch (\Exception $e) {
-            // Silent fail for learning - don't break chat
+        // Silent fail for learning - don't break chat
+        error_log($e->getMessage());
         }
     }
 
@@ -720,7 +722,8 @@ class SelfLearningAI
                 );
             }
         } catch (\Exception $e) {
-            // Silent fail
+        // Silent fail
+        error_log($e->getMessage());
         }
     }
 
@@ -801,7 +804,8 @@ class SelfLearningAI
                 ]
             );
         } catch (\Exception $e) {
-            // Silent fail
+        // Silent fail
+        error_log($e->getMessage());
         }
     }
 

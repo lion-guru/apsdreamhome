@@ -91,7 +91,7 @@ class InquiryToLeadService
                         "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'inquiry', ?, ?, NOW())",
                         [$leadId, "New {$inquiryType} inquiry received", $data['created_by'] ?? null]
                     );
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) { error_log($e->getMessage()); }
 
                 return $leadId;
             }
@@ -125,7 +125,7 @@ class InquiryToLeadService
                     "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'created', ?, ?, NOW())",
                     [$leadId, "Lead auto-created from {$inquiryType} inquiry", $data['created_by'] ?? null]
                 );
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log($e->getMessage()); }
 
             return $leadId;
         } catch (\Exception $e) {

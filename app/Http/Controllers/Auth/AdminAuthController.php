@@ -249,7 +249,8 @@ class AdminAuthController extends BaseController
                             $_SESSION['employee_id'] = $emp['id'];
                         }
                     } catch (\Exception $e) {
-                        // employees table may not exist; skip
+                    // employees table may not exist; skip
+                    error_log($e->getMessage());
                     }
                 }
 

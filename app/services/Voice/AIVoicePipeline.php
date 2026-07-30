@@ -151,7 +151,7 @@ class AIVoicePipeline
                             "INSERT INTO site_visits (lead_id, visit_date, status, notes, created_at)
                              VALUES (?, DATE_ADD(NOW(), INTERVAL 2 DAY), 'scheduled', 'AI voice agent booking request', NOW())"
                         )->execute([$leadId]);
-                    } catch (\Throwable $e) { /* table may differ */ }
+                    } catch (\Throwable $e) { /* table may differ */ error_log($e->getMessage()); }
 
                     return "Dhanyavaad! Maine aapka booking request note kar liya hai. "
                         . "Hamari team aapko jald call karegi. Aapka reference number hai VOICE-{$leadId}. "

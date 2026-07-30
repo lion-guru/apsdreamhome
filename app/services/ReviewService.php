@@ -257,7 +257,8 @@ class ReviewService
             $stats['featured_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials WHERE is_featured = 1")->fetchColumn();
             $stats['pending_testimonials'] = (int)$this->pdo->query("SELECT COUNT(*) FROM testimonials WHERE status = 'pending'")->fetchColumn();
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         return $stats;
     }

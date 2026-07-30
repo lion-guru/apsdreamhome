@@ -73,7 +73,7 @@ class RankEvaluationService
                     "UPDATE associates SET level = ? WHERE user_id = ?",
                     [$highestEligible, $userId]
                 );
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
 
             // Log to mlm_rank_history
             try {
@@ -82,7 +82,7 @@ class RankEvaluationService
                      VALUES (?, ?, ?, ?, ?, NOW())",
                     [$userId, $fromLevel, $highestEligible, $monthlySales, $teamSize]
                 );
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
 
             // Broadcast rank change via WebSocket
             try {
@@ -94,7 +94,7 @@ class RankEvaluationService
                     'message'   => "Congratulations! You've been promoted from {$fromLevel} to {$highestEligible}",
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
 
             $promoted = true;
         }

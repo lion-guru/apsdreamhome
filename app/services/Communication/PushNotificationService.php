@@ -88,7 +88,8 @@ class PushNotificationService
             );
             $tokens = $stmt->fetchAll(\PDO::FETCH_COLUMN);
         } catch (\Throwable $e) {
-            // Table might not exist
+        // Table might not exist
+        error_log($e->getMessage());
         }
 
         // Fallback: read from mobile_devices (legacy path)
@@ -100,7 +101,8 @@ class PushNotificationService
                 );
                 $tokens = $stmt->fetchAll(\PDO::FETCH_COLUMN);
             } catch (\Throwable $e) {
-                // Table might not exist
+            // Table might not exist
+            error_log($e->getMessage());
             }
         }
 
@@ -216,7 +218,8 @@ class PushNotificationService
                 [$userId, $deviceToken, $platform]
             );
         } catch (\Throwable $e) {
-            // Table might not exist
+        // Table might not exist
+        error_log($e->getMessage());
         }
 
         // Also write to mobile_devices (backward compatibility)
@@ -238,7 +241,8 @@ class PushNotificationService
                 );
             }
         } catch (\Throwable $e) {
-            // mobile_devices table might not exist — push_tokens is sufficient
+        // mobile_devices table might not exist — push_tokens is sufficient
+        error_log($e->getMessage());
         }
 
         // Subscribe to user role topic
@@ -270,7 +274,8 @@ class PushNotificationService
                 [$deviceToken]
             )->rowCount() > 0;
         } catch (\Throwable $e) {
-            // Table might not exist
+        // Table might not exist
+        error_log($e->getMessage());
         }
 
         try {
@@ -279,7 +284,8 @@ class PushNotificationService
                 [$deviceToken]
             );
         } catch (\Throwable $e) {
-            // Table might not exist
+        // Table might not exist
+        error_log($e->getMessage());
         }
 
         return $deactivated;

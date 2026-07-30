@@ -186,7 +186,8 @@ try {
                 $bookingId = (int)($stmt->fetchColumn() ?: 0);
             }
         } catch (\Throwable $e) {
-            // Non-fatal - just skip the PDF link
+        // Non-fatal - just skip the PDF link
+        error_log($e->getMessage());
         }
         return $this->render('pages/payment_success', [
             'page_title' => 'Payment Successful — APS Dream Home',

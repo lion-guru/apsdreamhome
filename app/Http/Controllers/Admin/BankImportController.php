@@ -125,7 +125,8 @@ class BankImportController extends AdminController
                 $stmt2 = $pdo->prepare("UPDATE bank_transactions SET bank_account_id = ? WHERE import_id = ?");
                 $stmt2->execute([$bankAccountId, $result['import_id']]);
             } catch (\Exception $e) {
-                // non-fatal
+            // non-fatal
+            error_log($e->getMessage());
             }
         }
 

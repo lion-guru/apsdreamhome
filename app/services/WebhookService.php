@@ -175,7 +175,7 @@ class WebhookService
             foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) {
                 $stats['by_event'][$r['event_type']] = (int)$r['cnt'];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
         return $stats;
     }
 }

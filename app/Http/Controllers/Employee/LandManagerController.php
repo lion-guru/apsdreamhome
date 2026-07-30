@@ -676,7 +676,8 @@ class LandManagerController extends BaseController
                      GROUP BY la.id
                      ORDER BY la.created_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $reportData = $this->db->fetchAll($query, $params);
@@ -747,7 +748,8 @@ class LandManagerController extends BaseController
                         acquisition_id, status, notes, performed_by, created_at
                     ) VALUES (?, ?, ?, ?, NOW())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $this->db->execute($query, [
@@ -786,7 +788,8 @@ class LandManagerController extends BaseController
             $stakeholdersQuery = "SELECT DISTINCT employee_id FROM acquisition_stakeholders 
                                   WHERE acquisition_id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stakeholders = $this->db->fetchAll($stakeholdersQuery, [$acquisitionId]);
 

@@ -84,7 +84,8 @@ class LegalController extends AdminController
             try {
                 $stmt = $this->db->prepare("SELECT d.*, u.name as assigned_name FROM legal_disputes d LEFT JOIN users u ON d.assigned_to = u.id WHERE d.id = ?");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([(int)$id]);
             $dispute = $stmt->fetch(\PDO::FETCH_ASSOC);

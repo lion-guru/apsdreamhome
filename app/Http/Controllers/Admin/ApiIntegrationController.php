@@ -75,12 +75,14 @@ class ApiIntegrationController extends AdminController
         try {
             $apiIntegrations = $this->db->fetchAll("SELECT * FROM api_integrations ORDER BY created_at DESC");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         try {
             $thirdParty = $this->db->fetchAll("SELECT * FROM third_party_integrations ORDER BY created_at DESC");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->render('admin/api/integrations', [
@@ -121,7 +123,8 @@ class ApiIntegrationController extends AdminController
                 LIMIT 200
             ");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         return $this->render('admin/api/integration-logs', [

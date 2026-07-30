@@ -250,7 +250,7 @@ class PipelineWorkflowService
                 'to_stage'   => $nextStage,
             ];
         } catch (Exception $e) {
-            try { $this->db->rollBack(); } catch (Exception $x) {}
+            try { $this->db->rollBack(); } catch (Exception $x) { error_log($x->getMessage()); }
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

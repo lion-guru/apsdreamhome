@@ -81,7 +81,8 @@ class CustomerLeadExtrasController extends AdminController
                 ORDER BY cj.started_at DESC
             ";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $journeys = $this->db->query($query)->fetchAll();
         
@@ -113,7 +114,8 @@ class CustomerLeadExtrasController extends AdminController
                 WHERE cj.id = ?
             ";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $journey = $this->db->query($query, [$id])->fetch();
         
@@ -436,7 +438,8 @@ class CustomerLeadExtrasController extends AdminController
                 ORDER BY laa.created_at DESC
             ";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $approvals = $this->db->query($query)->fetchAll();
         
@@ -451,7 +454,8 @@ class CustomerLeadExtrasController extends AdminController
                 FROM lead_assignment_approvals
             ";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stats = $this->db->query($statsQuery)->fetch();
         
@@ -478,7 +482,8 @@ class CustomerLeadExtrasController extends AdminController
                 WHERE laa.id = ?
             ";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $approval = $this->db->query($query, [$id])->fetch();
         
@@ -516,7 +521,8 @@ class CustomerLeadExtrasController extends AdminController
                     [$status, $adminNotes, $approvedBy, $id]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             $_SESSION['success'] = 'Approval status updated successfully';
@@ -542,7 +548,8 @@ class CustomerLeadExtrasController extends AdminController
                 ORDER BY lfe.created_at DESC
             ";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $fileExtractions = $this->db->query($query)->fetchAll();
         

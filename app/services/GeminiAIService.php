@@ -349,7 +349,8 @@ Requirements:
                     ]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
         } catch (\Exception $e) {
             error_log('Failed to log API request: ' . $e->getMessage());
@@ -376,7 +377,8 @@ Requirements:
                     ['gemini']
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             $thisMonth = $this->db->fetchAll(

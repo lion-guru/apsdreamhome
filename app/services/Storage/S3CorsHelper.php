@@ -391,7 +391,8 @@ class S3CorsHelper
                 json_encode($context, JSON_UNESCAPED_SLASHES),
             ]);
         } catch (\Throwable $e) {
-            // swallow - logging must never break a request
+        // swallow - logging must never break a request
+        error_log($e->getMessage());
         }
     }
 }

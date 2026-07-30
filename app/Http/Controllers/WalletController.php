@@ -66,7 +66,8 @@ class WalletController extends BaseController
                 [$userId]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         // Get wallet configuration
@@ -580,7 +581,8 @@ class WalletController extends BaseController
                     VALUES (?, 'bank_account_updated', ?, ?, NOW())
                 ", [$userId, json_encode(['bank_id' => $bankId, 'changes' => 'Bank details updated']), $_SERVER['REMOTE_ADDR'] ?? '']);
             } catch (\Throwable $e) {
-                // Activity log table might not exist, ignore
+            // Activity log table might not exist, ignore
+            error_log($e->getMessage());
             }
 
             echo json_encode(['success' => true, 'message' => 'Bank account updated successfully']);
@@ -615,7 +617,8 @@ class WalletController extends BaseController
                 [$userId, $userId]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         // Get referral earnings
@@ -756,7 +759,8 @@ class WalletController extends BaseController
             // Get wallet configuration
             $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $walletConfig = [];
         foreach ($config as $item) {

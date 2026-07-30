@@ -163,7 +163,8 @@ class AdminMenuService
                 $tenantId = (int)$_SESSION['tenant_id'];
             }
         } catch (\Throwable $e) {
-            // Default to 1 (platform owner)
+        // Default to 1 (platform owner)
+        error_log($e->getMessage());
         }
 
         // Platform owner sees everything

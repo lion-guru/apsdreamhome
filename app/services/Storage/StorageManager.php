@@ -199,7 +199,8 @@ class StorageManager
             $stmt = $pdo->prepare("INSERT INTO gateway_logs (gateway, level, action, endpoint, context_json, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute(['s3', 'warning', 'fallback_to_local', '', json_encode(['reason' => $reason])]);
         } catch (\Throwable $e) {
-            // silent
+        // silent
+        error_log($e->getMessage());
         }
     }
 }

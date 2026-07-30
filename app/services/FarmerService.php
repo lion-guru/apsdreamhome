@@ -488,7 +488,8 @@ class FarmerService
         try {
             $sql = "SELECT * FROM farmer_support_requests WHERE farmer_id = ? ORDER BY created_at DESC";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $params = [$farmerId];
 
@@ -579,7 +580,8 @@ class FarmerService
                     ['open', 'resolved', $farmerId]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             return $dashboard;
@@ -606,7 +608,8 @@ class FarmerService
                     'active_loans' => (int) $db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status IN (?, ?)", ['active', 'disbursed'])
                 ];
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
         });
     }
@@ -655,7 +658,8 @@ class FarmerService
                 [$prefix . $year . '%']
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $prefix . $year . str_pad($count + 1, 5, '0', STR_PAD_LEFT);
     }

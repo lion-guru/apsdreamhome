@@ -80,7 +80,8 @@ class BaseController
                             'method' => $_SERVER['REQUEST_METHOD'] ?? null,
                         ]);
                     } catch (\Throwable $e) {
-                        // never let monitoring break the app
+                    // never let monitoring break the app
+                    error_log($e->getMessage());
                     }
                     if (is_callable($previous)) {
                         call_user_func($previous, $exception);
@@ -98,7 +99,8 @@ class BaseController
                 try {
                     $this->mlSupport = \App\Services\Localization\LocalizationService::getInstance();
                 } catch (\Throwable $e) {
-                    // LocalizationService requires deps not available - skip silently
+                // LocalizationService requires deps not available - skip silently
+                error_log($e->getMessage());
                 }
             }
         }
@@ -111,7 +113,8 @@ class BaseController
             try {
                 \App\Core\Middleware\TenantContext::resolve();
             } catch (\Throwable $e) {
-                // TenantContext failure should not break the app
+            // TenantContext failure should not break the app
+            error_log($e->getMessage());
             }
         }
 

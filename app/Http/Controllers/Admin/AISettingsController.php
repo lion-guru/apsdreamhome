@@ -196,7 +196,8 @@ class AISettingsController extends AdminController
                 ['gemini']
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         // Get error breakdown
@@ -235,7 +236,8 @@ class AISettingsController extends AdminController
                 ['gemini', $days]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         if ($result) {
@@ -269,7 +271,8 @@ class AISettingsController extends AdminController
                 ['gemini', $startDate, $endDate]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         $csv = "Date,Endpoint,Status Code,Response Time (ms),User ID\n";

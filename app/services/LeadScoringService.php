@@ -167,7 +167,8 @@ class LeadScoringService
                 [$lead['assigned_to'] ?? 0]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $recCount = intval($recommendations['COUNT(*)'] ?? 0);
         $score += min(10, $recCount * 2);

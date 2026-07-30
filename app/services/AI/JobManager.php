@@ -31,7 +31,8 @@ class JobManager {
         try {
             $sql = "INSERT INTO ai_jobs (agent_id, workflow_id, task_type, input_data, priority, scheduled_at) VALUES (?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $input_json = json_encode($input_data);
 
@@ -68,7 +69,8 @@ class JobManager {
         try {
             $sql = "SELECT * FROM ai_jobs WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $job = $this->db->fetch($sql, [$jobId]);
 
@@ -102,7 +104,8 @@ class JobManager {
         try {
             $sql = "UPDATE ai_jobs SET status = ? WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->execute($sql, [$status, $id]);
     }
@@ -115,7 +118,8 @@ class JobManager {
         try {
             $sql = "UPDATE ai_jobs SET status = ?, attempts = ?, error_message = ? WHERE id = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->execute($sql, [$status, $newAttempts, $errorMessage, $id]);
     }

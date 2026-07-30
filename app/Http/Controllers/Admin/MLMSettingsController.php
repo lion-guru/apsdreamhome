@@ -72,7 +72,8 @@ class MLMSettingsController extends AdminController
         try {
             $rules = $this->db->fetchAll("SELECT * FROM commission_calculation_rules ORDER BY priority ASC");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->render('admin/mlm-settings/rules', [
             'page_title' => 'Commission Rules - Admin',
@@ -96,7 +97,8 @@ class MLMSettingsController extends AdminController
             $this->db->query("UPDATE commission_calculation_rules SET rate_percentage = ?, is_active = ? WHERE id = ?" . $tw,
                 array_merge([$rate, $active, $id], $tp));
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->setFlash('success', 'Rule updated');
         $this->redirect('/admin/mlm-settings/rules');

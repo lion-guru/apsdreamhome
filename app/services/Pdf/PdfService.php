@@ -308,7 +308,8 @@ class PdfService
                 }
             }
         } catch (\Throwable $e) {
-            // Ignore - produce a placeholder
+        // Ignore - produce a placeholder
+        error_log($e->getMessage());
         }
 
         $pdf = new MinimalPDF();
@@ -576,7 +577,7 @@ class PdfService
                         $row['customer_email'] = $user['email'] ?? '';
                         $row['customer_phone'] = $user['phone'] ?? '';
                     }
-                } catch (\Throwable $e) { /* ignore */ }
+                } catch (\Throwable $e) { /* ignore */ error_log($e->getMessage()); }
             }
             // Augment with plot data if plot_id is set
             if (!empty($row['plot_id'])) {
@@ -588,7 +589,7 @@ class PdfService
                         $row['plot_number']    = $plot['plot_number'] ?? '';
                         $row['area_sqft']      = $plot['area_sqft'] ?? '';
                     }
-                } catch (\Throwable $e) { /* ignore */ }
+                } catch (\Throwable $e) { /* ignore */ error_log($e->getMessage()); }
             }
             // Fallback labels for legacy bookings
             $row['customer_name']  = $row['customer_name']  ?? 'Customer #' . $bookingId;
@@ -674,7 +675,8 @@ class PdfService
                 json_encode($result['data'] ?? []),
             ]);
         } catch (\Throwable $e) {
-            // best-effort
+        // best-effort
+        error_log($e->getMessage());
         }
     }
 
@@ -733,7 +735,8 @@ class PdfService
                 if (method_exists($instance, 'getConnection')) return $instance->getConnection();
             }
         } catch (\Throwable $e) {
-            // fall through
+        // fall through
+        error_log($e->getMessage());
         }
         return null;
     }

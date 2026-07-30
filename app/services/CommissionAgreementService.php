@@ -24,7 +24,8 @@ class CommissionAgreementService
                     FROM mlm_commission_agreements a
                     JOIN users u ON a.user_id = u.id";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $where = [];
         $params = [];
@@ -53,7 +54,8 @@ class CommissionAgreementService
                  VALUES (?, ?, ?, ?, ?, ?, ?)'
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $userId = (int) ($data['user_id'] ?? 0);
@@ -88,7 +90,8 @@ class CommissionAgreementService
                  WHERE id = ?'
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $propertyId = isset($data['property_id']) && $data['property_id'] !== '' ? (int) $data['property_id'] : null;
@@ -114,7 +117,8 @@ class CommissionAgreementService
         try {
             $stmt = $this->conn->prepare("SELECT * FROM mlm_commission_agreements WHERE id = ?");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);

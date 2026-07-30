@@ -140,7 +140,8 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 $allRequests = $db->query("SELECT r.*, u.name as user_name, u.email as user_email, u.is_rera_approved 
                     FROM rera_requests r JOIN users u ON u.id = r.user_id ORDER BY r.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC);
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
         } catch (\Exception $e) {
             $allRequests = [];

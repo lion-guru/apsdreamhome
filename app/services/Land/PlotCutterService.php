@@ -777,7 +777,8 @@ class PlotCutterService
                 $this->db->rollBack();
             }
         } catch (Exception $ignored) {
-            // Swallow — nothing useful to do here
+        // Swallow — nothing useful to do here
+        error_log($ignored->getMessage());
         }
     }
 
@@ -791,7 +792,8 @@ class PlotCutterService
                 $this->logger->log($level, $message, $context);
             }
         } catch (Exception $ignored) {
-            // Never let logging break the caller
+        // Never let logging break the caller
+        error_log($ignored->getMessage());
         }
     }
 }

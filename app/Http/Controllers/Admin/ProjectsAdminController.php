@@ -102,7 +102,8 @@ class ProjectsAdminController extends AdminController
         try {
             $images = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? ORDER BY display_order", [$id]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->data['project'] = $project ?: [];
         $this->data['images'] = $images ?: [];

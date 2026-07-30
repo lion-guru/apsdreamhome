@@ -398,7 +398,7 @@ class AIGateway
             $this->db->getConnection()->prepare(
                 "INSERT INTO ai_api_logs (task_type, engine_used, confidence, response_time_ms, input_summary, created_at) VALUES (?, ?, ?, ?, ?, NOW())"
             )->execute([$task, $engine, $result['confidence'] ?? 0, $elapsed, substr(json_encode($result['result'] ?? []), 0, 500)]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
 
         $result['engine'] = $engine;
         $result['response_time_ms'] = $elapsed;

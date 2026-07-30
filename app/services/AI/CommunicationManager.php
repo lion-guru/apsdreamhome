@@ -30,7 +30,8 @@ class CommunicationManager {
         try {
             $sql = "INSERT INTO communication_interactions (lead_id, channel, interaction_type, direction, content, recording_url) VALUES (?, ?, ?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         if ($this->db->execute($sql, [$lead_id, $channel, $type, $direction, $content, $recording])) {
@@ -54,7 +55,8 @@ class CommunicationManager {
             // Update tag in interaction
             $this->db->execute("UPDATE communication_interactions SET tag = ? WHERE id = ?", [$tag, $interactionId]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         // Find best department and employee
@@ -70,7 +72,8 @@ class CommunicationManager {
         try {
             $sql = "INSERT INTO interaction_routing (interaction_id, department_id, assigned_to, routing_reason) VALUES (?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $reason = "AI analyzed content as " . strtoupper($deptType) . " / " . strtoupper($tag);
         

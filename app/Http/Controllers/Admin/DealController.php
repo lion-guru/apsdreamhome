@@ -291,7 +291,8 @@ class DealController extends AdminController
                 [$dealId]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         // Get deal contacts
@@ -550,7 +551,8 @@ class DealController extends AdminController
                      VALUES (?, ?, ?, ?, NOW(), ?)"
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$dealId, $type, $title, $description, $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0]);
         } catch (\Exception $e) {

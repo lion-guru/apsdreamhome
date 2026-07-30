@@ -271,7 +271,8 @@ class SiteVisitService
             $tenantVal = $tid > 1 ? ', ?' : '';
             $sql = "INSERT INTO visit_reminders (visit_id, reminder_type, reminder_time{$tenantCol}) VALUES (?, ?, ?{$tenantVal})";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!isset($sql)) return;
         $stmt = $this->database->prepare($sql);
@@ -512,7 +513,8 @@ class SiteVisitService
             $tid = $this->getTenantId();
             $sql = "DELETE FROM visit_reminders WHERE visit_id = ? AND is_sent = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         if (!isset($sql)) return;
         $stmt = $this->database->prepare($sql);

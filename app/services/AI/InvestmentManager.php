@@ -33,7 +33,8 @@ class InvestmentManager {
             try {
                 $sql = "UPDATE investment_plans SET name=?, description=?, min_amount=?, expected_roi_percentage=?, duration_months=?, plan_type=?, start_date=?, end_date=?, document_path=? WHERE id=?";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             return $this->db->execute($sql, [$name, $desc, $min, $roi, $duration, $type, $start, $end, $doc, $id]);
         } else {
@@ -53,7 +54,8 @@ class InvestmentManager {
         try {
             $sql = "INSERT INTO plan_status_history (plan_id, status, changed_by, reason) VALUES (?, ?, ?, ?)";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->execute($sql, [$planId, $status, $userId, $reason]);
     }
@@ -91,7 +93,8 @@ class InvestmentManager {
         try {
             $sql = "SELECT * FROM investment_plans WHERE is_active = 1 AND (end_date IS NULL OR end_date >= CURDATE())";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $this->db->fetchAll($sql);
     }

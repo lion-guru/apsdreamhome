@@ -218,7 +218,8 @@ class MessagingService
                 [$conversationId, $userId]
             );
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
     }
 

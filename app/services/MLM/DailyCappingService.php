@@ -86,7 +86,8 @@ class DailyCappingService
         try {
             $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as flushed_today FROM retained_earnings WHERE user_id = ? AND retention_reason = 'daily_cap_flush' AND DATE(created_at) = CURDATE()");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$userId]);
         $flushedToday = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['flushed_today'];

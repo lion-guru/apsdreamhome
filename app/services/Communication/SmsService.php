@@ -217,7 +217,8 @@ class SMSService
                         \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'sms');
                     }
                 } catch (\Throwable $e) {
-                    // usage tracking should never break SMS sending
+                // usage tracking should never break SMS sending
+                error_log($e->getMessage());
                 }
             }
             

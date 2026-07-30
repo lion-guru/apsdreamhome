@@ -388,7 +388,8 @@ class PayrollService
                         net_salary = VALUES(net_salary),
                         updated_at = NOW()";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $this->db->query($sql, [
@@ -424,7 +425,8 @@ class PayrollService
                     LEFT JOIN departments d ON e.department_id = d.id
                     WHERE p.id = ?" . ($tid > 1 ? " AND e.tenant_id = ?" : "");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $payroll = $this->db->query($sql, $tid > 1 ? [$payrollId, $tid] : [$payrollId])->fetch(\PDO::FETCH_ASSOC);

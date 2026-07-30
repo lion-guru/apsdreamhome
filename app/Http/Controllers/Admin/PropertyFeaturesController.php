@@ -22,7 +22,8 @@ class PropertyFeaturesController extends AdminController
                 ORDER BY r.created_at DESC
             ") ?: [];
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         $reviews = $this->db->fetchAll("

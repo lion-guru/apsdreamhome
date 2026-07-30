@@ -204,8 +204,7 @@ class CoreAuthController extends BaseController
             $tid = 1;
             try {
                 $tid = \App\Core\Middleware\TenantContext::getId();
-            } catch (\Throwable $e) {
-            }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
             $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $params = [$identity, $identity];
             if ($tid > 1) $params[] = $tid;
@@ -390,8 +389,7 @@ class CoreAuthController extends BaseController
             $tid = 1;
             try {
                 $tid = \App\Core\Middleware\TenantContext::getId();
-            } catch (\Throwable $e) {
-            }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
             $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $tenantParams = $tid > 1 ? [$tid] : [];
 

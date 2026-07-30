@@ -100,7 +100,8 @@ class BookingComplianceService
         try {
             $stmt = $this->db->prepare("INSERT INTO plot_emi_schedule (booking_id, installment_number, due_date, amount, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
 
         for ($i = 1; $i <= $installments; $i++) {
@@ -175,7 +176,8 @@ class BookingComplianceService
             try {
                 $stmt = $this->db->prepare("INSERT INTO plot_payments (booking_id, amount, payment_mode, payment_date, created_at) VALUES (?, ?, ?, CURDATE(), NOW())");
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             $stmt->execute([$bookingId, $amount, $mode]);
 
@@ -213,7 +215,8 @@ class BookingComplianceService
         try {
             $stmt = $this->db->prepare("SELECT COUNT(*) as emis, SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END) as paid_emis FROM plot_emi_schedule WHERE booking_id = ?");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$bookingId]);
         $emiStatus = $stmt->fetch(\PDO::FETCH_ASSOC);

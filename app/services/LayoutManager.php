@@ -15,7 +15,8 @@ class LayoutManager {
         try {
             $result = $this->db->fetch("SELECT * FROM layout_settings WHERE id = 1");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $result ? json_decode($result['settings'], true) : $this->getDefaultSettings();
     }

@@ -630,7 +630,8 @@ class AuthService
                         VALUES (?, ?, ?, NOW())
                         ON DUPLICATE KEY UPDATE token = ?, expires_at = ?, created_at = NOW()";
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
             
             $this->db->execute($sql, [$user['id'], $token, $expires, $token, $expires]);
@@ -659,7 +660,8 @@ class AuthService
         try {
             $sql = "DELETE FROM remember_tokens WHERE token = ?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $this->db->execute($sql, [$token]);
     }

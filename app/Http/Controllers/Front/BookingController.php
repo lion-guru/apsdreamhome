@@ -294,7 +294,8 @@ class BookingController extends BaseController
                 [$id]
             );
         } catch (\Throwable $e) {
-            // table may not exist yet
+        // table may not exist yet
+        error_log($e->getMessage());
         }
 
         $totalPaid = 0;
@@ -481,14 +482,16 @@ class BookingController extends BaseController
                 [$user['id'], $id]
             );
         } catch (\Throwable $e) {
-            // table may not exist
+        // table may not exist
+        error_log($e->getMessage());
         }
 
         // Release expired locks on this plot
         try {
             $this->db->execute("DELETE FROM plot_locks WHERE plot_id = ? AND expires_at <= NOW()", [$id]);
         } catch (\Throwable $e) {
-            // table may not exist
+        // table may not exist
+        error_log($e->getMessage());
         }
 
         // Check if another user holds an active lock
@@ -505,7 +508,8 @@ class BookingController extends BaseController
                 ], 409);
             }
         } catch (\Throwable $e) {
-            // table may not exist, proceed
+        // table may not exist, proceed
+        error_log($e->getMessage());
         }
 
         $expiresAt = date('Y-m-d H:i:s', time() + 1800); // 30 minutes
@@ -550,7 +554,8 @@ class BookingController extends BaseController
                 [$id, $user['id']]
             );
         } catch (\Throwable $e) {
-            // graceful
+        // graceful
+        error_log($e->getMessage());
         }
 
         return $this->jsonResponse(['success' => true]);
@@ -588,7 +593,8 @@ class BookingController extends BaseController
             $bls = new BookingLifecycleService();
             $mandate = $bls->getNachMandate($id);
         } catch (\Throwable $e) {
-            // graceful
+        // graceful
+        error_log($e->getMessage());
         }
 
         $this->layout = 'layouts/customer';

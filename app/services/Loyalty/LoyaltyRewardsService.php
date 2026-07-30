@@ -170,7 +170,8 @@ class LoyaltyRewardsService
                 (tier_name, benefit_type, benefit_name, benefit_description, benefit_value)
                 VALUES (?, ?, ?, ?, ?)");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         
         foreach ($benefits as $benefit) {
@@ -419,7 +420,8 @@ class LoyaltyRewardsService
         try {
             $sql = "SELECT * FROM tier_benefits WHERE tier_name = ? AND is_active = 1 ORDER BY sort_order";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$tier]);

@@ -142,7 +142,7 @@ class AISystemController extends AdminController
             Database::getInstance()->getConnection()->prepare(
                 "INSERT INTO agent_task_logs (agent_type, action_type, details, status, tenant_id, created_at) VALUES (?, ?, ?, 'completed', ?, NOW())"
             )->execute(['ai_' . $agentType, $action, json_encode($result), $tid]);
-        } catch (\Throwable $e) { /* non-critical */ }
+        } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
 
         if (is_ajax()) {
             header('Content-Type: application/json');

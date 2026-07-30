@@ -163,7 +163,8 @@ class PropertyAlertService
             $stmt = $this->pdo->query("SELECT property_type, COUNT(*) as count FROM property_alert_subscriptions WHERE is_active = 1 GROUP BY property_type ORDER BY count DESC LIMIT 5");
             $stats['top_property_types'] = $stmt->fetchAll();
         } catch (\Throwable $e) {
-            // ignore
+        // ignore
+        error_log($e->getMessage());
         }
         return $stats;
     }

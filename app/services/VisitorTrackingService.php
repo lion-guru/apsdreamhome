@@ -195,7 +195,8 @@ class VisitorTrackingService
                     [$userId, $this->sessionId]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             try {
@@ -210,7 +211,8 @@ class VisitorTrackingService
                     [$userId, $this->sessionId, $this->sessionId]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
 
             return true;
@@ -232,7 +234,8 @@ class VisitorTrackingService
                     [$this->sessionId]
                 );
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            // Gracefully handle dropped table ref
+            error_log($e->getMessage());
             }
         } catch (\Exception $e) {
             return null;

@@ -101,7 +101,8 @@ class PermissionManager {
                     JOIN permissions p ON rp.permission_id = p.id
                     WHERE ur.user_id=? AND p.action=?";
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $res = $this->db->fetch($sql, [$user_id, $action]);
 

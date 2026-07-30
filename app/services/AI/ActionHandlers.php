@@ -90,7 +90,8 @@ class ActionHandlers
                 [$userId]
             );
         } catch (\Exception $e) {
-            // Graceful — table might not exist
+        // Graceful — table might not exist
+        error_log($e->getMessage());
         }
 
         return [
@@ -142,7 +143,8 @@ class ActionHandlers
                 [$leadId, $userId, $tid]
             );
         } catch (\Exception $e) {
-            // Graceful — table might not exist
+        // Graceful — table might not exist
+        error_log($e->getMessage());
         }
 
         // Auto-response: send welcome SMS if phone available
@@ -152,7 +154,8 @@ class ActionHandlers
                 $welcomeMsg = "Namaste {$data['name']}! APS Dream Homes mein aapka swagat hai. Aapka lead #{$leadNumber} create ho gaya hai. Hamari team jald hi aapko contact karegi. Dhanyavaad!";
                 $sms->sendSMS($data['phone'], $welcomeMsg);
             } catch (\Exception $e) {
-                // Graceful — SMS service might not be configured
+            // Graceful — SMS service might not be configured
+            error_log($e->getMessage());
             }
         }
 
@@ -209,7 +212,8 @@ class ActionHandlers
                     [$userId, $tid]
                 );
             } catch (\Exception $e) {
-                // Graceful
+            // Graceful
+            error_log($e->getMessage());
             }
 
             return [
@@ -389,7 +393,8 @@ class ActionHandlers
                 [$userId, $tid]
             );
         } catch (\Exception $e) {
-            // Graceful
+        // Graceful
+        error_log($e->getMessage());
         }
 
         // Auto-response: send acknowledgment SMS if phone available
@@ -398,7 +403,8 @@ class ActionHandlers
                 $sms = new \App\Services\SMSService();
                 $sms->sendSMS($data['phone'], "APS Dream Homes: Aapki complaint (#{$ticketId}) register ho gayi hai. Hamari team 24 ghante mein contact karegi. Dhanyavaad!");
             } catch (\Exception $e) {
-                // Graceful
+            // Graceful
+            error_log($e->getMessage());
             }
         }
 

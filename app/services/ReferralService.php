@@ -53,7 +53,8 @@ class ReferralService
         try {
             $auditStmt = $this->conn->prepare("INSERT INTO mlm_import_audit (batch_reference, user_id, sponsor_user_id, referral_code, status, message, payload, processed_at, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $updateProfileStmt = $this->conn->prepare("UPDATE mlm_profiles SET sponsor_user_id = ?, sponsor_code = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?");
 
@@ -246,7 +247,8 @@ class ReferralService
         try {
             $stmt = $this->conn->prepare("INSERT INTO mlm_referrals (referrer_user_id, referred_user_id, referral_type, channel, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         return $stmt->execute([$referrer_user_id, $referred_user_id, $referral_type, $channel, $this->getTenantId()]);
     }
@@ -318,7 +320,8 @@ class ReferralService
                 ORDER BY r.created_at DESC
             ");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -378,7 +381,8 @@ class ReferralService
                 ORDER BY date DESC
             ");
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+        // Gracefully handle dropped table ref
+        error_log($e->getMessage());
         }
         $stmt->execute([$user_id, $days]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -510,7 +514,7 @@ class ReferralService
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
             $stats['total_referrals'] = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $stmt = $this->conn->prepare("
@@ -521,19 +525,19 @@ class ReferralService
             ");
             $stmt->execute([$userId]);
             $stats['successful_referrals'] = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'paid'");
             $stmt->execute([$userId]);
             $stats['total_earned'] = (float)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'pending'");
             $stmt->execute([$userId]);
             $stats['pending_earned'] = (float)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return $stats;
     }
@@ -883,14 +887,14 @@ class ReferralService
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
             $signupCount = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $crCount = 0;
         try {
             $stmt = $this->conn->prepare("SELECT COUNT(*) FROM customer_referrals WHERE referrer_user_id = ?");
             $stmt->execute([$userId]);
             $crCount = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $totalReferrals = max($signupCount, $crCount);
 
@@ -949,7 +953,7 @@ class ReferralService
             if ($stmt->fetch()) {
                 return ['success' => false, 'message' => 'Signup bonus already processed'];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
              $referrerName = '';
@@ -1015,7 +1019,7 @@ class ReferralService
             if ($stmt->fetch()) {
                 return ['success' => false, 'message' => 'Booking bonus already processed'];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
          try {
              $referredName = '';

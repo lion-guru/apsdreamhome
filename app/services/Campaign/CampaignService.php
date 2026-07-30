@@ -594,7 +594,8 @@ class CampaignService
                     $_SERVER['REMOTE_ADDR'] ?? null,
                 ]);
             } catch (\Throwable $e) {
-                // audit table might not exist; ignore
+            // audit table might not exist; ignore
+            error_log($e->getMessage());
             }
             return;
         }

@@ -343,7 +343,7 @@ class EFilingController extends AdminController
             $tanStmt->execute();
             $tanRow = $tanStmt->fetch(\PDO::FETCH_ASSOC);
             $tan = $tanRow['credential_value'] ?? '';
-        } catch (\Exception $e) { /* fallback */ }
+        } catch (\Exception $e) { /* fallback */ error_log($e->getMessage()); }
 
         $deductorName = htmlspecialchars($tdsRecords[0]['deductor_name'] ?? 'APS Dream Home');
         $deductorPan = htmlspecialchars($tdsRecords[0]['deductor_pan'] ?? '');
