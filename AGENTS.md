@@ -1981,3 +1981,17 @@ equire_once are always safe
 5. **Does it have DB data?** — Tables it reads/writes — check row counts
 6. **What breaks if deleted?** — Trace all downstream effects
 7. **Make the call** — ALL 6 pass = safe. ANY fail = DO NOT DELETE
+ 
+ - - -  
+  
+ # #   A u t o n o m o u s   A g e n t i c   D e v   S y s t e m   ( 2 0 2 6 - 0 7 - 3 1 )  
+  
+ B u i l t   a   s e l f - r u n n i n g   m u l t i - a g e n t   s y s t e m   ( l i k e   J A R V I S )   t h a t   w o r k s   c o n t i n u o u s l y   o n   t h i s   p r o j e c t   e v e n   w h i l e   y o u   s l e e p .  
+  
+ # # #   Q u i c k   S t a r t  
+ ` ` `  
+ p h p   a g e n t i c _ d e v _ s y s t e m / s c h e d u l e r / r u n _ s c h e d u l e r . p h p  
+ ` ` `  
+  
+ O r   d o u b l e - c l i c k   a g e n t i c _ d e v _ s y s t e m / s t a r t . b a t .   T h e   7   s p e c i a l i z e d   a g e n t s   a u t o - d i s c o v e r   t a s k s ,   f i x   c o d e ,   r u n   E 2 E   t e s t s   ( 1 5 3 / 1 5 3 ) ,   a n d   c o m m i t   c h a n g e s   u s i n g   l o c a l   O l l a m a   ( Q w e n   2 . 5   7 B )   A I .  
+ 
