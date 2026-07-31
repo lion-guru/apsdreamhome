@@ -259,19 +259,19 @@ class ReferralService
     public function getNetworkTree($user_id, $max_depth = 5, array $options = [])
     {
         $stmt = $this->conn->prepare("
-            SELECT 
+            SELECT
                 u.id, u.name, u.email, u.type,
                 mp.referral_code, mp.current_level, mp.total_team_size,
                 mp.direct_referrals, mp.total_commission, mp.plan_mode,
                 mp.lifetime_sales,
                 nt.level, nt.created_at
             FROM mlm_network_tree nt
-            JOIN users u ON nt.descendant_user_id = u.id
+            JOIN users u ON nt.associate_id = u.id
             JOIN mlm_profiles mp ON u.id = mp.user_id
-            WHERE nt.ancestor_user_id = ? AND nt.level <= ?
+            WHERE nt.parent_id = ?
             ORDER BY nt.level, nt.created_at
         ");
-        $stmt->execute([$user_id, $max_depth]);
+        $stmt->execute([$user_id]);
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $query = isset($options['query']) ? strtolower($options['query']) : null;
@@ -341,7 +341,7 @@ class ReferralService
         $stmt = $this->conn->prepare('
             SELECT level, COUNT(*) AS member_count
             FROM mlm_network_tree
-            WHERE ancestor_user_id = ?
+            WHERE parent_id = ?
             GROUP BY level
             ORDER BY level
         ');
@@ -718,23 +718,33 @@ class ReferralService
             return true;
         }
 
-        $stmt = $this->conn->prepare('SELECT ancestor_user_id FROM mlm_network_tree WHERE descendant_user_id = ?');
-        $stmt->execute([$potentialSponsorId]);
-        $ancestors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $currentId = $potentialSponsorId;
+        $visited = [];
+        for ($i = 0; $i < 100; $i++) {
+            if (in_array($currentId, $visited, true)) {
+                break;
+            }
+            $visited[] = $currentId;
 
-        foreach ($ancestors as $row) {
-            if ((int) $row['ancestor_user_id'] === $userId) {
+            $stmt = $this->conn->prepare('SELECT parent_id FROM mlm_network_tree WHERE associate_id = ? LIMIT 1');
+            $stmt->execute([$currentId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row || empty($row['parent_id'])) {
+                break;
+            }
+            if ((int) $row['parent_id'] === $userId) {
                 return true;
             }
+            $currentId = (int) $row['parent_id'];
         }
 
         return false;
     }
 
-    private function countTeamMembers(int $ancestorId): int
+    private function countTeamMembers(int $parentId): int
     {
-        $stmt = $this->conn->prepare('SELECT COUNT(*) AS team_size FROM mlm_network_tree WHERE ancestor_user_id = ?');
-        $stmt->execute([$ancestorId]);
+        $stmt = $this->conn->prepare('SELECT COUNT(*) AS team_size FROM mlm_network_tree WHERE parent_id = ?');
+        $stmt->execute([$parentId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return (int) ($result['team_size'] ?? 0);
