@@ -12,6 +12,7 @@ use App\Core\Config\Config;
  */
 class MarketingAutomationService
 {
+    use \App\Traits\ServiceTenantTrait;
     private $database;
     private $logger;
     private $config;
@@ -82,16 +83,21 @@ class MarketingAutomationService
                         source = ?, 
                         campaign = ?, 
                         updated_at = NOW() 
-                        WHERE id = ?";
+                        WHERE id = ?" . $this->tenantSql();
                 
-                $this->database->query($sql, [$source, $campaign, $existingLead['id']]);
+                $params = [$source, $campaign, $existingLead['id']];
+                if ($this->tenantId() > 1) $params[] = $this->tenantId();
+                $this->database->query($sql, $params);
                 $leadId = $existingLead['id'];
             } else {
                 // Create new lead
-                $sql = "INSERT INTO marketing_leads (name, email, phone, source, campaign)
-                        VALUES (?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO marketing_leads (name, email, phone, source, campaign, tenant_id)
+                        VALUES (?, ?, ?, ?, ?, ?)";
                 
-                $this->database->query($sql, [$name, $email, $phone, $source, $campaign]);
+                $insertData = $this->tenantInsertData();
+                $columns = array_merge(['name', 'email', 'phone', 'source', 'campaign'], array_keys($insertData));
+                $values = array_merge([$name, $email, $phone, $source, $campaign], array_values($insertData));
+                $this->database->query($sql, $values);
                 $leadId = $this->database->lastInsertId();
             }
             
@@ -134,8 +140,8 @@ class MarketingAutomationService
     public function getLeadByEmail($email)
     {
         try {
-            $sql = "SELECT * FROM marketing_leads WHERE email = ?";
-            return $this->database->selectOne($sql, [$email]);
+            $sql = "SELECT * FROM marketing_leads WHERE email = ?" . $this->tenantSql();
+            return $this->database->selectOne($sql, array_merge([$email], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Exception $e) {
             $this->logger->error('Failed to get lead by email', [
                 'error' => $e->getMessage(),
@@ -151,8 +157,8 @@ class MarketingAutomationService
     public function getLead($leadId)
     {
         try {
-            $sql = "SELECT * FROM marketing_leads WHERE id = ?";
-            $lead = $this->database->selectOne($sql, [$leadId]);
+            $sql = "SELECT * FROM marketing_leads WHERE id = ?" . $this->tenantSql();
+            $lead = $this->database->selectOne($sql, array_merge([$leadId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             
             if ($lead) {
                 // Get lead analytics
@@ -176,8 +182,9 @@ class MarketingAutomationService
     public function getLeads($filters = [], $limit = 50, $offset = 0)
     {
         try {
-            $sql = "SELECT * FROM marketing_leads WHERE 1=1";
+            $sql = "SELECT * FROM marketing_leads WHERE 1=1" . $this->tenantSql();
             $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             
             if (!empty($filters['status'])) {
                 $sql .= " AND status = ?";

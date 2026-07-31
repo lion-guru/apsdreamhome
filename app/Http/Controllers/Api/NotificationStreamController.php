@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
-use App\Services\NotificationCenter;
+use App\Services\NotificationService;
 
 class NotificationStreamController extends BaseController
 {
@@ -19,15 +19,15 @@ class NotificationStreamController extends BaseController
             return $this->jsonResponse(['error' => 'Not authenticated'], 401);
         }
 
-        $nc = new NotificationCenter($this->db);
-        $notifications = $nc->fetchPending($userId, $channel, 20, $sinceId);
+        $notifier = new NotificationService($this->db);
+        $notifications = $notifier->fetchPending($userId, $channel, 20, $sinceId);
 
         if (!empty($notifications)) {
             $ids = array_map(fn($n) => (int)$n['id'], $notifications);
-            $nc->markDelivered($ids);
+            $notifier->markDelivered($ids);
         }
 
-        $unread = $nc->getUnreadCount($userId, $channel);
+        $unread = $notifier->getUnreadCount($userId);
 
         return $this->jsonResponse([
             'notifications' => $notifications,
@@ -44,8 +44,11 @@ class NotificationStreamController extends BaseController
         if (!$userId) return $this->jsonResponse(['error' => 'Unauthorized'], 401);
 
         $ids = json_decode($_POST['ids'] ?? '[]', true) ?: [];
-        $nc = new NotificationCenter($this->db);
-        $count = $nc->markRead($userId, $ids);
+        $notifier = new NotificationService($this->db);
+        $count = 0;
+        foreach ($ids as $id) {
+            if ($notifier->markRead((int)$id)) $count++;
+        }
 
         return $this->jsonResponse(['ok' => true, 'marked' => $count]);
     }
@@ -66,13 +69,13 @@ class NotificationStreamController extends BaseController
         header('Connection: keep-alive');
         header('X-Accel-Buffering: no');
 
-        $nc = new NotificationCenter($this->db);
+        $notifier = new NotificationService($this->db);
         $lastId = (int)($_GET['last_id'] ?? 0);
         $startTime = time();
         $maxDuration = 60;
 
         while (time() - $startTime < $maxDuration) {
-            $notifications = $nc->fetchPending($userId, $channel, 10, $lastId);
+            $notifications = $notifier->fetchPending($userId, $channel, 10, $lastId);
             if (!empty($notifications)) {
                 foreach ($notifications as $n) {
                     echo "id: {$n['id']}\n";
@@ -85,7 +88,7 @@ class NotificationStreamController extends BaseController
                     ]) . "\n\n";
                     $lastId = max($lastId, (int)$n['id']);
                 }
-                $nc->markDelivered(array_map(fn($n) => (int)$n['id'], $notifications));
+                $notifier->markDelivered(array_map(fn($n) => (int)$n['id'], $notifications));
                 @ob_flush();
                 @flush();
             }
