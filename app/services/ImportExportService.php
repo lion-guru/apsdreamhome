@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Import/Export Service - Bulk Data Operations
  * CSV/Excel import and export with validation

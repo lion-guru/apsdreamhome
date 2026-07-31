@@ -5,6 +5,8 @@ namespace App\Services;
 use PDO;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Commission Plan Service — Versioned Plan Management
  * ────────────────────────────────────────────────────

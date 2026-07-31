@@ -2,11 +2,17 @@
 
 namespace App\Services;
 
+use App\Core\Database\Database;
+
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Drip Campaign Service - Automated lead nurturing sequences
  */
 class DripCampaignService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
 

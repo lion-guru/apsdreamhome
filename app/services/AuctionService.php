@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use \App\Traits\ServiceTenantTrait;
+
 class AuctionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $pdo;
 
     public function __construct($db = null)
