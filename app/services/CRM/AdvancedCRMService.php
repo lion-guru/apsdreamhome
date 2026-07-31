@@ -300,7 +300,7 @@ $stmt = $this->database->prepare("
         }
         
         $stmt = $this->database->prepare("
-            SELECT * FROM properties {$whereClause} 
+            SELECT * FROM properties {$whereClause} AND tenant_id = " . $this->tenantId() . "
             ORDER BY featured DESC, created_at DESC 
             LIMIT 5
         ");
@@ -321,8 +321,8 @@ $stmt = $this->database->prepare("
     {
         // Log email sending
         $stmt = $this->database->prepare("
-            INSERT INTO notifications_unified (lead_id, template, subject, data, sent_at) 
-            VALUES (?, ?, ?, ?, NOW())
+            INSERT INTO notifications_unified (lead_id, template, subject, data, sent_at, tenant_id) 
+            VALUES (?, ?, ?, ?, NOW(), " . $this->tenantId() . ")
         ");
         
         $stmt->execute([
@@ -341,8 +341,8 @@ $stmt = $this->database->prepare("
     private function scheduleFollowUpCall($leadId)
     {
         $stmt = $this->database->prepare("
-            INSERT INTO scheduled_calls (lead_id, call_type, scheduled_at, status) 
-            VALUES (?, 'follow_up', DATE_ADD(NOW(), INTERVAL 1 DAY), 'scheduled')
+            INSERT INTO scheduled_calls (lead_id, call_type, scheduled_at, status, tenant_id) 
+            VALUES (?, 'follow_up', DATE_ADD(NOW(), INTERVAL 1 DAY), 'scheduled', " . $this->tenantId() . ")
         ");
         
         $stmt->execute([$leadId]);
@@ -355,7 +355,7 @@ $stmt = $this->database->prepare("
     private function updateLeadStatus($leadId, $status)
     {
         $stmt = $this->database->prepare("
-            UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?
+            UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = " . $this->tenantId() . "
         ");
         
         $stmt->execute([$status, $leadId]);

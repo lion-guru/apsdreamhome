@@ -17,8 +17,12 @@ namespace App\Services\AI\Agents;
 use App\Core\Database\Database;
 use App\Services\AI\AIGateway;
 
+use \App\Traits\ServiceTenantTrait;
+
 class PropertyMatchmakerAgent
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $gateway;
 
@@ -33,7 +37,7 @@ class PropertyMatchmakerAgent
      */
     public function matchForLead(int $leadId, int $limit = 5): array
     {
-        $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ? AND deleted_at IS NULL", [$leadId]);
+        $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ? AND deleted_at IS NULL" . $this->tenantSql(), array_merge([$leadId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         if (!$lead) return ['error' => 'Lead not found'];
 
         // Get lead preferences from history
@@ -72,10 +76,10 @@ class PropertyMatchmakerAgent
     public function batchMatch(int $limit = 20): array
     {
         $leads = $this->db->fetchAll(
-            "SELECT id FROM leads WHERE deleted_at IS NULL AND status NOT IN ('converted','closed','dead','won')
-             AND (last_recommendation_date IS NULL OR last_recommendation_date < DATE_SUB(NOW(), INTERVAL 7 DAY))
-             ORDER BY lead_score DESC LIMIT ?",
-            [$limit]
+            "SELECT id FROM leads WHERE deleted_at IS NULL AND status NOT IN ('converted','closed','dead','won')" . $this->tenantSql() .
+             " AND (last_recommendation_date IS NULL OR last_recommendation_date < DATE_SUB(NOW(), INTERVAL 7 DAY))" .
+             " ORDER BY lead_score DESC LIMIT ?",
+            array_merge($this->tenantId() > 1 ? [$this->tenantId()] : [], [$limit])
         ) ?: [];
 
         $results = ['matched' => 0, 'recommendations_sent' => 0];
@@ -96,13 +100,13 @@ class PropertyMatchmakerAgent
      */
     public function getTrendingProperties(int $limit = 10): array
     {
-        return $this->db->fetchAll(
+return $this->db->fetchAll(
             "SELECT p.*, c.name as colony_name,
-                    (SELECT COUNT(*) FROM leads l WHERE l.location_preference LIKE CONCAT('%', c.name, '%') AND l.deleted_at IS NULL) as matching_leads
+                    (SELECT COUNT(*) FROM leads l WHERE l.location_preference LIKE CONCAT('%', c.name, '%') AND l.deleted_at IS NULL)" . $this->tenantSql() . " as matching_leads
              FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id
-             WHERE p.status = 'available'
-             ORDER BY matching_leads DESC, p.created_at DESC LIMIT ?",
-            [$limit]
+             WHERE p.status = 'available'" . $this->tenantSql() .
+             " ORDER BY matching_leads DESC, p.created_at DESC LIMIT ?",
+            array_merge($this->tenantId() > 1 ? [$this->tenantId()] : [], [$limit])
         ) ?: [];
     }
 
@@ -112,8 +116,8 @@ class PropertyMatchmakerAgent
     {
         // Analyze from interactions, views, inquiries
         $interactions = $this->db->fetchAll(
-            "SELECT content, metadata FROM crm_interactions WHERE lead_id = ? ORDER BY created_at DESC LIMIT 20",
-            [$leadId]
+            "SELECT content, metadata FROM crm_interactions WHERE lead_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT 20",
+            array_merge([$leadId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         ) ?: [];
 
         $preferences = [

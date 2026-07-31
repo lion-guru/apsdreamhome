@@ -7,6 +7,7 @@ namespace App\Services\CRM;
 
 use App\Core\Database;
 use App\Models\Lead;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Lead Scoring Service
@@ -14,6 +15,8 @@ use App\Models\Lead;
  */
 class LeadScoringService
 {
+    use ServiceTenantTrait;
+
     private $db;
     
     // Scoring weights
@@ -144,7 +147,7 @@ class LeadScoringService
                     COUNT(*) as total_emails,
                     SUM(CASE WHEN opened = 1 THEN 1 ELSE 0 END) as opened,
                     SUM(CASE WHEN clicked = 1 THEN 1 ELSE 0 END) as clicked
-                FROM notifications_unified WHERE lead_id = ?";
+                FROM notifications_unified WHERE lead_id = ? AND tenant_id = " . $this->tenantId();
         $emailStats = $this->db->query($sql, [$leadId])->fetch(\PDO::FETCH_ASSOC);
 
         if ($emailStats && $emailStats['total_emails'] > 0) {
@@ -155,7 +158,7 @@ class LeadScoringService
         }
 
         // Website visits
-        $sql = "SELECT COUNT(*) as visits FROM lead_visits WHERE lead_id = ? 
+        $sql = "SELECT COUNT(*) as visits FROM lead_visits WHERE lead_id = ? AND tenant_id = " . $this->tenantId() . " 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
         $visits = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(25, $visits * 5);
@@ -163,7 +166,7 @@ class LeadScoringService
 
         // Property views
         $sql = "SELECT COUNT(*) as views FROM property_views pv
-                JOIN leads l ON pv.user_id = l.user_id WHERE l.id = ?";
+                JOIN leads l ON pv.user_id = l.user_id WHERE l.id = ? AND l.tenant_id = " . $this->tenantId();
         $views = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(25, $views * 2);
         $factors['property_views'] = $views;
@@ -183,32 +186,32 @@ class LeadScoringService
         $factors = [];
 
         // Inquiry frequency
-        $sql = "SELECT COUNT(*) FROM inquiries WHERE lead_id = ?";
+        $sql = "SELECT COUNT(*) FROM inquiries WHERE lead_id = ? AND tenant_id = " . $this->tenantId();
         $inquiries = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(20, $inquiries * 10);
         $factors['inquiries'] = $inquiries;
 
         // Property visits scheduled
-        $sql = "SELECT COUNT(*) FROM property_visits WHERE lead_id = ? AND status = 'completed'";
+        $sql = "SELECT COUNT(*) FROM property_visits WHERE lead_id = ? AND tenant_id = " . $this->tenantId() . " AND status = 'completed'";
         $visits = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(30, $visits * 15);
         $factors['property_visits'] = $visits;
 
         // Favorites saved
-        $sql = "SELECT COUNT(*) FROM property_favorites WHERE lead_id = ?";
+        $sql = "SELECT COUNT(*) FROM property_favorites WHERE lead_id = ? AND tenant_id = " . $this->tenantId();
         $favorites = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(15, $favorites * 5);
         $factors['favorites'] = $favorites;
 
         // Documents uploaded
-        $sql = "SELECT COUNT(*) FROM lead_documents WHERE lead_id = ?";
+        $sql = "SELECT COUNT(*) FROM lead_documents WHERE lead_id = ? AND tenant_id = " . $this->tenantId();
         $docs = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(20, $docs * 10);
         $factors['documents_uploaded'] = $docs;
 
         // Response time (how quickly they respond)
         $sql = "SELECT AVG(TIMESTAMPDIFF(HOUR, created_at, first_response_at)) as avg_response
-                FROM lead_communications WHERE lead_id = ? AND first_response_at IS NOT NULL";
+                FROM lead_communications WHERE lead_id = ? AND first_response_at IS NOT NULL AND tenant_id = " . $this->tenantId();
         $avgResponse = $this->db->query($sql, [$leadId])->fetchColumn();
 
         if ($avgResponse !== null) {
@@ -300,7 +303,7 @@ class LeadScoringService
     private function updateLeadScore(int $leadId, float $score, array $breakdown): void
     {
         $this->db->query(
-            "UPDATE leads SET score = ?, score_breakdown = ?, score_updated_at = NOW() WHERE id = ?",
+            "UPDATE leads SET score = ?, score_breakdown = ?, score_updated_at = NOW() WHERE id = ? AND tenant_id = " . $this->tenantId(),
             [$score, json_encode($breakdown), $leadId]
         );
     }
@@ -310,7 +313,7 @@ class LeadScoringService
      */
     public function scoreAllLeads(): array
     {
-        $sql = "SELECT id FROM leads WHERE status NOT IN ('converted', 'lost')";
+        $sql = "SELECT id FROM leads WHERE status NOT IN ('converted', 'lost') AND tenant_id = " . $this->tenantId();
         $leads = $this->db->query($sql)->fetchAll(\PDO::FETCH_COLUMN);
 
         $results = ['scored' => 0, 'errors' => 0];
@@ -342,7 +345,7 @@ class LeadScoringService
         [$min, $max] = $thresholds[$category] ?? [0, 100];
 
         return $this->db->query(
-            "SELECT * FROM leads WHERE score >= ? AND score <= ? ORDER BY score DESC",
+            "SELECT * FROM leads WHERE score >= ? AND score <= ? AND tenant_id = " . $this->tenantId() . " ORDER BY score DESC",
             [$min, $max]
         )->fetchAll(\PDO::FETCH_ASSOC);
     }

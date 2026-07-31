@@ -18,8 +18,12 @@ use App\Services\AI\AIGateway;
 use App\Services\AI\IntentDetector;
 use App\Services\AI\LeadScorer;
 
+use \App\Traits\ServiceTenantTrait;
+
 class SmartLeadQualifierAgent
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $gateway;
 
@@ -76,14 +80,13 @@ class SmartLeadQualifierAgent
         }
 
         // 3. Update lead
+        $tid = $this->tenantId();
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         $this->db->getConnection()->prepare(
-            "UPDATE leads SET lead_score = ?, lead_category = ?, priority = ?, updated_at = NOW() WHERE id = ?"
-        )->execute([
-            $aiScore,
-            $qualification,
-            $qualification === 'hot' ? 'high' : ($qualification === 'warm' ? 'medium' : 'low'),
-            $leadId
-        ]);
+            "UPDATE leads SET lead_score = ?, lead_category = ?, priority = ?, updated_at = NOW() WHERE id = ?" . $tenantWhere
+        )->execute(
+            array_merge([$aiScore, $qualification, $qualification === 'hot' ? 'high' : ($qualification === 'warm' ? 'medium' : 'low'), $leadId], $tid > 1 ? [$tid] : [])
+        );
 
         // 4. Auto-assign if hot and unassigned
         if ($qualification === 'hot' && empty($lead['assigned_to'])) {
@@ -119,8 +122,8 @@ class SmartLeadQualifierAgent
     public function processBatch(int $limit = 50): array
     {
         $leads = $this->db->fetchAll(
-            "SELECT id FROM leads WHERE deleted_at IS NULL AND (lead_score IS NULL OR lead_score = 0) ORDER BY created_at DESC LIMIT ?",
-            [$limit]
+            "SELECT id FROM leads WHERE deleted_at IS NULL AND (lead_score IS NULL OR lead_score = 0)" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT ?",
+            array_merge($this->tenantId() > 1 ? [$this->tenantId()] : [], [$limit])
         ) ?: [];
 
         $results = ['processed' => 0, 'hot' => 0, 'warm' => 0, 'cold' => 0, 'errors' => 0];

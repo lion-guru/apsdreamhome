@@ -2,6 +2,7 @@
 
 namespace App\Services\Communication;
 
+use App\Traits\ServiceTenantTrait;
 use App\Core\Database;
 use Psr\Log\LoggerInterface;
 
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
  */
 class MediaService
 {
+    use ServiceTenantTrait;
+
     private Database $db;
     private LoggerInterface $logger;
     private array $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'];
@@ -28,7 +31,7 @@ class MediaService
     public function getMediaForTemplates(string $category = null, int $limit = 10): array
     {
         try {
-            $sql = "SELECT * FROM media_library WHERE mime_type LIKE 'image/%'";
+            $sql = "SELECT * FROM media_library WHERE mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId();
             $params = [];
 
             if ($category) {
@@ -65,7 +68,7 @@ class MediaService
         try {
             $sql = "SELECT * FROM media_library
                     WHERE category IN ('general', 'property', 'project')
-                    AND mime_type LIKE 'image/%'
+                    AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
                     ORDER BY upload_date DESC
                     LIMIT ?";
 
@@ -95,7 +98,7 @@ class MediaService
         try {
             $sql = "SELECT * FROM media_library
                     WHERE category = 'team'
-                    AND mime_type LIKE 'image/%'
+                    AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
                     ORDER BY upload_date DESC
                     LIMIT ?";
 
@@ -125,7 +128,7 @@ class MediaService
         try {
             $sql = "SELECT * FROM media_library
                     WHERE category = 'property'
-                    AND mime_type LIKE 'image/%'
+                    AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
                     ORDER BY upload_date DESC
                     LIMIT ?";
 
@@ -155,7 +158,7 @@ class MediaService
         try {
             $sql = "SELECT * FROM media_library
                     WHERE category = 'project'
-                    AND mime_type LIKE 'image/%'
+                    AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
                     ORDER BY upload_date DESC
                     LIMIT ?";
 
@@ -183,7 +186,7 @@ class MediaService
     public function getDocuments(string $category = null, int $limit = 10): array
     {
         try {
-            $sql = "SELECT * FROM media_library WHERE mime_type LIKE 'application/%'";
+            $sql = "SELECT * FROM media_library WHERE mime_type LIKE 'application/%' AND tenant_id = " . $this->tenantId();
             $params = [];
 
             if ($category) {
@@ -220,7 +223,7 @@ class MediaService
         try {
             $sql = "SELECT * FROM media_library
                     WHERE category = 'carousel'
-                    AND mime_type LIKE 'image/%'
+                    AND mime_type LIKE 'image/%' AND tenant_id = " . $this->tenantId() . "
                     ORDER BY upload_date DESC
                     LIMIT ?";
 
@@ -249,7 +252,7 @@ class MediaService
     {
         try {
             $offset = ($page - 1) * $limit;
-            $sql = "SELECT * FROM media_library WHERE 1=1";
+            $sql = "SELECT * FROM media_library WHERE 1=1 AND tenant_id = " . $this->tenantId();
             $params = [];
 
             // Apply filters
@@ -317,8 +320,8 @@ class MediaService
 
             // Save to database
             $sql = "INSERT INTO media_library 
-                    (original_name, filename, title, description, category, mime_type, file_size, upload_date) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+                    (original_name, filename, title, description, category, mime_type, file_size, upload_date, tenant_id) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), " . $this->tenantId() . ")";
 
             $this->db->execute($sql, [
                 $file['name'],

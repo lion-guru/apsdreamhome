@@ -2,6 +2,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use RuntimeException;
 
 /**
@@ -17,6 +18,8 @@ use RuntimeException;
  */
 class PushSender
 {
+    use ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 
@@ -94,9 +97,9 @@ class PushSender
     {
         // Idempotency: same endpoint for same user → update keys + last_used_at
         $stmt = $this->db->prepare(
-            'SELECT id FROM push_subscriptions WHERE user_id = ? AND endpoint = ? LIMIT 1'
+            'SELECT id FROM push_subscriptions WHERE user_id = ? AND endpoint = ? AND tenant_id = ? LIMIT 1'
         );
-        $stmt->execute([$userId, $endpoint]);
+        $stmt->execute([$userId, $endpoint, $this->tenantId()]);
         $existing = $stmt->fetchColumn();
 
         if ($existing) {

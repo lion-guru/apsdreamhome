@@ -2,6 +2,7 @@
 
 namespace App\Services\Commission;
 
+use App\Traits\ServiceTenantTrait;
 use App\Core\Database\Database;
 use App\Services\LoggingService;
 
@@ -13,6 +14,7 @@ use App\Services\LoggingService;
 
 class HybridRealEstateCommission
 {
+    use ServiceTenantTrait;
 
     private $db;
     private $current_plan = null;
@@ -203,7 +205,7 @@ class HybridRealEstateCommission
     {
         try {
             // First, delete existing costs for this property
-            $delete_query = "DELETE FROM property_development_costs WHERE property_id = ?";
+            $delete_query = "DELETE FROM property_development_costs WHERE property_id = ? AND tenant_id = " . $this->tenantId();
             $this->db->execute($delete_query, [$property_id]);
 
             $total_cost = 0;
@@ -214,9 +216,9 @@ class HybridRealEstateCommission
             foreach ($cost_breakdown as $cost) {
                 $percentage = ($total_cost > 0) ? ($cost['amount'] / $total_cost) * 100 : 0;
 
-                $query = "INSERT INTO property_development_costs
-                         (property_id, cost_type, description, amount, percentage_of_total)
-                         VALUES (?, ?, ?, ?, ?)";
+$query = "INSERT INTO property_development_costs
+                         (property_id, cost_type, description, amount, percentage_of_total, tenant_id)
+                         VALUES (?, ?, ?, ?, ?, " . $this->tenantId() . ")";
 
                 $this->db->execute($query, [
                     $property_id,
@@ -239,7 +241,7 @@ class HybridRealEstateCommission
     private function getPropertyDetails($property_id)
     {
         try {
-            $query = "SELECT * FROM real_estate_properties WHERE id = ?";
+            $query = "SELECT * FROM real_estate_properties WHERE id = ? AND tenant_id = " . $this->tenantId();
             return $this->db->fetch($query, [$property_id]);
         } catch (\Exception $e) {
             return null;
@@ -353,8 +355,8 @@ class HybridRealEstateCommission
         try {
             $query = "INSERT INTO hybrid_commission_records
                      (associate_id, property_id, customer_id, sale_amount, commission_amount,
-                      commission_type, commission_breakdown, level_achieved, payout_status)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                      commission_type, commission_breakdown, level_achieved, payout_status, tenant_id)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, " . $this->tenantId() . ")";
 
             $breakdown_json = json_encode($commission_data['breakdown']);
             $payout_status = 'pending';
@@ -400,7 +402,7 @@ class HybridRealEstateCommission
                         commission_type,
                         COUNT(DISTINCT DATE(created_at)) as active_days
                      FROM hybrid_commission_records
-                     WHERE associate_id = ? $where_clause
+                     WHERE associate_id = ? AND tenant_id = " . $this->tenantId() . " $where_clause
                      GROUP BY commission_type";
 
             return $this->db->fetchAll($query, $params);
@@ -422,7 +424,7 @@ class HybridRealEstateCommission
                         percentage_of_total,
                         SUM(amount) OVER () as total_cost
                      FROM property_development_costs
-                     WHERE property_id = ?
+                     WHERE property_id = ? AND tenant_id = " . $this->tenantId() . "
                      ORDER BY amount DESC";
 
             $costs = $this->db->fetchAll($query, [$property_id]);

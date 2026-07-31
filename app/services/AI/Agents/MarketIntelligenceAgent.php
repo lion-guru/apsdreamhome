@@ -18,8 +18,12 @@ namespace App\Services\AI\Agents;
 use App\Core\Database\Database;
 use App\Services\AI\PricePredictor;
 
+use \App\Traits\ServiceTenantTrait;
+
 class MarketIntelligenceAgent
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pricePredictor;
 
