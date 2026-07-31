@@ -87,26 +87,28 @@ class LeadScoringService
     {
         $score = 0;
         
-        // Activities count
+         // Activities count
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $activities = $this->db->fetch(
-            "SELECT COUNT(*) FROM lead_activities WHERE lead_id = ?",
-            [$leadId]
+            "SELECT COUNT(*) FROM lead_activities WHERE lead_id = ?" . $tidSql,
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         $activityCount = intval($activities['COUNT(*)'] ?? 0);
         $score += min(15, $activityCount * 3);
         
         // Visit count
         $visits = $this->db->fetch(
-            "SELECT COUNT(*) FROM lead_visits WHERE lead_id = ?",
-            [$leadId]
+            "SELECT COUNT(*) FROM lead_visits WHERE lead_id = ?" . $tidSql,
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         $visitCount = intval($visits['COUNT(*)'] ?? 0);
         $score += min(15, $visitCount * 5);
         
         // Notes count
         $notes = $this->db->fetch(
-            "SELECT COUNT(*) FROM lead_notes WHERE lead_id = ?",
-            [$leadId]
+            "SELECT COUNT(*) FROM lead_notes WHERE lead_id = ?" . $tidSql,
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         $noteCount = intval($notes['COUNT(*)'] ?? 0);
         $score += min(10, $noteCount * 2);
@@ -120,12 +122,14 @@ class LeadScoringService
     private function calculateBehaviorScore($leadId)
     {
         $score = 0;
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         
         // Recent engagement (last 7 days)
         $recentVisits = $this->db->fetch(
             "SELECT COUNT(*) FROM lead_visits 
-             WHERE lead_id = ? AND visit_date > DATE_SUB(NOW(), INTERVAL 7 DAY)",
-            [$leadId]
+             WHERE lead_id = ?" . $tidSql . " AND visit_date > DATE_SUB(NOW(), INTERVAL 7 DAY)",
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         $recentCount = intval($recentVisits['COUNT(*)'] ?? 0);
         $score += min(20, $recentCount * 7);
@@ -133,16 +137,16 @@ class LeadScoringService
         // Page views
         $pageViews = $this->db->fetch(
             "SELECT SUM(metric_value) FROM lead_engagement_metrics 
-             WHERE lead_id = ? AND metric_type = 'page_views'",
-            [$leadId]
+             WHERE lead_id = ?" . $tidSql . " AND metric_type = 'page_views'",
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         $views = intval($pageViews['SUM(metric_value)'] ?? 0);
         $score += min(15, $views);
         
         // Time on site (duration)
         $duration = $this->db->fetch(
-            "SELECT SUM(duration_seconds) FROM lead_visits WHERE lead_id = ?",
-            [$leadId]
+            "SELECT SUM(duration_seconds) FROM lead_visits WHERE lead_id = ?" . $tidSql,
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         $totalDuration = intval($duration['SUM(duration_seconds)'] ?? 0);
         if ($totalDuration > 600) $score += 10; // > 10 minutes
@@ -166,9 +170,11 @@ class LeadScoringService
         
         try {
             // Has AI-generated recommendations
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $recommendations = $this->db->fetch(
-                "SELECT COUNT(*) FROM ai_recommendations WHERE user_id = ?",
-                [$lead['assigned_to'] ?? 0]
+                "SELECT COUNT(*) FROM ai_recommendations WHERE user_id = ?" . $tidSql,
+                $tid > 1 ? [$lead['assigned_to'] ?? 0, $tid] : [$lead['assigned_to'] ?? 0]
             );
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
@@ -201,9 +207,11 @@ class LeadScoringService
      */
     private function getLead($leadId)
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         return $this->db->fetch(
-            "SELECT * FROM leads WHERE id = ?",
-            [$leadId]
+            "SELECT * FROM leads WHERE id = ?" . $tidSql,
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
     }
     
@@ -213,9 +221,11 @@ class LeadScoringService
     public function saveScore($leadId, $scores)
     {
         // Check if score exists
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $existing = $this->db->fetch(
-            "SELECT id FROM lead_scores WHERE lead_id = ?",
-            [$leadId]
+            "SELECT id FROM lead_scores WHERE lead_id = ?" . $tidSql,
+            $tid > 1 ? [$leadId, $tid] : [$leadId]
         );
         
         $factors = json_encode([
@@ -226,6 +236,19 @@ class LeadScoringService
         ]);
         
         if ($existing) {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [
+                $scores['total'],
+                $scores['demographics'],
+                $scores['engagement'],
+                $scores['behavior'],
+                $scores['ai_analysis'],
+                $scores['rank'],
+                $scores['is_hot'] ? 1 : 0,
+                $leadId
+            ];
+            if ($tid > 1) $params[] = $tid;
             $this->db->execute(
                 "UPDATE lead_scores SET 
                     total_score = ?,
@@ -236,42 +259,40 @@ class LeadScoringService
                     rank = ?,
                     is_hot_lead = ?,
                     calculated_at = NOW()
-                WHERE lead_id = ?",
-                [
-                    $scores['total'],
-                    $scores['demographics'],
-                    $scores['engagement'],
-                    $scores['behavior'],
-                    $scores['ai_analysis'],
-                    $scores['rank'],
-                    $scores['is_hot'] ? 1 : 0,
-                    $leadId
-                ]
+                WHERE lead_id = ?" . $tidSql,
+                $params
             );
         } else {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [
+                $leadId,
+                $scores['total'],
+                $scores['demographics'],
+                $scores['engagement'],
+                $scores['behavior'],
+                $scores['ai_analysis'],
+                $scores['rank'],
+                $scores['is_hot'] ? 1 : 0
+            ];
+            if ($tid > 1) $params[] = $tid;
             $this->db->execute(
                 "INSERT INTO lead_scores (
                     lead_id, total_score, demographics_score, 
                     engagement_score, behavior_score, ai_analysis_score,
-                    rank, is_hot_lead, calculated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())",
-                [
-                    $leadId,
-                    $scores['total'],
-                    $scores['demographics'],
-                    $scores['engagement'],
-                    $scores['behavior'],
-                    $scores['ai_analysis'],
-                    $scores['rank'],
-                    $scores['is_hot'] ? 1 : 0
-                ]
+                    rank, is_hot_lead, calculated_at" . ($tid > 1 ? ", tenant_id" : "") . "
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")",
+                $params
             );
         }
         
-        // Update lead with score
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$scores['total'], $leadId];
+        if ($tid > 1) $params[] = $tid;
         $this->db->execute(
-            "UPDATE leads SET lead_score = ?, last_scored_at = NOW() WHERE id = ?",
-            [$scores['total'], $leadId]
+            "UPDATE leads SET lead_score = ?, last_scored_at = NOW() WHERE id = ?" . $tidSql,
+            $params
         );
         
         return true;
@@ -282,7 +303,9 @@ class LeadScoringService
      */
     public function processAllLeads()
     {
-        $leads = $this->db->fetchAll("SELECT id FROM leads");
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " WHERE tenant_id = $tid" : " WHERE 1=1";
+        $leads = $this->db->fetchAll("SELECT id FROM leads" . $tidSql);
         $processed = 0;
         
         foreach ($leads as $lead) {
@@ -301,29 +324,36 @@ class LeadScoringService
      */
     public function autoAssignHotLeads()
     {
+        $tid = $this->tenantId();
+        $tidWhere = $tid > 1 ? " AND l.tenant_id = $tid" : "";
         $hotLeads = $this->db->fetchAll(
             "SELECT ls.*, l.name, l.phone, l.assigned_to 
              FROM lead_scores ls
              JOIN leads l ON ls.lead_id = l.id
-             WHERE ls.is_hot_lead = 1 AND l.assigned_to IS NULL"
+             WHERE ls.is_hot_lead = 1 AND l.assigned_to IS NULL" . $tidWhere
         );
         
         // Get available users
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $users = $this->db->fetchAll(
-            "SELECT id FROM users WHERE role = 'agent' AND status = 'active'"
+            "SELECT id FROM users WHERE role = 'agent' AND status = 'active'" . $tidSql,
+            $tid > 1 ? [$tid] : []
         );
         
         if (empty($users)) {
             // Fallback to users
             $users = $this->db->fetchAll(
-                "SELECT id FROM users WHERE role = 'associate' AND status = 'active'"
+                "SELECT id FROM users WHERE role = 'associate' AND status = 'active'" . $tidSql,
+                $tid > 1 ? [$tid] : []
             );
         }
         
         if (empty($users)) {
             // Fallback to admin
             $users = $this->db->fetchAll(
-                "SELECT id FROM users WHERE role IN ('admin', 'super_admin') AND status = 'active'"
+                "SELECT id FROM users WHERE role IN ('admin', 'super_admin') AND status = 'active'" . $tidSql,
+                $tid > 1 ? [$tid] : []
             );
         }
         
@@ -335,20 +365,22 @@ class LeadScoringService
                 $assignTo = $users[$agentIndex % count($users)]['id'];
                 
                 $this->db->execute(
-                    "UPDATE leads SET assigned_to = ?, priority = 'high' WHERE id = ?",
-                    [$assignTo, $lead['lead_id']]
+                    "UPDATE leads SET assigned_to = ?, priority = 'high' WHERE id = ?" . $tidSql,
+                    array_merge([$assignTo, $lead['lead_id']], $tid > 1 ? [$tid] : [])
                 );
                 
                 $this->db->execute(
-                    "UPDATE lead_scores SET assigned_to = ?, auto_assign_at = NOW() WHERE lead_id = ?",
-                    [$assignTo, $lead['lead_id']]
+                    "UPDATE lead_scores SET assigned_to = ?, auto_assign_at = NOW() WHERE lead_id = ?" . $tidSql,
+                    array_merge([$assignTo, $lead['lead_id']], $tid > 1 ? [$tid] : [])
                 );
                 
                 // Log assignment
+                $logParams = [$lead['lead_id'], "Auto-assigned due to high score ({$lead['total_score']})", $assignTo];
+                if ($tid > 1) $logParams[] = $tid;
                 $this->db->execute(
-                    "INSERT INTO lead_activities (lead_id, activity_type, description, created_by) 
-                     VALUES (?, 'auto_assigned', ?, ?)",
-                    [$lead['lead_id'], "Auto-assigned due to high score ({$lead['total_score']})", $assignTo]
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, created_by" . ($tid > 1 ? ", tenant_id" : "") . ") 
+                     VALUES (?, 'auto_assigned', ?, ?" . ($tid > 1 ? ", ?" : "") . ")",
+                    $logParams
                 );
                 
                 $assigned++;

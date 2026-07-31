@@ -56,6 +56,10 @@ class MarketIntelligenceAgent
     public function getPriceTrends(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+            
             // Monthly average prices for last 12 months
             $monthly = $this->db->fetchAll(
                 "SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
@@ -64,16 +68,19 @@ class MarketIntelligenceAgent
                         MAX(price) as max_price,
                         COUNT(*) as sales_count
                  FROM plot_bookings
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) AND status = 'confirmed'
-                 GROUP BY month ORDER BY month ASC"
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) AND status = 'confirmed'" . $tidSql . "
+                 GROUP BY month ORDER BY month ASC",
+                $tidParams
             ) ?: [];
 
             // Current vs last month
             $current = $this->db->fetch(
-                "SELECT AVG(price) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND status = 'confirmed'"
+                "SELECT AVG(price) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND status = 'confirmed'" . $tidSql,
+                $tidParams
             );
             $lastMonth = $this->db->fetch(
-                "SELECT AVG(price) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND status = 'confirmed'"
+                "SELECT AVG(price) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND status = 'confirmed'" . $tidSql,
+                $tidParams
             );
 
             $currentAvg = (float)($current['avg'] ?? 0);
@@ -98,20 +105,27 @@ class MarketIntelligenceAgent
     public function getDemandAnalysis(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             // Leads by location preference
             $locationDemand = $this->db->fetchAll(
                 "SELECT location_preference, COUNT(*) as leads, AVG(lead_score) as avg_score
-                 FROM leads WHERE deleted_at IS NULL AND location_preference != ''
-                 GROUP BY location_preference ORDER BY leads DESC LIMIT 10"
+                 FROM leads WHERE deleted_at IS NULL AND location_preference != ''" . $tidSql . "
+                 GROUP BY location_preference ORDER BY leads DESC LIMIT 10",
+                $tidParams
             ) ?: [];
 
             // Leads by source
             $sourceDemand = $this->db->fetchAll(
-                "SELECT source, COUNT(*) as leads,
+                "SELECT source,
+                        COUNT(*) as leads,
                         SUM(CASE WHEN status IN ('won','booking','qualified') THEN 1 ELSE 0 END) as qualified,
                         ROUND(AVG(lead_score),1) as avg_score
-                 FROM leads WHERE deleted_at IS NULL
-                 GROUP BY source ORDER BY leads DESC"
+                 FROM leads WHERE deleted_at IS NULL" . $tidSql . "
+                 GROUP BY source ORDER BY leads DESC",
+                $tidParams
             ) ?: [];
 
             // Budget distribution
@@ -124,8 +138,9 @@ class MarketIntelligenceAgent
                         ELSE '50L+'
                     END as range,
                     COUNT(*) as leads
-                 FROM leads WHERE deleted_at IS NULL AND budget > 0
-                 GROUP BY range ORDER BY MIN(budget)"
+                 FROM leads WHERE deleted_at IS NULL AND budget > 0" . $tidSql . "
+                 GROUP BY range ORDER BY MIN(budget)",
+                $tidParams
             ) ?: [];
 
             return [
@@ -144,10 +159,15 @@ class MarketIntelligenceAgent
     public function getSeasonalPatterns(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             $monthly = $this->db->fetchAll(
                 "SELECT MONTH(created_at) as month, COUNT(*) as bookings, AVG(price) as avg_price
-                 FROM plot_bookings WHERE status = 'confirmed'
-                 GROUP BY month ORDER BY month"
+                 FROM plot_bookings WHERE status = 'confirmed'" . $tidSql . "
+                 GROUP BY month ORDER BY month",
+                $tidParams
             ) ?: [];
 
             $monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -170,18 +190,23 @@ class MarketIntelligenceAgent
     public function getColonyPerformance(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             return $this->db->fetchAll(
                 "SELECT c.name as colony_name,
-                        (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available') as available,
-                        (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'sold') as sold,
-                        (SELECT COUNT(*) FROM leads l WHERE l.location_preference LIKE CONCAT('%', c.name, '%') AND l.deleted_at IS NULL) as leads,
-                        (SELECT AVG(price) FROM plots p WHERE p.colony_id = c.id) as avg_price,
+                        (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available'" . $tidSql . ") as available,
+                        (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'sold'" . $tidSql . ") as sold,
+                        (SELECT COUNT(*) FROM leads l WHERE l.location_preference LIKE CONCAT('%', c.name, '%') AND l.deleted_at IS NULL" . $tidSql . ") as leads,
+                        (SELECT AVG(price) FROM plots p WHERE p.colony_id = c.id" . $tidSql . ") as avg_price,
                         (SELECT COUNT(*) FROM plot_bookings pb
                          LEFT JOIN plots p ON pb.plot_id = p.id
-                         WHERE p.colony_id = c.id AND pb.status = 'confirmed' AND pb.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)) as month_sales
+                         WHERE p.colony_id = c.id AND pb.status = 'confirmed' AND pb.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tidSql . ") as month_sales
                  FROM colonies c
-                 WHERE c.is_active = 1
-                 ORDER BY leads DESC"
+                 WHERE c.is_active = 1" . $tidSql . "
+                 ORDER BY leads DESC",
+                $tidParams
             ) ?: [];
         } catch (\Throwable $e) {
             return [];
@@ -194,6 +219,10 @@ class MarketIntelligenceAgent
     public function getSourceEffectiveness(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             return $this->db->fetchAll(
                 "SELECT source,
                         COUNT(*) as total_leads,
@@ -201,9 +230,10 @@ class MarketIntelligenceAgent
                         ROUND(AVG(lead_score),1) as avg_score,
                         ROUND(AVG(TIMESTAMPDIFF(DAY, created_at, updated_at)),1) as avg_days_to_convert,
                         ROUND(SUM(CASE WHEN status='won' THEN 1 ELSE 0 END) / COUNT(*) * 100, 1) as conversion_rate
-                 FROM leads WHERE deleted_at IS NULL
+                 FROM leads WHERE deleted_at IS NULL" . $tidSql . "
                  GROUP BY source
-                 ORDER BY conversion_rate DESC"
+                 ORDER BY conversion_rate DESC",
+                $tidParams
             ) ?: [];
         } catch (\Throwable $e) {
             return [];
@@ -216,6 +246,10 @@ class MarketIntelligenceAgent
     public function getInvestorInsights(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND p.tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             // ROI by colony (price appreciation)
             $roi = $this->db->fetchAll(
                 "SELECT c.name,
@@ -224,9 +258,10 @@ class MarketIntelligenceAgent
                         ROUND((MAX(p.price) - MIN(p.price)) / MIN(p.price) * 100, 1) as price_range_pct,
                         COUNT(p.id) as plots
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
-                 WHERE p.status = 'available'
+                 WHERE p.status = 'available'" . $tidSql . "
                  GROUP BY c.name HAVING plots > 1
-                 ORDER BY price_range_pct DESC"
+                 ORDER BY price_range_pct DESC",
+                $tidParams
             ) ?: [];
 
             return [
@@ -245,13 +280,18 @@ class MarketIntelligenceAgent
     public function getMarketHealthScore(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             $healthScore = 0;
             $factors = [];
 
             // 1. Volume factor (20%) — total active plots as proxy for market liquidity
             $plots = $this->db->fetch(
                 "SELECT COUNT(*) as total, SUM(CASE WHEN status='available' THEN 1 ELSE 0 END) as available
-                 FROM plots"
+                 FROM plots" . $tidSql,
+                $tidParams
             );
             $totalPlots = (int)($plots['total'] ?? 0);
             $volumeScore = min($totalPlots / 50, 1) * 20;
@@ -265,7 +305,8 @@ class MarketIntelligenceAgent
             // 2. Demand factor (25%) — recent leads vs available plots
             $recentLeads = $this->db->fetch(
                 "SELECT COUNT(*) as cnt FROM leads
-                 WHERE deleted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                 WHERE deleted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tidSql,
+                $tidParams
             );
             $leadCount = (int)($recentLeads['cnt'] ?? 0);
             $demandRate = $totalPlots > 0 ? $leadCount / $totalPlots : 0;
@@ -280,7 +321,8 @@ class MarketIntelligenceAgent
             // 3. Price stability factor (20%) — volatility of recent booking prices
             $recentBookings = $this->db->fetchAll(
                 "SELECT price FROM plot_bookings
-                 WHERE status = 'confirmed' AND created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)"
+                 WHERE status = 'confirmed' AND created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)" . $tidSql,
+                $tidParams
             );
             $prices = array_column($recentBookings ?? [], 'price');
             $priceStability = 1.0;
@@ -303,11 +345,13 @@ class MarketIntelligenceAgent
             // 4. Sales velocity factor (20%) — bookings per month trend
             $thisMonth = $this->db->fetch(
                 "SELECT COUNT(*) as cnt FROM plot_bookings
-                 WHERE status='confirmed' AND MONTH(created_at)=MONTH(CURDATE()) AND YEAR(created_at)=YEAR(CURDATE())"
+                 WHERE status='confirmed' AND MONTH(created_at)=MONTH(CURDATE()) AND YEAR(created_at)=YEAR(CURDATE())" . $tidSql,
+                $tidParams
             );
             $lastMonth = $this->db->fetch(
                 "SELECT COUNT(*) as cnt FROM plot_bookings
-                 WHERE status='confirmed' AND MONTH(created_at)=MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))"
+                 WHERE status='confirmed' AND MONTH(created_at)=MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))" . $tidSql,
+                $tidParams
             );
             $thisCount = (int)($thisMonth['cnt'] ?? 0);
             $lastCount = max((int)($lastMonth['cnt'] ?? 1), 1);
@@ -325,7 +369,8 @@ class MarketIntelligenceAgent
                 "SELECT
                     COUNT(*) as total_leads,
                     SUM(CASE WHEN status='won' THEN 1 ELSE 0 END) as won
-                 FROM leads WHERE deleted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)"
+                 FROM leads WHERE deleted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)" . $tidSql,
+                $tidParams
             );
             $convRate = ((int)($conversions['total_leads'] ?? 0)) > 0
                 ? ((int)($conversions['won'] ?? 0)) / (int)($conversions['total_leads'] ?? 1)
@@ -365,6 +410,10 @@ class MarketIntelligenceAgent
         try {
             $insights = [];
 
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND p.tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             // ROI Analysis — price appreciation by colony
             $roi = $this->db->fetchAll(
                 "SELECT c.name,
@@ -373,9 +422,10 @@ class MarketIntelligenceAgent
                         ROUND((MAX(p.price) - MIN(p.price)) / NULLIF(MIN(p.price),0) * 100, 1) as price_range_pct,
                         COUNT(p.id) as plots
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
-                 WHERE p.status = 'available'
+                 WHERE p.status = 'available'" . $tidSql . "
                  GROUP BY c.name HAVING plots > 1
-                 ORDER BY price_range_pct DESC"
+                 ORDER BY price_range_pct DESC",
+                $tidParams
             ) ?: [];
 
             $avgRoi = 0;
@@ -441,6 +491,10 @@ class MarketIntelligenceAgent
     public function getComparativeAnalysis(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND p.tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+
             // Colony-wise comparison
             $comparisons = $this->db->fetchAll(
                 "SELECT c.name as colony,
@@ -449,22 +503,25 @@ class MarketIntelligenceAgent
                         SUM(CASE WHEN p.status='sold' THEN 1 ELSE 0 END) as sold,
                         ROUND(AVG(p.area_sqft),0) as avg_area,
                         ROUND(AVG(p.price) / NULLIF(AVG(p.area_sqft),0), 0) as price_per_sqft
-                 FROM plots p JOIN colonies c ON p.colony_id = c.id
+                 FROM plots p JOIN colonies c ON p.colony_id = c.id" . $tidSql . "
                  GROUP BY c.name
-                 ORDER BY avg_price DESC"
+                 ORDER BY avg_price DESC",
+                $tidParams
             ) ?: [];
 
             // Gorakhpur average
             $gorakhpur = $this->db->fetch(
                 "SELECT AVG(p.price) as avg_price, AVG(p.price/NULLIF(p.area_sqft,0)) as price_per_sqft
-                 FROM plots p WHERE p.status IN ('available','sold')"
+                 FROM plots p WHERE p.status IN ('available','sold')" . $tidSql,
+                $tidParams
             );
 
             // Deoria average (if separate colonies exist)
             $deoria = $this->db->fetch(
                 "SELECT AVG(p.price) as avg_price, AVG(p.price/NULLIF(p.area_sqft,0)) as price_per_sqft
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
-                 WHERE c.district = 'Deoria'"
+                 WHERE c.district = 'Deoria'" . $tidSql,
+                $tidParams
             );
 
             return [

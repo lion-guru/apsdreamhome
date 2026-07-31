@@ -157,9 +157,12 @@ class SmartLeadQualifierAgent
 
         $response = $chatResult['result']['text'] ?? $chatResult['result']['parsed']['text'] ?? null;
         if ($response) {
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, created_at) VALUES (?, 'auto_reply', 'outbound', ?, NOW())"
-            )->execute([$leadId, $response]);
+                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, created_at" . $tenantCol . ") VALUES (?, 'auto_reply', 'outbound', ?, NOW()" . $tenantVal . ")"
+            )->execute(array_merge([$leadId, $response], $tid > 1 ? [$tid] : []));
         }
         return $response;
     }
@@ -174,20 +177,26 @@ class SmartLeadQualifierAgent
     {
         $ctx = ['avg_booking' => 0, 'top_colonies' => [], 'available_plots' => 0];
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $row = $this->db->fetch(
                 "SELECT AVG(total_price) AS avg_price, COUNT(*) AS cnt
-                 FROM plot_bookings WHERE total_price > 0"
+                 FROM plot_bookings WHERE total_price > 0" . $tidSql,
+                $tid > 1 ? [$tid] : []
             );
             if ($row && (int)$row['cnt'] > 0) {
                 $ctx['avg_booking'] = (float)$row['avg_price'];
             }
 
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND c.tenant_id = ?" : "";
             $colonies = $this->db->fetchAll(
                 "SELECT c.name, COUNT(p.id) AS available
                  FROM colonies c
                  LEFT JOIN plots p ON p.colony_id = c.id AND p.status = 'available' AND p.is_active = 1
-                 WHERE c.is_active = 1
-                 GROUP BY c.id ORDER BY available DESC LIMIT 3"
+                 WHERE c.is_active = 1" . $tidSql . "
+                 GROUP BY c.id ORDER BY available DESC LIMIT 3",
+                $tid > 1 ? [$tid] : []
             ) ?: [];
             foreach ($colonies as $c) {
                 if (!empty($c['name'])) {
@@ -212,19 +221,27 @@ class SmartLeadQualifierAgent
     }
 
     private function getLead(int $id): ?array
-    {        return $this->db->fetch("SELECT * FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]) ?: null;
+    {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        return $this->db->fetch("SELECT * FROM leads WHERE id = ? AND deleted_at IS NULL" . $tidSql, $tid > 1 ? [$id, $tid] : [$id]) ?: null;
     }
 
     private function autoAssignHotLead(int $leadId): void
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
         $bestAgent = $this->db->fetch(
             "SELECT u.id FROM users u LEFT JOIN leads l ON l.assigned_to = u.id AND l.deleted_at IS NULL
-             WHERE u.role IN ('associate','agent','employee') AND u.is_active = 1
-             GROUP BY u.id ORDER BY COUNT(l.id) ASC LIMIT 1"
+             WHERE u.role IN ('associate','agent','employee') AND u.is_active = 1" . $tidSql . "
+             GROUP BY u.id ORDER BY COUNT(l.id) ASC LIMIT 1",
+            $tid > 1 ? [$tid] : []
         );
         if ($bestAgent) {
-            $this->db->getConnection()->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?")
-                ->execute([$bestAgent['id'], $leadId]);
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+            $this->db->getConnection()->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?" . $tenantWhere)
+                ->execute(array_merge([$bestAgent['id'], $leadId], $tid > 1 ? [$tid] : []));
         }
     }
 
@@ -234,38 +251,47 @@ class SmartLeadQualifierAgent
         $lead = $this->getLead($leadId);
 
         try {
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO crm_tasks (lead_id, assigned_to, task_type, title, priority, due_date, status, created_at)
-                 VALUES (?, ?, 'follow_up', ?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY), 'pending', NOW())"
-            )->execute([
+                "INSERT INTO crm_tasks (lead_id, assigned_to, task_type, title, priority, due_date, status, created_at" . $tenantCol . ")
+                 VALUES (?, ?, 'follow_up', ?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY), 'pending', NOW()" . $tenantVal . ")"
+            )->execute(array_merge([
                 $leadId,
                 $lead['assigned_to'] ?? 1,
                 "Follow up: {$lead['name']} ($qualification lead)",
                 $priority,
-            ]);
+            ], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* table may not have all columns */ error_log($e->getMessage()); }
     }
 
     private function logQualification(int $leadId, string $qualification, int $score, string $action, string $engine): void
     {
         try {
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO agent_task_logs (agent_type, action_type, lead_id, details, status, created_at)
-                 VALUES ('smart_qualifier', 'qualify', ?, ?, 'completed', NOW())"
-            )->execute([$leadId, "Qualified as $qualification (score: $score) — $action [engine: $engine]"]);
+                "INSERT INTO agent_task_logs (agent_type, action_type, lead_id, details, status, created_at" . $tenantCol . ")
+                 VALUES ('smart_qualifier', 'qualify', ?, ?, 'completed', NOW()" . $tenantVal . ")"
+            )->execute(array_merge([$leadId, "Qualified as $qualification (score: $score) — $action [engine: $engine]"], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 
     private function escalateHotLead(int $leadId, array $lead, int $score): void
     {
         try {
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO agent_escalations (agent_type, lead_id, escalation_type, priority, details, status, created_at)
-                 VALUES ('smart_qualifier', ?, 'hot_lead', 'urgent', ?, 'pending', NOW())"
-            )->execute([
+                "INSERT INTO agent_escalations (agent_type, lead_id, escalation_type, priority, details, status, created_at" . $tenantCol . ")
+                 VALUES ('smart_qualifier', ?, 'hot_lead', 'urgent', ?, 'pending', NOW()" . $tenantVal . ")"
+            )->execute(array_merge([
                 $leadId,
                 "HOT LEAD: {$lead['name']} ({$lead['phone']}) — Score: $score. Immediate action required."
-            ]);
+            ], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

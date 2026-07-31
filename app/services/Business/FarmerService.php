@@ -195,8 +195,8 @@ class FarmerService
     {
         try {
             $sql = "SELECT f.*, 
-                           (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved') as total_land_acres,
-                           (SELECT COUNT(*) FROM documents WHERE entity_type = 'farmer' AND entity_id = f.id) as document_count
+                           (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved' AND tenant_id = f.tenant_id) as total_land_acres,
+                           (SELECT COUNT(*) FROM documents WHERE entity_type = 'farmer' AND entity_id = f.id AND tenant_id = f.tenant_id) as document_count
                     FROM farmers f 
                     WHERE f.id = ?" . $this->tenantSql();
             
@@ -227,7 +227,7 @@ class FarmerService
         try {
             $tid = $this->tenantId();
             $sql = "SELECT f.*, 
-                           (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved') as total_land_acres
+                           (SELECT SUM(size_acres) FROM land_allocations WHERE farmer_id = f.id AND status = 'approved' AND tenant_id = f.tenant_id) as total_land_acres
                     FROM farmers f 
                     WHERE 1=1";
             $params = [];
@@ -476,8 +476,10 @@ class FarmerService
             // Commission statistics (farmer_commissions may not exist)
             $commissionStats = ['total_commissions' => 0, 'total_amount' => 0];
             try {
-                $commissionSql = "SELECT COUNT(*) as total_commissions, SUM(amount) as total_amount FROM farmer_commissions WHERE status = 'paid'";
-                $commissionStats = $this->db->fetchOne($commissionSql) ?? $commissionStats;
+                $tid = $this->tenantId();
+                $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+                $commissionSql = "SELECT COUNT(*) as total_commissions, SUM(amount) as total_amount FROM farmer_commissions WHERE status = 'paid'" . $tidSql;
+                $commissionStats = $this->db->fetchOne($commissionSql, $tid > 1 ? [$tid] : []) ?? $commissionStats;
             } catch (\Throwable $e) {
                 error_log("FarmerService commission stats: " . $e->getMessage());
             }
@@ -691,8 +693,12 @@ class FarmerService
 
     private function checkLandLimit(int $farmerId, float $newSize): bool
     {
-        $sql = "SELECT SUM(size_acres) as total FROM land_allocations WHERE farmer_id = ? AND status = 'approved'";
-        $currentTotal = $this->db->fetchOne($sql, [$farmerId]) ?? 0;
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT SUM(size_acres) as total FROM land_allocations WHERE farmer_id = ? AND status = 'approved'" . $tidSql;
+        $params = [$farmerId];
+        if ($tid > 1) $params[] = $tid;
+        $currentTotal = $this->db->fetchOne($sql, $params) ?? 0;
         return ($currentTotal + $newSize) <= $this->config['max_land_per_farmer'];
     }
 
@@ -747,14 +753,18 @@ class FarmerService
 
     private function getFarmerDocuments(int $farmerId): array
     {
-        $sql = "SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ?";
-        return $this->db->fetchAll($sql, [$farmerId]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ?" . $tidSql;
+        return $this->db->fetchAll($sql, $tid > 1 ? [$farmerId, $tid] : [$farmerId]);
     }
 
     private function getFarmerLandAllocations(int $farmerId): array
     {
-        $sql = "SELECT * FROM land_allocations WHERE farmer_id = ? ORDER BY created_at DESC";
-        return $this->db->fetchAll($sql, [$farmerId]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM land_allocations WHERE farmer_id = ?" . $tidSql . " ORDER BY created_at DESC";
+        return $this->db->fetchAll($sql, $tid > 1 ? [$farmerId, $tid] : [$farmerId]);
     }
 
     private function getFarmerCommissions(int $farmerId): array
@@ -800,19 +810,17 @@ class FarmerService
     private function logFarmerActivity(int $farmerId, string $type, string $description, string $data = ''): void
     {
         try {
-            $sql = "INSERT INTO farmer_activities (farmer_id, activity_type, description, data, created_by, created_at) 
-                    VALUES (?, ?, ?, ?, 'system', NOW())";
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+            $sql = "INSERT INTO farmer_activities (farmer_id, activity_type, description, data, created_by, created_at" . $tenantCol . ") 
+                    VALUES (?, ?, ?, ?, 'system', NOW()" . $tenantVal . ")";
+            $params = [$farmerId, $type, $description, $data ? json_encode(['data' => $data]) : null];
+            if ($tid > 1) $params[] = $tid;
+            $this->db->execute($sql, $params);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log("FarmerService::logFarmerActivity - " . $e->getMessage());
         }
-        
-        $this->db->execute($sql, [
-            $farmerId,
-            $type,
-            $description,
-            $data ? json_encode(['data' => $data]) : null
-        ]);
     }
 
     private function sendStatusNotification(int $farmerId, string $status, string $reason): void
@@ -860,22 +868,25 @@ class FarmerService
     private function createCommissionRecord(int $farmerId, string $type, float $amount, array $data): string
     {
         try {
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $sql = "INSERT INTO farmer_commissions 
-                    (farmer_id, commission_type, amount, commission_rate, reference_id, reference_data, status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+                    (farmer_id, commission_type, amount, commission_rate, reference_id, reference_data, status, created_at" . $tenantCol . ") 
+                    VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW()" . $tenantVal . ")";
+            $params = [
+                $farmerId,
+                $type,
+                $amount,
+                $this->config['commission_rate'],
+                $data['reference_id'] ?? null,
+                json_encode($data)
+            ];
+            if ($tid > 1) $params[] = $tid;
+            $this->db->execute($sql, $params);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log("FarmerService::createCommissionRecord - " . $e->getMessage());
         }
-        
-        $this->db->execute($sql, [
-            $farmerId,
-            $type,
-            $amount,
-            $this->config['commission_rate'],
-            $data['reference_id'] ?? null,
-            json_encode($data)
-        ]);
         
         return $this->db->lastInsertId();
     }

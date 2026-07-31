@@ -128,7 +128,9 @@ return $this->db->fetchAll(
         ];
 
         // Extract from lead's own data
-        $lead = $this->db->fetch("SELECT budget, location_preference FROM leads WHERE id = ?", [$leadId]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $lead = $this->db->fetch("SELECT budget, location_preference FROM leads WHERE id = ?" . $tidSql, $tid > 1 ? [$leadId, $tid] : [$leadId]);
         if ($lead) {
             $preferences['avg_budget'] = (float)($lead['budget'] ?? 0);
             $preferences['preferred_location'] = $lead['location_preference'] ?? '';
@@ -149,7 +151,7 @@ return $this->db->fetchAll(
                        CASE WHEN c.name LIKE ? THEN 20 ELSE 0 END as location_fit,
                        CASE WHEN p.area >= ? THEN 15 WHEN p.area >= ? * 0.8 THEN 10 ELSE 0 END as size_fit
                 FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id
-                WHERE p.status = 'available'
+                WHERE p.status = 'available'" . $this->tenantSql() . "
                 HAVING (budget_fit + location_fit + size_fit) > 0
                 ORDER BY (budget_fit + location_fit + size_fit) DESC
                 LIMIT ?";
@@ -158,12 +160,12 @@ return $this->db->fetchAll(
         $location = '%' . ($lead['location_preference'] ?? $preferences['preferred_location'] ?? '') . '%';
         $size = (int)($preferences['preferred_size'] ?? 1000);
 
-        return $this->db->fetchAll($sql, [
+        return $this->db->fetchAll($sql, array_merge($this->tenantId() > 1 ? [$this->tenantId()] : [], [
             $budget, $budget, $budget,
             $location,
             $size, $size,
             $limit
-        ]) ?: [];
+        ])) ?: [];
     }
 
     private function mergeMatches(array $dbMatches, array $aiMatches, int $limit): array
@@ -197,24 +199,29 @@ return $this->db->fetchAll(
     private function logRecommendations(int $leadId, array $matches): void
     {
         try {
+            $tid = $this->tenantId();
+            $whereClause = $tid > 1 ? " AND tenant_id = ?" : "";
             $plotIds = array_column($matches, 'plot_id');
             $this->db->getConnection()->prepare(
-                "UPDATE leads SET last_recommendation_date = NOW(), recommended_plots = ? WHERE id = ?"
-            )->execute([json_encode($plotIds), $leadId]);
+                "UPDATE leads SET last_recommendation_date = NOW(), recommended_plots = ? WHERE id = ?" . $whereClause
+            )->execute(array_merge([json_encode($plotIds), $leadId], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* column may not exist */ error_log($e->getMessage()); }
     }
 
     private function sendRecommendation(int $leadId, array $match): void
     {
         try {
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
             $this->db->getConnection()->prepare(
-                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, metadata, created_at)
-                 VALUES (?, 'recommendation', 'outbound', ?, ?, NOW())"
-            )->execute([
+                "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, metadata, created_at" . $tenantCol . ")
+                 VALUES (?, 'recommendation', 'outbound', ?, ?, NOW()" . $tenantVal . ")"
+            )->execute(array_merge([
                 $leadId,
                 "Recommended: {$match['colony']} {$match['block']} - {$match['area']} sqft @ ₹" . number_format($match['price']),
                 json_encode($match),
-            ]);
+            ], $tid > 1 ? [$tid] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

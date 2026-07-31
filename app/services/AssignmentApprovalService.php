@@ -31,19 +31,24 @@ class AssignmentApprovalService
                 return $this->approveRequest(0, $leadId, $requestedTo, $requestedBy, 'Auto-approved: admin request', true);
             }
 
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantCol = $tid > 1 ? ", tenant_id" : "";
+            $tenantVal = $tid > 1 ? ", ?" : "";
+
             // Check for duplicate pending request
             $existing = $this->db->fetch(
-                "SELECT id FROM lead_assignment_approvals WHERE lead_id = ? AND status = 'pending' AND requested_by = ?",
-                [$leadId, $requestedBy]
+                "SELECT id FROM lead_assignment_approvals WHERE lead_id = ? AND status = 'pending' AND requested_by = ?" . $tidSql,
+                $tid > 1 ? [$leadId, $requestedBy, $tid] : [$leadId, $requestedBy]
             );
             if ($existing) {
                 return ['success' => false, 'error' => 'You already have a pending request for this lead'];
             }
 
             $this->db->query(
-                "INSERT INTO lead_assignment_approvals (lead_id, requested_from, requested_to, requested_by, reason, status, created_at)
-                 VALUES (?, ?, ?, ?, ?, 'pending', NOW())",
-                [$leadId, $requestedFrom, $requestedTo, $requestedBy, $reason]
+                "INSERT INTO lead_assignment_approvals (lead_id, requested_from, requested_to, requested_by, reason, status, created_at" . $tenantCol . ")
+                 VALUES (?, ?, ?, ?, ?, 'pending', NOW()" . $tenantVal . ")",
+                array_merge([$leadId, $requestedFrom, $requestedTo, $requestedBy, $reason], $tid > 1 ? [$tid] : [])
             );
             $approvalId = $this->db->lastInsertId();
 
@@ -69,8 +74,10 @@ class AssignmentApprovalService
     public function approveRequest(int $approvalId, int $leadId = 0, int $requestedTo = 0, int $approvedBy = 0, string $notes = '', bool $skipLookup = false): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             if (!$skipLookup && $approvalId > 0) {
-                $approval = $this->db->fetch("SELECT * FROM lead_assignment_approvals WHERE id = ? AND status = 'pending'", [$approvalId]);
+                $approval = $this->db->fetch("SELECT * FROM lead_assignment_approvals WHERE id = ? AND status = 'pending'" . $tidSql, $tid > 1 ? [$approvalId, $tid] : [$approvalId]);
                 if (!$approval) {
                     return ['success' => false, 'error' => 'Request not found or already processed'];
                 }
@@ -89,8 +96,8 @@ class AssignmentApprovalService
             // Update approval status
             if ($approvalId > 0) {
                 $this->db->query(
-                    "UPDATE lead_assignment_approvals SET status = 'approved', approved_by = ?, approved_at = NOW(), notes = ? WHERE id = ?",
-                    [$approvedBy, $notes, $approvalId]
+                    "UPDATE lead_assignment_approvals SET status = 'approved', approved_by = ?, approved_at = NOW(), notes = ? WHERE id = ?" . $tidSql,
+                    array_merge([$approvedBy, $notes, $approvalId], $tid > 1 ? [$tid] : [])
                 );
             }
 
@@ -113,14 +120,16 @@ class AssignmentApprovalService
     public function rejectRequest(int $approvalId, int $rejectedBy, string $reason = ''): array
     {
         try {
-            $approval = $this->db->fetch("SELECT * FROM lead_assignment_approvals WHERE id = ? AND status = 'pending'", [$approvalId]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $approval = $this->db->fetch("SELECT * FROM lead_assignment_approvals WHERE id = ? AND status = 'pending'" . $tidSql, $tid > 1 ? [$approvalId, $tid] : [$approvalId]);
             if (!$approval) {
                 return ['success' => false, 'error' => 'Request not found or already processed'];
             }
 
             $this->db->query(
-                "UPDATE lead_assignment_approvals SET status = 'rejected', approved_by = ?, approved_at = NOW(), notes = ? WHERE id = ?",
-                [$rejectedBy, $reason, $approvalId]
+                "UPDATE lead_assignment_approvals SET status = 'rejected', approved_by = ?, approved_at = NOW(), notes = ? WHERE id = ?" . $tidSql,
+                array_merge([$rejectedBy, $reason, $approvalId], $tid > 1 ? [$tid] : [])
             );
 
             // Log
@@ -143,6 +152,8 @@ class AssignmentApprovalService
     public function getPendingRequests(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
             return $this->db->fetchAll(
                 "SELECT laa.*,
                     l.name as lead_name, l.phone as lead_phone, l.status as lead_status,
@@ -153,8 +164,9 @@ class AssignmentApprovalService
                  LEFT JOIN users u_from ON u_from.id = laa.requested_from
                  LEFT JOIN users u_to ON u_to.id = laa.requested_to
                  LEFT JOIN users u_req ON u_req.id = laa.requested_by
-                 WHERE laa.status = 'pending'
-                 ORDER BY laa.created_at ASC"
+                 WHERE laa.status = 'pending'" . $tidSql . "
+                 ORDER BY laa.created_at ASC",
+                $tid > 1 ? [$tid] : []
             ) ?: [];
         } catch (\Exception $e) {
             return [];
@@ -167,6 +179,8 @@ class AssignmentApprovalService
     public function getHistory(int $limit = 50): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND laa.tenant_id = ?" : "";
             return $this->db->fetchAll(
                 "SELECT laa.*,
                     l.name as lead_name,
@@ -178,8 +192,9 @@ class AssignmentApprovalService
                  LEFT JOIN users u_to ON u_to.id = laa.requested_to
                  LEFT JOIN users u_req ON u_req.id = laa.requested_by
                  LEFT JOIN users u_app ON u_app.id = laa.approved_by
-                 ORDER BY laa.created_at DESC LIMIT ?",
-                [$limit]
+                 WHERE 1=1" . $tidSql . "
+                 ORDER BY laa.created_at DESC LIMIT " . ($tid > 1 ? "?" : "") . " ",
+                $tid > 1 ? array_merge([$limit, $tid]) : [$limit]
             ) ?: [];
         } catch (\Exception $e) {
             return [];
@@ -192,13 +207,16 @@ class AssignmentApprovalService
     public function getStats(): array
     {
         try {
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " WHERE tenant_id = ?" : "";
             $stats = $this->db->fetch(
                 "SELECT
                     COUNT(*) as total,
                     SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
                     SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
                     SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
-                 FROM lead_assignment_approvals"
+                 FROM lead_assignment_approvals" . $tidSql,
+                $tid > 1 ? [$tid] : []
             );
             return $stats ?: ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
         } catch (\Exception $e) {
@@ -209,7 +227,9 @@ class AssignmentApprovalService
     private function getUserRole(int $userId): string
     {
         try {
-            $user = $this->db->fetch("SELECT role FROM users WHERE id = ?", [$userId]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $user = $this->db->fetch("SELECT role FROM users WHERE id = ?" . $tidSql, $tid > 1 ? [$userId, $tid] : [$userId]);
             return $user['role'] ?? 'user';
         } catch (\Exception $e) { return 'user'; }
     }
@@ -217,7 +237,9 @@ class AssignmentApprovalService
     private function getUserName(int $userId): string
     {
         try {
-            $user = $this->db->fetch("SELECT name FROM users WHERE id = ?", [$userId]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $user = $this->db->fetch("SELECT name FROM users WHERE id = ?" . $tidSql, $tid > 1 ? [$userId, $tid] : [$userId]);
             return $user['name'] ?? 'Unknown';
         } catch (\Exception $e) { return 'Unknown'; }
     }

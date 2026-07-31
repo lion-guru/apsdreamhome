@@ -90,15 +90,19 @@ class MLMIncentiveService
             $incentiveAmount = ($mbv >= $target) ? $reward : 0;
 
             // 4. Record/Update incentive
+            $tid = $this->tenantId();
+            $tenantCol = $tid > 1 ? ', tenant_id' : '';
+            $tenantVal = $tid > 1 ? ', ?' : '';
             $sql = "INSERT INTO mlm_monthly_incentives 
-                    (user_id, month, year, rank_at_time, target_business, achieved_business, incentive_amount, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    (user_id, month, year, rank_at_time, target_business, achieved_business, incentive_amount, status{$tenantCol}) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?{$tenantVal})
                     ON DUPLICATE KEY UPDATE 
                     achieved_business = VALUES(achieved_business),
                     incentive_amount = VALUES(incentive_amount),
                     status = IF(status = 'paid', 'paid', VALUES(status))";
             
-            $this->db->query($sql, [$userId, $month, $year, $currentRank, $target, $mbv, $incentiveAmount, $status]);
+            $tenantParams = $tid > 1 ? [$tid] : [];
+            $this->db->query($sql, [$userId, $month, $year, $currentRank, $target, $mbv, $incentiveAmount, $status, ...$tenantParams]);
 
             return [
                 'success' => true,
