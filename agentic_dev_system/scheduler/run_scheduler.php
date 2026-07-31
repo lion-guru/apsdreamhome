@@ -73,7 +73,7 @@ class ContinuousScheduler
 }
 
 if (php_sapi_name() === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    require __DIR__ . '/../config/bootstrap.php';
+    require __DIR__ . '/../../config/bootstrap.php';
     $scheduler = new ContinuousScheduler();
     $scheduler->start();
 }

@@ -7,10 +7,13 @@
 
 namespace App\Services\Bulk;
 
+use App\Traits\ServiceTenantTrait;
 use PDO;
 
 class PropertyImportService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -275,8 +278,8 @@ class PropertyImportService
         $title = $data['title'] ?? '';
         $location = trim(($data['location'] ?? '') . ' ' . ($data['city'] ?? ''));
         if ($title === '') return false;
-        $stmt = $this->pdo->prepare("SELECT id FROM user_properties WHERE name = ? AND (address = ? OR location = ?) LIMIT 1");
-        $stmt->execute([$title, $data['location'] ?? '', $location]);
+$stmt = $this->pdo->prepare("SELECT id FROM user_properties WHERE name = ? AND (address = ? OR location = ?) AND tenant_id = ? LIMIT 1");
+         $stmt->execute([$title, $data['location'] ?? '', $location, $this->tenantId()]);
         return (bool)$stmt->fetchColumn();
     }
 
@@ -306,7 +309,7 @@ class PropertyImportService
             'posted_by' => null,
             'posted_by_type' => 'admin_import',
             'created_at' => date('Y-m-d H:i:s'),
-        ];
+        ] + $this->tenantInsertData();
     }
 
     private function insertBatch(array $rows): int

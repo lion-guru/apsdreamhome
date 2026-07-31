@@ -1,12 +1,16 @@
 <?php
 namespace App\Services\CRM;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Advanced CRM Service
  * Complete customer relationship management with AI integration
  */
 class AdvancedCRMService
 {
+    use ServiceTenantTrait;
+
     private $database;
     
     public function __construct()
@@ -135,19 +139,11 @@ class AdvancedCRMService
         
         // Save sequence to database
         foreach ($sequence as $step) {
-            $stmt = $this->database->prepare("
-                INSERT INTO follow_up_sequences (lead_id, delay_days, action_type, 
-                message_content, scheduled_date, status) 
-                VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), 'pending')
-            ");
-            
-            $stmt->execute([
-                $leadId,
-                $step['delay'],
-                $step['type'],
-                $step['message'],
-                $step['delay']
-            ]);
+            $columns = array_merge(['lead_id', 'delay_days', 'action_type', 'message_content', 'scheduled_date', 'status'], array_keys($this->tenantInsertData()));
+            $values = array_merge([$leadId, $step['delay'], $step['type'], $step['message'], "DATE_ADD(NOW(), INTERVAL {$step['delay']} DAY)", 'pending'], array_values($this->tenantInsertData()));
+            $placeholders = '(' . implode(',', array_fill(0, count($values), '?')) . ')';
+            $sql = "INSERT INTO follow_up_sequences ({$columns}) VALUES {$placeholders}";
+            $this->database->execute($sql, $values);
         }
         
         return $sequence;
@@ -162,7 +158,7 @@ class AdvancedCRMService
             $interval = $timeframe === '7_days' ? '7 DAY' : 
                       ($timeframe === '30_days' ? '30 DAY' : '90 DAY');
             
-            $stmt = $this->database->prepare("
+$stmt = $this->database->prepare("
                 SELECT 
                     COUNT(*) as total_leads,
                     SUM(CASE WHEN score >= 80 THEN 1 ELSE 0 END) as hot_leads,
@@ -172,10 +168,11 @@ class AdvancedCRMService
                     DATE(created_at) as date
                 FROM leads 
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL {$interval})
+                AND tenant_id = " . $this->tenantId() . "
                 GROUP BY DATE(created_at)
                 ORDER BY DATE(created_at) DESC
             ");
-            
+             
             $stmt->execute();
             return $stmt->fetchAll();
             
@@ -192,7 +189,7 @@ class AdvancedCRMService
         try {
             // Get lead data
             $stmt = $this->database->prepare("
-                SELECT * FROM leads WHERE id = ?
+                SELECT * FROM leads WHERE id = ? AND tenant_id = " . $this->tenantId() . "
             ");
             $stmt->execute([$leadId]);
             $lead = $stmt->fetch();
@@ -276,7 +273,7 @@ class AdvancedCRMService
     {
         // Get lead preferences
         $stmt = $this->database->prepare("
-            SELECT * FROM leads WHERE id = ?
+            SELECT * FROM leads WHERE id = ? AND tenant_id = " . $this->tenantId() . "
         ");
         $stmt->execute([$leadId]);
         $lead = $stmt->fetch();

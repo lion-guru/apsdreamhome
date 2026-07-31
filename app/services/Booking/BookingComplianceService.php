@@ -131,19 +131,19 @@ class BookingComplianceService
             WHERE b.status = 'pending'
               AND b.created_at <= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
               AND (b.amount / NULLIF(b.total_amount, 0)) < 0.25
-        ");
+              " . $this->tenantSql());
         $violations = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($violations as $v) {
             try {
                 $plotId = (int)$v['plot_id'];
                 if ($plotId > 0) {
-                    $stmt = $this->db->prepare("UPDATE plots SET status = 'Available' WHERE id = ?");
-                    $stmt->execute([$plotId]);
+                    $stmt = $this->db->prepare("UPDATE plots SET status = 'Available' WHERE id = ? AND tenant_id = ?");
+                    $stmt->execute([$plotId, $this->tenantId()]);
                 }
 
-                $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ' | Auto-cancelled: Token payment < 25% within 15 days') WHERE id = ?");
-                $stmt->execute([$v['id']]);
+$stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), ' | Auto-cancelled: Token payment < 25% within 15 days') WHERE id = ? AND tenant_id = ?");
+                    $stmt->execute([$v['id'], $this->tenantId()]);
 
                 error_log("BookingCompliance: Booking #{$v['id']} auto-cancelled. Plot #$plotId released back to Available.");
                 $released++;
@@ -162,33 +162,33 @@ class BookingComplianceService
         try {
             $this->db->beginTransaction();
 
-            $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ?");
-            $stmt->execute([$bookingId]);
+            $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$bookingId, $this->tenantId()]);
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$booking) throw new \Exception('Booking not found');
 
             $newPaid = (float)$booking['amount'] + $amount;
             $total = (float)$booking['total_amount'];
 
-            $stmt = $this->db->prepare("UPDATE bookings SET amount = ? WHERE id = ?");
-            $stmt->execute([$newPaid, $bookingId]);
+            $stmt = $this->db->prepare("UPDATE bookings SET amount = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$newPaid, $bookingId, $this->tenantId()]);
 
             $paymentStatus = 'partial';
             if ($newPaid >= $total) {
                 $paymentStatus = 'paid';
-                $this->db->prepare("UPDATE bookings SET payment_status = 'paid', status = 'completed' WHERE id = ?")->execute([$bookingId]);
+                $this->db->prepare("UPDATE bookings SET payment_status = 'paid', status = 'completed' WHERE id = ? AND tenant_id = " . $this->tenantId())->execute([$bookingId]);
             } elseif ($newPaid >= $total * 0.25) {
                 $paymentStatus = 'partial';
-                $this->db->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ?")->execute([$bookingId]);
+                $this->db->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ? AND tenant_id = " . $this->tenantId())->execute([$bookingId]);
             }
 
-            try {
-                $stmt = $this->db->prepare("INSERT INTO plot_payments (booking_id, amount, payment_mode, payment_date, created_at) VALUES (?, ?, ?, CURDATE(), NOW())");
+try {
+                $stmt = $this->db->prepare("INSERT INTO plot_payments (booking_id, amount, payment_mode, payment_date, tenant_id, created_at) VALUES (?, ?, ?, CURDATE(), ?, NOW())");
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-            $stmt->execute([$bookingId, $amount, $mode]);
+            $stmt->execute([$bookingId, $amount, $mode, $this->tenantId()]);
 
             $this->db->commit();
 
@@ -212,7 +212,7 @@ class BookingComplianceService
             JSON_UNQUOTE(JSON_EXTRACT(b.notes, '$.plot_id')) as plot_id,
             JSON_UNQUOTE(JSON_EXTRACT(b.notes, '$.token_deadline')) as token_deadline,
             JSON_UNQUOTE(JSON_EXTRACT(b.notes, '$.payment_mode')) as payment_mode
-            FROM bookings b WHERE b.id = ?");
+            FROM bookings b WHERE b.id = ?" . $this->tenantSql());
         $stmt->execute([$bookingId]);
         $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$booking) return ['error' => 'Booking not found'];
@@ -221,14 +221,14 @@ class BookingComplianceService
         $paidAmount = (float)$booking['amount'];
         $tokenPercent = $totalAmount > 0 ? round($paidAmount * 100 / $totalAmount, 2) : 0;
 
-        try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) as emis, SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END) as paid_emis FROM plot_emi_schedule WHERE booking_id = ?");
+try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as emis, SUM(CASE WHEN status='paid' THEN 1 ELSE 0 END) as paid_emis FROM plot_emi_schedule WHERE booking_id = ?" . $this->tenantSql());
+            $stmt->execute([$bookingId]);
+            $emiStatus = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
+            $emiStatus = ['emis' => 0, 'paid_emis' => 0];
         }
-        $stmt->execute([$bookingId]);
-        $emiStatus = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return [
             'booking' => $booking,
