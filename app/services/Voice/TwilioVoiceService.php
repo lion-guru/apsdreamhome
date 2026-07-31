@@ -4,6 +4,7 @@ namespace App\Services\Voice;
 
 use App\Core\Database\Database;
 use App\Services\Gateway\TwilioService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * APS Dream Home - Twilio Voice Gateway

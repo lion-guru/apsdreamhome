@@ -30,6 +30,7 @@ use App\Services\ServiceConfigService;
  */
 class S3Storage implements StorageInterface
 {
+    use \App\Traits\ServiceTenantTrait;
     /** @var string */
     private $accessKey;
     /** @var string */

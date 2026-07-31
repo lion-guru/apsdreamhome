@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Email Queue Service - Background Email Processing
  * Queue emails for async sending with retry logic
  */
 class EmailQueueService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $maxRetries = 3;
     private $batchSize = 50;

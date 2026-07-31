@@ -15,6 +15,8 @@ namespace App\Services\Storage;
  */
 class StorageManager
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private static $instance = null;
 
     /** @var StorageInterface|null */

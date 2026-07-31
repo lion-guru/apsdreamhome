@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Lead Follow-up Service
  * Handles follow-up for incomplete registrations and visitor leads
  */
 class LeadFollowUpService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()

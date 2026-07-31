@@ -17,6 +17,8 @@ namespace App\Services\Voice;
  */
 class AIVoicePipeline
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $ollamaUrl;
     private $ollamaModel;
     private $whisperUrl;

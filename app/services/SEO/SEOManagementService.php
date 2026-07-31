@@ -3,6 +3,7 @@
 namespace App\Services\SEO;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * SEO Management Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class SEOManagementService
 {
+    use ServiceTenantTrait;
+
     private $database;
     private $baseUrl;
     

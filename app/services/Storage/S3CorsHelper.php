@@ -43,6 +43,8 @@ namespace App\Services\Storage;
  */
 class S3CorsHelper
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** cURL timeout in seconds */
     private const CURL_TIMEOUT = 30;
     /** cURL connect timeout in seconds */

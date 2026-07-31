@@ -4,10 +4,14 @@
  */
 namespace App\Services;
 
-use App\Core\Database;
+use App\Core\Database\Database;
+
+use \App\Traits\ServiceTenantTrait;
 
 class EmailTrackingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {

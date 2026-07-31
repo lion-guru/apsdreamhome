@@ -3,9 +3,12 @@
 namespace App\Services\Security;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 class ComplianceService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $weights = [
         'data_encryption'   => 0.25,

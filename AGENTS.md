@@ -1,8 +1,8 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-30 — Session 67)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-31 — Session 68)
 
 ---
 
-# Session 66: Archived Files Audit + Dead Code Verification (2026-07-30)
+# Session 67: Controller Tenant_id Scoping — 38 Files, 200+ SQL Writes (2026-07-30)
 
 ## Goal
 
@@ -2023,3 +2023,75 @@ equire_once are always safe
  O r   d o u b l e - c l i c k   a g e n t i c * d e v * s y s t e m / s t a r t . b a t .   T h e   7   s p e c i a l i z e d   a g e n t s   a u t o - d i s c o v e r   t a s k s ,   f i x   c o d e ,   r u n   E 2 E   t e s t s   ( 1 5 3 / 1 5 3 ) ,   a n d   c o m m i t   c h a n g e s   u s i n g   l o c a l   O l l a m a   ( Q w e n   2 . 5   7 B )   A I . 
  
  
+
+
+---
+
+# Session 68: Python Agentic Dev System + PHP Fixes (2026-07-31)
+
+## Goal
+
+Port the Autonomous Agentic Dev System from PHP to Python within the same project folder, fixing the critical timeout bug in the PHP orchestrator and creating a fully functional Python version that works within OpenCode IDE.
+
+## What Was Done
+
+| Feature | Details |
+| :------ | :------ |
+| **Python Agentic System (NEW)** | Complete port of PHP agentic system to Python at agentic_dev_system/py_agentic/. 7 specialized agents (Backend, Frontend, QA, Security, DevOps, Architecture, Documentation) with async concurrent execution. |
+| **PHP Orchestrator Fix** | Fixed critical timeout /t blocking bug in orchestrator.php:254 - Windows-specific command was causing indefinite blocking. |
+| **RERAVerificationService Fix** | Fixed PHP syntax error - duplicate __construct with missing body (line 25 had empty constructor, line 40 had real one). Removed orphaned constructor. |
+| **Backend Agent Enhancement** | Enhanced backend agent to fix PHP syntax errors using AI analysis with precise line replacement. Added Windows path format support in error regex parsing. |
+| **Startup Scripts** | Created start.bat (Windows batch) and start.ps1 (PowerShell) startup scripts for the Python system. |
+| **requirements.txt** | Created with zero external dependencies - uses only Python stdlib. |
+| **E2E Tests** | **153/153 PASS** - zero regressions after all changes. |
+
+## Python Agentic System Architecture
+
+`
+agentic_dev_system/py_agentic/
+  main.py                     # Async orchestrator + entry point
+  ollama_client.py            # Ollama LLM client (urllib, no deps)
+  task_discovery.py           # Auto-task discovery (git, syntax, AGENTS.md, E2E, security)
+  start.bat                   # Windows batch startup script
+  start.ps1                   # PowerShell startup script
+  requirements.txt            # No external dependencies
+  __init__.py
+  agents/
+    __init__.py
+    base_agent.py             # Abstract base with async task processing + AI reasoning
+    backend_agent.py          # PHP fixes, SQL injection, syntax errors
+    frontend_agent.py         # Flutter UI/UX fixes
+    qa_agent.py               # E2E tests, regression, syntax checks
+    security_agent.py         # SQL injection, CSRF, tenant isolation
+    devops_agent.py           # Builds, APK, deployment, cron
+    architecture_agent.py     # Codebase analysis, dead code
+    documentation_agent.py    # AGENTS.md, changelog, reports
+  tools/
+    __init__.py
+    shell.py                  # Cross-platform subprocess execution
+    filesystem.py             # File operations, grep, glob
+`
+
+## Usage
+
+`ash
+# Run 3 cycles (default)
+py main.py
+
+# Run continuously
+py main.py --continuous
+
+# Run specific number of cycles
+py main.py --cycles 5 --interval 60
+
+# Skip E2E tests (faster)
+py main.py --skip-e2e
+`
+
+### Key Lessons
+
+_96. Python agentic system must live within project folder - Created at agentic_dev_system/py_agentic/ alongside the PHP version.
+_97. Zero-dependency Python is achievable - Used only urllib, asyncio, subprocess, os, re, json, time, argparse, dataclasses, typing, pathlib, hashlib, shutil, glob, sys.
+_98. PHP orchestrator timeout bug was Windows-specific - timeout /t blocks indefinitely on Windows. Python uses asyncio.sleep() which is cross-platform.
+_99. Windows path format in regex needs special handling - PHP syntax errors on Windows use C:\path\to\file.php:42: format.
+_100. Backend agent can fix syntax errors with AI - When Ollama is available, the backend agent analyzes error context and suggests precise fixes.

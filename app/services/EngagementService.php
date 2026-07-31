@@ -4,10 +4,12 @@
 
 namespace App\Services;
 
-use App\Core\Database;
+use App\Core\Database\Database;
 use PDO;
 use Exception;
 use InvalidArgumentException;
+
+use \App\Traits\ServiceTenantTrait;
 use RuntimeException;
 
 /**
@@ -17,6 +19,9 @@ use RuntimeException;
 
 class EngagementService
 {
+    use \App\Traits\ServiceTenantTrait;
+
+    private $db;
     private PDO $conn;
 
     public function __construct()

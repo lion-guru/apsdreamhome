@@ -3,6 +3,7 @@
 namespace App\Services\UI;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Theme & UI Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class ModernThemeService
 {
+    use ServiceTenantTrait;
+
     private $database;
     
     // Predefined theme presets

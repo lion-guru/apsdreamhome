@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Audit Trail Service - Complete Activity Logging
  * Logs all system activities for compliance and debugging
  */
 class AuditTrailService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logLevel = 'detailed'; // minimal, standard, detailed
     

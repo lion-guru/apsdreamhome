@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
-use App\Core\Database;
+use App\Core\Database\Database;
 use App\Services\Security\SecurityService;
 use Exception;
 use PDO;
+
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Agent Assignment Service
@@ -14,6 +16,8 @@ use PDO;
 
 class AgentAssignmentService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private SecurityService $securityService;
 
