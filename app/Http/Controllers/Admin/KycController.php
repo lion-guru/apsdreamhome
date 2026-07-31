@@ -188,15 +188,41 @@ class KycController extends AdminController
                             ['event_type' => 'kyc', 'action_url' => '/user/kyc']
                         );
                     }
-                } catch (\Throwable $e) {
-                    error_log("[KycController] reject notification failed: " . $e->getMessage());
-                }
+        } catch (\Throwable $e) {
+            error_log("[KycController] reject notification failed: " . $e->getMessage());
+        }
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');
             }
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to reject: ' . $e->getMessage());
         }
+
+        // Create department request for rejected KYC (LEGAL escalation for compliance review)
+        try {
+            $deptService = new \App\Services\DepartmentRequestService();
+            $row = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+            if (!empty($row['user_id'])) {
+                $userStmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?");
+                $userStmt->execute([(int)$row['user_id']]);
+                $user = $userStmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+                $deptService->submitRequest([
+                    'request_type' => 'escalation',
+                    'department_code' => 'LEGAL',
+                    'title' => 'KYC Rejected - Compliance Review Needed',
+                    'description' => "KYC request #{$id} for user " . ($user['name'] ?? 'Unknown') . " was rejected. Reason: {$reason}. Requires legal compliance review.",
+                    'priority' => $reason !== '' ? 'high' : 'medium',
+                    'requester_id' => $adminId,
+                    'requester_role' => 'admin',
+                    'requester_name' => 'Admin',
+                    'related_entity_type' => 'kyc_request',
+                    'related_entity_id' => $id,
+                ]);
+            }
+        } catch (\Exception $e) {
+            error_log("[KycController] department request error: " . $e->getMessage());
+        }
+
         $this->redirect('/admin/kyc');
     }
 

@@ -258,6 +258,31 @@ class MLMCommissionController extends AdminController
         $userId = $this->currentUserId();
         $ok = $this->engine->approvePayoutBatch((int)$id, $userId);
         $this->setFlash($ok ? 'success' : 'error', $ok ? 'Payout batch approved' : 'Failed to approve batch');
+
+        // Create department request for FIN (payout processing)
+        if ($ok) {
+            try {
+                $batch = $this->engine->getPayoutBatch((int)$id);
+                if ($batch && !empty($batch['batch'])) {
+                    $deptService = new \App\Services\DepartmentRequestService();
+                    $deptService->submitRequest([
+                        'request_type' => 'approval',
+                        'department_code' => 'FIN',
+                        'title' => 'Payout Batch Approved - Ready for Processing',
+                        'description' => "Payout batch #{$id} has been approved. Ready for payment processing.",
+                        'priority' => 'high',
+                        'requester_id' => $userId,
+                        'requester_role' => 'admin',
+                        'requester_name' => 'Admin',
+                        'related_entity_type' => 'payout_batch',
+                        'related_entity_id' => $id,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                error_log('[MLMCommissionController] payoutBatchApprove department request error: ' . $e->getMessage());
+            }
+        }
+
         return $this->redirect('/admin/mlm/payouts/batches/' . (int)$id);
     }
 

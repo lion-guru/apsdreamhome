@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Core\Database\Database;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * CampaignService - Handle campaign and notification management
  * 
@@ -13,6 +15,8 @@ use Exception;
  */
 class CampaignService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()
@@ -26,9 +30,10 @@ class CampaignService
     public function createCampaign($data)
     {
         try {
-            $query = "INSERT INTO campaigns (title, description, type, target_audience, start_date, end_date, status, created_by, created_at) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO campaigns (title, description, type, target_audience, start_date, end_date, status, created_by, created_at, tenant_id) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+            $insertData = $this->tenantInsertData();
             $params = [
                 $data['title'] ?? '',
                 $data['description'] ?? '',
@@ -38,8 +43,9 @@ class CampaignService
                 $data['end_date'] ?? date('Y-m-d', strtotime('+30 days')),
                 $data['status'] ?? 'active',
                 $data['created_by'] ?? 0,
-                date('Y-m-d H:i:s')
+                date('Y-m-d H:i:s'),
             ];
+            $params = array_merge($params, array_values($insertData));
 
             $this->db->execute($query, $params);
             return $this->db->getLastInsertId();
@@ -55,14 +61,17 @@ class CampaignService
     public function getActiveCampaigns($targetAudience = 'all')
     {
         try {
-            $query = "SELECT * FROM campaigns 
-                     WHERE status = 'active' 
-                     AND start_date <= CURDATE() 
-                     AND end_date >= CURDATE() 
-                     AND (target_audience = ? OR target_audience = 'all')
-                     ORDER BY created_at DESC";
+$query = "SELECT * FROM campaigns 
+                      WHERE status = 'active' 
+                      AND start_date <= CURDATE() 
+                      AND end_date >= CURDATE() 
+                      AND (target_audience = ? OR target_audience = 'all')" . $this->tenantSql() .
+                      " ORDER BY created_at DESC";
 
-            return $this->db->fetchAll($query, [$targetAudience]);
+            $params = [$targetAudience];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+
+            return $this->db->fetchAll($query, $params);
         } catch (Exception $e) {
             error_log("Error getting campaigns: " . $e->getMessage());
             return [];
@@ -75,9 +84,10 @@ class CampaignService
     public function createNotification($userId, $title, $message, $type = 'info', $campaignId = null)
     {
         try {
-            $query = "INSERT INTO notifications (user_id, title, message, type, campaign_id, is_read, created_at) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO notifications (user_id, title, message, type, campaign_id, is_read, created_at, tenant_id) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+            $insertData = $this->tenantInsertData();
             $params = [
                 $userId,
                 $title,
@@ -85,8 +95,9 @@ class CampaignService
                 $type,
                 $campaignId,
                 0, // unread
-                date('Y-m-d H:i:s')
+                date('Y-m-d H:i:s'),
             ];
+            $params = array_merge($params, array_values($insertData));
 
             $this->db->execute($query, $params);
             return $this->db->getLastInsertId();
@@ -102,18 +113,22 @@ class CampaignService
     public function getUserNotifications($userId, $limit = 10, $unreadOnly = false)
     {
         try {
-            $query = "SELECT n.*, c.title as campaign_title 
-                     FROM notifications n 
-                     LEFT JOIN campaigns c ON n.campaign_id = c.id 
-                     WHERE n.user_id = ?";
+            $query = "SELECT n.*, c.title as campaign_title " .
+                      "FROM notifications n " .
+                      "LEFT JOIN campaigns c ON n.campaign_id = c.id " .
+                      "WHERE n.user_id = ?" . $this->tenantSql();
+
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
 
             if ($unreadOnly) {
                 $query .= " AND n.is_read = 0";
             }
 
             $query .= " ORDER BY n.created_at DESC LIMIT ?";
+            $params[] = $limit;
 
-            return $this->db->fetchAll($query, [$userId, $limit]);
+            return $this->db->fetchAll($query, $params);
         } catch (Exception $e) {
             error_log("Error getting notifications: " . $e->getMessage());
             return [];
@@ -123,13 +138,15 @@ class CampaignService
     /**
      * Mark notification as read
      */
-    public function markNotificationRead($notificationId, $userId)
+public function markNotificationRead($notificationId, $userId)
     {
         try {
-            $query = "UPDATE notifications SET is_read = 1, read_at = ? 
-                     WHERE id = ? AND user_id = ?";
+            $query = "UPDATE notifications SET is_read = 1, read_at = ? " .
+                     "WHERE id = ? AND user_id = ?" . $this->tenantSql();
 
-            $this->db->execute($query, [date('Y-m-d H:i:s'), $notificationId, $userId]);
+            $params = [date('Y-m-d H:i:s'), $notificationId, $userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $this->db->execute($query, $params);
             return true;
         } catch (Exception $e) {
             error_log("Error marking notification read: " . $e->getMessage());
@@ -179,8 +196,10 @@ class CampaignService
     private function getCampaignById($campaignId)
     {
         try {
-            $query = "SELECT * FROM campaigns WHERE id = ?";
-            return $this->db->fetch($query, [$campaignId]);
+            $query = "SELECT * FROM campaigns WHERE id = ?" . $this->tenantSql();
+            $params = [$campaignId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            return $this->db->fetch($query, $params);
         } catch (Exception $e) {
             return null;
         }
@@ -192,24 +211,27 @@ class CampaignService
     private function getUsersByAudience($targetAudience)
     {
         try {
+            $tenantWhere = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+
             switch ($targetAudience) {
                 case 'all':
-                    $query = "SELECT id FROM users WHERE status = 'active'";
+                    $query = "SELECT id FROM users WHERE status = 'active'" . $tenantWhere;
                     break;
                 case 'users':
-                    $query = "SELECT id FROM users WHERE role = 'customer' AND status = 'active'";
+                    $query = "SELECT id FROM users WHERE role = 'customer' AND status = 'active'" . $tenantWhere;
                     break;
                 case 'users':
-                    $query = "SELECT id FROM users WHERE role IN ('agent', 'associate') AND status = 'active'";
+                    $query = "SELECT id FROM users WHERE role IN ('agent', 'associate') AND status = 'active'" . $tenantWhere;
                     break;
                 case 'users':
-                    $query = "SELECT id FROM users WHERE role = 'employee' AND status = 'active'";
+                    $query = "SELECT id FROM users WHERE role = 'employee' AND status = 'active'" . $tenantWhere;
                     break;
                 default:
                     return [];
             }
 
-            return $this->db->fetchAll($query);
+            return $this->db->fetchAll($query, $tenantParam);
         } catch (Exception $e) {
             return [];
         }
@@ -222,22 +244,26 @@ class CampaignService
     {
         try {
             if ($userId) {
-                $query = "SELECT 
-                            COUNT(*) as total,
-                            SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as unread,
-                            SUM(CASE WHEN type = 'campaign' THEN 1 ELSE 0 END) as campaigns,
-                            SUM(CASE WHEN type = 'system' THEN 1 ELSE 0 END) as system
-                         FROM notifications WHERE user_id = ?";
+                $query = "SELECT " .
+                            "COUNT(*) as total, " .
+                            "SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as unread, " .
+                            "SUM(CASE WHEN type = 'campaign' THEN 1 ELSE 0 END) as campaigns, " .
+                            "SUM(CASE WHEN type = 'system' THEN 1 ELSE 0 END) as system " .
+                         "FROM notifications WHERE user_id = ?" . $this->tenantSql();
 
-                return $this->db->fetch($query, [$userId]);
+                $params = [$userId];
+                if ($this->tenantId() > 1) $params[] = $this->tenantId();
+                return $this->db->fetch($query, $params);
             } else {
-                $query = "SELECT 
-                            COUNT(*) as total_notifications,
-                            COUNT(DISTINCT user_id) as total_users,
-                            SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as total_unread
-                         FROM notifications";
+                $query = "SELECT " .
+                            "COUNT(*) as total_notifications, " .
+                            "COUNT(DISTINCT user_id) as total_users, " .
+                            "SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as total_unread " .
+                         "FROM notifications" . $this->tenantSql();
 
-                return $this->db->fetch($query);
+                $params = [];
+                if ($this->tenantId() > 1) $params[] = $this->tenantId();
+                return $this->db->fetch($query, $params);
             }
         } catch (Exception $e) {
             return null;
@@ -272,11 +298,15 @@ class CampaignService
     public function dismissPopup($userId, $popupId)
     {
         try {
-            $query = "INSERT INTO popup_dismissals (user_id, popup_id, dismissed_at) 
-                     VALUES (?, ?, ?)
-                     ON DUPLICATE KEY UPDATE dismissed_at = ?";
+            $query = "INSERT INTO popup_dismissals (user_id, popup_id, dismissed_at, tenant_id) " .
+                     "VALUES (?, ?, ?, ?) " .
+                     "ON DUPLICATE KEY UPDATE dismissed_at = ?";
 
-            $this->db->execute($query, [$userId, $popupId, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')]);
+            $insertData = $this->tenantInsertData();
+            $params = [$userId, $popupId, date('Y-m-d H:i:s'), $insertData['tenant_id']];
+            $params[] = date('Y-m-d H:i:s'); // for ON DUPLICATE KEY UPDATE
+
+            $this->db->execute($query, $params);
             return true;
         } catch (Exception $e) {
             return false;

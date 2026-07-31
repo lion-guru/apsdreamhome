@@ -264,12 +264,36 @@ class AdminController extends BaseController
             ") ?? [];
         } catch (\Exception $e) { $leadPipelineChart = []; }
 
+        // Department Requests stats
+        try {
+            $stats['dept_pending'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE status IN ('pending','assigned')")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['dept_pending'] = 0; }
+
+        try {
+            $stats['dept_high_priority'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE priority = 'high' AND status IN ('pending','assigned')")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['dept_high_priority'] = 0; }
+
+        try {
+            $stats['dept_overdue'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE due_date < CURDATE() AND status NOT IN ('closed','completed','rejected')")['cnt'] ?? 0);
+        } catch (\Exception $e) { $stats['dept_overdue'] = 0; }
+
+        try {
+            $stats['dept_by_department'] = $this->db->fetchAll("
+                SELECT department_code, COUNT(*) AS cnt
+                FROM department_requests
+                WHERE status NOT IN ('closed','completed','rejected')
+                GROUP BY department_code
+                ORDER BY cnt DESC
+            ") ?? [];
+        } catch (\Exception $e) { $stats['dept_by_department'] = []; }
+
         return $this->render('admin/erp/overview', [
             'page_title' => 'ERP Overview — APS Dream Home',
             'stats' => $stats,
             'recent_activity' => $recentActivity,
             'cash_flow_chart' => $cashFlowChart,
             'lead_pipeline_chart' => $leadPipelineChart,
+            'department_requests' => $stats['dept_by_department'],
             'updated_at' => date('d M Y, h:i A'),
         ]);
     }

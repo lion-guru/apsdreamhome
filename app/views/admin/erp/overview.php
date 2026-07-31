@@ -284,13 +284,15 @@ if (($s['money_bounced_cheques'] ?? 0) > 0) $alerts[] = ['warning', '<strong>Bou
 if (($s['money_pending_tds'] ?? 0) > 0) $alerts[] = ['info', '<strong>Pending TDS:</strong> ' . (int)$s['money_pending_tds'] . ' pending filing.', BASE_URL . '/admin/finance/tds'];
 if (($s['mlm_pending_payouts'] ?? 0) > 0) $alerts[] = ['warning', '<strong>Pending Payouts:</strong> ' . (int)$s['mlm_pending_payouts'] . ' MLM payouts awaiting.', BASE_URL . '/admin/mlm/payouts'];
 if (($s['backoffice_pending_leaves'] ?? 0) > 0) $alerts[] = ['info', '<strong>Pending Leaves:</strong> ' . (int)$s['backoffice_pending_leaves'] . ' need approval.', BASE_URL . '/admin/backoffice/leaves'];
+if (($s['dept_high_priority'] ?? 0) > 0) $alerts[] = ['warning', '<strong>High-Priority Requests:</strong> ' . (int)$s['dept_high_priority'] . ' department requests need urgent attention.', BASE_URL . '/admin/department-requests'];
+if (($s['dept_overdue'] ?? 0) > 0) $alerts[] = ['error', '<strong>Overdue Requests:</strong> ' . (int)$s['dept_overdue'] . ' department requests are overdue.', BASE_URL . '/admin/department-requests'];
 ?>
 <?php if (!empty($alerts)): ?>
 <div style="margin-bottom:24px">
     <?php foreach ($alerts as [$type, $msg, $url]): ?>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:12px;margin-bottom:8px;background:<?= $type === 'warning' ? 'linear-gradient(135deg,#fffbeb,#fef9c3)' : 'linear-gradient(135deg,#eff6ff,#dbeafe)' ?>;border:1px solid <?= $type === 'warning' ? '#fed7aa' : '#bfdbfe' ?>">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:12px;margin-bottom:8px;background:<?= $type === 'warning' ? 'linear-gradient(135deg,#fffbeb,#fef9c3)' : ($type === 'error' ? 'linear-gradient(135deg,#fef2f2,#fee2e2)' : 'linear-gradient(135deg,#eff6ff,#dbeafe)') ?>;border:1px solid <?= $type === 'warning' ? '#fed7aa' : ($type === 'error' ? '#fca5a5' : '#bfdbfe') ?>">
             <span style="font-size:0.85rem;color:#1e293b"><?= $msg ?></span>
-            <a href="<?= $url ?>" style="font-size:0.8rem;font-weight:600;color:<?= $type === 'warning' ? '#d97706' : '#2563eb' ?>;text-decoration:none;padding:6px 14px;border-radius:8px;background:<?= $type === 'warning' ? '#fef3c7' : '#dbeafe' ?>;white-space:nowrap">View <i class="fas fa-arrow-right ms-1"></i></a>
+            <a href="<?= $url ?>" style="font-size:0.8rem;font-weight:600;color:<?= $type === 'warning' ? '#d97706' : ($type === 'error' ? '#dc2626' : '#2563eb') ?>;text-decoration:none;padding:6px 14px;border-radius:8px;background:<?= $type === 'warning' ? '#fef3c7' : ($type === 'error' ? '#fecaca' : '#dbeafe') ?>;white-space:nowrap">View <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
     <?php endforeach; ?>
 </div>

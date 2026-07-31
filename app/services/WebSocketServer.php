@@ -10,7 +10,7 @@ use Firebase\JWT\Key;
 class WebSocketServer implements MessageComponentInterface
 {
     protected $clients;
-    protected $notificationCenter;
+    protected $notifier;
     protected $db;
     protected $jwtSecret;
 
@@ -18,7 +18,7 @@ class WebSocketServer implements MessageComponentInterface
     {
         $this->clients = new \SplObjectStorage;
         $this->db = $db;
-        $this->notificationCenter = new NotificationCenter($db);
+        $this->notifier = new NotificationService($db);
 
         $secret = $_ENV['JWT_SECRET'] ?? getenv('JWT_SECRET') ?: null;
         if (!$secret || strlen($secret) < 32) {
@@ -136,10 +136,10 @@ class WebSocketServer implements MessageComponentInterface
             return;
         }
 
-        $notifications = $this->notificationCenter->fetchPending($conn->userId);
+        $notifications = $this->notifier->fetchPending($conn->userId);
         if (!empty($notifications)) {
             $ids = array_map(fn($n) => (int)$n['id'], $notifications);
-            $this->notificationCenter->markDelivered($ids);
+            $this->notifier->markDelivered($ids);
             
             foreach ($notifications as $notification) {
                 $conn->send(json_encode([
@@ -157,7 +157,10 @@ class WebSocketServer implements MessageComponentInterface
             return;
         }
 
-        $count = $this->notificationCenter->markRead($conn->userId, $ids);
+        $count = 0;
+        foreach ($ids as $id) {
+            if ($this->notifier->markRead((int)$id)) $count++;
+        }
         $conn->send(json_encode([
             'type' => 'mark_read_result',
             'count' => $count
@@ -281,7 +284,7 @@ class WebSocketServer implements MessageComponentInterface
         return false;
     }
 
-    // Static method to get/set instance for broadcasting from NotificationCenter
+    // Static method to get/set instance for broadcasting from NotificationService
     private static $instance = null;
     
     public static function setInstance($instance)

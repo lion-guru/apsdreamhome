@@ -8,6 +8,8 @@ namespace App\Services\Auc;
  */
 class AucBrainService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()

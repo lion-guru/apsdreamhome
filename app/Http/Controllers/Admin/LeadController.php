@@ -138,6 +138,39 @@ class LeadController extends AdminController
                 error_log('LeadController::store SLA trigger error: ' . $e->getMessage());
             }
 
+            // High-budget leads trigger finance/marketing department requests
+            try {
+                $budget = !empty($_POST['budget']) ? (float)$_POST['budget'] : 0;
+                if ($budget >= 1000000) {
+                    $reqSvc = new \App\Services\DepartmentRequestService();
+                    $leadName = trim($_POST['name'] ?? 'Unknown');
+                    $reqSvc->submitRequest([
+                        'request_type'      => 'approval',
+                        'department_code'   => 'FIN',
+                        'title'             => 'High-Budget Lead — Finance Review',
+                        'description'       => "High-budget lead (₹" . number_format($budget) . ") created for {$leadName}. Budget exceeds ₹10L. Please review financing options and payment plan.",
+                        'priority'          => 'high',
+                        'requester_id'      => $adminId,
+                        'requester_role'    => $role,
+                        'requester_name'    => $_SESSION['admin_name'] ?? 'Admin',
+                        'related_entity_type' => 'lead',
+                        'related_entity_id'   => $result['lead_id'],
+                    ]);
+                    $reqSvc->submitRequest([
+                        'request_type'      => 'inquiry',
+                        'department_code'   => 'MKTG',
+                        'title'             => 'High-Budget Lead — Marketing Follow-up',
+                        'description'       => "High-budget lead (₹" . number_format($budget) . ") for {$leadName}. Priority follow-up and personalized campaign recommended.",
+                        'priority'          => 'high',
+                        'requester_id'      => $adminId,
+                        'requester_role'    => $role,
+                        'requester_name'    => $_SESSION['admin_name'] ?? 'Admin',
+                        'related_entity_type' => 'lead',
+                        'related_entity_id'   => $result['lead_id'],
+                    ]);
+                }
+            } catch (\Throwable $e) { error_log('LeadController::store department request error: ' . $e->getMessage()); }
+
             $this->setFlash('success', 'Lead created successfully (' . ($result['lead_number'] ?? '') . ')');
         } else {
             $this->setFlash('error', 'Failed to create lead: ' . ($result['error'] ?? 'Unknown error'));

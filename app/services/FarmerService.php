@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Modern Farmer Management Service
  * Complete management system for farmers and agricultural land relationships
  */
 class FarmerService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private int $cacheTtl = 3600; // 1 hour
 
     /**
@@ -67,8 +71,9 @@ class FarmerService
                     (SELECT COUNT(*) FROM farmer_transactions WHERE farmer_id = fp.id) as transaction_count
                     FROM farmer_profiles fp
                     LEFT JOIN users a ON fp.associate_id = a.id
-                    LEFT JOIN users ua ON a.user_id = ua.id";
+                    LEFT JOIN users ua ON a.user_id = ua.id" . $this->tenantSql();
             $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $conditions = [];
 
             if (!empty($filters['status'])) {
@@ -101,11 +106,13 @@ class FarmerService
             // Count total
             $countSql = "SELECT COUNT(*) FROM farmer_profiles fp
                          LEFT JOIN users a ON fp.associate_id = a.id
-                         LEFT JOIN users ua ON a.user_id = ua.id";
+                         LEFT JOIN users ua ON a.user_id = ua.id" . $this->tenantSql();
             if (!empty($conditions)) {
                 $countSql .= " WHERE " . implode(" AND ", $conditions);
             }
-            $total = (int) $db->fetchColumn($countSql, $params);
+            $countParams = $params;
+            if ($this->tenantId() > 1) $countParams[] = $this->tenantId();
+            $total = (int) $db->fetchColumn($countSql, $countParams);
 
             $page = max(1, (int) ($_GET['page'] ?? 1));
             $perPage = min(100, max(1, $perPage));
@@ -171,7 +178,7 @@ class FarmerService
             // Validate required fields
             $this->validateFarmerData($data);
 
-            $farmerId = $db->insert('farmer_profiles', [
+            $farmerId = $db->insert('farmer_profiles', array_merge([
                 'farmer_number' => $data['farmer_number'],
                 'full_name' => $data['full_name'],
                 'father_name' => $data['father_name'] ?? null,
@@ -213,7 +220,7 @@ class FarmerService
                 'created_by' => $data['created_by'],
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $this->tenantInsertData()));
 
             $this->clearFarmerCache();
 
@@ -351,7 +358,7 @@ class FarmerService
                 'remarks' => $data['remarks'] ?? null,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $this->tenantInsertData()));
 
             $this->updateFarmerTotalLand($farmerId);
             $this->clearFarmerCache($farmerId);

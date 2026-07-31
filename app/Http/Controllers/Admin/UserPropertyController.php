@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\DepartmentRequestService;
 
 class UserPropertyController extends AdminController
 {
@@ -186,6 +187,27 @@ class UserPropertyController extends AdminController
         // since this user_property change can appear in either.
         \App\Services\Cache\HotPathCacheService::invalidatePropertyList();
         \App\Services\Cache\HotPathCacheService::invalidateHomeFeatured();
+
+        // Create department request for verified properties (LEGAL escalation for title verification)
+        if (in_array($status, ['verified', 'approved']) && $action === 'approve') {
+            try {
+                $deptService = new \App\Services\DepartmentRequestService();
+                $deptService->submitRequest([
+                    'request_type' => 'verification',
+                    'department_code' => 'LEGAL',
+                    'title' => 'Property Title Verification Needed',
+                    'description' => "Property listing #{$id} has been approved and requires legal title verification before public listing.",
+                    'priority' => 'medium',
+                    'requester_id' => $adminId,
+                    'requester_role' => 'admin',
+                    'requester_name' => 'Admin',
+                    'related_entity_type' => 'user_property',
+                    'related_entity_id' => $id,
+                ]);
+            } catch (\Exception $e) {
+                error_log('UserPropertyController::action department request error: ' . $e->getMessage());
+            }
+        }
 
         redirect('/admin/user-properties?success=updated');
         exit;
