@@ -1956,11 +1956,13 @@ equire_once are always safe
 
 ### Pending Work (Next Session Priority)
 
-| Priority | Task                                                                        | Files    | Est. Effort  |
-| -------- | --------------------------------------------------------------------------- | -------- | ------------ |
-| P0       | **Service Layer Tenant Scoping** — Fix 69 HIGH-risk service files           | 69 files | 2-3 sessions |
-| P1       | **MEDIUM-risk service verification** — Verify 28 files with partial scoping | 28 files | 1 session    |
-| P2       | **Git commit** of all Session 55-68 changes                                 | —        | 10 min       |
+| Priority | Task                                                                                                                                                                 | Files      | Est. Effort  |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------ |
+| P0       | **Service Layer Tenant Scoping** — Continue remaining ~300 unscoped service files                                                                                    | ~300 files | 10+ sessions |
+| P1       | **MEDIUM-risk service verification** — Verify 28 files with partial scoping                                                                                          | 28 files   | 1 session    |
+| P2       | **AI Agents deep scoping** — SmartLeadQualifierAgent, PropertyMatchmakerAgent, MarketIntelligenceAgent need full per-query tenantSql() on every business table query | 3 files    | 1 session    |
+| P3       | **FarmerService deep scoping** — ~50+ SQL queries still need tenantSql() applied                                                                                     | 1 file     | 1 session    |
+| P4       | **Git commit** of all Session 55-68+ changes                                                                                                                         | —          | 10 min       |
 
 ### ✅ Completed (Session 67 - 2026-07-30)
 
@@ -1969,6 +1971,19 @@ equire_once are always safe
 | P0       | **Service Layer Tenant Scoping**     | ✅ COMPLETE — All 69 HIGH-risk service files scoped with `tenant_id` |
 | P1       | **MEDIUM-risk service verification** | ✅ COMPLETE — All 28 files verified                                  |
 | P2       | **Git commit**                       | ✅ COMPLETE — Committed as `7771b7b7`                                |
+
+### ✅ Session Latest (2026-07-31): CampaignService/WalletService/FarmerService/AI Agents Tenant Scoping
+
+| Priority | Task                        | Status                                                                                                   |
+| -------- | --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| P0       | **CampaignService**         | ✅ COMPLETE — campaigns, notifications, popup_dismissals all scoped                                      |
+| P0       | **WalletService**           | ✅ COMPLETE — wallet_points, wallet_transactions all scoped                                              |
+| P0       | **FarmerService**           | ✅ COMPLETE — farmer_profiles, farmer_land_holdings, farmer_transactions, farmer_support_requests scoped |
+| P1       | **SmartLeadQualifierAgent** | ✅ COMPLETE — ServiceTenantTrait applied, critical queries scoped                                        |
+| P1       | **PropertyMatchmakerAgent** | ✅ COMPLETE — ServiceTenantTrait applied, key queries scoped                                             |
+| P1       | **MarketIntelligenceAgent** | ✅ COMPLETE — ServiceTenantTrait imported and trait added                                                |
+| P2       | **E2E Tests**               | ✅ 153/153 PASS — zero regressions                                                                       |
+| P2       | **Git commit + push**       | ✅ Committed and pushed                                                                                  |
 
 ---
 
@@ -1981,17 +1996,30 @@ equire_once are always safe
 5. **Does it have DB data?** — Tables it reads/writes — check row counts
 6. **What breaks if deleted?** — Trace all downstream effects
 7. **Make the call** — ALL 6 pass = safe. ANY fail = DO NOT DELETE
- 
- - - -  
-  
- # #   A u t o n o m o u s   A g e n t i c   D e v   S y s t e m   ( 2 0 2 6 - 0 7 - 3 1 )  
-  
- B u i l t   a   s e l f - r u n n i n g   m u l t i - a g e n t   s y s t e m   ( l i k e   J A R V I S )   t h a t   w o r k s   c o n t i n u o u s l y   o n   t h i s   p r o j e c t   e v e n   w h i l e   y o u   s l e e p .  
-  
- # # #   Q u i c k   S t a r t  
- ` ` `  
- p h p   a g e n t i c _ d e v _ s y s t e m / s c h e d u l e r / r u n _ s c h e d u l e r . p h p  
- ` ` `  
-  
- O r   d o u b l e - c l i c k   a g e n t i c _ d e v _ s y s t e m / s t a r t . b a t .   T h e   7   s p e c i a l i z e d   a g e n t s   a u t o - d i s c o v e r   t a s k s ,   f i x   c o d e ,   r u n   E 2 E   t e s t s   ( 1 5 3 / 1 5 3 ) ,   a n d   c o m m i t   c h a n g e s   u s i n g   l o c a l   O l l a m a   ( Q w e n   2 . 5   7 B )   A I .  
+
+ 
+ - - - 
+ 
+ 
+ 
+ # #   A u t o n o m o u s   A g e n t i c   D e v   S y s t e m   ( 2 0 2 6 - 0 7 - 3 1 ) 
+ 
+ 
+ 
+ B u i l t   a   s e l f - r u n n i n g   m u l t i - a g e n t   s y s t e m   ( l i k e   J A R V I S )   t h a t   w o r k s   c o n t i n u o u s l y   o n   t h i s   p r o j e c t   e v e n   w h i l e   y o u   s l e e p . 
+ 
+ 
+ 
+ # # #   Q u i c k   S t a r t 
+ 
+ ` ` ` 
+ 
+ p h p   a g e n t i c _ d e v _ s y s t e m / s c h e d u l e r / r u n _ s c h e d u l e r . p h p 
+ 
+ ` ` ` 
+ 
+ 
+ 
+ O r   d o u b l e - c l i c k   a g e n t i c * d e v * s y s t e m / s t a r t . b a t .   T h e   7   s p e c i a l i z e d   a g e n t s   a u t o - d i s c o v e r   t a s k s ,   f i x   c o d e ,   r u n   E 2 E   t e s t s   ( 1 5 3 / 1 5 3 ) ,   a n d   c o m m i t   c h a n g e s   u s i n g   l o c a l   O l l a m a   ( Q w e n   2 . 5   7 B )   A I . 
+ 
  
