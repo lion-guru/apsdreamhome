@@ -6,6 +6,8 @@ namespace App\Services;
 
 use App\Core\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 class MeetingService
 {
     private $db;

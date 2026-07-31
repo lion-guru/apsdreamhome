@@ -6,6 +6,8 @@ use App\Core\Database\Database;
 use PDO;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * DocumentLockerService
  * Manages secure document storage and retrieval for users.

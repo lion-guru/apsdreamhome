@@ -2544,7 +2544,7 @@ class MobileApiController extends BaseController
                 'current_rank' => $currentRank,
                 'total_sales' => $totalSales,
                 'total_commission' => $totalCommission,
-                'direct_count' => (int)($this->db->fetchOne("SELECT COUNT(*) FROM network_tree WHERE parent_id = ?", [$userId])['COUNT(*)'] ?? 0),
+                'direct_count' => (int)($this->db->fetchOne("SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ?", [$userId])['COUNT(*)'] ?? 0),
                 'next_rank' => $nextRank,
             ];
 

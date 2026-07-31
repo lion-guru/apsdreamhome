@@ -103,7 +103,7 @@ class ModernThemeService
      */
     public function getUserTheme(int $userId, string $userType = 'admin'): array
     {
-        $sql = "SELECT * FROM user_theme_preferences WHERE user_id = ? AND user_type = ?";
+        $sql = "SELECT * FROM user_theme_preferences WHERE user_id = ? AND user_type = ?" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$userId, $userType]);
         $prefs = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -140,11 +140,15 @@ class ModernThemeService
     private function setDefaultPreferences(int $userId, string $userType): void
     {
         $sql = "INSERT IGNORE INTO user_theme_preferences 
-            (user_id, user_type, theme_preset) 
-            VALUES (?, ?, 'light')";
+            (user_id, user_type, theme_preset" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+            VALUES (?, ?, 'light'" . 
+            (empty($this->tenantInsertData()) ? '' : ', ?') . ")";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType]);
+        $execParams = [$userId, $userType];
+        if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+        $stmt->execute($execParams);
         
         // Add default quick actions for admin
         if ($userType === 'admin') {
@@ -167,20 +171,24 @@ class ModernThemeService
         ];
         
         $sql = "INSERT IGNORE INTO user_quick_actions 
-            (user_id, user_type, action_name, action_icon, action_url, display_order) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+            (user_id, user_type, action_name, action_icon, action_url, display_order" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+            VALUES (?, ?, ?, ?, ?, ?" . 
+            (empty($this->tenantInsertData()) ? '' : ', ?') . ")";
         
         $stmt = $this->database->prepare($sql);
         
         foreach ($defaultActions as $action) {
-            $stmt->execute([
+            $execParams = [
                 $userId, 
                 $userType, 
                 $action['name'],
                 $action['icon'],
                 $action['url'],
                 $action['order']
-            ]);
+            ];
+            if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+            $stmt->execute($execParams);
         }
     }
     
@@ -190,7 +198,7 @@ class ModernThemeService
     public function toggleDarkMode(int $userId, string $userType = 'admin'): array
     {
         // Get current
-        $sql = "SELECT is_dark_mode FROM user_theme_preferences WHERE user_id = ? AND user_type = ?";
+        $sql = "SELECT is_dark_mode FROM user_theme_preferences WHERE user_id = ? AND user_type = ?" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$userId, $userType]);
         $current = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -199,13 +207,18 @@ class ModernThemeService
         
         // Update
         $updateSql = "INSERT INTO user_theme_preferences 
-            (user_id, user_type, is_dark_mode, theme_preset) 
-            VALUES (?, ?, ?, ?)
+            (user_id, user_type, is_dark_mode, theme_preset" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+            VALUES (?, ?, ?, ?" . 
+            (empty($this->tenantInsertData()) ? '' : ', ?') . ")
             ON DUPLICATE KEY UPDATE 
-            is_dark_mode = VALUES(is_dark_mode)";
+            is_dark_mode = VALUES(is_dark_mode)" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id = VALUES(tenant_id)');
         
         $updateStmt = $this->database->prepare($updateSql);
-        $updateStmt->execute([$userId, $userType, $newMode ? 1 : 0, $newMode ? 'dark' : 'light']);
+        $updateParams = [$userId, $userType, $newMode ? 1 : 0, $newMode ? 'dark' : 'light'];
+        if (!empty($this->tenantInsertData())) $updateParams = array_merge($updateParams, array_values($this->tenantInsertData()));
+        $updateStmt->execute($updateParams);
         
         return [
             'success' => true,
@@ -220,7 +233,8 @@ class ModernThemeService
     public function getQuickActions(int $userId, string $userType = 'admin'): array
     {
         $sql = "SELECT * FROM user_quick_actions 
-            WHERE user_id = ? AND user_type = ? AND is_active = 1 
+            WHERE user_id = ? AND user_type = ? AND is_active = 1" . 
+            $this->tenantSql() . "
             ORDER BY display_order ASC";
         
         $stmt = $this->database->prepare($sql);
@@ -236,18 +250,22 @@ class ModernThemeService
     {
         try {
             $sql = "INSERT INTO user_quick_actions 
-                (user_id, user_type, action_name, action_icon, action_url, display_order) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+                (user_id, user_type, action_name, action_icon, action_url, display_order" . 
+                (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+                VALUES (?, ?, ?, ?, ?, ?" . 
+                (empty($this->tenantInsertData()) ? '' : ', ?') . ")";
             
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $execParams = [
                 $userId,
                 $userType,
                 $action['name'],
                 $action['icon'] ?? 'fa-link',
                 $action['url'],
                 $action['order'] ?? 99
-            ]);
+            ];
+            if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+            $stmt->execute($execParams);
             
             return [
                 'success' => true,
@@ -264,7 +282,7 @@ class ModernThemeService
     public function reorderQuickActions(int $userId, string $userType, array $order): array
     {
         try {
-            $sql = "UPDATE user_quick_actions SET display_order = ? WHERE id = ? AND user_id = ? AND user_type = ?";
+            $sql = "UPDATE user_quick_actions SET display_order = ? WHERE id = ? AND user_id = ? AND user_type = ?" . $this->tenantSql();
             $stmt = $this->database->prepare($sql);
             
             foreach ($order as $index => $actionId) {
@@ -282,7 +300,7 @@ class ModernThemeService
      */
     public function removeQuickAction(int $actionId, int $userId, string $userType): array
     {
-        $sql = "DELETE FROM user_quick_actions WHERE id = ? AND user_id = ? AND user_type = ?";
+        $sql = "DELETE FROM user_quick_actions WHERE id = ? AND user_id = ? AND user_type = ?" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$actionId, $userId, $userType]);
         
@@ -310,14 +328,19 @@ class ModernThemeService
         }
         
         $sql = "INSERT INTO user_theme_preferences 
-            (user_id, user_type, theme_preset, is_dark_mode) 
-            VALUES (?, ?, ?, ?)
+            (user_id, user_type, theme_preset, is_dark_mode" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+            VALUES (?, ?, ?, ?" . 
+            (empty($this->tenantInsertData()) ? '' : ', ?') . ")
             ON DUPLICATE KEY UPDATE 
             theme_preset = VALUES(theme_preset),
-            is_dark_mode = VALUES(is_dark_mode)";
+            is_dark_mode = VALUES(is_dark_mode)" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id = VALUES(tenant_id)');
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType, $themeKey, $isDark ? 1 : 0]);
+        $execParams = [$userId, $userType, $themeKey, $isDark ? 1 : 0];
+        if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+        $stmt->execute($execParams);
         
         return [
             'success' => true,

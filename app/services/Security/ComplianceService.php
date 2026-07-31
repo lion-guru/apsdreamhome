@@ -492,7 +492,7 @@ class ComplianceService
 
         $totalUsers = 0;
         try {
-            $totalUsers = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'customer'");
+            $totalUsers = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'customer'" . $this->tenantSql());
         } catch (\Exception $e) {
             $findings[] = "Could not query users table for KYC stats";
         }
@@ -507,12 +507,12 @@ class ComplianceService
             }
             try {
                 if ($table === 'kyc_requests') {
-                    $kycTotal = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table}");
-                    $kycVerified = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'approved'");
-                    $kycPending = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'pending'");
+                    $kycTotal = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table}" . $this->tenantSql());
+                    $kycVerified = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'approved'" . $this->tenantSql());
+                    $kycPending = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'pending'" . $this->tenantSql());
                 } elseif ($table === 'kyc_verification_logs') {
-                    $kycTotal = max($kycTotal, (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table}"));
-                    $kycVerified = max($kycVerified, (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'verified'"));
+                    $kycTotal = max($kycTotal, (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table}" . $this->tenantSql()));
+                    $kycVerified = max($kycVerified, (int)$this->db->fetchColumn("SELECT COUNT(*) FROM {$table} WHERE status = 'verified'" . $this->tenantSql()));
                 }
             } catch (\Exception $e) { error_log($e->getMessage()); }
         }

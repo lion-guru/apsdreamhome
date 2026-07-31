@@ -135,24 +135,29 @@ class AIVoicePipeline
 
             if (!empty($phone)) {
                 $fullPhone = '91' . $phone;
-                $stmt = $db->prepare("SELECT id FROM leads WHERE phone LIKE ? ORDER BY id DESC LIMIT 1");
+                $stmt = $db->prepare("SELECT id FROM leads WHERE phone LIKE ?" . $this->tenantSql());
                 $stmt->execute(['%' . $phone]);
                 $existing = $stmt->fetch();
 
                 if (!$existing) {
-                    $stmt = $db->prepare(
-                        "INSERT INTO leads (name, phone, message, source, source_id, status, created_at)
-                         VALUES (?, ?, ?, 'voice_agent', 0, 'new', NOW())"
-                    );
-                    $stmt->execute([$name ?: 'Voice Enquiry', $fullPhone, $userInput]);
+                    $insertSql = "INSERT INTO leads (name, phone, message, source, source_id, status, created_at" . 
+                        (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ")
+                         VALUES (?, ?, ?, 'voice_agent', 0, 'new', NOW()" . 
+                        (empty($this->tenantInsertData()) ? '' : ', ?') . ")";
+                    $stmt = $db->prepare($insertSql);
+                    $execParams = [$name ?: 'Voice Enquiry', $fullPhone, $userInput];
+                    if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+                    $stmt->execute($execParams);
                     $leadId = (int)$db->lastInsertId();
 
                     // Log a site visit intent so the team can schedule
                     try {
                         $db->prepare(
-                            "INSERT INTO site_visits (lead_id, visit_date, status, notes, created_at)
-                             VALUES (?, DATE_ADD(NOW(), INTERVAL 2 DAY), 'scheduled', 'AI voice agent booking request', NOW())"
-                        )->execute([$leadId]);
+                            "INSERT INTO site_visits (lead_id, visit_date, status, notes, created_at" . 
+                            (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ")
+                             VALUES (?, DATE_ADD(NOW(), INTERVAL 2 DAY), 'scheduled', 'AI voice agent booking request', NOW()" . 
+                            (empty($this->tenantInsertData()) ? '' : ', ?') . ")"
+                        )->execute(array_merge([$leadId], array_values($this->tenantInsertData())));
                     } catch (\Throwable $e) { /* table may differ */ error_log($e->getMessage()); }
 
                     return "Dhanyavaad! Maine aapka booking request note kar liya hai. "
@@ -676,7 +681,7 @@ class AIVoicePipeline
     {
         try {
             $session = $this->db->fetch(
-                "SELECT call_transcript FROM ai_call_sessions WHERE id = ?",
+                "SELECT call_transcript FROM ai_call_sessions WHERE id = ?" . $this->tenantSql(),
                 [$sessionId]
             );
             
@@ -685,7 +690,7 @@ class AIVoicePipeline
             $transcript .= "\n[AI]: " . $aiResponse;
 
             $this->db->execute(
-                "UPDATE ai_call_sessions SET call_transcript = ?, sentiment_score = ?, ai_summary = ?, updated_at = NOW() WHERE id = ?",
+                "UPDATE ai_call_sessions SET call_transcript = ?, sentiment_score = ?, ai_summary = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
                 [$transcript, $sentiment, $aiResponse, $sessionId]
             );
         } catch (\Exception $e) {

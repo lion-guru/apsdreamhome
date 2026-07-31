@@ -18,6 +18,8 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 class AutomationTriggerService
 {
     private $db;

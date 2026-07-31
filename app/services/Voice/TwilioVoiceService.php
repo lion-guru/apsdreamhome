@@ -20,6 +20,8 @@ use \App\Traits\ServiceTenantTrait;
  */
 class TwilioVoiceService
 {
+    use ServiceTenantTrait;
+
     /** @var TwilioService */
     protected $twilio;
 
@@ -431,13 +433,9 @@ class TwilioVoiceService
                 'created_at'=> date('Y-m-d H:i:s'),
                 'updated_at'=> date('Y-m-d H:i:s'),
             ];
-            // Persist TwiML URL + meta in extracted_data JSON column if available.
-            if (in_array('extracted_data', $existingCols, true)) {
-                $row['extracted_data'] = json_encode(array_merge(
-                    $data['sessionMeta'] ?? [],
-                    ['twiml_url' => $data['twiml_url'] ?? null]
-                ));
-            }
+            // Add tenant_id for multi-tenant isolation
+            $tenantData = $this->tenantInsertData();
+            $row = array_merge($row, $tenantData);
             // Only insert columns that actually exist in the table.
             $cols = array_values(array_intersect(array_keys($row), $existingCols));
             if (empty($cols)) return;
@@ -493,7 +491,7 @@ class TwilioVoiceService
                 $vals[] = $v;
             }
             $vals[] = $callSid;
-            $stmt = $this->pdo->prepare("UPDATE ai_call_sessions SET " . implode(',', $sets) . " WHERE call_sid = ?");
+            $stmt = $this->pdo->prepare("UPDATE ai_call_sessions SET " . implode(',', $sets) . " WHERE call_sid = ?" . $this->tenantSql());
             $stmt->execute($vals);
         } catch (\Throwable $e) {
             $this->logToFile([

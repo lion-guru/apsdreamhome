@@ -6,12 +6,16 @@ use App\Core\Database\Database;
 use PDO;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * MLMIncentiveService
  * Handles monthly business targets and salary-style incentive payouts.
  */
 class MLMIncentiveService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
     protected $logger;
     protected $rankCalculator;

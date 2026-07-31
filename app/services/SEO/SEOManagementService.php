@@ -69,7 +69,7 @@ class SEOManagementService
         }
         
         // Property pages
-        $propSql = "SELECT id, slug, updated_at FROM properties WHERE status = 'available' ORDER BY updated_at DESC";
+        $propSql = "SELECT id, slug, updated_at FROM properties WHERE status = 'available'" . $this->tenantSql() . " ORDER BY updated_at DESC";
         $properties = $this->database->query($propSql)->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($properties as $property) {
@@ -82,7 +82,8 @@ class SEOManagementService
         }
         
         // Project pages
-        $projSql = "SELECT id, slug, updated_at FROM projects WHERE status = 'active' ORDER BY updated_at DESC";
+        $projSql = "SELECT id, slug, updated_at FROM projects WHERE status = 'active'" . $this->tenantSql() . " ORDER BY updated_at DESC";
+        $projects = $this->database->query($projSql)->fetchAll(\PDO::FETCH_ASSOC);
         $projects = $this->database->query($projSql)->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($projects as $project) {
@@ -95,7 +96,7 @@ class SEOManagementService
         }
         
         // Location pages
-        $locSql = "SELECT DISTINCT city FROM properties WHERE city IS NOT NULL AND status = 'available'";
+        $locSql = "SELECT DISTINCT city FROM properties WHERE city IS NOT NULL AND status = 'available'" . $this->tenantSql();
         $cities = $this->database->query($locSql)->fetchAll(\PDO::FETCH_COLUMN);
         
         foreach ($cities as $city) {
@@ -161,10 +162,12 @@ class SEOManagementService
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
             LEFT JOIN cities c ON p.city_id = c.id
             LEFT JOIN states s ON p.state_id = s.id
-            WHERE p.id = ?";
+            WHERE p.id = ?" . $this->tenantSql();
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$propertyId]);
+        $params = [$propertyId];
+        if ($this->isTenantScoped()) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $property = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$property) {
@@ -248,8 +251,10 @@ class SEOManagementService
     {
         $sql = "INSERT INTO seo_meta_tags 
             (entity_type, entity_id, title, description, keywords, og_title, og_description, 
-             og_image, canonical_url, priority, change_frequency, schema_markup) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             og_image, canonical_url, priority, change_frequency, schema_markup" . 
+            implode(',', array_keys($this->tenantInsertData())) . ") 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . 
+            implode(',', array_fill(0, count($this->tenantInsertData()), '?')) . ")
             ON DUPLICATE KEY UPDATE
             title = VALUES(title),
             description = VALUES(description),
@@ -263,7 +268,7 @@ class SEOManagementService
             updated_at = NOW()";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+        $executeParams = array_merge([
             $meta['entity_type'],
             $meta['entity_id'],
             $meta['title'],
@@ -276,7 +281,8 @@ class SEOManagementService
             $meta['priority'],
             $meta['change_frequency'],
             json_encode($meta['schema_markup'])
-        ]);
+        ], array_values($this->tenantInsertData()));
+        $stmt->execute($executeParams);
     }
     
     /**
@@ -284,7 +290,7 @@ class SEOManagementService
      */
     public function getMetaTags(string $entityType, int $entityId): ?array
     {
-        $sql = "SELECT * FROM seo_meta_tags WHERE entity_type = ? AND entity_id = ?";
+        $sql = "SELECT * FROM seo_meta_tags WHERE entity_type = ? AND entity_id = ?" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$entityType, $entityId]);
         $meta = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -302,14 +308,18 @@ class SEOManagementService
     public function addRedirect(string $oldUrl, string $newUrl, string $type = '301'): array
     {
         try {
-            $sql = "INSERT INTO url_redirects (old_url, new_url, redirect_type) 
-                    VALUES (?, ?, ?)
-                    ON DUPLICATE KEY UPDATE
-                    new_url = VALUES(new_url),
-                    redirect_type = VALUES(redirect_type)";
+            $sql = "INSERT INTO url_redirects (old_url, new_url, redirect_type" . 
+            (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+            VALUES (?, ?, ?" . 
+            (empty($this->tenantInsertData()) ? '' : ', ?') . ")
+            ON DUPLICATE KEY UPDATE
+            new_url = VALUES(new_url),
+            redirect_type = VALUES(redirect_type)";
             
-            $stmt = $this->database->prepare($sql);
-            $stmt->execute([$oldUrl, $newUrl, $type]);
+        $stmt = $this->database->prepare($sql);
+        $execParams = [$oldUrl, $newUrl, $type];
+        if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+        $stmt->execute($execParams);
             
             return ['success' => true];
         } catch (\Exception $e) {
@@ -322,7 +332,7 @@ class SEOManagementService
      */
     public function getRedirect(string $url): ?array
     {
-        $sql = "SELECT * FROM url_redirects WHERE old_url = ? AND is_active = 1";
+        $sql = "SELECT * FROM url_redirects WHERE old_url = ? AND is_active = 1" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$url]);
         
@@ -330,7 +340,7 @@ class SEOManagementService
         
         if ($redirect) {
             // Update hit count
-            $updateSql = "UPDATE url_redirects SET hit_count = hit_count + 1, last_accessed = NOW() WHERE id = ?";
+            $updateSql = "UPDATE url_redirects SET hit_count = hit_count + 1, last_accessed = NOW() WHERE id = ?" . $this->tenantSql();
             $updateStmt = $this->database->prepare($updateSql);
             $updateStmt->execute([$redirect['id']]);
         }
@@ -343,14 +353,18 @@ class SEOManagementService
      */
     public function logBrokenLink(string $url, ?string $sourcePage = null, ?int $statusCode = null, ?string $error = null): void
     {
-        $sql = "INSERT INTO broken_links (url, source_page, status_code, error_message) 
-                VALUES (?, ?, ?, ?)
+$sql = "INSERT INTO broken_links (url, source_page, status_code, error_message" . 
+                (empty($this->tenantInsertData()) ? '' : ', tenant_id') . ") 
+                VALUES (?, ?, ?, ?" . 
+                (empty($this->tenantInsertData()) ? '' : ', ?') . ")
                 ON DUPLICATE KEY UPDATE
                 found_at = NOW(),
                 is_fixed = 0";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$url, $sourcePage, $statusCode, $error]);
+            
+            $stmt = $this->database->prepare($sql);
+            $execParams = [$url, $sourcePage, $statusCode, $error];
+            if (!empty($this->tenantInsertData())) $execParams = array_merge($execParams, array_values($this->tenantInsertData()));
+            $stmt->execute($execParams);
     }
     
     /**
@@ -367,7 +381,7 @@ class SEOManagementService
             SUM(search_clicks) as total_clicks,
             AVG(search_position) as avg_position
             FROM seo_analytics 
-            WHERE date_recorded BETWEEN ? AND ?";
+            WHERE date_recorded BETWEEN ? AND ?" . $this->tenantSql();
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$dateFrom, $dateTo]);
@@ -382,7 +396,8 @@ class SEOManagementService
     {
         $sql = "SELECT page_url, SUM(page_views) as total_views,
             AVG(search_position) as avg_position
-            FROM seo_analytics 
+            FROM seo_analytics" . 
+            $this->tenantSql() . "
             GROUP BY page_url
             ORDER BY total_views DESC
             LIMIT ?";

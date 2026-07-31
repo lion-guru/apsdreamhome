@@ -10,8 +10,11 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
 
+use \App\Traits\ServiceTenantTrait;
+
 class InquiryToLeadService
 {
+    use \App\Traits\ServiceTenantTrait;
     /**
      * Create or update a lead from inquiry data.
      * Uses phone number as dedup key — won't create duplicates.

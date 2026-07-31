@@ -3,11 +3,15 @@ namespace App\Services;
 
 use PDO;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * AgentOrchestrator - background agent execution + workflow automation
  */
 class AgentOrchestrator
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
