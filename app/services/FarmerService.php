@@ -330,7 +330,7 @@ class FarmerService
     {
         try {
             $db = $this->db();
-            $holdingId = $db->insert('farmer_land_holdings', [
+            $holdingId = $db->insert('farmer_land_holdings', array_merge([
                 'farmer_id' => $farmerId,
                 'khasra_number' => $data['khasra_number'] ?? null,
                 'land_area' => $data['land_area'],
@@ -438,7 +438,7 @@ class FarmerService
             $db = $this->db();
             $transactionNumber = $data['transaction_number'] ?? $this->generateTransactionNumber();
 
-            $transactionId = $db->insert('farmer_transactions', [
+            $transactionId = $db->insert('farmer_transactions', array_merge([
                 'farmer_id' => $farmerId,
                 'transaction_type' => $data['transaction_type'],
                 'transaction_number' => $transactionNumber,
@@ -453,7 +453,7 @@ class FarmerService
                 'status' => $data['status'] ?? 'completed',
                 'created_by' => $data['created_by'],
                 'created_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $this->tenantInsertData()));
 
             $this->updateFarmerPaymentHistory($farmerId, [
                 'transaction_number' => $transactionNumber,
@@ -516,7 +516,7 @@ class FarmerService
             $db = $this->db();
             $requestNumber = $data['request_number'] ?? $this->generateSupportRequestNumber();
 
-            $requestId = $db->insert('farmer_support_requests', [
+            $requestId = $db->insert('farmer_support_requests', array_merge([
                 'farmer_id' => $farmerId,
                 'request_number' => $requestNumber,
                 'request_type' => $data['request_type'],
@@ -528,7 +528,7 @@ class FarmerService
                 'created_by' => $data['created_by'],
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $this->tenantInsertData()));
 
             $this->clearFarmerCache($farmerId);
 

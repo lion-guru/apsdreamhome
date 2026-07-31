@@ -7,6 +7,8 @@ namespace App\Services\Auc;
  */
 class WhatsAppService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $phoneNumberId;
     private $accessToken;
@@ -264,10 +266,10 @@ class WhatsAppService
     {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO auc_conversations (session_id, channel, user_message, bot_response, intent, phone, direction, wa_message_id, created_at)
-                VALUES (?, 'whatsapp', ?, ?, ?, ?, ?, ?, NOW())
+                INSERT INTO auc_conversations (session_id, channel, user_message, bot_response, intent, phone, direction, wa_message_id, created_at, tenant_id)
+                VALUES (?, 'whatsapp', ?, ?, ?, ?, ?, ?, NOW(), ?)
             ");
-            $stmt->execute([$waId ?: uniqid('wa_'), $inbound, $outbound, $intent, $phone, $direction, $waId]);
+            $stmt->execute([$waId ?: uniqid('wa_'), $inbound, $outbound, $intent, $phone, $direction, $waId, $this->tenantId()]);
         } catch (\Exception $e) {
             error_log("WA log error: " . $e->getMessage());
         }

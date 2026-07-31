@@ -151,11 +151,11 @@ class AucBrainService
             $stmt = $this->db->prepare("
                 SELECT p.title as name, p.price, p.area_sqft as area, p.status
                 FROM properties p
-                WHERE p.status = 'active'
+                WHERE p.status = 'active' AND p.tenant_id = ?
                 ORDER BY p.created_at DESC
                 LIMIT 5
             ");
-            $stmt->execute();
+            $stmt->execute([$this->tenantId()]);
             $cache = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [
                 ['name' => 'Suryoday Plot', 'price' => 500000, 'area' => 1200],
                 ['name' => 'Raghunath Plot', 'price' => 450000, 'area' => 1000],
@@ -182,10 +182,10 @@ class AucBrainService
     {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO auc_conversations (session_id, user_id, channel, user_message, bot_response, intent, language, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                INSERT INTO auc_conversations (session_id, user_id, channel, user_message, bot_response, intent, language, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
             ");
-            $stmt->execute([$sessionId, $userId, $channel, $message, $response, $intent, $lang]);
+            $stmt->execute([$sessionId, $userId, $channel, $message, $response, $intent, $lang, $this->tenantId()]);
         } catch (\Exception $e) {
             error_log("AUC log error: " . $e->getMessage());
         }

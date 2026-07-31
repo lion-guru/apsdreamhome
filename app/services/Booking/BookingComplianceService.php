@@ -1,8 +1,12 @@
 <?php
 namespace App\Services\Booking;
 
+use App\Traits\ServiceTenantTrait;
+
 class BookingComplianceService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $tokenPercentage = 25;
 
@@ -22,8 +26,8 @@ class BookingComplianceService
             $paymentMode = $data['payment_mode'] ?? 'Full';
             $bookingDate = $data['booking_date'] ?? date('Y-m-d');
 
-            $stmt = $this->db->prepare("SELECT * FROM plots WHERE id = ?");
-            $stmt->execute([$plotId]);
+            $stmt = $this->db->prepare("SELECT * FROM plots WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$plotId, $this->tenantId()]);
             $plot = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$plot) throw new \Exception('Plot not found');
             if ($plot['status'] !== 'Available') throw new \Exception('Plot is not available');
@@ -40,13 +44,18 @@ class BookingComplianceService
                 throw new \Exception("Initial payment must be at least 25% (₹" . number_format($tokenAmount, 2) . ") for $paymentMode bookings");
             }
 
-            $stmt = $this->db->prepare("UPDATE plots SET status = 'Hold' WHERE id = ?");
-            $stmt->execute([$plotId]);
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'Hold' WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$plotId, $this->tenantId()]);
 
-            $stmt = $this->db->prepare("INSERT INTO bookings (customer_id, associate_id, property_id, total_amount, amount, payment_status, status, booking_date, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, NOW())");
+            $tenantData = $this->tenantInsertData();
             $customerId = $data['customer_id'] ?? 0;
             $propertyId = $data['property_id'] ?? $plotId;
-            $stmt->execute([$customerId, $agentId, $propertyId, $totalAmount, $initialPayment, $initialPayment > 0 ? 'partial' : 'pending', $bookingDate, json_encode(['plot_id' => $plotId, 'block' => $plot['block'], 'plot_no' => $plot['plot_number'], 'plc_charges' => $plcAmount, 'payment_mode' => $paymentMode, 'token_deadline' => $tokenDeadline])]);
+            $columns = array_merge(['customer_id', 'associate_id', 'property_id', 'total_amount', 'amount', 'payment_status', 'status', 'booking_date', 'notes'], array_keys($tenantData));
+            $values = array_merge([$customerId, $agentId, $propertyId, $totalAmount, $initialPayment, $initialPayment > 0 ? 'partial' : 'pending', $bookingDate, json_encode(['plot_id' => $plotId, 'block' => $plot['block'], 'plot_no' => $plot['plot_number'], 'plc_charges' => $plcAmount, 'payment_mode' => $paymentMode, 'token_deadline' => $tokenDeadline])], array_values($tenantData));
+            $placeholders = implode(',', array_fill(0, count($values), '?'));
+            $sql = "INSERT INTO bookings ({$columns}) VALUES ({$placeholders})";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($values);
             $bookingId = $this->db->lastInsertId();
 
             if (in_array($paymentMode, ['EMI', 'Offer'])) {
@@ -98,7 +107,7 @@ class BookingComplianceService
         $monthlyAmount = round($remainingAmount / $installments, 2);
 
         try {
-            $stmt = $this->db->prepare("INSERT INTO plot_emi_schedule (booking_id, installment_number, due_date, amount, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
+            $stmt = $this->db->prepare("INSERT INTO plot_emi_schedule (booking_id, installment_number, due_date, amount, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'pending', ?, NOW())");
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -106,7 +115,7 @@ class BookingComplianceService
 
         for ($i = 1; $i <= $installments; $i++) {
             $dueDate = date('Y-m-d', strtotime($startDate . " + $i months"));
-            $stmt->execute([$bookingId, $i, $dueDate, $monthlyAmount]);
+            $stmt->execute([$bookingId, $i, $dueDate, $monthlyAmount, $this->tenantId()]);
         }
     }
 

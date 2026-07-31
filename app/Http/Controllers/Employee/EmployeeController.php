@@ -268,6 +268,24 @@ class EmployeeController extends BaseController
             // Get activities
             $data['activities'] = $this->getEmployeeActivities($employeeId);
 
+            // Get department requests for this employee's department
+            try {
+                $deptService = new \App\Services\DepartmentRequestService();
+                $empRole = $_SESSION['employee_role'] ?? 'employee';
+                $deptCode = $deptService->getDepartmentForUser($empRole);
+                if ($deptCode) {
+                    $data['dept_requests'] = [
+                        'pending' => $deptService->getPendingCount($deptCode),
+                        'stats' => $deptService->getStats($deptCode),
+                    ];
+                } else {
+                    $data['dept_requests'] = null;
+                }
+            } catch (\Exception $e) {
+                error_log('Employee dashboard dept requests error: ' . $e->getMessage());
+                $data['dept_requests'] = null;
+            }
+
             return $data;
         } catch (\Exception $e) {
             error_log("Dashboard data error: " . $e->getMessage());
