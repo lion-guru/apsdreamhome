@@ -3,6 +3,7 @@
 namespace App\Services\File;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * File Manager Service

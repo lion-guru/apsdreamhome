@@ -104,10 +104,10 @@ class PushSender
 
         if ($existing) {
             $this->db->prepare(
-                'UPDATE push_subscriptions
-                    SET p256dh_key = ?, auth_key = ?, device_token = ?, is_active = 1, last_used_at = NOW()
-                    WHERE id = ?'
-            )->execute([$p256dh, $auth, $endpoint, (int)$existing]);
+            'UPDATE push_subscriptions
+                SET p256dh_key = ?, auth_key = ?, device_token = ?, is_active = 1, last_used_at = NOW()
+                WHERE id = ? AND tenant_id = ' . $this->tenantId()
+        )->execute([$p256dh, $auth, $endpoint, (int)$existing]);
             return (int)$existing;
         }
 
