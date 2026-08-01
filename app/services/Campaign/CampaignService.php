@@ -7,6 +7,7 @@ use App\Services\AuditService;
 use App\Services\Gateway\TwilioService;
 use App\Services\MarketingCampaignService;
 use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * CampaignService
@@ -30,9 +31,11 @@ use App\Core\Middleware\TenantContext;
  *
  * Backed by `marketing_campaigns` and `marketing_campaign_recipients`
  * tables that were already in place from the cluster-3 work.
- */
+  */
 class CampaignService
 {
+    use ServiceTenantTrait;
+
     private $pdo;
     private $base;
     private $audit;
@@ -132,7 +135,8 @@ class CampaignService
             return true;
         }
         $params[] = $id;
-        $sql = "UPDATE marketing_campaigns SET " . implode(', ', $fields) . " WHERE id = ?";
+        $sql = "UPDATE marketing_campaigns SET " . implode(', ', $fields) . " WHERE id = ?" . $this->tenantSql();
+        $params = array_merge($params, $this->tenantId() > 1 ? [$this->tenantId()] : []);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         $this->logAudit('campaign.update', $id, 'Updated campaign #' . $id);
@@ -141,16 +145,18 @@ class CampaignService
 
     public function getCampaign(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaigns WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaigns WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
     }
 
     public function listCampaigns(array $filters = [], int $limit = 100, int $offset = 0): array
     {
-        $where = ['1=1'];
-        $params = [];
+         $where = ['1=1' . $this->tenantSql()];
+         $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         if (!empty($filters['type'])) {
             $where[] = 'type = ?';
             $params[] = $filters['type'];
@@ -176,8 +182,10 @@ class CampaignService
 
     public function deleteCampaign(int $id): bool
     {
-        $this->pdo->prepare("DELETE FROM marketing_campaign_recipients WHERE campaign_id = ?")->execute([$id]);
-        $this->pdo->prepare("DELETE FROM marketing_campaigns WHERE id = ?")->execute([$id]);
+        $tsql = $this->tenantSql();
+        $tparams = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $this->pdo->prepare("DELETE FROM marketing_campaign_recipients WHERE campaign_id = ?{$tsql}")->execute(array_merge([$id], $tparams));
+        $this->pdo->prepare("DELETE FROM marketing_campaigns WHERE id = ?{$tsql}")->execute(array_merge([$id], $tparams));
         $this->logAudit('campaign.delete', $id, 'Deleted campaign #' . $id);
         return true;
     }
@@ -206,8 +214,11 @@ class CampaignService
 
     public function scheduleCampaign(int $id, string $sendAt): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET scheduled_at = ?, status = 'scheduled' WHERE id = ?");
-        $ok = $stmt->execute([$sendAt, $id]);
+        $sql = "UPDATE marketing_campaigns SET scheduled_at = ?, status = 'scheduled' WHERE id = ?" . $this->tenantSql();
+        $ok = $stmt = $this->pdo->prepare($sql);
+        $params = [$sendAt, $id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $ok = $stmt->execute($params);
         if ($ok) $this->logAudit('campaign.schedule', $id, "Scheduled for $sendAt");
         return $ok;
     }
@@ -218,7 +229,10 @@ class CampaignService
         if (!$c || !in_array($c['status'], ['sending', 'scheduled'], true)) {
             return false;
         }
-        $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'paused' WHERE id = ?")->execute([$id]);
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'paused' WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $this->logAudit('campaign.pause', $id, 'Paused');
         return true;
     }
@@ -229,7 +243,10 @@ class CampaignService
         if (!$c || $c['status'] !== 'paused') {
             return false;
         }
-        $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?")->execute([$id]);
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $this->logAudit('campaign.resume', $id, 'Resumed');
         return true;
     }
@@ -240,7 +257,10 @@ class CampaignService
         if (!$c) {
             return false;
         }
-        $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'cancelled' WHERE id = ?")->execute([$id]);
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'cancelled' WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $this->logAudit('campaign.cancel', $id, 'Cancelled');
         return true;
     }
@@ -259,7 +279,10 @@ class CampaignService
             return ['ok' => false, 'error' => 'Campaign is ' . $campaign['status']];
         }
 
-        $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?")->execute([$id]);
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $filters = json_decode($campaign['target_filters'] ?? '{}', true) ?: [];
         $audience = $this->getAudience($filters, $campaign['target_audience']);
         $channel = $campaign['type'];
@@ -301,18 +324,20 @@ class CampaignService
             $rid = (int) $this->pdo->lastInsertId();
             $delivered = $this->dispatch($channel, $contact, $campaign['subject'] ?? '', $body, $u);
             if ($delivered) {
-                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'delivered', delivered_at = NOW() WHERE id = ?")->execute([$rid]);
+                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'delivered', delivered_at = NOW() WHERE id = ?" . $this->tenantSql())->execute(array_merge([$rid], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 $stats['delivered']++;
             } else {
-                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'failed' WHERE id = ?")->execute([$rid]);
+                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'failed' WHERE id = ?" . $this->tenantSql())->execute(array_merge([$rid], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 $stats['failed']++;
             }
             $stats['sent']++;
         }
 
         $this->base->updateStats($id, $stats);
-        $this->pdo->prepare("UPDATE marketing_campaigns SET total_recipients = ?, status = 'sent', sent_at = NOW(), completed_at = NOW() WHERE id = ?")
-            ->execute([count($audience), $id]);
+        $tsql = $this->tenantSql();
+        $tparams = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+        $this->pdo->prepare("UPDATE marketing_campaigns SET total_recipients = ?, status = 'sent', sent_at = NOW(), completed_at = NOW() WHERE id = ?{$tsql}")
+            ->execute(array_merge([count($audience), $id], $tparams));
         $this->logAudit('campaign.send', $id, "Sent to {$stats['sent']} of " . count($audience));
         return ['ok' => true, 'stats' => $stats, 'recipients' => count($audience)];
     }
@@ -364,8 +389,8 @@ class CampaignService
 
     public function getAudience(array $criteria, string $audienceType = 'all_users'): array
     {
-        $where = ["status = 'active'"];
-        $params = [];
+        $where = ["status = 'active'", '1=1' . $this->tenantSql()];
+        $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         switch ($audienceType) {
             case 'by_role':
                 if (!empty($criteria['role'])) {
@@ -543,11 +568,7 @@ class CampaignService
 
     private function getTenantId(): int
     {
-        try {
-            return TenantContext::getId();
-        } catch (\Throwable $e) {
-            return 1;
-        }
+        return $this->tenantId();
     }
 
     private function appendUnsubscribe(string $body, string $channel): string
@@ -584,14 +605,23 @@ class CampaignService
     {
         if (!$this->audit) {
             try {
-                $stmt = $this->pdo->prepare("INSERT INTO audit_log (user_id, user_role, action, details, ip_address, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([
+                $insertData = $this->tenantInsertData();
+                $columns = "user_id,user_role,action,details,ip_address,created_at";
+                $values = "?,?,?,?,?,NOW()";
+                $params = [
                     $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null,
                     $_SESSION['role'] ?? 'admin',
                     $action,
                     json_encode(['campaign_id' => $campaignId, 'description' => $description]),
                     $_SERVER['REMOTE_ADDR'] ?? null,
-                ]);
+                ];
+                if (!empty($insertData)) {
+                    $columns .= ", " . implode(', ', array_keys($insertData));
+                    $values .= ", ?";
+                    $params = array_merge($params, array_values($insertData));
+                }
+                $stmt = $this->pdo->prepare("INSERT INTO audit_log ($columns) VALUES ($values)");
+                $stmt->execute($params);
             } catch (\Throwable $e) {
             // audit table might not exist; ignore
             error_log($e->getMessage());

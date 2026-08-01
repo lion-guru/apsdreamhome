@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Marketing Campaign Service
  * Create, manage, and track marketing campaigns
  */
 class MarketingCampaignService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -24,10 +28,10 @@ class MarketingCampaignService
 
     public function create(array $data): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO marketing_campaigns
-            (name, description, type, status, target_audience, target_filters, subject, content, template_id, scheduled_at, created_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
+        $insertData = $this->tenantInsertData();
+        $columns = "name, description, type, status, target_audience, target_filters, subject, content, template_id, scheduled_at, created_by";
+        $values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+        $params = [
             $data['name'],
             $data['description'] ?? null,
             $data['type'] ?? 'email',
@@ -39,16 +43,23 @@ class MarketingCampaignService
             $data['template_id'] ?? null,
             $data['scheduled_at'] ?? null,
             $data['created_by'] ?? null
-        ]);
+        ];
+        if (!empty($insertData)) {
+            $columns .= ", " . implode(', ', array_keys($insertData));
+            $values .= ", ?";
+            $params = array_merge($params, array_values($insertData));
+        }
+        $stmt = $this->pdo->prepare("INSERT INTO marketing_campaigns ($columns) VALUES ($values)");
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
     public function getAll(int $limit = 50, string $status = ''): array
     {
-        $sql = "SELECT c.*, COALESCE(u.name, 'System') as creator_name FROM marketing_campaigns c LEFT JOIN users u ON u.id = c.created_by";
-        $params = [];
+        $sql = "SELECT c.*, COALESCE(u.name, 'System') as creator_name FROM marketing_campaigns c LEFT JOIN users u ON u.id = c.created_by WHERE 1=1" . $this->tenantSql();
+        $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         if ($status) {
-            $sql .= " WHERE c.status = ?";
+            $sql .= " AND c.status = ?";
             $params[] = $status;
         }
         $sql .= " ORDER BY c.created_at DESC LIMIT ?";
@@ -64,23 +75,28 @@ class MarketingCampaignService
 
     public function getById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaigns WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaigns WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
     }
 
     public function updateStatus(int $id, string $status): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = ? WHERE id = ?");
-        $stmt->execute([$status, $id]);
+        $sql = "UPDATE marketing_campaigns SET status = ? WHERE id = ?" . $this->tenantSql();
+        $params = [$status, $id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function updateStats(int $id, array $stats): void
     {
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET sent_count = ?, delivered_count = ?, opened_count = ?, clicked_count = ?, failed_count = ?, unsubscribed_count = ? WHERE id = ?");
-        $stmt->execute([
+        $sql = "UPDATE marketing_campaigns SET sent_count = ?, delivered_count = ?, opened_count = ?, clicked_count = ?, failed_count = ?, unsubscribed_count = ? WHERE id = ?" . $this->tenantSql();
+        $params = [
             $stats['sent'] ?? 0,
             $stats['delivered'] ?? 0,
             $stats['opened'] ?? 0,
@@ -88,13 +104,17 @@ class MarketingCampaignService
             $stats['failed'] ?? 0,
             $stats['unsubscribed'] ?? 0,
             $id
-        ]);
+        ];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
     }
 
     public function getRecipients(int $campaignId, string $status = '', int $limit = 100): array
     {
-        $sql = "SELECT * FROM marketing_campaign_recipients WHERE campaign_id = ?";
+        $sql = "SELECT * FROM marketing_campaign_recipients WHERE campaign_id = ?" . $this->tenantSql();
         $params = [$campaignId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         if ($status) {
             $sql .= " AND status = ?";
             $params[] = $status;
@@ -167,8 +187,9 @@ class MarketingCampaignService
 
     public function getAudienceList(array $filters): array
     {
-        $sql = "SELECT id, name, email, phone FROM users WHERE status = 'active'";
+        $sql = "SELECT id, name, email, phone FROM users WHERE status = 'active'" . $this->tenantSql();
         $params = [];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         if (!empty($filters['role'])) {
             $sql .= " AND role = ?";
             $params[] = $filters['role'];
@@ -239,23 +260,41 @@ class MarketingCampaignService
             'total_unsubscribed' => 0, 'avg_open_rate' => 0, 'avg_click_rate' => 0, 'by_type' => []
         ];
         try {
-            $stats['total_campaigns'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaigns")->fetchColumn();
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
+            $stats['total_campaigns'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaigns WHERE 1=1" . $this->tenantSql())->fetchColumn();
             foreach (['draft', 'sent', 'scheduled', 'sending'] as $s) {
-                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaigns WHERE status = ?");
-                $stmt->execute([$s]);
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaigns WHERE status = ?" . $this->tenantSql());
+                $params = [$s];
+                if ($tid > 1) $params[] = $tid;
+                $stmt->execute($params);
                 $stats[$s] = (int)$stmt->fetchColumn();
             }
-            $stats['total_recipients'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients")->fetchColumn();
-            $stats['total_sent'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('sent','delivered','opened','clicked')")->fetchColumn();
-            $stats['total_delivered'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('delivered','opened','clicked')")->fetchColumn();
-            $stats['total_opened'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('opened','clicked')")->fetchColumn();
-            $stats['total_clicked'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status = 'clicked'")->fetchColumn();
-            $stats['total_unsubscribed'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_unsubscribes")->fetchColumn();
+            $stats['total_recipients'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE 1=1" . $this->tenantSql())->fetchColumn();
+            $params = [];
+            if ($tid > 1) $params[] = $tid;
+            $stats['total_sent'] = (int)$this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('sent','delivered','opened','clicked')" . $this->tenantSql());
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('sent','delivered','opened','clicked')" . $this->tenantSql());
+            $stmt->execute($params);
+            $stats['total_sent'] = (int)$stmt->fetchColumn();
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('delivered','opened','clicked')" . $this->tenantSql());
+            $stmt->execute($params);
+            $stats['total_delivered'] = (int)$stmt->fetchColumn();
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status IN ('opened','clicked')" . $this->tenantSql());
+            $stmt->execute($params);
+            $stats['total_opened'] = (int)$stmt->fetchColumn();
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM marketing_campaign_recipients WHERE status = 'clicked'" . $this->tenantSql());
+            $stmt->execute($params);
+            $stats['total_clicked'] = (int)$stmt->fetchColumn();
+            $stats['total_unsubscribed'] = (int)$this->pdo->query("SELECT COUNT(*) FROM marketing_unsubscribes WHERE 1=1" . $this->tenantSql())->fetchColumn();
             if ($stats['total_delivered'] > 0) {
                 $stats['avg_open_rate'] = round(($stats['total_opened'] / $stats['total_delivered']) * 100, 2);
                 $stats['avg_click_rate'] = round(($stats['total_clicked'] / $stats['total_delivered']) * 100, 2);
             }
-            $stmt = $this->pdo->query("SELECT type, COUNT(*) as count, SUM(sent_count) as sent FROM marketing_campaigns GROUP BY type ORDER BY count DESC");
+            $stmt = $this->pdo->prepare("SELECT type, COUNT(*) as count, SUM(sent_count) as sent FROM marketing_campaigns WHERE 1=1" . $this->tenantSql() . " GROUP BY type ORDER BY count DESC");
+            $params2 = [];
+            if ($tid > 1) $params2[] = $tid;
+            $stmt->execute($params2);
             $stats['by_type'] = $stmt->fetchAll();
         } catch (\Throwable $e) {
         // ignore
