@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Backup & Restore Service - Automated Database Backup
  * Full backup, incremental backup, and restore functionality
  */
 class BackupRestoreService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $backupPath;
     private $retentionDays = 30;

@@ -17,6 +17,8 @@ use \App\Traits\ServiceTenantTrait;
  */
 class CommissionPlanService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var PDO */
     private $pdo;
 
@@ -37,14 +39,23 @@ class CommissionPlanService
      */
     public function getAllPlans(): array
     {
-        return $this->pdo->query("
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " WHERE p.tenant_id = ?" : "";
+        $params = $tid > 1 ? [$tid] : [];
+        $sql = "
             SELECT p.*,
-                (SELECT COUNT(*) FROM mlm_plan_levels WHERE plan_id = p.id) as level_count,
+                (SELECT COUNT(*) FROM mlm_plan_levels WHERE plan_id = p.id" . ($tid > 1 ? " AND tenant_id = ?" : "") . ") as level_count,
                 (SELECT COALESCE(SUM(direct_commission + team_commission + level_bonus + matching_bonus + leadership_bonus + performance_bonus), 0)
-                 FROM mlm_plan_levels WHERE plan_id = p.id) as total_commission_pct
+                 FROM mlm_plan_levels WHERE plan_id = p.id" . ($tid > 1 ? " AND tenant_id = ?" : "") . ") as total_commission_pct
             FROM mlm_commission_plans p
-            ORDER BY p.status = 'active' DESC, p.version DESC, p.created_at DESC
-        ")->fetchAll(PDO::FETCH_ASSOC);
+            {$tidSql}
+            ORDER BY p.status = 'active' DESC, p.version DESC, p.created_at DESC";
+        if ($tid > 1) {
+            $params = [$tid, $tid, $tid];
+        }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -52,8 +63,12 @@ class CommissionPlanService
      */
     public function getPlanById(int $id): ?array
     {
-        $plan = $this->pdo->prepare("SELECT * FROM mlm_commission_plans WHERE id = ?");
-        $plan->execute([$id]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $plan = $this->pdo->prepare("SELECT * FROM mlm_commission_plans WHERE id = ?{$tidSql}");
+        $plan->execute($params);
         $plan = $plan->fetch(PDO::FETCH_ASSOC);
         if (!$plan) return null;
 
@@ -66,10 +81,16 @@ class CommissionPlanService
      */
     public function getActivePlan(): ?array
     {
-        $plan = $this->pdo->query("
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = $tid > 1 ? [$tid] : [];
+        $stmt = $this->pdo->prepare("
             SELECT * FROM mlm_commission_plans WHERE status = 'active'
+            {$tidSql}
             ORDER BY version DESC LIMIT 1
-        ")->fetch(PDO::FETCH_ASSOC);
+        ");
+        $stmt->execute($params);
+        $plan = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$plan) return null;
 
         $plan['levels'] = $this->getLevelsForPlan((int)$plan['id']);
@@ -81,14 +102,21 @@ class CommissionPlanService
      */
     public function getPlanVersions(string $planCode): array
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$planCode];
+        if ($tid > 1) $params[] = $tid;
         $stmt = $this->pdo->prepare("
             SELECT p.*,
-                (SELECT COUNT(*) FROM mlm_plan_levels WHERE plan_id = p.id) as level_count
+                (SELECT COUNT(*) FROM mlm_plan_levels WHERE plan_id = p.id" . ($tid > 1 ? " AND tenant_id = ?" : "") . ") as level_count
             FROM mlm_commission_plans p
-            WHERE p.plan_code = ?
+            WHERE p.plan_code = ?{$tidSql}
             ORDER BY p.version DESC
         ");
-        $stmt->execute([$planCode]);
+        if ($tid > 1) {
+            $params = [$planCode, $tid, $tid];
+        }
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -102,8 +130,12 @@ class CommissionPlanService
             $planCode = strtoupper(trim($data['plan_code']));
 
             // Check code uniqueness
-            $existing = $this->pdo->prepare("SELECT id FROM mlm_commission_plans WHERE plan_code = ?");
-            $existing->execute([$planCode]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $existing = $this->pdo->prepare("SELECT id FROM mlm_commission_plans WHERE plan_code = ?{$tidSql}");
+            $existingParams = [$planCode];
+            if ($tid > 1) $existingParams[] = $tid;
+            $existing->execute($existingParams);
             if ($existing->fetch()) {
                 throw new Exception("Plan code '{$planCode}' already exists");
             }
@@ -157,53 +189,54 @@ class CommissionPlanService
             $oldData = $plan;
 
             $this->pdo->prepare("
-                UPDATE mlm_commission_plans SET
-                    plan_name = ?,
-                    description = ?,
-                    plan_type = ?,
-                    effective_date = ?,
-                    expiry_date = ?,
-                    global_cap_pct = ?,
-                    track_a_pct = ?,
-                    track_b_pct = ?,
-                    track_c_pct = ?,
-                    royalty_pool_pct = ?,
-                    same_level_override_gen1 = ?,
-                    same_level_override_gen2 = ?,
-                    updated_by = ?,
-                    updated_at = NOW()
-                WHERE id = ?
-            ")->execute([
-                trim($data['plan_name'] ?? $plan['plan_name']),
-                trim($data['description'] ?? $plan['description']),
-                $data['plan_type'] ?? $plan['plan_type'],
-                $data['effective_date'] ?? $plan['effective_date'],
-                $data['expiry_date'] ?? $plan['expiry_date'],
-                (float)($data['global_cap_pct'] ?? $plan['global_cap_pct']),
-                (float)($data['track_a_pct'] ?? $plan['track_a_pct']),
-                (float)($data['track_b_pct'] ?? $plan['track_b_pct']),
-                (float)($data['track_c_pct'] ?? $plan['track_c_pct']),
-                (float)($data['royalty_pool_pct'] ?? $plan['royalty_pool_pct']),
-                (float)($data['same_level_override_gen1'] ?? $plan['same_level_override_gen1']),
-                (float)($data['same_level_override_gen2'] ?? $plan['same_level_override_gen2']),
-                $updatedBy,
-                $id,
+UPDATE mlm_commission_plans SET
+                     plan_name = ?,
+                     description = ?,
+                     plan_type = ?,
+                     effective_date = ?,
+                     expiry_date = ?,
+                     global_cap_pct = ?,
+                     track_a_pct = ?,
+                     track_b_pct = ?,
+                     track_c_pct = ?,
+                     royalty_pool_pct = ?,
+                     same_level_override_gen1 = ?,
+                     same_level_override_gen2 = ?,
+                     updated_by = ?,
+                     updated_at = NOW()
+                 WHERE id = ?{$tidSql}
+             ")->execute([
+                 trim($data['plan_name'] ?? $plan['plan_name']),
+                 trim($data['description'] ?? $plan['description']),
+                 $data['plan_type'] ?? $plan['plan_type'],
+                 $data['effective_date'] ?? $plan['effective_date'],
+                 $data['expiry_date'] ?? $plan['expiry_date'],
+                 (float)($data['global_cap_pct'] ?? $plan['global_cap_pct']),
+                 (float)($data['track_a_pct'] ?? $plan['track_a_pct']),
+                 (float)($data['track_b_pct'] ?? $plan['track_b_pct']),
+                 (float)($data['track_c_pct'] ?? $plan['track_c_pct']),
+                 (float)($data['royalty_pool_pct'] ?? $plan['royalty_pool_pct']),
+                 (float)($data['same_level_override_gen1'] ?? $plan['same_level_override_gen1']),
+                 (float)($data['same_level_override_gen2'] ?? $plan['same_level_override_gen2']),
+                 $updatedBy,
+                 $id,
+                 $tid,
             ]);
 
             // Update level percentages if provided
             if (!empty($data['levels']) && is_array($data['levels'])) {
                 foreach ($data['levels'] as $levelId => $levelData) {
                     $this->pdo->prepare("
-                        UPDATE mlm_plan_levels SET
-                            direct_commission = ?,
-                            team_commission = ?,
-                            level_bonus = ?,
-                            matching_bonus = ?,
-                            leadership_bonus = ?,
-                            performance_bonus = ?,
-                            monthly_target = ?
-                        WHERE id = ? AND plan_id = ?
-                    ")->execute([
+UPDATE mlm_plan_levels SET
+                             direct_commission = ?,
+                             team_commission = ?,
+                             level_bonus = ?,
+                             matching_bonus = ?,
+                             leadership_bonus = ?,
+                             performance_bonus = ?,
+                             monthly_target = ?
+                         WHERE id = ? AND plan_id = ?{$tidSql}
+                     ")->execute([
                         (float)($levelData['direct_commission'] ?? 0),
                         (float)($levelData['team_commission'] ?? 0),
                         (float)($levelData['level_bonus'] ?? 0),
@@ -319,10 +352,12 @@ class CommissionPlanService
             if (!$plan) throw new Exception("Plan not found");
 
             // Deactivate all
-            $this->pdo->exec("UPDATE mlm_commission_plans SET status = 'inactive', updated_at = NOW() WHERE status = 'active'");
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " WHERE tenant_id = ?" : "";
+            $this->pdo->prepare("UPDATE mlm_commission_plans SET status = 'inactive', updated_at = NOW(){$tidSql}")->execute($tid > 1 ? [$tid] : []);
 
             // Activate selected
-            $this->pdo->prepare("UPDATE mlm_commission_plans SET status = 'active', effective_date = COALESCE(effective_date, CURDATE()), updated_at = NOW() WHERE id = ?")->execute([$planId]);
+            $this->pdo->prepare("UPDATE mlm_commission_plans SET status = 'active', effective_date = COALESCE(effective_date, CURDATE()), updated_at = NOW() WHERE id = ?{$tidSql}")->execute($tid > 1 ? [$planId, $tid] : [$planId]);
 
             $this->logAudit($planId, $plan['plan_name'], $plan['plan_code'], $plan['version'], 'activate', $plan, ['status' => 'active'], $activatedBy);
 
@@ -344,7 +379,10 @@ class CommissionPlanService
             $plan = $this->getPlanById($planId);
             if (!$plan) throw new Exception("Plan not found");
 
-            $this->pdo->prepare("UPDATE mlm_commission_plans SET status = 'inactive', updated_at = NOW() WHERE id = ?")->execute([$planId]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+
+            $this->pdo->prepare("UPDATE mlm_commission_plans SET status = 'inactive', updated_at = NOW() WHERE id = ?{$tidSql}")->execute($tid > 1 ? [$planId, $tid] : [$planId]);
 
             $this->logAudit($planId, $plan['plan_name'], $plan['plan_code'], $plan['version'], 'deactivate', $plan, ['status' => 'inactive'], $deactivatedBy);
 
@@ -367,8 +405,10 @@ class CommissionPlanService
             if (!$plan) throw new Exception("Plan not found");
             if ($plan['status'] === 'active') throw new Exception("Cannot delete an active plan.");
 
-            $this->pdo->prepare("DELETE FROM mlm_plan_levels WHERE plan_id = ?")->execute([$planId]);
-            $this->pdo->prepare("DELETE FROM mlm_commission_plans WHERE id = ?")->execute([$planId]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $this->pdo->prepare("DELETE FROM mlm_plan_levels WHERE plan_id = ?{$tidSql}")->execute($tid > 1 ? [$planId, $tid] : [$planId]);
+            $this->pdo->prepare("DELETE FROM mlm_commission_plans WHERE id = ?{$tidSql}")->execute($tid > 1 ? [$planId, $tid] : [$planId]);
 
             $this->logAudit($planId, $plan['plan_name'], $plan['plan_code'], $plan['version'], 'delete', $plan, null, $deletedBy);
 
@@ -389,20 +429,26 @@ class CommissionPlanService
      */
     public function getLevelsForPlan(int $planId): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM mlm_plan_levels WHERE plan_id = ? ORDER BY level_order");
-        $stmt->execute([$planId]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->pdo->prepare("SELECT * FROM mlm_plan_levels WHERE plan_id = ?{$tidSql} ORDER BY level_order");
+        $stmt->execute($tid > 1 ? [$planId, $tid] : [$planId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
      * Add a new rank level to a plan.
      */
-    public function addLevel(int $planId, array $data): int
+public function addLevel(int $planId, array $data): int
     {
+        $tid = $this->tenantId();
+        $tidCol = $tid > 1 ? ", tenant_id" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         $stmt = $this->pdo->prepare("
             INSERT INTO mlm_plan_levels (plan_id, level_name, level_order, direct_commission, team_commission,
-                level_bonus, matching_bonus, leadership_bonus, performance_bonus, monthly_target)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                level_bonus, matching_bonus, leadership_bonus, performance_bonus, monthly_target{$tidCol})
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?{$tidPlaceholder})
         ");
         $stmt->execute([
             $planId,
@@ -415,6 +461,7 @@ class CommissionPlanService
             (float)($data['leadership_bonus'] ?? 0),
             (float)($data['performance_bonus'] ?? 0),
             (float)($data['monthly_target'] ?? 0),
+            ...$tidParams,
         ]);
         return (int)$this->pdo->lastInsertId();
     }
@@ -424,18 +471,20 @@ class CommissionPlanService
      */
     public function updateLevel(int $levelId, int $planId, array $data): bool
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $stmt = $this->pdo->prepare("
-            UPDATE mlm_plan_levels SET
-                level_name = ?,
-                direct_commission = ?,
-                team_commission = ?,
-                level_bonus = ?,
-                matching_bonus = ?,
-                leadership_bonus = ?,
-                performance_bonus = ?,
-                monthly_target = ?
-            WHERE id = ? AND plan_id = ?
-        ");
+UPDATE mlm_plan_levels SET
+                 level_name = ?,
+                 direct_commission = ?,
+                 team_commission = ?,
+                 level_bonus = ?,
+                 matching_bonus = ?,
+                 leadership_bonus = ?,
+                 performance_bonus = ?,
+                 monthly_target = ?
+             WHERE id = ? AND plan_id = ?{$tidSql}
+         ");
         return $stmt->execute([
             $data['level_name'],
             (float)$data['direct_commission'],
@@ -447,6 +496,7 @@ class CommissionPlanService
             (float)($data['monthly_target'] ?? 0),
             $levelId,
             $planId,
+            ...($tid > 1 ? [$tid] : []),
         ]);
     }
 
@@ -455,8 +505,10 @@ class CommissionPlanService
      */
     public function deleteLevel(int $levelId, int $planId): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM mlm_plan_levels WHERE id = ? AND plan_id = ?");
-        return $stmt->execute([$levelId, $planId]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $stmt = $this->pdo->prepare("DELETE FROM mlm_plan_levels WHERE id = ? AND plan_id = ?{$tidSql}");
+        return $stmt->execute($tid > 1 ? [$levelId, $planId, $tid] : [$levelId, $planId]);
     }
 
     /* ================================================================
@@ -468,15 +520,17 @@ class CommissionPlanService
      */
     public function getAuditLog(int $planId, int $limit = 50): array
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         $stmt = $this->pdo->prepare("
             SELECT a.*, u.name as changer_name
             FROM commission_plan_audit a
             LEFT JOIN users u ON a.changed_by = u.id
-            WHERE a.plan_id = ?
+            WHERE a.plan_id = ?{$tidSql}
             ORDER BY a.created_at DESC
             LIMIT ?
         ");
-        $stmt->execute([$planId, $limit]);
+        $stmt->execute($tid > 1 ? [$planId, $tid, $limit] : [$planId, $limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -485,13 +539,17 @@ class CommissionPlanService
      */
     public function getFullAuditLog(int $limit = 100): array
     {
-        $stmt = $this->pdo->query("
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " WHERE a.tenant_id = ?" : "";
+        $stmt = $this->pdo->prepare("
             SELECT a.*, u.name as changer_name
             FROM commission_plan_audit a
             LEFT JOIN users u ON a.changed_by = u.id
+            {$tidSql}
             ORDER BY a.created_at DESC
-            LIMIT $limit
+            LIMIT ?
         ");
+        $stmt->execute($tid > 1 ? [$tid, $limit] : [$limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -576,13 +634,35 @@ class CommissionPlanService
 
     public function getStats(): array
     {
-        $total = (int)$this->pdo->query("SELECT COUNT(*) FROM mlm_commission_plans")->fetchColumn();
-        $active = (int)$this->pdo->query("SELECT COUNT(*) FROM mlm_commission_plans WHERE status = 'active'")->fetchColumn();
-        $draft = (int)$this->pdo->query("SELECT COUNT(*) FROM mlm_commission_plans WHERE status = 'draft'")->fetchColumn();
-        $inactive = (int)$this->pdo->query("SELECT COUNT(*) FROM mlm_commission_plans WHERE status = 'inactive'")->fetchColumn();
-        $maxVersion = (int)$this->pdo->query("SELECT COALESCE(MAX(version), 0) FROM mlm_commission_plans")->fetchColumn();
-        $totalLevels = (int)$this->pdo->query("SELECT COUNT(*) FROM mlm_plan_levels")->fetchColumn();
-        $totalAudits = (int)$this->pdo->query("SELECT COUNT(*) FROM commission_plan_audit")->fetchColumn();
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " WHERE tenant_id = ?" : "";
+        $row = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_commission_plans{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $total = (int)$row->fetchColumn();
+
+        $row = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_commission_plans WHERE status = 'active'{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $active = (int)$row->fetchColumn();
+
+        $row = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_commission_plans WHERE status = 'draft'{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $draft = (int)$row->fetchColumn();
+
+        $row = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_commission_plans WHERE status = 'inactive'{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $inactive = (int)$row->fetchColumn();
+
+        $row = $this->pdo->prepare("SELECT COALESCE(MAX(version), 0) FROM mlm_commission_plans{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $maxVersion = (int)$row->fetchColumn();
+
+        $row = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_plan_levels{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $totalLevels = (int)$row->fetchColumn();
+
+        $row = $this->pdo->prepare("SELECT COUNT(*) FROM commission_plan_audit{$tidSql}");
+        $row->execute($tid > 1 ? [$tid] : []);
+        $totalAudits = (int)$row->fetchColumn();
 
         return compact('total', 'active', 'draft', 'inactive', 'maxVersion', 'totalLevels', 'totalAudits');
     }
@@ -593,12 +673,16 @@ class CommissionPlanService
 
     private function insertPlan(array $data): int
     {
+        $tid = $this->tenantId();
+        $tidCol = $tid > 1 ? ", tenant_id" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         $this->pdo->prepare("
             INSERT INTO mlm_commission_plans
                 (plan_name, plan_code, description, plan_type, status, version, effective_date, created_by,
                  global_cap_pct, track_a_pct, track_b_pct, track_c_pct, royalty_pool_pct,
-                 same_level_override_gen1, same_level_override_gen2)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 same_level_override_gen1, same_level_override_gen2{$tidCol})
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?{$tidPlaceholder})
         ")->execute([
             $data['plan_name'], $data['plan_code'], $data['description'] ?? '',
             $data['plan_type'] ?? 'hybrid', $data['status'] ?? 'draft',
@@ -607,6 +691,7 @@ class CommissionPlanService
             $data['track_b_pct'] ?? 3, $data['track_c_pct'] ?? 2,
             $data['royalty_pool_pct'] ?? 2,
             $data['same_level_override_gen1'] ?? 2, $data['same_level_override_gen2'] ?? 1,
+            ...$tidParam,
         ]);
         return (int)$this->pdo->lastInsertId();
     }
@@ -642,9 +727,13 @@ class CommissionPlanService
 
     private function logAudit(int $planId, string $planName, string $planCode, int $version, string $action, ?array $oldValues, ?array $newValues, int $changedBy, ?array $changedFields = null): void
     {
+        $tid = $this->tenantId();
+        $tidCol = $tid > 1 ? ", tenant_id" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         $this->pdo->prepare("
-            INSERT INTO commission_plan_audit (plan_id, plan_name, plan_code, version, action, changed_fields, old_values, new_values, changed_by, ip_address)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO commission_plan_audit (plan_id, plan_name, plan_code, version, action, changed_fields, old_values, new_values, changed_by, ip_address{$tidCol})
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?{$tidPlaceholder})
         ")->execute([
             $planId, $planName, $planCode, $version, $action,
             $changedFields ? json_encode($changedFields) : null,
@@ -652,6 +741,7 @@ class CommissionPlanService
             $newValues ? json_encode($newValues) : null,
             $changedBy,
             $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+            ...$tidParam,
         ]);
     }
 

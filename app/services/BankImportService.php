@@ -5,8 +5,12 @@ namespace App\Services;
 use App\Core\Database\Database;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 class BankImportService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
 
     public function __construct($pdo = null)
@@ -43,11 +47,15 @@ class BankImportService
             $importDate = date('Y-m-d');
 
             // Create import record
+            $tid = $this->tenantId();
+            $tidCol = $tid > 1 ? ", tenant_id" : "";
+            $tidPlaceholder = $tid > 1 ? ", ?" : "";
+            $tidParam = $tid > 1 ? [$tid] : [];
             $stmt = $pdo->prepare("
-                INSERT INTO bank_statement_imports (filename, original_filename, import_date, status, imported_by)
-                VALUES (?, ?, ?, 'processing', ?)
+                INSERT INTO bank_statement_imports (filename, original_filename, import_date, status, imported_by{$tidCol})
+                VALUES (?, ?, ?, 'processing', ?{$tidPlaceholder})
             ");
-            $stmt->execute([$originalFilename, $originalFilename, $importDate, $importedBy]);
+            $stmt->execute(array_merge([$originalFilename, $originalFilename, $importDate, $importedBy], $tidParam));
             $importId = (int)$pdo->lastInsertId();
 
             // Open CSV
@@ -71,10 +79,14 @@ class BankImportService
             $totalRows = 0;
             $inserted = 0;
 
+            $tid = $this->tenantId();
+            $tidCol = $tid > 1 ? ", tenant_id" : "";
+            $tidPlaceholder = $tid > 1 ? ", ?" : "";
+            $tidParam = $tid > 1 ? [$tid] : [];
             $stmtInsert = $pdo->prepare("
                 INSERT INTO bank_transactions
-                    (import_id, bank_account_id, transaction_date, value_date, description, debit, credit, balance, cheque_number, reference_number)
-                VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (import_id, bank_account_id, transaction_date, value_date, description, debit, credit, balance, cheque_number, reference_number{$tidCol})
+                VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?{$tidPlaceholder})
             ");
 
             while (($row = fgetcsv($handle)) !== false) {
@@ -101,6 +113,7 @@ class BankImportService
                     $balance,
                     $chequeRef ?: null,
                     $reference ?: null,
+                    ...$tidParam,
                 ]);
                 $inserted++;
             }
@@ -183,6 +196,7 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
+            $tid = $this->tenantId();
             $sets = ['status = ?'];
             $params = [$status];
 
@@ -204,7 +218,9 @@ class BankImportService
             }
 
             $params[] = $importId;
-            $pdo->prepare("UPDATE bank_statement_imports SET " . implode(', ', $sets) . " WHERE id = ?")->execute($params);
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            if ($tid > 1) $params[] = $tid;
+            $pdo->prepare("UPDATE bank_statement_imports SET " . implode(', ', $sets) . " WHERE id = ?{$tidSql}")->execute($params);
         } catch (Exception $e) {
             error_log('BankImportService::updateImportStatus error: ' . $e->getMessage());
         }
@@ -332,13 +348,18 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
-            $stmt = $pdo->query("
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " WHERE i.tenant_id = ?" : "";
+            $params = $tid > 1 ? [$tid] : [];
+            $stmt = $pdo->prepare("
                 SELECT i.*,
                        b.account_name, b.bank_name
                 FROM bank_statement_imports i
                 LEFT JOIN bank_accounts_master b ON b.id = i.bank_account_id
+                {$tidSql}
                 ORDER BY i.created_at DESC
             ");
+            $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];
@@ -349,14 +370,18 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND i.tenant_id = ?" : "";
+            $params = [$id];
+            if ($tid > 1) $params[] = $tid;
             $stmt = $pdo->prepare("
                 SELECT i.*,
                        b.account_name, b.bank_name
                 FROM bank_statement_imports i
                 LEFT JOIN bank_accounts_master b ON b.id = i.bank_account_id
-                WHERE i.id = ?
+                WHERE i.id = ?{$tidSql}
             ");
-            $stmt->execute([$id]);
+            $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (Exception $e) {
             return null;
@@ -367,13 +392,17 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
-            $sql = "SELECT * FROM bank_transactions WHERE import_id = ?";
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $sql = "SELECT * FROM bank_transactions WHERE import_id = ?{$tidSql}";
             $params = [$importId];
 
             if ($matched === '1') {
-                $sql .= " AND matched = 1";
+                $sql .= " AND matched = 1{$tidSql}";
+                if ($tid > 1) $params[] = $tid;
             } elseif ($matched === '0') {
-                $sql .= " AND matched = 0";
+                $sql .= " AND matched = 0{$tidSql}";
+                if ($tid > 1) $params[] = $tid;
             }
 
             $sql .= " ORDER BY transaction_date ASC";
@@ -389,11 +418,14 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND bt.tenant_id = ?" : "";
             $sql = "SELECT bt.*, bsi.original_filename
                     FROM bank_transactions bt
                     JOIN bank_statement_imports bsi ON bsi.id = bt.import_id
-                    WHERE bt.matched = 0";
-            $params = [];
+                    WHERE bt.matched = 0
+                    {$tidSql}";
+            $params = $tid > 1 ? [$tid] : [];
 
             if ($importId) {
                 $sql .= " AND bt.import_id = ?";
@@ -413,12 +445,14 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $stmt = $pdo->prepare("
                 UPDATE bank_transactions
                 SET matched = 1, matched_transaction_id = ?, matched_at = NOW()
-                WHERE id = ? AND matched = 0
+                WHERE id = ? AND matched = 0{$tidSql}
             ");
-            $stmt->execute([$internalTxnId, $bankTxnId]);
+            $stmt->execute(array_merge([$internalTxnId, $bankTxnId], $tid > 1 ? [$tid] : []));
 
             if ($stmt->rowCount() > 0) {
                 // Update import stats
@@ -441,6 +475,8 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $bt = $this->getBankTransaction($bankTxnId);
             if (!$bt) {
                 return false;
@@ -449,9 +485,9 @@ class BankImportService
             $stmt = $pdo->prepare("
                 UPDATE bank_transactions
                 SET matched = 0, matched_transaction_id = NULL, matched_at = NULL
-                WHERE id = ?
+                WHERE id = ?{$tidSql}
             ");
-            $stmt->execute([$bankTxnId]);
+            $stmt->execute(array_merge([$bankTxnId], $tid > 1 ? [$tid] : []));
 
             $totalMatched = $this->countMatched($bt['import_id']);
             $totalUnmatched = $this->countUnmatched($bt['import_id']);
@@ -468,8 +504,10 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
-            $stmt = $pdo->prepare("SELECT * FROM bank_transactions WHERE id = ?");
-            $stmt->execute([$id]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $pdo->prepare("SELECT * FROM bank_transactions WHERE id = ?{$tidSql}");
+            $stmt->execute($tid > 1 ? [$id, $tid] : [$id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (Exception $e) {
             return null;
@@ -480,8 +518,10 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
-            $stmt = $pdo->prepare("DELETE FROM bank_statement_imports WHERE id = ?");
-            $stmt->execute([$importId]);
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $pdo->prepare("DELETE FROM bank_statement_imports WHERE id = ?{$tidSql}");
+            $stmt->execute($tid > 1 ? [$importId, $tid] : [$importId]);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
             error_log('BankImportService::deleteImport error: ' . $e->getMessage());
@@ -496,6 +536,8 @@ class BankImportService
     {
         try {
             $pdo = $this->getPdo();
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
 
             $stmt = $pdo->prepare("
                 SELECT
@@ -507,9 +549,9 @@ class BankImportService
                     SUM(CASE WHEN matched = 1 THEN COALESCE(credit, 0) + COALESCE(debit, 0) ELSE 0 END) AS matched_amount,
                     SUM(CASE WHEN matched = 0 THEN COALESCE(credit, 0) + COALESCE(debit, 0) ELSE 0 END) AS unmatched_amount
                 FROM bank_transactions
-                WHERE import_id = ?
+                WHERE import_id = ?{$tidSql}
             ");
-            $stmt->execute([$importId]);
+            $stmt->execute([$importId, ...($tid > 1 ? [$tid] : [])]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $total = (int)($row['total_transactions'] ?? 0);
@@ -559,10 +601,13 @@ class BankImportService
             $results = [];
 
             // Search payment_transactions
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $sql = "SELECT id, amount, transaction_date, type, description
                     FROM payment_transactions
-                    WHERE 1=1";
+                    WHERE 1=1{$tidSql}";
             $params = [];
+            if ($tid > 1) $params[] = $tid;
 
             if ($amount > 0) {
                 $sql .= " AND ABS(amount - ?) < 0.01";

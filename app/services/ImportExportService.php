@@ -12,6 +12,8 @@ use \App\Traits\ServiceTenantTrait;
  */
 class ImportExportService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $importPath;
     private $exportPath;
@@ -149,23 +151,30 @@ class ImportExportService
      */
     private function insertPropertyBatch(array $batch): void
     {
+        $tid = $this->tenantId();
+        $tidCol = $tid > 1 ? ", tenant_id" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         $sql = "INSERT INTO properties (title, type, price, area, location, address, 
-                description, status, amenities, created_at) 
+                description, status, amenities, created_at{$tidCol}) 
                 VALUES ";
         
         $values = [];
         $params = [];
         
         foreach ($batch as $row) {
-            $values[] = "(?, ?, ?, ?, ?, ?, ?, 'available', ?, NOW())";
-            $params[] = $row['title'];
-            $params[] = $row['type'];
-            $params[] = $row['price'];
-            $params[] = $row['area'] ?? null;
-            $params[] = $row['location'];
-            $params[] = $row['address'] ?? $row['location'];
-            $params[] = $row['description'] ?? null;
-            $params[] = !empty($row['amenities']) ? json_encode(explode(',', $row['amenities'])) : null;
+            $values[] = "(?, ?, ?, ?, ?, ?, ?, 'available', ?, NOW(){$tidPlaceholder})";
+            $valuesParams = [
+                $row['title'],
+                $row['type'],
+                $row['price'],
+                $row['area'] ?? null,
+                $row['location'],
+                $row['address'] ?? $row['location'],
+                $row['description'] ?? null,
+                !empty($row['amenities']) ? json_encode(explode(',', $row['amenities'])) : null,
+            ];
+            $params = array_merge($params, $valuesParams, $tidParam);
         }
         
         $sql .= implode(', ', $values);
@@ -242,19 +251,24 @@ class ImportExportService
      */
     private function insertLeadsBatch(array $batch): void
     {
+        $tid = $this->tenantId();
+        $tidCol = $tid > 1 ? ", tenant_id" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         $sql = "INSERT INTO leads (name, email, phone, source, status, budget, 
-                property_type, location, notes, assigned_to, created_at) VALUES ";
+                property_type, location, notes, assigned_to, created_at{$tidCol}) VALUES ";
         
         $values = [];
         $params = [];
         
         foreach ($batch as $row) {
-            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(){$tidPlaceholder})";
             array_push($params, 
                 $row['name'], $row['email'], $row['phone'], $row['source'],
                 $row['status'], $row['budget'], $row['property_type'],
                 $row['location'], $row['notes'], $row['assigned_to']
             );
+            $params = array_merge($params, $tidParam);
         }
         
         $sql .= implode(', ', $values);
@@ -271,9 +285,14 @@ class ImportExportService
         $filename = 'properties_export_' . date('Y-m-d_H-i-s') . '.csv';
         $filepath = $this->exportPath . $filename;
         
+        $tid = $this->tenantId();
         // Build query
         $where = ['1=1'];
         $params = [];
+        if ($tid > 1) {
+            $where[] = 'tenant_id = ?';
+            $params[] = $tid;
+        }
         
         if (!empty($filters['type'])) {
             $where[] = 'type = ?';
@@ -292,8 +311,7 @@ class ImportExportService
         
         $whereClause = implode(' AND ', $where);
         
-        $sql = "SELECT * FROM properties WHERE {$whereClause} ORDER BY id DESC";
-        $stmt = $this->database->prepare($sql);
+        $stmt = $this->database->prepare("SELECT * FROM properties WHERE {$whereClause} ORDER BY id DESC");
         $stmt->execute($params);
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
@@ -329,8 +347,13 @@ class ImportExportService
         $filename = 'leads_export_' . date('Y-m-d_H-i-s') . '.csv';
         $filepath = $this->exportPath . $filename;
         
+        $tid = $this->tenantId();
         $where = ['1=1'];
         $params = [];
+        if ($tid > 1) {
+            $where[] = 'tenant_id = ?';
+            $params[] = $tid;
+        }
         
         if (!empty($filters['status'])) {
             $where[] = 'status = ?';
@@ -354,8 +377,7 @@ class ImportExportService
         
         $whereClause = implode(' AND ', $where);
         
-        $sql = "SELECT * FROM leads WHERE {$whereClause} ORDER BY created_at DESC";
-        $stmt = $this->database->prepare($sql);
+        $stmt = $this->database->prepare("SELECT * FROM leads WHERE {$whereClause} ORDER BY created_at DESC");
         $stmt->execute($params);
         $leads = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
@@ -536,20 +558,25 @@ class ImportExportService
      */
     private function insertSalesBatch(array $batch): void
     {
+        $tid = $this->tenantId();
+        $tidCol = $tid > 1 ? ", tenant_id" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         $sql = "INSERT INTO khatabook_sales (transaction_date, customer_name, customer_phone, customer_address,
-                item_description, quantity, rate, amount, payment_method, reference_no, notes, import_batch, imported_by, imported_at) VALUES ";
+                item_description, quantity, rate, amount, payment_method, reference_no, notes, import_batch, imported_by, imported_at{$tidCol}) VALUES ";
 
         $values = [];
         $params = [];
 
         foreach ($batch as $row) {
-            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-            array_push($params,
+            $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(){$tidPlaceholder})";
+            $rowParams = [
                 $row['transaction_date'], $row['customer_name'], $row['customer_phone'],
                 $row['customer_address'], $row['item_description'], $row['quantity'],
                 $row['rate'], $row['amount'], $row['payment_method'], $row['reference_no'],
                 $row['notes'], $row['import_batch'], $_SESSION['admin_id'] ?? null
-            );
+            ];
+            $params = array_merge($params, $rowParams, $tidParam);
         }
 
         $sql .= implode(', ', $values);

@@ -11,6 +11,8 @@ use \App\Traits\ServiceTenantTrait;
  */
 class FileManagerService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $basePath;
     private $allowedTypes;
@@ -111,14 +113,18 @@ class FileManagerService
             $checksum = hash_file('sha256', $fullPath);
             
             // Save to database
+            $tid = $this->tenantId();
+            $tidCol = $tid > 1 ? ", tenant_id" : "";
+            $tidPlaceholder = $tid > 1 ? ", ?" : "";
+            $tidParam = $tid > 1 ? [$tid] : [];
             $sql = "INSERT INTO files 
                 (uuid, original_name, file_name, file_path, file_type, file_category, 
                  mime_type, extension, size_bytes, checksum, uploaded_by, uploaded_by_type,
-                 entity_type, entity_id, is_public, metadata, description)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                 entity_type, entity_id, is_public, metadata, description, created_at{$tidCol}) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(){$tidPlaceholder})";
             
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $stmt->execute(array_merge([
                 $uuid,
                 $file['name'],
                 $newFileName,
@@ -136,7 +142,7 @@ class FileManagerService
                 $options['is_public'] ?? 0,
                 json_encode($options['metadata'] ?? []),
                 $options['description'] ?? null
-            ]);
+            ], $tidParam));
             
             $fileId = $this->database->lastInsertId();
             
@@ -166,21 +172,24 @@ class FileManagerService
     public function getFile(string $uuid, ?int $userId = null, ?string $userType = null): ?array
     {
         try {
-            $sql = "SELECT f.*, 
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND f.tenant_id = ?" : "";
+            $stmt = $this->database->prepare("SELECT f.*, 
                 GROUP_CONCAT(t.name) as tag_names,
                 GROUP_CONCAT(t.color) as tag_colors
                 FROM files f
                 LEFT JOIN file_tag_relations ftr ON f.id = ftr.file_id
                 LEFT JOIN file_tags t ON ftr.tag_id = t.id
                 WHERE f.uuid = ?
-                GROUP BY f.id";
+                {$tidSql}
+                GROUP BY f.id");
+            $params = [$uuid];
+            if ($tid > 1) $params[] = $tid;
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$uuid]);
+        $stmt->execute($params);
         $file = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$file) {
@@ -335,8 +344,14 @@ class FileManagerService
      */
     public function listFiles(array $filters = [], int $page = 1, int $perPage = 20): array
     {
+        $tid = $this->tenantId();
         $where = ['1=1'];
         $params = [];
+        
+        if ($tid > 1) {
+            $where[] = 'tenant_id = ?';
+            $params[] = $tid;
+        }
         
         if (!empty($filters['category'])) {
             $where[] = 'file_category = ?';
@@ -523,13 +538,17 @@ class FileManagerService
      */
     private function updateDownloadCount(int $fileId): void
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$fileId];
+        if ($tid > 1) $params[] = $tid;
         $sql = "UPDATE files SET 
             download_count = download_count + 1,
             last_downloaded_at = NOW()
-            WHERE id = ?";
+            WHERE id = ?{$tidSql}";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$fileId]);
+        $stmt->execute($params);
     }
     
     /**
@@ -538,55 +557,59 @@ class FileManagerService
     private function logAccess(int $fileId, string $action, ?int $userId, ?string $userType): void
     {
         try {
-            $sql = "INSERT INTO file_access_logs 
-                (file_id, user_id, user_type, action, ip_address, user_agent)
-                VALUES (?, ?, ?, ?, ?, ?)";
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? ", tenant_id" : "";
+            $tidPlaceholder = $tid > 1 ? ", ?" : "";
+            $tidParam = $tid > 1 ? [$tid] : [];
+            $stmt = $this->database->prepare("INSERT INTO file_access_logs 
+                (file_id, user_id, user_type, action, ip_address, user_agent{$tidSql})
+                VALUES (?, ?, ?, ?, ?, ?{$tidPlaceholder})");
+            $stmt->execute(array_merge([
+                $fileId,
+                $userId,
+                $userType,
+                $action,
+                $_SERVER['REMOTE_ADDR'] ?? null,
+                $_SERVER['HTTP_USER_AGENT'] ?? null
+            ], $tidParam));
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([
-            $fileId,
-            $userId,
-            $userType,
-            $action,
-            $_SERVER['REMOTE_ADDR'] ?? null,
-            $_SERVER['HTTP_USER_AGENT'] ?? null
-        ]);
     }
     
     /**
-     * Add tags to file
+     * Get or create tag
      */
     private function addTagsToFile(int $fileId, array $tags): void
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ", tenant_id" : "";
+        $tidWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $tidPlaceholder = $tid > 1 ? ", ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         foreach ($tags as $tagName) {
             try {
                 // Get or create tag
-                $tagSql = "SELECT id FROM file_tags WHERE name = ?";
+                $tagStmt = $this->database->prepare("SELECT id FROM file_tags WHERE name = ?{$tidWhere}");
+                $tagStmt->execute(array_merge([$tagName], $tidParam));
+                $tag = $tagStmt->fetch(\PDO::FETCH_ASSOC);
+                
+                if (!$tag) {
+                    $insertStmt = $this->database->prepare("INSERT INTO file_tags (name{$tidSql}) VALUES (?{$tidPlaceholder})");
+                    $insertStmt->execute(array_merge([$tagName], $tidParam));
+                    $tagId = $this->database->lastInsertId();
+                } else {
+                    $tagId = $tag['id'];
+                }
+                
+                // Add relation
+                $relStmt = $this->database->prepare("INSERT IGNORE INTO file_tag_relations (file_id, tag_id{$tidSql}) VALUES (?, ?{$tidPlaceholder})");
+                $relStmt->execute(array_merge([$fileId, $tagId], $tidParam));
             } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-            $tagStmt = $this->database->prepare($tagSql);
-            $tagStmt->execute([$tagName]);
-            $tag = $tagStmt->fetch(\PDO::FETCH_ASSOC);
-            
-            if (!$tag) {
-                $insertSql = "INSERT INTO file_tags (name) VALUES (?)";
-                $insertStmt = $this->database->prepare($insertSql);
-                $insertStmt->execute([$tagName]);
-                $tagId = $this->database->lastInsertId();
-            } else {
-                $tagId = $tag['id'];
-            }
-            
-            // Add relation
-            $relSql = "INSERT IGNORE INTO file_tag_relations (file_id, tag_id) VALUES (?, ?)";
-            $relStmt = $this->database->prepare($relSql);
-            $relStmt->execute([$fileId, $tagId]);
         }
     }
     
@@ -595,9 +618,12 @@ class FileManagerService
      */
     private function enableVersioning(int $fileId): void
     {
-        $sql = "UPDATE files SET is_versioned = 1 WHERE id = ?";
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = $tid > 1 ? [$fileId, $tid] : [$fileId];
+        $sql = "UPDATE files SET is_versioned = 1 WHERE id = ?{$tidSql}";
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$fileId]);
+        $stmt->execute($params);
     }
     
     /**
@@ -631,13 +657,17 @@ class FileManagerService
      */
     private function updateFileVersion(int $fileId, int $newFileId, int $versionNum): void
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$versionNum, $newFileId, $fileId];
+        if ($tid > 1) $params[] = $tid;
         $sql = "UPDATE files SET 
             version_number = ?,
             parent_file_id = ?
-            WHERE id = ?";
+            WHERE id = ?{$tidSql}";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$versionNum, $newFileId, $fileId]);
+        $stmt->execute($params);
     }
     
     /**
@@ -645,15 +675,18 @@ class FileManagerService
      */
     private function deleteVersions(int $fileId): void
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$fileId];
+        if ($tid > 1) $params[] = $tid;
         try {
-            $sql = "SELECT * FROM file_versions WHERE file_id = ?";
+            $stmt = $this->database->prepare("SELECT * FROM file_versions WHERE file_id = ?{$tidSql}");
+            $stmt->execute($params);
+            $versions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$fileId]);
-        $versions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($versions as $version) {
             $path = $this->basePath . $version['file_path'];
@@ -662,9 +695,8 @@ class FileManagerService
             }
         }
         
-        $deleteSql = "DELETE FROM file_versions WHERE file_id = ?";
-        $deleteStmt = $this->database->prepare($deleteSql);
-        $deleteStmt->execute([$fileId]);
+        $deleteStmt = $this->database->prepare("DELETE FROM file_versions WHERE file_id = ?{$tidSql}");
+        $deleteStmt->execute($params);
     }
     
     /**
@@ -672,30 +704,30 @@ class FileManagerService
      */
     private function deleteFileRecord(int $fileId): void
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$fileId];
+        if ($tid > 1) $params[] = $tid;
         // Delete tag relations
-        $tagSql = "DELETE FROM file_tag_relations WHERE file_id = ?";
-        $tagStmt = $this->database->prepare($tagSql);
-        $tagStmt->execute([$fileId]);
+        $tagStmt = $this->database->prepare("DELETE FROM file_tag_relations WHERE file_id = ?{$tidSql}");
+        $tagStmt->execute($params);
         
         try {
             // Delete shares
-            $shareSql = "DELETE FROM file_shares WHERE file_id = ?";
+            $shareStmt = $this->database->prepare("DELETE FROM file_shares WHERE file_id = ?{$tidSql}");
+            $shareStmt->execute($params);
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        $shareStmt = $this->database->prepare($shareSql);
-        $shareStmt->execute([$fileId]);
         
         // Delete access logs
-        $logSql = "DELETE FROM file_access_logs WHERE file_id = ?";
-        $logStmt = $this->database->prepare($logSql);
-        $logStmt->execute([$fileId]);
+        $logStmt = $this->database->prepare("DELETE FROM file_access_logs WHERE file_id = ?{$tidSql}");
+        $logStmt->execute($params);
         
         // Delete file
-        $sql = "DELETE FROM files WHERE id = ?";
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$fileId]);
+        $stmt = $this->database->prepare("DELETE FROM files WHERE id = ?{$tidSql}");
+        $stmt->execute($params);
     }
     
     /**
@@ -703,20 +735,24 @@ class FileManagerService
      */
     public function getStorageStats(): array
     {
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " WHERE tenant_id = ?" : "";
+        $params = $tid > 1 ? [$tid] : [];
         $sql = "SELECT 
             COUNT(*) as total_files,
             SUM(size_bytes) as total_size,
             file_category,
             file_type
-            FROM files
+            FROM files{$tidSql}
             GROUP BY file_category, file_type";
         
-        $stmt = $this->database->query($sql);
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
         $byCategory = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Total size
-        $totalSql = "SELECT SUM(size_bytes) FROM files";
-        $totalStmt = $this->database->query($totalSql);
+        $totalStmt = $this->database->prepare("SELECT SUM(size_bytes) FROM files{$tidSql}");
+        $totalStmt->execute($params);
         $totalSize = $totalStmt->fetchColumn();
         
         // Disk usage

@@ -6,8 +6,12 @@ use App\Core\Database\Database;
 use App\Services\Communication\NotificationService;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 class CampaignDeliveryService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $notificationService;
     private $otpService;

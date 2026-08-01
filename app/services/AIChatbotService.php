@@ -5,8 +5,12 @@ namespace App\Services;
 use App\Core\Database\Database;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 class AIChatbotService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $intents = [
         'greeting' => ['hello', 'hi', 'hey', 'good morning', 'good evening', 'namaste'],
@@ -90,8 +94,9 @@ class AIChatbotService
     public function processMessage($sessionId, $message, $userId = null)
     {
         try {
+            $tid = $this->tenantId();
             // Store user message
-            $this->storeMessage($sessionId, $message, null, null, 0, false);
+            $this->storeMessage($sessionId, $message, null, null, 0, false, $tid);
 
             // Detect intent and entities
             $intentData = $this->detectIntent($message);
@@ -113,7 +118,7 @@ class AIChatbotService
             error_log("Chatbot processing error: " . $e->getMessage());
 
             $fallbackResponse = $this->responses['fallback'][array_rand($this->responses['fallback'])];
-            $this->storeMessage($sessionId, $fallbackResponse, 'fallback', '{}', 0.5, true);
+            $this->storeMessage($sessionId, $fallbackResponse, 'fallback', '{}', 0.5, true, $tid);
 
             return [
                 'success' => true,
@@ -281,10 +286,13 @@ class AIChatbotService
     /**
      * Store conversation message
      */
-    private function storeMessage($sessionId, $message, $intent, $entities, $confidence, $isBot)
+    private function storeMessage($sessionId, $message, $intent, $entities, $confidence, $isBot, $tid = null)
     {
-        $query = "INSERT INTO chatbot_conversations (user_id, session_id, message, response, intent, entities, confidence, is_bot) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $this->db->execute($query, [
+        if ($tid === null) $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? ", tenant_id" : "";
+        $tidParams = $tid > 1 ? [$tid] : [];
+        $query = "INSERT INTO chatbot_conversations (user_id, session_id, message, response, intent, entities, confidence, is_bot{$tidSql}) VALUES (?, ?, ?, ?, ?, ?, ?, ?" . ($tid > 1 ? ", ?" : "") . ")";
+        $this->db->execute($query, array_merge([
             $_SESSION['user_id'] ?? null,
             $sessionId,
             $isBot ? '' : $message,
@@ -293,7 +301,7 @@ class AIChatbotService
             $entities,
             $confidence,
             $isBot
-        ]);
+        ], $tidParams));
     }
 
     /**
@@ -301,8 +309,12 @@ class AIChatbotService
      */
     public function getConversationHistory($sessionId, $limit = 20)
     {
-        $query = "SELECT * FROM chatbot_conversations WHERE session_id = ? ORDER BY created_at ASC LIMIT ?";
-        return $this->db->fetchAll($query, [$sessionId, $limit]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$sessionId, $limit];
+        if ($tid > 1) $params[] = $tid;
+        $query = "SELECT * FROM chatbot_conversations WHERE session_id = ?{$tidSql} ORDER BY created_at ASC LIMIT ?";
+        return $this->db->fetchAll($query, $params);
     }
 
     /**
@@ -310,8 +322,12 @@ class AIChatbotService
      */
     public function clearConversationHistory($sessionId)
     {
-        $query = "DELETE FROM chatbot_conversations WHERE session_id = ?";
-        $this->db->execute($query, [$sessionId]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$sessionId];
+        if ($tid > 1) $params[] = $tid;
+        $query = "DELETE FROM chatbot_conversations WHERE session_id = ?{$tidSql}";
+        $this->db->execute($query, $params);
         return true;
     }
 
@@ -320,13 +336,21 @@ class AIChatbotService
      */
     public function getChatbotAnalytics($startDate = null, $endDate = null)
     {
-        $dateCondition = "";
+        $tid = $this->tenantId();
+        $where = [];
         $params = [];
 
-        if ($startDate && $endDate) {
-            $dateCondition = "WHERE created_at BETWEEN ? AND ?";
-            $params = [$startDate, $endDate];
+        if ($tid > 1) {
+            $where[] = "tenant_id = ?";
+            $params[] = $tid;
         }
+
+        if ($startDate && $endDate) {
+            $where[] = "created_at BETWEEN ? AND ?";
+            $params = array_merge($params, [$startDate, $endDate]);
+        }
+
+        $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
 
         $query = "SELECT 
                     COUNT(*) as total_conversations,
@@ -336,7 +360,7 @@ class AIChatbotService
                     intent,
                     COUNT(*) as intent_count
                 FROM chatbot_conversations 
-                $dateCondition
+                {$whereClause}
                 GROUP BY intent
                 ORDER BY intent_count DESC";
 
@@ -373,8 +397,12 @@ class AIChatbotService
      */
     public function getPopularIntents($limit = 10)
     {
-        $query = "SELECT intent, COUNT(*) as count FROM chatbot_conversations WHERE is_bot = 0 GROUP BY intent ORDER BY count DESC LIMIT ?";
-        return $this->db->fetchAll($query, [$limit]);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$limit];
+        if ($tid > 1) $params[] = $tid;
+        $query = "SELECT intent, COUNT(*) as count FROM chatbot_conversations WHERE is_bot = 0{$tidSql} GROUP BY intent ORDER BY count DESC LIMIT ?";
+        return $this->db->fetchAll($query, $params);
     }
 
     /**
@@ -382,13 +410,21 @@ class AIChatbotService
      */
     public function getConversationStats($sessionId = null)
     {
-        $condition = "";
+        $tid = $this->tenantId();
+        $where = [];
         $params = [];
 
         if ($sessionId) {
-            $condition = "WHERE session_id = ?";
-            $params = [$sessionId];
+            $where[] = "session_id = ?";
+            $params[] = $sessionId;
         }
+
+        if ($tid > 1) {
+            $where[] = "tenant_id = ?";
+            $params[] = $tid;
+        }
+
+        $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
 
         $query = "SELECT 
                     COUNT(*) as total_messages,
@@ -396,7 +432,7 @@ class AIChatbotService
                     AVG(confidence) as avg_confidence,
                     MAX(created_at) as last_activity
                 FROM chatbot_conversations 
-                $condition";
+                {$whereClause}";
 
         return $this->db->fetch($query, $params);
     }

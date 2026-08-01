@@ -3,8 +3,12 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 class AuditService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $auditLogService;
 

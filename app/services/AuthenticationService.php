@@ -8,12 +8,16 @@ use App\Core\Middleware\TenantContext;
 use App\Services\CoreFunctionsServiceCustom;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Custom Authentication Service
  * Pure PHP implementation for APS Dream Home Custom MVC
  */
 class AuthenticationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()
