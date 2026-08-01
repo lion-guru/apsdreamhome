@@ -4,10 +4,12 @@ namespace App\Services\Accounting;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 class InvoiceService
 {
+    use ServiceTenantTrait;
     protected $db;
 
     public function __construct($pdo = null)
@@ -42,8 +44,10 @@ class InvoiceService
         $date = date('Ymd');
         $prefix = 'APS-INV-' . $date . '-';
         $pdo = $this->pdo();
-        $stmt = $pdo->prepare("SELECT invoice_number FROM invoices WHERE invoice_number LIKE ? ORDER BY id DESC LIMIT 1");
-        $stmt->execute([$prefix . '%']);
+        $stmt = $pdo->prepare("SELECT invoice_number FROM invoices WHERE invoice_number LIKE ?" . $this->tenantSql() . " ORDER BY id DESC LIMIT 1");
+        $params = [$prefix . '%'];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $last = $stmt->fetch(\PDO::FETCH_ASSOC);
         if ($last) {
             $lastNum = (int)substr($last['invoice_number'], -4);
@@ -160,28 +164,19 @@ class InvoiceService
 
             $totalAmount = $taxableAmount + $gst['tax_amount'];
 
-            $stmt = $pdo->prepare("INSERT INTO invoices (
-                invoice_number, invoice_date, due_date,
-                client_id, client_type, client_name, client_email, client_phone, client_address,
-                billing_address, shipping_address,
-                subtotal, tax_amount, gst_type, gst_rate, cgst_amount, sgst_amount, igst_amount,
-                gstin, hsn_code, place_of_supply, e_invoice_number, e_way_bill,
-                discount_amount, total_amount, currency,
-                status, payment_terms, notes, template_id, generated_by,
-                booking_id
-            ) VALUES (
-                ?, CURDATE(), ?,
-                ?, ?, ?, ?, ?, ?,
-                ?, ?,
-                ?, ?, ?, ?, ?, ?, ?,
-                ?, ?, ?, ?, ?,
-                ?, ?, ?,
-                ?, ?, ?, ?, ?,
-                ?
-            )");
-
-            $params = [
+            $insertColumns = [
+                'invoice_number', 'invoice_date', 'due_date',
+                'client_id', 'client_type', 'client_name', 'client_email', 'client_phone', 'client_address',
+                'billing_address', 'shipping_address',
+                'subtotal', 'tax_amount', 'gst_type', 'gst_rate', 'cgst_amount', 'sgst_amount', 'igst_amount',
+                'gstin', 'hsn_code', 'place_of_supply', 'e_invoice_number', 'e_way_bill',
+                'discount_amount', 'total_amount', 'currency',
+                'status', 'payment_terms', 'notes', 'template_id', 'generated_by',
+                'booking_id'
+            ];
+            $insertValues = [
                 $invoiceNumber,
+                date('Y-m-d'),
                 $data['due_date'] ?? date('Y-m-d', strtotime('+30 days')),
                 $data['client_id'] ?? null,
                 $data['client_type'] ?? 'customer',
@@ -213,8 +208,14 @@ class InvoiceService
                 $data['generated_by'] ?? ($_SESSION['admin_id'] ?? null),
                 $data['booking_id'] ?? null,
             ];
-
-            $stmt->execute($params);
+            if ($this->tenantId() > 1) {
+                $insertColumns[] = 'tenant_id';
+                $insertValues[] = $this->tenantId();
+            }
+            $cols = implode(', ', $insertColumns);
+            $phs = implode(', ', array_fill(0, count($insertValues), '?'));
+            $stmt = $pdo->prepare("INSERT INTO invoices ($cols) VALUES ($phs)");
+            $stmt->execute($insertValues);
             $invoiceId = (int)$pdo->lastInsertId();
 
             if (!empty($data['items']) && is_array($data['items'])) {
@@ -282,8 +283,10 @@ class InvoiceService
     public function getInvoice(int $id): ?array
     {
         $pdo = $this->pdo();
-        $stmt = $pdo->prepare("SELECT * FROM invoices WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $pdo->prepare("SELECT * FROM invoices WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$invoice) {
@@ -325,19 +328,24 @@ class InvoiceService
             $params[] = $filters['date_to'];
         }
 
-        $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
+        $whereClause .= $this->tenantSql();
         $page = max(1, (int)($filters['page'] ?? 1));
         $perPage = max(1, min(100, (int)($filters['per_page'] ?? 20)));
         $offset = ($page - 1) * $perPage;
 
         $countSql = "SELECT COUNT(*) FROM invoices i {$whereClause}";
         $countStmt = $pdo->prepare($countSql);
-        $countStmt->execute($params);
+        $countParams = $params;
+        if ($this->tenantId() > 1) $countParams[] = $this->tenantId();
+        $countStmt->execute($countParams);
         $total = (int)$countStmt->fetchColumn();
 
-        $sql = "SELECT i.* FROM invoices i {$whereClause} ORDER BY i.created_at DESC LIMIT {$perPage} OFFSET {$offset}";
+        $sql = "SELECT i.* FROM invoices i {$whereClause} ORDER BY i.created_at DESC LIMIT " . (int)$perPage . " OFFSET " . (int)$offset;
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
+        $execParams = $params;
+        if ($this->tenantId() > 1) $execParams[] = $this->tenantId();
+        $stmt->execute($execParams);
         $invoices = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         return [
@@ -362,26 +370,21 @@ class InvoiceService
         $taxAmount = round($lineTotalBeforeTax * $taxPercent / 100, 2);
         $lineTotal = $lineTotalBeforeTax + $taxAmount;
 
-        $stmt = $pdo->prepare("INSERT INTO invoice_items (
-            invoice_id, item_type, item_name, item_description,
-            quantity, unit_price, discount_percent, discount_amount,
-            tax_percent, tax_amount, line_total, sort_order
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $insertColumns = ['invoice_id', 'item_type', 'item_name', 'item_description',
+            'quantity', 'unit_price', 'discount_percent', 'discount_amount',
+            'tax_percent', 'tax_amount', 'line_total', 'sort_order'];
+        $insertValues = [$invoiceId, $item['item_type'] ?? 'service', $item['item_name'] ?? '', $item['item_description'] ?? '',
+            $quantity, $unitPrice, $discountPercent, $discountAmount,
+            $taxPercent, $taxAmount, $lineTotal, $item['sort_order'] ?? 0];
+        if ($this->tenantId() > 1) {
+            $insertColumns[] = 'tenant_id';
+            $insertValues[] = $this->tenantId();
+        }
+        $cols = implode(', ', $insertColumns);
+        $phs = implode(', ', array_fill(0, count($insertValues), '?'));
+        $stmt = $pdo->prepare("INSERT INTO invoice_items ($cols) VALUES ($phs)");
 
-        $stmt->execute([
-            $invoiceId,
-            $item['item_type'] ?? 'service',
-            $item['item_name'] ?? '',
-            $item['item_description'] ?? '',
-            $quantity,
-            $unitPrice,
-            $discountPercent,
-            $discountAmount,
-            $taxPercent,
-            $taxAmount,
-            $lineTotal,
-            $item['sort_order'] ?? 0,
-        ]);
+        $stmt->execute($insertValues);
 
         return (int)$pdo->lastInsertId();
     }
@@ -398,15 +401,19 @@ class InvoiceService
         $taxAmount = (float)($totals['item_taxes'] ?? 0);
         $totalAmount = $subtotal;
 
-        $invStmt = $pdo->prepare("SELECT discount_amount FROM invoices WHERE id = ?");
-        $invStmt->execute([$invoiceId]);
+        $invStmt = $pdo->prepare("SELECT discount_amount FROM invoices WHERE id = ?" . $this->tenantSql());
+        $params = [$invoiceId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $invStmt->execute($params);
         $inv = $invStmt->fetch(\PDO::FETCH_ASSOC);
         $invDiscount = (float)($inv['discount_amount'] ?? 0);
 
         $totalAmount = $subtotal;
 
-        $pdo->prepare("UPDATE invoices SET subtotal = ?, tax_amount = ?, total_amount = ?, updated_at = NOW() WHERE id = ?")
-            ->execute([$subtotal, $taxAmount, $totalAmount, $invoiceId]);
+        $sql = "UPDATE invoices SET subtotal = ?, tax_amount = ?, total_amount = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql();
+        $params = [$subtotal, $taxAmount, $totalAmount, $invoiceId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $pdo->prepare($sql)->execute($params);
     }
 
     public function updateStatus(int $invoiceId, string $status): bool
@@ -416,24 +423,33 @@ class InvoiceService
         if (!in_array($status, $allowed, true)) {
             return false;
         }
-        $stmt = $pdo->prepare("UPDATE invoices SET status = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$status, $invoiceId]);
+        $sql = "UPDATE invoices SET status = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql();
+        $params = [$status, $invoiceId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function markAsPaid(int $invoiceId): bool
     {
         $pdo = $this->pdo();
-        $stmt = $pdo->prepare("UPDATE invoices SET status = 'paid', paid_at = NOW(), updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$invoiceId]);
+        $sql = "UPDATE invoices SET status = 'paid', paid_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql();
+        $params = [$invoiceId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function markAsSent(int $invoiceId): bool
     {
         $pdo = $this->pdo();
-        $stmt = $pdo->prepare("UPDATE invoices SET status = 'sent', sent_at = NOW(), updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$invoiceId]);
+        $sql = "UPDATE invoices SET status = 'sent', sent_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql();
+        $params = [$invoiceId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
@@ -442,9 +458,15 @@ class InvoiceService
         $pdo = $this->pdo();
         $pdo->beginTransaction();
         try {
-            $pdo->prepare("DELETE FROM invoice_items WHERE invoice_id = ?")->execute([$invoiceId]);
-            $stmt = $pdo->prepare("DELETE FROM invoices WHERE id = ?");
-            $stmt->execute([$invoiceId]);
+            $sql = "DELETE FROM invoice_items WHERE invoice_id = ? AND invoice_id IN (SELECT id FROM invoices" . $this->tenantSql() . ")";
+            $params = [$invoiceId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $pdo->prepare($sql)->execute($params);
+            $sql = "DELETE FROM invoices WHERE id = ?" . $this->tenantSql();
+            $params = [$invoiceId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
             $pdo->commit();
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
@@ -470,7 +492,9 @@ class InvoiceService
         ];
 
         try {
-            $row = $pdo->query("SELECT
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+            $stmt = $pdo->prepare("SELECT
                 COUNT(*) AS total_count,
                 COALESCE(SUM(total_amount), 0) AS total_amount,
                 SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) AS paid_count,
@@ -481,7 +505,9 @@ class InvoiceService
                 COALESCE(SUM(CASE WHEN status = 'overdue' THEN total_amount ELSE 0 END), 0) AS overdue_amount,
                 SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft_count,
                 COALESCE(SUM(CASE WHEN status = 'draft' THEN total_amount ELSE 0 END), 0) AS draft_amount
-            FROM invoices")->fetch(\PDO::FETCH_ASSOC);
+            FROM invoices" . $tenantWhere);
+            $stmt->execute($tid > 1 ? [$tid] : []);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($row) {
                 $stats = array_merge($stats, $row);

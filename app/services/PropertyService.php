@@ -111,9 +111,9 @@ class PropertyService
     }
     
     public function getProjects($filters = []) {
-        $sql = "SELECT * FROM projects WHERE 1=1";
+        $sql = "SELECT * FROM projects WHERE 1=1" . ($this->tid() > 1 ? " AND tenant_id = :tenant_id" : "");
         
-        $params = [];
+        $params = $this->tid() > 1 ? [':tenant_id' => $this->tid()] : [];
         
         if (!empty($filters['project_type'])) {
             $sql .= " AND project_type = :project_type";
@@ -134,8 +134,8 @@ class PropertyService
     }
     
     public function getResellProperties($filters = []) {
-        $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'";
-        $params = [];
+        $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'" . ($this->tid() > 1 ? " AND tenant_id = :tenant_id" : "");
+        $params = $this->tid() > 1 ? [':tenant_id' => $this->tid()] : [];
         
         if (!empty($filters['property_type'])) {
             $sql .= " AND property_type = :property_type";

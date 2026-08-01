@@ -3,6 +3,8 @@ namespace App\Services;
 
 class PaymentService 
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $settings;
     
@@ -37,13 +39,12 @@ class PaymentService
         $totalAmount = $data["amount"] + $taxAmount - $data["discount_amount"];
         
         // Insert payment record
-        $stmt = $this->db->prepare("INSERT INTO payments (
-            payment_id, transaction_id, reference_id, customer_id, property_id, property_type,
+        $insertData = $this->tenantInsertData();
+        $columns = "payment_id, transaction_id, reference_id, customer_id, property_id, property_type,
             payment_type, amount, currency, tax_amount, discount_amount, total_amount,
-            gateway, status, description, ip_address, user_agent, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-        
-        $stmt->execute([
+            gateway, status, description, ip_address, user_agent, created_at";
+        $values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()";
+        $params = [
             $paymentId,
             $transactionId,
             $data["reference_id"] ?? null,
@@ -61,7 +62,14 @@ class PaymentService
             $data["description"] ?? "",
             $_SERVER["REMOTE_ADDR"] ?? "",
             $_SERVER["HTTP_USER_AGENT"] ?? ""
-        ]);
+        ];
+        if (!empty($insertData)) {
+            $columns .= ", " . implode(', ', array_keys($insertData));
+            $values .= ", ?";
+            $params = array_merge($params, array_values($insertData));
+        }
+        $stmt = $this->db->prepare("INSERT INTO payments ($columns) VALUES ($values)");
+        $stmt->execute($params);
         
         // Create payment notification
         $this->createNotification($paymentId, "payment_initiated", "Payment Initiated", 
@@ -78,8 +86,10 @@ class PaymentService
     }
     
     public function processRazorpay($paymentId, $data) {
-        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
-        $stmt->execute([$paymentId]);
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?" . $this->tenantSql());
+        $params = [$paymentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $payment = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$payment) {
@@ -90,17 +100,19 @@ class PaymentService
         $updateStmt = $this->db->prepare("UPDATE payments SET 
             gateway_transaction_id = ?, gateway_response = ?, status = ?, 
             payment_date = ?, payment_time = ?, updated_at = NOW()
-            WHERE payment_id = ?");
+            WHERE payment_id = ?" . $this->tenantSql());
         
         $status = $data["status"] === "captured" ? "completed" : "failed";
-        $updateStmt->execute([
+        $params = [
             $data["razorpay_payment_id"] ?? "",
             json_encode($data),
             $status,
             date("Y-m-d"),
             date("H:i:s"),
             $paymentId
-        ]);
+        ];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $updateStmt->execute($params);
         
         if ($status === "completed") {
             $this->createNotification($paymentId, "payment_success", "Payment Successful", 
@@ -116,8 +128,10 @@ class PaymentService
     }
     
     public function processPaytm($paymentId, $data) {
-        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
-        $stmt->execute([$paymentId]);
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?" . $this->tenantSql());
+        $params = [$paymentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $payment = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$payment) {
@@ -129,16 +143,18 @@ class PaymentService
         $updateStmt = $this->db->prepare("UPDATE payments SET 
             gateway_transaction_id = ?, gateway_response = ?, status = ?, 
             payment_date = ?, payment_time = ?, updated_at = NOW()
-            WHERE payment_id = ?");
+            WHERE payment_id = ?" . $this->tenantSql());
         
-        $updateStmt->execute([
+        $params = [
             $data["TXNID"] ?? "",
             json_encode($data),
             $status,
             date("Y-m-d"),
             date("H:i:s"),
             $paymentId
-        ]);
+        ];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $updateStmt->execute($params);
         
         if ($status === "completed") {
             $this->createNotification($paymentId, "payment_success", "Payment Successful", 
@@ -166,8 +182,10 @@ class PaymentService
     
     public function getPaymentPlans() {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM payment_plans WHERE is_active = 1 ORDER BY is_default DESC, plan_name ASC");
-            $stmt->execute();
+            $stmt = $this->db->prepare("SELECT * FROM payment_plans WHERE is_active = 1" . $this->tenantSql() . " ORDER BY is_default DESC, plan_name ASC");
+            $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return [];
@@ -175,20 +193,26 @@ class PaymentService
     }
     
     public function getPaymentHistory($customerId, $limit = 20, $offset = 0) {
-        $stmt = $this->db->prepare("SELECT * FROM payments WHERE customer_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?");
-        $stmt->execute([$customerId, $limit, $offset]);
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE customer_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        $params = [$customerId, $limit, $offset];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getPayment($paymentId) {
-        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
-        $stmt->execute([$paymentId]);
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?" . $this->tenantSql());
+        $params = [$paymentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
     public function refundPayment($paymentId, $refundAmount, $refundReason) {
-        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?");
-        $stmt->execute([$paymentId]);
+        $stmt = $this->db->prepare("SELECT * FROM payments WHERE payment_id = ?" . $this->tenantSql());
+        $params = [$paymentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $payment = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$payment) {
@@ -200,16 +224,18 @@ class PaymentService
         $updateStmt = $this->db->prepare("UPDATE payments SET 
             refund_amount = ?, refund_reason = ?, refund_date = ?, refund_transaction_id = ?, 
             status = ?, updated_at = NOW()
-            WHERE payment_id = ?");
+            WHERE payment_id = ?" . $this->tenantSql());
         
-        $updateStmt->execute([
+        $params = [
             $refundAmount,
             $refundReason,
             date("Y-m-d"),
             $refundTransactionId,
             "refunded",
             $paymentId
-        ]);
+        ];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $updateStmt->execute($params);
         
         $this->createNotification($paymentId, "payment_refunded", "Payment Refunded", 
             "Your refund of ₹" . number_format($refundAmount, 2) . " has been processed. Reason: " . $refundReason,
@@ -232,15 +258,16 @@ class PaymentService
     }
     
     private function createNotification($paymentId, $type, $title, $message, $customerId = null) {
-        $stmt = $this->db->prepare("SELECT u.email as customer_email, u.phone as customer_phone FROM users u WHERE u.id = (SELECT c.user_id FROM users c WHERE c.id = ?)");
-        $stmt->execute([$customerId]);
+        $stmt = $this->db->prepare("SELECT u.email as customer_email, u.phone as customer_phone FROM users u WHERE u.id = ?" . $this->tenantSql());
+        $params = [$customerId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $customer = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        $notifStmt = $this->db->prepare("INSERT INTO payment_notifications (
-            payment_id, notification_type, title, message, customer_id, customer_email, customer_phone, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-        
-        $notifStmt->execute([
+        $insertData = $this->tenantInsertData();
+        $columns = "payment_id, notification_type, title, message, customer_id, customer_email, customer_phone, created_at";
+        $values = "?, ?, ?, ?, ?, ?, ?, NOW()";
+        $params = [
             $paymentId,
             $type,
             $title,
@@ -248,7 +275,14 @@ class PaymentService
             $customerId,
             $customer["customer_email"] ?? null,
             $customer["customer_phone"] ?? null
-        ]);
+        ];
+        if (!empty($insertData)) {
+            $columns .= ", " . implode(', ', array_keys($insertData));
+            $values .= ", ?";
+            $params = array_merge($params, array_values($insertData));
+        }
+        $notifStmt = $this->db->prepare("INSERT INTO payment_notifications ($columns) VALUES ($values)");
+        $notifStmt->execute($params);
         
         // Send email notification (implement email service)
         // Send SMS notification (implement SMS service)

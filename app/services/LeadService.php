@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 
 class LeadService
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {
@@ -48,7 +51,9 @@ class LeadService
                 $params[] = $filters['source'];
             }
 
-            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
+            $whereClause .= $this->tenantSql();
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
 
             $page = max(1, (int)($filters['page'] ?? 1));
             $perPage = min(100, max(1, (int)($filters['per_page'] ?? 25)));
@@ -71,7 +76,10 @@ class LeadService
      */
     public function getLeadById($id) {
         try {
-            $stmt = $this->db->query("SELECT * FROM leads WHERE id = ?", [$id]);
+            $sql = "SELECT * FROM leads WHERE id = ?" . $this->tenantSql();
+            $params = [$id];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetch();
         } catch (\Exception $e) {
             return null;
@@ -83,11 +91,10 @@ class LeadService
      */
     public function getLeadActivities($leadId) {
         try {
-            $stmt = $this->db->query("
-                SELECT * FROM lead_activities
-                WHERE lead_id = ?
-                ORDER BY created_at DESC
-            ", [$leadId]);
+            $sql = "SELECT * FROM lead_activities WHERE lead_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC";
+            $params = [$leadId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -99,11 +106,10 @@ class LeadService
      */
     public function getLeadNotes($leadId) {
         try {
-            $stmt = $this->db->query("
-                SELECT * FROM lead_notes
-                WHERE lead_id = ?
-                ORDER BY created_at DESC
-            ", [$leadId]);
+            $sql = "SELECT * FROM lead_notes WHERE lead_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC";
+            $params = [$leadId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -116,11 +122,13 @@ class LeadService
     public function getLeadStats() {
         try {
             $stats = [];
+            $tenantSql = $this->tenantSql();
 
             // Total leads by status
             $stmt = $this->db->query("
                 SELECT status, COUNT(*) as count
                 FROM leads
+                WHERE 1=1 {$tenantSql}
                 GROUP BY status
             ");
             $stats['by_status'] = $stmt->fetchAll();
@@ -129,6 +137,7 @@ class LeadService
             $stmt = $this->db->query("
                 SELECT source, COUNT(*) as count
                 FROM leads
+                WHERE 1=1 {$tenantSql}
                 GROUP BY source
             ");
             $stats['by_source'] = $stmt->fetchAll();
@@ -144,7 +153,7 @@ class LeadService
      */
     public function getSources() {
         try {
-            $stmt = $this->db->query("SELECT DISTINCT source FROM leads WHERE source IS NOT NULL ORDER BY source");
+            $stmt = $this->db->query("SELECT DISTINCT source FROM leads WHERE source IS NOT NULL" . $this->tenantSql() . " ORDER BY source");
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -156,7 +165,7 @@ class LeadService
      */
     public function getStatuses() {
         try {
-            $stmt = $this->db->query("SELECT DISTINCT status FROM leads WHERE status IS NOT NULL ORDER BY status");
+            $stmt = $this->db->query("SELECT DISTINCT status FROM leads WHERE status IS NOT NULL" . $this->tenantSql() . " ORDER BY status");
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -168,14 +177,22 @@ class LeadService
      */
     public function createLead($data) {
         try {
+            $insertData = $this->tenantInsertData();
+            $columns = "name, email, phone, source, status, priority, budget, property_type, location_preference, notes, assigned_to, created_by, created_at";
+            $values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()";
+            $params = [
+                $data['name'], $data['email'], $data['phone'], $data['source'],
+                $data['status'], $data['priority'], $data['budget'], $data['property_type'],
+                $data['location_preference'], $data['notes'], $data['assigned_to'], $data['created_by']
+            ];
+            if (!empty($insertData)) {
+                $columns .= ", " . implode(', ', array_keys($insertData));
+                $values .= ", ?";
+                $params = array_merge($params, array_values($insertData));
+            }
             $stmt = $this->db->query(
-                "INSERT INTO leads (name, email, phone, source, status, priority, budget, property_type, location_preference, notes, assigned_to, created_by, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
-                [
-                    $data['name'], $data['email'], $data['phone'], $data['source'],
-                    $data['status'], $data['priority'], $data['budget'], $data['property_type'],
-                    $data['location_preference'], $data['notes'], $data['assigned_to'], $data['created_by']
-                ]
+                "INSERT INTO leads ($columns) VALUES ($values)",
+                $params
             );
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
@@ -188,17 +205,18 @@ class LeadService
      */
     public function updateLead($id, $data) {
         try {
-            $stmt = $this->db->query(
-                "UPDATE leads SET
+            $sql = $this->tenantSql();
+            $sql = "UPDATE leads SET
                  name = ?, email = ?, phone = ?, source = ?, status = ?, priority = ?,
                  budget = ?, property_type = ?, location_preference = ?, notes = ?, assigned_to = ?, updated_at = NOW()
-                 WHERE id = ?",
-                [
-                    $data['name'], $data['email'], $data['phone'], $data['source'],
-                    $data['status'], $data['priority'], $data['budget'], $data['property_type'],
-                    $data['location_preference'], $data['notes'], $data['assigned_to'], $id
-                ]
-            );
+                 WHERE id = ?" . $this->tenantSql();
+            $params = [
+                $data['name'], $data['email'], $data['phone'], $data['source'],
+                $data['status'], $data['priority'], $data['budget'], $data['property_type'],
+                $data['location_preference'], $data['notes'], $data['assigned_to'], $id
+            ];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $this->db->query($sql, $params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -210,13 +228,21 @@ class LeadService
      */
     public function addActivity($data) {
         try {
+            $insertData = $this->tenantInsertData();
+            $columns = "lead_id, activity_type, description, created_by, metadata, created_at";
+            $values = "?, ?, ?, ?, ?, NOW()";
+            $params = [
+                $data['lead_id'], $data['activity_type'], $data['description'],
+                $data['created_by'], $data['metadata']
+            ];
+            if (!empty($insertData)) {
+                $columns .= ", " . implode(', ', array_keys($insertData));
+                $values .= ", ?";
+                $params = array_merge($params, array_values($insertData));
+            }
             $stmt = $this->db->query(
-                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, metadata, created_at)
-                 VALUES (?, ?, ?, ?, ?, NOW())",
-                [
-                    $data['lead_id'], $data['activity_type'], $data['description'],
-                    $data['created_by'], $data['metadata'], $data['created_at']
-                ]
+                "INSERT INTO lead_activities ($columns) VALUES ($values)",
+                $params
             );
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
@@ -229,10 +255,18 @@ class LeadService
      */
     public function addNote($data) {
         try {
+            $insertData = $this->tenantInsertData();
+            $columns = "lead_id, note, created_by, created_at";
+            $values = "?, ?, NOW()";
+            $params = [$data['lead_id'], $data['note'], $data['created_by']];
+            if (!empty($insertData)) {
+                $columns .= ", " . implode(', ', array_keys($insertData));
+                $values .= ", ?";
+                $params = array_merge($params, array_values($insertData));
+            }
             $stmt = $this->db->query(
-                "INSERT INTO lead_notes (lead_id, note, created_by, created_at)
-                 VALUES (?, ?, ?, NOW())",
-                [$data['lead_id'], $data['note'], $data['created_by']]
+                "INSERT INTO lead_notes ($columns) VALUES ($values)",
+                $params
             );
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
@@ -245,10 +279,10 @@ class LeadService
      */
     public function assignLead($leadId, $userId) {
         try {
-            $stmt = $this->db->query(
-                "UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?",
-                [$userId, $leadId]
-            );
+            $sql = "UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql();
+            $params = [$userId, $leadId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $this->db->query($sql, $params);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -322,7 +356,10 @@ class LeadService
             $userId = $this->db->lastInsertId();
             
             // Update lead status to converted
-            $this->db->query("UPDATE leads SET status = 'converted', updated_at = NOW() WHERE id = ?", [$leadId]);
+            $sql = "UPDATE leads SET status = 'converted', updated_at = NOW() WHERE id = ?" . $this->tenantSql();
+            $params = [$leadId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $this->db->query($sql, $params);
             return $userId;
         } catch (\Exception $e) {
             return false;
@@ -344,8 +381,8 @@ class LeadService
                             COUNT(CASE WHEN status = 'qualified' THEN 1 END) as qualified_leads,
                             COUNT(CASE WHEN status = 'converted' THEN 1 END) as converted_leads
                         FROM leads
-                        WHERE created_at BETWEEN ? AND ?
-                    ", [$dateRange['start'], $dateRange['end']]);
+                        WHERE created_at BETWEEN ? AND ? " . $this->tenantSql() . "
+                    ", array_merge([$dateRange['start'], $dateRange['end']], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                     break;
 
                 default:

@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class BookingNotificationService
 {
+    use ServiceTenantTrait;
     private $db;
     private $fromEmail;
     private $fromName;
@@ -178,7 +180,7 @@ class BookingNotificationService
         $sql = "SELECT ccl.*, u.name as user_name, u.email as user_email, u.phone as user_phone
                 FROM customer_communication_log ccl
                 LEFT JOIN users u ON ccl.user_id = u.id
-                WHERE " . implode(' AND ', $where) . "
+                WHERE " . implode(' AND ', $where) . $this->tenantSql() . "
                 ORDER BY ccl.created_at DESC
                 LIMIT {$limit} OFFSET {$offset}";
 
@@ -199,27 +201,27 @@ class BookingNotificationService
         ];
 
         try {
-            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log");
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log" . $this->tenantSql());
             $stats['total'] = (int)($row['cnt'] ?? 0);
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
-            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE channel = 'email' AND status = 'sent'");
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE channel = 'email' AND status = 'sent'" . $this->tenantSql());
             $stats['email_sent'] = (int)($row['cnt'] ?? 0);
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
-            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE channel = 'sms' AND status = 'sent'");
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE channel = 'sms' AND status = 'sent'" . $this->tenantSql());
             $stats['sms_sent'] = (int)($row['cnt'] ?? 0);
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
-            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE status = 'failed'");
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE status = 'failed'" . $this->tenantSql());
             $stats['failed'] = (int)($row['cnt'] ?? 0);
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
-            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE DATE(created_at) = CURDATE()");
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM customer_communication_log WHERE DATE(created_at) = CURDATE()" . $this->tenantSql());
             $stats['today'] = (int)($row['cnt'] ?? 0);
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
@@ -271,12 +273,16 @@ class BookingNotificationService
         try {
             $phone = preg_replace('/[^0-9]/', '', $to);
             if (strlen($phone) === 10) $phone = '91' . $phone;
-            $this->db->insert('sms_queue', [
+            $smsData = [
                 'recipient' => $phone,
                 'message' => mb_substr($message, 0, 500),
                 'status' => 'pending',
                 'created_at' => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $smsData['tenant_id'] = $this->tenantId();
+            }
+            $this->db->insert('sms_queue', $smsData);
             return true;
         } catch (\Throwable $e) {
             error_log("[BookingNotificationService] SMS queue fallback failed: " . $e->getMessage());
@@ -287,7 +293,7 @@ class BookingNotificationService
     private function logCommunication(int $userId, string $type, string $channel, bool $success, string $subject, string $message): void
     {
         try {
-            $this->db->insert('customer_communication_log', [
+            $data = [
                 'user_id' => $userId,
                 'channel' => $channel,
                 'direction' => 'outbound',
@@ -297,7 +303,11 @@ class BookingNotificationService
                 'related_entity_type' => $type,
                 'sent_at' => $success ? date('Y-m-d H:i:s') : null,
                 'created_at' => date('Y-m-d H:i:s'),
-            ]);
+            ];
+            if ($this->tenantId() > 1) {
+                $data['tenant_id'] = $this->tenantId();
+            }
+            $this->db->insert('customer_communication_log', $data);
         } catch (\Throwable $e) {
             error_log("[BookingNotificationService] logCommunication failed: " . $e->getMessage());
         }

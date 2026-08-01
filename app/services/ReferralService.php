@@ -5,16 +5,14 @@ namespace App\Services;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Services\RankService;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 use PDO;
 
-/**
- * Referral Service
- * Handles referral code generation, tracking, and MLM network management
- */
-
 class ReferralService
 {
+    use ServiceTenantTrait;
+
     private PDO $conn;
     private RankService $rankService;
 
@@ -204,8 +202,10 @@ class ReferralService
      */
     private function codeExists($code)
     {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM mlm_profiles WHERE referral_code = ?");
-        $stmt->execute([$code]);
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM mlm_profiles WHERE referral_code = ?" . $this->tenantSql());
+        $params = [$code];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return ($row['count'] ?? 0) > 0;
     }
@@ -215,8 +215,10 @@ class ReferralService
      */
     public function getReferralLink($user_id, $role = null)
     {
-        $stmt = $this->conn->prepare("SELECT referral_code FROM mlm_profiles WHERE user_id = ?");
-        $stmt->execute([$user_id]);
+        $stmt = $this->conn->prepare("SELECT referral_code FROM mlm_profiles WHERE user_id = ?" . $this->tenantSql());
+        $params = [$user_id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($result) {
@@ -269,9 +271,12 @@ class ReferralService
             JOIN users u ON nt.associate_id = u.id
             JOIN mlm_profiles mp ON u.id = mp.user_id
             WHERE nt.parent_id = ?
+            " . $this->tenantSql() . "
             ORDER BY nt.level, nt.created_at
-        ");
-        $stmt->execute([$user_id]);
+         ");
+        $params = [$user_id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $query = isset($options['query']) ? strtolower($options['query']) : null;
@@ -317,13 +322,16 @@ class ReferralService
                 JOIN users u ON r.referred_user_id = u.id
                 JOIN mlm_profiles mp ON u.id = mp.user_id
                 WHERE r.referrer_user_id = ?
+                " . $this->tenantSql() . "
                 ORDER BY r.created_at DESC
             ");
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        $stmt->execute([$user_id]);
+        $params = [$user_id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -338,14 +346,17 @@ class ReferralService
         $total_team = $this->countTeamMembers($user_id);
         $rankInfo = $profile ? $this->rankService->getRankInfo((float) $profile['lifetime_sales']) : null;
 
-        $stmt = $this->conn->prepare('
+        $tenantWhere = $this->tenantSql();
+        $stmt = $this->conn->prepare("
             SELECT level, COUNT(*) AS member_count
             FROM mlm_network_tree
-            WHERE parent_id = ?
+            WHERE parent_id = ? {$tenantWhere}
             GROUP BY level
             ORDER BY level
-        ');
-        $stmt->execute([$user_id]);
+        ");
+        $params = [$user_id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $level_breakdown = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $level_breakdown = array_map(function ($row) {
@@ -376,7 +387,9 @@ class ReferralService
                     COUNT(*) as referrals,
                     referral_type
                 FROM mlm_referrals
-                WHERE referrer_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                WHERE referrer_user_id = ?
+                " . $this->tenantSql() . "
+                AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                 GROUP BY DATE(created_at), referral_type
                 ORDER BY date DESC
             ");
@@ -384,7 +397,9 @@ class ReferralService
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        $stmt->execute([$user_id, $days]);
+        $params = [$user_id, $days];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -401,6 +416,7 @@ class ReferralService
             FROM mlm_profiles mp
             JOIN users u ON mp.user_id = u.id
             WHERE mp.status = 'active'
+            " . $this->tenantSql() . "
             ORDER BY mp.direct_referrals DESC, mp.total_commission DESC
             LIMIT ?
         ");
@@ -422,8 +438,11 @@ class ReferralService
             FROM mlm_profiles mp
             JOIN users u ON mp.user_id = u.id
             WHERE mp.referral_code = ? AND mp.status = 'active'
+            " . $this->tenantSql() . "
         ");
-        $stmt->execute([$code]);
+        $params = [$code];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -516,26 +535,32 @@ class ReferralService
             $stats['total_referrals'] = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
-        try {
+         try {
             $stmt = $this->conn->prepare("
                 SELECT COUNT(DISTINCT u.id) 
                 FROM users u 
                 INNER JOIN plot_bookings pb ON pb.customer_id = u.id 
-                WHERE u.referred_by = ? AND pb.status NOT IN ('cancelled')
+                WHERE u.referred_by = ?" . $this->tenantSql() . " AND pb.status NOT IN ('cancelled')
             ");
-            $stmt->execute([$userId]);
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $stats['successful_referrals'] = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
-        try {
-            $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'paid'");
-            $stmt->execute([$userId]);
+         try {
+            $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'paid'" . $this->tenantSql());
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $stats['total_earned'] = (float)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
-        try {
-            $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'pending'");
-            $stmt->execute([$userId]);
+         try {
+            $stmt = $this->conn->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'referral' AND status = 'pending'" . $this->tenantSql());
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $stats['pending_earned'] = (float)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
@@ -548,7 +573,7 @@ class ReferralService
     public function getReferredUsers(int $userId): array
     {
         try {
-            $stmt = $this->conn->prepare("
+            $sql = "
                 SELECT u.id, u.name, u.email, u.phone, u.created_at,
                        CASE WHEN pb.id IS NOT NULL THEN 1 ELSE 0 END AS has_booking,
                        COALESCE(ml.amount, 0) AS commission_earned
@@ -556,9 +581,13 @@ class ReferralService
                 LEFT JOIN plot_bookings pb ON pb.customer_id = u.id AND pb.status NOT IN ('cancelled')
                 LEFT JOIN mlm_commission_ledger ml ON ml.source_user_id = u.id AND ml.beneficiary_user_id = ? AND ml.commission_type = 'referral'
                 WHERE u.referred_by = ?
+                " . $this->tenantSql() . "
                 ORDER BY u.created_at DESC
-            ");
-            $stmt->execute([$userId, $userId]);
+            ";
+            $params = [$userId, $userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return [];
@@ -775,10 +804,11 @@ class ReferralService
                     COUNT(DISTINCT CASE WHEN cr.status = 'booked' THEN cr.referred_user_id END) AS booked_count,
                     COALESCE(SUM(CASE WHEN cr.status = 'booked' THEN 1 ELSE 0 END), 0) AS bookings_made,
                     (SELECT COUNT(DISTINCT u2.referred_by) FROM users u2 WHERE u2.referred_by = u.id) AS total_signups
-                FROM users u
-                LEFT JOIN customer_referrals cr ON cr.referrer_user_id = u.id {$dateFilter}
-                WHERE u.referral_code IS NOT NULL AND u.referral_code != ''
-                GROUP BY u.id
+            FROM users u
+            LEFT JOIN customer_referrals cr ON cr.referrer_user_id = u.id {$dateFilter}
+            WHERE u.referral_code IS NOT NULL AND u.referral_code != ''
+            " . $this->tenantSql() . "
+            GROUP BY u.id
                 HAVING referral_count > 0 OR total_signups > 0
                 ORDER BY referral_count DESC, booked_count DESC
                 LIMIT ?
@@ -890,19 +920,20 @@ class ReferralService
         // Count total referrals (signups + customer_referrals)
         $signupCount = 0;
         try {
-            $tid = $this->getTenantId();
-            $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
-            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?$tenantWhere");
+            $tenantWhere = $this->tenantSql();
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?{$tenantWhere}");
             $params = [$userId];
-            if ($tid > 1) $params[] = $tid;
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $stmt->execute($params);
             $signupCount = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $crCount = 0;
         try {
-            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM customer_referrals WHERE referrer_user_id = ?");
-            $stmt->execute([$userId]);
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM customer_referrals WHERE referrer_user_id = ?" . $this->tenantSql());
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $crCount = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
@@ -966,35 +997,38 @@ class ReferralService
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
-             $referrerName = '';
-             $tid = $this->getTenantId();
-             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
-             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere");
-             $params = [$referrerId];
-             if ($tid > 1) $params[] = $tid;
-             $stmt->execute($params);
-             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-             $referrerName = $row['name'] ?? 'User';
+          $referrerName = '';
+          $tenantWhere = $this->tenantSql();
+          $params = [$referrerId];
+          if ($this->tenantId() > 1) $params[] = $this->tenantId();
+          $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?{$tenantWhere}");
+          $stmt->execute($params);
+          $row = $stmt->fetch(PDO::FETCH_ASSOC);
+          $referrerName = $row['name'] ?? 'User';
 
-             $referredName = '';
-             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere");
-             $params2 = [$referredUserId];
-             if ($tid > 1) $params2[] = $tid;
-             $stmt->execute($params2);
-             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-             $referredName = $row['name'] ?? 'User';
+          $referredName = '';
+          $params2 = [$referredUserId];
+          if ($this->tenantId() > 1) $params2[] = $this->tenantId();
+          $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?{$tenantWhere}");
+          $stmt->execute($params2);
+          $row = $stmt->fetch(PDO::FETCH_ASSOC);
+          $referredName = $row['name'] ?? 'User';
 
-             $this->conn->prepare("
-                 INSERT INTO mlm_commission_ledger 
-                     (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, tenant_id, created_at)
-                 VALUES (?, ?, 'referral_signup', ?, 'approved', ?, ?, NOW())
-             ")->execute([
-                $referrerId,
-                $referredUserId,
-                $bonusAmount,
-                "Tiered signup bonus ({$tier['label']}) for referral: {$referredName}",
-                $this->getTenantId()
-            ]);
+          $insertData = $this->tenantInsertData();
+          $columns = "beneficiary_user_id, source_user_id, commission_type, amount, status, notes, created_at";
+          $values = "?, ?, 'referral_signup', ?, 'approved', ?, NOW()";
+          $insertParams = [
+              $referrerId,
+              $referredUserId,
+              $bonusAmount,
+              "Tiered signup bonus ({$tier['label']}) for referral: {$referredName}"
+          ];
+          if (!empty($insertData)) {
+              $columns .= ", " . implode(', ', array_keys($insertData));
+              $values .= ", ?";
+              $insertParams = array_merge($insertParams, array_values($insertData));
+          }
+          $this->conn->prepare("INSERT INTO mlm_commission_ledger ($columns) VALUES ($values)")->execute($insertParams);
 
             return [
                 'success' => true,
@@ -1032,34 +1066,39 @@ class ReferralService
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
          try {
-             $referredName = '';
-             $tid = $this->getTenantId();
-             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
-             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere");
-             $params = [$referredUserId];
-             if ($tid > 1) $params[] = $tid;
-             $stmt->execute($params);
-             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-             $referredName = $row['name'] ?? 'User';
+          $referredName = '';
+          $tenantWhere = $this->tenantSql();
+          $params = [$referredUserId];
+          if ($this->tenantId() > 1) $params[] = $this->tenantId();
+          $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?{$tenantWhere}");
+          $stmt->execute($params);
+          $row = $stmt->fetch(PDO::FETCH_ASSOC);
+          $referredName = $row['name'] ?? 'User';
 
-             $bookingNumber = "#{$bookingId}";
-            $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ?");
-            $stmt->execute([$bookingId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row) $bookingNumber = $row['booking_number'] ?? "#{$bookingId}";
+          $bookingNumber = "#{$bookingId}";
+         $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ?" . $this->tenantSql());
+         $params = [$bookingId];
+         if ($this->tenantId() > 1) $params[] = $this->tenantId();
+         $stmt->execute($params);
+         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+         if ($row) $bookingNumber = $row['booking_number'] ?? "#{$bookingId}";
 
-            $this->conn->prepare("
-                INSERT INTO mlm_commission_ledger 
-                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, tenant_id, created_at)
-                VALUES (?, ?, 'referral_booking', ?, 'approved', ?, ?, ?, NOW())
-            ")->execute([
-                $referrerId,
-                $referredUserId,
-                $bonusAmount,
-                $bookingId,
-                "Tiered booking bonus ({$tier['label']}) for {$referredName}'s booking {$bookingNumber}",
-                $this->getTenantId()
-            ]);
+         $insertData = $this->tenantInsertData();
+         $columns = "beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, created_at";
+         $values = "?, ?, 'referral_booking', ?, 'approved', ?, ?, NOW()";
+         $insertParams = [
+             $referrerId,
+             $referredUserId,
+             $bonusAmount,
+             $bookingId,
+             "Tiered booking bonus ({$tier['label']}) for {$referredName}'s booking {$bookingNumber}"
+         ];
+         if (!empty($insertData)) {
+             $columns .= ", " . implode(', ', array_keys($insertData));
+             $values .= ", ?";
+             $insertParams = array_merge($insertParams, array_values($insertData));
+         }
+         $this->conn->prepare("INSERT INTO mlm_commission_ledger ($columns) VALUES ($values)")->execute($insertParams);
 
             return [
                 'success' => true,
@@ -1092,7 +1131,7 @@ class ReferralService
 
         try {
             // Total shares from users.share_clicks
-            $users = $this->conn->query("SELECT share_clicks FROM users WHERE share_clicks IS NOT NULL AND share_clicks != '{}' AND share_clicks != ''")->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            $users = $this->conn->query("SELECT share_clicks FROM users WHERE share_clicks IS NOT NULL AND share_clicks != '{}' AND share_clicks != ''" . $this->tenantSql())->fetchAll(PDO::FETCH_ASSOC) ?: [];
             foreach ($users as $u) {
                 $clicks = json_decode($u['share_clicks'] ?? '{}', true);
                 if (is_array($clicks)) {
@@ -1138,6 +1177,7 @@ class ReferralService
                 SELECT id, name, share_clicks 
                 FROM users 
                 WHERE share_clicks IS NOT NULL AND share_clicks != '{}' AND share_clicks != ''
+                " . $this->tenantSql() . "
             ")->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
             $sharers = [];

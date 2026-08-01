@@ -2,9 +2,12 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 class AddressService
 {
+    use ServiceTenantTrait;
+
     private PDO $pdo;
 
     public function __construct(?PDO $pdo = null)
@@ -18,15 +21,21 @@ class AddressService
 
     public function listForUser(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM user_addresses WHERE user_id = ? ORDER BY is_primary DESC, id DESC");
-        $stmt->execute([$userId]);
+        $sql = "SELECT * FROM user_addresses WHERE user_id = ?" . $this->tenantSql() . " ORDER BY is_primary DESC, id DESC";
+        $params = [$userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function get(int $id, int $userId): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM user_addresses WHERE id = ? AND user_id = ? LIMIT 1");
-        $stmt->execute([$id, $userId]);
+        $sql = "SELECT * FROM user_addresses WHERE id = ? AND user_id = ?" . $this->tenantSql() . " LIMIT 1";
+        $params = [$id, $userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
@@ -43,10 +52,20 @@ class AddressService
 
         $isPrimary = !empty($data['is_primary']) ? 1 : 0;
         if ($isPrimary) {
-            $this->pdo->prepare("UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
+            $sql = "UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?" . $this->tenantSql();
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $this->pdo->prepare($sql)->execute($params);
         }
 
-        $stmt = $this->pdo->prepare("INSERT INTO user_addresses (user_id, label, address_type, address_line1, address_line2, city, state, pincode, country, phone, is_primary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $insertData = $this->tenantInsertData();
+        $columns = ['user_id', 'label', 'address_type', 'address_line1', 'address_line2', 'city', 'state', 'pincode', 'country', 'phone', 'is_primary'];
+        $placeholders = array_fill(0, count($columns), '?');
+        if (!empty($insertData)) {
+            $columns = array_merge($columns, array_keys($insertData));
+            $placeholders = array_merge($placeholders, array_fill(0, count($insertData), '?'));
+        }
+        $stmt = $this->pdo->prepare("INSERT INTO user_addresses (" . implode(',', $columns) . ") VALUES (" . implode(',', $placeholders) . ")");
         $stmt->execute([
             $userId,
             trim($data['label']),
@@ -59,6 +78,7 @@ class AddressService
             $data['country'] ?? 'India',
             $data['phone'] ?? null,
             $isPrimary,
+            ...array_values($insertData),
         ]);
         return ['success' => true, 'id' => (int)$this->pdo->lastInsertId()];
     }
@@ -69,11 +89,14 @@ class AddressService
         if (!$existing) return ['success' => false, 'error' => 'Address not found'];
 
         if (!empty($data['is_primary'])) {
-            $this->pdo->prepare("UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
+            $sql = "UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?" . $this->tenantSql();
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $this->pdo->prepare($sql)->execute($params);
         }
 
-        $stmt = $this->pdo->prepare("UPDATE user_addresses SET label=?, address_type=?, address_line1=?, address_line2=?, city=?, state=?, pincode=?, country=?, phone=?, is_primary=? WHERE id=? AND user_id=?");
-        $stmt->execute([
+        $sql = "UPDATE user_addresses SET label=?, address_type=?, address_line1=?, address_line2=?, city=?, state=?, pincode=?, country=?, phone=?, is_primary=? WHERE id=? AND user_id=?" . $this->tenantSql();
+        $params = [
             trim($data['label'] ?? $existing['label']),
             $data['address_type'] ?? $existing['address_type'],
             trim($data['address_line1'] ?? $existing['address_line1']),
@@ -86,22 +109,34 @@ class AddressService
             !empty($data['is_primary']) ? 1 : 0,
             $id,
             $userId,
-        ]);
+        ];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return ['success' => true];
     }
 
     public function delete(int $id, int $userId): array
     {
-        $stmt = $this->pdo->prepare("DELETE FROM user_addresses WHERE id = ? AND user_id = ?");
-        $stmt->execute([$id, $userId]);
+        $sql = "DELETE FROM user_addresses WHERE id = ? AND user_id = ?" . $this->tenantSql();
+        $params = [$id, $userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return ['success' => $stmt->rowCount() > 0];
     }
 
     public function setPrimary(int $id, int $userId): array
     {
-        $this->pdo->prepare("UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
-        $stmt = $this->pdo->prepare("UPDATE user_addresses SET is_primary = 1 WHERE id = ? AND user_id = ?");
-        $stmt->execute([$id, $userId]);
+        $sql = "UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?" . $this->tenantSql();
+        $params = [$userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $this->pdo->prepare($sql)->execute($params);
+        $sql = "UPDATE user_addresses SET is_primary = 1 WHERE id = ? AND user_id = ?" . $this->tenantSql();
+        $params = [$id, $userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return ['success' => $stmt->rowCount() > 0];
     }
 
