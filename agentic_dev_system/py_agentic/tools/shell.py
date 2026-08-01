@@ -86,9 +86,28 @@ class ShellTool:
         return self.run(f'php -l "{full_path}"', timeout=10)
 
     def php_syntax_check_all(self, directory: str = 'app/') -> str:
-        """Check PHP syntax for all files in a directory."""
-        result = self.run(f'find {directory} -name "*.php" -exec php -l {{}} \\; 2>&1', timeout=60)
-        return result.stdout + result.stderr
+        """Check PHP syntax for all files in a directory (cross-platform)."""
+        import glob as glob_module
+        exclude_dirs = ('_archive', 'agentic_dev_system', 'vendor', 'node_modules', '.git')
+        full_dir = os.path.join(self.project_root, directory)
+        results = []
+
+        if not os.path.isdir(full_dir):
+            return ''
+
+        for root, dirs, files in os.walk(full_dir):
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            for filename in files:
+                if filename.endswith('.php'):
+                    fpath = os.path.join(root, filename)
+                    # Use forward slashes for command line on all platforms
+                    cmd_fpath = fpath.replace('\\', '/')
+                    result = self.run(f'php -l "{cmd_fpath}"', timeout=10)
+                    output = result.stdout + result.stderr
+                    if 'No syntax errors' not in output:
+                        results.append(output.strip())
+
+        return '\n'.join(results)
 
     def node_command(self, command: str, timeout: int = 30) -> ShellResult:
         """Run a node command."""

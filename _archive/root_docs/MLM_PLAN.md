@@ -33,12 +33,12 @@ APS Dream Home uses a **hybrid unilevel MLM commission system** with rank-based 
 | Rank               | Order | Min Legs | Min Qualifying Volume | Direct Rate |
 | ------------------ | ----- | -------- | --------------------- | ----------- |
 | **Associate**      | 1     | 0        | ₹0                    | **5%**      |
-| **Senior Assoc.**  | 2     | 1        | ₹25,000               | **7%**      |
-| **BDM**            | 3     | 2        | ₹1,00,000             | **10%**     |
-| **Sr. BDM**        | 4     | 3        | ₹3,00,000             | **12%**     |
-| **Vice President** | 5     | 4        | ₹8,00,000             | **15%**     |
-| **President**      | 6     | 5        | ₹20,00,000            | **18%**     |
-| **Site Manager**   | 7     | 6        | ₹50,00,000            | **20%**     |
+| **Senior Assoc.**  | 2     | 5        | ₹25,000               | **7%**      |
+| **BDM**            | 3     | 3        | ₹35,00,000            | **10%**     |
+| **Sr. BDM**        | 4     | 3        | ₹70,00,000            | **12%**     |
+| **Vice President** | 5     | 3        | ₹1,50,00,000          | **15%**     |
+| **President**      | 6     | 3        | ₹3,00,00,000          | **18%**     |
+| **Site Manager**   | 7     | 3        | ₹5,00,00,000          | **20%**     |
 
 > All percentages are of the **booking payment amount**.
 > The `direct_sale_pct` column stores the agent's own rank rate.
@@ -78,6 +78,7 @@ When a sale happens, the **selling agent gets their full rank rate**. Each uplin
 
 - Evaluated monthly via `scripts/run_rank_promotion.php`
 - Must meet **BOTH** leg count AND qualifying volume thresholds
+- **Minimum Legs** = Direct referrals only (people directly sponsored by the associate via users.referred_by)
 - Promotions logged to `mlm_rank_history`
 - Demotion NOT implemented (ranks only go up)
 - Agent rank stored in **both** `associates.level` and `mlm_profiles.current_level`
@@ -183,6 +184,66 @@ TOTAL: ₹1,60,000 (16% of payment — within 20% cap)
   - L2 override: 1.0% (instead of full rate)
 - This prevents double-dipping at the same rank level
 - Implemented in `MLMCommissionEngine::calculateBookingCommission()`
+
+### 3.5 EMI-Based Commission System
+
+**Commission Generation on EMI Payments:**
+
+- Commission is generated **only when client pays EMI**, not on booking amount
+- Commission rate is **locked at the agent's rank level at the time of plot sale**
+- Example: Agent sells plot at Associate level (5%) → Commission always calculated at 5% even if agent promotes to BDM later
+- Commission amount = EMI payment amount × Agent's locked commission rate
+
+**EMI Payment Flow:**
+
+```
+Client EMI Payment
+      │
+      ▼
+┌─────────────────────────────────────┐
+│  BookingLifecycleService            │
+│  recordEMIPayment()                  │
+│  → Updates payment schedule         │
+│  → Checks agent's locked rank       │
+│  → Calculates commission on EMI     │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  MLMCommissionEngine                │
+│  calculateEMICommission()           │
+│                                     │
+│  1. Get agent's locked rank         │
+│  2. Calculate commission on EMI     │
+│  3. Walk upline (users.referred_by) │
+│  4. Calculate per-level amounts     │
+│  5. Write to mlm_commission_ledger  │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  mlm_commission_ledger              │
+│  Entry per beneficiary:             │
+│  - direct_sale: Agent gets X% of EMI│
+│  - mlm_level_1: Sponsor gets Y%     │
+│  - mlm_level_2: Super gets Z%      │
+│  - mlm_level_3: Great-grand gets W% │
+└─────────────────────────────────────┘
+```
+
+**Plot Cancellation & Clawback:**
+
+- If plot is cancelled, all EMI-based commissions are **clawed back**
+- Clawback implemented via `mlm_clawback_log` table
+- 30-day EMI default triggers automatic clawback
+- Negative entries in `mlm_commission_ledger` for clawback amounts
+
+**Commission Lock Mechanism:**
+
+- Agent's rank is **locked at plot sale time** in `booking_commission_lock` table
+- Locked rank stored: `booking_id`, `agent_id`, `locked_rank`, `locked_rate`
+- Commission always calculated using locked rate, not current rank
+- This ensures commission consistency regardless of future rank promotions
 
 ---
 

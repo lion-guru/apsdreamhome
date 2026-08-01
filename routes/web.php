@@ -1,4 +1,6 @@
 <?php
+use App\Core\Database\Database;
+
 // Web Routes - APS Dream Home
 // Clean, deduplicated route definitions
 
@@ -3199,6 +3201,13 @@ $router->post('/admin/salary/batch/process', 'App\\Http\\Controllers\\Admin\\Sal
 $router->get('/admin/salary/batch/history', 'App\\Http\\Controllers\\Admin\\SalaryController@batchHistory');
 
 // ═══════════════════════════════════════════════════
+// ASSOCIATE SALARY DASHBOARD
+// ═══════════════════════════════════════════════════
+$router->get('/admin/salary/associate-dashboard', 'App\\Http\\Controllers\\Admin\\SalaryController@associateDashboard');
+$router->post('/admin/salary/update-associate-salary', 'App\\Http\\Controllers\\Admin\\SalaryController@updateAssociateSalary');
+$router->post('/admin/salary/process-associate-salary', 'App\\Http\\Controllers\\Admin\\SalaryController@processAssociateSalary');
+
+// ═══════════════════════════════════════════════════
 // AI MANAGEMENT (Integrations, Chatbot Logs, Memory)
 // ═══════════════════════════════════════════════════
 $router->get('/admin/ai-management/integrations', 'App\\Http\\Controllers\\Admin\\AIManagementController@integrations');
@@ -3220,13 +3229,13 @@ $router->get('/admin/ai/dashboard', function() {
     require_once $root . '/vendor/autoload.php';
     $config = require $root . '/config/database.php';
     try {
-        $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $pdo = new \PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
         $ai = new \App\Services\AI\AIManager($pdo);
         $stats = $ai->getStats();
-        $recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-        $topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-        $topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-        $priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
+        $recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
+        $topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
+        $topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
+        $priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC);
     } catch (\Throwable $e) {
         $stats = [];
         $recentMessages = [];
@@ -4288,7 +4297,8 @@ $router->post('/admin/iot/automation/delete/{id}', 'Admin\IoTController@automati
 // ============================================================
 // NEWLY ROUTED CONTROLLERS (from unrouted scan)
 // ============================================================
-
+
+
 
 // Property Workflow (Property\PropertyWorkflowController)
 $router->get('/property-workflow', 'Property\\PropertyWorkflowController@index');

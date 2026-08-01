@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\AdminController;
 use App\Traits\TenantAwareTrait;
+use App\Http\Controllers\Admin\AdminController;
 
 class SalaryController extends AdminController
 {
@@ -44,6 +44,135 @@ class SalaryController extends AdminController
             'pending_amount' => $pendingAmount,
             'recent_payments' => $recentPayments
         ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // ASSOCIATE SALARY DASHBOARD
+    // ──────────────────────────────────────────────
+
+    public function associateDashboard()
+    {
+        $this->requireAdmin();
+        [$tidSql, $tidParams] = $this->tenantWhere();
+        try {
+            // Get associate salary statistics
+            $totalAssociates = $this->db->fetch("SELECT COUNT(*) as c FROM associates WHERE status='active' {$tidSql}", $tidParams)['c'] ?? 0;
+            $salaryEligible = $this->db->fetch("SELECT COUNT(*) as c FROM associates WHERE salary_eligible=1 AND status='active' {$tidSql}", $tidParams)['c'] ?? 0;
+            $targetBonusEligible = $this->db->fetch("SELECT COUNT(*) as c FROM associates WHERE target_bonus_eligible=1 AND status='active' {$tidSql}", $tidParams)['c'] ?? 0;
+            $totalSalaryAmount = $this->db->fetch("SELECT COALESCE(SUM(salary_amount),0) as total FROM associates WHERE salary_eligible=1 AND status='active' {$tidSql}", $tidParams)['total'] ?? 0;
+            $totalTargetBonus = $this->db->fetch("SELECT COALESCE(SUM(target_bonus_amount),0) as total FROM associates WHERE target_bonus_eligible=1 AND status='active' {$tidSql}", $tidParams)['total'] ?? 0;
+
+            // Get associates with registration status
+            $associates = $this->db->fetchAll("
+                SELECT a.*, u.name as user_name, u.email as user_email,
+                       (a.registration_count >= a.required_registrations) as registration_complete,
+                       (a.required_registrations - a.registration_count) as pending_registrations
+                FROM associates a
+                LEFT JOIN users u ON a.user_id = u.id
+                WHERE a.status='active' {$tidSql}
+                ORDER BY a.registration_count DESC, a.total_sales DESC
+                LIMIT 50
+            ", $tidParams) ?? [];
+        } catch (\Exception $e) {
+            $totalAssociates = 0; $salaryEligible = 0; $targetBonusEligible = 0;
+            $totalSalaryAmount = 0; $totalTargetBonus = 0; $associates = [];
+        }
+        return $this->render('admin/salary/associate_dashboard', [
+            'page_title' => 'Associate Salary Dashboard',
+            'total_associates' => $totalAssociates,
+            'salary_eligible' => $salaryEligible,
+            'target_bonus_eligible' => $targetBonusEligible,
+            'total_salary_amount' => $totalSalaryAmount,
+            'total_target_bonus' => $totalTargetBonus,
+            'associates' => $associates
+        ]);
+    }
+
+    public function updateAssociateSalary()
+    {
+        $this->requireAdmin();
+        $associateId = (int)($_POST['associate_id'] ?? 0);
+        $salaryAmount = (float)($_POST['salary_amount'] ?? 0);
+        $salaryEligible = isset($_POST['salary_eligible']) ? 1 : 0;
+        $targetBonusAmount = (float)($_POST['target_bonus_amount'] ?? 0);
+        $targetBonusEligible = isset($_POST['target_bonus_eligible']) ? 1 : 0;
+
+        if ($associateId <= 0) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid associate ID']);
+            exit;
+        }
+
+        try {
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $this->db->execute("
+                UPDATE associates
+                SET salary_amount = ?, salary_eligible = ?, target_bonus_amount = ?, target_bonus_eligible = ?
+                WHERE id = ? {$tidSql}
+            ", array_merge([$salaryAmount, $salaryEligible, $targetBonusAmount, $targetBonusEligible, $associateId], $tidParams));
+
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'message' => 'Associate salary updated successfully']);
+        } catch (\Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function processAssociateSalary()
+    {
+        $this->requireAdmin();
+        $associateId = (int)($_POST['associate_id'] ?? 0);
+        $paymentMonth = (int)($_POST['payment_month'] ?? date('n'));
+        $paymentYear = (int)($_POST['payment_year'] ?? date('Y'));
+
+        if ($associateId <= 0) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid associate ID']);
+            exit;
+        }
+
+        try {
+            // Get associate details
+            [$tidSql, $tidParams] = $this->tenantWhere();
+            $associate = $this->db->fetch("
+                SELECT a.*, u.name as user_name
+                FROM associates a
+                LEFT JOIN users u ON a.user_id = u.id
+                WHERE a.id = ? AND a.salary_eligible = 1 {$tidSql}
+            ", array_merge([$associateId], $tidParams));
+
+            if (!$associate) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Associate not found or not salary eligible']);
+                exit;
+            }
+
+            // Create salary payment record
+            $this->db->execute("
+                INSERT INTO salary_payments
+                (tenant_id, associate_id, user_id, payment_month, payment_year, payment_date,
+                 basic_amount, gross_amount, net_amount, payment_status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', NOW(), NOW())
+            ", [
+                $this->getTenantId(),
+                $associateId,
+                $associate['user_id'],
+                $paymentMonth,
+                $paymentYear,
+                $associate['salary_amount'],
+                $associate['salary_amount'],
+                $associate['salary_amount']
+            ]);
+
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'message' => 'Salary payment processed successfully']);
+        } catch (\Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
     }
 
     public function stats()

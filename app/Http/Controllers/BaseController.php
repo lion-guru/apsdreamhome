@@ -2,6 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Database\Database;
+use App\Core\Http\Request;
+use App\Http\Middleware\ExperimentMiddleware;
+use App\Services\Monitoring\ErrorTrackerService;
+use App\Services\Localization\LocalizationService;
+use App\Core\Middleware\TenantContext;
+use App\Services\TenantEnforcement;
+use App\Services\Log;
+use App\Core\ErrorHandler;
+
 /**
  * Base Controller
  * 
@@ -49,9 +59,9 @@ class BaseController
      */
     protected function runExperimentMiddleware(): void
     {
-        if (class_exists('\\App\\Http\\Middleware\\ExperimentMiddleware')
-            && method_exists('\\App\\Http\\Middleware\\ExperimentMiddleware', 'handle')) {
-            \App\Http\Middleware\ExperimentMiddleware::handle();
+        if (class_exists(ExperimentMiddleware::class)
+            && method_exists(ExperimentMiddleware::class, 'handle')) {
+            ExperimentMiddleware::handle();
         }
     }
 
@@ -72,21 +82,21 @@ class BaseController
         $this->session = $this;
 
         // Initialize request
-        $this->request = \App\Core\Http\Request::createFromGlobals();
+        $this->request = Request::createFromGlobals();
 
         // Initialize database
-        $this->db = \App\Core\Database\Database::getInstance();
+        $this->db = Database::getInstance();
 
         // Monitoring: register global exception handler (once per process).
         // Captures uncaught Throwables into monitoring_errors without breaking
         // any existing handler that PHP installed earlier.
         if (!defined('APS_MONITORING_HANDLER_REGISTERED')) {
             define('APS_MONITORING_HANDLER_REGISTERED', true);
-            if (class_exists('\App\Services\Monitoring\ErrorTrackerService')) {
+            if (class_exists(ErrorTrackerService::class)) {
                 $previous = set_exception_handler(null);
                 set_exception_handler(function ($exception) use ($previous) {
                     try {
-                        \App\Services\Monitoring\ErrorTrackerService::captureException($exception, [
+                        ErrorTrackerService::captureException($exception, [
                             'url'    => $_SERVER['REQUEST_URI'] ?? null,
                             'method' => $_SERVER['REQUEST_METHOD'] ?? null,
                         ]);
@@ -105,10 +115,10 @@ class BaseController
         }
 
         // Initialize Localization Service (mlSupport) if available
-        if (class_exists('\App\Services\Localization\LocalizationService')) {
-            if (method_exists('\App\Services\Localization\LocalizationService', 'getInstance')) {
+        if (class_exists(LocalizationService::class)) {
+            if (method_exists(LocalizationService::class, 'getInstance')) {
                 try {
-                    $this->mlSupport = \App\Services\Localization\LocalizationService::getInstance();
+                    $this->mlSupport = LocalizationService::getInstance();
                 } catch (\Throwable $e) {
                 // LocalizationService requires deps not available - skip silently
                 error_log($e->getMessage());
@@ -120,9 +130,9 @@ class BaseController
         $this->runExperimentMiddleware();
 
         // Multi-tenant: resolve tenant context from request (header/subdomain/query/session/default)
-        if (class_exists('\App\Core\Middleware\TenantContext')) {
+        if (class_exists(TenantContext::class)) {
             try {
-                \App\Core\Middleware\TenantContext::resolve();
+                TenantContext::resolve();
             } catch (\Throwable $e) {
             // TenantContext failure should not break the app
             error_log($e->getMessage());
@@ -133,8 +143,8 @@ class BaseController
         $this->enforceTenantStatus();
 
         // Per-request correlation id for log entries (X-Request-Id if upstream provided)
-        if (class_exists('\App\Services\Log')) {
-            \App\Services\Log::setRequestId(
+        if (class_exists(Log::class)) {
+            Log::setRequestId(
                 $_SERVER['HTTP_X_REQUEST_ID'] ?? null
             );
         }
@@ -149,7 +159,7 @@ class BaseController
         if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && !$this->skipCsrfProtection()) {
             $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!$this->validateCsrfToken($token)) {
-                \App\Core\ErrorHandler::render(403, "Invalid or missing CSRF token.");
+                ErrorHandler::render(403, "Invalid or missing CSRF token.");
                 exit;
             }
         }
@@ -164,12 +174,12 @@ class BaseController
      */
     protected function enforceTenantStatus(): void
     {
-        if (!class_exists('\App\Core\Middleware\TenantContext') || !class_exists('\App\Services\TenantEnforcement')) {
+        if (!class_exists(TenantContext::class) || !class_exists(TenantEnforcement::class)) {
             return;
         }
 
         try {
-            $tenantId = \App\Core\Middleware\TenantContext::getId();
+            $tenantId = TenantContext::getId();
 
             // APS Dream Home (id=1) is never blocked
             if ($tenantId <= 1) return;
@@ -185,7 +195,7 @@ class BaseController
                 return;
             }
 
-            $enforcement = \App\Services\TenantEnforcement::getInstance();
+            $enforcement = TenantEnforcement::getInstance();
             $isWrite = in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'DELETE']);
 
             // Block all write operations for suspended/cancelled tenants
@@ -691,8 +701,8 @@ class BaseController
     protected function logLeadActivity($leadId, $type, $description, $metadata = [])
     {
         try {
-            $db = \App\Core\Database\Database::getInstance();
-            $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, metadata, created_by, created_at) 
+            $db = Database::getInstance();
+            $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, metadata, created_by, created_at)
                     VALUES (?, ?, ?, ?, ?, NOW())";
             $db->execute($sql, [
                 $leadId,
@@ -775,7 +785,7 @@ class BaseController
             $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
             if (!$userId) return;
 
-            $db = \App\Core\Database\Database::getInstance();
+            $db = Database::getInstance();
             $sql = "INSERT INTO activity_logs_unified (user_id, action, details, created_at) VALUES (?, ?, ?, NOW())";
             $db->execute($sql, [$userId, $action, $details]);
         } catch (\Exception $e) {

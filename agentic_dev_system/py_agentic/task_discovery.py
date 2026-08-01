@@ -86,16 +86,25 @@ class TaskDiscovery:
         """Check for PHP syntax errors in all PHP files."""
         self._log("Checking PHP syntax...")
 
-        # Use find + php -l to check all files
-        result = self.shell.run(
-            'find app/ -name "*.php" -exec php -l {} \\; 2>&1',
-            timeout=120
-        )
+        import glob as glob_module
+        php_files = []
+        exclude_dirs = {'_archive', 'agentic_dev_system', 'vendor', 'node_modules', '.git'}
+
+        for root, dirs, files in os.walk(self.project_root):
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            for filename in files:
+                if filename.endswith('.php'):
+                    php_files.append(os.path.join(root, filename))
 
         errors = []
-        for line in (result.stdout + result.stderr).split('\n'):
-            if 'Parse error' in line or 'syntax error' in line:
-                errors.append(line.strip())
+        for fpath in php_files:
+            result = self.shell.php_syntax_check(fpath)
+            output = result.stdout + result.stderr
+            if 'Parse error' in output or 'syntax error' in output:
+                # Extract just the error line
+                for line in output.split('\n'):
+                    if 'Parse error' in line or 'syntax error' in line:
+                        errors.append(line.strip())
 
         if errors:
             return [{
@@ -214,18 +223,21 @@ class TaskDiscovery:
         """Check for security issues."""
         self._log("Checking security...")
 
-        # Look for SQL injection patterns
-        results = self.shell.run(
-            'grep -rn "\\$GLOBALS.*\\$.*SELECT\\|\\$GLOBALS.*\\$.*INSERT\\|\\$GLOBALS.*\\$.*UPDATE\\|\\$GLOBALS.*\\$.*DELETE" app/ 2>/dev/null | head -20',
-            timeout=10
+        # Look for SQL injection patterns using cross-platform FilesystemTool
+        matches = self.fs.grep(
+            r'\$GLOBALS.*\$.*SELECT|\$GLOBALS.*\$.*INSERT|\$GLOBALS.*\$.*UPDATE|\$GLOBALS.*\$.*DELETE',
+            path='app/',
+            include='*.php',
+            max_results=20
         )
 
-        if results.stdout.strip():
+        if matches:
+            details = '\n'.join(f"{m[0]}:{m[1]}: {m[2]}" for m in matches)
             return [{
                 'type': 'sql_injection_risk',
                 'priority': 'high',
                 'desc': 'Potential SQL injection via $GLOBALS',
-                'detail': results.stdout.strip()
+                'detail': details
             }]
 
         return []
