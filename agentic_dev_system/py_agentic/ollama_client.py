@@ -5,7 +5,7 @@ Uses only Python standard library (urllib) - no external dependencies.
 Communicates with local Ollama server for AI reasoning tasks.
 
 Usage:
-    client = OllamaClient({'host': 'localhost', 'port': 11434, 'model': 'qwen2.5:7b'})
+    client = OllamaClient({'base_url': 'http://localhost:11434', 'model': 'qwen2.5:7b'})
     if client.is_available():
         response = client.generate("Fix this PHP code: ...")
 """
@@ -20,11 +20,14 @@ class OllamaClient:
     """Lightweight Ollama API client using stdlib only."""
 
     def __init__(self, config: dict):
-        self.host = config.get('host', 'localhost')
-        self.port = config.get('port', 11434)
+        if 'base_url' in config:
+            self.base_url = config['base_url']
+        else:
+            self.host = config.get('host', 'localhost')
+            self.port = config.get('port', 11434)
+            self.base_url = f"http://{self.host}:{self.port}"
         self.model = config.get('model', 'qwen2.5:7b')
-        self.base_url = f"http://{self.host}:{self.port}"
-        self.timeout = config.get('timeout', 30)
+        self.timeout = config.get('timeout_ms', 30000) / 1000.0
 
     def is_available(self) -> bool:
         """Check if Ollama server is reachable."""

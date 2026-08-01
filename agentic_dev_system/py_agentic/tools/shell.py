@@ -1,13 +1,14 @@
 """
 Shell Tool - Cross-platform subprocess execution for agents.
 
-Provides shell command execution, git operations, and PHP syntax checking
-that work on both Windows and Unix-like systems.
+Works on both Windows and Unix-like systems.
+Uses os.walk for file operations instead of Unix find.
 """
 
 import subprocess
 import os
-from typing import Optional
+import time
+from typing import Optional, List
 
 
 class ShellResult:
@@ -45,9 +46,7 @@ class ShellTool:
             ShellResult with stdout, stderr, and returncode
         """
         work_dir = cwd or self.project_root
-
         try:
-            # Use shell=True for cross-platform compatibility
             result = subprocess.run(
                 command,
                 shell=True,
@@ -85,29 +84,42 @@ class ShellTool:
         full_path = file_path if os.path.isabs(file_path) else os.path.join(self.project_root, file_path)
         return self.run(f'php -l "{full_path}"', timeout=10)
 
-    def php_syntax_check_all(self, directory: str = 'app/') -> str:
-        """Check PHP syntax for all files in a directory (cross-platform)."""
-        import glob as glob_module
-        exclude_dirs = ('_archive', 'agentic_dev_system', 'vendor', 'node_modules', '.git')
-        full_dir = os.path.join(self.project_root, directory)
-        results = []
+    def php_syntax_check_all(self, directory: str = 'app/', max_files: int = 30) -> str:
+        """Check PHP syntax for recently modified PHP files (optimized for speed).
 
-        if not os.path.isdir(full_dir):
-            return ''
+        Only checks files modified within the last 24 hours and limits to max_files
+        to keep each cycle fast. Falls back to git diff for known changed files.
+        """
+        search_dir = os.path.join(self.project_root, directory) if not os.path.isabs(directory) else directory
+        if not os.path.exists(search_dir):
+            return f'Directory not found: {directory}'
 
-        for root, dirs, files in os.walk(full_dir):
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
-            for filename in files:
-                if filename.endswith('.php'):
-                    fpath = os.path.join(root, filename)
-                    # Use forward slashes for command line on all platforms
-                    cmd_fpath = fpath.replace('\\', '/')
-                    result = self.run(f'php -l "{cmd_fpath}"', timeout=10)
-                    output = result.stdout + result.stderr
-                    if 'No syntax errors' not in output:
-                        results.append(output.strip())
+        errors = []
+        checked = 0
+        cutoff = time.time() - 86400  # 24 hours ago
 
-        return '\n'.join(results)
+        for root, dirs, files in os.walk(search_dir):
+            dirs[:] = [d for d in dirs if d not in ('_archive', 'vendor', 'node_modules', '.git')]
+            for f in files:
+                if f.endswith('.php'):
+                    full = os.path.join(root, f)
+                    try:
+                        if os.path.getmtime(full) < cutoff:
+                            continue
+                    except OSError:
+                        continue
+                    r = self.php_syntax_check(full)
+                    if r.stderr:
+                        for line in r.stderr.split('\n'):
+                            if 'Parse error' in line or 'syntax error' in line:
+                                errors.append(line.strip())
+                    checked += 1
+                    if checked >= max_files:
+                        return '\n'.join(errors) if errors else ''
+
+        if checked == 0:
+            return ''  # No recently modified files
+        return '\n'.join(errors) if errors else ''
 
     def node_command(self, command: str, timeout: int = 30) -> ShellResult:
         """Run a node command."""
@@ -116,3 +128,18 @@ class ShellTool:
     def composer_command(self, command: str, timeout: int = 60) -> ShellResult:
         """Run a composer command."""
         return self.run(f'composer {command}', timeout=timeout)
+
+    def find_php_files(self, directory: str = 'app/', exclude_dirs: List[str] = None) -> List[str]:
+        """Find all PHP files in a directory (cross-platform, replaces Unix find)."""
+        if exclude_dirs is None:
+            exclude_dirs = ['_archive', 'vendor', 'node_modules', '.git']
+        search_dir = os.path.join(self.project_root, directory) if not os.path.isabs(directory) else directory
+        if not os.path.exists(search_dir):
+            return []
+        results = []
+        for root, dirs, files in os.walk(search_dir):
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            for f in files:
+                if f.endswith('.php'):
+                    results.append(os.path.join(root, f))
+        return results

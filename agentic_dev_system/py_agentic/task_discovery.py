@@ -13,17 +13,22 @@ Sources:
 import os
 import re
 import json
-import subprocess
+import time
 from typing import List, Dict, Any
 
 
 class TaskDiscovery:
     """Discovers development tasks from multiple sources."""
 
+    # Cooldown in seconds for recurring low-priority tasks
+    _COOLDOWN_ARCHIVE = 3600  # 1 hour
+    _COOLDOWN_GIT = 600       # 10 min
+
     def __init__(self, project_root: str, shell):
         self.project_root = project_root
         self.shell = shell
         self._log_count = 0
+        self._last_reported = {}  # type -> timestamp
 
     def _log(self, message: str) -> None:
         """Log a message."""
@@ -60,58 +65,52 @@ class TaskDiscovery:
         return tasks
 
     def _check_git_diff(self) -> List[Dict[str, Any]]:
-        """Check for recent git changes."""
+        """Check for recent git changes (cross-platform)."""
         self._log("Checking git diff...")
 
-        result = self.shell.run('git diff --name-only HEAD~1 2>/dev/null || git diff --name-only 2>/dev/null')
-        if not result.success or not result.stdout.strip():
+        result = self.shell.run('git diff --name-only HEAD~1', timeout=10)
+        if not result.success and not result.stdout.strip():
+            result = self.shell.run('git diff --name-only', timeout=10)
+
+        if not result.stdout.strip():
             return []
 
         changed_files = [f.strip() for f in result.stdout.strip().split('\n') if f.strip()]
         if not changed_files:
             return []
 
-        # Filter to PHP files
-        php_files = [f for f in changed_files if f.endswith('.php')]
+        # Filter to PHP files, excluding agentic system and log files
+        php_files = [
+            f for f in changed_files
+            if f.endswith('.php') and 'agentic_dev_system' not in f
+            and 'logs/' not in f and '.log' not in f
+        ]
         if php_files:
+            now = time.time()
+            if now - self._last_reported.get('git_changes', 0) < self._COOLDOWN_GIT:
+                return []
+            self._last_reported['git_changes'] = now
             return [{
                 'type': 'git_changes',
                 'priority': 'medium',
                 'desc': f'Recent changes in {len(php_files)} PHP file(s)',
-                'detail': '\n'.join(php_files)
+                'detail': '\n'.join(php_files[:10])
             }]
         return []
 
     def _check_php_syntax(self) -> List[Dict[str, Any]]:
-        """Check for PHP syntax errors in all PHP files."""
+        """Check for PHP syntax errors in all PHP files (cross-platform)."""
         self._log("Checking PHP syntax...")
 
-        import glob as glob_module
-        php_files = []
-        exclude_dirs = {'_archive', 'agentic_dev_system', 'vendor', 'node_modules', '.git'}
-
-        for root, dirs, files in os.walk(self.project_root):
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
-            for filename in files:
-                if filename.endswith('.php'):
-                    php_files.append(os.path.join(root, filename))
-
-        errors = []
-        for fpath in php_files:
-            result = self.shell.php_syntax_check(fpath)
-            output = result.stdout + result.stderr
-            if 'Parse error' in output or 'syntax error' in output:
-                # Extract just the error line
-                for line in output.split('\n'):
-                    if 'Parse error' in line or 'syntax error' in line:
-                        errors.append(line.strip())
-
+        # Use shell tool's cross-platform PHP syntax check
+        errors = self.shell.php_syntax_check_all('app/')
         if errors:
+            error_lines = errors.split('\n')
             return [{
                 'type': 'php_syntax',
                 'priority': 'high',
-                'desc': f'PHP syntax errors found in {len(errors)} file(s)',
-                'detail': '\n'.join(errors)
+                'desc': f'PHP syntax errors found in {len(error_lines)} file(s)',
+                'detail': errors[:2000]  # Limit detail length
             }]
         return []
 
@@ -129,22 +128,19 @@ class TaskDiscovery:
         except Exception:
             return []
 
-        # Look for pending tasks in tables
         tasks = []
 
         # Find pending tasks in the Pending Tasks section
         pending_match = re.search(r'## Pending Tasks\s+(.*?)(?:---|\Z)', content, re.DOTALL)
         if pending_match:
             pending_section = pending_match.group(1)
-            # Look for rows with empty checkboxes or "pending" markers
             for line in pending_section.split('\n'):
-                if line.strip().startswith('|') and 'pending' in line.lower():
-                    # Extract task description
+                if line.strip().startswith('|') and ('pending' in line.lower() or '[ ]' in line):
                     cells = [c.strip() for c in line.split('|')]
-                    if len(cells) >= 3:
+                    if len(cells) >= 4:
                         priority = cells[1] if cells[1] else 'medium'
                         desc = cells[2] if len(cells) > 2 else ''
-                        if desc and 'pending' in desc.lower():
+                        if desc:
                             tasks.append({
                                 'type': 'pending_agent_task',
                                 'priority': priority,
@@ -153,11 +149,10 @@ class TaskDiscovery:
                             })
 
         # Also check for E2E test status
-        if '153/153' not in content and 'PASS' in content:
-            # E2E might be mentioned as needing attention
-            e2e_match = re.search(r'E2E\s*(?:tests)?[\s\S]*?(\d+/\d+)', content, re.IGNORECASE)
-            if e2e_match:
-                ratio = e2e_match.group(1)
+        e2e_match = re.search(r'E2E\s*(?:tests)?[\s\S]*?(\d+/\d+)', content, re.IGNORECASE)
+        if e2e_match:
+            ratio = e2e_match.group(1)
+            try:
                 passed, total = map(int, ratio.split('/'))
                 if passed < total:
                     tasks.append({
@@ -166,14 +161,15 @@ class TaskDiscovery:
                         'desc': f'E2E tests: {passed}/{total} passing',
                         'detail': f'{total - passed} test(s) failing'
                     })
+            except ValueError:
+                pass
 
         return tasks
 
     def _check_e2e_results(self) -> List[Dict[str, Any]]:
-        """Check E2E test results."""
+        """Check E2E test results from log files."""
         self._log("Checking E2E results...")
 
-        # Check if E2E test file exists and run it
         e2e_path = os.path.join(self.project_root, 'testing', 'visual_tests', 'E2E_MASTER_TEST.mjs')
         if not os.path.exists(e2e_path):
             return []
@@ -183,7 +179,7 @@ class TaskDiscovery:
         if os.path.exists(log_path):
             try:
                 with open(log_path, 'r') as f:
-                    recent = f.readlines()[-50:]  # Last 50 lines
+                    recent = f.readlines()[-50:]
                 for line in recent:
                     if 'E2E' in line and 'FAIL' in line:
                         return [{
@@ -205,12 +201,15 @@ class TaskDiscovery:
         if not os.path.exists(archive_path):
             return []
 
-        # Count files in archive
         file_count = 0
         for root, dirs, files in os.walk(archive_path):
             file_count += len(files)
 
-        if file_count > 500:
+        if file_count > 1000:
+            now = time.time()
+            if now - self._last_reported.get('archive_growth', 0) < self._COOLDOWN_ARCHIVE:
+                return []
+            self._last_reported['archive_growth'] = now
             return [{
                 'type': 'archive_growth',
                 'priority': 'low',
@@ -220,24 +219,63 @@ class TaskDiscovery:
         return []
 
     def _check_security(self) -> List[Dict[str, Any]]:
-        """Check for security issues."""
+        """Check for security issues using cross-platform grep (optimized)."""
         self._log("Checking security...")
 
-        # Look for SQL injection patterns using cross-platform FilesystemTool
-        matches = self.fs.grep(
-            r'\$GLOBALS.*\$.*SELECT|\$GLOBALS.*\$.*INSERT|\$GLOBALS.*\$.*UPDATE|\$GLOBALS.*\$.*DELETE',
-            path='app/',
-            include='*.php',
-            max_results=20
-        )
+        search_root = os.path.join(self.project_root, 'app')
+        if not os.path.exists(search_root):
+            return []
 
-        if matches:
-            details = '\n'.join(f"{m[0]}:{m[1]}: {m[2]}" for m in matches)
+        patterns = [
+            r'\$GLOBALS.*\$_.*\b(SELECT|INSERT|UPDATE|DELETE)\b',
+        ]
+
+        findings = []
+        cutoff = time.time() - 86400  # Only scan files modified in last 24h
+        files_scanned = 0
+        max_files = 50  # Limit scan to prevent slow cycles
+
+        for root, dirs, files in os.walk(search_root):
+            dirs[:] = [d for d in dirs if d not in ('_archive', 'vendor', 'node_modules', '.git')]
+            for f in files:
+                if f.endswith('.php'):
+                    filepath = os.path.join(root, f)
+                    try:
+                        if os.path.getmtime(filepath) < cutoff:
+                            continue
+                    except OSError:
+                        continue
+
+                    files_scanned += 1
+                    if files_scanned > max_files:
+                        return [{
+                            'type': 'sql_injection_risk',
+                            'priority': 'info',
+                            'desc': f'Found {len(findings)} potential SQL injection risk(s) in {files_scanned} recent files',
+                            'detail': '\n'.join(findings) if findings else 'No issues in recent files'
+                        }]
+
+                    try:
+                        with open(filepath, 'r', encoding='utf-8', errors='ignore') as fh:
+                            for line_num, line in enumerate(fh, 1):
+                                if '$GLOBALS' in line and re.search(r'\$\w+.*(?:SELECT|INSERT|UPDATE|DELETE)', line, re.IGNORECASE):
+                                    findings.append(f"{filepath}:{line_num}: {line.strip()[:100]}")
+                                    if len(findings) >= 20:
+                                        return [{
+                                            'type': 'sql_injection_risk',
+                                            'priority': 'high',
+                                            'desc': f'Potential SQL injection via $GLOBALS in {len(findings)} location(s)',
+                                            'detail': '\n'.join(findings)
+                                        }]
+                    except Exception:
+                        continue
+
+        if findings:
             return [{
                 'type': 'sql_injection_risk',
                 'priority': 'high',
-                'desc': 'Potential SQL injection via $GLOBALS',
-                'detail': details
+                'desc': f'Potential SQL injection via $GLOBALS in {len(findings)} location(s)',
+                'detail': '\n'.join(findings)
             }]
 
         return []

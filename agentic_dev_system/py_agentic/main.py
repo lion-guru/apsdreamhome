@@ -24,8 +24,11 @@ from typing import List, Dict, Any, Optional
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 _parent_dir = os.path.dirname(_current_dir)
 _grandparent_dir = os.path.dirname(_parent_dir)
-sys.path.insert(0, _grandparent_dir)  # project root
-sys.path.insert(0, _parent_dir)      # agentic_dev_system
+
+if _grandparent_dir not in sys.path:
+    sys.path.insert(0, _grandparent_dir)
+if _parent_dir not in sys.path:
+    sys.path.insert(0, _parent_dir)
 
 from py_agentic.tools.shell import ShellTool
 from py_agentic.tools.filesystem import FilesystemTool
@@ -46,23 +49,17 @@ class Orchestrator:
 
     def __init__(self, config_path: str = None):
         if config_path is None:
-            config_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'config.json'
-            )
+            config_path = os.path.join(_parent_dir, 'config.json')
 
         with open(config_path) as f:
             self.config = json.load(f)
 
         self.project_root = self.config['project_root']
-        self.log_file = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            'logs', 'agent_heartbeat.log'
-        )
-        self.state_file = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            'state', 'agent_state.json'
-        )
+
+        # Use proper Windows-compatible path handling for log/state files
+        _base_dir = _parent_dir.replace('/', os.sep)
+        self.log_file = os.path.join(_base_dir, 'logs', 'agent_heartbeat.log')
+        self.state_file = os.path.join(_base_dir, 'state', 'agent_state.json')
 
         self.shell = ShellTool(self.project_root)
         self.fs = FilesystemTool(self.project_root)
@@ -107,11 +104,15 @@ class Orchestrator:
                 self._log(f"Initialized agent: {agent_cfg['name']} ({agent_id})")
 
     def _log(self, message: str) -> None:
-        """Log to file and console."""
+        """Log to file and console (with error handling)."""
         line = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}\n"
-        os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
-        with open(self.log_file, 'a') as f:
-            f.write(line)
+        try:
+            os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+            with open(self.log_file, 'a', encoding='utf-8') as f:
+                f.write(line)
+        except (IOError, OSError) as e:
+            # Fallback to console only if file writing fails
+            pass
         print(line, end='')
 
     def _save_state(self, state: dict = None) -> None:
@@ -123,15 +124,18 @@ class Orchestrator:
         state['total_cycles'] = state.get('total_cycles', 0) + 1
         state['project'] = self.config['project']
         state['mode'] = self.config['scheduler']['mode']
-        os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
-        with open(self.state_file, 'w') as f:
-            json.dump(state, f, indent=2)
+        try:
+            os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
+            with open(self.state_file, 'w', encoding='utf-8') as f:
+                json.dump(state, f, indent=2)
+        except (IOError, OSError):
+            pass
 
     def _load_state(self) -> dict:
         """Load agent state."""
         if os.path.exists(self.state_file):
             try:
-                with open(self.state_file) as f:
+                with open(self.state_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
             except Exception:
                 pass
@@ -225,6 +229,7 @@ class Orchestrator:
             except Exception as e:
                 self._log(f"ERROR in cycle {self.cycle}: {e}")
                 self._save_state()
+                await asyncio.sleep(5)
 
             if self.cycle < max_cycles:
                 await asyncio.sleep(interval_ms / 1000.0)
@@ -250,7 +255,7 @@ async def main():
     orchestrator = Orchestrator(config_path=args.config)
 
     if args.skip_e2e:
-        orchestrator.config['e2e_tests']['command'] = 'echo "E2E tests skipped"'
+        orchestrator.config['e2e_tests']['command'] = 'echo E2E tests skipped'
 
     await orchestrator.run(
         max_cycles=args.cycles,
