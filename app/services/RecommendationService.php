@@ -121,7 +121,8 @@ class RecommendationService
 
     private function getPropertyCandidates(int $limit): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM properties WHERE status = 'active'" . $this->tenantSql() . " LIMIT ?");
+        $sql = "SELECT * FROM properties WHERE status = 'active'" . $this->tenantSql() . " LIMIT ?";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([$limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -168,13 +169,14 @@ class RecommendationService
 
             // Step 2: Get properties favorited by similar users
             $placeholders = implode(',', array_fill(0, count($similarUserIds), '?'));
+            $tsql = $this->tenantSql();
             $sql = "SELECT p.*, COUNT(DISTINCT pf.user_id) as recommender_count
                     FROM property_favorites pf
                     JOIN properties p ON pf.property_id = p.id
                     WHERE pf.user_id IN ($placeholders)
-                      AND p.status = 'active'" . $this->tenantSql() . "
+                      AND p.status = 'active'" . $tsql . "
                       AND pf.property_id NOT IN (
-                          SELECT property_id FROM property_favorites WHERE user_id = ?" . $this->tenantSql() . "
+                          SELECT property_id FROM property_favorites WHERE user_id = ?" . $tsql . "
                       )
                     GROUP BY p.id
                     ORDER BY recommender_count DESC
@@ -202,10 +204,11 @@ class RecommendationService
     private function findSimilarUsers(int $userId): array
     {
         try {
+            $tsql = $this->tenantSql();
             $sql = "SELECT DISTINCT pv2.user_id
                     FROM property_views pv1
                     JOIN property_views pv2 ON pv1.property_id = pv2.property_id
-                        AND pv1.user_id = ? AND pv2.user_id != ?" . $this->tenantSql() . "
+                        AND pv1.user_id = ? AND pv2.user_id != ?" . $tsql . "
                     LIMIT 50";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId, $userId]);

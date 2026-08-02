@@ -73,8 +73,10 @@ class LeadScorer
 
     private function getLead(int $leadId): ?array
     {
-        $stmt = $this->db->prepare("SELECT * FROM leads WHERE id = ?");
-        $stmt->execute([$leadId]);
+        $stmt = $this->db->prepare("SELECT * FROM leads WHERE id = ?{$this->tenantSql()}");
+        $params = [$leadId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
