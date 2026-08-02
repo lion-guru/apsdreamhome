@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Property Chatbot Service v3 — Realistic, Conversational, Never Repetitive
  *
@@ -16,6 +18,8 @@ namespace App\Services;
  */
 class PropertyChatbotService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $context = [];
 
@@ -108,8 +112,8 @@ class PropertyChatbotService
                        MIN(p.area_sqft) as min_area
                 FROM colonies c
                 LEFT JOIN plots p ON c.id = p.colony_id AND p.is_active = 1
-                WHERE c.is_active = 1
-                GROUP BY c.id, c.name, c.slug, c.description, c.map_link, c.latitude, c.longitude,
+                WHERE c.is_active = 1" . $this->tenantSqlForAlias('c') .
+                " GROUP BY c.id, c.name, c.slug, c.description, c.map_link, c.latitude, c.longitude,
                          c.starting_price, c.image_path
                 ORDER BY c.name
             ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -132,7 +136,7 @@ class PropertyChatbotService
                 "SELECT p.plot_number, p.area_sqft, p.total_price, p.front_ft, p.depth_ft,
                         c.name as colony_name, c.slug as colony_slug
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
-                 WHERE {$where} ORDER BY p.total_price ASC LIMIT ?",
+                 WHERE {$where}" . $this->tenantSqlForAlias('p') . " ORDER BY p.total_price ASC LIMIT ?",
                 $params
             )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
@@ -143,7 +147,7 @@ class PropertyChatbotService
     private function getPlotCount(): int
     {
         try {
-            $row = $this->db->query("SELECT COUNT(*) as cnt FROM plots WHERE status='available' AND is_active=1")->fetch(\PDO::FETCH_ASSOC);
+            $row = $this->db->query("SELECT COUNT(*) as cnt FROM plots WHERE status='available' AND is_active=1" . $this->tenantSqlForAlias('plots'))->fetch(\PDO::FETCH_ASSOC);
             return (int)($row['cnt'] ?? 0);
         } catch (\Exception $e) {
             return 0;
@@ -153,7 +157,7 @@ class PropertyChatbotService
     private function getColonyCount(): int
     {
         try {
-            $row = $this->db->query("SELECT COUNT(*) as cnt FROM colonies WHERE is_active=1")->fetch(\PDO::FETCH_ASSOC);
+            $row = $this->db->query("SELECT COUNT(*) as cnt FROM colonies WHERE is_active=1" . $this->tenantSqlForAlias('colonies'))->fetch(\PDO::FETCH_ASSOC);
             return (int)($row['cnt'] ?? 0);
         } catch (\Exception $e) {
             return 0;
@@ -779,9 +783,18 @@ class PropertyChatbotService
     public function saveConversation($userId, $message, $response)
     {
         try {
+            $tid = $this->tenantId();
+            $columns = "user_id, user_message, bot_response, intent, created_at";
+            $values = "?, ?, ?, ?, NOW()";
+            $params = [$userId, $message, $response['reply'], $response['intent']];
+            if ($tid > 1) {
+                $columns .= ", tenant_id";
+                $values .= ", ?";
+                $params[] = $tid;
+            }
             $this->db->execute(
-                "INSERT INTO chatbot_conversations (user_id, user_message, bot_response, intent, created_at) VALUES (?, ?, ?, ?, NOW())",
-                [$userId, $message, $response['reply'], $response['intent']]
+                "INSERT INTO chatbot_conversations ($columns) VALUES ($values)",
+                $params
             );
         } catch (\Exception $e) {
             error_log("Chatbot save error: " . $e->getMessage());

@@ -7,9 +7,12 @@
 namespace App\Services\AI;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class ChatAnalytics
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct(?Database $db = null)
@@ -24,8 +27,8 @@ class ChatAnalytics
     {
         try {
             $this->db->query(
-                "INSERT INTO chat_analytics (event_type, action, session_id, user_id, meta, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-                [$event, $action, $sessionId, $userId, json_encode($meta)]
+                "INSERT INTO chat_analytics (event_type, action, session_id, user_id, meta, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '' ) . ") VALUES (?, ?, ?, ?, ?, NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '' ) . ")",
+                array_merge([$event, $action, $sessionId, $userId, json_encode($meta)], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
         } catch (\Exception $e) {
             error_log("ChatAnalytics log error: " . $e->getMessage());
@@ -87,7 +90,7 @@ class ChatAnalytics
                     SUM(CASE WHEN event_type='cancelled' THEN 1 ELSE 0 END) as cancels,
                     SUM(CASE WHEN event_type='dropoff' THEN 1 ELSE 0 END) as dropoffs
              FROM chat_analytics 
-             WHERE created_at >= ? 
+             WHERE created_at >= ?" . $this->tenantSql() . "
              GROUP BY action
              ORDER BY starts DESC",
             [$since]
@@ -106,7 +109,7 @@ class ChatAnalytics
                     SUM(CASE WHEN event_type='started' THEN 1 ELSE 0 END) as starts,
                     SUM(CASE WHEN event_type='completed' THEN 1 ELSE 0 END) as completions
              FROM chat_analytics 
-             WHERE created_at >= ? 
+             WHERE created_at >= ?" . $this->tenantSql() . "
              GROUP BY DATE(created_at)
              ORDER BY day DESC",
             [$since]
@@ -118,7 +121,7 @@ class ChatAnalytics
                     JSON_EXTRACT(meta, '$.step') as dropoff_step,
                     COUNT(*) as count
              FROM chat_analytics 
-             WHERE event_type = 'dropoff' AND created_at >= ?
+             WHERE event_type = 'dropoff' AND created_at >= ?" . $this->tenantSql() . "
              GROUP BY action, dropoff_step
              ORDER BY count DESC
              LIMIT 10",
@@ -133,7 +136,7 @@ class ChatAnalytics
                 SUM(CASE WHEN event_type='cancelled' THEN 1 ELSE 0 END) as total_cancels,
                 SUM(CASE WHEN event_type='dropoff' THEN 1 ELSE 0 END) as total_dropoffs
              FROM chat_analytics 
-             WHERE created_at >= ?",
+             WHERE created_at >= ?" . $this->tenantSql(),
             [$since]
         );
 
