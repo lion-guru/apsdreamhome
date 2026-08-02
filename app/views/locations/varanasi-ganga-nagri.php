@@ -30,7 +30,7 @@
                     </ul>
                 </div>
                 <div class="col-lg-6">
-                    <img src="<?= BASE_URL ?>/images/projects/ganga-nagri.jpg" alt="Ganga Nagri" class="img-fluid rounded-4 shadow-lg" />
+                    <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="Ganga Nagri" class="img-fluid rounded-4 shadow-lg" />
                 </div>
             </div>
 

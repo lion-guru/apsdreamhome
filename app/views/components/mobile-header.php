@@ -22,7 +22,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
         </button>
 
         <a href="<?php echo BASE_URL; ?>" class="flex items-center space-x-2 mx-auto">
-            <img src="<?= BASE_URL ?>/assets/images/logo.png" class="img-fluid" alt="htmlspecialchars(__('aps_dream_home', 'APS Dream Home'))" style="height: 32px;" onerror="this.style.display='none'">
+            <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="htmlspecialchars(__('aps_dream_home', 'APS Dream Home'))" style="height: 32px;" onerror="this.style.display='none'">
             <span class="text-lg font-bold text-primary">__('aps_dream_home', 'APS Dream Home')</span>
         </a>
 
@@ -80,7 +80,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                 <!-- Logo -->
                 <div class="col-lg-3">
                     <a href="<?php echo BASE_URL; ?>" class="d-flex align-items-center text-decoration-none">
-                        <img src="<?= BASE_URL ?>/assets/images/logo.png" class="me-2" alt="APS Dream Home" style="height: 40px;" onerror="this.style.display='none'">
+                        <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="me-2" alt="APS Dream Home" style="height: 40px;" onerror="this.style.display='none'">
                         <span class="h5 mb-0 text-primary fw-bold">APS Dream Home</span>
                     </a>
                 </div>

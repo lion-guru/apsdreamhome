@@ -104,7 +104,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <?php if (!empty($project['gallery_images'])): ?>
                         <img src="<?= htmlspecialchars($project['gallery_images'][0] ?? $project['gallery_images']) ?>" class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>" id="mainImage" loading="lazy">
                     <?php else: ?>
-                        <img loading="lazy" src="/assets/images/no-project-image.jpg"
+                        <img loading="lazy" src="/assets/images/placeholder/property.svg"
                              class="img-fluid rounded shadow" alt="No Image Available"
                              id="mainImage">
                     <?php endif; ?>

@@ -102,7 +102,7 @@ include __DIR__ . '/../layouts/base.php';
                         <p><i class="bi bi-geo-alt me-2 text-primary"></i><?php echo htmlspecialchars($property['address'] ?? $property['location']); ?></p>
                         <div class="rounded-lg overflow-hidden border border-secondary" style="height: 300px;">
                             <!-- Mock Map -->
-                            <img src="<?= BASE_URL ?>/assets/images/map-placeholder.jpg" alt="Property location map" class="w-100 h-100" style="object-fit: cover;" loading="lazy">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" alt="Property location map" class="w-100 h-100" style="object-fit: cover;" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -118,6 +118,10 @@ include __DIR__ . '/../layouts/base.php';
                     <h2 class="text-white fw-bold mb-4">₹<?php echo number_format($property['price']); ?></h2>
 
                     <div class="d-grid gap-3">
+                        <!-- WhatsApp Primary CTA -->
+                        <a href="https://wa.me/<?= $phoneRaw ?>?text=<?= urlencode("Hi, I'm interested in " . $property['title'] . " (ID: " . $property['id'] . ") - Price: ₹" . number_format($property['price']) . ". Could you share more details?") ?>" class="btn btn-success btn-lg" target="_blank" rel="noopener">
+                            <i class="bi bi-whatsapp me-2"></i>Chat on WhatsApp
+                        </a>
                         <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#inquiryModal">
                             <i class="bi bi-chat-dots me-2"></i>Send Inquiry
                         </button>
@@ -138,7 +142,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="glass-card p-4">
                     <h5 class="text-white h6 mb-3">Contact Property <?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Owner' : 'Specialist'; ?></h5>
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <img src="<?= BASE_URL ?>/assets/images/team/sales-team.jpg" class="rounded-circle shadow" alt="Contact person" style="width: 60px; height: 60px; object-fit: cover;">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/hero.svg" class="rounded-circle shadow" alt="Contact person" style="width: 60px; height: 60px; object-fit: cover;">
                         <div class="w-100">
                             <h6 class="text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h6>
 

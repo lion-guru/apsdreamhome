@@ -69,7 +69,7 @@
                         <?php foreach ($tour_data['panoramas'] as $pano): ?>
                         <div class="col-md-4">
                             <div class="border rounded p-2 text-center">
-                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" style="height:120px;width:100%;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/img/no-image.jpg'">
+                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" style="height:120px;width:100%;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                 <small class="text-muted text-capitalize d-block"><?= ($pano['panorama_type'] ?? 'interior') ?></small>
                             </div>
                         </div>

@@ -116,7 +116,7 @@ $orderId = 'ORD_' . strtoupper(bin2hex(random_bytes(5)));
                 currency: order.currency,
                 name: 'APS Dream Home',
                 description: 'Booking #' + bookingId,
-                image: '<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/images/logo.png',
+                image: '<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/images/logo/apslogonew.jpg',
                 order_id: order.order_id,
                 handler: function (response) {
                     var form = document.createElement('form');

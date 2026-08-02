@@ -54,7 +54,7 @@
                 </div>
                 <div class="col-lg-5">
                     <div class="position-relative">
-                        <img src="<?= BASE_URL ?>/images/projects/raghunath-nagri.jpg" alt="Raghunath Nagri" class="img-fluid rounded-4 shadow-lg" />
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" alt="Raghunath Nagri" class="img-fluid rounded-4 shadow-lg" />
                         <div class="position-absolute bottom-0 start-0 p-4 w-100">
                             <div class="bg-white p-3 rounded-3 shadow-sm d-flex align-items-center">
                                 <div class="bg-success text-white p-2 rounded-circle me-3">

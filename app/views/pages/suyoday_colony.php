@@ -239,6 +239,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
     </div>
 </div>
 
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); ?>
 <!-- CTA Section -->
 <div class="full-row bg-primary py-5">
     <div class="container">
@@ -247,6 +248,9 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
                 <h2 class="mb-4"><?= __('surya_cta_heading', [], 'Interested in Suyoday Colony?') ?></h2>
                 <p class="lead mb-4"><?= __('surya_cta_subtitle', [], 'Book your dream plot today and secure your future!') ?></p>
                 <div class="cta-buttons">
+                    <a href="https://wa.me/<?= $phoneRaw ?>?text=<?= urlencode("Hi, I'm interested in Suyoday Colony, Gorakhpur. Could you share plot availability, pricing, and site visit details?") ?>" class="btn btn-success btn-lg me-3" target="_blank" rel="noopener">
+                        <i class="bi bi-whatsapp me-2"></i><?= __('surya_cta_whatsapp', [], 'Chat on WhatsApp') ?>
+                    </a>
                     <a href="<?= BASE_URL ?>/contact" class="btn btn-light btn-lg me-3">
                         <i class="fas fa-phone me-2"></i><?= __('surya_cta_contact', [], 'Contact Us') ?>
                     </a>

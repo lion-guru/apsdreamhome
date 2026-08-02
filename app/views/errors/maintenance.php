@@ -5,7 +5,7 @@
  */
 $message = $message ?? "We're performing scheduled maintenance. We'll be back soon. Thanks for your patience!";
 $eta = $eta ?? '';
-$logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
+$logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo/apslogonew.jpg' : '/assets/images/logo/apslogonew.jpg';
 $contact = 'info@apsdreamhome.com';
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 http_response_code(503);

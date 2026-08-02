@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use PDO;
 use Exception;
 
@@ -10,7 +11,7 @@ use Exception;
  * SyncService
  * Handles incremental data fetching for mobile offline synchronization.
  */
-class SyncService
+class SyncService extends ServiceTenantTrait
 {
     protected $db;
 
@@ -44,9 +45,14 @@ class SyncService
             // Check if column exists, fallback to created_at if necessary
             // For this phase, we assume sync_updated_at exists for properties as verified in audit
             
-            $sql = "SELECT * FROM $table WHERE $timestampColumn > ? ORDER BY $timestampColumn ASC LIMIT ? OFFSET ?";
+            $sql = "SELECT * FROM $table WHERE $timestampColumn > ?";
+            $params = [$lastSync];
+            $this->tenantWhere($sql, $params);
+            $sql .= " ORDER BY $timestampColumn ASC LIMIT ? OFFSET ?";
+            $params[] = $limit;
+            $params[] = $offset;
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$lastSync, $limit, $offset]);
+            $stmt->execute($params);
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
 

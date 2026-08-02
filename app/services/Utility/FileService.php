@@ -3,38 +3,8 @@
 namespace App\Services\Utility;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use App\Services\LoggingService;
-
-class ServiceTenantTrait
-{
-    protected static function tenantId(): int
-    {
-        try {
-            $tid = TenantContext::getId();
-            return $tid > 0 ? $tid : 1;
-        } catch (\Exception $e) {
-            return 1;
-        }
-    }
-
-    protected static function tenantWhere(string &$sql, array &$params): void
-    {
-        $tid = static::tenantId();
-        if ($tid > 1) {
-            $sql .= ' AND tenant_id = ?';
-            $params[] = $tid;
-        }
-    }
-
-    protected static function tenantInsertData(array &$columns, array &$values): void
-    {
-        $tid = static::tenantId();
-        if ($tid > 1) {
-            $columns[] = 'tenant_id';
-            $values[] = $tid;
-        }
-    }
-}
 
 /**
  * File Service - APS Dream Home
@@ -180,7 +150,7 @@ class FileService extends ServiceTenantTrait
             $this->tenantInsertData($columns, $values);
             
             $sql .= ' (' . implode(', ', $columns) . ') VALUES (' . 
-                implode(', ', array_map(fn($k) => ':' . $k, $columns)) . ')'
+                implode(', ', array_map(fn($k) => ':' . $k, $columns)) . ')' 
             ;
             
             $stmt = $this->database->prepare($sql);
@@ -525,141 +495,6 @@ class FileService extends ServiceTenantTrait
         } catch (\Exception $e) {
             $this->logger->error("Error creating thumbnail: " . $e->getMessage());
             return false;
-        }
-    }
-
-    /**
-     * Get file statistics
-     */
-    public function getFileStatistics()
-    {
-        try {
-            $sql = "SELECT 
-                        COUNT(*) as total_files,
-                        SUM(file_size) as total_size,
-                        COUNT(DISTINCT category) as categories,
-                        COUNT(CASE WHEN uploaded_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as recent_files
-                    FROM files";
-            
-            $stmt = $this->database->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetch();
-        } catch (\Exception $e) {
-            $this->logger->error("Error getting file statistics: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Clean up old files
-     */
-    public function cleanupOldFiles($daysOld = 30)
-    {
-        try {
-            $sql = "SELECT * FROM files WHERE uploaded_at < DATE_SUB(NOW(), INTERVAL :days DAY)";
-            $stmt = $this->database->prepare($sql);
-            $stmt->bindParam(':days', $daysOld);
-            $stmt->execute();
-            $oldFiles = $stmt->fetchAll();
-
-            $deletedCount = 0;
-            
-            foreach ($oldFiles as $file) {
-                if ($this->deleteFile($file['id'])) {
-                    $deletedCount++;
-                }
-            }
-
-            $this->logger->info("Cleaned up {$deletedCount} old files");
-            return $deletedCount;
-        } catch (\Exception $e) {
-            $this->logger->error("Error cleaning up old files: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * Batch file operations
-     */
-    public function batchOperation($operation, $fileIds)
-    {
-        try {
-            $results = [];
-            
-            foreach ($fileIds as $fileId) {
-                switch ($operation) {
-                    case 'delete':
-                        $results[$fileId] = $this->deleteFile($fileId);
-                        break;
-                    case 'process':
-                        $file = $this->getFileById($fileId);
-                        if ($file && $this->isImageFile($file['mime_type'])) {
-                            $results[$fileId] = $this->processImage($file['filepath']);
-                        } else {
-                            $results[$fileId] = false;
-                        }
-                        break;
-                    default:
-                        $results[$fileId] = false;
-                }
-            }
-
-            return $results;
-        } catch (\Exception $e) {
-            $this->logger->error("Error in batch operation: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Check if file is image
-     */
-    private function isImageFile($mimeType)
-    {
-        return in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
-    }
-
-    /**
-     * Get file URL
-     */
-    public function getFileUrl($fileId)
-    {
-        $file = $this->getFileById($fileId);
-        
-        if ($file) {
-            return BASE_URL . '/uploads/' . $file['category'] . '/' . $file['filename'];
-        }
-
-        return false;
-    }
-
-    /**
-     * Search files
-     */
-    public function searchFiles($query, $category = null)
-    {
-        try {
-            $sql = "SELECT * FROM files WHERE original_name LIKE :query";
-            $params = ['query' => '%' . $query . '%'];
-            
-            if ($category) {
-                $sql .= " AND category = :category";
-                $params['category'] = $category;
-            }
-            
-            $sql .= " ORDER BY uploaded_at DESC LIMIT 50";
-            
-            $stmt = $this->database->prepare($sql);
-            
-            foreach ($params as $key => $value) {
-                $stmt->bindParam(':' . $key, $value);
-            }
-            
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch (\Exception $e) {
-            $this->logger->error("Error searching files: " . $e->getMessage());
-            return [];
         }
     }
 }

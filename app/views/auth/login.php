@@ -4,6 +4,7 @@
  * Used by AuthenticationController as a unified entry point.
  */
 $role = $_GET['role'] ?? '';
+$redirectTo = $_GET['redirect'] ?? '';
 $redirects = [
     'admin'     => '/admin/login',
     'customer'  => '/login',
@@ -12,9 +13,26 @@ $redirects = [
     'employee'  => '/employee/login',
 ];
 if (isset($redirects[$role])) {
-    header('Location: ' . BASE_URL . $redirects[$role]);
+    $url = BASE_URL . $redirects[$role];
+    if ($redirectTo) {
+        $url .= '?redirect=' . urlencode($redirectTo);
+    }
+    header('Location: ' . $url);
     exit;
 }
+$contextMessages = [
+    'mlm-dashboard'     => 'Login to view your MLM dashboard and track commissions',
+    'user-dashboard'    => 'Login to access your account dashboard',
+    'user-properties'   => 'Login to view your saved properties',
+    'user-inquiries'    => 'Login to manage your property inquiries',
+    'user-profile'      => 'Login to update your profile',
+    'property-detail'   => 'Login to save this property to your favorites',
+    'associate-network' => 'Login to view your MLM network tree',
+    'associate-commissions' => 'Login to check your commission earnings',
+    'checkout'          => 'Login to complete your booking',
+    'booking'           => 'Login to proceed with booking',
+];
+$context = $contextMessages[$redirectTo] ?? '';
 ?>
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -22,8 +40,16 @@ if (isset($redirects[$role])) {
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <h4 class="text-center mb-4"><i class="fas fa-sign-in-alt me-2"></i>Login</h4>
+                    <?php if ($context): ?>
+                        <div class="alert alert-info mb-4">
+                            <i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($context) ?>
+                        </div>
+                    <?php endif; ?>
                     <form method="POST" action="<?= BASE_URL ?>/login">
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
+                        <?php if ($redirectTo): ?>
+                            <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirectTo) ?>">
+                        <?php endif; ?>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($old['email'] ?? $_GET['email'] ?? '') ?>">

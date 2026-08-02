@@ -26,11 +26,11 @@ $locationName = ucfirst($location);
                     if (stripos($project->site_name, 'Suryoday') !== false) {
                         $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
                     } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-                        $imgPath = '/assets/images/projects/gorakhpur/raghunath-nagri.jpg';
+                        $imgPath = '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG';
                     } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
                         $imgPath = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
                     } elseif (stripos($project->site_name, 'Budh') !== false) {
-                        $imgPath = '/assets/images/projects/kushinagar/budh-bihar.jpg';
+                        $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
                     } elseif (stripos($project->site_name, 'Awadhpuri') !== false) {
                         $imgPath = '/assets/images/projects/lucknow/awadhpuri.jpg';
                     } elseif (stripos($project->site_name, 'Ganga') !== false) {

@@ -101,7 +101,7 @@
                 <i class="fas fa-check-circle text-success me-1"></i> <?= __('receipt_park_facing', [], 'Park Facing:') ?> <?= !empty($booking['park_facing']) ? __('receipt_yes', [], 'Yes') : __('receipt_no_label', [], 'No') ?><br>
             </div>
             <div class="col-6 text-end">
-                <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'" /><br>
+                <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'" /><br>
                 <small class="text-muted"><?= __('receipt_authorized_sig', [], 'Authorized Signature') ?></small>
             </div>
         </div>

@@ -464,7 +464,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" alt="Building Progress" class="img-cover" loading="lazy">
                         </div>
                         <div style="border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.08);grid-column:span 2">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath-nagri.jpg" alt="Modern Construction" class="img-cover" loading="lazy">
+                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" alt="Modern Construction" class="img-cover" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -527,7 +527,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 <div class="col-md-4">
                     <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal" style="animation-delay: 0.2s;">
                         <div class="position-relative colony-img-height">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/kushinagar/budh-bihar.jpg" alt="<?= __('home_colony_budh_bihar') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
+                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('home_colony_budh_bihar') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
                             <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
                                 <span class="capsule-badge badge-upcoming text-white badge-upcoming"><?= __('home_colony_upcoming') ?></span>
                             </div>
@@ -1485,7 +1485,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             </div>
                         </div>
                         <div class="col-lg-5 text-center mt-4 mt-lg-0">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/hero/about.jpg"
+                            <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-2.jpg"
                                 alt="<?= __('home_growth_calculator_title') ?>"
                                 class="img-fluid rounded-4 shadow-lg mb-3" style="max-height:220px;object-fit:cover;width:100%;">
                             <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
@@ -2128,7 +2128,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         </div>
                         <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_1') ?></p>
                         <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-2.jpg"
+                            <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_1_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;border:3px solid #f59e0b;">
                             <div>
@@ -2145,7 +2145,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         </div>
                         <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_2') ?></p>
                         <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-1.jpg"
+                            <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_2_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;border:3px solid #10b981;">
                             <div>
@@ -2162,7 +2162,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         </div>
                         <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_3') ?></p>
                         <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-3.jpg"
+                            <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/hero.svg"
                                 alt="<?= __('home_testimonial_3_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;border:3px solid #6366f1;">
                             <div>

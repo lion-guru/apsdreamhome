@@ -883,77 +883,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
-            return null;
-        }
-    }
-
-    private function fetchPlot(int $plotId): ?array
-    {
-        if (!$this->db || !$plotId) return null;
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM inventory_plots WHERE id = ? LIMIT 1");
-            $stmt->execute([$plotId]);
-            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $row ?: null;
-        } catch (Exception $e) {
-            return null;
-        }
-    }
-
-    private function fetchColony(int $colonyId): ?array
-    {
-        if (!$this->db || !$colonyId) return null;
-        try {
-            $stmt = $this->db->prepare(
-                "SELECT c.*, d.name AS district_name FROM colonies c
-                 LEFT JOIN districts d ON c.district_id = d.id
-                 WHERE c.id = ? LIMIT 1"
-            );
-            $stmt->execute([$colonyId]);
-            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $row ?: null;
-        } catch (Exception $e) {
-            return null;
-        }
-    }
-
-    private function fetchSchedule(int $bookingId): array
-    {
-        if (!$this->db) return [];
-        try {
-            $stmt = $this->db->prepare(
-                "SELECT * FROM booking_payment_schedules WHERE booking_id = ? ORDER BY installment_number ASC"
-            );
-            $stmt->execute([$bookingId]);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
-            return [];
-        }
-    }
-
-    private function fetchInstallment(int $id): ?array
-    {
-        if (!$this->db) return null;
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM booking_payment_schedules WHERE id = ? LIMIT 1");
-            $stmt->execute([$id]);
-            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $row ?: null;
-        } catch (Exception $e) {
-            return null;
-        }
-    }
-
-    private function fetchRefund(int $id): ?array
-    {
-        if (!$this->db) return null;
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM booking_refunds WHERE id = ? LIMIT 1");
-            $stmt->execute([$id]);
-            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $row ?: null;
-        } catch (Exception $e) {
+} catch (Exception $e) {
             return null;
         }
     }
