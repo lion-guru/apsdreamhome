@@ -18,7 +18,7 @@ class VoiceCallService
     public function scheduleCall($leadId, $phone, $agentId, $scheduledDate, $scheduledTime = '10:00:00', $scriptTemplate = 'property_introduction', $priority = 'medium', $leadName = '')
     {
         $existing = $this->db->fetch(
-            "SELECT id FROM ai_calling_schedule WHERE lead_id = ? AND status IN ('pending','processing')",
+            "SELECT id FROM ai_calling_schedule WHERE lead_id = ? AND status IN ('pending','processing')" . $this->tenantSql(),
             [$leadId]
         );
         if ($existing) {
@@ -77,7 +77,7 @@ class VoiceCallService
 
         try {
             $script = $this->db->fetch(
-                "SELECT * FROM ai_call_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
+                "SELECT * FROM ai_call_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1" . $this->tenantSql(),
                 [$schedule['script_template']]
             );
         } catch (\Throwable $e) {
@@ -137,7 +137,7 @@ class VoiceCallService
 
             if ($asteriskResult['success']) {
                 $this->db->execute(
-                    "UPDATE ai_call_sessions SET call_sid = ? WHERE id = ?",
+                    "UPDATE ai_call_sessions SET call_sid = ? WHERE id = ?" . $this->tenantSql(),
                     [$asteriskResult['call_id'], $sessionId]
                 );
             }
@@ -169,7 +169,7 @@ class VoiceCallService
 
     public function processResponse($sessionId, $userInput, $intent = null, $sentiment = 'neutral')
     {
-        $session = $this->db->fetch("SELECT * FROM ai_call_sessions WHERE id = ?", [$sessionId]);
+        $session = $this->db->fetch("SELECT * FROM ai_call_sessions WHERE id = ?" . $this->tenantSql(), [$sessionId]);
         if (!$session) {
             return ['success' => false, 'error' => 'Session not found'];
         }
@@ -193,15 +193,14 @@ class VoiceCallService
         $responseText = $this->generateResponse($detectedIntent, $session);
         $updatedTranscript .= "\n[AI]: " . $responseText;
 
-        $tid = $this->tenantId();
         $this->db->execute(
             "UPDATE ai_call_sessions SET call_transcript = ?, sentiment_score = ?, ai_summary = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
-            array_merge([$updatedTranscript, $sentiment, $responseText, $sessionId], $tid > 1 ? [$tid] : [])
+            [$updatedTranscript, $sentiment, $responseText, $sessionId]
         );
 
         $this->db->execute(
             "UPDATE ai_call_sessions SET call_sid = ?, sentiment = ? WHERE id = ?" . $this->tenantSql(),
-            array_merge(['SES-' . $sessionId, $sentiment, $sessionId], $tid > 1 ? [$tid] : [])
+            ['SES-' . $sessionId, $sentiment, $sessionId]
         );
 
         $nextAction = 'continue';
@@ -219,40 +218,39 @@ class VoiceCallService
 
     public function endCall($sessionId, $summary = null, $outcome = 'unknown')
     {
-        $session = $this->db->fetch("SELECT * FROM ai_call_sessions WHERE id = ?", [$sessionId]);
+        $session = $this->db->fetch("SELECT * FROM ai_call_sessions WHERE id = ?" . $this->tenantSql(), [$sessionId]);
         if (!$session) {
             return ['success' => false, 'error' => 'Session not found'];
         }
 
         $duration = $session['started_at'] ? time() - strtotime($session['started_at']) : 0;
-        $tid = $this->tenantId();
 
         $this->db->execute(
             "UPDATE ai_call_sessions SET status = 'completed', ended_at = NOW(), duration_seconds = ?, ai_summary = COALESCE(?, ai_summary), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
-            array_merge([$duration, $summary, $sessionId], $tid > 1 ? [$tid] : [])
+            [$duration, $summary, $sessionId]
         );
 
         if ($session['ai_agent_id']) {
             $this->db->execute(
                 "UPDATE ai_calling_agents SET current_calls = GREATEST(current_calls - 1, 0), successful_calls = successful_calls + 1, avg_call_duration = ? WHERE agent_id = ?" . $this->tenantSql(),
-                array_merge([$duration, $session['ai_agent_id']], $tid > 1 ? [$tid] : [])
+                [$duration, $session['ai_agent_id']]
             );
         }
 
         $this->db->execute(
             "UPDATE ai_calling_schedule SET status = 'completed', result_notes = ?, updated_at = NOW() WHERE call_session_id = ?" . $this->tenantSql(),
-            array_merge([$summary, $sessionId], $tid > 1 ? [$tid] : [])
+            [$summary, $sessionId]
         );
 
         if ($session['lead_id']) {
             $this->db->execute(
                 "UPDATE leads SET last_activity_date = NOW(), status = CASE WHEN ? IN ('interested','followup_needed') THEN 'contacted' ELSE status END WHERE id = ?" . $this->tenantSql(),
-                array_merge([$outcome, $session['lead_id']], $tid > 1 ? [$tid] : [])
+                [$outcome, $session['lead_id']]
             );
         }
 
         if (in_array($outcome, ['interested', 'followup_needed']) && $session['lead_id']) {
-            $lead = $this->db->fetch("SELECT name, phone, email, property_interest, budget_range FROM leads WHERE id = ?", [$session['lead_id']]);
+            $lead = $this->db->fetch("SELECT name, phone, email, property_interest, budget_range FROM leads WHERE id = ?" . $this->tenantSql(), [$session['lead_id']]);
             if ($lead) {
                 $this->db->execute(
                     "INSERT INTO ai_call_extracted_leads (call_session_id, lead_id, extracted_name, extracted_phone, extracted_email, interest_level, quality_score, tenant_id, created_at, updated_at)
@@ -265,7 +263,7 @@ class VoiceCallService
                         $lead['email'] ?? '',
                         $outcome === 'interested' ? 'hot' : 'warm',
                         75,
-                        $tid > 1 ? $tid : 1
+                        $this->tenantId()
                     ]
                 );
             }
@@ -289,7 +287,7 @@ class VoiceCallService
                     a.agent_name, a.agent_id as agent_identifier
              FROM ai_calling_schedule s
              LEFT JOIN leads l ON l.id = s.lead_id
-             LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+             LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id" . $this->tenantSqlForAlias('s') . "
              WHERE s.status = 'pending' AND s.scheduled_date <= CURDATE()
              ORDER BY s.priority ASC, s.scheduled_date ASC, s.scheduled_time ASC
              LIMIT ?",
@@ -317,13 +315,14 @@ class VoiceCallService
     {
         $where = $agentId ? "WHERE agent_id = ?" : "";
         $params = $agentId ? [$agentId] : [];
+        $where .= $this->tenantSqlForAlias('s');
 
         $stats = $this->db->fetch(
             "SELECT COUNT(*) as total_calls,
                     SUM(CASE WHEN status IN ('completed','failed','no_answer') THEN 1 ELSE 0 END) as processed,
                     SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as successful,
                     SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
-             FROM ai_calling_schedule $where",
+             FROM ai_calling_schedule s $where",
             $params
         );
 
@@ -344,7 +343,7 @@ class VoiceCallService
         return $this->db->fetchAll(
             "SELECT s.*, a.agent_name
              FROM ai_call_sessions s
-             LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+             LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id" . $this->tenantSqlForAlias('s') . "
              WHERE s.lead_id = ?
              ORDER BY s.created_at DESC
              LIMIT 20",
@@ -356,11 +355,11 @@ class VoiceCallService
     {
         $today = date('Y-m-d');
         return [
-            'today_scheduled' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE DATE(scheduled_date) = ?", [$today])['c'] ?? 0,
-            'total_pending' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'pending'")['c'] ?? 0,
-            'total_completed' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'completed'")['c'] ?? 0,
-            'total_failed' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'failed'")['c'] ?? 0,
-            'agents_active' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_agents WHERE status = 'active'")['c'] ?? 0,
+            'today_scheduled' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE DATE(scheduled_date) = ?" . $this->tenantSql(), [$today])['c'] ?? 0,
+            'total_pending' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'pending'" . $this->tenantSql())['c'] ?? 0,
+            'total_completed' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'completed'" . $this->tenantSql())['c'] ?? 0,
+            'total_failed' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_schedule WHERE status = 'failed'" . $this->tenantSql())['c'] ?? 0,
+            'agents_active' => $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_agents WHERE status = 'active'" . $this->tenantSql())['c'] ?? 0,
         ];
     }
 
@@ -370,8 +369,8 @@ class VoiceCallService
             "SELECT a.agent_name, a.agent_id, a.status,
                     COUNT(s.id) as total_calls,
                     SUM(CASE WHEN s.status = 'completed' THEN 1 ELSE 0 END) as completed
-             FROM ai_calling_agents a
-             LEFT JOIN ai_calling_schedule s ON s.ai_agent_id = a.agent_id
+             FROM ai_calling_agents a" . $this->tenantSqlForAlias('a') . "
+             LEFT JOIN ai_calling_schedule s ON s.ai_agent_id = a.agent_id" . $this->tenantSqlForAlias('s') . "
              GROUP BY a.agent_id
              ORDER BY total_calls DESC"
         );
@@ -385,8 +384,8 @@ class VoiceCallService
                     SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
                     SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
              FROM ai_calling_schedule
-             WHERE scheduled_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-             GROUP BY DATE(scheduled_date)
+              WHERE scheduled_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)" . $this->tenantSql() . "
+              GROUP BY DATE(scheduled_date)
              ORDER BY date ASC",
             [$days]
         );
@@ -395,7 +394,7 @@ class VoiceCallService
     public function getAgentList()
     {
         return $this->db->fetchAll(
-            "SELECT agent_id, agent_name, status, current_calls, max_concurrent_calls, daily_call_limit, total_calls_made FROM ai_calling_agents ORDER BY agent_name"
+            "SELECT agent_id, agent_name, status, current_calls, max_concurrent_calls, daily_call_limit, total_calls_made FROM ai_calling_agents ORDER BY agent_name" . $this->tenantSql()
         );
     }
 
@@ -403,7 +402,7 @@ class VoiceCallService
     {
         try {
             return $this->db->fetchAll(
-                "SELECT id, script_code, script_name, is_active, usage_count FROM ai_call_scripts ORDER BY script_name"
+                "SELECT id, script_code, script_name, is_active, usage_count FROM ai_call_scripts ORDER BY script_name" . $this->tenantSql()
             );
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
@@ -414,10 +413,10 @@ class VoiceCallService
     public function getAvailableLeadsForScheduling($limit = 50)
     {
         return $this->db->fetchAll(
-            "SELECT l.id, l.name, l.phone, l.property_interest, l.status, l.budget_range
-             FROM leads l
+             "SELECT l.id, l.name, l.phone, l.property_interest, l.status, l.budget_range
+             FROM leads l" . $this->tenantSqlForAlias('l') . "
              WHERE l.status IN ('new','contacted','nurture')
-             AND l.id NOT IN (SELECT lead_id FROM ai_calling_schedule WHERE status IN ('pending','processing'))
+             AND l.id NOT IN (SELECT lead_id FROM ai_calling_schedule WHERE status IN ('pending','processing')" . $this->tenantSql() . ")
              ORDER BY l.created_at DESC
              LIMIT ?",
             [$limit]

@@ -631,8 +631,8 @@ class AIVoicePipeline
     private function getConversationHistory(int $sessionId): array
     {
         try {
-            $transcript = $this->db->fetch(
-                "SELECT call_transcript FROM ai_call_sessions WHERE id = ?",
+             $transcript = $this->db->fetch(
+                "SELECT call_transcript FROM ai_call_sessions WHERE id = ?" . $this->tenantSql(),
                 [$sessionId]
             );
             
