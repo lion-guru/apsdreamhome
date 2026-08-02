@@ -452,9 +452,11 @@ class EmailService
      */
     private function getWalletBalance($userId)
     {
+        $tid = $this->getTenantId();
+        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
         $wallet = $this->db->fetchOne(
-            "SELECT points_balance FROM wallet_points WHERE user_id = ?",
-            [$userId]
+            "SELECT points_balance FROM wallet_points WHERE user_id = ?" . $tenantSql,
+            $tid > 1 ? [$userId, $tid] : [$userId]
         );
         return $wallet ? number_format($wallet['points_balance'], 2) : '0.00';
     }
