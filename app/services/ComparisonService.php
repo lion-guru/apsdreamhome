@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class ComparisonService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $maxCompare = 4;
 
@@ -77,7 +80,7 @@ class ComparisonService
             JOIN colonies c ON p.colony_id = c.id
             LEFT JOIN districts d ON c.district_id = d.id
             LEFT JOIN states s ON d.state_id = s.id
-            WHERE p.id IN ($placeholders)
+            WHERE p.id IN ($placeholders)" . $this->tenantSql() . "
         ");
         $stmt->execute($list);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);

@@ -5,6 +5,8 @@ use PDO;
 
 class BulkOperationsService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     private $allowedTables = [
@@ -70,8 +72,13 @@ class BulkOperationsService
         $errors = [];
 
         $colList = implode(',', array_map(fn($c) => "`$c`", $header));
-        $placeholders = implode(',', array_fill(0, count($header), '?'));
-
+        $tenantIns = $this->tenantInsertData();
+        if (!empty($tenantIns)) {
+            $colList .= ', `tenant_id`';
+            $placeholders = implode(',', array_fill(0, count($header) + 1, '?'));
+        } else {
+            $placeholders = implode(',', array_fill(0, count($header), '?'));
+        }
         $st = $this->db->prepare("INSERT INTO $table ($colList) VALUES ($placeholders)");
 
         foreach ($lines as $i => $line) {
@@ -79,7 +86,7 @@ class BulkOperationsService
             $row = str_getcsv($line);
             $row = array_pad(array_slice($row, 0, count($header)), count($header), null);
             try {
-                $st->execute($row);
+                $st->execute(array_merge($row, array_values($tenantIns)));
                 $imported++;
             } catch (\Throwable $e) {
                 $failed++;
@@ -109,6 +116,7 @@ class BulkOperationsService
 
         $sql = "SELECT " . implode(',', array_map(fn($c) => "`$c`", $cols)) . " FROM $table";
         $params = [];
+        $whereParts = [];
         if (!empty($filters)) {
             $where = [];
             foreach ($filters as $col => $val) {
@@ -117,8 +125,13 @@ class BulkOperationsService
                     $params[] = $val;
                 }
             }
-            if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+            if ($where) $whereParts = $where;
         }
+        if ($this->tenantId() > 1) {
+            $whereParts[] = "tenant_id = ?";
+            $params[] = $this->tenantId();
+        }
+        if ($whereParts) $sql .= " WHERE " . implode(' AND ', $whereParts);
         $sql .= " LIMIT ?";
         $params[] = $limit;
 
@@ -141,7 +154,7 @@ class BulkOperationsService
     {
         if (!isset($this->allowedTables[$table])) return 0;
         try {
-            $st = $this->db->query("SELECT COUNT(*) FROM `$table`");
+            $st = $this->db->query("SELECT COUNT(*) FROM `$table` WHERE 1=1" . $this->tenantSql());
             return (int)$st->fetchColumn();
         } catch (\Throwable $e) { return 0; }
     }

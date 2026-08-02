@@ -8,20 +8,25 @@ use PDO;
  */
 class PropertyMarketplaceService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
 
     public function scheduleMaintenance(int $propertyId, string $type, string $description, string $scheduledDate, float $estimatedCost, int $assignedTo = 0): array
     {
-        $st = $this->db->prepare("INSERT INTO property_maintenance (property_id, maintenance_type, description, scheduled_date, estimated_cost, assigned_to, status, created_at) VALUES (:p, :t, :d, :dt, :c, :a, 'scheduled', NOW())");
-        $st->execute([':p' => $propertyId, ':t' => $type, ':d' => $description, ':dt' => $scheduledDate, ':c' => $estimatedCost, ':a' => $assignedTo]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $st = $this->db->prepare("INSERT INTO property_maintenance (property_id, maintenance_type, description, scheduled_date, estimated_cost, assigned_to, status, created_at{$extraCols}) VALUES (:p, :t, :d, :dt, :c, :a, 'scheduled', NOW(){$extraVals})");
+        $st->execute(array_merge([':p' => $propertyId, ':t' => $type, ':d' => $description, ':dt' => $scheduledDate, ':c' => $estimatedCost, ':a' => $assignedTo], array_values($insertData)));
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function completeMaintenance(int $id, float $actualCost, string $notes = ''): array
     {
-        $st = $this->db->prepare("UPDATE property_maintenance SET status = 'completed', actual_cost = :c, completion_notes = :n, completed_at = NOW() WHERE id = :id");
+        $st = $this->db->prepare("UPDATE property_maintenance SET status = 'completed', actual_cost = :c, completion_notes = :n, completed_at = NOW() WHERE id = :id" . $this->tenantSql());
         $st->execute([':c' => $actualCost, ':n' => $notes, ':id' => $id]);
         return ['ok' => true];
     }
@@ -29,7 +34,7 @@ class PropertyMarketplaceService
     public function listMaintenance(int $propertyId = 0, string $status = ''): array
     {
         try {
-            $sql = "SELECT m.*, p.plot_number as property_title, u.name as assignee_name FROM property_maintenance m LEFT JOIN plots p ON m.property_id = p.id LEFT JOIN users u ON m.assigned_to = u.id WHERE 1=1";
+            $sql = "SELECT m.*, p.plot_number as property_title, u.name as assignee_name FROM property_maintenance m LEFT JOIN plots p ON m.property_id = p.id LEFT JOIN users u ON m.assigned_to = u.id WHERE 1=1" . $this->tenantSql();
             $params = [];
             if ($propertyId) { $sql .= " AND m.property_id = :p"; $params[':p'] = $propertyId; }
             if ($status) { $sql .= " AND m.status = :s"; $params[':s'] = $status; }
@@ -45,7 +50,7 @@ class PropertyMarketplaceService
     public function getMarketAnalytics(int $days = 90): array
     {
         try {
-            $st = $this->db->prepare("SELECT * FROM property_market_data WHERE data_date > DATE_SUB(CURDATE(), INTERVAL :d DAY) ORDER BY data_date DESC");
+            $st = $this->db->prepare("SELECT * FROM property_market_data WHERE data_date > DATE_SUB(CURDATE(), INTERVAL :d DAY)" . $this->tenantSql() . " ORDER BY data_date DESC");
             $st->execute([':d' => $days]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {

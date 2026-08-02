@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Report Builder Service - Custom Reports & Charts
@@ -10,6 +11,7 @@ use App\Core\Database\Database;
  */
 class ReportBuilderService
 {
+    use ServiceTenantTrait;
     private $database;
     private $chartsSupported = ['bar', 'line', 'pie', 'doughnut', 'table'];
     
@@ -42,6 +44,7 @@ class ReportBuilderService
             is_active TINYINT(1) DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             INDEX idx_type (report_type),
             INDEX idx_created_by (created_by),
             INDEX idx_active (is_active)
@@ -69,7 +72,7 @@ class ReportBuilderService
             COUNT(DISTINCT customer_id) as users
             FROM bookings 
             WHERE DATE(created_at) BETWEEN ? AND ?
-            AND status = 'confirmed'
+            AND status = 'confirmed'" . $this->tenantSql() . "
             GROUP BY DATE(created_at)
             ORDER BY date";
         
@@ -85,7 +88,7 @@ class ReportBuilderService
             FROM bookings b
             JOIN properties p ON b.property_id = p.id
             WHERE DATE(b.created_at) BETWEEN ? AND ?
-            AND b.status = 'confirmed'
+            AND b.status = 'confirmed'" . $this->tenantSql() . "
             GROUP BY p.type";
         
         $stmt2 = $this->database->prepare($sql2);
@@ -100,7 +103,7 @@ class ReportBuilderService
             FROM bookings b
             JOIN properties p ON b.property_id = p.id
             WHERE DATE(b.created_at) BETWEEN ? AND ?
-            AND b.status = 'confirmed'
+            AND b.status = 'confirmed'" . $this->tenantSql() . "
             GROUP BY p.location
             ORDER BY revenue DESC
             LIMIT 10";
@@ -141,7 +144,7 @@ class ReportBuilderService
             COUNT(*) as new_leads,
             SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) as converted
             FROM leads 
-            WHERE DATE(created_at) BETWEEN ? AND ?
+            WHERE DATE(created_at) BETWEEN ? AND ?" . $this->tenantSql() . "
             GROUP BY DATE(created_at)
             ORDER BY date";
         
@@ -156,7 +159,7 @@ class ReportBuilderService
             SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) as converted,
             ROUND((SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as conversion_rate
             FROM leads 
-            WHERE DATE(created_at) BETWEEN ? AND ?
+            WHERE DATE(created_at) BETWEEN ? AND ?" . $this->tenantSql() . "
             GROUP BY source
             ORDER BY count DESC";
         
@@ -169,7 +172,7 @@ class ReportBuilderService
             status,
             COUNT(*) as count
             FROM leads 
-            WHERE DATE(created_at) BETWEEN ? AND ?
+            WHERE DATE(created_at) BETWEEN ? AND ?" . $this->tenantSql() . "
             GROUP BY status";
         
         $stmt3 = $this->database->prepare($sql3);
@@ -210,6 +213,7 @@ class ReportBuilderService
             $where .= " AND c.associate_id = ?";
             $params[] = $associateId;
         }
+        $where .= $this->tenantSql();
         
         // Commission summary
         $sql = "SELECT 
@@ -235,7 +239,7 @@ class ReportBuilderService
             COUNT(*) as count,
             SUM(amount) as total
             FROM commissions 
-            WHERE DATE(created_at) BETWEEN ? AND ?
+            WHERE DATE(created_at) BETWEEN ? AND ?" . $this->tenantSql() . "
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')
             ORDER BY month";
         
@@ -362,16 +366,19 @@ class ReportBuilderService
     public function saveReport(string $name, string $type, array $config, int $userId): int
     {
         try {
-            $sql = "INSERT INTO saved_reports 
-                    (report_name, report_type, data_source, filters, columns, chart_type, created_by) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $sql = "INSERT INTO saved_reports 
+                    (report_name, report_type, data_source, filters, columns, chart_type, created_by{$extraCols}) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?{$extraVals})";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+        $stmt->execute(array_merge([
             $name,
             $type,
             $config['data_source'] ?? 'database',
@@ -379,7 +386,7 @@ class ReportBuilderService
             json_encode($config['columns'] ?? []),
             $config['chart_type'] ?? null,
             $userId
-        ]);
+        ], array_values($insertData)));
         
         return $this->database->lastInsertId();
     }
@@ -391,7 +398,7 @@ class ReportBuilderService
     {
         try {
             $sql = "SELECT * FROM saved_reports 
-                    WHERE (created_by = ? OR is_public = 1) AND is_active = 1 
+                    WHERE (created_by = ? OR is_public = 1) AND is_active = 1 " . $this->tenantSql() . "
                     ORDER BY created_at DESC";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
@@ -420,7 +427,7 @@ class ReportBuilderService
         try {
             $sql = "UPDATE saved_reports 
                     SET schedule_frequency = ?, schedule_day = ?, schedule_time = ? 
-                    WHERE id = ?";
+                    WHERE id = ?" . $this->tenantSql();
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());

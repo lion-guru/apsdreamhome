@@ -62,7 +62,7 @@ class CommissionReconciliationService
         try {
             // 1. Row counts
             $findings['ledger_total'] = $this->countRows('mlm_commission_ledger');
-            $findings['booking_comm_total'] = (int)$this->db->query("SELECT COUNT(*) FROM mlm_commission_ledger WHERE booking_id IS NOT NULL")->fetchColumn();
+            $findings['booking_comm_total'] = (int)$this->db->query("SELECT COUNT(*) FROM mlm_commission_ledger WHERE booking_id IS NOT NULL" . $this->tenantSql())->fetchColumn();
             $findings['legacy_comm_total'] = 0;
 
             // 2. Find ledger entries with no matching booking
@@ -228,7 +228,7 @@ class CommissionReconciliationService
     private function countRows(string $table): int
     {
         try {
-            return (int)$this->db->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
+            return (int)$this->db->query("SELECT COUNT(*) FROM `{$table}`" . $this->tenantSql())->fetchColumn();
         } catch (Exception $e) {
             return 0;
         }

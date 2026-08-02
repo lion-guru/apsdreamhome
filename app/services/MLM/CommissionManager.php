@@ -363,12 +363,6 @@ class CommissionManager
 
             // Insert negative clawback entries in ledger
             $insertData = $this->tenantInsertData();
-            $ins = $this->db->prepare("
-                INSERT INTO mlm_commission_ledger
-                (beneficiary_user_id, source_user_id, commission_type, amount, level, 
-                 sale_amount, commission_percentage, status, notes, booking_id, created_at)
-                VALUES (?, ?, 'clawback', ?, ?, 0, 0, 'approved', ?, ?, NOW())
-            ");
 
             foreach ($entries as $e) {
                 $params = [

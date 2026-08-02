@@ -7,9 +7,11 @@ use PDO;
 use App\Models\Model;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class RecommendationService
 {
+    use ServiceTenantTrait;
     private $db;
     private $mlWeights = [
         'location_match' => 0.25,
@@ -74,7 +76,7 @@ class RecommendationService
         $stmt = $this->db->prepare("
             SELECT action_type, property_id, category_id, price_range 
             FROM user_interactions 
-            WHERE user_id = ? 
+            WHERE user_id = ? " . $this->tenantSql() . "
             ORDER BY created_at DESC 
             LIMIT 100
         ");
@@ -119,7 +121,7 @@ class RecommendationService
 
     private function getPropertyCandidates(int $limit): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM properties WHERE status = 'active' LIMIT ?");
+        $stmt = $this->db->prepare("SELECT * FROM properties WHERE status = 'active'" . $this->tenantSql() . " LIMIT ?");
         $stmt->execute([$limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -170,9 +172,9 @@ class RecommendationService
                     FROM property_favorites pf
                     JOIN properties p ON pf.property_id = p.id
                     WHERE pf.user_id IN ($placeholders)
-                      AND p.status = 'active'
+                      AND p.status = 'active'" . $this->tenantSql() . "
                       AND pf.property_id NOT IN (
-                          SELECT property_id FROM property_favorites WHERE user_id = ?
+                          SELECT property_id FROM property_favorites WHERE user_id = ?" . $this->tenantSql() . "
                       )
                     GROUP BY p.id
                     ORDER BY recommender_count DESC
@@ -203,7 +205,7 @@ class RecommendationService
             $sql = "SELECT DISTINCT pv2.user_id
                     FROM property_views pv1
                     JOIN property_views pv2 ON pv1.property_id = pv2.property_id
-                        AND pv1.user_id = ? AND pv2.user_id != ?
+                        AND pv1.user_id = ? AND pv2.user_id != ?" . $this->tenantSql() . "
                     LIMIT 50";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId, $userId]);

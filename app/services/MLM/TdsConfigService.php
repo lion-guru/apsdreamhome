@@ -213,13 +213,15 @@ class TdsConfigService
             $quarter = $this->getQuarter($data['tds_date'] ?? date('Y-m-d'));
 
         $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
         $stmt = $this->db->prepare("
             INSERT INTO tds_register 
             (deductee_user_id, deductee_pan, tds_section, tds_date, taxable_amount, 
-             tds_amount, financial_year, quarter, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+             tds_amount, financial_year, quarter, status, created_at{$extraCols})
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(){$extraVals})
         ");
-        $stmt->execute([
+        $stmt->execute(array_merge([
             $data['deductee_user_id'],
             $pan,
             strtoupper($data['section']),
@@ -228,13 +230,7 @@ class TdsConfigService
             $calc['tds_amount'],
             $fy['label'],
             $quarter,
-        ]);
-        $insertData = $this->tenantInsertData();
-        if (!empty($insertData)) {
-            $insertId = $this->db->lastInsertId();
-            $colName = key($insertData);
-            $this->db->prepare("UPDATE tds_register SET {$colName} = ? WHERE id = ?")->execute([current($insertData), $insertId]);
-        }
+        ], array_values($insertData)));
 
             return [
                 'success' => true,
