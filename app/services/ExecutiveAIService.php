@@ -307,11 +307,11 @@ class ExecutiveAIService
             $context['kpis']['Override Earnings'] = '₹' . number_format($overrideEarn / 100000, 2) . 'L';
         }
         if (in_array($role, ['hr_director', 'hr_manager', 'chro'])) {
-            $context['kpis']['Attendance Today'] = $safeQuery("SELECT COUNT(*) as c FROM attendance WHERE DATE(date) = CURDATE() AND status='present'");
-            $context['kpis']['Pending Leaves'] = $safeQuery("SELECT COUNT(*) as c FROM leave_applications WHERE status='pending'");
+            $context['kpis']['Attendance Today'] = $safeQuery("SELECT COUNT(*) as c FROM attendance WHERE DATE(date) = CURDATE() AND status='present'" . $this->tenantSql());
+            $context['kpis']['Pending Leaves'] = $safeQuery("SELECT COUNT(*) as c FROM leave_applications WHERE status='pending'" . $this->tenantSql());
         }
         if (in_array($role, ['cmo', 'marketing_director', 'marketing_manager'])) {
-            $context['kpis']['Active Campaigns'] = $safeQuery("SELECT COUNT(*) as c FROM marketing_campaigns WHERE status='active'");
+            $context['kpis']['Active Campaigns'] = $safeQuery("SELECT COUNT(*) as c FROM marketing_campaigns WHERE status='active'" . $this->tenantSql());
         }
 
         return $context;

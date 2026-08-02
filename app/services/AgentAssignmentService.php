@@ -148,8 +148,10 @@ class AgentAssignmentService
     {
         $stmt = $this->db->prepare("SELECT id FROM customer_assignments 
                                    WHERE customer_id = :customer_id AND assignment_type = 'agent' 
-                                   AND status = 'active' LIMIT 1");
-        $stmt->execute(['customer_id' => $customerId]);
+                                   AND status = 'active'" . $this->tenantSql() . " LIMIT 1");
+        $params = ['customer_id' => $customerId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return (bool)$stmt->fetch();
     }
 
@@ -160,8 +162,10 @@ class AgentAssignmentService
     {
         $stmt = $this->db->prepare("SELECT id FROM customer_assignments 
                                    WHERE customer_id = :customer_id AND assignment_type = 'office' 
-                                   AND status = 'active' LIMIT 1");
-        $stmt->execute(['customer_id' => $customerId]);
+                                   AND status = 'active'" . $this->tenantSql() . " LIMIT 1");
+        $params = ['customer_id' => $customerId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return (bool)$stmt->fetch();
     }
 
@@ -189,14 +193,14 @@ class AgentAssignmentService
         try {
             // Build query to find suitable users
             $sql = "SELECT a.*, 
-                           COUNT(ca.id) as current_assignments,
-                           AVG(ar.rating) as avg_rating,
-                           COUNT(p.id) as properties_handled
-                    FROM users a
-                    LEFT JOIN customer_assignments ca ON a.user_id = ca.agent_id AND ca.status = 'active'
-                    LEFT JOIN agent_reviews ar ON a.user_id = ar.agent_id
-                    LEFT JOIN properties p ON a.user_id = p.assigned_agent_id
-                    WHERE a.status = 'active' AND a.workload < a.max_workload";
+                            COUNT(ca.id) as current_assignments,
+                            AVG(ar.rating) as avg_rating,
+                            COUNT(p.id) as properties_handled
+                     FROM users a
+                     LEFT JOIN customer_assignments ca ON a.user_id = ca.agent_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
+                     LEFT JOIN agent_reviews ar ON a.user_id = ar.agent_id" . $this->tenantSqlForAlias('ar') . "
+                     LEFT JOIN properties p ON a.user_id = p.assigned_agent_id" . $this->tenantSqlForAlias('p') . "
+                     WHERE a.status = 'active' AND a.workload < a.max_workload";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -206,7 +210,7 @@ class AgentAssignmentService
         
         // Add location filter
         if (!empty($location)) {
-            $sql .= " AND (a.service_areas LIKE :location OR a.city = :city)";
+            $sql .= " AND (a.service_areas LIKE :location OR a.city = :city)" . $this->tenantSqlForAlias('a');
             $params['location'] = '%' . $location . '%';
             $params['city'] = $location;
         }
@@ -239,18 +243,18 @@ class AgentAssignmentService
         $location = $preferences['location'] ?? '';
 
         $sql = "SELECT o.*, 
-                       COUNT(ca.id) as current_assignments,
-                       AVG(orating.rating) as avg_rating
-                FROM offices o
-                LEFT JOIN customer_assignments ca ON o.id = ca.office_id AND ca.status = 'active'
-                LEFT JOIN office_reviews orating ON o.id = orating.office_id
-                WHERE o.status = 'active'";
+                        COUNT(ca.id) as current_assignments,
+                        AVG(orating.rating) as avg_rating
+                 FROM offices o
+                 LEFT JOIN customer_assignments ca ON o.id = ca.office_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
+                 LEFT JOIN office_reviews orating ON o.id = orating.office_id" . $this->tenantSqlForAlias('orating') . "
+                 WHERE o.status = 'active'" . $this->tenantSqlForAlias('o');
 
         $params = [];
         
         // Add location filter
         if (!empty($location)) {
-            $sql .= " AND (o.service_cities LIKE :location OR o.city = :city)";
+            $sql .= " AND (o.service_cities LIKE :location OR o.city = :city)" . $this->tenantSqlForAlias('o');
             $params['location'] = '%' . $location . '%';
             $params['city'] = $location;
         }
@@ -499,19 +503,21 @@ $wparams = ['agent_id' => $currentAssignment['agent_id']];
     public function getAssignmentHistory(int $customerId): array
     {
         $sql = "SELECT ca.*, 
-                       CASE 
-                           WHEN ca.assignment_type = 'agent' THEN u.name
-                           ELSE o.name
-                       END as assignee_name,
-                       ca.assignment_type
-                FROM customer_assignments ca
-                LEFT JOIN users u ON ca.agent_id = u.id AND ca.assignment_type = 'agent'
-                LEFT JOIN offices o ON ca.office_id = o.id AND ca.assignment_type = 'office'
-                WHERE ca.customer_id = :customer_id
-                ORDER BY ca.created_at DESC";
+                        CASE 
+                            WHEN ca.assignment_type = 'agent' THEN u.name
+                            ELSE o.name
+                        END as assignee_name,
+                        ca.assignment_type
+                 FROM customer_assignments ca
+                 LEFT JOIN users u ON ca.agent_id = u.id AND ca.assignment_type = 'agent'
+                 LEFT JOIN offices o ON ca.office_id = o.id AND ca.assignment_type = 'office'
+                 WHERE ca.customer_id = :customer_id" . $this->tenantSqlForAlias('ca') . "
+                 ORDER BY ca.created_at DESC";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['customer_id' => $customerId]);
+        $params = ['customer_id' => $customerId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -523,11 +529,13 @@ $wparams = ['agent_id' => $currentAssignment['agent_id']];
         $sql = "SELECT ca.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
                 FROM customer_assignments ca
                 JOIN users u ON ca.customer_id = u.id
-                WHERE ca.agent_id = :agent_id AND ca.status = 'active'
+                WHERE ca.agent_id = :agent_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
                 ORDER BY ca.created_at DESC";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['agent_id' => $agentId]);
+        $params = [':agent_id' => $agentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -539,11 +547,13 @@ $wparams = ['agent_id' => $currentAssignment['agent_id']];
         $sql = "SELECT ca.*, u.name as customer_name, u.email as customer_email
                 FROM customer_assignments ca
                 JOIN users u ON ca.customer_id = u.id
-                WHERE ca.office_id = :office_id AND ca.status = 'active'
+                WHERE ca.office_id = :office_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
                 ORDER BY ca.created_at DESC";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['office_id' => $officeId]);
+        $params = [':office_id' => $officeId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 }

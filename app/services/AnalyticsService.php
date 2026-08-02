@@ -40,26 +40,36 @@ class AnalyticsService
 
     public function recordKpi(int $kpiId, float $actual, ?int $employeeId = null, string $period = null, array $metadata = []): array
     {
-        $p = $period ?: date('Y-m');
-        $st = $this->db->prepare("INSERT INTO employee_kpis (kpi_id, employee_id, period, actual_value, metadata, recorded_at) VALUES (:k, :e, :p, :a, :m, NOW())
+        $insertData = $this->tenantInsertData();
+        $cols = "kpi_id, employee_id, period, actual_value, metadata, recorded_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $p = [':k' => $kpiId, ':e' => $employeeId, ':p' => $period ?: date('Y-m'), ':a' => $actual, ':m' => json_encode($metadata, JSON_UNESCAPED_UNICODE)];
+        if (!empty($insertData)) $p = array_merge($p, array_values($insertData));
+        $st = $this->db->prepare("INSERT INTO employee_kpis ($cols) VALUES ($ph)
                                   ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), metadata = VALUES(metadata), recorded_at = NOW()");
-        $st->execute([':k' => $kpiId, ':e' => $employeeId, ':p' => $p, ':a' => $actual, ':m' => json_encode($metadata, JSON_UNESCAPED_UNICODE)]);
+        $st->execute($p);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function getKpiPerformance(int $kpiId, int $months = 6): array
     {
         $st = $this->db->prepare("SELECT period, AVG(actual_value) as avg_val, MIN(actual_value) as min_val, MAX(actual_value) as max_val, COUNT(*) as sample_count
-                                  FROM employee_kpis WHERE kpi_id = :k AND recorded_at > DATE_SUB(NOW(), INTERVAL :m MONTH) GROUP BY period ORDER BY period DESC");
+                                  FROM employee_kpis WHERE kpi_id = :k AND recorded_at > DATE_SUB(NOW(), INTERVAL :m MONTH)" . $this->tenantSql() . " GROUP BY period ORDER BY period DESC");
         $st->execute([':k' => $kpiId, ':m' => $months]);
+        if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function recordDailyMetric(string $metricName, float $value, string $category = 'general', array $dimensions = []): array
     {
-        $st = $this->db->prepare("INSERT INTO daily_metrics_summary (metric_name, category, value, dimensions, metric_date, created_at) VALUES (:n, :c, :v, :d, :dt, NOW())
+        $insertData = $this->tenantInsertData();
+        $cols = "metric_name, category, value, dimensions, metric_date, created_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $params = [$metricName, $category, $value, json_encode($dimensions, JSON_UNESCAPED_UNICODE), date('Y-m-d')];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $st = $this->db->prepare("INSERT INTO daily_metrics_summary ($cols) VALUES ($ph)
                                   ON DUPLICATE KEY UPDATE value = VALUES(value), dimensions = VALUES(dimensions)");
-        $st->execute([':n' => $metricName, ':c' => $category, ':v' => $value, ':d' => json_encode($dimensions, JSON_UNESCAPED_UNICODE), ':dt' => date('Y-m-d')]);
+        $st->execute($params);
 
         // WebSocket broadcast - real-time dashboards subscribed to analytics_global
         // receive an event the moment a metric is recorded. Best-effort, never throws.
@@ -82,8 +92,9 @@ class AnalyticsService
 
     public function getDailyMetrics(string $name, int $days = 30): array
     {
-        $st = $this->db->prepare("SELECT metric_date, value FROM daily_metrics_summary WHERE metric_name = :n AND metric_date > DATE_SUB(CURDATE(), INTERVAL :d DAY) ORDER BY metric_date DESC");
+        $st = $this->db->prepare("SELECT metric_date, value FROM daily_metrics_summary WHERE metric_name = :n AND metric_date > DATE_SUB(CURDATE(), INTERVAL :d DAY)" . $this->tenantSql() . " ORDER BY metric_date DESC");
         $st->execute([':n' => $name, ':d' => $days]);
+        if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -136,8 +147,10 @@ class AnalyticsService
         }
         $rSquared = $ssTot > 0 ? round(1 - $ssRes / $ssTot, 4) : 0;
 
-        $st = $this->db->prepare("INSERT INTO forecast_results (metric_name, method, periods, predictions, r_squared, generated_at) VALUES (:m, :me, :p, :pr, :r, NOW())");
-        $st->execute([':m' => $metric, ':me' => $method, ':p' => $periods, ':pr' => json_encode($predictions, JSON_UNESCAPED_UNICODE), ':r' => $rSquared]);
+        $st = $this->db->prepare("INSERT INTO forecast_results (metric_name, method, periods, predictions, r_squared, generated_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:m, :me, :p, :pr, :r, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
+        $fparams = [':m' => $metric, ':me' => $method, ':p' => $periods, ':pr' => json_encode($predictions, JSON_UNESCAPED_UNICODE), ':r' => $rSquared];
+        if (!empty($insertData = $this->tenantInsertData())) $fparams = array_merge($fparams, $insertData);
+        $st->execute($fparams);
         $id = (int)$this->db->lastInsertId();
 
         return ['ok' => true, 'id' => $id, 'metric' => $metric, 'predictions' => $predictions, 'r_squared' => $rSquared, 'method' => $method];
@@ -146,8 +159,9 @@ class AnalyticsService
     public function listForecasts(int $limit = 20): array
     {
         try {
-            $st = $this->db->prepare("SELECT * FROM forecast_results ORDER BY generated_at DESC LIMIT :lim");
+            $st = $this->db->prepare("SELECT * FROM forecast_results" . $this->tenantSql() . " ORDER BY generated_at DESC LIMIT :lim");
             $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $st->execute();
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -157,27 +171,34 @@ class AnalyticsService
 
     public function getMarketSummary(int $days = 30): array
     {
-        $st = $this->db->prepare("SELECT * FROM market_analytics_summary WHERE summary_date > DATE_SUB(CURDATE(), INTERVAL :d DAY) ORDER BY summary_date DESC LIMIT 30");
+        $st = $this->db->prepare("SELECT * FROM market_analytics_summary WHERE summary_date > DATE_SUB(CURDATE(), INTERVAL :d DAY)" . $this->tenantSql() . " ORDER BY summary_date DESC LIMIT 30");
         $st->execute([':d' => $days]);
+        if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function recordMarketSummary(string $category, float $value, array $data = []): array
     {
-        $st = $this->db->prepare("INSERT INTO market_analytics_summary (category, value, summary_data, summary_date, created_at) VALUES (:c, :v, :d, :dt, NOW())
+        $insertData = $this->tenantInsertData();
+        $cols = "category, value, summary_data, summary_date, created_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $params = [$category, $value, json_encode($data, JSON_UNESCAPED_UNICODE), date('Y-m-d')];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $st = $this->db->prepare("INSERT INTO market_analytics_summary ($cols) VALUES ($ph)
                                   ON DUPLICATE KEY UPDATE value = VALUES(value), summary_data = VALUES(summary_data)");
-        $st->execute([':c' => $category, ':v' => $value, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':dt' => date('Y-m-d')]);
+        $st->execute($params);
         return ['ok' => true];
     }
 
     public function listDashboards(int $userId = 0): array
     {
         try {
-            $sql = "SELECT * FROM analytics_dashboards WHERE 1=1";
+            $sql = "SELECT * FROM analytics_dashboards WHERE 1=1" . $this->tenantSql();
             $params = [];
             if ($userId) { $sql .= " AND (owner_user_id = :u OR is_public = 1)"; $params[':u'] = $userId; }
             $sql .= " ORDER BY created_at DESC";
             $st = $this->db->prepare($sql);
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             $st->execute($params);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -187,15 +208,22 @@ class AnalyticsService
 
     public function createDashboard(int $userId, string $name, array $widgets, bool $isPublic = false): array
     {
-        $st = $this->db->prepare("INSERT INTO analytics_dashboards (user_id, name, widgets, is_public, created_at, updated_at) VALUES (:u, :n, :w, :p, NOW(), NOW())");
-        $st->execute([':u' => $userId, ':n' => $name, ':w' => json_encode($widgets, JSON_UNESCAPED_UNICODE), ':p' => $isPublic ? 1 : 0]);
+        $insertData = $this->tenantInsertData();
+        $cols = "user_id, name, widgets, is_public, created_at, updated_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, NOW(), NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $params = [$userId, $name, json_encode($widgets, JSON_UNESCAPED_UNICODE), $isPublic ? 1 : 0];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $st = $this->db->prepare("INSERT INTO analytics_dashboards ($cols) VALUES ($ph)");
+        $st->execute($params);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function getDashboard(int $id): ?array
     {
-        $st = $this->db->prepare("SELECT * FROM analytics_dashboards WHERE id = :id");
-        $st->execute([':id' => $id]);
+        $st = $this->db->prepare("SELECT * FROM analytics_dashboards WHERE id = :id" . $this->tenantSql());
+        $sparams = [':id' => $id];
+        if ($this->tenantId() > 1) $sparams[] = $this->tenantId();
+        $st->execute($sparams);
         $r = $st->fetch(PDO::FETCH_ASSOC);
         if (!$r) return null;
         $r['widgets'] = json_decode($r['widgets'] ?? '[]', true) ?: [];

@@ -212,7 +212,7 @@ class MlmInvestmentEngine
             SELECT r.*, p.package_name, p.package_code
             FROM mlm_associate_registrations r
             JOIN mlm_joining_packages p ON p.id = r.package_id
-            WHERE r.user_id = ?
+            WHERE r.user_id = ?" . $this->tenantSql('r') . "
             ORDER BY r.registered_at DESC
         ");
         $stmt->execute([$userId]);
@@ -228,7 +228,7 @@ class MlmInvestmentEngine
             SELECT r.*, p.package_name, p.package_code, u.name AS user_name
             FROM mlm_associate_registrations r
             JOIN mlm_joining_packages p ON p.id = r.package_id
-            LEFT JOIN users u ON u.id = r.user_id
+            LEFT JOIN users u ON u.id = r.user_id" . $this->tenantSql('r') . "
             ORDER BY r.registered_at DESC
             LIMIT ? OFFSET ?
         ");
@@ -244,23 +244,23 @@ class MlmInvestmentEngine
         $stats = [];
 
         // Total registrations
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM mlm_associate_registrations");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_associate_registrations" . $this->tenantSql());
         $stats['total_registrations'] = (int) $stmt->fetchColumn();
 
         // Paid registrations
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM mlm_associate_registrations WHERE payment_status = 'paid'");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_associate_registrations WHERE payment_status = 'paid'" . $this->tenantSql());
         $stats['paid_registrations'] = (int) $stmt->fetchColumn();
 
         // Total revenue
-        $stmt = $this->pdo->query("SELECT COALESCE(SUM(amount_paid), 0) FROM mlm_associate_registrations WHERE payment_status = 'paid'");
+        $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount_paid), 0) FROM mlm_associate_registrations WHERE payment_status = 'paid'" . $this->tenantSql());
         $stats['total_revenue'] = (float) $stmt->fetchColumn();
 
         // Total distributed via joining packages
-        $stmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE commission_type = 'joining_package' AND status = 'paid'" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE commission_type = 'joining_package' AND status = 'paid'" . $this->tenantSql());
         $stats['total_distributed'] = (float) $stmt->fetchColumn();
 
         // Pending registrations
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM mlm_associate_registrations WHERE payment_status = 'pending'");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_associate_registrations WHERE payment_status = 'pending'" . $this->tenantSql());
         $stats['pending_registrations'] = (int) $stmt->fetchColumn();
 
         // Active packages
@@ -287,7 +287,7 @@ class MlmInvestmentEngine
     private function fetchAssociate(int $userId): ?array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM associates WHERE user_id = ? AND status = 'active'"
+            "SELECT * FROM associates WHERE user_id = ? AND status = 'active'" . $this->tenantSql()
         );
         $stmt->execute([$userId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -297,7 +297,7 @@ class MlmInvestmentEngine
     private function checkDuplicate(int $userId, int $packageId): bool
     {
         $stmt = $this->pdo->prepare(
-            "SELECT COUNT(*) FROM mlm_associate_registrations WHERE user_id = ? AND package_id = ? AND payment_status = 'paid'"
+            "SELECT COUNT(*) FROM mlm_associate_registrations WHERE user_id = ? AND package_id = ? AND payment_status = 'paid'" . $this->tenantSql()
         );
         $stmt->execute([$userId, $packageId]);
         return (int) $stmt->fetchColumn() > 0;
@@ -310,19 +310,23 @@ class MlmInvestmentEngine
 
     private function createRegistration(string $regNumber, int $userId, int $packageId, array $context): void
     {
-        $stmt = $this->pdo->prepare("
-            INSERT INTO mlm_associate_registrations
-                (user_id, package_id, registration_number, payment_status, payment_method, payment_reference, amount_paid, registered_at, paid_at)
-            VALUES (?, ?, ?, 'paid', ?, ?, ?, NOW(), NOW())
-        ");
-        $stmt->execute([
-            $userId,
-            $packageId,
-            $regNumber,
-            $context['payment_method'] ?? null,
-            $context['payment_reference'] ?? null,
-            $this->getPackagePrice($packageId),
-        ]);
+$insertData = $this->tenantInsertData();
+            $cols = 'user_id, package_id, registration_number, payment_status, payment_method, payment_reference, amount_paid, registered_at, paid_at' . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = '?, ?, ?, \'paid\', ?, ?, NOW(), NOW()' . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+            $stmt = $this->pdo->prepare("
+                INSERT INTO mlm_associate_registrations ($cols)
+                VALUES ($ph)
+            ");
+            $params = [
+                $userId,
+                $packageId,
+                $regNumber,
+                $context['payment_method'] ?? null,
+                $context['payment_reference'] ?? null,
+                $this->getPackagePrice($packageId),
+            ];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $stmt->execute($params);
     }
 
     private function getPackagePrice(int $packageId): float
@@ -346,7 +350,7 @@ class MlmInvestmentEngine
         for ($i = 0; $i < $maxLevels; $i++) {
             $stmt = $this->pdo->prepare("
                 SELECT u.id, u.name, u.email
-                FROM mlm_network_tree mnt
+                FROM mlm_network_tree mnt" . $this->tenantSql('mnt') . "
                 JOIN users u ON u.id = mnt.parent_id
                 WHERE mnt.associate_id = ?
                 LIMIT 1
@@ -399,16 +403,23 @@ class MlmInvestmentEngine
     private function logActivity(int $userId, string $action, array $data): void
     {
         try {
+            $insertData = $this->tenantInsertData();
+            $cols = 'user_id, activity_type, description, reference_type, reference_id, tenant_id' . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = '?, ?, ?, ?, ?, ?' . (count($insertData) > 0 ? ', ?' : '');
             $stmt = $this->pdo->prepare("
-                INSERT INTO daily_operations_log (user_id, activity_type, description, reference_type, reference_id, created_at)
-                VALUES (?, ?, ?, 'joining_package', ?, NOW())
+                INSERT INTO daily_operations_log ($cols)
+                VALUES ($ph)
             ");
-            $stmt->execute([
+            $params = [
                 $userId,
                 $action,
                 json_encode($data),
+                'joining_package',
                 $data['registration_number'] ?? null,
-            ]);
+                $this->tenantId(),
+            ];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $stmt->execute($params);
         } catch (Exception $e) {
             error_log("MlmInvestmentEngine::logActivity ERROR: " . $e->getMessage());
         }

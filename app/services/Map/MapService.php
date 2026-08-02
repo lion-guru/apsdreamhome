@@ -337,22 +337,24 @@ class MapService
      */
     private function saveNearbyPlace(int $propertyId, array $place): void
     {
-        $sql = "INSERT INTO nearby_places 
-            (property_id, place_type, place_name, distance_meters, rating, walk_time_minutes, drive_time_minutes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-            distance_meters = VALUES(distance_meters)";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([
-            $propertyId,
-            $place['place_type'],
-            $place['place_name'],
-            $place['distance_meters'],
-            $place['rating'] ?? null,
-            $place['walk_time_minutes'] ?? null,
-            $place['drive_time_minutes'] ?? null
-        ]);
+$tenantId = $this->tenantId();
+         $sql = "INSERT INTO nearby_places 
+             (property_id, place_type, place_name, distance_meters, rating, walk_time_minutes, drive_time_minutes, tenant_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+             distance_meters = VALUES(distance_meters)";
+         
+         $stmt = $this->database->prepare($sql);
+         $stmt->execute([
+             $propertyId,
+             $place['place_type'],
+             $place['place_name'],
+             $place['distance_meters'],
+             $place['rating'] ?? null,
+             $place['walk_time_minutes'] ?? null,
+             $place['drive_time_minutes'] ?? null,
+             $tenantId,
+         ]);
     }
     
     /**
@@ -438,14 +440,15 @@ class MapService
     {
         $expiresAt = date('Y-m-d H:i:s', time() + $ttl);
         
-        $sql = "INSERT INTO map_cache (cache_key, response_data, expires_at)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-            response_data = VALUES(response_data),
-            expires_at = VALUES(expires_at)";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([$key, json_encode($data), $expiresAt]);
+$tenantId = $this->tenantId();
+         $sql = "INSERT INTO map_cache (cache_key, response_data, expires_at, tenant_id)
+             VALUES (?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+             response_data = VALUES(response_data),
+             expires_at = VALUES(expires_at)";
+         
+         $stmt = $this->database->prepare($sql);
+         $stmt->execute([$key, json_encode($data), $expiresAt, $tenantId]);
     }
     
     /**
@@ -453,8 +456,9 @@ class MapService
      */
     public function cleanupCache(): int
     {
-        $sql = "DELETE FROM map_cache WHERE expires_at < NOW()";
-        $stmt = $this->database->query($sql);
+        $sql = "DELETE FROM map_cache WHERE expires_at < NOW() AND tenant_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute([$this->tenantId()]);
         return $stmt->rowCount();
     }
     

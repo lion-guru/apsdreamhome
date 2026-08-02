@@ -99,24 +99,19 @@ class DocumentAIService
         }
 
         try {
-            $stmt = $this->db->prepare("
-                INSERT INTO document_extraction_jobs 
-                (document_type, source_type, original_filename, file_path, file_url, mime_type, file_size,
-                 extraction_engine, status, created_by, metadata)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?)
-            ");
-            $stmt->execute([
-                $data['document_type'],
-                $data['source_type'] ?? 'upload',
-                $data['original_filename'],
-                $data['file_path'] ?? null,
-                $data['file_url'] ?? null,
-                $data['mime_type'] ?? null,
-                $data['file_size'] ?? 0,
-                $engine,
-                $data['created_by'] ?? null,
-                json_encode($data['metadata'] ?? []),
-            ]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = ['document_type', 'source_type', 'original_filename', 'file_path', 'file_url', 'mime_type', 'file_size', 'extraction_engine', 'status', 'created_by', 'metadata'];
+            $values = [$data['document_type'], $data['source_type'] ?? 'upload', $data['original_filename'], $data['file_path'] ?? null, $data['file_url'] ?? null, $data['mime_type'] ?? null, $data['file_size'] ?? 0, $engine, 'queued', $data['created_by'] ?? null, json_encode($data['metadata'] ?? [])];
+            if (!empty($tenantCols)) {
+                $columns = array_merge($columns, $tenantCols);
+                $values = array_merge($values, $tenantVals);
+            }
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $this->db->prepare("INSERT INTO document_extraction_jobs ($colStr) VALUES ($placeholders)");
+            $stmt->execute($values);
 
             $jobId = (int)$this->db->lastInsertId();
 
@@ -174,6 +169,7 @@ class DocumentAIService
                 $processingTime = (int)((microtime(true) - $startTime) * 1000);
                 
                 // Update with extracted data
+                $tenantId = $this->tenantId();
                 $stmt = $this->db->prepare("
                     UPDATE document_extraction_jobs 
                     SET status = 'completed', 
@@ -183,7 +179,7 @@ class DocumentAIService
                         processing_time_ms = ?,
                         completed_at = NOW(),
                         updated_at = NOW()
-                    WHERE id = ?
+                    WHERE id = ? AND tenant_id = ?
                 ");
                 $stmt->execute([
                     json_encode($extractedData['data']),
@@ -191,6 +187,7 @@ class DocumentAIService
                     $extractedData['review_required'] ?? 1,
                     $processingTime,
                     $jobId,
+                    $tenantId,
                 ]);
 
                 return [
@@ -371,12 +368,13 @@ class DocumentAIService
         if (!$this->db) return;
         
         try {
+            $tenantId = $this->tenantId();
             $stmt = $this->db->prepare("
                 UPDATE document_extraction_jobs 
                 SET status = ?, error_message = ?, updated_at = NOW() 
-                WHERE id = ?
+                WHERE id = ? AND tenant_id = ?
             ");
-            $stmt->execute([$status, $error, $jobId]);
+            $stmt->execute([$status, $error, $jobId, $tenantId]);
         } catch (Exception $e) {
             error_log('[DocumentAIService::updateJobStatus] ' . $e->getMessage());
         }
@@ -475,6 +473,7 @@ class DocumentAIService
             
             $newStatus = $action === 'approve' ? 'approved' : 'corrected';
             
+            $tenantId = $this->tenantId();
             $stmt = $this->db->prepare("
                 UPDATE document_extraction_jobs 
                 SET status = ?, 
@@ -483,7 +482,7 @@ class DocumentAIService
                     reviewed_by = ?,
                     reviewed_at = NOW(),
                     review_notes = ?
-                WHERE id = ?
+                WHERE id = ? AND tenant_id = ?
             ");
             $stmt->execute([
                 $newStatus,
@@ -491,6 +490,7 @@ class DocumentAIService
                 $reviewerId,
                 $action === 'correct' ? 'Corrected fields: ' . implode(', ', array_keys($corrections)) : 'Approved as-is',
                 $jobId,
+                $tenantId,
             ]);
             
             return [

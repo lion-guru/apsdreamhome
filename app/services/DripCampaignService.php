@@ -94,9 +94,12 @@ class DripCampaignService
     public function getEmails(int $campaignId): array
     {
         try {
-            $sql = "SELECT * FROM drip_emails WHERE campaign_id = ? ORDER BY sequence_order ASC";
+            $tid = $this->tenantId();
+            $sql = "SELECT * FROM drip_emails WHERE campaign_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY sequence_order ASC";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$campaignId]);
+            $params = [$campaignId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             return [];

@@ -225,18 +225,18 @@ class NpsService
     {
         try {
             // Get some users to survey (simplified)
-            $users = $this->pdo->query("SELECT id FROM users WHERE role IN ('customer','agent','associate') {$this->tenantSql()} LIMIT " . (int)$limit)->fetchAll(\PDO::FETCH_COLUMN);
+            $users = $this->pdo->query("SELECT id FROM users WHERE role IN ('customer','agent','associate')" . $this->tenantSql() . " LIMIT " . (int)$limit)->fetchAll(\PDO::FETCH_COLUMN);
             $scheduled = 0;
             foreach ($users as $userId) {
                 // Check if already scheduled
-                $existing = $this->pdo->prepare("SELECT id FROM nps_schedule WHERE survey_id = ? AND user_id = ? AND status = 'pending' {$this->tenantSql()}")
+                $existing = $this->pdo->prepare("SELECT id FROM nps_schedule WHERE survey_id = ? AND user_id = ? AND status = 'pending'" . $this->tenantSql())
                     ->execute([$surveyId, $userId])->fetch();
                 if (!$existing) {
                     $sendAt = date('Y-m-d H:i:s', time() + rand(3600, 86400)); // 1-24 hours from now
                     $tid = $this->tenantId();
-                    $cols = "survey_id, user_id, scheduled_for";
-                    $vals = "?,?,?";
-                    $params = [$surveyId, $userId, $sendAt];
+                    $cols = "survey_id, user_id, scheduled_for, tenant_id";
+                    $vals = "?,?,?,?";
+                    $params = [$surveyId, $userId, $sendAt, $tid];
                     if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ",?"; $params[] = $tid; }
                     $this->pdo->prepare("INSERT INTO nps_schedule ($cols) VALUES ($vals)")
                         ->execute($params);

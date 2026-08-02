@@ -103,15 +103,15 @@ class EMIAutomationService
     public function applyDailyPenalties(): bool
     {
         try {
-            $sql = "SELECT bps.id, bps.booking_id, bps.amount, bps.due_date, bps.accrued_penalty,
-                           pb.booking_date,
-                           DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
-                    FROM booking_payment_schedules bps
-                    LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
-                    WHERE bps.status IN ('overdue','pending')
-                      AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
-                      AND bps.due_date >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)";
-            $rows = $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+             $sql = "SELECT bps.id, bps.booking_id, bps.amount, bps.due_date, bps.accrued_penalty,
+                            pb.booking_date,
+                            DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
+                     FROM booking_payment_schedules bps
+                     LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
+                     WHERE bps.status IN ('overdue','pending')
+                       AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
+                       AND bps.due_date >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)" . $this->tenantSql();
+             $rows = $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
             $advanceCache = [];
 
@@ -228,7 +228,7 @@ class EMIAutomationService
     public function sendUpcomingPaymentReminders(): bool
     {
         try {
-            $rows = $this->db->query(
+             $rows = $this->db->query(
                 "SELECT bps.id, bps.booking_id, bps.installment_no, bps.amount, bps.due_date,
                         pb.booking_number, pb.customer_id,
                         p.plot_number,
@@ -241,7 +241,7 @@ class EMIAutomationService
                  JOIN users u ON u.id = pb.customer_id
                  WHERE bps.status = 'pending'
                    AND bps.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
-                   AND bps.reminder_count = 0"
+                   AND bps.reminder_count = 0" . $this->tenantSql()
             )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
             foreach ($rows as $row) {
@@ -284,7 +284,7 @@ class EMIAutomationService
         ];
 
         try {
-            $rows = $this->db->query(
+             $rows = $this->db->query(
                 "SELECT bps.*, pb.booking_number, pb.customer_id,
                         p.plot_number,
                         c.name AS colony_name,
@@ -296,7 +296,7 @@ class EMIAutomationService
                  JOIN colonies c ON c.id = p.colony_id
                  JOIN users u ON u.id = pb.customer_id
                  WHERE bps.status IN ('overdue','pending')
-                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)" . $this->tenantSql() . "
                  ORDER BY bps.due_date ASC"
             )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
@@ -368,7 +368,7 @@ class EMIAutomationService
     public function checkDefaultedBookings(): bool
     {
         try {
-            $rows = $this->db->query(
+             $rows = $this->db->query(
                 "SELECT pb.id AS booking_id, pb.booking_number, pb.customer_id,
                         COUNT(bps.id) AS overdue_count,
                         MAX(DATEDIFF(CURDATE(), bps.due_date)) AS worst_days,
@@ -382,7 +382,7 @@ class EMIAutomationService
                  JOIN colonies col ON col.id = p.colony_id
                  JOIN users u ON u.id = pb.customer_id
                  WHERE bps.status IN ('overdue','pending')
-                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 90 DAY)
+                   AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 90 DAY)" . $this->tenantSql() . "
                  GROUP BY pb.id
                  HAVING overdue_count >= 2"
             )->fetchAll(\PDO::FETCH_ASSOC) ?: [];

@@ -171,9 +171,10 @@ class MoneyWorkflowService
             // Update bank balance
             if ($bankId) {
                 $delta = $type === 'receipt' ? $amount : -$amount;
+                $tid = $this->tenantId();
                 $this->db->execute(
-                    "UPDATE bank_accounts_master SET current_balance = current_balance + ? WHERE id = ?",
-                    [$delta, $bankId]
+                    "UPDATE bank_accounts_master SET current_balance = current_balance + ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                    array_merge([$delta, $bankId], $tid > 1 ? [$tid] : [])
                 );
             }
 
@@ -543,27 +544,28 @@ class MoneyWorkflowService
     public function approveExpense(int $approvalId, string $decision, string $remarks = ''): bool
     {
         $status = $decision === 'approve' ? 'approved' : 'rejected';
+        $tid = $this->tenantId();
         $this->db->execute(
             "UPDATE expense_approvals
              SET status = ?, remarks = ?, approved_at = NOW()
-             WHERE id = ?",
-            [$status, $remarks, $approvalId]
+             WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            array_merge([$status, $remarks, $approvalId], $tid > 1 ? [$tid] : [])
         );
 
         // If approved, update the underlying expense record too
         $row = $this->db->fetchOne(
-            "SELECT expense_id, expense_table, approval_level FROM expense_approvals WHERE id = ?",
-            [$approvalId]
+            "SELECT expense_id, expense_table, approval_level FROM expense_approvals WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            array_merge([$approvalId], $tid > 1 ? [$tid] : [])
         );
         if ($row && $status === 'approved') {
             $this->db->execute(
-                "UPDATE expenses SET status = 'approved' WHERE id = ?",
-                [$row['expense_id']]
+                "UPDATE expenses SET status = 'approved' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                array_merge([$row['expense_id']], $tid > 1 ? [$tid] : [])
             );
         } elseif ($row && $status === 'rejected') {
             $this->db->execute(
-                "UPDATE expenses SET status = 'rejected' WHERE id = ?",
-                [$row['expense_id']]
+                "UPDATE expenses SET status = 'rejected' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                array_merge([$row['expense_id']], $tid > 1 ? [$tid] : [])
             );
         }
 
@@ -676,9 +678,10 @@ class MoneyWorkflowService
      */
     public function verifyVendorKyc(int $vendorId): bool
     {
+        $tid = $this->tenantId();
         $this->db->execute(
-            "UPDATE vendors SET kyc_status = 'verified', kyc_verified_at = NOW() WHERE id = ?",
-            [$vendorId]
+            "UPDATE vendors SET kyc_status = 'verified', kyc_verified_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            array_merge([$vendorId], $tid > 1 ? [$tid] : [])
         );
         return true;
     }
@@ -688,9 +691,10 @@ class MoneyWorkflowService
      */
     public function rejectVendorKyc(int $vendorId, string $reason = ''): bool
     {
+        $tid = $this->tenantId();
         $this->db->execute(
-            "UPDATE vendors SET kyc_status = 'rejected', notes = CONCAT(COALESCE(notes,''), '\nKYC Rejected: ', ?) WHERE id = ?",
-            [$reason, $vendorId]
+            "UPDATE vendors SET kyc_status = 'rejected', notes = CONCAT(COALESCE(notes,''), '\nKYC Rejected: ', ?) WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            array_merge([$reason, $vendorId], $tid > 1 ? [$tid] : [])
         );
         return true;
     }
@@ -963,11 +967,12 @@ class MoneyWorkflowService
                 // Update account current balance
                 $debit  = (float)($l['debit']  ?? 0);
                 $credit = (float)($l['credit'] ?? 0);
+                $tid = $this->tenantId();
                 $this->db->execute(
                     "UPDATE chart_of_accounts
                      SET current_balance = current_balance + ? - ?
-                     WHERE id = ?",
-                    [$debit, $credit, (int)$l['account_id']]
+                     WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                    array_merge([$debit, $credit, (int)$l['account_id']], $tid > 1 ? [$tid] : [])
                 );
             }
 
@@ -2236,7 +2241,8 @@ class MoneyWorkflowService
                 if ($userId) { $set[] = 'deductee_user_id = ?'; $params[] = (int)$userId; }
                 if ($set) {
                     $params[] = $tdsId;
-                    $this->db->execute('UPDATE tds_register SET ' . implode(', ', $set) . ' WHERE id = ?', $params);
+                    $tid = $this->tenantId();
+                    $this->db->execute('UPDATE tds_register SET ' . implode(', ', $set) . ' WHERE id = ?' . ($tid > 1 ? ' AND tenant_id = ?' : ''), array_merge($params, $tid > 1 ? [$tid] : []));
                 }
             }
         } catch (Exception $e) { /* column may not exist - swallow */ error_log($e->getMessage()); }
@@ -2350,7 +2356,8 @@ class MoneyWorkflowService
         try {
             $fy = $data['financial_year'] ?? null;
             if ($fy) {
-                $this->db->execute('UPDATE gst_transactions SET financial_year = ? WHERE id = ?', [$fy, $gstId]);
+                $tid = $this->tenantId();
+                $this->db->execute('UPDATE gst_transactions SET financial_year = ? WHERE id = ?' . ($tid > 1 ? ' AND tenant_id = ?' : ''), array_merge([$fy, $gstId], $tid > 1 ? [$tid] : []));
             }
         } catch (Exception $e) { /* column may not exist - swallow */ error_log($e->getMessage()); }
         return $gstId;
@@ -2457,7 +2464,8 @@ class MoneyWorkflowService
 
     public function deleteDemandLetterTemplate(int $id): bool
     {
-        return $this->db->execute("DELETE FROM demand_letter_template WHERE id = ?", [$id]) > 0;
+        $tid = $this->tenantId();
+        return $this->db->execute("DELETE FROM demand_letter_template WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), array_merge([$id], $tid > 1 ? [$tid] : [])) > 0;
     }
 
     public function generateForecast(int $days = 30): array

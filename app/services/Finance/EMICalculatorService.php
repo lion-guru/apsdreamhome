@@ -272,13 +272,11 @@ class EMICalculatorService
             $pdo->beginTransaction();
             
             // Insert plan
-            $sql = "INSERT INTO payment_plans 
-                (property_id, plan_name, plan_type, total_amount, down_payment_percent, 
-                 number_of_installments, installment_frequency, interest_applicable, interest_rate, description) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
-            $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $insertData = $this->tenantInsertData();
+            $cols = 'property_id, plan_name, plan_type, total_amount, down_payment_percent, number_of_installments, installment_frequency, interest_applicable, interest_rate, description, tenant_id' . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?' . (count($insertData) > 0 ? ', ?' : '');
+            $stmt = $this->database->prepare("INSERT INTO payment_plans ($cols) VALUES ($ph)");
+            $params = [
                 $propertyId,
                 $data['name'],
                 $data['type'],
@@ -288,8 +286,11 @@ class EMICalculatorService
                 $data['frequency'] ?? 'milestone',
                 $data['interest_applicable'] ?? 0,
                 $data['interest_rate'] ?? null,
-                $data['description'] ?? null
-            ]);
+                $data['description'] ?? null,
+                $this->tenantId(),
+            ];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $stmt->execute($params);
             
             $planId = $this->database->lastInsertId();
             
@@ -335,7 +336,7 @@ class EMICalculatorService
                 SUM(ppm.amount) as milestones_total
                 FROM payment_plans pp
                 LEFT JOIN payment_plan_milestones ppm ON pp.id = ppm.plan_id
-                WHERE pp.property_id = ? AND pp.is_active = 1
+                WHERE pp.property_id = ? AND pp.is_active = 1" . $this->tenantSql('pp') . "
                 GROUP BY pp.id
                 ORDER BY pp.created_at DESC";
         } catch (\Throwable $e) {
@@ -375,12 +376,12 @@ class EMICalculatorService
             
             // Create schedule
             $scheduleSql = "INSERT INTO buyer_payment_schedules 
-                (user_id, property_id, payment_plan_id, total_amount, remaining_amount) 
-                VALUES (?, ?, ?, ?, ?)";
+                (user_id, property_id, payment_plan_id, total_amount, remaining_amount, tenant_id) 
+                VALUES (?, ?, ?, ?, ?, ?)";
             
             $scheduleStmt = $this->database->prepare($scheduleSql);
             $scheduleStmt->execute([
-                $userId, $propertyId, $planId, $plan['total_amount'], $remainingAmount
+                $userId, $propertyId, $planId, $plan['total_amount'], $remainingAmount, $this->tenantId()
             ]);
             
             $scheduleId = $this->database->lastInsertId();
@@ -455,7 +456,7 @@ class EMICalculatorService
             FROM emi_calculations ec
             LEFT JOIN properties p ON ec.property_id = p.id
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
-            WHERE ec.user_id = ?
+            WHERE ec.user_id = ?" . $this->tenantSql('ec') . "
             ORDER BY ec.created_at DESC
             LIMIT ?";
         

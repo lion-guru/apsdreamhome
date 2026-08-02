@@ -629,23 +629,19 @@ class CommunicationGateway
             return;
         }
         try {
-            $stmt = $this->pdo->prepare(
-                'INSERT INTO gateway_logs
-                    (gateway, action, recipient, request_payload, response_payload, status, http_code, duration_ms, cost, error_message, created_at)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,NOW())'
-            );
-            $stmt->execute([
-                $gateway,
-                $action,
-                $recipient !== null ? mb_substr($recipient, 0, 100) : null,
-                $this->safeJson($request),
-                $this->safeJson($extra),
-                $status,
-                0,
-                (int)$duration,
-                0.0,
-                $error !== null ? mb_substr((string)$error, 0, 1000) : null,
-            ]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = ['gateway', 'action', 'recipient', 'request_payload', 'response_payload', 'status', 'http_code', 'duration_ms', 'cost', 'error_message', 'created_at'];
+            $values = [$gateway, $action, $recipient !== null ? mb_substr($recipient, 0, 100) : null, $this->safeJson($request), $this->safeJson($extra), $status, 0, (int)$duration, 0.0, $error !== null ? mb_substr((string)$error, 0, 1000) : null, 'NOW()'];
+            if (!empty($tenantCols)) {
+                $columns = array_merge($columns, $tenantCols);
+                $values = array_merge($values, $tenantVals);
+            }
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $this->pdo->prepare("INSERT INTO gateway_logs ($colStr) VALUES ($placeholders)");
+            $stmt->execute($values);
         } catch (\Throwable $e) {
             $this->logToFile([
                 'gateway' => $gateway, 'action' => $action, 'recipient' => $recipient,

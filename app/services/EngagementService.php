@@ -36,11 +36,11 @@ class EngagementService
     {
         [$where, $params] = $this->buildMetricsFilter($filters);
 
-        $sql = 'SELECT am.*, u.name AS user_name, u.email AS user_email,
-                       mp.current_level, mp.referral_code
-                FROM mlm_associate_metrics am
-                JOIN users u ON am.user_id = u.id
-                LEFT JOIN mlm_profiles mp ON mp.user_id = am.user_id';
+$sql = 'SELECT am.*, u.name AS user_name, u.email AS user_email,
+                        mp.current_level, mp.referral_code
+                 FROM mlm_associate_metrics am' . $this->tenantSql('am') . '
+                 JOIN users u ON am.user_id = u.id
+                 LEFT JOIN mlm_profiles mp ON mp.user_id = am.user_id';
 
         if ($where) {
             $sql .= ' WHERE ' . $where;
@@ -82,31 +82,28 @@ class EngagementService
             $snapshotDate = $row['latest_date'];
         }
 
-        $sql = 'SELECT ls.*, u.name AS user_name, u.email AS user_email,
-                       mp.current_level, mp.referral_code
-                FROM mlm_leaderboard_snapshots ls
-                JOIN users u ON ls.user_id = u.id
-                LEFT JOIN mlm_profiles mp ON mp.user_id = ls.user_id
-                WHERE ls.metric_type = ? AND ls.snapshot_date = ?
-                ORDER BY ls.rank_position ASC
-                LIMIT ?'; // PDO limits need int, but we can't bind int directly in execute array easily without setting type. 
-                          // However, mysql driver often handles string numbers in LIMIT if emulation is on.
-                          // To be safe, we can use bindValue or just put it in execute array if emulation is on.
-                          // Or we can just use bindValue.
+$sql = 'SELECT ls.*, u.name AS user_name, u.email AS user_email,
+                        mp.current_level, mp.referral_code
+                 FROM mlm_leaderboard_snapshots ls' . $this->tenantSql('ls') . '
+                 JOIN users u ON ls.user_id = u.id
+                 LEFT JOIN mlm_profiles mp ON mp.user_id = ls.user_id
+                 WHERE ls.metric_type = ? AND ls.snapshot_date = ?
+                 ORDER BY ls.rank_position ASC
+                 LIMIT ?';
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(1, $metricType);
-        $stmt->bindValue(2, $snapshotDate);
-        $stmt->bindValue(3, $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+         $stmt = $this->conn->prepare($sql);
+         $stmt->bindValue(1, $metricType);
+         $stmt->bindValue(2, $snapshotDate);
+         $stmt->bindValue(3, $limit, PDO::PARAM_INT);
+         $stmt->execute();
+         $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return [
-            'metric_type' => $metricType,
-            'snapshot_date' => $snapshotDate,
-            'records' => $records,
-        ];
-    }
+         return [
+             'metric_type' => $metricType,
+             'snapshot_date' => $snapshotDate,
+             'records' => $records,
+         ];
+     }
 
     /**
      * Retrieve goals with optional filters.
@@ -115,10 +112,10 @@ class EngagementService
     {
         [$where, $params] = $this->buildGoalFilter($filters);
 
-        $sql = 'SELECT g.*, owner.name AS owner_name, creator.name AS created_by_name
-                FROM mlm_goals g
-                LEFT JOIN users owner ON g.user_id = owner.id
-                LEFT JOIN users creator ON g.created_by = creator.id';
+$sql = 'SELECT g.*, owner.name AS owner_name, creator.name AS created_by_name
+                 FROM mlm_goals g' . $this->tenantSql('g') . '
+                 LEFT JOIN users owner ON g.user_id = owner.id
+                 LEFT JOIN users creator ON g.created_by = creator.id';
 
         if ($where) {
             $sql .= ' WHERE ' . $where;
@@ -156,7 +153,7 @@ class EngagementService
      */
     public function getGoalProgress(int $goalId): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_progress WHERE goal_id = ? ORDER BY checkpoint_date ASC');
+        $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_progress WHERE goal_id = ?' . $this->tenantSql() . ' ORDER BY checkpoint_date ASC');
         $stmt->execute([$goalId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -166,7 +163,7 @@ class EngagementService
      */
     public function getGoalEvents(int $goalId): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_events WHERE goal_id = ? ORDER BY created_at ASC');
+        $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_events WHERE goal_id = ?' . $this->tenantSql() . ' ORDER BY created_at ASC');
         $stmt->execute([$goalId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -208,7 +205,7 @@ class EngagementService
      */
     public function getNotificationPreferences(int $userId): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM mlm_notification_preferences WHERE user_id = ?');
+        $stmt = $this->conn->prepare('SELECT * FROM mlm_notification_preferences WHERE user_id = ?' . $this->tenantSql());
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -440,7 +437,7 @@ $insertData = $this->tenantInsertData();
             throw new InvalidArgumentException('No fields supplied for update.');
         }
 
-        $sql = 'UPDATE mlm_goals SET ' . implode(', ', $fields) . ', updated_at = NOW() WHERE id = ?';
+        $sql = 'UPDATE mlm_goals SET ' . implode(', ', $fields) . ', updated_at = NOW() WHERE id = ?' . $this->tenantSql();
         $params[] = $goalId;
 
         $stmt = $this->conn->prepare($sql);
@@ -497,13 +494,16 @@ $insertData = $this->tenantInsertData();
 
         $percentage = max(0.0, min(100.0, $percentage));
 
-        $stmt = $this->conn->prepare(
-            'INSERT INTO mlm_goal_progress (goal_id, checkpoint_date, actual_value, percentage_complete)
-             VALUES (?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), percentage_complete = VALUES(percentage_complete), updated_at = CURRENT_TIMESTAMP'
+$stmt = $this->conn->prepare(
+            'INSERT INTO mlm_goal_progress (goal_id, checkpoint_date, actual_value, percentage_complete, tenant_id)' .
+            ' VALUES (?, ?, ?, ?, ?)' .
+            ' ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), percentage_complete = VALUES(percentage_complete), updated_at = CURRENT_TIMESTAMP'
         );
 
-        if (!$stmt->execute([$goalId, $checkpointDate, $actualValue, $percentage])) {
+        $insertData = $this->tenantInsertData();
+        $params = [$goalId, $checkpointDate, $actualValue, $percentage];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        if (!$stmt->execute($params)) {
             throw new RuntimeException('Failed to record progress: ' . implode(" ", $stmt->errorInfo()));
         }
 
@@ -532,7 +532,7 @@ $insertData = $this->tenantInsertData();
             throw new InvalidArgumentException('Invalid status value.');
         }
 
-        $stmt = $this->conn->prepare('UPDATE mlm_goals SET status = ?, updated_at = NOW() WHERE id = ?');
+        $stmt = $this->conn->prepare('UPDATE mlm_goals SET status = ?, updated_at = NOW() WHERE id = ?' . $this->tenantSql());
         $stmt->execute([$status, $goalId]);
         $affected = $stmt->rowCount();
 
@@ -556,7 +556,7 @@ $insertData = $this->tenantInsertData();
 
     private function fetchGoal(int $goalId): ?array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM mlm_goals WHERE id = ? LIMIT 1');
+        $stmt = $this->conn->prepare('SELECT * FROM mlm_goals WHERE id = ?' . $this->tenantSql() . ' LIMIT 1');
         $stmt->execute([$goalId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -567,11 +567,15 @@ $insertData = $this->tenantInsertData();
     {
         $payloadJson = $payload ? json_encode($payload, JSON_UNESCAPED_UNICODE) : null;
 
+        $insertData = $this->tenantInsertData();
+        $cols = 'goal_id, event_type, event_message, event_payload, tenant_id' . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = '?, ?, ?, ?' . (count($insertData) > 0 ? ', ?' : '');
         $stmt = $this->conn->prepare(
-            'INSERT INTO mlm_goal_events (goal_id, event_type, event_message, event_payload)
-             VALUES (?, ?, ?, ?)' 
+            "INSERT INTO mlm_goal_events ($cols) VALUES ($ph)"
         );
-        $stmt->execute([$goalId, $eventType, $message, $payloadJson]);
+        $params = [$goalId, $eventType, $message, $payloadJson];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
     }
 
     private function buildMetricsFilter(array $filters): array

@@ -512,23 +512,19 @@ class RazorpayService
         $respSafe = is_array($resp) ? $this->redact($resp) : ['raw' => 'non-array'];
         $status = $code >= 200 && $code < 300 ? 'success' : 'failed';
         try {
-            $stmt = $this->db?->prepare("INSERT INTO gateway_logs
-                (gateway, method, endpoint, request_payload, response_payload, response_code, status, amount_paise, transaction_id, duration_ms, retry_count, error_message)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt?->execute([
-                'razorpay',
-                $method,
-                $path,
-                json_encode($reqSafe),
-                json_encode($respSafe),
-                $code,
-                $status,
-                $amountPaise,
-                $txnId,
-                $duration,
-                max(0, $attempt - 1),
-                $err,
-            ]);
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $columns = ['gateway', 'method', 'endpoint', 'request_payload', 'response_payload', 'response_code', 'status', 'amount_paise', 'transaction_id', 'duration_ms', 'retry_count', 'error_message'];
+            $values = ['razorpay', $method, $path, json_encode($reqSafe), json_encode($respSafe), $code, $status, $amountPaise, $txnId, $duration, max(0, $attempt - 1), $err];
+            if (!empty($tenantCols)) {
+                $columns = array_merge($columns, $tenantCols);
+                $values = array_merge($values, $tenantVals);
+            }
+            $colStr = implode(', ', $columns);
+            $placeholders = implode(', ', array_fill(0, count($values), '?'));
+            $stmt = $this->db?->prepare("INSERT INTO gateway_logs ($colStr) VALUES ($placeholders)");
+            $stmt?->execute($values);
         } catch (\Throwable $e) {
             $this->info("logCall: " . $e->getMessage());
         }

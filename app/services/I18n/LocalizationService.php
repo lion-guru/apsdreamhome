@@ -313,9 +313,18 @@ class LocalizationService
      */
     public function setUserLocale(int $userId, string $userType, string $locale, array $options = []): bool
     {
-        $sql = "INSERT INTO user_locale_preferences 
-            (user_id, user_type, locale, timezone, date_format, time_format, currency_code)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+        $tenantData = $this->tenantInsertData();
+        $tenantCols = array_keys($tenantData);
+        $tenantVals = array_values($tenantData);
+        $columns = ['user_id', 'user_type', 'locale', 'timezone', 'date_format', 'time_format', 'currency_code'];
+        $values = [$userId, $userType, $locale, $options['timezone'] ?? 'Asia/Kolkata', $options['date_format'] ?? 'd M Y', $options['time_format'] ?? 'h:i A', $options['currency_code'] ?? 'INR'];
+        if (!empty($tenantCols)) {
+            $columns = array_merge($columns, $tenantCols);
+            $values = array_merge($values, $tenantVals);
+        }
+        $colStr = implode(', ', $columns);
+        $placeholders = implode(', ', array_fill(0, count($values), '?'));
+        $sql = "INSERT INTO user_locale_preferences ($colStr) VALUES ($placeholders)
             ON DUPLICATE KEY UPDATE
             locale = VALUES(locale),
             timezone = VALUES(timezone),
@@ -324,15 +333,7 @@ class LocalizationService
             currency_code = VALUES(currency_code)";
         
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([
-            $userId,
-            $userType,
-            $locale,
-            $options['timezone'] ?? 'Asia/Kolkata',
-            $options['date_format'] ?? 'd M Y',
-            $options['time_format'] ?? 'h:i A',
-            $options['currency_code'] ?? 'INR'
-        ]);
+        return $stmt->execute($values);
     }
     
     /**

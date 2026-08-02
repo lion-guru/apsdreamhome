@@ -153,8 +153,10 @@ $st = $this->db->prepare("INSERT INTO agent_state (agent_id, context, state_data
 
     public function getState(int $agentId, string $context): ?array
     {
-        $st = $this->db->prepare("SELECT * FROM agent_state WHERE agent_id = :a AND context = :c AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY updated_at DESC LIMIT 1");
-        $st->execute([':a' => $agentId, ':c' => $context]);
+        $st = $this->db->prepare("SELECT * FROM agent_state WHERE agent_id = :a AND context = :c AND (expires_at IS NULL OR expires_at > NOW())" . $this->tenantSql() . " ORDER BY updated_at DESC LIMIT 1");
+        $sparams = [':a' => $agentId, ':c' => $context];
+        if ($this->tenantId() > 1) $sparams[] = $this->tenantId();
+        $st->execute($sparams);
         $r = $st->fetch(PDO::FETCH_ASSOC);
         if (!$r) return null;
         $r['state_data'] = json_decode($r['state_data'] ?? '{}', true) ?: [];
@@ -192,8 +194,10 @@ $st = $this->db->prepare("INSERT INTO agent_state (agent_id, context, state_data
 
     public function triggerWorkflow(string $trigger, array $context): array
     {
-        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE trigger_event = :t AND is_active = 1");
-        $st->execute([':t' => $trigger]);
+        $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE trigger_event = :t AND is_active = 1" . $this->tenantSql());
+        $wparams = [':t' => $trigger];
+        if ($this->tenantId() > 1) $wparams[':stid'] = $this->tenantId();
+        $st->execute($wparams);
         $workflows = $st->fetchAll(PDO::FETCH_ASSOC);
 
         $results = [];

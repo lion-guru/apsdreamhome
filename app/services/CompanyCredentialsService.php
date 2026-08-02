@@ -28,7 +28,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return [];
         try {
-            $stmt = $this->db->query("SELECT * FROM company_credentials ORDER BY credential_type, is_primary DESC");
+            $stmt = $this->db->prepare("SELECT * FROM company_credentials" . $this->tenantSql() . " ORDER BY credential_type, is_primary DESC");
+            $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] getAll: " . $e->getMessage());
@@ -40,8 +43,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->prepare("SELECT * FROM company_credentials WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("SELECT * FROM company_credentials WHERE id = ?" . $this->tenantSql());
+            $params = [$id];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (\Throwable $e) {
@@ -54,8 +59,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return [];
         try {
-            $stmt = $this->db->prepare("SELECT * FROM company_credentials WHERE credential_type = ? ORDER BY is_primary DESC");
-            $stmt->execute([$type]);
+            $stmt = $this->db->prepare("SELECT * FROM company_credentials WHERE credential_type = ?" . $this->tenantSql() . " ORDER BY is_primary DESC");
+            $params = [$type];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] getByType: " . $e->getMessage());
@@ -67,7 +74,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return [];
         try {
-            $stmt = $this->db->query("SELECT * FROM company_credentials WHERE status = 'active' ORDER BY credential_type");
+            $stmt = $this->db->prepare("SELECT * FROM company_credentials WHERE status = 'active'" . $this->tenantSql() . " ORDER BY credential_type");
+            $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] getActive: " . $e->getMessage());
@@ -79,7 +89,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->query("SELECT credential_value FROM company_credentials WHERE credential_type = 'gst' AND is_primary = 1 AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT credential_value FROM company_credentials WHERE credential_type = 'gst' AND is_primary = 1 AND status = 'active'" . $this->tenantSql() . " LIMIT 1");
+            $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ? $row['credential_value'] : null;
         } catch (\Throwable $e) {
@@ -92,7 +105,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->query("SELECT credential_value FROM company_credentials WHERE credential_type = 'pan' AND is_primary = 1 AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT credential_value FROM company_credentials WHERE credential_type = 'pan' AND is_primary = 1 AND status = 'active'" . $this->tenantSql() . " LIMIT 1");
+            $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ? $row['credential_value'] : null;
         } catch (\Throwable $e) {
@@ -105,7 +121,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->query("SELECT credential_value FROM company_credentials WHERE credential_type = 'rera' AND is_primary = 1 AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT credential_value FROM company_credentials WHERE credential_type = 'rera' AND is_primary = 1 AND status = 'active'" . $this->tenantSql() . " LIMIT 1");
+            $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ? $row['credential_value'] : null;
         } catch (\Throwable $e) {

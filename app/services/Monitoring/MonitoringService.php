@@ -167,11 +167,12 @@ class MonitoringService
     private function storeMetricsInDatabase($metrics)
     {
         try {
+            $tenantId = $this->tenantId();
             $stmt = $this->db->prepare("
                 INSERT INTO system_metrics
                 (timestamp, memory_current, memory_peak, cpu_load_1, cpu_load_5, cpu_load_15,
-                 disk_total, disk_used, disk_free, server_uptime, db_connections, active_sessions, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                 disk_total, disk_used, disk_free, server_uptime, db_connections, active_sessions, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
 
             $stmt->execute([
@@ -186,7 +187,8 @@ class MonitoringService
                 $metrics['disk_usage']['free'],
                 $metrics['server_uptime'],
                 $metrics['database_connections'],
-                $metrics['active_sessions']
+                $metrics['active_sessions'],
+                $tenantId,
             ]);
         } catch (\Exception $e) {
             $this->loggingService->error('Failed to store system metrics: ' . $e->getMessage());
