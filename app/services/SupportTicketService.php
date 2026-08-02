@@ -72,6 +72,8 @@ class SupportTicketService
             $params[] = '%' . $search . '%';
         }
 
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        if ($tid) { $where[] = "t.tenant_id = ?"; $params[] = $tid; }
         $whereSql = implode(' AND ', $where);
 
         $countStmt = $this->db->prepare("SELECT COUNT(*) FROM support_tickets t WHERE $whereSql");
@@ -102,28 +104,35 @@ class SupportTicketService
 
     public function getTicket(int $ticketId): ?array
     {
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $extra = $tid ? " AND t.tenant_id = ?" : "";
         $stmt = $this->db->prepare("
             SELECT t.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
                    a.name as assigned_name, a.email as assigned_email
             FROM support_tickets t
             LEFT JOIN users u ON t.user_id = u.id
             LEFT JOIN users a ON t.assigned_to = a.id
-            WHERE t.id = ?
+            WHERE t.id = ?" . $extra . "
         ");
-        $stmt->execute([$ticketId]);
+        $params = [$ticketId];
+        if ($tid) $params[] = $tid;
+        $stmt->execute($params);
         $ticket = $stmt->fetch();
         if (!$ticket) {
             return null;
         }
 
+        $replyExtra = $tid ? " AND r.tenant_id = ?" : "";
         $replyStmt = $this->db->prepare("
             SELECT r.*, u.name as user_name, u.role as user_role
             FROM support_ticket_replies r
             LEFT JOIN users u ON r.user_id = u.id
-            WHERE r.ticket_id = ?
+            WHERE r.ticket_id = ?" . $replyExtra . "
             ORDER BY r.created_at ASC
         ");
-        $replyStmt->execute([$ticketId]);
+        $replyParams = [$ticketId];
+        if ($tid) $replyParams[] = $tid;
+        $replyStmt->execute($replyParams);
         $ticket['replies'] = $replyStmt->fetchAll();
 
         return $ticket;
@@ -149,8 +158,10 @@ class SupportTicketService
         if ($tid) { $sql .= " AND tenant_id = ?"; $params2[] = $tid; }
         $this->db->prepare($sql)->execute($params2);
 
-        $stmt2 = $this->db->prepare("SELECT * FROM support_ticket_replies WHERE id = ?");
-        $stmt2->execute([$replyId]);
+        $stmt2 = $this->db->prepare("SELECT * FROM support_ticket_replies WHERE id = ?" . ($tid ? " AND tenant_id = ?" : ""));
+        $replyParams = [$replyId];
+        if ($tid) $replyParams[] = $tid;
+        $stmt2->execute($replyParams);
         return $stmt2->fetch();
     }
 
@@ -191,8 +202,10 @@ class SupportTicketService
     public function getStats(): array
     {
         $stats = [];
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $tenantWhere = $tid ? " AND tenant_id = $tid" : "";
 
-        $row = $this->db->query("SELECT COUNT(*) as total, SUM(status='open') as open_count, SUM(status='in_progress') as in_progress, SUM(status='waiting_customer') as waiting, SUM(status='resolved') as resolved, SUM(status='closed') as closed FROM support_tickets")->fetch();
+        $row = $this->db->query("SELECT COUNT(*) as total, SUM(status='open') as open_count, SUM(status='in_progress') as in_progress, SUM(status='waiting_customer') as waiting, SUM(status='resolved') as resolved, SUM(status='closed') as closed FROM support_tickets" . $tenantWhere)->fetch();
         $stats['total'] = (int)($row['total'] ?? 0);
         $stats['open'] = (int)($row['open_count'] ?? 0);
         $stats['in_progress'] = (int)($row['in_progress'] ?? 0);
@@ -200,13 +213,13 @@ class SupportTicketService
         $stats['resolved'] = (int)($row['resolved'] ?? 0);
         $stats['closed'] = (int)($row['closed'] ?? 0);
 
-        $catRows = $this->db->query("SELECT category, COUNT(*) as cnt FROM support_tickets GROUP BY category")->fetchAll();
+        $catRows = $this->db->query("SELECT category, COUNT(*) as cnt FROM support_tickets" . $tenantWhere . " GROUP BY category")->fetchAll();
         $stats['by_category'] = [];
         foreach ($catRows as $r) {
             $stats['by_category'][$r['category']] = (int) $r['cnt'];
         }
 
-        $priRows = $this->db->query("SELECT priority, COUNT(*) as cnt FROM support_tickets GROUP BY priority")->fetchAll();
+        $priRows = $this->db->query("SELECT priority, COUNT(*) as cnt FROM support_tickets" . $tenantWhere . " GROUP BY priority")->fetchAll();
         $stats['by_priority'] = [];
         foreach ($priRows as $r) {
             $stats['by_priority'][$r['priority']] = (int) $r['cnt'];
@@ -215,7 +228,7 @@ class SupportTicketService
         $avgRow = $this->db->query("
             SELECT AVG(TIMESTAMPDIFF(HOUR, t.created_at, t.last_reply_at)) as avg_hours
             FROM support_tickets t
-            WHERE t.last_reply_at IS NOT NULL AND t.reply_count > 1
+            WHERE t.last_reply_at IS NOT NULL AND t.reply_count > 1" . $tenantWhere . "
         ")->fetch();
         $stats['avg_response_hours'] = round((float)($avgRow['avg_hours'] ?? 0), 1);
 
@@ -228,22 +241,30 @@ class SupportTicketService
 
     public function getTicketCount(int $userId): int
     {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM support_tickets WHERE user_id = ?");
-        $stmt->execute([$userId]);
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $extra = $tid ? " AND tenant_id = ?" : "";
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM support_tickets WHERE user_id = ?" . $extra);
+        $params = [$userId];
+        if ($tid) $params[] = $tid;
+        $stmt->execute($params);
         return (int) $stmt->fetchColumn();
     }
 
     public function getUserTicketStats(int $userId): array
     {
+        $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+        $extra = $tid ? " AND tenant_id = ?" : "";
         $stmt = $this->db->prepare("
             SELECT
                 COUNT(*) as total,
                 SUM(status='open') as open_count,
                 SUM(status='in_progress') as in_progress,
                 SUM(status IN ('resolved','closed')) as resolved
-            FROM support_tickets WHERE user_id = ?
+            FROM support_tickets WHERE user_id = ?" . $extra . "
         ");
-        $stmt->execute([$userId]);
+        $params = [$userId];
+        if ($tid) $params[] = $tid;
+        $stmt->execute($params);
         $row = $stmt->fetch();
         return [
             'total' => (int)($row['total'] ?? 0),

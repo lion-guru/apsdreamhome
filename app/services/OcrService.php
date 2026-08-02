@@ -90,6 +90,11 @@ class OcrService
         return $this->tenantId;
     }
 
+    private function _tWhere(string $alias = 'd'): string
+    {
+        return $this->tenantId > 1 ? " AND $alias.tenant_id = {$this->tenantId}" : "";
+    }
+
     public function getDocTypeLabel(string $type): string
     {
         return self::DOC_TYPE_LABELS[$type] ?? ucfirst(str_replace('_', ' ', $type));
@@ -104,8 +109,7 @@ class OcrService
     {
         $default = ['total' => 0, 'pending' => 0, 'processing' => 0, 'completed' => 0, 'failed' => 0, 'valid' => 0, 'invalid' => 0];
         try {
-            $stmt = $this->db->prepare("
-                SELECT
+            $sql = "SELECT
                     COUNT(*) AS total,
                     SUM(CASE WHEN ocr_status = 'pending' THEN 1 ELSE 0 END) AS pending,
                     SUM(CASE WHEN ocr_status = 'processing' THEN 1 ELSE 0 END) AS processing,
@@ -113,8 +117,8 @@ class OcrService
                     SUM(CASE WHEN ocr_status = 'failed' THEN 1 ELSE 0 END) AS failed,
                     SUM(CASE WHEN validation_status = 'valid' THEN 1 ELSE 0 END) AS valid,
                     SUM(CASE WHEN validation_status = 'invalid' THEN 1 ELSE 0 END) AS `invalid`
-                FROM ocr_documents
-            ");
+                FROM ocr_documents" . $this->_tWhere();
+            $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             foreach ($default as $k => $v) {
@@ -183,15 +187,18 @@ class OcrService
     public function processDocument(int $docId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM ocr_documents WHERE id = :id");
-            $stmt->execute([':id' => $docId]);
+            $tid = $this->getTenantId();
+            $stmt = $this->db->prepare("SELECT * FROM ocr_documents WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : ""));
+            $params = [':id' => $docId];
+            if ($tid > 1) $params[':tid'] = $tid;
+            $stmt->execute($params);
             $doc = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$doc) {
                 return ['ok' => false, 'error' => 'Document not found.'];
             }
 
-            $this->db->prepare("UPDATE ocr_documents SET ocr_status = 'processing', updated_at = NOW() WHERE id = :id")
-                ->execute([':id' => $docId]);
+            $this->db->prepare("UPDATE ocr_documents SET ocr_status = 'processing', updated_at = NOW() WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : ""))
+                ->execute([':id' => $docId, ':tid' => $tid]);
 
             $fileName = $doc['original_name'] ?? $doc['file_name'] ?? '';
             $docType = $doc['document_type'] ?? 'unknown';
@@ -211,7 +218,7 @@ class OcrService
                     confidence_score = :conf,
                     processed_at = NOW(),
                     updated_at = NOW()
-                WHERE id = :id
+                WHERE id = :id" . $this->_tWhere() . "
             ")->execute([':text' => $extractedText, ':data' => $jsonFields, ':conf' => $confidence, ':id' => $docId]);
 
             $this->db->prepare("DELETE FROM ocr_extracted_fields WHERE ocr_document_id = :oid")
@@ -230,8 +237,9 @@ class OcrService
 
             return ['ok' => true, 'fields' => $fields, 'confidence' => $confidence];
         } catch (\Throwable $e) {
-            $this->db->prepare("UPDATE ocr_documents SET ocr_status = 'failed', error_message = :err, updated_at = NOW() WHERE id = :id")
-                ->execute([':err' => $e->getMessage(), ':id' => $docId]);
+            $this->db->prepare("
+                UPDATE ocr_documents SET ocr_status = 'failed', error_message = :err, updated_at = NOW() WHERE id = :id" . $this->_tWhere() . "
+            ")->execute([':err' => $e->getMessage(), ':id' => $docId]);
             return ['ok' => false, 'error' => $e->getMessage()];
         }
     }
@@ -272,8 +280,12 @@ class OcrService
         }
 
         try {
-            $stmt = $this->db->prepare("SELECT field_definitions FROM ocr_templates WHERE document_type = :dt AND is_active = 1 LIMIT 1");
-            $stmt->execute([':dt' => $documentType]);
+            $tid = $this->getTenantId();
+            $tplSql = "SELECT field_definitions FROM ocr_templates WHERE document_type = :dt AND is_active = 1" . ($tid > 1 ? " AND tenant_id = :tid" : "") . " LIMIT 1";
+            $stmt = $this->db->prepare($tplSql);
+            $params = [':dt' => $documentType];
+            if ($tid > 1) $params[':tid'] = $tid;
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row && !empty($row['field_definitions'])) {
                 $tmplFields = json_decode($row['field_definitions'], true);
@@ -310,15 +322,20 @@ class OcrService
 
     public function classifyDocument(int $documentId, string $category, float $confidence = 0.0, array $metadata = []): array
     {
+        $tid = $this->getTenantId();
         try {
-            $this->db->prepare("
-                INSERT INTO document_classification (document_id, classified_category, classified_type, confidence, manual_override, classified_at)
-                VALUES (:d, :c, :t, :co, 0, NOW())
-            ")->execute([
+            $insertCols = "(document_id, classified_category, classified_type, confidence, manual_override, classified_at)";
+            $insertVals = "VALUES (:d, :c, :t, :co, 0, NOW())";
+            if ($tid > 1) {
+                $insertCols = "(document_id, classified_category, classified_type, confidence, manual_override, classified_at, tenant_id)";
+                $insertVals = "VALUES (:d, :c, :t, :co, 0, NOW(), :tid)";
+            }
+            $this->db->prepare("INSERT INTO document_classification $insertCols $insertVals")->execute([
                 ':d' => $documentId,
                 ':c' => $category,
                 ':t' => $metadata['method'] ?? $category,
                 ':co' => $confidence,
+                ':tid' => $tid,
             ]);
             return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
         } catch (\Throwable $e) {
@@ -357,16 +374,20 @@ class OcrService
 
     public function getDocument(int $id): ?array
     {
+        $tid = $this->getTenantId();
         try {
-            $stmt = $this->db->prepare("SELECT * FROM ocr_documents WHERE id = :id");
-            $stmt->execute([':id' => $id]);
+            $docSql = "SELECT * FROM ocr_documents WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
+            $stmt = $this->db->prepare($docSql);
+            $params = [':id' => $id];
+            if ($tid > 1) $params[':tid'] = $tid;
+            $stmt->execute($params);
             $doc = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$doc) {
                 return null;
             }
 
-            $fstmt = $this->db->prepare("SELECT * FROM ocr_extracted_fields WHERE ocr_document_id = :oid ORDER BY id");
-            $fstmt->execute([':oid' => $id]);
+            $fstmt = $this->db->prepare("SELECT * FROM ocr_extracted_fields WHERE ocr_document_id = :oid" . ($tid > 1 ? " AND tenant_id = :tid" : "") . " ORDER BY id");
+            $fstmt->execute([':oid' => $id, ':tid' => $tid]);
             $doc['fields'] = $fstmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (!empty($doc['structured_data']) && is_string($doc['structured_data'])) {
@@ -382,8 +403,13 @@ class OcrService
 
     public function listDocuments(int $page = 1, int $perPage = 20, string $status = '', string $doctype = '', string $search = ''): array
     {
+        $tid = $this->getTenantId();
         $where = ['1=1'];
         $params = [];
+        if ($tid > 1) {
+            $where[] = "tenant_id = :tid";
+            $params[':tid'] = $tid;
+        }
 
         if ($status !== '') {
             $where[] = "ocr_status = :status";
@@ -426,8 +452,10 @@ class OcrService
     public function approveDocument(int $id, int $adminId): array
     {
         try {
-            $this->db->prepare("UPDATE ocr_documents SET validation_status = 'valid', is_verified = 1, verified_by = :uid, updated_at = NOW() WHERE id = :id")
-                ->execute([':uid' => $adminId, ':id' => $id]);
+            $tid = $this->getTenantId();
+            $extra = $tid > 1 ? " AND tenant_id = :tid" : "";
+            $this->db->prepare("UPDATE ocr_documents SET validation_status = 'valid', is_verified = 1, verified_by = :uid, updated_at = NOW() WHERE id = :id" . $extra)
+                ->execute([':uid' => $adminId, ':id' => $id, ':tid' => $tid]);
             return ['ok' => true];
         } catch (\Throwable $e) {
             return ['ok' => false, 'error' => $e->getMessage()];
@@ -437,8 +465,10 @@ class OcrService
     public function rejectDocument(int $id, string $reason): array
     {
         try {
-            $this->db->prepare("UPDATE ocr_documents SET validation_status = 'invalid', rejection_reason = :reason, is_verified = 0, updated_at = NOW() WHERE id = :id")
-                ->execute([':reason' => $reason, ':id' => $id]);
+            $tid = $this->getTenantId();
+            $extra = $tid > 1 ? " AND tenant_id = :tid" : "";
+            $this->db->prepare("UPDATE ocr_documents SET validation_status = 'invalid', rejection_reason = :reason, is_verified = 0, updated_at = NOW() WHERE id = :id" . $extra)
+                ->execute([':reason' => $reason, ':id' => $id, ':tid' => $tid]);
             return ['ok' => true];
         } catch (\Throwable $e) {
             return ['ok' => false, 'error' => $e->getMessage()];
@@ -447,15 +477,20 @@ class OcrService
 
     public function deleteDocument(int $id): array
     {
+        $tid = $this->getTenantId();
         try {
-            $doc = $this->getDocument($id);
+            $extraTid = $tid > 1 ? " AND tenant_id = :tid" : "";
+            $docSql = "SELECT * FROM ocr_documents WHERE id = :id" . $extraTid;
+            $docStmt = $this->db->prepare($docSql);
+            $docStmt->execute([':id' => $id, ':tid' => $tid]);
+            $doc = $docStmt->fetch(PDO::FETCH_ASSOC);
             if (!$doc) {
                 return ['ok' => false, 'error' => 'Document not found.'];
             }
 
-            $this->db->prepare("DELETE FROM ocr_extracted_fields WHERE ocr_document_id = :oid")->execute([':oid' => $id]);
-            $this->db->prepare("DELETE FROM document_classification WHERE document_id = :did")->execute([':did' => $id]);
-            $this->db->prepare("DELETE FROM ocr_documents WHERE id = :id")->execute([':id' => $id]);
+            $this->db->prepare("DELETE FROM ocr_extracted_fields WHERE ocr_document_id = :oid" . $extraTid)->execute([':oid' => $id, ':tid' => $tid]);
+            $this->db->prepare("DELETE FROM document_classification WHERE document_id = :did" . $extraTid)->execute([':did' => $id, ':tid' => $tid]);
+            $this->db->prepare("DELETE FROM ocr_documents WHERE id = :id" . $extraTid)->execute([':id' => $id, ':tid' => $tid]);
 
             $filePath = $_SERVER['DOCUMENT_ROOT'] . '/apsdreamhome' . ($doc['file_path'] ?? '');
             if (!empty($doc['file_path']) && file_exists($filePath)) {
@@ -470,9 +505,11 @@ class OcrService
 
     public function listTemplates(string $doctype = ''): array
     {
+        $tid = $this->getTenantId();
         try {
-            $sql = "SELECT * FROM ocr_templates WHERE 1=1";
+            $sql = "SELECT * FROM ocr_templates WHERE 1=1" . ($tid > 1 ? " AND tenant_id = :tid" : "");
             $params = [];
+            if ($tid > 1) $params[':tid'] = $tid;
             if ($doctype !== '') {
                 $sql .= " AND document_type = :dt";
                 $params[':dt'] = $doctype;
@@ -494,9 +531,13 @@ class OcrService
 
     public function getTemplate(int $id): ?array
     {
+        $tid = $this->getTenantId();
         try {
-            $stmt = $this->db->prepare("SELECT * FROM ocr_templates WHERE id = :id");
-            $stmt->execute([':id' => $id]);
+            $sql = "SELECT * FROM ocr_templates WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "");
+            $stmt = $this->db->prepare($sql);
+            $params = [':id' => $id];
+            if ($tid > 1) $params[':tid'] = $tid;
+            $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row && !empty($row['field_definitions']) && is_string($row['field_definitions'])) {
                 $row['field_definitions'] = json_decode($row['field_definitions'], true) ?? [];
@@ -509,29 +550,32 @@ class OcrService
 
     public function saveTemplate(array $data, int $id = 0): array
     {
+        $tid = $this->getTenantId();
         try {
             $fieldsJson = json_encode($data['field_definitions'] ?? [], JSON_UNESCAPED_UNICODE);
             if ($id > 0) {
                 $this->db->prepare("
                     UPDATE ocr_templates
-                    SET template_name = :name, document_type = :doctype, field_definitions = :fields, is_active = :active
-                    WHERE id = :id
+                    SET template_name = :name, document_type = :doctype, field_definitions = :fields, is_active = :active" . ($tid > 1 ? ", tenant_id = :tid" : "") . "
+                    WHERE id = :id" . ($tid > 1 ? " AND tenant_id = :tid" : "") . "
                 ")->execute([
                     ':name' => $data['template_name'],
                     ':doctype' => $data['document_type'],
                     ':fields' => $fieldsJson,
                     ':active' => $data['is_active'] ?? 1,
                     ':id' => $id,
+                    ':tid' => $tid,
                 ]);
             } else {
                 $this->db->prepare("
-                    INSERT INTO ocr_templates (template_name, document_type, field_definitions, is_active, created_at)
-                    VALUES (:name, :doctype, :fields, :active, NOW())
+                    INSERT INTO ocr_templates (template_name, document_type, field_definitions, is_active" . ($tid > 1 ? ", tenant_id" : "") . ", created_at)
+                    VALUES (:name, :doctype, :fields, :active" . ($tid > 1 ? ", :tid" : "") . ", NOW())
                 ")->execute([
                     ':name' => $data['template_name'],
                     ':doctype' => $data['document_type'],
                     ':fields' => $fieldsJson,
                     ':active' => $data['is_active'] ?? 1,
+                    ':tid' => $tid,
                 ]);
                 $id = (int)$this->db->lastInsertId();
             }
@@ -543,8 +587,10 @@ class OcrService
 
     public function deleteTemplate(int $id): array
     {
+        $tid = $this->getTenantId();
+        $extra = $tid > 1 ? " AND tenant_id = :tid" : "";
         try {
-            $this->db->prepare("DELETE FROM ocr_templates WHERE id = :id")->execute([':id' => $id]);
+            $this->db->prepare("DELETE FROM ocr_templates WHERE id = :id" . $extra)->execute([':id' => $id, ':tid' => $tid]);
             return ['ok' => true];
         } catch (\Throwable $e) {
             return ['ok' => false, 'error' => $e->getMessage()];

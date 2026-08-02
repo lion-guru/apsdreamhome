@@ -1,12 +1,16 @@
 <?php
 namespace App\Services\Property;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Virtual Tour Service
  * Advanced 360-degree virtual tour management
  */
 class VirtualTourService
 {
+    use ServiceTenantTrait;
+
     private $database;
     
     public function __construct()
@@ -20,21 +24,23 @@ class VirtualTourService
     public function createVirtualTour($propertyId, $tourData)
     {
         try {
-            $stmt = $this->database->prepare("
-                INSERT INTO virtual_tours (property_id, tour_type, tour_url, thumbnail_url, 
-                created_at, updated_at) 
-                VALUES (?, ?, ?, ?, NOW(), NOW())
-            ");
-            
-            $stmt->execute([
+            $tid = $this->tenantId();
+            $cols = "property_id, tour_type, tour_url, thumbnail_url, created_at, updated_at";
+            $vals = "?, ?, ?, ?, NOW(), NOW()";
+            $params = [
                 $propertyId,
                 $tourData['tour_type'] ?? '360',
                 $tourData['tour_url'],
                 $tourData['thumbnail_url'] ?? ''
-            ]);
-            
+            ];
+            if ($tid > 1) {
+                $cols .= ", tenant_id";
+                $vals .= ", ?";
+                $params[] = $tid;
+            }
+            $stmt = $this->database->prepare("INSERT INTO virtual_tours ($cols) VALUES ($vals)");
+            $stmt->execute($params);
             return $this->database->lastInsertId();
-            
         } catch (\Exception $e) {
             throw new Exception("Failed to create virtual tour: " . $e->getMessage());
         }
@@ -46,16 +52,18 @@ class VirtualTourService
     public function getPropertyVirtualTour($propertyId)
     {
         try {
+            $tid = $this->tenantId();
+            $extra = $tid > 1 ? " AND tenant_id = ?" : "";
             $stmt = $this->database->prepare("
                 SELECT * FROM virtual_tours 
-                WHERE property_id = ? 
+                WHERE property_id = ?" . $extra . "
                 ORDER BY created_at DESC 
                 LIMIT 1
             ");
-            
-            $stmt->execute([$propertyId]);
+            $params = [$propertyId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
             return $stmt->fetch();
-            
         } catch (\Exception $e) {
             return null;
         }
