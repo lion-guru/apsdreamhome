@@ -13,9 +13,12 @@ use App\Core\Security\CSRFProtection;
 use App\Core\Security\InputValidation;
 use App\Core\Session\SessionManager;
 use App\Core\Logger\Logger;
+use \App\Traits\ServiceTenantTrait;
 
 class FinancialService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $csrfProtection;
     private $inputValidation;

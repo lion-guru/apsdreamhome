@@ -14,9 +14,12 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Services\AI\AIGateway;
+use \App\Traits\ServiceTenantTrait;
 
 class ExecutiveAIService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $gateway;
 
@@ -255,25 +258,25 @@ class ExecutiveAIService
             catch (\Throwable $e) { return $default; }
         };
 
-        $totalUsers = $safeQuery("SELECT COUNT(*) as c FROM users");
-        $totalProperties = $safeQuery("SELECT COUNT(*) as c FROM properties WHERE status='active'");
-        $totalLeads = $safeQuery("SELECT COUNT(*) as c FROM leads");
-        $todayLeads = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()");
-        $totalRevenue = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger");
-        $monthRevenue = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
-        $totalAssociates = $safeQuery("SELECT COUNT(*) as c FROM users WHERE role='associate'");
-        $totalEmployees = $safeQuery("SELECT COUNT(*) as c FROM users WHERE role IN ('employee','telecaller','backoffice_staff')");
-        $activeColonies = $safeQuery("SELECT COUNT(*) as c FROM colonies WHERE status='active'");
-        $availablePlots = $safeQuery("SELECT COUNT(*) as c FROM plots WHERE status='available'");
-        $bookedPlots = $safeQuery("SELECT COUNT(*) as c FROM plots WHERE status='sold'");
-        $totalBookings = $safeQuery("SELECT COUNT(*) as c FROM plot_bookings");
-        $pendingBookings = $safeQuery("SELECT COUNT(*) as c FROM plot_bookings WHERE status='pending'");
-        $convertedLeads = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE status='converted'");
+        $totalUsers = $safeQuery("SELECT COUNT(*) as c FROM users" . $this->tenantSql());
+        $totalProperties = $safeQuery("SELECT COUNT(*) as c FROM properties WHERE status='active'" . $this->tenantSql());
+        $totalLeads = $safeQuery("SELECT COUNT(*) as c FROM leads" . $this->tenantSql());
+        $todayLeads = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()" . $this->tenantSql());
+        $totalRevenue = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger" . $this->tenantSql());
+        $monthRevenue = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSql());
+        $totalAssociates = $safeQuery("SELECT COUNT(*) as c FROM users WHERE role='associate'" . $this->tenantSql());
+        $totalEmployees = $safeQuery("SELECT COUNT(*) as c FROM users WHERE role IN ('employee','telecaller','backoffice_staff')" . $this->tenantSql());
+        $activeColonies = $safeQuery("SELECT COUNT(*) as c FROM colonies WHERE status='active'" . $this->tenantSql());
+        $availablePlots = $safeQuery("SELECT COUNT(*) as c FROM plots WHERE status='available'" . $this->tenantSql());
+        $bookedPlots = $safeQuery("SELECT COUNT(*) as c FROM plots WHERE status='sold'" . $this->tenantSql());
+        $totalBookings = $safeQuery("SELECT COUNT(*) as c FROM plot_bookings" . $this->tenantSql());
+        $pendingBookings = $safeQuery("SELECT COUNT(*) as c FROM plot_bookings WHERE status='pending'" . $this->tenantSql());
+        $convertedLeads = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE status='converted'" . $this->tenantSql());
         $conversionRate = $totalLeads > 0 ? round(($convertedLeads / $totalLeads) * 100, 1) : 0;
-        $pendingTickets = $safeQuery("SELECT COUNT(*) as c FROM support_tickets WHERE status != 'closed'");
-        $openTasks = $safeQuery("SELECT COUNT(*) as c FROM tasks WHERE status='pending'");
-        $newLeadsToday = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()");
-        $pendingPayments = $safeQuery("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status='pending'");
+        $pendingTickets = $safeQuery("SELECT COUNT(*) as c FROM support_tickets WHERE status != 'closed'" . $this->tenantSql());
+        $openTasks = $safeQuery("SELECT COUNT(*) as c FROM tasks WHERE status='pending'" . $this->tenantSql());
+        $newLeadsToday = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE DATE(created_at) = CURDATE()" . $this->tenantSql());
+        $pendingPayments = $safeQuery("SELECT COUNT(*) as c FROM booking_payment_schedules WHERE status='pending'" . $this->tenantSql());
 
         $context['kpis'] = [
             'Total Revenue' => '₹' . number_format($totalRevenue / 100000, 2) . 'L',
@@ -386,10 +389,14 @@ class ExecutiveAIService
     private function logInteraction(int $userId, string $role, string $message, string $response): void
     {
         try {
-            $this->db->getConnection()->prepare("
-                INSERT INTO ai_api_logs (user_id, engine, task, input_tokens, output_tokens, response_time_ms, created_at)
-                VALUES (?, 'executive_ai', 'chat', ?, ?, 0, NOW())
-            ")->execute([$userId, mb_strlen($message), mb_strlen($response)]);
+            $logInsertData = $this->tenantInsertData();
+        $logCols = 'user_id, engine, task, input_tokens, output_tokens, response_time_ms, created_at' . (count($logInsertData) > 0 ? ', tenant_id' : '');
+        $logPh = '?, ?, ?, ?, ?, 0, NOW()' . (count($logInsertData) > 0 ? ', ?' : '');
+        $logParams = [$userId, 'executive_ai', 'chat', mb_strlen($message), mb_strlen($response)];
+        if (!empty($logInsertData)) $logParams = array_merge($logParams, array_values($logInsertData));
+        $this->db->getConnection()->prepare(
+            "INSERT INTO ai_api_logs ($logCols) VALUES ($logPh)"
+        )->execute($logParams);
         } catch (\Throwable $e) {
         // Non-critical — don't break the flow
         error_log($e->getMessage());

@@ -4,6 +4,7 @@ namespace App\Services\Events;
 
 use App\Core\Database;
 use Psr\Log\LoggerInterface;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Event Dispatcher Service
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
  */
 class EventDispatcherService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private Database $db;
     private LoggerInterface $logger;
     private array $listeners = [];

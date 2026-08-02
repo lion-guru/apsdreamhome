@@ -7,6 +7,7 @@ namespace App\Services\Gamification;
 
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Gamification Service
@@ -14,6 +15,8 @@ use App\Core\Middleware\TenantContext;
  */
 class GamificationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     // Badge categories

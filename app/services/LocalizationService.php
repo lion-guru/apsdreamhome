@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Config;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Custom Localization Service
@@ -12,6 +13,8 @@ use Exception;
  */
 class LocalizationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $currentLocale;
     private $supportedLocales;

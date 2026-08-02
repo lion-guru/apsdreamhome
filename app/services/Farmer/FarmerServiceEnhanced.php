@@ -8,6 +8,7 @@ use App\Services\LoggingService;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Farmer/Kisan Management Service - APS Dream Home
@@ -16,6 +17,8 @@ use RuntimeException;
  */
 class FarmerServiceEnhanced
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logger;
 

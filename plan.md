@@ -1,7 +1,8 @@
 
-# Implementation Plan: Create Integration Test File and List Files
-## Step 1: Create integration_test.txt
-Create a new file named `integration_test.txt` with the content 'Jarvis Third Eye Integration Test - SUCCESS'.
-
-## Step 2: List Files
-Use the `list_files` tool to list all files in the current directory and verify that `integration_test.txt` has been created successfully.
+# Implementation Plan: Disk Space Monitor
+1. **Import necessary libraries**: `psutil` for disk usage information.
+2. **Define a function to check disk usage**: Use `psutil.disk_usage()` to get current disk usage.
+3. **Set threshold and compare**: Check if current usage exceeds 90%.
+4. **Print alert if exceeded**: Notify user if threshold is crossed.
+5. **Create Python script**: Implement the plan in `disk_monitor.py`.
+6. **Run the script**: Test the `disk_monitor.py` file to ensure it works as expected.

@@ -8,9 +8,12 @@ namespace App\Services\Finance;
 
 use App\Core\Database\Database;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class StampDutyCalculatorService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var \PDO */
     protected $db;
 

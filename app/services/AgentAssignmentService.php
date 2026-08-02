@@ -273,15 +273,17 @@ class AgentAssignmentService
     {
         try {
             $sql = "INSERT INTO customer_assignments 
-                    (customer_id, {$assignmentType}_id, assignment_type, status, assigned_by, assigned_at)
-                    VALUES (:customer_id, :assignee_id, :assignment_type, 'active', 'system', NOW())";
+                    (customer_id, {$assignmentType}_id, assignment_type, status, assigned_by, assigned_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ")
+                    VALUES (:customer_id, :assignee_id, :assignment_type, 'active', 'system', NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tenant_id' : '') . ")";
 
-            $stmt = $this->db->prepare($sql);
-            $success = $stmt->execute([
+            $params = [
                 'customer_id' => $customerId,
                 'assignee_id' => $assigneeId,
                 'assignment_type' => $assignmentType
-            ]);
+            ];
+            if (!empty($insertData = $this->tenantInsertData())) $params = array_merge($params, $insertData);
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute($params);
 
             if ($success) {
                 $assignmentId = (int)$this->db->lastInsertId();
@@ -308,21 +310,27 @@ class AgentAssignmentService
     {
         try {
             // Get customer details
-            $customerStmt = $this->db->prepare("SELECT name, email FROM users WHERE id = :customer_id LIMIT 1");
-            $customerStmt->execute(['customer_id' => $customerId]);
+            $customerStmt = $this->db->prepare("SELECT name, email FROM users WHERE id = :customer_id" . $this->tenantSql() . " LIMIT 1");
+            $cparams = ['customer_id' => $customerId];
+            if ($this->tenantId() > 1) $cparams[] = $this->tenantId();
+            $customerStmt->execute($cparams);
             $customer = $customerStmt->fetch();
 
             // Get assignee details
-            if ($assignmentType === 'agent') {
+if ($assignmentType === 'agent') {
                 $assigneeStmt = $this->db->prepare("SELECT u.name, u.email, u.phone FROM users u 
-                                                   JOIN users a ON u.id = a.user_id 
-                                                   WHERE u.id = :assignee_id LIMIT 1");
+                                                    JOIN users a ON u.id = a.user_id 
+                                                    WHERE u.id = :assignee_id" . $this->tenantSqlForAlias('u') . " LIMIT 1");
+                $aparams = ['assignee_id' => $assigneeId];
+                if ($this->tenantId() > 1) $aparams[] = $this->tenantId();
             } else {
                 $assigneeStmt = $this->db->prepare("SELECT o.name, o.email, o.phone FROM offices o 
-                                                   WHERE o.id = :assignee_id LIMIT 1");
+                                                    WHERE o.id = :assignee_id" . $this->tenantSqlForAlias('o') . " LIMIT 1");
+                $aparams = ['assignee_id' => $assigneeId];
+                if ($this->tenantId() > 1) $aparams[] = $this->tenantId();
             }
             
-            $assigneeStmt->execute(['assignee_id' => $assigneeId]);
+            $assigneeStmt->execute($aparams);
             $assignee = $assigneeStmt->fetch();
 
             if ($customer && $assignee) {
@@ -350,16 +358,18 @@ class AgentAssignmentService
      */
     private function createNotification(int $userId, string $type, string $title, string $message): void
     {
-        $sql = "INSERT INTO notifications (user_id, type, title, message, created_at)
-                VALUES (:user_id, :type, :title, :message, NOW())";
+        $sql = "INSERT INTO notifications (user_id, type, title, message, created_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ")
+                VALUES (:user_id, :type, :title, :message, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tenant_id' : '') . ")";
         
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
+        $params = [
             'user_id' => $userId,
             'type' => $type,
             'title' => $title,
             'message' => $message
-        ]);
+        ];
+        if (!empty($insertData = $this->tenantInsertData())) $params = array_merge($params, $insertData);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
     }
 
     /**
@@ -367,9 +377,11 @@ class AgentAssignmentService
      */
     private function updateAgentWorkload(int $agentId): void
     {
-        $sql = "UPDATE users SET workload = workload + 1 WHERE user_id = :agent_id";
+        $sql = "UPDATE users SET workload = workload + 1 WHERE user_id = :agent_id" . $this->tenantSql();
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['agent_id' => $agentId]);
+        $params = [':agent_id' => $agentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
     }
 
     /**
@@ -377,9 +389,11 @@ class AgentAssignmentService
      */
     private function updateOfficeWorkload(int $officeId): void
     {
-        $sql = "UPDATE offices SET current_customers = current_customers + 1 WHERE id = :office_id";
+        $sql = "UPDATE offices SET current_customers = current_customers + 1 WHERE id = :office_id" . $this->tenantSql();
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['office_id' => $officeId]);
+        $params = [':office_id' => $officeId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
     }
 
     /**
@@ -400,17 +414,16 @@ class AgentAssignmentService
             }
 
             // Deactivate current assignment
+$updParams = ['reason' => $reason ?: 'Reassigned', 'assignment_id' => $currentAssignment['id']];
+            if ($this->tenantId() > 1) $updParams[] = $this->tenantId();
             $this->db->prepare("UPDATE customer_assignments SET status = 'inactive', 
                                ended_at = NOW(), end_reason = :reason 
-                               WHERE id = :assignment_id")
-                     ->execute([
-                         'reason' => $reason ?: 'Reassigned',
-                         'assignment_id' => $currentAssignment['id']
-                     ]);
+                               WHERE id = :assignment_id" . $this->tenantSql())->execute($updParams);
 
             // Update old agent workload
-            $this->db->prepare("UPDATE users SET workload = workload - 1 WHERE user_id = :agent_id")
-                     ->execute(['agent_id' => $currentAssignment['agent_id']]);
+$wparams = ['agent_id' => $currentAssignment['agent_id']];
+            if ($this->tenantId() > 1) $wparams[] = $this->tenantId();
+            $this->db->prepare("UPDATE users SET workload = workload - 1 WHERE user_id = :agent_id" . $this->tenantSql())->execute($wparams);
 
             // Create new assignment
             $result = $this->createAssignment($customerId, $newAgentId, 'agent');
@@ -438,16 +451,22 @@ class AgentAssignmentService
     {
         try {
             // Get details
-            $customerStmt = $this->db->prepare("SELECT name FROM users WHERE id = :customer_id LIMIT 1");
-            $customerStmt->execute(['customer_id' => $customerId]);
+            $customerStmt = $this->db->prepare("SELECT name FROM users WHERE id = :customer_id" . $this->tenantSql() . " LIMIT 1");
+            $cparams = ['customer_id' => $customerId];
+            if ($this->tenantId() > 1) $cparams[] = $this->tenantId();
+            $customerStmt->execute($cparams);
             $customer = $customerStmt->fetch();
 
-            $oldAgentStmt = $this->db->prepare("SELECT name FROM users WHERE id = :agent_id LIMIT 1");
-            $oldAgentStmt->execute(['agent_id' => $oldAgentId]);
+            $oldAgentStmt = $this->db->prepare("SELECT name FROM users WHERE id = :agent_id" . $this->tenantSql() . " LIMIT 1");
+            $oparams = ['agent_id' => $oldAgentId];
+            if ($this->tenantId() > 1) $oparams[] = $this->tenantId();
+            $oldAgentStmt->execute($oparams);
             $oldAgent = $oldAgentStmt->fetch();
 
-            $newAgentStmt = $this->db->prepare("SELECT name FROM users WHERE id = :agent_id LIMIT 1");
-            $newAgentStmt->execute(['agent_id' => $newAgentId]);
+            $newAgentStmt = $this->db->prepare("SELECT name FROM users WHERE id = :agent_id" . $this->tenantSql() . " LIMIT 1");
+            $nparams = ['agent_id' => $newAgentId];
+            if ($this->tenantId() > 1) $nparams[] = $this->tenantId();
+            $newAgentStmt->execute($nparams);
             $newAgent = $newAgentStmt->fetch();
 
             if ($customer && $oldAgent && $newAgent) {

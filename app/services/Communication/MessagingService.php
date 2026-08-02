@@ -7,6 +7,7 @@ namespace App\Services\Communication;
 
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * In-app Messaging Service
@@ -14,6 +15,8 @@ use App\Core\Middleware\TenantContext;
  */
 class MessagingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()

@@ -8,9 +8,12 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Services\TenantScopeService;
+use \App\Traits\ServiceTenantTrait;
 
 class CRMService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {

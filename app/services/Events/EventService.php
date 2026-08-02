@@ -4,6 +4,7 @@ php
 namespace App\Services\Events;
 
 use App\Core\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Event Service
@@ -11,6 +12,8 @@ use App\Core\Database;
  */
 class EventService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private Database $db;
     private array $subscribers = [];
     private array $eventQueue = [];

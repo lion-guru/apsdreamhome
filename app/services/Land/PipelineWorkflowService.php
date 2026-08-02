@@ -4,6 +4,7 @@ namespace App\Services\Land;
 
 use App\Core\Database\Database;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * PipelineWorkflowService — Auto-advance stages, validate transitions, track history.
@@ -18,6 +19,8 @@ use Exception;
  */
 class PipelineWorkflowService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 

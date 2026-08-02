@@ -21,6 +21,8 @@ use App\Core\Middleware\TenantContext;
  */
 class PushNotificationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $projectId;
     private $serviceAccountPath;

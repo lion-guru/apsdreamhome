@@ -5,6 +5,7 @@ namespace App\Services\Land;
 use App\Core\Database\Database;
 use App\Services\SystemLogger;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * PlotCutterService — Core plot-cutting algorithm for Indian real-estate colonies.

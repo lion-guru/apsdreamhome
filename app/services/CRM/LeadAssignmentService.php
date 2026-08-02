@@ -4,9 +4,12 @@ namespace App\Services\CRM;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class LeadAssignmentService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $pdo;
 
     public function __construct()

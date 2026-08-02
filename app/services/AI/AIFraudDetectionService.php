@@ -4,6 +4,7 @@ namespace App\Services\AI;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 use Exception;
 
 /**
@@ -12,6 +13,8 @@ use Exception;
  */
 class AIFraudDetectionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     
     public function __construct()

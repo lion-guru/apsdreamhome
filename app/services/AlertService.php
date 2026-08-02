@@ -8,9 +8,12 @@ use App\Core\App;
 use App\Models\Model;
 use App\Services\Communication\NotificationService;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class AlertService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $notificationService;
     private $alert_levels = ['info', 'warning', 'critical'];

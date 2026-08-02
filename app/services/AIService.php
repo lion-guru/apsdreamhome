@@ -4,9 +4,12 @@ namespace App\Services;
 
 use Exception;
 use App\Core\AI\OpenRouterClient;
+use \App\Traits\ServiceTenantTrait;
 
 class AIService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $apiKey;
     private $model = 'gpt-3.5-turbo';
     private $openRouterClient;

@@ -9,6 +9,8 @@ use PDO;
  */
 class TDSFilingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $efiling;
     private $credentials;

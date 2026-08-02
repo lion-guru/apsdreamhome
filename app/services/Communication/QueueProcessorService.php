@@ -1,8 +1,12 @@
 <?php
 namespace App\Services\Communication;
 
+use \App\Traits\ServiceTenantTrait;
+
 class QueueProcessorService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $emailSender;
     private $smsSender;
 

@@ -4,6 +4,7 @@ namespace App\Services\Localization;
 
 use App\Core\Database\Database;
 use Psr\Log\LoggerInterface;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Localization Service
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
  */
 class LocalizationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     // Localization Modes
     public const MODE_SIMPLE = 'simple';
     public const MODE_ADVANCED = 'advanced';

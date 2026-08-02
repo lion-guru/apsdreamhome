@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Core\Cache;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Exchange Rate Service
@@ -15,6 +16,8 @@ use Exception;
  */
 class ExchangeRateService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private const CACHE_TTL = 3600;
     private const CACHE_PREFIX = 'fx_rate_';
     private const TIMEOUT = 5;

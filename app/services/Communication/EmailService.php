@@ -10,9 +10,11 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 class EmailService
 {
+    use \App\Traits\ServiceTenantTrait;
     private $mailer;
     private $db;
     private $fromEmail;

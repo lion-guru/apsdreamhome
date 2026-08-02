@@ -4,9 +4,12 @@ namespace App\Services\Communication;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class WhatsAppTemplateService
 {
+    use ServiceTenantTrait;
+
     /** @var PDO */
     protected $db;
 
@@ -45,7 +48,7 @@ class WhatsAppTemplateService
         if (!$this->db) return;
 
         try {
-            $stmt = $this->db->query("SELECT config_key, config_value FROM whatsapp_config WHERE is_active = 1");
+            $stmt = $this->db->query("SELECT config_key, config_value FROM whatsapp_config WHERE is_active = 1" . $this->tenantSql());
             $configs = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
             $this->phoneNumberId = $configs['phone_number_id'] ?? '';
@@ -264,19 +267,28 @@ class WhatsAppTemplateService
         if (!$this->db) return;
 
         try {
-            $stmt = $this->db->prepare("
-                INSERT INTO whatsapp_message_logs 
-                (to_number, template_name, request_payload, response_payload, http_status, status, sent_at)
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
-            ");
-            $stmt->execute([
+            $tid = $this->tenantId();
+            $columns = "to_number, template_name, request_payload, response_payload, http_status, status, sent_at";
+            $values = "?, ?, ?, ?, ?, ?, NOW()";
+            $params = [
                 $to,
                 $template,
                 json_encode($request),
                 json_encode($response),
                 $httpCode,
                 $httpCode >= 200 && $httpCode < 300 ? 'sent' : 'failed',
-            ]);
+            ];
+            if ($tid > 1) {
+                $columns .= ", tenant_id";
+                $values .= ", ?";
+                $params[] = $tid;
+            }
+            $stmt = $this->db->prepare("
+                INSERT INTO whatsapp_message_logs 
+                ($columns)
+                VALUES ($values)
+            ");
+            $stmt->execute($params);
         } catch (Exception $e) {
             error_log('[WhatsAppTemplateService::logMessage] ' . $e->getMessage());
         }
@@ -292,13 +304,20 @@ class WhatsAppTemplateService
         try {
             $sql = "SELECT * FROM whatsapp_message_logs";
             $params = [];
-            
+            $tid = $this->tenantId();
+            $tidClause = $tid > 1 ? "tenant_id = {$tid}" : '';
+
             if ($phone) {
                 $phone = $this->normalizePhone($phone);
                 $sql .= " WHERE to_number = ?";
                 $params[] = $phone;
+                if ($tidClause) {
+                    $sql .= " AND $tidClause";
+                }
+            } elseif ($tidClause) {
+                $sql .= " WHERE $tidClause";
             }
-            
+
             $sql .= " ORDER BY sent_at DESC LIMIT ?";
             $params[] = $limit;
 

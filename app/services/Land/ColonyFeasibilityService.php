@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Services\SystemLogger;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * ColonyFeasibilityService — Full colony pricing feasibility engine.
@@ -33,6 +34,8 @@ use Exception;
  */
 class ColonyFeasibilityService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database|null */
     private $db;
 

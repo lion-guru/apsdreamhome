@@ -2,6 +2,8 @@
 
 namespace App\Services\Custom;
 
+use App\Traits\ServiceTenantTrait;
+
 /**
  * Custom Logging Service - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
@@ -9,6 +11,8 @@ namespace App\Services\Custom;
  */
 class LoggingService
 {
+    use ServiceTenantTrait;
+
     private $database;
     private $logger;
     private $config;
@@ -248,7 +252,7 @@ class LoggingService
     private function storeInDatabase($logEntry)
     {
         try {
-            $this->database->insert('system_logs', [
+            $this->database->insert('system_logs', array_merge([
                 'level' => $logEntry['level'],
                 'category' => $logEntry['category'],
                 'message' => $logEntry['message'],
@@ -258,7 +262,7 @@ class LoggingService
                 'user_agent' => $logEntry['user_agent'],
                 'request_id' => $logEntry['request_id'],
                 'created_at' => date('Y-m-d H:i:s')
-            ]);
+            ], $this->tenantInsertData()));
         } catch (\Exception $e) {
             // Fallback to file if database fails
             error_log("Failed to store log in database: " . $e->getMessage());
@@ -372,7 +376,7 @@ class LoggingService
         
         // Clean database logs
         $this->database->query(
-            "DELETE FROM system_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)",
+            "DELETE FROM system_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)" . $this->tenantSql(),
             [$days]
         );
         
@@ -393,11 +397,11 @@ class LoggingService
             'security_events' => 0
         ];
         
-        // Get from database
+        /* Get from database */
         $logs = $this->database->select(
             "SELECT level, category, COUNT(*) as count 
              FROM system_logs 
-             WHERE created_at > DATE_SUB(NOW(), INTERVAL ? HOUR)
+             WHERE created_at > DATE_SUB(NOW(), INTERVAL ? HOUR)" . $this->tenantSql() . "
              GROUP BY level, category",
             [$hours]
         );
@@ -448,8 +452,11 @@ class LoggingService
         
         $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
         
+        $tid = $this->tenantId();
+        $tidClause = $tid > 1 ? ($whereClause ? ' AND tenant_id = ' . $tid : ' WHERE tenant_id = ' . $tid) : '';
+
         $logs = $this->database->select(
-            "SELECT * FROM system_logs $whereClause ORDER BY created_at DESC",
+            "SELECT * FROM system_logs $whereClause" . $tidClause . " ORDER BY created_at DESC",
             $params
         );
         

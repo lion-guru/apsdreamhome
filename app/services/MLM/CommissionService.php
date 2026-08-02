@@ -5,6 +5,7 @@ namespace App\Services\MLM;
 use App\Core\Database;
 use Exception;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Multi-Level Commission Service
@@ -12,6 +13,8 @@ use App\Core\Middleware\TenantContext;
  */
 class CommissionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     
     // Commission rates by level

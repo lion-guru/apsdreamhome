@@ -4,6 +4,7 @@ namespace App\Services\Land;
 
 use App\Core\Database\Database;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * LegalColonyDevelopmentService — Complete legal colony development pipeline.
@@ -21,6 +22,8 @@ use Exception;
  */
 class LegalColonyDevelopmentService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 

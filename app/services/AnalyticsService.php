@@ -2,12 +2,15 @@
 namespace App\Services;
 
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * AnalyticsService - KPIs, dashboards, forecasting, performance metrics
  */
 class AnalyticsService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
     public function __construct($db) { $this->db = $db; if (is_object($db) && method_exists($db, "getPdo")) { $this->pdo = $db->getPdo(); } elseif ($db instanceof PDO) { $this->pdo = $db; } else { $this->pdo = $db; } }
@@ -203,14 +206,14 @@ class AnalyticsService
     {
         try {
             $st = $this->db->query("SELECT
-                (SELECT COUNT(*) FROM users WHERE role = 'customer' AND status = 'active') as customers,
-                (SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active') as agents,
-                (SELECT COUNT(*) FROM users WHERE role = 'associate' AND status = 'active') as associates,
-                (SELECT COUNT(*) FROM users WHERE role = 'employee' AND status = 'active') as employees,
-                (SELECT COUNT(*) FROM leads WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as leads_30d,
-                (SELECT COUNT(*) FROM bookings WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as bookings_30d,
-                (SELECT COUNT(*) FROM plots WHERE status = 'available') as available_plots,
-                (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)) as revenue_30d");
+                (SELECT COUNT(*) FROM users WHERE role = 'customer' AND status = 'active'" . $this->tenantSqlForAlias('users') . ") as customers,
+                (SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active'" . $this->tenantSqlForAlias('users') . ") as agents,
+                (SELECT COUNT(*) FROM users WHERE role = 'associate' AND status = 'active'" . $this->tenantSqlForAlias('users') . ") as associates,
+                (SELECT COUNT(*) FROM users WHERE role = 'employee' AND status = 'active'" . $this->tenantSqlForAlias('users') . ") as employees,
+                (SELECT COUNT(*) FROM leads WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSqlForAlias('leads') . ") as leads_30d,
+                (SELECT COUNT(*) FROM bookings WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSqlForAlias('bookings') . ") as bookings_30d,
+                (SELECT COUNT(*) FROM plots WHERE status = 'available'" . $this->tenantSqlForAlias('plots') . ") as available_plots,
+                (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSqlForAlias('payments') . ") as revenue_30d");
             $row = $st->fetch(PDO::FETCH_ASSOC);
             return $row ?: [];
         } catch (\Throwable $e) {

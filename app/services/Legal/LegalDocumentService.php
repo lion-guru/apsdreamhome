@@ -5,9 +5,12 @@ namespace App\Services\Legal;
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 class LegalDocumentService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected PDO $db;
     protected int $tenantId;
 

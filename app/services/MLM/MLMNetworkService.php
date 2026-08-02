@@ -2,9 +2,12 @@
 namespace App\Services\MLM;
 
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 class MLMNetworkService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Centralized service configuration store.
@@ -24,6 +25,8 @@ use PDO;
  */
 class ServiceConfigService
 {
+    use ServiceTenantTrait;
+
     private static ?self $instance = null;
 
     /** @var PDO|null */
@@ -99,16 +102,20 @@ class ServiceConfigService
         if ($existing !== null) {
             $stmt = $pdo->prepare(
                 "UPDATE `service_configs` SET `config_value` = ?, `updated_at` = NOW()
-                 WHERE `service_name` = ? AND `config_key` = ?"
+                 WHERE `service_name` = ? AND `config_key` = ?" . $this->tenantSql()
             );
             $stmt->execute([(string) $value, $service, $key]);
         } else {
+            $insertCols = ['service_name','config_key','config_value','config_type','description','is_secret','group_name','sort_order'];
+            $insertVals = str_repeat('?,', count($insertCols) - 1) . '?';
+            $insertCols = array_merge($insertCols, array_keys($this->tenantInsertData()));
+            $insertVals .= $this->tenantInsertData() ? ', ?' : '';
             $stmt = $pdo->prepare(
                 "INSERT INTO `service_configs`
-                    (`service_name`,`config_key`,`config_value`,`config_type`,`description`,`is_secret`,`group_name`,`sort_order`)
-                 VALUES (?,?,?,?,?,?,?,?)"
+                    (`" . implode('`,`', $insertCols) . "`)
+                  VALUES ($insertVals)"
             );
-            $stmt->execute([
+            $stmt->execute(array_merge([
                 $service,
                 $key,
                 (string) $value,
@@ -117,7 +124,7 @@ class ServiceConfigService
                 $meta['is_secret'] ?? 0,
                 $meta['group_name'] ?? 'general',
                 $meta['sort_order'] ?? 0,
-            ]);
+            ], array_values($this->tenantInsertData()));
         }
 
         $this->invalidateCache();

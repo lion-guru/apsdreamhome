@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * EmailTemplateService - Renders and sends production-quality HTML emails
@@ -15,6 +16,8 @@ use App\Core\Database\Database;
  */
 class EmailTemplateService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $fromEmail;
     private $fromName;

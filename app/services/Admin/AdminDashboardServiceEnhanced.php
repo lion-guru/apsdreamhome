@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\Core\Database\Database;
 use App\Services\Auth\AuthenticationService;
 use App\Services\TenantScopeService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Admin Dashboard Service - APS Dream Home
@@ -13,7 +14,8 @@ use App\Services\TenantScopeService;
  */
 class AdminDashboardService
 {
-    private $db;
+    use \App\Traits\ServiceTenantTrait;
+
     private $authService;
 
     private function tid(): ?int {

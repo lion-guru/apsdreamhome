@@ -5,9 +5,12 @@
 namespace App\Services;
 
 use App\Core\Database;
+use \App\Traits\ServiceTenantTrait;
 
 class CRMVoiceService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {

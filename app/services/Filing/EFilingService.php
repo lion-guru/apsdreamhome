@@ -2,6 +2,7 @@
 namespace App\Services\Filing;
 
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * EFilingService — Central e-filing orchestrator for TDS + GST
@@ -9,6 +10,8 @@ use PDO;
  */
 class EFilingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct($pdo = null)

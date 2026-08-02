@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 use App\Services\LoggingService;
 use Exception;
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Land Acquisition Service

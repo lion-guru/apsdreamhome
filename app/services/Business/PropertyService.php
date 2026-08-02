@@ -12,9 +12,12 @@ use App\Core\Database\Database;
 use App\Services\SystemLogger;
 use App\Core\Security;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 class PropertyService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $logger;
 

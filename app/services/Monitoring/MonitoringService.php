@@ -2,12 +2,16 @@
 
 namespace App\Services\Monitoring;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * System Monitoring Service for APS Dream Home
  * Monitors system health, performance, and generates reports
  */
 class MonitoringService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $loggingService;
     private $metrics = [];

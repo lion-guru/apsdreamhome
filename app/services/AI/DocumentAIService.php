@@ -4,9 +4,12 @@ namespace App\Services\AI;
 
 use PDO;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class DocumentAIService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var PDO */
     protected $db;
 

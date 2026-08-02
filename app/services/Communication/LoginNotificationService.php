@@ -19,9 +19,12 @@ namespace App\Services\Communication;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Services\AI\AIGateway;
+use \App\Traits\ServiceTenantTrait;
 
 class LoginNotificationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $emailService;
     private $smsService;

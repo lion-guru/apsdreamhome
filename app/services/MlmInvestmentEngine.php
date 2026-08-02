@@ -18,9 +18,12 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class MlmInvestmentEngine
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var PDO|null */
     private $pdo;
 
@@ -374,10 +377,10 @@ class MlmInvestmentEngine
             INSERT INTO mlm_commission_ledger
                 (beneficiary_user_id, source_user_id, commission_type, amount,
                  level, sale_amount, commission_percentage, status, notes,
-                 property_id, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, NOW())
+                 property_id, created_at" . ($this->tenantId() > 1 ? ', tenant_id' : '') . ")
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, NOW()" . ($this->tenantId() > 1 ? ', ?' : '') . ")
         ");
-        $stmt->execute([
+        $mparams = [
             $beneficiaryId,
             $sourceId,
             $type,
@@ -387,7 +390,9 @@ class MlmInvestmentEngine
             round($pct, 2),
             $notes,
             null,
-        ]);
+        ];
+        if ($this->tenantId() > 1) $mparams[] = $this->tenantId();
+        $stmt->execute($mparams);
         return (int) $this->pdo->lastInsertId();
     }
 

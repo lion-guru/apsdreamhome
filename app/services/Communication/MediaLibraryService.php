@@ -4,6 +4,7 @@ namespace App\Services\Communication;
 
 use App\Core\Database;
 use Psr\Log\LoggerInterface;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Media Library Service
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
  */
 class MediaLibraryService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private Database $db;
     private LoggerInterface $logger;
     private string $uploadDir;

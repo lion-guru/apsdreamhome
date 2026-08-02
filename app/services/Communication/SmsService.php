@@ -7,9 +7,12 @@
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 class SMSService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $authKey;
     private $senderId;

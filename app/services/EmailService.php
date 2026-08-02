@@ -4,9 +4,12 @@ namespace App\Services;
 
 use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use \App\Traits\ServiceTenantTrait;
 
 class EmailService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $config;
 
     public function __construct()

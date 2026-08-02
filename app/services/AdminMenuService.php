@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Core\Database\Database;
 use App\Core\Cache;
 use App\Http\Middleware\RBACManager;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Admin Menu Service - RBAC-based Sidebar Menu System
@@ -14,7 +15,8 @@ use App\Http\Middleware\RBACManager;
  */
 class AdminMenuService
 {
-    private $db;
+    use \App\Traits\ServiceTenantTrait;
+
     private $currentRole;
     private $currentUserId;
 

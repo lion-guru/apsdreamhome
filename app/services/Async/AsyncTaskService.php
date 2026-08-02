@@ -5,6 +5,7 @@ namespace App\Services\Async;
 use App\Core\Database;
 use App\Core\Logger;
 use App\Core\Config\Config;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Async Task Service - APS Dream Home
@@ -12,6 +13,8 @@ use App\Core\Config\Config;
  */
 class AsyncTaskService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logger;
     private $config;

@@ -34,8 +34,10 @@ class AgentOrchestrator
 
     public function createTask(int $agentId, string $type, array $payload, int $priority = 5): array
     {
-        $st = $this->db->prepare("INSERT INTO agent_tasks (agent_id, task_type, task_payload, priority, status) VALUES (:a, :t, :p, :pr, 'queued')");
-        $st->execute([':a' => $agentId, ':t' => $type, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE), ':pr' => $priority]);
+        $st = $this->db->prepare("INSERT INTO agent_tasks (agent_id, task_type, task_payload, priority, status" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:a, :t, :p, :pr, 'queued'" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
+        $params = [':a' => $agentId, ':t' => $type, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE), ':pr' => $priority];
+        if (!empty($insertData = $this->tenantInsertData())) $params = array_merge($params, $insertData);
+        $st->execute($params);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -52,8 +54,10 @@ class AgentOrchestrator
             $result = $this->runTaskLogic($task);
             $duration = (int)((microtime(true) - $startTime) * 1000);
 
-            $st = $this->db->prepare("INSERT INTO agent_executions (task_id, agent_id, status, result, duration_ms, completed_at) VALUES (:t, :a, 'success', :r, :d, NOW())");
-            $st->execute([':t' => $taskId, ':a' => $task['agent_id'], ':r' => json_encode($result, JSON_UNESCAPED_UNICODE), ':d' => $duration]);
+            $st = $this->db->prepare("INSERT INTO agent_executions (task_id, agent_id, status, result, duration_ms, completed_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:t, :a, 'success', :r, :d, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
+            $eparams = [':t' => $taskId, ':a' => $task['agent_id'], ':r' => json_encode($result, JSON_UNESCAPED_UNICODE), ':d' => $duration];
+            if (!empty($insertData = $this->tenantInsertData())) $eparams = array_merge($eparams, $insertData);
+            $st->execute($eparams);
             $execId = (int)$this->db->lastInsertId();
 
             $this->updateTaskStatus($taskId, 'completed', $execId);
@@ -61,8 +65,10 @@ class AgentOrchestrator
 
             return ['ok' => true, 'execution_id' => $execId, 'result' => $result, 'duration_ms' => $duration];
         } catch (\Throwable $e) {
-            $st = $this->db->prepare("INSERT INTO agent_executions (task_id, agent_id, status, error_message, duration_ms, completed_at) VALUES (:t, :a, 'failed', :e, :d, NOW())");
-            $st->execute([':t' => $taskId, ':a' => $task['agent_id'], ':e' => $e->getMessage(), ':d' => (int)((microtime(true) - $startTime) * 1000)]);
+            $st = $this->db->prepare("INSERT INTO agent_executions (task_id, agent_id, status, error_message, duration_ms, completed_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:t, :a, 'failed', :e, :d, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
+            $eparams = [':t' => $taskId, ':a' => $task['agent_id'], ':e' => $e->getMessage(), ':d' => (int)((microtime(true) - $startTime) * 1000)];
+            if (!empty($insertData = $this->tenantInsertData())) $eparams = array_merge($eparams, $insertData);
+            $st->execute($eparams);
             $this->updateTaskStatus($taskId, 'failed');
             return ['ok' => false, 'error' => $e->getMessage()];
         }
@@ -96,10 +102,10 @@ class AgentOrchestrator
 
     public function updateTaskStatus(int $id, string $status, ?int $executionId = null): array
     {
-        $sql = "UPDATE agent_tasks SET status = :s, completed_at = NOW()";
+        $sql = "UPDATE agent_tasks SET status = :s, completed_at = NOW()" . ($executionId ? ", execution_id = :e" : "") . " WHERE id = :id" . $this->tenantSql();
         $params = [':s' => $status, ':id' => $id];
-        if ($executionId) { $sql .= ", execution_id = :e"; $params[':e'] = $executionId; }
-        $sql .= " WHERE id = :id";
+        if ($executionId) $params[':e'] = $executionId;
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $st = $this->db->prepare($sql);
         $st->execute($params);
         return ['ok' => true];
@@ -107,8 +113,10 @@ class AgentOrchestrator
 
     public function getTask(int $id): ?array
     {
-        $st = $this->db->prepare("SELECT * FROM agent_tasks WHERE id = :id");
-        $st->execute([':id' => $id]);
+        $st = $this->db->prepare("SELECT * FROM agent_tasks WHERE id = :id" . $this->tenantSql());
+        $sparams = [':id' => $id];
+        if ($this->tenantId() > 1) $sparams[] = $this->tenantId();
+        $st->execute($sparams);
         $r = $st->fetch(PDO::FETCH_ASSOC);
         return $r ?: null;
     }
@@ -133,9 +141,11 @@ class AgentOrchestrator
     public function updateState(int $agentId, string $context, array $data, int $ttl = 3600): array
     {
         $expires = date('Y-m-d H:i:s', time() + $ttl);
-        $st = $this->db->prepare("INSERT INTO agent_state (agent_id, context, state_data, expires_at, updated_at) VALUES (:a, :c, :d, :e, NOW())
-                                  ON DUPLICATE KEY UPDATE state_data = VALUES(state_data), expires_at = VALUES(expires_at), updated_at = NOW()");
-        $st->execute([':a' => $agentId, ':c' => $context, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':e' => $expires]);
+$st = $this->db->prepare("INSERT INTO agent_state (agent_id, context, state_data, expires_at, updated_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:a, :c, :d, :e, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")
+                                   ON DUPLICATE KEY UPDATE state_data = VALUES(state_data), expires_at = VALUES(expires_at), updated_at = NOW()");
+        $sparams = [':a' => $agentId, ':c' => $context, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':e' => $expires];
+        if (!empty($insertData = $this->tenantInsertData())) $sparams = array_merge($sparams, $insertData);
+        $st->execute($sparams);
         return ['ok' => true];
     }
 
@@ -151,15 +161,16 @@ class AgentOrchestrator
 
     public function clearExpiredState(): int
     {
-        $st = $this->db->query("DELETE FROM agent_state WHERE updated_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        $st = $this->db->query("DELETE FROM agent_state WHERE updated_at < DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSql());
         return (int)($st->rowCount() ?? 0);
     }
 
     public function listWorkflows(int $limit = 50): array
     {
         try {
-            $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE 1=1 ORDER BY id DESC LIMIT :lim");
+            $st = $this->db->prepare("SELECT * FROM workflow_automations WHERE 1=1" . $this->tenantSql() . " ORDER BY id DESC LIMIT :lim");
             $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $st->execute();
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -170,8 +181,10 @@ class AgentOrchestrator
 
     public function createWorkflow(string $name, string $trigger, array $steps, ?int $createdBy = null): array
     {
-        $st = $this->db->prepare("INSERT INTO workflow_automations (automation_name, trigger_event, actions, is_active) VALUES (:n, :t, :s, 1)");
-        $st->execute([':n' => $name, ':t' => $trigger, ':s' => json_encode($steps, JSON_UNESCAPED_UNICODE)]);
+        $st = $this->db->prepare("INSERT INTO workflow_automations (automation_name, trigger_event, actions, is_active" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:n, :t, :s, 1" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
+        $wparams = [':n' => $name, ':t' => $trigger, ':s' => json_encode($steps, JSON_UNESCAPED_UNICODE)];
+        if (!empty($insertData = $this->tenantInsertData())) $wparams = array_merge($wparams, $insertData);
+        $st->execute($wparams);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
@@ -211,8 +224,11 @@ class AgentOrchestrator
                     $payload = array_merge($step['payload'] ?? [], $context);
                     return $this->createTask((int)($step['agent_id'] ?? 1), $step['task_type'] ?? 'lead_score', $payload, (int)($step['priority'] ?? 5));
                 case 'create_lead':
-                    $st = $this->db->prepare("INSERT INTO leads (name, email, phone, source, lead_number) VALUES (:n, :e, :p, :s, :num)");
-                    $st->execute([':n' => $context['name'] ?? '', ':e' => $context['email'] ?? '', ':p' => $context['phone'] ?? '', ':s' => $context['source'] ?? 'workflow', ':num' => 'WF-' . date('Ymd') . '-' . substr(uniqid(), -4)]);
+                    $leadParams = [':n' => $context['name'] ?? '', ':e' => $context['email'] ?? '', ':p' => $context['phone'] ?? '', ':s' => $context['source'] ?? 'workflow', ':num' => 'WF-' . date('Ymd') . '-' . substr(uniqid(), -4)];
+                    $leadSql = "INSERT INTO leads (name, email, phone, source, lead_number" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:n, :e, :p, :s, :num" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")";
+                    if (!empty($insertData = $this->tenantInsertData())) $leadParams = array_merge($leadParams, $insertData);
+                    $st = $this->db->prepare($leadSql);
+                    $st->execute($leadParams);
                     return ['ok' => true, 'lead_id' => (int)$this->db->lastInsertId()];
                 default:
                     return ['ok' => true, 'noop' => $type];

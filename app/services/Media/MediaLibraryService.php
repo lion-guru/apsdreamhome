@@ -5,6 +5,7 @@ namespace App\Services\Media;
 use App\Core\Database\Database;
 use App\Services\LoggingService;
 use App\Core\ConfigService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Media Library Service - APS Dream Home
@@ -12,6 +13,8 @@ use App\Core\ConfigService;
  */
 class MediaLibraryService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logger;
     private $config;

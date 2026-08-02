@@ -3,6 +3,7 @@
 namespace App\Services\Communication;
 
 use App\Core\Database;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * WhatsApp Business API Integration
@@ -10,6 +11,7 @@ use App\Core\Database;
  */
 class WhatsAppService
 {
+    use ServiceTenantTrait;
     private $accessToken;
     private $phoneNumberId;
     private $webhookVerifyToken;
@@ -354,15 +356,24 @@ class WhatsAppService
     private function storeMessage(array $message): void
     {
         $db = Database::getInstance();
-        
+        $tid = $this->tenantId();
+
+        $columns = "phone_number, message_type, message_data, direction, created_at";
+        $values = "?, ?, ?, 'inbound', NOW()";
+        $params = [
+            $message['from'],
+            $message['type'],
+            json_encode($message)
+        ];
+        if ($tid > 1) {
+            $columns .= ", tenant_id";
+            $values .= ", ?";
+            $params[] = $tid;
+        }
+
         $db->query(
-            "INSERT INTO whatsapp_messages (phone_number, message_type, message_data, direction, created_at) 
-             VALUES (?, ?, ?, 'inbound', NOW())",
-            [
-                $message['from'],
-                $message['type'],
-                json_encode($message)
-            ]
+            "INSERT INTO whatsapp_messages ($columns) VALUES ($values)",
+            $params
         );
     }
 

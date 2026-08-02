@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * API Documentation Service - Swagger/OpenAPI Generator
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class APIDocumentationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $openApiVersion = '3.0.0';
     private $apiInfo = [];

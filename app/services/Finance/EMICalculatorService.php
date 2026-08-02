@@ -3,6 +3,7 @@
 namespace App\Services\Finance;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * EMI Calculator & Payment Plans Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class EMICalculatorService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     
     // Default bank interest rates

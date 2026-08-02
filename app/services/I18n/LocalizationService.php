@@ -3,6 +3,7 @@
 namespace App\Services\I18n;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Localization Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class LocalizationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $defaultLocale;
     private $currentLocale;

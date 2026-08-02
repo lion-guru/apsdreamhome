@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Middleware\TenantContext;
 use App\Models\Employee;
 use App\Models\EmployeeAttendance;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Payroll Service
@@ -16,6 +17,8 @@ use App\Models\EmployeeAttendance;
  */
 class PayrollService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     // Salary components

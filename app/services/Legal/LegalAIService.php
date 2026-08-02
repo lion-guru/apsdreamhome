@@ -3,9 +3,12 @@
 namespace App\Services\Legal;
 
 use App\Services\AI\AIGateway;
+use \App\Traits\ServiceTenantTrait;
 
 class LegalAIService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected LegalDocumentService $docService;
     protected ?AIGateway $aiGateway;
 

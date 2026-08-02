@@ -6,6 +6,7 @@ use App\Core\Database;
 use App\Core\Logger;
 use App\Core\Config\Config;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Admin Dashboard Service - APS Dream Home
@@ -13,6 +14,9 @@ use App\Core\Middleware\TenantContext;
  */
 class AdminDashboardService
 {
+    use \App\Traits\ServiceTenantTrait;
+
+    private $db;
     private $database;
     private $logger;
     private $config;

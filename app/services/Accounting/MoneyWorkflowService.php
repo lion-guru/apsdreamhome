@@ -4,6 +4,7 @@ namespace App\Services\Accounting;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 use Exception;
 
 /**
@@ -26,6 +27,8 @@ use Exception;
  */
 class MoneyWorkflowService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
 
     public function __construct()

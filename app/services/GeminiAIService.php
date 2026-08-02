@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Gemini AI Service - Advanced AI Integration for APS Dream Home
@@ -16,6 +17,8 @@ use App\Core\Database\Database;
  */
 class GeminiAIService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $apiKey;
     private $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';

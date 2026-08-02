@@ -7,6 +7,7 @@ use App\Core\Middleware\TenantContext;
 use App\Services\AI\AIChatbotService;
 use App\Services\AI\AIGateway;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Unified Communication Automation Service
@@ -14,6 +15,8 @@ use Exception;
  */
 class CommunicationAutomationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $aiChatbot;
     private $aiGateway;

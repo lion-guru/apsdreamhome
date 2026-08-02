@@ -3,7 +3,11 @@
 namespace App\Services\Legacy;
 // Email Template Management System
 
+use App\Traits\ServiceTenantTrait;
+
 class EmailTemplateManager {
+    use ServiceTenantTrait;
+
     // Dependencies
     private $db;
     private $logger;
@@ -32,8 +36,8 @@ class EmailTemplateManager {
             $template = $this->db->fetchOne("
                 SELECT id, name, subject, body, variables
                 FROM email_templates
-                WHERE name = ? AND active = 1
-            ", [$template_name]);
+                WHERE name = ? AND active = 1" . $this->tenantSql(),
+            [$template_name]);
 
             if (!$template) {
                 $this->logger->log(
@@ -71,30 +75,29 @@ class EmailTemplateManager {
      */
     public function createOrUpdateTemplate($name, $subject, $body, $variables = []) {
         try {
-            // Serialize variables
+            $tid = $this->tenantId();
             $variables_json = json_encode($variables);
 
-            // Execute using modern PDO-based API
+            /* Build INSERT with optional tenant_id */
+            $columns = "name, subject, body, variables, active";
+            $values = "?, ?, ?, ?, 1";
+            $params = [$name, $subject, $body, $variables_json, $subject, $body, $variables_json];
+            if ($tid > 1) {
+                $columns .= ", tenant_id";
+                $values .= ", ?";
+                $params[] = $tid;
+            }
+
             $sql = "
                 INSERT INTO email_templates
-                (name, subject, body, variables, active)
-                VALUES (?, ?, ?, ?, 1)
+                ($columns)
+                VALUES ($values)
                 ON DUPLICATE KEY UPDATE
-                subject = ?,
-                body = ?,
-                variables = ?,
+                subject = VALUES(subject),
+                body = VALUES(body),
+                variables = VALUES(variables),
                 updated_at = NOW()
             ";
-
-            $params = [
-                $name,
-                $subject,
-                $body,
-                $variables_json,
-                $subject,
-                $body,
-                $variables_json
-            ];
 
             return $this->db->executeQuery($sql, $params);
 
@@ -165,7 +168,7 @@ class EmailTemplateManager {
         try {
             $active_int = $active ? 1 : 0;
             $result = $this->db->executeQuery(
-                "UPDATE email_templates SET active = ?, updated_at = NOW() WHERE name = ?",
+                "UPDATE email_templates SET active = ?, updated_at = NOW() WHERE name = ?" . $this->tenantSql(),
                 [$active_int, $template_name]
             );
 
@@ -200,8 +203,14 @@ class EmailTemplateManager {
         try {
             $query = "SELECT id, name, subject, active FROM email_templates";
             $params = [];
+            $tidClause = $this->tenantSql();
             if ($active_only) {
-                $query .= " WHERE active = 1";
+                $query .= " WHERE active = 1" . $tidClause;
+            } else {
+                $query .= $tidClause;
+                if ($tidClause) {
+                    $query .= '';
+                }
             }
 
             return $this->db->fetchAll($query, $params);

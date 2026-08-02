@@ -5,9 +5,12 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use App\Core\Middleware\TenantContext;
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 class EmailSenderService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $mailer;
     private $config;

@@ -3,9 +3,12 @@ namespace App\Services\Communication;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 class SmsSenderService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $provider;
     private $apiKey;

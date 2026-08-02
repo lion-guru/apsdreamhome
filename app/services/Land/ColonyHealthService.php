@@ -4,6 +4,7 @@ namespace App\Services\Land;
 
 use App\Core\Database\Database;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * ColonyHealthService — Automated health scoring for colony development pipeline.
@@ -22,6 +23,8 @@ use Exception;
  */
 class ColonyHealthService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 

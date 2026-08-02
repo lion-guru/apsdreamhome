@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
 use Psr\Log\LoggerInterface;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Modern Admin Dashboard Service
@@ -12,6 +13,8 @@ use Psr\Log\LoggerInterface;
  */
 class DashboardService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private Database $db;
     private LoggerInterface $logger;
 

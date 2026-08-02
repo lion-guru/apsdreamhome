@@ -4,6 +4,7 @@ namespace App\Services\Communication;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Real-time Chat Service
@@ -11,6 +12,8 @@ use App\Core\Middleware\TenantContext;
  */
 class ChatService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     
     public function __construct()

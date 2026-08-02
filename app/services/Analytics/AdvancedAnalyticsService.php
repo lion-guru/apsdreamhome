@@ -4,6 +4,7 @@ namespace App\Services\Analytics;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Advanced Analytics Service
@@ -11,6 +12,8 @@ use App\Core\Middleware\TenantContext;
  */
 class AdvancedAnalyticsService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     
     public function __construct()

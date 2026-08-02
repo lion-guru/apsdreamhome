@@ -295,9 +295,11 @@ class EngagementService
         $createdBy = !empty($payload['created_by']) ? (int) $payload['created_by'] : null;
         $status = 'active';
 
+$insertData = $this->tenantInsertData();
+        $cols = 'goal_type, scope, user_id, target_value, target_units, start_date, end_date, status, created_at' . (count($insertData) > 0 ? ', tenant_id' : '');
+        $ph = '?, ?, ?, ?, ?, ?, ?, ?, NOW()' . (count($insertData) > 0 ? ', ?' : '');
         $stmt = $this->conn->prepare(
-            'INSERT INTO mlm_goals (goal_type, scope, user_id, target_value, target_units, start_date, end_date, status, created_by, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())'
+            "INSERT INTO mlm_goals ($cols) VALUES ($ph)"
         );
 
         $params = [
@@ -308,9 +310,9 @@ class EngagementService
             $targetUnits,
             $startDate,
             $endDate,
-            $status,
-            $createdBy
+            $status
         ];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
 
         if (!$stmt->execute($params)) {
             throw new RuntimeException('Failed to create goal: ' . implode(" ", $stmt->errorInfo()));

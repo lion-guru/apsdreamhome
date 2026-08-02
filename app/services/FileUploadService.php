@@ -2,7 +2,12 @@
 
 namespace App\Services;
 
-class FileUploadService {
+use \App\Traits\ServiceTenantTrait;
+
+class FileUploadService
+{
+    use \App\Traits\ServiceTenantTrait;
+
     private $allowedTypes = [
         'image/jpeg' => ['jpg', 'jpeg'],
         'image/png' => ['png'],

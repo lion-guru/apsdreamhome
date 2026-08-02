@@ -11,9 +11,12 @@ use App\Core\Database;
 use App\Core\Middleware\TenantContext;
 use App\Core\Session\SessionManager;
 use App\Core\Logger\Logger;
+use \App\Traits\ServiceTenantTrait;
 
 class ReportService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $sessionManager;
     private $logger;

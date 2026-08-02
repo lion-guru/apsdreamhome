@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Services\SystemLogger;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * ColonyPricingService — Calculates and applies plot pricing for a colony.
@@ -24,6 +25,8 @@ use Exception;
  */
 class ColonyPricingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 

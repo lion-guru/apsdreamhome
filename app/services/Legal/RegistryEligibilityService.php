@@ -5,6 +5,7 @@ namespace App\Services\Legal;
 use App\Core\Middleware\TenantContext;
 use PDO;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Registry/NOC Eligibility Service
@@ -21,6 +22,8 @@ use Exception;
  */
 class RegistryEligibilityService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected PDO $db;
     protected int $tenantId;
 

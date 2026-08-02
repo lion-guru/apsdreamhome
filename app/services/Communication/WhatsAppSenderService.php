@@ -1,10 +1,13 @@
 <?php
 namespace App\Services\Communication;
 
-use App\Core\Database\Database;
+use App\Core\Database;
+use App\Traits\ServiceTenantTrait;
 
 class WhatsAppSenderService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $apiUrl;
     private $accessToken;
@@ -53,10 +56,18 @@ class WhatsAppSenderService
         $messageId = 'MSG' . time() . rand(1000, 9999);
 
         try {
+            $tid = $this->tenantId();
+            $columns = "phone_number, message, direction, message_type, status, whatsapp_message_id, created_at";
+            $values = "?, ?, 'outbound', ?, 'pending', ?, NOW()";
+            $params = [$phone, $message, $templateName ? 'template' : 'text', $messageId];
+            if ($tid > 1) {
+                $columns .= ", tenant_id";
+                $values .= ", ?";
+                $params[] = $tid;
+            }
             $this->db->execute(
-                "INSERT INTO whatsapp_messages (phone_number, message, direction, message_type, status, whatsapp_message_id, created_at)
-                 VALUES (?, ?, 'outbound', ?, 'pending', ?, NOW())",
-                [$phone, $message, $templateName ? 'template' : 'text', $messageId]
+                "INSERT INTO whatsapp_messages ($columns) VALUES ($values)",
+                $params
             );
         } catch (\Exception $e) {
             error_log("WhatsAppSenderService: insert failed: " . $e->getMessage());
@@ -70,7 +81,7 @@ class WhatsAppSenderService
         try {
             $statusCol = $status === 'sent' ? 'sent' : 'failed';
             $this->db->execute(
-                "UPDATE whatsapp_messages SET status = ?, whatsapp_message_id = COALESCE(?, whatsapp_message_id), updated_at = NOW() WHERE phone_number = ? AND created_at >= NOW() - INTERVAL 5 SECOND",
+                "UPDATE whatsapp_messages SET status = ?, whatsapp_message_id = COALESCE(?, whatsapp_message_id), updated_at = NOW() WHERE phone_number = ? AND created_at >= NOW() - INTERVAL 5 SECOND" . $this->tenantSql(),
                 [$statusCol, $apiResult['meta_message_id'] ?? null, $phone]
             );
         } catch (\Exception $e) {
@@ -92,10 +103,18 @@ class WhatsAppSenderService
         $messageId = 'TMPL' . time() . rand(1000, 9999);
 
         try {
+            $tid = $this->tenantId();
+            $columns = "phone_number, message, direction, message_type, status, whatsapp_message_id, created_at";
+            $values = "?, ?, 'outbound', 'template', 'pending', ?, NOW()";
+            $params = [$phone, 'Template: ' . $templateName . ' | Params: ' . json_encode($parameters), $messageId];
+            if ($tid > 1) {
+                $columns .= ", tenant_id";
+                $values .= ", ?";
+                $params[] = $tid;
+            }
             $this->db->execute(
-                "INSERT INTO whatsapp_messages (phone_number, message, direction, message_type, status, whatsapp_message_id, created_at)
-                 VALUES (?, ?, 'outbound', 'template', 'pending', ?, NOW())",
-                [$phone, 'Template: ' . $templateName . ' | Params: ' . json_encode($parameters), $messageId]
+                "INSERT INTO whatsapp_messages ($columns) VALUES ($values)",
+                $params
             );
         } catch (\Exception $e) {
             error_log("WhatsAppSenderService: insert failed: " . $e->getMessage());
@@ -107,7 +126,7 @@ class WhatsAppSenderService
 
         try {
             $this->db->execute(
-                "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE phone_number = ? AND created_at >= NOW() - INTERVAL 5 SECOND",
+                "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE phone_number = ? AND created_at >= NOW() - INTERVAL 5 SECOND" . $this->tenantSql(),
                 [$status === 'sent' ? 'sent' : 'failed', $phone]
             );
         } catch (\Exception $e) {
@@ -127,7 +146,7 @@ class WhatsAppSenderService
     {
         try {
             $rows = $this->db->fetchAll(
-                "SELECT * FROM whatsapp_messages WHERE status = 'pending' AND direction = 'outbound' ORDER BY created_at ASC LIMIT ?",
+                "SELECT * FROM whatsapp_messages WHERE status = 'pending' AND direction = 'outbound' ORDER BY created_at ASC LIMIT ?" . $this->tenantSql(),
                 [$limit]
             );
         } catch (\Exception $e) {
@@ -146,7 +165,7 @@ class WhatsAppSenderService
             $newStatus = $result['status'] === 'sent' ? 'sent' : 'failed';
             try {
                 $this->db->execute(
-                    "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE id = ?",
+                    "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
                     [$newStatus, $row['id']]
                 );
                 $processed++;
@@ -179,7 +198,7 @@ class WhatsAppSenderService
 
             try {
                 $this->db->execute(
-                    "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE whatsapp_message_id = ?",
+                    "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE whatsapp_message_id = ?" . $this->tenantSql(),
                     [$status, $messageId]
                 );
             } catch (\Exception $e) {
@@ -190,7 +209,7 @@ class WhatsAppSenderService
         }
 
         try {
-            $row = $this->db->fetch("SELECT status FROM whatsapp_messages WHERE whatsapp_message_id = ?", [$messageId]);
+            $row = $this->db->fetch("SELECT status FROM whatsapp_messages WHERE whatsapp_message_id = ?" . $this->tenantSql(), [$messageId]);
             return ['status' => $row['status'] ?? 'unknown', 'http_code' => $httpCode];
         } catch (\Exception $e) {
             return ['status' => 'unknown', 'http_code' => $httpCode];
@@ -229,8 +248,8 @@ class WhatsAppSenderService
                         $statusUpdate = $value['statuses'][0] ?? null;
                         if ($statusUpdate) {
                             try {
-                                $this->db->execute(
-                                    "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE whatsapp_message_id = ?",
+                $this->db->execute(
+                    "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE whatsapp_message_id = ?" . $this->tenantSql(),
                                     [$statusUpdate['status'] ?? 'unknown', $statusUpdate['id'] ?? '']
                                 );
                             } catch (\Exception $e) {

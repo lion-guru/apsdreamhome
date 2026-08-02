@@ -1,11 +1,14 @@
 <?php
 namespace App\Services\Accounting;
 
-use App\Core\Database;
-use App\Core\Middleware\TenantContext;
+use PDO;
+use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class AccountingIntegrationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()

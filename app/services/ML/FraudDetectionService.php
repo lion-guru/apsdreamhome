@@ -4,6 +4,7 @@ namespace App\Services\ML;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * FraudDetectionService - ML-based Fraud Detection

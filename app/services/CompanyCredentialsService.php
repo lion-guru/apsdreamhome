@@ -116,10 +116,10 @@ class CompanyCredentialsService
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO company_credentials
-                (credential_type, credential_label, credential_value, issuer, issue_date, expiry_date, document_path, is_primary, status, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (credential_type, credential_label, credential_value, issuer, issue_date, expiry_date, document_path, is_primary, status, notes" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ")
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($this->tenantInsertData()) > 0 ? ', ?' : '') . ")
             ");
-            $stmt->execute([
+            $cparams = [
                 $data['credential_type'],
                 $data['credential_label'],
                 $data['credential_value'],
@@ -130,7 +130,9 @@ class CompanyCredentialsService
                 isset($data['is_primary']) ? (int)$data['is_primary'] : 1,
                 $data['status'] ?? 'active',
                 $data['notes'] ?? null,
-            ]);
+            ];
+            if (!empty($insertData = $this->tenantInsertData())) $cparams = array_merge($cparams, array_values($insertData));
+            $stmt->execute($cparams);
             return (int)$this->db->lastInsertId();
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] create: " . $e->getMessage());
@@ -154,9 +156,8 @@ class CompanyCredentialsService
                     is_primary = ?,
                     status = ?,
                     notes = ?
-                WHERE id = ?
-            ");
-            $stmt->execute([
+                WHERE id = ?" . $this->tenantSql());
+            $updParams = [
                 $data['credential_type'],
                 $data['credential_label'],
                 $data['credential_value'],
@@ -168,7 +169,9 @@ class CompanyCredentialsService
                 $data['status'] ?? 'active',
                 $data['notes'] ?? null,
                 $id,
-            ]);
+            ];
+            if ($this->tenantId() > 1) $updParams[] = $this->tenantId();
+            $stmt->execute($updParams);
             return $stmt->rowCount() > 0;
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] update: " . $e->getMessage());
@@ -180,8 +183,10 @@ class CompanyCredentialsService
     {
         if (!$this->db) return false;
         try {
-            $stmt = $this->db->prepare("DELETE FROM company_credentials WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare("DELETE FROM company_credentials WHERE id = ?" . $this->tenantSql());
+            $dparams = [$id];
+            if ($this->tenantId() > 1) $dparams[] = $this->tenantId();
+            $stmt->execute($dparams);
             return $stmt->rowCount() > 0;
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] delete: " . $e->getMessage());

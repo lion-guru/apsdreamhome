@@ -8,6 +8,7 @@
 namespace App\Services\AI;
 
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 class PatternLearner
 {

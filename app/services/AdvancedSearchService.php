@@ -6,8 +6,11 @@
 
 use App\Core\Database\Database;
 use App\Core\Cache;
+use \App\Traits\ServiceTenantTrait;
 
 class AdvancedSearchService {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $cachePrefix = 'search_';
     
@@ -261,8 +264,10 @@ class AdvancedSearchService {
             // Create search_history table if it doesn't exist
             $this->db->exec("");
             
-            $stmt = $this->db->prepare("INSERT INTO search_history (user_id, search_term, filters) VALUES (?, ?, ?)");
-            $stmt->execute([$userId, $searchTerm, json_encode($filters)]);
+            $stmt = $this->db->prepare("INSERT INTO search_history (user_id, search_term, filters" . implode(',', array_keys($this->tenantInsertData())) . ") VALUES (?, ?, ?" . implode(',', array_fill(0, count($this->tenantInsertData()), '?')) . ")");
+            $params = [$userId, $searchTerm, json_encode($filters)];
+            if (!empty($insertData = $this->tenantInsertData())) $params = array_merge($params, array_values($insertData));
+            $stmt->execute($params);
             
             return true;
         } catch (\Exception $e) {
@@ -276,8 +281,10 @@ class AdvancedSearchService {
      */
     public function getRecentSearches($userId, $limit = 10) {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM search_history WHERE user_id = ? ORDER BY created_at DESC LIMIT $limit");
-            $stmt->execute([$userId]);
+            $stmt = $this->db->prepare("SELECT * FROM search_history WHERE user_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT $limit");
+            $params = [$userId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             // Parse filters JSON
@@ -298,7 +305,7 @@ class AdvancedSearchService {
         try {
             $query = "SELECT search_term, COUNT(*) as search_count 
                       FROM search_history 
-                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)" . $this->tenantSql() . "
                       GROUP BY search_term 
                       ORDER BY search_count DESC 
                       LIMIT $limit";
@@ -320,15 +327,15 @@ class AdvancedSearchService {
             $facets = [];
             
             // Property types
-            $propertyTypes = $this->db->query("SELECT DISTINCT property_type FROM user_properties WHERE status = 'approved' ORDER BY property_type")->fetchAll(PDO::FETCH_COLUMN);
+            $propertyTypes = $this->db->query("SELECT DISTINCT property_type FROM user_properties WHERE status = 'approved'" . $this->tenantSql() . " ORDER BY property_type")->fetchAll(PDO::FETCH_COLUMN);
             $facets['property_types'] = $propertyTypes;
             
             // Listing types
-            $listingTypes = $this->db->query("SELECT DISTINCT listing_type FROM user_properties WHERE status = 'approved' ORDER BY listing_type")->fetchAll(PDO::FETCH_COLUMN);
+            $listingTypes = $this->db->query("SELECT DISTINCT listing_type FROM user_properties WHERE status = 'approved'" . $this->tenantSql() . " ORDER BY listing_type")->fetchAll(PDO::FETCH_COLUMN);
             $facets['listing_types'] = $listingTypes;
             
             // Price ranges
-            $priceRanges = $this->db->query("SELECT MIN(price) as min_price, MAX(price) as max_price FROM user_properties WHERE status = 'approved'")->fetch(PDO::FETCH_ASSOC);
+            $priceRanges = $this->db->query("SELECT MIN(price) as min_price, MAX(price) as max_price FROM user_properties WHERE status = 'approved'" . $this->tenantSql())->fetch(PDO::FETCH_ASSOC);
             $facets['price_ranges'] = [
                 'min' => (int)($priceRanges['min_price'] ?? 0),
                 'max' => (int)($priceRanges['max_price'] ?? 10000000)

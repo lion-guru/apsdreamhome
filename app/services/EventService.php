@@ -2,12 +2,16 @@
 
 namespace App\Services;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Modern Event Bus Service
  * Advanced event-driven architecture with pub/sub system and real-time processing
  */
 class EventService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     // Event Types
     public const TYPE_SYSTEM = 'system';
     public const TYPE_USER = 'user';

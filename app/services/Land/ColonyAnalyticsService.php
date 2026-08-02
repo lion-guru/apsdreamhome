@@ -4,12 +4,15 @@ namespace App\Services\Land;
 
 use App\Core\Database\Database;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
- * ColonyAnalyticsService — Revenue, cost, profit analysis per colony.
+ * ColonyAnalyticsService �?" Revenue, cost, profit analysis per colony.
  */
 class ColonyAnalyticsService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 

@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use \App\Traits\ServiceTenantTrait;
 
 class AuditLogService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct(Database $db = null)

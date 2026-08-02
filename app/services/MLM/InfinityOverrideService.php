@@ -20,9 +20,11 @@ namespace App\Services\MLM;
 use PDO;
 use Exception;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 class InfinityOverrideService
 {
+    use \App\Traits\ServiceTenantTrait;
     /** @var PDO|null */
     protected $db;
 

@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Models\User;
+use \App\Traits\ServiceTenantTrait;
 
 class GoogleAuthService {
     
+    use \App\Traits\ServiceTenantTrait;
+
     public function getAuthUrl($redirectUri) {
         $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? '');
         $params = http_build_query([

@@ -5,9 +5,12 @@ namespace App\Services\Loan;
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 class CompanyLoanService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected PDO $db;
     protected int $tenantId;
     protected const EMI_PENALTY_RATE = 18.0;

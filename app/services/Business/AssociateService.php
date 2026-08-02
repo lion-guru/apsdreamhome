@@ -5,6 +5,7 @@ namespace App\Services\Business;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Services\SystemLogger;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Associate Business Service - APS Dream Home
@@ -12,6 +13,8 @@ use App\Services\SystemLogger;
  */
 class AssociateService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logger;
 

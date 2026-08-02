@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Config;
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Custom Core Functions Service
@@ -12,6 +13,8 @@ use Exception;
  */
 class CoreFunctionsServiceCustom
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private static $db = null;
     
     /**
@@ -33,6 +36,7 @@ class CoreFunctionsServiceCustom
         try {
             $db = self::getDb();
             
+            $tid = \App\Core\Middleware\TenantContext::getId();
             $logEntry = [
                 'user_id' => $_SESSION['user_id'] ?? 0,
                 'action' => $data['action'] ?? 'unknown',
@@ -41,19 +45,16 @@ class CoreFunctionsServiceCustom
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
                 'created_at' => date('Y-m-d H:i:s')
             ];
+            if ($tid > 1) {
+                $logEntry['tenant_id'] = $tid;
+            }
 
-            $sql = "INSERT INTO activity_logs_unified (user_id, action, context, ip_address, user_agent, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
-            
+            $columns = implode(', ', array_keys($logEntry));
+            $placeholders = str_repeat('?, ', count($logEntry) - 1) . '?';
+            $sql = "INSERT INTO activity_logs_unified ($columns) VALUES ($placeholders)";
+
             $stmt = $db->prepare($sql);
-            return $stmt->execute([
-                $logEntry['user_id'],
-                $logEntry['action'],
-                $logEntry['context'],
-                $logEntry['ip_address'],
-                $logEntry['user_agent'],
-                $logEntry['created_at']
-            ]);
+            return $stmt->execute(array_values($logEntry));
             
         } catch (Exception $e) {
             error_log("Failed to log admin action: " . $e->getMessage());

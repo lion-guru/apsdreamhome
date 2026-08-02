@@ -8,6 +8,7 @@ use App\Services\EmailService;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Career and Job Application Management Service - APS Dream Home
@@ -15,6 +16,8 @@ use RuntimeException;
  */
 class CareerService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $logger;
     private $allowedExtensions = ['pdf', 'doc', 'docx'];

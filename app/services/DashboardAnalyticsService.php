@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Core\Database;
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * DashboardAnalyticsService
@@ -13,6 +14,7 @@ use PDO;
  */
 class DashboardAnalyticsService
 {
+    use \App\Traits\ServiceTenantTrait;
     /**
      * Get booking statistics
      * 
@@ -41,29 +43,32 @@ class DashboardAnalyticsService
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
             
             // Get total bookings
-            $sql = "SELECT COUNT(*) as count FROM bookings {$whereClause}";
+            $sql = "SELECT COUNT(*) as count FROM bookings {$whereClause}" . $this->tenantSql();
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $total = $stmt->fetch()['count'];
             
             // Get bookings by status
-            $sql = "SELECT status, COUNT(*) as count FROM bookings {$whereClause} GROUP BY status";
+            $sql = "SELECT status, COUNT(*) as count FROM bookings {$whereClause}" . $this->tenantSql() . " GROUP BY status";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $byStatus = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
-            // Get total revenue
-            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}";
+// Get total revenue
+            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " WHERE payment_status = 'paid'";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $revenue = $stmt->fetch()['revenue'] ?? 0;
             
@@ -130,29 +135,32 @@ class DashboardAnalyticsService
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
             
             // Get total properties
-            $sql = "SELECT COUNT(*) as count FROM properties {$whereClause}";
+            $sql = "SELECT COUNT(*) as count FROM properties {$whereClause}" . $this->tenantSql();
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $total = $stmt->fetch()['count'];
             
             // Get properties by status
-            $sql = "SELECT status, COUNT(*) as count FROM properties {$whereClause} GROUP BY status";
+            $sql = "SELECT status, COUNT(*) as count FROM properties {$whereClause}" . $this->tenantSql() . " GROUP BY status";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $byStatus = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
             // Get properties by type
-            $sql = "SELECT type, COUNT(*) as count FROM properties {$whereClause} GROUP BY type";
+            $sql = "SELECT type, COUNT(*) as count FROM properties {$whereClause}" . $this->tenantSql() . " GROUP BY type";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $byType = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
@@ -160,11 +168,12 @@ class DashboardAnalyticsService
             $featuredWhere = $where;
             $featuredWhere[] = "featured = 1";
             $featuredWhereClause = 'WHERE ' . implode(' AND ', $featuredWhere);
-            $sql = "SELECT COUNT(*) as count FROM properties {$featuredWhereClause}";
+            $sql = "SELECT COUNT(*) as count FROM properties {$featuredWhereClause}" . $this->tenantSql();
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $featured = $stmt->fetch()['count'];
             
@@ -231,29 +240,32 @@ class DashboardAnalyticsService
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
             
             // Get total leads
-            $sql = "SELECT COUNT(*) as count FROM leads {$whereClause}";
+            $sql = "SELECT COUNT(*) as count FROM leads {$whereClause}" . $this->tenantSql();
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $total = $stmt->fetch()['count'];
             
             // Get leads by status
-            $sql = "SELECT status, COUNT(*) as count FROM leads {$whereClause} GROUP BY status";
+            $sql = "SELECT status, COUNT(*) as count FROM leads {$whereClause}" . $this->tenantSql() . " GROUP BY status";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $byStatus = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
             // Get leads by source
-            $sql = "SELECT source, COUNT(*) as count FROM leads {$whereClause} GROUP BY source";
+            $sql = "SELECT source, COUNT(*) as count FROM leads {$whereClause}" . $this->tenantSql() . " GROUP BY source";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $bySource = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
@@ -261,8 +273,13 @@ class DashboardAnalyticsService
             $todayWhere = $where;
             $todayWhere[] = "DATE(created_at) = CURDATE()";
             $todayWhereClause = 'WHERE ' . implode(' AND ', $todayWhere);
-            $sql = "SELECT COUNT(*) as count FROM leads {$todayWhereClause}";
+            $sql = "SELECT COUNT(*) as count FROM leads {$todayWhereClause}" . $this->tenantSql();
             $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
+            $stmt->execute();
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
@@ -322,20 +339,22 @@ class DashboardAnalyticsService
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
             
             // Get total revenue from bookings
-            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause} WHERE payment_status = 'paid'";
+            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " WHERE payment_status = 'paid'";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $totalRevenue = $stmt->fetch()['revenue'] ?? 0;
             
             // Get pending revenue
-            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause} WHERE payment_status IN ('pending', 'partial')";
+            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " WHERE payment_status IN ('pending', 'partial')";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $pendingRevenue = $stmt->fetch()['revenue'] ?? 0;
             
@@ -345,7 +364,7 @@ class DashboardAnalyticsService
                         SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as paid,
                         SUM(CASE WHEN payment_status IN ('pending', 'partial') THEN total_amount ELSE 0 END) as pending
                     FROM bookings 
-                    {$whereClause}
+                    {$whereClause}" . $this->tenantSql() . "
                     GROUP BY DATE_FORMAT(created_at, '%Y-%m')
                     ORDER BY month DESC
                     LIMIT 12";
@@ -405,20 +424,22 @@ class DashboardAnalyticsService
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
             
             // Get team members count
-            $sql = "SELECT COUNT(*) as count FROM users {$whereClause}";
+            $sql = "SELECT COUNT(*) as count FROM users {$whereClause}" . $this->tenantSql();
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $total = $stmt->fetch()['count'];
             
             // Get team members by role
-            $sql = "SELECT role, COUNT(*) as count FROM users {$whereClause} GROUP BY role";
+            $sql = "SELECT role, COUNT(*) as count FROM users {$whereClause}" . $this->tenantSql() . " GROUP BY role";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $byRole = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             

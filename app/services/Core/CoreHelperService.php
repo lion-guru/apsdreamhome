@@ -4,6 +4,7 @@ namespace App\Services\Core;
 
 use App\Core\Database\Database;
 use App\Services\LoggingService;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * Core Helper Service - APS Dream Home
@@ -12,6 +13,8 @@ use App\Services\LoggingService;
  */
 class CoreHelperService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logger;
 

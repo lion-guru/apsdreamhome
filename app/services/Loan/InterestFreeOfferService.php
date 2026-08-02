@@ -4,9 +4,12 @@ namespace App\Services\Loan;
 
 use App\Core\Database;
 use PDO;
+use \App\Traits\ServiceTenantTrait;
 
 class InterestFreeOfferService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected PDO $db;
 
     public function __construct(?PDO $pdo = null)

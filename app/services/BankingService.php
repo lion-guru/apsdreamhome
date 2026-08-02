@@ -5,9 +5,12 @@
 namespace App\Services;
 
 use Exception;
+use \App\Traits\ServiceTenantTrait;
 
 class BankingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /**
      * Fetch bank details by IFSC code
      * 
