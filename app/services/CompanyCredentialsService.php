@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 class CompanyCredentialsService
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct($db = null)
@@ -202,10 +206,12 @@ class CompanyCredentialsService
                 SELECT * FROM company_credentials
                 WHERE expiry_date IS NOT NULL
                 AND expiry_date <= DATE_ADD(NOW(), INTERVAL ? DAY)
-                AND status = 'active'
+                AND status = 'active'" . $this->tenantSql() . "
                 ORDER BY expiry_date ASC
             ");
-            $stmt->execute([$days]);
+            $params = [$days];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             error_log("[CompanyCredentials] getExpiringSoon: " . $e->getMessage());
@@ -218,12 +224,12 @@ class CompanyCredentialsService
         if (!$this->db) return ['total' => 0, 'active' => 0, 'expiring' => 0, 'expired' => 0, 'by_type' => []];
         try {
             $stats = [];
-            $stats['total'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials")->fetchColumn();
-            $stats['active'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials WHERE status = 'active'")->fetchColumn();
-            $stats['expired'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials WHERE status = 'expired'")->fetchColumn();
-            $stats['expiring'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials WHERE expiry_date IS NOT NULL AND expiry_date <= DATE_ADD(NOW(), INTERVAL 30 DAY) AND status = 'active'")->fetchColumn();
+            $stats['total'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials" . $this->tenantSql())->fetchColumn();
+            $stats['active'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials WHERE status = 'active'" . $this->tenantSql())->fetchColumn();
+            $stats['expired'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials WHERE status = 'expired'" . $this->tenantSql())->fetchColumn();
+            $stats['expiring'] = (int)$this->db->query("SELECT COUNT(*) FROM company_credentials WHERE expiry_date IS NOT NULL AND expiry_date <= DATE_ADD(NOW(), INTERVAL 30 DAY) AND status = 'active'" . $this->tenantSql())->fetchColumn();
 
-            $byType = $this->db->query("SELECT credential_type, COUNT(*) as cnt FROM company_credentials GROUP BY credential_type ORDER BY credential_type")->fetchAll(PDO::FETCH_ASSOC);
+            $byType = $this->db->query("SELECT credential_type, COUNT(*) as cnt FROM company_credentials" . $this->tenantSql() . " GROUP BY credential_type ORDER BY credential_type")->fetchAll(PDO::FETCH_ASSOC);
             $stats['by_type'] = [];
             foreach ($byType as $row) {
                 $stats['by_type'][$row['credential_type']] = (int)$row['cnt'];

@@ -301,8 +301,8 @@ class ExecutiveAIService
 
         // Role-specific additional KPIs
         if (in_array($role, ['cfo', 'finance_director', 'finance_manager', 'chartered_accountant', 'senior_accountant'])) {
-            $directSale = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE type='direct_sale'");
-            $overrideEarn = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE type='override'");
+            $directSale = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE type='direct_sale'" . $this->tenantSql());
+            $overrideEarn = $safeQuery("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE type='override'" . $this->tenantSql());
             $context['kpis']['Direct Sales'] = '₹' . number_format($directSale / 100000, 2) . 'L';
             $context['kpis']['Override Earnings'] = '₹' . number_format($overrideEarn / 100000, 2) . 'L';
         }

@@ -2,9 +2,12 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 class WebhookService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $pdo;
     private $maxAttempts = 3;
@@ -18,20 +21,19 @@ class WebhookService
 
     public function registerEndpoint(string $name, string $url, array $events, ?string $secret = null, ?int $userId = null): int
     {
-        $st = $this->db->prepare("INSERT INTO webhook_endpoints (name, url, secret_key, events, is_active, created_by) VALUES (:n, :u, :s, :e, 1, :uid)");
-        $st->execute([
-            ':n' => $name,
-            ':u' => $url,
-            ':s' => $secret,
-            ':e' => implode(',', $events),
-            ':uid' => $userId
-        ]);
+        $insertData = $this->tenantInsertData();
+        $cols = "name, url, secret_key, events, is_active, created_by" . (count($insertData) > 0 ? ', tenant_id' : '');
+        $ph = ":n, :u, :s, :e, 1, :uid" . (count($insertData) > 0 ? ', :tid' : '');
+        $st = $this->db->prepare("INSERT INTO webhook_endpoints ($cols) VALUES ($ph)");
+        $params = [':n' => $name, ':u' => $url, ':s' => $secret, ':e' => implode(',', $events), ':uid' => $userId];
+        if (!empty($insertData)) $params = array_merge($params, $insertData);
+        $st->execute($params);
         return (int)$this->db->lastInsertId();
     }
 
     public function listEndpoints(bool $activeOnly = false): array
     {
-        $sql = "SELECT * FROM webhook_endpoints";
+        $sql = "SELECT * FROM webhook_endpoints" . $this->tenantSql();
         if ($activeOnly) $sql .= " WHERE is_active = 1";
         $sql .= " ORDER BY name";
         try {
@@ -42,9 +44,12 @@ class WebhookService
 
     public function deleteEndpoint(int $id): bool
     {
+        $sql = "DELETE FROM webhook_endpoints WHERE id = :id" . $this->tenantSql();
+        $params = [':id' => $id];
+        if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
         try {
-            $st = $this->db->prepare("DELETE FROM webhook_endpoints WHERE id = :id");
-            $st->execute([':id' => $id]);
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
             return $st->rowCount() > 0;
         } catch (\Throwable $e) { return false; }
     }
@@ -75,19 +80,23 @@ class WebhookService
 
     private function recordDelivery(int $endpointId, string $eventType, array $payload): int
     {
-        $st = $this->db->prepare("INSERT INTO webhook_deliveries (endpoint_id, event_type, payload, status) VALUES (:e, :ev, :p, 'pending')");
-        $st->execute([
-            ':e' => $endpointId,
-            ':ev' => $eventType,
-            ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE)
-        ]);
+        $insertData = $this->tenantInsertData();
+        $cols = "endpoint_id, event_type, payload, status" . (count($insertData) > 0 ? ', tenant_id' : '');
+        $ph = ":e, :ev, :p, 'pending'" . (count($insertData) > 0 ? ', :tid' : '');
+        $st = $this->db->prepare("INSERT INTO webhook_deliveries ($cols) VALUES ($ph)");
+        $params = [':e' => $endpointId, ':ev' => $eventType, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE)];
+        if (!empty($insertData)) $params = array_merge($params, $insertData);
+        $st->execute($params);
         return (int)$this->db->lastInsertId();
     }
 
     public function deliver(int $deliveryId): array
     {
-        $st = $this->db->prepare("SELECT d.*, e.url, e.secret_key FROM webhook_deliveries d JOIN webhook_endpoints e ON d.endpoint_id = e.id WHERE d.id = :id");
-        $st->execute([':id' => $deliveryId]);
+        $sql = "SELECT d.*, e.url, e.secret_key FROM webhook_deliveries d JOIN webhook_endpoints e ON d.endpoint_id = e.id WHERE d.id = :id" . $this->tenantSql();
+        $params = [':id' => $deliveryId];
+        if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
         $delivery = $st->fetch(PDO::FETCH_ASSOC);
         if (!$delivery) return ['ok' => false, 'error' => 'Delivery not found'];
 
@@ -121,16 +130,22 @@ class WebhookService
         $status = ($code >= 200 && $code < 300) ? 'success' : (($delivery['attempt'] ?? 1) < $this->maxAttempts ? 'retrying' : 'failed');
         $error = $err ?: ($status === 'failed' ? "HTTP $code" : null);
 
-        $st = $this->db->prepare("UPDATE webhook_deliveries SET response_code = :c, response_body = :b, status = :s, delivered_at = NOW(), error_message = :e WHERE id = :id");
-        $st->execute([':c' => $code, ':b' => substr((string)$body, 0, 4000), ':s' => $status, ':e' => $error, ':id' => $deliveryId]);
+        $st = $this->db->prepare("UPDATE webhook_deliveries SET response_code = :c, response_body = :b, status = :s, delivered_at = NOW(), error_message = :e WHERE id = :id" . $this->tenantSql());
+        $updParams = [':c' => $code, ':b' => substr((string)$body, 0, 4000), ':s' => $status, ':e' => $error, ':id' => $deliveryId];
+        if ($this->tenantId() > 1) $updParams[':stid'] = $this->tenantId();
+        $st->execute($updParams);
 
         return ['ok' => $status === 'success', 'status' => $status, 'code' => $code, 'error' => $error];
     }
 
     public function processPending(int $maxBatch = 50): array
     {
-        $st = $this->db->prepare("SELECT id FROM webhook_deliveries WHERE status IN ('pending','retrying') ORDER BY id ASC LIMIT :lim");
+        $sql = "SELECT id FROM webhook_deliveries WHERE status IN ('pending','retrying')" . $this->tenantSql() . " ORDER BY id ASC LIMIT :lim";
+        $st = $this->db->prepare($sql);
+        $params = [];
+        if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
         $st->bindValue(':lim', $maxBatch, PDO::PARAM_INT);
+        foreach ($params as $k => $v) $st->bindValue($k, $v);
         $st->execute();
         $ids = $st->fetchAll(PDO::FETCH_COLUMN);
         $results = [];

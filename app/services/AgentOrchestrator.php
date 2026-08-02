@@ -19,11 +19,12 @@ class AgentOrchestrator
     public function listTasks(int $agentId = 0, string $status = ''): array
     {
         try {
-            $sql = "SELECT t.* FROM agent_tasks t WHERE 1=1";
+            $sql = "SELECT t.* FROM agent_tasks t WHERE 1=1" . $this->tenantSql();
             $params = [];
             if ($status) { $sql .= " AND t.status = :s"; $params[':s'] = $status; }
             $sql .= " ORDER BY t.assigned_at DESC LIMIT 200";
             $st = $this->db->prepare($sql);
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             $st->execute($params);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -124,10 +125,11 @@ class AgentOrchestrator
     public function listExecutions(int $taskId = 0, int $limit = 100): array
     {
         try {
-            $sql = "SELECT e.* FROM agent_executions e WHERE 1=1";
+            $sql = "SELECT e.* FROM agent_executions e WHERE 1=1" . $this->tenantSql();
             $params = [];
             $sql .= " ORDER BY e.execution_end DESC LIMIT :lim";
             $st = $this->db->prepare($sql);
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             foreach ($params as $k => $v) $st->bindValue($k, $v);
             $st->bindValue(':lim', $limit, PDO::PARAM_INT);
             $st->execute();
@@ -240,7 +242,11 @@ $st = $this->db->prepare("INSERT INTO agent_state (agent_id, context, state_data
 
     public function processPendingTasks(int $maxTasks = 50): array
     {
-        $st = $this->db->prepare("SELECT id FROM agent_tasks WHERE status = 'queued' ORDER BY priority DESC, assigned_at ASC LIMIT :lim");
+        $sql = "SELECT id FROM agent_tasks WHERE status = 'queued'" . $this->tenantSql() . " ORDER BY priority DESC, assigned_at ASC LIMIT :lim";
+        $st = $this->db->prepare($sql);
+        $params = [];
+        if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+        foreach ($params as $k => $v) $st->bindValue($k, $v);
         $st->bindValue(':lim', $maxTasks, PDO::PARAM_INT);
         $st->execute();
         $ids = $st->fetchAll(PDO::FETCH_COLUMN);

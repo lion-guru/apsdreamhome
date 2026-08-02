@@ -46,24 +46,34 @@ class SmsSenderService
 
     public function sendFromQueue($queueId)
     {
-        $sql = "SELECT * FROM sms_queue WHERE id = ? AND status = 'pending'";
-        $sms = $this->db->fetchOne($sql, [$queueId]);
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM sms_queue WHERE id = ? AND status = 'pending'" . $tenantFilter;
+        $params = [$queueId];
+        if ($tid > 1) $params[] = $tid;
+        $sms = $this->db->fetchOne($sql, $params);
         if (!$sms) return false;
 
-        $this->db->query("UPDATE sms_queue SET attempts = attempts + 1 WHERE id = ?", [$queueId]);
+        $updParams = [$queueId];
+        if ($tid > 1) $updParams[] = $tid;
+        $this->db->query("UPDATE sms_queue SET attempts = attempts + 1 WHERE id = ?" . $tenantFilter, $updParams);
 
         try {
             $result = $this->send($sms['recipient'], $sms['message']);
             $status = ($result['success'] ?? false) ? 'sent' : 'failed';
+            $updParams2 = [$status, $result['error'] ?? null, $queueId];
+            if ($tid > 1) $updParams2[] = $tid;
             $this->db->query(
-                "UPDATE sms_queue SET status = ?, sent_at = NOW(), error_message = ? WHERE id = ?",
-                [$status, $result['error'] ?? null, $queueId]
+                "UPDATE sms_queue SET status = ?, sent_at = NOW(), error_message = ? WHERE id = ?" . $tenantFilter,
+                $updParams2
             );
             return $result['success'] ?? false;
         } catch (\Exception $e) {
+            $updParams3 = [$e->getMessage(), $queueId];
+            if ($tid > 1) $updParams3[] = $tid;
             $this->db->query(
-                "UPDATE sms_queue SET status = 'failed', error_message = ? WHERE id = ?",
-                [$e->getMessage(), $queueId]
+                "UPDATE sms_queue SET status = 'failed', error_message = ? WHERE id = ?" . $tenantFilter,
+                $updParams3
             );
             return false;
         }
@@ -71,10 +81,14 @@ class SmsSenderService
 
     public function processQueue($limit = 10)
     {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $sql = "SELECT * FROM sms_queue 
-                WHERE status = 'pending' AND attempts < 3 
+                WHERE status = 'pending' AND attempts < 3" . $tenantFilter . "
                 ORDER BY created_at ASC LIMIT ?";
-        $items = $this->db->fetchAll($sql, [$limit]);
+        $params = [$limit];
+        if ($tid > 1) $params[] = $tid;
+        $items = $this->db->fetchAll($sql, $params);
         $results = ['processed' => 0, 'sent' => 0, 'failed' => 0];
         foreach ($items as $item) {
             $ok = $this->sendFromQueue($item['id']);
@@ -164,7 +178,9 @@ class SmsSenderService
     {
         $stats = ['pending' => 0, 'sent' => 0, 'failed' => 0];
         try {
-            $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM sms_queue GROUP BY status");
+            $tid = $this->tenantId();
+            $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+            $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM sms_queue WHERE 1=1" . $tenantFilter . " GROUP BY status", $tid > 1 ? [$tid] : []);
             foreach ($rows as $r) $stats[$r['status']] = (int)$r['cnt'];
         } catch (\Exception $e) {
                     error_log("SmsSenderService.php: " . $e->getMessage());
@@ -174,11 +190,14 @@ class SmsSenderService
 
     public function getQueueItems($status = null, $limit = 50, $offset = 0)
     {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $where = $status ? "WHERE status = ?" : "";
         $params = $status ? [$status] : [];
+        if ($tid > 1) $params[] = $tid;
         try {
             return $this->db->fetchAll(
-                "SELECT * FROM sms_queue $where ORDER BY created_at DESC LIMIT ? OFFSET ?",
+                "SELECT * FROM sms_queue $where" . $tenantFilter . " ORDER BY created_at DESC LIMIT ? OFFSET ?",
                 array_merge($params, [$limit, $offset])
             );
         } catch (\Exception $e) { return []; }

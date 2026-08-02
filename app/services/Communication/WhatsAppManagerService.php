@@ -4,6 +4,7 @@ namespace App\Services\Communication;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use \App\Traits\ServiceTenantTrait;
 
 /**
  * APS Dream Home - WhatsApp Integration Manager
@@ -12,6 +13,8 @@ use App\Core\Middleware\TenantContext;
 
 class WhatsAppManager
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $logger;
 
@@ -606,8 +609,10 @@ class WhatsAppManager
 
     private function getLead($leadId)
     {
-        $sql = "SELECT * FROM leads WHERE id = ?";
-        return $this->db->fetch($sql, [$leadId]);
+        $sql = "SELECT * FROM leads WHERE id = ?" . $this->tenantSql();
+        $params = [$leadId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        return $this->db->fetch($sql, $params);
     }
 
     private function getCustomer($customerId)

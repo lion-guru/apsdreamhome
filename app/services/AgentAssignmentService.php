@@ -170,8 +170,10 @@ class AgentAssignmentService
      */
     private function getCustomer(int $customerId): ?array
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :customer_id AND role = 'customer' LIMIT 1");
-        $stmt->execute(['customer_id' => $customerId]);
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :customer_id AND role = 'customer'" . $this->tenantSql() . " LIMIT 1");
+        $params = ['customer_id' => $customerId];
+        if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetch() ?: null;
     }
 

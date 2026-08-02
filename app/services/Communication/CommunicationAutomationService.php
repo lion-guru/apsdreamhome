@@ -207,9 +207,11 @@ class CommunicationAutomationService
         if (!$phone) return null;
 
         // Check if lead exists by phone
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $existing = $this->db->fetchOne(
-            "SELECT id FROM leads WHERE phone = ? OR whatsapp_number = ? LIMIT 1",
-            [$phone, $phone]
+            "SELECT id FROM leads WHERE phone = ? OR whatsapp_number = ?" . $tenantFilter . " LIMIT 1",
+            array_merge([$phone, $phone], $tid > 1 ? [$tid] : [])
         );
 
         if ($existing) {
@@ -263,13 +265,15 @@ class CommunicationAutomationService
 
     private function updateLeadChannel(int $leadId, string $channel, string $from, array $messageData): void
     {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $updates = ['last_activity_at' => date('Y-m-d H:i:s')];
         
-        if ($channel === 'whatsapp' && empty($this->db->fetchOne("SELECT whatsapp_number FROM leads WHERE id = ?", [$leadId])['whatsapp_number'] ?? '')) {
+        if ($channel === 'whatsapp' && empty($this->db->fetchOne("SELECT whatsapp_number FROM leads WHERE id = ?" . $tenantFilter, array_merge([$leadId], $tid > 1 ? [$tid] : []))['whatsapp_number'] ?? '')) {
             $updates['whatsapp_number'] = $this->normalizePhone($from);
         }
         
-        if ($channel === 'telegram' && empty($this->db->fetchOne("SELECT telegram_id FROM leads WHERE id = ?", [$leadId])['telegram_id'] ?? '')) {
+        if ($channel === 'telegram' && empty($this->db->fetchOne("SELECT telegram_id FROM leads WHERE id = ?" . $tenantFilter, array_merge([$leadId], $tid > 1 ? [$tid] : []))['telegram_id'] ?? '')) {
             $updates['telegram_id'] = $messageData['chat_id'] ?? $from;
         }
 

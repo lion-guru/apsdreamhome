@@ -225,7 +225,7 @@ class LeadScorer
             SELECT l.id FROM leads l
             LEFT JOIN ai_lead_scores s ON l.id = s.lead_id" . ($tid > 1 ? " AND s.tenant_id = ?" : "") . " AND s.scored_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
             WHERE s.id IS NULL{$tenantFilter}
-            LIMIT $limit
+            LIMIT " . (int)$limit . "
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);

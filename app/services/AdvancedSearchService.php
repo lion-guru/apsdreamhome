@@ -25,13 +25,13 @@ class AdvancedSearchService {
         $cacheKey = $this->cachePrefix . 'properties_' . md5(serialize($params));
         
         return Cache::remember($cacheKey, function() use ($params) {
-            $query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
-                      d.name as district_name, s.name as state_name
-                      FROM user_properties p 
-                      LEFT JOIN users u ON p.user_id = u.id 
-                      LEFT JOIN districts d ON p.district_id = d.id
-                      LEFT JOIN states s ON p.state_id = s.id
-                      WHERE p.status = 'approved'";
+$query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
+                       d.name as district_name, s.name as state_name
+                       FROM user_properties p 
+                       LEFT JOIN users u ON p.user_id = u.id 
+                       LEFT JOIN districts d ON p.district_id = d.id
+                       LEFT JOIN states s ON p.state_id = s.id
+                       WHERE p.status = 'approved'" . $this->tenantSql();
             
             $bindings = [];
             
@@ -229,23 +229,27 @@ class AdvancedSearchService {
             // Suggest property types
             $typeQuery = "SELECT DISTINCT property_type as suggestion, 'property_type' as type 
                           FROM user_properties 
-                          WHERE property_type LIKE :query 
+                          WHERE property_type LIKE :query" . $this->tenantSql() . "
                           LIMIT 5";
             
             $stmt = $this->db->prepare($typeQuery);
-            $stmt->execute(['query' => '%' . $query . '%']);
+            $typeParams = ['query' => '%' . $query . '%'];
+            if ($this->tenantId() > 1) $typeParams[':stid'] = $this->tenantId();
+            $stmt->execute($typeParams);
             $suggestions = array_merge($suggestions, $stmt->fetchAll(PDO::FETCH_ASSOC));
             
             // Suggest from recent searches
             $recentQuery = "SELECT DISTINCT search_term as suggestion, 'recent' as type 
                             FROM search_history 
-                            WHERE search_term LIKE :query 
+                            WHERE search_term LIKE :query" . $this->tenantSql() . "
                             ORDER BY created_at DESC 
                             LIMIT 5";
             
             try {
                 $stmt = $this->db->prepare($recentQuery);
-                $stmt->execute(['query' => '%' . $query . '%']);
+                $recentParams = ['query' => '%' . $query . '%'];
+                if ($this->tenantId() > 1) $recentParams[':stid'] = $this->tenantId();
+                $stmt->execute($recentParams);
                 $suggestions = array_merge($suggestions, $stmt->fetchAll(PDO::FETCH_ASSOC));
             } catch (\Exception $e) {
                 // Table might not exist yet

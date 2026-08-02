@@ -108,10 +108,10 @@ class RazorpayService
         if ($resp['success'] && isset($resp['data']['id'])) {
             try {
                 $stmt = $this->db?->prepare("INSERT INTO payment_orders
-                    (order_id, gateway, booking_id, user_id, customer_name, customer_email, customer_phone, amount, currency, status, description, notes, receipt, expires_at)
-                    VALUES (?, 'razorpay', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    (order_id, gateway, booking_id, user_id, customer_name, customer_email, customer_phone, amount, currency, status, description, notes, receipt, expires_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ")
+                    VALUES (?, 'razorpay', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($this->tenantInsertData()) > 0 ? ', ?' : '') . ")");
                 $expires = date('Y-m-d H:i:s', time() + 30 * 60);
-                $stmt?->execute([
+                $params = [
                     $resp['data']['id'],
                     $notes['booking_id'] ?? null,
                     $notes['user_id'] ?? null,
@@ -125,7 +125,9 @@ class RazorpayService
                     json_encode($this->sanitizeNotes($notes)),
                     $receipt,
                     $expires,
-                ]);
+                ];
+                if (!empty($insertData = $this->tenantInsertData())) $params = array_merge($params, array_values($insertData));
+                $stmt?->execute($params);
             } catch (\Throwable $e) {
                 $this->info("createOrder: db log failed: " . $e->getMessage());
             }

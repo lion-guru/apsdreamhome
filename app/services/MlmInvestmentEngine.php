@@ -256,7 +256,7 @@ class MlmInvestmentEngine
         $stats['total_revenue'] = (float) $stmt->fetchColumn();
 
         // Total distributed via joining packages
-        $stmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE commission_type = 'joining_package' AND status = 'paid'");
+        $stmt = $this->pdo->query("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE commission_type = 'joining_package' AND status = 'paid'" . $this->tenantSql());
         $stats['total_distributed'] = (float) $stmt->fetchColumn();
 
         // Pending registrations

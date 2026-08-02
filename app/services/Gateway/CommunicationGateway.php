@@ -543,14 +543,18 @@ class CommunicationGateway
         try {
             if ($channel) {
                 $stmt = $this->pdo->prepare(
-                    'SELECT * FROM gateway_logs WHERE gateway = ? ORDER BY id DESC LIMIT ' . (int)$limit
+                    'SELECT * FROM gateway_logs WHERE gateway = ?' . $this->tenantSql() . ' ORDER BY id DESC LIMIT ' . (int)$limit
                 );
-                $stmt->execute([$channel]);
+                $params = [$channel];
+                if ($this->tenantId() > 1) $params[] = $this->tenantId();
+                $stmt->execute($params);
             } else {
                 $stmt = $this->pdo->prepare(
-                    'SELECT * FROM gateway_logs ORDER BY id DESC LIMIT ' . (int)$limit
+                    'SELECT * FROM gateway_logs' . $this->tenantSql() . ' ORDER BY id DESC LIMIT ' . (int)$limit
                 );
-                $stmt->execute();
+                $params = [];
+                if ($this->tenantId() > 1) $params[] = $this->tenantId();
+                $stmt->execute($params);
             }
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {

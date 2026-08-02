@@ -4,6 +4,7 @@ namespace App\Services\AI;
 
 use App\Core\Database\Database;
 use App\Core\Security;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * APS Dream Home - AI Property Valuation Engine
@@ -11,6 +12,8 @@ use App\Core\Security;
  */
 class PropertyValuationEngine
 {
+    use ServiceTenantTrait;
+
     private $database;
     private $marketData;
     private $propertyTypeMultipliers;
@@ -321,11 +324,13 @@ class PropertyValuationEngine
         try {
             $stmt = $this->database->prepare("
                 SELECT * FROM property_valuations 
-                WHERE property_id = ? 
+                WHERE property_id = ?" . $this->tenantSql() . "
                 ORDER BY created_at DESC 
                 LIMIT ?
             ");
-            $stmt->execute([$propertyId, $limit]);
+            $params = [$propertyId, $limit];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             return [];

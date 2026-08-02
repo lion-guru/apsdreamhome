@@ -2,9 +2,12 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 class TotpService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $pdo;
     private $algorithm = 'sha1';
@@ -91,8 +94,10 @@ class TotpService
     public function enableForUser(int $userId, string $secret): bool
     {
         try {
-            $st = $this->db->prepare("UPDATE users SET two_factor_secret = :s, two_factor_enabled = 1 WHERE id = :id");
-            $st->execute([':s' => $secret, ':id' => $userId]);
+            $st = $this->db->prepare("UPDATE users SET two_factor_secret = :s, two_factor_enabled = 1 WHERE id = :id" . $this->tenantSql());
+            $params = [':s' => $secret, ':id' => $userId];
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+            $st->execute($params);
             return $st->rowCount() > 0;
         } catch (\Throwable $e) { return false; }
     }
@@ -100,8 +105,10 @@ class TotpService
     public function disableForUser(int $userId): bool
     {
         try {
-            $st = $this->db->prepare("UPDATE users SET two_factor_secret = NULL, two_factor_enabled = 0 WHERE id = :id");
-            $st->execute([':id' => $userId]);
+            $st = $this->db->prepare("UPDATE users SET two_factor_secret = NULL, two_factor_enabled = 0 WHERE id = :id" . $this->tenantSql());
+            $params = [':id' => $userId];
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+            $st->execute($params);
             return $st->rowCount() > 0;
         } catch (\Throwable $e) { return false; }
     }
@@ -109,8 +116,10 @@ class TotpService
     public function isEnabled(int $userId): bool
     {
         try {
-            $st = $this->db->prepare("SELECT two_factor_enabled FROM users WHERE id = :id");
-            $st->execute([':id' => $userId]);
+            $st = $this->db->prepare("SELECT two_factor_enabled FROM users WHERE id = :id" . $this->tenantSql());
+            $params = [':id' => $userId];
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+            $st->execute($params);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             return !empty($r['two_factor_enabled']);
         } catch (\Throwable $e) { return false; }
@@ -119,8 +128,10 @@ class TotpService
     public function getSecret(int $userId): ?string
     {
         try {
-            $st = $this->db->prepare("SELECT two_factor_secret FROM users WHERE id = :id");
-            $st->execute([':id' => $userId]);
+            $st = $this->db->prepare("SELECT two_factor_secret FROM users WHERE id = :id" . $this->tenantSql());
+            $params = [':id' => $userId];
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+            $st->execute($params);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             return $r['two_factor_secret'] ?? null;
         } catch (\Throwable $e) { return null; }

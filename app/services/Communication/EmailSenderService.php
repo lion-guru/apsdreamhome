@@ -78,38 +78,52 @@ class EmailSenderService
         }
     }
 
-    public function sendFromQueue($queueId)
+public function sendFromQueue($queueId)
     {
-        $sql = "SELECT * FROM email_queue WHERE id = ? AND status = 'pending'";
-        $email = $this->db->fetchOne($sql, [$queueId]);
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM email_queue WHERE id = ? AND status = 'pending'" . $tenantFilter;
+        $params = [$queueId];
+        if ($tid > 1) $params[] = $tid;
+        $email = $this->db->fetchOne($sql, $params);
         if (!$email) return false;
 
-        $this->db->query("UPDATE email_queue SET status = 'processing', attempts = attempts + 1 WHERE id = ?", [$queueId]);
+        $updParams = [$queueId];
+        if ($tid > 1) $updParams[] = $tid;
+        $this->db->query("UPDATE email_queue SET status = 'processing', attempts = attempts + 1 WHERE id = ?" . $tenantFilter, $updParams);
 
         try {
             $sent = $this->send($email['to_email'], $email['subject'], $email['body_html'], $email['body_text'] ?? '');
             $status = $sent ? 'sent' : 'failed';
             $error = $sent ? null : 'Send method returned false';
+            $updParams2 = [$status, $error, $queueId];
+            if ($tid > 1) $updParams2[] = $tid;
             $this->db->query(
-                "UPDATE email_queue SET status = ?, sent_at = NOW(), error_message = ? WHERE id = ?",
-                [$status, $error, $queueId]
+                "UPDATE email_queue SET status = ?, sent_at = NOW(), error_message = ? WHERE id = ?" . $tenantFilter,
+                $updParams2
             );
             return $sent;
         } catch (\Exception $e) {
+            $updParams3 = [$e->getMessage(), $queueId];
+            if ($tid > 1) $updParams3[] = $tid;
             $this->db->query(
-                "UPDATE email_queue SET status = 'failed', error_message = ? WHERE id = ?",
-                [$e->getMessage(), $queueId]
+                "UPDATE email_queue SET status = 'failed', error_message = ? WHERE id = ?" . $tenantFilter,
+                $updParams3
             );
             return false;
         }
     }
 
-    public function processQueue($limit = 10)
+public function processQueue($limit = 10)
     {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $sql = "SELECT * FROM email_queue 
-                WHERE status = 'pending' AND attempts < 3 
+                WHERE status = 'pending' AND attempts < 3" . $tenantFilter . "
                 ORDER BY created_at ASC LIMIT ?";
-        $emails = $this->db->fetchAll($sql, [$limit]);
+        $params = [$limit];
+        if ($tid > 1) $params[] = $tid;
+        $emails = $this->db->fetchAll($sql, $params);
         $results = ['processed' => 0, 'sent' => 0, 'failed' => 0];
         foreach ($emails as $email) {
             $ok = $this->sendFromQueue($email['id']);
@@ -139,11 +153,13 @@ class EmailSenderService
         }
     }
 
-    public function getQueueStats()
+public function getQueueStats()
     {
         $stats = ['pending' => 0, 'processing' => 0, 'sent' => 0, 'failed' => 0, 'cancelled' => 0];
         try {
-            $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM email_queue GROUP BY status");
+            $tid = $this->tenantId();
+            $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+            $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM email_queue WHERE 1=1" . $tenantFilter . " GROUP BY status", $tid > 1 ? [$tid] : []);
             foreach ($rows as $r) $stats[$r['status']] = (int)$r['cnt'];
         } catch (\Exception $e) {
                     error_log("EmailSenderService.php: " . $e->getMessage());
@@ -153,10 +169,13 @@ class EmailSenderService
 
     public function getQueueItems($status = null, $limit = 50, $offset = 0)
     {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $where = $status ? "WHERE status = ?" : "";
         $params = $status ? [$status] : [];
+        if ($tid > 1) $params[] = $tid;
         try {
-            $sql = "SELECT * FROM email_queue $where ORDER BY created_at DESC LIMIT ? OFFSET ?";
+            $sql = "SELECT * FROM email_queue $where" . $tenantFilter . " ORDER BY created_at DESC LIMIT ? OFFSET ?";
             return $this->db->fetchAll($sql, array_merge($params, [$limit, $offset]));
         } catch (\Exception $e) { return []; }
     }

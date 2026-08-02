@@ -427,11 +427,11 @@ class EMICalculatorService
     {
         $sql = "INSERT INTO emi_calculations 
             (user_id, property_id, principal_amount, interest_rate, tenure_years, 
-             emi_amount, total_interest, total_payment, calculation_data) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+             emi_amount, total_interest, total_payment, calculation_data" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($this->tenantInsertData()) > 0 ? ', ?' : '') . ")";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+        $params = [
             $userId,
             $propertyId,
             $data['principal'],
@@ -441,7 +441,9 @@ class EMICalculatorService
             $data['total_interest'],
             $data['total_payment'],
             json_encode($data)
-        ]);
+        ];
+        if (!empty($insertData = $this->tenantInsertData())) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
     }
     
     /**

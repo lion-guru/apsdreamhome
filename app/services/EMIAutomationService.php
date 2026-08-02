@@ -120,12 +120,16 @@ class EMIAutomationService
 
                 // 1. Advance Payment Check
                 if (!isset($advanceCache[$bookingId])) {
-                    $stmtPaid = $this->db->prepare("SELECT COALESCE(SUM(paid_amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ?");
-                    $stmtPaid->execute([$bookingId]);
+                    $stmtPaid = $this->db->prepare("SELECT COALESCE(SUM(paid_amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ?" . $this->tenantSql());
+                    $paidParams = [$bookingId];
+                    if ($this->tenantId() > 1) $paidParams[] = $this->tenantId();
+                    $stmtPaid->execute($paidParams);
                     $totalPaid = (float)$stmtPaid->fetchColumn();
 
-                    $stmtScheduled = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ? AND due_date <= CURDATE()");
-                    $stmtScheduled->execute([$bookingId]);
+                    $stmtScheduled = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ? AND due_date <= CURDATE()" . $this->tenantSql());
+                    $schedParams = [$bookingId];
+                    if ($this->tenantId() > 1) $schedParams[] = $this->tenantId();
+                    $stmtScheduled->execute($schedParams);
                     $totalScheduled = (float)$stmtScheduled->fetchColumn();
 
                     $advanceCache[$bookingId] = ($totalPaid >= $totalScheduled);
