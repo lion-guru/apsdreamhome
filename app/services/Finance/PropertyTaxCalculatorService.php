@@ -4,9 +4,12 @@ namespace App\Services\Finance;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class PropertyTaxCalculatorService
 {
+    use ServiceTenantTrait;
+
     /** @var PDO */
     protected $db;
 
@@ -247,24 +250,14 @@ class PropertyTaxCalculatorService
      */
     protected function saveAssessment(array $data): ?int
     {
-        if (!$this->db) return null;
+         if (!$this->db) return null;
 
         try {
-            $stmt = $this->db->prepare("
-                INSERT INTO property_tax_assessments 
-                (property_id, assessment_year, property_type, built_up_area_sqft, land_area_sqft,
-                 tax_rate_applied, annual_tax_amount, rebate_amount, penalty_amount, total_due, status, due_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE
-                    tax_rate_applied = VALUES(tax_rate_applied),
-                    annual_tax_amount = VALUES(annual_tax_amount),
-                    rebate_amount = VALUES(rebate_amount),
-                    penalty_amount = VALUES(penalty_amount),
-                    total_due = VALUES(total_due),
-                    status = VALUES(status),
-                    updated_at = CURRENT_TIMESTAMP
-            ");
-            $stmt->execute([
+            $tid = $this->tenantId();
+            $cols = "property_id, assessment_year, property_type, built_up_area_sqft, land_area_sqft,
+                     tax_rate_applied, annual_tax_amount, rebate_amount, penalty_amount, total_due, status, due_date";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $params = [
                 $data['property_id'],
                 $data['assessment_year'],
                 $data['property_type'],
@@ -277,7 +270,22 @@ class PropertyTaxCalculatorService
                 $data['total_due'],
                 $data['status'],
                 $data['due_date'],
-            ]);
+            ];
+            if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare("
+                INSERT INTO property_tax_assessments 
+                ($cols)
+                VALUES ($vals)
+                ON DUPLICATE KEY UPDATE
+                    tax_rate_applied = VALUES(tax_rate_applied),
+                    annual_tax_amount = VALUES(annual_tax_amount),
+                    rebate_amount = VALUES(rebate_amount),
+                    penalty_amount = VALUES(penalty_amount),
+                    total_due = VALUES(total_due),
+                    status = VALUES(status),
+                    updated_at = CURRENT_TIMESTAMP
+            ");
+            $stmt->execute($params);
             return (int)$this->db->lastInsertId();
         } catch (Exception $e) {
             error_log('[PropertyTaxCalculatorService::saveAssessment] ' . $e->getMessage());
@@ -295,7 +303,7 @@ class PropertyTaxCalculatorService
         try {
             $stmt = $this->db->prepare("
                 SELECT * FROM property_tax_assessments 
-                WHERE property_id = ? 
+                WHERE property_id = ? {$this->tenantSql()}
                 ORDER BY assessment_year DESC
             ");
             $stmt->execute([$propertyId]);

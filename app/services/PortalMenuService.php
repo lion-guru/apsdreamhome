@@ -23,8 +23,12 @@
  */
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 class PortalMenuService
 {
+    use ServiceTenantTrait;
+
     private ?\PDO $pdo = null;
     private ?int $userId = null;
     private string $role = 'guest';
@@ -280,7 +284,7 @@ class PortalMenuService
                 FROM employees e
                 INNER JOIN employee_designation_roles edr 
                     ON edr.designation = e.designation AND (edr.department = e.department OR edr.department IS NULL)
-                WHERE e.user_id = ?
+                WHERE e.user_id = ? {$this->tenantSqlForAlias('e')} AND edr.tenant_id = {$this->tenantId()}
                 LIMIT 1
             ");
             $stmt->execute([$this->userId]);
@@ -340,6 +344,11 @@ class PortalMenuService
                 $where[] = "`$extraCol` = ?";
                 $params[] = $extraVal;
             }
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             if ($where) {
                 $sql .= ' WHERE ' . implode(' AND ', $where);
             }
@@ -357,7 +366,7 @@ class PortalMenuService
             return null;
         }
         try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM site_visits WHERE (assigned_to = ? OR user_id = ?) AND status NOT IN ('cancelled','completed') AND visit_date >= CURDATE()");
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM site_visits WHERE (assigned_to = ? OR user_id = ?) AND status NOT IN ('cancelled','completed') AND visit_date >= CURDATE() {$this->tenantSql()}");
             $stmt->execute([$this->userId, $this->userId]);
             return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
         } catch (\Throwable $e) {

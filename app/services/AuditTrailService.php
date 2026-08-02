@@ -50,11 +50,13 @@ class AuditTrailService
                 request_url VARCHAR(500) NULL,
                 request_method VARCHAR(10) NULL,
                 execution_time_ms INT NULL,
+                tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
                 INDEX idx_timestamp (timestamp),
                 INDEX idx_user (user_id, user_type),
                 INDEX idx_action (action),
                 INDEX idx_entity (entity_type, entity_id),
-                INDEX idx_severity (severity)
+                INDEX idx_severity (severity),
+                INDEX idx_tenant (tenant_id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
             
             $this->database->getConnection()->exec($sql);
@@ -74,14 +76,15 @@ class AuditTrailService
             $userId = $this->getCurrentUserId();
             $userType = $this->getCurrentUserType();
             
-            $sql = "INSERT INTO audit_log 
-                    (user_id, user_type, user_ip, user_agent, session_id, action, 
+            $insertData = $this->tenantInsertData();
+            $cols = "user_id, user_type, user_ip, user_agent, session_id, action, 
                      entity_type, entity_id, old_values, new_values, description, 
-                     severity, request_url, request_method) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     severity, request_url, request_method" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+            $sql = "INSERT INTO audit_log ($cols) VALUES ($ph)";
             
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $stmt->execute(array_merge([
                 $userId,
                 $userType,
                 $_SERVER['REMOTE_ADDR'] ?? null,
@@ -96,7 +99,7 @@ class AuditTrailService
                 $severity,
                 $_SERVER['REQUEST_URI'] ?? null,
                 $_SERVER['REQUEST_METHOD'] ?? null
-            ]);
+            ], array_values($insertData)));
             
             return $this->database->lastInsertId();
             
@@ -117,13 +120,14 @@ class AuditTrailService
             $userId = $this->getCurrentUserId();
             $userType = $this->getCurrentUserType();
             
-            $sql = "INSERT INTO audit_log 
-                    (user_id, user_type, user_ip, action, entity_type, entity_id, 
-                     description, severity, status, error_message, request_url, request_method) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $insertData = $this->tenantInsertData();
+            $cols = "user_id, user_type, user_ip, action, entity_type, entity_id, 
+                     description, severity, status, error_message, request_url, request_method" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+            $sql = "INSERT INTO audit_log ($cols) VALUES ($ph)";
             
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([
+            $stmt->execute(array_merge([
                 $userId,
                 $userType,
                 $_SERVER['REMOTE_ADDR'] ?? null,
@@ -136,7 +140,7 @@ class AuditTrailService
                 $errorMessage,
                 $_SERVER['REQUEST_URI'] ?? null,
                 $_SERVER['REQUEST_METHOD'] ?? null
-            ]);
+            ], array_values($insertData)));
             
             return $this->database->lastInsertId();
             
@@ -196,7 +200,8 @@ class AuditTrailService
             $params[] = $search;
         }
         
-        $whereClause = implode(' AND ', $where);
+        $whereClause = implode(' AND ', $where) . $this->tenantSql();
+        $params[] = $this->tenantId();
         
         // Get total count
         $countSql = "SELECT COUNT(*) FROM audit_log WHERE {$whereClause}";
@@ -240,11 +245,13 @@ class AuditTrailService
     public function getEntityHistory(string $entityType, int $entityId): array
     {
         $sql = "SELECT * FROM audit_log 
-                WHERE entity_type = ? AND entity_id = ? 
+                WHERE entity_type = ? AND entity_id = ?" . $this->tenantSql() . "
                 ORDER BY timestamp DESC";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$entityType, $entityId]);
+        $params = [$entityType, $entityId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($records as &$record) {
@@ -269,13 +276,15 @@ class AuditTrailService
                     action,
                     COUNT(*) as count
                 FROM audit_log 
-                WHERE user_id = ? AND user_type = ? 
+                WHERE user_id = ? AND user_type = ?" . $this->tenantSql() . "
                 AND timestamp >= DATE_SUB(NOW(), INTERVAL ? DAY)
                 GROUP BY DATE(timestamp), action
                 ORDER BY date DESC, count DESC";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType, $days]);
+        $params = [$userId, $userType, $days];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
@@ -294,22 +303,35 @@ class AuditTrailService
         $stats = [];
         
         // Total actions
-        $sql1 = "SELECT COUNT(*) FROM audit_log WHERE {$dateFilter}";
-        $stats['total_actions'] = $this->database->query($sql1)->fetchColumn();
+        $sql1 = "SELECT COUNT(*) FROM audit_log WHERE {$dateFilter}" . $this->tenantSql();
+        $params1 = [];
+        if ($this->tenantId() > 1) $params1[] = $this->tenantId();
+        $stats['total_actions'] = (int)$this->database->prepare($sql1)->fetchColumn($params1 === [] ? null : $params1);
         
         // By action type
         $sql2 = "SELECT action, COUNT(*) as count FROM audit_log 
-                  WHERE {$dateFilter} GROUP BY action ORDER BY count DESC LIMIT 10";
-        $stats['top_actions'] = $this->database->query($sql2)->fetchAll(\PDO::FETCH_ASSOC);
+                  WHERE {$dateFilter}" . $this->tenantSql() . " GROUP BY action ORDER BY count DESC LIMIT 10";
+        $stmt2 = $this->database->prepare($sql2);
+        $params2 = [];
+        if ($this->tenantId() > 1) $params2[] = $this->tenantId();
+        $stmt2->execute($params2);
+        $stats['top_actions'] = $stmt2->fetchAll(\PDO::FETCH_ASSOC);
         
         // By user type
         $sql3 = "SELECT user_type, COUNT(*) as count FROM audit_log 
-                  WHERE {$dateFilter} GROUP BY user_type";
-        $stats['by_user_type'] = $this->database->query($sql3)->fetchAll(\PDO::FETCH_ASSOC);
+                  WHERE {$dateFilter}" . $this->tenantSql() . " GROUP BY user_type";
+        $stmt3 = $this->database->prepare($sql3);
+        $params3 = [];
+        if ($this->tenantId() > 1) $params3[] = $this->tenantId();
+        $stmt3->execute($params3);
+        $stats['by_user_type'] = $stmt3->fetchAll(\PDO::FETCH_ASSOC);
         
         // Failed actions
-        $sql4 = "SELECT COUNT(*) FROM audit_log WHERE status = 'failed' AND {$dateFilter}";
-        $stats['failed_actions'] = $this->database->query($sql4)->fetchColumn();
+        $sql4 = "SELECT COUNT(*) FROM audit_log WHERE status = 'failed' AND {$dateFilter}" . $this->tenantSql();
+        $stmt4 = $this->database->prepare($sql4);
+        $params4 = [];
+        if ($this->tenantId() > 1) $params4[] = $this->tenantId();
+        $stats['failed_actions'] = (int)$stmt4->fetchColumn($params4 === [] ? null : $params4);
         
         return $stats;
     }
@@ -334,9 +356,11 @@ class AuditTrailService
             
             // Delete from main table
             if ($archived > 0) {
-                $sql2 = "DELETE FROM audit_log WHERE timestamp < ?";
+                $sql2 = "DELETE FROM audit_log WHERE timestamp < ?" . $this->tenantSql();
+                $params2 = [$cutoff];
+                if ($this->tenantId() > 1) $params2[] = $this->tenantId();
                 $stmt2 = $this->database->prepare($sql2);
-                $stmt2->execute([$cutoff]);
+                $stmt2->execute($params2);
             }
             
             return $archived;

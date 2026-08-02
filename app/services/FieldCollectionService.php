@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * On-Field Cash Collection Service for Associates & Agents
  *
@@ -11,6 +13,8 @@ namespace App\Services;
  */
 class FieldCollectionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $cashCollection;
 
@@ -97,41 +101,69 @@ class FieldCollectionService
             'this_month_amount' => 0, 'this_month_count'=> 0,
         ];
         try {
-            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND collection_date = ?");
-            $s->execute([$collectorId, date('Y-m-d')]); $stats['today_amount'] = (float)$s->fetchColumn();
+            $tid = $this->tenantId();
+            $tsql = $this->tenantSql();
+            $tp = $tid > 1 ? [$tid] : [];
 
-            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND collection_date = ?");
-            $s->execute([$collectorId, date('Y-m-d')]); $stats['today_count'] = (int)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND collection_date = ?" . $tsql);
+            $params = [$collectorId, date('Y-m-d')];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['today_amount'] = (float)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ?");
-            $s->execute([$collectorId]); $stats['total_amount'] = (float)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND collection_date = ?" . $tsql);
+            $params = [$collectorId, date('Y-m-d')];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['today_count'] = (int)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ?");
-            $s->execute([$collectorId]); $stats['total_count'] = (int)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ?" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['total_amount'] = (float)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND status = 'submitted'");
-            $s->execute([$collectorId]); $stats['pending_count'] = (int)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ?" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['total_count'] = (int)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND status = 'submitted'");
-            $s->execute([$collectorId]); $stats['pending_amount'] = (float)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND status = 'submitted'" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['pending_count'] = (int)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND status = 'verified'");
-            $s->execute([$collectorId]); $stats['verified_count'] = (int)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND status = 'submitted'" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['pending_amount'] = (float)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND status = 'verified'");
-            $s->execute([$collectorId]); $stats['verified_amount'] = (float)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND status = 'verified'" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['verified_count'] = (int)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND status = 'rejected'");
-            $s->execute([$collectorId]); $stats['rejected_count'] = (int)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND status = 'verified'" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['verified_amount'] = (float)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND status = 'rejected'");
-            $s->execute([$collectorId]); $stats['rejected_amount'] = (float)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND status = 'rejected'" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['rejected_count'] = (int)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND collection_date >= ?");
-            $s->execute([$collectorId, date('Y-m-01')]); $stats['this_month_amount'] = (float)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND status = 'rejected'" . $tsql);
+            $params = [$collectorId];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['rejected_amount'] = (float)$s->fetchColumn();
 
-            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND collection_date >= ?");
-            $s->execute([$collectorId, date('Y-m-01')]); $stats['this_month_count'] = (int)$s->fetchColumn();
+            $s = $this->db->prepare("SELECT COALESCE(SUM(amount),0) FROM cash_collections WHERE collector_id = ? AND collection_date >= ?" . $tsql);
+            $params = [$collectorId, date('Y-m-01')];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['this_month_amount'] = (float)$s->fetchColumn();
+
+            $s = $this->db->prepare("SELECT COUNT(*) FROM cash_collections WHERE collector_id = ? AND collection_date >= ?" . $tsql);
+            $params = [$collectorId, date('Y-m-01')];
+            if ($tid > 1) $params = array_merge($params, $tp);
+            $s->execute($params); $stats['this_month_count'] = (int)$s->fetchColumn();
         } catch (\Throwable $e) {
             error_log('[FieldCollectionService] getMyStats error: ' . $e->getMessage());
         }

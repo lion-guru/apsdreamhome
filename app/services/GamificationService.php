@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * GamificationService — computes level/rank/progress for any user role.
@@ -9,6 +10,7 @@ use PDO;
  */
 class GamificationService
 {
+    use ServiceTenantTrait;
     private PDO $pdo;
 
     public function __construct(?PDO $pdo = null)
@@ -40,12 +42,12 @@ class GamificationService
     {
         $teamSales = 0.0;
         try {
-            $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
+            $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commission_ledger WHERE beneficiary_user_id = ? {$this->tenantSql()} AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
             $stmt->execute([$userId]);
             $teamSales = (float)$stmt->fetchColumn();
         } catch (\Throwable $e) {
             try {
-                $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commissions WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
+                $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commissions WHERE user_id = ? {$this->tenantSql()} AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
                 $stmt->execute([$userId]);
                 $teamSales = (float)$stmt->fetchColumn();
             } catch (\Throwable $e2) { error_log($e2->getMessage()); }
@@ -53,7 +55,7 @@ class GamificationService
 
         $networkSize = 0;
         try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_user_id = ?");
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_user_id = ? {$this->tenantSql()}");
             $stmt->execute([$userId]);
             $networkSize = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log($e->getMessage()); }
@@ -74,7 +76,7 @@ class GamificationService
     {
         $deals = 0; $revenue = 0.0;
         try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) c, COALESCE(SUM(amount),0) s FROM deals WHERE agent_id = ? AND status = 'won' AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) c, COALESCE(SUM(amount),0) s FROM deals WHERE agent_id = ? {$this->tenantSql()} AND status = 'won' AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
             $stmt->execute([$agentId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row) { $deals = (int)$row['c']; $revenue = (float)$row['s']; }
@@ -94,7 +96,7 @@ class GamificationService
     {
         $score = 0;
         try {
-            $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(points),0) FROM performance_metrics WHERE employee_id = ? AND metric_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
+            $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(points),0) FROM performance_metrics WHERE employee_id = ? {$this->tenantSql()} AND metric_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
             $stmt->execute([$employeeId]);
             $score = (int)$stmt->fetchColumn();
         } catch (\Throwable $e) {
@@ -119,7 +121,7 @@ class GamificationService
                 SELECT a.name, a.level, a.lifetime_sales, u.id
                 FROM associates a
                 JOIN users u ON u.id = a.user_id
-                WHERE a.lifetime_sales IS NOT NULL AND a.lifetime_sales > 0
+                WHERE a.lifetime_sales IS NOT NULL AND a.lifetime_sales > 0 {$this->tenantSqlForAlias('a')}
                 ORDER BY a.lifetime_sales DESC
                 LIMIT 1
             ");
@@ -135,16 +137,17 @@ class GamificationService
     {
         try {
             $pdo = $this->resolvePdo();
-            $stmt = $pdo->prepare("
+            $sql = "
                 SELECT u.name, a.level, COALESCE(SUM(d.deal_value), 0) as total_deals
                 FROM users u
                 JOIN agents a ON a.user_id = u.id
-                LEFT JOIN deals d ON d.assigned_to = u.id
-                WHERE u.role = 'agent'
+                LEFT JOIN deals d ON d.assigned_to = u.id {$this->tenantSqlForAlias('d')}
+                WHERE u.role = 'agent' {$this->tenantSqlForAlias('a')}
                 GROUP BY u.id, u.name, a.level
                 ORDER BY total_deals DESC
                 LIMIT 1
-            ");
+            ";
+            $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
@@ -157,16 +160,17 @@ class GamificationService
     {
         try {
             $pdo = $this->resolvePdo();
-            $stmt = $pdo->prepare("
+            $sql = "
                 SELECT u.name, COALESCE(SUM(pm.points), 0) as total_points
                 FROM users u
                 JOIN employees e ON e.user_id = u.id
-                LEFT JOIN performance_metrics pm ON pm.employee_id = e.id
-                WHERE u.role = 'employee'
+                LEFT JOIN performance_metrics pm ON pm.employee_id = e.id {$this->tenantSqlForAlias('pm')}
+                WHERE u.role = 'employee' {$this->tenantSqlForAlias('e')}
                 GROUP BY u.id, u.name
                 ORDER BY total_points DESC
                 LIMIT 1
-            ");
+            ";
+            $stmt = $pdo->prepare($sql);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row) {

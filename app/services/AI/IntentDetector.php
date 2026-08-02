@@ -11,6 +11,8 @@ use PDO;
 
 class IntentDetector
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     private $pdo;
 
@@ -80,9 +82,9 @@ class IntentDetector
         $stmt = $this->db->prepare("
             SELECT intent_name, pattern_text, pattern_type, weight, hit_count
             FROM ai_intent_patterns
-            WHERE is_active = 1 AND (language = ? OR language = 'en')
+            WHERE is_active = 1 AND (language = ? OR language = 'en'){$this->tenantSql()}
         ");
-        $stmt->execute([$language]);
+        $stmt->execute(array_merge([$language], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         $dbPatterns = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($dbPatterns as $p) {
@@ -123,12 +125,19 @@ class IntentDetector
      */
     public function learn(string $intent, string $pattern, string $type = 'keyword', float $weight = 1.0, string $language = 'en'): int
     {
+        $tenantData = $this->tenantInsertData();
+        $tenantCols = array_keys($tenantData);
+        $tenantVals = array_values($tenantData);
+        $columns = array_merge(['intent_name', 'pattern_text', 'pattern_type', 'weight', 'language'], $tenantCols);
+        $values  = array_merge([$intent, $pattern, $type, $weight, $language], $tenantVals);
+        $colStr = implode(', ', $columns);
+        $placeholders = implode(', ', array_fill(0, count($values), '?'));
         $stmt = $this->db->prepare("
-            INSERT INTO ai_intent_patterns (intent_name, pattern_text, pattern_type, weight, language)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO ai_intent_patterns ($colStr)
+            VALUES ($placeholders)
             ON DUPLICATE KEY UPDATE weight = weight + 0.1, hit_count = hit_count + 1
         ");
-        $stmt->execute([$intent, $pattern, $type, $weight, $language]);
+        $stmt->execute($values);
         return (int)$this->db->lastInsertId();
     }
 
@@ -138,8 +147,10 @@ class IntentDetector
     public function reinforce(int $patternId, bool $success): void
     {
         $col = $success ? 'success_count' : 'hit_count';
-        $stmt = $this->db->prepare("UPDATE ai_intent_patterns SET $col = $col + 1 WHERE id = ?");
-        $stmt->execute([$patternId]);
+        $stmt = $this->db->prepare("UPDATE ai_intent_patterns SET $col = $col + 1 WHERE id = ?{$this->tenantSql()}");
+        $params = [$patternId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
     }
 
     /**
@@ -147,21 +158,25 @@ class IntentDetector
      */
     private function seedDefaultIntents(): void
     {
-        $stmt = $this->db->query("SELECT COUNT(*) FROM ai_intent_patterns WHERE language = 'en'");
+        $tid = $this->tenantId();
+        $sql = "SELECT COUNT(*) FROM ai_intent_patterns WHERE language = 'en'" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($tid > 1 ? [$tid] : []);
         if ((int)$stmt->fetchColumn() > 0) return;
 
         foreach ($this->defaultIntents as $intent => $langs) {
             foreach ($langs as $lang => $patterns) {
                 foreach ($patterns as $p) {
                     try {
-                        $ins = $this->db->prepare("
-                            INSERT INTO ai_intent_patterns (intent_name, pattern_text, pattern_type, language, weight)
-                            VALUES (?, ?, 'keyword', ?, 1.0)
-                        ");
-                        $ins->execute([$intent, $p, $lang]);
+                        $tenantData = $this->tenantInsertData();
+                        $columns = array_merge(['intent_name', 'pattern_text', 'pattern_type', 'language', 'weight'], array_keys($tenantData));
+                        $values  = array_merge([$intent, $p, 'keyword', $lang, 1.0], array_values($tenantData));
+                        $colStr = implode(', ', $columns);
+                        $placeholders = implode(', ', array_fill(0, count($values), '?'));
+                        $ins = $this->db->prepare("INSERT INTO ai_intent_patterns ($colStr) VALUES ($placeholders)");
+                        $ins->execute($values);
                     } catch (\Exception $e) {
-                    // ignore dupes
-                    error_log($e->getMessage());
+                        error_log($e->getMessage());
                     }
                 }
             }

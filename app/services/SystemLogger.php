@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Core\Database;
 use Exception;
 use JsonSerializable;
+use \App\Traits\ServiceTenantTrait;
 
 class SystemLogger
 {
+    use \App\Traits\ServiceTenantTrait;
     // Log levels
     public const EMERGENCY = 'emergency';
     public const ALERT = 'alert';

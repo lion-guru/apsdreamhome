@@ -356,7 +356,10 @@ class AIManager
         $results = [];
 
         // 1. Update user profiles from behavior
-        $stmt = $this->db->query("SELECT user_id FROM user_behavior_tracking WHERE tracked_at > DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY user_id LIMIT 100");
+        $tid = $this->tenantId();
+        $twhere = $this->tenantSql();
+        $stmt = $this->db->prepare("SELECT user_id FROM user_behavior_tracking WHERE tracked_at > DATE_SUB(NOW(), INTERVAL 7 DAY)" . $twhere . " GROUP BY user_id LIMIT 100");
+        $stmt->execute($tid > 1 ? [$tid] : []);
         $profileCount = 0;
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $this->recommender->updateProfileFromBehavior((int)$row['user_id']);
@@ -404,17 +407,25 @@ class AIManager
 
         foreach ($tables as $key => $t) {
             try {
-                $stats[$key] = (int)$this->db->query("SELECT COUNT(*) FROM $t")->fetchColumn();
+                $tid = $this->tenantId();
+                $tsql = $this->tenantSql();
+                $stmt = $this->db->prepare("SELECT COUNT(*) FROM $t" . $tsql);
+                $stmt->execute($tid > 1 ? [$tid] : []);
+                $stats[$key] = (int)$stmt->fetchColumn();
             } catch (\Exception $e) {
                 $stats[$key] = 0;
             }
         }
 
         // Recent activity
-        $stmt = $this->db->query("SELECT COUNT(*) FROM ai_learning_data WHERE learned_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM ai_learning_data WHERE learned_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)" . $tsql);
+        $stmt->execute($tid > 1 ? [$tid] : []);
         $stats['learnings_24h'] = (int)$stmt->fetchColumn();
 
-        $stmt = $this->db->query("SELECT COUNT(*) FROM ai_chat_sessions WHERE started_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM ai_chat_sessions WHERE started_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)" . $tsql);
+        $stmt->execute($tid > 1 ? [$tid] : []);
         $stats['chat_sessions_24h'] = (int)$stmt->fetchColumn();
 
         return $stats;

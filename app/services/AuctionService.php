@@ -22,9 +22,12 @@ class AuctionService
     public function createAuction($data)
     {
         try {
-            $sql = "INSERT INTO auctions (property_id, plot_id, title, description, auction_type, start_price, reserve_price, bid_increment, buy_now_price, deposit_amount, starts_at, ends_at, original_ends_at, extension_seconds, auto_extend_threshold_seconds, status, terms, image_url, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            $insertData = $this->tenantInsertData();
+            $cols = "property_id, plot_id, title, description, auction_type, start_price, reserve_price, bid_increment, buy_now_price, deposit_amount, starts_at, ends_at, original_ends_at, extension_seconds, auto_extend_threshold_seconds, status, terms, image_url, created_by" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+            $sql = "INSERT INTO auctions ($cols) VALUES ($ph)";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([
+            $params = [
                 $data['property_id'] ?? null,
                 $data['plot_id'] ?? null,
                 $data['title'],
@@ -44,7 +47,9 @@ class AuctionService
                 $data['terms'] ?? null,
                 $data['image_url'] ?? null,
                 $data['created_by'] ?? null
-            ]);
+            ];
+            if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+            $stmt->execute($params);
             return $this->pdo->lastInsertId();
         } catch (\Throwable $e) {
             error_log("Auction create: " . $e->getMessage());
@@ -55,8 +60,9 @@ class AuctionService
     public function getAllAuctions($status = null, $limit = 50)
     {
         try {
-            $sql = "SELECT a.*, p.title as property_title, p.address as property_address FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE 1=1";
+            $sql = "SELECT a.*, p.title as property_title, p.address as property_address FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE 1=1" . $this->tenantSql();
             $params = [];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
             if ($status) {
                 $sql .= " AND a.status = ?";
                 $params[] = $status;
@@ -71,8 +77,10 @@ class AuctionService
     public function getLiveAuctions($limit = 20)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT a.*, p.title as property_title, p.address as property_address, p.city as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.status = 'live' AND a.ends_at > NOW() ORDER BY a.ends_at ASC LIMIT " . (int)$limit);
-            $stmt->execute();
+            $tid = $this->tenantId();
+            $sql = "SELECT a.*, p.title as property_title, p.address as property_address, p.city as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.status = 'live' AND a.ends_at > NOW()" . ($tid > 1 ? " AND a.tenant_id = ?" : "") . " ORDER BY a.ends_at ASC LIMIT " . (int)$limit;
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$tid] : []);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) { return []; }
     }
@@ -80,8 +88,11 @@ class AuctionService
     public function getAuctionById($id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT a.*, p.title as property_title, p.address as property_address, p.city as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.id = ?");
-            $stmt->execute([$id]);
+            $sql = "SELECT a.*, p.title as property_title, p.address as property_address, p.city as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.id = ?" . $this->tenantSql();
+            $stmt = $this->pdo->prepare($sql);
+            $params = [$id];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) { return null; }
     }
@@ -91,8 +102,10 @@ class AuctionService
         try {
             $this->pdo->beginTransaction();
 
-            $stmt = $this->pdo->prepare("SELECT * FROM auctions WHERE id = ? FOR UPDATE");
-            $stmt->execute([$auctionId]);
+            $stmt = $this->pdo->prepare("SELECT * FROM auctions WHERE id = ? FOR UPDATE" . $this->tenantSql());
+            $params = [$auctionId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $auction = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$auction) {
                 $this->pdo->rollBack();
@@ -127,8 +140,8 @@ class AuctionService
             $this->pdo->prepare("INSERT INTO auction_bids (auction_id, bidder_id, bidder_name, bid_amount, max_auto_bid, bid_type, ip_address, status) VALUES (?,?,?,?,?,'manual',?,'winning')")
                 ->execute([$auctionId, $bidderId, $bidderName, $amount, $maxAutoBid, $_SERVER['REMOTE_ADDR'] ?? '']);
 
-            $this->pdo->prepare("UPDATE auctions SET current_bid = ?, bid_count = bid_count + 1, ends_at = ? WHERE id = ?")
-                ->execute([$amount, $newEndsAt, $auctionId]);
+            $this->pdo->prepare("UPDATE auctions SET current_bid = ?, bid_count = bid_count + 1, ends_at = ?" . $this->tenantSql() . " WHERE id = ?")
+                ->execute(array_merge([$amount, $newEndsAt, $auctionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
             $this->pdo->commit();
             return [
@@ -168,8 +181,8 @@ class AuctionService
                     ->execute([$auctionId, $winner['bidder_id']]);
             }
 
-            $this->pdo->prepare("UPDATE auctions SET status = ?, winner_id = ?, winning_bid = ?, closed_at = NOW() WHERE id = ?")
-                ->execute([$status, $winner['bidder_id'] ?? null, $winner['bid_amount'] ?? null, $auctionId]);
+            $this->pdo->prepare("UPDATE auctions SET status = ?, winner_id = ?, winning_bid = ?, closed_at = NOW() WHERE id = ?" . $this->tenantSql())
+                ->execute(array_merge([$status, $winner['bidder_id'] ?? null, $winner['bid_amount'] ?? null, $auctionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
             return ['success' => true, 'status' => $status, 'winner' => $winner];
         } catch (\Throwable $e) { return ['error' => $e->getMessage()]; }
@@ -178,8 +191,10 @@ class AuctionService
     public function startAuction($auctionId)
     {
         try {
-            $this->pdo->prepare("UPDATE auctions SET status = 'live' WHERE id = ? AND status IN ('draft','scheduled')")
-                ->execute([$auctionId]);
+            $tid = $this->tenantId();
+            $sql = "UPDATE auctions SET status = 'live' WHERE id = ? AND status IN ('draft','scheduled')" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$auctionId, $tid] : [$auctionId]);
             return true;
         } catch (\Throwable $e) { return false; }
     }
@@ -187,8 +202,10 @@ class AuctionService
     public function cancelAuction($auctionId, $reason = null)
     {
         try {
-            $this->pdo->prepare("UPDATE auctions SET status = 'cancelled', close_reason = ? WHERE id = ?")
-                ->execute([$reason, $auctionId]);
+            $tid = $this->tenantId();
+            $sql = "UPDATE auctions SET status = 'cancelled', close_reason = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$reason, $auctionId, $tid] : [$reason, $auctionId]);
             return true;
         } catch (\Throwable $e) { return false; }
     }
@@ -245,7 +262,10 @@ class AuctionService
     public function processEndingAuctions()
     {
         try {
-            $stmt = $this->pdo->query("SELECT id FROM auctions WHERE status = 'live' AND ends_at <= NOW()");
+            $tid = $this->tenantId();
+            $sql = "SELECT id FROM auctions WHERE status = 'live' AND ends_at <= NOW()" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($tid > 1 ? [$tid] : []);
             $auctions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $ended = 0;
             foreach ($auctions as $a) {
@@ -269,15 +289,33 @@ class AuctionService
             'unique_bidders' => 0
         ];
         try {
-            $stats['total_auctions'] = (int)$this->pdo->query("SELECT COUNT(*) FROM auctions")->fetchColumn();
-            $stats['live'] = (int)$this->pdo->query("SELECT COUNT(*) FROM auctions WHERE status = 'live'")->fetchColumn();
-            $stats['scheduled'] = (int)$this->pdo->query("SELECT COUNT(*) FROM auctions WHERE status = 'scheduled'")->fetchColumn();
-            $stats['ended'] = (int)$this->pdo->query("SELECT COUNT(*) FROM auctions WHERE status = 'ended'")->fetchColumn();
-            $stats['sold'] = (int)$this->pdo->query("SELECT COUNT(*) FROM auctions WHERE status = 'sold'")->fetchColumn();
-            $stats['total_bids'] = (int)$this->pdo->query("SELECT COUNT(*) FROM auction_bids")->fetchColumn();
-            $val = $this->pdo->query("SELECT COALESCE(SUM(winning_bid), 0) FROM auctions WHERE status = 'sold'")->fetchColumn();
-            $stats['total_value'] = (float)$val;
-            $stats['unique_bidders'] = (int)$this->pdo->query("SELECT COUNT(DISTINCT bidder_id) FROM auction_bids")->fetchColumn();
+            $tid = $this->tenantId();
+            $tsql = $this->tenantSql();
+            $params = $tid > 1 ? [$tid] : [];
+
+            $sql = "SELECT COUNT(*) FROM auctions" . $tsql;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($params);
+            $stats['total_auctions'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM auctions WHERE status = 'live'" . $tsql;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($params);
+            $stats['live'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM auctions WHERE status = 'scheduled'" . $tsql;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($params);
+            $stats['scheduled'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM auctions WHERE status = 'ended'" . $tsql;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($params);
+            $stats['ended'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM auctions WHERE status = 'sold'" . $tsql;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($params);
+            $stats['sold'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COALESCE(SUM(winning_bid), 0) FROM auctions WHERE status = 'sold'" . $tsql;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($params);
+            $stats['total_value'] = (float)$stmt->fetchColumn();
         } catch (\Throwable $e) { error_log("Auction stats: " . $e->getMessage()); }
         return $stats;
     }

@@ -176,7 +176,7 @@ class EngagementService
      */
     public function getNotificationFeed(int $userId, int $limit = 20, int $offset = 0, ?string $category = null, bool $unreadOnly = false): array
     {
-        $sql = 'SELECT * FROM notifications WHERE user_id = ?';
+        $sql = 'SELECT * FROM notifications WHERE user_id = ?' . $this->tenantSql();
         $params = [$userId];
 
         if ($category) {
@@ -191,6 +191,8 @@ class EngagementService
         $sql .= ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
         $params[] = $limit;
         $params[] = $offset;
+
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
 
         $stmt = $this->conn->prepare($sql);
         foreach ($params as $key => $value) {
@@ -221,11 +223,14 @@ class EngagementService
             throw new InvalidArgumentException('user_id is required.');
         }
 
-        $stmt = $this->conn->prepare(
-            'UPDATE notifications SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL'
-        );
+        $sql = 'UPDATE notifications SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL' . $this->tenantSql();
+        
+        $params = [$notificationId, $userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        
+        $stmt = $this->conn->prepare($sql);
 
-        if (!$stmt->execute([$notificationId, $userId])) {
+        if (!$stmt->execute($params)) {
             throw new RuntimeException('Failed to mark notification read: ' . implode(" ", $stmt->errorInfo()));
         }
 
@@ -238,11 +243,13 @@ class EngagementService
             throw new InvalidArgumentException('user_id is required.');
         }
 
-        $stmt = $this->conn->prepare(
-            'UPDATE notifications SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL'
-        );
+        $sql = 'UPDATE notifications SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL' . $this->tenantSql();
+        $params = [$userId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        
+        $stmt = $this->conn->prepare($sql);
 
-        if (!$stmt->execute([$userId])) {
+        if (!$stmt->execute($params)) {
             throw new RuntimeException('Failed to mark notifications read: ' . implode(" ", $stmt->errorInfo()));
         }
 

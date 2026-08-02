@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\KYC\NSDLVerificationService;
 use App\Services\KYC\UIDAIVerificationService;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * KYC Service — orchestrator for PAN + Aadhaar verification
@@ -19,6 +20,8 @@ use App\Services\KYC\UIDAIVerificationService;
  */
 class KYCService
 {
+    use ServiceTenantTrait;
+
     private $nsdl;
     private $uidai;
     private $db;
@@ -115,7 +118,7 @@ class KYCService
     {
         try {
             $stmt = $this->db->prepare("
-                SELECT * FROM kyc_requests WHERE user_id = ? ORDER BY created_at DESC LIMIT 1
+                SELECT * FROM kyc_requests WHERE user_id = ? {$this->tenantSql()} ORDER BY created_at DESC LIMIT 1
             ");
             $stmt->execute([$userId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];

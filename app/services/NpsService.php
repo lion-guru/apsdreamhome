@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use PDO;
+use App\Traits\ServiceTenantTrait;
+
 class NpsService
 {
+    use ServiceTenantTrait;
     private $pdo;
 
     public function __construct($db = null)
@@ -18,8 +22,8 @@ class NpsService
     public function createSurvey($data)
     {
         try {
-            $sql = "INSERT INTO nps_surveys (title, description, question_text, scale_min_label, scale_max_label, follow_up_question, is_active, send_immediately, delay_days, delay_hours, trigger_event, created_by) 
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+            $sql = "INSERT INTO nps_surveys (title, description, question_text, scale_min_label, scale_max_label, follow_up_question, is_active, send_immediately, delay_days, delay_hours, trigger_event, created_by, tenant_id) 
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?," . ($this->tenantId() > 1 ? $this->tenantId() : "NULL") . ")";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 $data['title'],
@@ -45,7 +49,7 @@ class NpsService
     public function getAllSurveys($activeOnly = false)
     {
         try {
-            $sql = "SELECT s.*, u.name as creator_name FROM nps_surveys s LEFT JOIN users u ON s.created_by = u.id WHERE 1=1";
+            $sql = "SELECT s.*, u.name as creator_name FROM nps_surveys s LEFT JOIN users u ON s.created_by = u.id WHERE 1=1 {$this->tenantSqlForAlias('s')}";
             $params = [];
             if ($activeOnly) {
                 $sql .= " AND s.is_active = 1";
@@ -60,7 +64,7 @@ class NpsService
     public function getSurveyById($id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT s.*, u.name as creator_name FROM nps_surveys s LEFT JOIN users u ON s.created_by = u.id WHERE s.id = ?");
+            $stmt = $this->pdo->prepare("SELECT s.*, u.name as creator_name FROM nps_surveys s LEFT JOIN users u ON s.created_by = u.id WHERE s.id = ? {$this->tenantSqlForAlias('s')}");
             $stmt->execute([$id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) { return null; }
@@ -69,7 +73,7 @@ class NpsService
     public function updateSurvey($id, $data)
     {
         try {
-            $sql = "UPDATE nps_surveys SET title = ?, description = ?, question_text = ?, scale_min_label = ?, scale_max_label = ?, follow_up_question = ?, is_active = ?, send_immediately = ?, delay_days = ?, delay_hours = ?, trigger_event = ?, updated_at = NOW() WHERE id = ?";
+            $sql = "UPDATE nps_surveys SET title = ?, description = ?, question_text = ?, scale_min_label = ?, scale_max_label = ?, follow_up_question = ?, is_active = ?, send_immediately = ?, delay_days = ?, delay_hours = ?, trigger_event = ?, updated_at = NOW() WHERE id = ? {$this->tenantSql()}";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 $data['title'],
@@ -95,9 +99,9 @@ class NpsService
     public function deleteSurvey($id)
     {
         try {
-            $this->pdo->prepare("DELETE FROM nps_responses WHERE survey_id = ?")->execute([$id]);
-            $this->pdo->prepare("DELETE FROM nps_schedule WHERE survey_id = ?")->execute([$id]);
-            $this->pdo->prepare("DELETE FROM nps_surveys WHERE id = ?")->execute([$id]);
+            $this->pdo->prepare("DELETE FROM nps_responses WHERE survey_id = ? {$this->tenantSql()}")->execute([$id]);
+            $this->pdo->prepare("DELETE FROM nps_schedule WHERE survey_id = ? {$this->tenantSql()}")->execute([$id]);
+            $this->pdo->prepare("DELETE FROM nps_surveys WHERE id = ? {$this->tenantSql()}")->execute([$id]);
             return true;
         } catch (\Throwable $e) { return false; }
     }
@@ -111,7 +115,7 @@ class NpsService
             }
             
             // Check if already responded
-            $existing = $this->pdo->prepare("SELECT id FROM nps_responses WHERE survey_id = ? AND (user_id = ? OR visitor_id = ?)")->execute([$surveyId, $userId, $visitorId])->fetch();
+            $existing = $this->pdo->prepare("SELECT id FROM nps_responses WHERE survey_id = ? AND (user_id = ? OR visitor_id = ?) {$this->tenantSql()}")->execute([$surveyId, $userId, $visitorId])->fetch();
             if ($existing) {
                 return ['error' => 'Already responded to this survey'];
             }
@@ -121,9 +125,13 @@ class NpsService
             
             $this->pdo->beginTransaction();
             
-            $this->pdo->prepare("INSERT INTO nps_responses (survey_id, user_id, visitor_id, score, category, follow_up_answer, ip_address, user_agent) 
-                                VALUES (?,?,?,?,?,?,?,?)")
-                ->execute([$surveyId, $userId, $visitorId, $score, $category, $followUpAnswer, $ip, $userAgent]);
+            $tid = $this->tenantId();
+            $cols = "survey_id, user_id, visitor_id, score, category, follow_up_answer, ip_address, user_agent";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?";
+            $params = [$surveyId, $userId, $visitorId, $score, $category, $followUpAnswer, $ip, $userAgent];
+            if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
+            $this->pdo->prepare("INSERT INTO nps_responses ($cols) VALUES ($vals)")
+                ->execute($params);
             
             $this->pdo->commit();
             return ['success' => true, 'category' => $category];
@@ -140,7 +148,7 @@ class NpsService
             $stmt = $this->pdo->prepare("SELECT r.*, u.name as user_name, v.name as visitor_name FROM nps_responses r 
                                         LEFT JOIN users u ON r.user_id = u.id 
                                         LEFT JOIN users v ON r.visitor_id = v.id 
-                                        WHERE r.survey_id = ? 
+                                        WHERE r.survey_id = ? {$this->tenantSqlForAlias('r')}
                                         ORDER BY r.responded_at DESC LIMIT " . (int)$limit);
             $stmt->execute([$surveyId]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -159,7 +167,7 @@ class NpsService
             'response_rate' => 0
         ];
         try {
-            $where = $surveyId ? "WHERE r.survey_id = ?" : "";
+            $where = $surveyId ? "WHERE r.survey_id = ? {$this->tenantSqlForAlias('r')}" : "WHERE 1=1 {$this->tenantSqlForAlias('r')}";
             $params = $surveyId ? [$surveyId] : [];
             
             $totalStmt = $this->pdo->prepare("SELECT COUNT(*) FROM nps_responses r $where");
@@ -199,7 +207,7 @@ class NpsService
     {
         try {
             // Get surveys with triggers that should be sent
-            $stmt = $this->pdo->prepare("SELECT s.* FROM nps_surveys s WHERE s.is_active = 1 AND s.trigger_event != 'manual'");
+            $stmt = $this->pdo->prepare("SELECT s.* FROM nps_surveys s WHERE s.is_active = 1 AND s.trigger_event != 'manual' {$this->tenantSqlForAlias('s')}");
             $stmt->execute();
             $activeSurveys = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
@@ -217,16 +225,21 @@ class NpsService
     {
         try {
             // Get some users to survey (simplified)
-            $users = $this->pdo->query("SELECT id FROM users WHERE role IN ('customer','agent','associate') LIMIT " . (int)$limit)->fetchAll(\PDO::FETCH_COLUMN);
+            $users = $this->pdo->query("SELECT id FROM users WHERE role IN ('customer','agent','associate') {$this->tenantSql()} LIMIT " . (int)$limit)->fetchAll(\PDO::FETCH_COLUMN);
             $scheduled = 0;
             foreach ($users as $userId) {
                 // Check if already scheduled
-                $existing = $this->pdo->prepare("SELECT id FROM nps_schedule WHERE survey_id = ? AND user_id = ? AND status = 'pending'")
+                $existing = $this->pdo->prepare("SELECT id FROM nps_schedule WHERE survey_id = ? AND user_id = ? AND status = 'pending' {$this->tenantSql()}")
                     ->execute([$surveyId, $userId])->fetch();
                 if (!$existing) {
                     $sendAt = date('Y-m-d H:i:s', time() + rand(3600, 86400)); // 1-24 hours from now
-                    $this->pdo->prepare("INSERT INTO nps_schedule (survey_id, user_id, scheduled_for) VALUES (?,?,?)")
-                        ->execute([$surveyId, $userId, $sendAt]);
+                    $tid = $this->tenantId();
+                    $cols = "survey_id, user_id, scheduled_for";
+                    $vals = "?,?,?";
+                    $params = [$surveyId, $userId, $sendAt];
+                    if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ",?"; $params[] = $tid; }
+                    $this->pdo->prepare("INSERT INTO nps_schedule ($cols) VALUES ($vals)")
+                        ->execute($params);
                     $scheduled++;
                 }
             }
@@ -239,7 +252,7 @@ class NpsService
         try {
             $stmt = $this->pdo->prepare("SELECT s.*, n.* FROM nps_schedule n 
                                         JOIN nps_surveys s ON n.survey_id = s.id 
-                                        WHERE n.status = 'pending' AND n.scheduled_for <= NOW()");
+                                        WHERE n.status = 'pending' AND n.scheduled_for <= NOW() {$this->tenantSqlForAlias('n')}");
             $stmt->execute();
             $due = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
@@ -247,7 +260,7 @@ class NpsService
             foreach ($due as $item) {
                 // In reality, this would send email/SMS with survey link
                 // For now, just mark as sent
-                $this->pdo->prepare("UPDATE nps_schedule SET status = 'sent', sent_at = NOW() WHERE id = ?")
+                $this->pdo->prepare("UPDATE nps_schedule SET status = 'sent', sent_at = NOW() WHERE id = ? {$this->tenantSql()}")
                     ->execute([$item['id']]);
                 $sent++;
             }
@@ -258,7 +271,7 @@ class NpsService
     public function getWidgetData()
     {
         try {
-            $activeSurvey = $this->pdo->prepare("SELECT * FROM nps_surveys WHERE is_active = 1 AND send_immediately = 1 ORDER BY created_at DESC LIMIT 1")
+            $activeSurvey = $this->pdo->prepare("SELECT * FROM nps_surveys WHERE is_active = 1 AND send_immediately = 1 {$this->tenantSql()} ORDER BY created_at DESC LIMIT 1")
                 ->execute()->fetch();
             if (!$activeSurvey) return null;
             

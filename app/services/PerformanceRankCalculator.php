@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use PDO;
 use Exception;
 
 class PerformanceRankCalculator
 {
+    use ServiceTenantTrait;
     protected $db;
     protected $teamRanks = [
         'Associate' => ['members' => 0, 'performance' => 0, 'target' => 1000000],
@@ -75,11 +77,12 @@ class PerformanceRankCalculator
                 WITH RECURSIVE downline AS (
                     SELECT user_id, sponsor_user_id
                     FROM mlm_profiles
-                    WHERE sponsor_user_id = ?
+                    WHERE sponsor_user_id = ? {$this->tenantSql()}
                     UNION ALL
                     SELECT p.user_id, p.sponsor_user_id
                     FROM mlm_profiles p
                     INNER JOIN downline d ON p.sponsor_user_id = d.user_id
+                    WHERE p.tenant_id = {$this->tenantId()}
                 )
                 SELECT user_id FROM downline
             ";
@@ -99,7 +102,7 @@ class PerformanceRankCalculator
                 if (in_array($parentId, $processed)) continue;
                 $processed[] = $parentId;
 
-                $stmt = $this->db->prepare("SELECT user_id FROM mlm_profiles WHERE sponsor_user_id = ?");
+                 $stmt = $this->db->prepare("SELECT user_id FROM mlm_profiles WHERE sponsor_user_id = ? {$this->tenantSql()}");
                 $stmt->execute([$parentId]);
                 $children = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
@@ -123,7 +126,7 @@ class PerformanceRankCalculator
         
         try {
             // Sum sales from legacy property_sales
-            $sqlLegacy = "SELECT SUM(sale_amount) FROM property_sales WHERE agent_id IN ($placeholders) OR buyer_id IN ($placeholders)";
+            $sqlLegacy = "SELECT SUM(sale_amount) FROM property_sales WHERE (agent_id IN ($placeholders) OR buyer_id IN ($placeholders)) {$this->tenantSql()}";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -134,7 +137,7 @@ class PerformanceRankCalculator
         $legacyVolume = (float)$stmtLegacy->fetchColumn() ?: 0;
 
         // Sum sales from new plot_bookings (V2)
-        $sqlV2 = "SELECT SUM(booking_amount) FROM plot_bookings WHERE associate_id IN ($placeholders) AND status IN ('confirmed', 'completed')";
+        $sqlV2 = "SELECT SUM(booking_amount) FROM plot_bookings WHERE associate_id IN ($placeholders) AND status IN ('confirmed', 'completed') {$this->tenantSql()}";
         $stmtV2 = $this->db->prepare($sqlV2);
         $stmtV2->execute($downline);
         $v2Volume = (float)$stmtV2->fetchColumn() ?: 0;
@@ -189,7 +192,7 @@ class PerformanceRankCalculator
                 SELECT u.id, u.name, mp.current_level, mp.referral_code, mp.status, mp.sponsor_user_id, 0 as depth
                 FROM users u
                 JOIN mlm_profiles mp ON u.id = mp.user_id
-                WHERE u.id = ?
+                WHERE u.id = ? {$this->tenantSqlForAlias('mp')}
                 
                 UNION ALL
                 
@@ -197,7 +200,7 @@ class PerformanceRankCalculator
                 FROM users u
                 JOIN mlm_profiles mp ON u.id = mp.user_id
                 JOIN network n ON mp.sponsor_user_id = n.id
-                WHERE n.depth < ?
+                WHERE n.depth < ? AND mp.tenant_id = {$this->tenantId()}
             )
             SELECT * FROM network
         ";

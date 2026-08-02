@@ -2,9 +2,11 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 class InsuranceService
 {
+    use ServiceTenantTrait;
     private PDO $pdo;
 
     public function __construct(?PDO $pdo = null)
@@ -49,14 +51,14 @@ class InsuranceService
 
     public function getUserPolicies(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT p.*, pl.plan_name, pl.plan_category FROM insurance_policies p JOIN insurance_plans pl ON p.plan_id = pl.id WHERE p.user_id = ? ORDER BY p.created_at DESC");
+        $stmt = $this->pdo->prepare("SELECT p.*, pl.plan_name, pl.plan_category FROM insurance_policies p JOIN insurance_plans pl ON p.plan_id = pl.id WHERE p.user_id = ? {$this->tenantSqlForAlias('p')} ORDER BY p.created_at DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getStats(int $userId): array
     {
-        $rows = $this->pdo->prepare("SELECT pl.plan_category, COUNT(*) as cnt FROM insurance_policies p JOIN insurance_plans pl ON p.plan_id = pl.id WHERE p.user_id = ? AND p.status = 'active' GROUP BY pl.plan_category");
+        $rows = $this->pdo->prepare("SELECT pl.plan_category, COUNT(*) as cnt FROM insurance_policies p JOIN insurance_plans pl ON p.plan_id = pl.id WHERE p.user_id = ? AND p.status = 'active' {$this->tenantSqlForAlias('p')} GROUP BY pl.plan_category");
         $rows->execute([$userId]);
         $out = ['home' => 0, 'health' => 0, 'term_life' => 0, 'vehicle' => 0, 'travel' => 0, 'total' => 0];
         foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $r) {
@@ -80,8 +82,11 @@ class InsuranceService
         $sumInsured = (float)($data['sum_insured'] ?? $plan['coverage_amount']);
         $premium = (float)($plan['premium_yearly'] ?? 0);
 
-        $stmt = $this->pdo->prepare("INSERT INTO insurance_policies (user_id, plan_id, policy_number, nominee_name, nominee_relation, sum_insured, premium_amount, start_date, end_date, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending')");
-        $stmt->execute([$userId, $planId, $policyNumber, $nomineeName, $nomineeRelation, $sumInsured, $premium, $startDate, $endDate]);
+        $tid = $this->tenantId();
+        $stmt = $this->pdo->prepare("INSERT INTO insurance_policies (user_id, plan_id, policy_number, nominee_name, nominee_relation, sum_insured, premium_amount, start_date, end_date, status, payment_status" . ($tid > 1 ? ", tenant_id" : "") . ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending'" . ($tid > 1 ? ", ?" : "") . ")");
+        $params = [$userId, $planId, $policyNumber, $nomineeName, $nomineeRelation, $sumInsured, $premium, $startDate, $endDate];
+        if ($tid > 1) $params[] = $tid;
+        $stmt->execute($params);
         return ['success' => true, 'policy_id' => $this->pdo->lastInsertId(), 'policy_number' => $policyNumber];
     }
 

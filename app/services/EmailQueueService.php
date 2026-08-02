@@ -48,10 +48,12 @@ class EmailQueueService
             scheduled_at TIMESTAMP NULL,
             sent_at TIMESTAMP NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             INDEX idx_status (status),
             INDEX idx_priority (priority),
             INDEX idx_scheduled (scheduled_at),
-            INDEX idx_created_at (created_at)
+            INDEX idx_created_at (created_at),
+            INDEX idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
         $this->database->getConnection()->exec($sql);
@@ -59,16 +61,19 @@ class EmailQueueService
         // Email templates table
         $sql2 = "CREATE TABLE IF NOT EXISTS email_templates (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            template_code VARCHAR(50) NOT NULL UNIQUE,
+            template_code VARCHAR(50) NOT NULL,
             template_name VARCHAR(100) NOT NULL,
             subject VARCHAR(200) NOT NULL,
             body_html LONGTEXT NOT NULL,
             body_text LONGTEXT NOT NULL,
             variables JSON NULL,
             is_active TINYINT(1) DEFAULT 1,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_active (is_active)
+            INDEX idx_active (is_active),
+            INDEX idx_tenant (tenant_id),
+            UNIQUE KEY uk_code_tenant (template_code, tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
         $this->database->getConnection()->exec($sql2);
@@ -115,11 +120,16 @@ class EmailQueueService
         ];
         
         try {
+            $insertData = $this->tenantInsertData();
+            $cols = "template_code, template_name, subject, body_html, body_text" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+            $ph = "?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
             $stmt = $this->database->prepare("INSERT IGNORE INTO email_templates 
-                (template_code, template_name, subject, body_html, body_text) 
-                VALUES (?, ?, ?, ?, ?)");
+                ($cols) 
+                VALUES ($ph)");
             foreach ($templates as $template) {
-                $stmt->execute($template);
+                $params = [$template[0], $template[1], $template[2], $template[3], $template[4]];
+                if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+                $stmt->execute($params);
             }
         } catch (\Exception $e) {
             error_log("EmailQueueService: seed error (non-critical): " . $e->getMessage());
@@ -130,15 +140,16 @@ class EmailQueueService
      * Queue an email
      */
     public function queue(string $toEmail, string $subject, string $bodyHtml, 
-                         ?string $bodyText = null, array $options = []): int
+                          ?string $bodyText = null, array $options = []): int
     {
-        $sql = "INSERT INTO email_queue 
+        $insertData = $this->tenantInsertData();
+         $sql = "INSERT INTO email_queue 
                 (priority, from_email, from_name, to_email, to_name, subject, 
-                 body_html, body_text, attachments, template, template_data, scheduled_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                 body_html, body_text, attachments, template, template_data, scheduled_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '') . ") 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '') . ")";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+        $params = [
             $options['priority'] ?? 5,
             $options['from_email'] ?? 'noreply@apsdreamhome.com',
             $options['from_name'] ?? 'APS Dream Home',
@@ -151,7 +162,9 @@ class EmailQueueService
             $options['template'] ?? null,
             isset($options['template_data']) ? json_encode($options['template_data']) : null,
             $options['scheduled_at'] ?? null
-        ]);
+        ];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
         
         return $this->database->lastInsertId();
     }
@@ -163,9 +176,11 @@ class EmailQueueService
                                    array $templateData, array $options = []): int
     {
         // Get template
-        $sql = "SELECT * FROM email_templates WHERE template_code = ? AND is_active = 1";
+        $sql = "SELECT * FROM email_templates WHERE template_code = ? AND is_active = 1" . $this->tenantSql();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$templateCode]);
+        $params = [$templateCode];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $template = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$template) {
@@ -211,12 +226,14 @@ class EmailQueueService
         $sql = "SELECT * FROM email_queue 
                 WHERE status = 'pending' 
                 AND (scheduled_at IS NULL OR scheduled_at <= NOW())
-                AND attempts < ?
+                AND attempts < ?" . $this->tenantSql() . "
                 ORDER BY priority ASC, created_at ASC
                 LIMIT ?";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$this->maxRetries, $limit]);
+        $params = [$this->maxRetries, $limit];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $emails = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         $results = ['processed' => 0, 'sent' => 0, 'failed' => 0];
@@ -273,9 +290,11 @@ class EmailQueueService
      */
     private function markAsProcessing(int $id): void
     {
-        $sql = "UPDATE email_queue SET status = 'processing', attempts = attempts + 1 WHERE id = ?";
+        $sql = "UPDATE email_queue SET status = 'processing', attempts = attempts + 1 WHERE id = ?" . $this->tenantSql();
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$id]);
+        $stmt->execute($params);
     }
     
     /**
@@ -283,9 +302,11 @@ class EmailQueueService
      */
     private function markAsSent(int $id): void
     {
-        $sql = "UPDATE email_queue SET status = 'sent', sent_at = NOW() WHERE id = ?";
+        $sql = "UPDATE email_queue SET status = 'sent', sent_at = NOW() WHERE id = ?" . $this->tenantSql();
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$id]);
+        $stmt->execute($params);
     }
     
     /**
@@ -293,9 +314,11 @@ class EmailQueueService
      */
     private function markAsFailed(int $id, string $error): void
     {
-        $sql = "UPDATE email_queue SET status = 'failed', error_message = ? WHERE id = ?";
+        $sql = "UPDATE email_queue SET status = 'failed', error_message = ? WHERE id = ?" . $this->tenantSql();
+        $params = [$error, $id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$error, $id]);
+        $stmt->execute($params);
     }
     
     /**
@@ -304,9 +327,13 @@ class EmailQueueService
     public function getStats(): array
     {
         $stats = [];
+        $tidClause = $this->tenantSql();
+        $tidParams = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         
-        $sql = "SELECT status, COUNT(*) as count FROM email_queue GROUP BY status";
-        $results = $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        $sql = "SELECT status, COUNT(*) as count FROM email_queue" . $tidClause . " GROUP BY status";
+        $results = $this->database->prepare($sql);
+        $results->execute($tidParams);
+        $results = $results->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($results as $row) {
             $stats[$row['status']] = $row['count'];
@@ -315,9 +342,11 @@ class EmailQueueService
         // Hourly stats
         $sql2 = "SELECT HOUR(created_at) as hour, COUNT(*) as count 
                  FROM email_queue 
-                 WHERE DATE(created_at) = CURDATE() 
+                 WHERE DATE(created_at) = CURDATE()" . $tidClause . "
                  GROUP BY HOUR(created_at)";
-        $stats['hourly'] = $this->database->query($sql2)->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt2 = $this->database->prepare($sql2);
+        $stmt2->execute($tidParams);
+        $stats['hourly'] = $stmt2->fetchAll(\PDO::FETCH_ASSOC);
         
         return $stats;
     }
@@ -327,9 +356,11 @@ class EmailQueueService
      */
     public function cancel(int $id): bool
     {
-        $sql = "UPDATE email_queue SET status = 'cancelled' WHERE id = ? AND status = 'pending'";
+        $sql = "UPDATE email_queue SET status = 'cancelled' WHERE id = ? AND status = 'pending'" . $this->tenantSql();
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$id]);
+        $stmt->execute($params);
         
         return $stmt->rowCount() > 0;
     }
@@ -341,9 +372,11 @@ class EmailQueueService
     {
         $sql = "UPDATE email_queue 
                 SET status = 'pending', attempts = 0, error_message = NULL 
-                WHERE status = 'failed' AND attempts < ?";
+                WHERE status = 'failed' AND attempts < ?" . $this->tenantSql();
+        $params = [$this->maxRetries];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$this->maxRetries]);
+        $stmt->execute($params);
         
         return $stmt->rowCount();
     }
@@ -353,25 +386,34 @@ class EmailQueueService
      */
     public function getTemplates(): array
     {
-        $sql = "SELECT * FROM email_templates WHERE is_active = 1 ORDER BY template_name";
-        return $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM email_templates WHERE is_active = 1" . $this->tenantSql() . " ORDER BY template_name";
+        $sid = $this->database->prepare($sql);
+        $params = [];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $sid->execute($params);
+        return $sid->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     /**
      * Add custom template
      */
     public function addTemplate(string $code, string $name, string $subject, 
-                                 string $html, string $text): bool
+                                  string $html, string $text): bool
     {
-        $sql = "INSERT INTO email_templates (template_code, template_name, subject, body_html, body_text) 
-                VALUES (?, ?, ?, ?, ?)
+        $insertData = $this->tenantInsertData();
+        $cols = "template_code, template_name, subject, body_html, body_text" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $sql = "INSERT INTO email_templates ($cols) 
+                VALUES ($ph)
                 ON DUPLICATE KEY UPDATE 
                 template_name = VALUES(template_name),
                 subject = VALUES(subject),
                 body_html = VALUES(body_html),
                 body_text = VALUES(body_text)";
         
+        $params = [$code, $name, $subject, $html, $text];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([$code, $name, $subject, $html, $text]);
+        return $stmt->execute($params);
     }
 }

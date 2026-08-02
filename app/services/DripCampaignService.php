@@ -29,22 +29,30 @@ class DripCampaignService
 
     public function createCampaign(array $data): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO drip_campaigns (name, description, trigger_event, status, target_filter, created_by) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
+        $insertData = $this->tenantInsertData();
+        $cols = "name, description, trigger_event, status, target_filter, created_by" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $stmt = $this->pdo->prepare("INSERT INTO drip_campaigns ($cols) VALUES ($ph)");
+        $params = [
             $data['name'],
             $data['description'] ?? null,
             $data['trigger_event'] ?? 'new_lead',
             $data['status'] ?? 'draft',
             isset($data['target_filter']) ? json_encode($data['target_filter']) : null,
             $data['created_by'] ?? null
-        ]);
+        ];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
     public function addEmail(int $campaignId, array $data): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO drip_emails (campaign_id, sequence_order, delay_days, delay_hours, subject, body, channel) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
+        $insertData = $this->tenantInsertData();
+        $cols = "campaign_id, sequence_order, delay_days, delay_hours, subject, body, channel" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $stmt = $this->pdo->prepare("INSERT INTO drip_emails ($cols) VALUES ($ph)");
+        $params = [
             $campaignId,
             $data['sequence_order'] ?? 1,
             $data['delay_days'] ?? 0,
@@ -52,15 +60,20 @@ class DripCampaignService
             $data['subject'],
             $data['body'],
             $data['channel'] ?? 'email'
-        ]);
+        ];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
     public function getAllCampaigns(int $limit = 50): array
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM drip_campaigns ORDER BY created_at DESC LIMIT ?");
-            $stmt->execute([$limit]);
+            $sql = "SELECT * FROM drip_campaigns" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT ?";
+            $stmt = $this->pdo->prepare($sql);
+            $params = [$limit];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             return [];
@@ -69,8 +82,11 @@ class DripCampaignService
 
     public function getCampaignById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM drip_campaigns WHERE id = ?");
-        $stmt->execute([$id]);
+        $sql = "SELECT * FROM drip_campaigns WHERE id = ?" . $this->tenantSql();
+        $stmt = $this->pdo->prepare($sql);
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
     }
@@ -78,7 +94,8 @@ class DripCampaignService
     public function getEmails(int $campaignId): array
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM drip_emails WHERE campaign_id = ? ORDER BY sequence_order ASC");
+            $sql = "SELECT * FROM drip_emails WHERE campaign_id = ? ORDER BY sequence_order ASC";
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$campaignId]);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
@@ -96,26 +113,34 @@ class DripCampaignService
             $delaySeconds = ((int)$first['delay_days'] * 86400) + ((int)$first['delay_hours'] * 3600);
             $nextSend = date('Y-m-d H:i:s', time() + $delaySeconds);
         }
-        $stmt = $this->pdo->prepare("INSERT INTO drip_enrollments (campaign_id, lead_id, user_id, email, name, next_send_at, current_step) VALUES (?, ?, ?, ?, ?, ?, 0)");
-        $stmt->execute([
+        $insertData = $this->tenantInsertData();
+        $cols = "campaign_id, lead_id, user_id, email, name, next_send_at, current_step" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?, ?, 0" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $stmt = $this->pdo->prepare("INSERT INTO drip_enrollments ($cols) VALUES ($ph)");
+        $params = [
             $campaignId,
             $data['lead_id'] ?? null,
             $data['user_id'] ?? null,
             $data['email'],
             $data['name'] ?? null,
             $nextSend
-        ]);
+        ];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
         $enrollmentId = (int)$this->pdo->lastInsertId();
-        $this->pdo->prepare("UPDATE drip_campaigns SET total_enrolled = total_enrolled + 1 WHERE id = ?")->execute([$campaignId]);
+        $tid = $this->tenantId();
+        $this->pdo->prepare("UPDATE drip_campaigns SET total_enrolled = total_enrolled + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$campaignId, $tid] : [$campaignId]);
         $this->logEnrollment($enrollmentId, $campaignId, 'enrolled', 'Enrolled in campaign');
         return $enrollmentId;
     }
 
     public function autoEnrollNewLeads(int $leadId, string $email, ?string $name = null): int
     {
-        $campaign = $this->pdo->prepare("SELECT id FROM drip_campaigns WHERE trigger_event = 'new_lead' AND status = 'active' LIMIT 1");
-        $campaign->execute();
-        $cid = $campaign->fetchColumn();
+        $tid = $this->tenantId();
+        $sql = "SELECT id FROM drip_campaigns WHERE trigger_event = 'new_lead' AND status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($tid > 1 ? [$tid] : []);
+        $cid = $stmt->fetchColumn();
         if (!$cid) return 0;
         return $this->enroll((int)$cid, ['lead_id' => $leadId, 'email' => $email, 'name' => $name]);
     }
@@ -123,12 +148,15 @@ class DripCampaignService
     public function processQueue(int $limit = 100): array
     {
         $stats = ['processed' => 0, 'sent' => 0, 'failed' => 0, 'completed' => 0];
+        $tid = $this->tenantId();
         try {
-            $stmt = $this->pdo->prepare("SELECT e.*, c.status as campaign_status FROM drip_enrollments e
+            $sql = "SELECT e.*, c.status as campaign_status FROM drip_enrollments e
                 JOIN drip_campaigns c ON c.id = e.campaign_id
-                WHERE e.status = 'active' AND c.status = 'active' AND e.next_send_at <= NOW()
-                ORDER BY e.next_send_at ASC LIMIT ?");
-            $stmt->execute([$limit]);
+                WHERE e.status = 'active' AND c.status = 'active' AND e.next_send_at <= NOW()" . ($tid > 1 ? " AND e.tenant_id = ? AND c.tenant_id = ?" : "") . "
+                ORDER BY e.next_send_at ASC LIMIT ?";
+            $stmt = $this->pdo->prepare($sql);
+            $params = $tid > 1 ? [$tid, $tid, $limit] : [$limit];
+            $stmt->execute($params);
             $enrollments = $stmt->fetchAll();
             foreach ($enrollments as $enr) {
                 $stats['processed']++;
@@ -145,16 +173,16 @@ class DripCampaignService
                 $renderedSubject = $this->renderTemplate($email['subject'], $vars);
                 $renderedBody = $this->renderTemplate($email['body'], $vars);
                 $logId = $this->logEnrollment((int)$enr['id'], (int)$enr['campaign_id'], 'sent', $renderedSubject, (int)$email['id']);
-                $this->pdo->prepare("UPDATE drip_email_log SET status = 'sent', sent_at = NOW() WHERE id = ?")->execute([$logId]);
+                $this->pdo->prepare("UPDATE drip_email_log SET status = 'sent', sent_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$logId, $tid] : [$logId]);
                 $nextEmail = $emails[$nextStep + 1] ?? null;
                 $nextSend = null;
                 if ($nextEmail) {
                     $delay = ((int)$nextEmail['delay_days'] * 86400) + ((int)$nextEmail['delay_hours'] * 3600);
                     $nextSend = date('Y-m-d H:i:s', time() + $delay);
                 }
-                $this->pdo->prepare("UPDATE drip_enrollments SET current_step = current_step + 1, total_sent = total_sent + 1, last_sent_at = NOW(), next_send_at = ? WHERE id = ?")
-                    ->execute([$nextSend, $enr['id']]);
-                $this->pdo->prepare("UPDATE drip_campaigns SET emails_sent = emails_sent + 1 WHERE id = ?")->execute([$enr['campaign_id']]);
+                $this->pdo->prepare("UPDATE drip_enrollments SET current_step = current_step + 1, total_sent = total_sent + 1, last_sent_at = NOW(), next_send_at = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))
+                    ->execute($tid > 1 ? [$nextSend, $enr['id'], $tid] : [$nextSend, $enr['id']]);
+                $this->pdo->prepare("UPDATE drip_campaigns SET emails_sent = emails_sent + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$enr['campaign_id'], $tid] : [$enr['campaign_id']]);
                 $stats['sent']++;
             }
         } catch (\Throwable $e) {
@@ -165,36 +193,46 @@ class DripCampaignService
 
     public function markCompleted(int $enrollmentId): void
     {
-        $this->pdo->prepare("UPDATE drip_enrollments SET status = 'completed', completed_at = NOW() WHERE id = ?")->execute([$enrollmentId]);
-        $this->pdo->prepare("UPDATE drip_campaigns c JOIN drip_enrollments e ON e.campaign_id = c.id SET c.total_completed = c.total_completed + 1 WHERE e.id = ?")->execute([$enrollmentId]);
+        $tid = $this->tenantId();
+        $this->pdo->prepare("UPDATE drip_enrollments SET status = 'completed', completed_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$enrollmentId, $tid] : [$enrollmentId]);
+        $this->pdo->prepare("UPDATE drip_campaigns c JOIN drip_enrollments e ON e.campaign_id = c.id SET c.total_completed = c.total_completed + 1 WHERE e.id = ?" . ($tid > 1 ? " AND e.tenant_id = ? AND c.tenant_id = ?" : ""))->execute($tid > 1 ? [$enrollmentId, $tid, $tid] : [$enrollmentId]);
     }
 
     public function pauseEnrollment(int $enrollmentId): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE drip_enrollments SET status = 'paused' WHERE id = ?");
-        $stmt->execute([$enrollmentId]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE drip_enrollments SET status = 'paused' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($tid > 1 ? [$enrollmentId, $tid] : [$enrollmentId]);
         return $stmt->rowCount() > 0;
     }
 
     public function resumeEnrollment(int $enrollmentId): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE drip_enrollments SET status = 'active', next_send_at = NOW() WHERE id = ?");
-        $stmt->execute([$enrollmentId]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE drip_enrollments SET status = 'active', next_send_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($tid > 1 ? [$enrollmentId, $tid] : [$enrollmentId]);
         return $stmt->rowCount() > 0;
     }
 
     public function unsubscribe(int $enrollmentId): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE drip_enrollments SET status = 'unsubscribed' WHERE id = ?");
-        $stmt->execute([$enrollmentId]);
+        $tid = $this->tenantId();
+        $sql = "UPDATE drip_enrollments SET status = 'unsubscribed' WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($tid > 1 ? [$enrollmentId, $tid] : [$enrollmentId]);
         return $stmt->rowCount() > 0;
     }
 
     public function getEnrollments(int $campaignId, int $limit = 100): array
     {
+        $tid = $this->tenantId();
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM drip_enrollments WHERE campaign_id = ? ORDER BY enrolled_at DESC LIMIT ?");
-            $stmt->execute([$campaignId, $limit]);
+            $sql = "SELECT * FROM drip_enrollments WHERE campaign_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY enrolled_at DESC LIMIT ?";
+            $stmt = $this->pdo->prepare($sql);
+            $params = $tid > 1 ? [$campaignId, $tid, $limit] : [$campaignId, $limit];
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             return [];
@@ -203,9 +241,12 @@ class DripCampaignService
 
     public function getEnrollmentLog(int $enrollmentId): array
     {
+        $tid = $this->tenantId();
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM drip_email_log WHERE enrollment_id = ? ORDER BY created_at DESC");
-            $stmt->execute([$enrollmentId]);
+            $sql = "SELECT * FROM drip_email_log WHERE enrollment_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $params = $tid > 1 ? [$enrollmentId, $tid] : [$enrollmentId];
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             return [];
@@ -214,8 +255,13 @@ class DripCampaignService
 
     public function logEnrollment(int $enrollmentId, int $campaignId, string $status, ?string $message = null, ?int $emailId = null): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO drip_email_log (enrollment_id, campaign_id, email_id, status, error_message) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$enrollmentId, $campaignId, $emailId, $status, $message]);
+        $insertData = $this->tenantInsertData();
+        $cols = "enrollment_id, campaign_id, email_id, status, error_message" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $stmt = $this->pdo->prepare("INSERT INTO drip_email_log ($cols) VALUES ($ph)");
+        $params = [$enrollmentId, $campaignId, $emailId, $status, $message];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
@@ -234,20 +280,46 @@ class DripCampaignService
             'total_enrollments' => 0, 'active_enrollments' => 0, 'completed_enrollments' => 0,
             'emails_sent_today' => 0, 'emails_sent_week' => 0, 'avg_completion_rate' => 0
         ];
+        $tid = $this->tenantId();
+        $tidClause = $tid > 1 ? " AND tenant_id = ?" : "";
+        $tidParam = $tid > 1 ? [$tid] : [];
         try {
-            $stats['total_campaigns'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_campaigns")->fetchColumn();
-            $stats['active_campaigns'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_campaigns WHERE status = 'active'")->fetchColumn();
-            $stats['draft_campaigns'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_campaigns WHERE status = 'draft'")->fetchColumn();
-            $stats['total_enrollments'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_enrollments")->fetchColumn();
-            $stats['active_enrollments'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_enrollments WHERE status = 'active'")->fetchColumn();
-            $stats['completed_enrollments'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_enrollments WHERE status = 'completed'")->fetchColumn();
-            $stats['emails_sent_today'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_email_log WHERE DATE(created_at) = CURDATE() AND status = 'sent'")->fetchColumn();
-            $stats['emails_sent_week'] = (int)$this->pdo->query("SELECT COUNT(*) FROM drip_email_log WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND status = 'sent'")->fetchColumn();
+            $sql = "SELECT COUNT(*) FROM drip_campaigns" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['total_campaigns'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_campaigns WHERE status = 'active'" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['active_campaigns'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_campaigns WHERE status = 'draft'" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['draft_campaigns'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_enrollments" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['total_enrollments'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_enrollments WHERE status = 'active'" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['active_enrollments'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_enrollments WHERE status = 'completed'" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['completed_enrollments'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_email_log WHERE DATE(created_at) = CURDATE() AND status = 'sent'" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['emails_sent_today'] = (int)$stmt->fetchColumn();
+
+            $sql = "SELECT COUNT(*) FROM drip_email_log WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND status = 'sent'" . $tidClause;
+            $stmt = $this->pdo->prepare($sql); $stmt->execute($tidParam);
+            $stats['emails_sent_week'] = (int)$stmt->fetchColumn();
+
             if ($stats['total_enrollments'] > 0) {
                 $stats['avg_completion_rate'] = round(($stats['completed_enrollments'] / $stats['total_enrollments']) * 100, 1);
             }
         } catch (\Throwable $e) {
-        // ignore
         error_log($e->getMessage());
         }
         return $stats;

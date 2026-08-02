@@ -14,6 +14,21 @@ use PDO;
 class FormSelectDataService
 {
     /**
+     * Get current tenant ID for static method context.
+     */
+    private static function tid(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return (int) \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
+    }
+
+    /**
      * Get users for select dropdown
      * 
      * @param array $filters Optional filters (status, etc.)
@@ -25,6 +40,11 @@ class FormSelectDataService
             $db = Database::getInstance();
             $where = ["role = 'customer'"];
             $params = [];
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
@@ -59,6 +79,11 @@ class FormSelectDataService
             $db = Database::getInstance();
             $where = ["role = 'associate'"];
             $params = [];
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
@@ -96,6 +121,11 @@ class FormSelectDataService
             $db = Database::getInstance();
             $where = ["role IN ('admin', 'support', 'associate', 'manager')"];
             $params = [];
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
@@ -142,7 +172,11 @@ class FormSelectDataService
             $columnList = implode(', ', $columns);
             $where = ["1=1"];
             $params = [];
-            
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
                 $params['status'] = $filters['status'];
@@ -188,7 +222,11 @@ class FormSelectDataService
             $columnList = implode(', ', $columns);
             $where = ["is_active = 1"];
             $params = [];
-            
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
                 $params['status'] = $filters['status'];
@@ -229,6 +267,11 @@ class FormSelectDataService
             $columnList = implode(', ', $columns);
             $where = ["is_active = 1"];
             $params = [];
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
@@ -381,6 +424,11 @@ class FormSelectDataService
             $db = Database::getInstance();
             $where = ["role = 'employee'"];
             $params = [];
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";
@@ -421,6 +469,11 @@ class FormSelectDataService
             
             $where = ["role IN ($placeholders)"];
             $params = $roleArray;
+            $tid = self::tid();
+            if ($tid > 1) {
+                $where[] = "tenant_id = :tid";
+                $params[':tid'] = $tid;
+            }
             
             if (!empty($filters['status']) && $filters['status'] !== 'all') {
                 $where[] = "status = :status";

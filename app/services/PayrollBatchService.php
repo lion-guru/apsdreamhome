@@ -6,8 +6,12 @@
  */
 namespace App\Services;
 
+use App\Traits\ServiceTenantTrait;
+
 class PayrollBatchService
 {
+    use ServiceTenantTrait;
+
     private ?\PDO $pdo = null;
     private SalaryCalculationService $calc;
 
@@ -29,19 +33,22 @@ class PayrollBatchService
         $totalNet = 0;
 
         $existing = $this->fetchColumn(
-            "SELECT COUNT(*) FROM salary_payments WHERE payment_month = ? AND payment_year = ? AND payment_status != 'cancelled'",
+            "SELECT COUNT(*) FROM salary_payments WHERE payment_month = ? AND payment_year = ? AND payment_status != 'cancelled' {$this->tenantSql()}",
             [$month, $year]
         );
         if ($existing > 0) {
             throw new \RuntimeException("Payroll for $month/$year already has $existing payments. Void them first to regenerate.");
         }
 
+        $tid = $this->tenantId();
+        $cols = "employee_id, salary_structure_id, payment_month, payment_year, payment_date,
+                 basic_amount, allowance_amount, gross_amount, deduction_amount, net_amount,
+                 payment_status, created_by";
+        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?";
         $stmt = $this->pdo->prepare("
             INSERT INTO salary_payments
-            (employee_id, salary_structure_id, payment_month, payment_year, payment_date,
-             basic_amount, allowance_amount, gross_amount, deduction_amount, net_amount,
-             payment_status, created_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+            ($cols" . ($tid > 1 ? ", tenant_id" : "") . ")
+            VALUES ($vals" . ($tid > 1 ? ", ?" : "") . ")
         ");
 
         foreach ($structures as $s) {
@@ -50,11 +57,13 @@ class PayrollBatchService
                 $paymentDate = date("Y-" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-28");
                 $allowances = $breakdown['hra'] + $breakdown['conveyance'] + $breakdown['medical_allowance'] + $breakdown['special_allowance'] + $breakdown['other_allowances'];
 
-                $stmt->execute([
+                $params = [
                     $s['employee_id'], $s['id'], $month, $year, $paymentDate,
                     $breakdown['basic_salary'], $allowances, $breakdown['gross_salary'],
                     $breakdown['total_deductions'], $breakdown['net_salary'], $processedBy,
-                ]);
+                ];
+                if ($tid > 1) $params[] = $tid;
+                $stmt->execute($params);
                 $generated++;
                 $totalNet += $breakdown['net_salary'];
             } catch (\Exception $e) {
@@ -76,7 +85,7 @@ class PayrollBatchService
             UPDATE salary_payments
             SET payment_status = 'paid', payment_method = ?, bank_reference = ?,
                 payment_processed_by = ?, payment_processed_at = NOW()
-            WHERE id = ? AND payment_status = 'pending'
+            WHERE id = ? AND payment_status = 'pending' {$this->tenantSql()}
         ");
         foreach ($paymentIds as $pid) {
             $stmt->execute([$method, $reference, $processedBy, $pid]);
@@ -101,7 +110,7 @@ class PayrollBatchService
                 COUNT(CASE WHEN payment_status='paid' THEN 1 END) as paid_count,
                 COUNT(CASE WHEN payment_status='pending' THEN 1 END) as pending_count
             FROM salary_payments
-            WHERE payment_month = ? AND payment_year = ?
+            WHERE payment_month = ? AND payment_year = ? {$this->tenantSql()}
         ", [$month, $year]) ?? [];
     }
 
@@ -114,9 +123,9 @@ class PayrollBatchService
             SELECT sp.*, ss.basic_salary, ss.hra, ss.pf_employee, ss.esi_employee, ss.tds,
                    u.name as employee_name
             FROM salary_payments sp
-            LEFT JOIN salary_structures ss ON sp.salary_structure_id = ss.id
-            LEFT JOIN users u ON sp.employee_id = u.id
-            WHERE sp.employee_id = ?
+            LEFT JOIN salary_structures ss ON sp.salary_structure_id = ss.id {$this->tenantSqlForAlias('ss')}
+            LEFT JOIN users u ON sp.employee_id = u.id {$this->tenantSqlForAlias('u')}
+            WHERE sp.employee_id = ? {$this->tenantSqlForAlias('sp')}
             ORDER BY sp.payment_year DESC, sp.payment_month DESC
             LIMIT ?
         ", [$employeeId, $limit]);
@@ -162,7 +171,7 @@ class PayrollBatchService
             "SELECT ss.*, u.name as employee_name
              FROM salary_structures ss
              JOIN users u ON ss.employee_id = u.id
-             WHERE ss.status = 'active'
+             WHERE ss.status = 'active' {$this->tenantSqlForAlias('ss')} AND u.tenant_id = {$this->tenantId()}
              ORDER BY ss.employee_id"
         );
     }

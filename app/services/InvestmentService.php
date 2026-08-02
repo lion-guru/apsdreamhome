@@ -2,9 +2,11 @@
 namespace App\Services;
 
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 class InvestmentService
 {
+    use ServiceTenantTrait;
     private PDO $pdo;
 
     public function __construct(?PDO $pdo = null)
@@ -39,7 +41,7 @@ class InvestmentService
 
     public function getUserInvestments(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT i.*, pl.plan_name, pl.plan_category, pl.expected_return_pct FROM investments i JOIN investment_plans pl ON i.plan_id = pl.id WHERE i.user_id = ? ORDER BY i.created_at DESC");
+        $stmt = $this->pdo->prepare("SELECT i.*, pl.plan_name, pl.plan_category, pl.expected_return_pct FROM investments i JOIN investment_plans pl ON i.plan_id = pl.id WHERE i.user_id = ? {$this->tenantSqlForAlias('i')} ORDER BY i.created_at DESC");
         $stmt->execute([$userId]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as &$r) {
@@ -51,11 +53,11 @@ class InvestmentService
 
     public function getStats(int $userId): array
     {
-        $row = $this->pdo->prepare("SELECT COALESCE(SUM(principal_amount), 0) as total_invested, COALESCE(SUM(current_value), 0) as total_value, COALESCE(SUM(current_value - principal_amount), 0) as total_returns FROM investments WHERE user_id = ? AND status = 'active'");
+        $row = $this->pdo->prepare("SELECT COALESCE(SUM(principal_amount), 0) as total_invested, COALESCE(SUM(current_value), 0) as total_value, COALESCE(SUM(current_value - principal_amount), 0) as total_returns FROM investments WHERE user_id = ? AND status = 'active' {$this->tenantSql()}");
         $row->execute([$userId]);
         $stats = $row->fetch(PDO::FETCH_ASSOC);
 
-        $count = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM investments WHERE user_id = ? AND status = 'active'");
+        $count = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM investments WHERE user_id = ? AND status = 'active' {$this->tenantSql()}");
         $count->execute([$userId]);
         $active = (int)$count->fetch(PDO::FETCH_ASSOC)['cnt'];
 
@@ -102,8 +104,17 @@ class InvestmentService
         $promisedValue = (float)($planRow['plot_promised_value'] ?? 0);
         $companyContrib = $promisedValue > 0 ? max(0.0, $promisedValue - $amount) : 0.0;
 
-        $stmt = $this->pdo->prepare("INSERT INTO investments (user_id, plan_id, investment_ref, principal_amount, current_value, monthly_amount, sip_date, start_date, maturity_date, status, auto_invest, company_contribution, plot_promised_sqft, plot_promised_value, maturity_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 'pending')");
-        $stmt->execute([$userId, $planId, $ref, $amount, $amount, $monthly, $sipDate, $start, $maturity, $autoInvest, $companyContrib, $promisedSqft, $promisedValue]);
+        $tid = $this->tenantId();
+        $cols = "user_id, plan_id, investment_ref, principal_amount, current_value, monthly_amount, sip_date, start_date, maturity_date, status, auto_invest, company_contribution, plot_promised_sqft, plot_promised_value, maturity_status";
+        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 'pending'";
+        $params = [$userId, $planId, $ref, $amount, $amount, $monthly, $sipDate, $start, $maturity, $autoInvest, $companyContrib, $promisedSqft, $promisedValue];
+        if ($tid > 1) {
+            $cols .= ", tenant_id";
+            $vals .= ", ?";
+            $params[] = $tid;
+        }
+        $stmt = $this->pdo->prepare("INSERT INTO investments ($cols) VALUES ($vals)");
+        $stmt->execute($params);
         $investmentId = (int) $this->pdo->lastInsertId();
 
         // Wire up commission: if a referrer is specified, pay 3% (2% agent + 0.7% L1 + 0.3% L2)
@@ -144,7 +155,7 @@ class InvestmentService
     public function cancelInvestment(int $userId, int $investmentId, string $reason = ''): array
     {
         // Fetch investment
-        $stmt = $this->pdo->prepare("SELECT * FROM investments WHERE id = ? AND user_id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM investments WHERE id = ? AND user_id = ? {$this->tenantSql()}");
         $stmt->execute([$investmentId, $userId]);
         $inv = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$inv) {
@@ -178,7 +189,7 @@ class InvestmentService
             $this->pdo->prepare("
                 UPDATE investments
                 SET status = 'cancelled', updated_at = NOW(), notes = CONCAT(COALESCE(notes,''), '\nCancelled: ', ?)
-                WHERE id = ?
+                WHERE id = ? {$this->tenantSql()}
             ")->execute([$reason ?: 'User requested cancellation', $investmentId]);
 
             // Reverse any commissions paid for this investment
@@ -218,8 +229,17 @@ class InvestmentService
     {
         $stats = $this->getStats($userId);
         $xp = (int)floor($stats['total_invested'] / 100);
-        $this->pdo->prepare("INSERT INTO investor_levels (user_id, level_name, total_invested, total_returns, xp_points, next_level_threshold) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE level_name=VALUES(level_name), total_invested=VALUES(total_invested), total_returns=VALUES(total_returns), xp_points=VALUES(xp_points), next_level_threshold=VALUES(next_level_threshold), last_updated=NOW()")
-            ->execute([$userId, $stats['level'], $stats['total_invested'], $stats['total_returns'], $xp, $stats['next_threshold']]);
+        $tid = $this->tenantId();
+        $cols = "user_id, level_name, total_invested, total_returns, xp_points, next_level_threshold";
+        $vals = "?, ?, ?, ?, ?, ?";
+        $params = [$userId, $stats['level'], $stats['total_invested'], $stats['total_returns'], $xp, $stats['next_threshold']];
+        if ($tid > 1) {
+            $cols .= ", tenant_id";
+            $vals .= ", ?";
+            $params[] = $tid;
+        }
+        $this->pdo->prepare("INSERT INTO investor_levels ($cols) VALUES ($vals) ON DUPLICATE KEY UPDATE level_name=VALUES(level_name), total_invested=VALUES(total_invested), total_returns=VALUES(total_returns), xp_points=VALUES(xp_points), next_level_threshold=VALUES(next_level_threshold), last_updated=NOW()")
+            ->execute($params);
     }
 
     private function computeLevel(float $total): array

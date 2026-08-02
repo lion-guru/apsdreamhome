@@ -212,14 +212,20 @@ class LeadScorer
      */
     public function scoreAllUnscored(int $limit = 100): int
     {
-        $tenantSql = $this->tenantSql();
-        $tenantVal = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-        $stmt = $this->db->query("
+        $tid = $this->tenantId();
+        $tenantFilter = $this->tenantSql();
+        $params = [];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
+        $sql = "
             SELECT l.id FROM leads l
-            LEFT JOIN ai_lead_scores s ON l.id = s.lead_id AND s.scored_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
-            WHERE s.id IS NULL{$tenantSql}
+            LEFT JOIN ai_lead_scores s ON l.id = s.lead_id" . ($tid > 1 ? " AND s.tenant_id = ?" : "") . " AND s.scored_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+            WHERE s.id IS NULL{$tenantFilter}
             LIMIT $limit
-        ");
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         $count = 0;
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $this->score((int)$row['id']);

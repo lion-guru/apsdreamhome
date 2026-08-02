@@ -4,9 +4,12 @@ namespace App\Services\Finance;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class StampDutyService
 {
+    use ServiceTenantTrait;
+
     /** @var PDO */
     protected $db;
 
@@ -244,16 +247,14 @@ class StampDutyService
         try {
             $userId = $_SESSION['user_id'] ?? null;
             $bookingId = $data['booking_id'] ?? null;
+            $tid = $this->tenantId();
 
-            $stmt = $this->db->prepare("
-                INSERT INTO stamp_duty_calculations 
-                (user_id, booking_id, state_code, district, area_name, area_type, 
-                 property_value, circle_rate_value, higher_value, buyer_gender, 
-                 stamp_duty_rate, stamp_duty_amount, registration_fee_rate, 
-                 registration_fee_amount, surcharge_amount, cess_amount, total_amount, calculation_data)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([
+            $cols = "user_id, booking_id, state_code, district, area_name, area_type, 
+                     property_value, circle_rate_value, higher_value, buyer_gender, 
+                     stamp_duty_rate, stamp_duty_amount, registration_fee_rate, 
+                     registration_fee_amount, surcharge_amount, cess_amount, total_amount, calculation_data";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $params = [
                 $userId,
                 $bookingId,
                 $data['state_code'] ?? 'UP',
@@ -272,7 +273,15 @@ class StampDutyService
                 $data['cess_amount'] ?? 0,
                 $data['total_amount'] ?? 0,
                 json_encode($data),
-            ]);
+            ];
+            if ($tid > 1) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
+
+            $stmt = $this->db->prepare("
+                INSERT INTO stamp_duty_calculations 
+                ($cols)
+                VALUES ($vals)
+            ");
+            $stmt->execute($params);
         } catch (Exception $e) {
             error_log('[StampDutyService::saveCalculation] ' . $e->getMessage());
         }
@@ -288,7 +297,7 @@ class StampDutyService
         try {
             $stmt = $this->db->prepare("
                 SELECT * FROM stamp_duty_calculations 
-                WHERE user_id = ? 
+                WHERE user_id = ? {$this->tenantSql()}
                 ORDER BY created_at DESC 
                 LIMIT ?
             ");
