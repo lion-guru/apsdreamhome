@@ -104,4 +104,14 @@ trait ServiceTenantTrait
     {
         return $this->tenantId() > 1;
     }
+
+    /**
+     * WHERE clause fragment for tenant scoping with table alias.
+     * Use for JOIN queries where multiple tables have tenant_id (avoids ambiguity).
+     * Returns " AND alias.tenant_id = N" for tenants > 1, empty string for superadmin.
+     */
+    protected function tenantSqlForAlias(string $alias): string
+    {
+        return $this->tenantId() > 1 ? " AND {$alias}.tenant_id = {$this->tenantId()}" : "";
+    }
 }

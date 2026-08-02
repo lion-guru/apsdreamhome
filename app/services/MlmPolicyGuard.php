@@ -14,9 +14,11 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class MlmPolicyGuard
 {
+    use ServiceTenantTrait;
     /** @var PDO|null */
     private $pdo;
 
@@ -145,6 +147,7 @@ class MlmPolicyGuard
      */
     public function checkMonthlyMaintenance(int $userId): array
     {
+        $tid = $this->tenantId();
         $stmt = $this->pdo->prepare("
             SELECT
                 DATE_FORMAT(pb.created_at, '%Y-%m') AS ym,
@@ -153,11 +156,12 @@ class MlmPolicyGuard
             JOIN associates a ON a.id = pb.associate_id
             WHERE a.user_id = ?
               AND pb.status NOT IN ('cancelled', 'refunded')
+            " . ($tid > 1 ? " AND pb.tenant_id = $tid" : "") . "
             GROUP BY ym
             ORDER BY ym DESC
             LIMIT 12
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         $months = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $consecutive = 0;
@@ -253,14 +257,16 @@ class MlmPolicyGuard
      */
     private function getPbv(int $userId): float
     {
+        $tid = $this->tenantId();
         $stmt = $this->pdo->prepare("
             SELECT COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0)
             FROM plot_bookings pb
             JOIN associates a ON a.id = pb.associate_id
             WHERE a.user_id = ?
-              AND pb.status NOT IN ('cancelled', 'refunded')
+              AND pb.status NOT IN ('cancelled', 'refunded')"
+            . ($tid > 1 ? " AND pb.tenant_id = $tid" : "") . "
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         return (float) $stmt->fetchColumn();
     }
 
@@ -269,6 +275,7 @@ class MlmPolicyGuard
      */
     private function getDownlineLegs(int $userId): array
     {
+        $tid = $this->tenantId();
         $stmt = $this->pdo->prepare("
             SELECT
                 mnt.associate_id AS user_id,
@@ -277,9 +284,10 @@ class MlmPolicyGuard
             FROM mlm_network_tree mnt
             JOIN users u ON u.id = mnt.associate_id
             LEFT JOIN mlm_profiles mp ON mp.user_id = mnt.associate_id
-            WHERE mnt.parent_id = ?
+            WHERE mnt.parent_id = ?"
+            . ($tid > 1 ? " AND mnt.tenant_id = $tid" : "") . "
         ");
-        $stmt->execute([$userId]);
+        $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -288,7 +296,7 @@ class MlmPolicyGuard
      */
     private function resolveCurrentRank(int $userId): string
     {
-        $stmt = $this->pdo->prepare("SELECT current_level FROM mlm_profiles WHERE user_id = ? LIMIT 1");
+        $stmt = $this->pdo->prepare("SELECT current_level FROM mlm_profiles WHERE user_id = ?" . $this->tenantSql() . " LIMIT 1");
         $stmt->execute([$userId]);
         $level = $stmt->fetchColumn();
         return $level ?: 'associate';

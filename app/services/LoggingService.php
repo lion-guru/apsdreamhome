@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Config\Config;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 /**
@@ -12,6 +13,8 @@ use Exception;
  */
 class LoggingService
 {
+    use ServiceTenantTrait;
+
     private static $instance = null;
     private $db;
     private $logFile;
@@ -155,8 +158,9 @@ class LoggingService
     private function logToDatabase(string $level, string $message, array $context): void
     {
         try {
-            $sql = "INSERT INTO system_logs (level, message, context, ip_address, user_agent, created_at) 
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+            $tid = $this->tenantId();
+            $sql = "INSERT INTO system_logs (level, message, context, ip_address, user_agent, tenant_id, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
@@ -164,7 +168,8 @@ class LoggingService
                 $message,
                 json_encode($context),
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+                $tid
             ]);
         } catch (Exception $e) {
             // Fallback to file logging if database fails
@@ -196,17 +201,24 @@ class LoggingService
     public function logUserActivity(int $userId, string $action, array $details = []): void
     {
         try {
-            $sql = "INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, user_agent, created_at) 
-                    VALUES (?, ?, ?, ?, ?, NOW())";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
+            $tid = $this->tenantId();
+            $col = "user_id, action, context, ip_address, user_agent, created_at";
+            $placeholders = "?, ?, ?, ?, ?, NOW()";
+            $params = [
                 $userId,
                 $action,
                 json_encode($details),
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown',
                 $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
-            ]);
+            ];
+            if ($tid > 1) {
+                $col = "tenant_id, $col";
+                $placeholders = ", $placeholders";
+                $params = array_merge([$tid], $params);
+            }
+            $sql = "INSERT INTO user_activity_logs_unified ($col) VALUES ($placeholders)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
 
             // Also log to main log
             $this->info("User activity: $action", array_merge(['user_id' => $userId], $details));

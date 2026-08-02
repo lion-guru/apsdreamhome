@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Services;
+use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
-/**
- * Property Comparison Service
- * Save up to 4 properties for side-by-side comparison
- */
 class PropertyComparisonService
 {
+    use ServiceTenantTrait;
     private $db;
     private $pdo;
 
@@ -24,7 +22,7 @@ class PropertyComparisonService
 
     public function getOrCreateActive(int $userId = 0, string $sessionId = ''): array
     {
-        $sql = "SELECT * FROM property_comparisons WHERE is_active = 1";
+        $sql = "SELECT * FROM property_comparisons WHERE is_active = 1" . $this->tenantSql();;
         $params = [];
         if ($userId) {
             $sql .= " AND user_id = ?";
@@ -41,8 +39,11 @@ class PropertyComparisonService
         $row = $stmt->fetch();
         if ($row) return $row;
         $token = bin2hex(random_bytes(16));
-        $stmt = $this->pdo->prepare("INSERT INTO property_comparisons (user_id, session_id, property_ids, share_token) VALUES (?, ?, '[]', ?)");
-        $stmt->execute([$userId ?: null, $sessionId ?: null, $token]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $stmt = $this->pdo->prepare("INSERT INTO property_comparisons (user_id, session_id, property_ids, share_token{$extraCols}) VALUES (?, ?, '[]', ?{$extraVals})");
+        $stmt->execute(array_merge([$userId ?: null, $sessionId ?: null, $token], array_values($insertData)));
         return ['id' => (int)$this->pdo->lastInsertId(), 'user_id' => $userId, 'session_id' => $sessionId, 'property_ids' => '[]', 'share_token' => $token];
     }
 
@@ -56,7 +57,7 @@ class PropertyComparisonService
         if (count($ids) > 4) {
             return ['success' => false, 'error' => 'Maximum 4 properties allowed. Remove one first.'];
         }
-        $stmt = $this->pdo->prepare("UPDATE property_comparisons SET property_ids = ? WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE property_comparisons SET property_ids = ? WHERE id = ?" . $this->tenantSql());
         $stmt->execute([json_encode(array_values($ids)), $compId]);
         return ['success' => true, 'count' => count($ids), 'ids' => array_values($ids)];
     }
@@ -67,21 +68,21 @@ class PropertyComparisonService
         if (!$row) return ['success' => false, 'error' => 'Comparison list not found'];
         $ids = json_decode($row['property_ids'] ?? '[]', true) ?: [];
         $ids = array_values(array_filter($ids, fn($x) => $x != $propertyId));
-        $stmt = $this->pdo->prepare("UPDATE property_comparisons SET property_ids = ? WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE property_comparisons SET property_ids = ? WHERE id = ?" . $this->tenantSql());
         $stmt->execute([json_encode($ids), $compId]);
         return ['success' => true, 'count' => count($ids), 'ids' => $ids];
     }
 
     public function clear(int $compId): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE property_comparisons SET property_ids = '[]' WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE property_comparisons SET property_ids = '[]' WHERE id = ?" . $this->tenantSql());
         $stmt->execute([$compId]);
         return true;
     }
 
     public function getById(int $compId): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM property_comparisons WHERE id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM property_comparisons WHERE id = ?" . $this->tenantSql());
         $stmt->execute([$compId]);
         $row = $stmt->fetch();
         return $row ?: null;
@@ -89,11 +90,11 @@ class PropertyComparisonService
 
     public function getByToken(string $token): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM property_comparisons WHERE share_token = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM property_comparisons WHERE share_token = ?" . $this->tenantSql());
         $stmt->execute([$token]);
         $row = $stmt->fetch();
         if ($row) {
-            $this->pdo->prepare("UPDATE property_comparisons SET view_count = view_count + 1 WHERE id = ?")->execute([$row['id']]);
+            $this->pdo->prepare("UPDATE property_comparisons SET view_count = view_count + 1 WHERE id = ?" . $this->tenantSql())->execute([$row['id']]);
         }
         return $row ?: null;
     }
@@ -103,7 +104,7 @@ class PropertyComparisonService
         if (empty($ids)) return [];
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM user_properties WHERE id IN ($placeholders) AND status = 'approved'");
+            $stmt = $this->pdo->prepare("SELECT * FROM user_properties WHERE id IN ($placeholders) AND status = 'approved'" . $this->tenantSql());
             $stmt->execute(array_map('intval', $ids));
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
@@ -115,9 +116,9 @@ class PropertyComparisonService
     {
         $stats = ['total_lists' => 0, 'total_views' => 0, 'avg_properties_per_list' => 0];
         try {
-            $stats['total_lists'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_comparisons")->fetchColumn();
-            $stats['total_views'] = (int)$this->pdo->query("SELECT COALESCE(SUM(view_count), 0) FROM property_comparisons")->fetchColumn();
-            $stats['avg_properties_per_list'] = round((float)$this->pdo->query("SELECT AVG(JSON_LENGTH(property_ids)) FROM property_comparisons")->fetchColumn(), 1);
+            $stats['total_lists'] = (int)$this->pdo->query("SELECT COUNT(*) FROM property_comparisons" . $this->tenantSql())->fetchColumn();
+            $stats['total_views'] = (int)$this->pdo->query("SELECT COALESCE(SUM(view_count), 0) FROM property_comparisons" . $this->tenantSql())->fetchColumn();
+            $stats['avg_properties_per_list'] = round((float)$this->pdo->query("SELECT AVG(JSON_LENGTH(property_ids)) FROM property_comparisons" . $this->tenantSql())->fetchColumn(), 1);
         } catch (\Throwable $e) {
         // ignore
         error_log($e->getMessage());

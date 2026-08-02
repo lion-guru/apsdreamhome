@@ -23,9 +23,12 @@ namespace App\Services\MLM;
 use PDO;
 use Exception;
 use App\Services\HybridCommissionEngine;
+use App\Traits\ServiceTenantTrait;
 
 class CommissionManager
 {
+    use ServiceTenantTrait;
+
     protected $db;
 
     /** Engine identifiers */
@@ -105,13 +108,13 @@ class CommissionManager
     private function detectEngine(int $bookingId): string
     {
         try {
-            $stmt = $this->db->prepare("
-                SELECT p.colony_id 
-                FROM plot_bookings pb
-                JOIN plots p ON p.id = pb.plot_id
-                WHERE pb.id = ? LIMIT 1
-            ");
-            $stmt->execute([$bookingId]);
+        $stmt = $this->db->prepare("
+            SELECT p.colony_id 
+            FROM plot_bookings pb
+            JOIN plots p ON p.id = pb.plot_id
+            WHERE pb.id = ?" . $this->tenantSql() . " LIMIT 1
+        ");
+        $stmt->execute([$bookingId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row && !empty($row['colony_id'])) {
@@ -192,7 +195,7 @@ class CommissionManager
                     a.user_id as agent_user_id
                 FROM plot_bookings pb
                 LEFT JOIN associates a ON a.id = pb.associate_id
-                WHERE pb.id = ? LIMIT 1
+                WHERE pb.id = ?" . $this->tenantSql() . " LIMIT 1
             ");
             $stmt->execute([$bookingId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -206,7 +209,7 @@ class CommissionManager
             // ── FIX: Use ACTUAL payment received, not full plot value ──
             $paidStmt = $this->db->prepare("
                 SELECT 
-                    COALESCE((SELECT SUM(paid_amount) FROM booking_payment_schedules WHERE booking_id = ? AND status = 'paid'), 0)
+                    COALESCE((SELECT SUM(paid_amount) FROM booking_payment_schedules WHERE booking_id = ? AND status = 'paid'" . $this->tenantSql() . "), 0)
                     + ? AS total_received
             ");
             $paidStmt->execute([$bookingId, (float)$row['booking_amount']]);
@@ -219,7 +222,7 @@ class CommissionManager
             // Get the latest paid receipt_id for idempotency
             $receiptStmt = $this->db->prepare("
                 SELECT id FROM booking_payment_schedules 
-                WHERE booking_id = ? AND status = 'paid' ORDER BY id DESC LIMIT 1
+                WHERE booking_id = ? AND status = 'paid'" . $this->tenantSql() . " ORDER BY id DESC LIMIT 1
             ");
             $receiptStmt->execute([$bookingId]);
             $receiptRow = $receiptStmt->fetch(PDO::FETCH_ASSOC);
@@ -321,7 +324,7 @@ class CommissionManager
             $stmt = $this->db->prepare("
                 SELECT id, beneficiary_user_id, commission_type, amount, status, created_at
                 FROM mlm_commission_ledger
-                WHERE booking_id = ? AND status NOT IN ('cancelled', 'clawed_back')
+                WHERE booking_id = ? AND status NOT IN ('cancelled', 'clawed_back')" . $this->tenantSql() . "
                 ORDER BY id
             ");
             $stmt->execute([$bookingId]);
@@ -346,7 +349,7 @@ class CommissionManager
             $stmt = $this->db->prepare("
                 SELECT id, beneficiary_user_id, source_user_id, commission_type, amount, level
                 FROM mlm_commission_ledger
-                WHERE booking_id = ? AND status IN ('pending', 'approved', 'paid')
+                WHERE booking_id = ? AND status IN ('pending', 'approved', 'paid')" . $this->tenantSql() . "
             ");
             $stmt->execute([$bookingId]);
             $entries = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -359,6 +362,7 @@ class CommissionManager
             $note = $reason ?: "Clawback - Booking #{$bookingId} cancelled";
 
             // Insert negative clawback entries in ledger
+            $insertData = $this->tenantInsertData();
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                 (beneficiary_user_id, source_user_id, commission_type, amount, level, 
@@ -367,14 +371,22 @@ class CommissionManager
             ");
 
             foreach ($entries as $e) {
-                $ins->execute([
+                $params = [
                     $e['beneficiary_user_id'],
                     $e['source_user_id'] ?? 0,
                     -$e['amount'],
                     $e['level'],
                     $note,
                     $bookingId,
-                ]);
+                ];
+                $ins = $this->db->prepare("
+                    INSERT INTO mlm_commission_ledger
+                    (beneficiary_user_id, source_user_id, commission_type, amount, level, 
+                     sale_amount, commission_percentage, status, notes, booking_id, created_at)
+                    VALUES (?, ?, 'clawback', ?, ?, 0, 0, 'approved', ?, ?, NOW()" .
+                    ($insertData ? ", " . implode(', ', array_keys($insertData)) : "") . ")
+                ");
+                $ins->execute(array_merge($params, array_values($insertData)));
                 $reversed++;
             }
 
@@ -406,10 +418,10 @@ class CommissionManager
 
         try {
             // Get all pending commissions in this batch
-            $stmt = $this->db->prepare("
+             $stmt = $this->db->prepare("
                 SELECT id, beneficiary_user_id, amount, commission_type
                 FROM mlm_commission_ledger
-                WHERE payout_batch_id = ? AND status = 'pending'
+                WHERE payout_batch_id = ? AND status = 'pending'" . $this->tenantSql() . "
             ");
             $stmt->execute([$batchId]);
             $entries = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -440,25 +452,28 @@ class CommissionManager
 
                 // Credit user_wallets (monetary wallet, not gamification points)
                 $walletExists = $this->db->prepare(
-                    "SELECT id FROM user_wallets WHERE user_id = ? LIMIT 1"
+                    "SELECT id FROM user_wallets WHERE user_id = ?" . $this->tenantSql() . " LIMIT 1"
                 );
                 $walletExists->execute([$userId]);
                 if ($walletExists->fetch()) {
                     $this->db->prepare("
-                        UPDATE user_wallets SET balance = balance + ?, total_credited = total_credited + ? WHERE user_id = ?
+                        UPDATE user_wallets SET balance = balance + ?, total_credited = total_credited + ? WHERE user_id = ?" . $this->tenantSql() . "
                     ")->execute([$amount, $amount, $userId]);
                 } else {
+                    $insertData = $this->tenantInsertData();
                     $this->db->prepare("
-                        INSERT INTO user_wallets (user_id, user_type, balance, total_credited, created_at)
-                        VALUES (?, 'associate', ?, ?, NOW())
-                    ")->execute([$userId, $amount, $amount]);
+                        INSERT INTO user_wallets (user_id, user_type, balance, total_credited, created_at" .
+                        ($insertData ? ", " . implode(', ', array_keys($insertData)) : "") . ")
+                        VALUES (?, 'associate', ?, ?, NOW()" .
+                        ($insertData ? ", " . implode(', ', array_fill(0, count($insertData), '?')) : "") . ")
+                    ")->execute(array_merge([$userId, $amount, $amount], array_values($insertData)));
                 }
 
                 // Update ledger status to 'paid'
                 $placeholders = implode(',', array_fill(0, count($data['ids']), '?'));
                 $this->db->prepare("
                     UPDATE mlm_commission_ledger SET status = 'paid', updated_at = NOW()
-                    WHERE id IN ({$placeholders})
+                    WHERE id IN ({$placeholders})" . $this->tenantSql() . "
                 ")->execute($data['ids']);
 
                 // mlm_commission_ledger is the single source of truth — status already updated above
@@ -469,7 +484,7 @@ class CommissionManager
 
             // Update batch status
             $this->db->prepare("
-                UPDATE mlm_payout_batches SET status = 'completed', processed_at = NOW() WHERE id = ?
+                UPDATE mlm_payout_batches SET status = 'completed', processed_at = NOW() WHERE id = ?" . $this->tenantSql() . "
             ")->execute([$batchId]);
 
             return [
@@ -501,7 +516,7 @@ class CommissionManager
                     SUM(amount) as total,
                     status
                 FROM mlm_commission_ledger
-                WHERE booking_id = ?
+                WHERE booking_id = ?" . $this->tenantSql() . "
                 GROUP BY commission_type, status
                 ORDER BY commission_type, status
             ");

@@ -364,12 +364,13 @@ class NotificationService
     public function getRecent(?int $userId = null, int $limit = 50): array
     {
         try {
+            $tid = $this->getTenantId();
             $sql = 'SELECT * FROM notifications';
             $params = [];
-            if ($userId) {
-                $sql .= ' WHERE (user_id = ? OR user_id IS NULL)';
-                $params[] = $userId;
-            }
+            $wheres = [];
+            if ($tid > 1) { $wheres[] = 'tenant_id = ?'; $params[] = $tid; }
+            if ($userId) { $wheres[] = '(user_id = ? OR user_id IS NULL)'; $params[] = $userId; }
+            if ($wheres) { $sql .= ' WHERE ' . implode(' AND ', $wheres); }
             $sql .= ' ORDER BY created_at DESC LIMIT ?';
             $params[] = $limit;
             $st = $this->db->prepare($sql);
@@ -387,8 +388,14 @@ class NotificationService
     public function getCustomerNotifications(int $userId, int $limit = 20): array
     {
         try {
-            $st = $this->db->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT ?");
-            $st->execute([$userId, $limit]);
+            $tid = $this->getTenantId();
+            $sql = "SELECT * FROM notifications WHERE user_id = ?";
+            $params = [$userId];
+            if ($tid > 1) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $sql .= " ORDER BY created_at DESC LIMIT ?";
+            $params[] = $limit;
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
             return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             return [];
@@ -403,8 +410,10 @@ class NotificationService
     public function getUnreadCount(?int $userId = null): int
     {
         try {
+            $tid = $this->getTenantId();
             $sql = 'SELECT COUNT(*) as cnt FROM notifications WHERE is_read = 0';
             $params = [];
+            if ($tid > 1) { $sql .= ' AND tenant_id = ?'; $params[] = $tid; }
             if ($userId) {
                 $sql .= ' AND (user_id = ? OR user_id IS NULL)';
                 $params[] = $userId;

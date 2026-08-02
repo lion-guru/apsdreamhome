@@ -12,9 +12,11 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class CommissionReconciliationService
 {
+    use ServiceTenantTrait;
     protected $db;
 
     public function __construct(?PDO $pdo = null)
@@ -99,7 +101,7 @@ class CommissionReconciliationService
             SELECT l.id, l.booking_id, l.beneficiary_user_id, l.commission_type, l.amount, l.status
             FROM mlm_commission_ledger l
             LEFT JOIN plot_bookings pb ON pb.id = l.booking_id
-            WHERE l.booking_id IS NOT NULL AND pb.id IS NULL
+            WHERE l.booking_id IS NOT NULL AND pb.id IS NULL" . $this->tenantSql() . "
             ORDER BY l.created_at DESC
             LIMIT 50
         ";
@@ -121,7 +123,7 @@ class CommissionReconciliationService
             SELECT l.id, l.beneficiary_user_id, l.commission_type, l.amount, l.booking_id
             FROM mlm_commission_ledger l
             LEFT JOIN users u ON u.id = l.beneficiary_user_id
-            WHERE u.id IS NULL
+            WHERE u.id IS NULL" . $this->tenantSql() . "
             LIMIT 50
         ";
         try {
@@ -141,7 +143,7 @@ class CommissionReconciliationService
         $sql = "
             SELECT l.id, l.booking_id, l.beneficiary_user_id, l.commission_type, l.amount, l.notes
             FROM mlm_commission_ledger l
-            WHERE l.amount < 0
+            WHERE l.amount < 0" . $this->tenantSql() . "
             ORDER BY l.created_at DESC
             LIMIT 50
         ";
@@ -154,7 +156,7 @@ class CommissionReconciliationService
             $posStmt = $this->db->prepare("
                 SELECT SUM(amount) AS positive_total 
                 FROM mlm_commission_ledger 
-                WHERE booking_id = ? AND beneficiary_user_id = ? AND commission_type = ? AND amount > 0
+                WHERE booking_id = ? AND beneficiary_user_id = ? AND commission_type = ? AND amount > 0" . $this->tenantSql() . "
             ");
             foreach ($negatives as $neg) {
                 $posStmt->execute([$neg['booking_id'], $neg['beneficiary_user_id'], $neg['commission_type']]);
@@ -199,15 +201,15 @@ class CommissionReconciliationService
             $ledger = $this->countRows('mlm_commission_ledger');
 
             $pending = (int)$this->db->query(
-                "SELECT COUNT(*) FROM mlm_commission_ledger WHERE status = 'pending'"
+                "SELECT COUNT(*) FROM mlm_commission_ledger WHERE status = 'pending'" . $this->tenantSql()
             )->fetchColumn();
 
             $ledgerAmount = (float)$this->db->query(
-                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE status = 'paid'"
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE status = 'paid'" . $this->tenantSql()
             )->fetchColumn();
 
             $clawbacks = (int)$this->db->query(
-                "SELECT COUNT(*) FROM mlm_commission_ledger WHERE commission_type = 'clawback'"
+                "SELECT COUNT(*) FROM mlm_commission_ledger WHERE commission_type = 'clawback'" . $this->tenantSql()
             )->fetchColumn();
 
             return [
@@ -282,7 +284,7 @@ class CommissionReconciliationService
                 SUM(amount) as total_amount
             FROM mlm_commission_ledger
             WHERE booking_id IS NOT NULL
-              AND status NOT IN ('cancelled', 'clawed_back', 'clawback')
+              AND status NOT IN ('cancelled', 'clawed_back', 'clawback')" . $this->tenantSql() . "
             GROUP BY booking_id
             HAVING COUNT(*) > 10
             ORDER BY total_entries DESC
@@ -299,7 +301,7 @@ class CommissionReconciliationService
                 SELECT booking_id, beneficiary_user_id, commission_type, COUNT(*) as cnt
                 FROM mlm_commission_ledger
                 WHERE booking_id IS NOT NULL
-                  AND status NOT IN ('cancelled', 'clawed_back', 'clawback')
+                  AND status NOT IN ('cancelled', 'clawed_back', 'clawback')" . $this->tenantSql() . "
                 GROUP BY booking_id, beneficiary_user_id, commission_type
                 HAVING COUNT(*) > 1
                 LIMIT 20
@@ -323,7 +325,7 @@ class CommissionReconciliationService
             SELECT l.id, l.beneficiary_user_id, l.commission_type, l.amount, l.status, l.created_at
             FROM mlm_commission_ledger l
             WHERE l.booking_id IS NULL
-              AND l.amount < 0
+              AND l.amount < 0" . $this->tenantSql() . "
             ORDER BY l.created_at DESC
             LIMIT 50
         ";

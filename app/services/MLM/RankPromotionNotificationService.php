@@ -16,9 +16,11 @@ namespace App\Services\MLM;
 use PDO;
 use Exception;
 use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 
 class RankPromotionNotificationService
 {
+    use ServiceTenantTrait;
     protected $db;
 
     /** Rank display names and benefits */
@@ -122,22 +124,25 @@ class RankPromotionNotificationService
                 $message .= "Keep going to reach {$newInfo['next']}!";
             }
 
-            $this->db->prepare("
-                INSERT INTO realtime_notifications 
-                (channel_name, user_id, event_type, payload, created_at)
-                VALUES ('user_{$userId}_notifications', ?, 'rank_promotion', ?, NOW())
-            ")->execute([
-                $userId,
-                json_encode([
-                    'title' => $title,
-                    'message' => $message,
-                    'old_rank' => $oldRank,
-                    'new_rank' => $newRank,
-                    'icon' => $newInfo['icon'],
-                    'color' => $newInfo['color'],
-                    'metadata' => $metadata,
-                ]),
-            ]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $this->db->prepare("
+            INSERT INTO realtime_notifications 
+            (channel_name, user_id, event_type, payload, created_at{$extraCols})
+            VALUES ('user_{$userId}_notifications', ?, 'rank_promotion', ?, NOW(){$extraVals})
+        ")->execute(array_merge([
+            $userId,
+            json_encode([
+                'title' => $title,
+                'message' => $message,
+                'old_rank' => $oldRank,
+                'new_rank' => $newRank,
+                'icon' => $newInfo['icon'],
+                'color' => $newInfo['color'],
+                'metadata' => $metadata,
+            ]),
+        ], array_values($insertData)));
 
             return true;
         } catch (Exception $e) {
@@ -191,11 +196,14 @@ class RankPromotionNotificationService
             </div>";
 
             // Log to email queue
-            $this->db->prepare("
-                INSERT INTO email_queue 
-                (recipient_email, subject, body_html, status, scheduled_at, created_at)
-                VALUES (?, ?, ?, 'pending', NOW(), NOW())
-            ")->execute([$email, $subject, $html]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $this->db->prepare("
+            INSERT INTO email_queue 
+            (recipient_email, subject, body_html, status, scheduled_at, created_at{$extraCols})
+            VALUES (?, ?, ?, 'pending', NOW(), NOW(){$extraVals})
+        ")->execute(array_merge([$email, $subject, $html], array_values($insertData)));
 
             return true;
         } catch (Exception $e) {
@@ -214,11 +222,14 @@ class RankPromotionNotificationService
             $name = $user['name'] ?? 'Agent';
             $message = "Hi {$name}! Congratulations! You've been promoted to {$newInfo['label']} rank at APS Dream Home. Keep up the excellent work!";
 
-            $this->db->prepare("
-                INSERT INTO sms_queue
-                (recipient_phone, message, status, scheduled_at, created_at)
-                VALUES (?, ?, 'pending', NOW(), NOW())
-            ")->execute([$phone, $message]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $this->db->prepare("
+            INSERT INTO sms_queue
+            (recipient_phone, message, status, scheduled_at, created_at{$extraCols})
+            VALUES (?, ?, 'pending', NOW(), NOW(){$extraVals})
+        ")->execute(array_merge([$phone, $message], array_values($insertData)));
 
             return true;
         } catch (Exception $e) {
@@ -238,8 +249,8 @@ class RankPromotionNotificationService
     private function logRankHistory(int $userId, string $oldRank, string $newRank, array $metadata): void
     {
         try {
-            $assocStmt = $this->db->prepare(
-                "SELECT id FROM associates WHERE user_id = ? LIMIT 1"
+        $assocStmt = $this->db->prepare(
+                "SELECT id FROM associates WHERE user_id = ?" . $this->tenantSql() . " LIMIT 1"
             );
             $assocStmt->execute([$userId]);
             $assoc = $assocStmt->fetch(PDO::FETCH_ASSOC);
@@ -250,18 +261,21 @@ class RankPromotionNotificationService
                 return;
             }
 
-            $this->db->prepare("
-                INSERT INTO mlm_rank_history
-                (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion,
-                 promoted_at, created_at)
-                VALUES (?, ?, ?, ?, ?, NOW(), NOW())
-            ")->execute([
-                $associateId,
-                $oldRank,
-                $newRank,
-                $metadata['gbv'] ?? 0,
-                $metadata['team_size'] ?? 0,
-            ]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $this->db->prepare("
+            INSERT INTO mlm_rank_history
+            (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion,
+             promoted_at, created_at{$extraCols})
+            VALUES (?, ?, ?, ?, ?, NOW(), NOW(){$extraVals})
+        ")->execute(array_merge([
+            $associateId,
+            $oldRank,
+            $newRank,
+            $metadata['gbv'] ?? 0,
+            $metadata['team_size'] ?? 0,
+        ], array_values($insertData)));
 
             // Update current rank in associates extension table
             $levelMap = [
@@ -275,12 +289,12 @@ class RankPromotionNotificationService
             ];
             $newLevel = $levelMap[$newRank] ?? 'bronze';
             $this->db->prepare("
-                UPDATE associates SET level = ? WHERE id = ?
+                UPDATE associates SET level = ? WHERE id = ?" . $this->tenantSql() . "
             ")->execute([$newLevel, $associateId]);
 
             // Also update current_rank in mlm_profiles for display
             $this->db->prepare("
-                UPDATE mlm_profiles SET current_rank = ?, updated_at = NOW() WHERE user_id = ?
+                UPDATE mlm_profiles SET current_rank = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql() . "
             ")->execute([$newRank, $userId]);
 
         } catch (Exception $e) {

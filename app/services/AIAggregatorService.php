@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 class AIAggregatorService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $geminiKey;
 
@@ -44,11 +47,13 @@ class AIAggregatorService
                 $aiContent = $this->rewriteWithAI($listing['title'], $listing['description']);
 
                 $sql = "INSERT INTO properties 
-                        (title, description, price, location, city, state, type, property_type_id, bedrooms, bathrooms, area, status, source, owner_contact, original_url, created_at) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', 'ai_fetched', ?, ?, NOW())";
+                        (tenant_id, title, description, price, location, city, state, type, property_type_id, bedrooms, bathrooms, area, status, source, owner_contact, original_url, created_at) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', 'ai_fetched', ?, ?, NOW())";
 
                 $stmt = $this->db->getConnection()->prepare($sql);
+                $tid = $this->tenantId();
                 $stmt->execute([
+                    $tid,
                     $aiContent['title'] ?? $listing['title'],
                     $aiContent['description'] ?? $listing['description'],
                     $listing['price'],

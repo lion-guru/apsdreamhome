@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class RoyaltyService
 {
+    use ServiceTenantTrait;
     private $pdo;
 
     public function __construct(?\PDO $pdo = null)
@@ -20,7 +22,7 @@ class RoyaltyService
             SELECT COALESCE(SUM(total_price), 0) as total_sales
             FROM plot_bookings
             WHERE status IN ('booked', 'registered')
-            AND DATE_FORMAT(booking_date, '%Y-%m') = ?
+            AND DATE_FORMAT(booking_date, '%Y-%m') = ?" . $this->tenantSql() . "
         ");
         $stmt->execute([$period]);
         $totalSales = (float)$stmt->fetchColumn();
@@ -49,7 +51,7 @@ class RoyaltyService
             FROM users u
             WHERE u.rank = 'site_manager'
             AND u.gbv >= 5000000
-            AND u.status = 'active'
+            AND u.status = 'active'" . $this->tenantSql() . "
         ");
         $stmt->execute();
         $siteManagers = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -64,16 +66,19 @@ class RoyaltyService
 
         foreach ($siteManagers as $manager) {
             $share = ($manager['gbv'] / $totalGBV) * $poolAmount;
-            
+
+            $insertData = $this->tenantInsertData();
+            $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+            $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
             $stmt = $this->pdo->prepare("
-                INSERT INTO mlm_commission_ledger (user_id, commission_type, amount, description, status, created_at)
-                VALUES (?, 'royalty_pool', ?, ?, 'pending', NOW())
+                INSERT INTO mlm_commission_ledger (user_id, commission_type, amount, description, status, created_at{$extraCols})
+                VALUES (?, 'royalty_pool', ?, ?, 'pending', NOW(){$extraVals})
             ");
-            $stmt->execute([
+            $stmt->execute(array_merge([
                 $manager['id'],
                 $share,
                 "Royalty pool share for {$period}"
-            ]);
+            ], array_values($insertData)));
             $distributed += $share;
         }
 

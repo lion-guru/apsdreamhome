@@ -4,6 +4,7 @@ namespace App\Services;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Retroactive Commission Recalculation Service
@@ -21,6 +22,7 @@ use Exception;
  */
 class RetroactiveRecalculationService
 {
+    use ServiceTenantTrait;
     /** @var PDO */
     private $pdo;
 
@@ -53,7 +55,7 @@ class RetroactiveRecalculationService
                        amount, level, sale_amount, commission_percentage,
                        plan_id, plan_version, plan_snapshot, notes, booking_id, created_at
                 FROM mlm_commission_ledger
-                WHERE id = ?
+                WHERE id = ?" . $this->tenantSql() . "
                 FOR UPDATE
             ");
             $stmt->execute([$ledgerId]);
@@ -72,7 +74,7 @@ class RetroactiveRecalculationService
             // 2. Check if there's already a pending recalculation for this entry
             $dup = $this->pdo->prepare("
                 SELECT COUNT(*) FROM commission_recalculations
-                WHERE original_ledger_id = ? AND status IN ('pending', 'approved')
+                WHERE original_ledger_id = ? AND status IN ('pending', 'approved')" . $this->tenantSql() . "
             ");
             $dup->execute([$ledgerId]);
             if ((int)$dup->fetchColumn() > 0) {
@@ -95,23 +97,26 @@ class RetroactiveRecalculationService
             $activePlan = $this->getActivePlanInfo();
 
             // 5. Insert recalculation request
-            $ins = $this->pdo->prepare("
-                INSERT INTO commission_recalculations
-                    (original_ledger_id, plan_id, plan_version, reason,
-                     original_amount, new_amount, amount_diff,
-                     requested_by, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-            ");
-            $ins->execute([
-                $ledgerId,
-                $activePlan['plan_id'],
-                $activePlan['plan_version'],
-                $reason,
-                $originalAmount,
-                round($newAmount, 2),
-                round($diff, 2),
-                $requestedBy,
-            ]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $ins = $this->pdo->prepare("
+            INSERT INTO commission_recalculations
+                (original_ledger_id, plan_id, plan_version, reason,
+                 original_amount, new_amount, amount_diff,
+                 requested_by, status, created_at{$extraCols})
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(){$extraVals})
+        ");
+        $ins->execute(array_merge([
+            $ledgerId,
+            $activePlan['plan_id'],
+            $activePlan['plan_version'],
+            $reason,
+            $originalAmount,
+            round($newAmount, 2),
+            round($diff, 2),
+            $requestedBy,
+        ], array_values($insertData)));
 
             $recalcId = (int)$this->pdo->lastInsertId();
             $this->pdo->commit();
@@ -139,7 +144,7 @@ class RetroactiveRecalculationService
             $stmt = $this->pdo->prepare("
                 SELECT id FROM mlm_commission_ledger
                 WHERE commission_type = ? AND created_at BETWEEN ? AND ?
-                  AND commission_type NOT IN ('superseded', 'reversed')
+                  AND commission_type NOT IN ('superseded', 'reversed')" . $this->tenantSql() . "
             ");
             $stmt->execute([$commissionType, $fromDate, $toDate]);
             $entries = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -179,7 +184,7 @@ class RetroactiveRecalculationService
 
             // 1. Fetch the request
             $stmt = $this->pdo->prepare("
-                SELECT * FROM commission_recalculations WHERE id = ? AND status = 'pending' FOR UPDATE
+                SELECT * FROM commission_recalculations WHERE id = ? AND status = 'pending'" . $this->tenantSql() . " FOR UPDATE
             ");
             $stmt->execute([$recalcId]);
             $recalc = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -190,7 +195,7 @@ class RetroactiveRecalculationService
             }
 
             // 2. Fetch original ledger entry
-            $stmt2 = $this->pdo->prepare("SELECT * FROM mlm_commission_ledger WHERE id = ?");
+            $stmt2 = $this->pdo->prepare("SELECT * FROM mlm_commission_ledger WHERE id = ?" . $this->tenantSql());
             $stmt2->execute([$recalc['original_ledger_id']]);
             $original = $stmt2->fetch(PDO::FETCH_ASSOC);
 
@@ -200,34 +205,37 @@ class RetroactiveRecalculationService
             }
 
             // 3. Create new ledger entry with recalculated amount
-            $ins = $this->pdo->prepare("
-                INSERT INTO mlm_commission_ledger
-                    (beneficiary_user_id, source_user_id, commission_type, amount,
-                     level, sale_amount, commission_percentage, status, notes,
-                     booking_id, receipt_id, property_id, created_at,
-                     plan_id, plan_version, plan_snapshot, calculation_engine)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'recalculated', ?,
-                        ?, ?, ?, NOW(),
-                        ?, ?, ?, 'retroactive_recalc')
-            ");
-            $ins->execute([
-                $original['beneficiary_user_id'],
-                $original['source_user_id'],
-                $original['commission_type'],
-                $recalc['new_amount'],
-                $original['level'],
-                $original['sale_amount'],
-                $original['commission_percentage'],
-                "Retroactive recalc: orig ₹" . number_format($recalc['original_amount']) .
-                    " → ₹" . number_format($recalc['new_amount']) .
-                    " | Reason: " . substr($recalc['reason'], 0, 100),
-                $original['booking_id'],
-                $original['receipt_id'] ?? null,
-                $original['property_id'] ?? null,
-                $recalc['plan_id'],
-                $recalc['plan_version'],
-                $this->getCurrentPlanSnapshotJson(),
-            ]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $ins = $this->pdo->prepare("
+            INSERT INTO mlm_commission_ledger
+                (beneficiary_user_id, source_user_id, commission_type, amount,
+                 level, sale_amount, commission_percentage, status, notes,
+                 booking_id, receipt_id, property_id, created_at,
+                 plan_id, plan_version, plan_snapshot, calculation_engine{$extraCols})
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'recalculated', ?,
+                    ?, ?, ?, NOW(),
+                    ?, ?, ?, 'retroactive_recalc'{$extraVals})
+        ");
+        $ins->execute(array_merge([
+            $original['beneficiary_user_id'],
+            $original['source_user_id'],
+            $original['commission_type'],
+            $recalc['new_amount'],
+            $original['level'],
+            $original['sale_amount'],
+            $original['commission_percentage'],
+            "Retroactive recalc: orig ₹" . number_format($recalc['original_amount']) .
+                " → ₹" . number_format($recalc['new_amount']) .
+                " | Reason: " . substr($recalc['reason'], 0, 100),
+            $original['booking_id'],
+            $original['receipt_id'] ?? null,
+            $original['property_id'] ?? null,
+            $recalc['plan_id'],
+            $recalc['plan_version'],
+            $this->getCurrentPlanSnapshotJson(),
+        ], array_values($insertData)));
 
             $newLedgerId = (int)$this->pdo->lastInsertId();
 
@@ -236,7 +244,7 @@ class RetroactiveRecalculationService
                 UPDATE mlm_commission_ledger
                 SET commission_type = CONCAT(commission_type, '_superseded'),
                     notes = CONCAT(COALESCE(notes, ''), ' [Superseded by recalculated entry #{$newLedgerId}]')
-                WHERE id = ?
+                WHERE id = ?" . $this->tenantSql() . "
             ")->execute([$recalc['original_ledger_id']]);
 
             // 5. Update recalculation record
@@ -244,7 +252,7 @@ class RetroactiveRecalculationService
                 UPDATE commission_recalculations
                 SET new_ledger_id = ?, approved_by = ?, status = 'applied',
                     admin_notes = ?, updated_at = NOW()
-                WHERE id = ?
+                WHERE id = ?" . $this->tenantSql() . "
             ")->execute([$newLedgerId, $approvedBy, $adminNotes, $recalcId]);
 
             $this->pdo->commit();
@@ -273,7 +281,7 @@ class RetroactiveRecalculationService
             $stmt = $this->pdo->prepare("
                 UPDATE commission_recalculations
                 SET status = 'rejected', approved_by = ?, admin_notes = ?, updated_at = NOW()
-                WHERE id = ? AND status = 'pending'
+                WHERE id = ? AND status = 'pending'" . $this->tenantSql() . "
             ");
             $stmt->execute([$rejectedBy, $adminNotes, $recalcId]);
 
@@ -301,7 +309,7 @@ class RetroactiveRecalculationService
         }
 
         // Count
-        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM commission_recalculations cr $where");
+        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM commission_recalculations cr {$where}" . $this->tenantSqlForAlias('cr'));
         $countStmt->execute($params);
         $total = (int)$countStmt->fetchColumn();
         $totalPages = max(1, ceil($total / $perPage));
@@ -322,7 +330,8 @@ class RetroactiveRecalculationService
             LEFT JOIN users s ON s.id = ml.source_user_id
             LEFT JOIN users a ON a.id = cr.requested_by
             LEFT JOIN users b ON b.id = cr.approved_by
-            $where
+            {$where}
+            " . $this->tenantSqlForAlias('cr') . "
             ORDER BY cr.created_at DESC
             LIMIT $perPage OFFSET $offset
         ");
@@ -346,7 +355,7 @@ class RetroactiveRecalculationService
         $stats = [];
         $r = $this->pdo->query("
             SELECT status, COUNT(*) as cnt, COALESCE(SUM(amount_diff), 0) as total_diff
-            FROM commission_recalculations
+            FROM commission_recalculations" . $this->tenantSql() . "
             GROUP BY status
         ");
         foreach ($r->fetchAll(PDO::FETCH_ASSOC) as $row) {

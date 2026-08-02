@@ -2,9 +2,11 @@
 namespace App\Services\MLM;
 
 use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 
 class DailyCappingService
 {
+    use ServiceTenantTrait;
     private $db;
     
     public function __construct()
@@ -32,7 +34,7 @@ class DailyCappingService
         if ($incomingReward <= 0) return 0;
         
         // Get today's accumulated level income
-        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total_today FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type IN ('level_bonus', 'level') AND DATE(created_at) = CURDATE() AND status = 'approved'");
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total_today FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type IN ('level_bonus', 'level') AND DATE(created_at) = CURDATE() AND status = 'approved'" . $this->tenantSql());
         $stmt->execute([$userId]);
         $todayTotal = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total_today'];
         
@@ -57,8 +59,17 @@ class DailyCappingService
     private function logFlushOut(int $userId, float $amount, string $reason): void
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO retained_earnings (user_id, amount, retention_reason, notes, created_at) VALUES (?, ?, 'daily_cap_flush', ?, NOW())");
-            $stmt->execute([$userId, $amount, $reason]);
+            $insertData = $this->tenantInsertData();
+            $cols = "user_id, amount, retention_reason, notes, created_at";
+            $vals = "?, ?, 'daily_cap_flush', ?, NOW()";
+            $params = [$userId, $amount, $reason];
+            if (!empty($insertData)) {
+                $cols .= ", " . implode(', ', array_keys($insertData));
+                $vals .= ", " . implode(', ', array_fill(0, count($insertData), '?'));
+                $params = array_merge($params, array_values($insertData));
+            }
+            $stmt = $this->db->prepare("INSERT INTO retained_earnings ({$cols}) VALUES ({$vals})");
+            $stmt->execute($params);
             
             error_log("DailyCapping: Flushed ₹$amount from user #$userId. Reason: $reason");
         } catch (\Exception $e) {
@@ -79,12 +90,12 @@ class DailyCappingService
         
         $dailyCap = $user ? (float)$user['daily_capping'] : 0;
         
-        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as used_today FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type IN ('level_bonus', 'level') AND DATE(created_at) = CURDATE() AND status = 'approved'");
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as used_today FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type IN ('level_bonus', 'level') AND DATE(created_at) = CURDATE() AND status = 'approved'" . $this->tenantSql());
         $stmt->execute([$userId]);
         $usedToday = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['used_today'];
         
         try {
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as flushed_today FROM retained_earnings WHERE user_id = ? AND retention_reason = 'daily_cap_flush' AND DATE(created_at) = CURDATE()");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as flushed_today FROM retained_earnings WHERE user_id = ? AND retention_reason = 'daily_cap_flush' AND DATE(created_at) = CURDATE()" . $this->tenantSql());
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());

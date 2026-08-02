@@ -2,9 +2,11 @@
 namespace App\Services\MLM;
 
 use App\Core\Middleware\TenantContext;
+use App\Traits\ServiceTenantTrait;
 
 class LeadershipSalaryService
 {
+    use ServiceTenantTrait;
     private $db;
     
     const TARGET_1_VOLUME = 1500000.00;
@@ -64,7 +66,7 @@ class LeadershipSalaryService
     private function createSalaryTarget(int $userId, float $targetVolume, int $achievedDays, float $monthlyPayout, int $durationMonths): array
     {
         // Check if already achieved this target
-        $stmt = $this->db->prepare("SELECT id FROM salary_tracker WHERE user_id = ? AND target_volume = ? AND status = 'active'");
+        $stmt = $this->db->prepare("SELECT id FROM salary_tracker WHERE user_id = ? AND target_volume = ? AND status = 'active'" . $this->tenantSql());
         $stmt->execute([$userId, $targetVolume]);
         if ($stmt->fetch()) {
             return ['target' => $targetVolume, 'status' => 'already_active'];
@@ -73,13 +75,16 @@ class LeadershipSalaryService
         $startDate = date('Y-m-d', strtotime('+1 month'));
         $endDate = date('Y-m-d', strtotime("+$durationMonths months"));
         
-        $stmt = $this->db->prepare("INSERT INTO salary_tracker (user_id, target_volume, achieved_in_days, achieved_date, monthly_payout, duration_months, start_date, end_date, status) VALUES (?, ?, ?, CURDATE(), ?, ?, ?, ?, 'active')");
-        $stmt->execute([$userId, $targetVolume, $achievedDays, $monthlyPayout, $durationMonths, $startDate, $endDate]);
+        $insertData = $this->tenantInsertData();
+        $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+        $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+        $stmt = $this->db->prepare("INSERT INTO salary_tracker (user_id, target_volume, achieved_in_days, achieved_date, monthly_payout, duration_months, start_date, end_date, status{$extraCols}) VALUES (?, ?, ?, CURDATE(), ?, ?, ?, ?, 'active'{$extraVals})");
+        $stmt->execute(array_merge([$userId, $targetVolume, $achievedDays, $monthlyPayout, $durationMonths, $startDate, $endDate], array_values($insertData)));
         
         $targetId = $this->db->lastInsertId();
         
         // Check for overlap with existing active targets
-        $stmt = $this->db->prepare("SELECT id, monthly_payout, start_date, end_date FROM salary_tracker WHERE user_id = ? AND status = 'active' AND id != ?");
+        $stmt = $this->db->prepare("SELECT id, monthly_payout, start_date, end_date FROM salary_tracker WHERE user_id = ? AND status = 'active' AND id != ?" . $this->tenantSql());
         $stmt->execute([$userId, $targetId]);
         $overlapping = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
@@ -111,7 +116,7 @@ class LeadershipSalaryService
         $totalAmount = 0;
         
         // Get all active salary trackers whose start_date <= today AND end_date >= today
-        $stmt = $this->db->query("SELECT * FROM salary_tracker WHERE status = 'active' AND start_date <= CURDATE() AND end_date >= CURDATE()");
+        $stmt = $this->db->query("SELECT * FROM salary_tracker WHERE status = 'active' AND start_date <= CURDATE() AND end_date >= CURDATE()" . $this->tenantSql());
         $activeTargets = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Group by user for overlap calculation
@@ -131,7 +136,7 @@ class LeadershipSalaryService
             if ($totalMonthlyPayout <= 0) continue;
             
             // Check if already paid this month
-            $stmt = $this->db->prepare("SELECT COUNT(*) as paid FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'performance_bonus' AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') AND notes LIKE 'Leadership Salary%'");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as paid FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'performance_bonus' AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') AND notes LIKE 'Leadership Salary%'" . $this->tenantSql());
             $stmt->execute([$userId]);
             if ($stmt->fetch(\PDO::FETCH_ASSOC)['paid'] > 0) continue;
 
@@ -141,11 +146,14 @@ class LeadershipSalaryService
             $minTarget = self::MONTHLY_TARGET_STARTER;
             if ($monthlyVolume < $minTarget) {
                 // Withhold salary — target not met
+                $insertData = $this->tenantInsertData();
+                $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+                $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
                 $this->db->prepare(
                     "INSERT INTO mlm_commission_ledger 
-                     (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at)
-                     VALUES (?, 0, 'salary_withheld', 0, 0, 'withheld', ?, NOW())"
-                )->execute([$userId, "Leadership Salary WITHHELD — Monthly volume ₹" . number_format($monthlyVolume) . " < target ₹" . number_format($minTarget)]);
+                     (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at{$extraCols})
+                     VALUES (?, 0, 'salary_withheld', 0, 0, 'withheld', ?, NOW(){$extraVals})"
+                )->execute(array_merge([$userId, "Leadership Salary WITHHELD — Monthly volume ₹" . number_format($monthlyVolume) . " < target ₹" . number_format($minTarget)], array_values($insertData)));
                 error_log("LeadershipSalary: WITHHELD user #$userId — monthly volume ₹$monthlyVolume < target ₹$minTarget");
                 continue;
             }
@@ -154,13 +162,16 @@ class LeadershipSalaryService
                 $this->db->beginTransaction();
                 
                 // Credit wallet
-                $stmt = $this->db->prepare("UPDATE user_wallets SET balance = balance + ?, total_credited = total_credited + ? WHERE user_id = ?");
+                $stmt = $this->db->prepare("UPDATE user_wallets SET balance = balance + ?, total_credited = total_credited + ? WHERE user_id = ?" . $this->tenantSql());
                 $stmt->execute([$totalMonthlyPayout, $totalMonthlyPayout, $userId]);
                 
                 // Create monthly commission entry for EACH source target (so accounting is transparent)
                 $targetIds = array_column($targets, 'id');
-                $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at) VALUES (?, ?, 'performance_bonus', ?, 1, 'approved', CONCAT('Leadership Salary [Targets: ', ?, '] - Monthly payout with overlap aggregation'), NOW())");
-                $stmt->execute([$userId, 1, $totalMonthlyPayout, implode(',', $targetIds)]);
+                $insertData = $this->tenantInsertData();
+                $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
+                $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
+                $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at{$extraCols}) VALUES (?, ?, 'performance_bonus', ?, 1, 'approved', CONCAT('Leadership Salary [Targets: ', ?, '] - Monthly payout with overlap aggregation'), NOW(){$extraVals})");
+                $stmt->execute(array_merge([$userId, 1, $totalMonthlyPayout, implode(',', $targetIds)], array_values($insertData)));
                 
                 $this->db->commit();
                 $processed++;
@@ -175,30 +186,28 @@ class LeadershipSalaryService
         }
         
         // Check for completed targets (end_date passed)
-        $stmt = $this->db->query("UPDATE salary_tracker SET status = 'completed' WHERE status = 'active' AND end_date < CURDATE()");
+        $stmt = $this->db->query("UPDATE salary_tracker SET status = 'completed' WHERE status = 'active' AND end_date < CURDATE()" . $this->tenantSql());
         
         return ['processed' => $processed, 'total_amount' => $totalAmount];
     }
     
     private function getUserRegisteredDate(int $userId): ?string
     {
-        $tid = $this->getTenantId();
-        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
-        $stmt = $this->db->prepare("SELECT created_at FROM users WHERE id = ?{$tenantSql}");
-        $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
+        $stmt = $this->db->prepare("SELECT created_at FROM users WHERE id = ?" . $this->tenantSql());
+        $stmt->execute([$userId]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $user ? $user['created_at'] : null;
     }
     
     private function getUserTotalVolume(int $userId): float
     {
-        // Query plot_bookings via associates link (primary source for plot sales)
+        $tid = $this->tenantId();
         $stmt = $this->db->prepare("
             SELECT COALESCE(SUM(pb.total_plot_value), 0) as total 
             FROM plot_bookings pb
             JOIN associates a ON a.id = pb.associate_id
             WHERE a.user_id = ? 
-              AND pb.status NOT IN ('cancelled', 'defaulted')
+              AND pb.status NOT IN ('cancelled', 'defaulted')" . ($tid > 1 ? " AND pb.tenant_id = $tid" : "") . "
         ");
         $stmt->execute([$userId]);
         $plotTotal = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
@@ -208,7 +217,7 @@ class LeadershipSalaryService
             SELECT COALESCE(SUM(b.total_amount), 0) as total 
             FROM bookings b
             WHERE b.associate_id = ? 
-              AND b.status IN ('confirmed', 'completed')
+              AND b.status IN ('confirmed', 'completed')" . $this->tenantSql() . "
         ");
         $stmt->execute([$userId]);
         $bookingTotal = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
@@ -228,7 +237,7 @@ class LeadershipSalaryService
             WHERE beneficiary_user_id = ? 
               AND commission_type = 'direct_sale' 
               AND status = 'approved'
-              AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+              AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')" . $this->tenantSql() . "
         ");
         $stmt->execute([$userId]);
         return (float)$stmt->fetch(\PDO::FETCH_ASSOC)['volume'];
@@ -245,11 +254,11 @@ class LeadershipSalaryService
      */
     public function getUserSalaryStatus(int $userId): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM salary_tracker WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt = $this->db->prepare("SELECT * FROM salary_tracker WHERE user_id = ? ORDER BY created_at DESC" . $this->tenantSql());
         $stmt->execute([$userId]);
         $targets = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
-        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total_salary_paid FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'performance_bonus' AND notes LIKE 'Leadership Salary%'");
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total_salary_paid FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'performance_bonus' AND notes LIKE 'Leadership Salary%'" . $this->tenantSql());
         $stmt->execute([$userId]);
         $totalPaid = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total_salary_paid'];
         

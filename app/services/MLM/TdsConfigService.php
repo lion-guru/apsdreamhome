@@ -19,9 +19,11 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class TdsConfigService
 {
+    use ServiceTenantTrait;
     protected $db;
 
     /** TDS section rates — defaults, overridable from DB */
@@ -174,7 +176,7 @@ class TdsConfigService
                 SELECT COALESCE(SUM(tds_amount), 0)
                 FROM tds_register
                 WHERE deductee_user_id = ? 
-                AND tds_date BETWEEN ? AND ?
+                AND tds_date BETWEEN ? AND ?" . $this->tenantSql() . "
             ");
             $stmt->execute([$userId, $fy['start'], $fy['end']]);
             return (float)$stmt->fetchColumn();
@@ -210,22 +212,29 @@ class TdsConfigService
             $fy = $this->getCurrentFinancialYear();
             $quarter = $this->getQuarter($data['tds_date'] ?? date('Y-m-d'));
 
-            $stmt = $this->db->prepare("
-                INSERT INTO tds_register 
-                (deductee_user_id, deductee_pan, tds_section, tds_date, taxable_amount, 
-                 tds_amount, financial_year, quarter, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-            ");
-            $stmt->execute([
-                $data['deductee_user_id'],
-                $pan,
-                strtoupper($data['section']),
-                $data['tds_date'] ?? date('Y-m-d'),
-                $data['amount'],
-                $calc['tds_amount'],
-                $fy['label'],
-                $quarter,
-            ]);
+        $insertData = $this->tenantInsertData();
+        $stmt = $this->db->prepare("
+            INSERT INTO tds_register 
+            (deductee_user_id, deductee_pan, tds_section, tds_date, taxable_amount, 
+             tds_amount, financial_year, quarter, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+        ");
+        $stmt->execute([
+            $data['deductee_user_id'],
+            $pan,
+            strtoupper($data['section']),
+            $data['tds_date'] ?? date('Y-m-d'),
+            $data['amount'],
+            $calc['tds_amount'],
+            $fy['label'],
+            $quarter,
+        ]);
+        $insertData = $this->tenantInsertData();
+        if (!empty($insertData)) {
+            $insertId = $this->db->lastInsertId();
+            $colName = key($insertData);
+            $this->db->prepare("UPDATE tds_register SET {$colName} = ? WHERE id = ?")->execute([current($insertData), $insertId]);
+        }
 
             return [
                 'success' => true,
