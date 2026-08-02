@@ -7416,6 +7416,7 @@ return array(
   'surya_cta_subtitle' => 'Limited plots available. Contact us now for site visit and best prices.',
   'surya_cta_btn_plan' => 'View Layout Plan',
   'surya_cta_btn_contact' => 'Contact Us',
+  'surya_cta_whatsapp' => 'Chat on WhatsApp',
 
   // builder_registration.php (breg_)
   'breg_subtitle' => 'Developer Partner Program',

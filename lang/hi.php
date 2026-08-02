@@ -7389,6 +7389,7 @@ return array(
   'surya_cta_subtitle' => 'सीमित प्लॉट उपलब्ध। साइट विज़िट और सर्वोत्तम मूल्य के लिए अभी संपर्क करें।',
   'surya_cta_btn_plan' => 'लेआउट प्लान देखें',
   'surya_cta_btn_contact' => 'हमसे संपर्क करें',
+  'surya_cta_whatsapp' => 'WhatsApp पर चैट करें',
 
   // builder_registration.php (breg_)
   'breg_subtitle' => 'डेवलपर पार्टनर कार्यक्रम',
