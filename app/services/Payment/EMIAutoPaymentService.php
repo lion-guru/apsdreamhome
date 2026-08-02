@@ -443,9 +443,9 @@ class EMIAutoPaymentService
                 "SELECT cm.*, pb.booking_number, pb.customer_id,
                         u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
                         p.plot_number, col.name AS colony_name,
-                        (SELECT MIN(bps.due_date) FROM booking_payment_schedules bps
-                         WHERE bps.booking_id = cm.booking_id AND bps.status IN ('pending','upcoming')
-                        ) AS next_payment_date
+(SELECT MIN(bps.due_date) FROM booking_payment_schedules bps
+                          WHERE bps.booking_id = cm.booking_id AND bps.status IN ('pending','upcoming')" . ($tid > 1 ? " AND bps.tenant_id = {$tid}" : "") . "
+                         ) AS next_payment_date
                  FROM customer_mandates cm
                  LEFT JOIN plot_bookings pb ON pb.id = cm.booking_id
                  LEFT JOIN users u ON u.id = pb.customer_id

@@ -122,15 +122,19 @@ class RazorpayService
             }
             
             // Get order details from DB
-            $order = $this->db->fetchOne("SELECT * FROM payment_orders WHERE order_id = ?", [$orderId]);
+            $tid = $this->getTenantId();
+            $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+            $order = $this->db->fetchOne("SELECT * FROM payment_orders WHERE order_id = ?" . $tenantFilter, array_merge([$orderId], $tid > 1 ? [$tid] : []));
             if (!$order) {
                 return ['success' => false, 'error' => 'Order not found'];
             }
             
             // Update payment status
+            $updParams = [$paymentId, $orderId];
+            if ($tid > 1) $updParams[] = $tid;
             $this->db->query(
-                "UPDATE payment_orders SET payment_id = ?, status = 'paid', paid_at = NOW() WHERE order_id = ?",
-                [$paymentId, $orderId]
+                "UPDATE payment_orders SET payment_id = ?, status = 'paid', paid_at = NOW() WHERE order_id = ?" . $tenantFilter,
+                $updParams
             );
             
             // Record payment
@@ -214,26 +218,32 @@ class RazorpayService
     {
         try {
             // Get current wallet
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?", [$userId]);
+            $tid = $this->getTenantId();
+            $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?" . $tenantFilter, array_merge([$userId], $tid > 1 ? [$tid] : []));
             
             if (!$wallet) {
                 // Create wallet
-                $this->db->insert('wallet_points', [
+                $walletData = [
                     'user_id' => $userId,
                     'points_balance' => $amount,
                     'total_earned' => $amount,
                     'commission_earnings' => $amount,
                     'created_at' => date('Y-m-d H:i:s')
-                ]);
+                ];
+                if ($tid > 1) $walletData['tenant_id'] = $tid;
+                $this->db->insert('wallet_points', $walletData);
             } else {
                 // Update wallet
                 $newBalance = $wallet['points_balance'] + $amount;
                 $newTotal = $wallet['total_earned'] + $amount;
                 $newCommission = $wallet['commission_earnings'] + $amount;
                 
+                $updParams = [$newBalance, $newTotal, $newCommission, $userId];
+                if ($tid > 1) $updParams[] = $tid;
                 $this->db->query(
-                    "UPDATE wallet_points SET points_balance = ?, total_earned = ?, commission_earnings = ?, updated_at = NOW() WHERE user_id = ?",
-                    [$newBalance, $newTotal, $newCommission, $userId]
+                    "UPDATE wallet_points SET points_balance = ?, total_earned = ?, commission_earnings = ?, updated_at = NOW() WHERE user_id = ?" . $tenantFilter,
+                    $updParams
                 );
             }
             
