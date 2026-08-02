@@ -5,12 +5,43 @@ namespace App\Services\Utility;
 use App\Core\Database\Database;
 use App\Services\LoggingService;
 
+class ServiceTenantTrait
+{
+    protected static function tenantId(): int
+    {
+        try {
+            $tid = TenantContext::getId();
+            return $tid > 0 ? $tid : 1;
+        } catch (\Exception $e) {
+            return 1;
+        }
+    }
+
+    protected static function tenantWhere(string &$sql, array &$params): void
+    {
+        $tid = static::tenantId();
+        if ($tid > 1) {
+            $sql .= ' AND tenant_id = ?';
+            $params[] = $tid;
+        }
+    }
+
+    protected static function tenantInsertData(array &$columns, array &$values): void
+    {
+        $tid = static::tenantId();
+        if ($tid > 1) {
+            $columns[] = 'tenant_id';
+            $values[] = $tid;
+        }
+    }
+}
+
 /**
  * File Service - APS Dream Home
  * Advanced file operations and management
  * Custom MVC implementation without Laravel dependencies
  */
-class FileService
+class FileService extends ServiceTenantTrait
 {
     private $database;
     private $logger;
@@ -134,16 +165,28 @@ class FileService
     {
         try {
             $sql = "INSERT INTO files 
-                    (original_name, filename, filepath, file_size, mime_type, category, uploaded_at) 
-                    VALUES (:original_name, :filename, :filepath, :file_size, :mime_type, :category, NOW())";
+                    (original_name, filename, filepath, file_size, mime_type, category, uploaded_at";
+            $columns = ['original_name', 'filename', 'filepath', 'file_size', 'mime_type', 'category', 'uploaded_at'];
+            $values = [
+                ':original_name' => $file['name'],
+                ':filename' => $filename,
+                ':filepath' => $this->uploadPath . $category . '/' . $filename,
+                ':file_size' => $file['size'],
+                ':mime_type' => $file['type'],
+                ':category' => $category,
+                ':uploaded_at' => 'NOW()'
+            ];
+            
+            $this->tenantInsertData($columns, $values);
+            
+            $sql .= ' (' . implode(', ', $columns) . ') VALUES (' . 
+                implode(', ', array_map(fn($k) => ':' . $k, $columns)) . ')'
+            ;
             
             $stmt = $this->database->prepare($sql);
-            $stmt->bindParam(':original_name', $file['name']);
-            $stmt->bindParam(':filename', $filename);
-            $stmt->bindParam(':filepath', $this->uploadPath . $category . '/' . $filename);
-            $stmt->bindParam(':file_size', $file['size']);
-            $stmt->bindParam(':mime_type', $file['type']);
-            $stmt->bindParam(':category', $category);
+            foreach ($values as $param => $value) {
+                $stmt->bindParam($param, $value);
+            }
             
             $result = $stmt->execute();
             
@@ -165,8 +208,12 @@ class FileService
     {
         try {
             $sql = "SELECT * FROM files WHERE id = :id";
+            $params = ['id' => $fileId];
+            $this->tenantWhere($sql, $params);
             $stmt = $this->database->prepare($sql);
-            $stmt->bindParam(':id', $fileId);
+            foreach ($params as $key => $value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
             $stmt->execute();
             return $stmt->fetch();
         } catch (\Exception $e) {
@@ -182,9 +229,12 @@ class FileService
     {
         try {
             $sql = "SELECT * FROM files WHERE category = :category ORDER BY uploaded_at DESC LIMIT :limit";
+            $params = ['category' => $category, 'limit' => $limit];
+            $this->tenantWhere($sql, $params);
             $stmt = $this->database->prepare($sql);
-            $stmt->bindParam(':category', $category);
-            $stmt->bindParam(':limit', $limit);
+            foreach ($params as $key => $value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
             $stmt->execute();
             return $stmt->fetchAll();
         } catch (\Exception $e) {
@@ -212,8 +262,12 @@ class FileService
 
             // Delete database record
             $sql = "DELETE FROM files WHERE id = :id";
+            $params = ['id' => $fileId];
+            $this->tenantWhere($sql, $params);
             $stmt = $this->database->prepare($sql);
-            $stmt->bindParam(':id', $fileId);
+            foreach ($params as $key => $value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
             $result = $stmt->execute();
 
             if ($result) {
@@ -225,6 +279,142 @@ class FileService
         } catch (\Exception $e) {
             $this->logger->error("Error deleting file: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Get file statistics
+     */
+    public function getFileStatistics()
+    {
+        try {
+            $sql = "SELECT 
+                        COUNT(*) as total_files,
+                        SUM(file_size) as total_size,
+                        COUNT(DISTINCT category) as categories,
+                        COUNT(CASE WHEN uploaded_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as recent_files
+                     FROM files";
+            $params = [];
+            $this->tenantWhere($sql, $params);
+            $stmt = $this->database->prepare($sql);
+            foreach ($params as $key => $value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch (\Exception $e) {
+            $this->logger->error("Error getting file statistics: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Clean up old files
+     */
+    public function cleanupOldFiles($daysOld = 30)
+    {
+        try {
+            $sql = "SELECT * FROM files WHERE uploaded_at < DATE_SUB(NOW(), INTERVAL :days DAY)";
+            $params = ['days' => $daysOld];
+            $this->tenantWhere($sql, $params);
+            $stmt = $this->database->prepare($sql);
+            foreach ($params as $key => $value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
+            $stmt->execute();
+            $oldFiles = $stmt->fetchAll();
+
+            $deletedCount = 0;
+            
+            foreach ($oldFiles as $file) {
+                if ($this->deleteFile($file['id'])) {
+                    $deletedCount++;
+                }
+            }
+
+            $this->logger->info("Cleaned up {$deletedCount} old files");
+            return $deletedCount;
+        } catch (\Exception $e) {
+            $this->logger->error("Error cleaning up old files: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Batch file operations
+     */
+    public function batchOperation($operation, $fileIds)
+    {
+        try {
+            $results = [];
+            
+            foreach ($fileIds as $fileId) {
+                switch ($operation) {
+                    case 'delete':
+                        $results[$fileId] = $this->deleteFile($fileId);
+                        break;
+                    case 'process':
+                        $file = $this->getFileById($fileId);
+                        if ($file && $this->isImageFile($file['mime_type'])) {
+                            $results[$fileId] = $this->processImage($file['filepath']);
+                        } else {
+                            $results[$fileId] = false;
+                        }
+                        break;
+                    default:
+                        $results[$fileId] = false;
+                }
+            }
+
+            return $results;
+        } catch (\Exception $e) {
+            $this->logger->error("Error in batch operation: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get file URL
+     */
+    public function getFileUrl($fileId)
+    {
+        $file = $this->getFileById($fileId);
+        
+        if ($file) {
+            return BASE_URL . '/uploads/' . $file['category'] . '/' . $file['filename'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Search files
+     */
+    public function searchFiles($query, $category = null)
+    {
+        try {
+            $sql = "SELECT * FROM files WHERE original_name LIKE :query";
+            $params = ['query' => '%' . $query . '%'];
+            $this->tenantWhere($sql, $params);
+            
+            if ($category) {
+                $sql .= " AND category = :category";
+                $params['category'] = $category;
+            }
+            
+            $sql .= " ORDER BY uploaded_at DESC LIMIT 50";
+            
+            $stmt = $this->database->prepare($sql);
+            
+            foreach ($params as $key => $value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
+            
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (\Exception $e) {
+            $this->logger->error("Error searching files: " . $e->getMessage());
+            return [];
         }
     }
 

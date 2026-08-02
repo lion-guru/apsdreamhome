@@ -11,7 +11,7 @@
         "ext-mbstring": "*",
         "ext-mysqli": "*",
         "ext-openssl": "*",
-        "cboden/ratchet": "0.4.3",
+        "cboden/ratchet": "^0.4.4",
         "firebase/php-jwt": "^7.0",
         "phpmailer/phpmailer": "^7.0",
         "tecnickcom/tcpdf": "^6.11",
@@ -29,7 +29,10 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "audit": {
+            "ignore": ["cboden/ratchet"]
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true

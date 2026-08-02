@@ -8,6 +8,8 @@ class LiveChatService
 {
     use ServiceTenantTrait;
 
+    private ?PDO $pdo = null;
+
     public function __construct($db = null)
     {
         if (is_object($db) && method_exists($db, 'getPdo')) {

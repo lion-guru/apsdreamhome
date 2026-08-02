@@ -5,6 +5,8 @@ namespace App\Services\Auth;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 
+
+
 /**
  * JWT Authentication Service for Mobile API V2
  * Stateless authentication using JSON Web Tokens (HS256)
@@ -75,10 +77,11 @@ class JWTAuthService
 
         try {
             $pdo = $this->database->getConnection();
+            $tid = $this->getTenantId();
             $stmt = $pdo->prepare("
                 INSERT INTO api_tokens
-                  (user_id, user_type, token, refresh_token, device_info, ip_address, expires_at, last_used_at, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?), NOW(), NOW())
+                  (user_id, user_type, token, refresh_token, device_info, ip_address, expires_at, last_used_at, created_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?), NOW(), NOW(), ?)
             ");
             $stmt->execute([
                 (int) $userId,
@@ -88,6 +91,7 @@ class JWTAuthService
                 $_SERVER['HTTP_USER_AGENT'] ?? null,
                 $_SERVER['REMOTE_ADDR'] ?? null,
                 $refreshExpire,
+                $tid > 1 ? $tid : null,
             ]);
         } catch (\Throwable $e) {
             error_log('JWTAuthService::generateToken persist failed: ' . $e->getMessage());

@@ -6,7 +6,38 @@ use TCPDF;
 use Exception;
 use App\Core\Middleware\TenantContext;
 
-class AgreementPDFService
+class ServiceTenantTrait
+{
+    protected static function tenantId(): int
+    {
+        try {
+            $tid = TenantContext::getId();
+            return $tid > 0 ? $tid : 1;
+        } catch (\Exception $e) {
+            return 1;
+        }
+    }
+
+    protected static function tenantWhere(string &$sql, array &$params): void
+    {
+        $tid = static::tenantId();
+        if ($tid > 1) {
+            $sql .= ' AND tenant_id = ?';
+            $params[] = $tid;
+        }
+    }
+
+    protected static function tenantInsertData(array &$columns, array &$values): void
+    {
+        $tid = static::tenantId();
+        if ($tid > 1) {
+            $columns[] = 'tenant_id';
+            $values[] = $tid;
+        }
+    }
+}
+
+class AgreementPDFService extends ServiceTenantTrait
 {
     private $db;
     private $storageDir;
@@ -733,16 +764,18 @@ class AgreementPDFService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->prepare(
-                "SELECT b.*, u.name AS customer_name, u.phone AS customer_phone, u.email AS customer_email,
-                        p.plot_number, p.area_sqft, p.width_ft, p.length_ft, p.facing, p.total_price AS plot_price,
-                        p.colony_id, p.block_name
-                 FROM plot_bookings b
-                 LEFT JOIN users u ON b.user_id = u.id
-                 LEFT JOIN inventory_plots p ON b.plot_id = p.id
-                 WHERE b.id = ? LIMIT 1"
-            );
-            $stmt->execute([$id]);
+            $sql = "SELECT b.*, u.name AS customer_name, u.phone AS customer_phone, u.email AS customer_email,
+                            p.plot_number, p.area_sqft, p.width_ft, p.length_ft, p.facing, p.total_price AS plot_price,
+                            p.colony_id, p.block_name
+                     FROM plot_bookings b
+                     LEFT JOIN users u ON b.user_id = u.id
+                     LEFT JOIN inventory_plots p ON b.plot_id = p.id
+                     WHERE b.id = ?";
+            $params = [(int)$id];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
@@ -762,6 +795,92 @@ class AgreementPDFService
                 $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ? LIMIT 1");
                 $stmt->execute([$userId]);
             }
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    private function fetchPlot(int $plotId): ?array
+    {
+        if (!$this->db || !$plotId) return null;
+        try {
+            $sql = "SELECT * FROM inventory_plots WHERE id = ?";
+            $params = [(int)$plotId];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    private function fetchColony(int $colonyId): ?array
+    {
+        if (!$this->db || !$colonyId) return null;
+        try {
+            $sql = "SELECT c.*, d.name AS district_name FROM colonies c
+                     LEFT JOIN districts d ON c.district_id = d.id
+                     WHERE c.id = ?";
+            $params = [(int)$colonyId];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    private function fetchSchedule(int $bookingId): array
+    {
+        if (!$this->db) return [];
+        try {
+            $sql = "SELECT * FROM booking_payment_schedules WHERE booking_id = ?";
+            $params = [(int)$bookingId];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' ORDER BY installment_number ASC';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    private function fetchInstallment(int $id): ?array
+    {
+        if (!$this->db) return null;
+        try {
+            $sql = "SELECT * FROM booking_payment_schedules WHERE id = ?";
+            $params = [(int)$id];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    private function fetchRefund(int $id): ?array
+    {
+        if (!$this->db) return null;
+        try {
+            $sql = "SELECT * FROM booking_refunds WHERE id = ?";
+            $params = [(int)$id];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {

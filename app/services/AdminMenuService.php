@@ -19,6 +19,7 @@ class AdminMenuService
 
     private $currentRole;
     private $currentUserId;
+    private $db;
 
     /**
      * URLs that should only be visible to the platform owner (tenant_id = 1).

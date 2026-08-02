@@ -5,13 +5,43 @@ namespace App\Services\Esign;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 
+class ServiceTenantTrait
+{
+    protected static function tenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable $e) {
+            return 1;
+        }
+    }
+
+    protected static function tenantWhere(string &$sql, array &$params): void
+    {
+        $tid = static::tenantId();
+        if ($tid > 1) {
+            $sql .= ' AND tenant_id = ?';
+            $params[] = $tid;
+        }
+    }
+
+    protected static function tenantInsertData(array &$columns, array &$values): void
+    {
+        $tid = static::tenantId();
+        if ($tid > 1) {
+            $columns[] = 'tenant_id';
+            $values[] = $tid;
+        }
+    }
+}
+
 /**
  * E-Sign Manager — Facade for initiating and tracking document signing.
  *
  * Delegates to LeegalityService (extensible for other providers).
  * All booking e-sign state is tracked in the plot_bookings table.
  */
-class ESignManager
+class ESignManager extends ServiceTenantTrait
 {
     /** @var LeegalityService */
     private $provider;
@@ -166,8 +196,12 @@ class ESignManager
             return null;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM plot_bookings WHERE id = ?');
-            $stmt->execute([$id]);
+            $sql = 'SELECT * FROM plot_bookings WHERE id = ?';
+            $params = [(int)$id];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) {
             return null;
@@ -180,8 +214,12 @@ class ESignManager
             return null;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM plot_bookings WHERE esign_document_id = ?');
-            $stmt->execute([$documentId]);
+            $sql = 'SELECT * FROM plot_bookings WHERE esign_document_id = ?';
+            $params = [$documentId];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) {
             return null;
@@ -196,7 +234,7 @@ class ESignManager
         try {
             $tid = $this->getTenantId();
             $sql = 'SELECT * FROM users WHERE id = ?';
-            $params = [$userId];
+            $params = [(int)$userId];
             if ($tid > 1) {
                 $sql .= ' AND tenant_id = ?';
                 $params[] = $tid;
@@ -215,8 +253,12 @@ class ESignManager
             return null;
         }
         try {
-            $stmt = $this->pdo->prepare('SELECT * FROM plots WHERE id = ?');
-            $stmt->execute([$plotId]);
+            $sql = 'SELECT * FROM plots WHERE id = ?';
+            $params = [(int)$plotId];
+            $this->tenantWhere($sql, $params);
+            $sql .= ' LIMIT 1';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (\Throwable $e) {
             return null;
