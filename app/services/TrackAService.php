@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use Exception;
 
-class TrackAService
+class TrackAService extends ServiceTenantTrait
 {
     private $pdo;
     private $slabDifferentials;
@@ -42,13 +43,16 @@ class TrackAService
     public function calculateTrackA(int $bookingId): array
     {
         // Get booking details
-        $stmt = $this->pdo->prepare("
+        $sql = "
             SELECT pb.*, u.id as user_id, u.name, u.rank, u.referred_by
             FROM plot_bookings pb
             JOIN users u ON pb.user_id = u.id
             WHERE pb.id = ?
-        ");
-        $stmt->execute([$bookingId]);
+        ";
+        $params = [$bookingId];
+        $this->tenantWhere($sql, $params);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$booking) {
@@ -65,8 +69,11 @@ class TrackAService
         $breakdown = [];
 
         while ($uplineId) {
-            $stmt = $this->pdo->prepare("SELECT id, rank, referred_by FROM users WHERE id = ?");
-            $stmt->execute([$uplineId]);
+            $sql = "SELECT id, rank, referred_by FROM users WHERE id = ?";
+            $params = [$uplineId];
+            $this->tenantWhere($sql, $params);
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             $upline = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$upline) break;

@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
-class TrackCService
+class TrackCService extends ServiceTenantTrait
 {
     private $pdo;
 
@@ -15,13 +16,16 @@ class TrackCService
 
     public function calculateTrackC(int $bookingId): array
     {
-        $stmt = $this->pdo->prepare("
+        $sql = "
             SELECT pb.*, u.id as user_id, u.rank, u.referred_by
             FROM plot_bookings pb
             JOIN users u ON pb.user_id = u.id
             WHERE pb.id = ?
-        ");
-        $stmt->execute([$bookingId]);
+        ";
+        $params = [$bookingId];
+        $this->tenantWhere($sql, $params);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$booking) {
@@ -34,8 +38,11 @@ class TrackCService
         $breakdown = [];
 
         while ($uplineId) {
-            $stmt = $this->pdo->prepare("SELECT id, rank, referred_by FROM users WHERE id = ?");
-            $stmt->execute([$uplineId]);
+            $sql = "SELECT id, rank, referred_by FROM users WHERE id = ?";
+            $params = [$uplineId];
+            $this->tenantWhere($sql, $params);
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             $upline = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$upline) break;
@@ -64,12 +71,15 @@ class TrackCService
     public function releaseEscrow(int $bookingId): array
     {
         // Release escrow on registry completion
-        $stmt = $this->pdo->prepare("
+        $sql = "
             UPDATE mlm_commission_ledger
             SET status = 'released', released_at = NOW()
             WHERE booking_id = ? AND commission_type = 'milestone_escrow'
-        ");
-        $stmt->execute([$bookingId]);
+        ";
+        $params = [$bookingId];
+        $this->tenantWhere($sql, $params);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
 
         return ['success' => true, 'released_count' => $stmt->rowCount()];
     }

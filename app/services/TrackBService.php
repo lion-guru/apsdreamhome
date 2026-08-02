@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 
-class TrackBService
+class TrackBService extends ServiceTenantTrait
 {
     private $pdo;
 
@@ -15,13 +16,16 @@ class TrackBService
 
     public function calculateTrackB(int $bookingId): array
     {
-        $stmt = $this->pdo->prepare("
+        $sql = "
             SELECT pb.*, u.id as user_id, u.rank, u.referred_by
             FROM plot_bookings pb
             JOIN users u ON pb.user_id = u.id
             WHERE pb.id = ?
-        ");
-        $stmt->execute([$bookingId]);
+        ";
+        $params = [$bookingId];
+        $this->tenantWhere($sql, $params);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$booking) {
@@ -33,8 +37,11 @@ class TrackBService
         $totalCommission = 0;
 
         while ($uplineId) {
-            $stmt = $this->pdo->prepare("SELECT id, rank, referred_by, gbv FROM users WHERE id = ?");
-            $stmt->execute([$uplineId]);
+            $sql = "SELECT id, rank, referred_by, gbv FROM users WHERE id = ?";
+            $params = [$uplineId];
+            $this->tenantWhere($sql, $params);
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             $upline = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$upline) break;
