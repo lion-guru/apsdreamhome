@@ -118,14 +118,14 @@ class LeadFollowUpAgent extends BaseAgent
 
     public function getLeadContext($leadId)
     {
-        $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?", [$leadId]);
+        $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?" . $this->tenantSql(), [$leadId]);
         if (!$lead) {
             return ['success' => false, 'error' => 'Lead not found'];
         }
 
         $call_history = $this->db->fetchAll(
             "SELECT id, call_sid, ai_summary as summary, sentiment, follow_up_date, created_at
-             FROM ai_call_sessions WHERE lead_id = ? ORDER BY created_at DESC LIMIT 5",
+             FROM ai_call_sessions WHERE lead_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT 5",
             [$leadId]
         );
 
@@ -174,7 +174,7 @@ class LeadFollowUpAgent extends BaseAgent
         }
 
         if ($script) {
-            $this->db->execute("UPDATE ai_call_scripts SET usage_count = usage_count + 1 WHERE id = ?", [$script['id']]);
+            $this->db->execute("UPDATE ai_call_scripts SET usage_count = usage_count + 1 WHERE id = ?" . $this->tenantSql(), [$script['id']]);
         }
 
         return $script ?: [
@@ -204,7 +204,7 @@ class LeadFollowUpAgent extends BaseAgent
             }
 
             $params[] = $leadId;
-            $this->db->execute("UPDATE leads SET $update_fields WHERE id = ?", $params);
+            $this->db->execute("UPDATE leads SET $update_fields WHERE id = ?" . $this->tenantSql(), $params);
 
             $this->logActivity('LEAD_STATUS_UPDATED', "Lead #$leadId -> $status: $notes");
 
@@ -222,7 +222,7 @@ class LeadFollowUpAgent extends BaseAgent
     public function scheduleNextFollowUp($leadId, $recommendedDate = null)
     {
         if (!$recommendedDate) {
-            $lead = $this->db->fetch("SELECT status, name, phone FROM leads WHERE id = ?", [$leadId]);
+            $lead = $this->db->fetch("SELECT status, name, phone FROM leads WHERE id = ?" . $this->tenantSql(), [$leadId]);
             if (!$lead) {
                 return ['success' => false, 'error' => 'Lead not found'];
             }
@@ -232,13 +232,13 @@ class LeadFollowUpAgent extends BaseAgent
         }
 
         $existing = $this->db->fetch(
-            "SELECT id FROM ai_calling_schedule WHERE lead_id = ? AND status IN ('pending','processing')",
+            "SELECT id FROM ai_calling_schedule WHERE lead_id = ?" . $this->tenantSql() . " AND status IN ('pending','processing')",
             [$leadId]
         );
 
         if (!$existing) {
             try {
-                $lead = $this->db->fetch("SELECT phone, status FROM leads WHERE id = ?", [$leadId]);
+                $lead = $this->db->fetch("SELECT phone, status FROM leads WHERE id = ?" . $this->tenantSql(), [$leadId]);
                 $voiceSvc = new VoiceCallService();
                 $agent = $this->db->fetch(
                     "SELECT agent_id FROM ai_calling_agents WHERE agent_type LIKE '%follow%' OR agent_id = 'agent_12' AND status = 'active' LIMIT 1"
@@ -250,22 +250,24 @@ class LeadFollowUpAgent extends BaseAgent
                 $voiceSvc->scheduleCall($leadId, $phone, $agentId, $recommendedDate, '10:00:00', $script, $priority);
             } catch (\Exception $e) {
                 error_log('LeadFollowUpAgent::scheduleNextFollowUp VoiceCallService error: ' . $e->getMessage());
-                $this->db->insert('ai_calling_schedule', [
-                    'lead_id' => $leadId, 'phone' => '', 'scheduled_date' => $recommendedDate,
-                    'scheduled_time' => '10:00', 'priority' => 'medium', 'status' => 'pending',
-                    'script_template' => 'follow_up_call', 'max_attempts' => 3
-                ]);
+                $this->db->insert('ai_calling_schedule',
+                    array_merge([
+                        'lead_id' => $leadId, 'phone' => '', 'scheduled_date' => $recommendedDate,
+                        'scheduled_time' => '10:00', 'priority' => 'medium', 'status' => 'pending',
+                        'script_template' => 'follow_up_call', 'max_attempts' => 3
+                    ], $this->tenantInsertData())
+                );
             }
         } else {
             $this->db->execute(
-                "UPDATE ai_calling_schedule SET scheduled_date = ?, updated_at = NOW() WHERE id = ?",
+                "UPDATE ai_calling_schedule SET scheduled_date = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
                 [$recommendedDate, $existing['id']]
             );
         }
 
         if ($leadId) {
             $this->db->execute(
-                "UPDATE leads SET next_activity_date = ? WHERE id = ?",
+                "UPDATE leads SET next_activity_date = ? WHERE id = ?" . $this->tenantSql(),
                 [$recommendedDate . ' 10:00:00', $leadId]
             );
         }
@@ -304,16 +306,18 @@ class LeadFollowUpAgent extends BaseAgent
 
         $follow_up_needed = ($result === 'no_answer' || $result === 'busy') ? 1 : 0;
 
-        $this->db->insert('ai_call_sessions', [
-            'lead_id' => $leadId,
-            'ai_agent_id' => $this->agentId,
-            'ai_summary' => $notes,
-            'sentiment' => $sentiment,
-            'follow_up_required' => $follow_up_needed,
-            'follow_up_date' => $follow_up_needed ? date('Y-m-d H:i:s', strtotime('+1 day')) : null,
-            'status' => 'completed',
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        $this->db->insert('ai_call_sessions',
+            array_merge([
+                'lead_id' => $leadId,
+                'ai_agent_id' => $this->agentId,
+                'ai_summary' => $notes,
+                'sentiment' => $sentiment,
+                'follow_up_required' => $follow_up_needed,
+                'follow_up_date' => $follow_up_needed ? date('Y-m-d H:i:s', strtotime('+1 day')) : null,
+                'status' => 'completed',
+                'created_at' => date('Y-m-d H:i:s')
+            ], $this->tenantInsertData())
+        );
 
         $log_id = $this->db->lastInsertId();
 

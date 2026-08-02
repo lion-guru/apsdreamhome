@@ -12,9 +12,12 @@
 namespace App\Services\AI\Agents;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class SmartSchedulerAgent
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct()
@@ -126,21 +129,21 @@ class SmartSchedulerAgent
     public function autoReschedule(): array
     {
         $missed = $this->db->fetchAll(
-            "SELECT * FROM site_visits WHERE status = 'scheduled' AND visit_date < CURDATE()"
+            "SELECT * FROM site_visits WHERE status = 'scheduled' AND visit_date < CURDATE()" . $this->tenantSql()
         ) ?: [];
 
         $rescheduled = 0;
         foreach ($missed as $visit) {
             $newDate = date('Y-m-d', strtotime('+3 days'));
             $this->db->getConnection()->prepare(
-                "UPDATE site_visits SET visit_date = ?, status = 'rescheduled', updated_at = NOW() WHERE id = ?"
-            )->execute([$newDate, $visit['id']]);
+                "UPDATE site_visits SET visit_date = ?, status = 'rescheduled', updated_at = NOW() WHERE id = ? AND lead_id = ?" . $this->tenantSql()
+            )->execute([$newDate, $visit['id'], $visit['lead_id']]);
 
             // Notify lead
             if (!empty($visit['lead_id'])) {
                 $this->db->getConnection()->prepare(
-                    "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, created_at)
-                     VALUES (?, 'auto_reschedule', 'outbound', ?, NOW())"
+                    "INSERT INTO crm_interactions (lead_id, interaction_type, direction, content, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '') . ")
+                     VALUES (?, 'auto_reschedule', 'outbound', ?, NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '') . ")"
                 )->execute([$visit['lead_id'], "Site visit rescheduled to $newDate. We'll contact you to confirm."]);
             }
             $rescheduled++;
@@ -156,10 +159,10 @@ class SmartSchedulerAgent
         // Find agents with least visits on that day, preferably familiar with the colony
         return $this->db->fetch(
             "SELECT u.id, u.name,
-                    (SELECT COUNT(*) FROM site_visits sv WHERE sv.agent_id = u.id AND sv.visit_date = ?) as today_visits,
-                    (SELECT COUNT(*) FROM site_visits sv WHERE sv.agent_id = u.id AND sv.colony_id = ? AND sv.status = 'completed') as colony_visits
+                    (SELECT COUNT(*) FROM site_visits sv WHERE sv.agent_id = u.id AND sv.visit_date = ?" . $this->tenantSql('sv') . ") as today_visits,
+                    (SELECT COUNT(*) FROM site_visits sv WHERE sv.agent_id = u.id AND sv.colony_id = ? AND sv.status = 'completed'" . $this->tenantSql('sv') . ") as colony_visits
              FROM users u
-             WHERE u.role IN ('associate','agent','employee') AND u.is_active = 1
+             WHERE u.role IN ('associate','agent','employee') AND u.is_active = 1" . $this->tenantSql('u') . "
              ORDER BY today_visits ASC, colony_visits DESC
              LIMIT 1",
             [$date, $colonyId ?? 0]
@@ -180,15 +183,15 @@ class SmartSchedulerAgent
     private function createVisit(int $leadId, int $agentId, string $date, string $time, ?int $colonyId): int
     {
         $this->db->getConnection()->prepare(
-            "INSERT INTO site_visits (lead_id, agent_id, visit_date, visit_time, colony_id, status, created_at)
-             VALUES (?, ?, ?, ?, ?, 'scheduled', NOW())"
-        )->execute([$leadId, $agentId, $date, $time, $colonyId]);
+            "INSERT INTO site_visits (lead_id, agent_id, visit_date, visit_time, colony_id, status, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '') . ")
+             VALUES (?, ?, ?, ?, ?, 'scheduled', NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '') . ")"
+        )->execute(array_merge([$leadId, $agentId, $date, $time, $colonyId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         return (int)$this->db->getConnection()->lastInsertId();
     }
 
     private function sendConfirmation(int $leadId, string $date, string $time, string $agentName): void
     {
-        $lead = $this->db->fetch("SELECT phone, name FROM leads WHERE id = ?", [$leadId]);
+        $lead = $this->db->fetch("SELECT phone, name FROM leads WHERE id = ?" . $this->tenantSql(), [$leadId]);
         if ($lead && !empty($lead['phone'])) {
             $this->sendSMS($lead['phone'], "APS Dream Home: Aapka site visit confirm ho gaya hai! 📅 Date: $date, Time: $time, Agent: $agentName. Address: Raghunath Nagri, Gorakhpur.");
         }
@@ -198,9 +201,9 @@ class SmartSchedulerAgent
     {
         try {
             $this->db->getConnection()->prepare(
-                "INSERT INTO crm_tasks (lead_id, assigned_to, task_type, title, priority, due_date, status, created_at)
-                 VALUES (?, ?, 'site_visit_reminder', ?, 'high', ?, 'pending', NOW())"
-            )->execute([$leadId, $agentId, "Site visit at $time — check plot availability", $date]);
+                "INSERT INTO crm_tasks (lead_id, assigned_to, task_type, title, priority, due_date, status, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '') . ")
+                 VALUES (?, ?, 'site_visit_reminder', ?, 'high', ?, 'pending', NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '') . ")"
+            )->execute(array_merge([$leadId, $agentId, "Site visit at $time — check plot availability", $date], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 
@@ -215,8 +218,8 @@ class SmartSchedulerAgent
     {
         try {
             $this->db->getConnection()->prepare(
-                "INSERT INTO sms_queue (phone, message, status, created_at) VALUES (?, ?, 'pending', NOW())"
-            )->execute([$phone, $message]);
+                "INSERT INTO sms_queue (phone, message, status, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '') . ") VALUES (?, ?, 'pending', NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '') . ")"
+            )->execute(array_merge([$phone, $message], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

@@ -34,9 +34,9 @@ class SiteVisitBookingAgent extends BaseAgent
             return $this->handleError('Property ID and preferred date are required');
         }
 
-        $property = $this->db->fetch("SELECT id, property_type, address, location, price FROM user_properties WHERE id = ? AND status = 'approved'", [$property_id]);
+        $property = $this->db->fetch("SELECT id, property_type, address, location, price FROM user_properties WHERE id = ? AND status = 'approved'" . $this->tenantSql(), [$property_id]);
         if (!$property) {
-            $property = $this->db->fetch("SELECT id, name as property_type, description as address, location, price FROM properties WHERE id = ?", [$property_id]);
+            $property = $this->db->fetch("SELECT id, name as property_type, description as address, location, price FROM properties WHERE id = ?" . $this->tenantSql(), [$property_id]);
         }
         if (!$property) {
             return $this->handleError('Property not found or not available');
@@ -92,12 +92,14 @@ class SiteVisitBookingAgent extends BaseAgent
             $booking_data['customer_id'] = $lead_id;
         }
 
-        $this->db->insert('bookings', $booking_data);
+        $this->db->insert('bookings',
+            array_merge($booking_data, $this->tenantInsertData())
+        );
         $booking_id = $this->db->lastInsertId();
 
         if ($lead_id) {
             $this->db->execute(
-                "UPDATE leads SET status = 'contacted', next_activity_date = DATE_ADD(NOW(), INTERVAL 1 DAY) WHERE id = ?",
+                "UPDATE leads SET status = 'contacted', next_activity_date = DATE_ADD(NOW(), INTERVAL 1 DAY) WHERE id = ?" . $this->tenantSql(),
                 [$lead_id]
             );
         }

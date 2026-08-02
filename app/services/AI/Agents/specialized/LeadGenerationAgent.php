@@ -84,7 +84,7 @@ class LeadGenerationAgent extends BaseAgent {
 
         try {
             // Check if lead already exists
-            $row = $this->db->fetch("SELECT id FROM leads WHERE phone = ? LIMIT 1", [$phone]);
+            $row = $this->db->fetch("SELECT id FROM leads WHERE phone = ?" . $this->tenantSql(), [$phone]);
             $exists = !empty($row);
 
             $details = json_encode($analysis);
@@ -92,7 +92,7 @@ class LeadGenerationAgent extends BaseAgent {
             if (!$exists) {
                 // Create new lead
                 $this->db->execute(
-                    "INSERT INTO leads (phone, last_message, lead_score, status, ai_analysis) VALUES (?, ?, ?, 'new', ?)",
+                    "INSERT INTO leads (phone, last_message, lead_score, status, ai_analysis" . ( $this->tenantId() > 1 ? ', tenant_id' : '' ) . ") VALUES (?, ?, ?, 'new', ?" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '' ) . ")",
                     [$phone, $message, $score, $details]
                 );
 
@@ -101,7 +101,7 @@ class LeadGenerationAgent extends BaseAgent {
             } else {
                 // Update existing lead score
                 $this->db->execute(
-                    "UPDATE leads SET lead_score = lead_score + ?, last_message = ?, ai_analysis = ?, updated_at = NOW() WHERE phone = ?",
+                    "UPDATE leads SET lead_score = lead_score + ?, last_message = ?, ai_analysis = ?, updated_at = NOW() WHERE phone = ?" . $this->tenantSql(),
                     [$score, $message, $details, $phone]
                 );
             }

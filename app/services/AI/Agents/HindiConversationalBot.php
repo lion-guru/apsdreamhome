@@ -17,12 +17,15 @@
 namespace App\Services\AI\Agents;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use App\Services\AI\AIGateway;
 use App\Services\AI\SelfLearningAI;
 use App\Services\AI\IntentDetector;
 
 class HindiConversationalBot
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $gateway;
 
@@ -271,14 +274,14 @@ class HindiConversationalBot
     {
         try {
             $this->db->getConnection()->prepare(
-                "INSERT INTO ai_chat_messages (session_id, user_id, role, content, intent, language, created_at)
-                 VALUES (?, ?, 'user', ?, ?, ?, NOW())"
-            )->execute([$sessionId, $userId, $message, $intent['intent'] ?? '', $intent['language'] ?? 'hi']);
+                "INSERT INTO ai_chat_messages (session_id, user_id, role, content, intent, language, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '' ) . ")
+                 VALUES (?, ?, 'user', ?, ?, ?, NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '' ) . ")"
+            )->execute(array_merge([$sessionId, $userId, $message, $intent['intent'] ?? '', $intent['language'] ?? 'hi'], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
             $this->db->getConnection()->prepare(
-                "INSERT INTO ai_chat_messages (session_id, user_id, role, content, created_at)
-                 VALUES (?, ?, 'assistant', ?, NOW())"
-            )->execute([$sessionId, $userId, $response]);
+                "INSERT INTO ai_chat_messages (session_id, user_id, role, content, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '' ) . ")
+                 VALUES (?, ?, 'assistant', ?, NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '' ) . ")"
+            )->execute(array_merge([$sessionId, $userId, $response], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) { /* non-critical */ error_log($e->getMessage()); }
     }
 }

@@ -49,14 +49,14 @@ class EMICollectionAgent extends BaseAgent {
             // Record payment in the database (using existing logic pattern)
             $transactionId = 'EMI' . \time() . \App\Helpers\SecurityHelper::secureRandomInt(1000, 9999);
 
-            $query = "INSERT INTO payments (transaction_id, amount, payment_type, payment_method, status, payment_date, created_at)
-                      VALUES (?, ?, 'emi', ?, 'completed', NOW(), NOW())";
+            $query = "INSERT INTO payments (transaction_id, amount, payment_type, payment_method, status, payment_date, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '') . ")
+                      VALUES (?, ?, 'emi', ?, 'completed', NOW(), NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '') . ")";
 
             $this->db->execute($query, [$transactionId, $amount, $method]);
             $paymentId = $this->db->lastInsertId();
 
             // Update installment status
-            $updateQuery = "UPDATE emi_payments SET status = 'paid', transaction_id = ?, payment_date = NOW() WHERE id = ?";
+            $updateQuery = "UPDATE emi_payments SET status = 'paid', transaction_id = ?, payment_date = NOW() WHERE id = ?" . $this->tenantSql();
             $this->db->execute($updateQuery, [$transactionId, $installmentId]);
 
             $this->logActivity("EMI_PAYMENT_PROCESSED", "Installment ID: $installmentId, Amount: $amount, Txn: $transactionId");
@@ -77,7 +77,7 @@ class EMICollectionAgent extends BaseAgent {
      * Check for pending EMIs and return summary
      */
     public function checkPendingEMIs() {
-        $query = "SELECT COUNT(*) as total, SUM(amount) as total_amount FROM emi_payments WHERE status = 'pending'";
+        $query = "SELECT COUNT(*) as total, SUM(amount) as total_amount FROM emi_payments WHERE status = 'pending'" . $this->tenantSql();
         $result = $this->db->fetch($query);
 
         return [
@@ -99,7 +99,7 @@ class EMICollectionAgent extends BaseAgent {
                   FROM emi_payments e
                   JOIN users u ON e.user_id = u.uid
                   WHERE e.status = 'pending'
-                  AND (e.due_date <= ? OR e.due_date = ?)";
+                  AND (e.due_date <= ? OR e.due_date = ?)" . $this->tenantSql('e');
 
         $results = $this->db->fetchAll($query, [$threeDaysLater, $today]);
 

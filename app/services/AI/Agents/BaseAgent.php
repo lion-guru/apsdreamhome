@@ -3,6 +3,7 @@
 namespace App\Services\AI\Agents;
 
 use App\Core\App;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 /**
@@ -13,6 +14,8 @@ use Exception;
  */
 
 abstract class BaseAgent implements AgentInterface {
+    use ServiceTenantTrait;
+
     protected $agentId;
     protected $agentName;
     protected $config = [];
