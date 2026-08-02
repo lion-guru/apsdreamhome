@@ -4,9 +4,11 @@ namespace App\Services\Loan;
 
 use App\Core\Database;
 use PDO;
+use App\Traits\ServiceTenantTrait;
 
 class LoanDocumentService
 {
+    use ServiceTenantTrait;
     protected PDO $db;
     protected CompanyLoanService $loanService;
 
@@ -30,13 +32,14 @@ class LoanDocumentService
 
             $content = $this->buildLoanAgreementHtml($loan);
 
-            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at) VALUES (?, 'loan_agreement', ?, ?, ?, 'draft', ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at, tenant_id) VALUES (?, 'loan_agreement', ?, ?, ?, 'draft', ?, NOW(), ?)");
             $stmt->execute([
                 $loanId,
                 'Loan Agreement - ' . $loan['loan_number'],
                 $docNumber,
                 $content,
-                $_SESSION['admin_id'] ?? null
+                $_SESSION['admin_id'] ?? null,
+                $this->tenantId(),
             ]);
             $docId = (int)$this->db->lastInsertId();
 
@@ -58,13 +61,14 @@ class LoanDocumentService
             $docNumber = 'PN-' . $loan['loan_number'];
             $content = $this->buildPromissoryNoteHtml($loan);
 
-            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at) VALUES (?, 'promissory_note', ?, ?, ?, 'draft', ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at, tenant_id) VALUES (?, 'promissory_note', ?, ?, ?, 'draft', ?, NOW(), ?)");
             $stmt->execute([
                 $loanId,
                 'Promissory Note - ' . $loan['loan_number'],
                 $docNumber,
                 $content,
-                $_SESSION['admin_id'] ?? null
+                $_SESSION['admin_id'] ?? null,
+                $this->tenantId(),
             ]);
 
             $this->loanService->logActivity($loanId, 'document_generated', 'Promissory note generated: ' . $docNumber);
@@ -94,13 +98,14 @@ class LoanDocumentService
             $docNumber = 'DL-' . $loan['loan_number'] . '-I' . $installmentNo;
             $content = $this->buildDemandLetterHtml($loan, $installment);
 
-            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at) VALUES (?, 'demand_letter', ?, ?, ?, 'draft', ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at, tenant_id) VALUES (?, 'demand_letter', ?, ?, ?, 'draft', ?, NOW(), ?)");
             $stmt->execute([
                 $loanId,
                 'Demand Letter - Installment #' . $installmentNo . ' - ' . $loan['loan_number'],
                 $docNumber,
                 $content,
-                $_SESSION['admin_id'] ?? null
+                $_SESSION['admin_id'] ?? null,
+                $this->tenantId(),
             ]);
 
             $this->loanService->logActivity($loanId, 'document_generated', 'Demand letter generated for installment #' . $installmentNo);
@@ -123,13 +128,14 @@ class LoanDocumentService
 
             $content = $this->buildDefaultNoticeHtml($loan, $overdueList);
 
-            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at) VALUES (?, 'default_notice', ?, ?, ?, 'draft', ?, NOW())");
+            $stmt = $this->db->prepare("INSERT INTO loan_documents (loan_id, document_type, title, document_number, content, status, generated_by, generated_at, tenant_id) VALUES (?, 'default_notice', ?, ?, ?, 'draft', ?, NOW(), ?)");
             $stmt->execute([
                 $loanId,
                 'Default Notice - ' . $loan['loan_number'],
                 $docNumber,
                 $content,
-                $_SESSION['admin_id'] ?? null
+                $_SESSION['admin_id'] ?? null,
+                $this->tenantId(),
             ]);
 
             $this->loanService->logActivity($loanId, 'document_generated', 'Default notice generated');
@@ -143,7 +149,7 @@ class LoanDocumentService
     public function signDocument(int $documentId): array
     {
         try {
-            $this->db->prepare("UPDATE loan_documents SET status = 'signed', signed_by_customer = 1, signed_at = NOW() WHERE id = ?")->execute([$documentId]);
+            $this->db->prepare("UPDATE loan_documents SET status = 'signed', signed_by_customer = 1, signed_at = NOW() WHERE id = ?" . $this->tenantSql())->execute([$documentId]);
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -153,7 +159,7 @@ class LoanDocumentService
     public function finalizeDocument(int $documentId): array
     {
         try {
-            $this->db->prepare("UPDATE loan_documents SET status = 'final' WHERE id = ?")->execute([$documentId]);
+            $this->db->prepare("UPDATE loan_documents SET status = 'final' WHERE id = ?" . $this->tenantSql())->execute([$documentId]);
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];

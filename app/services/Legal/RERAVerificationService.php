@@ -8,9 +8,11 @@ namespace App\Services\Legal;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class RERAVerificationService
 {
+    use ServiceTenantTrait;
     /** @var PDO */
     protected $db;
 
@@ -58,11 +60,11 @@ class RERAVerificationService
         // First check local database
         if ($this->db) {
             try {
-                $stmt = $this->db->prepare("
-                    SELECT * FROM rera_projects 
-                    WHERE rera_number = ? AND state_code = ? AND is_active = 1
-                ");
-                $stmt->execute([$reraNumber, $stateCode]);
+            $stmt = $this->db->prepare("
+                SELECT * FROM rera_projects 
+                WHERE rera_number = ? AND state_code = ? AND is_active = 1" . $this->tenantSql() . "
+            ");
+            $stmt->execute([$reraNumber, $stateCode]);
                 $project = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($project) {
@@ -100,7 +102,7 @@ class RERAVerificationService
         }
 
         try {
-            $sql = "SELECT * FROM rera_projects WHERE is_active = 1";
+             $sql = "SELECT * FROM rera_projects WHERE is_active = 1" . $this->tenantSql();
             $params = [];
 
             if (!empty($criteria['builder_name'])) {
@@ -152,7 +154,7 @@ class RERAVerificationService
         try {
             $stmt = $this->db->prepare("
                 SELECT * FROM rera_projects 
-                WHERE rera_number = ? AND state_code = ? AND is_active = 1
+                WHERE rera_number = ? AND state_code = ? AND is_active = 1" . $this->tenantSql() . "
             ");
             $stmt->execute([$reraNumber, strtoupper($stateCode)]);
             $project = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -164,7 +166,7 @@ class RERAVerificationService
             // Get related documents
             $stmt = $this->db->prepare("
                 SELECT * FROM rera_documents 
-                WHERE project_id = ? ORDER BY document_type, created_at DESC
+                WHERE project_id = ?" . $this->tenantSql() . " ORDER BY document_type, created_at DESC
             ");
             $stmt->execute([$project['id']]);
             $project['documents'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -172,7 +174,7 @@ class RERAVerificationService
             // Get timeline/milestones
             $stmt = $this->db->prepare("
                 SELECT * FROM rera_milestones 
-                WHERE project_id = ? ORDER BY milestone_date ASC
+                WHERE project_id = ?" . $this->tenantSql() . " ORDER BY milestone_date ASC
             ");
             $stmt->execute([$project['id']]);
             $project['milestones'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -271,8 +273,8 @@ class RERAVerificationService
                 (rera_number, state_code, project_name, builder_name, builder_license, 
                  project_type, status, registration_date, validity_date, city, district, 
                  area_sqm, total_units, address, latitude, longitude, completion_percentage, 
-                 created_at, updated_at, is_active)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 1)
+                 created_at, updated_at, is_active, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 1, ?)
                 ON DUPLICATE KEY UPDATE
                     project_name = VALUES(project_name),
                     builder_name = VALUES(builder_name),
@@ -309,6 +311,7 @@ class RERAVerificationService
                 $project['latitude'] ?? 0,
                 $project['longitude'] ?? 0,
                 $project['completion_percentage'] ?? 0,
+                $this->tenantId(),
             ]);
         } catch (Exception $e) {
             error_log('[RERAVerificationService::saveProject] ' . $e->getMessage());

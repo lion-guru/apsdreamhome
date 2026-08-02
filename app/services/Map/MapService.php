@@ -3,6 +3,7 @@
 namespace App\Services\Map;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Map Service
@@ -10,6 +11,7 @@ use App\Core\Database\Database;
  */
 class MapService
 {
+    use ServiceTenantTrait;
     private $database;
     private $apiKey;
     private $baseUrl = 'https://maps.googleapis.com/maps/api';
@@ -153,8 +155,8 @@ class MapService
             }
             
             $sql = "INSERT INTO property_coordinates 
-                (property_id, latitude, longitude, address_formatted, geocoded_at)
-                VALUES (?, ?, ?, ?, NOW())
+                (property_id, latitude, longitude, address_formatted, geocoded_at, tenant_id)
+                VALUES (?, ?, ?, ?, NOW(), ?)
                 ON DUPLICATE KEY UPDATE
                 latitude = VALUES(latitude),
                 longitude = VALUES(longitude),
@@ -166,7 +168,8 @@ class MapService
                 $propertyId,
                 $lat,
                 $lng,
-                $address
+                $address,
+                $this->tenantId()
             ]);
             
             // Fetch nearby places
@@ -195,7 +198,7 @@ class MapService
         $sql = "SELECT pc.*, p.title, p.address
             FROM property_coordinates pc
             JOIN properties p ON pc.property_id = p.id
-            WHERE pc.property_id = ?";
+            WHERE pc.property_id = ?" . $this->tenantSql();
         
         $stmt = $this->database->prepare($sql);
         $stmt->execute([$propertyId]);
@@ -214,7 +217,7 @@ class MapService
             JOIN properties p ON pc.property_id = p.id
             WHERE pc.latitude BETWEEN ? AND ?
             AND pc.longitude BETWEEN ? AND ?
-            AND p.status = 'available'";
+            AND p.status = 'available'" . $this->tenantSql();
         
         $params = [$swLat, $neLat, $swLng, $neLng];
         

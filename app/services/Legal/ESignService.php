@@ -4,9 +4,11 @@ namespace App\Services\Legal;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class ESignService
 {
+    use ServiceTenantTrait;
     /** @var PDO */
     protected $db;
 
@@ -145,7 +147,7 @@ class ESignService
 
         try {
             $stmt = $this->db->prepare("
-                SELECT * FROM esign_transactions WHERE transaction_id = ? AND status IN ('initiated', 'pending_otp')
+                SELECT * FROM esign_transactions WHERE transaction_id = ? AND status IN ('initiated', 'pending_otp')" . $this->tenantSql() . "
             ");
             $stmt->execute([$transactionId]);
             $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -200,7 +202,7 @@ class ESignService
         }
 
         try {
-            $stmt = $this->db->prepare("SELECT * FROM esign_transactions WHERE transaction_id = ?");
+            $stmt = $this->db->prepare("SELECT * FROM esign_transactions WHERE transaction_id = ?" . $this->tenantSql());
             $stmt->execute([$transactionId]);
             $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -239,7 +241,7 @@ class ESignService
 
         try {
             $stmt = $this->db->prepare("
-                SELECT * FROM esign_transactions WHERE transaction_id = ? AND status = 'signed'
+                SELECT * FROM esign_transactions WHERE transaction_id = ? AND status = 'signed'" . $this->tenantSql() . "
             ");
             $stmt->execute([$transactionId]);
             $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -271,7 +273,7 @@ class ESignService
 
         try {
             $stmt = $this->db->prepare("
-                SELECT * FROM esign_transactions WHERE booking_id = ? ORDER BY created_at DESC
+                SELECT * FROM esign_transactions WHERE booking_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC
             ");
             $stmt->execute([$bookingId]);
             return ['success' => true, 'transactions' => $stmt->fetchAll(PDO::FETCH_ASSOC)];
@@ -315,8 +317,8 @@ class ESignService
                 INSERT INTO esign_transactions 
                 (booking_id, document_id, document_type, transaction_id, signer_name, signer_aadhaar, 
                  signer_phone, signer_email, esign_provider, document_hash, document_content, 
-                 template_id, status, expires_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 template_id, status, expires_at, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $data['booking_id'] ?? null,
@@ -333,6 +335,7 @@ class ESignService
                 $data['template_id'] ?? null,
                 $data['status'],
                 $data['expires_at'],
+                $this->tenantId(),
             ]);
             return (int)$this->db->lastInsertId();
         } catch (Exception $e) {
@@ -358,7 +361,7 @@ class ESignService
                 $params[] = $responseData;
             }
 
-            $sql .= " WHERE id = ?";
+            $sql .= " WHERE id = ?" . $this->tenantSql();
             $params[] = $id;
 
             $stmt = $this->db->prepare($sql);
@@ -375,7 +378,7 @@ class ESignService
 
         try {
             $stmt = $this->db->prepare("
-                UPDATE esign_transactions SET signed_document_url = ? WHERE id = ?
+                UPDATE esign_transactions SET signed_document_url = ? WHERE id = ?" . $this->tenantSql() . "
             ");
             return $stmt->execute([$documentUrl, $id]);
         } catch (Exception $e) {
@@ -397,7 +400,7 @@ class ESignService
             // Update status to pending_otp
             $stmt = $this->db->prepare("
                 UPDATE esign_transactions SET status = 'pending_otp', otp_sent_at = NOW() 
-                WHERE transaction_id = ?
+                WHERE transaction_id = ?" . $this->tenantSql() . "
             ");
             $stmt->execute([$transactionId]);
         } catch (Exception $e) {

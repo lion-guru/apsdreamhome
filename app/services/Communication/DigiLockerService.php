@@ -4,9 +4,11 @@ namespace App\Services\Communication;
 
 use PDO;
 use Exception;
+use App\Traits\ServiceTenantTrait;
 
 class DigiLockerService
 {
+    use ServiceTenantTrait;
     /** @var PDO */
     protected $db;
 
@@ -195,11 +197,11 @@ class DigiLockerService
 
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO digilocker_sessions (session_id, state, scopes, status)
-                VALUES (?, ?, ?, 'pending')
+                INSERT INTO digilocker_sessions (session_id, state, scopes, status, tenant_id)
+                VALUES (?, ?, ?, 'pending', ?)
                 ON DUPLICATE KEY UPDATE scopes = VALUES(scopes), status = 'pending'
             ");
-            $stmt->execute([$state, $state, json_encode($scopes)]);
+            $stmt->execute([$state, $state, json_encode($scopes), $this->tenantId()]);
         } catch (Exception $e) {
             error_log('[DigiLockerService::saveSession] ' . $e->getMessage());
         }
@@ -213,7 +215,7 @@ class DigiLockerService
         if (!$this->db) return null;
 
         try {
-            $stmt = $this->db->prepare("SELECT * FROM digilocker_sessions WHERE session_id = ? AND status = 'pending'");
+            $stmt = $this->db->prepare("SELECT * FROM digilocker_sessions WHERE session_id = ? AND status = 'pending'" . $this->tenantSql());
             $stmt->execute([$state]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         } catch (Exception $e) {
@@ -235,7 +237,7 @@ class DigiLockerService
                 UPDATE digilocker_sessions 
                 SET access_token = ?, refresh_token = ?, expires_at = ?, 
                     user_data = ?, status = 'authorized', updated_at = CURRENT_TIMESTAMP
-                WHERE session_id = ?
+                WHERE session_id = ?" . $this->tenantSql() . "
             ");
             $stmt->execute([
                 $tokenData['access_token'] ?? '',
@@ -259,7 +261,7 @@ class DigiLockerService
         try {
             $stmt = $this->db->prepare("
                 SELECT * FROM digilocker_sessions 
-                WHERE user_id = ? AND status = 'authorized' 
+                WHERE user_id = ? AND status = 'authorized' " . $this->tenantSql() . "
                 ORDER BY created_at DESC LIMIT 1
             ");
             $stmt->execute([$userId]);
