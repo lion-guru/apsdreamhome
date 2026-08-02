@@ -126,12 +126,12 @@ class ReferralService
                                     $sponsorId,
                                     $sponsorCode,
                                     $userId,
-                                    $this->getTenantId()
+                                    $this->tenantId()
                                 ]);
 
                                 if ($referralCodeOverride) {
                                     $stmtOverride = $this->conn->prepare("UPDATE mlm_profiles SET referral_code = ? WHERE user_id = ? AND tenant_id = ?");
-                                    $stmtOverride->execute([$referralCodeOverride, $userId, $this->getTenantId()]);
+                                    $stmtOverride->execute([$referralCodeOverride, $userId, $this->tenantId()]);
                                 }
 
                                 $this->conn->commit();
@@ -168,7 +168,7 @@ class ReferralService
                     $message,
                     $payload,
                     $processedAt,
-                    $this->getTenantId()
+                    $this->tenantId()
                 ]);
             }
         }
@@ -252,7 +252,7 @@ class ReferralService
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
-        return $stmt->execute([$referrer_user_id, $referred_user_id, $referral_type, $channel, $this->getTenantId()]);
+        return $stmt->execute([$referrer_user_id, $referred_user_id, $referral_type, $channel, $this->tenantId()]);
     }
 
     /**
@@ -471,7 +471,7 @@ class ReferralService
      */
     public function getReferralCode(int $userId): string
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         $stmt = $this->conn->prepare("SELECT referral_code, name, phone FROM users WHERE id = ?$tenantWhere LIMIT 1");
         $params = [$userId];
@@ -494,7 +494,7 @@ class ReferralService
         $code = 'APS-' . $prefix . $last4;
 
         // Ensure uniqueness
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         $check = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referral_code = ? AND id != ?$tenantWhere");
         $checkParams = [$code, $userId];
@@ -526,7 +526,7 @@ class ReferralService
         ];
 
         try {
-            $tid = $this->getTenantId();
+            $tid = $this->tenantId();
             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
             $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?$tenantWhere");
             $params = [$userId];
@@ -600,7 +600,7 @@ class ReferralService
     public function processReferralCommission(int $referredUserId, int $bookingId, float $bookingAmount): array
     {
         try {
-            $tid = $this->getTenantId();
+            $tid = $this->tenantId();
             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
             $stmt = $this->conn->prepare("SELECT referred_by FROM users WHERE id = ?$tenantWhere LIMIT 1");
             $params = [$referredUserId];
@@ -618,8 +618,10 @@ class ReferralService
             }
 
             // Check if commission already processed for this booking
-            $stmt = $this->conn->prepare("SELECT id FROM mlm_commission_ledger WHERE source_user_id = ? AND booking_id = ? AND commission_type = 'referral' LIMIT 1");
-            $stmt->execute([$referredUserId, $bookingId]);
+            $stmt = $this->conn->prepare("SELECT id FROM mlm_commission_ledger WHERE source_user_id = ? AND booking_id = ? AND commission_type = 'referral' LIMIT 1" . $this->tenantSql());
+            $params = [$referredUserId, $bookingId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             if ($stmt->fetch()) {
                 return ['success' => false, 'message' => 'Commission already processed'];
             }
@@ -628,13 +630,15 @@ class ReferralService
             $commissionAmount = round($bookingAmount * 0.01, 2);
 
             // Get booking number for notes
-            $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ? LIMIT 1");
-            $stmt->execute([$bookingId]);
+            $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ? LIMIT 1" . $this->tenantSql());
+            $params = [$bookingId];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
             $bookingNumber = $booking['booking_number'] ?? "#{$bookingId}";
 
             // Get referrer name
-            $tid = $this->getTenantId();
+            $tid = $this->tenantId();
             $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
             $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?$tenantWhere LIMIT 1");
             $params = [$referrerId];
@@ -652,7 +656,7 @@ class ReferralService
                 $commissionAmount,
                 $bookingId,
                 "Referral commission for booking {$bookingNumber}",
-                $this->getTenantId()
+                $this->tenantId()
             ]);
 
             // Send referral commission email to referrer
@@ -692,7 +696,7 @@ class ReferralService
      */
     public function validateUserReferralCode(string $code): ?array
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         $stmt = $this->conn->prepare("SELECT id, name FROM users WHERE referral_code = ?$tenantWhere LIMIT 1");
         $params = [$code];
@@ -712,7 +716,7 @@ class ReferralService
             return false;
         }
 
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         $stmt = $this->conn->prepare("UPDATE users SET referred_by = ? WHERE id = ?$tenantWhere AND (referred_by IS NULL OR referred_by = 0)");
         $params = [(int)$referrer['id'], $newUserId];
@@ -723,7 +727,7 @@ class ReferralService
 
     private function userExists(int $userId): bool
     {
-        $tid = $this->getTenantId();
+        $tid = $this->tenantId();
         $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
         $stmt = $this->conn->prepare("SELECT 1 FROM users WHERE id = ?$tenantWhere LIMIT 1");
         $params = [$userId];
@@ -749,14 +753,16 @@ class ReferralService
 
         $currentId = $potentialSponsorId;
         $visited = [];
+        $tSql = $this->tenantSql();
+        $tidParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         for ($i = 0; $i < 100; $i++) {
             if (in_array($currentId, $visited, true)) {
                 break;
             }
             $visited[] = $currentId;
 
-            $stmt = $this->conn->prepare('SELECT parent_id FROM mlm_network_tree WHERE associate_id = ? LIMIT 1');
-            $stmt->execute([$currentId]);
+            $stmt = $this->conn->prepare('SELECT parent_id FROM mlm_network_tree WHERE associate_id = ? LIMIT 1' . $tSql);
+            $stmt->execute(array_merge([$currentId], $tidParam));
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$row || empty($row['parent_id'])) {
                 break;
@@ -772,8 +778,11 @@ class ReferralService
 
     private function countTeamMembers(int $parentId): int
     {
-        $stmt = $this->conn->prepare('SELECT COUNT(*) AS team_size FROM mlm_network_tree WHERE parent_id = ?');
-        $stmt->execute([$parentId]);
+        $tSql = $this->tenantSql();
+        $stmt = $this->conn->prepare('SELECT COUNT(*) AS team_size FROM mlm_network_tree WHERE parent_id = ?' . $tSql);
+        $params = [$parentId];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return (int) ($result['team_size'] ?? 0);
@@ -1199,17 +1208,5 @@ class ReferralService
         } catch (\Throwable $e) {
             return [];
         }
-    }
-
-    private function getTenantId(): int
-    {
-        if (class_exists('\App\Core\Middleware\TenantContext')) {
-            try {
-                return \App\Core\Middleware\TenantContext::getId();
-            } catch (\Throwable $e) {
-                return 1;
-            }
-        }
-        return 1;
     }
 }

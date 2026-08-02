@@ -132,15 +132,24 @@ class MarketingCampaignService
 
     public function addRecipient(int $campaignId, array $data): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO marketing_campaign_recipients (campaign_id, user_id, email, phone, name, channel) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
+        $insertData = $this->tenantInsertData();
+        $cols = "campaign_id, user_id, email, phone, name, channel";
+        $placeholders = "?, ?, ?, ?, ?, ?";
+        $params = [
             $campaignId,
             $data['user_id'] ?? null,
             $data['email'] ?? null,
             $data['phone'] ?? null,
             $data['name'] ?? null,
             $data['channel']
-        ]);
+        ];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $placeholders .= ", ?";
+            $params = array_merge($params, array_values($insertData));
+        }
+        $stmt = $this->pdo->prepare("INSERT INTO marketing_campaign_recipients ($cols) VALUES ($placeholders)");
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
@@ -154,13 +163,12 @@ class MarketingCampaignService
 
     public function getTemplates(string $type = ''): array
     {
-        $sql = "SELECT * FROM marketing_campaign_templates";
+        $sql = "SELECT * FROM marketing_campaign_templates WHERE is_active = 1" . $this->tenantSql();
         $params = [];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         if ($type) {
-            $sql .= " WHERE type = ? AND is_active = 1";
+            $sql .= " AND type = ?";
             $params[] = $type;
-        } else {
-            $sql .= " WHERE is_active = 1";
         }
         $sql .= " ORDER BY usage_count DESC, name ASC";
         try {
@@ -174,15 +182,20 @@ class MarketingCampaignService
 
     public function getTemplateById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaign_templates WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaign_templates WHERE id = ?" . $this->tenantSql());
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $row = $stmt->fetch();
         return $row ?: null;
     }
 
     public function incrementTemplateUsage(int $id): void
     {
-        $this->pdo->prepare("UPDATE marketing_campaign_templates SET usage_count = usage_count + 1 WHERE id = ?")->execute([$id]);
+        $sql = "UPDATE marketing_campaign_templates SET usage_count = usage_count + 1 WHERE id = ?" . $this->tenantSql();
+        $params = [$id];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $this->pdo->prepare($sql)->execute($params);
     }
 
     public function getAudienceList(array $filters): array
@@ -217,8 +230,10 @@ class MarketingCampaignService
 
     public function recordUnsubscribe(array $data): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO marketing_unsubscribes (user_id, email, phone, channel, reason, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([
+        $insertData = $this->tenantInsertData();
+        $cols = "user_id, email, phone, channel, reason, ip_address, user_agent";
+        $placeholders = "?, ?, ?, ?, ?, ?, ?";
+        $params = [
             $data['user_id'] ?? null,
             $data['email'] ?? null,
             $data['phone'] ?? null,
@@ -226,7 +241,14 @@ class MarketingCampaignService
             $data['reason'] ?? null,
             $data['ip_address'] ?? $_SERVER['REMOTE_ADDR'] ?? null,
             $data['user_agent'] ?? $_SERVER['HTTP_USER_AGENT'] ?? null
-        ]);
+        ];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $placeholders .= ", ?";
+            $params = array_merge($params, array_values($insertData));
+        }
+        $stmt = $this->pdo->prepare("INSERT INTO marketing_unsubscribes ($cols) VALUES ($placeholders)");
+        $stmt->execute($params);
         return (int)$this->pdo->lastInsertId();
     }
 
@@ -234,6 +256,8 @@ class MarketingCampaignService
     {
         $sql = "SELECT 1 FROM marketing_unsubscribes WHERE channel = ?";
         $params = [$channel];
+        $sql .= $this->tenantSql();
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
         if ($email) {
             $sql .= " AND email = ?";
             $params[] = $email;

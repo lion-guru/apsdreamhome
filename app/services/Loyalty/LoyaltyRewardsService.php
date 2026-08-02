@@ -3,6 +3,7 @@
 namespace App\Services\Loyalty;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Loyalty & Rewards Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class LoyaltyRewardsService
 {
+    use ServiceTenantTrait;
+
     private $database;
     private $tiers;
     
@@ -44,11 +47,13 @@ class LoyaltyRewardsService
             current_tier VARCHAR(20) DEFAULT 'bronze',
             tier_achieved_at TIMESTAMP NULL,
             referral_count INT DEFAULT 0,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_user (user_id, user_type),
+            UNIQUE KEY unique_user (user_id, user_type, tenant_id),
             INDEX idx_tier (current_tier),
-            INDEX idx_points (points)
+            INDEX idx_points (points),
+            INDEX idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         
         // Points transactions
@@ -64,8 +69,9 @@ class LoyaltyRewardsService
             balance_after INT NOT NULL,
             expiry_date DATE NULL,
             is_expired TINYINT(1) DEFAULT 0,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id, user_type),
+            INDEX idx_user (user_id, user_type, tenant_id),
             INDEX idx_type (transaction_type),
             INDEX idx_created (created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -104,8 +110,9 @@ class LoyaltyRewardsService
             delivery_details JSON NULL,
             used_at TIMESTAMP NULL,
             expires_at TIMESTAMP NULL,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_user (user_id, user_type),
+            INDEX idx_user (user_id, user_type, tenant_id),
             INDEX idx_status (status),
             INDEX idx_code (redemption_code)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -227,16 +234,28 @@ class LoyaltyRewardsService
      */
     public function getOrCreateAccount(int $userId, string $userType = 'customer'): array
     {
-        $sql = "SELECT * FROM loyalty_points WHERE user_id = ? AND user_type = ?";
+        $tSql = $this->tenantSql();
+        $params = [$userId, $userType];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $sql = "SELECT * FROM loyalty_points WHERE user_id = ? AND user_type = ?" . $tSql;
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType]);
+        $stmt->execute($params);
         $account = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         if (!$account) {
             // Create new account
-            $insertSql = "INSERT INTO loyalty_points (user_id, user_type, current_tier) VALUES (?, ?, 'bronze')";
+            $insertData = $this->tenantInsertData();
+            $cols = "user_id, user_type, current_tier";
+            $placeholders = "?, ?, 'bronze'";
+            $insertParams = [$userId, $userType];
+            if (!empty($insertData)) {
+                $cols .= ", " . implode(', ', array_keys($insertData));
+                $placeholders .= ", ?";
+                $insertParams = array_merge($insertParams, array_values($insertData));
+            }
+            $insertSql = "INSERT INTO loyalty_points ($cols) VALUES ($placeholders)";
             $insertStmt = $this->database->prepare($insertSql);
-            $insertStmt->execute([$userId, $userType]);
+            $insertStmt->execute($insertParams);
             
             return [
                 'user_id' => $userId,
@@ -348,15 +367,21 @@ class LoyaltyRewardsService
             $newBalance = $this->updatePointsBalance($userId, $userType, -$reward['points_required']);
             
             // Create redemption record
-            $insertSql = "INSERT INTO reward_redemptions 
-                (user_id, user_type, reward_id, points_used, redemption_code, expires_at)
-                VALUES (?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))";
-            
-            $insertStmt = $this->database->prepare($insertSql);
-            $insertStmt->execute([
-                $userId, $userType, $rewardId, 
+            $insertData = $this->tenantInsertData();
+            $cols = "user_id, user_type, reward_id, points_used, redemption_code, expires_at";
+            $placeholders = "?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY)";
+            $insertParams = [
+                $userId, $userType, $rewardId,
                 $reward['points_required'], $redemptionCode
-            ]);
+            ];
+            if (!empty($insertData)) {
+                $cols .= ", " . implode(', ', array_keys($insertData));
+                $placeholders .= ", ?";
+                $insertParams = array_merge($insertParams, array_values($insertData));
+            }
+            $insertSql = "INSERT INTO reward_redemptions ($cols) VALUES ($placeholders)";
+            $insertStmt = $this->database->prepare($insertSql);
+            $insertStmt->execute($insertParams);
             
             // Update stock
             if ($reward['is_limited']) {
@@ -462,13 +487,16 @@ class LoyaltyRewardsService
         
         if ($newTier && $newTier !== $currentTier) {
             // Update tier
+            $tSql = $this->tenantSql();
             $sql = "UPDATE loyalty_points SET 
                 current_tier = ?,
                 tier_achieved_at = NOW()
-                WHERE user_id = ? AND user_type = ?";
-            
+                WHERE user_id = ? AND user_type = ?" . $tSql;
+
             $stmt = $this->database->prepare($sql);
-            $stmt->execute([$newTier, $userId, $userType]);
+            $params = [$newTier, $userId, $userType];
+            if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $stmt->execute($params);
             
             return [
                 'upgraded' => true,
@@ -501,12 +529,15 @@ class LoyaltyRewardsService
      */
     private function getPointsEarnedToday(int $userId, string $userType, string $actionType): int
     {
+        $tSql = $this->tenantSql();
         $sql = "SELECT SUM(points) FROM loyalty_transactions 
             WHERE user_id = ? AND user_type = ? AND transaction_type = 'earned'
-            AND DATE(created_at) = CURDATE() AND description LIKE ?";
-        
+            AND DATE(created_at) = CURDATE() AND description LIKE ?" . $tSql;
+
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType, "%$actionType%"]);
+        $params = [$userId, $userType, "%$actionType%"];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         return (int) $stmt->fetchColumn();
     }
     
@@ -519,17 +550,24 @@ class LoyaltyRewardsService
         // Get current balance
         $account = $this->getOrCreateAccount($userId, $userType);
         $balanceAfter = $account['points'] + $points;
-        
-        $sql = "INSERT INTO loyalty_transactions 
-            (user_id, user_type, transaction_type, points, description, 
-             reference_type, reference_id, balance_after)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+
+        $insertData = $this->tenantInsertData();
+        $cols = "user_id, user_type, transaction_type, points, description, 
+             reference_type, reference_id, balance_after";
+        $placeholders = "?, ?, ?, ?, ?, ?, ?, ?";
+        $params = [
             $userId, $userType, $type, $points, $description,
             $refType, $refId, $balanceAfter
-        ]);
+        ];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $placeholders .= ", ?";
+            $params = array_merge($params, array_values($insertData));
+        }
+
+        $sql = "INSERT INTO loyalty_transactions ($cols) VALUES ($placeholders)";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
     }
     
     /**
@@ -537,18 +575,21 @@ class LoyaltyRewardsService
      */
     private function updatePointsBalance(int $userId, string $userType, int $pointsDelta): int
     {
+        $tSql = $this->tenantSql();
         $sql = "UPDATE loyalty_points SET 
             points = points + ?,
             lifetime_points = CASE WHEN ? > 0 THEN lifetime_points + ? ELSE lifetime_points END,
             redeemed_points = CASE WHEN ? < 0 THEN redeemed_points + ABS(?) ELSE redeemed_points END
-            WHERE user_id = ? AND user_type = ?";
-        
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute([
+            WHERE user_id = ? AND user_type = ?" . $tSql;
+
+        $params = [
             $pointsDelta, $pointsDelta, $pointsDelta,
             $pointsDelta, $pointsDelta,
             $userId, $userType
-        ]);
+        ];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute($params);
         
         // Get new balance
         $account = $this->getOrCreateAccount($userId, $userType);
@@ -581,12 +622,17 @@ class LoyaltyRewardsService
      */
     private function getRecentTransactions(int $userId, string $userType, int $limit): array
     {
+        $tSql = $this->tenantSql();
         $sql = "SELECT * FROM loyalty_transactions 
             WHERE user_id = ? AND user_type = ?
+            " . $tSql . "
             ORDER BY created_at DESC LIMIT ?";
-        
+
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType, $limit]);
+        $params = [$userId, $userType];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $params[] = $limit;
+        $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
@@ -612,9 +658,12 @@ class LoyaltyRewardsService
      */
     private function getReferralStats(int $userId, string $userType): array
     {
-        $sql = "SELECT referral_count FROM loyalty_points WHERE user_id = ? AND user_type = ?";
+        $tSql = $this->tenantSql();
+        $sql = "SELECT referral_count FROM loyalty_points WHERE user_id = ? AND user_type = ?" . $tSql;
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$userId, $userType]);
+        $params = [$userId, $userType];
+        if ($this->tenantId() > 1) $params[] = $this->tenantId();
+        $stmt->execute($params);
         $count = $stmt->fetchColumn();
         
         return [
@@ -641,21 +690,28 @@ class LoyaltyRewardsService
      */
     public function getAdminStats(): array
     {
+        $tSql = $this->tenantSql();
+        $tid = $this->tenantId();
+
         // Total members by tier
-        $tierSql = "SELECT current_tier, COUNT(*) as count FROM loyalty_points GROUP BY current_tier";
-        $tierStmt = $this->database->query($tierSql);
+        $tierSql = "SELECT current_tier, COUNT(*) as count FROM loyalty_points WHERE 1=1" . $tSql . " GROUP BY current_tier";
+        $tierStmt = $this->database->prepare($tierSql);
+        $tierParams = $tid > 1 ? [$tid] : [];
+        $tierStmt->execute($tierParams);
         $byTier = $tierStmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         // Total points in circulation
-        $pointsSql = "SELECT SUM(points) as total_active, SUM(lifetime_points) as total_lifetime FROM loyalty_points";
-        $pointsStmt = $this->database->query($pointsSql);
+        $pointsSql = "SELECT SUM(points) as total_active, SUM(lifetime_points) as total_lifetime FROM loyalty_points WHERE 1=1" . $tSql;
+        $pointsStmt = $this->database->prepare($pointsSql);
+        $pointsStmt->execute($tid > 1 ? [$tid] : []);
         $pointsData = $pointsStmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         // Recent redemptions
         $redemptionData = [0, 0];
         try {
-            $redemptionSql = "SELECT COUNT(*), COALESCE(SUM(points_used), 0) FROM reward_redemptions WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $redemptionStmt = $this->database->query($redemptionSql);
+            $redemptionSql = "SELECT COUNT(*), COALESCE(SUM(points_used), 0) FROM reward_redemptions WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tSql;
+            $redemptionStmt = $this->database->prepare($redemptionSql);
+            $redemptionStmt->execute($tid > 1 ? [$tid] : []);
             $redemptionData = $redemptionStmt->fetch(\PDO::FETCH_NUM);
         } catch (\Exception $e) {
             // Table or column may not exist yet
