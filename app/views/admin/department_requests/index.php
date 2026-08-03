@@ -19,10 +19,10 @@
     <div class="col-12">
         <div class="d-flex gap-2">
             <a href="?department=<?= $department_code ?>" class="btn btn-outline-secondary btn-sm <?= empty($statusFilter) ? 'active' : '' ?>">All</a>
-            <a href="?department=<?= $department_code ?>&status=submitted" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'submitted' ? 'active' : '' ?>">Submitted</a>
+            <a href="?department=<?= $department_code ?>&status=open" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'open' ? 'active' : '' ?>">Open</a>
             <a href="?department=<?= $department_code ?>&status=in_progress" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'in_progress' ? 'active' : '' ?>">In Progress</a>
-            <a href="?department=<?= $department_code ?>&status=review" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'review' ? 'active' : '' ?>">Review</a>
-            <a href="?department=<?= $department_code ?>&status=completed" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'completed' ? 'active' : '' ?>">Completed</a>
+            <a href="?department=<?= $department_code ?>&status=resolved" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'resolved' ? 'active' : '' ?>">Resolved</a>
+            <a href="?department=<?= $department_code ?>&status=closed" class="btn btn-outline-secondary btn-sm <?= $statusFilter === 'closed' ? 'active' : '' ?>">Closed</a>
         </div>
     </div>
 </div>
@@ -59,7 +59,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="badge bg-<?= $req['status'] === 'submitted' ? 'secondary' : ($req['status'] === 'in_progress' ? 'warning' : ($req['status'] === 'completed' ? 'success' : ($req['status'] === 'rejected' ? 'danger' : 'info'))) ?>">
+                            <span class="badge bg-<?= $req['status'] === 'open' ? 'secondary' : ($req['status'] === 'in_progress' ? 'warning' : ($req['status'] === 'resolved' ? 'success' : ($req['status'] === 'rejected' ? 'danger' : 'info'))) ?>">
                                 <?= ucfirst($req['status']) ?>
                             </span>
                         </td>
@@ -83,9 +83,9 @@
         <h5>Stats for <?= htmlspecialchars($department_name ?? $department_code) ?></h5>
         <div class="row g-2">
             <div class="col-2"><span class="badge bg-secondary">Total: <?= $stats['total'] ?? 0 ?></span></div>
-            <div class="col-2"><span class="badge bg-info">In Progress: <?= $stats['in_progress'] ?? 0 ?></span></div>
-            <div class="col-2"><span class="badge bg-warning">Review: <?= $stats['review'] ?? 0 ?></span></div>
-            <div class="col-2"><span class="badge bg-success">Completed: <?= $stats['completed'] ?? 0 ?></span></div>
+            <div class="col-2"><span class="badge bg-warning">In Progress: <?= $stats['in_progress'] ?? 0 ?></span></div>
+            <div class="col-2"><span class="badge bg-info">Open: <?= $stats['open'] ?? 0 ?></span></div>
+            <div class="col-2"><span class="badge bg-success">Resolved: <?= $stats['resolved'] ?? 0 ?></span></div>
             <div class="col-2"><span class="badge bg-danger">Rejected: <?= $stats['rejected'] ?? 0 ?></span></div>
         </div>
     </div>

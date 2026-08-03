@@ -319,7 +319,7 @@ class RetroactiveRecalculationService
         // Fetch with original entry info
         $stmt = $this->pdo->prepare("
             SELECT cr.*,
-                   ml.commission_type as orig_type, ml.amount as orig_calc_amount,
+                    ml.type as orig_type, ml.amount as orig_calc_amount,
                    ml.beneficiary_user_id, ml.source_user_id, ml.booking_id,
                    ml.commission_percentage as orig_rate,
                    u.name as beneficiary_name, s.name as source_name,

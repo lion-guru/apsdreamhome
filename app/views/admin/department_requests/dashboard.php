@@ -70,7 +70,7 @@
                                         <?= ucfirst($req['priority']) ?>
                                     </span>
                                 </td>
-                                <td><span class="badge bg-<?= $req['status'] === 'submitted' ? 'secondary' : ($req['status'] === 'in_progress' ? 'warning' : 'info') ?>"><?= ucfirst($req['status']) ?></span></td>
+                                    <td><span class="badge bg-<?= $req['status'] === 'open' ? 'info' : ($req['status'] === 'in_progress' ? 'warning' : 'success') ?>"><?= ucfirst($req['status']) ?></span></td>
                                 <td><?= date('M j, Y g:i a', strtotime($req['created_at'])) ?></td>
                             </tr>
                             <?php endforeach; ?>

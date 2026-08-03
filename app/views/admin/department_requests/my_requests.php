@@ -50,7 +50,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="badge bg-<?= $req['status'] === 'submitted' ? 'secondary' : ($req['status'] === 'in_progress' ? 'warning' : ($req['status'] === 'completed' ? 'success' : ($req['status'] === 'rejected' ? 'danger' : 'info'))) ?>">
+                            <span class="badge bg-<?= $req['status'] === 'open' ? 'secondary' : ($req['status'] === 'in_progress' ? 'warning' : ($req['status'] === 'resolved' ? 'success' : ($req['status'] === 'rejected' ? 'danger' : 'info'))) ?>">
                                 <?= ucfirst($req['status']) ?>
                             </span>
                         </td>

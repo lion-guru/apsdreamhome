@@ -1341,7 +1341,7 @@ class MoneyWorkflowController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
+            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db instanceof \PDO ? $this->db : null);
             $stats = $autoPayService->getDashboardStats();
             $mandates = $autoPayService->listMandates();
             $failedPayments = $autoPayService->getFailedPayments(50);
@@ -1369,7 +1369,7 @@ class MoneyWorkflowController extends AdminController
             return;
         }
         try {
-            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
+            $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db instanceof \PDO ? $this->db : null);
             $result = $autoPayService->processDueEmiPayments();
             $this->json($result);
         } catch (\Exception $e) {

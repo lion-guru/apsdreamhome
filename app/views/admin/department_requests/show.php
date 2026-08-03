@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-6">
                         <strong>Status:</strong> 
-                        <span class="badge bg-<?= $request['status'] === 'submitted' ? 'secondary' : ($request['status'] === 'in_progress' ? 'warning' : ($request['status'] === 'completed' ? 'success' : ($request['status'] === 'rejected' ? 'danger' : 'info'))) ?>">
+                        <span class="badge bg-<?= $request['status'] === 'open' ? 'secondary' : ($request['status'] === 'in_progress' ? 'warning' : ($request['status'] === 'resolved' ? 'success' : ($request['status'] === 'rejected' ? 'danger' : 'info'))) ?>">
                             <?= ucfirst($request['status']) ?>
                         </span>
                     </div>
@@ -72,13 +72,11 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <select class="form-select" name="status" required>
-                                <option value="submitted">Submitted</option>
+                                <option value="open">Open</option>
                                 <option value="in_progress">In Progress</option>
-                                <option value="review">Review</option>
-                                <option value="approved">Approved</option>
+                                <option value="resolved">Resolved</option>
                                 <option value="rejected">Rejected</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
+                                <option value="closed">Closed</option>
                             </select>
                         </div>
                         <div class="col-md-8">
@@ -168,7 +166,7 @@
                     <a href="<?= BASE_URL ?>/admin/department-requests/my-requests" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-list"></i> My Requests
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/department-requests/list?department=<?= $request['department_code'] ?>" class="btn btn-outline-secondary btn-sm">
+                    <a href="<?= BASE_URL ?>/admin/department-requests/list?department=<?= $request['department_name'] ?? '' ?>" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-building"></i> Same Department
                     </a>
                 </div>

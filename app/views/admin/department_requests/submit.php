@@ -19,10 +19,10 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Department *</label>
-                    <select class="form-select" name="department_code" required>
+                    <select class="form-select" name="department_id" required>
                         <option value="">Select Department</option>
                         <?php foreach ($departments as $dept): ?>
-                        <option value="<?= $dept['code'] ?>"><?= $dept['name'] ?> (<?= $dept['code'] ?>)</option>
+                        <option value="<?= $dept['id'] ?>"><?= $dept['name'] ?> (<?= $dept['code'] ?>)</option>
                         <?php endforeach; ?>
                     </select>
                 </div>

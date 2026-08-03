@@ -47,26 +47,47 @@ class DepartmentRequestController extends AdminController
         $statusFilter = $_GET['status'] ?? null;
 
         $userRole = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
-        $userDept = $this->requestService->getDepartmentForUser($userRole);
+        $userDeptId = $this->requestService->getDepartmentForUser($userRole);
 
         if (!$departmentCode) {
-            // Default to user's department
-            $departmentCode = $userDept;
+            $departmentId = $userDeptId;
+        } else {
+            // Resolve department code to ID
+            $departmentId = $this->resolveDepartmentId($departmentCode);
+            if (!$departmentId) {
+                $departmentId = $userDeptId;
+            }
         }
 
-        $requests = $this->requestService->getRequestsForDepartment($departmentCode, [
+        $requests = $this->requestService->getRequestsForDepartment($departmentId, [
             'status' => $statusFilter
         ]);
 
-        $stats = $this->requestService->getStats($departmentCode);
+        $stats = $this->requestService->getStats($departmentId);
 
         $this->render('admin/department_requests/index', [
             'title' => 'Department Requests',
-            'department_code' => $departmentCode,
+            'department_id' => $departmentId,
+            'department_code' => $departmentCode ?? '',
             'statusFilter' => $statusFilter,
             'requests' => $requests,
             'stats' => $stats
         ]);
+    }
+
+    private function resolveDepartmentId(string $code): ?int
+    {
+        $tid = $this->tenantId();
+        $where = $tid > 1 ? " WHERE tenant_id = $tid" : " WHERE 1";
+
+        $sql = "SELECT id FROM departments {$where} AND code = ? LIMIT 1";
+        $params = [$code];
+        if ($tid > 1) $params[] = $tid;
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $row ? (int)$row['id'] : null;
     }
 
     /**
@@ -75,19 +96,16 @@ class DepartmentRequestController extends AdminController
     public function submit()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->validateCsrfOrFail();
+            $this->validateCsrfFail();
 
             $data = [
-                'request_type' => $_POST['request_type'] ?? 'inquiry',
-                'department_code' => $_POST['department_code'],
+                'department_id' => (int)($_POST['department_id'] ?? $_POST['department_code'] ?? 1),
                 'title' => $_POST['title'],
                 'description' => $_POST['description'] ?? '',
                 'priority' => $_POST['priority'] ?? 'medium',
                 'requester_id' => $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0,
                 'requester_role' => $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin',
                 'requester_name' => $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Unknown',
-                'related_entity_type' => $_POST['related_entity_type'] ?? null,
-                'related_entity_id' => $_POST['related_entity_id'] ?? null,
                 'due_date' => $_POST['due_date'] ?? null
             ];
 
