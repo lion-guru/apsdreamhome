@@ -179,6 +179,10 @@ class AdvancedAnalyticsService
      */
     private function getPropertyMetrics(string $dateFrom, string $dateTo): array
     {
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $tparam = $tid > 1 ? [$tid] : [];
+
         // Property views
         $viewsSql = "SELECT COUNT(*) FROM analytics_events 
             WHERE event_name = 'property_view' AND DATE(created_at) BETWEEN ? AND ?{$tsql}";
@@ -216,6 +220,10 @@ class AdvancedAnalyticsService
      */
     private function getLeadMetrics(string $dateFrom, string $dateTo): array
     {
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $tparam = $tid > 1 ? [$tid] : [];
+
         // New leads
         $newSql = "SELECT COUNT(*) FROM leads WHERE DATE(created_at) BETWEEN ? AND ?{$tsql}";
         $newStmt = $this->database->prepare($newSql);
@@ -280,7 +288,7 @@ class AdvancedAnalyticsService
             GROUP BY a.id ORDER BY revenue DESC LIMIT 5";
         $agentParams = $tid > 1 ? [$dateFrom, $dateTo, $tid] : [$dateFrom, $dateTo];
         $agentStmt = $this->database->prepare($agentSql);
-        $agentStmt->execute($params);
+        $agentStmt->execute($agentParams);
         $topAgents = $agentStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [
@@ -299,8 +307,8 @@ class AdvancedAnalyticsService
         $tsql = $this->tenantSql();
         $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $sql = "SELECT funnel_name, stage_name, COUNT(*) as count
-            FROM analytics_funnels{$tsql}
-            WHERE DATE(created_at) BETWEEN ? AND ?
+            FROM analytics_funnels
+            WHERE DATE(created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY funnel_name, stage_name
             ORDER BY funnel_name, stage_name";
         
@@ -402,8 +410,8 @@ class AdvancedAnalyticsService
         $sql = "SELECT 
             {$groupBy} as period,
             COUNT(*) as value
-            FROM analytics_events{$tsql}
-            WHERE event_name = ? AND DATE(created_at) BETWEEN ? AND ?
+            FROM analytics_events
+            WHERE event_name = ? AND DATE(created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY period
             ORDER BY period ASC";
         
@@ -501,6 +509,9 @@ class AdvancedAnalyticsService
      */
     public function cleanup(int $days = 90): int
     {
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $tparam = $tid > 1 ? [$tid] : [];
         $sql = "DELETE FROM analytics_events 
             WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY){$tsql}";
         

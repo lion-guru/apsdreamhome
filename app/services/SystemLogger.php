@@ -226,15 +226,18 @@ class SystemLogger
     private function logToDatabase(array $logEntry)
     {
         try {
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = count($tenantData) > 0 ? ', ' . implode(', ', array_keys($tenantData)) : '';
+            $tenantPhs  = count($tenantData) > 0 ? ', ' . implode(', ', array_fill(0, count($tenantData), '?')) : '';
             $stmt = $this->db->prepare(
                 "INSERT INTO comprehensive_audit_log 
                 (trace_id, user_id, username, action_type, severity_level, 
-                ip_address, request_payload, created_at) 
+                ip_address, request_payload{$tenantCols}, created_at) 
                 VALUES (:trace_id, :user_id, :username, :action_type, 
-                :severity_level, :ip_address, :request_payload, NOW())"
+                :severity_level, :ip_address, :request_payload{$tenantPhs}, NOW())"
             );
 
-            $stmt->execute([
+            $params = [
                 ':trace_id' => $logEntry['trace_id'],
                 ':user_id' => $logEntry['user_id'] ?? null,
                 ':username' => $logEntry['username'],
@@ -245,7 +248,11 @@ class SystemLogger
                     'message' => $logEntry['message'],
                     'context' => $logEntry['context']
                 ])
-            ]);
+            ];
+            foreach ($tenantData as $col => $val) {
+                $params[":{$col}"] = $val;
+            }
+            $stmt->execute($params);
         } catch (Exception $e) {
             error_log("Database Logging Error: " . $e->getMessage());
         }

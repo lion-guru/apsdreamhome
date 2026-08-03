@@ -154,7 +154,7 @@ class TotpService
     public function getBackupCodes(int $userId): array
     {
         try {
-            $st = $this->db->prepare("SELECT two_factor_backup_codes FROM users WHERE id = :id");
+            $st = $this->db->prepare("SELECT two_factor_backup_codes FROM users WHERE id = :id" . $this->tenantSql());
             $st->execute([':id' => $userId]);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             $json = $r['two_factor_backup_codes'] ?? null;
@@ -167,7 +167,7 @@ class TotpService
     public function saveBackupCodes(int $userId, array $codes): bool
     {
         try {
-            $st = $this->db->prepare("UPDATE users SET two_factor_backup_codes = :c WHERE id = :id");
+            $st = $this->db->prepare("UPDATE users SET two_factor_backup_codes = :c WHERE id = :id" . $this->tenantSql());
             $st->execute([':c' => json_encode(array_values($codes)), ':id' => $userId]);
             return true;
         } catch (\Throwable $e) { return false; }
@@ -202,7 +202,7 @@ class TotpService
     public function getUsedBackupCodes(int $userId): array
     {
         try {
-            $st = $this->pdo->prepare("SELECT used_codes FROM two_factor_backup_codes_log WHERE user_id = :id");
+            $st = $this->pdo->prepare("SELECT used_codes FROM two_factor_backup_codes_log WHERE user_id = :id" . $this->tenantSql());
             $st->execute([':id' => $userId]);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             $json = $r['used_codes'] ?? null;
@@ -217,16 +217,23 @@ class TotpService
         try {
             $existing = $this->getUsedBackupCodes($userId);
             $existing[] = $code;
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = count($tenantData) > 0 ? ', ' . implode(', ', array_keys($tenantData)) : '';
+            $tenantPhs = count($tenantData) > 0 ? ', ' . implode(', ', array_fill(0, count($tenantData), '?')) : '';
             $st = $this->pdo->prepare("
-                INSERT INTO two_factor_backup_codes_log (user_id, used_codes, last_used_at)
-                VALUES (:id, :codes, NOW())
+                INSERT INTO two_factor_backup_codes_log (user_id, used_codes, last_used_at{$tenantCols})
+                VALUES (:id, :codes, NOW(){$tenantPhs})
                 ON DUPLICATE KEY UPDATE used_codes = :codes2, last_used_at = NOW()
             ");
-            $st->execute([
+            $params = [
                 ':id' => $userId,
                 ':codes' => json_encode(array_values($existing)),
                 ':codes2' => json_encode(array_values($existing)),
-            ]);
+            ];
+            foreach ($tenantData as $col => $val) {
+                $params[":{$col}"] = $val;
+            }
+            $st->execute($params);
             return true;
         } catch (\Throwable $e) { return false; }
     }

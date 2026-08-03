@@ -369,7 +369,7 @@ class PropertyValuationEngine
             FROM properties p
             LEFT JOIN property_images pi ON p.id = pi.property_id AND pi.is_primary = 1
             LEFT JOIN property_types pt ON p.type = pt.id
-            WHERE p.id = ?
+            WHERE p.id = ?" . $this->tenantSqlForAlias('p') . "
         ");
         $stmt->execute([$propertyId]);
         return $stmt->fetch();

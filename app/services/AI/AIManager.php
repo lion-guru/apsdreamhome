@@ -173,7 +173,7 @@ class AIManager
 
     private function getAveragePrice(?string $type, ?int $districtId): float
     {
-        $sql = "SELECT AVG(price) FROM user_properties WHERE price > 0";
+        $sql = "SELECT AVG(price) FROM user_properties WHERE price > 0" . $this->tenantSql();
         $params = [];
         if ($type) { $sql .= " AND property_type = ?"; $params[] = $type; }
         if ($districtId) { $sql .= " AND district_id = ?"; $params[] = $districtId; }
@@ -409,7 +409,7 @@ class AIManager
             try {
                 $tid = $this->tenantId();
                 $tsql = $this->tenantSql();
-                $stmt = $this->db->prepare("SELECT COUNT(*) FROM $t" . $tsql);
+                $stmt = $this->db->prepare("SELECT COUNT(*) FROM $t WHERE 1=1{$tsql}");
                 $stmt->execute($tid > 1 ? [$tid] : []);
                 $stats[$key] = (int)$stmt->fetchColumn();
             } catch (\Exception $e) {
