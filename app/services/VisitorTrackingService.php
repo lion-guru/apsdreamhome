@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 /**
  * Visitor Tracking Service
@@ -10,6 +11,8 @@ use App\Core\Database\Database;
  */
 class VisitorTrackingService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $sessionId;
 
@@ -133,7 +136,7 @@ class VisitorTrackingService
 
             // Check if lead already exists for this email/phone
             $existing = $this->db->fetchOne(
-                "SELECT * FROM leads WHERE email = ? OR phone = ? LIMIT 1",
+                "SELECT * FROM leads WHERE email = ? OR phone = ?" . $this->tenantSql() . " LIMIT 1",
                 [$email, $phone]
             );
 
@@ -147,7 +150,7 @@ class VisitorTrackingService
                         last_message = CONCAT(COALESCE(last_message, ''), ?, ' '),
                         status = 'new',
                         updated_at = NOW()
-                    WHERE id = ?",
+                    WHERE id = ?" . $this->tenantSql(),
                     [
                         $name,
                         $email,
@@ -158,7 +161,8 @@ class VisitorTrackingService
                 );
             } else {
                 // Create new lead
-                $this->db->insert('leads', [
+                $insertData = $this->tenantInsertData();
+                $leadData = [
                     'name' => $name,
                     'email' => $email,
                     'phone' => $phone,
@@ -168,7 +172,9 @@ class VisitorTrackingService
                     'priority' => 'medium',
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                ];
+                $leadData = array_merge($leadData, $insertData);
+                $this->db->insert('leads', $leadData);
             }
 
             return true;
@@ -201,13 +207,15 @@ class VisitorTrackingService
 
             try {
                 // Update leads - mark leads from this session as converted
+                $tid = $this->tenantId();
+                $tenantWhere = $tid > 1 ? "tenant_id = $tid AND (" : "(";
                 $this->db->query(
                     "UPDATE leads SET 
                         status = 'converted',
                         assigned_to = ?,
                         updated_at = NOW()
-                    WHERE email IN (SELECT email FROM visitor_sessions WHERE session_id = ?) 
-                       OR phone IN (SELECT phone FROM visitor_sessions WHERE session_id = ?)",
+                    WHERE $tenantWhere email IN (SELECT email FROM visitor_sessions WHERE session_id = ?) 
+                       OR phone IN (SELECT phone FROM visitor_sessions WHERE session_id = ?))",
                     [$userId, $this->sessionId, $this->sessionId]
                 );
             } catch (\Throwable $e) {

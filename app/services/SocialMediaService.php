@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 use Exception;
 
 class SocialMediaService
 {
+    use ServiceTenantTrait;
+
     private $db;
 
     public function __construct()
@@ -39,14 +42,14 @@ class SocialMediaService
             $params[] = $filters['user_id'];
         }
 
-        $sql .= " ORDER BY sa.created_at DESC";
+        $sql .= $this->tenantSqlForAlias("sa") . " ORDER BY sa.created_at DESC";
         return $this->db->fetchAll($sql, $params) ?: [];
     }
 
     public function getAccount(int $id): ?array
     {
         $row = $this->db->fetchOne(
-            "SELECT * FROM social_media_accounts WHERE id = ?",
+            "SELECT * FROM social_media_accounts WHERE id = ?" . $this->tenantSql(),
             [$id]
         );
         return $row ?: null;
@@ -54,11 +57,10 @@ class SocialMediaService
 
     public function createAccount(array $data): int
     {
-        $sql = "INSERT INTO social_media_accounts (
-            user_id, platform, account_id, account_name, account_type, access_token,
-            refresh_token, token_expires_at, scopes, status, metadata
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+        $insertData = $this->tenantInsertData();
+        $cols = "user_id, platform, account_id, account_name, account_type, access_token,
+             refresh_token, token_expires_at, scopes, status, metadata";
+        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
         $params = [
             $data['user_id'] ?? null,
             $data['platform'],
@@ -72,7 +74,13 @@ class SocialMediaService
             $data['status'] ?? 'connected',
             isset($data['metadata']) ? json_encode($data['metadata']) : null,
         ];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $vals .= ", " . str_repeat('?,', count($insertData) - 1) . '?';
+            $params = array_merge($params, array_values($insertData));
+        }
 
+        $sql = "INSERT INTO social_media_accounts ($cols) VALUES ($vals)";
         $this->db->execute($sql, $params);
         return (int)$this->db->lastInsertId();
     }
@@ -97,14 +105,14 @@ class SocialMediaService
         if (empty($set)) return false;
 
         $params[] = $id;
-        $sql = "UPDATE social_media_accounts SET " . implode(', ', $set) . ", updated_at = NOW() WHERE id = ?";
+        $sql = "UPDATE social_media_accounts SET " . implode(', ', $set) . ", updated_at = NOW() WHERE id = ?" . $this->tenantSql();
         $this->db->execute($sql, $params);
         return true;
     }
 
     public function deleteAccount(int $id): bool
     {
-        $this->db->execute("DELETE FROM social_media_accounts WHERE id = ?", [$id]);
+        $this->db->execute("DELETE FROM social_media_accounts WHERE id = ?" . $this->tenantSql(), [$id]);
         return true;
     }
 
@@ -233,7 +241,7 @@ class SocialMediaService
     private function upsertLead(int $accountId, array $lead): string
     {
         $existing = $this->db->fetchOne(
-            "SELECT id FROM social_media_leads WHERE account_id = ? AND platform_lead_id = ?",
+            "SELECT id FROM social_media_leads WHERE account_id = ? AND platform_lead_id = ?" . $this->tenantSql(),
             [$accountId, $lead['platform_lead_id']]
         );
 
@@ -252,16 +260,33 @@ class SocialMediaService
         ];
 
         if ($existing) {
-            $this->db->execute(
-                "UPDATE social_media_leads SET form_name=?, full_name=?, email=?, phone=?, city=?, state=?, budget_min=?, budget_max=?, source_ad=?, raw_data=?, updated_at=NOW() WHERE id=?",
-                [$data['form_name'], $data['full_name'], $data['email'], $data['phone'], $data['city'], $data['state'], $data['budget_min'], $data['budget_max'], $data['source_ad'], $data['raw_data'], $existing['id']]
-            );
+            $tid = $this->isTenantScoped() ? $this->tenantId() : null;
+            $set = [];
+            $params = [];
+            foreach ($data as $col => $val) {
+                $set[] = "$col = ?";
+                $params[] = $val;
+            }
+            $params[] = $existing['id'];
+            $sql = "UPDATE social_media_leads SET " . implode(', ', $set) . ", updated_at=NOW() WHERE id = ?";
+            if ($tid) { $sql .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->execute($sql, $params);
             return 'update';
         }
 
+        $insertData = $this->tenantInsertData();
+        $cols = "account_id, platform_lead_id, form_name, full_name, email, phone, city, state, budget_min, budget_max, source_ad, raw_data, status";
+        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new'";
+        $params = [$accountId, $lead['platform_lead_id'], $data['form_name'], $data['full_name'], $data['email'], $data['phone'], $data['city'], $data['state'], $data['budget_min'], $data['budget_max'], $data['source_ad'], $data['raw_data']];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $vals .= ", " . str_repeat('?,', count($insertData) - 1) . '?';
+            $params = array_merge($params, array_values($insertData));
+        }
+
         $this->db->execute(
-            "INSERT INTO social_media_leads (account_id, platform_lead_id, form_name, full_name, email, phone, city, state, budget_min, budget_max, source_ad, raw_data, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', NOW())",
-            [$accountId, $lead['platform_lead_id'], $data['form_name'], $data['full_name'], $data['email'], $data['phone'], $data['city'], $data['state'], $data['budget_min'], $data['budget_max'], $data['source_ad'], $data['raw_data']]
+            "INSERT INTO social_media_leads ($cols, created_at) VALUES ($vals, NOW())",
+            $params
         );
         return 'insert';
     }
@@ -284,9 +309,10 @@ class SocialMediaService
         if (!empty($filters['platform'])) { $cw .= " AND a.platform = ?"; $countParams[] = $filters['platform']; }
         if (!empty($filters['search'])) { $cw .= " AND (l.full_name LIKE ? OR l.email LIKE ? OR l.phone LIKE ?)"; $term = "%{$filters['search']}%"; $countParams[] = $term; $countParams[] = $term; $countParams[] = $term; }
 
+        $countSql .= $this->tenantSqlForAlias("l");
         $total = (int)($this->db->fetchOne($countSql . $cw, $countParams)['c'] ?? 0);
 
-        $sql .= " ORDER BY l.created_at DESC";
+        $sql .= $this->tenantSqlForAlias("l") . " ORDER BY l.created_at DESC";
         $offset = ($page - 1) * $limit;
         $sql .= " LIMIT $limit OFFSET $offset";
 
@@ -300,14 +326,14 @@ class SocialMediaService
         $sql = "UPDATE social_media_leads SET status = ?, last_activity_at = NOW()";
         $params = [$status];
         if ($assignedTo) { $sql .= ", assigned_to = ?"; $params[] = $assignedTo; }
-        $sql .= " WHERE id = ?"; $params[] = $leadId;
+        $sql .= " WHERE id = ?" . $this->tenantSql(); $params[] = $leadId;
         $this->db->execute($sql, $params);
         return true;
     }
 
     public function assignLead(int $leadId, int $userId): bool
     {
-        $this->db->execute("UPDATE social_media_leads SET assigned_to = ?, last_activity_at = NOW() WHERE id = ?", [$userId, $leadId]);
+        $this->db->execute("UPDATE social_media_leads SET assigned_to = ?, last_activity_at = NOW() WHERE id = ?" . $this->tenantSql(), [$userId, $leadId]);
         return true;
     }
 
@@ -323,7 +349,9 @@ class SocialMediaService
 
     public function createCampaign(int $accountId, array $data): int
     {
-        $sql = "INSERT INTO social_media_campaigns (account_id, platform_campaign_id, platform, name, objective, status, daily_budget, lifetime_budget, start_date, end_date, targeting, creative_preview) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insertData = $this->tenantInsertData();
+        $cols = "account_id, platform_campaign_id, platform, name, objective, status, daily_budget, lifetime_budget, start_date, end_date, targeting, creative_preview";
+        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
         $params = [
             $accountId,
             $data['platform_campaign_id'] ?? '',
@@ -338,6 +366,13 @@ class SocialMediaService
             isset($data['targeting']) ? json_encode($data['targeting']) : null,
             isset($data['creative_preview']) ? json_encode($data['creative_preview']) : null,
         ];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $vals .= ", " . str_repeat('?,', count($insertData) - 1) . '?';
+            $params = array_merge($params, array_values($insertData));
+        }
+
+        $sql = "INSERT INTO social_media_campaigns ($cols) VALUES ($vals)";
         $this->db->execute($sql, $params);
         return (int)$this->db->lastInsertId();
     }
@@ -346,7 +381,9 @@ class SocialMediaService
 
     public function createPost(array $accountId, array $data): int
     {
-        $sql = "INSERT INTO social_media_posts (platform, post_content, image_url, post_url, posted_by, scheduled_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $insertData = $this->tenantInsertData();
+        $cols = "platform, post_content, image_url, post_url, posted_by, scheduled_date, status";
+        $vals = "?, ?, ?, ?, ?, ?, ?";
         $params = [
             $data['platform'] ?? 'facebook',
             $data['post_content'] ?? '',
@@ -356,6 +393,13 @@ class SocialMediaService
             $data['scheduled_date'] ?? null,
             $data['status'] ?? 'draft',
         ];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $vals .= ", " . str_repeat('?,', count($insertData) - 1) . '?';
+            $params = array_merge($params, array_values($insertData));
+        }
+
+        $sql = "INSERT INTO social_media_posts ($cols, engagement_likes, engagement_shares, engagement_comments, created_at) VALUES ($vals, 0, 0, 0, NOW())";
         $this->db->execute($sql, $params);
         return (int)$this->db->lastInsertId();
     }
@@ -363,7 +407,7 @@ class SocialMediaService
     public function getPosts(int $limit = 20): array
     {
         return $this->db->fetchAll(
-            "SELECT * FROM social_media_posts ORDER BY created_at DESC LIMIT ?",
+            "SELECT * FROM social_media_posts" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT ?",
             [$limit]
         ) ?: [];
     }
@@ -374,18 +418,18 @@ class SocialMediaService
     {
         $since = $this->periodToDate($period);
         $leads = $this->db->fetchAll(
-            "SELECT DATE(created_at) as date, COUNT(*) as count FROM social_media_leads WHERE account_id = ? AND created_at >= ? GROUP BY DATE(created_at) ORDER BY date",
+            "SELECT DATE(created_at) as date, COUNT(*) as count FROM social_media_leads WHERE account_id = ? AND created_at >= ?" . $this->tenantSql() . " GROUP BY DATE(created_at) ORDER BY date",
             [$accountId, $since]
         );
 
-        $totalLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ?", [$accountId])['c'] ?? 0;
-        $newLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ? AND status = 'new'", [$accountId])['c'] ?? 0;
-        $contacted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ? AND status = 'contacted'", [$accountId])['c'] ?? 0;
-        $converted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ? AND status IN ('converted', 'qualified')", [$accountId])['c'] ?? 0;
+        $totalLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ?" . $this->tenantSql(), [$accountId])['c'] ?? 0;
+        $newLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ? AND status = 'new'" . $this->tenantSql(), [$accountId])['c'] ?? 0;
+        $contacted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ? AND status = 'contacted'" . $this->tenantSql(), [$accountId])['c'] ?? 0;
+        $converted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE account_id = ? AND status IN ('converted', 'qualified')" . $this->tenantSql(), [$accountId])['c'] ?? 0;
 
         $account = $this->getAccount($accountId);
         $leadsByStatus = $this->db->fetchAll(
-            "SELECT status, COUNT(*) as count FROM social_media_leads WHERE account_id = ? GROUP BY status",
+            "SELECT status, COUNT(*) as count FROM social_media_leads WHERE account_id = ?" . $this->tenantSql() . " GROUP BY status",
             [$accountId]
         );
 
@@ -405,27 +449,29 @@ class SocialMediaService
     public function getAllCampaigns(): array
     {
         return $this->db->fetchAll(
-            "SELECT c.*, a.account_name FROM social_media_campaigns c
-             LEFT JOIN social_media_accounts a ON a.id = c.account_id
-             ORDER BY c.created_at DESC"
+            "SELECT c.*, a.account_name FROM social_media_campaigns c" . $this->tenantSqlForAlias("c") . "
+              LEFT JOIN social_media_accounts a ON a.id = c.account_id" . $this->tenantSqlForAlias("a") . "
+              ORDER BY c.created_at DESC"
         ) ?: [];
     }
 
     public function getAllInsights(string $period = '7d'): array
     {
         $since = $this->periodToDate($period);
+        $tid = $this->tenantId();
         $leads = $this->db->fetchAll(
-            "SELECT DATE(created_at) as date, COUNT(*) as count FROM social_media_leads WHERE created_at >= ? GROUP BY DATE(created_at) ORDER BY date",
+            "SELECT DATE(created_at) as date, COUNT(*) as count FROM social_media_leads WHERE created_at >= ?" . ($tid > 1 ? " AND tenant_id = $tid" : "") . " GROUP BY DATE(created_at) ORDER BY date",
             [$since]
         );
-        $totalLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads")['c'] ?? 0;
-        $newLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'new'")['c'] ?? 0;
-        $contacted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'contacted'")['c'] ?? 0;
-        $converted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status IN ('converted', 'qualified')")['c'] ?? 0;
-        $leadsByStatus = $this->db->fetchAll("SELECT status, COUNT(*) as count FROM social_media_leads GROUP BY status");
+        $tenantSql = $tid > 1 ? " AND tenant_id = $tid" : "";
+        $totalLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads" . $tenantSql)['c'] ?? 0;
+        $newLeads = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'new'" . $tenantSql)['c'] ?? 0;
+        $contacted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status = 'contacted'" . $tenantSql)['c'] ?? 0;
+        $converted = $this->db->fetchOne("SELECT COUNT(*) as c FROM social_media_leads WHERE status IN ('converted', 'qualified')" . $tenantSql)['c'] ?? 0;
+        $leadsByStatus = $this->db->fetchAll("SELECT status, COUNT(*) as count FROM social_media_leads" . $tenantSql . " GROUP BY status");
         $leadsByAccount = $this->db->fetchAll(
             "SELECT a.account_name, COUNT(*) as count FROM social_media_leads l
-             LEFT JOIN social_media_accounts a ON a.id = l.account_id
+             LEFT JOIN social_media_accounts a ON a.id = l.account_id" . ($tid > 1 ? " WHERE l.tenant_id = $tid" : "") . "
              GROUP BY l.account_id ORDER BY count DESC"
         );
         return [
@@ -464,9 +510,19 @@ class SocialMediaService
 
     private function logSync(int $accountId, string $type, string $status, int $fetched = 0, int $new = 0, int $updated = 0, string $error = null): void
     {
+        $insertData = $this->tenantInsertData();
+        $cols = "account_id, sync_type, status, records_fetched, records_new, records_updated, error_message";
+        $vals = "?, ?, ?, ?, ?, ?, ?";
+        $params = [$accountId, $type, $status, $fetched, $new, $updated, $error];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $vals .= ", " . str_repeat('?,', count($insertData) - 1) . '?';
+            $params = array_merge($params, array_values($insertData));
+        }
+
         $this->db->execute(
-            "INSERT INTO social_media_sync_log (account_id, sync_type, status, records_fetched, records_new, records_updated, error_message, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            [$accountId, $type, $status, $fetched, $new, $updated, $error, $status !== 'started' ? date('Y-m-d H:i:s') : null]
+            "INSERT INTO social_media_sync_log ($cols, completed_at) VALUES ($vals, ?)",
+            array_merge($params, [$status !== 'started' ? date('Y-m-d H:i:s') : null])
         );
     }
 

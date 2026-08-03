@@ -7,9 +7,12 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Traits\ServiceTenantTrait;
 
 class PlotDevelopmentCostService
 {
+    use ServiceTenantTrait;
+
     private $db;
     
     public function __construct()
@@ -94,7 +97,7 @@ class PlotDevelopmentCostService
 
         // Get old prices before update
         $oldPlot = $this->db->fetch(
-            "SELECT price_per_sqft, total_price, colony_id FROM plots WHERE id = ?",
+            "SELECT price_per_sqft, total_price, colony_id FROM plots WHERE id = ?" . $this->tenantSql(),
             [$plotId]
         );
         $oldPricePerSqft = (float) ($oldPlot['price_per_sqft'] ?? 0);
@@ -106,7 +109,7 @@ class PlotDevelopmentCostService
                 price_per_sqft = ?,
                 total_price = ?,
                 updated_at = NOW()
-             WHERE id = ?",
+              WHERE id = ?" . $this->tenantSql(),
             [$pricing['final_price_per_sqft'], $pricing['final_price'], $plotId]
         );
 
@@ -132,7 +135,11 @@ class PlotDevelopmentCostService
     private function logPriceHistory($plotId, $colonyId, $oldPricePerSqft, $newPricePerSqft, $oldTotalPrice, $newTotalPrice, $changeType, $reason, $changedBy)
     {
         try {
-            $this->db->insert('price_history', [
+            $insertData = $this->tenantInsertData();
+            $extraCols = !empty($insertData) ? ", " . implode(', ', array_keys($insertData)) : "";
+            $extraVals = !empty($insertData) ? ", " . str_repeat('?,', count($insertData) - 1) . '?' : "";
+            $extraParams = !empty($insertData) ? array_values($insertData) : [];
+            $this->db->insert('price_history', array_merge([
                 'plot_id'           => $plotId,
                 'colony_id'         => $colonyId,
                 'old_price'         => $oldTotalPrice,
@@ -145,7 +152,7 @@ class PlotDevelopmentCostService
                 'reference_type'    => 'cost_calculation',
                 'reference_id'      => $colonyId,
                 'created_at'        => date('Y-m-d H:i:s'),
-            ]);
+            ], $insertData));
         } catch (\Exception $e) {
             error_log("Price history insert failed: " . $e->getMessage());
         }
@@ -159,7 +166,7 @@ class PlotDevelopmentCostService
         try {
             $result = $this->db->fetch(
                 "SELECT SUM(plot_price * available_area) as total_land_cost 
-                 FROM plot_master WHERE site_id = ?",
+                 FROM plot_master WHERE site_id = ?" . $this->tenantSql(),
                 [$colonyId]
             );
             return floatval($result['total_land_cost'] ?? 0);
@@ -176,7 +183,7 @@ class PlotDevelopmentCostService
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
              FROM colony_development_costs 
-             WHERE colony_id = ? AND cost_type IN ('road','electricity','water','sewerage','drainage','street_light')",
+             WHERE colony_id = ?" . $this->tenantSql() . " AND cost_type IN ('road','electricity','water','sewerage','drainage','street_light')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -190,7 +197,7 @@ class PlotDevelopmentCostService
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
              FROM colony_development_costs 
-             WHERE colony_id = ? AND cost_type IN ('landscaping','compound_wall','gate','security')",
+             WHERE colony_id = ?" . $this->tenantSql() . " AND cost_type IN ('landscaping','compound_wall','gate','security')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -204,7 +211,7 @@ class PlotDevelopmentCostService
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
              FROM colony_development_costs 
-             WHERE colony_id = ? AND cost_type IN ('legal','approval_fee')",
+             WHERE colony_id = ?" . $this->tenantSql() . " AND cost_type IN ('legal','approval_fee')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -218,7 +225,7 @@ class PlotDevelopmentCostService
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
              FROM colony_development_costs 
-             WHERE colony_id = ? AND cost_type IN ('brokerage','marketing','office_setup','staff','other')",
+             WHERE colony_id = ?" . $this->tenantSql() . " AND cost_type IN ('brokerage','marketing','office_setup','staff','other')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -230,7 +237,7 @@ class PlotDevelopmentCostService
     private function getPlotArea($colonyId)
     {
         $result = $this->db->fetch(
-            "SELECT SUM(area_sqft) as total_area FROM plots WHERE colony_id = ?",
+            "SELECT SUM(area_sqft) as total_area FROM plots WHERE colony_id = ?" . $this->tenantSql(),
             [$colonyId]
         );
         return floatval($result['total_area'] ?? 0);
@@ -241,7 +248,7 @@ class PlotDevelopmentCostService
      */
     private function getColony($colonyId)
     {
-        return $this->db->fetch("SELECT * FROM colonies WHERE id = ?", [$colonyId]);
+        return $this->db->fetch("SELECT * FROM colonies WHERE id = ?" . $this->tenantSql(), [$colonyId]);
     }
     
     /**
@@ -249,7 +256,7 @@ class PlotDevelopmentCostService
      */
     private function getPlot($plotId)
     {
-        return $this->db->fetch("SELECT * FROM plots WHERE id = ?", [$plotId]);
+        return $this->db->fetch("SELECT * FROM plots WHERE id = ?" . $this->tenantSql(), [$plotId]);
     }
     
     /**
@@ -257,11 +264,19 @@ class PlotDevelopmentCostService
      */
     public function addCost($colonyId, $costType, $description, $amount, $perSqftRate = null, $totalArea = null)
     {
+        $insertData = $this->tenantInsertData();
+        $cols = "colony_id, cost_type, work_description, amount";
+        $vals = "?, ?, ?, ?";
+        $params = [$colonyId, $costType, $description, $amount];
+        if (!empty($insertData)) {
+            $cols .= ", " . implode(', ', array_keys($insertData));
+            $vals .= ", " . str_repeat('?,', count($insertData) - 1) . '?';
+            $params = array_merge($params, array_values($insertData));
+        }
+
         $this->db->execute(
-            "INSERT INTO colony_development_costs 
-             (colony_id, cost_type, work_description, amount, created_at)
-             VALUES (?, ?, ?, ?, NOW())",
-            [$colonyId, $costType, $description, $amount]
+            "INSERT INTO colony_development_costs ($cols, created_at) VALUES ($vals, NOW())",
+            array_merge($params, [date('Y-m-d H:i:s')])
         );
         
         return $this->db->lastInsertId();
@@ -275,7 +290,7 @@ class PlotDevelopmentCostService
         $costs = $this->db->fetchAll(
             "SELECT cost_type, SUM(amount) as total_amount, COUNT(*) as entries
              FROM colony_development_costs
-             WHERE colony_id = ?
+             WHERE colony_id = ?" . $this->tenantSql() . "
              GROUP BY cost_type",
             [$colonyId]
         );
@@ -332,7 +347,7 @@ class PlotDevelopmentCostService
         $plots = $this->db->fetchAll(
             "SELECT p.*, (p.total_price / NULLIF(p.area_sqft, 0)) as price_per_sqft_calc
              FROM plots p
-             WHERE p.colony_id = ?",
+             WHERE p.colony_id = ?" . $this->tenantSql(),
             [$colonyId]
         );
         
@@ -383,7 +398,7 @@ class PlotDevelopmentCostService
     public function updateAllPlotPrices($colonyId, $marginPercent = 25)
     {
         $plots = $this->db->fetchAll(
-            "SELECT id FROM plots WHERE colony_id = ?",
+            "SELECT id FROM plots WHERE colony_id = ?" . $this->tenantSql(),
             [$colonyId]
         );
         
