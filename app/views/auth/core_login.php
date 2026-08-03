@@ -251,6 +251,9 @@ $supportedRoles = [
                 <div class="otp-link">
                     <a href="<?= $base ?>/register/smart"><i class="fas fa-mobile-alt me-1"></i>Register with Phone (OTP)</a>
                 </div>
+                <div class="otp-link">
+                    <a href="<?= $base ?>/auth/air-login"><i class="fas fa-plug me-1"></i>Air Login (OTP without password)</a>
+                </div>
 
                 <!-- Role Quick Links -->
                 <div class="role-quick">

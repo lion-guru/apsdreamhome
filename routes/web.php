@@ -821,6 +821,12 @@ $router->get('/auth/login', 'Auth\\CoreAuthController@showLogin');
 $router->post('/auth/login', 'Auth\\CoreAuthController@authenticate');
 $router->get('/auth/logout', 'Auth\\CoreAuthController@logout');
 
+// Air Login — OTP-based login without password
+$router->get('/auth/air-login', 'Auth\\CoreAuthController@showAirLogin');
+$router->post('/auth/air-login', 'Auth\\CoreAuthController@requestAirLoginOtp');
+$router->get('/auth/air-login/verify', 'Auth\\CoreAuthController@showAirLoginVerify');
+$router->post('/auth/air-login/verify', 'Auth\\CoreAuthController@verifyAirLoginOtp');
+
 // Smart Registration — Role Selection (after OTP)
 $router->get('/auth/smart/role', 'Auth\\CoreAuthController@showRoleSelection');
 $router->post('/auth/smart/role', 'Auth\\CoreAuthController@saveRoleSelection');

@@ -728,6 +728,10 @@ app/
 - `requireAdmin()` — checks `$_SESSION['admin_id']` or `$_SESSION['role'] === 'admin'`
 - `requireLogin()` — checks `$_SESSION['user_id']`
 - Test bypass: `/admin/login?test_login=1` auto-logs in as admin
+- **Air Login** — OTP-based login without password: `/auth/air-login` → enter email/phone → receive 6-digit OTP → `/auth/air-login/verify` → enter OTP → logged in
+  - OTP sent via email or SMS (Twilio) via `OTPService`
+  - OTP valid for 10 minutes, single-use, 3 retry attempts
+  - Login notifications sent via `LoginNotificationService` with `'otp'` channel
 
 ### Cache System
 
@@ -740,6 +744,7 @@ app/
 ```
 /                           → Homepage
 /admin/login                → Admin login (test_login=1 bypass)
+/auth/air-login             → Air Login — OTP without password
 /admin/erp                  → Unified ERP Dashboard
 /admin/mlm                  → MLM Commission Dashboard
 /admin/sales/*              → Sales module (bookings, payments, etc.)
@@ -2242,3 +2247,37 @@ Complete tenant_id scoping across ALL service layer files that write to tenant-s
 \_104. **Procedural scripts can't use traits** — LeadManagementService is a procedural PHP script (no class), so ServiceTenantTrait can't be applied directly. Use TenantContext::getId() directly.
 
 \_105. **E2E tests are the final safety net** — 153/153 PASS after all tenant scoping changes confirms zero regressions.
+
+---
+
+# Session 68: Air Login (OTP-based Login Without Password) (2026-08-03)
+
+## Goal
+
+Add passwordless login option ('Air Login') using OTP sent to user's email or registered phone number, for users who don't remember their password.
+
+## What Was Done
+
+| Feature                  | Details                                                                                                                                                                                                                                                              |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CoreAuthController**   | Added 4 new methods: `showAirLogin()`, `requestAirLoginOtp()`, `showAirLoginVerify()`, `verifyAirLoginOtp()`. Uses existing `OTPService` to send OTP via email/SMS/SMS with purpose `'login'`. Full session setup on successful OTP verification (same as password login). |
+| **Air Login Routes**     | 4 routes in `routes/web.php`: `GET /auth/air-login`, `POST /auth/air-login`, `GET /auth/air-login/verify`, `POST /auth/air-login/verify`. Already CSRF-exempt via `/auth/` exclusion in router.                                                                    |
+| **Views Created**        | `app/views/auth/air_login.php` — glassmorphism OTP request form. `app/views/auth/air_login_verify.php` — OTP verification with 6-digit input, 5-min countdown timer, paste-to-fill, auto-submit on complete.                                                      |
+| **Login Page Updated**   | Added Air Login link on `/auth/login` page (core_login.php:251-254).                                                                                                                                                                                                  |
+| **E2E Tests**            | **153/153 PASS** — zero regressions. All existing tests still pass after adding Air Login.                                                                                                                                                                           |
+
+## How It Works
+
+1. User visits `/auth/air-login` → enters email or phone number
+2. System looks up user → sends 6-digit OTP via OTPService (email or SMS)
+3. User redirected to `/auth/air-login/verify` → enters OTP
+4. OTP verified against `otp_verifications` table → on success, full session established (same as password login)
+5. User redirected to role-specific dashboard
+
+## Key Lessons
+
+_\_106. **Existing OTPService supports login purpose** — The OTPService already had `'login'` as a supported purpose (in getEmailSubject, getSMSMessage, getWhatsAppMessage). The infrastructure was there, just no controller method to use it for login._
+_\_107. **Air Login mirrors password login session setup** — The `verifyAirLoginOtp()` method duplicates the session setup logic from `authenticate()`. This is intentional — OTP login must establish the exact same session state as password login (user_id, role, admin_id for admin roles, associate_id for agents, employee_id for employees, etc.)._
+_\_108. **CSRF exemption works via router** — The `/auth/` prefix in `$excludedPaths` (router.php:115) exempts all Air Login POST endpoints from router-level CSRF validation. The BaseController CSRF check still runs but the forms include valid CSRF tokens._
+_\_109. **Masked identifier display** — Phone numbers are masked as `*******3456` and emails as `a***@domain.com` for privacy on the verification screen._
+_\_110. **OTP auto-submit UX** — The verification form auto-submits when 6 digits are entered, supports paste of full OTP code, and has a 5-minute countdown timer with resend link._

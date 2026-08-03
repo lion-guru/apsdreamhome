@@ -447,6 +447,334 @@ class CoreAuthController extends BaseController
     }
 
     // ============================================================
+    // Air Login — OTP-based login without password
+    // ============================================================
+
+    /**
+     * Send OTP for Air Login (login without password)
+     * Can use email or phone as identifier
+     */
+    public function requestAirLoginOtp()
+    {
+        @session_start();
+
+        $identity = trim($_POST['identity'] ?? $_POST['email'] ?? $_POST['phone'] ?? '');
+        $csrfToken = $_POST['csrf_token'] ?? $_SESSION['csrf_token'] ?? '';
+
+        if (empty($identity)) {
+            $_SESSION['air_login_error'] = 'Email or phone number is required';
+            header('Location: ' . BASE_URL . '/auth/air-login');
+            exit;
+        }
+
+        try {
+            $db = Database::getInstance();
+            $tid = 1;
+            try {
+                $tid = \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$identity, $identity];
+            if ($tid > 1) $params[] = $tid;
+
+            $user = $db->fetchOne(
+                "SELECT id, email, phone, name, role, status, registration_status FROM users WHERE (email = ? OR phone = ?) AND status != 'deleted'" . $tenantSql . " LIMIT 1",
+                $params
+            );
+
+            if (!$user) {
+                $_SESSION['air_login_error'] = 'No account found with this email or phone number';
+                header('Location: ' . BASE_URL . '/auth/air-login');
+                exit;
+            }
+
+            if (($user['status'] ?? 'active') !== 'active') {
+                $_SESSION['air_login_error'] = 'Account is ' . ($user['status'] ?? 'inactive') . '. Please contact support.';
+                header('Location: ' . BASE_URL . '/auth/air-login');
+                exit;
+            }
+
+            if (($user['registration_status'] ?? 'approved') === 'rejected') {
+                $_SESSION['air_login_error'] = 'Registration has been rejected.';
+                header('Location: ' . BASE_URL . '/auth/air-login');
+                exit;
+            }
+
+            if (($user['registration_status'] ?? 'approved') === 'pending') {
+                $_SESSION['air_login_error'] = 'Account pending approval. You will be notified once approved.';
+                header('Location: ' . BASE_URL . '/auth/air-login');
+                exit;
+            }
+
+            // Send OTP
+            require_once __DIR__ . '/../../../Services/OTPService.php';
+            $otpService = new \App\Services\OTPService();
+
+            $identifier = filter_var($identity, FILTER_VALIDATE_EMAIL) ? $user['email'] : $user['phone'];
+            $type = filter_var($identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'sms';
+
+            $result = $otpService->sendOTP($identifier, $type, 'login');
+
+            if (!$result['success']) {
+                error_log("Air Login OTP send failed for $identity: " . $result['message']);
+                $_SESSION['air_login_error'] = 'Failed to send OTP. Please try again.';
+                header('Location: ' . BASE_URL . '/auth/air-login');
+                exit;
+            }
+
+            // Store login context in session for verification step
+            $_SESSION['air_login_context'] = [
+                'user_id' => (int)$user['id'],
+                'identity' => $identifier,
+                'type' => $type,
+                'role' => $user['role'] ?? 'customer',
+                'name' => $user['name'],
+            ];
+
+            $_SESSION['air_login_success'] = 'OTP sent! Please check your ' . ($type === 'email' ? 'email' : 'phone') . ' for verification code.';
+            header('Location: ' . BASE_URL . '/auth/air-login/verify');
+            exit;
+
+        } catch (\Exception $e) {
+            error_log("Air Login OTP request error: " . $e->getMessage());
+            $_SESSION['air_login_error'] = 'Failed to send OTP. Please try again.';
+            header('Location: ' . BASE_URL . '/auth/air-login');
+            exit;
+        }
+    }
+
+    /**
+     * Show Air Login OTP verification page
+     */
+    public function showAirLoginVerify()
+    {
+        @session_start();
+
+        // Must have air_login context in session
+        if (!isset($_SESSION['air_login_context'])) {
+            header('Location: ' . BASE_URL . '/auth/air-login');
+            exit;
+        }
+
+        // If already logged in, redirect to dashboard
+        if (isset($_SESSION['user_id']) && !isset($_SESSION['air_login_context'])) {
+            $this->redirectToDashboard($_SESSION['role'] ?? 'customer');
+            exit;
+        }
+
+        $csrf_token = $this->getCsrfToken();
+        $error = $_SESSION['air_login_error'] ?? null;
+        $success = $_SESSION['air_login_success'] ?? null;
+        $expires_at = $_SESSION['air_login_otp_expires'] ?? null;
+        $identifier_type = $_SESSION['air_login_context']['type'] ?? 'email';
+        $identifier = $_SESSION['air_login_context']['identifier'] ?? '';
+
+        // Show masked identifier
+        if ($identifier_type === 'email') {
+            $masked = $this->maskEmail($identifier);
+        } else {
+            $masked = $this->maskPhone($identifier);
+        }
+
+        unset($_SESSION['air_login_error'], $_SESSION['air_login_success'], $_SESSION['air_login_otp_expires']);
+
+        include __DIR__ . '/../../../views/auth/air_login_verify.php';
+    }
+
+    /**
+     * Verify Air Login OTP and log the user in
+     */
+    public function verifyAirLoginOtp()
+    {
+        @session_start();
+
+        if (!isset($_SESSION['air_login_context'])) {
+            header('Location: ' . BASE_URL . '/auth/air-login');
+            exit;
+        }
+
+        $otp = trim($_POST['otp'] ?? '');
+        $csrfToken = $_POST['csrf_token'] ?? '';
+
+        if (empty($otp) || strlen($otp) !== 6 || !ctype_digit($otp)) {
+            $_SESSION['air_login_error'] = 'Please enter a valid 6-digit OTP';
+            header('Location: ' . BASE_URL . '/auth/air-login/verify');
+            exit;
+        }
+
+        $context = $_SESSION['air_login_context'];
+
+        try {
+            require_once __DIR__ . '/../../../Services/OTPService.php';
+            $otpService = new \App\Services\OTPService();
+
+            $result = $otpService->verifyOTP(
+                $context['identifier'],
+                $otp,
+                'login'
+            );
+
+            if (!$result['success']) {
+                $_SESSION['air_login_error'] = $result['message'] ?? 'Invalid OTP';
+                header('Location: ' . BASE_URL . '/auth/air-login/verify');
+                exit;
+            }
+
+            // OTP verified — set up the session
+            $db = Database::getInstance();
+            $tid = 1;
+            try {
+                $tid = \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [(int)$context['user_id']];
+            if ($tid > 1) $params[] = $tid;
+
+            $user = $db->fetchOne(
+                "SELECT * FROM users WHERE id = ?" . $tenantSql . " LIMIT 1",
+                $params
+            );
+
+            if (!$user) {
+                unset($_SESSION['air_login_context']);
+                $_SESSION['air_login_error'] = 'User not found';
+                header('Location: ' . BASE_URL . '/auth/air-login');
+                exit;
+            }
+
+            session_regenerate_id(true);
+            $_SESSION['last_regenerate'] = time();
+
+            $role = $user['role'] ?? 'customer';
+            $_SESSION['user_id'] = (int)$user['id'];
+            $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_phone'] = $user['phone'] ?? '';
+            $_SESSION['role'] = $role;
+            $_SESSION['logged_in'] = true;
+
+            // Admin roles
+            $adminRoles = ['admin', 'super_admin', 'manager', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro',
+                'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'operations_director',
+                'legal_head', 'finance_head', 'hr_head', 'operations_head',
+                'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager',
+                'finance_manager', 'property_manager', 'it_manager', 'operations_manager',
+                'legal_advisor', 'chartered_accountant', 'senior_developer',
+                'employee', 'telecaller'];
+
+            // Load role-specific IDs
+            if (in_array($role, ['agent', 'associate'], true)) {
+                try {
+                    $assParams = [$user['id']];
+                    if ($tid > 1) $assParams[] = $tid;
+                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tenantSql . " LIMIT 1", $assParams);
+                    if ($ass) {
+                        $_SESSION['associate_id'] = (int)$ass['id'];
+                        if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
+                    }
+                } catch (\Throwable $e) { error_log("verifyAirLoginOtp: " . $e->getMessage()); }
+            } elseif ($role === 'employee' || $role === 'telecaller') {
+                try {
+                    $empParams = [$user['id']];
+                    if ($tid > 1) $empParams[] = $tid;
+                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $empParams);
+                    if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
+                } catch (\Throwable $e) { error_log("verifyAirLoginOtp: " . $e->getMessage()); }
+            }
+
+            // Set admin session for admin-level roles
+            if (in_array($role, $adminRoles, true)) {
+                $_SESSION['admin_id'] = (int)$user['id'];
+                $_SESSION['admin_user_id'] = (int)$user['id'];
+                $_SESSION['admin_email'] = $user['email'] ?? '';
+                $_SESSION['admin_role'] = $role;
+                $_SESSION['admin_name'] = $user['name'] ?? 'Admin';
+                $_SESSION['admin_username'] = $user['name'] ?? 'admin';
+            }
+
+            // Audit log
+            try {
+                require_once __DIR__ . '/../../../Services/AuditService.php';
+                (new \App\Services\AuditService($db))->log('login', (int)$user['id'], $role, 'user', (int)$user['id'], 'Air Login (OTP)');
+            } catch (\Throwable $e) { error_log("verifyAirLoginOtp audit: " . $e->getMessage()); }
+
+            // Login notification
+            try {
+                require_once __DIR__ . '/../../../Services/Communication/LoginNotificationService.php';
+                $loginNotifier = new \App\Services\Communication\LoginNotificationService();
+                $isMobile = !empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(Android|iPhone|iPad)/i', $_SERVER['HTTP_USER_AGENT']);
+                $loginNotifier->sendLoginAlerts(
+                    (int)$user['id'], $role,
+                    $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '',
+                    $isMobile, 'otp'
+                );
+            } catch (\Throwable $e) { error_log("Air Login notification failed: " . $e->getMessage()); }
+
+            // Clean up air_login context
+            unset($_SESSION['air_login_context']);
+
+            $_SESSION['login_success'] = "Welcome back, {$user['name']}!";
+            $this->redirectToDashboard($role);
+            exit;
+
+        } catch (\Exception $e) {
+            error_log("Air Login OTP verification error: " . $e->getMessage());
+            $_SESSION['air_login_error'] = 'OTP verification failed. Please try again.';
+            header('Location: ' . BASE_URL . '/auth/air-login/verify');
+            exit;
+        }
+    }
+
+    /**
+     * Show Air Login request OTP page
+     */
+    public function showAirLogin()
+    {
+        @session_start();
+
+        // If already logged in, redirect to dashboard
+        if (isset($_SESSION['user_id']) && !isset($_SESSION['air_login_context'])) {
+            $this->redirectToDashboard($_SESSION['role'] ?? 'customer');
+            exit;
+        }
+
+        $csrf_token = $this->getCsrfToken();
+        $error = $_SESSION['air_login_error'] ?? null;
+        $success = $_SESSION['air_login_success'] ?? null;
+        unset($_SESSION['air_login_error'], $_SESSION['air_login_success']);
+
+        include __DIR__ . '/../../../views/auth/air_login.php';
+    }
+
+    /**
+     * Mask email for display (a***@example.com)
+     */
+    private function maskEmail(string $email): string
+    {
+        $parts = explode('@', $email);
+        if (count($parts) !== 2) return $email;
+        $name = $parts[0];
+        $domain = $parts[1];
+        $maskedName = strlen($name) > 2
+            ? substr($name, 0, 1) . str_repeat('*', strlen($name) - 2) . substr($name, -1)
+            : str_repeat('*', strlen($name));
+        return $maskedName . '@' . $domain;
+    }
+
+    /**
+     * Mask phone for display (+91-XXXXX12345)
+     */
+    private function maskPhone(string $phone): string
+    {
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($digits) <= 4) return str_repeat('*', strlen($digits));
+        $visibleEnd = 4;
+        $maskedPart = str_repeat('*', strlen($digits) - $visibleEnd);
+        return $maskedPart . substr($digits, -$visibleEnd);
+    }
+
+    // ============================================================
     // Logout
     // ============================================================
 
