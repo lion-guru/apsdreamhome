@@ -124,7 +124,7 @@ class ServiceConfigService
                 $meta['is_secret'] ?? 0,
                 $meta['group_name'] ?? 'general',
                 $meta['sort_order'] ?? 0,
-            ], array_values($this->tenantInsertData()));
+            ], array_values($this->tenantInsertData())));
         }
 
         $this->invalidateCache();

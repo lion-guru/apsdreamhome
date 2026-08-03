@@ -39,9 +39,13 @@ class SystemLogger
         // Initialize database connection
         $this->db = Database::getInstance();
 
-        // Load configuration from ConfigurationManager
-        $configManager = \App\Services\ConfigurationManager::getInstance();
-        $loggingConfig = $configManager->get('logging');
+        // Load configuration safely
+        try {
+            $configManager = \App\Helpers\ConfigurationManager::getInstance();
+            $loggingConfig = $configManager->get('logging');
+        } catch (\Throwable $e) {
+            $loggingConfig = null;
+        }
         $this->config = array_merge($loggingConfig ?? [], $config);
 
         // Ensure default configuration values

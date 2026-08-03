@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use PDO;
 use App\Traits\ServiceTenantTrait;
 
 class CompanyCredentialsService
