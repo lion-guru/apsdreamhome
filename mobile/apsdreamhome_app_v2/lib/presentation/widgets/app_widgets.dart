@@ -487,6 +487,105 @@ class AppWidgets {
     );
   }
 
+  // OTP Dialog
+  static Future<String?> showOTPDialog(
+    BuildContext context, {
+    String? title,
+    String? message,
+    int length = 6,
+  }) {
+    final controllers = List.generate(length, (_) => TextEditingController());
+    final focuses = List.generate(length, (_) => FocusNode());
+
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E2E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          title ?? 'Enter OTP',
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (message != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  message,
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(length, (i) {
+                return Container(
+                  width: 40,
+                  height: 48,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  child: TextField(
+                    controller: controllers[i],
+                    focusNode: focuses[i],
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLength: 1,
+                    decoration: InputDecoration(
+                      counterText: '',
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.08),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFD4AF37),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      if (val.isNotEmpty && i + 1 < length) {
+                        focuses[i + 1].requestFocus();
+                      } else if (val.isEmpty && i > 0) {
+                        focuses[i - 1].requestFocus();
+                      }
+                    },
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              final otp = controllers.map((c) => c.text).join();
+              Navigator.of(context).pop(otp);
+            },
+            child: const Text(
+              'Verify',
+              style: TextStyle(color: Color(0xFFD4AF37)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Format Currency
   static String _formatCurrency(double amount) {
     if (amount >= 10000000) {

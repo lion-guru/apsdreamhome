@@ -41,6 +41,28 @@ class AuthNotifier extends StateNotifier<User?> {
     }
   }
 
+  Future<void> requestAirLoginOtp(String identifier) async {
+    try {
+      await _repository.requestAirLoginOtp(identifier);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserModel> verifyAirLoginOtp(String otp) async {
+    state = null;
+    try {
+      final token = await _repository.verifyAirLoginOtp(otp);
+      final user = await _repository.getCurrentUser();
+      if (user != null) {
+        state = user;
+      }
+      return user!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     await _repository.logout();
     state = null;

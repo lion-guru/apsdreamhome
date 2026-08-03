@@ -133,6 +133,21 @@ class ApiService {
     );
   }
 
+  // Air Login (OTP-based login without password)
+  Future<Map<String, dynamic>> requestAirLoginOtp(String identifier) async {
+    return post(
+      AppConstants.airLoginEndpoint,
+      data: {'identifier': identifier},
+    );
+  }
+
+  Future<Map<String, dynamic>> verifyAirLoginOtp(String otp) async {
+    return post(
+      AppConstants.airLoginVerifyEndpoint,
+      data: {'otp': otp},
+    );
+  }
+
   Future<void> logout() async {
     await _secureStorage.delete(key: AppConstants.tokenKey);
     await _secureStorage.delete(key: AppConstants.userIdKey);

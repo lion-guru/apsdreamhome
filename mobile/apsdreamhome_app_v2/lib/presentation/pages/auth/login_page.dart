@@ -22,6 +22,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _secureStorage = const FlutterSecureStorage();
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -67,6 +68,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -609,13 +611,50 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                 ],
               ),
-              child: ElevatedButton(
-                onPressed: () {
-                  AppWidgets.showInfoSnackBar(
-                    context,
-                    'Phone OTP login will be available soon. Use Email login for now.',
-                  );
-                },
+               child: ElevatedButton(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        final phone = _phoneController.text.trim();
+                        if (phone.isEmpty || phone.length < 10) {
+                          AppWidgets.showErrorSnackBar(
+                            context,
+                            'Please enter a valid phone number',
+                          );
+                          return;
+                        }
+                          setState(() => _isLoading = true);
+                        try {
+                          await ref
+                              .read(authProvider.notifier)
+                              .requestAirLoginOtp(phone);
+                          if (!mounted) return;
+                          final otp = await AppWidgets.showOTPDialog(
+                            context,
+                            title: 'Enter OTP',
+                            message: 'OTP sent to $phone',
+                          );
+                          if (otp != null && otp.length == 6) {
+                            final user = await ref
+                                .read(authProvider.notifier)
+                                .verifyAirLoginOtp(otp);
+                            if (!mounted) return;
+                            if (user != null) {
+                              final route = defaultRouteForRole(user);
+                              AuthBridge.instance.currentUser.value = user;
+                              context.go(route);
+                            }
+                          }
+                        } catch (e) {
+                          if (!mounted) return;
+                          AppWidgets.showErrorSnackBar(
+                            context,
+                            e.toString(),
+                          );
+                        } finally {
+                          if (mounted) setState(() => _isLoading = false);
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
@@ -686,10 +725,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          AppWidgets.showInfoSnackBar(
-            context,
-            '$label login coming soon. Use Email login for now.',
-          );
+          if (label == 'Phone') {
+            setState(() => _selectedTab = 1);
+          } else {
+            AppWidgets.showInfoSnackBar(
+              context,
+              '$label login coming soon. Use Email login for now.',
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(

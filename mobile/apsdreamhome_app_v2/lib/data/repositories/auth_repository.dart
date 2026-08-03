@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/services/api_service.dart';
 import '../../core/services/database_helper.dart';
 import '../../core/utils/logger.dart';
+import '../../core/constants/app_constants.dart';
 import '../models/user_model.dart';
 
 /// Auth Repository - Handles authentication & user data
@@ -89,6 +90,39 @@ class AuthRepository {
     } catch (e) {
       throw Exception('Firebase login failed: $e');
     }
+  }
+
+  /// Login with Air Login (OTP without password)
+  Future<void> requestAirLoginOtp(String identifier) async {
+    final response = await _apiService.post(
+      AppConstants.airLoginEndpoint,
+      data: {'identifier': identifier},
+    );
+    if (response['success'] != true) {
+      throw Exception(response['message'] ?? 'Failed to send OTP');
+    }
+  }
+
+  Future<String?> verifyAirLoginOtp(String otp) async {
+    final response = await _apiService.post(
+      AppConstants.airLoginVerifyEndpoint,
+      data: {'otp': otp},
+    );
+    if (response['success'] != true) {
+      throw Exception(response['message'] ?? 'OTP verification failed');
+    }
+    final token = response['data']['token'] as String;
+    await _apiService.saveToken(token);
+    await _secureStorage.write(key: 'auth_token', value: token);
+
+    final userData = response['data']['user'] as Map<String, dynamic>;
+    final user = UserModel.fromJson(userData);
+    await _dbHelper.saveUser(user.toJson());
+    await _secureStorage.write(
+      key: 'current_user',
+      value: user.toJson().toString(),
+    );
+    return token;
   }
 
   /// Register new user

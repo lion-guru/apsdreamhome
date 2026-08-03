@@ -26,6 +26,8 @@ class AppConstants {
 
   // Endpoints
   static const String loginEndpoint = '/auth/login';
+  static const String airLoginEndpoint = '/auth/air-login';
+  static const String airLoginVerifyEndpoint = '/auth/air-login/verify';
   static const String propertiesEndpoint = '/properties';
   static const String updatesEndpoint = '/updates';
   static const String leadsEndpoint = '/leads';
