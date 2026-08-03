@@ -727,6 +727,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         onTap: () {
           if (label == 'Phone') {
             setState(() => _selectedTab = 1);
+          } else if (label == 'Google') {
+            setState(() => _selectedTab = 0);
           } else {
             AppWidgets.showInfoSnackBar(
               context,
