@@ -36,9 +36,9 @@ ob_start();
             <div>
               <small class="opacity-75">Top Action</small>
               <?php if (!empty($stats['by_action'])): ?>
-                <?php $topAction = array_key_first($stats['by_action']); ?>
-                <h6 class="mb-0 small"><?= htmlspecialchars($topAction) ?></h6>
-                <small><?= number_format($stats['by_action'][$topAction]) ?> events</small>
+                <?php $topAction = $stats['by_action'][0]; ?>
+                <h6 class="mb-0 small"><?= htmlspecialchars($topAction['action'] ?? '') ?></h6>
+                <small><?= number_format($topAction['cnt'] ?? 0) ?> events</small>
               <?php else: ?>
                 <h6 class="mb-0 small">—</h6>
               <?php endif; ?>
@@ -55,9 +55,9 @@ ob_start();
             <div>
               <small class="opacity-75">Top Role</small>
               <?php if (!empty($stats['by_role'])): ?>
-                <?php $topRole = array_key_first($stats['by_role']); ?>
-                <h6 class="mb-0 small"><?= htmlspecialchars($topRole) ?></h6>
-                <small><?= number_format($stats['by_role'][$topRole]) ?> events</small>
+                <?php $topRole = $stats['by_role'][0]; ?>
+                <h6 class="mb-0 small"><?= htmlspecialchars($topRole['user_role'] ?? '') ?></h6>
+                <small><?= number_format($topRole['cnt'] ?? 0) ?> events</small>
               <?php else: ?>
                 <h6 class="mb-0 small">—</h6>
               <?php endif; ?>
@@ -104,13 +104,13 @@ ob_start();
                   <tr><th>Action</th><th class="text-end">Count</th><th class="text-end">%</th></tr>
                 </thead>
                 <tbody>
-                  <?php foreach ($stats['by_action'] as $action => $count): ?>
+                  <?php foreach ($stats['by_action'] as $item): ?>
                     <tr>
-                      <td><code><?= htmlspecialchars($action) ?></code></td>
-                      <td class="text-end"><?= number_format($count) ?></td>
+                      <td><code><?= htmlspecialchars($item['action'] ?? '') ?></code></td>
+                      <td class="text-end"><?= number_format($item['cnt'] ?? 0) ?></td>
                       <td class="text-end">
                         <div class="progress" style="height: 6px; width: 100px;">
-                          <div class="progress-bar bg-primary" style="width: <?= min(100, ($count / max(1, $total)) * 100) ?>%"></div>
+                          <div class="progress-bar bg-primary" style="width: <?= min(100, (($item['cnt'] ?? 0) / max(1, $total)) * 100) ?>%"></div>
                         </div>
                       </td>
                     </tr>
@@ -138,17 +138,17 @@ ob_start();
                   <tr><th>Role</th><th class="text-end">Count</th><th class="text-end">%</th></tr>
                 </thead>
                 <tbody>
-                  <?php foreach ($stats['by_role'] as $role => $count): ?>
+                  <?php foreach ($stats['by_role'] as $item): ?>
                     <tr>
                       <td>
-                        <span class="badge bg-<?= in_array($role, ['admin', 'super_admin']) ? 'danger' : 'secondary' ?> me-1">
-                          <?= htmlspecialchars($role) ?>
+                        <span class="badge bg-<?= in_array($item['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?> me-1">
+                          <?= htmlspecialchars($item['user_role'] ?? '') ?>
                         </span>
                       </td>
-                      <td class="text-end"><?= number_format($count) ?></td>
+                      <td class="text-end"><?= number_format($item['cnt'] ?? 0) ?></td>
                       <td class="text-end">
                         <div class="progress" style="height: 6px; width: 100px;">
-                          <div class="progress-bar bg-<?= in_array($role, ['admin', 'super_admin']) ? 'danger' : 'secondary' ?>" style="width: <?= min(100, ($count / max(1, $total)) * 100) ?>%"></div>
+                          <div class="progress-bar bg-<?= in_array($item['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?>" style="width: <?= min(100, (($item['cnt'] ?? 0) / max(1, $total)) * 100) ?>%"></div>
                         </div>
                       </td>
                     </tr>

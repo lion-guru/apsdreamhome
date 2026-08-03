@@ -168,17 +168,17 @@ ob_start();
       <h5 class="mb-0">Top Actions (30d)</h5>
     </div>
     <div class="card-body">
-      <?php foreach (array_slice($stats['by_action'], 0, 10, true) as $action => $count): ?>
-        <div class="mb-2">
-          <div class="d-flex justify-content-between">
-            <span><code><?= htmlspecialchars($action) ?></code></span>
-            <strong><?= number_format($count) ?></strong>
+        <?php foreach (array_slice($stats['by_action'], 0, 10, true) as $item): ?>
+          <div class="mb-2">
+            <div class="d-flex justify-content-between">
+              <span><code><?= htmlspecialchars($item['action']) ?></code></span>
+              <strong><?= number_format($item['cnt']) ?></strong>
+            </div>
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar bg-primary" style="width: <?= min(100, ($item['cnt'] / max(1, $stats['total'] ?? 1)) * 100) ?>%"></div>
+            </div>
           </div>
-          <div class="progress" style="height: 6px;">
-            <div class="progress-bar bg-primary" style="width: <?= min(100, ($count / max(1, $stats['total'] ?? 1)) * 100) ?>%"></div>
-          </div>
-        </div>
-      <?php endforeach; ?>
+        <?php endforeach; ?>
     </div>
   </div>
   <?php endif; ?>
