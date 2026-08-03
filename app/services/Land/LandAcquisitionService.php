@@ -153,7 +153,9 @@ class LandAcquisitionService
     public function fetchLead(int $id): ?array
     {
         try {
-            $row = $this->db->fetch("SELECT * FROM land_leads WHERE id = ?", [$id]);
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+            $row = $this->db->fetch("SELECT * FROM land_leads WHERE id = ?{$tenantFilter}", array_merge([$id], $tenantParam));
             return $row ?: null;
         } catch (Exception $e) {
             $this->log('error', 'fetchLead failed', $e->getMessage());
@@ -164,10 +166,11 @@ class LandAcquisitionService
     public function listLeads(array $filters = []): array
     {
         try {
+            $tenantFilter = $this->tenantSqlForAlias('l');
             $sql = "SELECT l.*, b.broker_name
                     FROM land_leads l
-                    LEFT JOIN land_brokers b ON b.id = l.broker_id
-                    WHERE 1=1";
+                    LEFT JOIN land_brokers b ON b.id = l.broker_id{$this->tenantSqlForAlias('b')}
+                    WHERE 1=1{$tenantFilter}";
             $params = [];
             if (!empty($filters['status'])) {
                 $sql .= " AND l.status = ?";
@@ -232,9 +235,11 @@ class LandAcquisitionService
     public function listDocuments(int $leadId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM land_documents WHERE land_lead_id = ? ORDER BY created_at DESC",
-                [$leadId]
+                "SELECT * FROM land_documents WHERE land_lead_id = ?{$tenantFilter} ORDER BY created_at DESC",
+                array_merge([$leadId], $tenantParam)
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
         } catch (Exception $e) {
@@ -270,9 +275,11 @@ class LandAcquisitionService
     public function getVisitHistory(int $leadId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM land_site_visits WHERE land_lead_id = ? ORDER BY visit_date DESC",
-                [$leadId]
+                "SELECT * FROM land_site_visits WHERE land_lead_id = ?{$tenantFilter} ORDER BY visit_date DESC",
+                array_merge([$leadId], $tenantParam)
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
         } catch (Exception $e) {
@@ -310,9 +317,11 @@ class LandAcquisitionService
     public function getOpinion(int $leadId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $row = $this->db->fetch(
-                "SELECT * FROM land_legal_opinions WHERE land_lead_id = ? ORDER BY opinion_date DESC LIMIT 1",
-                [$leadId]
+                "SELECT * FROM land_legal_opinions WHERE land_lead_id = ?{$tenantFilter} ORDER BY opinion_date DESC LIMIT 1",
+                array_merge([$leadId], $tenantParam)
             );
             return ['success' => true, 'data' => $row];
         } catch (Exception $e) {
@@ -323,9 +332,11 @@ class LandAcquisitionService
     public function listOpinions(int $leadId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM land_legal_opinions WHERE land_lead_id = ? ORDER BY opinion_date DESC",
-                [$leadId]
+                "SELECT * FROM land_legal_opinions WHERE land_lead_id = ?{$tenantFilter} ORDER BY opinion_date DESC",
+                array_merge([$leadId], $tenantParam)
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
         } catch (Exception $e) {
@@ -371,7 +382,7 @@ class LandAcquisitionService
     public function registerAcquisition(int $dealId, array $data): array
     {
         return $this->withTransaction(function () use ($dealId, $data) {
-            $deal = $this->db->fetch("SELECT * FROM land_deals WHERE id = ?", [$dealId]);
+            $deal = $this->db->fetch("SELECT * FROM land_deals WHERE id = ?{$this->tenantSql()}", [$dealId]);
             if (!$deal) return ['success' => false, 'error' => 'Deal not found'];
 
             $payload = [
@@ -431,12 +442,13 @@ class LandAcquisitionService
     public function listDeals(array $filters = []): array
     {
         try {
+            $tenantFilter = $this->tenantSqlForAlias('d');
             $sql = "SELECT d.*, l.land_owner_name, l.village, l.district,
                            c.name AS colony_name
                     FROM land_deals d
-                    LEFT JOIN land_leads l ON l.id = d.land_lead_id
+                    LEFT JOIN land_leads l ON l.id = d.land_lead_id{$this->tenantSqlForAlias('l')}
                     LEFT JOIN colonies c ON c.id = d.colony_id
-                    WHERE 1=1";
+                    WHERE 1=1{$tenantFilter}";
             $params = [];
             if (!empty($filters['status'])) {
                 $sql .= " AND d.status = ?";
@@ -453,13 +465,15 @@ class LandAcquisitionService
     public function fetchDeal(int $id): ?array
     {
         try {
+            $tenantFilter = $this->tenantSqlForAlias('d');
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $row = $this->db->fetch(
                 "SELECT d.*, l.land_owner_name, l.village, l.district, l.state,
-                        c.name AS colony_name
+                         c.name AS colony_name
                  FROM land_deals d
-                 LEFT JOIN land_leads l ON l.id = d.land_lead_id
+                 LEFT JOIN land_leads l ON l.id = d.land_lead_id{$this->tenantSqlForAlias('l')}
                  LEFT JOIN colonies c ON c.id = d.colony_id
-                 WHERE d.id = ?",
+                 WHERE d.id = ?{$this->tenantSql()}",
                 [$id]
             );
             return $row ?: null;
@@ -504,9 +518,11 @@ class LandAcquisitionService
     public function getAcquisitionLedger(int $dealId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM land_deal_payments WHERE land_deal_id = ? ORDER BY payment_date DESC, id DESC",
-                [$dealId]
+                "SELECT * FROM land_deal_payments WHERE land_deal_id = ?{$tenantFilter} ORDER BY payment_date DESC, id DESC",
+                array_merge([$dealId], $tenantParam)
             );
             $total = 0.0;
             $cleared = 0.0;
@@ -570,9 +586,11 @@ class LandAcquisitionService
     public function getColonyCostSummary(int $colonyId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM colony_development_costs WHERE colony_id = ? ORDER BY invoice_date DESC, id DESC",
-                [$colonyId]
+                "SELECT * FROM colony_development_costs WHERE colony_id = ?{$tenantFilter} ORDER BY invoice_date DESC, id DESC",
+                array_merge([$colonyId], $tenantParam)
             );
             $total = 0.0; $paid = 0.0; $byType = [];
             foreach ($rows as $r) {
@@ -623,9 +641,11 @@ class LandAcquisitionService
     public function getLayouts(int $colonyId): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM colony_layouts WHERE colony_id = ? ORDER BY created_at DESC",
-                [$colonyId]
+                "SELECT * FROM colony_layouts WHERE colony_id = ?{$tenantFilter} ORDER BY created_at DESC",
+                array_merge([$colonyId], $tenantParam)
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
         } catch (Exception $e) {
@@ -661,8 +681,11 @@ class LandAcquisitionService
     public function listBrokers(): array
     {
         try {
+            $tenantFilter = $this->tenantSql();
+            $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             $rows = $this->db->fetchAll(
-                "SELECT * FROM land_brokers ORDER BY `active` DESC, broker_name ASC"
+                "SELECT * FROM land_brokers WHERE 1=1{$tenantFilter} ORDER BY `active` DESC, broker_name ASC",
+                $tenantParam
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
         } catch (Exception $e) {
@@ -701,6 +724,7 @@ class LandAcquisitionService
     private function insert(string $table, array $data): ?int
     {
         if (!$this->pdo) return null;
+        $data = array_merge($data, $this->tenantInsertData());
         $cols = array_keys($data);
         $placeholders = implode(',', array_fill(0, count($cols), '?'));
         $colList = implode(',', $cols);
@@ -719,9 +743,10 @@ class LandAcquisitionService
             $sets[] = "{$col} = ?";
             $params[] = $val;
         }
-        $sql = "UPDATE {$table} SET " . implode(',', $sets) . " WHERE {$where}";
+        $tenantWhere = $this->tenantSql();
+        $sql = "UPDATE {$table} SET " . implode(',', $sets) . " WHERE {$where}{$tenantWhere}";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(array_merge($params, $whereParams));
+        $stmt->execute(array_merge($params, $whereParams, $this->tenantId() > 1 ? [$this->tenantId()] : []));
         return $stmt->rowCount();
     }
 
