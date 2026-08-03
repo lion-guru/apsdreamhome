@@ -8,8 +8,12 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 class RegistrationFollowupService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
     
     public function __construct()
@@ -49,8 +53,8 @@ class RegistrationFollowupService
             
             // Update session
             $this->db->query(
-                "UPDATE smart_registration_sessions SET followup_whatsapp_sent = 1, followup_count = followup_count + 1, last_followup_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$sessionId]
+                "UPDATE smart_registration_sessions SET followup_whatsapp_sent = 1, followup_count = followup_count + 1, last_followup_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+                array_merge([$sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             
             return $result;
@@ -99,8 +103,8 @@ class RegistrationFollowupService
             
             // Update session
             $this->db->query(
-                "UPDATE smart_registration_sessions SET followup_email_sent = 1, followup_count = followup_count + 1, last_followup_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$sessionId]
+                "UPDATE smart_registration_sessions SET followup_email_sent = 1, followup_count = followup_count + 1, last_followup_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+                array_merge([$sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             
             return $result;
@@ -143,8 +147,8 @@ class RegistrationFollowupService
             
             // Update session
             $this->db->query(
-                "UPDATE smart_registration_sessions SET followup_sms_sent = 1, followup_count = followup_count + 1, last_followup_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$sessionId]
+                "UPDATE smart_registration_sessions SET followup_sms_sent = 1, followup_count = followup_count + 1, last_followup_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
+                array_merge([$sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             
             return $result;
@@ -167,7 +171,7 @@ class RegistrationFollowupService
                  WHERE registration_status IN ('otp_sent', 'account_created', 'profile_incomplete')
                  AND abandoned_at IS NOT NULL
                  AND abandoned_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
-                 AND followup_count < 3
+                 AND followup_count < 3" . $this->tenantSql() . "
                  ORDER BY abandoned_at ASC
                  LIMIT 100"
             );
@@ -245,7 +249,7 @@ class RegistrationFollowupService
                     SUM(followup_email_sent) as email_reminders,
                     SUM(followup_sms_sent) as sms_reminders
                 FROM smart_registration_sessions
-                WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSql()
             );
             
             return $stats;
@@ -261,21 +265,25 @@ class RegistrationFollowupService
     private function getSession($sessionId)
     {
         return $this->db->fetchOne(
-            "SELECT * FROM smart_registration_sessions WHERE id = ? LIMIT 1",
-            [$sessionId]
+            "SELECT * FROM smart_registration_sessions WHERE id = ?" . $this->tenantSql() . " LIMIT 1",
+            array_merge([$sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
     }
     
     private function logReminder($sessionId, $channel, $content, $status)
     {
-        $this->db->insert('smart_registration_reminders', [
+        $insertData = array_merge([
             'session_id' => $sessionId,
             'reminder_type' => $channel,
             'message_content' => $content,
             'sent_status' => $status,
             'sent_at' => $status === 'sent' ? date('Y-m-d H:i:s') : null,
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ], $this->tenantInsertData());
+        
+        $cols = implode(', ', array_keys($insertData));
+        $placeholders = implode(', ', array_fill(0, count($insertData), '?'));
+        $this->db->insert('smart_registration_reminders', $insertData);
     }
     
     private function determineBestChannel($session)

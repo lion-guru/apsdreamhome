@@ -6,8 +6,12 @@ namespace App\Services;
 
 use App\Core\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 class SLAService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct() {
@@ -16,27 +20,30 @@ class SLAService
 
     public function getAllRules() {
         try {
-            return $this->db->fetchAll("SELECT * FROM crm_sla_rules ORDER BY rule_type ASC, target_minutes ASC") ?: [];
+            return $this->db->fetchAll("SELECT * FROM crm_sla_rules ORDER BY rule_type ASC, target_minutes ASC" . $this->tenantSql()) ?: [];
         } catch (\Exception $e) { return []; }
     }
 
     public function getActiveRules() {
         try {
-            return $this->db->fetchAll("SELECT * FROM crm_sla_rules WHERE is_active = 1") ?: [];
+            return $this->db->fetchAll("SELECT * FROM crm_sla_rules WHERE is_active = 1" . $this->tenantSql()) ?: [];
         } catch (\Exception $e) { return []; }
     }
 
     public function getRuleById($id) {
         try {
-            return $this->db->fetch("SELECT * FROM crm_sla_rules WHERE id = ?", [$id]);
+            return $this->db->fetch("SELECT * FROM crm_sla_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Exception $e) { return null; }
     }
 
     public function createRule($data) {
         try {
+            $insertCols = array_merge(['name', 'rule_type', 'target_minutes', 'applies_to_roles', 'applies_to_stages', 'is_active'], array_keys($this->tenantInsertData()));
+            $insertVals = array_merge([$data['name'], $data['rule_type'], $data['target_minutes'], $data['applies_to_roles'] ?? 'all', $data['applies_to_stages'] ?? 'all', $data['is_active'] ?? 1], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
             $this->db->query(
-                "INSERT INTO crm_sla_rules (name, rule_type, target_minutes, applies_to_roles, applies_to_stages, is_active) VALUES (?, ?, ?, ?, ?, ?)",
-                [$data['name'], $data['rule_type'], $data['target_minutes'], $data['applies_to_roles'] ?? 'all', $data['applies_to_stages'] ?? 'all', $data['is_active'] ?? 1]
+                "INSERT INTO crm_sla_rules (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")",
+                $insertVals
             );
             return ['success' => true, 'id' => $this->db->lastInsertId()];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
@@ -45,8 +52,8 @@ class SLAService
     public function updateRule($id, $data) {
         try {
             $this->db->query(
-                "UPDATE crm_sla_rules SET name = ?, rule_type = ?, target_minutes = ?, applies_to_roles = ?, applies_to_stages = ?, is_active = ? WHERE id = ?",
-                [$data['name'], $data['rule_type'], $data['target_minutes'], $data['applies_to_roles'] ?? 'all', $data['applies_to_stages'] ?? 'all', $data['is_active'] ?? 1, $id]
+                "UPDATE crm_sla_rules SET name = ?, rule_type = ?, target_minutes = ?, applies_to_roles = ?, applies_to_stages = ?, is_active = ?" . $this->tenantSql() . " AND id = ?",
+                array_merge([$data['name'], $data['rule_type'], $data['target_minutes'], $data['applies_to_roles'] ?? 'all', $data['applies_to_stages'] ?? 'all', $data['is_active'] ?? 1, $id], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return ['success' => true];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
@@ -54,20 +61,23 @@ class SLAService
 
     public function deleteRule($id) {
         try {
-            $this->db->query("DELETE FROM crm_sla_logs WHERE sla_rule_id = ?", [$id]);
-            $this->db->query("DELETE FROM crm_sla_rules WHERE id = ?", [$id]);
+            $this->db->query("DELETE FROM crm_sla_logs WHERE sla_rule_id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+            $this->db->query("DELETE FROM crm_sla_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             return ['success' => true];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function startSLA($leadId, $ruleId) {
         try {
-            $existing = $this->db->fetch("SELECT id FROM crm_sla_logs WHERE lead_id = ? AND sla_rule_id = ? AND status = 'pending'", [$leadId, $ruleId]);
+            $existing = $this->db->fetch("SELECT id FROM crm_sla_logs WHERE lead_id = ? AND sla_rule_id = ? AND status = 'pending'" . $this->tenantSql(), array_merge([$leadId, $ruleId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if ($existing) return ['success' => true, 'log_id' => $existing['id']];
 
+            $insertCols = array_merge(['lead_id', 'sla_rule_id', 'started_at', 'status'], array_keys($this->tenantInsertData()));
+            $insertVals = array_merge([$leadId, $ruleId, 'NOW()', 'pending'], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
             $this->db->query(
-                "INSERT INTO crm_sla_logs (lead_id, sla_rule_id, started_at, status) VALUES (?, ?, NOW(), 'pending')",
-                [$leadId, $ruleId]
+                "INSERT INTO crm_sla_logs (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")",
+                $insertVals
             );
             return ['success' => true, 'log_id' => $this->db->lastInsertId()];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
@@ -75,15 +85,15 @@ class SLAService
 
     public function completeSLA($logId, $status = 'met', $notes = '') {
         try {
-            $log = $this->db->fetch("SELECT * FROM crm_sla_logs WHERE id = ?", [$logId]);
+            $log = $this->db->fetch("SELECT * FROM crm_sla_logs WHERE id = ?" . $this->tenantSql(), array_merge([$logId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if (!$log) return ['success' => false, 'error' => 'SLA log not found'];
 
             $started = strtotime($log['started_at']);
             $responseTime = time() - $started;
 
             $this->db->query(
-                "UPDATE crm_sla_logs SET ended_at = NOW(), status = ?, response_time_seconds = ?, notes = ? WHERE id = ?",
-                [$status, $responseTime, $notes, $logId]
+                "UPDATE crm_sla_logs SET ended_at = NOW(), status = ?, response_time_seconds = ?, notes = ?" . $this->tenantSql() . " AND id = ?",
+                array_merge([$status, $responseTime, $notes, $logId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return ['success' => true, 'response_time' => $responseTime];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
@@ -98,8 +108,8 @@ class SLAService
                     SUM(CASE WHEN status = 'breached' THEN 1 ELSE 0 END) as breached,
                     SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
                     AVG(CASE WHEN status IN ('met','missed') THEN response_time_seconds END) as avg_response
-                 FROM crm_sla_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)",
-                [$days]
+                 FROM crm_sla_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)" . $this->tenantSql(),
+                array_merge([$days], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             $stats['compliance_rate'] = ($stats['met'] + $stats['missed']) > 0
                 ? round(($stats['met'] / ($stats['met'] + $stats['missed'])) * 100, 1) : 0;
@@ -112,11 +122,11 @@ class SLAService
             return $this->db->fetchAll(
                 "SELECT sl.*, sr.name as rule_name, sr.rule_type, sr.target_minutes, l.name as lead_name, l.phone as lead_phone
                  FROM crm_sla_logs sl
-                 JOIN crm_sla_rules sr ON sr.id = sl.sla_rule_id
-                 LEFT JOIN leads l ON l.id = sl.lead_id
-                 WHERE sl.status IN ('missed','breached')
+                 JOIN crm_sla_rules sr ON sr.id = sl.sla_rule_id" . $this->tenantSqlForAlias('sr') . "
+                 LEFT JOIN leads l ON l.id = sl.lead_id" . $this->tenantSqlForAlias('l') . "
+                 WHERE sl.status IN ('missed','breached')" . $this->tenantSqlForAlias('sl') . "
                  ORDER BY sl.created_at DESC LIMIT ?",
-                [$limit]
+                array_merge([$limit], $this->tenantId() > 1 ? [$this->tenantId(), $this->tenantId(), $this->tenantId()] : [])
             ) ?: [];
         } catch (\Exception $e) { return []; }
     }
@@ -127,9 +137,9 @@ class SLAService
                 "SELECT sl.*, sr.name as rule_name, sr.rule_type, sr.target_minutes, l.name as lead_name, l.phone as lead_phone,
                     TIMESTAMPDIFF(MINUTE, sl.started_at, NOW()) as elapsed_minutes
                  FROM crm_sla_logs sl
-                 JOIN crm_sla_rules sr ON sr.id = sl.sla_rule_id
-                 LEFT JOIN leads l ON l.id = sl.lead_id
-                 WHERE sl.status = 'pending'
+                 JOIN crm_sla_rules sr ON sr.id = sl.sla_rule_id" . $this->tenantSqlForAlias('sr') . "
+                 LEFT JOIN leads l ON l.id = sl.lead_id" . $this->tenantSqlForAlias('l') . "
+                 WHERE sl.status = 'pending'" . $this->tenantSqlForAlias('sl') . "
                  ORDER BY sl.started_at ASC"
             ) ?: [];
         } catch (\Exception $e) { return []; }

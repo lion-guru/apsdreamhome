@@ -3,8 +3,12 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 class RankEvaluationService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     public function __construct()
@@ -14,7 +18,7 @@ class RankEvaluationService
 
     public function evaluateAll()
     {
-        $profiles = $this->db->fetchAll("SELECT * FROM mlm_profiles WHERE status = 'active'");
+        $profiles = $this->db->fetchAll("SELECT * FROM mlm_profiles WHERE status = 'active'" . $this->tenantSql());
         $results = [];
         foreach ($profiles as $profile) {
             $results[] = $this->evaluate($profile['user_id']);
@@ -24,7 +28,7 @@ class RankEvaluationService
 
     public function evaluate($userId)
     {
-        $profile = $this->db->fetch("SELECT * FROM mlm_profiles WHERE user_id = ?", [$userId]);
+        $profile = $this->db->fetch("SELECT * FROM mlm_profiles WHERE user_id = ?" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         if (!$profile) {
             return ['user_id' => $userId, 'error' => 'No MLM profile found'];
         }
@@ -33,16 +37,16 @@ class RankEvaluationService
         $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_number ASC");
 
         $teamSize = (int)$this->db->fetchColumn(
-            "SELECT COUNT(*) FROM network_tree WHERE associate_id = ? AND `level` <= 3",
-            [$userId]
+            "SELECT COUNT(*) FROM network_tree WHERE associate_id = ? AND `level` <= 3" . $this->tenantSql(),
+            array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 
         $directReferrals = (int)$profile['direct_referrals'];
 
         $monthlySales = (float)$this->db->fetchColumn(
             "SELECT COALESCE(SUM(total_amount), 0) FROM bookings
-             WHERE customer_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
-            [$userId]
+             WHERE customer_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSql(),
+            array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 
         $highestEligible = null;
@@ -63,24 +67,26 @@ class RankEvaluationService
         $fromLevel = $currentLevel;
         if ($highestEligible !== null && $highestEligible !== $currentLevel) {
             $this->db->query(
-                "UPDATE mlm_profiles SET current_level = ?, rank_updated_at = NOW() WHERE user_id = ?",
-                [$highestEligible, $userId]
+                "UPDATE mlm_profiles SET current_level = ?, rank_updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
+                array_merge([$highestEligible, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
 
             // Sync associates.level (extension table) with new rank
             try {
                 $this->db->query(
-                    "UPDATE associates SET level = ? WHERE user_id = ?",
-                    [$highestEligible, $userId]
+                    "UPDATE associates SET level = ? WHERE user_id = ?" . $this->tenantSql(),
+                    array_merge([$highestEligible, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                 );
             } catch (\Throwable $e) { error_log($e->getMessage()); }
 
             // Log to mlm_rank_history
             try {
+                $insertCols = array_merge(['associate_id', 'from_rank', 'to_rank', 'qualifying_volume_at_promotion', 'leg_count_at_promotion', 'promoted_at'], array_keys($this->tenantInsertData()));
+                $insertVals = array_merge([$userId, $fromLevel, $highestEligible, $monthlySales, $teamSize], array_values($this->tenantInsertData()));
+                $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
                 $this->db->query(
-                    "INSERT INTO mlm_rank_history (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_at)
-                     VALUES (?, ?, ?, ?, ?, NOW())",
-                    [$userId, $fromLevel, $highestEligible, $monthlySales, $teamSize]
+                    "INSERT INTO mlm_rank_history (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")",
+                    $insertVals
                 );
             } catch (\Throwable $e) { error_log($e->getMessage()); }
 
@@ -112,20 +118,20 @@ class RankEvaluationService
 
     public function getProgress($userId)
     {
-        $profile = $this->db->fetch("SELECT * FROM mlm_profiles WHERE user_id = ?", [$userId]);
+        $profile = $this->db->fetch("SELECT * FROM mlm_profiles WHERE user_id = ?" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         if (!$profile) return null;
 
         $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_number ASC");
 
         $teamSize = (int)$this->db->fetchColumn(
-            "SELECT COUNT(*) FROM network_tree WHERE associate_id = ? AND `level` <= 3",
-            [$userId]
+            "SELECT COUNT(*) FROM network_tree WHERE associate_id = ? AND `level` <= 3" . $this->tenantSql(),
+            array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
         $directReferrals = (int)$profile['direct_referrals'];
         $monthlySales = (float)$this->db->fetchColumn(
             "SELECT COALESCE(SUM(total_amount), 0) FROM bookings
-             WHERE customer_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
-            [$userId]
+             WHERE customer_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $this->tenantSql(),
+            array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 
         $currentLevelNum = 0;

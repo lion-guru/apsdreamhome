@@ -34,6 +34,7 @@ class LeadFollowUpService
                 AND status = 'new'
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                 AND (email IS NOT NULL OR phone IS NOT NULL)
+                " . $this->tenantSql() . "
                 ORDER BY created_at DESC
             ");
 
@@ -60,6 +61,7 @@ class LeadFollowUpService
                 WHERE status = 'new'
                 AND source != 'incomplete_registration'
                 AND (email IS NOT NULL OR phone IS NOT NULL)
+                " . $this->tenantSql() . "
                 ORDER BY created_at DESC
             ");
 
@@ -96,8 +98,8 @@ class LeadFollowUpService
             "UPDATE leads SET 
                 status = 'contacted',
                 updated_at = NOW()
-            WHERE id = ?",
-            [$lead['id']]
+            WHERE id = ?" . $this->tenantSql(),
+            array_merge([$lead['id']], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
     }
 
@@ -214,22 +216,13 @@ class LeadFollowUpService
                     COUNT(CASE WHEN is_converted = 1 THEN 1 END) as converted
                 FROM incomplete_registrations
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-            ");
-
-            $leadStats = $this->db->fetchOne("
-                SELECT 
-                    COUNT(*) as total_leads,
-                    COUNT(CASE WHEN lead_status = 'contacted' THEN 1 END) as contacted,
-                    COUNT(CASE WHEN lead_status = 'converted' THEN 1 END) as converted_leads
-                FROM visitor_leads
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-            ");
+                " . $this->tenantSql()
+            );
 
             return [
                 'success' => true,
                 'data' => [
                     'incomplete_registrations' => $stats,
-                    'leads' => $leadStats
                 ]
             ];
         } catch (\Exception $e) {

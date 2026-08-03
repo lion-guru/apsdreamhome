@@ -28,11 +28,14 @@ class EmailTrackingService
 
     public function trackOpen($emailId, $recipient, $ipAddress, $userAgent) {
         try {
-            $existing = $this->db->fetch("SELECT id FROM email_tracking WHERE email_id = ? AND recipient = ? AND event_type = 'open'", [$emailId, $recipient]);
+            $existing = $this->db->fetch("SELECT id FROM email_tracking WHERE email_id = ? AND recipient = ? AND event_type = 'open'" . $this->tenantSql(), array_merge([$emailId, $recipient], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if (!$existing) {
+                $insertCols = array_merge(['email_id', 'recipient', 'event_type', 'ip_address', 'user_agent', 'event_at'], array_keys($this->tenantInsertData()));
+                $insertVals = array_merge([$emailId, $recipient, 'open', $ipAddress, $userAgent, 'NOW()'], array_values($this->tenantInsertData()));
+                $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
                 $this->db->query(
-                    "INSERT INTO email_tracking (email_id, recipient, event_type, ip_address, user_agent, event_at) VALUES (?, ?, 'open', ?, ?, NOW())",
-                    [$emailId, $recipient, $ipAddress, $userAgent]
+                    "INSERT INTO email_tracking (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")",
+                    $insertVals
                 );
                 // Bump engagement score
                 $this->updateEngagementScore($emailId);
@@ -43,10 +46,13 @@ class EmailTrackingService
 
     public function trackClick($emailId, $recipient, $linkUrl, $ipAddress, $userAgent) {
         try {
-            $this->db->query(
-                "INSERT INTO email_tracking (email_id, recipient, event_type, link_url, ip_address, user_agent, event_at) VALUES (?, ?, 'click', ?, ?, ?, NOW())",
-                [$emailId, $recipient, $linkUrl, $ipAddress, $userAgent]
-            );
+        $insertCols = array_merge(['email_id', 'recipient', 'event_type', 'link_url', 'ip_address', 'user_agent', 'event_at'], array_keys($this->tenantInsertData()));
+        $insertVals = array_merge([$emailId, $recipient, 'click', $linkUrl, $ipAddress, $userAgent, 'NOW()'], array_values($this->tenantInsertData()));
+        $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
+        $this->db->query(
+            "INSERT INTO email_tracking (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")",
+            $insertVals
+        );
             $this->updateEngagementScore($emailId);
             return ['success' => true];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
@@ -54,15 +60,15 @@ class EmailTrackingService
 
     private function updateEngagementScore($emailId) {
         try {
-            $tracking = $this->db->fetch("SELECT recipient FROM email_tracking WHERE email_id = ?", [$emailId]);
+            $tracking = $this->db->fetch("SELECT recipient FROM email_tracking WHERE email_id = ?" . $this->tenantSql(), array_merge([$emailId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if ($tracking) {
-                $lead = $this->db->fetch("SELECT id, lead_score FROM leads WHERE email = ? AND deleted_at IS NULL", [$tracking['recipient']]);
+                $lead = $this->db->fetch("SELECT id, lead_score FROM leads WHERE email = ? AND deleted_at IS NULL" . $this->tenantSql(), array_merge([$tracking['recipient']], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 if ($lead) {
-                    $opens = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM email_tracking WHERE email_id = ? AND event_type = 'open'", [$emailId])['cnt'];
-                    $clicks = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM email_tracking WHERE email_id = ? AND event_type = 'click'", [$emailId])['cnt'];
+                    $opens = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM email_tracking WHERE email_id = ? AND event_type = 'open'" . $this->tenantSql(), array_merge([$emailId], $this->tenantId() > 1 ? [$this->tenantId()] : []))['cnt'];
+                    $clicks = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM email_tracking WHERE email_id = ? AND event_type = 'click'" . $this->tenantSql(), array_merge([$emailId], $this->tenantId() > 1 ? [$this->tenantId()] : []))['cnt'];
                     $bonus = ($opens * 2) + ($clicks * 5);
                     $newScore = min(100, (int)$lead['lead_score'] + $bonus);
-                    $this->db->query("UPDATE leads SET lead_score = ? WHERE id = ?", [$newScore, $lead['id']]);
+                    $this->db->query("UPDATE leads SET lead_score = ? WHERE id = ?" . $this->tenantSql(), array_merge([$newScore, $lead['id']], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 }
             }
         } catch (\Exception $e) { error_log($e->getMessage()); }
@@ -76,8 +82,8 @@ class EmailTrackingService
                     SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) as clicks,
                     COUNT(DISTINCT email_id) as emails_tracked,
                     COUNT(DISTINCT recipient) as unique_recipients
-                 FROM email_tracking WHERE event_at >= DATE_SUB(NOW(), INTERVAL ? DAY)",
-                [$days]
+                 FROM email_tracking WHERE event_at >= DATE_SUB(NOW(), INTERVAL ? DAY)" . $this->tenantSql(),
+                array_merge([$days], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return $stats ?: ['total_events' => 0, 'opens' => 0, 'clicks' => 0, 'emails_tracked' => 0, 'unique_recipients' => 0];
         } catch (\Exception $e) { return ['total_events' => 0, 'opens' => 0, 'clicks' => 0, 'emails_tracked' => 0, 'unique_recipients' => 0]; }
@@ -87,23 +93,23 @@ class EmailTrackingService
         try {
             return $this->db->fetchAll(
                 "SELECT DATE(event_at) as day, event_type, COUNT(*) as cnt
-                 FROM email_tracking WHERE event_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                 FROM email_tracking WHERE event_at >= DATE_SUB(NOW(), INTERVAL ? DAY)" . $this->tenantSql() . "
                  GROUP BY DATE(event_at), event_type ORDER BY day ASC",
-                [$days]
+                array_merge([$days], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             ) ?: [];
         } catch (\Exception $e) { return []; }
     }
 
     public function getLeadEmailStats($leadId) {
         try {
-            $lead = $this->db->fetch("SELECT email FROM leads WHERE id = ?", [$leadId]);
+            $lead = $this->db->fetch("SELECT email FROM leads WHERE id = ?" . $this->tenantSql(), array_merge([$leadId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             if (!$lead || empty($lead['email'])) return ['opens' => 0, 'clicks' => 0, 'last_activity' => null];
             $stats = $this->db->fetch(
                 "SELECT SUM(CASE WHEN event_type = 'open' THEN 1 ELSE 0 END) as opens,
                     SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) as clicks,
                     MAX(event_at) as last_activity
-                 FROM email_tracking WHERE recipient = ?",
-                [$lead['email']]
+                 FROM email_tracking WHERE recipient = ?" . $this->tenantSql(),
+                array_merge([$lead['email']], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return $stats ?: ['opens' => 0, 'clicks' => 0, 'last_activity' => null];
         } catch (\Exception $e) { return ['opens' => 0, 'clicks' => 0, 'last_activity' => null]; }
@@ -113,9 +119,9 @@ class EmailTrackingService
         try {
             return $this->db->fetchAll(
                 "SELECT link_url, COUNT(*) as clicks, COUNT(DISTINCT recipient) as unique_clicks
-                 FROM email_tracking WHERE event_type = 'click' AND link_url IS NOT NULL
+                 FROM email_tracking WHERE event_type = 'click' AND link_url IS NOT NULL" . $this->tenantSql() . "
                  GROUP BY link_url ORDER BY clicks DESC LIMIT ?",
-                [$limit]
+                array_merge([$limit], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             ) ?: [];
         } catch (\Exception $e) { return []; }
     }

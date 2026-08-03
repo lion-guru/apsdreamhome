@@ -5,12 +5,16 @@ namespace App\Services;
 use App\Core\Database\Database;
 use PDO;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * PropertySubmissionService
  * Handles property posts from users and public users with commission split logic.
  */
 class PropertySubmissionService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
 
     public function __construct()
@@ -29,29 +33,15 @@ class PropertySubmissionService
         ];
 
         try {
-            $sql = "INSERT INTO property_submissions (
-                        submitter_id, submitter_type, title, description, price, 
-                        property_type, location, images, commission_split_json
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $columns = array_merge(['submitter_id', 'submitter_type', 'title', 'description', 'price', 'property_type', 'location', 'images', 'commission_split_json'], array_keys($this->tenantInsertData()));
+            $values = array_merge([$data['submitter_id'], $data['submitter_type'], $data['title'], $data['description'] ?? '', $data['price'], $data['property_type'] ?? 'Plot', $data['location'] ?? '', json_encode($data['images'] ?? []), json_encode($splitLogic)], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($columns), '?'));
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
-        
-        $params = [
-            $data['submitter_id'],
-            $data['submitter_type'],
-            $data['title'],
-            $data['description'] ?? '',
-            $data['price'],
-            $data['property_type'] ?? 'Plot',
-            $data['location'] ?? '',
-            json_encode($data['images'] ?? []),
-            json_encode($splitLogic)
-        ];
 
         try {
-            $this->db->query($sql, $params);
+            $this->db->query("INSERT INTO property_submissions (" . implode(', ', $columns) . ") VALUES (" . $placeholders . ")", $values);
             return [
                 'success' => true, 
                 'message' => 'Property submitted successfully. It will be live after admin approval.',
@@ -67,8 +57,8 @@ class PropertySubmissionService
      */
     public function getUserSubmissions($userId)
     {
-        $sql = "SELECT * FROM property_submissions WHERE submitter_id = ? ORDER BY created_at DESC";
-        return $this->db->fetchAll($sql, [$userId]) ?? [];
+        $sql = "SELECT * FROM property_submissions WHERE submitter_id = ?" . $this->tenantSql();
+        return $this->db->fetchAll($sql, array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])) ?? [];
     }
 
     /**
@@ -77,7 +67,7 @@ class PropertySubmissionService
     public function approveSubmission($submissionId)
     {
         try {
-            $submission = $this->db->fetchOne("SELECT * FROM property_submissions WHERE id = ?", [$submissionId]);
+            $submission = $this->db->fetchOne("SELECT * FROM property_submissions WHERE id = ?" . $this->tenantSql(), array_merge([$submissionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -86,18 +76,14 @@ class PropertySubmissionService
 
         try {
             // 1. Insert into main properties table
-            $sql = "INSERT INTO properties (title, description, price, city, status) 
-                    VALUES (?, ?, ?, ?, 'available')";
-            $this->db->query($sql, [
-                $submission['title'], 
-                $submission['description'], 
-                $submission['price'], 
-                $submission['location']
-            ]);
+            $columns = array_merge(['title', 'description', 'price', 'city', 'status'], array_keys($this->tenantInsertData()));
+            $values = array_merge([$submission['title'], $submission['description'], $submission['price'], $submission['location'], 'available'], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($columns), '?'));
+            $this->db->query("INSERT INTO properties (" . implode(', ', $columns) . ") VALUES (" . $placeholders . ")", $values);
             $propertyId = $this->db->lastInsertId();
 
             // 2. Mark submission as approved
-            $this->db->query("UPDATE property_submissions SET status = 'approved' WHERE id = ?", [$submissionId]);
+            $this->db->query("UPDATE property_submissions SET status = 'approved' WHERE id = ?" . $this->tenantSql(), array_merge([$submissionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
             return ['success' => true, 'message' => 'Property approved and live!', 'property_id' => $propertyId];
         } catch (\Exception $e) {

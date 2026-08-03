@@ -23,11 +23,12 @@ class LeadRoutingService
 
     public function getAllRules(): array {
         try {
-            return $this->db->fetchAll(
+             return $this->db->fetchAll(
                 "SELECT rr.*, d.name as department_name, u.name as target_user_name
                  FROM crm_routing_rules rr
                  LEFT JOIN departments d ON d.id = rr.target_department_id
                  LEFT JOIN users u ON u.id = rr.target_user_id
+                 " . $this->tenantSqlForAlias('rr') . "
                  ORDER BY rr.priority ASC, rr.created_at DESC"
             ) ?: [];
         } catch (\Exception $e) { return []; }
@@ -36,33 +37,26 @@ class LeadRoutingService
     public function getActiveRules(): array {
         try {
             return $this->db->fetchAll(
-                "SELECT * FROM crm_routing_rules WHERE is_active = 1 ORDER BY priority ASC"
+                "SELECT * FROM crm_routing_rules WHERE is_active = 1" . $this->tenantSql()
             ) ?: [];
         } catch (\Exception $e) { return []; }
     }
 
     public function getRuleById(int $id): ?array {
         try {
-            return $this->db->fetch("SELECT * FROM crm_routing_rules WHERE id = ?", [$id]);
+            return $this->db->fetch("SELECT * FROM crm_routing_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         } catch (\Exception $e) { return null; }
     }
 
     public function createRule(array $data): array {
         try {
+            $insertCols = array_merge(['name', 'source_pattern', 'city_pattern', 'min_budget', 'max_budget', 'target_department_id', 'target_user_id', 'priority', 'is_active'], array_keys($this->tenantInsertData()));
+            $insertVals = array_merge([$data['name'] ?? '', $data['source_pattern'] ?? '*', $data['city_pattern'] ?? '*', $data['min_budget'] ?? 0, $data['max_budget'] ?? 0, $data['target_department_id'] ?? null, $data['target_user_id'] ?? null, $data['priority'] ?? 100, $data['is_active'] ?? 1], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
+            
             $this->db->query(
-                "INSERT INTO crm_routing_rules (name, source_pattern, city_pattern, min_budget, max_budget, target_department_id, target_user_id, priority, is_active)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $data['name'] ?? '',
-                    $data['source_pattern'] ?? '*',
-                    $data['city_pattern'] ?? '*',
-                    $data['min_budget'] ?? 0,
-                    $data['max_budget'] ?? 0,
-                    $data['target_department_id'] ?? null,
-                    $data['target_user_id'] ?? null,
-                    $data['priority'] ?? 100,
-                    $data['is_active'] ?? 1,
-                ]
+                "INSERT INTO crm_routing_rules (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")",
+                $insertVals
             );
             return ['success' => true, 'id' => $this->db->lastInsertId()];
         } catch (\Exception $e) {
@@ -84,7 +78,7 @@ class LeadRoutingService
             if (empty($sets)) return ['success' => false, 'error' => 'No fields to update'];
             $sets[] = "updated_at = NOW()";
             $params[] = $id;
-            $this->db->query("UPDATE crm_routing_rules SET " . implode(', ', $sets) . " WHERE id = ?", $params);
+            $this->db->query("UPDATE crm_routing_rules SET " . implode(', ', $sets) . " " . $this->tenantSql() . " AND id = ?", array_merge($params, $this->tenantId() > 1 ? [$this->tenantId()] : []));
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -93,7 +87,7 @@ class LeadRoutingService
 
     public function deleteRule(int $id): array {
         try {
-            $this->db->query("DELETE FROM crm_routing_rules WHERE id = ?", [$id]);
+            $this->db->query("DELETE FROM crm_routing_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -108,7 +102,7 @@ class LeadRoutingService
      * Returns matched rule or null (no routing).
      */
     public function routeLead(int $leadId): ?array {
-        $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?", [$leadId]);
+        $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?" . $this->tenantSql(), array_merge([$leadId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
         if (!$lead) return null;
 
         $rules = $this->getActiveRules();
@@ -179,9 +173,9 @@ class LeadRoutingService
         // Log the routing decision
         try {
             $this->db->query(
-                "INSERT INTO lead_routing_log (lead_id, rule_id, target_department_id, target_user_id, routed_at)
-                 VALUES (?, ?, ?, ?, NOW())",
-                [$leadId, $rule['id'], $rule['target_department_id'] ?? null, $targetUserId]
+                "INSERT INTO lead_routing_log (lead_id, rule_id, target_department_id, target_user_id, routed_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ")
+                 VALUES (?, ?, ?, ?, NOW()" . (count($this->tenantInsertData()) > 0 ? ', ?' : '') . ")",
+                array_merge([$leadId, $rule['id'], $rule['target_department_id'] ?? null, $targetUserId], array_values($this->tenantInsertData()))
             );
         } catch (\Exception $e) {
             error_log('LeadRoutingService::applyRouting log error: ' . $e->getMessage());
@@ -196,9 +190,9 @@ class LeadRoutingService
             $row = $this->db->fetch(
                 "SELECT u.id, COUNT(l.id) as lead_count
                  FROM users u
-                 LEFT JOIN leads l ON l.assigned_to = u.id AND l.deleted_at IS NULL
-                 WHERE u.deleted_at IS NULL
-                   AND EXISTS (SELECT 1 FROM employee_designation_roles edr WHERE edr.user_id = u.id AND edr.department_id = ?)
+                 LEFT JOIN leads l ON l.assigned_to = u.id AND l.tenant_id = u.tenant_id AND l.deleted_at IS NULL
+                 WHERE u.deleted_at IS NULL" . $this->tenantSqlForAlias('u') . "
+                   AND EXISTS (SELECT 1 FROM employee_designation_roles edr WHERE edr.user_id = u.id AND edr.department_id = ? AND edr.tenant_id = u.tenant_id)
                  GROUP BY u.id
                  ORDER BY lead_count ASC
                  LIMIT 1",
@@ -214,15 +208,15 @@ class LeadRoutingService
 
     public function getRoutingStats(): array {
         try {
-            $totalRules = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_routing_rules")['cnt'];
-            $activeRules = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_routing_rules WHERE is_active = 1")['cnt'];
-            $routedToday = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM lead_routing_log WHERE DATE(routed_at) = CURDATE()")['cnt'];
-            $routedTotal = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM lead_routing_log")['cnt'];
+            $totalRules = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_routing_rules" . $this->tenantSql())['cnt'];
+            $activeRules = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_routing_rules WHERE is_active = 1" . $this->tenantSql())['cnt'];
+            $routedToday = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM lead_routing_log WHERE DATE(routed_at) = CURDATE()" . $this->tenantSql())['cnt'];
+            $routedTotal = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM lead_routing_log" . $this->tenantSql())['cnt'];
 
             $topRules = $this->db->fetchAll(
                 "SELECT rr.name, COUNT(rl.id) as route_count
                  FROM crm_routing_rules rr
-                 LEFT JOIN lead_routing_log rl ON rl.rule_id = rr.id
+                 LEFT JOIN lead_routing_log rl ON rl.rule_id = rr.id" . $this->tenantSqlForAlias('rr') . "
                  GROUP BY rr.id ORDER BY route_count DESC LIMIT 5"
             ) ?: [];
 

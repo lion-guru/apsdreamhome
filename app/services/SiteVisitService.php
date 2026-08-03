@@ -6,12 +6,16 @@ use App\Core\Database\Database;
 use PDO;
 use Exception;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * SiteVisitService
  * Manages GPS tracking and coordination for site visits.
  */
 class SiteVisitService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     protected $db;
     protected $logger;
 
@@ -36,11 +40,13 @@ class SiteVisitService
             destination_lng DECIMAL(11,8) NULL,
             start_time DATETIME NULL,
             end_time DATETIME NULL,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             KEY idx_agent (agent_id),
-            KEY idx_status (status)
+            KEY idx_status (status),
+            KEY idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
         try {
@@ -56,9 +62,10 @@ class SiteVisitService
     public function startVisit($agentId, $leadId = null, $propertyId = null, $destLat = null, $destLng = null)
     {
         try {
-            $sql = "INSERT INTO mlm_site_visits (agent_id, lead_id, property_id, status, destination_lat, destination_lng, start_time) 
-                    VALUES (?, ?, ?, 'in_progress', ?, ?, NOW())";
-            $this->db->query($sql, [$agentId, $leadId, $propertyId, $destLat, $destLng]);
+            $columns = array_merge(['agent_id', 'lead_id', 'property_id', 'status', 'destination_lat', 'destination_lng', 'start_time'], array_keys($this->tenantInsertData()));
+            $values = array_merge([$agentId, $leadId, $propertyId, 'in_progress', $destLat, $destLng], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($columns), '?'));
+            $this->db->query("INSERT INTO mlm_site_visits (" . implode(', ', $columns) . ") VALUES (" . $placeholders . ")", $values);
             
             return [
                 'success' => true,
@@ -94,8 +101,8 @@ class SiteVisitService
      */
     public function getActiveVisit($agentId)
     {
-        $sql = "SELECT * FROM mlm_site_visits WHERE agent_id = ? AND status = 'in_progress' LIMIT 1";
-        return $this->db->selectOne($sql, [$agentId]);
+        $sql = "SELECT * FROM mlm_site_visits WHERE agent_id = ? AND status = 'in_progress'" . $this->tenantSql() . " LIMIT 1";
+        return $this->db->selectOne($sql, array_merge([$agentId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
     }
 
     /**
