@@ -20,6 +20,8 @@ use \App\Traits\ServiceTenantTrait;
  */
 class PlotCutterService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     /** @var Database */
     private $db;
 
@@ -246,49 +248,36 @@ class PlotCutterService
 
             $this->db->beginTransaction();
 
-            // ── Insert each plot ──────────────────────────────
-            $insertSql = "INSERT INTO plots (
-                colony_id, plot_number, block, sector, plot_type,
-                area_sqft, area_sqm, width_ft, length_ft,
-                dimension_label, frontage_ft, depth_ft,
-                price_per_sqft, base_price_per_sqft, total_price,
-                facing, corner_plot, park_facing, road_width_ft,
-                status, is_active, created_by, created_at, updated_at
-            ) VALUES (
-                :colony_id, :plot_number, :block, :sector, :plot_type,
-                :area_sqft, :area_sqm, :width_ft, :length_ft,
-                :dimension_label, :frontage_ft, :depth_ft,
-                :price_per_sqft, :base_price_per_sqft, :total_price,
-                :facing, :corner_plot, :park_facing, :road_width_ft,
-                'available', 1, :created_by, NOW(), NOW()
-            )";
+            $tid = $this->tenantId();
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+            $tenantWhere = $this->tenantSql();
+            $tenantParam = $tid > 1 ? [$tid] : [];
 
+            // ── Insert each plot ──────────────────────────────
+            $insertCols = array_merge([
+                'colony_id', 'plot_number', 'block', 'sector', 'plot_type',
+                'area_sqft', 'area_sqm', 'width_ft', 'length_ft',
+                'dimension_label', 'frontage_ft', 'depth_ft',
+                'price_per_sqft', 'base_price_per_sqft', 'total_price',
+                'facing', 'corner_plot', 'park_facing', 'road_width_ft',
+                'status', 'is_active', 'created_by', 'created_at', 'updated_at'
+            ], $tenantCols);
+            $insertPlaceholders = implode(', ', array_fill(0, count($insertCols), '?'));
+            $insertSql = "INSERT INTO plots (" . implode(', ', $insertCols) . ") VALUES (" . $insertPlaceholders . ")";
             $stmt = $this->pdo->prepare($insertSql);
 
             foreach ($plots as $plot) {
                 $areaSqm = $plot['area_sqft'] * 0.092903;
-                $stmt->execute([
-                    ':colony_id'         => $colonyId,
-                    ':plot_number'       => $plot['plot_number'],
-                    ':block'             => $plot['block'],
-                    ':sector'            => $plot['sector'] ?? '',
-                    ':plot_type'         => $plot['plot_type'] ?? 'residential',
-                    ':area_sqft'         => round($plot['area_sqft'], 2),
-                    ':area_sqm'          => round($areaSqm, 2),
-                    ':width_ft'          => round($plot['width_ft'], 2),
-                    ':length_ft'         => round($plot['length_ft'], 2),
-                    ':dimension_label'   => $plot['dimension_label'],
-                    ':frontage_ft'       => round($plot['width_ft'], 2),
-                    ':depth_ft'          => round($plot['length_ft'], 2),
-                    ':price_per_sqft'    => 0,
-                    ':base_price_per_sqft' => 0,
-                    ':total_price'       => 0,
-                    ':facing'            => $plot['facing'],
-                    ':corner_plot'       => $plot['corner_plot'] ? 1 : 0,
-                    ':park_facing'       => $plot['park_facing'] ? 1 : 0,
-                    ':road_width_ft'     => $plot['road_width_ft'] ?? 0,
-                    ':created_by'        => $createdBy,
-                ]);
+                $stmt->execute(array_merge([
+                    $colonyId, $plot['plot_number'], $plot['block'], $plot['sector'] ?? '', $plot['plot_type'] ?? 'residential',
+                    round($plot['area_sqft'], 2), round($areaSqm, 2), round($plot['width_ft'], 2), round($plot['length_ft'], 2),
+                    $plot['dimension_label'], round($plot['width_ft'], 2), round($plot['length_ft'], 2),
+                    0, 0, 0,
+                    $plot['facing'], $plot['corner_plot'] ? 1 : 0, $plot['park_facing'] ? 1 : 0, $plot['road_width_ft'] ?? 0,
+                    'available', 1, $createdBy, 'NOW()', 'NOW()'
+                ], $tenantVals));
             }
 
             // ── Update colony totals ─────────────────────────
@@ -300,8 +289,8 @@ class PlotCutterService
                     total_plots      = total_plots + :tp,
                     available_plots  = available_plots + :ap,
                     updated_at       = NOW()
-                WHERE id = :cid",
-                ['tp' => $plotCount, 'ap' => $plotCount, 'cid' => $colonyId]
+                WHERE id = :cid{$tenantWhere}",
+                array_merge(['tp' => $plotCount, 'ap' => $plotCount, 'cid' => $colonyId], $tenantParam)
             );
 
             // ── Create a colony_layouts record ───────────────
@@ -314,7 +303,7 @@ class PlotCutterService
                 $blockSummary[$b]++;
             }
 
-            $layoutData = [
+            $layoutData = array_merge([
                 'colony_id'    => $colonyId,
                 'layout_name'  => 'Layout ' . ($plots[0]['block'] ?? 'A') . ' v1',
                 'version'      => 1,
@@ -331,12 +320,12 @@ class PlotCutterService
                     'created_by' => $createdBy,
                 ]),
                 'status'       => 'active',
-            ];
+            ], $tenantData);
 
             // Remove is_current from others first
             $this->db->execute(
-                "UPDATE colony_layouts SET is_current = 0 WHERE colony_id = :cid",
-                ['cid' => $colonyId]
+                "UPDATE colony_layouts SET is_current = 0 WHERE colony_id = :cid{$tenantWhere}",
+                array_merge(['cid' => $colonyId], $tenantParam)
             );
 
             $this->db->insert('colony_layouts', $layoutData);
@@ -365,9 +354,12 @@ class PlotCutterService
     public function deletePlotsByColony(int $colonyId): array
     {
         try {
+            $tid = $this->tenantId();
+            $tsql = $this->tenantSql();
+            $tparam = $tid > 1 ? [$tid] : [];
             $countRow = $this->db->fetch(
-                "SELECT COUNT(*) AS cnt FROM plots WHERE colony_id = :cid",
-                ['cid' => $colonyId]
+                "SELECT COUNT(*) AS cnt FROM plots WHERE colony_id = :cid{$tsql}",
+                array_merge(['cid' => $colonyId], $tparam)
             );
             $existingCount = (int) ($countRow['cnt'] ?? 0);
 
@@ -378,8 +370,8 @@ class PlotCutterService
             $this->db->beginTransaction();
 
             $this->db->execute(
-                "DELETE FROM plots WHERE colony_id = :cid",
-                ['cid' => $colonyId]
+                "DELETE FROM plots WHERE colony_id = :cid{$tsql}",
+                array_merge(['cid' => $colonyId], $tparam)
             );
 
             $this->db->execute(
@@ -387,13 +379,13 @@ class PlotCutterService
                     total_plots     = 0,
                     available_plots = 0,
                     updated_at      = NOW()
-                WHERE id = :cid",
-                ['cid' => $colonyId]
+                WHERE id = :cid{$tsql}",
+                array_merge(['cid' => $colonyId], $tparam)
             );
 
             $this->db->execute(
-                "UPDATE colony_layouts SET is_current = 0 WHERE colony_id = :cid",
-                ['cid' => $colonyId]
+                "UPDATE colony_layouts SET is_current = 0 WHERE colony_id = :cid{$tsql}",
+                array_merge(['cid' => $colonyId], $tparam)
             );
 
             $this->db->commit();
@@ -420,9 +412,11 @@ class PlotCutterService
     public function getLayoutsForColony(int $colonyId): array
     {
         try {
+            $tsql = $this->tenantSql();
+            $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             return $this->db->fetchAll(
-                "SELECT * FROM colony_layouts WHERE colony_id = :cid ORDER BY version DESC",
-                ['cid' => $colonyId]
+                "SELECT * FROM colony_layouts WHERE colony_id = :cid{$tsql} ORDER BY version DESC",
+                array_merge(['cid' => $colonyId], $tparam)
             );
         } catch (Exception $e) {
             $this->log('error', 'getLayoutsForColony failed', ['error' => $e->getMessage()]);

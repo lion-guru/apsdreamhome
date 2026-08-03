@@ -30,6 +30,7 @@ class AIContentGenerationService
             $this->db->query("
                 CREATE TABLE IF NOT EXISTS generated_content (
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
                     content_type VARCHAR(50) NOT NULL,
                     property_id INT UNSIGNED NULL,
                     generated_content TEXT NOT NULL,
@@ -40,20 +41,23 @@ class AIContentGenerationService
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     INDEX idx_type (content_type),
                     INDEX idx_property (property_id),
-                    INDEX idx_status (status)
+                    INDEX idx_status (status),
+                    INDEX idx_tenant (tenant_id)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ");
             
             $this->db->query("
                 CREATE TABLE IF NOT EXISTS content_templates (
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
                     template_type VARCHAR(50) NOT NULL,
                     section VARCHAR(50) NOT NULL,
                     template_text TEXT NOT NULL,
                     variables JSON,
                     is_active BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_type_section (template_type, section)
+                    INDEX idx_type_section (template_type, section),
+                    INDEX idx_tenant (tenant_id)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ");
         } catch (Exception $e) {
@@ -64,7 +68,7 @@ class AIContentGenerationService
     private function loadTemplates(): void
     {
         try {
-            $rows = $this->db->fetchAll("SELECT * FROM content_templates WHERE is_active = 1");
+            $rows = $this->db->fetchAll("SELECT * FROM content_templates WHERE is_active = 1{$this->tenantSql()}", $this->tenantId() > 1 ? [$this->tenantId()] : []);
             foreach ($rows as $row) {
                 $this->templates[$row['template_type']][$row['section']][] = $row['template_text'];
             }

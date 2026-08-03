@@ -381,17 +381,21 @@ class S3CorsHelper
     private function log(string $level, string $action, string $key, array $context): void
     {
         try {
+            $tenantData = $this->tenantInsertData();
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $pdo->prepare("INSERT INTO gateway_logs
-                (gateway, action, method, endpoint, status, response_code, request_payload)
-                VALUES ('aws_s3', ?, 'OTHER', ?, ?, 0, ?)");
+            $cols = array_merge(
+                ['gateway', 'action', 'method', 'endpoint', 'recipient', 'request_payload', 'response_payload', 'http_code', 'response_code', 'status', 'duration_ms'],
+                array_keys($tenantData)
+            );
+            $colStr = implode(', ', $cols);
+            $placeholders = implode(', ', array_fill(0, count($cols), '?'));
+            $stmt = $pdo->prepare("INSERT INTO gateway_logs ($colStr) VALUES ($placeholders)");
             $status = $level === 'error' ? 'failed' : 'success';
-            $stmt->execute([
-                $action,
-                $key,
-                $status,
-                json_encode($context, JSON_UNESCAPED_SLASHES),
-            ]);
+            $params = array_merge(
+                ['aws_s3', $action, 'OTHER', $key, $this->bucket, json_encode($context, JSON_UNESCAPED_SLASHES), '', 0, 0, $status, 0],
+                array_values($tenantData)
+            );
+            $stmt->execute($params);
         } catch (\Throwable $e) {
         // swallow - logging must never break a request
         error_log($e->getMessage());

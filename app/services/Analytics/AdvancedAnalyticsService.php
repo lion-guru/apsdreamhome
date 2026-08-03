@@ -60,30 +60,27 @@ class AdvancedAnalyticsService
     public function track(string $eventName, array $properties = [], array $context = []): bool
     {
         try {
-            $sql = "INSERT INTO analytics_events 
-                (event_type, event_name, user_id, user_type, session_id, entity_type, entity_id,
-                 properties, ip_address, user_agent, referrer, device_type, browser, os, country, city)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+            $tid = $this->tenantId();
+            $tenantData = $this->tenantInsertData();
+            $cols = array_merge(
+                ['event_type', 'event_name', 'user_id', 'user_type', 'session_id', 'entity_type', 'entity_id',
+                 'properties', 'ip_address', 'user_agent', 'referrer', 'device_type', 'browser', 'os', 'country', 'city'],
+                array_keys($tenantData)
+            );
+            $vals = array_merge(
+                [$context['event_type'] ?? 'custom', $eventName, $context['user_id'] ?? null, $context['user_type'] ?? null,
+                 $context['session_id'] ?? null, $context['entity_type'] ?? null, $context['entity_id'] ?? null,
+                 json_encode($properties), $_SERVER['REMOTE_ADDR'] ?? null, $_SERVER['HTTP_USER_AGENT'] ?? null,
+                 $_SERVER['HTTP_REFERER'] ?? null, $this->detectDeviceType(), $this->detectBrowser(), $this->detectOS(),
+                 $context['country'] ?? null, $context['city'] ?? null],
+                array_values($tenantData)
+            );
+            $colStr = implode(', ', $cols);
+            $placeholders = implode(', ', array_fill(0, count($vals), '?'));
+            $sql = "INSERT INTO analytics_events ($colStr) VALUES ($placeholders)";
+
             $stmt = $this->database->prepare($sql);
-            return $stmt->execute([
-                $context['event_type'] ?? 'custom',
-                $eventName,
-                $context['user_id'] ?? null,
-                $context['user_type'] ?? null,
-                $context['session_id'] ?? null,
-                $context['entity_type'] ?? null,
-                $context['entity_id'] ?? null,
-                json_encode($properties),
-                $_SERVER['REMOTE_ADDR'] ?? null,
-                $_SERVER['HTTP_USER_AGENT'] ?? null,
-                $_SERVER['HTTP_REFERER'] ?? null,
-                $this->detectDeviceType(),
-                $this->detectBrowser(),
-                $this->detectOS(),
-                $context['country'] ?? null,
-                $context['city'] ?? null
-            ]);
+            return $stmt->execute($vals);
         } catch (\Exception $e) {
             return false;
         }
@@ -95,17 +92,15 @@ class AdvancedAnalyticsService
     public function trackFunnel(string $funnelName, string $stageName, array $context = []): bool
     {
         try {
-            $sql = "INSERT INTO analytics_funnels 
-                (funnel_name, stage_name, user_id, session_id)
-                VALUES (?, ?, ?, ?)";
+            $tenantData = $this->tenantInsertData();
+            $cols = array_merge(['funnel_name', 'stage_name', 'user_id', 'session_id'], array_keys($tenantData));
+            $vals = array_merge([$funnelName, $stageName, $context['user_id'] ?? null, $context['session_id'] ?? null], array_values($tenantData));
+            $colStr = implode(', ', $cols);
+            $placeholders = implode(', ', array_fill(0, count($vals), '?'));
+            $sql = "INSERT INTO analytics_funnels ($colStr) VALUES ($placeholders)";
             
             $stmt = $this->database->prepare($sql);
-            return $stmt->execute([
-                $funnelName,
-                $stageName,
-                $context['user_id'] ?? null,
-                $context['session_id'] ?? null
-            ]);
+            return $stmt->execute($vals);
         } catch (\Exception $e) {
             return false;
         }
@@ -134,35 +129,39 @@ class AdvancedAnalyticsService
      */
     private function getTrafficMetrics(string $dateFrom, string $dateTo): array
     {
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $tparam = $tid > 1 ? [$tid] : [];
+
         // Total page views
         $pageViewsSql = "SELECT COUNT(*) FROM analytics_events 
-            WHERE event_name = 'page_view' AND DATE(created_at) BETWEEN ? AND ?";
+            WHERE event_name = 'page_view' AND DATE(created_at) BETWEEN ? AND ?{$tsql}";
         $pageViewsStmt = $this->database->prepare($pageViewsSql);
-        $pageViewsStmt->execute([$dateFrom, $dateTo]);
+        $pageViewsStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $pageViews = $pageViewsStmt->fetchColumn();
         
         // Unique visitors
         $uniqueSql = "SELECT COUNT(DISTINCT session_id) FROM analytics_events 
-            WHERE DATE(created_at) BETWEEN ? AND ?";
+            WHERE DATE(created_at) BETWEEN ? AND ?{$tsql}";
         $uniqueStmt = $this->database->prepare($uniqueSql);
-        $uniqueStmt->execute([$dateFrom, $dateTo]);
+        $uniqueStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $uniqueVisitors = $uniqueStmt->fetchColumn();
         
         // Device breakdown
         $deviceSql = "SELECT device_type, COUNT(*) as count FROM analytics_events 
-            WHERE DATE(created_at) BETWEEN ? AND ? AND device_type IS NOT NULL
+            WHERE DATE(created_at) BETWEEN ? AND ?{$tsql} AND device_type IS NOT NULL
             GROUP BY device_type";
         $deviceStmt = $this->database->prepare($deviceSql);
-        $deviceStmt->execute([$dateFrom, $dateTo]);
+        $deviceStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $deviceBreakdown = $deviceStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Top pages
         $pagesSql = "SELECT properties->>'$.page' as page, COUNT(*) as views 
             FROM analytics_events 
-            WHERE event_name = 'page_view' AND DATE(created_at) BETWEEN ? AND ?
+            WHERE event_name = 'page_view' AND DATE(created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY page ORDER BY views DESC LIMIT 10";
         $pagesStmt = $this->database->prepare($pagesSql);
-        $pagesStmt->execute([$dateFrom, $dateTo]);
+        $pagesStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $topPages = $pagesStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [
@@ -182,27 +181,27 @@ class AdvancedAnalyticsService
     {
         // Property views
         $viewsSql = "SELECT COUNT(*) FROM analytics_events 
-            WHERE event_name = 'property_view' AND DATE(created_at) BETWEEN ? AND ?";
+            WHERE event_name = 'property_view' AND DATE(created_at) BETWEEN ? AND ?{$tsql}";
         $viewsStmt = $this->database->prepare($viewsSql);
-        $viewsStmt->execute([$dateFrom, $dateTo]);
+        $viewsStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $propertyViews = $viewsStmt->fetchColumn();
         
         // Top viewed properties
         $topSql = "SELECT entity_id as property_id, COUNT(*) as views 
             FROM analytics_events 
-            WHERE event_name = 'property_view' AND DATE(created_at) BETWEEN ? AND ?
+            WHERE event_name = 'property_view' AND DATE(created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY entity_id ORDER BY views DESC LIMIT 10";
         $topStmt = $this->database->prepare($topSql);
-        $topStmt->execute([$dateFrom, $dateTo]);
+        $topStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $topProperties = $topStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Search queries
         $searchSql = "SELECT properties->>'$.query' as query, COUNT(*) as count 
             FROM analytics_events 
-            WHERE event_name = 'property_search' AND DATE(created_at) BETWEEN ? AND ?
+            WHERE event_name = 'property_search' AND DATE(created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY query ORDER BY count DESC LIMIT 10";
         $searchStmt = $this->database->prepare($searchSql);
-        $searchStmt->execute([$dateFrom, $dateTo]);
+        $searchStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $topSearches = $searchStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [
@@ -218,24 +217,24 @@ class AdvancedAnalyticsService
     private function getLeadMetrics(string $dateFrom, string $dateTo): array
     {
         // New leads
-        $newSql = "SELECT COUNT(*) FROM leads WHERE DATE(created_at) BETWEEN ? AND ?";
+        $newSql = "SELECT COUNT(*) FROM leads WHERE DATE(created_at) BETWEEN ? AND ?{$tsql}";
         $newStmt = $this->database->prepare($newSql);
-        $newStmt->execute([$dateFrom, $dateTo]);
+        $newStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $newLeads = $newStmt->fetchColumn();
         
         // Lead sources
         $sourceSql = "SELECT source, COUNT(*) as count FROM leads 
-            WHERE DATE(created_at) BETWEEN ? AND ?
+            WHERE DATE(created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY source";
         $sourceStmt = $this->database->prepare($sourceSql);
-        $sourceStmt->execute([$dateFrom, $dateTo]);
+        $sourceStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $sources = $sourceStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Conversion rate
         $convertedSql = "SELECT COUNT(*) FROM leads 
-            WHERE status = 'converted' AND DATE(updated_at) BETWEEN ? AND ?";
+            WHERE status = 'converted' AND DATE(updated_at) BETWEEN ? AND ?{$tsql}";
         $convertedStmt = $this->database->prepare($convertedSql);
-        $convertedStmt->execute([$dateFrom, $dateTo]);
+        $convertedStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $converted = $convertedStmt->fetchColumn();
         
         $conversionRate = $newLeads > 0 ? round(($converted / $newLeads) * 100, 2) : 0;
@@ -253,32 +252,33 @@ class AdvancedAnalyticsService
      */
     private function getSalesMetrics(string $dateFrom, string $dateTo): array
     {
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $tparam = $tid > 1 ? [$tid] : [];
         // Bookings
         $bookingSql = "SELECT COUNT(*), SUM(total_amount) FROM bookings 
-            WHERE status = 'confirmed' AND DATE(created_at) BETWEEN ? AND ?";
+            WHERE status = 'confirmed' AND DATE(created_at) BETWEEN ? AND ?{$tsql}";
         $bookingStmt = $this->database->prepare($bookingSql);
-        $bookingStmt->execute([$dateFrom, $dateTo]);
+        $bookingStmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $bookingData = $bookingStmt->fetch(\PDO::FETCH_NUM);
         
         // Revenue by property type
         $typeSql = "SELECT p.type, COUNT(b.id) as bookings, SUM(b.total_amount) as revenue
             FROM bookings b
-            JOIN properties p ON b.property_id = p.id
+            JOIN properties p ON b.property_id = p.id{$tsql}
             WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?
             GROUP BY p.type";
         $typeStmt = $this->database->prepare($typeSql);
-        $typeStmt->execute([$dateFrom, $dateTo]);
+        $typeStmt->execute(array_merge($tparam, [$dateFrom, $dateTo]));
         $byType = $typeStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         // Top users
-        $tid = $this->getTenantId();
-        $tenantSql = $tid > 1 ? " AND a.tenant_id = ?" : "";
         $agentSql = "SELECT a.name, COUNT(b.id) as bookings, SUM(b.total_amount) as revenue
             FROM bookings b
             JOIN users a ON b.agent_id = a.id
-            WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?{$tenantSql}
+            WHERE b.status = 'confirmed' AND DATE(b.created_at) BETWEEN ? AND ?{$tsql}
             GROUP BY a.id ORDER BY revenue DESC LIMIT 5";
-        $params = $tid > 1 ? [$dateFrom, $dateTo, $tid] : [$dateFrom, $dateTo];
+        $agentParams = $tid > 1 ? [$dateFrom, $dateTo, $tid] : [$dateFrom, $dateTo];
         $agentStmt = $this->database->prepare($agentSql);
         $agentStmt->execute($params);
         $topAgents = $agentStmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -296,14 +296,16 @@ class AdvancedAnalyticsService
      */
     private function getFunnelMetrics(string $dateFrom, string $dateTo): array
     {
+        $tsql = $this->tenantSql();
+        $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $sql = "SELECT funnel_name, stage_name, COUNT(*) as count
-            FROM analytics_funnels
+            FROM analytics_funnels{$tsql}
             WHERE DATE(created_at) BETWEEN ? AND ?
             GROUP BY funnel_name, stage_name
             ORDER BY funnel_name, stage_name";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$dateFrom, $dateTo]);
+        $stmt->execute(array_merge([$dateFrom, $dateTo], $tparam));
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         $funnels = [];
@@ -319,9 +321,10 @@ class AdvancedAnalyticsService
      */
     private function getTopPerformers(string $dateFrom, string $dateTo): array
     {
+        $tid = $this->tenantId();
+        $tsql = $this->tenantSql();
+        $tparam = $tid > 1 ? [$tid] : [];
         // Top users by sales
-        $tid = $this->getTenantId();
-        $tenantWhere = $tid > 1 ? " WHERE a.tenant_id = ?" : "";
         $agentSql = "SELECT 
             a.id,
             a.name,
@@ -332,7 +335,7 @@ class AdvancedAnalyticsService
             LEFT JOIN bookings b ON a.id = b.agent_id 
                 AND b.status = 'confirmed' 
                 AND DATE(b.created_at) BETWEEN ? AND ?
-            {$tenantWhere}
+            {$tsql}
             GROUP BY a.id
             HAVING bookings > 0
             ORDER BY revenue DESC
@@ -349,7 +352,7 @@ class AdvancedAnalyticsService
             p.title,
             COUNT(b.id) as bookings,
             AVG(pv.views) as avg_daily_views
-            FROM properties p
+            FROM properties p{$tsql}
             LEFT JOIN bookings b ON p.id = b.property_id 
                 AND b.status = 'confirmed' 
                 AND DATE(b.created_at) BETWEEN ? AND ?
@@ -357,7 +360,7 @@ class AdvancedAnalyticsService
                 SELECT entity_id, COUNT(*) as views 
                 FROM analytics_events 
                 WHERE event_name = 'property_view' 
-                AND DATE(created_at) BETWEEN ? AND ?
+                AND DATE(created_at) BETWEEN ? AND ?{$tsql}
                 GROUP BY entity_id
             ) pv ON p.id = pv.entity_id
             WHERE p.status = 'available'
@@ -367,7 +370,7 @@ class AdvancedAnalyticsService
             LIMIT 10";
         
         $propStmt = $this->database->prepare($propSql);
-        $propStmt->execute([$dateFrom, $dateTo, $dateFrom, $dateTo]);
+        $propStmt->execute(array_merge([$dateFrom, $dateTo, $dateFrom, $dateTo], $tparam, $tparam));
         $properties = $propStmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return [
@@ -385,7 +388,7 @@ class AdvancedAnalyticsService
         $dateFrom = $dateFrom ?? date('Y-m-d', strtotime('-30 days'));
         $dateTo = $dateTo ?? date('Y-m-d');
         
-        $groupBy = match($granularity) {
+         $groupBy = match($granularity) {
             'hour' => "DATE_FORMAT(created_at, '%Y-%m-%d %H:00')",
             'day' => "DATE(created_at)",
             'week' => "YEARWEEK(created_at)",
@@ -393,16 +396,19 @@ class AdvancedAnalyticsService
             default => "DATE(created_at)"
         };
         
+        $tsql = $this->tenantSql();
+        $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+
         $sql = "SELECT 
             {$groupBy} as period,
             COUNT(*) as value
-            FROM analytics_events
+            FROM analytics_events{$tsql}
             WHERE event_name = ? AND DATE(created_at) BETWEEN ? AND ?
             GROUP BY period
             ORDER BY period ASC";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$metric, $dateFrom, $dateTo]);
+        $stmt->execute(array_merge([$metric, $dateFrom, $dateTo], $tparam));
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -496,10 +502,10 @@ class AdvancedAnalyticsService
     public function cleanup(int $days = 90): int
     {
         $sql = "DELETE FROM analytics_events 
-            WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+            WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY){$tsql}";
         
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$days]);
+        $stmt->execute(array_merge([$days], $tparam));
         
         return $stmt->rowCount();
     }

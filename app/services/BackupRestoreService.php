@@ -37,6 +37,7 @@ class BackupRestoreService
     {
         $sql = "CREATE TABLE IF NOT EXISTS system_backups (
             id INT AUTO_INCREMENT PRIMARY KEY,
+            tenant_id INT UNSIGNED NOT NULL DEFAULT 1,
             backup_type ENUM('full', 'incremental', 'partial') NOT NULL,
             file_path VARCHAR(500) NOT NULL,
             file_size BIGINT NOT NULL,
@@ -49,7 +50,8 @@ class BackupRestoreService
             created_by INT NULL,
             INDEX idx_status (status),
             INDEX idx_type (backup_type),
-            INDEX idx_created_at (started_at)
+            INDEX idx_created_at (started_at),
+            INDEX idx_tenant (tenant_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
         $this->database->getConnection()->exec($sql);
@@ -268,12 +270,15 @@ class BackupRestoreService
     public function listBackups(): array
     {
         try {
-            $sql = "SELECT * FROM system_backups ORDER BY started_at DESC";
+            $tsql = $this->tenantSql();
+            $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
+            $sql = "SELECT * FROM system_backups{$tsql} ORDER BY started_at DESC";
+            $backups = $this->database->query($sql, $tparam)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
+        $backups = [];
         }
-        $backups = $this->database->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($backups as &$backup) {
             $backup['file_size_formatted'] = $this->formatBytes($backup['file_size']);
@@ -316,15 +321,17 @@ class BackupRestoreService
     private function cleanOldBackups(): void
     {
         $cutoff = date('Y-m-d H:i:s', strtotime("-{$this->retentionDays} days"));
+        $tsql = $this->tenantSql();
+        $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         
         try {
-            $sql = "SELECT * FROM system_backups WHERE started_at < ? AND status = 'completed'";
+            $sql = "SELECT * FROM system_backups WHERE started_at < ? AND status = 'completed'{$tsql}";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$cutoff]);
+        $stmt->execute(array_merge([$cutoff], $tparam));
         $oldBackups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         foreach ($oldBackups as $backup) {
@@ -332,7 +339,10 @@ class BackupRestoreService
                 unlink($backup['file_path']);
             }
             
-            $this->database->exec("DELETE FROM system_backups WHERE id = " . $backup['id']);
+            $this->database->execute(
+                "DELETE FROM system_backups WHERE id = ?{$tsql}",
+                array_merge([$backup['id']], $tparam)
+            );
         }
     }
     
@@ -342,14 +352,18 @@ class BackupRestoreService
     private function logBackupStart(string $type, ?int $createdBy): int
     {
         try {
-            $sql = "INSERT INTO system_backups (backup_type, file_path, file_size, checksum, created_by) 
-                    VALUES (?, '', 0, '', ?)";
+            $tenantData = $this->tenantInsertData();
+            $cols = array_merge(['backup_type', 'file_path', 'file_size', 'checksum', 'created_by'], array_keys($tenantData));
+            $vals = array_merge([$type, '', 0, '', $createdBy], array_values($tenantData));
+            $colStr = implode(', ', $cols);
+            $placeholders = implode(', ', array_fill(0, count($vals), '?'));
+            $sql = "INSERT INTO system_backups ($colStr) VALUES ($placeholders)";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$type, $createdBy]);
+        $stmt->execute($vals);
         
         return $this->database->lastInsertId();
     }
@@ -360,12 +374,14 @@ class BackupRestoreService
     private function logBackupComplete(int $backupId, string $filepath, int $fileSize, 
                                         string $checksum, array $tables): void
     {
+        $tsql = $this->tenantSql();
+        $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $sql = "UPDATE system_backups 
                 SET file_path = ?, file_size = ?, checksum = ?, tables_backed = ?, 
                     status = 'completed', completed_at = NOW() 
-                WHERE id = ?";
+                WHERE id = ?{$tsql}";
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$filepath, $fileSize, $checksum, json_encode($tables), $backupId]);
+        $stmt->execute(array_merge([$filepath, $fileSize, $checksum, json_encode($tables), $backupId], $tparam));
     }
     
     /**
@@ -373,16 +389,18 @@ class BackupRestoreService
      */
     private function logBackupFailed(int $backupId, string $error): void
     {
+        $tsql = $this->tenantSql();
+        $tparam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         try {
             $sql = "UPDATE system_backups 
                     SET status = 'failed', error_message = ? 
-                    WHERE id = ?";
+                    WHERE id = ?{$tsql}";
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
         }
         $stmt = $this->database->prepare($sql);
-        $stmt->execute([$error, $backupId]);
+        $stmt->execute(array_merge([$error, $backupId], $tparam));
     }
     
     /**

@@ -379,14 +379,16 @@ class RAGAgent
         if ($parsed['intent'] !== 'pricing') return [];
 
         try {
-$rows = $this->db->fetchAll(
+            $tid = $this->tenantId();
+            $tenantWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
+            $rows = $this->db->fetchAll(
                 "SELECT p.plot_number, p.area_sqft, c.name as colony_name, ph.old_price, ph.new_price, ph.effective_date
                   FROM price_history ph
-                  JOIN plots p ON ph.plot_id = p.id
+                  JOIN plots p ON ph.plot_id = p.id{$tenantWhere}
                   LEFT JOIN colonies c ON p.colony_id = c.id
-                  WHERE ph.plot_id IN (SELECT id FROM plots{$this->tenantSql()})
                   ORDER BY ph.effective_date DESC
-                  LIMIT 5"
+                  LIMIT 5",
+                $tid > 1 ? [$tid] : []
             );
 
             $results = [];
@@ -555,28 +557,41 @@ $rows = $this->db->fetchAll(
                 }
             }
 
-            // Store in ai_chat_messages for learning
-            $this->db->execute(
-                "INSERT INTO ai_chat_messages (session_id, sender, message, detected_intent, confidence, entities, created_at)
-                 VALUES (?, 'user', ?, ?, ?, ?, NOW())",
-                [
-                    session_id(),
-                    $question,
-                    'rag_query',
-                    $answer['confidence'],
-                    json_encode(['sources' => $answer['sources']])
-                ]
+            $tenantData = $this->tenantInsertData();
+            $tenantCols = array_keys($tenantData);
+            $tenantVals = array_values($tenantData);
+
+            // Store user message in ai_chat_messages for learning
+            $userCols = array_merge(
+                ['session_id', 'sender', 'message', 'detected_intent', 'confidence', 'entities'],
+                $tenantCols
+            );
+            $userVals = array_merge(
+                [session_id(), 'user', $question, 'rag_query', $answer['confidence'],
+                 json_encode(['sources' => $answer['sources']])],
+                $tenantVals
+            );
+            $colStr = implode(', ', $userCols);
+            $placeholders = implode(', ', array_fill(0, count($userVals), '?'));
+            $this->db->query(
+                "INSERT INTO ai_chat_messages ($colStr, created_at) VALUES ($placeholders, NOW())",
+                $userVals
             );
 
-            $this->db->execute(
-                "INSERT INTO ai_chat_messages (session_id, sender, message, detected_intent, confidence, created_at)
-                 VALUES (?, 'bot', ?, ?, ?, NOW())",
-                [
-                    session_id(),
-                    $answer['text'],
-                    'rag_response',
-                    $answer['confidence']
-                ]
+            // Store bot response
+            $botCols = array_merge(
+                ['session_id', 'sender', 'message', 'detected_intent', 'confidence'],
+                $tenantCols
+            );
+            $botVals = array_merge(
+                [session_id(), 'bot', $answer['text'], 'rag_response', $answer['confidence']],
+                $tenantVals
+            );
+            $colStr2 = implode(', ', $botCols);
+            $placeholders2 = implode(', ', array_fill(0, count($botVals), '?'));
+            $this->db->query(
+                "INSERT INTO ai_chat_messages ($colStr2, created_at) VALUES ($placeholders2, NOW())",
+                $botVals
             );
         } catch (\Exception $e) {
         // Silent fail
