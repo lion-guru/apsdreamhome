@@ -2,6 +2,104 @@
 
 ---
 
+# 🏗️ Agent Instructions — Quick Reference
+
+## Project Stack
+- **Framework:** Custom PHP MVC (NOT Laravel) — `app/Http/Controllers/`, `app/Models/`, `app/views/`, `app/Services/`
+- **Runtime:** PHP 8.3, MySQL 8.0 (port 3307), Apache (XAMPP, port 80)
+- **Frontend:** Flutter (mobile app), Vanilla JS + Bootstrap 5 (web admin)
+- **Database:** ~775 tables, InnoDB, all with PKs, 23 FK constraints
+- **Mobile App:** `mobile/apsdreamhome_app_v2/` — Flutter, debug APK at `public/downloads/apsdreamhome.apk`
+
+## Key Commands
+```bash
+# E2E Tests (must pass: 153/153)
+node testing/visual_tests/E2E_MASTER_TEST.mjs
+
+# PHP syntax check
+php -l <file.php>
+
+# Database query (verify columns exist before writing queries)
+mysql -h 127.0.0.1 -P 3307 -u root apsdreamhome -e "DESCRIBE table_name"
+
+# Build APK (every Flutter change requires APK rebuild)
+cd mobile/apsdreamhome_app_v2 && flutter build apk --debug
+# APK is at: android/app/build/outputs/flutter-apk/app-debug.apk
+# Copy to: public/downloads/apsdreamhome.apk
+```
+
+## Architecture — 7-Layer Tenant Enforcement
+1. **Global** — `BaseController::enforceTenantStatus()` blocks suspended tenants
+2. **Controller** — `TenantAwareTrait` (Tenant ID from session)
+3. **Service** — `ServiceTenantTrait` (tenant_id added to all SQL writes)
+4. **Model** — `Model::$tenantScoped = true` on 39 business models
+5. **Cache** — `CacheService::tenantKey()` prefixes all cache keys with `t{N}_`
+6. **Cron** — `TenantContext::setById()` + `$tenantSql` helpers in all cron scripts
+7. **Auth** — `tenant_id` filtering on ALL user/login/register/password-reset queries
+
+## Critical Patterns
+
+### Tenant Scoping (ALL services must use)
+```php
+use App\Traits\ServiceTenantTrait;
+$tid = $this->tenantId(); // Returns 1 for superadmin, tenant_id for others
+$tenantCol = $tid > 1 ? ", tenant_id" : "";
+$tenantVal = $tid > 1 ? ", ?" : "";
+$sql = "...{$tenantCol}" . " VALUES (...{$tenantVal})";
+```
+
+### CSRF Exclusion
+- Router-level: Add new auth endpoints to `$excludedPaths` in `routes/router.php:107`
+- Controller-level: `skipCsrfProtection()` in constructor for public POST endpoints
+
+### Layout System
+- Admin layout: `app/views/layouts/admin.php`
+- `AdminController` extends `BaseController`, sets `$this->layout = 'layouts/admin'`
+- All admin controllers MUST extend `AdminController`
+- View paths: `render('admin.auctions.index')` → `app/views/admin/auctions/index.php`
+
+### Dual MLM Tree Tables
+- `network_tree` — rich binary tree for displays/visualizations
+- `mlm_network_tree` — simple parent chain for ALL commission engines
+- Registration must INSERT into BOTH tables
+
+### Error Handling
+- All `catch {}` blocks must have `error_log()` — no empty catches
+- Use `$this->pdo->prepare()` + `execute($params)` for ALL SQL — never interpolate raw
+- `(int)` cast all `$GLOBALS['api_user_id']`, `$userId`, `$tid` before SQL use
+
+## Pre-Deletion Checklist (MANDATORY)
+1. What does it do? — Read entire file
+2. Is functionality reimplemented elsewhere?
+3. Is it referenced anywhere? — Routes, views, services, sidebar, DB menu
+4. Can it be reached via URL?
+5. Does it have DB data?
+6. What breaks if deleted?
+7. ALL pass = safe. ANY fail = MOVE to `_archive/`, don't delete.
+
+## File Organization Rules
+- PHP files in `app/` use namespace `App\*`
+- Views in `app/views/` use dot notation: `admin.dashboard.index` → `admin/dashboard/index.php`
+- CSS must be in `public/assets/css/` (not `assets/css/`)
+- Static assets served from `public/`
+
+## Testing Standards
+- Run E2E after EVERY batch of changes
+- 153/153 must pass before considering work complete
+- PHP syntax check all modified files: `php -l <file>`
+- Check PHP error log for warnings/notices
+
+## Doc Accuracy Discipline
+> **If `grep -rn "name" app/` returns nothing, the name does not exist. Do not document it.**
+
+The recurring failure mode is *plausible-but-unverified specifics*. Always verify claims against the source before writing them.
+
+1. **Never state an API name, endpoint, path, or env var without grepping for it first.**
+2. **Never write a line count, table count, or route count from memory.** Use actual commands.
+3. **Cite real source (`file.php:line`) over paraphrasing behavior.**
+
+---
+
 # Session 67: Controller Tenant_id Scoping — 38 Files, 200+ SQL Writes (2026-07-30)
 
 ## Goal
