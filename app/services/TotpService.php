@@ -155,7 +155,9 @@ class TotpService
     {
         try {
             $st = $this->db->prepare("SELECT two_factor_backup_codes FROM users WHERE id = :id" . $this->tenantSql());
-            $st->execute([':id' => $userId]);
+            $params = [':id' => $userId];
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+            $st->execute($params);
             $r = $st->fetch(PDO::FETCH_ASSOC);
             $json = $r['two_factor_backup_codes'] ?? null;
             if (!$json) return [];
@@ -168,7 +170,9 @@ class TotpService
     {
         try {
             $st = $this->db->prepare("UPDATE users SET two_factor_backup_codes = :c WHERE id = :id" . $this->tenantSql());
-            $st->execute([':c' => json_encode(array_values($codes)), ':id' => $userId]);
+            $params = [':c' => json_encode(array_values($codes)), ':id' => $userId];
+            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
+            $st->execute($params);
             return true;
         } catch (\Throwable $e) { return false; }
     }
@@ -230,9 +234,8 @@ class TotpService
                 ':codes' => json_encode(array_values($existing)),
                 ':codes2' => json_encode(array_values($existing)),
             ];
-            foreach ($tenantData as $col => $val) {
-                $params[":{$col}"] = $val;
-            }
+            $params = array_merge($params, $tenantData);
+
             $st->execute($params);
             return true;
         } catch (\Throwable $e) { return false; }

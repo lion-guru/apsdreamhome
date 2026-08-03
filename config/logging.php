@@ -13,7 +13,7 @@ return [
         'database' => [
             'enabled' => true,
             'connection' => 'default',
-            'table' => 'comprehensive_audit_log',
+            'table' => 'audit_log',
             'log_levels' => ['emergency', 'alert', 'critical', 'error']
         ],
         'file' => [
@@ -132,7 +132,7 @@ return [
 
     // Log Retention and Cleanup
     'retention' => [
-        'comprehensive_audit_log' => 90, // days
+        'audit_log' => 90, // days
         'security_event_log' => 90, // days
         'system_performance_log' => 30, // days
         'api_request_log' => 60 // days

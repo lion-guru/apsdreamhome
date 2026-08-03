@@ -230,28 +230,26 @@ class SystemLogger
             $tenantCols = count($tenantData) > 0 ? ', ' . implode(', ', array_keys($tenantData)) : '';
             $tenantPhs  = count($tenantData) > 0 ? ', ' . implode(', ', array_fill(0, count($tenantData), '?')) : '';
             $stmt = $this->db->prepare(
-                "INSERT INTO comprehensive_audit_log 
-                (trace_id, user_id, username, action_type, severity_level, 
-                ip_address, request_payload{$tenantCols}, created_at) 
-                VALUES (:trace_id, :user_id, :username, :action_type, 
-                :severity_level, :ip_address, :request_payload{$tenantPhs}, NOW())"
+                "INSERT INTO audit_log 
+                (user_id, user_role, action, details, ip_address{$tenantCols}, created_at) 
+                VALUES (?, ?, ?, ?, ?{$tenantPhs}, NOW())"
             );
 
+            $detailsJson = json_encode([
+                'trace_id' => $logEntry['trace_id'],
+                'severity_level' => $logEntry['level'],
+                'message' => $logEntry['message'],
+                'context' => $logEntry['context']
+            ], JSON_UNESCAPED_SLASHES);
+
             $params = [
-                ':trace_id' => $logEntry['trace_id'],
-                ':user_id' => $logEntry['user_id'] ?? null,
-                ':username' => $logEntry['username'],
-                ':action_type' => 'system',
-                ':severity_level' => $logEntry['level'],
-                ':ip_address' => $logEntry['ip_address'],
-                ':request_payload' => json_encode([
-                    'message' => $logEntry['message'],
-                    'context' => $logEntry['context']
-                ])
+                $logEntry['user_id'] ?? null,
+                $logEntry['username'] ?? 'system',
+                $logEntry['level'],
+                $detailsJson,
+                $logEntry['ip_address']
             ];
-            foreach ($tenantData as $col => $val) {
-                $params[":{$col}"] = $val;
-            }
+            if (!empty($tenantData)) $params = array_merge($params, array_values($tenantData));
             $stmt->execute($params);
         } catch (Exception $e) {
             error_log("Database Logging Error: " . $e->getMessage());

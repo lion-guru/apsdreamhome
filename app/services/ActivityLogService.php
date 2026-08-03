@@ -30,7 +30,7 @@ class ActivityLogService
             $cols = "user_id, action, details, ip_address, created_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
             $ph = "?, ?, ?, ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
             $stmt = $this->db->prepare("
-                INSERT INTO user_activity_log ($cols) VALUES ($ph)
+                INSERT INTO user_activity_logs_unified ($cols) VALUES ($ph)
             ");
             $params = [
                 $userId,
@@ -52,7 +52,7 @@ class ActivityLogService
     public function getRecent(int $userId, int $limit = 50): array
     {
         try {
-            $sql = "SELECT * FROM user_activity_log 
+            $sql = "SELECT * FROM user_activity_logs_unified 
                 WHERE user_id = ?" . $this->tenantSql() . "
                 ORDER BY created_at DESC 
                 LIMIT ?";
@@ -74,7 +74,7 @@ class ActivityLogService
     public function checkSuspicious(int $userId, string $action, int $windowMinutes = 15, int $maxAttempts = 5): bool
     {
         try {
-            $sql = "SELECT COUNT(*) as cnt FROM user_activity_log 
+            $sql = "SELECT COUNT(*) as cnt FROM user_activity_logs_unified 
                 WHERE user_id = ? AND action = ?" . $this->tenantSql() . "
                 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
             $params = [$userId, $action];
@@ -85,6 +85,7 @@ class ActivityLogService
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return ($row['cnt'] ?? 0) >= $maxAttempts;
         } catch (\Throwable $e) {
+            error_log('ActivityLog checkSuspicious error: ' . $e->getMessage());
             return false;
         }
     }
@@ -97,7 +98,7 @@ class ActivityLogService
         try {
             $sql = "SELECT action, COUNT(*) as count, 
                        COUNT(DISTINCT user_id) as unique_users
-                FROM user_activity_log 
+                FROM user_activity_logs_unified 
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? HOUR)" . $this->tenantSql() . "
                 GROUP BY action
                 ORDER BY count DESC";
@@ -107,6 +108,7 @@ class ActivityLogService
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
+            error_log('ActivityLog getSummary error: ' . $e->getMessage());
             return [];
         }
     }

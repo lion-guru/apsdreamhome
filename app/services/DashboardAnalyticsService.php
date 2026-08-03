@@ -21,7 +21,7 @@ class DashboardAnalyticsService
      * @param array $filters Optional filters (date_from, date_to, status, etc.)
      * @return array Booking statistics
      */
-    public static function getBookingStats($filters = [])
+    public function getBookingStats($filters = [])
     {
         try {
             $db = Database::getInstance();
@@ -40,7 +40,7 @@ class DashboardAnalyticsService
                 $params['date_to'] = $filters['date_to'];
             }
             
-            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
             
             // Get total bookings
             $sql = "SELECT COUNT(*) as count FROM bookings {$whereClause}" . $this->tenantSql();
@@ -63,7 +63,7 @@ class DashboardAnalyticsService
             $byStatus = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             
 // Get total revenue
-            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " WHERE payment_status = 'paid'";
+            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " AND payment_status = 'paid'";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
@@ -101,7 +101,7 @@ class DashboardAnalyticsService
      * @param array $filters Optional filters (date_from, date_to, status, type, etc.)
      * @return array Property statistics
      */
-    public static function getPropertyStats($filters = [])
+    public function getPropertyStats($filters = [])
     {
         try {
             $db = Database::getInstance();
@@ -132,7 +132,7 @@ class DashboardAnalyticsService
                 $params['type'] = $filters['type'];
             }
             
-            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
             
             // Get total properties
             $sql = "SELECT COUNT(*) as count FROM properties {$whereClause}" . $this->tenantSql();
@@ -206,7 +206,7 @@ class DashboardAnalyticsService
      * @param array $filters Optional filters (date_from, date_to, status, source, etc.)
      * @return array Lead statistics
      */
-    public static function getLeadStats($filters = [])
+    public function getLeadStats($filters = [])
     {
         try {
             $db = Database::getInstance();
@@ -237,7 +237,7 @@ class DashboardAnalyticsService
                 $params['source'] = $filters['source'];
             }
             
-            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
             
             // Get total leads
             $sql = "SELECT COUNT(*) as count FROM leads {$whereClause}" . $this->tenantSql();
@@ -280,10 +280,6 @@ class DashboardAnalyticsService
             }
             if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
-            foreach ($params as $key => $val) {
-                $stmt->bindValue(':' . $key, $val);
-            }
-            $stmt->execute();
             $today = $stmt->fetch()['count'];
             
             return [
@@ -317,7 +313,7 @@ class DashboardAnalyticsService
      * @param array $filters Optional filters (date_from, date_to, etc.)
      * @return array Revenue statistics
      */
-    public static function getRevenueStats($filters = [])
+    public function getRevenueStats($filters = [])
     {
         try {
             $db = Database::getInstance();
@@ -336,7 +332,7 @@ class DashboardAnalyticsService
                 $params['date_to'] = $filters['date_to'];
             }
             
-            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
             
             // Get total revenue from bookings
             $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " WHERE payment_status = 'paid'";
@@ -349,7 +345,7 @@ class DashboardAnalyticsService
             $totalRevenue = $stmt->fetch()['revenue'] ?? 0;
             
             // Get pending revenue
-            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " WHERE payment_status IN ('pending', 'partial')";
+            $sql = "SELECT SUM(total_amount) as revenue FROM bookings {$whereClause}" . $this->tenantSql() . " AND payment_status IN ('pending', 'partial')";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
@@ -396,7 +392,7 @@ class DashboardAnalyticsService
      * @param array $filters Optional filters (date_from, date_to, role, etc.)
      * @return array Team performance statistics
      */
-    public static function getTeamPerformanceStats($filters = [])
+    public function getTeamPerformanceStats($filters = [])
     {
         try {
             $db = Database::getInstance();
@@ -421,7 +417,7 @@ class DashboardAnalyticsService
                 $params['role'] = $filters['role'];
             }
             
-            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : 'WHERE 1=1';
             
             // Get team members count
             $sql = "SELECT COUNT(*) as count FROM users {$whereClause}" . $this->tenantSql();
@@ -452,7 +448,7 @@ class DashboardAnalyticsService
                         SUM(b.total_amount) as total_revenue
                     FROM users u
                     LEFT JOIN bookings b ON u.id = b.associate_id OR u.id = b.customer_id
-                    {$whereClause}
+                    {$whereClause}" . $this->tenantSqlForAlias('u') . "
                     GROUP BY u.id
                     ORDER BY total_revenue DESC
                     LIMIT 10";
@@ -460,6 +456,7 @@ class DashboardAnalyticsService
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
             }
+            if ($this->tenantId() > 1) $stmt->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $stmt->execute();
             $topPerformers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
@@ -492,14 +489,14 @@ class DashboardAnalyticsService
      * @param array $filters Optional filters for all stats
      * @return array All dashboard statistics
      */
-    public static function getAllDashboardStats($filters = [])
+    public function getAllDashboardStats($filters = [])
     {
         return [
-            'bookings' => self::getBookingStats($filters),
-            'properties' => self::getPropertyStats($filters),
-            'leads' => self::getLeadStats($filters),
-            'revenue' => self::getRevenueStats($filters),
-            'team_performance' => self::getTeamPerformanceStats($filters)
+            'bookings' => $this->getBookingStats($filters),
+            'properties' => $this->getPropertyStats($filters),
+            'leads' => $this->getLeadStats($filters),
+            'revenue' => $this->getRevenueStats($filters),
+            'team_performance' => $this->getTeamPerformanceStats($filters)
         ];
     }
 }
