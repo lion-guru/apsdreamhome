@@ -4,12 +4,16 @@ namespace App\Services\Training;
 
 use App\Core\Database;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Training Module Service
  * Video courses, certifications for users
  */
 class TrainingService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     // Course status
@@ -49,7 +53,11 @@ class TrainingService
         $sql = "INSERT INTO training_courses (" . implode(', ', array_keys($course)) . ") 
                 VALUES (" . implode(', ', array_fill(0, count($course), '?')) . ")";
 
-        $this->db->query($sql, array_values($course));
+            $this->db->query(
+            "INSERT INTO training_courses (" . implode(', ', array_keys($course)) . ", tenant_id) 
+                VALUES (" . implode(', ', array_fill(0, count($course), '?')) . ", ?)",
+            array_merge(array_values($course), [$this->tenantId()])
+        );
 
         return [
             'success' => true,
@@ -64,20 +72,21 @@ class TrainingService
     {
         // Get next order
         $order = $this->db->query(
-            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_modules WHERE course_id = ?",
-            [$courseId]
+            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_modules WHERE course_id = ?" . $this->tenantSqlForAlias('m') . " LIMIT 1",
+            array_merge([$courseId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         )->fetchColumn();
 
-        $module = [
+            $module = [
             'course_id' => $courseId,
             'title' => $data['title'],
             'description' => $data['description'] ?? '',
             'sort_order' => $order,
             'created_at' => date('Y-m-d H:i:s')
         ];
+        $module['tenant_id'] = $this->tenantId();
 
         $this->db->query(
-            "INSERT INTO training_modules (course_id, title, description, sort_order, created_at) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO training_modules (course_id, title, description, sort_order, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?)",
             array_values($module)
         );
 
@@ -93,7 +102,7 @@ class TrainingService
     public function addLesson(int $moduleId, array $data): array
     {
         $order = $this->db->query(
-            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_lessons WHERE module_id = ?",
+            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_lessons WHERE module_id = ?" . $this->tenantSqlForAlias('l') . " LIMIT 1",
             [$moduleId]
         )->fetchColumn();
 
@@ -108,8 +117,10 @@ class TrainingService
             'created_at' => date('Y-m-d H:i:s')
         ];
 
+        $lesson['tenant_id'] = $this->tenantId();
+
         $this->db->query(
-            "INSERT INTO training_lessons (module_id, title, content_type, content_url, content_text, duration_minutes, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO training_lessons (module_id, title, content_type, content_url, content_text, duration_minutes, sort_order, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             array_values($lesson)
         );
 
@@ -126,8 +137,8 @@ class TrainingService
     {
         // Check if already enrolled
         $existing = $this->db->query(
-            "SELECT id, status FROM training_enrollments WHERE course_id = ? AND user_id = ?",
-            [$courseId, $userId]
+            "SELECT id, status FROM training_enrollments WHERE course_id = ? AND user_id = ?" . $this->tenantSql(),
+            array_merge([$courseId, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         )->fetch(\PDO::FETCH_ASSOC);
 
         if ($existing) {
@@ -142,9 +153,20 @@ class TrainingService
             return ['success' => true, 'enrollment_id' => $existing['id']];
         }
 
+        $enrollmentData = [
+            'course_id' => $courseId,
+            'user_id' => $userId,
+            'status' => self::ENROLLMENT_ACTIVE,
+            'enrolled_at' => 'NOW()',
+            'created_at' => 'NOW()'
+        ];
+        $enrollmentData = array_merge($enrollmentData, $this->tenantInsertData());
+
+        $cols = implode(', ', array_keys($enrollmentData));
+        $placeholders = implode(', ', array_fill(0, count($enrollmentData), '?'));
         $this->db->query(
-            "INSERT INTO training_enrollments (course_id, user_id, status, enrolled_at, created_at) VALUES (?, ?, ?, NOW(), NOW())",
-            [$courseId, $userId, self::ENROLLMENT_ACTIVE]
+            "INSERT INTO training_enrollments ($cols) VALUES ($placeholders)",
+            array_map(fn($v) => $v === 'NOW()' ? 'NOW()' : $v, array_values($enrollmentData))
         );
 
         return [
@@ -159,9 +181,8 @@ class TrainingService
     public function completeLesson(int $enrollmentId, int $lessonId): array
     {
         $this->db->query(
-            "INSERT INTO training_lesson_progress (enrollment_id, lesson_id, completed_at, created_at) VALUES (?, ?, NOW(), NOW())
-             ON DUPLICATE KEY UPDATE completed_at = NOW()",
-            [$enrollmentId, $lessonId]
+            "INSERT INTO training_lesson_progress (enrollment_id, lesson_id, completed_at, created_at, tenant_id) VALUES (?, ?, NOW(), NOW(), ?)",
+            [$enrollmentId, $lessonId, $this->tenantId()]
         );
 
         // Update overall progress
@@ -184,8 +205,8 @@ class TrainingService
     private function calculateProgress(int $enrollmentId): float
     {
         $enrollment = $this->db->query(
-            "SELECT e.course_id FROM training_enrollments e WHERE e.id = ?",
-            [$enrollmentId]
+            "SELECT e.course_id FROM training_enrollments e WHERE e.id = ?" . $this->tenantSql(),
+            array_merge([$enrollmentId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         )->fetch(\PDO::FETCH_ASSOC);
 
         if (!$enrollment) return 0;
@@ -211,8 +232,8 @@ class TrainingService
 
         // Update enrollment
         $this->db->query(
-            "UPDATE training_enrollments SET progress = ? WHERE id = ?",
-            [$progress, $enrollmentId]
+            "UPDATE training_enrollments SET progress = ? WHERE id = ?" . $this->tenantSql(),
+            array_merge([$progress, $enrollmentId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 
         return round($progress, 2);
@@ -225,17 +246,17 @@ class TrainingService
     {
         $enrollment = $this->db->query(
             "SELECT e.*, c.title as course_title, c.points_reward FROM training_enrollments e
-             JOIN training_courses c ON e.course_id = c.id
+             JOIN training_courses c ON e.course_id = c.id" . $this->tenantSqlForAlias('e') . $this->tenantSqlForAlias('c') . "
              WHERE e.id = ?",
-            [$enrollmentId]
+            array_merge([$enrollmentId], $this->tenantId() > 1 ? [$this->tenantId(), $this->tenantId()] : [])
         )->fetch(\PDO::FETCH_ASSOC);
 
         if (!$enrollment) return;
 
         // Update enrollment
         $this->db->query(
-            "UPDATE training_enrollments SET status = ?, completed_at = NOW() WHERE id = ?",
-            [self::ENROLLMENT_COMPLETED, $enrollmentId]
+            "UPDATE training_enrollments SET status = ?, completed_at = NOW() WHERE id = ?" . $this->tenantSql(),
+            array_merge([self::ENROLLMENT_COMPLETED, $enrollmentId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         );
 
         // Generate certificate
@@ -257,9 +278,15 @@ class TrainingService
     {
         $certificateNumber = 'CERT-' . date('Ymd') . '-' . str_pad($enrollment['id'], 5, '0', STR_PAD_LEFT);
 
+        $certData = array_merge(
+            ['enrollment_id' => $enrollment['id'], 'certificate_number' => $certificateNumber, 'issued_at' => 'NOW()', 'created_at' => 'NOW()'],
+            $this->tenantInsertData()
+        );
+        $cols = implode(', ', array_keys($certData));
+        $vals = implode(', ', array_fill(0, count($certData), '?'));
         $this->db->query(
-            "INSERT INTO training_certificates (enrollment_id, certificate_number, issued_at, created_at) VALUES (?, ?, NOW(), NOW())",
-            [$enrollment['id'], $certificateNumber]
+            "INSERT INTO training_certificates ($cols) VALUES ($vals)",
+            array_map(fn($v) => $v === 'NOW()' ? 'NOW()' : $v, array_values($certData))
         );
 
         return $certificateNumber;
@@ -271,13 +298,12 @@ class TrainingService
     public function getCourse(int $courseId): ?array
     {
         $course = $this->db->query(
-            "SELECT c.*, u.name as instructor_name,
-                   (SELECT COUNT(*) FROM training_enrollments WHERE course_id = c.id AND status = 'completed') as completions,
-                   (SELECT AVG(rating) FROM training_reviews WHERE course_id = c.id) as avg_rating
-             FROM training_courses c
+            "SELECT c.*, u.name as instructor_name
+             FROM training_courses c" . $this->tenantSqlForAlias('c') . "
              LEFT JOIN users u ON c.instructor_id = u.id
-             WHERE c.id = ?",
-            [$courseId]
+             WHERE c.id = ?
+             LIMIT 1",
+            array_merge([$courseId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         )->fetch(\PDO::FETCH_ASSOC);
 
         if (!$course) return null;
@@ -285,17 +311,17 @@ class TrainingService
         // Get modules and lessons
         $course['modules'] = $this->db->query(
             "SELECT m.*, 
-                    (SELECT COUNT(*) FROM training_lessons l WHERE l.module_id = m.id) as lesson_count
-             FROM training_modules m
+                    (SELECT COUNT(*) FROM training_lessons l WHERE l.module_id = m.id" . $this->tenantSql() . ") as lesson_count
+             FROM training_modules m" . $this->tenantSqlForAlias('m') . "
              WHERE m.course_id = ?
              ORDER BY m.sort_order",
-            [$courseId]
+            array_merge([$courseId], $this->tenantId() > 1 ? [$this->tenantId(), $this->tenantId(), $this->tenantId()] : [])
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($course['modules'] as &$module) {
             $module['lessons'] = $this->db->query(
-                "SELECT * FROM training_lessons WHERE module_id = ? ORDER BY sort_order",
-                [$module['id']]
+                "SELECT * FROM training_lessons WHERE module_id = ?" . $this->tenantSqlForAlias('l') . " ORDER BY sort_order",
+                array_merge([$module['id']], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             )->fetchAll(\PDO::FETCH_ASSOC);
         }
 
@@ -310,11 +336,11 @@ class TrainingService
         return $this->db->query(
             "SELECT e.*, c.title, c.description, c.thumbnail_url, c.category, c.difficulty_level,
                    c.duration_minutes, c.points_reward
-             FROM training_enrollments e
-             JOIN training_courses c ON e.course_id = c.id
+             FROM training_enrollments e" . $this->tenantSqlForAlias('e') . "
+             JOIN training_courses c ON e.course_id = c.id" . $this->tenantSqlForAlias('c') . "
              WHERE e.user_id = ?
              ORDER BY e.enrolled_at DESC",
-            [$userId]
+            array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId(), $this->tenantId()] : [])
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -324,8 +350,8 @@ class TrainingService
     public function getAvailableCourses(int $userId = null, string $category = null): array
     {
         $sql = "SELECT c.*, u.name as instructor_name,
-                       (SELECT COUNT(*) FROM training_enrollments WHERE course_id = c.id) as enrollment_count
-                FROM training_courses c
+                       (SELECT COUNT(*) FROM training_enrollments WHERE course_id = c.id" . $this->tenantSql() . ") as enrollment_count
+                FROM training_courses c" . $this->tenantSqlForAlias('c') . "
                 LEFT JOIN users u ON c.instructor_id = u.id
                 WHERE c.status = ?";
 
@@ -338,13 +364,17 @@ class TrainingService
 
         $sql .= " ORDER BY c.created_at DESC";
 
+        if ($this->tenantId() > 1) {
+            $params[] = $this->tenantId();
+        }
+
         $courses = $this->db->query($sql, $params)->fetchAll(\PDO::FETCH_ASSOC);
 
         if ($userId) {
             foreach ($courses as &$course) {
                 $course['enrolled'] = $this->db->query(
-                    "SELECT status FROM training_enrollments WHERE course_id = ? AND user_id = ?",
-                    [$course['id'], $userId]
+                    "SELECT status FROM training_enrollments WHERE course_id = ? AND user_id = ?" . $this->tenantSql(),
+                    array_merge([$course['id'], $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                 )->fetchColumn() ?: false;
             }
         }
@@ -441,18 +471,16 @@ class TrainingService
     public function getLeaderboard(int $limit = 10): array
     {
         return $this->db->query(
-            "SELECT u.id, u.name, u.avatar,
+            "SELECT u.id, u.name, u.avatar," . ($this->tenantId() > 1 ? " u.tenant_id as u_tid," : "") . "
                     COUNT(DISTINCT e.course_id) as courses_completed,
-                    SUM(c.points_reward) as total_points,
-                    COUNT(DISTINCT cert.id) as certificates
-             FROM users u
-             JOIN training_enrollments e ON u.id = e.user_id AND e.status = 'completed'
-             JOIN training_courses c ON e.course_id = c.id
-             LEFT JOIN training_certificates cert ON e.id = cert.enrollment_id
+                    SUM(c.points_reward) as total_points
+             FROM users u" . $this->tenantSqlForAlias('u') . "
+             JOIN training_enrollments e ON u.id = e.user_id AND e.status = 'completed'" . $this->tenantSqlForAlias('e') . "
+             JOIN training_courses c ON e.course_id = c.id" . $this->tenantSqlForAlias('c') . "
              GROUP BY u.id
              ORDER BY total_points DESC
              LIMIT ?",
-            [$limit]
+            array_merge([$limit], $this->tenantId() > 1 ? array_fill(0, 3, $this->tenantId()) : [])
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 

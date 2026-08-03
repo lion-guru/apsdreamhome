@@ -8,12 +8,16 @@ namespace App\Services\Property;
 use App\Core\Database;
 use App\Models\Property;
 
+use \App\Traits\ServiceTenantTrait;
+
 /**
  * Property Comparison Service
  * Side-by-side comparison of properties
  */
 class PropertyComparisonService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $db;
 
     // Comparison criteria with weights
@@ -93,7 +97,7 @@ class PropertyComparisonService
                     LEFT JOIN localities l ON p.locality_id = l.id
                     LEFT JOIN cities c ON p.city_id = c.id
                     LEFT JOIN builders b ON p.builder_id = b.id
-                    WHERE p.id IN ($placeholders)";
+                     WHERE p.id IN ($placeholders)" . $this->tenantSqlForAlias('p');
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());
@@ -373,10 +377,10 @@ class PropertyComparisonService
      */
     public function saveComparison(int $userId, array $propertyIds): int
     {
-        $this->db->query(
-            "INSERT INTO property_comparisons (user_id, property_ids, created_at) VALUES (?, ?, NOW())",
-            [$userId, json_encode($propertyIds)]
-        );
+            $insertCols = array_merge(['user_id', 'property_ids', 'created_at'], array_keys($this->tenantInsertData()));
+            $insertVals = array_merge([$userId, json_encode($propertyIds), 'NOW()'], array_values($this->tenantInsertData()));
+            $placeholders = implode(',', array_fill(0, count($insertCols), '?'));
+            $this->db->query("INSERT INTO property_comparisons (" . implode(', ', $insertCols) . ") VALUES (" . $placeholders . ")", $insertVals);
 
         return (int)$this->db->lastInsertId();
     }
@@ -388,8 +392,8 @@ class PropertyComparisonService
     {
         try {
             return $this->db->query(
-                "SELECT * FROM property_comparisons WHERE user_id = ? ORDER BY created_at DESC",
-                [$userId]
+                "SELECT * FROM property_comparisons WHERE user_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC",
+                array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             )->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
