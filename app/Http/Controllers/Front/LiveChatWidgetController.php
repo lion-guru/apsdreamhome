@@ -136,14 +136,26 @@ class LiveChatWidgetController extends BaseController
         $userId = (int)($_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0);
         $userName = $_SESSION['user_name'] ?? '';
         $userEmail = $_SESSION['user_email'] ?? '';
-        $settings = [
-            'enabled' => $this->service->getWidgetSetting('widget_enabled', '1'),
-            'position' => $this->service->getWidgetSetting('widget_position', 'bottom-right'),
-            'color' => $this->service->getWidgetSetting('widget_color', '#007bff'),
-            'title' => $this->service->getWidgetSetting('widget_title', 'APS Dream Home Support'),
-            'subtitle' => $this->service->getWidgetSetting('widget_subtitle', 'We typically reply in a few minutes'),
-            'auto_assign' => $this->service->getWidgetSetting('auto_assign', '1')
-        ];
+
+        if ($this->service === null) {
+            $settings = [
+                'enabled' => '1',
+                'position' => 'bottom-right',
+                'color' => '#007bff',
+                'title' => 'APS Dream Home Support',
+                'subtitle' => 'We typically reply in a few minutes',
+                'auto_assign' => '1'
+            ];
+        } else {
+            $settings = [
+                'enabled' => $this->service->getWidgetSetting('widget_enabled', '1'),
+                'position' => $this->service->getWidgetSetting('widget_position', 'bottom-right'),
+                'color' => $this->service->getWidgetSetting('widget_color', '#007bff'),
+                'title' => $this->service->getWidgetSetting('widget_title', 'APS Dream Home Support'),
+                'subtitle' => $this->service->getWidgetSetting('widget_subtitle', 'We typically reply in a few minutes'),
+                'auto_assign' => $this->service->getWidgetSetting('auto_assign', '1')
+            ];
+        }
         header('Content-Type: application/json');
         echo json_encode([
             'user' => ['id' => $userId, 'name' => $userName, 'email' => $userEmail],

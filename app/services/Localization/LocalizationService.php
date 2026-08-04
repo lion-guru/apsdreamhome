@@ -56,12 +56,13 @@ class LocalizationService
     public static function getInstance(): self
     {
         if (self::$instance === null) {
-            $db = Database::getInstance();
-            // We need a logger, but since we don't have a global one easily available here 
-            // without a container, we'll use a simple error-log based logger or null logger for now
-            // For now, let's assume one is provided or we use a fallback.
-            // This is a minimal implementation to satisfy the BaseController.
-            throw new \RuntimeException("LocalizationService must be initialized with dependencies first using initialize()");
+            try {
+                $db = Database::getInstance();
+                self::$instance = new self($db, null, 'en_US');
+            } catch (\Throwable $e) {
+                error_log("Auto-init LocalizationService failed: " . $e->getMessage());
+                self::$instance = new self(null, null, 'en_US');
+            }
         }
         return self::$instance;
     }
