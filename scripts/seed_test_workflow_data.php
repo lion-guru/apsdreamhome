@@ -203,10 +203,10 @@ if (!empty($plots)) {
 // ============================================================
 echo "\nSTEP 5: Running commission calculation...\n";
 
-$completedBookings = $db->query("SELECT pb.id, pb.user_id, pb.colony_id, pb.booking_amount, p.total_price 
+$completedBookings = $db->query("SELECT pb.id, pb.customer_id, pb.colony_id, pb.booking_amount, p.total_price 
     FROM plot_bookings pb 
     JOIN plots p ON pb.plot_id=p.id 
-    WHERE pb.status='completed' 
+    WHERE pb.status='fully_paid' 
     AND pb.id NOT IN (SELECT DISTINCT booking_id FROM mlm_commission_ledger WHERE type='direct_sale' AND booking_id IS NOT NULL)
     LIMIT 5")->fetchAll();
 

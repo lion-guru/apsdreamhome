@@ -43,11 +43,11 @@ try {
     echo "<h2>Recent Plot Bookings:</h2>";
     
     $stmt = $pdo->query("
-        SELECT pb.*, u.name as user_name, u.email as user_email, 
-               p.property_type, p.address, p.price
+        SELECT pb.*, u.name as customer_name, u.email as customer_email, 
+               p.plot_number, p.area_sqft
         FROM plot_bookings pb
-        LEFT JOIN users u ON pb.user_id = u.id
-        LEFT JOIN user_properties p ON pb.property_id = p.id
+        LEFT JOIN users u ON pb.customer_id = u.id
+        LEFT JOIN plots p ON pb.plot_id = p.id
         ORDER BY pb.created_at DESC
         LIMIT 10
     ");
@@ -61,9 +61,9 @@ try {
         foreach ($bookings as $booking) {
             echo "<tr>";
             echo "<td>" . $booking['id'] . "</td>";
-            echo "<td>" . htmlspecialchars($booking['user_name'] ?? 'N/A') . "</td>";
-            echo "<td>" . htmlspecialchars($booking['property_type'] ?? 'N/A') . "</td>";
-            echo "<td>₹" . number_format($booking['amount'] ?? 0) . "</td>";
+            echo "<td>" . htmlspecialchars($booking['customer_name'] ?? 'N/A') . "</td>";
+            echo "<td>" . htmlspecialchars($booking['plot_number'] ?? 'N/A') . "</td>";
+            echo "<td>₹" . number_format($booking['booking_amount'] ?? 0) . "</td>";
             echo "<td>" . $booking['status'] . "</td>";
             echo "<td>" . $booking['created_at'] . "</td>";
             echo "</tr>";
@@ -78,7 +78,7 @@ try {
     
     $stmt = $pdo->query("
         SELECT mc.*, u.name as associate_name, u.email as associate_email,
-               pb.amount as booking_amount, pb.status as booking_status
+               pb.booking_amount as booking_amount, pb.status as booking_status
         FROM mlm_commissions mc
         LEFT JOIN users u ON mc.associate_id = u.id
         LEFT JOIN plot_bookings pb ON mc.booking_id = pb.id

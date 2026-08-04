@@ -180,8 +180,8 @@ class SmartLeadQualifierAgent
             $tid = $this->tenantId();
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $row = $this->db->fetch(
-                "SELECT AVG(total_price) AS avg_price, COUNT(*) AS cnt
-                 FROM plot_bookings WHERE total_price > 0" . $tidSql,
+                "SELECT AVG(total_plot_value) AS avg_price, COUNT(*) AS cnt
+                 FROM plot_bookings WHERE total_plot_value > 0" . $tidSql,
                 $tid > 1 ? [$tid] : []
             );
             if ($row && (int)$row['cnt'] > 0) {
