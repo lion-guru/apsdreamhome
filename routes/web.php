@@ -1089,6 +1089,13 @@ $router->get('/ai/property-valuation/history', 'AI\\PropertyValuationController@
 $router->post('/ai/property-valuation/batch', 'AI\\PropertyValuationController@batchValuation');
 $router->post('/api/ai/valuation', 'AI\\PropertyValuationController@apiValuation');
 
+// Property Valuation Reports
+$router->get('/admin/property-valuations', 'AI\\PropertyValuationController@reports');
+$router->get('/admin/property-valuations/view/{id}', 'AI\\PropertyValuationController@viewReport');
+$router->get('/admin/property-valuations/generate', 'AI\\PropertyValuationController@showGenerateForm');
+$router->post('/admin/property-valuations/generate', 'AI\\PropertyValuationController@generateAndStore');
+$router->get('/admin/property-valuations/property/{id}', 'AI\\PropertyValuationController@valuationByProperty');
+
 // ============================================================
 // AI CHATBOT
 // ============================================================
@@ -1270,6 +1277,10 @@ $router->post('/admin/leads/{id}/permanent-delete', 'App\\Http\\Controllers\\Adm
 
 // Lead Export
 $router->get('/admin/leads/export/csv', 'App\\Http\\Controllers\\Admin\\LeadController@export');
+
+$router->get('/admin/leads/commission-heatmap', 'App\\Http\\Controllers\\Admin\\LeadController@commissionHeatmap');
+$router->get('/admin/leads/property-comparison', 'App\\Http\\Controllers\\Admin\\LeadController@propertyComparison');
+$router->get('/admin/leads/telecaller-performance', 'App\\Http\\Controllers\\Admin\\LeadController@telecallerPerformance');
 
 // CRM Settings
 $router->get('/admin/crm/settings', 'App\\Http\\Controllers\\Admin\\CRMSettingsController@index');
@@ -4939,6 +4950,10 @@ $router->get('/admin/department-requests/submit',             'App\\Http\\Contro
 $router->post('/admin/department-requests/submit',            'App\\Http\\Controllers\\Admin\\DepartmentRequestController@submit');
 $router->get('/admin/department-requests/{id}',               'App\\Http\\Controllers\\Admin\\DepartmentRequestController@show');
 $router->post('/admin/department-requests/{id}/status',       'App\\Http\\Controllers\\Admin\\DepartmentRequestController@updateStatus');
+
+$router->get('/admin/tools/emi-calculator', function() {
+    return App\Core\View::make('tools/emi_calculator')->render();
+});
 $router->post('/admin/department-requests/{id}/assign',       'App\\Http\\Controllers\\Admin\\DepartmentRequestController@assign');
 $router->post('/admin/department-requests/{id}/comment',      'App\\Http\\Controllers\\Admin\\DepartmentRequestController@addComment');
 $router->get('/admin/department-requests/my-requests',        'App\\Http\\Controllers\\Admin\\DepartmentRequestController@myRequests');

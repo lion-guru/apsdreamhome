@@ -979,4 +979,97 @@ class LeadController extends AdminController
             echo json_encode(['success' => false, 'error' => 'Server error']);
         }
     }
+
+    public function commissionHeatmap()
+    {
+        $this->requireAdmin();
+
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $tid = (int)$this->tenantId();
+
+        $tenantSql = $tid > 1 ? "AND tenant_id = $tid" : "";
+
+        $topEarners = $db->query("
+            SELECT beneficiary_user_id as user_id, u.name, SUM(amount) as total_earned, COUNT(*) as transactions
+            FROM mlm_commission_ledger l
+            JOIN users u ON u.id = l.beneficiary_user_id
+            WHERE l.status = 'approved' $tenantSql
+            GROUP BY l.beneficiary_user_id
+            ORDER BY total_earned DESC
+            LIMIT 20
+        ")->fetchAll(\PDO::FETCH_ASSOC);
+
+        $byCommissionType = $db->query("
+            SELECT type, SUM(amount) as total, COUNT(*) as count
+            FROM mlm_commission_ledger
+            WHERE status = 'approved' $tenantSql
+            GROUP BY type
+            ORDER BY total DESC
+        ")->fetchAll(\PDO::FETCH_ASSOC);
+
+        $byMonth = $db->query("
+            SELECT DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as total, COUNT(*) as count
+            FROM mlm_commission_ledger
+            WHERE status = 'approved' $tenantSql
+            GROUP BY month
+            ORDER BY month DESC
+            LIMIT 12
+        ")->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $this->render('admin/leads/commission_heatmap', [
+            'topEarners' => $topEarners,
+            'byCommissionType' => $byCommissionType,
+            'byMonth' => $byMonth,
+        ]);
+    }
+
+    public function propertyComparison()
+    {
+        $this->requireAdmin();
+
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $tid = (int)$this->tenantId();
+
+        $tenantFilter = $tid > 1 ? "AND tenant_id = $tid" : "";
+
+        $properties = $db->query("
+            SELECT id, title, price, location, city, type, bedrooms, bathrooms, area_sqft, status, created_at
+            FROM properties
+            WHERE status = 'active' $tenantFilter
+            ORDER BY created_at DESC
+            LIMIT 50
+        ")->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $this->render('admin/leads/property_comparison', [
+            'properties' => $properties,
+        ]);
+    }
+
+    public function telecallerPerformance()
+    {
+        $this->requireAdmin();
+
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $tid = (int)$this->tenantId();
+
+        $tenantSql = $tid > 1 ? "AND u.tenant_id = $tid" : "";
+
+        $telecallers = $db->query("
+            SELECT u.id, u.name, u.role,
+                COUNT(l.id) as leads_assigned,
+                SUM(CASE WHEN l.status = 'closed_won' THEN 1 ELSE 0 END) as conversions,
+                ROUND(AVG(l.lead_score), 1) as avg_score,
+                MAX(l.created_at) as last_activity
+            FROM users u
+            LEFT JOIN leads l ON l.assigned_to = u.id $tenantSql
+            WHERE u.role IN ('telecaller', 'agent', 'associate') $tenantSql
+            GROUP BY u.id
+            ORDER BY conversions DESC, leads_assigned DESC
+            LIMIT 30
+        ")->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $this->render('admin/leads/telecaller_performance', [
+            'telecallers' => $telecallers,
+        ]);
+    }
 }

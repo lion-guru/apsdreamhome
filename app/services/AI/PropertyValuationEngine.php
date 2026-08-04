@@ -525,4 +525,132 @@ class PropertyValuationEngine
             ],
         ];
     }
+
+    /**
+     * Store valuation report in database
+     */
+    public function storeValuation($propertyId, $valuationResult, $generatedBy = null): int
+    {
+        if (!isset($valuationResult['data'])) {
+            return 0;
+        }
+
+        $data = $valuationResult['data'];
+        $tid = $this->tenantId();
+
+        $sql = "INSERT INTO property_valuation_reports 
+            (tenant_id, property_id, property_code, location, property_type, area_sqft,
+             base_valuation, location_multiplier, type_multiplier, market_adjustment_pct,
+             final_valuation, confidence_score, ai_analysis, market_analysis, recommendations,
+             comparable_properties, generated_by, generated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+        $property = $this->getPropertyData($propertyId);
+        $params = [
+            $tid,
+            $propertyId,
+            $property['plot_number'] ?? $property['property_code'] ?? null,
+            $property['location'] ?? $property['city'] ?? null,
+            $property['property_type'] ?? $property['plot_type'] ?? null,
+            $property['area_sqft'] ?? null,
+            $data['base_valuation'] ?? 0,
+            $data['location_multiplier'] ?? 0,
+            $data['type_multiplier'] ?? 0,
+            $data['market_adjustment'] ?? '0%',
+            $data['final_valuation'] ?? 0,
+            $data['confidence_score'] ?? 0,
+            json_encode($data),
+            json_encode($valuationResult['data']['market_analysis'] ?? []),
+            json_encode($valuationResult['data']['recommendations'] ?? []),
+            json_encode($valuationResult['data']['comparable_properties'] ?? []),
+            $generatedBy
+        ];
+
+        $stmt = $this->pdo()->prepare($sql);
+        $stmt->execute($params);
+
+        return (int)$this->pdo()->lastInsertId();
+    }
+
+    /**
+     * Get all valuation reports with filtering
+     */
+    public function getReports($filters = []): array
+    {
+        $tid = $this->tenantId();
+        $where = $this->tenantWhere();
+        $params = $this->tenantParams([]);
+
+        if (!empty($filters['property_id'])) {
+            $where .= " AND property_id = ?";
+            $params[] = $filters['property_id'];
+        }
+        if (!empty($filters['date_from'])) {
+            $where .= " AND generated_at >= ?";
+            $params[] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $where .= " AND generated_at <= ?";
+            $params[] = $filters['date_to'];
+        }
+        if (!empty($filters['min_value'])) {
+            $where .= " AND final_valuation >= ?";
+            $params[] = $filters['min_value'];
+        }
+        if (!empty($filters['max_value'])) {
+            $where .= " AND final_valuation <= ?";
+            $params[] = $filters['max_value'];
+        }
+
+        $sql = "SELECT r.*, p.plot_number as property_code, p.total_price as current_price,
+                u.name as generated_by_name
+                FROM property_valuation_reports r
+                LEFT JOIN plots p ON r.property_id = p.id
+                LEFT JOIN users u ON r.generated_by = u.id
+                {$where}
+                ORDER BY r.generated_at DESC
+                LIMIT 100";
+
+        $stmt = $this->pdo()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get single valuation report by ID
+     */
+    public function getReport($id): ?array
+    {
+        $tid = $this->tenantId();
+        $sql = "SELECT r.*, p.plot_number as property_code, p.total_price as current_price,
+                u.name as generated_by_name
+                FROM property_valuation_reports r
+                LEFT JOIN plots p ON r.property_id = p.id
+                LEFT JOIN users u ON r.generated_by = u.id
+                WHERE r.id = ? {$this->tenantWhere()}";
+
+        $stmt = $this->pdo()->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Get valuation stats for dashboard
+     */
+    public function getValuationStats(): array
+    {
+        $tid = $this->tenantId();
+        $sql = "SELECT 
+            COUNT(*) as total_valuations,
+            AVG(final_valuation) as avg_valuation,
+            MIN(final_valuation) as min_valuation,
+            MAX(final_valuation) as max_valuation,
+            SUM(base_valuation) as total_base_valuation,
+            COUNT(DISTINCT property_id) as unique_properties
+            FROM property_valuation_reports {$this->tenantWhere()}";
+
+        $stmt = $this->pdo()->prepare($sql);
+        $stmt->execute($this->tenantParams([]));
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
 }
