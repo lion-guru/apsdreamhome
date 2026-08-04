@@ -45,7 +45,7 @@ $bonusRates = [
 try {
     // Find active bookings with payments
     $bookings = $db->fetchAll(
-        "SELECT pb.id as booking_id, pb.customer_id, pb.associate_id, pb.agent_id,
+        "SELECT pb.id as booking_id, pb.customer_id, pb.associate_id,
                 pb.total_plot_value,
                 COALESCE(SUM(bps.paid_amount), 0) as total_paid,
                 (SELECT COUNT(*) FROM mlm_commission_ledger 
