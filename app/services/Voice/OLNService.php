@@ -19,10 +19,10 @@ class OLNService
             $tid = TenantContext::getId();
             $sql = "SELECT l.*, u.name as lead_name, u.phone, u.email
                     FROM leads l
-                    LEFT JOIN users u ON l.user_id = u.id
-                    WHERE l.follow_up_date <= CURDATE()
-                    AND l.follow_up_date IS NOT NULL
-                    AND (l.status NOT IN ('closed', 'dnd', 'not_interested') OR l.status IS NULL)";
+                    LEFT JOIN users u ON l.assigned_to = u.id
+                    WHERE l.next_activity_date <= NOW()
+                    AND l.next_activity_date IS NOT NULL
+                    AND l.status NOT IN ('closed_won', 'closed_lost', 'nurture')";
             $params = [];
 
             if ($tid > 1) {
@@ -31,11 +31,11 @@ class OLNService
             }
 
             if ($agentType) {
-                $sql .= " AND l.assigned_agent_type = ?";
+                $sql .= " AND u.role = ?";
                 $params[] = $agentType;
             }
 
-            $sql .= " ORDER BY l.follow_up_date ASC, l.priority DESC LIMIT 100";
+            $sql .= " ORDER BY l.next_activity_date ASC, l.priority DESC LIMIT 100";
 
             return $this->db->fetchAll($sql, $params);
         } catch (\Exception $e) {
@@ -52,9 +52,9 @@ class OLNService
             $unassigned = $this->db->fetchAll(
                 "SELECT l.*, u.name as lead_name, u.phone, u.email
                  FROM leads l
-                 LEFT JOIN users u ON l.user_id = u.id
+                 LEFT JOIN users u ON l.assigned_to = u.id
                  WHERE l.assigned_to IS NULL
-                 AND l.status NOT IN ('closed', 'dnd', 'not_interested')" . $tenantWhere . "
+                 AND l.status NOT IN ('closed_won', 'closed_lost', 'nurture')" . $tenantWhere . "
                  ORDER BY l.priority DESC, l.created_at ASC
                  LIMIT ?",
                 $tid > 1 ? [$tid, $limit] : [$limit]
@@ -125,7 +125,7 @@ class OLNService
             $lead = $this->db->fetch(
                 "SELECT l.*, u.name as lead_name, u.phone, u.email
                  FROM leads l
-                 LEFT JOIN users u ON l.user_id = u.id
+                 LEFT JOIN users u ON l.assigned_to = u.id
                  WHERE l.id = ?" . $tenantWhere,
                 $tid > 1 ? [$leadId, $tid] : [$leadId]
             );

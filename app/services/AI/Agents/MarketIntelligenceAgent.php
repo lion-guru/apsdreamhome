@@ -199,10 +199,10 @@ class MarketIntelligenceAgent
                         (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available'" . $tidSql . ") as available,
                         (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'sold'" . $tidSql . ") as sold,
                         (SELECT COUNT(*) FROM leads l WHERE l.location_preference LIKE CONCAT('%', c.name, '%') AND l.deleted_at IS NULL" . $tidSql . ") as leads,
-                        (SELECT AVG(price) FROM plots p WHERE p.colony_id = c.id" . $tidSql . ") as avg_price,
+                        (SELECT AVG(total_price) FROM plots p WHERE p.colony_id = c.id" . $tidSql . ") as avg_price,
                         (SELECT COUNT(*) FROM plot_bookings pb
                          LEFT JOIN plots p ON pb.plot_id = p.id
-                         WHERE p.colony_id = c.id AND pb.status = 'confirmed' AND pb.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tidSql . ") as month_sales
+                         WHERE p.colony_id = c.id AND pb.status IN ('token_paid','agreement_signed','emi_active','partially_paid','fully_paid','registration_done') AND pb.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tidSql . ") as month_sales
                  FROM colonies c
                  WHERE c.is_active = 1" . $tidSql . "
                  ORDER BY leads DESC",

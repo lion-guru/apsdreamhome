@@ -197,14 +197,14 @@ class DataAnalysisAgent extends BaseAgent
         $topEarners = $this->db->fetchAll(
             "SELECT u.name, SUM(l.amount) AS total_earned, COUNT(l.id) AS entries
              FROM mlm_commission_ledger l
-             JOIN users u ON u.id = l.user_id
-             GROUP BY l.user_id ORDER BY total_earned DESC LIMIT 10"
+             JOIN users u ON u.id = l.beneficiary_user_id
+             GROUP BY l.beneficiary_user_id ORDER BY total_earned DESC LIMIT 10"
         ) ?: [];
 
         $byRank = $this->db->fetchAll(
-            "SELECT u.role, COUNT(DISTINCT l.user_id) AS users, SUM(l.amount) AS total
+            "SELECT u.role, COUNT(DISTINCT l.beneficiary_user_id) AS users, SUM(l.amount) AS total
              FROM mlm_commission_ledger l
-             JOIN users u ON u.id = l.user_id
+             JOIN users u ON u.id = l.beneficiary_user_id
              GROUP BY u.role ORDER BY total DESC"
         ) ?: [];
 

@@ -1159,7 +1159,7 @@ class LegalDocumentService
     {
         try {
             $tid = $this->tenantId;
-            $sql = "SELECT b.id, b.booking_number, u.name as customer_name, p.plot_number, c.name as colony_name FROM plot_bookings b JOIN users u ON b.user_id = u.id LEFT JOIN plots p ON b.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id WHERE 1=1";
+            $sql = "SELECT b.id, b.booking_number, u.name as customer_name, p.plot_number, c.name as colony_name FROM plot_bookings b JOIN users u ON b.customer_id = u.id LEFT JOIN plots p ON b.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id WHERE 1=1";
             $params = [];
             if ($tid > 1) { $sql .= " AND b.tenant_id = ?"; $params[] = $tid; }
             $sql .= " ORDER BY b.created_at DESC";

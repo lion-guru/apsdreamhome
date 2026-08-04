@@ -166,7 +166,7 @@ class LeadScoringService
 
         // Property views
         $sql = "SELECT COUNT(*) as views FROM property_views pv
-                JOIN leads l ON pv.user_id = l.user_id WHERE l.id = ? AND l.tenant_id = " . $this->tenantId();
+                JOIN leads l ON pv.customer_id = l.assigned_to WHERE l.id = ? AND l.tenant_id = " . $this->tenantId();
         $views = $this->db->query($sql, [$leadId])->fetchColumn();
         $score += min(25, $views * 2);
         $factors['property_views'] = $views;

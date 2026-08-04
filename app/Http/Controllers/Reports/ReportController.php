@@ -402,7 +402,7 @@ class ReportController extends AdminController
             try {
                 $stmt = $this->db->query(
                     "SELECT u.id, u.name, u.email, u.role, u.created_at,
-                            (SELECT COUNT(*) FROM leads WHERE user_id = u.id) as lead_count,
+                            (SELECT COUNT(*) FROM leads WHERE assigned_to = u.id) as lead_count,
                             (SELECT COUNT(*) FROM user_properties WHERE user_id = u.id) as property_count,
                             (SELECT COUNT(*) FROM inquiries WHERE email = u.email) as inquiry_count
                      FROM users u

@@ -66,7 +66,7 @@ class AIAnalyticsController extends AdminController
             $this->data['avgCallDuration'] = round((float)($db->query("SELECT COALESCE(AVG(duration_seconds),0) FROM ai_call_sessions WHERE duration_seconds > 0")->fetchColumn()));
 
             $this->data['staleLeads'] = $db->fetchAll(
-                "SELECT l.id, l.name, l.phone, l.status, l.score, l.updated_at, DATEDIFF(NOW(), l.updated_at) as days_stale FROM leads l WHERE l.status NOT IN ('won','lost') AND DATEDIFF(NOW(), l.updated_at) > 7 ORDER BY l.updated_at ASC LIMIT 10"
+                "SELECT l.id, l.name, l.phone, l.status, l.lead_score, l.updated_at, DATEDIFF(NOW(), l.updated_at) as days_stale FROM leads l WHERE l.status NOT IN ('closed_won','closed_lost','nurture') AND DATEDIFF(NOW(), l.updated_at) > 7 ORDER BY l.updated_at ASC LIMIT 10"
             ) ?: [];
 
             $this->data['topPerformingScripts'] = $db->fetchAll(
@@ -74,7 +74,7 @@ class AIAnalyticsController extends AdminController
             ) ?: [];
 
             $this->data['sourcePerformance'] = $db->fetchAll(
-                "SELECT source, COUNT(*) total, ROUND(SUM(CASE WHEN status='won' THEN 1 ELSE 0 END)/COUNT(*)*100,1) win_rate FROM leads WHERE source IS NOT NULL GROUP BY source HAVING total > 5 ORDER BY win_rate DESC"
+                "SELECT source, COUNT(*) total, ROUND(SUM(CASE WHEN status='closed_won' THEN 1 ELSE 0 END)/COUNT(*)*100,1) win_rate FROM leads WHERE source IS NOT NULL GROUP BY source HAVING total > 5 ORDER BY win_rate DESC"
             ) ?: [];
 
             $this->data['insights'] = [];
