@@ -133,7 +133,7 @@ class PropertyChatbotService
             }
             $params[] = $limit;
             return $this->db->query(
-                "SELECT p.plot_number, p.area_sqft, p.total_price, p.front_ft, p.depth_ft,
+                "SELECT p.plot_number, p.area_sqft, p.total_price, p.frontage_ft, p.depth_ft,
                         c.name as colony_name, c.slug as colony_slug
                  FROM plots p JOIN colonies c ON p.colony_id = c.id
                  WHERE {$where}" . $this->tenantSqlForAlias('p') . " ORDER BY p.total_price ASC LIMIT ?",

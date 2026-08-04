@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<div style="flex:0 0 calc(12.5% - 8px);background:' + bg + ';border:1px solid ' + border + ';color:' + color + ';padding:10px;border-radius:10px;text-align:center;font-size:0.75rem;min-height:75px;display:flex;flex-direction:column;justify-content:center;transition:all 0.15s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
                 '<div style="font-weight:700;margin-bottom:2px;">' + icon + p.plot_no + '</div>' +
                 '<div class="text-muted" style="font-size:0.62rem;font-weight:500;">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
-                '<div style="font-size:0.55rem;opacity:0.8;margin-top:2px;">' + p.front + 'x' + p.depth + ' ft</div>' +
+                '<div style="font-size:0.55rem;opacity:0.8;margin-top:2px;">' + p.width_ft + 'x' + p.length_ft + ' ft</div>' +
                 '</div>';
           });
           html += '</div>';
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
           html += '<h6 class="mb-3 fw-bold text-secondary"><i class="fas fa-list-ul me-1"></i><?= __('cp_plots_inventory') ?></h6>';
           html += '<div class="table-responsive"><table class="table table-sm table-hover align-middle"><thead><tr><th>#</th><th><?= __('cp_plot_no') ?></th><th><?= __('cp_block') ?></th><th><?= __('cp_area') ?> (<?= __('cp_sqft') ?>)</th><th><?= __('cp_type') ?></th><th><?= __('cp_front_ft') ?></th><th><?= __('cp_depth_ft') ?></th></tr></thead><tbody>';
           data.plots.forEach(function(p, i) {
-            html += '<tr><td>' + (i+1) + '</td><td><strong>' + p.plot_no + '</strong></td><td>' + p.block_name + '</td><td>' + p.area_sqft + '</td><td>' + p.plot_type + '</td><td>' + p.front + '</td><td>' + p.depth + '</td></tr>';
+            html += '<tr><td>' + (i+1) + '</td><td><strong>' + p.plot_no + '</strong></td><td>' + p.block_name + '</td><td>' + p.area_sqft + '</td><td>' + p.plot_type + '</td><td>' + p.width_ft + '</td><td>' + p.length_ft + '</td></tr>';
           });
           html += '</tbody></table></div>';
           

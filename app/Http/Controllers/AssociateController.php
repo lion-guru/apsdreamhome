@@ -307,7 +307,7 @@ class AssociateController extends BaseController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $recentBookings = $this->db->fetchAll(
                 "SELECT pb.id, pb.booking_number, pb.total_plot_value, pb.status as booking_status, pb.created_at,
-                        u.name as customer_name, p.name as plot_name, c.name as colony_name
+                        u.name as customer_name, p.plot_number as plot_name, c.name as colony_name
                  FROM plot_bookings pb
                  LEFT JOIN users u ON u.id = pb.user_id
                  LEFT JOIN plots p ON p.id = pb.plot_id

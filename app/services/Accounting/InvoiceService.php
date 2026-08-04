@@ -238,7 +238,7 @@ class InvoiceService
         $pdo = $this->pdo();
 
         $tid = TenantContext::getId();
-        $booking = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, p.area_sqft, p.total_price AS plot_price,
+        $booking = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, p.size_sqft, p.basic_price AS plot_price,
                 u.name AS client_name, u.email AS client_email, u.phone AS client_phone
             FROM plot_bookings pb
             LEFT JOIN inventory_plots p ON pb.plot_id = p.id

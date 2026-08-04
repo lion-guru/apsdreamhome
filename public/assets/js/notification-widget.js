@@ -28,7 +28,7 @@
     read: BASE + '/api/v2/notifications/read',
   };
   const WS_URL =
-    window.WS_URL || (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/websocket_server.php';
+    window.WS_URL || (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/apsdreamhome/websocket_server.php';
 
   const escape = s =>
     String(s || '')
