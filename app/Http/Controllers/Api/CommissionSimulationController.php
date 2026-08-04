@@ -272,9 +272,8 @@ class CommissionSimulationController extends BaseApiController
                     pb.id,
                     pb.total_plot_value,
                     pb.booking_amount,
-                    pb.total_amount,
                     pb.associate_id,
-                    IFNULL(pb.booking_amount, pb.total_amount * 0.1) AS amount,
+                    IFNULL(pb.booking_amount, pb.total_plot_value * 0.1) AS amount,
                     u.id AS agent_id
                 FROM plot_bookings pb
                 JOIN users u ON u.id = pb.associate_id

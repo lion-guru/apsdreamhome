@@ -1432,12 +1432,12 @@ class MoneyWorkflowService
                     // Notify customer of penalty
                     try {
                         $userId = $this->db->fetchOne(
-                            "SELECT pb.user_id FROM plot_bookings pb WHERE pb.id = ?",
+                            "SELECT pb.customer_id FROM plot_bookings pb WHERE pb.id = ?",
                             [$row['booking_id']]
                         );
-                        if (!empty($userId['user_id'])) {
+                        if (!empty($userId['customer_id'])) {
                             $notifSvc = new \App\Services\Communication\NotificationService();
-                            $notifSvc->sendNotification((int)$userId['user_id'], 'in_app',
+                            $notifSvc->sendNotification((int)$userId['customer_id'], 'in_app',
                                 'EMI Penalty Applied',
                                 'Installment #' . $row['installment_no'] . ' is ' . $daysOverdue . ' days overdue. Penalty of ₹' . number_format($newPenalty, 2) . ' applied (total: ₹' . number_format($totalAccrued, 2) . ').',
                                 ['event_type' => 'payment', 'booking_id' => $row['booking_id'], 'action_url' => '/booking/confirmation/' . $row['booking_id']]

@@ -309,10 +309,10 @@ class AssociateController extends BaseController
                 "SELECT pb.id, pb.booking_number, pb.total_plot_value, pb.status as booking_status, pb.created_at,
                         u.name as customer_name, p.plot_number as plot_name, c.name as colony_name
                  FROM plot_bookings pb
-                 LEFT JOIN users u ON u.id = pb.user_id
+                 LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
                  LEFT JOIN colonies c ON c.id = pb.colony_id
-                 WHERE pb.user_id IN (SELECT id FROM users WHERE referred_by = ?{$tidSql})
+                 WHERE pb.customer_id IN (SELECT id FROM users WHERE referred_by = ?{$tidSql})
                  ORDER BY pb.created_at DESC LIMIT 5",
                 array_merge([$userId], $tidParams)
             ) ?: [];
@@ -328,7 +328,7 @@ class AssociateController extends BaseController
                     SUM(CASE WHEN status IN ('pending','overdue') THEN 1 ELSE 0 END) as pending_emi,
                     SUM(CASE WHEN status = 'overdue' OR (status = 'pending' AND due_date < CURDATE()) THEN 1 ELSE 0 END) as overdue_emi
                  FROM booking_payment_schedules 
-                 WHERE booking_id IN (SELECT id FROM plot_bookings WHERE user_id IN (SELECT id FROM users WHERE referred_by = ?{$tidSql}))",
+                 WHERE booking_id IN (SELECT id FROM plot_bookings WHERE customer_id IN (SELECT id FROM users WHERE referred_by = ?{$tidSql}))",
                 array_merge([$userId], $tidParams)
             );
             if ($emiRow) {
@@ -2386,7 +2386,7 @@ class AssociateController extends BaseController
                        (SELECT COALESCE(SUM(amount), 0) FROM booking_payment_receipts WHERE booking_id = b.id) as total_paid
                 FROM plot_bookings b
                 LEFT JOIN properties p ON p.id = b.property_id
-                LEFT JOIN users u ON u.id = b.user_id
+                LEFT JOIN users u ON u.id = b.customer_id
                 WHERE b.associate_id = ? OR b.created_by = ?
                 ORDER BY b.created_at DESC
             ");
@@ -2429,12 +2429,12 @@ class AssociateController extends BaseController
                 SELECT DISTINCT u.id, u.name, u.phone, u.email, u.address, u.created_at as registered_date,
                        COUNT(DISTINCT b.id) as booking_count,
                        COALESCE(SUM(b.total_amount), 0) as total_business,
-                       (SELECT COALESCE(SUM(r.amount), 0) FROM booking_payment_receipts r 
-                        INNER JOIN plot_bookings pb ON pb.id = r.booking_id WHERE pb.user_id = u.id) as total_paid,
-                       (SELECT MAX(created_at) FROM plot_bookings WHERE user_id = u.id) as last_booking_date,
+                        (SELECT COALESCE(SUM(r.amount), 0) FROM booking_payment_receipts r 
+                        INNER JOIN plot_bookings pb ON pb.id = r.booking_id WHERE pb.customer_id = u.id) as total_paid,
+                       (SELECT MAX(created_at) FROM plot_bookings WHERE customer_id = u.id) as last_booking_date,
                        (SELECT role FROM users WHERE id = u.id) as user_role
                 FROM users u
-                INNER JOIN plot_bookings b ON b.user_id = u.id
+                INNER JOIN plot_bookings b ON b.customer_id = u.id
                 WHERE b.associate_id = ? OR b.created_by = ?
                 GROUP BY u.id, u.name, u.phone, u.email, u.address, u.created_at
                 ORDER BY total_business DESC
@@ -2453,7 +2453,7 @@ class AssociateController extends BaseController
                     FROM plot_bookings b 
                     INNER JOIN plots p ON p.id = b.plot_id 
                     LEFT JOIN colonies col ON col.id = p.colony_id 
-                    WHERE b.user_id = ?
+                    WHERE b.customer_id = ?
                     ORDER BY b.created_at DESC LIMIT 5
                 ");
                 $plotStmt->execute([$c['id']]);
@@ -2495,7 +2495,7 @@ class AssociateController extends BaseController
                        (SELECT referral_code FROM users WHERE id = u.id) as referral_code
                 FROM users u
                 WHERE u.id = ? AND EXISTS (
-                    SELECT 1 FROM plot_bookings WHERE user_id = u.id AND (associate_id = ? OR created_by = ?)
+                    SELECT 1 FROM plot_bookings WHERE customer_id = u.id AND (associate_id = ? OR created_by = ?)
                 )
             ");
             $stmt->execute([$customerId, $userId, $userId]);
@@ -2508,7 +2508,7 @@ class AssociateController extends BaseController
                     FROM plot_bookings b
                     LEFT JOIN plots p ON p.id = b.plot_id
                     LEFT JOIN colonies col ON col.id = p.colony_id
-                    WHERE b.user_id = ? AND (b.associate_id = ? OR b.created_by = ?)
+                    WHERE b.customer_id = ? AND (b.associate_id = ? OR b.created_by = ?)
                     ORDER BY b.created_at DESC
                 ");
                 $bookStmt->execute([$customerId, $userId, $userId]);
@@ -2518,7 +2518,7 @@ class AssociateController extends BaseController
                 $receiptStmt = $pdo->prepare("
                     SELECT r.* FROM booking_payment_receipts r
                     INNER JOIN plot_bookings b ON b.id = r.booking_id
-                    WHERE b.user_id = ? AND (b.associate_id = ? OR b.created_by = ?)
+                    WHERE b.customer_id = ? AND (b.associate_id = ? OR b.created_by = ?)
                     ORDER BY r.receipt_date DESC
                 ");
                 $receiptStmt->execute([$customerId, $userId, $userId]);
@@ -2564,7 +2564,7 @@ class AssociateController extends BaseController
                 FROM booking_payment_schedules s
                 INNER JOIN plot_bookings b ON b.id = s.booking_id
                 LEFT JOIN properties p ON p.id = b.property_id
-                LEFT JOIN users u ON u.id = b.user_id
+                LEFT JOIN users u ON u.id = b.customer_id
                 WHERE (b.associate_id = ? OR b.created_by = ?)
                   AND s.status != 'completed'
                 ORDER BY s.due_date ASC
@@ -2613,7 +2613,7 @@ class AssociateController extends BaseController
                 FROM booking_payment_receipts r
                 INNER JOIN plot_bookings b ON b.id = r.booking_id
                 LEFT JOIN properties p ON p.id = b.property_id
-                LEFT JOIN users u ON u.id = b.user_id
+                LEFT JOIN users u ON u.id = b.customer_id
                 WHERE b.associate_id = ? OR b.created_by = ?
                 ORDER BY r.receipt_date DESC, r.id DESC
             ");
@@ -2649,7 +2649,7 @@ class AssociateController extends BaseController
                        p.city, p.state, u.name as customer_name, u.phone as customer_phone, u.email as customer_email
                 FROM plot_bookings b
                 LEFT JOIN properties p ON p.id = b.property_id
-                LEFT JOIN users u ON u.id = b.user_id
+                LEFT JOIN users u ON u.id = b.customer_id
                 WHERE b.id = ? AND (b.associate_id = ? OR b.created_by = ?)
             ");
             $stmt->execute([$id, $userId, $userId]);

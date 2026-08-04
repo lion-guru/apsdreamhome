@@ -923,7 +923,7 @@ class RoleBasedDashboardController extends AdminController
     }
     private function getUserBookings()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM plot_bookings WHERE user_id=?", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM plot_bookings WHERE customer_id=?", [$uid])['c']; } catch (\Exception $e) { return 0; }
     }
     private function getFeaturedProperties()
     {
@@ -1047,7 +1047,7 @@ class RoleBasedDashboardController extends AdminController
     {
         try {
             $uid = $_SESSION['user_id'] ?? 0;
-            $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM plot_bookings WHERE user_id=? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC", [$uid]);
+            $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM plot_bookings WHERE customer_id=? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC", [$uid]);
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'cnt')];
         } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
     }

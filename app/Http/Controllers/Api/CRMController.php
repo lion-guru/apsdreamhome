@@ -529,7 +529,7 @@ class CRMController extends BaseController
                        pb.booking_number, pb.total_plot_value, u.name as customer_name
                 FROM booking_payment_schedules s
                 JOIN plot_bookings pb ON pb.id = s.booking_id
-                JOIN users u ON u.id = pb.user_id
+                JOIN users u ON u.id = pb.customer_id
                 WHERE s.paid_amount > 0
                 ORDER BY s.payment_date DESC LIMIT 15
             ");
@@ -544,7 +544,7 @@ class CRMController extends BaseController
                        DATEDIFF(s.due_date, CURDATE()) as days_until_due
                 FROM booking_payment_schedules s
                 JOIN plot_bookings pb ON pb.id = s.booking_id
-                JOIN users u ON u.id = pb.user_id
+                JOIN users u ON u.id = pb.customer_id
                 WHERE s.status IN ('pending','overdue')
                 ORDER BY s.due_date ASC LIMIT 20
             ");

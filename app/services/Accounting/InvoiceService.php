@@ -238,11 +238,11 @@ class InvoiceService
         $pdo = $this->pdo();
 
         $tid = TenantContext::getId();
-        $booking = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, p.size_sqft, p.basic_price AS plot_price,
+        $booking = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, p.area_sqft, p.total_price AS plot_price,
                 u.name AS client_name, u.email AS client_email, u.phone AS client_phone
             FROM plot_bookings pb
-            LEFT JOIN inventory_plots p ON pb.plot_id = p.id
-            LEFT JOIN users u ON pb.user_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
+            LEFT JOIN plots p ON pb.plot_id = p.id
+            LEFT JOIN users u ON pb.customer_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
             WHERE pb.id = ?");
         $stmt = $booking;
         $stmt->execute($tid > 1 ? [$bookingId, $tid] : [$bookingId]);
@@ -253,7 +253,7 @@ class InvoiceService
         }
 
         $items = [];
-        $plotPrice = (float)($row['plot_price'] ?? $row['total_amount'] ?? 0);
+        $plotPrice = (float)($row['plot_price'] ?? $row['total_plot_value'] ?? 0);
 
         $items[] = [
             'item_type' => 'property',
@@ -266,7 +266,7 @@ class InvoiceService
         ];
 
         return $this->createInvoice([
-            'client_id' => $row['user_id'] ?? null,
+            'client_id' => $row['customer_id'] ?? null,
             'client_type' => 'customer',
             'client_name' => $row['client_name'] ?? '',
             'client_email' => $row['client_email'] ?? '',
@@ -551,11 +551,11 @@ class InvoiceService
         $pdo = $this->pdo();
         try {
             $tid = TenantContext::getId();
-            $sql = "SELECT pb.id, pb.booking_number, pb.total_amount, pb.status,
+            $sql = "SELECT pb.id, pb.booking_number, pb.total_plot_value, pb.status,
                     p.plot_no, u.name AS client_name
                 FROM plot_bookings pb
-                LEFT JOIN inventory_plots p ON pb.plot_id = p.id
-                LEFT JOIN users u ON pb.user_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN users u ON pb.customer_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
                 ORDER BY pb.created_at DESC LIMIT 200";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($tid > 1 ? [$tid] : []);

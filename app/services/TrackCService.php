@@ -19,7 +19,7 @@ class TrackCService extends ServiceTenantTrait
         $sql = "
             SELECT pb.*, u.id as user_id, u.rank, u.referred_by
             FROM plot_bookings pb
-            JOIN users u ON pb.user_id = u.id
+            JOIN users u ON pb.customer_id = u.id
             WHERE pb.id = ?
         ";
         $params = [$bookingId];
@@ -33,7 +33,7 @@ class TrackCService extends ServiceTenantTrait
         }
 
         // Milestone escrow: 2% released on registry completion
-        $escrowAmount = ($booking['total_price'] * 2) / 100;
+        $escrowAmount = ($booking['total_plot_value'] * 2) / 100;
         $uplineId = $booking['referred_by'];
         $breakdown = [];
 

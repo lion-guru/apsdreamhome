@@ -16,7 +16,7 @@ class AgentController extends AdminController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $this->data['agents'] = $db->fetchAll(
                 "SELECT u.id, u.name, u.email, u.phone, u.status,
-                    (SELECT COUNT(*) FROM plot_bookings pb WHERE pb.agent_id = u.id) as deals_count,
+                    (SELECT COUNT(*) FROM plot_bookings pb WHERE pb.associate_id = u.id) as deals_count,
                     (SELECT COALESCE(SUM(ml.commission_amount), 0) FROM mlm_commission_ledger ml WHERE ml.user_id = u.id) as total_commission
                  FROM users u WHERE u.role = 'agent'{$tidSql} ORDER BY u.name ASC",
                 $tidParams

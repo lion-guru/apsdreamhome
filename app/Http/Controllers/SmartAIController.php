@@ -759,7 +759,7 @@ EOT;
             
             // Query live bookings
             try {
-                $bookings = $this->db->fetchAll("SELECT plot_id, status FROM plot_bookings WHERE user_id = ?", [$userContext['id']]);
+                $bookings = $this->db->fetchAll("SELECT plot_id, status FROM plot_bookings WHERE customer_id = ?", [$userContext['id']]);
                 if (!empty($bookings)) {
                     $prompt .= "Active Plot Bookings: " . count($bookings) . "\n";
                 }

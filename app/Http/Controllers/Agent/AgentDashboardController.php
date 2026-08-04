@@ -453,7 +453,7 @@ class AgentDashboardController extends BaseController
         try {
             // This month's sales
             $thisMonth = $this->db->fetchOne(
-                "SELECT COUNT(*) as count, COALESCE(SUM(pb.total_amount), 0) as volume
+                "SELECT COUNT(*) as count, COALESCE(SUM(pb.total_plot_value), 0) as volume
                  FROM plot_bookings pb
                  JOIN associates a ON pb.associate_id = a.id
                  WHERE a.id = ? AND MONTH(pb.created_at) = MONTH(CURDATE()) AND YEAR(pb.created_at) = YEAR(CURDATE())",
@@ -462,7 +462,7 @@ class AgentDashboardController extends BaseController
 
             // Last month's sales
             $lastMonth = $this->db->fetchOne(
-                "SELECT COUNT(*) as count, COALESCE(SUM(pb.total_amount), 0) as volume
+                "SELECT COUNT(*) as count, COALESCE(SUM(pb.total_plot_value), 0) as volume
                  FROM plot_bookings pb
                  JOIN associates a ON pb.associate_id = a.id
                  WHERE a.id = ? AND MONTH(pb.created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(pb.created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))",
@@ -471,10 +471,10 @@ class AgentDashboardController extends BaseController
 
             // Total career sales
             $career = $this->db->fetchOne(
-                "SELECT COUNT(*) as count, COALESCE(SUM(pb.total_amount), 0) as volume
+                "SELECT COUNT(*) as count, COALESCE(SUM(pb.total_plot_value), 0) as volume
                  FROM plot_bookings pb
                  JOIN associates a ON pb.associate_id = a.id
-                 WHERE a.id = ? AND pb.status IN ('booked', 'confirmed', 'completed')",
+                 WHERE a.id = ? AND pb.status IN ('token_paid', 'agreement_signed', 'emi_active', 'partially_paid', 'fully_paid', 'registration_done')",
                 [$associateId]
             );
 
@@ -754,10 +754,10 @@ class AgentDashboardController extends BaseController
         $deals = [];
         try {
             $deals = $this->db->fetchAll(
-                "SELECT pb.*, p.title as property_title, u.name as customer_name
+                "SELECT pb.*, p.plot_number as property_title, u.name as customer_name
                  FROM plot_bookings pb
                  LEFT JOIN plots p ON pb.plot_id = p.id
-                 LEFT JOIN users u ON pb.user_id = u.id
+                 LEFT JOIN users u ON pb.customer_id = u.id
                  WHERE pb.associate_id = (SELECT id FROM associates WHERE user_id = ? LIMIT 1)
                  ORDER BY pb.created_at DESC LIMIT 50",
                 [$userId]

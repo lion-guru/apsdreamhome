@@ -46,7 +46,7 @@ class TrackAService extends ServiceTenantTrait
         $sql = "
             SELECT pb.*, u.id as user_id, u.name, u.rank, u.referred_by
             FROM plot_bookings pb
-            JOIN users u ON pb.user_id = u.id
+            JOIN users u ON pb.customer_id = u.id
             WHERE pb.id = ?
         ";
         $params = [$bookingId];
