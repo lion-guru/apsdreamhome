@@ -6,8 +6,8 @@
  * 1. Pattern Engine (IntentDetector + LeadScorer) — instant, free, deterministic
  * 2. SelfLearningAI — free, learns from every conversation
  * 3. Rule Engine — heuristic, instant, free
- * 4. Free AI Engines (Ollama → Groq → OpenRouter) — unlimited free intelligence
- * 5. Gemini Flash — free tier fallback for complex NLP
+ * 4. Free AI Engines (Ollama → Groq) — unlimited free intelligence
+ * 5. Gemini Flash — free tier fallback for complex NLP (rate limited)
  * 
  * Cost: ₹0. Ever. All free engines.
  * Hindi-first. Real estate specialized. Self-learning.
@@ -50,7 +50,7 @@ class AIGateway
         } catch (\Throwable $e) {
             $this->config = [];
         }
-        $this->geminiApiKey = $this->config['gemini_api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
+        $this->geminiApiKey = $this->config['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
     }
 
     // ─────────── Main Entry Point ─────────────────────────────────────

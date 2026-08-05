@@ -3,8 +3,8 @@
  * FreeAIEngines — All free AI engines in one place
  * 
  * 1. Ollama (localhost) — Unlimited, free, private, Hindi-capable
- * 2. Groq (free tier) — Llama 3.1 70B, fastest inference in world
- * 3. OpenRouter (free models) — Llama 3, Mistral, Gemma, Phi-3
+ * 2. Groq (free tier) — Llama 3.3 70B, fastest inference in world
+ * 3. OpenRouter (low-cost paid) — Free tier deprecated, used as last resort
  * 4. Google Gemini Flash (free tier) — Already in AIGateway
  * 
  * Cost: ₹0. Ever.
@@ -23,9 +23,9 @@ class FreeAIEngines
     // Groq (free tier: 30 RPM, 14,400 RPD)
     private $groqKey = '';
     private $groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-    private $groqModel = 'llama-3.1-70b-versatile';
+    private $groqModel = 'llama-3.3-70b-versatile';
 
-    // OpenRouter (free models available)
+    // OpenRouter (paid models, low-cost fallback — free tier deprecated 2026)
     private $openRouterKey = '';
     private $openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -165,12 +165,11 @@ class FreeAIEngines
         if ($system) $messages[] = ['role' => 'system', 'content' => $system];
         $messages[] = ['role' => 'user', 'content' => $prompt];
 
-        // Free models on OpenRouter
+        // Low-cost models on OpenRouter (free tier deprecated)
         $freeModels = [
-            'meta-llama/llama-3.1-8b-instruct:free',
-            'mistralai/mistral-7b-instruct:free',
-            'google/gemma-2-9b-it:free',
+            'meta-llama/llama-3.2-3b-instruct',
             'microsoft/phi-3-mini-128k-instruct:free',
+            'google/gemma-2-9b-it',
         ];
 
         foreach ($freeModels as $model) {
@@ -300,8 +299,8 @@ class FreeAIEngines
             ],
             'openrouter' => [
                 'available' => !empty($this->openRouterKey),
-                'model' => 'Free models (Llama, Mistral, Gemma)',
-                'cost' => 'Free tier available',
+                'model' => 'Low-cost paid models (Llama, Phi-3)',
+                'cost' => 'Paid (free tier deprecated)',
                 'speed' => '~100 tokens/sec',
             ],
             'gemini' => [
