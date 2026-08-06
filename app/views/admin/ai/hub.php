@@ -1,9 +1,9 @@
-ï»¿<?php
+<?php
 $mlSupport = $mlSupport ?? new class { public function translate($s) { return $s; } public function getCurrentLanguage() { return 'EN'; } };
 $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'; } };
 ?>
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.css" media="print" onload="this.media='all'">
 <style>
     #workflowCanvas {
@@ -359,22 +359,22 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Active Channels</h6><h3 id="tc-channels" class="mb-0">â€”</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Active Channels</h6><h3 id="tc-channels" class="mb-0">—</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Pending Calls</h6><h3 id="tc-pending" class="mb-0">â€”</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Pending Calls</h6><h3 id="tc-pending" class="mb-0">—</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Today's Calls</h6><h3 id="tc-today" class="mb-0">â€”</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Today's Calls</h6><h3 id="tc-today" class="mb-0">—</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Success Rate</h6><h3 id="tc-rate" class="mb-0">â€”</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Success Rate</h6><h3 id="tc-rate" class="mb-0">—</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
             </div>
@@ -444,17 +444,17 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Conversations Today</h6><h3 id="bot-convos" class="mb-0">â€”</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Conversations Today</h6><h3 id="bot-convos" class="mb-0">—</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Satisfaction</h6><h3 id="bot-satisfaction" class="mb-0">â€”</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Satisfaction</h6><h3 id="bot-satisfaction" class="mb-0">—</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Training Items</h6><h3 id="bot-training" class="mb-0">â€”</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Training Items</h6><h3 id="bot-training" class="mb-0">—</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
             </div>
@@ -598,7 +598,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
 </div>
 
 <script async src="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script async src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
     function initLibraries() {
         // Initialize Drawflow
@@ -652,7 +652,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     tryInit();
 
     function toggleAIMode() {
-        showToast('AI mode toggle â€” use Settings tab', 'info');
+        showToast('AI mode toggle — use Settings tab', 'info');
     }
 
     function toggleNotifications() {

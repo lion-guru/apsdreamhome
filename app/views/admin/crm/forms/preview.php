@@ -11,8 +11,8 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($form['name'] ?? 'Lead Form') ?> - Preview</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style>
         body{background:#f5f7fa;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}
         .form-card{max-width:600px;margin:40px auto;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.1)}

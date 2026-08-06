@@ -103,7 +103,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4"></script>
 <script>
 <?php if (!empty($analytics['campaigns'] ?? [])): ?>
 new Chart(document.getElementById('performanceChart'), {

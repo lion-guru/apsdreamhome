@@ -19,8 +19,8 @@ $base = BASE_URL;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quick Register - APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem 1rem}
@@ -213,7 +213,7 @@ $base = BASE_URL;
         </a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         function selectChannel(channel) {
             document.querySelectorAll('.channel-option').forEach(el => el.classList.remove('selected'));

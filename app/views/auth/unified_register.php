@@ -21,8 +21,8 @@ $base = BASE_URL;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         :root {
             --primary: #0d9488;
@@ -858,7 +858,7 @@ $base = BASE_URL;
         </a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     (function() {
         const BASE = <?php echo json_encode($base); ?>;

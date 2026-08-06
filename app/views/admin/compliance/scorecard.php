@@ -201,7 +201,7 @@ function complianceBadgeClass($status) {
                     </div>
                 <?php else: ?>
                     <canvas id="trendChart" height="200"></canvas>
-                    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+                    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4"></script>
                     <script>
                         const trendData = <?= json_encode(array_reverse($trend)) ?>;
                         const ctx = document.getElementById('trendChart').getContext('2d');

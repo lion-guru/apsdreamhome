@@ -180,7 +180,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 </div>
 
 <!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 
 <script>
 (function() {

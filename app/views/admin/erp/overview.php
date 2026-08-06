@@ -298,7 +298,7 @@ if (($s['dept_overdue'] ?? 0) > 0) $alerts[] = ['error', '<strong>Overdue Reques
 </div>
 <?php endif; ?>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var cashData = <?= json_encode($cashFlow, JSON_HEX_TAG) ?>;

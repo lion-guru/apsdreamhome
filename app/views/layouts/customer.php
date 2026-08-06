@@ -24,9 +24,9 @@ $GLOBALS['_html_doc_started'] = true;
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Consolidated APS CSS Bundles -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
@@ -150,7 +150,7 @@ $GLOBALS['_html_doc_started'] = true;
     </main>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
 

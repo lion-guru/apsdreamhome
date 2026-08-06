@@ -289,7 +289,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 // Salary Trend Chart
 const trendCtx = document.getElementById('salaryTrendChart');

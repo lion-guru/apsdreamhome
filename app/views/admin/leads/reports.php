@@ -296,7 +296,7 @@ Page Header -->
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         <?php if ($reportType == 'summary'): ?>

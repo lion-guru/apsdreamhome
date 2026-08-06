@@ -45,7 +45,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js" defer></script>
 <script>
 const ctx1 = document.getElementById('commissionChart').getContext('2d');
 new Chart(ctx1, {

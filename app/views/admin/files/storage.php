@@ -96,7 +96,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var ctx = document.getElementById('storageChart');

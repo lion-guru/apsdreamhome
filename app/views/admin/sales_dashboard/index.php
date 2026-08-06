@@ -215,7 +215,7 @@
 .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('leadTrendChart').getContext('2d');

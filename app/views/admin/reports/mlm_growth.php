@@ -236,7 +236,7 @@ $report = $report ?? [
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 // Network Growth Chart
 const networkGrowthCtx = document.getElementById('networkGrowthChart').getContext('2d');

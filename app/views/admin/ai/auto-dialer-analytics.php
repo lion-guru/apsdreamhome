@@ -69,7 +69,7 @@ $day_connected = $day_connected ?? [];
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 const labels = <?= json_encode($day_labels) ?>;
 const totals = <?= json_encode(array_map('intval', $day_totals)) ?>;

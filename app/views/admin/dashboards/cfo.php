@@ -172,7 +172,7 @@
 </div>
 
 <!-- Charts Script -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Revenue Chart - Load via AJAX

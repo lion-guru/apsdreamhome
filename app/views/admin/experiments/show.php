@@ -179,7 +179,7 @@ $variantNames = array_keys($results);
 </div>
 
 <?php if (!empty($results)): ?>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 (function() {
     const ctx = document.getElementById('conversionChart');

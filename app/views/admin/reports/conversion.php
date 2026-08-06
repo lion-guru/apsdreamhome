@@ -79,7 +79,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 <?php if (!empty($conversion_data)): ?>
 new Chart(document.getElementById('conversionTrendChart'), {

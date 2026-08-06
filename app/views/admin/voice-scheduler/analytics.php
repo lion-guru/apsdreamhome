@@ -92,7 +92,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var labels = <?= json_encode(array_map(function($r) { return $r['date'] ?? ''; }, $callsOverTime)) ?>;

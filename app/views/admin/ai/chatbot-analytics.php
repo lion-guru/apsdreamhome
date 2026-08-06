@@ -51,7 +51,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
     <script>
     const ctx = document.getElementById('satisfactionChart');
     if (ctx) {

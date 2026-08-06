@@ -82,7 +82,7 @@ $bookingData = $bookingData ?? [];
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 const colors = ['#0d9488','#06b6d4','#10b981','#f59e0b','#ef4444','#14b8a6','#ec4899','#14b8a6'];
 new Chart(document.getElementById('revenueChart'), {

@@ -114,7 +114,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     </div>
 
     <!-- Chart.js Initialization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         function createChart(id, type, labels, data, label, color) {

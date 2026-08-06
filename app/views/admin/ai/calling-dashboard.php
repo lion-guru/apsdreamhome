@@ -108,7 +108,7 @@ $recentCalls = $recentCalls ?? [];
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 new Chart(document.getElementById('weeklyChart'), {
     type: 'bar', data: { labels: <?= json_encode($weekLabels) ?>, datasets: [{ label: 'Calls', data: <?= json_encode(array_map('intval', $weekData)) ?>, backgroundColor: '#0d9488aa', borderColor: '#0d9488', borderWidth: 1 }] },

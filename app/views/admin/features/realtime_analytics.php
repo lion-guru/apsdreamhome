@@ -89,7 +89,7 @@ ob_start();
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 let leadsChart, sourcesChart, pipelineChart, propertyTypeChart;
 
