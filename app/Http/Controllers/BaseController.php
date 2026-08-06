@@ -172,6 +172,50 @@ class BaseController
     }
 
     /**
+     * Create InputValidator for form data
+     */
+    protected function validate(array $data = null): \App\Helpers\InputValidator
+    {
+        return \App\Helpers\InputValidator::make($data ?? $_POST);
+    }
+
+    /**
+     * Sanitize all POST data
+     */
+    protected function sanitizePost(): array
+    {
+        return \App\Helpers\InputValidator::sanitizePost();
+    }
+
+    /**
+     * Get sanitized input value
+     */
+    protected function input(string $key, $default = null)
+    {
+        $value = $_POST[$key] ?? $default;
+        if (is_string($value)) {
+            return \App\Helpers\InputValidator::sanitizeString($value);
+        }
+        return $value;
+    }
+
+    /**
+     * Get integer input
+     */
+    protected function inputInt(string $key, int $default = 0): int
+    {
+        return isset($_POST[$key]) ? (int) $_POST[$key] : $default;
+    }
+
+    /**
+     * Get float input
+     */
+    protected function inputFloat(string $key, float $default = 0.0): float
+    {
+        return isset($_POST[$key]) ? (float) $_POST[$key] : $default;
+    }
+
+    /**
      * Enforce rate limiting based on request type
      */
     protected function enforceRateLimit(): void
