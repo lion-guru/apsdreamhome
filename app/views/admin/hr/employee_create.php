@@ -44,7 +44,31 @@ $page_title = $page_title ?? 'Add Employee';
                     <input type="text" name="password" class="form-control" value="employee@123">
                     <div class="form-text">Default: employee@123</div>
                 </div>
-            </div>
+                
+                <hr class="my-4">
+                <h5 class="mb-3">Incentives & MLM Integration</h5>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Incentive Model</label>
+                    <select name="incentive_model" class="form-select">
+                        <option value="salary_only" selected>Salary Only</option>
+                        <option value="commission_only">Commission Only (Freelance)</option>
+                        <option value="salary_plus_commission">Salary + Commission</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Commission Rate</label>
+                    <input type="number" name="commission_rate" class="form-control" step="0.01" value="0.00">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Commission Type</label>
+                    <select name="commission_type" class="form-select">
+                        <option value="percentage" selected>Percentage (%)</option>
+                        <option value="flat">Flat Rate (₹ per SqFt)</option>
+                    </select>
+                </div>
+                
+                <hr class="my-4">
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create Employee</button>
                 <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-secondary ms-2">Cancel</a>

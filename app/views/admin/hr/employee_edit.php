@@ -41,8 +41,33 @@ $e = $employee ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Joining Date</label>
-                    <input type="date" name="join_date" class="form-control" value="<?= htmlspecialchars($e['join_date'] ?? date('Y-m-d')) ?>">
+                    <input type="date" name="join_date" class="form-control" value="<?= htmlspecialchars($e['joining_date'] ?? $e['join_date'] ?? date('Y-m-d')) ?>">
                 </div>
+                
+                <hr class="my-4">
+                <h5 class="mb-3">Incentives & MLM Integration</h5>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Incentive Model</label>
+                    <select name="incentive_model" class="form-select">
+                        <option value="salary_only" <?= ($e['incentive_model'] ?? '') === 'salary_only' ? 'selected' : '' ?>>Salary Only</option>
+                        <option value="commission_only" <?= ($e['incentive_model'] ?? '') === 'commission_only' ? 'selected' : '' ?>>Commission Only (Freelance)</option>
+                        <option value="salary_plus_commission" <?= ($e['incentive_model'] ?? '') === 'salary_plus_commission' ? 'selected' : '' ?>>Salary + Commission</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Commission Rate</label>
+                    <input type="number" name="commission_rate" class="form-control" step="0.01" value="<?= htmlspecialchars($e['commission_rate'] ?? '0.00') ?>">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Commission Type</label>
+                    <select name="commission_type" class="form-select">
+                        <option value="percentage" <?= ($e['commission_type'] ?? '') === 'percentage' ? 'selected' : '' ?>>Percentage (%)</option>
+                        <option value="flat" <?= ($e['commission_type'] ?? '') === 'flat' ? 'selected' : '' ?>>Flat Rate (₹ per SqFt)</option>
+                    </select>
+                </div>
+                
+                <hr class="my-4">
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">

@@ -1,7 +1,11 @@
-﻿<?php
+<?php
 $page_title = 'Add New Booking';
 $active_page = 'bookings';
 ?>
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Add New Booking</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -21,149 +25,180 @@ $active_page = 'bookings';
 <?php endif; ?>
 
 <!-- Booking Form -->
-<div class="card aps-cp-card">
-    <div class="card-header aps-cp-card-header">
-        <h5 class="card-title mb-0">
-            <i class="fas fa-plus-circle"></i> Booking Information
+<div class="card aps-cp-card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+        <h5 class="card-title mb-0 text-primary fw-bold">
+            <i class="fas fa-file-signature me-2"></i> Booking Information
         </h5>
     </div>
-    <div class="card-body aps-cp-card-body">
-        <form action="<?php echo BASE_URL; ?>/admin/bookings" method="POST">
+    <div class="card-body">
+        <form action="<?php echo BASE_URL; ?>/admin/bookings" method="POST" id="bookingForm" class="needs-validation" novalidate>
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
-            <div class="row">
-                <!-- Property Selection -->
-                <div class="col-md-6 mb-3">
-                    <label for="property_id" class="form-label">Property *</label>
-                    <select class="form-select" id="property_id" name="property_id" required>
-                        <option value="">Select Property</option>
-                        <?php foreach ($properties as $property): ?>
-                            <option value="<?= $property['id'] ?>">
-                                <?= htmlspecialchars($property['title'] ?? '') ?> - ₹<?= number_format(floatval($property['price'] ?? 0), 2) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <!-- Customer Selection -->
-                <div class="col-md-6 mb-3">
-                    <label for="customer_type" class="form-label">Customer Type *</label>
-                    <select class="form-select" id="customer_type" name="customer_type" required onchange="toggleCustomerFields()">
-                        <option value="existing">Existing Customer</option>
-                        <option value="new">New Customer</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Existing Customer Section -->
-            <div id="existing_customer_section" class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="customer_id" class="form-label">Select Customer *</label>
-                    <select class="form-select" id="customer_id" name="customer_id">
-                        <option value="">Select Customer</option>
-                        <?php foreach ($users as $customer): ?>
-                            <option value="<?= $customer['id'] ?>">
-                                <?= htmlspecialchars($customer['name'] ?? '') ?> (<?= htmlspecialchars($customer['email'] ?? '') ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <!-- New Customer Section -->
-            <div id="new_customer_section" class="row" style="display: none;">
-                <div class="col-md-6 mb-3">
-                    <label for="new_customer_name" class="form-label">Customer Name *</label>
-                    <input type="text" class="form-control" id="new_customer_name" name="new_customer_name"
-                        placeholder="Enter customer name" required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="new_customer_email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="new_customer_email" name="new_customer_email"
-                        placeholder="customer@example.com">
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="new_customer_phone" class="form-label">Phone Number *</label>
-                    <input type="tel" class="form-control" id="new_customer_phone" name="new_customer_phone"
-                        placeholder="+91 9876543210" required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="new_customer_address" class="form-label">Address</label>
-                    <textarea class="form-control" id="new_customer_address" name="new_customer_address"
-                        rows="2" placeholder="Enter customer address"></textarea>
-                </div>
-
-                <!-- Associate Assignment for New Customer -->
-                <div class="col-md-6 mb-3">
-                    <label for="new_customer_associate_id" class="form-label">
-                        <i class="fas fa-user-tie"></i> Assign Associate
-                        <small class="text-muted">(Optional - for commission tracking)</small>
-                    </label>
-                    <select class="form-select" id="new_customer_associate_id" name="associate_id">
-                        <option value="">No Associate (Direct Booking)</option>
-                        <?php foreach ($users as $associate): ?>
-                            <option value="<?= $associate['id'] ?>">
-                                <?= htmlspecialchars($associate['name']) ?>
-                                <?php if (!empty($associate['mlm_rank'])): ?>
-                                    - <?= htmlspecialchars($associate['mlm_rank']) ?>
-                                <?php endif; ?>
-                                (<?= htmlspecialchars($associate['email']) ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="form-text">
-                        Assign an associate to track commissions and team performance
+            <div class="row g-4">
+                <!-- Plot Selection -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="property_id" name="plot_id" required>
+                            <option value="" selected disabled>Select a plot...</option>
+                            <?php foreach ($plots ?? $properties ?? [] as $plot): ?>
+                                <option value="<?= $plot['id'] ?>" data-price="<?= $plot['total_price'] ?? $plot['price'] ?? 0 ?>">
+                                    <?= htmlspecialchars($plot['colony_name'] ?? '') ?> - Plot <?= htmlspecialchars($plot['plot_number'] ?? $plot['title'] ?? '') ?> 
+                                    (₹<?= number_format(floatval($plot['total_price'] ?? $plot['price'] ?? 0), 2) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <label for="property_id">Property / Plot <span class="text-danger">*</span></label>
+                        <div class="invalid-feedback">Please select a property.</div>
                     </div>
                 </div>
 
-                <!-- Booking Date for New Customer -->
-                <div class="col-md-6 mb-3">
-                    <label for="new_booking_date" class="form-label">Booking Date *</label>
-                    <input type="date" class="form-control" id="new_booking_date" name="booking_date"
-                        value="<?= date('Y-m-d') ?>" required>
-                </div>
-
-                <!-- Booking Amount for New Customer -->
-                <div class="col-md-6 mb-3">
-                    <label for="new_amount" class="form-label">Booking Amount (₹) *</label>
-                    <div class="input-group">
-                        <span class="input-group-text">₹</span>
-                        <input type="number" class="form-control" id="new_amount" name="amount"
-                            step="0.01" min="0" required placeholder="0.00">
+                <!-- Associate / Agent Assignment -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="associate_id" name="associate_id">
+                            <option value="">No Associate (Direct Booking)</option>
+                            <?php 
+                            // Try to get associates, fallback to users if needed
+                            $agentList = $associates ?? $users ?? [];
+                            foreach ($agentList as $associate): 
+                                // Only show users who are agents/associates if we're using the generic users array
+                                if (isset($associate['role']) && !in_array(strtolower($associate['role']), ['agent', 'associate', 'telecaller'])) continue;
+                            ?>
+                                <option value="<?= $associate['id'] ?>">
+                                    <?= htmlspecialchars($associate['name']) ?> 
+                                    <?php if (!empty($associate['role'])): ?>
+                                        (<?= ucfirst(htmlspecialchars($associate['role'])) ?>)
+                                    <?php endif; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <label for="associate_id">Assign Associate / Agent</label>
+                        <div id="associate_resolution" class="form-text mt-1 text-primary fw-bold" style="display: none;">
+                            <i class="fas fa-check-circle"></i> <span id="associate_name_display"></span>
+                        </div>
+                        <div class="form-text text-muted small mt-1" id="associate_help_text">
+                            <i class="fas fa-info-circle"></i> Assign an associate to track commissions
+                        </div>
                     </div>
                 </div>
 
-                <!-- Status for New Customer -->
-                <div class="col-md-6 mb-3">
-                    <label for="new_status" class="form-label">Booking Status</label>
-                    <select class="form-select" id="new_status" name="status">
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
+                <!-- Customer Type -->
+                <div class="col-md-12">
+                    <div class="card bg-light border-0">
+                        <div class="card-body">
+                            <label class="form-label fw-bold mb-3">Customer Selection <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="customer_type" id="type_existing" value="existing" checked onchange="toggleCustomerFields()">
+                                    <label class="form-check-label" for="type_existing">
+                                        Existing Customer
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="customer_type" id="type_new" value="new" onchange="toggleCustomerFields()">
+                                    <label class="form-check-label" for="type_new">
+                                        New Customer
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Commission Preview -->
-            <div id="commission_preview" class="alert alert-info d-none">
-                <h6><i class="fas fa-calculator"></i> Commission Preview</h6>
-                <div id="commission_details"></div>
+                <!-- Existing Customer Section -->
+                <div id="existing_customer_section" class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" id="customer_id" name="customer_id" required>
+                            <option value="" selected disabled>Select an existing customer...</option>
+                            <?php foreach ($customers ?? $users ?? [] as $customer): ?>
+                                <?php if (isset($customer['role']) && !in_array(strtolower($customer['role']), ['customer', 'user'])) continue; ?>
+                                <option value="<?= $customer['id'] ?>">
+                                    <?= htmlspecialchars($customer['name'] ?? '') ?> 
+                                    (<?= htmlspecialchars($customer['phone'] ?? $customer['email'] ?? '') ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <label for="customer_id">Select Customer <span class="text-danger">*</span></label>
+                        <div class="invalid-feedback">Please select a customer.</div>
+                    </div>
+                </div>
+
+                <!-- New Customer Section -->
+                <div id="new_customer_section" class="col-md-12" style="display: none;">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="new_customer_name" name="new_customer_name" placeholder="John Doe">
+                                <label for="new_customer_name">Full Name <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" id="new_customer_phone" name="new_customer_phone" placeholder="9876543210">
+                                <label for="new_customer_phone">Phone Number <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="new_customer_email" name="new_customer_email" placeholder="john@example.com">
+                                <label for="new_customer_email">Email Address <span class="text-muted">(Optional)</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Details -->
+                <div class="col-md-12 mt-4">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Financial & Status Details</h6>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="date" class="form-control" id="booking_date" name="booking_date" value="<?= date('Y-m-d') ?>" required>
+                        <label for="booking_date">Booking Date <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="total_plot_value" name="total_plot_value" step="0.01" min="0" required placeholder="0.00" readonly>
+                        <label for="total_plot_value">Total Plot Value (₹) <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="booking_amount" name="booking_amount" step="0.01" min="0" required placeholder="0.00">
+                        <label for="booking_amount">Booking/Token Amount Paid (₹) <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+
+                <!-- Commission Preview -->
+                <div class="col-md-12">
+                    <div id="commission_preview" class="alert alert-success d-none shadow-sm border-0">
+                        <h6 class="alert-heading fw-bold mb-2"><i class="fas fa-calculator me-1"></i> Commission Estimation</h6>
+                        <div id="commission_details" class="small"></div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <textarea class="form-control" id="notes" name="notes" style="height: 100px" placeholder="Any special remarks or terms..."></textarea>
+                        <label for="notes">Booking Notes / Remarks (Optional)</label>
+                    </div>
+                </div>
             </div>
 
             <!-- Form Actions -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Create Booking
-                    </button>
-                    <a href="<?= BASE_URL ?>admin/bookings" class="btn btn-secondary ms-2">
-                        <i class="fas fa-times"></i> Cancel
-                    </a>
-                </div>
+            <div class="mt-5 pt-3 border-top text-end">
+                <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-light me-2 px-4 shadow-sm">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary px-5 shadow-sm">
+                    <i class="fas fa-check-circle me-1"></i> Create Booking
+                </button>
             </div>
         </form>
     </div>
@@ -172,48 +207,88 @@ $active_page = 'bookings';
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const propertySelect = document.getElementById('property_id');
-        const amountInput = document.getElementById('new_amount');
-        const associateSelect = document.getElementById('new_customer_associate_id');
+        const totalValueInput = document.getElementById('total_plot_value');
+        const bookingAmountInput = document.getElementById('booking_amount');
+        const associateSelect = document.getElementById('associate_id');
         const commissionPreview = document.getElementById('commission_preview');
         const commissionDetails = document.getElementById('commission_details');
 
-        // Auto-fill amount when property is selected
+        // Auto-fill total value when property is selected
         propertySelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
-            const priceText = selectedOption.textContent;
-            const priceMatch = priceText.match(/₹([\d,]+\.?\d*)/);
-
-            if (priceMatch) {
-                const price = parseFloat(priceMatch[1].replace(/,/g, ''));
-                amountInput.value = price.toFixed(2);
+            if (selectedOption.value) {
+                const price = parseFloat(selectedOption.dataset.price || 0);
+                totalValueInput.value = price.toFixed(2);
+                // Pre-fill token amount as 10%
+                bookingAmountInput.value = (price * 0.1).toFixed(2);
                 updateCommissionPreview();
+            } else {
+                totalValueInput.value = '';
+                bookingAmountInput.value = '';
+                commissionPreview.classList.add('d-none');
             }
         });
 
         // Update commission preview when associate or amount changes
-        associateSelect.addEventListener('change', updateCommissionPreview);
-        amountInput.addEventListener('input', updateCommissionPreview);
+        associateSelect.addEventListener('change', function() {
+            updateCommissionPreview();
+            resolveAssociateName();
+        });
+        totalValueInput.addEventListener('input', updateCommissionPreview);
+
+        function resolveAssociateName() {
+            const associateId = associateSelect.value;
+            const resDiv = document.getElementById('associate_resolution');
+            const nameDisplay = document.getElementById('associate_name_display');
+            const helpText = document.getElementById('associate_help_text');
+
+            if (!associateId) {
+                resDiv.style.display = 'none';
+                helpText.style.display = 'block';
+                return;
+            }
+
+            fetch('<?= BASE_URL ?>/api/user/resolve-sponsor?ref=' + associateId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        nameDisplay.textContent = data.name + ' (' + data.role + ')';
+                        resDiv.style.display = 'block';
+                        helpText.style.display = 'none';
+                    } else {
+                        resDiv.style.display = 'none';
+                        helpText.style.display = 'block';
+                    }
+                })
+                .catch(error => console.error('Error resolving sponsor:', error));
+        }
 
         function updateCommissionPreview() {
             const associateId = associateSelect.value;
-            const amount = parseFloat(amountInput.value) || 0;
+            const amount = parseFloat(totalValueInput.value) || 0;
 
             if (associateId && amount > 0) {
-                // Calculate commission (5% example)
+                // Calculate estimated commission (Example: 5% of total value)
                 const commissionRate = 0.05;
                 const commissionAmount = amount * commissionRate;
 
                 commissionDetails.innerHTML = `
-                    <div class="row">
+                    <div class="row align-items-center">
                         <div class="col-md-4">
-                            <strong>Booking Amount:</strong> ₹${amount.toFixed(2)}
+                            <span class="text-muted d-block">Plot Value</span>
+                            <strong>₹${amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
                         </div>
                         <div class="col-md-4">
-                            <strong>Commission Rate:</strong> ${(commissionRate * 100)}%
+                            <span class="text-muted d-block">Est. Base Rate</span>
+                            <strong>${(commissionRate * 100)}%</strong>
                         </div>
                         <div class="col-md-4">
-                            <strong>Commission:</strong> ₹${commissionAmount.toFixed(2)}
+                            <span class="text-muted d-block">Est. Commission</span>
+                            <strong class="text-success">₹${commissionAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
                         </div>
+                    </div>
+                    <div class="mt-2 text-muted" style="font-size: 0.75rem;">
+                        * Note: Actual commission will be calculated automatically by the MLM Engine based on the Associate's rank and current plan.
                     </div>
                 `;
                 commissionPreview.classList.remove('d-none');
@@ -221,68 +296,93 @@ $active_page = 'bookings';
                 commissionPreview.classList.add('d-none');
             }
         }
-
-        // Handle new customer fields for new customer section
-        const newCustomerSection = document.getElementById('new_customer_section');
-        const newAmountInput = document.getElementById('new_amount');
-        const newAssociateSelect = document.getElementById('new_customer_associate_id');
-
-        // Auto-fill amount for new customer section
-        propertySelect.addEventListener('change', function() {
-            if (newAmountInput) {
-                const selectedOption = this.options[this.selectedIndex];
-                const priceText = selectedOption.textContent;
-                const priceMatch = priceText.match(/₹([\d,]+\.?\d*)/);
-
-                if (priceMatch) {
-                    const price = parseFloat(priceMatch[1].replace(/,/g, ''));
-                    newAmountInput.value = price.toFixed(2);
+        
+        // Form Validation Bootstrap
+        const form = document.getElementById('bookingForm');
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Custom validation for New Customer
+            const isNew = document.getElementById('type_new').checked;
+            if (isNew) {
+                const name = document.getElementById('new_customer_name');
+                const phone = document.getElementById('new_customer_phone');
+                
+                if (!name.value.trim()) {
+                    name.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    name.classList.remove('is-invalid');
+                }
+                
+                if (!phone.value.trim() || !/^\d{10}$/.test(phone.value.replace(/\D/g,''))) {
+                    phone.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    phone.classList.remove('is-invalid');
                 }
             }
-        });
+            
+            if (!form.checkValidity() || !isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
     });
 
     // Toggle customer fields based on customer type
     function toggleCustomerFields() {
-        const customerType = document.getElementById('customer_type').value;
+        const isNew = document.getElementById('type_new').checked;
         const existingSection = document.getElementById('existing_customer_section');
         const newSection = document.getElementById('new_customer_section');
+        const customerId = document.getElementById('customer_id');
 
-        if (customerType === 'existing') {
-            existingSection.style.display = 'block';
-            newSection.style.display = 'none';
-            // Make existing customer fields required
-            document.getElementById('customer_id').setAttribute('required', 'required');
-        } else {
+        if (isNew) {
             existingSection.style.display = 'none';
             newSection.style.display = 'block';
-            // Remove required from existing customer fields
-            document.getElementById('customer_id').removeAttribute('required');
+            customerId.removeAttribute('required');
+            document.getElementById('new_customer_name').setAttribute('required', 'required');
+            document.getElementById('new_customer_phone').setAttribute('required', 'required');
+        } else {
+            existingSection.style.display = 'block';
+            newSection.style.display = 'none';
+            customerId.setAttribute('required', 'required');
+            document.getElementById('new_customer_name').removeAttribute('required');
+            document.getElementById('new_customer_phone').removeAttribute('required');
         }
-    }
 
-    // Form validation before submission
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const customerType = document.getElementById('customer_type').value;
+        // Initialize Select2 for searchable dropdowns
+        if (typeof jQuery !== 'undefined') {
+            $('#property_id').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Select a plot...'
+            });
+            $('#associate_id').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'No Associate (Direct Booking)',
+                allowClear: true
+            });
+            $('#customer_id').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Select an existing customer...'
+            });
 
-        if (customerType === 'new') {
-            const customerName = document.getElementById('new_customer_name').value.trim();
-            const customerPhone = document.getElementById('new_customer_phone').value.trim();
+            // Re-bind change events for Select2 elements
+            $('#property_id').on('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+                totalValueInput.value = price.toFixed(2);
+                updateCommissionPreview();
+            });
 
-            if (!customerName || !customerPhone) {
-                e.preventDefault();
-                alert('Please fill in all required customer details (Name and Phone)');
-                return false;
-            }
-
-            // Validate phone number
-            const phoneRegex = /^[+]?[\d\s\-\(\)]+$/;
-            if (!phoneRegex.test(customerPhone)) {
-                e.preventDefault();
-                alert('Please enter a valid phone number');
-                return false;
-            }
+            $('#associate_id').on('change', function() {
+                updateCommissionPreview();
+                resolveAssociateName();
+            });
         }
     });
 </script>
-
+<!-- jQuery and Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

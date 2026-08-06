@@ -147,7 +147,9 @@ class HybridCommissionEngine
     ];
 
     /* ================================================================
-       SECTION 4 — DIWALI DHAMAKA SALARY INCENTIVE TIERS
+       SECTION 4 — TARGET ACHIEVEMENT INCENTIVE TIERS
+       (Freelance associate who completes a sales target within a window
+        gets a monthly incentive grant for a fixed number of months.)
        ================================================================ */
 
     private const SALARY_TIERS = [
@@ -321,40 +323,15 @@ class HybridCommissionEngine
                 return ['success' => true, 'skipped' => true, 'reason' => 'commissions_already_exist_for_this_receipt'];
             }
 
-            // ── 0b. Independent Agent bypass — flat commission, no MLM upline ──
-            $assocStmt = $this->pdo->prepare(
-                "SELECT agent_track, brokerage_model, brokerage_rate FROM associates WHERE user_id = ? LIMIT 1"
-            );
-            $assocStmt->execute([$executingAgentId]);
-            $assocRecord = $assocStmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($assocRecord && ($assocRecord['agent_track'] ?? 'mlm') === 'independent') {
-                $result = $this->processIndependentAgentCommission(
-                    $bookingId,
-                    $receiptId,
-                    $amountReceived,
-                    $executingAgentId,
-                    $assocRecord
-                );
-                $this->pdo->commit();
-                return $result;
-            }
-
-            // ── 1. Compute global cap envelope ────────────────────
-            $caps = $this->getActivePlanCaps();
-            $totalCap    = $amountReceived * ($caps['global_cap'] / 100);
-            $trackABudget = $amountReceived * ($caps['track_a'] / 100);
-            $trackBBudget = $amountReceived * ($caps['track_b'] / 100);
-            $trackCBudget = $amountReceived * ($caps['track_c'] / 100);
-
-            // ── 2. Resolve booking + agent context ────────────────
+            // ── 0b. Resolve booking for telecaller & subsequent logic ──
             $booking  = $this->fetchBooking($bookingId);
-            $agentGbv = $this->getAgentGbv($executingAgentId);
 
-            // ── 2.5 Resolve telecaller (if any) and compute incentives ──
+            // ── 0c. Resolve telecaller (if any) and compute incentives BEFORE agent bypass ──
             $telecaller = $this->resolveTelecallerForBooking($booking ?: []);
             $telecallerIncentive = 0.0;
             $telecallerLedgerIds = [];
+            $maxTelecallerBudget = $amountReceived * 0.05; // Strict 5% cap to protect company 80% margins
+            $telecallerBudgetUsed = 0.0;
 
             if ($telecaller) {
                 $tcUserId = (int)$telecaller['user_id'];
@@ -373,36 +350,45 @@ class HybridCommissionEngine
                     $bookingValue = 1.0;
                 }
 
-                if ($receiptId === 0) {
-                    // Token payment -> flat incentive
-                    $flatRate = (float)($telecaller['telecaller_incentive_rate'] > 0 ? $telecaller['telecaller_incentive_rate'] : 1000.00);
-                    $telecallerIncentive = min($flatRate, $amountReceived);
-                    $note = "Telecaller Token Conversion Incentive (Flat ₹" . number_format($flatRate) . ")";
-                    $rateUsed = 0.0;
+                if (isset($telecaller['telecaller_percent_rate']) && $telecaller['telecaller_percent_rate'] > 0) {
+                    $percentRate = (float)$telecaller['telecaller_percent_rate'];
+                    $telecallerIncentive = ($amountReceived * $percentRate) / 100.0;
+                    $telecallerIncentive = min($telecallerIncentive, $maxTelecallerBudget);
+                    $note = "Telecaller Percentage Incentive ({$percentRate}%, Capped)";
+                    $rateUsed = $percentRate;
                 } else {
-                    // Subsequent payment -> proportional sqft incentive
-                    $sqftRate = (float)($telecaller['telecaller_sqft_rate'] > 0 ? $telecaller['telecaller_sqft_rate'] : 10.00);
-                    $totalSqftIncentive = $plotArea * $sqftRate;
-                    $proportion = $amountReceived / $bookingValue;
-                    $telecallerIncentive = min($totalSqftIncentive * $proportion, $amountReceived);
-                    $note = "Telecaller SqFt Incentive (₹" . $sqftRate . "/sqft proportional, total ₹" . number_format($totalSqftIncentive) . ")";
-                    $rateUsed = $sqftRate;
+                    if ($receiptId === 0) {
+                        // Token payment -> flat incentive
+                        $flatRate = (float)($telecaller['telecaller_incentive_rate'] > 0 ? $telecaller['telecaller_incentive_rate'] : 1000.00);
+                        $telecallerIncentive = min($flatRate, $maxTelecallerBudget);
+                        $note = "Telecaller Token Conversion Incentive (Flat ₹" . number_format($flatRate) . ", Capped)";
+                        $rateUsed = 0.0;
+                    } else {
+                        // Subsequent payment -> proportional sqft incentive
+                        $sqftRate = (float)($telecaller['telecaller_sqft_rate'] > 0 ? $telecaller['telecaller_sqft_rate'] : 10.00);
+                        $totalSqftIncentive = $plotArea * $sqftRate;
+                        $proportion = $amountReceived / $bookingValue;
+                        $telecallerIncentive = min($totalSqftIncentive * $proportion, $maxTelecallerBudget);
+                        $note = "Telecaller SqFt Incentive (₹" . $sqftRate . "/sqft proportional, total ₹" . number_format($totalSqftIncentive) . ", Capped)";
+                        $rateUsed = $sqftRate;
+                    }
                 }
 
                 if ($telecallerIncentive > 0.01) {
                     $ledgerId = $this->writeLedger(
                         $tcUserId, $tcUserId, $amountReceived, $rateUsed,
-                        round($telecallerIncentive, 2), 'direct_sale', 0, $bookingId, $receiptId,
+                        round($telecallerIncentive, 2), 'telecaller_bonus', 0, $bookingId, $receiptId,
                         $note
                     );
                     $telecallerLedgerIds[] = $ledgerId;
+                    $telecallerBudgetUsed += $telecallerIncentive;
                 }
 
                 // Walk telecaller parent hierarchy up to 2 generations to award Team Lead overrides
                 $currentParentId = !empty($telecaller['telecaller_parent_id']) ? (int)$telecaller['telecaller_parent_id'] : null;
                 $levelRates = [1 => 2.0, 2 => 1.0];
                 for ($lvl = 1; $lvl <= 2; $lvl++) {
-                    if (!$currentParentId) {
+                    if (!$currentParentId || $telecallerBudgetUsed >= $maxTelecallerBudget) {
                         break;
                     }
 
@@ -420,20 +406,103 @@ class HybridCommissionEngine
 
                     $parentPct = $levelRates[$lvl];
                     $parentAmt = $amountReceived * ($parentPct / 100);
+                    $parentAmt = min($parentAmt, $maxTelecallerBudget - $telecallerBudgetUsed);
 
                     if ($parentAmt > 0.01) {
                         $ledgerId = $this->writeLedger(
                             $currentParentId, $tcUserId, $amountReceived, $parentPct,
                             round($parentAmt, 2), 'level_bonus', $lvl, $bookingId, $receiptId,
-                            "Telecaller Team Lead Override (Level {$lvl}, {$parentPct}%)"
+                            "Telecaller Team Lead Override (Level {$lvl}, {$parentPct}%, Capped)"
                         );
                         $telecallerLedgerIds[] = $ledgerId;
                         $telecallerIncentive += $parentAmt;
+                        $telecallerBudgetUsed += $parentAmt;
                     }
 
                     $currentParentId = !empty($parentRecord['telecaller_parent_id']) ? (int)$parentRecord['telecaller_parent_id'] : null;
                 }
             }
+
+            // ── 0d. Independent Agent bypass — flat commission, no MLM upline ──
+            $assocStmt = $this->pdo->prepare(
+                "SELECT agent_track, agent_type, brokerage_model, brokerage_rate FROM associates WHERE user_id = ? LIMIT 1"
+            );
+            $assocStmt->execute([$executingAgentId]);
+            $assocRecord = $assocStmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($assocRecord && ($assocRecord['agent_track'] ?? 'mlm') === 'independent') {
+                $result = $this->processIndependentAgentCommission(
+                    $bookingId,
+                    $receiptId,
+                    $amountReceived,
+                    $executingAgentId,
+                    $assocRecord
+                );
+                $this->pdo->commit();
+                return $result;
+            }
+
+            // ── 0c. Dual System Bypass (Freelance Broker vs Salaried) ──
+            $agentType = $assocRecord['agent_type'] ?? 'mlm';
+
+            if ($agentType === 'salaried') {
+                // Salaried agents get paid monthly payroll via SalariedAgentService.
+                // We do NOT write direct MLM commissions to the ledger for them.
+                $this->pdo->commit();
+                return ['success' => true, 'skipped' => true, 'reason' => 'salaried_agent_payroll_handled_separately'];
+            }
+
+            if ($agentType === 'freelance_broker') {
+                // Freelance Broker cascading commission
+                $plotValue = 0.0;
+                $areaSqft = 0.0;
+                $booking = $this->fetchBooking($bookingId);
+                if ($booking) {
+                    $plotValue = (float)($booking['agreement_value'] ?? $booking['total_plot_value'] ?? 0.0);
+                    if (!empty($booking['plot_id'])) {
+                        $pStmt = $this->pdo->prepare("SELECT area_sqft FROM plots WHERE id = ? LIMIT 1");
+                        $pStmt->execute([$booking['plot_id']]);
+                        $areaSqft = (float)$pStmt->fetchColumn();
+                    }
+                }
+
+                // Process cascading margins prorated against the payment amount received
+                $fbResult = $this->processFreelanceBrokerCommission($executingAgentId, $plotValue, $areaSqft, 10, $amountReceived);
+
+                if ($fbResult['success'] && !empty($fbResult['chain'])) {
+                    foreach ($fbResult['chain'] as $node) {
+                        $note = "Freelance Broker Cascading (Rate: " . $node['own_rate'] . ($node['comm_type'] === 'percentage' ? '%' : ' Rs/SqFt') . ")";
+                        $this->writeLedger(
+                            $node['user_id'],
+                            $executingAgentId,
+                            $amountReceived,
+                            $node['own_rate'],
+                            $node['margin'],
+                            'freelance_broker',
+                            $node['level'],
+                            $bookingId,
+                            $receiptId,
+                            $note
+                        );
+                    }
+                }
+                
+                // Track C equivalent (Royalty pool) is still collected from the payment, even for brokers
+                $this->contributeToRoyaltyPool($bookingId, $amountReceived);
+
+                $this->pdo->commit();
+                return ['success' => true, 'type' => 'freelance_broker', 'details' => $fbResult];
+            }
+
+            // ── 1. Compute global cap envelope ────────────────────
+            $caps = $this->getActivePlanCaps();
+            $totalCap    = $amountReceived * ($caps['global_cap'] / 100);
+            $trackABudget = $amountReceived * ($caps['track_a'] / 100);
+            $trackBBudget = $amountReceived * ($caps['track_b'] / 100);
+            $trackCBudget = $amountReceived * ($caps['track_c'] / 100);
+
+            // ── 2. Resolve agent context ────────────────
+            $agentGbv = $this->getAgentGbv($executingAgentId);
 
             // ── 3. PATH A — Slab Differential (15% budget) ────────
             $trackAResult = $this->computeTrackA(
@@ -837,11 +906,12 @@ class HybridCommissionEngine
     public function resolveRank(int $agentId): string
     {
         $gbv = $this->getAgentGbv($agentId);
+        $slabs = $this->loadRankSlabsFromDb();
 
         $rank = 'associate';
-        foreach (self::RANK_SLABS as $slug => $slab) {
+        foreach ($slabs as $slug => $slab) {
             if ($gbv >= $slab['min_gbv']) {
-                if ($slab['max_gbv'] === 0 || $gbv <= $slab['max_gbv']) {
+                if ($slab['max_gbv'] == 0 || $gbv <= $slab['max_gbv']) {
                     $rank = $slug;
                 } elseif ($gbv > $slab['max_gbv'] && $slab['max_gbv'] > 0) {
                     // continue to next slab
@@ -858,6 +928,10 @@ class HybridCommissionEngine
      */
     public function getRankName(string $rankSlug): string
     {
+        $slabs = $this->loadRankSlabsFromDb();
+        if (isset($slabs[$rankSlug])) {
+            return $slabs[$rankSlug]['rank_name'];
+        }
         return self::RANK_NAMES[$rankSlug] ?? ucfirst(str_replace('_', ' ', $rankSlug));
     }
 
@@ -976,13 +1050,18 @@ class HybridCommissionEngine
         if ($agentSlice > 0) {
             $alloc = min($agentSlice, max(0.0, $budgetCap - $distributed));
             if ($alloc > 0.01) {
+                // Check status for missed commission FOMO strategy
+                $agentStatus = $this->getAgentStatus($agentId);
+                $isMissed = !in_array($agentStatus, ['active']);
+
                 $ledgerId = $this->writeLedger(
                     $agentId, $agentId, $amountReceived, $agentRate,
                     round($alloc, 2), 'direct_sale', 1, $bookingId, $receiptId,
-                    'Track A — Direct agent slab commission'
+                    'Track A — Direct agent slab commission',
+                    $isMissed
                 );
                 $ledgerIds[]   = $ledgerId;
-                $distributed  += $alloc;
+                if (!$isMissed) $distributed  += $alloc;
             }
         }
 
@@ -1019,13 +1098,17 @@ class HybridCommissionEngine
                     if ($overrideAmt > 0) {
                         $alloc = min($overrideAmt, $remaining);
                         if ($alloc > 0.01) {
+                            $agentStatus = $this->getAgentStatus($userId);
+                            $isMissed = !in_array($agentStatus, ['active']);
+
                             $ledgerId = $this->writeLedger(
                                 $userId, $agentId, $amountReceived, $overridePct,
                                 round($alloc, 2), 'level_bonus', $gen['level'], $bookingId, $receiptId,
-                                "Track A — Same-level override ({$this->getRankName($uplineRank)}, Gen {$gen['level']})"
+                                "Track A — Same-level override ({$this->getRankName($uplineRank)}, Gen {$gen['level']})",
+                                $isMissed
                             );
                             $ledgerIds[]   = $ledgerId;
-                            $distributed  += $alloc;
+                            if (!$isMissed) $distributed  += $alloc;
                         }
                     }
                 }
@@ -1040,13 +1123,17 @@ class HybridCommissionEngine
                 $diffAmt = $amountReceived * ($differential / 100);
                 $alloc = min($diffAmt, $remaining);
                 if ($alloc > 0.01) {
+                    $agentStatus = $this->getAgentStatus($userId);
+                    $isMissed = !in_array($agentStatus, ['active']);
+
                     $ledgerId = $this->writeLedger(
                         $userId, $agentId, $amountReceived, $differential,
                         round($alloc, 2), 'level_bonus', $gen['level'], $bookingId, $receiptId,
-                        "Track A — Differential ({$this->getRankName($uplineRank)} {$uplineRate}% − {$prevRate}%)"
+                        "Track A — Differential ({$this->getRankName($uplineRank)} {$uplineRate}% − {$prevRate}%)",
+                        $isMissed
                     );
                     $ledgerIds[]   = $ledgerId;
-                    $distributed  += $alloc;
+                    if (!$isMissed) $distributed  += $alloc;
                 }
             }
 
@@ -1094,13 +1181,17 @@ class HybridCommissionEngine
         $bonusAmt = $amountReceived * ($bonusPct / 100);
 
         if ($bonusAmt > 0 && $bonusAmt <= $budgetCap) {
+            $agentStatus = $this->getAgentStatus($agentId);
+            $isMissed = !in_array($agentStatus, ['active']);
+
             $ledgerId = $this->writeLedger(
                 $agentId, $agentId, $amountReceived, $bonusPct,
                 $bonusAmt, 'performance_bonus', 0, $bookingId, $receiptId,
-                "Track B — Performance rollup ({$consecutive} consecutive months, {$bonusPct}%)"
+                "Track B — Performance rollup ({$consecutive} consecutive months, {$bonusPct}%)",
+                $isMissed
             );
             $ledgerIds[]   = $ledgerId;
-            $distributed  += $bonusAmt;
+            if (!$isMissed) $distributed  += $bonusAmt;
         }
 
         return [
@@ -1148,13 +1239,17 @@ class HybridCommissionEngine
         $escrowAmount = min($amountReceived * (self::TRACK_C_CAP_PCT / 100), $budgetCap);
 
         if ($escrowAmount > 0) {
+            $agentStatus = $this->getAgentStatus($agentId);
+            $isMissed = !in_array($agentStatus, ['active']);
+
             $ledgerId = $this->writeLedger(
                 $agentId, $agentId, $amountReceived, self::TRACK_C_CAP_PCT,
                 $escrowAmount, 'team_bonus', 0, $bookingId, $receiptId,
-                'Track C — Milestone escrow credit'
+                'Track C — Milestone escrow credit',
+                $isMissed
             );
             $ledgerIds[]   = $ledgerId;
-            $distributed  += $escrowAmount;
+            if (!$isMissed) $distributed  += $escrowAmount;
         }
 
         // Check milestones
@@ -1290,10 +1385,29 @@ class HybridCommissionEngine
         int    $level,
         int    $bookingId,
         int    $receiptId,
-        string $notes
+        string $notes,
+        bool   $isMissed = false
     ): int {
         // Capture plan snapshot for this calculation
         $planSnapshot = $this->getActivePlanSnapshot();
+
+        $status = $isMissed ? 'missed' : 'pending';
+        if ($isMissed) {
+            $notes .= ' | [MISSED_DUE_TO_INACTIVE]';
+        } else {
+            // Dynamic check for inactive associate status to enforce missed commissions
+            try {
+                $stmtStatus = $this->pdo->prepare("SELECT status FROM associates WHERE user_id = ? LIMIT 1");
+                $stmtStatus->execute([$beneficiaryId]);
+                $userStatus = $stmtStatus->fetchColumn();
+                if ($userStatus && $userStatus !== 'active') {
+                    $status = 'missed';
+                    $notes .= ' | [MISSED_DUE_TO_INACTIVE]';
+                }
+            } catch (\Throwable $e) {
+                // Ignore DB error and fallback to pending
+            }
+        }
 
         $stmt = $this->pdo->prepare("
             INSERT INTO mlm_commission_ledger
@@ -1301,7 +1415,7 @@ class HybridCommissionEngine
                  level, sale_amount, commission_percentage, status, notes,
                  property_id, booking_id, receipt_id, hold_until, created_at,
                  plan_id, plan_version, plan_snapshot, calculation_engine, tenant_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW(),
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW(),
                     ?, ?, ?, 'hybrid', ?)
         ");
         $stmt->execute([
@@ -1312,6 +1426,7 @@ class HybridCommissionEngine
             $level,
             $saleAmount,
             round($pct, 2),
+            $status,
             $notes,
             null, // property_id
             $bookingId > 0 ? $bookingId : null,
@@ -1351,6 +1466,23 @@ class HybridCommissionEngine
 
         return $ledgerId;
     }
+
+    /**
+     * Get agent status, cached per request
+     */
+    private function getAgentStatus(int $userId): string {
+        if (isset($this->agentStatusCache[$userId])) {
+            return $this->agentStatusCache[$userId];
+        }
+        $stmt = $this->pdo->prepare("SELECT status FROM associates WHERE user_id = ? LIMIT 1");
+        $stmt->execute([$userId]);
+        $status = $stmt->fetchColumn();
+        $this->agentStatusCache[$userId] = $status ?: 'inactive';
+        return $this->agentStatusCache[$userId];
+    }
+    
+    // Agent status cache to avoid repetitive queries
+    private array $agentStatusCache = [];
 
     /**
      * Fetch a booking row from plot_bookings.
@@ -2123,6 +2255,37 @@ class HybridCommissionEngine
         }
 
         $tcStmt = $this->pdo->prepare("
+            SELECT e.*, u.name, u.email 
+            FROM employees e
+            JOIN users u ON u.id = e.user_id
+            WHERE e.user_id = ? AND e.status = 'active' LIMIT 1
+        ");
+        $tcStmt->execute([$telecallerUserId]);
+        $telecaller = $tcStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($telecaller) {
+            // Map new HR schema to existing logic
+            if (($telecaller['incentive_model'] ?? 'salary_only') !== 'salary_only') {
+                $rate = (float)($telecaller['commission_rate'] ?? 0);
+                $type = $telecaller['commission_type'] ?? 'percentage';
+
+                if ($type === 'flat') {
+                    // It's a flat rate per sqft
+                    $telecaller['telecaller_sqft_rate'] = $rate;
+                    $telecaller['telecaller_incentive_rate'] = 0; // Or some flat token amount if needed
+                } else {
+                    // Percentage based: we'll handle this in the computation by overriding rate
+                    $telecaller['telecaller_sqft_rate'] = 0; // Marker for percentage
+                    $telecaller['telecaller_percent_rate'] = $rate;
+                }
+            } else {
+                return null; // Salary only, no commission
+            }
+            return $telecaller;
+        }
+
+        // Fallback to old associates table
+        $tcStmt = $this->pdo->prepare("
             SELECT a.*, u.name, u.email 
             FROM associates a
             JOIN users u ON u.id = a.user_id
@@ -2193,6 +2356,7 @@ class HybridCommissionEngine
             ");
             $params = array_merge($assocIds, [$month]);
             $legVolStmt->execute($params);
+            $legVolStmt->fetch(PDO::FETCH_ASSOC);
             $legVolumes[] = (float)$legVolStmt->fetchColumn();
         }
 
@@ -2334,6 +2498,8 @@ class HybridCommissionEngine
 
             // 1. Direct agent/referrer — 3.5%
             if ($agentShare > 0) {
+                $agentStatus = $this->getAgentStatus($referrerUserId);
+                $isMissed = !in_array($agentStatus, ['active']);
                 $ledgerId = $this->writeLedger(
                     $referrerUserId,
                     $investorUserId,
@@ -2344,9 +2510,10 @@ class HybridCommissionEngine
                     0,
                     0, // no booking_id for investments
                     $investmentId,
-                    "Investment #{$investmentId} — 3.5% direct agent commission"
+                    "Investment #{$investmentId} — 3.5% direct agent commission",
+                    $isMissed
                 );
-                $this->incrementGbv($referrerUserId, $amount);
+                if (!$isMissed) $this->incrementGbv($referrerUserId, $amount);
                 $details[] = ['user_id' => $referrerUserId, 'level' => 0, 'pct' => 3.5, 'amount' => $agentShare, 'ledger_id' => $ledgerId];
             }
 
@@ -2359,6 +2526,8 @@ class HybridCommissionEngine
                 if (!isset($remaining[$i]) || $remaining[$i] <= 0) {
                     break;
                 }
+                $agentStatus = $this->getAgentStatus($upline['user_id']);
+                $isMissed = !in_array($agentStatus, ['active']);
                 $ledgerId = $this->writeLedger(
                     $upline['user_id'],
                     $investorUserId,
@@ -2369,9 +2538,10 @@ class HybridCommissionEngine
                     $i + 1,
                     0,
                     $investmentId,
-                    "Investment #{$investmentId} — L" . ($i + 1) . " upline override ({$pcts[$i]}%)"
+                    "Investment #{$investmentId} — L" . ($i + 1) . " upline override ({$pcts[$i]}%)",
+                    $isMissed
                 );
-                $this->incrementGbv($upline['user_id'], $amount);
+                if (!$isMissed) $this->incrementGbv($upline['user_id'], $amount);
                 $details[] = ['user_id' => $upline['user_id'], 'level' => $i + 1, 'pct' => $pcts[$i], 'amount' => $remaining[$i], 'ledger_id' => $ledgerId];
             }
 
@@ -2555,6 +2725,205 @@ class HybridCommissionEngine
             }
             error_log("[HybridCommissionEngine] reverseInvestmentCommissions FAILED: " . $e->getMessage());
             return ['success' => false, 'reversed' => 0, 'total_reversed' => 0, 'entries' => [], 'error' => $e->getMessage()];
+        }
+    }
+
+    /* ================================================================
+       SECTION — FREELANCE BROKER CASCADING COMMISSION
+       ================================================================
+
+       Business rule:
+         - A freelance broker sets their own commission rate (% or ₹/SqFt).
+         - They can assign a LOWER rate to each of their downline members.
+         - Broker margin = broker's own rate − rate given to downline.
+         - Rates are stored in `associate_downline_rates`.
+         - Fallback: if no custom rate found, uses RANK_SLABS GBV-based rate.
+    */
+
+    /**
+     * Get the active custom rate a parent broker has set for a specific child.
+     *
+     * @param int    $parentUserId  The broker setting the rate
+     * @param int    $childUserId   The downline member receiving this rate
+     * @return array|null  ['commission_type'=>'percentage'|'per_sqft', 'commission_value'=>float] or null
+     */
+    public function getBrokerDownlineRate(int $parentUserId, int $childUserId): ?array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT commission_type, commission_value
+                FROM associate_downline_rates
+                WHERE parent_user_id = ?
+                  AND child_user_id  = ?
+                  AND effective_from <= CURDATE()
+                  AND (effective_to IS NULL OR effective_to >= CURDATE())
+                ORDER BY effective_from DESC
+                LIMIT 1
+            ");
+            $stmt->execute([$parentUserId, $childUserId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            error_log('[HybridCommissionEngine] getBrokerDownlineRate: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get the broker's own commission rate (from associates table).
+     *
+     * @param int $userId
+     * @return array|null  ['commission_type'=>..., 'commission_value'=>float]
+     */
+    public function getBrokerOwnRate(int $userId): ?array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT commission_type, commission_value, agent_type
+                FROM associates
+                WHERE user_id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            error_log('[HybridCommissionEngine] getBrokerOwnRate: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Calculate the commission amount for a single plot sale based on
+     * custom broker rates (percentage or per_sqft) with area support.
+     *
+     * @param float  $plotValue    Total sale value of the plot in Rs.
+     * @param float  $areaSqft     Area of the plot in SqFt.
+     * @param string $commType     'percentage' or 'per_sqft'
+     * @param float  $commValue    The rate value (% or Rs/SqFt)
+     * @return float               Gross commission amount in Rs.
+     */
+    public function calcBrokerCommission(
+        float  $plotValue,
+        float  $areaSqft,
+        string $commType,
+        float  $commValue,
+        float  $amountReceived = null
+    ): float {
+        if ($commType === 'per_sqft') {
+            $totalComm = $commValue * $areaSqft;
+            if ($amountReceived !== null && $plotValue > 0) {
+                return round($totalComm * ($amountReceived / $plotValue), 2);
+            }
+            return round($totalComm, 2);
+        }
+        // percentage
+        if ($amountReceived !== null) {
+            return round(($commValue / 100.0) * $amountReceived, 2);
+        }
+        return round(($commValue / 100.0) * $plotValue, 2);
+    }
+
+    /**
+     * Process the full cascading commission chain for a freelance broker network.
+     *
+     * Walk up the mlm_network_tree from the selling agent.
+     * At each level, look for a custom downline rate set by the parent for that child.
+     * Broker margin at each level = parent_rate − child_rate (differential).
+     * If no custom rate exists at any level, falls back to RANK_SLABS differential.
+     *
+     * Does NOT write to DB — returns a breakdown array for the caller to persist.
+     *
+     * @param int   $sellingUserId  The associate who made the plot sale
+     * @param float $plotValue      Total plot sale value in Rs.
+     * @param float $areaSqft       Plot area in SqFt.
+     * @param int   $maxLevels      How many upline levels to walk (default 10)
+     * @return array [
+     *   'success'     => bool,
+     *   'chain'       => [['user_id'=>int, 'gross'=>float, 'net'=>float, 'type'=>string], ...],
+     *   'total_gross' => float,
+     * ]
+     */
+    public function processFreelanceBrokerCommission(
+        int   $sellingUserId,
+        float $plotValue,
+        float $areaSqft,
+        int   $maxLevels = 10,
+        float $amountReceived = null
+    ): array {
+        try {
+            // ── 1. Fetch the ancestor chain (selling agent + uplines) ──────────────
+            $stmt = $this->pdo->prepare("
+                SELECT t.user_id, t.parent_id, t.level_depth
+                FROM mlm_network_tree t
+                WHERE t.user_id = ?
+                   OR t.user_id IN (
+                        SELECT parent_id FROM mlm_network_tree
+                        WHERE user_id = ?
+                   )
+                ORDER BY t.level_depth ASC
+                LIMIT ?
+            ");
+            $stmt->execute([$sellingUserId, $sellingUserId, $maxLevels + 1]);
+            $chain = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($chain)) {
+                return ['success' => false, 'error' => 'No network tree record for user ' . $sellingUserId, 'chain' => []];
+            }
+
+            // ── 2. Walk the chain, resolving rates ────────────────────────────────
+            $breakdown    = [];
+            $totalGross   = 0.0;
+            $prevChildRate = null; // rate that the previous (lower) person had — for differential
+
+            foreach ($chain as $node) {
+                $uid = (int)$node['user_id'];
+
+                // Get this member's own rate
+                $ownRateRow = $this->getBrokerOwnRate($uid);
+                if (!$ownRateRow || empty($ownRateRow['commission_value'])) {
+                    continue; // No rate configured, skip
+                }
+
+                $commType  = $ownRateRow['commission_type'] ?? 'percentage';
+                $ownRate   = (float)$ownRateRow['commission_value'];
+
+                // Gross commission for this node at their OWN rate
+                $grossOwn = $this->calcBrokerCommission($plotValue, $areaSqft, $commType, $ownRate, $amountReceived);
+
+                // Gross commission at the CHILD's rate (what the chain already cost below)
+                $grossChild = $prevChildRate !== null
+                    ? $this->calcBrokerCommission($plotValue, $areaSqft, $commType, $prevChildRate, $amountReceived)
+                    : 0.0;
+
+                // Margin = what this node earns = own_rate_commission - child_rate_commission
+                $margin = max(0.0, $grossOwn - $grossChild);
+
+                if ($margin > 0) {
+                    $breakdown[] = [
+                        'user_id'   => $uid,
+                        'level'     => (int)$node['level_depth'],
+                        'comm_type' => $commType,
+                        'own_rate'  => $ownRate,
+                        'gross'     => round($grossOwn, 2),
+                        'margin'    => round($margin, 2),
+                        'type'      => 'broker_cascading',
+                    ];
+                    $totalGross += $margin;
+                }
+
+                $prevChildRate = $ownRate;
+            }
+
+            return [
+                'success'     => true,
+                'chain'       => $breakdown,
+                'total_gross' => round($totalGross, 2),
+            ];
+
+        } catch (Exception $e) {
+            error_log('[HybridCommissionEngine] processFreelanceBrokerCommission: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage(), 'chain' => []];
         }
     }
 }

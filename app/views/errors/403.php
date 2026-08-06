@@ -4,34 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>403 - Access Denied | APS Dream Home</title>
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-        .card{background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-        .icon{width:80px;height:80px;background:#fffbeb;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;color:#f59e0b}
-        h1{font-size:3.5rem;font-weight:700;color:#1e293b;line-height:1}
-        h2{font-size:1.1rem;color:#64748b;font-weight:400;margin:8px 0 16px}
-        p{color:#94a3b8;font-size:.9rem;margin-bottom:24px;line-height:1.6}
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#0d9488;color:#fff;text-decoration:none;border-radius:8px;font-weight:500;font-size:.9rem;transition:all .2s;margin:4px}
-        .btn:hover{background:#4338ca;transform:translateY(-1px)}
-        .btn-outline{background:transparent;color:#64748b;border:1px solid #e2e8f0}
-        .btn-outline:hover{background:#f8fafc;color:#1e293b}
-        .logo-text{font-size:.8rem;color:#c7d2fe;margin-top:24px}
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 20px; }
+        .error-container { text-align: center; max-width: 600px; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .error-icon { font-size: 80px; color: #fd7e14; margin-bottom: 20px; }
+        .error-code { font-size: 6rem; font-weight: 700; color: #2c3e50; margin-bottom: 10px; }
+        .error-title { font-size: 1.5rem; color: #495057; margin-bottom: 15px; }
+        .error-message { color: #6c757d; margin-bottom: 30px; line-height: 1.6; }
+        .btn-home { background: linear-gradient(135deg, #6B4EE6 0%, #8B5CF6 100%); border: none; border-radius: 25px; padding: 12px 30px; color: white; font-weight: 600; text-decoration: none; display: inline-block; margin: 5px; transition: transform 0.2s; }
+        .btn-home:hover { transform: translateY(-2px); color: white; text-decoration: none; }
     </style>
 </head>
 <body>
-    <div class="card aps-cp-card">
-        <div class="icon"><i class="fas fa-lock"></i></div>
-        <h1>403</h1>
-        <h2>Access Denied</h2>
-        <p>You don't have permission to access this area. Sign in with appropriate credentials or contact the administrator.</p>
+    <div class="error-container">
+        <div class="error-icon"><i class="fas fa-lock"></i></div>
+        <div class="error-code">403</div>
+        <h1 class="error-title">Access Denied</h1>
+        <p class="error-message">You don't have permission to access this page. Please contact your administrator if you believe this is an error.</p>
         <div>
-            <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>" class="btn"><i class="fas fa-home"></i> Homepage</a>
-            <a href="<?php echo defined('BASE_URL') ? BASE_URL . '/login' : '/login'; ?>" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="<?= BASE_URL ?>/" class="btn-home"><i class="fas fa-home me-2"></i>Go Home</a>
+            <a href="javascript:history.back()" class="btn-home"><i class="fas fa-arrow-left me-2"></i>Go Back</a>
         </div>
-        <div class="logo-text">APS Dream Home</div>
     </div>
 </body>
 </html>

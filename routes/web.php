@@ -1711,6 +1711,10 @@ $router->get('/wallet/referral-network', 'App\\Http\\Controllers\\WalletControll
 // Wallet Analytics
 $router->get('/wallet/analytics', 'App\\Http\\Controllers\\WalletController@analytics');
 
+// Wallet Store
+$router->get('/wallet/store', 'App\\Http\\Controllers\\WalletController@store');
+$router->post('/wallet/process-purchase', 'App\\Http\\Controllers\\WalletController@processPurchase');
+
 // ============================================================
 // ML & AI API ROUTES
 // ============================================================
@@ -4060,11 +4064,29 @@ $router->get('/admin/hrm/employees', function () {
 });
 $router->get('/admin/mlm/associates', 'App\\Http\\Controllers\\Admin\\MLMController@users');
 $router->get('/admin/agents', 'App\\Http\\Controllers\\Admin\\AgentController@index');
+
+// ============================================================
+// SALARIED AGENTS — HR Salary Structure Management
+// ============================================================
+$router->get('/admin/agents/salaried',             'App\\Http\\Controllers\\Admin\\SalariedAgentController@index');
+$router->get('/admin/agents/salaried/create',       'App\\Http\\Controllers\\Admin\\SalariedAgentController@create');
+$router->post('/admin/agents/salaried/store',       'App\\Http\\Controllers\\Admin\\SalariedAgentController@store');
+$router->get('/admin/agents/salaried/{id}',         'App\\Http\\Controllers\\Admin\\SalariedAgentController@show');
 $router->get('/admin/async', 'App\\Http\\Controllers\\Async\\AsyncController@dashboard');
 $router->get('/admin/async/tasks', 'App\\Http\\Controllers\\Async\\AsyncController@tasks');
 $router->get('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@createTask');
 $router->post('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@handleCreateTask');
 $router->get('/api/work-distribution/analytics', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@getDistributionAnalytics');
+
+// ============================================================
+// COLONY LAND COSTING (Admin\ColonyLandCostingController)
+// ============================================================
+$router->get('/admin/colony-costing',                    'App\\Http\\Controllers\\Admin\\ColonyLandCostingController@index');
+$router->get('/admin/colony-costing/create/{id}',        'App\\Http\\Controllers\\Admin\\ColonyLandCostingController@create');
+$router->post('/admin/colony-costing/store',             'App\\Http\\Controllers\\Admin\\ColonyLandCostingController@store');
+$router->get('/admin/colony-costing/{id}',               'App\\Http\\Controllers\\Admin\\ColonyLandCostingController@show');
+$router->post('/admin/colony-costing/calculate',         'App\\Http\\Controllers\\Admin\\ColonyLandCostingController@calculate');
+$router->post('/admin/colony-costing/approve/{id}',      'App\\Http\\Controllers\\Admin\\ColonyLandCostingController@approve');
 
 // ============================================================
 // POSSESSION HANDOVER (Admin\PossessionController)

@@ -85,16 +85,16 @@ class MlmRewardsController extends AdminController
         $this->requireAdmin();
 
         $requests = [];
-        $stats = ['total' => 0, 'approved' => 0, 'rejected' => 0, 'pending' => 0, 'processed' => 0];
+        $stats = ['total' => 0, 'approved' => 0, 'rejected' => 0, 'pending' => 0, 'completed' => 0];
         try {
             $requests = $this->db->fetchAll("
                 SELECT wr.*, u.name as associate_name, u.email as associate_email
-                FROM mlm_withdrawal_requests wr
-                JOIN users u ON u.id = wr.associate_id
-                ORDER BY wr.request_date DESC
+                FROM withdrawal_requests wr
+                JOIN users u ON u.id = wr.user_id
+                ORDER BY wr.created_at DESC
             ") ?: [];
 
-            $counts = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM mlm_withdrawal_requests GROUP BY status") ?: [];
+            $counts = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM withdrawal_requests GROUP BY status") ?: [];
             foreach ($counts as $row) {
                 $key = strtolower($row['status']);
                 if (isset($stats[$key])) {
@@ -103,8 +103,7 @@ class MlmRewardsController extends AdminController
                 $stats['total'] += intval($row['cnt']);
             }
         } catch (\Exception $e) {
-        // Table may not exist
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
 
         return $this->render('admin/mlm-rewards/withdrawals', [
@@ -122,21 +121,63 @@ class MlmRewardsController extends AdminController
         }
 
         $status = $_POST['status'] ?? '';
-        $adminNotes = $_POST['admin_notes'] ?? '';
+        $adminNotes = $_POST['admin_notes'] ?? ''; // Maps to remarks/rejection_reason
 
-        if (!in_array($status, ['approved', 'rejected', 'processed'])) {
+        if (!in_array($status, ['approved', 'rejected', 'completed', 'processing'])) {
             $_SESSION['error'] = 'Invalid status.';
             $this->redirect('/admin/mlm/withdrawals');
         }
 
-        $update = ['status' => $status, 'admin_notes' => $adminNotes];
-        if ($status === 'processed' || $status === 'approved') {
-            $update['processed_date'] = date('Y-m-d H:i:s');
+        try {
+            $this->db->beginTransaction();
+
+            $request = $this->db->fetchOne("SELECT * FROM withdrawal_requests WHERE id = ? FOR UPDATE", [$id]);
+            if (!$request) {
+                $this->db->rollBack();
+                $_SESSION['error'] = 'Request not found.';
+                $this->redirect('/admin/mlm/withdrawals');
+                return;
+            }
+
+            if ($request['status'] === 'rejected' || $request['status'] === 'completed') {
+                $this->db->rollBack();
+                $_SESSION['error'] = 'Cannot change status of a finalized request.';
+                $this->redirect('/admin/mlm/withdrawals');
+                return;
+            }
+
+            $update = ['status' => $status];
+            if ($status === 'rejected') {
+                $update['rejection_reason'] = $adminNotes;
+                // Refund the user wallet
+                $this->db->query(
+                    "UPDATE user_wallets SET balance = balance + ?, updated_at = NOW() WHERE user_id = ? AND user_type = 'associate'",
+                    [$request['amount'], $request['user_id']]
+                );
+            } else {
+                $update['remarks'] = $adminNotes;
+            }
+
+            if ($status === 'completed' || $status === 'approved') {
+                $update['processed_at'] = date('Y-m-d H:i:s');
+                if ($status === 'approved') {
+                    $update['approved_at'] = date('Y-m-d H:i:s');
+                    $update['approved_by'] = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0;
+                }
+            }
+
+            $this->db->update('withdrawal_requests', $update, ['id' => intval($id)]);
+            $this->db->commit();
+
+            $_SESSION['success'] = 'Withdrawal request ' . $status . ' successfully!';
+        } catch (\Exception $e) {
+            if ($this->db && method_exists($this->db, 'inTransaction') && $this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('Admin withdrawal update error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to update request: ' . $e->getMessage();
         }
 
-        $this->db->update('mlm_withdrawal_requests', $update, ['id' => intval($id)]);
-
-        $_SESSION['success'] = 'Withdrawal request ' . $status . ' successfully!';
         $this->redirect('/admin/mlm/withdrawals');
     }
 

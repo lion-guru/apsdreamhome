@@ -38,6 +38,16 @@ class BaseApiController extends BaseController
     }
 
     /**
+     * Validate incoming JSON payload against a rules array
+     */
+    protected function validateApiPayload(array $rules): array
+    {
+        $input = \json_decode(\file_get_contents('php://input'), true) ?? $_POST;
+        $validator = new \App\Services\ValidatorService();
+        return $validator->validatePayloadSchema($input, $rules);
+    }
+
+    /**
      * Success JSON response
      */
     protected function jsonSuccess($data = [], $message = 'Success', $statusCode = 200)

@@ -150,13 +150,8 @@ class SalaryController extends AdminController
             }
 
             // Create salary payment record
-            $this->db->execute("
-                INSERT INTO salary_payments
-                (tenant_id, associate_id, user_id, payment_month, payment_year, payment_date,
-                 basic_amount, gross_amount, net_amount, payment_status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', NOW(), NOW())
-            ", [
-                $this->getTenantId(),
+            $params = [
+                $this->tenantId(),
                 $associateId,
                 $associate['user_id'],
                 $paymentMonth,
@@ -164,7 +159,13 @@ class SalaryController extends AdminController
                 $associate['salary_amount'],
                 $associate['salary_amount'],
                 $associate['salary_amount']
-            ]);
+            ];
+            $this->db->execute("
+                INSERT INTO salary_payments
+                (tenant_id, associate_id, user_id, payment_month, payment_year, payment_date,
+                 basic_amount, gross_amount, net_amount, payment_status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', NOW(), NOW())
+            ", $params);
 
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'message' => 'Salary payment processed successfully']);
@@ -224,17 +225,22 @@ class SalaryController extends AdminController
         $employee_id = (int)($_POST['employee_id'] ?? 0);
         $basic = (float)($_POST['basic_salary'] ?? 0);
         $hra = (float)($_POST['hra'] ?? 0);
-        $da = (float)($_POST['da'] ?? 0);
-        $ta = (float)($_POST['travel_allowance'] ?? 0);
-        $ma = (float)($_POST['medical_allowance'] ?? 0);
-        $sa = (float)($_POST['special_allowance'] ?? 0);
-        $pf = (float)($_POST['pf_percent'] ?? 12);
-        $tax = (float)($_POST['tax_deduction'] ?? 0);
-        $eff = $_POST['effective_from'] ?? date('Y-m-d');
+        $conveyance = (float)($_POST['conveyance'] ?? 0);
+        $medical = (float)($_POST['medical_allowance'] ?? 0);
+        $special = (float)($_POST['special_allowance'] ?? 0);
+        $other_allowances = (float)($_POST['other_allowances'] ?? 0);
+        $pf_employee = (float)($_POST['pf_employee'] ?? 0);
+        $tds = (float)($_POST['tds'] ?? 0);
+        
+        $gross = $basic + $hra + $conveyance + $medical + $special + $other_allowances;
+        $deductions = $pf_employee + $tds;
+        $net = $gross - $deductions;
+        
+        $eff = $_POST['effective_date'] ?? date('Y-m-d');
         $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("INSERT INTO salary_structures (employee_id, basic_salary, hra, da, travel_allowance, medical_allowance, special_allowance, pf_percent, tax_deduction, effective_from, is_active, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,1,?,NOW())");
-            $stmt->execute([$employee_id, $basic, $hra, $da, $ta, $ma, $sa, $pf, $tax, $eff, $tid]);
+            $stmt = $this->db->prepare("INSERT INTO salary_structures (employee_id, basic_salary, hra, conveyance, medical_allowance, special_allowance, other_allowances, pf_employee, tds, gross_salary, total_deductions, net_salary, effective_date, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,'active',?,NOW())");
+            $stmt->execute([$employee_id, $basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $gross, $deductions, $net, $eff, $tid]);
             $sid = $this->db->lastInsertId();
             $this->logHistory($employee_id, 'salary_structure_created', '0', (string)$sid, (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Salary structure created');
@@ -268,16 +274,21 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         $basic = (float)($_POST['basic_salary'] ?? 0);
         $hra = (float)($_POST['hra'] ?? 0);
-        $da = (float)($_POST['da'] ?? 0);
-        $ta = (float)($_POST['travel_allowance'] ?? 0);
-        $ma = (float)($_POST['medical_allowance'] ?? 0);
-        $sa = (float)($_POST['special_allowance'] ?? 0);
-        $pf = (float)($_POST['pf_percent'] ?? 12);
-        $tax = (float)($_POST['tax_deduction'] ?? 0);
-        $eff = $_POST['effective_from'] ?? date('Y-m-d');
+        $conveyance = (float)($_POST['conveyance'] ?? 0);
+        $medical = (float)($_POST['medical_allowance'] ?? 0);
+        $special = (float)($_POST['special_allowance'] ?? 0);
+        $other_allowances = (float)($_POST['other_allowances'] ?? 0);
+        $pf_employee = (float)($_POST['pf_employee'] ?? 0);
+        $tds = (float)($_POST['tds'] ?? 0);
+        
+        $gross = $basic + $hra + $conveyance + $medical + $special + $other_allowances;
+        $deductions = $pf_employee + $tds;
+        $net = $gross - $deductions;
+        
+        $eff = $_POST['effective_date'] ?? date('Y-m-d');
         $tid = (int)$this->tenantId();
         try {
-            $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, da=?, travel_allowance=?, medical_allowance=?, special_allowance=?, pf_percent=?, tax_deduction=?, effective_from=? WHERE id=? AND tenant_id=?", [$basic, $hra, $da, $ta, $ma, $sa, $pf, $tax, $eff, $id, $tid]);
+            $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, conveyance=?, medical_allowance=?, special_allowance=?, other_allowances=?, pf_employee=?, tds=?, gross_salary=?, total_deductions=?, net_salary=?, effective_date=? WHERE id=? AND tenant_id=?", [$basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $gross, $deductions, $net, $eff, $id, $tid]);
             $this->setFlash('success', 'Structure updated');
         } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
@@ -338,18 +349,23 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         $employee_id = (int)($_POST['employee_id'] ?? 0);
         $structure_id = (int)($_POST['structure_id'] ?? 0);
-        $gross = (float)($_POST['gross_salary'] ?? 0);
-        $deductions = (float)($_POST['total_deductions'] ?? 0);
+        
+        $basic = (float)($_POST['basic_amount'] ?? 0);
+        $gross = (float)($_POST['gross_amount'] ?? 0);
+        $deductions = (float)($_POST['deduction_amount'] ?? 0);
         $net = $gross - $deductions;
         $payment_date = $_POST['payment_date'] ?? date('Y-m-d');
+        $month = (int)date('m', strtotime($payment_date));
+        $year = (int)date('Y', strtotime($payment_date));
+        
         $method = $_POST['payment_method'] ?? 'bank_transfer';
         $txn = $_POST['transaction_id'] ?? '';
-        $status = $_POST['status'] ?? 'pending';
-        $notes = $_POST['notes'] ?? '';
+        $status = $_POST['payment_status'] ?? 'pending';
+        $notes = $_POST['remarks'] ?? '';
         $tid = (int)$this->tenantId();
         try {
-            $stmt = $this->db->prepare("INSERT INTO salary_payments (employee_id, salary_structure_id, gross_salary, total_deductions, net_salary, payment_date, payment_method, transaction_id, status, paid_by, notes, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?, ?,NOW())");
-            $stmt->execute([$employee_id, $structure_id ?: null, $gross, $deductions, $net, $payment_date, $method, $txn, $status, (int)($_SESSION['admin_id'] ?? 0), $notes, $tid]);
+            $stmt = $this->db->prepare("INSERT INTO salary_payments (employee_id, salary_structure_id, payment_month, payment_year, payment_date, basic_amount, gross_amount, deduction_amount, net_amount, payment_method, transaction_id, payment_status, created_by, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())");
+            $stmt->execute([$employee_id, $structure_id ?: null, $month, $year, $payment_date, $basic, $gross, $deductions, $net, $method, $txn, $status, (int)($_SESSION['admin_id'] ?? 0), $notes, $tid]);
             $this->logHistory($employee_id, 'payment_created', '0', number_format($net, 2), (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Payment record created');
         } catch (\Exception $e) {
@@ -380,14 +396,14 @@ class SalaryController extends AdminController
         $year = (int)($_POST['year'] ?? 0);
         if (!$month || !$year) { $this->setFlash('error', 'Month and year required'); $this->redirect('/admin/salary/payments'); }
         try {
-            $users = $this->db->fetchAll("SELECT DISTINCT s.employee_id, s.basic_salary, s.hra, s.da, s.travel_allowance, s.medical_allowance, s.special_allowance, s.pf_percent, s.tax_deduction FROM salary_structures s WHERE s.is_active=1 AND s.employee_id NOT IN (SELECT employee_id FROM salary_payments WHERE MONTH(payment_date)=? AND YEAR(payment_date)=? AND status='paid')", [$month, $year]) ?? [];
+            $users = $this->db->fetchAll("SELECT DISTINCT s.employee_id, s.id as structure_id, s.basic_salary, s.gross_salary, s.total_deductions, s.net_salary FROM salary_structures s WHERE s.status='active' AND s.employee_id NOT IN (SELECT employee_id FROM salary_payments WHERE payment_month=? AND payment_year=? AND payment_status='paid')", [$month, $year]) ?? [];
             $count = 0;
             foreach ($users as $emp) {
-                $gross = (float)$emp['basic_salary'] + (float)$emp['hra'] + (float)$emp['da'] + (float)$emp['travel_allowance'] + (float)$emp['medical_allowance'] + (float)$emp['special_allowance'];
-                $pfAmt = $gross * ((float)$emp['pf_percent'] / 100);
-                $deductions = $pfAmt + (float)$emp['tax_deduction'];
-                $net = $gross - $deductions;
-                $this->db->execute("INSERT INTO salary_payments (employee_id, gross_salary, total_deductions, net_salary, payment_date, status, paid_by, notes, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,NOW())", [$emp['employee_id'], $gross, $deductions, $net, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', 'pending', (int)($_SESSION['admin_id'] ?? 0), 'Bulk processed', (int)$this->tenantId()]);
+                $basic = (float)$emp['basic_salary'];
+                $gross = (float)$emp['gross_salary'];
+                $deductions = (float)$emp['total_deductions'];
+                $net = (float)$emp['net_salary'];
+                $this->db->execute("INSERT INTO salary_payments (employee_id, salary_structure_id, payment_month, payment_year, payment_date, basic_amount, gross_amount, deduction_amount, net_amount, payment_status, created_by, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", [$emp['employee_id'], $emp['structure_id'], $month, $year, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', $basic, $gross, $deductions, $net, 'pending', (int)($_SESSION['admin_id'] ?? 0), 'Bulk processed', (int)$this->tenantId()]);
                 $count++;
             }
             $this->setFlash('success', "Bulk processed $count users");

@@ -238,7 +238,24 @@ $active_page = 'dashboard';
 
         <!-- Page Content -->
         <div class="page-content">
-            <!-- Flash Messages -->
+            
+            <?php if (!empty($commission_summary['missed_commissions'])): ?>
+            <!-- FOMO Strategy: Missed Commissions Banner -->
+            <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 d-flex align-items-center" role="alert" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); box-shadow: 0 4px 15px rgba(220,38,38,0.1); border-radius: 12px;">
+                <div class="stat-icon red me-3 flex-shrink-0" style="background: #ef4444; color: white;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h5 class="alert-heading fw-bold mb-1" style="color: #991b1b;">You Missed ₹<?php echo $commission_summary['total_missed']; ?> in Commissions!</h5>
+                    <p class="mb-0 text-danger">Your account is currently inactive. You missed out on commissions this month because of it. 
+                        <a href="<?php echo $base; ?>/agent/renew" class="fw-bold text-decoration-underline" style="color: #b91c1c;">Activate your account now</a> to prevent losing more money!
+                    </p>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php endif; ?>
+
+            <!-- Stat Cards -->
             <?php if (!empty($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show mb-4">
                 <i class="fas fa-check-circle me-2"></i>
@@ -270,6 +287,27 @@ $active_page = 'dashboard';
                     </a>
                 </div>
             </div>
+
+            <!-- FOMO Strategy: Missed Commissions Banner -->
+            <?php if (!empty($commission_summary['missed_commissions']) && count($commission_summary['missed_commissions']) > 0): ?>
+            <div class="alert alert-warning alert-dismissible fade show mb-4 d-flex align-items-center" style="border: 2px solid #f59e0b; background-color: #fffbeb;">
+                <div class="me-3 fs-3 text-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h5 class="alert-heading text-warning mb-1" style="font-weight: 700;">Action Required: Missed Commissions!</h5>
+                    <p class="mb-0 text-dark">
+                        You have missed out on <strong>₹<?php echo $commission_summary['total_missed'] ?? '0.00'; ?></strong> in network commissions this month because your ID is currently inactive.
+                        <br>
+                        <small>Activate your ID or renew your subscription to start earning from your team's sales again.</small>
+                    </p>
+                </div>
+                <div class="ms-auto ps-3 border-start border-warning d-none d-md-block">
+                    <a href="<?php echo $base; ?>/agent/subscription" class="btn btn-warning fw-bold text-dark">Activate Now</a>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <?php endif; ?>
 
             <!-- Main Stats Row -->
             <div class="row g-3 mb-4">
@@ -392,10 +430,16 @@ $active_page = 'dashboard';
                                     <div class="text-muted small">Network/Override</div>
                                     <div class="fw-bold text-info">₹<?php echo $commission_summary['total_network'] ?? '0.00'; ?></div>
                                 </div>
+                                <?php if (!empty($commission_summary['total_missed']) && $commission_summary['total_missed'] > 0): ?>
+                                <div class="commission-item" style="border-color:#f59e0b;background:#fffbeb;">
+                                    <div class="text-muted small">Missed (Inactive ID)</div>
+                                    <div class="fw-bold text-danger">₹<?php echo $commission_summary['total_missed']; ?></div>
+                                </div>
+                                <?php endif; ?>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold">Total</span>
+                                <span class="fw-bold">Total Earned</span>
                                 <span class="fw-bold text-success fs-5">₹<?php echo $commission_summary['total_commission'] ?? '0.00'; ?></span>
                             </div>
                         </div>

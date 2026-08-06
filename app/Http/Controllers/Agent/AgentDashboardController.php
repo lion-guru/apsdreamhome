@@ -112,7 +112,7 @@ class AgentDashboardController extends BaseController
         $assignedProperties = $this->getAssignedProperties($userId);
 
         // Commission summary (MLM style with network commissions)
-        $commissionSummary = $this->getMLMCommissionSummary($associateId);
+        $commissionSummary = $this->getMLMCommissionSummary($userId);
 
         // Network/Team stats (only for MLM)
         $networkStats = $this->getNetworkStats($associateId);
@@ -283,39 +283,52 @@ class AgentDashboardController extends BaseController
     /**
      * MLM Commission Summary - includes network/downline commissions
      */
-    private function getMLMCommissionSummary($associateId)
+    private function getMLMCommissionSummary($userId)
     {
         try {
             // Direct commissions
             $directCommissions = $this->db->fetchAll(
-                "SELECT c.amount, c.type, c.description, c.created_at
+                "SELECT c.amount, c.commission_type as type, c.notes as description, c.created_at
                  FROM mlm_commission_ledger c
-                 WHERE c.associate_id = ? AND c.type IN ('direct_sale', 'level_bonus')
+                 WHERE c.beneficiary_user_id = ? AND c.commission_type IN ('direct_sale', 'level_bonus') AND c.status != 'missed'
                  ORDER BY c.created_at DESC LIMIT 10",
-                [$associateId]
+                [$userId]
             );
 
             // Network/Override commissions
             $networkCommissions = $this->db->fetchAll(
-                "SELECT c.amount, c.type, c.description, c.created_at
+                "SELECT c.amount, c.commission_type as type, c.notes as description, c.created_at
                  FROM mlm_commission_ledger c
-                 WHERE c.associate_id = ? AND c.type IN ('override', 'generation_bonus', 'matching_bonus', 'royalty_pool', 'rank_bonus')
+                 WHERE c.beneficiary_user_id = ? AND c.commission_type IN ('override', 'generation_bonus', 'matching_bonus', 'royalty_pool', 'rank_bonus', 'differential', 'rollup', 'performance_bonus', 'team_bonus') AND c.status != 'missed'
                  ORDER BY c.created_at DESC LIMIT 10",
-                [$associateId]
+                [$userId]
+            );
+
+            // FOMO Strategy: Missed Commissions this month
+            $missedCommissions = $this->db->fetchAll(
+                "SELECT c.amount, c.commission_type as type, c.notes as description, c.created_at
+                 FROM mlm_commission_ledger c
+                 WHERE c.beneficiary_user_id = ? AND c.status = 'missed' AND MONTH(c.created_at) = MONTH(CURRENT_DATE()) AND YEAR(c.created_at) = YEAR(CURRENT_DATE())
+                 ORDER BY c.created_at DESC",
+                [$userId]
             );
 
             // Calculate totals
             $totalDirect = 0;
             $totalNetwork = 0;
+            $totalMissed = 0;
 
             foreach ($directCommissions as $c) $totalDirect += $c['amount'];
             foreach ($networkCommissions as $c) $totalNetwork += $c['amount'];
+            foreach ($missedCommissions as $c) $totalMissed += $c['amount'];
 
             return [
                 'direct_commissions' => $directCommissions,
                 'network_commissions' => $networkCommissions,
+                'missed_commissions' => $missedCommissions,
                 'total_direct' => number_format($totalDirect, 2),
                 'total_network' => number_format($totalNetwork, 2),
+                'total_missed' => number_format($totalMissed, 2),
                 'total_commission' => number_format($totalDirect + $totalNetwork, 2),
             ];
         } catch (Exception $e) {
@@ -323,8 +336,10 @@ class AgentDashboardController extends BaseController
             return [
                 'direct_commissions' => [],
                 'network_commissions' => [],
+                'missed_commissions' => [],
                 'total_direct' => '0.00',
                 'total_network' => '0.00',
+                'total_missed' => '0.00',
                 'total_commission' => '0.00',
             ];
         }
@@ -729,8 +744,10 @@ class AgentDashboardController extends BaseController
         $balance = 0;
         $transactions = [];
         try {
-            $wallet = $this->db->fetch("SELECT * FROM wallet_points WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", [$userId]);
-            $balance = $wallet['points'] ?? $wallet['balance'] ?? 0;
+            $tid = (int)$this->tenantId();
+            $tenantSql = $tid ? " AND tenant_id = " . $tid : "";
+            $wallet = $this->db->fetchOne("SELECT * FROM user_wallets WHERE user_id = ? AND user_type = 'associate'$tenantSql LIMIT 1", [$userId]);
+            $balance = $wallet['balance'] ?? 0;
             $transactions = $this->db->fetchAll(
                 "SELECT * FROM wallet_transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
                 [$userId]

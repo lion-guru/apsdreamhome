@@ -46,7 +46,10 @@ When a customer pays **₹1,00,000** for a plot, the commission system distribut
 - Walks up to 7 levels deep
 - Stops when ₹15,000 budget is exhausted
 
-**Rank Rates:**
+**Rank Rates (EXAMPLE CONFIGURATION ONLY):**
+> **[WARNING] - Deprecation Notice**
+> The ranks below are no longer hardcoded into the system. This table represents a sample configuration that the Admin can set up via the `mlm_rank_slabs` table. The `HybridCommissionEngine` dynamically pulls these values from the database.
+
 | Rank | GBV Threshold | Rate |
 |------|--------------|------|
 | Associate | ₹0 - ₹10L | 5% |
@@ -57,7 +60,7 @@ When a customer pays **₹1,00,000** for a plot, the commission system distribut
 | President | ₹3Cr - ₹5Cr | 18% |
 | Site Manager | ₹5Cr+ | 20% |
 
-**Example: Associate (5%) sells ₹1 Lakh**
+**Example Calculation: Associate (5%) sells ₹1 Lakh**
 
 Upline chain (7 levels deep):
 

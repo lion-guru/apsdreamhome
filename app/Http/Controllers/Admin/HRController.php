@@ -101,6 +101,9 @@ class HRController extends AdminController
         $department = $_POST['department'] ?? 'General';
         $designation = $_POST['designation'] ?? '';
         $salary = $_POST['salary'] ?? 0;
+        $incentiveModel = $_POST['incentive_model'] ?? 'salary_only';
+        $commissionRate = $_POST['commission_rate'] ?? 0.00;
+        $commissionType = $_POST['commission_type'] ?? 'percentage';
         $joinDate = $_POST['join_date'] ?? date('Y-m-d');
         $password = $_POST['password'] ?? 'employee@123';
         if (!$name || !$email) { $this->setFlash('error', 'Name and Email are required'); header('Location: ' . BASE_URL . '/admin/hr/users/create'); exit; }
@@ -130,8 +133,8 @@ class HRController extends AdminController
             // Create employees table row with employment details
             $employeeCode = 'EMP' . str_pad($userId, 4, '0', STR_PAD_LEFT);
             $this->db->execute(
-                "INSERT INTO employees (user_id, name, email, phone, role, department, designation, employee_code, salary, joining_date, status, created_at) VALUES (?, ?, ?, ?, 'employee', ?, ?, ?, ?, ?, 'active', NOW())",
-                [$userId, $name, $email, $phone, $department, $designation, $employeeCode, $salary, $joinDate]
+                "INSERT INTO employees (user_id, name, email, phone, role, department, designation, employee_code, salary, incentive_model, commission_rate, commission_type, joining_date, status, created_at) VALUES (?, ?, ?, ?, 'employee', ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())",
+                [$userId, $name, $email, $phone, $department, $designation, $employeeCode, $salary, $incentiveModel, $commissionRate, $commissionType, $joinDate]
             );
 
             $this->setFlash('success', 'Employee created successfully. ID: ' . $userId);
@@ -148,7 +151,7 @@ class HRController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone FROM users e JOIN users u ON e.id=u.id WHERE e.id=?", [$id]);
+            $employee = $this->db->fetch("SELECT e.*, u.email, u.phone FROM employees e JOIN users u ON e.user_id = u.id WHERE e.id = ?", [$id]);
             if (!$employee) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
@@ -166,18 +169,26 @@ class HRController extends AdminController
         $department = $_POST['department'] ?? 'General';
         $designation = $_POST['designation'] ?? '';
         $salary = $_POST['salary'] ?? 0;
+        $incentiveModel = $_POST['incentive_model'] ?? 'salary_only';
+        $commissionRate = $_POST['commission_rate'] ?? 0.00;
+        $commissionType = $_POST['commission_type'] ?? 'percentage';
         $status = $_POST['status'] ?? 'active';
         $joinDate = $_POST['join_date'] ?? '';
         if (!$name) { $this->setFlash('error', 'Name is required'); header('Location: ' . BASE_URL . "/admin/hr/users/edit/$id"); exit; }
         try {
-            $emp = $this->db->fetch("SELECT id, employee_data FROM users WHERE id=?", [$id]);
+            $emp = $this->db->fetch("SELECT id, user_id FROM employees WHERE id=?", [$id]);
             if (!$emp) { $this->setFlash('error', 'Employee not found'); header('Location: ' . BASE_URL . '/admin/hr/users'); exit; }
-            $empData = json_decode($emp['employee_data'] ?? '{}', true);
-            $empData['department'] = $department;
-            $empData['designation'] = $designation;
-            $empData['salary'] = $salary;
-            $empData['join_date'] = $joinDate;
-            $this->db->execute("UPDATE users SET name=?, email=?, phone=?, employee_data=?, status=? WHERE id=? AND tenant_id=?", [$name, $email, $phone, json_encode($empData), $status, $id, $tid]);
+            
+            // Update employees table
+            $this->db->execute("UPDATE employees SET name=?, email=?, phone=?, department=?, designation=?, salary=?, incentive_model=?, commission_rate=?, commission_type=?, joining_date=?, status=? WHERE id=?", 
+                [$name, $email, $phone, $department, $designation, $salary, $incentiveModel, $commissionRate, $commissionType, $joinDate, $status, $id]);
+            
+            // Sync users table
+            if (!empty($emp['user_id'])) {
+                $this->db->execute("UPDATE users SET name=?, email=?, phone=?, status=? WHERE id=? AND tenant_id=?", 
+                    [$name, $email, $phone, $status, $emp['user_id'], $tid]);
+            }
+            
             $this->setFlash('success', 'Employee updated successfully');
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());

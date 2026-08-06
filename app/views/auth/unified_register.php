@@ -1035,11 +1035,66 @@ $base = BASE_URL;
             txt.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
         });
 
+        // --- Sponsor Name Resolution ---
+        const sponsorInputs = document.querySelectorAll('input[name="referral_code"], input[name="sponsor_code"]');
+        let sponsorTimeout = null;
+
+        sponsorInputs.forEach(input => {
+            // Create a badge container after the input if it doesn't exist
+            let badge = input.parentElement.parentElement.querySelector('.sponsor-badge');
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'sponsor-badge mt-2';
+                badge.style.display = 'none';
+                badge.style.fontSize = '0.8rem';
+                input.parentElement.parentElement.appendChild(badge);
+            }
+
+            const resolveSponsor = async (val) => {
+                if (!val || val.length < 3) {
+                    badge.style.display = 'none';
+                    return;
+                }
+                badge.style.display = 'block';
+                badge.innerHTML = '<i class="fas fa-spinner fa-spin text-muted"></i> <span class="text-muted">Resolving sponsor...</span>';
+                
+                try {
+                    const res = await fetch('<?php echo BASE_URL; ?>/api/user/resolve-sponsor?ref=' + encodeURIComponent(val));
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        badge.innerHTML = `<div class="p-2 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="fas fa-check-circle me-1"></i> <strong>Sponsor:</strong> ${data.name} <span class="badge bg-success ms-1">${data.role}</span></div>`;
+                    } else {
+                        badge.innerHTML = `<div class="p-2 rounded bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25"><i class="fas fa-times-circle me-1"></i> Invalid or inactive code</div>`;
+                    }
+                } catch (e) {
+                    badge.innerHTML = `<div class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error resolving sponsor</div>`;
+                }
+            };
+
+            input.addEventListener('input', (e) => {
+                clearTimeout(sponsorTimeout);
+                sponsorTimeout = setTimeout(() => resolveSponsor(e.target.value), 600);
+            });
+            input.addEventListener('blur', (e) => {
+                clearTimeout(sponsorTimeout);
+                resolveSponsor(e.target.value);
+            });
+
+            // Initial check if value exists
+            if (input.value) {
+                resolveSponsor(input.value);
+            }
+        });
+
         // --- Init ---
         pickRole(INIT_ROLE);
         if (INIT_REF) {
             const refInput = document.getElementById('refCode');
-            if (refInput) refInput.value = INIT_REF;
+            if (refInput) {
+                refInput.value = INIT_REF;
+                refInput.dispatchEvent(new Event('blur'));
+            }
         }
 
         // --- Card entrance ---

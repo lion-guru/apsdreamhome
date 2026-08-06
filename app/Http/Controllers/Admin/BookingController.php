@@ -121,12 +121,48 @@ class BookingController extends AdminController
     {
         try {
             $data = $_POST;
+            $customerId = $data['customer_id'] ?? null;
+            $associateId = $data['associate_id'] ?? null;
+            
+            // Handle new customer creation
+            if (isset($data['customer_type']) && $data['customer_type'] === 'new') {
+                $checkStmt = $this->db->prepare("SELECT id FROM users WHERE phone = ? OR email = ? LIMIT 1");
+                $checkStmt->execute([
+                    $data['new_customer_phone'],
+                    $data['new_customer_email'] ?: 'invalid@email.com' // avoid matching empty emails
+                ]);
+                
+                if ($existing = $checkStmt->fetch(\PDO::FETCH_ASSOC)) {
+                    $customerId = $existing['id'];
+                } else {
+                    // Create new customer
+                    $insertUser = $this->db->prepare("INSERT INTO users (name, email, phone, role, status, created_at) VALUES (?, ?, ?, 'customer', 'active', NOW())");
+                    $insertUser->execute([
+                        $data['new_customer_name'],
+                        $data['new_customer_email'] ?? null,
+                        $data['new_customer_phone']
+                    ]);
+                    $customerId = (int)$this->db->lastInsertId();
+                    
+                    // Create wallet for new customer
+                    if (class_exists('\\App\\Services\\WalletService')) {
+                        $walletService = new \App\Services\WalletService();
+                        $walletService->ensureWallet($customerId);
+                    }
+                }
+            }
+
+            if (!$customerId) {
+                throw new \Exception('Customer selection is required.');
+            }
+
             $stmt = $this->db->prepare(
-                "INSERT INTO plot_bookings (customer_id, plot_id, booking_amount, total_plot_value, booking_date, status, notes, created_at)
-                 VALUES (?, ?, ?, ?, ?, 'pending', ?, NOW())"
+                "INSERT INTO plot_bookings (customer_id, associate_id, plot_id, booking_amount, total_plot_value, booking_date, status, notes, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, NOW())"
             );
             $stmt->execute([
-                $data['customer_id'],
+                $customerId,
+                $associateId ?: null,
                 $data['plot_id'],
                 $data['booking_amount'] ?? $data['total_plot_value'] ?? 0,
                 $data['total_plot_value'] ?? 0,

@@ -102,61 +102,16 @@ Manage: Lead → Qualification → Site Visit → Booking → EMI → Registry
 ## 17. Module 3: MLM Commission Engine
 
 ### Purpose
-Calculate and distribute commissions through multi-level marketing network
+Calculate and distribute commissions through multi-level marketing network (Fully Database-Driven).
 
-### Commission Structure
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    MLM COMMISSION STRUCTURE                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  TOTAL COMMISSION POOL: 20% of Plot Value                       │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ TRACK A: Slab Differential (15%)                        │   │
-│  │ ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐    │   │
-│  │ │ Gen 1   │  │ Gen 2   │  │ Gen 3   │  │ Gen 4-7 │    │   │
-│  │ │ 5%      │  │ 3%      │  │ 2%      │  │ 1%      │    │   │
-│  │ └─────────┘  └─────────┘  └─────────┘  └─────────┘    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ TRACK B: Performance Rollup (3%)                        │   │
-│  │ ┌─────────┐  ┌─────────┐  ┌─────────┐                  │   │
-│  │ │ Manager │  │ Sr Mgr  │  │ Director│                  │   │
-│  │ │ 1%      │  │ 1%      │  │ 1%      │                  │   │
-│  │ └─────────┘  └─────────┘  └─────────┘                  │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ TRACK C: Milestone Escrow (2%)                          │   │
-│  │ Released on project milestone completion                 │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ MONTHLY BONUSES (Outside 20% cap)                       │   │
-│  │ ┌─────────┐  ┌─────────┐  ┌─────────┐                  │   │
-│  │ │Generation│  │Matching │  │ Royalty │                  │   │
-│  │ │ Bonus   │  │ Bonus   │  │ Pool    │                  │   │
-│  │ │2%/1.5%/ │  │100%/50%/│  │ 2%      │                  │   │
-│  │ │1%/0.5%  │  │ 25%     │  │         │                  │   │
-│  │ └─────────┘  └─────────┘  └─────────┘                  │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+### Commission Structure & Rank System (DEPRECATED: Hardcoded rules removed)
 
-### Rank System
+> **[WARNING] - Deprecation Notice**
+> The hardcoded Track A/B/C and static rank thresholds have been completely removed to prevent revenue loops. 
+> The system now relies 100% on the `mlm_rank_slabs` database table for Rank Configurations and the `mlm_commission_settings` / `BookingLifecycleService` for all distribution caps. 
+> Freelance agents and Salaried Agents now have dual-mode resolution. Maximum payout cap is strictly 20%.
 
-| Rank | GBV Threshold | Direct Rate |
-|------|--------------|-------------|
-| Associate | ₹0 - ₹10L | 5% |
-| Sr Associate | ₹10L - ₹35L | 7% |
-| BDM | ₹35L - ₹70L | 10% |
-| Sr BDM | ₹70L - ₹1.5Cr | 12% |
-| Vice President | ₹1.5Cr - ₹3Cr | 15% |
-| President | ₹3Cr - ₹5Cr | 18% |
-| Site Manager | ₹5Cr+ | 20% |
+All commission slab details, rank targets (GBV), and bonuses are managed by the Admin Dashboard via DB tables, NOT code.
 
 ## 18. Module 4: Finance and Accounting
 
