@@ -1,7 +1,5 @@
 var AIClient = {
-  init: function () {
-    /* AI Client initialized */
-  },
+  init: function () {},
   sendMessage: function (message, callback) {
     fetch('/api/ai/chatbot', {
       method: 'POST',
@@ -15,7 +13,7 @@ var AIClient = {
         if (callback) callback(data);
       })
       .catch(function (err) {
-        /* AI error handled silently */
+        console.error('AI error:', err);
       });
   },
 };

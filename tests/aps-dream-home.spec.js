@@ -133,9 +133,13 @@ test.describe('APS Dream Home - Core Functionality', () => {
     });
     expect(response.status()).toBe(200);
     
-    // Test AI bot API
-    const aiResponse = await page.request.post('http://localhost/apsdreamhome/api/ai/chatbot', {
-      form: {
+    // Test AI chatbot API (live endpoint)
+    const aiResponse = await page.request.post('http://localhost/apsdreamhome/api/ai/chat', {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      data: {
         message: 'hello'
       }
     });
