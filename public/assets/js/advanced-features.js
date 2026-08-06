@@ -502,10 +502,11 @@ class AdvancedFeaturesSystem {
         form.querySelector('input[name="message"]').value = '';
 
         try {
-            const response = await fetch('/api/chatbot/message', {
+            const response = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({ message })
             });
@@ -543,10 +544,11 @@ class AdvancedFeaturesSystem {
      */
     async clearChatbot() {
         try {
-            await fetch('/api/chatbot/clear', {
+            await fetch('/api/ai/clear-session', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             });
 

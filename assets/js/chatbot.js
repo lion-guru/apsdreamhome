@@ -57,7 +57,7 @@
         typingDiv.innerHTML = '<div class="ai-message-content"><em>Typing...</em></div>';
         if (chatBody) chatBody.appendChild(typingDiv);
 
-        var apiUrl = window.chatbotApiUrl || window.location.origin + '/api/ai/chatbot';
+        var apiUrl = window.chatbotApiUrl || window.location.origin + '/api/ai/chat';
         var context = window.chatbotUserContext || {};
 
         fetch(apiUrl, {

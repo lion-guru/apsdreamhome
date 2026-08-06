@@ -168,7 +168,7 @@
 
     showTyping();
 
-    var apiUrl = window.chatbotApiUrl || '/api/gemini/chat';
+    var apiUrl = window.chatbotApiUrl || '/api/ai/chat';
 
     fetch(apiUrl, {
       method: 'POST',
