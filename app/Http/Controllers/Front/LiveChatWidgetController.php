@@ -93,6 +93,22 @@ class LiveChatWidgetController extends BaseController
             $session['visitor_name'] ?: $session['user_name'] ?: 'Visitor',
             $message
         );
+
+        // AI auto-response when no agent is assigned
+        if (empty($session['assigned_to']) && $session['status'] !== 'closed') {
+            try {
+                $groqKey = getenv('GROQ_API_KEY') ?: '';
+                if (!empty($groqKey)) {
+                    $aiReply = $this->getAutoReply($message, $session, $groqKey);
+                    if (!empty($aiReply)) {
+                        $this->service->sendMessage($session['id'], 'bot', null, 'APS AI Bot', $aiReply, 'text', null, false);
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log("LiveChat AI auto-reply error: " . $e->getMessage());
+            }
+        }
+
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'id' => $msgId]);
         exit;
@@ -169,5 +185,48 @@ class LiveChatWidgetController extends BaseController
         $db = $this->db;
         if (is_object($db) && method_exists($db, 'getPdo')) return $db->getPdo();
         return $db;
+    }
+
+    /**
+     * Generate AI auto-reply for unattended chats using Groq (Llama 3.3 70B)
+     */
+    private function getAutoReply(string $visitorMessage, array $session, string $groqKey): ?string
+    {
+        $context = "You are APS Dream Home's AI assistant. You help real estate customers in Gorakhpur, UP. " .
+            "Be helpful, friendly, professional. Mix Hindi and English naturally (Hinglish). " .
+            "If the question is complex or needs human help, say 'Ek hamara team member aapko jaldi contact karega.' " .
+            "Never make up prices — say 'exact price ke liye hamare sales team se baat karein.' " .
+            "Keep replies under 3 sentences.";
+
+        $payload = [
+            'model' => 'llama-3.3-70b-versatile',
+            'messages' => [
+                ['role' => 'user', 'content' => $context . "\n\nVisitor: " . $visitorMessage . "\n\nReply:"],
+            ],
+            'temperature' => 0.7,
+            'max_tokens' => 200,
+            'stream' => false,
+        ];
+
+        $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $groqKey,
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200) {
+            $result = json_decode($response, true);
+            $reply = trim($result['choices'][0]['message']['content'] ?? '');
+            return !empty($reply) ? $reply : null;
+        }
+        return null;
     }
 }

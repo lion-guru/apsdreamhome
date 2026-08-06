@@ -70,14 +70,15 @@ class AIController extends AdminController
 
         // Use AIGateway for chat processing
         try {
-            if (class_exists('App\Services\AIGateway')) {
-                $gateway = \App\Services\AIGateway::getInstance();
+            if (class_exists('App\Services\AI\AIGateway')) {
+                $gateway = \App\Services\AI\AIGateway::getInstance();
                 $message = $input['message'] ?? $input['query'] ?? '';
-                $response = $gateway->processRequest('chat', $message, [
+                $result = $gateway->process('chat', ['message' => $message], [
                     'user_id' => $this->getUserId(),
-                    'context' => $input['context'] ?? 'general',
+                    'user_role' => $input['context'] ?? 'general',
                 ]);
-                echo json_encode(['success' => true, 'response' => $response['response'] ?? $response]);
+                $response = $result['result']['text'] ?? $result['result']['parsed']['text'] ?? $result['result'] ?? 'No response';
+                echo json_encode(['success' => true, 'response' => $response, 'engine' => $result['engine'] ?? 'unknown']);
             } else {
                 echo json_encode(['error' => 'AI service not configured']);
             }

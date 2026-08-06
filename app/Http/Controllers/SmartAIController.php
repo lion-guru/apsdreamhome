@@ -218,7 +218,23 @@ class SmartAIController extends BaseController
             }
         }
 
-        // 3. Try Gemini (if self-learning and RAG confidence is low)
+        // 3. Try Groq (fastest free cloud AI, Llama 3.3 70B)
+        if ($response === null) {
+            try {
+                $groqKey = getenv('GROQ_API_KEY') ?: '';
+                if (!empty($groqKey)) {
+                    $groqResponse = $this->getGroqResponse($message, $userContext, $language, $groqKey);
+                    if (!empty($groqResponse)) {
+                        $response = $groqResponse;
+                        $modelUsed = 'groq';
+                    }
+                }
+            } catch (\Exception $e) {
+                error_log("Groq error: " . $e->getMessage());
+            }
+        }
+
+        // 4. Try Gemini (if Groq failed)
         if ($response === null && !empty($this->geminiApiKey) && $this->geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE') {
             $response = $this->getGeminiResponse($message, $userContext, $language);
             if (!empty($response) && strpos($response, 'quota') === false && strpos($response, 'API key') === false) {
@@ -226,7 +242,7 @@ class SmartAIController extends BaseController
             }
         }
 
-        // 2. Try OpenRouter (free tier) if Gemini failed
+        // 5. Try OpenRouter if Gemini failed
         if ($response === null && !empty($this->openrouterApiKey)) {
             $response = $this->getOpenRouterResponse($message, $userContext, $language);
             if (!empty($response)) {
@@ -234,7 +250,7 @@ class SmartAIController extends BaseController
             }
         }
 
-        // 3. Try HuggingFace if OpenRouter failed
+        // 6. Try HuggingFace if OpenRouter failed
         if ($response === null && !empty($this->huggingfaceApiKey)) {
             $response = $this->getHuggingFaceResponse($message, $userContext, $language);
             if (!empty($response)) {
@@ -242,7 +258,7 @@ class SmartAIController extends BaseController
             }
         }
 
-        // 4. Fallback to PropertyChatbotService (rule-based)
+        // 7. Fallback to PropertyChatbotService (rule-based)
         if ($response === null) {
             try {
                 $chatbotService = new \App\Services\PropertyChatbotService();
@@ -463,6 +479,47 @@ class SmartAIController extends BaseController
         } catch (\Exception $e) {
             return [];
         }
+    }
+
+    /**
+     * Get response from Groq API (fastest free cloud AI — Llama 3.3 70B)
+     */
+    private function getGroqResponse($message, $userContext, $language, $apiKey)
+    {
+        $contextPrompt = $this->buildContextPrompt($userContext);
+        $prompt = $this->systemPrompt . "\n\n" . $contextPrompt . "\n\n";
+        $prompt .= "User Message (in " . ($language === 'hi' ? 'Hindi' : 'English') . "): " . $message . "\n\n";
+        $prompt .= "Instructions: Reply naturally in mixed Hindi-English (Hinglish). Be helpful, professional, friendly. If about property, give specific details.";
+
+        $payload = [
+            'model' => 'llama-3.3-70b-versatile',
+            'messages' => [
+                ['role' => 'user', 'content' => $prompt],
+            ],
+            'temperature' => 0.7,
+            'max_tokens' => 512,
+            'stream' => false,
+        ];
+
+        $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $apiKey,
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200) {
+            $result = json_decode($response, true);
+            return trim($result['choices'][0]['message']['content'] ?? '');
+        }
+        return null;
     }
 
     /**
