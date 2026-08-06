@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Database\Database;
 use App\Services\SocialLoginService;
 use App\Services\OTPService;
 use App\Services\ProgressiveRegistrationService;
@@ -17,12 +18,18 @@ class AdvancedFeaturesController extends BaseController
     private $chatbotService;
     private $campaignDeliveryService;
 
+    public function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function __construct()
     {
         parent::__construct();
+        $db = Database::getInstance();
         $this->socialLoginService = new SocialLoginService();
         $this->otpService = new OTPService();
-        $this->progressiveRegistrationService = new ProgressiveRegistrationService();
+        $this->progressiveRegistrationService = new ProgressiveRegistrationService($db);
         $this->chatbotService = new AIChatbotService();
         $this->campaignDeliveryService = new CampaignDeliveryService();
     }
@@ -495,8 +502,9 @@ class AdvancedFeaturesController extends BaseController
     /**
      * Send JSON response
      */
-    private function jsonResponse($data)
+    public function jsonResponse($data, int $status = 200)
     {
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;

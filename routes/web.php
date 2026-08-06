@@ -3808,6 +3808,7 @@ $router->post('/api/advanced/send-otp', 'App\\Http\\Controllers\\AdvancedFeature
 $router->post('/api/advanced/verify-otp', 'App\\Http\\Controllers\\AdvancedFeaturesController@verifyOTP');
 $router->post('/api/advanced/progressive-register', 'App\\Http\\Controllers\\AdvancedFeaturesController@progressiveRegister');
 $router->post('/api/advanced/webhook/campaign', 'App\\Http\\Controllers\\AdvancedFeaturesController@campaignWebhook');
+$router->post('/api/advanced/track-campaign', 'App\\Http\\Controllers\\AdvancedFeaturesController@trackCampaignEngagement');
 
 // ============================================================
 // REPORTS ENGINE (Reports\ReportController)
