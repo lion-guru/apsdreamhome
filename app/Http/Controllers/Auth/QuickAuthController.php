@@ -131,6 +131,46 @@ private function getTenantSql(): array
     }
 
     /**
+     * Request referral code by email or phone
+     */
+    public function requestReferralCode()
+    {
+        @session_start();
+
+        $identifier = $_POST['email'] ?? $_POST['phone'] ?? '';
+
+        try {
+            if (empty($identifier)) {
+                echo json_encode(['success' => false, 'message' => 'Email or phone is required']);
+                exit;
+            }
+
+            [$tSql, $tParams] = $this->getTenantSql();
+
+            $user = $this->db->fetchOne(
+                "SELECT id, name, email, phone, referral_code FROM users WHERE (email = ? OR phone = ?)" . $tSql . " LIMIT 1",
+                array_merge([$identifier, $identifier], $tParams)
+            );
+
+            if (!$user) {
+                echo json_encode(['success' => false, 'message' => 'No account found with this email or phone']);
+                exit;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'referral_code' => $user['referral_code'],
+                'name' => $user['name']
+            ]);
+            exit;
+
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Request failed: ' . $e->getMessage()]);
+            exit;
+        }
+    }
+
+    /**
      * Auto-generate user during booking/lead conversion
      */
     public function autoGenerateUser()

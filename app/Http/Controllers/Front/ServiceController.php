@@ -44,4 +44,14 @@ class ServiceController extends PageController
     {
         return parent::resell();
     }
+
+    public function constructionInquiry()
+    {
+        return parent::constructionInquiry();
+    }
+
+    public function inquiry()
+    {
+        return parent::inquiry();
+    }
 }

@@ -79,4 +79,14 @@ class PropertyController extends PageController
     {
         return parent::investProperty();
     }
+
+    public function plotSizeConverter()
+    {
+        return parent::plotSizeConverter();
+    }
+
+    public function plotConverter()
+    {
+        return parent::plotConverter();
+    }
 }

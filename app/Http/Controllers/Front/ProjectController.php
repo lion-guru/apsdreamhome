@@ -79,4 +79,9 @@ class ProjectController extends PageController
     {
         return parent::location($slug);
     }
+
+    public function plotMap()
+    {
+        return parent::plotMap();
+    }
 }

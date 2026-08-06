@@ -4856,7 +4856,7 @@ $router->post('/admin/tools/whatsapp-templates/save',     'App\\Http\\Controller
 $router->post('/admin/tools/whatsapp-templates/{id}/delete', 'App\\Http\\Controllers\\Admin\\ToolsAdminController@whatsappTemplatesDelete');
 
 // COMMUNICATION AUTOMATION ADMIN
-$router->get('/admin/communication/automation',           'App\\Http\\Controllers\\Admin\\CommunicationAdminController@index');
+$router->get('/admin/communication/automation',           'App\\Http\\Controllers\\Admin\\CommunicationAdminController@automation');
 $router->get('/admin/communication/whatsapp-setup',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@whatsappSetup');
 $router->get('/admin/communication/telegram-setup',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@telegramSetup');
 $router->get('/admin/communication/sms-setup',            'App\\Http\\Controllers\\Admin\\CommunicationAdminController@smsSetup');
