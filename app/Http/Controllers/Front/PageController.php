@@ -952,7 +952,86 @@ public function sellProperty()
 
 public function rentProperty()
     {
-        $this->render('pages/rent');
+        $page = (int)($_GET['page'] ?? 1);
+        $location = trim($_GET['location'] ?? '');
+        $type = $_GET['type'] ?? '';
+        $bedrooms = (int)($_GET['bedrooms'] ?? 0);
+        $minPrice = (int)($_GET['min_price'] ?? 0);
+        $maxPrice = (int)($_GET['max_price'] ?? 0);
+        $keyword = trim($_GET['q'] ?? '');
+        $perPage = 12;
+        $offset = ($page - 1) * $perPage;
+
+        $where = ["up.listing_type = 'rent'", "up.status = 'approved'"];
+        $params = [];
+
+        if ($keyword !== '') {
+            $where[] = "(up.name LIKE ? OR up.address LIKE ? OR up.location LIKE ?)";
+            $kw = "%{$keyword}%";
+            $params[] = $kw; $params[] = $kw; $params[] = $kw;
+        }
+        if ($location !== '') {
+            $where[] = "up.location LIKE ?";
+            $params[] = "%{$location}%";
+        }
+        if ($type !== '') {
+            $where[] = "up.property_type = ?";
+            $params[] = $type;
+        }
+        if ($bedrooms > 0) {
+            $where[] = "up.bedrooms = ?";
+            $params[] = $bedrooms;
+        }
+        if ($minPrice > 0) {
+            $where[] = "up.price >= ?";
+            $params[] = $minPrice;
+        }
+        if ($maxPrice > 0) {
+            $where[] = "up.price <= ?";
+            $params[] = $maxPrice;
+        }
+
+        $whereSql = implode(' AND ', $where);
+
+        try {
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM user_properties up WHERE {$whereSql}");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+
+            $stmt = $this->db->prepare("SELECT up.* FROM user_properties up WHERE {$whereSql} ORDER BY up.is_featured DESC, up.created_at DESC LIMIT {$perPage} OFFSET {$offset}");
+            $stmt->execute($params);
+            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("PageController::rentProperty - query: " . $e->getMessage());
+            $total = 0;
+            $properties = [];
+        }
+
+        $totalPages = max(1, (int)ceil($total / $perPage));
+
+        // Stats
+        try {
+            $statsStmt = $this->db->query("SELECT COUNT(*) as total, MIN(price) as min_price, MAX(price) as max_price, ROUND(AVG(price)) as avg_price FROM user_properties WHERE listing_type='rent' AND status='approved'");
+            $stats = $statsStmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $stats = ['total' => 0, 'min_price' => 0, 'max_price' => 0, 'avg_price' => 0];
+        }
+
+        $this->render('pages/rent', [
+            'properties' => $properties,
+            'total' => $total,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'stats' => $stats,
+            'filters' => [
+                'q' => $keyword,
+                'location' => $location,
+                'type' => $type,
+                'bedrooms' => $bedrooms,
+                'min_price' => $minPrice,
+                'max_price' => $maxPrice,
+            ],
+        ]);
     }
 
 public function investProperty()
