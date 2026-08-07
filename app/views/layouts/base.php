@@ -182,8 +182,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=1" rel="stylesheet">
     <?php endif; ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
-    <!-- Live Chat Widget CSS -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/live-chat-widget.css" rel="stylesheet">
     <!-- Notification Toast Widget CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
@@ -308,16 +306,14 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <?php if (isset($_SESSION['user_id'])): ?>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
     <?php endif; ?>
-    <!-- Live Chat Widget -->
-    <?php include __DIR__ . '/../components/live_chat_widget.php'; ?>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/live-chat-widget.js"></script>
+    <!-- Toast Notifications -->
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
     <!-- Image Gallery Lightbox -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js?v=1"></script>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-location-autofill.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-map-picker.js"></script>
     <!-- Leaflet JS for map picker -->
