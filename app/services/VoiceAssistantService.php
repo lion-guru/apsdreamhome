@@ -86,13 +86,20 @@ class VoiceAssistantService
         $query = strtolower(trim($query));
         $cacheKey = md5($query . $this->userRole);
 
-        // Check cache first
+        // Check cache first (fast in-memory)
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
 
+        // Check ResponseCache (persistent)
+        $cached = ResponseCache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $response = $this->generateResponse($query);
         $this->cache[$cacheKey] = $response;
+        ResponseCache::set($cacheKey, $response, 300); // 5 min cache
 
         return $response;
     }
