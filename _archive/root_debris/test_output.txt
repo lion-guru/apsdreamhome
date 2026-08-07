@@ -1,4 +1,0 @@
-=== TESTING ADMIN DASHBOARD ===
-✅ BaseController included
-✅ AdminController included
-✅ AdminController instantiated

@@ -1,223 +1,260 @@
 <?php
+/**
+ * Gamification Service
+ * 
+ * Points, badges, levels, and leaderboard system
+ * Rewards users for various activities
+ */
+
 namespace App\Services;
 
-use PDO;
+use App\Core\Database\Database;
 use App\Traits\ServiceTenantTrait;
 
-/**
- * GamificationService — computes level/rank/progress for any user role.
- * Returns arrays shaped exactly for `app/views/components/gamification_widget.php`.
- */
 class GamificationService
 {
     use ServiceTenantTrait;
-    private PDO $pdo;
+    private $db;
 
-    public function __construct(?PDO $pdo = null)
+    // Points configuration
+    const POINTS = [
+        'lead_created' => 10,
+        'lead_converted' => 50,
+        'booking_completed' => 100,
+        'referral_signup' => 25,
+        'referral_booking' => 75,
+        'site_visit_completed' => 30,
+        'document_uploaded' => 15,
+        'profile_completed' => 20,
+        'daily_login' => 5,
+        'review_posted' => 10,
+    ];
+
+    // Level thresholds
+    const LEVELS = [
+        1 => ['name' => 'Newcomer', 'min_points' => 0, 'icon' => 'fa-seedling', 'color' => '#9e9e9e'],
+        2 => ['name' => 'Explorer', 'min_points' => 100, 'icon' => 'fa-compass', 'color' => '#4caf50'],
+        3 => ['name' => 'Achiever', 'min_points' => 500, 'icon' => 'fa-trophy', 'color' => '#ff9800'],
+        4 => ['name' => 'Expert', 'min_points' => 1000, 'icon' => 'fa-star', 'color' => '#2196f3'],
+        5 => ['name' => 'Master', 'min_points' => 2500, 'icon' => 'fa-crown', 'color' => '#9c27b0'],
+        6 => ['name' => 'Legend', 'min_points' => 5000, 'icon' => 'fa-gem', 'color' => '#f44336'],
+        7 => ['name' => 'Champion', 'min_points' => 10000, 'icon' => 'fa-medal', 'color' => '#ff5722'],
+    ];
+
+    // Badge definitions
+    const BADGES = [
+        'first_lead' => ['name' => 'First Lead', 'description' => 'Created your first lead', 'icon' => 'fa-bullseye', 'points' => 10],
+        'lead_master' => ['name' => 'Lead Master', 'description' => 'Created 50 leads', 'icon' => 'fa-crosshairs', 'points' => 100],
+        'conversion_king' => ['name' => 'Conversion King', 'description' => 'Converted 10 leads', 'icon' => 'fa-handshake', 'points' => 150],
+        'referral_champion' => ['name' => 'Referral Champion', 'description' => 'Referred 5 users', 'icon' => 'fa-users', 'points' => 200],
+        'booking_pro' => ['name' => 'Booking Pro', 'description' => 'Completed 5 bookings', 'icon' => 'fa-file-contract', 'points' => 250],
+        'social_butterfly' => ['name' => 'Social Butterfly', 'description' => 'Shared 10 properties', 'icon' => 'fa-share-alt', 'points' => 50],
+        'early_bird' => ['name' => 'Early Bird', 'description' => 'Logged in 7 days in a row', 'icon' => 'fa-sun', 'points' => 75],
+        'night_owl' => ['name' => 'Night Owl', 'description' => 'Active after 10 PM', 'icon' => 'fa-moon', 'points' => 25],
+        'weekend_warrior' => ['name' => 'Weekend Warrior', 'description' => 'Active on weekends', 'icon' => 'fa-calendar-week', 'points' => 50],
+        'century_club' => ['name' => 'Century Club', 'description' => 'Earned 100 points', 'icon' => 'fa-100', 'points' => 100],
+    ];
+
+    public function __construct()
     {
-        $this->pdo = $pdo ?? $this->resolvePdo();
+        $this->db = Database::getInstance();
     }
 
-    public function forCustomer(int $userId): array
+    /**
+     * Award points to user for an action
+     */
+    public function awardPoints(int $userId, string $action, string $description = ''): array
     {
-        $stats = (new InvestmentService($this->pdo))->getStats($userId);
-        $color = match($stats['level']) { 'Diamond' => 'indigo', 'Platinum' => 'purple', 'Gold' => 'orange', 'Silver' => 'secondary', default => 'primary' };
-        $remaining = max(0, (float)$stats['next_threshold'] - (float)$stats['total_invested']);
+        $points = self::POINTS[$action] ?? 0;
+        if ($points <= 0) {
+            return ['success' => false, 'message' => 'Invalid action'];
+        }
+
+        $tid = $this->tenantId();
+
+        // Insert points transaction
+        $this->db->insert('gamification_points', array_merge([
+            'user_id' => $userId,
+            'action' => $action,
+            'points' => $points,
+            'description' => $description,
+        ], $tid > 1 ? ['tenant_id' => $tid] : []));
+
+        // Update user total points
+        $this->db->query(
+            "INSERT INTO gamification_user_stats (user_id, total_points, updated_at) 
+             VALUES (?, ?, NOW()) 
+             ON DUPLICATE KEY UPDATE total_points = total_points + VALUES(total_points), updated_at = NOW()",
+            array_merge([$userId], [$points])
+        );
+
+        // Check for level up
+        $newLevel = $this->checkLevelUp($userId);
+
+        // Check for new badges
+        $newBadges = $this->checkBadges($userId);
+
         return [
-            'title' => 'Investor Level',
-            'icon' => 'fa-trophy',
-            'level' => $stats['level'],
-            'level_color' => $color,
-            'metric' => 'Total Invested: ₹' . number_format((float)$stats['total_invested']),
-            'progress_pct' => (float)$stats['progress_pct'],
-            'next_label' => $stats['next_level'],
-            'next_target' => 'Invest ₹' . number_format($remaining),
-            'cta_url' => '/user/investment-plans',
-            'cta_text' => 'Upgrade',
-            'gradient' => 'linear-gradient(135deg, #fff 0%, #ede9fe 100%)',
+            'success' => true,
+            'points_awarded' => $points,
+            'new_level' => $newLevel,
+            'new_badges' => $newBadges,
         ];
     }
 
-    public function forAssociate(int $userId, int $associateId): array
+    /**
+     * Get user's gamification stats
+     */
+    public function getUserStats(int $userId): array
     {
-        $teamSales = 0.0;
-        try {
-            $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commission_ledger WHERE beneficiary_user_id = ? {$this->tenantSql()} AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
-            $stmt->execute([$userId]);
-            $teamSales = (float)$stmt->fetchColumn();
-        } catch (\Throwable $e) {
-            try {
-                $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(amount),0) s FROM mlm_commissions WHERE user_id = ? {$this->tenantSql()} AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
-                $stmt->execute([$userId]);
-                $teamSales = (float)$stmt->fetchColumn();
-            } catch (\Throwable $e2) { error_log($e2->getMessage()); }
-        }
+        $tid = $this->tenantId();
+        $tSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = $tid > 1 ? [$tid, $userId] : [$userId];
 
-        $networkSize = 0;
-        try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_user_id = ? {$this->tenantSql()}");
-            $stmt->execute([$userId]);
-            $networkSize = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) { error_log($e->getMessage()); }
+        $stats = $this->db->fetchOne(
+            "SELECT * FROM gamification_user_stats WHERE user_id = ? {$tSql}",
+            $params
+        ) ?? ['user_id' => $userId, 'total_points' => 0, 'current_level' => 1];
 
-        $thresholds = [
-            ['name' => 'Associate',       'min' => 0,          'color' => 'secondary'],
-            ['name' => 'Senior Associate', 'min' => 25000,     'color' => 'orange'],
-            ['name' => 'BDM',             'min' => 100000,    'color' => 'blue'],
-            ['name' => 'Sr. BDM',         'min' => 300000,    'color' => 'success'],
-            ['name' => 'Vice President',  'min' => 800000,    'color' => 'warning'],
-            ['name' => 'President',       'min' => 2000000,   'color' => 'purple'],
-            ['name' => 'Site Manager',    'min' => 5000000,   'color' => 'danger'],
-        ];
-        return $this->buildTieredWidget('MLM Rank', 'fa-medal', $teamSales, $thresholds, 'Team Sales (12 mo): ₹' . number_format($teamSales), '/associate/commissions', 'View Earnings', 'linear-gradient(135deg, #fff 0%, #dbeafe 100%)');
+        $level = $this->getLevel($stats['current_level'] ?? 1);
+        $nextLevel = $this->getLevel(($stats['current_level'] ?? 1) + 1);
+
+        $stats['level_name'] = $level['name'];
+        $stats['level_icon'] = $level['icon'];
+        $stats['level_color'] = $level['color'];
+        $stats['next_level'] = $nextLevel;
+        $stats['points_to_next'] = $nextLevel ? max(0, $nextLevel['min_points'] - ($stats['total_points'] ?? 0)) : 0;
+        $stats['progress_percent'] = $nextLevel ? min(100, round((($stats['total_points'] ?? 0) - $level['min_points']) / ($nextLevel['min_points'] - $level['min_points']) * 100)) : 100;
+
+        return $stats;
     }
 
-    public function forAgent(int $userId, int $agentId): array
+    /**
+     * Get user's badges
+     */
+    public function getUserBadges(int $userId): array
     {
-        $deals = 0; $revenue = 0.0;
-        try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) c, COALESCE(SUM(amount),0) s FROM deals WHERE agent_id = ? {$this->tenantSql()} AND status = 'won' AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
-            $stmt->execute([$agentId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row) { $deals = (int)$row['c']; $revenue = (float)$row['s']; }
-        } catch (\Throwable $e) { error_log($e->getMessage()); }
+        $tid = $this->tenantId();
+        $tSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = $tid > 1 ? [$tid, $userId] : [$userId];
 
-        $thresholds = [
-            ['name' => 'Rookie',    'min' => 0,       'color' => 'secondary'],
-            ['name' => 'Closer',    'min' => 500000,  'color' => 'blue'],
-            ['name' => 'Pro',       'min' => 2000000, 'color' => 'primary'],
-            ['name' => 'Elite',     'min' => 5000000, 'color' => 'orange'],
-            ['name' => 'Champion',  'min' => 10000000,'color' => 'purple'],
-        ];
-        return $this->buildTieredWidget('Agent Rank', 'fa-award', $revenue, $thresholds, 'Deals Won: ' . $deals . ' | Revenue (12 mo): ₹' . number_format($revenue), '/agent/deals', 'View Pipeline', 'linear-gradient(135deg, #fff 0%, #d1fae5 100%)');
+        return $this->db->fetchAll(
+            "SELECT * FROM gamification_user_badges WHERE user_id = ? {$tSql} ORDER BY earned_at DESC",
+            $params
+        ) ?? [];
     }
 
-    public function forEmployee(int $employeeId): array
+    /**
+     * Get leaderboard
+     */
+    public function getLeaderboard(int $limit = 20): array
     {
-        $score = 0;
-        try {
-            $stmt = $this->pdo->prepare("SELECT COALESCE(SUM(points),0) FROM performance_metrics WHERE employee_id = ? {$this->tenantSql()} AND metric_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)");
-            $stmt->execute([$employeeId]);
-            $score = (int)$stmt->fetchColumn();
-        } catch (\Throwable $e) {
-            $score = 0;
-        }
+        $tid = $this->tenantId();
+        $tSql = $tid > 1 ? " WHERE gus.tenant_id = ?" : "";
+        $params = $tid > 1 ? [$tid] : [];
 
-        $thresholds = [
-            ['name' => 'Trainee',   'min' => 0,    'color' => 'secondary'],
-            ['name' => 'Junior',    'min' => 100,  'color' => 'blue'],
-            ['name' => 'Senior',    'min' => 300,  'color' => 'primary'],
-            ['name' => 'Lead',      'min' => 600,  'color' => 'orange'],
-            ['name' => 'Star',      'min' => 1000, 'color' => 'purple'],
-        ];
-        return $this->buildTieredWidget('Performance Tier', 'fa-star', $score, $thresholds, 'Performance Score (12 mo): ' . number_format($score) . ' pts', '/employee/performance', 'View Details', 'linear-gradient(135deg, #fff 0%, #fed7aa 100%)');
+        return $this->db->fetchAll(
+            "SELECT gus.*, u.name, u.email, u.role,
+                    RANK() OVER (ORDER BY gus.total_points DESC) as rank
+             FROM gamification_user_stats gus
+             LEFT JOIN users u ON gus.user_id = u.id
+             {$tSql}
+             ORDER BY gus.total_points DESC
+             LIMIT ?",
+            array_merge($params, [$limit])
+        ) ?? [];
     }
 
-    public function getTopAssociate(): array
+    /**
+     * Get level info
+     */
+    public function getLevel(int $level): array
     {
-        try {
-            $pdo = $this->resolvePdo();
-            $stmt = $pdo->prepare("
-                SELECT a.name, a.level, a.lifetime_sales, u.id
-                FROM associates a
-                JOIN users u ON u.id = a.user_id
-                WHERE a.lifetime_sales IS NOT NULL AND a.lifetime_sales > 0 {$this->tenantSqlForAlias('a')}
-                ORDER BY a.lifetime_sales DESC
-                LIMIT 1
-            ");
-            $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
-        } catch (\Throwable $e) {
-            return ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
-        }
+        return self::LEVELS[$level] ?? end(self::LEVELS);
     }
 
-    public function getTopAgent(): array
+    /**
+     * Check and update user level
+     */
+    private function checkLevelUp(int $userId): ?array
     {
-        try {
-            $pdo = $this->resolvePdo();
-            $sql = "
-                SELECT u.name, a.level, COALESCE(SUM(d.deal_value), 0) as total_deals
-                FROM users u
-                JOIN agents a ON a.user_id = u.id
-                LEFT JOIN deals d ON d.assigned_to = u.id {$this->tenantSqlForAlias('d')}
-                WHERE u.role = 'agent' {$this->tenantSqlForAlias('a')}
-                GROUP BY u.id, u.name, a.level
-                ORDER BY total_deals DESC
-                LIMIT 1
-            ";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
-        } catch (\Throwable $e) {
-            return ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
-        }
-    }
+        $stats = $this->getUserStats($userId);
+        $totalPoints = $stats['total_points'] ?? 0;
+        $currentLevel = $stats['current_level'] ?? 1;
 
-    public function getTopEmployee(): array
-    {
-        try {
-            $pdo = $this->resolvePdo();
-            $sql = "
-                SELECT u.name, COALESCE(SUM(pm.points), 0) as total_points
-                FROM users u
-                JOIN employees e ON e.user_id = u.id
-                LEFT JOIN performance_metrics pm ON pm.employee_id = e.id {$this->tenantSqlForAlias('pm')}
-                WHERE u.role = 'employee' {$this->tenantSqlForAlias('e')}
-                GROUP BY u.id, u.name
-                ORDER BY total_points DESC
-                LIMIT 1
-            ";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row) {
-                $row['level'] = $this->getEmployeeLevelName($row['total_points']);
+        $newLevel = $currentLevel;
+        foreach (self::LEVELS as $level => $data) {
+            if ($totalPoints >= $data['min_points']) {
+                $newLevel = $level;
             }
-            return $row ?: ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
-        } catch (\Throwable $e) {
-            return ['name' => 'N/A', 'level' => 'N/A', 'metric' => 'N/A'];
         }
-    }
 
-    private function getEmployeeLevelName(int $points): string
-    {
-        if ($points >= 1000) return 'Star';
-        if ($points >= 600) return 'Lead';
-        if ($points >= 300) return 'Senior';
-        if ($points >= 100) return 'Junior';
-        return 'Trainee';
-    }
-
-    private function buildTieredWidget(string $title, string $icon, float $value, array $thresholds, string $metric, string $ctaUrl, string $ctaText, string $gradient): array
-    {
-        $current = $thresholds[0];
-        $next = $thresholds[count($thresholds) - 1];
-        foreach ($thresholds as $i => $t) {
-            if ($value >= $t['min']) { $current = $t; $next = $thresholds[$i + 1] ?? $t; }
+        if ($newLevel > $currentLevel) {
+            $this->db->query(
+                "UPDATE gamification_user_stats SET current_level = ?, updated_at = NOW() WHERE user_id = ?",
+                [$newLevel, $userId]
+            );
+            return self::LEVELS[$newLevel];
         }
-        $span = max(1, $next['min'] - $current['min']);
-        $pct = $next === $current ? 100.0 : min(100.0, (($value - $current['min']) / $span) * 100.0);
-        $remaining = max(0, $next['min'] - $value);
-        return [
-            'title' => $title,
-            'icon' => $icon,
-            'level' => $current['name'],
-            'level_color' => $current['color'],
-            'metric' => $metric,
-            'progress_pct' => $pct,
-            'next_label' => $next['name'],
-            'next_target' => $remaining > 0 ? 'Earn ₹' . number_format($remaining) : 'Maxed out',
-            'cta_url' => $ctaUrl,
-            'cta_text' => $ctaText,
-            'gradient' => $gradient,
-        ];
+
+        return null;
     }
 
-    private function resolvePdo(): PDO
+    /**
+     * Check and award badges
+     */
+    private function checkBadges(int $userId): array
     {
-        return \App\Core\Database\Database::getInstance()->getConnection();
+        $newBadges = [];
+        $stats = $this->getUserStats($userId);
+
+        // Century Club badge
+        if (($stats['total_points'] ?? 0) >= 100) {
+            $badge = $this->awardBadge($userId, 'century_club');
+            if ($badge) $newBadges[] = $badge;
+        }
+
+        return $newBadges;
+    }
+
+    /**
+     * Award a badge to user
+     */
+    private function awardBadge(int $userId, string $badgeKey): ?array
+    {
+        if (!isset(self::BADGES[$badgeKey])) {
+            return null;
+        }
+
+        $badge = self::BADGES[$badgeKey];
+        $tid = $this->tenantId();
+
+        // Check if already has badge
+        $existing = $this->db->fetchOne(
+            "SELECT id FROM gamification_user_badges WHERE user_id = ? AND badge_key = ?",
+            [$userId, $badgeKey]
+        );
+
+        if ($existing) {
+            return null;
+        }
+
+        // Award badge
+        $this->db->insert('gamification_user_badges', array_merge([
+            'user_id' => $userId,
+            'badge_key' => $badgeKey,
+            'badge_name' => $badge['name'],
+            'badge_description' => $badge['description'],
+            'badge_icon' => $badge['icon'],
+            'points' => $badge['points'],
+        ], $tid > 1 ? ['tenant_id' => $tid] : []));
+
+        // Award badge points
+        $this->db->query(
+            "UPDATE gamification_user_stats SET total_points = total_points + ?, updated_at = NOW() WHERE user_id = ?",
+            [$badge['points'], $userId]
+        );
+
+        return $badge;
     }
 }
