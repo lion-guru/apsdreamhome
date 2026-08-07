@@ -25,6 +25,16 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="keywords" content="<?= htmlspecialchars($sc('seo_keywords', 'real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial')) ?>">
     <meta name="author" content="APS Dream Home">
     <meta name="robots" content="index, follow">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/apsdreamhome/manifest.json">
+    <meta name="theme-color" content="#6B4EE6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="APS Dream">
+    <link rel="apple-touch-icon" href="/apsdreamhome/assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/apsdreamhome/assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/apsdreamhome/assets/images/favicon.png">
     <?php if (isset($_SESSION['user_id'])): ?>
     <meta name="user-id" content="<?= (int)$_SESSION['user_id'] ?>">
     <?php endif; ?>
@@ -349,7 +359,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/pwa/service-worker')
+                navigator.serviceWorker.register('/apsdreamhome/sw.js')
                     .then(function(reg) { console.log('SW registered:', reg.scope); })
                     .catch(function(err) { console.log('SW registration failed:', err); });
             });
