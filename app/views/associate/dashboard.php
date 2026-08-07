@@ -308,6 +308,51 @@ body {
     </div>
 </div>
 
+<!-- FOMO & Rank Progress Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="list-card border-0 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);">
+            <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                <i class="fas fa-chart-line fa-8x text-primary"></i>
+            </div>
+            <div class="d-flex flex-column flex-md-row align-items-md-center position-relative z-1">
+                <div class="me-md-4 mb-3 mb-md-0 text-center text-md-start">
+                    <div class="bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 60px; height: 60px;">
+                        <i class="fas fa-level-up-alt fa-2x"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="fw-bold mb-1 text-dark">Unlock Next Tier Earnings! <span class="badge bg-danger ms-2 shadow-sm pulse-badge"><i class="fas fa-fire me-1"></i> Don't Miss Out!</span></h5>
+                    <p class="text-muted mb-2">You are currently a <strong class="text-primary"><?= ucfirst(str_replace('_', ' ', $rank)) ?></strong>. Your team is growing fast! Upgrade to the next rank to unlock <strong>higher commission percentages</strong> and exclusive pool bonuses.</p>
+                    <div class="progress mb-2 shadow-sm" style="height: 12px; border-radius: 10px; background-color: #e2e8f0;">
+                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%; border-radius: 10px;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small fw-bold">
+                        <span class="text-primary"><i class="fas fa-check-circle me-1"></i> Current: <?= ucfirst(str_replace('_', ' ', $rank)) ?></span>
+                        <span class="text-warning text-darken"><i class="fas fa-lock-open me-1"></i> Next Tier close!</span>
+                    </div>
+                </div>
+                <div class="ms-md-4 mt-3 mt-md-0 text-center text-md-end">
+                    <a href="<?= BASE_URL ?>/associate/network" class="btn btn-warning rounded-pill fw-bold px-4 shadow text-dark border-0 py-2">
+                        <i class="fas fa-bolt me-1"></i> Grow Team Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse-animation {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.pulse-badge {
+    animation: pulse-animation 2s infinite;
+}
+</style>
+
 <!-- Details Area -->
 <div class="row g-4">
     <div class="col-lg-8">

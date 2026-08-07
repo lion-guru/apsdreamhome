@@ -223,11 +223,29 @@ class AssociateController extends BaseController
                 "SELECT rank_name, min_qualifying_volume FROM mlm_rank_benefits ORDER BY rank_order ASC"
             );
             $computedRank = 'associate';
-            foreach ($rankBenefits as $rb) {
+            $nextRank = null;
+            $nextRankVolume = 0;
+            
+            for ($i = 0; $i < count($rankBenefits); $i++) {
+                $rb = $rankBenefits[$i];
                 if ($ledgerSales12mo >= (float)$rb['min_qualifying_volume']) {
                     $computedRank = $rb['rank_name'];
+                    if (isset($rankBenefits[$i + 1])) {
+                        $nextRank = $rankBenefits[$i + 1]['rank_name'];
+                        $nextRankVolume = (float)$rankBenefits[$i + 1]['min_qualifying_volume'];
+                    } else {
+                        $nextRank = 'Max Rank';
+                        $nextRankVolume = $ledgerSales12mo;
+                    }
                 }
             }
+            
+            // If they haven't hit the first rank
+            if ($computedRank === 'associate' && $nextRank === null && isset($rankBenefits[0])) {
+                $nextRank = $rankBenefits[0]['rank_name'];
+                $nextRankVolume = (float)$rankBenefits[0]['min_qualifying_volume'];
+            }
+
             // Use ledger-based sales for rank progress (consistent with gamification widget)
             $teamSales = max($teamSales, $ledgerSales12mo);
             // Auto-update if stale

@@ -787,17 +787,19 @@ class MLMCommissionController extends AdminController
 
         try {
             if ($this->db) {
-                $benefits = $this->db->query(
-                    "SELECT * FROM mlm_rank_benefits ORDER BY rank_order ASC"
-                )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                $tid = (int)$this->tenantId();
 
-                $levels = $this->db->query(
-                    "SELECT * FROM mlm_levels ORDER BY level_number ASC"
-                )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                $stmt = $this->db->prepare("SELECT * FROM mlm_rank_benefits WHERE tenant_id = ? ORDER BY rank_order ASC");
+                $stmt->execute([$tid]);
+                $benefits = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-                $rows = $this->db->query(
-                    "SELECT setting_key, setting_value FROM mlm_settings"
-                )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                $stmt = $this->db->prepare("SELECT * FROM mlm_levels ORDER BY level_number ASC");
+                $stmt->execute();
+                $levels = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+                $stmt = $this->db->prepare("SELECT setting_key, setting_value FROM mlm_settings WHERE tenant_id = ?");
+                $stmt->execute([$tid]);
+                $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
                 foreach ($rows as $r) {
                     $settings[$r['setting_key']] = $r['setting_value'];
@@ -837,6 +839,7 @@ class MLMCommissionController extends AdminController
             if (!$this->db) {
                 throw new \Exception('Database not available');
             }
+            $tid = (int)$this->tenantId();
 
             // ── 1. Update rank benefits ──────────────────────────────
             $benefitsPOST = $_POST['benefits'] ?? [];
@@ -857,9 +860,9 @@ class MLMCommissionController extends AdminController
                         badge_icon      = ?,
                         color_code      = ?,
                         updated_at      = NOW()
-                    WHERE rank_name = ?
+                    WHERE rank_name = ? AND tenant_id = ?
                 ");
-                $stmt->execute([$directPct, $minVolume, $minLegs, $rankOrder, $badgeIcon, $colorCode, $rankName]);
+                $stmt->execute([$directPct, $minVolume, $minLegs, $rankOrder, $badgeIcon, $colorCode, $rankName, $tid]);
                 $saved += $stmt->rowCount();
             }
 
@@ -912,11 +915,11 @@ class MLMCommissionController extends AdminController
                 }
 
                 $stmt = $this->db->prepare("
-                    INSERT INTO mlm_settings (setting_key, setting_value)
-                    VALUES (?, ?)
+                    INSERT INTO mlm_settings (tenant_id, setting_key, setting_value)
+                    VALUES (?, ?, ?)
                     ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
                 ");
-                $stmt->execute([$key, $value]);
+                $stmt->execute([$tid, $key, $value]);
                 $saved++;
             }
 

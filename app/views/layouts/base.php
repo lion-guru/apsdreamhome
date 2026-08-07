@@ -27,14 +27,14 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="robots" content="index, follow">
     
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/apsdreamhome/manifest.json">
+    <link rel="manifest" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/manifest.json">
     <meta name="theme-color" content="#6B4EE6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="APS Dream">
-    <link rel="apple-touch-icon" href="/apsdreamhome/assets/images/logo-192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/apsdreamhome/assets/images/logo-192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/apsdreamhome/assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/favicon.png">
     <?php if (isset($_SESSION['user_id'])): ?>
     <meta name="user-id" content="<?= (int)$_SESSION['user_id'] ?>">
     <?php endif; ?>
@@ -142,7 +142,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
-    <!-- PWA Meta Tags -->
+    <!-- PWA Manifest (dynamic URL) -->
     <meta name="theme-color" content="#2c3e50">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -153,15 +153,13 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Preconnect to CDN origins for faster resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    
 
     <!-- Google Fonts (preloaded) -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome -->
+    <!-- Font Awesome -->
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Leaflet CSS for map picker -->
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
@@ -359,7 +357,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/apsdreamhome/sw.js')
+                navigator.serviceWorker.register('<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/sw.js')
                     .then(function(reg) { console.log('SW registered:', reg.scope); })
                     .catch(function(err) { console.log('SW registration failed:', err); });
             });

@@ -49,8 +49,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const alerts = document.querySelectorAll('.alert');
   alerts.forEach(function (alert) {
     setTimeout(function () {
-      const bsAlert = new bootstrap.Alert(alert);
-      bsAlert.close();
+      if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      } else {
+        alert.classList.remove('show');
+        alert.classList.add('d-none');
+      }
     }, 5000);
   });
 });

@@ -34,7 +34,8 @@
     "**/Thumbs.db": true,
     "**/test-results": true,
     "**/playwright-report": true,
-    "**/playwright/.cache": true
+    "**/playwright/.cache": true,
+    "**/_archive": true
   },
   "search.exclude": {
     "**/node_modules": true,
@@ -43,12 +44,22 @@
     "**/storage/cache": true,
     "**/.git": true,
     "**/test-results": true,
-    "**/playwright-report": true
+    "**/playwright-report": true,
+    "**/_archive": true
   },
   "php.suggest.basic": false,
   "intelephense.diagnostics.enable": true,
   "intelephense.diagnostics.errorReporting": true,
   "intelephense.diagnostics.run": true,
+  "intelephense.files.exclude": [
+    "**/.git/**",
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**/{Tests,tests}/**",
+    "**/.history/**",
+    "**/vendor/**/vendor/**",
+    "**/_archive/**"
+  ],
   "database-client.autoConnect": false,
   "database-client.defaultPort": 3307,
   "gitlens.advanced.messages": {

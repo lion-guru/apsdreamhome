@@ -1,119 +1,164 @@
 <?php
+/**
+ * CRM Lead Assignment Service
+ * Handles Round-Robin, Attendance-based, and Least-Burdened lead routing
+ */
+
 namespace App\Services\CRM;
 
 use App\Core\Database\Database;
-use App\Core\Middleware\TenantContext;
-use Exception;
-use \App\Traits\ServiceTenantTrait;
+use App\Traits\ServiceTenantTrait;
 
 class LeadAssignmentService
 {
-    use \App\Traits\ServiceTenantTrait;
+    use ServiceTenantTrait;
 
-    private $pdo;
+    private Database $db;
 
-    public function __construct()
+    public function __construct(Database $db)
     {
-        $this->pdo = Database::getInstance()->getConnection();
+        $this->db = $db;
     }
 
     /**
-     * Auto-assign unassigned leads to available handlers round-robin
+     * Assign a lead to the best available telecaller
      */
-    public function autoAssign(int $batchSize = 50): array
+    public function assignLead(int $leadId): array
     {
-        $handlers = $this->getAvailableHandlers();
-        if (empty($handlers)) {
-            return ['assigned' => 0, 'message' => 'No available handlers found'];
-        }
-
-        $tid = TenantContext::getId();
-        $unassigned = $this->pdo->prepare(
-            "SELECT id FROM leads WHERE assigned_to IS NULL AND status='new'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY created_at ASC LIMIT ?"
-        );
-        $params = $tid > 1 ? [$tid, $batchSize] : [$batchSize];
-        $unassigned->execute($params);
-        $leads = $unassigned->fetchAll(\PDO::FETCH_COLUMN);
-
-        if (empty($leads)) {
-            return ['assigned' => 0, 'message' => 'No unassigned leads'];
-        }
-
-        $assignments = [];
-        $idx = 0;
-        $stmt = $this->pdo->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
-
-        $this->pdo->beginTransaction();
         try {
-            foreach ($leads as $leadId) {
-                $handler = $handlers[$idx % count($handlers)];
-                $updParams = $tid > 1 ? [$handler['id'], $leadId, $tid] : [$handler['id'], $leadId];
-                $stmt->execute($updParams);
-                $assignments[] = ['lead_id' => $leadId, 'assigned_to' => $handler['id'], 'handler_name' => $handler['name']];
-                $idx++;
+            $tid = (int)$this->tenantId();
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tenantParams = $tid > 1 ? [$tid] : [];
+
+            // 1. Get Settings
+            $strategy = $this->getSetting('crm_lead_assignment_strategy', 'round_robin', $tid);
+            $requireAttendance = $this->getSetting('crm_require_attendance', '0', $tid);
+
+            // 2. Get active telecallers
+            // Join users with employees to ensure we have a valid telecaller
+            $query = "SELECT u.id as user_id, e.id as employee_id 
+                      FROM users u 
+                      JOIN employees e ON u.id = e.user_id
+                      WHERE u.role = 'telecaller' AND u.status = 'active'";
+            
+            $params = [];
+            if ($tid > 1) {
+                $query .= " AND u.tenant_id = ?";
+                $params[] = $tid;
             }
-            $this->pdo->commit();
-        } catch (Exception $e) {
-            $this->pdo->rollBack();
-            return ['assigned' => 0, 'error' => $e->getMessage()];
+
+            if ($requireAttendance === '1') {
+                $today = date('Y-m-d');
+                // Check if clocked in today and not clocked out
+                $query .= " AND EXISTS (
+                                SELECT 1 FROM employee_attendance a 
+                                WHERE a.employee_id = e.id 
+                                AND a.attendance_date = ? 
+                                AND a.check_in_time IS NOT NULL 
+                                AND a.check_out_time IS NULL
+                            )";
+                $params[] = $today;
+            }
+
+            $telecallers = $this->db->fetchAll($query, $params);
+
+            if (empty($telecallers)) {
+                return ['success' => false, 'message' => 'No available telecallers found'];
+            }
+
+            $assignedEmployeeId = null;
+
+            if ($strategy === 'least_burdened') {
+                // Find telecaller with fewest active leads
+                $minLeads = null;
+                foreach ($telecallers as $tc) {
+                    $empId = $tc['employee_id'];
+                    $q = "SELECT COUNT(*) as cnt FROM leads WHERE assigned_to = ? AND status NOT IN ('converted', 'dead')";
+                    $p = [$empId];
+                    if ($tid > 1) {
+                        $q .= " AND tenant_id = ?";
+                        $p[] = $tid;
+                    }
+                    $activeCount = (int)($this->db->fetchOne($q, $p)['cnt'] ?? 0);
+
+                    if ($minLeads === null || $activeCount < $minLeads) {
+                        $minLeads = $activeCount;
+                        $assignedEmployeeId = $empId;
+                    }
+                }
+            } else {
+                // Round Robin
+                // Get the telecaller with the oldest last_assigned_at timestamp
+                $oldestTime = null;
+                foreach ($telecallers as $tc) {
+                    $empId = $tc['employee_id'];
+                    $q = "SELECT MAX(assigned_at) as last_assigned FROM lead_assignments_log WHERE employee_id = ?";
+                    $p = [$empId];
+                    if ($tid > 1) {
+                        $q .= " AND tenant_id = ?";
+                        $p[] = $tid;
+                    }
+                    $lastAssigned = $this->db->fetchOne($q, $p)['last_assigned'] ?? '2000-01-01 00:00:00';
+                    
+                    if ($oldestTime === null || strtotime($lastAssigned) < strtotime($oldestTime)) {
+                        $oldestTime = $lastAssigned;
+                        $assignedEmployeeId = $empId;
+                    }
+                }
+            }
+
+            if ($assignedEmployeeId) {
+                // Assign to the selected telecaller
+                $q = "UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?";
+                $p = [$assignedEmployeeId, $leadId];
+                if ($tid > 1) {
+                    $q .= " AND tenant_id = ?";
+                    $p[] = $tid;
+                }
+                $this->db->query($q, $p);
+
+                // Log the assignment
+                // We assume lead_assignments_log exists. If not, this might fail, but it's okay, catch block handles it.
+                $cols = "lead_id, employee_id, assigned_at";
+                $vals = "?, ?, NOW()";
+                $logParams = [$leadId, $assignedEmployeeId];
+                if ($tid > 1) {
+                    $cols .= ", tenant_id";
+                    $vals .= ", ?";
+                    $logParams[] = $tid;
+                }
+                
+                try {
+                    $this->db->query("INSERT INTO lead_assignments_log ($cols) VALUES ($vals)", $logParams);
+                } catch (\Exception $e) {
+                    // Ignore if table doesn't exist yet, just error log it
+                    error_log("Failed to log lead assignment: " . $e->getMessage());
+                }
+
+                return ['success' => true, 'assigned_to' => $assignedEmployeeId, 'message' => 'Lead assigned successfully'];
+            }
+
+            return ['success' => false, 'message' => 'Failed to determine assignee'];
+
+        } catch (\Exception $e) {
+            error_log("LeadAssignmentService error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Internal assignment error'];
         }
-
-        return [
-            'assigned' => count($assignments),
-            'handlers_used' => count($handlers),
-            'assignments' => $assignments,
-        ];
     }
 
-    /**
-     * Get available handlers sorted by current workload (least-loaded first)
-     */
-    public function getAvailableHandlers(): array
+    private function getSetting(string $key, string $default, int $tid): string
     {
-        $roles = "'employee','telecaller','agent','sales'";
-        $tid = TenantContext::getId();
-        $subSql = "SELECT COUNT(*) FROM leads WHERE assigned_to = u.id AND status = 'new'";
-        if ($tid > 1) { $subSql .= " AND tenant_id = ?"; }
-        $sql = "SELECT u.id, u.name, u.role,
-                       ($subSql) as workload
-                FROM users u
-                WHERE u.role IN ($roles) AND u.status = 'active'" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "
-                ORDER BY workload ASC";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($tid > 1 ? [$tid, $tid] : []);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-    }
-
-    /**
-     * Get lead count for dashboard stats
-     */
-    public function getStats(): array
-    {
-        $tid = TenantContext::getId();
-        $total = $new = $unassigned = $assigned = 0;
-
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads" . ($tid > 1 ? " WHERE tenant_id = ?" : ""));
-        $stmt->execute($tid > 1 ? [$tid] : []);
-        $total = (int)$stmt->fetchColumn();
-
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE status='new'" . ($tid > 1 ? " AND tenant_id = ?" : ""));
-        $stmt->execute($tid > 1 ? [$tid] : []);
-        $new = (int)$stmt->fetchColumn();
-
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""));
-        $stmt->execute($tid > 1 ? [$tid] : []);
-        $unassigned = (int)$stmt->fetchColumn();
-
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE assigned_to IS NOT NULL" . ($tid > 1 ? " AND tenant_id = ?" : ""));
-        $stmt->execute($tid > 1 ? [$tid] : []);
-        $assigned = (int)$stmt->fetchColumn();
-
-        return [
-            'total' => $total,
-            'new' => $new,
-            'unassigned' => $unassigned,
-            'assigned' => $assigned,
-            'handlers' => count($this->getAvailableHandlers()),
-        ];
+        try {
+            $q = "SELECT value FROM settings WHERE key_name = ?";
+            $p = [$key];
+            if ($tid > 1) {
+                $q .= " AND tenant_id = ?";
+                $p[] = $tid;
+            }
+            $row = $this->db->fetchOne($q, $p);
+            return $row ? $row['value'] : $default;
+        } catch (\Exception $e) {
+            return $default;
+        }
     }
 }

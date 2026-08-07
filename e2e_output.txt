@@ -1,0 +1,10 @@
+--- Step 1: Admin Login ---
+  FAIL Admin Login => http://localhost/apsdreamhome/admin/login?test_login=1
+
+--- SKIPPING steps 2-6 (not logged in) ---
+
+============================================================
+TOTAL: 0 passed, 1 failed (1 checks)
+UNEXPECTED FAILURES: 1
+  - Admin Login: http://localhost/apsdreamhome/admin/login?test_login=1
+============================================================

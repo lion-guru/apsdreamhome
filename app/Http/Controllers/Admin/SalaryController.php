@@ -149,6 +149,39 @@ class SalaryController extends AdminController
                 exit;
             }
 
+            // Fallback defaults for settings if not in DB
+            $tid = (int)$this->tenantId();
+            $bonusPerLead = (float)($this->db->fetch("SELECT setting_value FROM settings WHERE setting_key='crm_conversion_bonus' AND tenant_id=?", [$tid])['setting_value'] ?? 500);
+
+            // 1. Calculate CRM Conversion Bonus
+            $crmBonus = 0;
+            // Find employee_id for this associate's user_id
+            $emp = $this->db->fetch("SELECT id FROM employees WHERE user_id=?", [$associate['user_id']]);
+            $employeeId = $emp['id'] ?? 0;
+            $convertedLeads = 0;
+            
+            if ($employeeId > 0) {
+                $convertedLeads = (int)($this->db->fetch("
+                    SELECT COUNT(*) as cnt 
+                    FROM leads 
+                    WHERE assigned_to=? AND status='converted' 
+                    AND MONTH(updated_at)=? AND YEAR(updated_at)=?
+                ", [$employeeId, $paymentMonth, $paymentYear])['cnt'] ?? 0);
+                
+                if ($convertedLeads > 0) {
+                    $crmBonus = $convertedLeads * $bonusPerLead;
+                }
+            }
+
+            // Calculate final amounts
+            $baseSalary = (float)$associate['salary_amount'];
+            $grossAmount = $baseSalary + $crmBonus;
+            
+            // Note: associate['target_bonus_amount'] exists but is handled separately or added here?
+            // Let's just add CRM Bonus for now.
+            $remarks = sprintf("Associate Salary Processed. Base: %.2f. CRM Bonus: +%.2f (%d leads).", 
+                                $baseSalary, $crmBonus, $convertedLeads);
+
             // Create salary payment record
             $params = [
                 $this->tenantId(),
@@ -156,15 +189,16 @@ class SalaryController extends AdminController
                 $associate['user_id'],
                 $paymentMonth,
                 $paymentYear,
-                $associate['salary_amount'],
-                $associate['salary_amount'],
-                $associate['salary_amount']
+                $baseSalary,
+                $grossAmount,
+                $grossAmount, // net amount (associates might not have deductions here)
+                $remarks
             ];
             $this->db->execute("
                 INSERT INTO salary_payments
                 (tenant_id, associate_id, user_id, payment_month, payment_year, payment_date,
-                 basic_amount, gross_amount, net_amount, payment_status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', NOW(), NOW())
+                 basic_amount, gross_amount, net_amount, payment_status, remarks, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, 'pending', ?, NOW(), NOW())
             ", $params);
 
             header('Content-Type: application/json');
@@ -395,18 +429,78 @@ class SalaryController extends AdminController
         $month = (int)($_POST['month'] ?? 0);
         $year = (int)($_POST['year'] ?? 0);
         if (!$month || !$year) { $this->setFlash('error', 'Month and year required'); $this->redirect('/admin/salary/payments'); }
+        
+        $tid = (int)$this->tenantId();
+        // Fallback defaults for settings if not in DB
+        $bonusPerLead = (float)($this->db->fetch("SELECT setting_value FROM settings WHERE setting_key='crm_conversion_bonus' AND tenant_id=?", [$tid])['setting_value'] ?? 500);
+        
+        $totalDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        
         try {
             $users = $this->db->fetchAll("SELECT DISTINCT s.employee_id, s.id as structure_id, s.basic_salary, s.gross_salary, s.total_deductions, s.net_salary FROM salary_structures s WHERE s.status='active' AND s.employee_id NOT IN (SELECT employee_id FROM salary_payments WHERE payment_month=? AND payment_year=? AND payment_status='paid')", [$month, $year]) ?? [];
             $count = 0;
             foreach ($users as $emp) {
+                $employeeId = $emp['employee_id'];
                 $basic = (float)$emp['basic_salary'];
                 $gross = (float)$emp['gross_salary'];
                 $deductions = (float)$emp['total_deductions'];
-                $net = (float)$emp['net_salary'];
-                $this->db->execute("INSERT INTO salary_payments (employee_id, salary_structure_id, payment_month, payment_year, payment_date, basic_amount, gross_amount, deduction_amount, net_amount, payment_status, created_by, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", [$emp['employee_id'], $emp['structure_id'], $month, $year, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', $basic, $gross, $deductions, $net, 'pending', (int)($_SESSION['admin_id'] ?? 0), 'Bulk processed', (int)$this->tenantId()]);
+                
+                // 1. Calculate Attendance & LOP (Loss of Pay)
+                // We count present, holiday, leave. We also count explicit 'absent' and 'half_day'.
+                $attStats = $this->db->fetch("
+                    SELECT 
+                        SUM(CASE WHEN attendance_status='present' THEN 1 ELSE 0 END) as present_days,
+                        SUM(CASE WHEN attendance_status='leave' THEN 1 ELSE 0 END) as leave_days,
+                        SUM(CASE WHEN attendance_status='holiday' THEN 1 ELSE 0 END) as holiday_days,
+                        SUM(CASE WHEN attendance_status='absent' THEN 1 ELSE 0 END) as explicit_absences,
+                        SUM(CASE WHEN attendance_status='half_day' THEN 1 ELSE 0 END) as half_days
+                    FROM employee_attendance 
+                    WHERE employee_id=? AND MONTH(attendance_date)=? AND YEAR(attendance_date)=?
+                ", [$employeeId, $month, $year]);
+                
+                $presentDays = (int)($attStats['present_days'] ?? 0);
+                $leaveDays = (int)($attStats['leave_days'] ?? 0);
+                $holidayDays = (int)($attStats['holiday_days'] ?? 0);
+                $explicitAbsences = (int)($attStats['explicit_absences'] ?? 0);
+                $halfDays = (int)($attStats['half_days'] ?? 0);
+                
+                $paidDays = $presentDays + $leaveDays + $holidayDays + ($halfDays * 0.5);
+                
+                // Calculate LOP based on explicit absences first. If no attendance records exist, 
+                // we assume full working month (to prevent 100% LOP if attendance module is unused).
+                $totalAbsences = max(0, $totalDaysInMonth - $paidDays);
+                $lopAmount = 0;
+                
+                if ($totalAbsences > 0) {
+                    $perDaySalary = $basic / $totalDaysInMonth;
+                    $lopAmount = $perDaySalary * $totalAbsences;
+                }
+                
+                // 2. Calculate CRM Conversion Bonus
+                $crmBonus = 0;
+                $convertedLeads = (int)($this->db->fetch("
+                    SELECT COUNT(*) as cnt 
+                    FROM leads 
+                    WHERE assigned_to=? AND status='converted' 
+                    AND MONTH(updated_at)=? AND YEAR(updated_at)=?
+                ", [$employeeId, $month, $year])['cnt'] ?? 0);
+                
+                if ($convertedLeads > 0) {
+                    $crmBonus = $convertedLeads * $bonusPerLead;
+                }
+                
+                // 3. Finalize Net Salary
+                // Gross = Base Gross - LOP + CRM Bonus
+                $finalGross = ($gross - $lopAmount) + $crmBonus;
+                $net = $finalGross - $deductions;
+                
+                $remarks = sprintf("Bulk processed. LOP: -%.2f (%s absent). CRM Bonus: +%.2f (%d leads).", 
+                                    $lopAmount, $totalAbsences, $crmBonus, $convertedLeads);
+
+                $this->db->execute("INSERT INTO salary_payments (employee_id, salary_structure_id, payment_month, payment_year, payment_date, basic_amount, gross_amount, deduction_amount, net_amount, payment_status, created_by, remarks, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", [$employeeId, $emp['structure_id'], $month, $year, $year . '-' . str_pad($month,2,'0',STR_PAD_LEFT) . '-01', $basic, $finalGross, $deductions, $net, 'pending', (int)($_SESSION['admin_id'] ?? 0), $remarks, $tid]);
                 $count++;
             }
-            $this->setFlash('success', "Bulk processed $count users");
+            $this->setFlash('success', "Bulk processed $count users with LOP & CRM Bonuses");
         } catch (\Exception $e) {
             $this->setFlash('error', 'Bulk failed: ' . $e->getMessage());
         }

@@ -1,9 +1,23 @@
-<?php
+<?php 
 $settings = $settings ?? [];
-$roles = $roles ?? [];
+$roles = ['admin', 'manager', 'associate', 'agent', 'telecaller'];
 $base = BASE_URL ?? '';
 $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default);
 ?>
+<div class="container-fluid py-4">
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> <?= htmlspecialchars($success) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> <?= htmlspecialchars($error) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .crm-settings-header { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
 .setting-card { border: none; border-radius: 12px; transition: transform 0.2s; }
@@ -27,7 +41,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     </div>
 </div>
 
-<form method="POST" action="<?= $base ?>/admin/crm-settings/save">
+<form method="POST" action="<?= $base ?>/admin/settings/crm">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
     <!-- Global CRM Toggle -->
@@ -97,13 +111,29 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                         <input type="hidden" id="crm_auto_assign" name="crm_auto_assign_enabled" value="<?= $val('crm_auto_assign_enabled') ?>">
                     </div>
                 </div>
-                <label class="fw-semibold mb-2">Assignment Method</label>
-                <select name="crm_auto_assign_method" class="form-select">
-                    <option value="round_robin" <?= $val('crm_auto_assign_method') === 'round_robin' ? 'selected' : '' ?>>Round Robin (Equal Distribution)</option>
-                    <option value="least_loaded" <?= $val('crm_auto_assign_method') === 'least_loaded' ? 'selected' : '' ?>>Least Loaded (Fewest Active Leads)</option>
-                    <option value="skill_based" <?= $val('crm_auto_assign_method') === 'skill_based' ? 'selected' : '' ?>>Skill-Based (Score Matching)</option>
-                    <option value="random" <?= $val('crm_auto_assign_method') === 'random' ? 'selected' : '' ?>>Random</option>
-                </select>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="fw-semibold">Require Attendance Clock-in</div>
+                        <small class="text-muted">Only assign leads if telecaller is marked present</small>
+                    </div>
+                    <div class="toggle-switch <?= $val('crm_require_attendance', '0') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_require_attendance').value = this.classList.contains('active') ? '1' : '0';">
+                        <input type="hidden" id="crm_require_attendance" name="crm_require_attendance" value="<?= $val('crm_require_attendance', '0') ?>">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-semibold mb-2">Assignment Method</label>
+                    <select name="crm_lead_assignment_strategy" class="form-select">
+                        <option value="round_robin" <?= $val('crm_lead_assignment_strategy', 'round_robin') === 'round_robin' ? 'selected' : '' ?>>Round Robin (Equal Distribution)</option>
+                        <option value="least_burdened" <?= $val('crm_lead_assignment_strategy') === 'least_burdened' ? 'selected' : '' ?>>Least Loaded (Fewest Active Leads)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="fw-semibold mb-2">Daily Lead Cap</label>
+                    <input type="number" name="crm_daily_lead_cap" class="form-control" value="<?= $val('crm_daily_lead_cap', '50') ?>" min="1" max="1000">
+                </div>
             </div>
         </div>
     </div>
@@ -221,3 +251,4 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
         </button>
     </div>
 </form>
+</div>

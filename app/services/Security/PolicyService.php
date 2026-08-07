@@ -425,11 +425,12 @@ class SecurityPolicyManager {
             'device' => ['type' => 'mobile']
         ]);
 
-        echo "Security Risk Level: $riskLevel\n";
+        // Log security risk level
+        error_log("Security Risk Level: $riskLevel");
 
-        // Generate and display report
+        // Generate report
         $report = $this->generateSecurityReport();
-        print_r($report);
+        error_log("Security Report: " . json_encode($report));
     }
 }
 

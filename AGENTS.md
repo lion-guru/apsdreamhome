@@ -1,4 +1,73 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-31 — Session 68)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-07 — Session 73)
+
+---
+
+# Session 73: Security Hardening + Feature Complete (2026-08-07)
+
+## Goal
+Production-ready security hardening, feature completion, performance optimization, and AI voice assistant integration.
+
+## What Was Done
+
+| Feature | Details |
+| :------ | :------ |
+| **Dead Routes Fixed** | 7 controller methods added (plotSizeConverter, plotConverter, plotMap, constructionInquiry, inquiry, requestReferralCode, communication route fix) |
+| **Controller Bugs** | AdvancedFeaturesController: jsonResponse visibility/signature, skipCsrfProtection, ProgressiveRegistrationService constructor |
+| **Campaign Tracking** | Route + 2 tables (campaign_deliveries, campaign_delivery_schedule) |
+| **Missing DB Tables** | 13+ tables: ai_chatbot_training, whatsapp_lead_shares, crm_form_submissions, daily_operations_log, nach_debit_log, rera_compliance_log, user_preferences, demand_letter_template, reconciliation_collections, mlm_salary_grants, nach_mandates, gamification_points/user_stats/user_badges, rate_limit_logs |
+| **Temp File Cleanup** | 60+ debug/temp files archived |
+| **Rate Limiting** | Middleware: 10/min auth, 120/min API, POST + API only |
+| **DB Indexes** | 30 indexes added (bookings, leads, MLM, plots, users) |
+| **Input Validator** | Indian formats: PAN, Aadhaar, IFSC, PIN, phone |
+| **Error Pages** | 404, 500, 403 with consistent design |
+| **Helpers** | Pagination, Search, Export (CSV/Excel), Theme (Light/Dark), DashboardWidget |
+| **Financial Reports** | P&L, Balance Sheet, Cash Flow with export |
+| **Bulk Operations** | Lead assign, status, priority, delete |
+| **Gamification** | 7 levels (Newcomer → Champion), 10 badges, leaderboard |
+| **Voice Search** | Web Speech API (Hindi/English) |
+| **AI Voice Assistant** | RBAC-aware, knowledge base, < 100ms cached responses |
+| **Response Cache** | In-memory caching with hit/miss stats |
+| **PWA Support** | manifest.json, service worker |
+| **UI Polish** | Comprehensive CSS (cards, buttons, tables, forms, modals, dark mode) |
+| **Documentation** | SRS (9 parts), API docs, user manual, testing reports, project handover |
+
+## Database State
+
+| Metric | Value |
+| :----- | ---- |
+| Total Tables | 592 |
+| Controllers | 430 |
+| Services | 460 |
+| Views | 1,709 |
+| Language Keys | 8,758 EN, 8,765 HI |
+| E2E Tests | 153/153 PASS |
+
+## Apache Configuration Fix
+- Added `Include conf/extra/httpd-xampp.conf` to `httpd.conf`
+- Added PHP module loading directly to `httpd.conf` as backup
+- Created `start_services.bat` for easy restart after computer restart
+- **Note:** If Apache shows "shutdown unexpectedly", run `start_services.bat` after computer restart
+
+## New Helper Files
+- `app/Helpers/InputValidator.php` — Form validation with Indian formats
+- `app/Helpers/Pagination.php` — Pagination helper
+- `app/Helpers/Search.php` — Full-text search
+- `app/Helpers/Export.php` — CSV/Excel export
+- `app/Helpers/Theme.php` — Light/Dark mode
+- `app/Helpers/DashboardWidget.php` — Dashboard widgets
+- `app/Services/VoiceAssistantService.php` — AI Voice Assistant with RBAC
+- `app/Services/GamificationService.php` — Points, badges, levels
+- `app/Services/FinancialReportService.php` — P&L, Balance Sheet, Cash Flow
+- `app/Services/ResponseCache.php` — In-memory caching
+- `app/Core/Middleware/RateLimitMiddleware.php` — Rate limiting
+
+## Key Lessons Learned
+
+_121. **Apache socket can get stuck in TIME_WAIT** — Multiple rapid restarts can cause the socket to get stuck. Fix: Restart computer or use PHP built-in server as temporary workaround._
+
+_122. **PHP module loading in XAMPP** — PHP is loaded via `httpd-xampp.conf` included from `httpd.conf`. If Apache doesn't process PHP files, check that `Include conf/extra/httpd-xampp.conf` is present in `httpd.conf`._
+
+_123. **PowerShell Add-Content can corrupt PHP files** — Using `Add-Content` with PHP code can introduce encoding issues. Use the `Write` tool instead for PHP files._
 
 ---
 
@@ -76,6 +145,16 @@ $sql = "...{$tenantCol}" . " VALUES (...{$tenantVal})";
 5. Does it have DB data?
 6. What breaks if deleted?
 7. ALL pass = safe. ANY fail = MOVE to `_archive/`, don't delete.
+
+## Pre-Refactoring & Route Modification Checklist (MANDATORY)
+> **Blindly updating routes or consolidating files based on file names is strictly forbidden.**
+1. **Verify Target Methods:** Never change a route to point to a new controller method without physically verifying that the method exists and handles the identical data/signature.
+2. **Deep Analysis:** Before consolidating (e.g. Auth controllers), read the *entire* target file. Check what it actually does. Do not assume `CoreAuthController` has `handleRegister` just because it sounds logical.
+3. **Trace Execution:** What exact views are loaded? Are there special tokens/roles required?
+4. **Always Ask Questions First:** If the refactoring is large or unclear, do a Q&A and deeply analyze what the original code was meant to do before writing a plan.
+5. **No Overlapping Controllers:** Do not create duplicate overlapping controllers (e.g., `UnifiedRegisterController`, `CoreAuthController`, `SmartRegistrationController`) with duplicated methods. Stick to standard MVC naming conventions (`LoginController`, `RegisterController`, `OtpAuthController`). When migrating functionality, completely remove or archive the old file instead of leaving it active alongside the new one.
+6. **Never Delete UI Intent:** Never blindly replace or delete UI placeholders, beautiful frontend templates, or rich settings pages (e.g., CRM Auto-scoring, Drip Campaigns toggles) just because the backend logic for them is not yet implemented. If a user provides a complex UI, leave it intact. Save their values in the database as simple key-value pairs so the user's design and intent are preserved.
+
 
 ## File Organization Rules
 - PHP files in `app/` use namespace `App\*`

@@ -183,7 +183,8 @@ try {
         </ul>
         <div class="sidebar-section">System</div>
         <ul class="sidebar-menu">
-            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/settings" class="sidebar-link <?php echo strpos($current_uri, '/admin/settings') !== false ? 'active' : ''; ?>"><i class="fas fa-cog"></i> Settings</a></li>
+            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/settings" class="sidebar-link <?php echo strpos($current_uri, '/admin/settings') !== false && strpos($current_uri, '/admin/settings/crm') === false ? 'active' : ''; ?>"><i class="fas fa-cog"></i> Settings</a></li>
+            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/settings/crm" class="sidebar-link <?php echo strpos($current_uri, '/admin/settings/crm') !== false ? 'active' : ''; ?>"><i class="fas fa-cogs"></i> CRM Settings</a></li>
             <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/ai-settings" class="sidebar-link <?php echo strpos($current_uri, '/admin/ai-settings') !== false ? 'active' : ''; ?>"><i class="fas fa-robot"></i> AI Settings</a></li>
         </ul>
         <div class="sidebar-section">Account</div>

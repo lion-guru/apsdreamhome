@@ -759,7 +759,6 @@ $router->get('/admin/deals', 'App\Http\Controllers\Admin\DealController@index');
 $router->get('/admin/deals/kanban', 'App\Http\Controllers\Admin\DealController@kanban');
 $router->get('/admin/deals/create', 'App\Http\Controllers\Admin\DealController@create');
 $router->post('/admin/deals/store', 'App\Http\Controllers\Admin\DealController@store');
-$router->get('/admin/deals/{id}', 'App\Http\Controllers\Admin\DealController@show');
 $router->post('/admin/deals/{id}/stage', 'App\Http\Controllers\Admin\DealController@updateStage');
 
 // Achievement Routes
@@ -772,27 +771,27 @@ $router->get('/api/achievements/badges', 'App\\Http\\Controllers\\AchievementCon
 // ============================================================
 
 // Unified Registration (Customer / Agent / Associate — main entry point)
-$router->get('/register', 'Auth\\UnifiedRegisterController@show');
-$router->post('/register', 'Auth\\UnifiedRegisterController@handle');
+$router->get('/register', 'Auth\\RegisterController@showRegister');
+$router->post('/register', 'Auth\\RegisterController@handleRegister');
 
 // Unified Registration alias (backward compatibility)
-$router->get('/register/unified', 'Auth\\UnifiedRegisterController@show');
-$router->post('/register/unified', 'Auth\\UnifiedRegisterController@handle');
+$router->get('/register/unified', 'Auth\\RegisterController@showRegister');
+$router->post('/register/unified', 'Auth\\RegisterController@handleRegister');
 
 // Direct Customer-only registration (legacy)
 $router->get('/register/customer', 'Auth\\CustomerAuthController@register');
 $router->post('/register/customer', 'Auth\\CustomerAuthController@handleRegister');
 
 // Smart Registration (Phone-First One-Click)
-$router->get('/register/smart', 'Auth\\SmartRegistrationController@showPhoneInput');
-$router->post('/register/smart/send-otp', 'Auth\\SmartRegistrationController@sendOtp');
-$router->get('/register/smart/otp', 'Auth\\SmartRegistrationController@showOtpVerification');
-$router->post('/register/smart/verify-otp', 'Auth\\SmartRegistrationController@verifyOtp');
-$router->get('/register/smart/profile-complete', 'Auth\\SmartRegistrationController@showProfileCompletion');
-$router->post('/register/smart/save-profile', 'Auth\\SmartRegistrationController@saveProfileProgress');
-$router->post('/register/smart/skip-profile', 'Auth\\SmartRegistrationController@skipProfileCompletion');
-$router->post('/register/smart/resend-otp', 'Auth\\SmartRegistrationController@resendOtp');
-$router->post('/api/smart-register/track', 'Auth\\SmartRegistrationController@trackBehavior');
+$router->get('/register/smart', 'Auth\\OtpAuthController@showPhoneInput');
+$router->post('/register/smart/send-otp', 'Auth\\OtpAuthController@sendOtp');
+$router->get('/register/smart/otp', 'Auth\\OtpAuthController@showOtpVerification');
+$router->post('/register/smart/verify-otp', 'Auth\\OtpAuthController@verifyOtp');
+$router->get('/register/smart/profile-complete', 'Auth\\OtpAuthController@showProfileCompletion');
+$router->post('/register/smart/save-profile', 'Auth\\OtpAuthController@saveProfileProgress');
+$router->post('/register/smart/skip-profile', 'Auth\\OtpAuthController@skipProfileCompletion');
+$router->post('/register/smart/resend-otp', 'Auth\\OtpAuthController@resendOtp');
+$router->post('/api/smart-register/track', 'Auth\\OtpAuthController@trackBehavior');
 
 // Multi-step Registration Wizard (4 steps + OTP + skip)
 if (file_exists(__DIR__ . '/../app/Http/Controllers/Auth/RegistrationWizardController.php')) {
@@ -815,21 +814,7 @@ $router->post('/login', 'Auth\\CustomerAuthController@authenticate');
 $router->get('/logout', 'Auth\\CustomerAuthController@logout');
 
 // CoreAuth — Unified Auth (replaces all role-specific auth over time)
-$router->get('/auth/register', 'Auth\\CoreAuthController@showRegister');
-$router->post('/auth/register', 'Auth\\CoreAuthController@handleRegister');
-$router->get('/auth/login', 'Auth\\CoreAuthController@showLogin');
-$router->post('/auth/login', 'Auth\\CoreAuthController@authenticate');
-$router->get('/auth/logout', 'Auth\\CoreAuthController@logout');
-
-// Air Login — OTP-based login without password
-$router->get('/auth/air-login', 'Auth\\CoreAuthController@showAirLogin');
-$router->post('/auth/air-login', 'Auth\\CoreAuthController@requestAirLoginOtp');
-$router->get('/auth/air-login/verify', 'Auth\\CoreAuthController@showAirLoginVerify');
-$router->post('/auth/air-login/verify', 'Auth\\CoreAuthController@verifyAirLoginOtp');
-
-// Smart Registration — Role Selection (after OTP)
-$router->get('/auth/smart/role', 'Auth\\CoreAuthController@showRoleSelection');
-$router->post('/auth/smart/role', 'Auth\\CoreAuthController@saveRoleSelection');
+$router->post('/auth/smart/role', 'Auth\\OtpAuthController@saveRoleSelection');
 
 // Profile Photo — Unified upload/delete for all roles
 $router->post('/profile/photo/upload', 'ProfilePhotoController@upload');
@@ -2830,8 +2815,8 @@ $router->post('/admin/crm/assignments/bulk', 'App\\Http\\Controllers\\Admin\\Ass
 // ============================================================
 // Smart Registration — Admin Dashboard
 // ============================================================
-$router->get('/admin/smart-registration', 'Auth\\SmartRegistrationController@adminDashboard');
-$router->get('/admin/smart-registration/detail', 'Auth\\SmartRegistrationController@adminSessionDetail');
+$router->get('/admin/smart-registration', 'Auth\\OtpAuthController@adminDashboard');
+$router->get('/admin/smart-registration/detail', 'Auth\\OtpAuthController@adminSessionDetail');
 
 // ============================================================
 // CRM - Custom Fields

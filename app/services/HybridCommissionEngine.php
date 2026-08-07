@@ -1958,25 +1958,31 @@ class HybridCommissionEngine
      */
     private function getActivePlanCaps(): array
     {
+        $tenantId = $this->getTenantId();
         try {
-            $plan = $this->pdo->query("
-                SELECT global_cap_pct, track_a_pct, track_b_pct, track_c_pct,
-                       royalty_pool_pct, same_level_override_gen1, same_level_override_gen2
-                FROM mlm_commission_plans
-                WHERE status = 'active'
-                ORDER BY version DESC
-                LIMIT 1
-            ")->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->prepare("
+                SELECT setting_key, setting_value 
+                FROM mlm_settings 
+                WHERE tenant_id = ?
+            ");
+            $stmt->execute([$tenantId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if ($plan) {
+            if ($rows) {
+                $settings = [];
+                foreach ($rows as $row) {
+                    $settings[$row['setting_key']] = $row['setting_value'];
+                }
+
+                // Map mlm_settings keys to the expected array structure
                 return [
-                    'global_cap'       => (float)$plan['global_cap_pct'],
-                    'track_a'          => (float)$plan['track_a_pct'],
-                    'track_b'          => (float)$plan['track_b_pct'],
-                    'track_c'          => (float)$plan['track_c_pct'],
-                    'royalty_pool'     => (float)$plan['royalty_pool_pct'],
-                    'same_level_gen1'  => (float)$plan['same_level_override_gen1'],
-                    'same_level_gen2'  => (float)$plan['same_level_override_gen2'],
+                    'global_cap'       => (float)($settings['global_cap_pct'] ?? self::GLOBAL_CAP_PCT),
+                    'track_a'          => (float)($settings['track_a_pct'] ?? self::TRACK_A_CAP_PCT),
+                    'track_b'          => (float)($settings['track_b_pct'] ?? self::TRACK_B_CAP_PCT),
+                    'track_c'          => (float)($settings['track_c_pct'] ?? self::TRACK_C_CAP_PCT),
+                    'royalty_pool'     => (float)($settings['royalty_pool_pct'] ?? self::ROYALTY_POOL_PCT ?? 2.0),
+                    'same_level_gen1'  => (float)($settings['same_level_override_gen1'] ?? self::SAME_LEVEL_OVERRIDES[1]),
+                    'same_level_gen2'  => (float)($settings['same_level_override_gen2'] ?? self::SAME_LEVEL_OVERRIDES[2]),
                 ];
             }
         } catch (Exception $e) {
@@ -1989,7 +1995,7 @@ class HybridCommissionEngine
             'track_a'          => self::TRACK_A_CAP_PCT,
             'track_b'          => self::TRACK_B_CAP_PCT,
             'track_c'          => self::TRACK_C_CAP_PCT,
-            'royalty_pool'     => self::ROYALTY_POOL_PCT,
+            'royalty_pool'     => defined('self::ROYALTY_POOL_PCT') ? self::ROYALTY_POOL_PCT : 2.0,
             'same_level_gen1'  => self::SAME_LEVEL_OVERRIDES[1],
             'same_level_gen2'  => self::SAME_LEVEL_OVERRIDES[2],
         ];
@@ -2001,53 +2007,74 @@ class HybridCommissionEngine
      */
     public function loadRankSlabsFromDb(): array
     {
+        $tenantId = $this->getTenantId();
         try {
-            $stmt = $this->pdo->query("
-                SELECT rank_slug, rank_name, min_gbv, max_gbv, commission_rate, reward_name, reward_value
-                FROM mlm_rank_slabs
-                WHERE is_active = 1
-                ORDER BY min_gbv ASC
+            $stmt = $this->pdo->prepare("
+                SELECT rank_name, min_qualifying_volume, direct_sale_pct, reward_item
+                FROM mlm_rank_benefits
+                WHERE is_active = 1 AND tenant_id = ?
+                ORDER BY rank_order ASC
             ");
+            $stmt->execute([$tenantId]);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (empty($rows)) {
-                // Fallback to hardcoded constants
-                $slabs = [];
-                foreach (self::RANK_SLABS as $slug => $slab) {
-                    $slabs[$slug] = [
-                        'rank_slug'       => $slug,
-                        'rank_name'       => self::RANK_NAMES[$slug] ?? $slug,
-                        'min_gbv'         => $slab['min_gbv'],
-                        'max_gbv'         => $slab['max_gbv'],
-                        'commission_rate' => $slab['rate'],
-                        'reward_name'     => null,
-                        'reward_value'    => null,
-                    ];
-                }
-                return $slabs;
+                return $this->getHardcodedSlabs();
             }
 
+            // Map UI enum names to our internal slugs
+            $slugMap = [
+                'Ass.'         => 'associate',
+                'Sr. Ass.'     => 'sr_associate',
+                'BDM'          => 'bdm',
+                'Sr. BDM'      => 'sr_bdm',
+                'V.P.'         => 'vice_president',
+                'President'    => 'president',
+                'Site Manager' => 'site_manager'
+            ];
+
             $slabs = [];
-            foreach ($rows as $row) {
-                $slabs[$row['rank_slug']] = $row;
-            }
-            return $slabs;
-        } catch (Exception $e) {
-            // Graceful fallback
-            $slabs = [];
-            foreach (self::RANK_SLABS as $slug => $slab) {
+            $numRows = count($rows);
+
+            for ($i = 0; $i < $numRows; $i++) {
+                $row = $rows[$i];
+                $slug = $slugMap[$row['rank_name']] ?? strtolower(str_replace([' ', '.'], ['_', ''], $row['rank_name']));
+                
+                // Max GBV is the Min GBV of the next rank, or 0 if it's the top rank
+                $maxGbv = ($i < $numRows - 1) ? (float)$rows[$i + 1]['min_qualifying_volume'] : 0.0;
+
                 $slabs[$slug] = [
                     'rank_slug'       => $slug,
-                    'rank_name'       => self::RANK_NAMES[$slug] ?? $slug,
-                    'min_gbv'         => $slab['min_gbv'],
-                    'max_gbv'         => $slab['max_gbv'],
-                    'commission_rate' => $slab['rate'],
-                    'reward_name'     => null,
-                    'reward_value'    => null,
+                    'rank_name'       => self::RANK_NAMES[$slug] ?? $row['rank_name'],
+                    'min_gbv'         => (float)$row['min_qualifying_volume'],
+                    'max_gbv'         => $maxGbv,
+                    'commission_rate' => (float)$row['direct_sale_pct'],
+                    'reward_name'     => $row['reward_item'],
+                    'reward_value'    => null, // Deprecated/Not tracked here
                 ];
             }
             return $slabs;
+        } catch (Exception $e) {
+            error_log("[HybridCommissionEngine] loadRankSlabsFromDb FAILED: " . $e->getMessage());
+            return $this->getHardcodedSlabs();
         }
+    }
+
+    private function getHardcodedSlabs(): array
+    {
+        $slabs = [];
+        foreach (self::RANK_SLABS as $slug => $slab) {
+            $slabs[$slug] = [
+                'rank_slug'       => $slug,
+                'rank_name'       => self::RANK_NAMES[$slug] ?? $slug,
+                'min_gbv'         => $slab['min_gbv'],
+                'max_gbv'         => $slab['max_gbv'],
+                'commission_rate' => $slab['rate'],
+                'reward_name'     => null,
+                'reward_value'    => null,
+            ];
+        }
+        return $slabs;
     }
 
     /* ================================================================

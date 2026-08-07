@@ -106,9 +106,21 @@ $formatRank = function (?string $rank): string {
                         <small class="text-white-50"><?php echo __('assoc_dash_overall_progress', [], 'Overall Progress'); ?></small>
                         <small class="text-white fw-bold"><?php echo $rank_progress['progress_pct']; ?>%</small>
                     </div>
-                    <div class="progress" style="height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px;">
-                        <div class="progress-bar" role="progressbar" style="width: <?php echo $rank_progress['progress_pct']; ?>%; background: linear-gradient(90deg, #fbbf24, #f59e0b); border-radius: 6px;"></div>
+                    <div class="progress" style="height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px; overflow: hidden;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                             style="width: 0%; background: linear-gradient(90deg, #fbbf24, #f59e0b); border-radius: 6px; transition: width 1.5s ease-in-out;"
+                             id="rankProgressBar"
+                             aria-valuenow="<?php echo $rank_progress['progress_pct']; ?>" aria-valuemin="0" aria-valuemax="100">
+                        </div>
                     </div>
+                    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+                        document.addEventListener('DOMContentLoaded', function() {
+                            setTimeout(function() {
+                                var pb = document.getElementById('rankProgressBar');
+                                if (pb) pb.style.width = '<?php echo $rank_progress['progress_pct']; ?>%';
+                            }, 300);
+                        });
+                    </script>
                 </div>
 
                 <!-- Requirements -->
