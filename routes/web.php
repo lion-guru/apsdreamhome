@@ -4980,3 +4980,12 @@ $router->get('/admin/tools/emi-calculator', function() {
 $router->post('/admin/department-requests/{id}/assign',       'App\\Http\\Controllers\\Admin\\DepartmentRequestController@assign');
 $router->post('/admin/department-requests/{id}/comment',      'App\\Http\\Controllers\\Admin\\DepartmentRequestController@addComment');
 $router->get('/admin/department-requests/my-requests',        'App\\Http\\Controllers\\Admin\\DepartmentRequestController@myRequests');
+
+// ============================================================
+// FINANCIAL REPORTS
+// ============================================================
+$router->get('/admin/reports/financial', 'App\\Http\\Controllers\\Admin\\FinancialReportController@index');
+$router->get('/admin/reports/financial/profit-loss', 'App\\Http\\Controllers\\Admin\\FinancialReportController@profitLoss');
+$router->get('/admin/reports/financial/balance-sheet', 'App\\Http\\Controllers\\Admin\\FinancialReportController@balanceSheet');
+$router->get('/admin/reports/financial/cash-flow', 'App\\Http\\Controllers\\Admin\\FinancialReportController@cashFlow');
+$router->get('/admin/reports/financial/export', 'App\\Http\\Controllers\\Admin\\FinancialReportController@export');
