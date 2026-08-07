@@ -4989,3 +4989,8 @@ $router->get('/admin/reports/financial/profit-loss', 'App\\Http\\Controllers\\Ad
 $router->get('/admin/reports/financial/balance-sheet', 'App\\Http\\Controllers\\Admin\\FinancialReportController@balanceSheet');
 $router->get('/admin/reports/financial/cash-flow', 'App\\Http\\Controllers\\Admin\\FinancialReportController@cashFlow');
 $router->get('/admin/reports/financial/export', 'App\\Http\\Controllers\\Admin\\FinancialReportController@export');
+
+// ============================================================
+// BULK OPERATIONS
+// ============================================================
+$router->post('/admin/leads/bulk-action', 'App\\Http\\Controllers\\Admin\\LeadController@bulkAction');
