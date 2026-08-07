@@ -16,6 +16,10 @@ if (strpos($apiUri, '/api/') !== false || strpos($apiUri, '/apsdreamhome/api/') 
 // API Routes
 $router->get('/api/user/resolve-sponsor', 'Api\UserController@resolveSponsor');
 
+// Voice Assistant
+$router->post('/api/voice-assistant/query', 'Api\VoiceAssistantController@query');
+$router->get('/api/voice-assistant', 'Api\VoiceAssistantController@index');
+
 $router->post('/api/v2/mobile/auth/login', 'Api\MobileApiController@login');
 $router->post('/api/v2/mobile/auth/register', 'Api\MobileApiController@register');
 $router->post('/api/v2/mobile/auth/logout', 'Api\MobileApiController@logout');
