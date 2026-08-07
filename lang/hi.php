@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Hindi (Devanagari) Language File

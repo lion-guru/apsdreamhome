@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * English Language File
