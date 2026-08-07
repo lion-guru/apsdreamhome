@@ -30,11 +30,12 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link rel="manifest" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/manifest.json">
     <meta name="theme-color" content="#6B4EE6">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="APS Dream">
     <link rel="apple-touch-icon" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/logo-192.png">
     <link rel="icon" type="image/png" sizes="192x192" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/logo-192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/images/favicon-32.png">
     <?php if (isset($_SESSION['user_id'])): ?>
     <meta name="user-id" content="<?= (int)$_SESSION['user_id'] ?>">
     <?php endif; ?>

@@ -170,9 +170,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
 <!-- APS Premium Animations (scroll reveal + card tilt) -->
 <script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js?v=20260725"></script>
-<!-- APS Voice Booking Widget -->
-<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/voice-widget.css">
-<script src="<?php echo BASE_URL; ?>/assets/js/voice-widget.js" defer></script>
+<!-- APS Voice Booking Widget (component in base.php) -->
 
 <script>
 // Newsletter Form Handler

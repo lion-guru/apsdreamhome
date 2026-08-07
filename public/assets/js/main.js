@@ -48,15 +48,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // Auto-hide alerts after 5 seconds
   const alerts = document.querySelectorAll('.alert');
   alerts.forEach(function (alert) {
-    setTimeout(function () {
-      if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-        const bsAlert = new bootstrap.Alert(alert);
-        bsAlert.close();
-      } else {
-        alert.classList.remove('show');
-        alert.classList.add('d-none');
-      }
-    }, 5000);
+      setTimeout(function () {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Alert && typeof bootstrap.Alert === 'function') {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        } else {
+          alert.classList.remove('show');
+          alert.classList.add('d-none');
+        }
+      }, 5000);
   });
 });
 

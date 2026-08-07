@@ -42,7 +42,7 @@ class LiveChatWidgetController extends BaseController
             $pageUrl = $_POST['page_url'] ?? '';
             $referrer = $_POST['referrer_url'] ?? '';
 
-            $result = $this->service->startSession(
+            $result = $this->service ? $this->service->startSession(
                 $userId ?: null,
                 $userId ?: null,
                 $name,
@@ -51,7 +51,7 @@ class LiveChatWidgetController extends BaseController
                 $referrer,
                 $ip,
                 $ua
-            );
+            ) : null;
 
             if ($result) {
                 $this->pdo()->prepare("UPDATE chat_sessions SET visitor_phone = ?, subject = ?, category = ?, priority = ? WHERE id = ? AND tenant_id = ?")
@@ -80,7 +80,7 @@ class LiveChatWidgetController extends BaseController
             echo json_encode(['error' => 'token and message required']);
             exit;
         }
-        $session = $this->service->getSessionByToken($token);
+        $session = $this->service ? $this->service->getSessionByToken($token) : null;
         if (!$session) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Invalid session']);
@@ -123,7 +123,7 @@ class LiveChatWidgetController extends BaseController
             echo json_encode(['messages' => []]);
             exit;
         }
-        $session = $this->service->getSessionByToken($token);
+        $session = $this->service ? $this->service->getSessionByToken($token) : null;
         if (!$session) {
             header('Content-Type: application/json');
             echo json_encode(['messages' => []]);

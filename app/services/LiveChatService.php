@@ -8,7 +8,7 @@ class LiveChatService
 {
     use ServiceTenantTrait;
 
-    private ?PDO $pdo = null;
+    private ?\PDO $pdo = null;
 
     public function __construct($db = null)
     {

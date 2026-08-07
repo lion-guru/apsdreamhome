@@ -60,11 +60,14 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
     0%,100% { box-shadow: 0 8px 24px rgba(13,148,136,0.45); }
     50% { box-shadow: 0 8px 34px rgba(13,148,136,0.75); }
 }
-.vbw-panel {
-    position: absolute; bottom: 76px; left: 0; width: 330px; max-width: 90vw;
-    background: #fff; border-radius: 18px; box-shadow: 0 16px 50px rgba(0,0,0,0.22);
-    overflow: hidden; display: flex; flex-direction: column; max-height: 78vh;
-}
+    .vbw-panel {
+        position: absolute; bottom: 76px; left: 0; width: 330px; max-width: 90vw;
+        background: #fff; border-radius: 18px; box-shadow: 0 16px 50px rgba(0,0,0,0.22);
+        overflow: hidden; display: flex; flex-direction: column; max-height: 78vh;
+    }
+    .vbw-panel[hidden] {
+        display: none !important;
+    }
 .vbw-header {
     display: flex; align-items: center; justify-content: space-between;
     background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; padding: 12px 16px;
