@@ -5,12 +5,13 @@
 }
 $waPhone = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112'));
 $cPhone = htmlspecialchars($sc('contact_phone', '+91 92771 21112'));
+$callDigits = preg_replace('/[^0-9]/', '', $cPhone);
 $userRole = isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest'));
 $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 ?>
 <!-- ═══════════════════════════════════════════════════════════════
-     APS AI Chatbot + WhatsApp — Combined Widget v2
-     Features: Voice STT/TTS, RBAC-aware, WhatsApp templates, tracking
+     APS AI Chatbot + WhatsApp + Call + Voice — Unified Widget v3
+      Unified widget: AI chatbot + voice + WhatsApp + call — all in one place.
      ═══════════════════════════════════════════════════════════════ -->
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .cw-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
@@ -32,6 +33,8 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 #cwChatToggle:hover{box-shadow:0 8px 28px rgba(13,148,136,0.5)}
 #cwWhatsAppToggle{background:#25D366;box-shadow:0 6px 20px rgba(37,211,102,0.4);text-decoration:none;color:#fff}
 #cwWhatsAppToggle:hover{box-shadow:0 8px 28px rgba(37,211,102,0.5);color:#fff}
+#cwCallToggle{background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 6px 20px rgba(99,102,241,0.4);text-decoration:none;color:#fff}
+#cwCallToggle:hover{box-shadow:0 8px 28px rgba(99,102,241,0.5);color:#fff}
 
 /* ── Chat Box ── */
 .cw-box{position:absolute;bottom:72px;right:0;width:calc(100vw - 32px);max-width:380px;height:calc(100dvh - 140px);max-height:540px;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.2),0 0 0 1px rgba(0,0,0,0.04);display:none;flex-direction:column;overflow:hidden}
@@ -198,13 +201,19 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         </div>
     </div>
 
-    <!-- Toggle Buttons: Chatbot + WhatsApp side by side -->
+    <!-- Toggle Buttons: WhatsApp + Call + Chatbot side by side -->
     <div class="cw-toggles">
         <a href="https://wa.me/<?= $waPhone ?>?text=<?= urlencode('Hello APS Dream Homes! I would like to know about your properties.') ?>"
            target="_blank" class="cw-toggle" id="cwWhatsAppToggle"
            onclick="cwTrackWhatsApp('main_button')"
            title="Chat on WhatsApp">
             <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="tel:<?= $callDigits ?>"
+           class="cw-toggle" id="cwCallToggle"
+           onclick="if(typeof ga==='function')ga('send','event','CTA','click','header_call_button');if(window.dataLayer)dataLayer.push({event:'cta_click',cta:'header_call_button',source:'chat_widget'})"
+           title="Call Now">
+            <i class="fas fa-phone-alt"></i>
         </a>
         <button class="cw-toggle" id="cwChatToggle" onclick="cwToggle()">
             <span class="cw-pulse"></span>
