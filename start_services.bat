@@ -16,6 +16,13 @@ echo ============================================================
 echo APS Dream Home - Startup Script
 echo MySQL max_connections = 500 (set in my.ini)
 echo Virtual Host: apsdreamhome.local
+echo.
+echo Access URLs:
+echo   Local:    http://apsdreamhome.local/
+echo   Local:    http://localhost/apsdreamhome/
+echo   Local:    http://localhost/ (Project Dashboard)
+echo   Ngrok:    https://xxx.ngrok-free.dev/ (Project Dashboard)
+echo   Ngrok:    https://xxx.ngrok-free.dev/apsdreamhome/ (APS Dream Home)
 echo ============================================================
 
 REM Step 1: Kill any stuck processes
