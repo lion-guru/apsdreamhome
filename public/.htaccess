@@ -76,6 +76,6 @@ AddType application/octet-stream .apk
     Require all denied
 </FilesMatch>
 
-<FilesMatch "\.(env|env\.local|env\.production|gitignore|gitattributes|md|json|lock|yaml|yml)$">
+<FilesMatch "\.(env|env\.local|env\.production|gitignore|gitattributes|md|lock|yaml|yml)$">
     Require all denied
 </FilesMatch>

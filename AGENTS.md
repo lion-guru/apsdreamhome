@@ -2543,3 +2543,15 @@ _117. **OpenRouter is already integrated** — Just need free API key.
 _118. **SelfLearningAI (38KB) is the largest AI file** — Most sophisticated AI component.
 _119. **ConversationEngine (38KB) handles multi-turn chat** — Already has conversation memory.
 _120. **Free AI APIs can enhance existing system** — No need to rebuild, just add API keys.
+
+_121. **Apache socket can get stuck in TIME_WAIT** — Multiple rapid restarts can cause the socket to get stuck. _Fix: Restart computer or use PHP built-in server as temporary workaround._
+
+_122. **PHP module loading in XAMPP** — PHP is loaded via `httpd-xampp.conf` included from `httpd.conf`. If Apache doesn't process PHP files, check that `Include conf/extra/httpd-xampp.conf` is present in `httpd.conf`.
+
+_123. **PowerShell `Add-Content` can corrupt PHP files** — Using `Add-Content` with PHP code can introduce encoding issues. Use the `Write` tool instead for PHP files.
+
+_124. **MySQL "Too many connections" kills all PHP requests** — The E2E test suite (153 concurrent browser requests) exhausted MySQL's default `max_connections` (21), causing `SQLSTATE[08004] [1040]` on every request. Fixed by adding `max_connections=500`, `wait_timeout=300`, `max_user_connections=2000` to `my.ini`. Without this, any bulk testing or high traffic causes all pages to return 500.
+
+_125. **Virtual hosts must be explicitly enabled** — `#Include conf/extra/httpd-vhosts.conf` was commented out in `httpd.conf`, causing `apsdreamhome.local` to fall back to the default `htdocs/` DocumentRoot (serving the "XAMPP Dev Hub" instead of APS Dream Home). Uncomment the include line, then restart Apache.
+
+_126. **start_services.bat works best from cmd.exe** — Calling it from PowerShell causes `echo` output issues due to PowerShell cmdlet resolution. Double-click or run from cmd.exe for clean output. If PowerShell is needed, use the `.ps1` variant or redirect output to a file.
