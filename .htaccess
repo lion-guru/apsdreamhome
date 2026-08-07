@@ -5,6 +5,8 @@ SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    Options -Indexes
+    DirectoryIndex index.php index.html
     
     # Route /admin through the PHP router
     RewriteRule ^admin/?$ public/index.php [L]

@@ -6,6 +6,8 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    Options -Indexes
+    DirectoryIndex index.php index.html
 
     # If the requested file is a real file (CSS, JS, image, etc.), serve it as-is
     RewriteCond %{REQUEST_FILENAME} -f
