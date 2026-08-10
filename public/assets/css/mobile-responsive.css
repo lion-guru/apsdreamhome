@@ -584,8 +584,6 @@
       right: 0;
       height: 60px;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid rgba(0, 0, 0, 0.08);
       box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
       z-index: 1500;
@@ -594,6 +592,8 @@
       padding-right: max(8px, env(safe-area-inset-right));
       align-items: center;
       justify-content: space-between;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .mobile-bottom-sticky-nav .mobile-nav-item {
@@ -648,11 +648,10 @@
       max-width: 90vw !important;
       height: 100vh !important;
       margin-top: 0 !important;
-      transform: translateX(100%) !important;
+      transform: translateX(100%) translateZ(0) !important;
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      will-change: transform;
       background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
       border-left: 1px solid rgba(0, 0, 0, 0.08);
       z-index: 2000 !important;
@@ -663,11 +662,11 @@
     }
 
     #navbarNav.show {
-      transform: translateX(0) !important;
+      transform: translateX(0) translateZ(0) !important;
     }
 
     #navbarToggler[aria-expanded="true"] + #navbarNav {
-      transform: translateX(0) !important;
+      transform: translateX(0) translateZ(0) !important;
     }
 
     .nav-backdrop {
@@ -681,7 +680,6 @@
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
       z-index: 1500;
-      backdrop-filter: blur(4px);
     }
 
     .nav-backdrop.show {
