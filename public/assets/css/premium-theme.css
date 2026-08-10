@@ -39,6 +39,14 @@
   /* TYPOGRAPHY */
   --font-primary: 'Plus Jakarta Sans', sans-serif;
 
+  /* RESPONSIVE HEADING SIZES (clamp for fluid scaling) */
+  --h1-size: clamp(2rem, 4vw, 3.5rem);
+  --h2-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  --h3-size: clamp(1.5rem, 3vw, 2.25rem);
+  --h4-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  --h5-size: clamp(1.1rem, 2vw, 1.4rem);
+  --h6-size: clamp(1rem, 1.5vw, 1.2rem);
+
   /* BORDERS & RADIUS */
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -144,6 +152,14 @@ body {
   background-color: var(--premium-light);
   color: var(--aps-text);
 }
+
+/* Responsive heading sizes with clamp() for fluid scaling */
+h1 { font-size: var(--h1-size); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: var(--h2-size); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: var(--h3-size); font-weight: 600; }
+h4 { font-size: var(--h4-size); font-weight: 600; }
+h5 { font-size: var(--h5-size); font-weight: 500; }
+h6 { font-size: var(--h6-size); font-weight: 500; }
 
 /* Text elements inherit from CSS variables — dark sections auto-override */
 .bg-dark:not(.card-header) p,
@@ -452,6 +468,33 @@ a {
   color: var(--premium-navy) !important;
 }
 
+/* Subtle glow pulse on CTA buttons */
+.btn-premium.btn-glow,
+.glow-on-hover {
+  position: relative;
+}
+.glow-on-hover::before,
+.btn-premium.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.5), rgba(212, 175, 55, 0));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  filter: blur(6px);
+}
+.glow-on-hover:hover::before,
+.btn-premium.btn-glow:hover::before {
+  opacity: 1;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.3; filter: blur(8px); }
+  50% { opacity: 0.6; filter: blur(12px); }
+}
+
 .btn-outline-premium {
   background: transparent;
   color: var(--premium-gold) !important;
@@ -551,6 +594,43 @@ footer.bg-dark {
   padding: 0.4rem 1rem;
   border-radius: 50px;
   font-size: 0.8rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+}
+
+/* Glassmorphism badge for property status */
+.glass-badge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Available status badge */
+.glass-badge.available {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+/* Sold status badge */
+.glass-badge.sold {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+/* Reserved status badge */
+.glass-badge.reserved {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
 }
 
 /* ============================================
@@ -908,6 +988,42 @@ footer.bg-dark {
 html {
   scroll-behavior: smooth;
 }
+
+/* ============================================
+   SCROLL REVEAL ANIMATIONS
+   ============================================ */
+.reveal,
+.premium-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.revealed,
+.premium-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+.reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+.reveal-delay-100.revealed { transition-delay: 0.1s; }
+.reveal-delay-200.revealed { transition-delay: 0.2s; }
+.reveal-delay-300.revealed { transition-delay: 0.3s; }
 
 /* ============================================
    MICRO-ANIMATIONS

@@ -41,7 +41,6 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
             margin: 0;
             padding: 1rem;
             position: relative;
-            overflow: hidden;
         }
 
         body::before {

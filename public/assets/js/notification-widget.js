@@ -28,7 +28,7 @@
     read: BASE + '/api/v2/notifications/read',
   };
   const WS_URL =
-    window.WS_URL || (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/apsdreamhome/websocket_server.php';
+    window.WS_URL || ''; // Disabled to prevent 404 errors on missing websocket_server.php
 
   const escape = s =>
     String(s || '')
@@ -70,6 +70,7 @@
 
     /* ─── WebSocket ─── */
     connect() {
+      if (!WS_URL) return;
       if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) return;
       try {
         this.ws = new WebSocket(WS_URL);

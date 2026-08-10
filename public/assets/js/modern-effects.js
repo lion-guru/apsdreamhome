@@ -53,7 +53,7 @@
 
   /* ---- Scroll Reveal (Lightweight AOS alternative) ---- */
   function initScrollReveal() {
-    var elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-rotate');
+    var elements = document.querySelectorAll('.reveal, .premium-reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-rotate');
     if (!elements.length) return;
 
     var observer = new IntersectionObserver(

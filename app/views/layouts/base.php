@@ -196,7 +196,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
     <!-- Scroll fix (Cleaned) -->
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        html, body { overflow-x: hidden; }
         header.premium-header { overflow: visible; }
         header.premium-header .navbar-collapse { overflow: visible; }
     </style>
