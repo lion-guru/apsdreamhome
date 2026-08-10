@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -680,6 +681,29 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                       ? const Color(0xFFFFD700)
                       : Colors.white38,
                   borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        // View Full Gallery button
+        if (images.length > 1)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Center(
+              child: TextButton.icon(
+                onPressed: () {
+                  GoRouter.of(context).push(
+                    '/property-gallery/${widget.propertyId}',
+                    extra: {'title': _displayTitle},
+                  );
+                },
+                icon: const Icon(Icons.photo_library_outlined, size: 18),
+                label: Text(
+                  'View Full Gallery',
+                  style: TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

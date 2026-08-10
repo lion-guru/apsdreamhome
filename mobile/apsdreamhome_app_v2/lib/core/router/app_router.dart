@@ -28,6 +28,7 @@ import '../../presentation/pages/customer/post_property_page.dart';
 // Property
 import '../../presentation/pages/property/property_marketplace_page.dart';
 import '../../presentation/pages/property/property_detail_page.dart';
+import '../../presentation/pages/property/property_gallery_page.dart';
 
 // Splash
 import '../../presentation/pages/common/splash_page.dart';
@@ -237,6 +238,7 @@ GoRouter createRouter() {
       final isPlotDetail = uri.startsWith('/plot-detail');
       final isProperties = uri == '/properties';
       final isPropertyDetail = uri.startsWith('/property-detail');
+      final isPropertyGallery = uri.startsWith('/property-gallery');
       final isEmiCalc = uri == '/emi-calculator';
       final isValuation = uri == '/property-valuation';
       final isSiteVisit = uri == '/site-visit';
@@ -295,7 +297,8 @@ GoRouter createRouter() {
           isPlots ||
           isPlotDetail ||
           isProperties ||
-          isPropertyDetail ||
+           isPropertyDetail ||
+           isPropertyGallery ||
           isEmiCalc ||
           isValuation ||
           isSiteVisit ||
@@ -523,6 +526,31 @@ GoRouter createRouter() {
           );
         },
       ),
+
+      // ─── Property Gallery ───
+      GoRoute(
+        path: '/property-gallery/:propertyId',
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return CustomTransitionPage<void>(
+            child: PropertyGalleryPage(
+              propertyId: state.pathParameters['propertyId']!,
+              title: extra?['title'] as String? ?? 'Gallery',
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOut,
+                ),
+                child: child,
+              );
+            },
+          );
+        },
+      ),
+
       GoRoute(
         path: '/colony-detail/:colonyId',
         pageBuilder: (context, state) {
