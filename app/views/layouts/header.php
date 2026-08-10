@@ -683,6 +683,52 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
         // Close on backdrop click
         backdrop.addEventListener('click', closeMenu);
 
+        // Touch gesture: swipe-left-to-close on nav panel
+        var touchStartX = 0;
+        var touchEndX = 0;
+        navCollapse.addEventListener('touchstart', function(e) {
+            if (e.touches && e.touches.length > 0) {
+                touchStartX = e.touches[0].clientX;
+            }
+        }, { passive: true });
+
+        navCollapse.addEventListener('touchend', function(e) {
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                touchEndX = e.changedTouches[0].clientX;
+                // Swipe right-to-left (more than 80px) closes the menu
+                if (touchStartX - touchEndX > 80 && navCollapse.classList.contains('show')) {
+                    closeMenu();
+                }
+            }
+        }, { passive: true });
+
+        // Haptic feedback on menu toggle
+        var supportsVibration = 'vibrate' in navigator;
+        function hapticFeedback(type) {
+            if (!supportsVibration) return;
+            try {
+                if (type === 'open') {
+                    navigator.vibrate([10]);
+                } else if (type === 'close') {
+                    navigator.vibrate([5, 15, 5]);
+                } else if (type === 'nav') {
+                    navigator.vibrate([5]);
+                }
+            } catch (e) {}
+        }
+
+        // Update openMenu to include haptic feedback
+        var _openMenu = openMenu;
+        var _closeMenu = closeMenu;
+        openMenu = function() {
+            _openMenu();
+            hapticFeedback('open');
+        };
+        closeMenu = function() {
+            _closeMenu();
+            hapticFeedback('close');
+        };
+
         // Close on Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && navCollapse.classList.contains('show')) {

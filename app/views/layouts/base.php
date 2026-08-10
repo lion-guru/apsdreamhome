@@ -421,6 +421,15 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                 item.classList.add('active');
             }
         });
+
+        // Haptic feedback on mobile nav taps
+        if ('vibrate' in navigator) {
+            items.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    try { navigator.vibrate([5]); } catch (e) {}
+                });
+            });
+        }
     })();
     </script>
     
