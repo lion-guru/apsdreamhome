@@ -336,6 +336,7 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
                             [
                                 'label' => __('services'),
                                 'icon' => 'fas fa-concierge-bell',
+                                'align_right' => true,
                                 'submenu' => [
                                     ['label' => __('nav_all_services'), 'url' => '/services', 'icon' => 'fas fa-concierge-bell'],
                                     ['label' => __('nav_home_loan'), 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
@@ -349,6 +350,7 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
                             [
                                 'label' => __('about_us'),
                                 'icon' => 'fas fa-info-circle',
+                                'align_right' => true,
                                 'submenu' => [
                                     ['label' => __('about_us'), 'url' => '/about', 'icon' => 'fas fa-info-circle'],
                                     ['label' => __('nav_our_team'), 'url' => '/team', 'icon' => 'fas fa-users'],
@@ -370,11 +372,12 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
                                     return $carry || $current_path === $sub_item['url'];
                                 }, false);
                                 $active_class = $is_active ? 'active' : '';
+                                $align_right_class = (isset($item['align_right']) && $item['align_right']) ? 'dropdown-menu-end' : '';
                                 echo '<li class="nav-item dropdown">';
                                 echo '<a class="nav-link dropdown-toggle ' . $active_class . '" href="#" data-bs-toggle="dropdown">';
                                 echo '<i class="' . $item['icon'] . ' me-1"></i>' . htmlspecialchars($item['label']);
                                 echo '</a>';
-                                echo '<ul class="dropdown-menu">';
+                                echo '<ul class="dropdown-menu ' . $align_right_class . '">';
                                 foreach ($item['submenu'] as $sub_item) {
                                     if (isset($sub_item['disabled']) && $sub_item['disabled']) {
                                         echo '<li><span class="dropdown-header"><i class="' . $sub_item['icon'] . ' me-2"></i>' . htmlspecialchars($sub_item['label']) . '</span></li>';

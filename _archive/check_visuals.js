@@ -1,0 +1,84 @@
+const { chromium } = require('playwright');
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+  const page = await ctx.newPage();
+
+  await page.goto('http://localhost/apsdreamhome/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(3000);
+
+  // Check for CSS issues
+  const issues = await page.evaluate(() => {
+    const results = [];
+
+    // Check for horizontal overflow
+    const allEls = document.querySelectorAll('*');
+    allEls.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > window.innerWidth * 1.05 && rect.width > 200) {
+        const tag = el.tagName;
+        const cls = el.className || '';
+        if (!cls.includes('hidden') && !results.some(r => r.element === tag + '.' + cls)) {
+          results.push({
+            type: 'HORIZONTAL_OVERFLOW',
+            element: tag + (cls ? '.' + cls.split(' ').slice(0,3).join('.') : ''),
+            width: Math.round(rect.width),
+            viewportWidth: window.innerWidth
+          });
+        }
+      }
+    });
+
+    // Check for low contrast text on light backgrounds
+    allEls.forEach(el => {
+      const style = window.getComputedStyle(el);
+      const color = style.color;
+      const bgColor = style.backgroundColor;
+      const fontSize = parseInt(style.fontSize);
+
+      if (color && bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && color !== 'rgba(0, 0, 0, 0)' && fontSize >= 12) {
+        // Only check visible text elements
+        const text = el.textContent.trim();
+        if (!text || text.length < 1) return;
+
+        if (color.includes('rgb')) {
+          const vals = color.match(/\d+/g);
+          if (vals && vals.length >= 3) {
+            const r = parseInt(vals[0]), g = parseInt(vals[1]), b = parseInt(vals[2]);
+            const bgVals = bgColor.match(/\d+/g);
+            const br = bgVals ? parseInt(bgVals[0]) : 0;
+            const bgG = bgVals ? parseInt(bgVals[1]) : 0;
+            const bgB = bgVals ? parseInt(bgVals[2]) : 0;
+
+            const fgL = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            const bgL = 0.2126 * br + 0.7152 * bgG + 0.0722 * bgB;
+            const ratio = (Math.max(fgL, bgL) + 0.05) / (Math.min(fgL, bgL) + 0.05);
+
+            if (ratio < 3.5) {
+              const cls = el.className || el.id || el.tagName;
+              const txt = text.substring(0, 50);
+              if (!results.some(r => r.element === cls + ':' + txt)) {
+                results.push({
+                  type: 'LOW_CONTRAST',
+                  element: cls,
+                  text: txt,
+                  ratio: ratio.toFixed(2),
+                  fgColor: color,
+                  bgColor: bgColor
+                });
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return results;
+  });
+
+  console.log('=== VISUAL ISSUES ===');
+  console.log(JSON.stringify(issues, null, 2));
+  console.log('Total issues:', issues.length);
+
+  await browser.close();
+})();

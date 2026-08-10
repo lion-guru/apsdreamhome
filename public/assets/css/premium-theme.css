@@ -75,6 +75,9 @@ footer.bg-dark {
   --aps-heading: #fff;
   --aps-text-muted: rgba(255, 255, 255, 0.7);
 }
+.bg-dark {
+  background-color: #0f172a !important;
+}
 
 .hero-section h1,
 .hero-section h2,
@@ -142,13 +145,19 @@ body {
   color: var(--aps-text);
 }
 
-/* Text elements inherit from CSS variables — dark sections auto-override (excluding card-body) */
+/* Text elements inherit from CSS variables — dark sections auto-override */
 .bg-dark:not(.card-header) p,
 .bg-dark:not(.card-header) span,
 .bg-dark:not(.card-header) td,
 .bg-dark:not(.card-header) th,
 .bg-dark:not(.card-header) label,
 .bg-dark:not(.card-header) li,
+.bg-premium-navy p,
+.bg-premium-navy span,
+.bg-premium-navy td,
+.bg-premium-navy th,
+.bg-premium-navy label,
+.bg-premium-navy li,
 .hero-premium:has(.hero-overlay) p,
 .hero-premium:has(.hero-overlay) span,
 .section-dark p,
@@ -159,9 +168,48 @@ body {
 .cta-section span,
 .emi-section p,
 .emi-section span,
+.emi-section label,
+.emi-section .form-label,
+.emi-section .input-group-text,
+.emi-section h1,
+.emi-section h2,
+.emi-section h3,
+.emi-section h4,
+.emi-section h5,
+.emi-section h6,
+.emi-section .lead,
+.emi-section .text-muted,
 .glass-dark p,
-.glass-dark span {
-  color: var(--aps-text);
+.glass-dark span,
+.glass-dark h1,
+.glass-dark h2,
+.glass-dark h3,
+.glass-dark h4,
+.glass-dark h5,
+.glass-dark h6,
+.glass-dark label,
+.glass-dark .form-label,
+.glass-dark td,
+.glass-dark th {
+  color: #fff !important;
+}
+.bg-premium-navy h1,
+.bg-premium-navy h2,
+.bg-premium-navy h3,
+.bg-premium-navy h4,
+.bg-premium-navy h5,
+.bg-premium-navy h6 {
+  color: #fff !important;
+}
+.emi-section .form-control,
+.emi-section .form-select {
+  background-color: #1e293b;
+  border-color: #334159;
+  color: #ffffff;
+}
+.emi-section .form-control::placeholder,
+.emi-section .form-select::placeholder {
+  color: #94a3b8;
 }
 
 /* Card Body High Contrast Text Protection — NOT in dark mode */
@@ -225,23 +273,12 @@ body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body .text-muted
   color: var(--aps-text-muted);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-  font-family: var(--font-primary) !important;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--aps-heading);
-}
+h1, .h1 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(2rem, 5vw, 3rem) !important; line-height: 1.2; }
+h2, .h2 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(1.75rem, 4vw, 2.5rem) !important; line-height: 1.25; }
+h3, .h3 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(1.5rem, 3vw, 2rem) !important; line-height: 1.3; }
+h4, .h4 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(1.25rem, 2.5vw, 1.75rem) !important; line-height: 1.35; }
+h5, .h5 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(1.1rem, 2vw, 1.25rem) !important; line-height: 1.4; }
+h6, .h6 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(1rem, 1.5vw, 1.1rem) !important; line-height: 1.4; }
 
 /* Universal Card Heading & Text Reset — NOT in dark mode */
 body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h1,
@@ -356,6 +393,20 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
   box-shadow: var(--shadow-glass) !important;
   border-radius: var(--radius-lg);
+}
+
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+}
+.hover-scale-img img {
+  transition: transform 0.5s ease;
+}
+.hover-scale-img:hover img {
+  transform: scale(1.05);
 }
 
 .glass-dark {
@@ -673,12 +724,16 @@ footer.bg-dark {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #0d9488;
-  font-weight: 700;
-  font-size: 0.9rem;
-  padding: 0.35rem 0.75rem;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* ============================================
@@ -686,20 +741,29 @@ footer.bg-dark {
    ============================================ */
 .badge-available,
 .badge-delivered {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(16, 185, 129, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .badge-ongoing,
 .badge-active {
-  background: rgba(13, 148, 136, 0.1);
+  background: rgba(13, 148, 136, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #0d9488;
+  border: 1px solid rgba(13, 148, 136, 0.2);
 }
 
 .badge-upcoming,
 .badge-planning {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(245, 158, 11, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 /* ============================================

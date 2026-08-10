@@ -167,6 +167,31 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         </div>
     </div>
 </footer>
+<!-- Sticky Mobile Bottom Navigation -->
+<div class="mobile-bottom-nav d-lg-none">
+    <a href="<?php echo BASE_URL; ?>/" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span><?= __('home') ?></span>
+    </a>
+    <a href="<?php echo BASE_URL; ?>/properties" class="nav-item">
+        <i class="fas fa-search"></i>
+        <span><?= __('search') ?></span>
+    </a>
+    <a href="<?php echo BASE_URL; ?>/post-property" class="nav-item nav-item-highlight">
+        <div class="highlight-circle">
+            <i class="fas fa-plus"></i>
+        </div>
+        <span>Post</span>
+    </a>
+    <a href="<?php echo BASE_URL; ?>/contact" class="nav-item">
+        <i class="fas fa-phone-alt"></i>
+        <span>Call</span>
+    </a>
+    <a href="<?php echo BASE_URL; ?>/admin/login" class="nav-item">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+</div>
 
 <!-- APS Premium Animations (scroll reveal + card tilt) -->
 <script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js?v=20260725"></script>

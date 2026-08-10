@@ -1,0 +1,60 @@
+const { chromium } = require('playwright');
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+  const page = await ctx.newPage();
+  await page.goto('http://localhost/apsdreamhome/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(3000);
+
+  // Check if body has dark-mode class
+  const bodyClasses = await page.evaluate(() => Array.from(document.body.classList));
+  console.log('Body classes:', bodyClasses);
+
+  // Check the bg-dark card computed style more carefully
+  const cardInfo = await page.evaluate(() => {
+    const card = document.querySelector('.card.border-0.shadow-lg.bg-dark');
+    if (!card) return { error: 'not found' };
+    const s = getComputedStyle(card);
+    return {
+      backgroundColor: s.backgroundColor,
+      color: s.color,
+      backgroundImage: s.backgroundImage,
+      // Get all background-related properties
+      bgProps: {
+        background: s.background,
+        backgroundColor: s.backgroundColor,
+        backgroundImage: s.backgroundImage,
+      }
+    };
+  });
+  console.log('Card:', JSON.stringify(cardInfo, null, 2));
+
+  // Check which CSS rules match the card
+  const rules = await page.evaluate(() => {
+    const card = document.querySelector('.card.border-0.shadow-lg.bg-dark');
+    if (!card) return [];
+    const sheetHrefs = Array.from(document.styleSheets).map(s => s.href || 'inline');
+    const results = [];
+    const sheets = Array.from(document.styleSheets);
+    for (const sheet of sheets) {
+      try {
+        const rules = Array.from(sheet.cssRules || sheet.rules || []);
+        for (const rule of rules) {
+          if (rule.selectorText && card.matches(rule.selectorText)) {
+            results.push({
+              href: sheet.href || 'inline',
+              selector: rule.selectorText,
+              bg: rule.style.backgroundColor,
+              color: rule.style.color,
+              important: rule.style.backgroundColor.includes('important')
+            });
+          }
+        }
+      } catch(e) { }
+    }
+    return results;
+  });
+  console.log('Matching CSS rules:', JSON.stringify(rules, null, 2));
+
+  await browser.close();
+})();

@@ -64,7 +64,7 @@ class NotificationSystem {
 
   async loadNotifications() {
     try {
-      const response = await fetch('/api/notifications', {
+      const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -89,7 +89,7 @@ class NotificationSystem {
 
   async loadPopups() {
     try {
-      const response = await fetch(`/api/popups?page=${this.currentPage}`, {
+      const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/popups?page=' + this.currentPage, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -416,7 +416,7 @@ class NotificationSystem {
 
   async dismissPopup(popupId) {
     try {
-      const response = await fetch('/api/popups/dismiss', {
+      const response = await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/popups/dismiss', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -564,7 +564,7 @@ class NotificationSystem {
   async markAsRead(notifId) {
     if (!notifId) return;
     try {
-      await fetch('/api/notifications/read', {
+      await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications/read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -585,7 +585,7 @@ class NotificationSystem {
 
   async markAllAsRead() {
     try {
-      await fetch('/api/notifications/read-all', {
+      await fetch((window.BASE_URL || '').replace(/\/+$/,'') + '/api/notifications/read-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',

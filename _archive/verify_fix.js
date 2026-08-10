@@ -1,0 +1,22 @@
+const { chromium } = require('playwright');
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const errors = [];
+  const notFound = [];
+  page.on('pageerror', err => errors.push(err.message));
+  page.on('response', resp => { if (resp.status() === 404) notFound.push(resp.url()); });
+  await page.goto('http://localhost/apsdreamhome/', { waitUntil: 'domcontentloaded', timeout: 15000 }).catch(e => {});
+  await page.waitForTimeout(5000);
+  console.log('=== JS ERRORS ===');
+  errors.forEach(e => console.log(e));
+  console.log('Total errors:', errors.length);
+  console.log('=== API 404s ===');
+  const api404s = notFound.filter(n => n.includes('/api/'));
+  api404s.forEach(n => console.log(n));
+  console.log('Total API 404s:', api404s.length);
+  const all404s = notFound.filter(n => !n.includes('/api/'));
+  console.log('Other 404s:', all404s.length);
+  await browser.close();
+})();

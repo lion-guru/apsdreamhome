@@ -73,14 +73,14 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
     background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; padding: 12px 16px;
 }
 .vbw-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; }
-.vbw-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 28px; height: 28px;
+.vbw-close { background: rgba(0,0,0,0.3); border: none; color: #fff; width: 28px; height: 28px;
     border-radius: 8px; font-size: 1.1rem; cursor: pointer; line-height: 1; }
 .vbw-transcript { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
 .vbw-msg { max-width: 85%; padding: 9px 13px; border-radius: 14px; font-size: 0.86rem; line-height: 1.45; white-space: pre-wrap; }
 .vbw-user { align-self: flex-end; background: #0d9488; color: #fff; border-bottom-right-radius: 4px; }
 .vbw-bot { align-self: flex-start; background: #fff; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
 .vbw-bot.vbw-success { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; font-weight: 600; }
-.vbw-status { text-align: center; font-size: 0.78rem; color: #64748b; padding: 6px; background: #fff; }
+.vbw-status { text-align: center; font-size: 0.78rem; color: #475569; padding: 6px; background: #f1f5f9; }
 .vbw-status.listening { color: #dc2626; font-weight: 600; }
 .vbw-controls { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 12px; background: #fff; border-top: 1px solid #eef2f7; }
 .vbw-mic {
@@ -91,13 +91,14 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
 .vbw-mic.recording { background: linear-gradient(135deg, #dc2626, #b91c1c); animation: vbwRec 1s infinite; }
 @keyframes vbwRec { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 .vbw-speak-btn {
-    border: 1px solid #0d9488; background: #fff; color: #0d9488; border-radius: 20px; padding: 8px 14px;
+    border: 1px solid #0d9488; background: #0d9488; color: #fff; border-radius: 20px; padding: 8px 14px;
     font-size: 0.8rem; font-weight: 600; cursor: pointer;
 }
-.vbw-speak-btn:disabled { opacity: .4; cursor: not-allowed; }
+.vbw-speak-btn:disabled { opacity: .85; cursor: not-allowed; background: #0f766e; }
 .vbw-fallback { padding: 12px 14px; border-top: 1px solid #eef2f7; font-size: 0.8rem; color: #475569; }
 .vbw-fallback textarea { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px; font-size: 0.84rem; resize: vertical; font-family: inherit; }
 .vbw-send { margin-top: 8px; width: 100%; border: none; background: #0d9488; color: #fff; border-radius: 10px; padding: 9px; font-weight: 600; cursor: pointer; }
+.vbw-send:focus { outline: 2px solid #fff; outline-offset: 2px; }
 </style>
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">

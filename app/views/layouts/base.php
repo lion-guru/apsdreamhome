@@ -164,6 +164,8 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Leaflet CSS for map picker -->
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <?php
     $isAdminPage = isset($admin_layout) && $admin_layout === true;
@@ -174,14 +176,19 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=6" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=8" rel="stylesheet">
     <!-- Homepage + public page extras (hero, projects, animations) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=8" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=10" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=1" rel="stylesheet">
+    <!-- Core layout, typography, dark-section helpers -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css?v=2" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css?v=2" rel="stylesheet">
     <!-- Customer portal components (wizard, hero, cards, checklist) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=1" rel="stylesheet">
     <?php endif; ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
+    <!-- Live Chat Widget CSS -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/live-chat-widget.css" rel="stylesheet">
     <!-- Notification Toast Widget CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
     <!-- Universal mobile-first responsive overrides -->
@@ -301,18 +308,21 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
         };
     </script>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js?v=4"></script>
     <!-- WebSocket Notification Widget (complements notification-system.js) -->
     <?php if (isset($_SESSION['user_id'])): ?>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
     <?php endif; ?>
+    <!-- Live Chat Widget -->
+    <?php include __DIR__ . '/../components/live_chat_widget.php'; ?>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/live-chat-widget.js"></script>
     <!-- Toast Notifications -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
     <!-- Image Gallery Lightbox -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
 
     <!-- Custom JS -->
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js?v=5"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js?v=1"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-location-autofill.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-map-picker.js"></script>
@@ -367,6 +377,27 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             window.APS.toast(message, type || 'info');
         }
     }
+    </script>
+    
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+            // Automatically add data-aos attributes to elements with premium-reveal
+            document.querySelectorAll('.premium-reveal').forEach(function(el) {
+                if (!el.hasAttribute('data-aos')) {
+                    el.setAttribute('data-aos', 'fade-up');
+                }
+            });
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 50,
+                easing: 'ease-out-cubic'
+            });
+        }
+      });
     </script>
 </body>
 

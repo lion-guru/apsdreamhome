@@ -79,8 +79,8 @@ class LocalizationService
     }
 
     public function __construct(
-        Database $db,
-        LoggerInterface $logger,
+        ?Database $db,
+        ?LoggerInterface $logger,
         string $locale = 'en_US',
         string $mode = self::MODE_ADVANCED
     ) {
@@ -107,12 +107,16 @@ class LocalizationService
             $this->createLocalizationTables();
             $this->loadSupportedLocales();
             $this->loadTranslationSources();
-            $this->logger->info('Localization system initialized', [
-                'locale' => $this->currentLocale,
-                'mode' => $this->localizationMode
-            ]);
+            if ($this->logger) {
+                $this->logger->info('Localization system initialized', [
+                    'locale' => $this->currentLocale,
+                    'mode' => $this->localizationMode
+                ]);
+            }
         } catch (\Exception $e) {
-            $this->logger->error('Failed to initialize localization', ['error' => $e->getMessage()]);
+            if ($this->logger) {
+                $this->logger->error('Failed to initialize localization', ['error' => $e->getMessage()]);
+            }
             throw new \RuntimeException('Localization initialization failed: ' . $e->getMessage());
         }
     }

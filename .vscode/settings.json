@@ -167,5 +167,6 @@
     "projectKey": "twilio_twilio-php"
   },
   "files.autoSave": "afterDelay",
-  "editor.linkedEditing": true
+  "editor.linkedEditing": true,
+  "git.ignoreLimitWarning": true
 }

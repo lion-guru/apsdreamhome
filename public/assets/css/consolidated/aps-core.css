@@ -958,6 +958,31 @@ section {
    ============================================ */
 .emi-section {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  color: #ffffff;
+}
+.emi-section h2,
+.emi-section h3,
+.emi-section h4,
+.emi-section h5,
+.emi-section h6,
+.emi-section .form-label,
+.emi-section .lead,
+.emi-section p,
+.emi-section span {
+  color: #ffffff;
+}
+.emi-section .text-muted {
+  color: #cbd5e1 !important;
+}
+.emi-section .form-control,
+.emi-section .form-select {
+  background-color: #1e293b;
+  border-color: #334159;
+  color: #ffffff;
+}
+.emi-section .form-control::placeholder,
+.emi-section .form-select::placeholder {
+  color: #94a3b8;
 }
 .emi-section .card {
   border-radius: var(--radius-lg);
