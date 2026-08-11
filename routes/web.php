@@ -682,6 +682,7 @@ $router->post('/api/chat/start', 'App\\Http\\Controllers\\Front\\LiveChatWidgetC
 $router->post('/api/chat/send', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@send');
 $router->get('/api/chat/poll', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@poll');
 $router->get('/api/chat/widget', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@widget');
+$router->get('/api/chat/history', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@history');
 
 $router->get('/admin/reviews', 'App\\Http\\Controllers\\Admin\\ReviewController@index');
 $router->get('/admin/reviews/approve', 'App\\Http\\Controllers\\Admin\\ReviewController@approve');

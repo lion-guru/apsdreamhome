@@ -41,13 +41,22 @@ class ColonyController extends AdminController
         $existing = $this->db->fetch("SELECT id FROM colonies WHERE slug = ? AND id != ?", [$slug, 0]);
         if ($existing) $slug .= '-' . time();
 
+        $latitude = $_POST['latitude'] !== '' ? (float)$_POST['latitude'] : null;
+        $longitude = $_POST['longitude'] !== '' ? (float)$_POST['longitude'] : null;
+        $mapLink = trim($_POST['map_link'] ?? '');
+        if (empty($mapLink) && $latitude !== null && $longitude !== null) {
+            $mapLink = "https://maps.google.com/?q={$latitude},{$longitude}";
+        }
+
         $tid = $this->tenantId();
-        $this->db->query("INSERT INTO colonies (district_id, name, slug, description, amenities, key_highlights, nearby_places, map_link, total_plots, available_plots, starting_price, image_path, banner_image, brochure_path, gallery_images, youtube_video_url, contact_phone, contact_email, meta_title, meta_description, show_plots_publicly, is_featured, is_active, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+        $this->db->query("INSERT INTO colonies (district_id, name, slug, description, amenities, key_highlights, nearby_places, map_link, total_plots, available_plots, starting_price, image_path, banner_image, brochure_path, gallery_images, youtube_video_url, layout_image, virtual_tour_url, latitude, longitude, contact_phone, contact_email, meta_title, meta_description, show_plots_publicly, is_featured, is_active, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
             $districtId, $name, $slug,
             $_POST['description'] ?? '', $_POST['amenities'] ?? '', $_POST['key_highlights'] ?? '', $_POST['nearby_places'] ?? '',
-            $_POST['map_link'] ?? '', (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
+            $mapLink, (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
             (float)($_POST['starting_price'] ?? 0), $_POST['image_path'] ?? '', $_POST['banner_image'] ?? '',
             $_POST['brochure_path'] ?? '', $_POST['gallery_images'] ?? '', $_POST['youtube_video_url'] ?? '',
+            $_POST['layout_image'] ?? '', $_POST['virtual_tour_url'] ?? '',
+            $latitude, $longitude,
             $_POST['contact_phone'] ?? '', $_POST['contact_email'] ?? '',
             $_POST['meta_title'] ?? '', $_POST['meta_description'] ?? '',
             isset($_POST['show_plots_publicly']) ? 1 : 0,
@@ -186,13 +195,22 @@ class ColonyController extends AdminController
         $existing = $this->db->fetch("SELECT id FROM colonies WHERE slug = ? AND id != ?", [$slug, $id]);
         if ($existing) $slug .= '-' . $id;
 
+        $latitude = $_POST['latitude'] !== '' ? (float)$_POST['latitude'] : null;
+        $longitude = $_POST['longitude'] !== '' ? (float)$_POST['longitude'] : null;
+        $mapLink = trim($_POST['map_link'] ?? '');
+        if (empty($mapLink) && $latitude !== null && $longitude !== null) {
+            $mapLink = "https://maps.google.com/?q={$latitude},{$longitude}";
+        }
+
         [$tenantSql, $tenantParams] = $this->tenantWhere();
-        $this->db->query("UPDATE colonies SET district_id=?, name=?, slug=?, description=?, amenities=?, key_highlights=?, nearby_places=?, map_link=?, total_plots=?, available_plots=?, starting_price=?, image_path=?, banner_image=?, brochure_path=?, gallery_images=?, youtube_video_url=?, contact_phone=?, contact_email=?, meta_title=?, meta_description=?, show_plots_publicly=?, is_featured=?, is_active=? WHERE id=? $tenantSql", array_merge([
+        $this->db->query("UPDATE colonies SET district_id=?, name=?, slug=?, description=?, amenities=?, key_highlights=?, nearby_places=?, map_link=?, total_plots=?, available_plots=?, starting_price=?, image_path=?, banner_image=?, brochure_path=?, gallery_images=?, youtube_video_url=?, layout_image=?, virtual_tour_url=?, latitude=?, longitude=?, contact_phone=?, contact_email=?, meta_title=?, meta_description=?, show_plots_publicly=?, is_featured=?, is_active=? WHERE id=? $tenantSql", array_merge([
             (int)($_POST['district_id'] ?? 0), $_POST['name'] ?? '', $slug,
             $_POST['description'] ?? '', $_POST['amenities'] ?? '', $_POST['key_highlights'] ?? '', $_POST['nearby_places'] ?? '',
-            $_POST['map_link'] ?? '', (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
+            $mapLink, (int)($_POST['total_plots'] ?? 0), (int)($_POST['available_plots'] ?? 0),
             (float)($_POST['starting_price'] ?? 0), $_POST['image_path'] ?? '', $_POST['banner_image'] ?? '',
             $_POST['brochure_path'] ?? '', $_POST['gallery_images'] ?? '', $_POST['youtube_video_url'] ?? '',
+            $_POST['layout_image'] ?? '', $_POST['virtual_tour_url'] ?? '',
+            $latitude, $longitude,
             $_POST['contact_phone'] ?? '', $_POST['contact_email'] ?? '',
             $_POST['meta_title'] ?? '', $_POST['meta_description'] ?? '',
             isset($_POST['show_plots_publicly']) ? 1 : 0,

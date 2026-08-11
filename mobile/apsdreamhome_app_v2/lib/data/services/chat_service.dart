@@ -185,6 +185,23 @@ class ChatService {
     }
   }
 
+  /// Fetch chat history for a session
+  Future<List<Map<String, dynamic>>> getChatHistory(String sessionId) async {
+    if (_useMock) return [];
+
+    try {
+      final response = await _dio.get(
+        AppConstants.chatHistoryEndpoint,
+        queryParameters: {'session_id': sessionId},
+      );
+      final data = response.data;
+      if (data is Map<String, dynamic> && data['success'] == true) {
+        return List<Map<String, dynamic>>.from(data['messages'] ?? []);
+      }
+    } catch (_) {}
+    return [];
+  }
+
   /// Poll for new messages
   Future<Map<String, dynamic>> pollMessages(
     String token, {

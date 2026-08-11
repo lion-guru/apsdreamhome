@@ -42,9 +42,9 @@
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img loading="lazy" src="https://img.freepik.com/free-photo/architectural-blueprints-construction-site_23-2148901413.jpg" alt="Construction" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1508514177221-188b19028604?auto=format&fit=crop&w=600&h=400&q=80" alt="Construction" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
                     <div class="position-absolute bottom-0 start-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
-                        <i class="fas fa-check-circle text-success me-1"></i> ISO 9001:2015 Certified
+                        <i class="fas fa-check-circle text-success me-1"></i> <?= __('const_iso_badge') ?>
                     </div>
                 </div>
             </div>
@@ -174,24 +174,32 @@
             <p class="lead text-muted"><?= __('const_recent_projects_desc') ?></p>
         </div>
         <div class="row g-4">
-            <?php if (!empty($projects)): ?>
-                <?php foreach ($projects as $p): ?>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="project-card card">
-                            <?php if (!empty($p['image'])): ?>
-                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($p['name'] ?? 'Project') ?>">
-                            <?php else: ?>
-                                <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
-                            <?php endif; ?>
-                            <div class="card-body aps-cp-card-body">
-                                <span class="badge bg-<?= $p['status'] === 'completed' ? 'success' : 'warning' ?> mb-2"><?= $p['status'] ?? 'In Progress' ?></span>
-                                <h5 class="fw-bold"><?= htmlspecialchars($p['name'] ?? 'Project') ?></h5>
-                                <p class="text-muted small mb-0"><?= htmlspecialchars($p['location'] ?? '') ?></p>
+<?php if (!empty($projects)): ?>
+                        <?php foreach ($projects as $idx => $p): ?>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="project-card card" data-aos="zoom-in" data-aos-delay="<?= $idx * 100 ?>">
+                                <?php
+                                $imgSrc = '';
+                                if (!empty($p['image'])) {
+                                    $imgSrc = (filter_var($p['image'], FILTER_VALIDATE_URL))
+                                        ? $p['image']
+                                        : BASE_URL . '/' . ltrim($p['image'], '/');
+                                }
+                                ?>
+                                <?php if (!empty($imgSrc)): ?>
+                                    <img src="<?= htmlspecialchars($imgSrc); ?>" class="card-img-top" alt="<?= htmlspecialchars($p['site_name'] ?? 'Project') ?>">
+                                <?php else: ?>
+                                    <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
+                                <?php endif; ?>
+                                <div class="card-body aps-cp-card-body">
+                                    <span class="badge <?= $p['status'] === 'completed' ? 'bg-success' : 'bg-warning' ?> mb-2"><?= ucfirst($p['status'] ?? 'In Progress') ?></span>
+                                    <h5 class="fw-bold"><?= htmlspecialchars($p['site_name'] ?? 'Project') ?></h5>
+                                    <p class="text-muted small mb-0"><?= htmlspecialchars($p['location'] ?? '') ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                 <div class="col-12 text-center py-5">
                     <i class="fas fa-hard-hat fa-4x text-muted mb-3"></i>
                     <h4 class="text-muted"><?= __('const_coming_soon') ?></h4>

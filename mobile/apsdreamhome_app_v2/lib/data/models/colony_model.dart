@@ -7,7 +7,7 @@ part 'colony_model.g.dart';
 
 /// Colony Model - maps directly to PHP API snake_case response
 @freezed
-class ColonyModel with _$ColonyModel {
+abstract class ColonyModel with _$ColonyModel {
   const factory ColonyModel({
     @Default(0) int id,
     @Default('') String name,
@@ -33,14 +33,33 @@ class ColonyModel with _$ColonyModel {
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
     @JsonKey(name: 'is_featured') @Default(false) bool isFeatured,
 
+    // Layout & Gallery (API: layout_image, gallery_images_data)
+    @JsonKey(name: 'layout_image') String? layoutImage,
+    @JsonKey(name: 'layout_image_url') String? layoutImageUrl,
+    @JsonKey(name: 'gallery_images_data') List<String>? galleryImagesData,
+
+    // Video & Virtual Tour (API: youtube_video_url, virtual_tour_url)
+    @JsonKey(name: 'youtube_video_url') String? youtubeVideoUrl,
+    @JsonKey(name: 'virtual_tour_url') String? virtualTourUrl,
+
+    // Documents (API: brochure_path, colony_documents)
+    @JsonKey(name: 'brochure_path') String? brochurePath,
+    @JsonKey(name: 'colony_documents') List<String>? colonyDocuments,
+
+    // Map & Location (API: map_link, latitude, longitude)
+    @JsonKey(name: 'map_link') String? mapLinkApi,
+    double? latitude,
+    double? longitude,
+
+    // Nearby Places (API: nearby_places)
+    @JsonKey(name: 'nearby_places') String? nearbyPlacesRaw,
+
     // Compatibility fields (computed from API data)
     @Default('') String location,
     @Default('') String state,
     List<String>? images,
     String? masterPlanImage,
     String? videoUrl,
-    double? latitude,
-    double? longitude,
 
     // Extended plot stats
     @Default(0) int holdPlots,
@@ -70,7 +89,6 @@ class ColonyModel with _$ColonyModel {
     String? layoutMap,
     String? rateList,
     String? handbill,
-    String? mapLink,
   }) = _ColonyModel;
 
   factory ColonyModel.fromJson(Map<String, dynamic> raw) {
@@ -93,6 +111,36 @@ class ColonyModel with _$ColonyModel {
         json['amenities'] = decoded is List ? decoded : null;
       } catch (_) {
         json['amenities'] = null;
+      }
+    }
+
+    // gallery_images_data: ensure list of strings
+    if (json['gallery_images_data'] is String) {
+      try {
+        final decoded = jsonDecode(json['gallery_images_data'] as String);
+        json['gallery_images_data'] = decoded is List ? decoded.cast<String>() : null;
+      } catch (_) {
+        json['gallery_images_data'] = null;
+      }
+    }
+
+    // gallery_images: JSON array from DB → list of strings (fallback for gallery_images_data)
+    if (json['gallery_images'] is String && json['gallery_images_data'] == null) {
+      try {
+        final decoded = jsonDecode(json['gallery_images'] as String);
+        if (decoded is List) {
+          json['gallery_images_data'] = decoded.cast<String>();
+        }
+      } catch (_) {}
+    }
+
+    // colony_documents: stringified JSON array → list
+    if (json['colony_documents'] is String) {
+      try {
+        final decoded = jsonDecode(json['colony_documents'] as String);
+        json['colony_documents'] = decoded is List ? decoded.cast<String>() : null;
+      } catch (_) {
+        json['colony_documents'] = null;
       }
     }
 
@@ -124,10 +172,41 @@ class ColonyModel with _$ColonyModel {
   /// Get display image URL (prefer image_url, fallback to imagePath)
   String? get displayImage => imageUrl ?? imagePath;
 
-  /// Get display images list
+  /// Get display images list (prefers gallery_images_data from API)
   List<String> get displayImages {
+    if (galleryImagesData != null && galleryImagesData!.isNotEmpty) {
+      return galleryImagesData!;
+    }
     if (imageUrl != null && imageUrl!.isNotEmpty) return [imageUrl!];
     if (imagePath != null && imagePath!.isNotEmpty) return [imagePath!];
+    return [];
+  }
+
+  /// Get layout/master plan image URL
+  String? get displayLayoutImage => layoutImageUrl ?? layoutImage;
+
+  /// Get Google Maps directions URL
+  String? get directionsUrl {
+    final lat = latitude;
+    final lng = longitude;
+    if (lat != null && lng != null) {
+      return 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng';
+    }
+    if (mapLinkApi != null && mapLinkApi!.isNotEmpty) return mapLinkApi;
+    return null;
+  }
+
+  /// Get nearby places as list
+  List<String> get nearbyPlacesList {
+    if (nearbyLandmarks != null && nearbyLandmarks!.isNotEmpty) {
+      return nearbyLandmarks!;
+    }
+    if (nearbyPlacesRaw != null && nearbyPlacesRaw!.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(nearbyPlacesRaw!);
+        if (decoded is List) return decoded.cast<String>();
+      } catch (_) {}
+    }
     return [];
   }
 }

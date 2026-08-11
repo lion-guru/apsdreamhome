@@ -148,7 +148,20 @@ class AgentAuthController extends BaseController
                 }
 
                 $_SESSION['user_id'] = $user['id'];
-                $_SESSION['agent_id'] = $user['customer_id'];
+                
+                // Fetch agent_id from associates table
+                try {
+                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$user['id']], $tParams));
+                    if ($ass) {
+                        $_SESSION['agent_id'] = (int)$ass['id'];
+                        $_SESSION['associate_id'] = (int)$ass['id'];
+                    } else {
+                        $_SESSION['agent_id'] = $user['customer_id'];
+                    }
+                } catch (\Exception $e) {
+                    $_SESSION['agent_id'] = $user['customer_id'];
+                }
+
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_phone'] = $user['phone'] ?? '';

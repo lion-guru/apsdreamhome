@@ -103,8 +103,8 @@ document.documentElement.classList.add('js-animations');
       }
     );
 
-    // Observe all elements with scroll-reveal OR premium-reveal class
-    document.querySelectorAll('.scroll-reveal, .premium-reveal').forEach(el => {
+   // Observe all elements with scroll-reveal OR premium-reveal class OR data-aos attribute
+    document.querySelectorAll('.scroll-reveal, .premium-reveal, [data-aos]').forEach(el => {
       observer.observe(el);
     });
   }

@@ -52,6 +52,7 @@ class AppConstants {
   static const String chatSendEndpoint = '/api/chat/send';
   static const String chatPollEndpoint = '/api/chat/poll';
   static const String chatWidgetEndpoint = '/api/chat/widget';
+  static const String chatHistoryEndpoint = '/api/chat/history';
 
   // In-App Messaging
   static const String conversationsEndpoint = '/messages/conversations';

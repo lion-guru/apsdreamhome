@@ -6,9 +6,9 @@ part of 'property_listing_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$PropertyListingImpl _$$PropertyListingImplFromJson(
+_PropertyListing _$PropertyListingFromJson(
   Map<String, dynamic> json,
-) => _$PropertyListingImpl(
+) => _PropertyListing(
   id: json['id'] as String? ?? '',
   title: json['title'] as String? ?? '',
   description: json['description'] as String? ?? '',
@@ -80,57 +80,56 @@ _$PropertyListingImpl _$$PropertyListingImplFromJson(
   updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$$PropertyListingImplToJson(
-  _$PropertyListingImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'title': instance.title,
-  'description': instance.description,
-  'propertyType': _$PropertyTypeEnumMap[instance.propertyType]!,
-  'purpose': _$ListingPurposeEnumMap[instance.purpose]!,
-  'ownerId': instance.ownerId,
-  'ownerName': instance.ownerName,
-  'ownerPhone': instance.ownerPhone,
-  'ownerEmail': instance.ownerEmail,
-  'ownerType': _$OwnerTypeEnumMap[instance.ownerType]!,
-  'state': instance.state,
-  'district': instance.district,
-  'city': instance.city,
-  'locality': instance.locality,
-  'address': instance.address,
-  'location': instance.location,
-  'landmark': instance.landmark,
-  'areaSqft': instance.areaSqft,
-  'areaUnit': instance.areaUnit,
-  'expectedPrice': instance.expectedPrice,
-  'negotiable': _$PriceNegotiableEnumMap[instance.negotiable],
-  'priceType': instance.priceType,
-  'images': instance.images,
-  'videos': instance.videos,
-  'documents': instance.documents,
-  'features': instance.features,
-  'status': _$ListingStatusEnumMap[instance.status]!,
-  'verifiedBy': instance.verifiedBy,
-  'verifiedAt': instance.verifiedAt?.toIso8601String(),
-  'rejectionReason': instance.rejectionReason,
-  'verificationFee': instance.verificationFee,
-  'viewCount': instance.viewCount,
-  'inquiryCount': instance.inquiryCount,
-  'callCount': instance.callCount,
-  'whatsappCount': instance.whatsappCount,
-  'lastInquiryAt': instance.lastInquiryAt?.toIso8601String(),
-  'listingPlan': _$ListingPlanEnumMap[instance.listingPlan],
-  'planExpiryDate': instance.planExpiryDate?.toIso8601String(),
-  'isFeatured': instance.isFeatured,
-  'isPremium': instance.isPremium,
-  'isSpotlight': instance.isSpotlight,
-  'interestedBuyers': instance.interestedBuyers,
-  'inquiries': instance.inquiries,
-  'adminNotes': instance.adminNotes,
-  'tags': instance.tags,
-  'createdAt': instance.createdAt.toIso8601String(),
-  'updatedAt': instance.updatedAt.toIso8601String(),
-};
+Map<String, dynamic> _$PropertyListingToJson(_PropertyListing instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'propertyType': _$PropertyTypeEnumMap[instance.propertyType]!,
+      'purpose': _$ListingPurposeEnumMap[instance.purpose]!,
+      'ownerId': instance.ownerId,
+      'ownerName': instance.ownerName,
+      'ownerPhone': instance.ownerPhone,
+      'ownerEmail': instance.ownerEmail,
+      'ownerType': _$OwnerTypeEnumMap[instance.ownerType]!,
+      'state': instance.state,
+      'district': instance.district,
+      'city': instance.city,
+      'locality': instance.locality,
+      'address': instance.address,
+      'location': instance.location,
+      'landmark': instance.landmark,
+      'areaSqft': instance.areaSqft,
+      'areaUnit': instance.areaUnit,
+      'expectedPrice': instance.expectedPrice,
+      'negotiable': _$PriceNegotiableEnumMap[instance.negotiable],
+      'priceType': instance.priceType,
+      'images': instance.images,
+      'videos': instance.videos,
+      'documents': instance.documents,
+      'features': instance.features,
+      'status': _$ListingStatusEnumMap[instance.status]!,
+      'verifiedBy': instance.verifiedBy,
+      'verifiedAt': instance.verifiedAt?.toIso8601String(),
+      'rejectionReason': instance.rejectionReason,
+      'verificationFee': instance.verificationFee,
+      'viewCount': instance.viewCount,
+      'inquiryCount': instance.inquiryCount,
+      'callCount': instance.callCount,
+      'whatsappCount': instance.whatsappCount,
+      'lastInquiryAt': instance.lastInquiryAt?.toIso8601String(),
+      'listingPlan': _$ListingPlanEnumMap[instance.listingPlan],
+      'planExpiryDate': instance.planExpiryDate?.toIso8601String(),
+      'isFeatured': instance.isFeatured,
+      'isPremium': instance.isPremium,
+      'isSpotlight': instance.isSpotlight,
+      'interestedBuyers': instance.interestedBuyers,
+      'inquiries': instance.inquiries,
+      'adminNotes': instance.adminNotes,
+      'tags': instance.tags,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+    };
 
 const _$PropertyTypeEnumMap = {
   PropertyType.plot: 'plot',
@@ -180,45 +179,43 @@ const _$ListingPlanEnumMap = {
   ListingPlan.spotlight: 'spotlight',
 };
 
-_$PropertyInquiryImpl _$$PropertyInquiryImplFromJson(
-  Map<String, dynamic> json,
-) => _$PropertyInquiryImpl(
-  id: json['id'] as String? ?? '',
-  buyerId: json['buyerId'] as String? ?? '',
-  buyerName: json['buyerName'] as String? ?? '',
-  buyerPhone: json['buyerPhone'] as String? ?? '',
-  buyerEmail: json['buyerEmail'] as String?,
-  type: $enumDecode(_$InquiryTypeEnumMap, json['type']),
-  message: json['message'] as String?,
-  scheduledVisitDate: json['scheduledVisitDate'] == null
-      ? null
-      : DateTime.parse(json['scheduledVisitDate'] as String),
-  status: $enumDecode(_$InquiryStatusEnumMap, json['status']),
-  createdAt: json['createdAt'] == null
-      ? null
-      : DateTime.parse(json['createdAt'] as String),
-  respondedAt: json['respondedAt'] == null
-      ? null
-      : DateTime.parse(json['respondedAt'] as String),
-  responseNotes: json['responseNotes'] as String?,
-);
+_PropertyInquiry _$PropertyInquiryFromJson(Map<String, dynamic> json) =>
+    _PropertyInquiry(
+      id: json['id'] as String? ?? '',
+      buyerId: json['buyerId'] as String? ?? '',
+      buyerName: json['buyerName'] as String? ?? '',
+      buyerPhone: json['buyerPhone'] as String? ?? '',
+      buyerEmail: json['buyerEmail'] as String?,
+      type: $enumDecode(_$InquiryTypeEnumMap, json['type']),
+      message: json['message'] as String?,
+      scheduledVisitDate: json['scheduledVisitDate'] == null
+          ? null
+          : DateTime.parse(json['scheduledVisitDate'] as String),
+      status: $enumDecode(_$InquiryStatusEnumMap, json['status']),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      respondedAt: json['respondedAt'] == null
+          ? null
+          : DateTime.parse(json['respondedAt'] as String),
+      responseNotes: json['responseNotes'] as String?,
+    );
 
-Map<String, dynamic> _$$PropertyInquiryImplToJson(
-  _$PropertyInquiryImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'buyerId': instance.buyerId,
-  'buyerName': instance.buyerName,
-  'buyerPhone': instance.buyerPhone,
-  'buyerEmail': instance.buyerEmail,
-  'type': _$InquiryTypeEnumMap[instance.type]!,
-  'message': instance.message,
-  'scheduledVisitDate': instance.scheduledVisitDate?.toIso8601String(),
-  'status': _$InquiryStatusEnumMap[instance.status]!,
-  'createdAt': instance.createdAt?.toIso8601String(),
-  'respondedAt': instance.respondedAt?.toIso8601String(),
-  'responseNotes': instance.responseNotes,
-};
+Map<String, dynamic> _$PropertyInquiryToJson(_PropertyInquiry instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'buyerId': instance.buyerId,
+      'buyerName': instance.buyerName,
+      'buyerPhone': instance.buyerPhone,
+      'buyerEmail': instance.buyerEmail,
+      'type': _$InquiryTypeEnumMap[instance.type]!,
+      'message': instance.message,
+      'scheduledVisitDate': instance.scheduledVisitDate?.toIso8601String(),
+      'status': _$InquiryStatusEnumMap[instance.status]!,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'respondedAt': instance.respondedAt?.toIso8601String(),
+      'responseNotes': instance.responseNotes,
+    };
 
 const _$InquiryTypeEnumMap = {
   InquiryType.call: 'call',

@@ -6,9 +6,7 @@ part of 'daily_caller_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DailyCallerImpl _$$DailyCallerImplFromJson(
-  Map<String, dynamic> json,
-) => _$DailyCallerImpl(
+_DailyCaller _$DailyCallerFromJson(Map<String, dynamic> json) => _DailyCaller(
   id: json['id'] as String? ?? '',
   name: json['name'] as String? ?? '',
   phone: json['phone'] as String? ?? '',
@@ -69,7 +67,7 @@ _$DailyCallerImpl _$$DailyCallerImplFromJson(
   updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$$DailyCallerImplToJson(_$DailyCallerImpl instance) =>
+Map<String, dynamic> _$DailyCallerToJson(_DailyCaller instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -125,9 +123,9 @@ const _$CallerStatusEnumMap = {
   CallerStatus.terminated: 'terminated',
 };
 
-_$DailyCallReportImpl _$$DailyCallReportImplFromJson(
+_DailyCallReport _$DailyCallReportFromJson(
   Map<String, dynamic> json,
-) => _$DailyCallReportImpl(
+) => _DailyCallReport(
   id: json['id'] as String? ?? '',
   date: DateTime.parse(json['date'] as String),
   totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
@@ -160,32 +158,31 @@ _$DailyCallReportImpl _$$DailyCallReportImplFromJson(
       : DateTime.parse(json['verifiedAt'] as String),
 );
 
-Map<String, dynamic> _$$DailyCallReportImplToJson(
-  _$DailyCallReportImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'date': instance.date.toIso8601String(),
-  'totalCalls': instance.totalCalls,
-  'connected': instance.connected,
-  'notAnswered': instance.notAnswered,
-  'busy': instance.busy,
-  'invalidNumber': instance.invalidNumber,
-  'callLater': instance.callLater,
-  'notInterested': instance.notInterested,
-  'totalTalkTimeMinutes': instance.totalTalkTimeMinutes,
-  'avgTalkTimeMinutes': instance.avgTalkTimeMinutes,
-  'validLeadsGenerated': instance.validLeadsGenerated,
-  'interestedCustomers': instance.interestedCustomers,
-  'siteVisitsScheduled': instance.siteVisitsScheduled,
-  'bookingsConfirmed': instance.bookingsConfirmed,
-  'revenueGenerated': instance.revenueGenerated,
-  'commissionEarned': instance.commissionEarned,
-  'callDetails': instance.callDetails,
-  'status': _$ReportStatusEnumMap[instance.status]!,
-  'supervisorNotes': instance.supervisorNotes,
-  'submittedAt': instance.submittedAt?.toIso8601String(),
-  'verifiedAt': instance.verifiedAt?.toIso8601String(),
-};
+Map<String, dynamic> _$DailyCallReportToJson(_DailyCallReport instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'date': instance.date.toIso8601String(),
+      'totalCalls': instance.totalCalls,
+      'connected': instance.connected,
+      'notAnswered': instance.notAnswered,
+      'busy': instance.busy,
+      'invalidNumber': instance.invalidNumber,
+      'callLater': instance.callLater,
+      'notInterested': instance.notInterested,
+      'totalTalkTimeMinutes': instance.totalTalkTimeMinutes,
+      'avgTalkTimeMinutes': instance.avgTalkTimeMinutes,
+      'validLeadsGenerated': instance.validLeadsGenerated,
+      'interestedCustomers': instance.interestedCustomers,
+      'siteVisitsScheduled': instance.siteVisitsScheduled,
+      'bookingsConfirmed': instance.bookingsConfirmed,
+      'revenueGenerated': instance.revenueGenerated,
+      'commissionEarned': instance.commissionEarned,
+      'callDetails': instance.callDetails,
+      'status': _$ReportStatusEnumMap[instance.status]!,
+      'supervisorNotes': instance.supervisorNotes,
+      'submittedAt': instance.submittedAt?.toIso8601String(),
+      'verifiedAt': instance.verifiedAt?.toIso8601String(),
+    };
 
 const _$ReportStatusEnumMap = {
   ReportStatus.pending: 'pending',
@@ -194,22 +191,21 @@ const _$ReportStatusEnumMap = {
   ReportStatus.rejected: 'rejected',
 };
 
-_$CallDetailImpl _$$CallDetailImplFromJson(Map<String, dynamic> json) =>
-    _$CallDetailImpl(
-      leadId: json['leadId'] as String? ?? '',
-      leadName: json['leadName'] as String? ?? '',
-      leadPhone: json['leadPhone'] as String? ?? '',
-      callTime: DateTime.parse(json['callTime'] as String),
-      outcome: $enumDecode(_$CallOutcomeEnumMap, json['outcome']),
-      talkTimeSeconds: (json['talkTimeSeconds'] as num?)?.toInt(),
-      notes: json['notes'] as String?,
-      recordingUrl: json['recordingUrl'] as String?,
-      location: json['location'] == null
-          ? null
-          : GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
-    );
+_CallDetail _$CallDetailFromJson(Map<String, dynamic> json) => _CallDetail(
+  leadId: json['leadId'] as String? ?? '',
+  leadName: json['leadName'] as String? ?? '',
+  leadPhone: json['leadPhone'] as String? ?? '',
+  callTime: DateTime.parse(json['callTime'] as String),
+  outcome: $enumDecode(_$CallOutcomeEnumMap, json['outcome']),
+  talkTimeSeconds: (json['talkTimeSeconds'] as num?)?.toInt(),
+  notes: json['notes'] as String?,
+  recordingUrl: json['recordingUrl'] as String?,
+  location: json['location'] == null
+      ? null
+      : GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
+);
 
-Map<String, dynamic> _$$CallDetailImplToJson(_$CallDetailImpl instance) =>
+Map<String, dynamic> _$CallDetailToJson(_CallDetail instance) =>
     <String, dynamic>{
       'leadId': instance.leadId,
       'leadName': instance.leadName,
@@ -235,66 +231,65 @@ const _$CallOutcomeEnumMap = {
   CallOutcome.followUpRequired: 'followUpRequired',
 };
 
-_$MonthlyPerformanceImpl _$$MonthlyPerformanceImplFromJson(
-  Map<String, dynamic> json,
-) => _$MonthlyPerformanceImpl(
-  id: json['id'] as String? ?? '',
-  year: (json['year'] as num?)?.toInt() ?? 0,
-  month: (json['month'] as num?)?.toInt() ?? 0,
-  totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
-  connectedCalls: (json['connectedCalls'] as num?)?.toInt() ?? 0,
-  totalTalkTimeMinutes: (json['totalTalkTimeMinutes'] as num?)?.toInt() ?? 0,
-  validLeads: (json['validLeads'] as num?)?.toInt() ?? 0,
-  siteVisits: (json['siteVisits'] as num?)?.toInt() ?? 0,
-  bookings: (json['bookings'] as num?)?.toInt() ?? 0,
-  totalRevenue: (json['totalRevenue'] as num?)?.toDouble() ?? 0.0,
-  baseSalary: (json['baseSalary'] as num?)?.toDouble() ?? 0.0,
-  commissionEarned: (json['commissionEarned'] as num?)?.toDouble() ?? 0.0,
-  incentives: (json['incentives'] as num?)?.toDouble() ?? 0.0,
-  deductions: (json['deductions'] as num?)?.toDouble() ?? 0.0,
-  totalEarnings: (json['totalEarnings'] as num?)?.toDouble() ?? 0.0,
-  targetAchievementPercentage:
-      (json['targetAchievementPercentage'] as num?)?.toDouble() ?? 0.0,
-  ranking: (json['ranking'] as num?)?.toInt() ?? 0,
-  avgCallsPerDay: (json['avgCallsPerDay'] as num?)?.toDouble() ?? 0.0,
-  avgTalkTimePerDay: (json['avgTalkTimePerDay'] as num?)?.toDouble() ?? 0.0,
-  avgLeadsPerDay: (json['avgLeadsPerDay'] as num?)?.toDouble() ?? 0.0,
-  leadQualityScore: (json['leadQualityScore'] as num?)?.toDouble() ?? 0.0,
-  conversionRate: (json['conversionRate'] as num?)?.toDouble() ?? 0.0,
-  paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
-  paidAt: json['paidAt'] == null
-      ? null
-      : DateTime.parse(json['paidAt'] as String),
-);
+_MonthlyPerformance _$MonthlyPerformanceFromJson(Map<String, dynamic> json) =>
+    _MonthlyPerformance(
+      id: json['id'] as String? ?? '',
+      year: (json['year'] as num?)?.toInt() ?? 0,
+      month: (json['month'] as num?)?.toInt() ?? 0,
+      totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
+      connectedCalls: (json['connectedCalls'] as num?)?.toInt() ?? 0,
+      totalTalkTimeMinutes:
+          (json['totalTalkTimeMinutes'] as num?)?.toInt() ?? 0,
+      validLeads: (json['validLeads'] as num?)?.toInt() ?? 0,
+      siteVisits: (json['siteVisits'] as num?)?.toInt() ?? 0,
+      bookings: (json['bookings'] as num?)?.toInt() ?? 0,
+      totalRevenue: (json['totalRevenue'] as num?)?.toDouble() ?? 0.0,
+      baseSalary: (json['baseSalary'] as num?)?.toDouble() ?? 0.0,
+      commissionEarned: (json['commissionEarned'] as num?)?.toDouble() ?? 0.0,
+      incentives: (json['incentives'] as num?)?.toDouble() ?? 0.0,
+      deductions: (json['deductions'] as num?)?.toDouble() ?? 0.0,
+      totalEarnings: (json['totalEarnings'] as num?)?.toDouble() ?? 0.0,
+      targetAchievementPercentage:
+          (json['targetAchievementPercentage'] as num?)?.toDouble() ?? 0.0,
+      ranking: (json['ranking'] as num?)?.toInt() ?? 0,
+      avgCallsPerDay: (json['avgCallsPerDay'] as num?)?.toDouble() ?? 0.0,
+      avgTalkTimePerDay: (json['avgTalkTimePerDay'] as num?)?.toDouble() ?? 0.0,
+      avgLeadsPerDay: (json['avgLeadsPerDay'] as num?)?.toDouble() ?? 0.0,
+      leadQualityScore: (json['leadQualityScore'] as num?)?.toDouble() ?? 0.0,
+      conversionRate: (json['conversionRate'] as num?)?.toDouble() ?? 0.0,
+      paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
+      paidAt: json['paidAt'] == null
+          ? null
+          : DateTime.parse(json['paidAt'] as String),
+    );
 
-Map<String, dynamic> _$$MonthlyPerformanceImplToJson(
-  _$MonthlyPerformanceImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'year': instance.year,
-  'month': instance.month,
-  'totalCalls': instance.totalCalls,
-  'connectedCalls': instance.connectedCalls,
-  'totalTalkTimeMinutes': instance.totalTalkTimeMinutes,
-  'validLeads': instance.validLeads,
-  'siteVisits': instance.siteVisits,
-  'bookings': instance.bookings,
-  'totalRevenue': instance.totalRevenue,
-  'baseSalary': instance.baseSalary,
-  'commissionEarned': instance.commissionEarned,
-  'incentives': instance.incentives,
-  'deductions': instance.deductions,
-  'totalEarnings': instance.totalEarnings,
-  'targetAchievementPercentage': instance.targetAchievementPercentage,
-  'ranking': instance.ranking,
-  'avgCallsPerDay': instance.avgCallsPerDay,
-  'avgTalkTimePerDay': instance.avgTalkTimePerDay,
-  'avgLeadsPerDay': instance.avgLeadsPerDay,
-  'leadQualityScore': instance.leadQualityScore,
-  'conversionRate': instance.conversionRate,
-  'paymentStatus': _$PaymentStatusEnumMap[instance.paymentStatus]!,
-  'paidAt': instance.paidAt?.toIso8601String(),
-};
+Map<String, dynamic> _$MonthlyPerformanceToJson(_MonthlyPerformance instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'year': instance.year,
+      'month': instance.month,
+      'totalCalls': instance.totalCalls,
+      'connectedCalls': instance.connectedCalls,
+      'totalTalkTimeMinutes': instance.totalTalkTimeMinutes,
+      'validLeads': instance.validLeads,
+      'siteVisits': instance.siteVisits,
+      'bookings': instance.bookings,
+      'totalRevenue': instance.totalRevenue,
+      'baseSalary': instance.baseSalary,
+      'commissionEarned': instance.commissionEarned,
+      'incentives': instance.incentives,
+      'deductions': instance.deductions,
+      'totalEarnings': instance.totalEarnings,
+      'targetAchievementPercentage': instance.targetAchievementPercentage,
+      'ranking': instance.ranking,
+      'avgCallsPerDay': instance.avgCallsPerDay,
+      'avgTalkTimePerDay': instance.avgTalkTimePerDay,
+      'avgLeadsPerDay': instance.avgLeadsPerDay,
+      'leadQualityScore': instance.leadQualityScore,
+      'conversionRate': instance.conversionRate,
+      'paymentStatus': _$PaymentStatusEnumMap[instance.paymentStatus]!,
+      'paidAt': instance.paidAt?.toIso8601String(),
+    };
 
 const _$PaymentStatusEnumMap = {
   PaymentStatus.pending: 'pending',
@@ -303,9 +298,9 @@ const _$PaymentStatusEnumMap = {
   PaymentStatus.paid: 'paid',
 };
 
-_$CallerLeadAssignmentImpl _$$CallerLeadAssignmentImplFromJson(
+_CallerLeadAssignment _$CallerLeadAssignmentFromJson(
   Map<String, dynamic> json,
-) => _$CallerLeadAssignmentImpl(
+) => _CallerLeadAssignment(
   leadId: json['leadId'] as String? ?? '',
   leadName: json['leadName'] as String? ?? '',
   leadPhone: json['leadPhone'] as String? ?? '',
@@ -326,8 +321,8 @@ _$CallerLeadAssignmentImpl _$$CallerLeadAssignmentImplFromJson(
   outcome: json['outcome'] as String?,
 );
 
-Map<String, dynamic> _$$CallerLeadAssignmentImplToJson(
-  _$CallerLeadAssignmentImpl instance,
+Map<String, dynamic> _$CallerLeadAssignmentToJson(
+  _CallerLeadAssignment instance,
 ) => <String, dynamic>{
   'leadId': instance.leadId,
   'leadName': instance.leadName,
@@ -349,9 +344,9 @@ const _$AssignmentPriorityEnumMap = {
   AssignmentPriority.low: 'low',
 };
 
-_$LeadDistributionBatchImpl _$$LeadDistributionBatchImplFromJson(
+_LeadDistributionBatch _$LeadDistributionBatchFromJson(
   Map<String, dynamic> json,
-) => _$LeadDistributionBatchImpl(
+) => _LeadDistributionBatch(
   id: json['id'] as String? ?? '',
   batchName: json['batchName'] as String? ?? '',
   createdAt: DateTime.parse(json['createdAt'] as String),
@@ -387,8 +382,8 @@ _$LeadDistributionBatchImpl _$$LeadDistributionBatchImplFromJson(
   totalLeads: (json['totalLeads'] as num?)?.toInt() ?? 0,
 );
 
-Map<String, dynamic> _$$LeadDistributionBatchImplToJson(
-  _$LeadDistributionBatchImpl instance,
+Map<String, dynamic> _$LeadDistributionBatchToJson(
+  _LeadDistributionBatch instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'batchName': instance.batchName,

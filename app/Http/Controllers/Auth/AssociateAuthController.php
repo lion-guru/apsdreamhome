@@ -180,6 +180,18 @@ class AssociateAuthController extends BaseController
                 }
 
                 $_SESSION['user_id'] = $user['id'];
+                
+                // Fetch associate_id from associates table
+                try {
+                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", array_merge([$user['id']], $tParams));
+                    if ($ass) {
+                        $_SESSION['associate_id'] = (int)$ass['id'];
+                    } else {
+                        // Fallback (though usually it should exist)
+                    }
+                } catch (\Exception $e) {
+                }
+
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];

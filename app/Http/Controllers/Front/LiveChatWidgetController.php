@@ -14,7 +14,12 @@ class LiveChatWidgetController extends BaseController
     public function __construct($db = null, $auth = null, array $config = [])
     {
         parent::__construct($db, $auth, $config);
-        try { $this->service = new LiveChatService($this->db); } catch (\Throwable $e) { $this->service = null; }
+        try {
+            $this->service = new LiveChatService($this->db);
+        } catch (\Throwable $e) {
+            error_log('LiveChatWidgetController service init error: ' . $e->getMessage());
+            $this->service = null;
+        }
     }
 
     /**
@@ -30,28 +35,39 @@ class LiveChatWidgetController extends BaseController
     public function start()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $json = json_decode(file_get_contents('php://input'), true) ?: [];
             $userId = (int)($_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0);
-            $name = trim($_POST['name'] ?? ($_SESSION['user_name'] ?? ''));
-            $email = trim($_POST['email'] ?? ($_SESSION['user_email'] ?? ''));
-            $phone = trim($_POST['phone'] ?? '');
-            $subject = trim($_POST['subject'] ?? '');
-            $firstMessage = trim($_POST['message'] ?? '');
+            $name = trim($json['name'] ?? ($_POST['name'] ?? ($_SESSION['user_name'] ?? '')));
+            $email = trim($json['email'] ?? ($_POST['email'] ?? ($_SESSION['user_email'] ?? '')));
+            $phone = trim($json['phone'] ?? ($_POST['phone'] ?? ''));
+            $subject = trim($json['subject'] ?? ($_POST['subject'] ?? ''));
+            $firstMessage = trim($json['message'] ?? ($_POST['message'] ?? ''));
 
             $ip = $_SERVER['REMOTE_ADDR'] ?? '';
             $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-            $pageUrl = $_POST['page_url'] ?? '';
-            $referrer = $_POST['referrer_url'] ?? '';
+            $pageUrl = $json['page_url'] ?? ($_POST['page_url'] ?? '');
+            $referrer = $json['referrer_url'] ?? ($_POST['referrer_url'] ?? '');
 
-            $result = $this->service ? $this->service->startSession(
-                $userId ?: null,
-                $userId ?: null,
-                $name,
-                $email,
-                $pageUrl,
-                $referrer,
-                $ip,
-                $ua
-            ) : null;
+            $result = null;
+            if ($this->service) {
+                try {
+                    $result = $this->service->startSession(
+                        $userId ?: null,
+                        $userId ?: null,
+                        $name,
+                        $email,
+                        $pageUrl,
+                        $referrer,
+                        $ip,
+                        $ua
+                    );
+                } catch (\Throwable $e) {
+                    error_log('LiveChat startSession exception: ' . $e->getMessage());
+                    $result = null;
+                }
+            } else {
+                error_log('LiveChat start: service is null');
+            }
 
             if ($result) {
                 $this->pdo()->prepare("UPDATE chat_sessions SET visitor_phone = ?, subject = ?, category = ?, priority = ? WHERE id = ? AND tenant_id = ?")
@@ -63,7 +79,11 @@ class LiveChatWidgetController extends BaseController
                 $this->service->sendMessage($result['id'], 'bot', null, 'APS Bot', $welcome, 'text', null, false);
             }
             header('Content-Type: application/json');
-            echo json_encode($result ?: ['error' => 'Failed to start chat']);
+            echo json_encode($result ? [
+                'id' => $result['id'],
+                'session_token' => $result['token'],
+                'status' => 'open',
+            ] : ['error' => 'Failed to start chat']);
             exit;
         }
         header('Content-Type: application/json');
@@ -73,8 +93,9 @@ class LiveChatWidgetController extends BaseController
 
     public function send()
     {
-        $token = $_POST['token'] ?? '';
-        $message = trim($_POST['message'] ?? '');
+        $json = json_decode(file_get_contents('php://input'), true) ?: [];
+        $token = $json['token'] ?? ($_POST['token'] ?? '');
+        $message = trim($json['message'] ?? ($_POST['message'] ?? ''));
         if (!$token || !$message) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'token and message required']);
@@ -94,6 +115,17 @@ class LiveChatWidgetController extends BaseController
             $message
         );
 
+        // Persist user message to chat_history
+        try {
+            $tid = (int)$this->tenantId();
+            $uid = (int)($session['user_id'] ?? 0);
+            $sid = $session['id'];
+            $this->pdo()->prepare("INSERT INTO chat_history (user_id, session_id, role, message, tenant_id) VALUES (?, ?, 'user', ?, ?)")
+                ->execute([$uid, $sid, $message, $tid]);
+        } catch (\Throwable $e) {
+            error_log("chat_history insert user msg error: " . $e->getMessage());
+        }
+
         // AI auto-response when no agent is assigned
         if (empty($session['assigned_to']) && $session['status'] !== 'closed') {
             try {
@@ -102,6 +134,13 @@ class LiveChatWidgetController extends BaseController
                     $aiReply = $this->getAutoReply($message, $session, $groqKey);
                     if (!empty($aiReply)) {
                         $this->service->sendMessage($session['id'], 'bot', null, 'APS AI Bot', $aiReply, 'text', null, false);
+                        // Persist bot response to chat_history
+                        try {
+                            $this->pdo()->prepare("INSERT INTO chat_history (user_id, session_id, role, message, tenant_id) VALUES (?, ?, 'bot', ?, ?)")
+                                ->execute([$uid, $sid, $aiReply, $tid]);
+                        } catch (\Throwable $e2) {
+                            error_log("chat_history insert bot msg error: " . $e2->getMessage());
+                        }
                     }
                 }
             } catch (\Throwable $e) {
@@ -177,6 +216,30 @@ class LiveChatWidgetController extends BaseController
             'user' => ['id' => $userId, 'name' => $userName, 'email' => $userEmail],
             'settings' => $settings
         ]);
+        exit;
+    }
+
+    public function history()
+    {
+        $userId = (int)($_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0);
+        $sessionId = $_GET['session_id'] ?? '';
+        if (!$userId || !$sessionId) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Missing params']);
+            exit;
+        }
+        try {
+            $stmt = $this->pdo()->prepare(
+                "SELECT role, message, created_at FROM chat_history WHERE user_id = ? AND session_id = ? ORDER BY created_at ASC LIMIT 100"
+            );
+            $stmt->execute([$userId, $sessionId]);
+            $messages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'messages' => $messages]);
+        } catch (\Throwable $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
         exit;
     }
 

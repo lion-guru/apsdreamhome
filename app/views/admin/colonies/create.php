@@ -65,12 +65,23 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
+                        <label class="form-label">Layout Image</label>
+                        <input name="layout_image" class="form-control" placeholder="/assets/images/colonies/layout.jpg">
+                        <small class="text-muted">Colony layout/plan image</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <label class="form-label">Brochure Path (PDF)</label>
                         <input name="brochure_path" class="form-control" placeholder="/assets/brochures/xyz.pdf">
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">YouTube Video URL</label>
                         <input name="youtube_video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Virtual Tour URL</label>
+                        <input name="virtual_tour_url" class="form-control" placeholder="https://my.matterport.com/show/?m=...">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -95,9 +106,20 @@
                     <label class="form-label">Starting Price (₹)</label>
                     <input name="starting_price" type="number" step="0.01" class="form-control" value="0">
                 </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input name="latitude" type="number" step="0.00000001" class="form-control" placeholder="26.7606">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input name="longitude" type="number" step="0.00000001" class="form-control" placeholder="83.3732">
+                    </div>
+                </div>
                 <div class="mb-3">
-                    <label class="form-label">Map Link (Google Maps)</label>
-                    <input name="map_link" class="form-control" placeholder="https://maps.google.com/?q=...">
+                    <label class="form-label">Google Maps Link</label>
+                    <input name="map_link" class="form-control" id="map_link" placeholder="https://maps.google.com/?q=...">
+                    <small class="text-muted">Auto-generated from lat/lng if empty on save</small>
                 </div>
             </div></div>
 
@@ -153,4 +175,14 @@ function loadDistricts(stateId) {
             data.forEach(d => sel.innerHTML += '<option value="' + d.id + '">' + d.name + '</option>');
         });
 }
+function autoMapLink() {
+    const lat = document.querySelector('input[name="latitude"]').value;
+    const lng = document.querySelector('input[name="longitude"]').value;
+    const mapInput = document.getElementById('map_link');
+    if (lat && lng && !mapInput.value) {
+        mapInput.value = 'https://maps.google.com/?q=' + lat + ',' + lng;
+    }
+}
+document.querySelector('input[name="latitude"]')?.addEventListener('change', autoMapLink);
+document.querySelector('input[name="longitude"]')?.addEventListener('change', autoMapLink);
 </script>

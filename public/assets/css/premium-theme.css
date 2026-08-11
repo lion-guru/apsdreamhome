@@ -76,13 +76,20 @@
 .cta-section,
 .emi-section,
 .glass-dark,
+.tools-section,
+.tools-hub-section,
+.calculator-section,
 [class*='bg-gradient-dark'],
 [class*='booking-hero'],
 footer.bg-dark {
   --aps-text: #fff;
   --aps-heading: #fff;
   --aps-text-muted: rgba(255, 255, 255, 0.7);
+  --aps-cp-text: #fff;
+  --aps-cp-text-secondary: rgba(255, 255, 255, 0.8);
+  color: #fff !important;
 }
+
 .bg-dark {
   background-color: #0f172a !important;
 }
@@ -144,6 +151,116 @@ footer.bg-dark {
   color: #ffffff !important;
 }
 
+/* Text elements inside dark sections with hardcoded colors — force white */
+.bg-dark .section-title,
+.bg-dark .section-heading,
+.bg-dark .section-heading-lg,
+.bg-dark .colony-card-title,
+.bg-dark .feature-title,
+.bg-dark .text-muted,
+.bg-dark .lead,
+.bg-dark .text-secondary,
+.bg-dark .breadcrumb-item,
+.bg-dark .breadcrumb-item a,
+.bg-dark .stat-card .lbl,
+.section-dark .section-title,
+.section-dark .section-heading,
+.section-dark .section-heading-lg,
+.section-dark .colony-card-title,
+.section-dark .feature-title,
+.section-dark .text-muted,
+.section-dark .lead,
+.section-dark .text-secondary,
+.section-dark .breadcrumb-item,
+.section-dark .breadcrumb-item a,
+.section-dark .stat-card .lbl,
+.hero-section .section-title,
+.hero-section .section-heading,
+.hero-section .section-heading-lg,
+.hero-section .colony-card-title,
+.hero-section .feature-title,
+.hero-section .text-muted,
+.hero-section .lead,
+.hero-section .text-secondary,
+.hero-section .stat-card .lbl,
+.cta-gradient .section-title,
+.cta-gradient .section-heading,
+.cta-gradient .section-heading-lg,
+.cta-gradient .colony-card-title,
+.cta-gradient .feature-title,
+.cta-gradient .text-muted,
+.cta-gradient .lead,
+.cta-gradient .text-secondary,
+.cta-gradient .stat-card .lbl,
+.cta-section .section-title,
+.cta-section .section-heading,
+.cta-section .section-heading-lg,
+.cta-section .colony-card-title,
+.cta-section .feature-title,
+.cta-section .text-muted,
+.cta-section .lead,
+.cta-section .text-secondary,
+.cta-section .stat-card .lbl,
+.hero-premium .section-title,
+.hero-premium .section-heading,
+.hero-premium .section-heading-lg,
+.hero-premium .colony-card-title,
+.hero-premium .feature-title,
+.hero-premium .text-muted,
+.hero-premium .lead,
+.hero-premium .text-secondary,
+.hero-premium .stat-card .lbl,
+.glass-dark .section-title,
+.glass-dark .section-heading,
+.glass-dark .section-heading-lg,
+.glass-dark .colony-card-title,
+.glass-dark .feature-title,
+.glass-dark .text-muted,
+.glass-dark .lead,
+.glass-dark .text-secondary,
+.glass-dark .stat-card .lbl,
+.hero-premium .section-title,
+.hero-premium .section-heading,
+.hero-premium .section-heading-lg,
+.hero-premium .colony-card-title,
+.hero-premium .feature-title,
+.hero-premium .text-muted,
+.hero-premium .lead,
+.hero-premium .text-secondary,
+.hero-premium .stat-card .lbl {
+  color: #ffffff !important;
+}
+
+.bg-dark .text-dark,
+.bg-dark .text-body,
+.bg-dark .text-black,
+.section-dark .text-dark,
+.section-dark .text-body,
+.section-dark .text-black,
+.hero-section .text-dark,
+.hero-section .text-body,
+.hero-section .text-black {
+  color: #ffffff !important;
+}
+
+.bg-dark .stat-card .num,
+.section-dark .stat-card .num,
+.hero-section .stat-card .num {
+  color: #ffffff !important;
+}
+
+.bg-dark .lead,
+.section-dark .lead,
+.hero-section .lead {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.bg-dark .text-muted,
+.section-dark .text-muted,
+.hero-section .text-muted {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
 /* ============================================
    BASE OVERRIDES
    ============================================ */
@@ -168,12 +285,33 @@ h6 { font-size: var(--h6-size); font-weight: 500; }
 .bg-dark:not(.card-header) th,
 .bg-dark:not(.card-header) label,
 .bg-dark:not(.card-header) li,
+.bg-dark:not(.card-header) input,
+.bg-dark:not(.card-header) select,
+.bg-dark:not(.card-header) textarea,
+.bg-dark:not(.card-header) h1,
+.bg-dark:not(.card-header) h2,
+.bg-dark:not(.card-header) h3,
+.bg-dark:not(.card-header) h4,
+.bg-dark:not(.card-header) h5,
+.bg-dark:not(.card-header) h6,
+.bg-dark:not(.card-header) .form-control,
+.bg-dark:not(.card-header) .form-select,
+.bg-dark:not(.card-header) .input-group-text,
+.bg-dark:not(.card-header) .form-label,
+.bg-dark:not(.card-header) .form-label *,
+.bg-dark:not(.card-header) .badge:not(.bg-primary):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger),
 .bg-premium-navy p,
 .bg-premium-navy span,
 .bg-premium-navy td,
 .bg-premium-navy th,
 .bg-premium-navy label,
 .bg-premium-navy li,
+.hero-section p,
+.hero-section span,
+.hero-section td,
+.hero-section th,
+.hero-section label,
+.hero-section li,
 .hero-premium:has(.hero-overlay) p,
 .hero-premium:has(.hero-overlay) span,
 .section-dark p,
@@ -243,7 +381,34 @@ body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body li {
 body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body .text-muted {
   color: #64748b !important;
 }
-
+.bg-dark .card.bg-dark .form-control,
+.bg-dark .card.bg-dark .form-select,
+.bg-dark .card.bg-dark .input-group-text,
+.bg-dark .card.bg-dark .form-label,
+.bg-dark .card.bg-dark input,
+.bg-dark .card.bg-dark select,
+.bg-dark .card.bg-dark textarea,
+.section-dark .card.bg-dark .form-control,
+.section-dark .card.bg-dark .form-select,
+.cta-section .card.bg-dark .form-control,
+.cta-section .card.bg-dark .form-select,
+.hero-premium .card.bg-dark .form-control,
+.hero-premium .card.bg-dark .form-select {
+  background-color: #1e293b !important;
+  border-color: #334159 !important;
+  color: #ffffff !important;
+}
+.bg-dark .card.bg-dark .form-control::placeholder,
+.bg-dark .card.bg-dark .form-select::placeholder,
+.bg-dark .card.bg-dark input::placeholder,
+.bg-dark .card.bg-dark select::placeholder,
+.bg-dark .card.bg-dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+.bg-dark .card.bg-dark option {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
 /* Card Surface Reset inside Dark Sections — prevents white-on-white text */
 .bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
 .section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
@@ -271,21 +436,25 @@ body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body .text-muted
 
 .bg-dark .lead,
 .bg-dark .text-muted,
+.bg-dark .text-secondary,
+.hero-section .lead,
+.hero-section .text-muted,
+.hero-section .text-secondary,
 .hero-premium:has(.hero-overlay) .lead,
+.hero-premium:has(.hero-overlay) .text-muted,
+.hero-premium:has(.hero-overlay) .text-secondary,
 .section-dark .lead,
+.section-dark .text-muted,
+.section-dark .text-secondary,
 .cta-gradient .lead,
+.cta-gradient .text-muted,
+.cta-gradient .text-secondary,
 .cta-section .lead,
-.emi-section .lead {
-  color: var(--aps-text-muted);
-}
-
-.bg-dark .lead,
-.bg-dark .text-muted,
-.hero-premium .lead,
-.section-dark .lead,
-.cta-gradient .lead,
-.cta-section .lead,
-.emi-section .lead {
+.cta-section .text-muted,
+.cta-section .text-secondary,
+.emi-section .lead,
+.emi-section .text-muted,
+.emi-section .text-secondary {
   color: var(--aps-text-muted);
 }
 
@@ -1445,4 +1614,355 @@ html {
 .card:hover:not(.no-hover),
 .aps-cp-card:hover:not(.no-hover) {
   box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.1) !important;
+}
+
+/* ===== SCROLL ANIMATIONS (AOS-style) ===== */
+[data-aos] {
+  opacity: 0;
+  transition-property: transform, opacity;
+  transition-duration: 0.6s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+[data-aos].aos-animate,
+[data-aos].visible {
+  opacity: 1;
+}
+
+[data-aos="fade-up"] {
+  transform: translateY(20px);
+}
+
+[data-aos="fade-up"].aos-animate,
+[data-aos="fade-up"].visible {
+  transform: translateY(0);
+}
+
+[data-aos="fade-in"] {
+  opacity: 0;
+}
+
+[data-aos="fade-in"].aos-animate,
+[data-aos="fade-in"].visible {
+  opacity: 1;
+}
+
+[data-aos-delay="100"] { transition-delay: 0.1s; }
+[data-aos-delay="200"] { transition-delay: 0.2s; }
+[data-aos-delay="300"] { transition-delay: 0.3s; }
+[data-aos-delay="400"] { transition-delay: 0.4s; }
+[data-aos-delay="500"] { transition-delay: 0.5s; }
+
+/* ===== PROPERTY CARD HOVER EFFECTS ===== */
+.property-card {
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px !important;
+}
+
+.property-card .card-img-wrapper {
+  overflow: hidden;
+}
+
+.property-card .card-img-top {
+  transition: transform 0.5s ease;
+}
+
+.property-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(13, 148, 136, 0.15) !important;
+}
+
+/* Project card hover */
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(13, 148, 136, 0.15) !important;
+}
+
+.project-card .card-img-top {
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+/* ===== BUTTON GLOWS ===== */
+.btn-primary,
+.btn-warning,
+.btn-success {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(13, 148, 136, 0.4);
+}
+
+.btn-warning:hover {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn-success:hover {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+/* ===== GLASSMORPHISM BADGES ===== */
+.glass-badge {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+}
+
+/* ===== Inline dark gradient section overrides ===== */
+section[style*="linear-gradient"] {
+  --aps-text: #fff;
+  --aps-heading: #fff;
+  --aps-text-muted: rgba(255, 255, 255, 0.7);
+  --aps-cp-text: #fff;
+  --aps-cp-text-secondary: rgba(255, 255, 255, 0.8);
+  color: #fff !important;
+}
+
+/* Override form controls directly inside dark gradient sections */
+section[style*="linear-gradient"] > .container > .form-control,
+section[style*="linear-gradient"] > .container > .form-select,
+section[style*="linear-gradient"] .row > .form-control,
+section[style*="linear-gradient"] .row > .form-select,
+section[style*="linear-gradient"] > .container > .form-label {
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+section[style*="linear-gradient"] .form-control::placeholder,
+section[style*="linear-gradient"] .form-select::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Form controls inside light cards inside dark sections — restore light theme */
+section[style*="linear-gradient"] .card .form-control,
+section[style*="linear-gradient"] .card .form-select,
+section[style*="linear-gradient"] .bg-light .form-control,
+section[style*="linear-gradient"] .bg-light .form-select,
+section[style*="linear-gradient"] .card .form-label,
+section[style*="linear-gradient"] .bg-light .form-label {
+  color: #1e293b !important;
+  background-color: #fff !important;
+  border-color: #ced4da !important;
+}
+
+section[style*="linear-gradient"] .card .form-control::placeholder,
+section[style*="linear-gradient"] .bg-light .form-control::placeholder {
+  color: #6c757d !important;
+}
+
+/* Preserve light-colored elements inside dark sections */
+section[style*="linear-gradient"] .card,
+section[style*="linear-gradient"] .card.bg-white,
+section[style*="linear-gradient"] .card.bg-light,
+section[style*="linear-gradient"] .card.bg-primary.text-white,
+section[style*="linear-gradient"] .bg-light,
+section[style*="linear-gradient"] .bg-white,
+section[style*="linear-gradient"] .bg-primary.text-white,
+section[style*="linear-gradient"] div[style*="background-color"],
+section[style*="linear-gradient"] div[style*="background: linear-gradient"] {
+  --aps-text: #1e293b;
+  --aps-heading: #0f172a;
+  --aps-text-muted: #64748b;
+  color: #1e293b !important;
+}
+
+section[style*="linear-gradient"] .card *,
+section[style*="linear-gradient"] .card.bg-white *,
+section[style*="linear-gradient"] .card.bg-light *,
+section[style*="linear-gradient"] .bg-light *,
+section[style*="linear-gradient"] .bg-white *,
+section[style*="linear-gradient"] .bg-primary.text-white *,
+section[style*="linear-gradient"] div[style*="background-color"] *,
+section[style*="linear-gradient"] div[style*="background: linear-gradient"] * {
+  color: inherit !important;
+}
+
+/* text-muted/text-secondary inside dark gradient sections — whiteish */
+section[style*="linear-gradient"] .text-muted,
+section[style*="linear-gradient"] .text-secondary {
+  color: #e2e8f0 !important;
+}
+
+/* Override: inside light cards/divs inside dark sections — restore dark gray */
+section[style*="linear-gradient"] .bg-light .text-muted,
+section[style*="linear-gradient"] .card .text-muted,
+section[style*="linear-gradient"] .bg-light .text-secondary,
+section[style*="linear-gradient"] .card .text-secondary,
+section[style*="linear-gradient"] .bg-white .text-muted,
+section[style*="linear-gradient"] .bg-white .text-secondary {
+  color: #64748b !important;
+}
+
+section[style*="linear-gradient"] .bg-light small,
+section[style*="linear-gradient"] .bg-light .badge,
+section[style*="linear-gradient"] .card small,
+section[style*="linear-gradient"] .card .badge {
+  color: #1e293b !important;
+}
+
+section[style*="linear-gradient"] .bg-primary.text-white .text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+section[style*="linear-gradient"] .bg-primary.text-white small,
+section[style*="linear-gradient"] .bg-primary.text-white .badge {
+  color: #fff !important;
+}
+
+section[style*="linear-gradient"] .btn-primary {
+  background-color: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+  color: #fff !important;
+}
+
+section[style*="linear-gradient"] .btn-warning {
+  background-color: #f59e0b !important;
+  border-color: #f59e0b !important;
+  color: #1e293b !important;
+}
+
+/* ================================================
+   MOBILE-RESPONSIVE PROPERTY CARDS + SWIPE GESTURES
+   ================================================ */
+
+/* Stack cards in single column on mobile */
+@media (max-width: 767.98px) {
+  .props-grid-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+    transition: box-shadow 0.2s ease;
+    touch-action: none;
+  }
+
+  .props-grid-card:active {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+    transform: scale(0.98);
+  }
+
+  .props-grid-card .card-img-wrap img {
+    height: 200px;
+  }
+
+  /* Larger touch targets on mobile */
+  .props-grid-card .img-actions .favorite-btn,
+  .props-grid-card .prop-actions .btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prop-features {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+
+  .prop-features .feat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+  }
+
+  .prop-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  .prop-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0d9488;
+  }
+
+  .prop-price small {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+}
+
+/* Larger touch targets for all nav links on mobile */
+@media (max-width: 1199.98px) {
+  .navbar-nav .nav-link {
+    padding: 0.75rem 0.85rem !important;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .mobile-bottom-nav .nav-item {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 4px;
+  }
+}
+
+/* Swipeable card container */
+.property-card-swipeable {
+  position: relative;
+  overflow: hidden;
+}
+
+.property-card-swipeable .swipe-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.95) 0%, rgba(245, 156, 156, 0.9) 100%);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 16px;
+  z-index: 0;
+}
+
+.property-card-swipeable.swipe-reveal .swipe-actions {
+  transform: translateX(0);
+}
+
+.property-card-swipeable .swipe-actions .swipe-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  margin-left: 8px;
+  transition: background 0.2s;
+}
+
+.property-card-swipeable .swipe-actions .swipe-btn:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.property-card-swipeable .card-body {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fff;
 }

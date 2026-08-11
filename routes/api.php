@@ -234,12 +234,24 @@ $router->post('/api/ai-valuation/calculator', 'App\\Http\\Controllers\\AIValuati
 $router->get('/api/ai-valuation/market-trends', 'App\\Http\\Controllers\\AIValuationController@getMarketTrends');
 $router->post('/api/ai-valuation/investment-analysis', 'App\\Http\\Controllers\\AIValuationController@getInvestmentAnalysis');
 
-// Legacy Mobile API Routes (Backward Compatibility)
-$router->get('/api/v1/mobile/properties', 'Api\MobileApiController@properties');
-$router->get('/api/v1/mobile/properties/{id}', 'Api\MobileApiController@property')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v1/mobile/leads', 'Api\MobileApiController@leads');
-$router->post('/api/v1/mobile/leads', 'Api\MobileApiController@submitLead');
-$router->get('/api/v1/mobile/user/profile', 'Api\MobileApiController@userProfile');
+// Legacy Mobile API Routes (v1 — Deprecated, use /api/v2/mobile/*)
+// These routes are kept for backward compatibility. Added Sunset/Deprecation headers via middleware.
+// v1 routes will be removed in a future release. Please migrate to /api/v2/mobile/* endpoints.
+$router->get('/api/v1/mobile/properties', 'Api\MobileApiController@properties')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->get('/api/v1/mobile/properties/{id}', 'Api\MobileApiController@property')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->get('/api/v1/mobile/leads', 'Api\MobileApiController@leads')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->post('/api/v1/mobile/leads', 'Api\MobileApiController@submitLead')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->get('/api/v1/mobile/user/profile', 'Api\MobileApiController@userProfile')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->get('/api/v1/search/properties', 'Api\SearchController@searchProperties')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->post('/api/v1/finance/emi-calculate', 'Api\NewFeaturesApiController@calculateEmi')
+    ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
 
 // Advanced Search API Routes
 $router->get('/api/search/properties', 'Api\SearchController@searchProperties');

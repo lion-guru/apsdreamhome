@@ -3428,7 +3428,15 @@ class MobileApiController extends BaseController
                        up.is_featured, up.is_urgent, up.is_premium, up.expires_at,
                        up.created_at, up.updated_at,
                        u.name as owner_name, u.phone as owner_phone,
-                       up.image as main_image,
+                       COALESCE(up.image, (
+                           SELECT pi.image_path FROM property_images pi 
+                           WHERE pi.property_id = up.id AND pi.is_primary = 1 
+                           LIMIT 1
+                       ), (
+                           SELECT pi.image_path FROM property_images pi 
+                           WHERE pi.property_id = up.id 
+                           ORDER BY pi.sort_order ASC LIMIT 1
+                       )) as main_image,
                        CASE WHEN up.is_premium = 1 THEN 3
                             WHEN up.is_featured = 1 THEN 2
                             WHEN up.is_urgent = 1 THEN 1
@@ -3456,7 +3464,7 @@ class MobileApiController extends BaseController
                 $p['area_sqft'] = (float)($p['area_sqft'] ?? 0);
                 $p['bedrooms'] = (int)($p['bedrooms'] ?? 0);
                 $p['bathrooms'] = (int)($p['bathrooms'] ?? 0);
-                $p['image_url'] = $p['main_image'] ? (BASE_URL . '/' . ltrim($p['main_image'], '/')) : null;
+                $p['image_url'] = $p['main_image'] ? (str_starts_with((string)$p['main_image'], 'http') ? $p['main_image'] : BASE_URL . '/' . ltrim($p['main_image'], '/')) : null;
             }
 
             // Separate premium listings for top section
@@ -3516,7 +3524,7 @@ class MobileApiController extends BaseController
                 $p['is_premium'] = (bool)$p['is_premium'];
                 $p['is_featured'] = (bool)$p['is_featured'];
                 $p['is_urgent'] = (bool)$p['is_urgent'];
-                $p['image_url'] = $p['main_image'] ? (BASE_URL . '/' . ltrim($p['main_image'], '/')) : null;
+                $p['image_url'] = $p['main_image'] ? (str_starts_with((string)$p['main_image'], 'http') ? $p['main_image'] : BASE_URL . '/' . ltrim($p['main_image'], '/')) : null;
             }
 
             echo json_encode([
@@ -5015,7 +5023,8 @@ class MobileApiController extends BaseController
 
             $stmt = $pdo->prepare("
                 SELECT c.id, c.name, c.slug, c.description, c.total_plots, c.available_plots,
-                       c.starting_price, c.image_path, c.is_featured, c.is_active,
+                       c.starting_price, c.image_path, c.layout_image, c.is_featured, c.is_active,
+                       c.latitude, c.longitude, c.map_link,
                        d.name as district_name, d.id as district_id
                 FROM colonies c
                 LEFT JOIN districts d ON d.id = c.district_id
@@ -5032,7 +5041,8 @@ class MobileApiController extends BaseController
                 $colony['starting_price'] = (float)($colony['starting_price'] ?? 0);
                 $colony['is_featured'] = (bool)($colony['is_featured'] ?? false);
                 $colony['is_active'] = (bool)($colony['is_active'] ?? false);
-                $colony['image_url'] = $colony['image_path'] ? BASE_URL . '/' . ltrim($colony['image_path'], '/') : null;
+                $colony['image_url'] = $colony['image_path'] ? (str_starts_with((string)$colony['image_path'], 'http') ? $colony['image_path'] : BASE_URL . '/' . ltrim($colony['image_path'], '/')) : null;
+                $colony['layout_image_url'] = $colony['layout_image'] ? (str_starts_with((string)$colony['layout_image'], 'http') ? $colony['layout_image'] : BASE_URL . '/' . ltrim($colony['layout_image'], '/')) : null;
             }
 
             echo json_encode([
@@ -5100,7 +5110,10 @@ class MobileApiController extends BaseController
                 echo json_encode(['success' => false, 'error' => 'Colony not found']);
                 return;
             }
-            $colony['image_url'] = $colony['image_path'] ? BASE_URL . '/' . ltrim($colony['image_path'], '/') : null;
+            $colony['image_url'] = $colony['image_path'] ? (str_starts_with((string)$colony['image_path'], 'http') ? $colony['image_path'] : BASE_URL . '/' . ltrim($colony['image_path'], '/')) : null;
+            $colony['layout_image_url'] = $colony['layout_image'] ? (str_starts_with((string)$colony['layout_image'], 'http') ? $colony['layout_image'] : BASE_URL . '/' . ltrim($colony['layout_image'], '/')) : null;
+            $colony['latitude'] = $colony['latitude'] ? (float)$colony['latitude'] : null;
+            $colony['longitude'] = $colony['longitude'] ? (float)$colony['longitude'] : null;
             echo json_encode(['success' => true, 'data' => $colony]);
         } catch (\Throwable $e) {
             error_log('getColonyDetail error: ' . $e->getMessage());

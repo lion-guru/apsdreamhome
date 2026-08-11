@@ -15,6 +15,7 @@ import '../../../data/models/colony_model.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
 import '../../widgets/app_widgets.dart';
 import '../../widgets/ai/floating_ai_button.dart';
+import '../../widgets/support/support_fab.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/shimmer_skeletons.dart';
 
@@ -125,14 +126,20 @@ class _HomePageState extends ConsumerState<HomePage>
                   _buildAvailablePlotsSection(context, ref, plotsAsync),
                   _buildPremiumPropertiesSection(context, ref),
                   _buildPropertiesSection(context, ref, propertiesAsync),
+                  SliverToBoxAdapter(child: _buildStatsCounter(context)),
                   SliverToBoxAdapter(child: _buildWhyChooseUs(context)),
+                  SliverToBoxAdapter(child: _buildTestimonialsSection(context)),
+                  SliverToBoxAdapter(child: _buildContactCTA(context)),
                   const SliverToBoxAdapter(child: SizedBox(height: 32)),
                 ],
               ),
             ),
           ),
         ),
-        const Positioned(bottom: 16, right: 16, child: FloatingAIButton()),
+        // AI Assistant Button (above support FAB)
+        const Positioned(bottom: 92, right: 12, child: FloatingAIButton(isMini: true)),
+        // WhatsApp-style Support FAB
+        const Positioned(bottom: 16, right: 8, child: SupportFAB()),
       ],
     );
   }
@@ -188,6 +195,22 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
           _NotificationBell(context: context),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: () => context.push('/live-chat'),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.headset_mic_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
           const SizedBox(width: 4),
           _ProfileAvatar(context: context),
         ],
@@ -1260,7 +1283,7 @@ class _HomePageState extends ConsumerState<HomePage>
               ),
               const SizedBox(height: 12),
               SizedBox(
-                height: 180,
+                height: 200,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1407,7 +1430,15 @@ class _HomePageState extends ConsumerState<HomePage>
       );
       final data = response.data;
       if (data['success'] == true) {
-        final properties = (data['data'] as List?) ?? [];
+        final inner = data['data'];
+        final List<dynamic> properties;
+        if (inner is Map && inner.containsKey('properties')) {
+          properties = (inner['properties'] as List<dynamic>?) ?? [];
+        } else if (inner is List) {
+          properties = inner;
+        } else {
+          properties = [];
+        }
         return properties
             .map((j) => PropertyListing.fromJson(j as Map<String, dynamic>))
             .take(5)
@@ -1608,6 +1639,282 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
+  // ───────────────────────────── STATS COUNTER ─────────────────────────────
+
+  Widget _buildStatsCounter(BuildContext context) {
+    final stats = [
+      _StatData('5+', 'Colonies', Icons.location_city_rounded, const Color(0xFF43A047)),
+      _StatData('200+', 'Plots', Icons.grid_on_rounded, const Color(0xFF1E88E5)),
+      _StatData('1000+', 'Families', Icons.people_rounded, const Color(0xFFFF9800)),
+      _StatData('12+', 'Years', Icons.workspace_premium_rounded, const Color(0xFF9C27B0)),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.15),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: stats.map((stat) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: stat.color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(stat.icon, color: stat.color, size: 22),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                stat.value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                stat.label,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // ───────────────────────────── TESTIMONIALS ─────────────────────────────
+
+  Widget _buildTestimonialsSection(BuildContext context) {
+    final testimonials = [
+      _TestimonialData(
+        name: 'Rajesh Kumar',
+        role: 'Plot Owner, Suryoday Colony',
+        text: 'Excellent experience! The plots are well-located and the team helped me through every step of the purchase.',
+        rating: 5,
+      ),
+      _TestimonialData(
+        name: 'Priya Singh',
+        role: 'Home Buyer, Braj Radha Nagri',
+        text: 'APS Dream Home made my dream of owning a plot come true. Very transparent and professional.',
+        rating: 5,
+      ),
+      _TestimonialData(
+        name: 'Amit Verma',
+        role: 'Investor, Raghunath Nagri',
+        text: 'Great investment returns! The colonies are well-planned and the ROI has been fantastic.',
+        rating: 4,
+      ),
+    ];
+
+    return Column(
+      children: [
+        AppWidgets.sectionHeader(
+          title: 'What Our Clients Say',
+          subtitle: 'Trusted by families across India',
+        ),
+        SizedBox(
+          height: 170,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: testimonials.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final t = testimonials[index];
+              return Container(
+                width: 280,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: List.generate(
+                        5,
+                        (i) => Icon(
+                          i < t.rating
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded,
+                          color: const Color(0xFFFFB300),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Text(
+                        t.text,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                          height: 1.4,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+                          child: Text(
+                            t.name[0],
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                t.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                t.role,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  // ───────────────────────────── CONTACT CTA ─────────────────────────────
+
+  Widget _buildContactCTA(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF25D366), Color(0xFF128C7E)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF25D366).withValues(alpha: 0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Need Help?',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Chat with our support team instantly',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () => context.push('/live-chat'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Start Chat',
+                      style: TextStyle(
+                        color: Color(0xFF128C7E),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.headset_mic_rounded,
+            color: Colors.white.withValues(alpha: 0.3),
+            size: 64,
+          ),
+        ],
+      ),
+    );
+  }
+
   // ───────────────────────────── WHY CHOOSE US ─────────────────────────────
 
   Widget _buildWhyChooseUs(BuildContext context) {
@@ -1651,7 +1958,7 @@ class _HomePageState extends ConsumerState<HomePage>
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 1.3,
+              childAspectRatio: 0.95,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),
@@ -1786,6 +2093,27 @@ class _FeatureData {
     required this.title,
     required this.description,
     required this.color,
+  });
+}
+
+class _StatData {
+  final String value;
+  final String label;
+  final IconData icon;
+  final Color color;
+  const _StatData(this.value, this.label, this.icon, this.color);
+}
+
+class _TestimonialData {
+  final String name;
+  final String role;
+  final String text;
+  final int rating;
+  const _TestimonialData({
+    required this.name,
+    required this.role,
+    required this.text,
+    required this.rating,
   });
 }
 

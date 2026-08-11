@@ -34,8 +34,16 @@ class PropertyListingService {
         queryParameters: params,
       );
 
-      final data = response['data'] ?? [];
-      return (data as List).map((json) {
+      final data = response['data'];
+      final List<dynamic> list;
+      if (data is Map && data.containsKey('properties')) {
+        list = (data['properties'] as List<dynamic>?) ?? [];
+      } else if (data is List) {
+        list = data;
+      } else {
+        list = [];
+      }
+      return list.map((json) {
         return PropertyListing.fromJson(json as Map<String, dynamic>);
       }).toList();
     } catch (e, stackTrace) {
@@ -78,6 +86,20 @@ class PropertyListingService {
 }
 
 /// Lightweight property listing model for marketplace display
+class PropertyImageInfo {
+  final String url;
+  final String type; // gallery, interior, exterior, aerial, floor_plan, etc.
+
+  const PropertyImageInfo({required this.url, required this.type});
+
+  factory PropertyImageInfo.fromJson(Map<String, dynamic> json) {
+    return PropertyImageInfo(
+      url: json['image_path']?.toString() ?? '',
+      type: json['image_type']?.toString() ?? 'gallery',
+    );
+  }
+}
+
 class PropertyListing {
   final int id;
   final String title;
@@ -92,6 +114,7 @@ class PropertyListing {
   final String status; // available, sold, pending
   final String? imageUrl;
   final List<String> images; // multiple images from API
+  final List<PropertyImageInfo> imageDetails; // images with type metadata
   final String ownerName;
   final String ownerType; // customer, associate, agent
   final bool isVerified;
@@ -116,6 +139,7 @@ class PropertyListing {
     required this.status,
     this.imageUrl,
     this.images = const [],
+    this.imageDetails = const [],
     required this.ownerName,
     required this.ownerType,
     required this.isVerified,
@@ -167,7 +191,7 @@ class PropertyListing {
       city: json['city']?.toString(),
       state: json['state']?.toString(),
       status: _parseString(json['status'], fallback: 'available'),
-      imageUrl: json['image']?.toString() ?? json['image_url']?.toString(),
+      imageUrl: json['main_image']?.toString() ?? json['image']?.toString() ?? json['image_url']?.toString(),
       images:
           (json['images'] as List<dynamic>?)
               ?.map(
@@ -176,6 +200,11 @@ class PropertyListing {
                     : e.toString(),
               )
               .where((s) => s.isNotEmpty)
+              .toList() ??
+          [],
+      imageDetails:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => PropertyImageInfo.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       ownerName: _parseString(

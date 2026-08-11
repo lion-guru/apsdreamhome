@@ -1,4 +1,37 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-07 — Session 73)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-11 — Session 74)
+
+---
+
+## Session 74: Colony Detail Enhancement + Chat History (2026-08-11)
+
+### What Was Done
+| Feature | Details |
+|---------|---------|
+| **Chat History Persistence** | `chat_history` table created (user_id, session_id, role, message, tenant_id). User messages + bot responses persisted on every send. Endpoint `GET /api/chat/history?session_id=X` returns last 100 messages. |
+| **Chat History Route** | Added `/api/chat/history` GET route to `routes/web.php` |
+| **Flutter Chat History** | `ChatService.getChatHistory()` fetches history from API. `LiveChatPage._loadChatHistory()` loads history on session start. `AppConstants.chatHistoryEndpoint` added. |
+| **Admin Colony Form (Layout)** | Added `layout_image` and `virtual_tour_url` fields to create and edit forms |
+| **Admin Colony Form (Location)** | Added `latitude`, `longitude`, auto-generate `map_link` fields to create and edit forms. JavaScript auto-fills map link from coordinates. |
+| **ColonyController store()** | Now inserts `layout_image`, `virtual_tour_url`, `latitude`, `longitude`. Auto-generates `map_link` from lat/lng if empty. |
+| **ColonyController update()** | Now updates `layout_image`, `virtual_tour_url`, `latitude`, `longitude`. Auto-generates `map_link` from lat/lng if empty. |
+| **E2E Tests** | 153/153 PASS — zero regressions |
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `app/Http/Controllers/Front/LiveChatWidgetController.php` | +history persistence in send(), +history() method |
+| `app/Http/Controllers/Admin/ColonyController.php` | +layout_image/virtual_tour_url/lat/lng in store()+update(), auto map_link |
+| `routes/web.php` | +`/api/chat/history` GET route |
+| `app/views/admin/colonies/create.php` | +layout_image, virtual_tour_url, latitude, longitude, auto-map-link JS |
+| `app/views/admin/colonies/edit.php` | +layout_image, virtual_tour_url, latitude, longitude, auto-map-link JS |
+| `mobile/.../app_constants.dart` | +chatHistoryEndpoint |
+| `mobile/.../chat_service.dart` | +getChatHistory() method |
+| `mobile/.../live_chat_page.dart` | +_loadChatHistory() called on session start |
+
+### Database Changes
+| Table | Change |
+|-------|--------|
+| `chat_history` | NEW table — id, user_id, session_id, role, message, message_type, tenant_id, created_at |
 
 ---
 
@@ -2554,4 +2587,42 @@ _124. **MySQL "Too many connections" kills all PHP requests** — The E2E test s
 
 _125. **Virtual hosts must be explicitly enabled** — `#Include conf/extra/httpd-vhosts.conf` was commented out in `httpd.conf`, causing `apsdreamhome.local` to fall back to the default `htdocs/` DocumentRoot (serving the "XAMPP Dev Hub" instead of APS Dream Home). Uncomment the include line, then restart Apache.
 
-_126. **start_services.bat works best from cmd.exe** — Calling it from PowerShell causes `echo` output issues due to PowerShell cmdlet resolution. Double-click or run from cmd.exe for clean output. If PowerShell is needed, use the `.ps1` variant or redirect output to a file.
+### Session 73: Frontend Polish + CSS Fixes (2026-08-11)
+
+| Feature | Details |
+|---------|--------|
+| **CSS Breakpoint Fix** | Fixed `header.css` media query breakpoint mismatch (991px → 1199.98px) to align with `navbar-expand-xl` and JS `isMobile()` check |
+| **Desktop Nav Overflow Fix** | Changed `flex-wrap: nowrap` to `flex-wrap: wrap` on `.navbar-nav` for desktops between 1200px-1400px |
+| **Dropdown Alignment Fix** | Added max-height + overflow-y for dropdowns, right-alignment for `.ms-auto` dropdowns |
+| **CSS Brace Fix** | Fixed orphaned CSS rules in `premium-theme.css` (stray `--aps-text` lines, extra `}` in `header.css`) |
+| **Inline Gradient Section Overrides** | Added `section[style*="linear-gradient"]` CSS selectors in `premium-theme.css` — white text for elements directly in dark gradient sections, dark text + white background for form controls/cards inside `.bg-light` containers within dark sections |
+| **AOS Scroll Animations** | Added `[data-aos]` CSS rules for fade-up/fade-in scroll animations, updated `premium-animations.js` to handle `data-aos` attributes via IntersectionObserver |
+| **Card Hover + Image Zoom** | Added `.property-card:hover` and `.project-card:hover` with translateY + box-shadow lift, image scale(1.05) on hover |
+| **Button Glows** | Added `:hover` box-shadow glow effects on `.btn-primary`, `.btn-warning`, `.btn-success` |
+| **Glassmorphism Badges** | Added `.glass-badge` class with backdrop-filter blur |
+| **Responsive Font Scaling** | Verified `clamp()` functions already applied to all h1-h6 in premium-theme.css |
+| **Tools Hub Nav** | Added "Tools Hub" link to header navigation |
+| **Construction Services** | Fixed project cards to handle both URL and relative image paths from DB |
+| **Team Page** | Updated to fetch real team member data from `team_members` + `team_groups` tables |
+| **E2E Tests** | **153/153 PASS** — zero regressions |
+
+_127. **CSS media query breakpoint mismatch** — `header.css` used `@media (max-width: 991px)` for mobile styles but `header.php` uses `navbar-expand-xl` (1200px) with JS `isMobile()` checking `<= 1199.98px`. This caused the mobile drawer to not activate at tablet widths (1024px). Fix: align all mobile media queries to `@media (max-width: 1199.98px)`.
+
+_128. **Desktop nav overflow** — `flex-wrap: nowrap` on `.navbar-nav` caused menu items to overflow off-screen on desktops between 1200px-1400px with many nav items. Fix: set `flex-wrap: wrap` to allow items to wrap instead of overflowing.
+
+_129. **Inline dark gradient sections need CSS attribute selectors** — Pages using `style="background: linear-gradient(135deg, #0f172a, #1e3a5f)"` on `<section>` tags aren't caught by class-based dark mode rules. Fix: added `section[style*="linear-gradient"]` selectors in `premium-theme.css` with white text + dark form control backgrounds, plus light card restoration for `.bg-light`/`.card` children.
+
+_130. **404 /auth/google/role-selection** — Route exists but requires Google OAuth credentials to be configured. The route is registered but falls through to 404 when the OAuth callback isn't wired. Fix: route already exists; needs Google OAuth client setup (deferred — Google social login button now redirects to email login as fallback).
+
+---
+
+## New Features (2026-08-03 — Session 70/71/72: Frontend Polish + Air Login + AI Plan)
+
+| Feature | Details |
+|---------|--------|
+| **Air Login (passwordless)** | OTP-based login via `/auth/air-login` — user enters email/phone, receives OTP, logs in without password. Wired to Flutter app. 4 routes, 2 views. |
+| **Google Social Button** | Now redirects to email login tab (instead of "coming soon") for passwordless Air Login flow. Full OAuth2 deferred to future. |
+| **Python Agentic Dev System** | `agentic_dev_system/py_agentic/` — 7 specialized agents (Backend, Frontend, QA, Security, DevOps, Architecture, Documentation) with async concurrent execution. Zero external deps, runs on local Ollama. |
+| **AI Integration Plan** | Documented 37+ existing AI services, 13 free API providers, 20 use cases to implement/enhance. |
+| **Frontend CSS Fixes** | Fixed `header.css` breakpoint (991px → 1199.98px), desktop nav `flex-wrap: wrap`, dropdown overflow prevention, inline gradient section text overrides in `premium-theme.css`. |
+| **E2E Tests** | **153/153 PASS** — zero regressions.

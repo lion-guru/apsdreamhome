@@ -25,9 +25,23 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  List<String> _allImages = [];
+  List<PropertyImageInfo> _allImages = [];
   bool _isLoading = true;
   String _errorMessage = '';
+  String _selectedFilter = 'all';
+
+  static const Map<String, String> _filterLabels = {
+    'all': 'All',
+    'gallery': 'Gallery',
+    'interior': 'Interior',
+    'exterior': 'Exterior',
+    'aerial': 'Aerial',
+    'floor_plan': 'Floor Plan',
+    'living_room': 'Living Room',
+    'kitchen': 'Kitchen',
+    'bathroom': 'Bathroom',
+    'master_bedroom': 'Master Bedroom',
+  };
 
   @override
   void initState() {
@@ -54,7 +68,7 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
     try {
       final property = await service.getPropertyById(widget.propertyId);
       if (property != null) {
-        final images = property.images.where((img) => img.isNotEmpty).toList();
+        final images = property.imageDetails.where((img) => img.url.isNotEmpty).toList();
         if (!mounted) return;
         setState(() {
           _allImages = images;
@@ -62,8 +76,8 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
           _errorMessage = '';
         });
         _fadeController.forward();
-      } else if (!mounted) return;
-      {
+      } else {
+        if (!mounted) return;
         setState(() {
           _allImages = [];
           _isLoading = false;
@@ -80,13 +94,23 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
     }
   }
 
+  List<PropertyImageInfo> get _filteredImages {
+    if (_selectedFilter == 'all') return _allImages;
+    return _allImages.where((img) => img.type == _selectedFilter).toList();
+  }
+
+  List<String> _getFilterableTypes() {
+    final types = _allImages.map((e) => e.type).toSet().toList()..sort();
+    return types;
+  }
+
   void _openFullScreen(int index) {
-    if (_allImages.isEmpty) return;
+    if (_filteredImages.isEmpty) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => _FullScreenGallery(
-          images: _allImages,
+          images: _filteredImages,
           initialIndex: index,
           title: widget.title,
         ),
@@ -94,7 +118,70 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
     );
   }
 
+  Widget _buildFilterBar() {
+    final types = _getFilterableTypes();
+    if (types.isEmpty) return const SizedBox.shrink();
+
+    final allFilters = ['all', ...types];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        children: allFilters.map((type) {
+          final label = _filterLabels[type] ?? type;
+          final isSelected = _selectedFilter == type;
+          final imageCount = type == 'all'
+              ? _allImages.length
+              : _allImages.where((img) => img.type == type).length;
+          return Container(
+            margin: const EdgeInsets.only(right: 8),
+            child: FilterChip(
+              label: Row(
+                children: [
+                  Text(label),
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Colors.white.withValues(alpha: 0.2)
+                          : Colors.grey.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      imageCount.toString(),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isSelected ? Colors.white : Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              selected: isSelected,
+              onSelected: (_) {
+                setState(() => _selectedFilter = type);
+              },
+        backgroundColor: Colors.grey[100],
+      selectedColor: AppTheme.primaryColor,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : AppTheme.textPrimaryLight,
+        fontSize: 13,
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              visualDensity: VisualDensity.compact,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildImageGrid() {
+    final images = _filteredImages;
+
     if (_allImages.isEmpty) {
       return Center(
         child: Column(
@@ -120,6 +207,29 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
       );
     }
 
+    if (images.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.filter_alt_outlined,
+              size: 64,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No "${_filterLabels[_selectedFilter] ?? _selectedFilter}" photos available',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return GridView.builder(
       padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -128,8 +238,10 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
         mainAxisSpacing: 8,
         childAspectRatio: 1.0,
       ),
-      itemCount: _allImages.length,
+      itemCount: images.length,
       itemBuilder: (context, index) {
+        final img = images[index];
+        final globalIndex = _allImages.indexOf(img);
         return FadeTransition(
           opacity: _fadeAnimation,
           child: GestureDetector(
@@ -139,9 +251,9 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
               child: Stack(
                 children: [
                   Hero(
-                    tag: 'property-image-gallery-$index-${widget.propertyId}',
+                    tag: 'property-image-gallery-$globalIndex-${widget.propertyId}',
                     child: CachedNetworkImage(
-                      imageUrl: _allImages[index],
+                      imageUrl: img.url,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
@@ -167,6 +279,26 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
                       ),
                     ),
                   ),
+                  if (img.type != 'gallery' && img.type != 'all')
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _imageTypeColor(img.type),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          _filterLabels[img.type] ?? img.type,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
                   Positioned(
                     top: 8,
                     right: 8,
@@ -193,6 +325,29 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
     );
   }
 
+  Color _imageTypeColor(String type) {
+    switch (type) {
+      case 'interior':
+        return Colors.blue;
+      case 'exterior':
+        return Colors.green;
+      case 'aerial':
+        return Colors.orange;
+      case 'floor_plan':
+        return Colors.purple;
+      case 'living_room':
+        return Colors.red;
+      case 'kitchen':
+        return Colors.amber;
+      case 'bathroom':
+        return Colors.teal;
+      case 'master_bedroom':
+        return Colors.indigo;
+      default:
+        return Colors.black45;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,27 +358,32 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
         foregroundColor: AppTheme.textPrimaryLight,
         elevation: 0,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.transparent,
-                  AppTheme.primaryColor.withOpacity(0.3),
-                  Colors.transparent,
-                ],
+          preferredSize: Size.fromHeight(_allImages.isNotEmpty ? 58 : 2),
+          child: Column(
+            children: [
+              Container(
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      AppTheme.primaryColor.withValues(alpha: 0.3),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
               ),
-            ),
+              if (_allImages.isNotEmpty) _buildFilterBar(),
+            ],
           ),
         ),
         actions: [
-          if (_allImages.isNotEmpty)
+          if (_filteredImages.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: Center(
                 child: Text(
-                  '${_allImages.length} photo${_allImages.length != 1 ? 's' : ''}',
+                  '${_filteredImages.length} photo${_filteredImages.length != 1 ? 's' : ''}',
                   style: TextStyle(
                     fontSize: 14,
                     color: AppTheme.textSecondaryLight,
@@ -241,7 +401,7 @@ class _PropertyGalleryPageState extends ConsumerState<PropertyGalleryPage>
 }
 
 class _FullScreenGallery extends StatefulWidget {
-  final List<String> images;
+  final List<PropertyImageInfo> images;
   final int initialIndex;
   final String title;
 
@@ -273,11 +433,11 @@ class _FullScreenGalleryState extends State<_FullScreenGallery> {
   }
 
   void _shareCurrent() {
-    Share.share(widget.images[_currentIndex]);
+    Share.share(widget.images[_currentIndex].url);
   }
 
   void _downloadCurrent() async {
-    final url = widget.images[_currentIndex];
+    final url = widget.images[_currentIndex].url;
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -320,12 +480,13 @@ class _FullScreenGalleryState extends State<_FullScreenGallery> {
         itemCount: widget.images.length,
         onPageChanged: (i) => setState(() => _currentIndex = i),
         itemBuilder: (context, index) {
+          final img = widget.images[index];
           return InteractiveViewer(
             minScale: 0.8,
             maxScale: 5,
             child: Center(
               child: CachedNetworkImage(
-                imageUrl: widget.images[index],
+                imageUrl: img.url,
                 fit: BoxFit.contain,
                 placeholder: (context, url) => const Center(
                   child: SizedBox(

@@ -242,8 +242,87 @@ class ColonyDetailPage extends ConsumerWidget {
                         const SizedBox(height: 24),
                       ],
 
-                      // Master Plan
-                      if (colony.masterPlanImage != null) ...[
+                      // Gallery Images
+                      if (colony.galleryImagesData != null &&
+                          colony.galleryImagesData!.isNotEmpty) ...[
+                        Text(
+                          'Gallery',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 150,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: colony.galleryImagesData!.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 12),
+                            itemBuilder: (context, index) {
+                              final imgUrl = colony.galleryImagesData![index];
+                              return GestureDetector(
+                                onTap: () => _showFullScreenImage(
+                                    context, colony.galleryImagesData!, index),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    imgUrl,
+                                    width: 200,
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => Container(
+                                      width: 200,
+                                      height: 150,
+                                      color: Colors.grey.shade200,
+                                      child: const Icon(Icons.image,
+                                          color: Colors.grey),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Layout / Master Plan
+                      if (colony.displayLayoutImage != null) ...[
+                        Text(
+                          'Master Plan / Layout',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        GestureDetector(
+                          onTap: () => _showFullScreenImage(
+                              context, [colony.displayLayoutImage!], 0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              colony.displayLayoutImage!,
+                              height: 250,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 250,
+                                  color: Colors.grey.shade200,
+                                  child: const Center(
+                                    child: Icon(Icons.map_outlined,
+                                        size: 60, color: Colors.grey),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Master Plan (fallback from old field)
+                      if (colony.masterPlanImage != null &&
+                          colony.displayLayoutImage == null) ...[
                         Text(
                           'Master Plan',
                           style: Theme.of(context).textTheme.titleLarge
@@ -285,6 +364,138 @@ class ColonyDetailPage extends ConsumerWidget {
                             icon: const Icon(Icons.grid_view),
                             label: const Text('View Plot Grid'),
                           ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Video Tour
+                      if (colony.youtubeVideoUrl != null &&
+                          colony.youtubeVideoUrl!.isNotEmpty) ...[
+                        Text(
+                          'Video Tour',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        GestureDetector(
+                          onTap: () => launchUrl(
+                            Uri.parse(colony.youtubeVideoUrl!),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                          child: Container(
+                            height: 200,
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.play_circle_fill,
+                                      size: 64, color: Colors.white),
+                                  SizedBox(height: 8),
+                                  Text('Watch Video Tour',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 16)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Virtual Tour
+                      if (colony.virtualTourUrl != null &&
+                          colony.virtualTourUrl!.isNotEmpty) ...[
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => launchUrl(
+                              Uri.parse(colony.virtualTourUrl!),
+                              mode: LaunchMode.externalApplication,
+                            ),
+                            icon: const Icon(Icons.view_in_ar),
+                            label: const Text('Explore Virtual Tour'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.all(16),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Documents
+                      if (colony.brochurePath != null &&
+                          colony.brochurePath!.isNotEmpty) ...[
+                        Text(
+                          'Documents',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDocumentTile(
+                          context,
+                          icon: Icons.picture_as_pdf,
+                          title: 'Download Brochure',
+                          onTap: () => launchUrl(
+                            Uri.parse(colony.brochurePath!),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Location on Map
+                      if (colony.directionsUrl != null) ...[
+                        Text(
+                          'Location',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => launchUrl(
+                              Uri.parse(colony.directionsUrl!),
+                              mode: LaunchMode.externalApplication,
+                            ),
+                            icon: const Icon(Icons.directions),
+                            label: const Text('Get Directions on Google Maps'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.all(16),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Nearby Places
+                      if (colony.nearbyPlacesList.isNotEmpty) ...[
+                        Text(
+                          'Nearby Places',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: colony.nearbyPlacesList.map((place) {
+                            return Chip(
+                              avatar: const Icon(
+                                Icons.place_outlined,
+                                color: AppTheme.primaryColor,
+                                size: 18,
+                              ),
+                              label: Text(place),
+                              backgroundColor: AppTheme.primaryColor.withValues(
+                                alpha: 0.1,
+                              ),
+                            );
+                          }).toList(),
                         ),
                         const SizedBox(height: 24),
                       ],
@@ -437,6 +648,36 @@ class ColonyDetailPage extends ConsumerWidget {
     );
   }
 
+  void _showFullScreenImage(
+      BuildContext context, List<String> images, int initialIndex) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => _FullScreenImageViewer(
+          images: images,
+          initialIndex: initialIndex,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocumentTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: AppTheme.primaryColor),
+      title: Text(title),
+      trailing: const Icon(Icons.download_outlined),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      onTap: onTap,
+    );
+  }
+
   Widget _buildPlotStats(BuildContext context, ColonyModel colony) {
     final stats = [
       {
@@ -486,6 +727,76 @@ class ColonyDetailPage extends ConsumerWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class _FullScreenImageViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const _FullScreenImageViewer({
+    required this.images,
+    this.initialIndex = 0,
+  });
+
+  @override
+  State<_FullScreenImageViewer> createState() => _FullScreenImageViewerState();
+}
+
+class _FullScreenImageViewerState extends State<_FullScreenImageViewer> {
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: Text(
+          '${_currentIndex + 1} / ${widget.images.length}',
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.images.length,
+        onPageChanged: (index) {
+          setState(() => _currentIndex = index);
+        },
+        itemBuilder: (context, index) {
+          return InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: Center(
+              child: Image.network(
+                widget.images[index],
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.broken_image,
+                  color: Colors.white54,
+                  size: 80,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

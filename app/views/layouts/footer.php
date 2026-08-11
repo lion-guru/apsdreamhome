@@ -168,29 +168,40 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </div>
 </footer>
 <!-- Sticky Mobile Bottom Navigation -->
-<div class="mobile-bottom-nav d-lg-none">
-    <a href="<?php echo BASE_URL; ?>/" class="nav-item">
+<div class="mobile-bottom-nav d-lg-none" id="mobileBottomNav">
+    <a href="<?php echo BASE_URL; ?>/" class="nav-item" data-nav-item="home" data-label="Home">
         <i class="fas fa-home"></i>
-        <span><?= __('home') ?></span>
+        <span>Home</span>
     </a>
-    <a href="<?php echo BASE_URL; ?>/properties" class="nav-item">
-        <i class="fas fa-search"></i>
-        <span><?= __('search') ?></span>
+    <a href="<?php echo BASE_URL; ?>/properties" class="nav-item" data-nav-item="properties" data-label="Properties">
+        <i class="fas fa-building"></i>
+        <span>Properties</span>
     </a>
-    <a href="<?php echo BASE_URL; ?>/post-property" class="nav-item nav-item-highlight">
+    <a href="<?php echo BASE_URL; ?>/plots" class="nav-item" data-nav-item="plots" data-label="Plots">
+        <i class="fas fa-vector-square"></i>
+        <span>Plots</span>
+    </a>
+    <a href="<?php echo BASE_URL; ?>/list-property" class="nav-item nav-item-highlight" data-nav-item="post" data-label="Post">
         <div class="highlight-circle">
             <i class="fas fa-plus"></i>
         </div>
         <span>Post</span>
     </a>
-    <a href="<?php echo BASE_URL; ?>/contact" class="nav-item">
+    <a href="<?php echo BASE_URL; ?>/contact" class="nav-item" data-nav-item="contact" data-label="Contact">
         <i class="fas fa-phone-alt"></i>
-        <span>Call</span>
+        <span>Contact</span>
     </a>
-    <a href="<?php echo BASE_URL; ?>/admin/login" class="nav-item">
+    <?php if (isset($_SESSION['user_id']) || isset($_SESSION['admin_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id'])): ?>
+    <a href="<?php echo BASE_URL; ?>/user/notifications" class="nav-item" data-nav-item="notifications" data-label="Notification">
+        <i class="fas fa-bell"></i>
+        <span>Alert</span>
+    </a>
+    <?php else: ?>
+    <a href="<?php echo BASE_URL; ?>/login" class="nav-item" data-nav-item="login" data-label="Login">
         <i class="fas fa-user"></i>
-        <span>Profile</span>
+        <span>My APS</span>
     </a>
+    <?php endif; ?>
 </div>
 
 <!-- APS Premium Animations (scroll reveal + card tilt) -->

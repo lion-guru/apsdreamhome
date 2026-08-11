@@ -39,6 +39,27 @@
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
   }
+
+  /* Remove 300ms tap delay on buttons and links (touch-action: manipulation) */
+  button,
+  .btn,
+  .nav-link,
+  .mobile-bottom-nav .nav-item,
+  .mobile-drawer .drawer-nav .nav-link,
+  [data-mobile-drawer-toggle],
+  .nav-link,
+  a.btn,
+  .form-control:focus,
+  .form-select:focus {
+    touch-action: manipulation;
+  }
+
+  /* Smooth tap highlight on mobile */
+  .mobile-bottom-nav .nav-item,
+  .mobile-drawer .drawer-nav .nav-link,
+  .props-grid-card:active {
+    -webkit-tap-highlight-color: rgba(13, 148, 136, 0.15);
+  }
 }
 
 /* ============================================
@@ -543,6 +564,13 @@
 .mobile-bottom-nav .nav-item.active {
   color: #0d9488;
 }
+.mobile-bottom-nav .nav-item.active span,
+.mobile-bottom-nav .nav-item.active i {
+  color: #0d9488;
+}
+.mobile-bottom-nav .nav-item-highlight .highlight-circle {
+  border-color: #d4af37;
+}
 .mobile-bottom-nav .nav-item-highlight {
   position: relative;
   top: -15px;
@@ -811,5 +839,69 @@
   /* Add padding to body so content doesn't hide behind bottom nav */
   body {
     padding-bottom: calc(65px + env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Mobile lightbox enhancements */
+  .n-stage {
+    touch-action: manipulation;
+  }
+
+  .n-image {
+    max-height: 85vh;
+    max-width: 95vw;
+    object-fit: contain;
+    touch-action: none;
+  }
+
+  .n-stage .n-image:active {
+    cursor: grabbing;
+  }
+
+  /* Larger close button on mobile */
+  .n-close {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    right: 12px;
+    top: 12px;
+  }
+
+  /* Larger navigation arrows on mobile */
+  .n-navigation .n-prev,
+  .n-navigation .n-next {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+  }
+
+  .n-navigation .n-prev {
+    left: 8px;
+  }
+
+  .n-navigation .n-next {
+    right: 8px;
+  }
+
+  /* Prevent double-tap zoom on interactive elements */
+  .n-thumbs-container {
+    touch-action: scroll;
+  }
+}
+
+/* Double-tap to zoom indicator on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .n-stage::after {
+    content: "Double-tap to zoom";
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    opacity: 0.7;
+    pointer-events: none;
   }
 }

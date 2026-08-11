@@ -36,6 +36,7 @@ class LayoutManager {
             'navigation_items' => [
                 ['label' => '🏠 Home', 'url' => '/', 'active' => true],
                 ['label' => '🏢 Properties', 'url' => '/properties', 'active' => false],
+                ['label' => '🔧 Tools Hub', 'url' => '/tools-hub', 'active' => false],
                 ['label' => '📚 About', 'url' => '/about', 'active' => false],
                 ['label' => '📞 Contact', 'url' => '/contact', 'active' => false],
                 ['label' => '🔂 Admin', 'url' => '/admin/login', 'active' => false]

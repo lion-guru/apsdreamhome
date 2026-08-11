@@ -122,7 +122,8 @@ class AIAgentService {
 
       final data = response.data;
       if (data is Map<String, dynamic>) {
-        return data['response']?.toString() ??
+        return data['reply']?.toString() ??
+            data['response']?.toString() ??
             data['message']?.toString() ??
             data['data']?['response']?.toString() ??
             'I received your message. How can I help?';
@@ -239,7 +240,8 @@ class AIAgentService {
 
       final data = response.data;
       if (data is Map<String, dynamic>) {
-        return data['response']?.toString() ??
+        return data['reply']?.toString() ??
+            data['response']?.toString() ??
             data['message']?.toString() ??
             data['data']?['response']?.toString() ??
             'Thank you for your message. How can I assist you today?';

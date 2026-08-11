@@ -163,19 +163,42 @@ class PageController extends BaseController
 
     public function team()
     {
+        [$cmsTitle, $pageContent] = $this->loadPageContent('team');
+
         $team = [];
+        $team_groups = [];
+        $category_groups = [];
         try {
-            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC");
+            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, display_order ASC");
             $stmt->execute();
-            $team = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $team = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+            $stmt2 = $this->db->prepare("SELECT * FROM team_groups WHERE is_active = 1 ORDER BY id");
+            $stmt2->execute();
+            $team_groups = $stmt2->fetchAll(\PDO::FETCH_ASSOC);
+
+            $category_groups = [];
+            foreach ($team as $m) {
+                $cat = !empty($m->category) ? ucfirst(str_replace('_', ' ', $m->category)) : 'Team';
+                if (!isset($category_groups[$cat])) {
+                    $category_groups[$cat] = [];
+                }
+                $category_groups[$cat][] = $m;
+            }
         } catch (\Exception $e) {
             error_log("Team error: " . $e->getMessage());
+            $team = [];
+            $team_groups = [];
+            $category_groups = [];
         }
 
         $data = [
-            'page_title' => 'Our Team - APS Dream Home',
+            'page_title' => ($cmsTitle ?: 'Our Team') . ' - APS Dream Home',
             'page_description' => 'Meet the team behind APS Dream Home',
-            'team' => $team,
+            'team_members' => $team,
+            'team_groups' => $team_groups,
+            'category_groups' => $category_groups,
+            'pageContent' => $pageContent,
         ];
         $this->render('pages/team', $data);
     }
@@ -658,10 +681,21 @@ public function navigation()
     public function constructionServices()
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('construction-services');
+
+        $projects = [];
+        try {
+            $stmt = $this->db->query("SELECT s.*, COUNT(p.id) as plot_count FROM sites s LEFT JOIN plots p ON p.colony_id = s.id WHERE s.status IN ('active', 'under_development') ORDER BY s.site_name LIMIT 6");
+            $projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
+            $projects = [];
+        }
+
         $data = [
             'page_title' => ($cmsTitle ?: 'Construction Services') . ' - APS Dream Home',
             'page_description' => 'Construction services',
             'pageContent' => $pageContent,
+            'projects' => $projects,
         ];
         $this->render('pages/construction_services', $data);
     }

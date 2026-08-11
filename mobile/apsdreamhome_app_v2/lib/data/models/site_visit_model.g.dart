@@ -6,9 +6,9 @@ part of 'site_visit_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SiteVisitModelImpl _$$SiteVisitModelImplFromJson(
+_SiteVisitModel _$SiteVisitModelFromJson(
   Map<String, dynamic> json,
-) => _$SiteVisitModelImpl(
+) => _SiteVisitModel(
   id: json['id'] as String? ?? '',
   agentId: json['agentId'] as String? ?? '',
   agentName: json['agentName'] as String? ?? '',
@@ -58,78 +58,75 @@ _$SiteVisitModelImpl _$$SiteVisitModelImplFromJson(
       : DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$$SiteVisitModelImplToJson(
-  _$SiteVisitModelImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'agentId': instance.agentId,
-  'agentName': instance.agentName,
-  'customerId': instance.customerId,
-  'customerName': instance.customerName,
-  'customerPhone': instance.customerPhone,
-  'colonyId': instance.colonyId,
-  'colonyName': instance.colonyName,
-  'plotIdsShown': instance.plotIdsShown,
-  'plotNumbersShown': instance.plotNumbersShown,
-  'latitude': instance.latitude,
-  'longitude': instance.longitude,
-  'address': instance.address,
-  'accuracy': instance.accuracy,
-  'visitStartTime': instance.visitStartTime.toIso8601String(),
-  'visitEndTime': instance.visitEndTime?.toIso8601String(),
-  'duration': instance.duration?.inMicroseconds,
-  'purpose': instance.purpose,
-  'customerFeedback': instance.customerFeedback,
-  'agentNotes': instance.agentNotes,
-  'outcome': instance.outcome,
-  'followUpRequired': instance.followUpRequired,
-  'followUpDate': instance.followUpDate?.toIso8601String(),
-  'followUpType': instance.followUpType,
-  'photos': instance.photos,
-  'videos': instance.videos,
-  'voiceNoteUrl': instance.voiceNoteUrl,
-  'isOfflineCreated': instance.isOfflineCreated,
-  'syncedAt': instance.syncedAt?.toIso8601String(),
-  'createdAt': instance.createdAt?.toIso8601String(),
-  'updatedAt': instance.updatedAt?.toIso8601String(),
-};
+Map<String, dynamic> _$SiteVisitModelToJson(_SiteVisitModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'agentId': instance.agentId,
+      'agentName': instance.agentName,
+      'customerId': instance.customerId,
+      'customerName': instance.customerName,
+      'customerPhone': instance.customerPhone,
+      'colonyId': instance.colonyId,
+      'colonyName': instance.colonyName,
+      'plotIdsShown': instance.plotIdsShown,
+      'plotNumbersShown': instance.plotNumbersShown,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+      'address': instance.address,
+      'accuracy': instance.accuracy,
+      'visitStartTime': instance.visitStartTime.toIso8601String(),
+      'visitEndTime': instance.visitEndTime?.toIso8601String(),
+      'duration': instance.duration?.inMicroseconds,
+      'purpose': instance.purpose,
+      'customerFeedback': instance.customerFeedback,
+      'agentNotes': instance.agentNotes,
+      'outcome': instance.outcome,
+      'followUpRequired': instance.followUpRequired,
+      'followUpDate': instance.followUpDate?.toIso8601String(),
+      'followUpType': instance.followUpType,
+      'photos': instance.photos,
+      'videos': instance.videos,
+      'voiceNoteUrl': instance.voiceNoteUrl,
+      'isOfflineCreated': instance.isOfflineCreated,
+      'syncedAt': instance.syncedAt?.toIso8601String(),
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
+    };
 
-_$LiveLocationModelImpl _$$LiveLocationModelImplFromJson(
-  Map<String, dynamic> json,
-) => _$LiveLocationModelImpl(
-  userId: json['userId'] as String? ?? '',
-  userName: json['userName'] as String? ?? '',
-  userType: json['userType'] as String? ?? '',
-  latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
-  longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
-  timestamp: DateTime.parse(json['timestamp'] as String),
-  speed: (json['speed'] as num?)?.toDouble(),
-  heading: (json['heading'] as num?)?.toDouble(),
-  accuracy: (json['accuracy'] as num?)?.toDouble(),
-  isSharingEnabled: json['isSharingEnabled'] as bool?,
-  sharingStartedAt: json['sharingStartedAt'] == null
-      ? null
-      : DateTime.parse(json['sharingStartedAt'] as String),
-  sharingExpiresAt: json['sharingExpiresAt'] == null
-      ? null
-      : DateTime.parse(json['sharingExpiresAt'] as String),
-  sharedWith: json['sharedWith'] as String?,
-);
+_LiveLocationModel _$LiveLocationModelFromJson(Map<String, dynamic> json) =>
+    _LiveLocationModel(
+      userId: json['userId'] as String? ?? '',
+      userName: json['userName'] as String? ?? '',
+      userType: json['userType'] as String? ?? '',
+      latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+      longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      speed: (json['speed'] as num?)?.toDouble(),
+      heading: (json['heading'] as num?)?.toDouble(),
+      accuracy: (json['accuracy'] as num?)?.toDouble(),
+      isSharingEnabled: json['isSharingEnabled'] as bool?,
+      sharingStartedAt: json['sharingStartedAt'] == null
+          ? null
+          : DateTime.parse(json['sharingStartedAt'] as String),
+      sharingExpiresAt: json['sharingExpiresAt'] == null
+          ? null
+          : DateTime.parse(json['sharingExpiresAt'] as String),
+      sharedWith: json['sharedWith'] as String?,
+    );
 
-Map<String, dynamic> _$$LiveLocationModelImplToJson(
-  _$LiveLocationModelImpl instance,
-) => <String, dynamic>{
-  'userId': instance.userId,
-  'userName': instance.userName,
-  'userType': instance.userType,
-  'latitude': instance.latitude,
-  'longitude': instance.longitude,
-  'timestamp': instance.timestamp.toIso8601String(),
-  'speed': instance.speed,
-  'heading': instance.heading,
-  'accuracy': instance.accuracy,
-  'isSharingEnabled': instance.isSharingEnabled,
-  'sharingStartedAt': instance.sharingStartedAt?.toIso8601String(),
-  'sharingExpiresAt': instance.sharingExpiresAt?.toIso8601String(),
-  'sharedWith': instance.sharedWith,
-};
+Map<String, dynamic> _$LiveLocationModelToJson(_LiveLocationModel instance) =>
+    <String, dynamic>{
+      'userId': instance.userId,
+      'userName': instance.userName,
+      'userType': instance.userType,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'speed': instance.speed,
+      'heading': instance.heading,
+      'accuracy': instance.accuracy,
+      'isSharingEnabled': instance.isSharingEnabled,
+      'sharingStartedAt': instance.sharingStartedAt?.toIso8601String(),
+      'sharingExpiresAt': instance.sharingExpiresAt?.toIso8601String(),
+      'sharedWith': instance.sharedWith,
+    };

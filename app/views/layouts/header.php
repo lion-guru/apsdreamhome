@@ -269,7 +269,7 @@ $is_home = ($current_path === '/');
 $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-header fixed-top';
 ?>
     <header class="<?= $header_class ?>" id="mainHeader">
-        <nav class="navbar navbar-expand-xl">
+        <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                     <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo"
@@ -290,12 +290,125 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
                     <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" style="display: none;"></div>
                 </form>
 
-                <button class="navbar-toggler" type="button" id="navbarToggler" aria-controls="navbarNav"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <button class="navbar-toggler" type="button" id="navbarToggler"
+        data-mobile-drawer-toggle="true" aria-controls="navbarNav"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
+    <!-- Mobile Off-Canvas Side Drawer -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
+    <nav class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+        <div class="mobile-drawer-header">
+            <span class="drawer-brand">APS Dream Home</span>
+            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-drawer-nav">
+            <ul class="navbar-nav" style="margin-left: 0;">
+                <?php
+                $mobile_nav_items = array_merge($nav_items ?? [], [
+                    ['label' => __('contact_us'), 'url' => '/contact', 'icon' => 'fas fa-phone'],
+                    ['label' => 'Tools Hub', 'url' => '/tools-hub', 'icon' => 'fas fa-flask'],
+                ]);
+                if (isset($nav_items[16]) && $nav_items[16]['highlight'] ?? false) {
+                    $mobile_nav_items[] = $nav_items[16];
+                }
+
+                $current_path = $GLOBALS['current_path'] ?? '/';
+                foreach ($mobile_nav_items as $item):
+                    if (isset($item['submenu'])):
+                        $is_active = array_reduce($item['submenu'], function ($carry, $sub_item) use ($current_path) {
+                            return $carry || $current_path === $sub_item['url'];
+                        }, false);
+                        $active_class = $is_active ? 'active' : '';
+                ?>
+                        <li class="nav-item">
+                            <a class="nav-link dropdown-toggle <?php echo $active_class; ?>" href="#"
+                                data-submenu-toggle="true" aria-expanded="false">
+                                <i class="<?php echo $item['icon']; ?> me-1"></i>
+                                <?php echo htmlspecialchars($item['label']); ?>
+                                <i class="fas fa-chevron-right ms-auto"></i>
+                            </a>
+                            <div class="dropdown-menu">
+                                <?php foreach ($item['submenu'] as $sub_item):
+                                    if (isset($sub_item['disabled']) && $sub_item['disabled']): ?>
+                                        <span class="dropdown-header"><i class="<?php echo $sub_item['icon']; ?> me-2"></i>
+                                            <?php echo htmlspecialchars($sub_item['label']); ?></span>
+                                    <?php else:
+                                        $active_sub = ($current_path === $sub_item['url']) ? 'active' : '';
+                                        $badge = $sub_item['badge'] ?? '';
+                                        $badge_html = $badge ? '&nbsp;<span class="badge bg-primary ms-2">' . $badge . '</span>' : '';
+                                    ?>
+                                        <a class="dropdown-item <?php echo $active_sub; ?>"
+                                            href="<?php echo BASE_URL . $sub_item['url']; ?>">
+                                            <i class="<?php echo $sub_item['icon']; ?> me-2"></i>
+                                            <?php echo htmlspecialchars($sub_item['label']); ?></a>
+                                    <?php endif; endforeach; ?>
+                            </div>
+                        </li>
+                    <?php else:
+                        $active_class = ($current_path === $item['url']) ? 'active' : '';
+                        $highlight_class = (isset($item['highlight']) && $item['highlight']) ? 'highlight-link' : '';
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo $active_class . ' ' . $highlight_class; ?>"
+                                href="<?php echo BASE_URL . $item['url']; ?>">
+                                <i class="<?php echo $item['icon']; ?> me-1"></i>
+                                <?php echo htmlspecialchars($item['label']); ?>
+                            </a>
+                        </li>
+                    <?php endif; endforeach; ?>
+
+                <!-- Mobile drawer user section -->
+                <?php if ($isLoggedIn): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE_URL; ?>/user/notifications">
+                            <i class="fas fa-bell me-1"></i>
+                            <?php echo __('notifications'); ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE_URL . $dashboardUrl; ?>">
+                            <i class="fas <?php echo $userIcon; ?> me-1"></i>
+                            <?php echo htmlspecialchars($userName); ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="<?php echo BASE_URL . $logoutUrl; ?>">
+                            <i class="fas fa-sign-out-alt me-1"></i>
+                            <?php echo __('logout'); ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE_URL; ?>/login">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            <?php echo __('login'); ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE_URL; ?>/register">
+                            <i class="fas fa-user-plus me-1"></i>
+                            <?php echo __('register'); ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/login">
+                            <i class="fas fa-user-lock me-1"></i>
+                            <?php echo __('admin'); ?>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav align-items-center" style="margin-left: 0;">
                         <?php
                         $nav_items = [
@@ -363,6 +476,7 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
                                 ]
                             ],
                             ['label' => __('contact_us'), 'url' => '/contact', 'icon' => 'fas fa-phone'],
+                            ['label' => 'Tools Hub', 'url' => '/tools-hub', 'icon' => 'fas fa-flask'],
                             ['label' => __('nav_post_property'), 'url' => '/list-property', 'icon' => 'fas fa-plus-circle', 'highlight' => true]
                         ];
 

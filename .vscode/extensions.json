@@ -48,7 +48,8 @@
     // Project Management
     "ms-vscode.vscode-tasks",
     "ms-vscode.vscode-project",
-    "ms-vscode.vscode-workspaces"
+    "ms-vscode.vscode-workspaces",
+    "saoudrizwan.claude-dev"
   ],
   "unwantedRecommendations": ["ms-vscode.vscode-php", "felixfbecker.php-debug"]
 }

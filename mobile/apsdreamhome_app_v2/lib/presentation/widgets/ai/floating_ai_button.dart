@@ -21,15 +21,20 @@ class FloatingAIButton extends StatelessWidget {
         width: isMini ? 48 : 64,
         height: isMini ? 48 : 64,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF4285F4), Color(0xFF34A853)],
+          gradient: LinearGradient(
+            colors: isMini
+                ? const [Color(0xFF7C3AED), Color(0xFF9333EA)]
+                : const [Color(0xFF4285F4), Color(0xFF34A853)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(isMini ? 24 : 32),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4285F4).withValues(alpha: 0.4),
+              color: (isMini
+                      ? const Color(0xFF7C3AED)
+                      : const Color(0xFF4285F4))
+                  .withValues(alpha: 0.4),
               blurRadius: 12,
               spreadRadius: 2,
               offset: const Offset(0, 4),
@@ -40,7 +45,7 @@ class FloatingAIButton extends StatelessWidget {
           child: Icon(
             isMini ? Icons.auto_awesome : Icons.chat_bubble,
             color: Colors.white,
-            size: isMini ? 24 : 28,
+            size: isMini ? 22 : 28,
           ),
         ),
       ),

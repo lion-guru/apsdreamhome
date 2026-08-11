@@ -6,124 +6,124 @@ part of 'emi_collection_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$EMICollectionAgentImpl _$$EMICollectionAgentImplFromJson(
-  Map<String, dynamic> json,
-) => _$EMICollectionAgentImpl(
-  id: json['id'] as String,
-  name: json['name'] as String,
-  phone: json['phone'] as String,
-  email: json['email'] as String,
-  photoUrl: json['photoUrl'] as String?,
-  aadharNumber: json['aadharNumber'] as String?,
-  address: json['address'] as String?,
-  employeeId: json['employeeId'] as String,
-  joiningDate: DateTime.parse(json['joiningDate'] as String),
-  agentType: $enumDecode(_$CollectionAgentTypeEnumMap, json['agentType']),
-  assignedArea: CollectionArea.fromJson(
-    json['assignedArea'] as Map<String, dynamic>,
-  ),
-  monthlySalary: (json['monthlySalary'] as num).toDouble(),
-  commissionPerCollection: (json['commissionPerCollection'] as num?)
-      ?.toDouble(),
-  commissionPercentage: (json['commissionPercentage'] as num?)?.toDouble(),
-  incentivePerTarget: (json['incentivePerTarget'] as num?)?.toDouble(),
-  assignedCustomerIds:
-      (json['assignedCustomerIds'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList() ??
-      const [],
-  customerAssignments:
-      (json['customerAssignments'] as List<dynamic>?)
-          ?.map(
-            (e) => EMICustomerAssignment.fromJson(e as Map<String, dynamic>),
-          )
-          .toList() ??
-      const [],
-  dailyReports:
-      (json['dailyReports'] as List<dynamic>?)
-          ?.map(
-            (e) => DailyCollectionReport.fromJson(e as Map<String, dynamic>),
-          )
-          .toList() ??
-      const [],
-  monthlyReports:
-      (json['monthlyReports'] as List<dynamic>?)
-          ?.map(
-            (e) => MonthlyCollectionPerformance.fromJson(
-              e as Map<String, dynamic>,
-            ),
-          )
-          .toList() ??
-      const [],
-  currentMonthCollections:
-      (json['currentMonthCollections'] as num?)?.toInt() ?? 0,
-  currentMonthAmount: (json['currentMonthAmount'] as num?)?.toDouble() ?? 0,
-  currentMonthCommission:
-      (json['currentMonthCommission'] as num?)?.toDouble() ?? 0,
-  currentMonthTarget: (json['currentMonthTarget'] as num?)?.toInt() ?? 0,
-  targetAchievement: (json['targetAchievement'] as num?)?.toDouble() ?? 0,
-  locationHistory:
-      (json['locationHistory'] as List<dynamic>?)
-          ?.map((e) => LocationTracking.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
-  isCurrentlyActive: json['isCurrentlyActive'] as bool?,
-  lastLocation: json['lastLocation'] == null
-      ? null
-      : GeoLocation.fromJson(json['lastLocation'] as Map<String, dynamic>),
-  lastLocationUpdate: json['lastLocationUpdate'] == null
-      ? null
-      : DateTime.parse(json['lastLocationUpdate'] as String),
-  status: $enumDecode(_$AgentStatusEnumMap, json['status']),
-  lastActiveAt: json['lastActiveAt'] == null
-      ? null
-      : DateTime.parse(json['lastActiveAt'] as String),
-  documentUrls:
-      (json['documentUrls'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList() ??
-      const [],
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
-);
+_EMICollectionAgent _$EMICollectionAgentFromJson(Map<String, dynamic> json) =>
+    _EMICollectionAgent(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      phone: json['phone'] as String,
+      email: json['email'] as String,
+      photoUrl: json['photoUrl'] as String?,
+      aadharNumber: json['aadharNumber'] as String?,
+      address: json['address'] as String?,
+      employeeId: json['employeeId'] as String,
+      joiningDate: DateTime.parse(json['joiningDate'] as String),
+      agentType: $enumDecode(_$CollectionAgentTypeEnumMap, json['agentType']),
+      assignedArea: CollectionArea.fromJson(
+        json['assignedArea'] as Map<String, dynamic>,
+      ),
+      monthlySalary: (json['monthlySalary'] as num).toDouble(),
+      commissionPerCollection: (json['commissionPerCollection'] as num?)
+          ?.toDouble(),
+      commissionPercentage: (json['commissionPercentage'] as num?)?.toDouble(),
+      incentivePerTarget: (json['incentivePerTarget'] as num?)?.toDouble(),
+      assignedCustomerIds:
+          (json['assignedCustomerIds'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      customerAssignments:
+          (json['customerAssignments'] as List<dynamic>?)
+              ?.map(
+                (e) =>
+                    EMICustomerAssignment.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          const [],
+      dailyReports:
+          (json['dailyReports'] as List<dynamic>?)
+              ?.map(
+                (e) =>
+                    DailyCollectionReport.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          const [],
+      monthlyReports:
+          (json['monthlyReports'] as List<dynamic>?)
+              ?.map(
+                (e) => MonthlyCollectionPerformance.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          const [],
+      currentMonthCollections:
+          (json['currentMonthCollections'] as num?)?.toInt() ?? 0,
+      currentMonthAmount: (json['currentMonthAmount'] as num?)?.toDouble() ?? 0,
+      currentMonthCommission:
+          (json['currentMonthCommission'] as num?)?.toDouble() ?? 0,
+      currentMonthTarget: (json['currentMonthTarget'] as num?)?.toInt() ?? 0,
+      targetAchievement: (json['targetAchievement'] as num?)?.toDouble() ?? 0,
+      locationHistory:
+          (json['locationHistory'] as List<dynamic>?)
+              ?.map((e) => LocationTracking.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      isCurrentlyActive: json['isCurrentlyActive'] as bool?,
+      lastLocation: json['lastLocation'] == null
+          ? null
+          : GeoLocation.fromJson(json['lastLocation'] as Map<String, dynamic>),
+      lastLocationUpdate: json['lastLocationUpdate'] == null
+          ? null
+          : DateTime.parse(json['lastLocationUpdate'] as String),
+      status: $enumDecode(_$AgentStatusEnumMap, json['status']),
+      lastActiveAt: json['lastActiveAt'] == null
+          ? null
+          : DateTime.parse(json['lastActiveAt'] as String),
+      documentUrls:
+          (json['documentUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+    );
 
-Map<String, dynamic> _$$EMICollectionAgentImplToJson(
-  _$EMICollectionAgentImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'name': instance.name,
-  'phone': instance.phone,
-  'email': instance.email,
-  'photoUrl': instance.photoUrl,
-  'aadharNumber': instance.aadharNumber,
-  'address': instance.address,
-  'employeeId': instance.employeeId,
-  'joiningDate': instance.joiningDate.toIso8601String(),
-  'agentType': _$CollectionAgentTypeEnumMap[instance.agentType]!,
-  'assignedArea': instance.assignedArea,
-  'monthlySalary': instance.monthlySalary,
-  'commissionPerCollection': instance.commissionPerCollection,
-  'commissionPercentage': instance.commissionPercentage,
-  'incentivePerTarget': instance.incentivePerTarget,
-  'assignedCustomerIds': instance.assignedCustomerIds,
-  'customerAssignments': instance.customerAssignments,
-  'dailyReports': instance.dailyReports,
-  'monthlyReports': instance.monthlyReports,
-  'currentMonthCollections': instance.currentMonthCollections,
-  'currentMonthAmount': instance.currentMonthAmount,
-  'currentMonthCommission': instance.currentMonthCommission,
-  'currentMonthTarget': instance.currentMonthTarget,
-  'targetAchievement': instance.targetAchievement,
-  'locationHistory': instance.locationHistory,
-  'isCurrentlyActive': instance.isCurrentlyActive,
-  'lastLocation': instance.lastLocation,
-  'lastLocationUpdate': instance.lastLocationUpdate?.toIso8601String(),
-  'status': _$AgentStatusEnumMap[instance.status]!,
-  'lastActiveAt': instance.lastActiveAt?.toIso8601String(),
-  'documentUrls': instance.documentUrls,
-  'createdAt': instance.createdAt.toIso8601String(),
-  'updatedAt': instance.updatedAt.toIso8601String(),
-};
+Map<String, dynamic> _$EMICollectionAgentToJson(_EMICollectionAgent instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'phone': instance.phone,
+      'email': instance.email,
+      'photoUrl': instance.photoUrl,
+      'aadharNumber': instance.aadharNumber,
+      'address': instance.address,
+      'employeeId': instance.employeeId,
+      'joiningDate': instance.joiningDate.toIso8601String(),
+      'agentType': _$CollectionAgentTypeEnumMap[instance.agentType]!,
+      'assignedArea': instance.assignedArea,
+      'monthlySalary': instance.monthlySalary,
+      'commissionPerCollection': instance.commissionPerCollection,
+      'commissionPercentage': instance.commissionPercentage,
+      'incentivePerTarget': instance.incentivePerTarget,
+      'assignedCustomerIds': instance.assignedCustomerIds,
+      'customerAssignments': instance.customerAssignments,
+      'dailyReports': instance.dailyReports,
+      'monthlyReports': instance.monthlyReports,
+      'currentMonthCollections': instance.currentMonthCollections,
+      'currentMonthAmount': instance.currentMonthAmount,
+      'currentMonthCommission': instance.currentMonthCommission,
+      'currentMonthTarget': instance.currentMonthTarget,
+      'targetAchievement': instance.targetAchievement,
+      'locationHistory': instance.locationHistory,
+      'isCurrentlyActive': instance.isCurrentlyActive,
+      'lastLocation': instance.lastLocation,
+      'lastLocationUpdate': instance.lastLocationUpdate?.toIso8601String(),
+      'status': _$AgentStatusEnumMap[instance.status]!,
+      'lastActiveAt': instance.lastActiveAt?.toIso8601String(),
+      'documentUrls': instance.documentUrls,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+    };
 
 const _$CollectionAgentTypeEnumMap = {
   CollectionAgentType.fullTime: 'fullTime',
@@ -139,9 +139,9 @@ const _$AgentStatusEnumMap = {
   AgentStatus.terminated: 'terminated',
 };
 
-_$CollectionAreaImpl _$$CollectionAreaImplFromJson(
+_CollectionArea _$CollectionAreaFromJson(
   Map<String, dynamic> json,
-) => _$CollectionAreaImpl(
+) => _CollectionArea(
   areaName: json['areaName'] as String,
   state: json['state'] as String,
   district: json['district'] as String,
@@ -155,21 +155,20 @@ _$CollectionAreaImpl _$$CollectionAreaImplFromJson(
   areaManagerId: json['areaManagerId'] as String?,
 );
 
-Map<String, dynamic> _$$CollectionAreaImplToJson(
-  _$CollectionAreaImpl instance,
-) => <String, dynamic>{
-  'areaName': instance.areaName,
-  'state': instance.state,
-  'district': instance.district,
-  'city': instance.city,
-  'colonies': instance.colonies,
-  'pincodes': instance.pincodes,
-  'areaManagerId': instance.areaManagerId,
-};
+Map<String, dynamic> _$CollectionAreaToJson(_CollectionArea instance) =>
+    <String, dynamic>{
+      'areaName': instance.areaName,
+      'state': instance.state,
+      'district': instance.district,
+      'city': instance.city,
+      'colonies': instance.colonies,
+      'pincodes': instance.pincodes,
+      'areaManagerId': instance.areaManagerId,
+    };
 
-_$EMICustomerAssignmentImpl _$$EMICustomerAssignmentImplFromJson(
+_EMICustomerAssignment _$EMICustomerAssignmentFromJson(
   Map<String, dynamic> json,
-) => _$EMICustomerAssignmentImpl(
+) => _EMICustomerAssignment(
   customerId: json['customerId'] as String,
   customerName: json['customerName'] as String,
   customerPhone: json['customerPhone'] as String,
@@ -209,8 +208,8 @@ _$EMICustomerAssignmentImpl _$$EMICustomerAssignmentImplFromJson(
       : DateTime.parse(json['lastCollectedAt'] as String),
 );
 
-Map<String, dynamic> _$$EMICustomerAssignmentImplToJson(
-  _$EMICustomerAssignmentImpl instance,
+Map<String, dynamic> _$EMICustomerAssignmentToJson(
+  _EMICustomerAssignment instance,
 ) => <String, dynamic>{
   'customerId': instance.customerId,
   'customerName': instance.customerName,
@@ -244,8 +243,8 @@ const _$PaymentStatusEnumMap = {
   PaymentStatus.newCustomer: 'newCustomer',
 };
 
-_$PreviousVisitImpl _$$PreviousVisitImplFromJson(Map<String, dynamic> json) =>
-    _$PreviousVisitImpl(
+_PreviousVisit _$PreviousVisitFromJson(Map<String, dynamic> json) =>
+    _PreviousVisit(
       visitDate: DateTime.parse(json['visitDate'] as String),
       outcome: $enumDecode(_$VisitOutcomeEnumMap, json['outcome']),
       amountCollected: (json['amountCollected'] as num?)?.toDouble(),
@@ -253,7 +252,7 @@ _$PreviousVisitImpl _$$PreviousVisitImplFromJson(Map<String, dynamic> json) =>
       customerFeedback: json['customerFeedback'] as String?,
     );
 
-Map<String, dynamic> _$$PreviousVisitImplToJson(_$PreviousVisitImpl instance) =>
+Map<String, dynamic> _$PreviousVisitToJson(_PreviousVisit instance) =>
     <String, dynamic>{
       'visitDate': instance.visitDate.toIso8601String(),
       'outcome': _$VisitOutcomeEnumMap[instance.outcome]!,
@@ -272,9 +271,9 @@ const _$VisitOutcomeEnumMap = {
   VisitOutcome.notInterested: 'notInterested',
 };
 
-_$DailyCollectionReportImpl _$$DailyCollectionReportImplFromJson(
+_DailyCollectionReport _$DailyCollectionReportFromJson(
   Map<String, dynamic> json,
-) => _$DailyCollectionReportImpl(
+) => _DailyCollectionReport(
   id: json['id'] as String,
   date: DateTime.parse(json['date'] as String),
   agentId: json['agentId'] as String,
@@ -317,8 +316,8 @@ _$DailyCollectionReportImpl _$$DailyCollectionReportImplFromJson(
   adminNotes: json['adminNotes'] as String?,
 );
 
-Map<String, dynamic> _$$DailyCollectionReportImplToJson(
-  _$DailyCollectionReportImpl instance,
+Map<String, dynamic> _$DailyCollectionReportToJson(
+  _DailyCollectionReport instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'date': instance.date.toIso8601String(),
@@ -353,61 +352,61 @@ const _$ReportSubmissionStatusEnumMap = {
   ReportSubmissionStatus.disputed: 'disputed',
 };
 
-_$CollectionRecordImpl _$$CollectionRecordImplFromJson(
-  Map<String, dynamic> json,
-) => _$CollectionRecordImpl(
-  customerId: json['customerId'] as String,
-  customerName: json['customerName'] as String,
-  bookingId: json['bookingId'] as String,
-  collectionTime: DateTime.parse(json['collectionTime'] as String),
-  amount: (json['amount'] as num).toDouble(),
-  mode: $enumDecode(_$PaymentModeEnumMap, json['mode']),
-  emiNumber: (json['emiNumber'] as num?)?.toInt(),
-  lateFee: (json['lateFee'] as num?)?.toDouble(),
-  chequeNumber: json['chequeNumber'] as String?,
-  transactionId: json['transactionId'] as String?,
-  receiptNumber: json['receiptNumber'] as String?,
-  location: json['location'] == null
-      ? null
-      : GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
-  addressAtCollection: json['addressAtCollection'] as String?,
-  photoUrls:
-      (json['photoUrls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-      const [],
-  signatureUrl: json['signatureUrl'] as String?,
-  notes: json['notes'] as String?,
-  isVerified: json['isVerified'] as bool?,
-  verifiedAt: json['verifiedAt'] == null
-      ? null
-      : DateTime.parse(json['verifiedAt'] as String),
-  verifiedBy: json['verifiedBy'] as String?,
-  disputeReason: json['disputeReason'] as String?,
-);
+_CollectionRecord _$CollectionRecordFromJson(Map<String, dynamic> json) =>
+    _CollectionRecord(
+      customerId: json['customerId'] as String,
+      customerName: json['customerName'] as String,
+      bookingId: json['bookingId'] as String,
+      collectionTime: DateTime.parse(json['collectionTime'] as String),
+      amount: (json['amount'] as num).toDouble(),
+      mode: $enumDecode(_$PaymentModeEnumMap, json['mode']),
+      emiNumber: (json['emiNumber'] as num?)?.toInt(),
+      lateFee: (json['lateFee'] as num?)?.toDouble(),
+      chequeNumber: json['chequeNumber'] as String?,
+      transactionId: json['transactionId'] as String?,
+      receiptNumber: json['receiptNumber'] as String?,
+      location: json['location'] == null
+          ? null
+          : GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
+      addressAtCollection: json['addressAtCollection'] as String?,
+      photoUrls:
+          (json['photoUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      signatureUrl: json['signatureUrl'] as String?,
+      notes: json['notes'] as String?,
+      isVerified: json['isVerified'] as bool?,
+      verifiedAt: json['verifiedAt'] == null
+          ? null
+          : DateTime.parse(json['verifiedAt'] as String),
+      verifiedBy: json['verifiedBy'] as String?,
+      disputeReason: json['disputeReason'] as String?,
+    );
 
-Map<String, dynamic> _$$CollectionRecordImplToJson(
-  _$CollectionRecordImpl instance,
-) => <String, dynamic>{
-  'customerId': instance.customerId,
-  'customerName': instance.customerName,
-  'bookingId': instance.bookingId,
-  'collectionTime': instance.collectionTime.toIso8601String(),
-  'amount': instance.amount,
-  'mode': _$PaymentModeEnumMap[instance.mode]!,
-  'emiNumber': instance.emiNumber,
-  'lateFee': instance.lateFee,
-  'chequeNumber': instance.chequeNumber,
-  'transactionId': instance.transactionId,
-  'receiptNumber': instance.receiptNumber,
-  'location': instance.location,
-  'addressAtCollection': instance.addressAtCollection,
-  'photoUrls': instance.photoUrls,
-  'signatureUrl': instance.signatureUrl,
-  'notes': instance.notes,
-  'isVerified': instance.isVerified,
-  'verifiedAt': instance.verifiedAt?.toIso8601String(),
-  'verifiedBy': instance.verifiedBy,
-  'disputeReason': instance.disputeReason,
-};
+Map<String, dynamic> _$CollectionRecordToJson(_CollectionRecord instance) =>
+    <String, dynamic>{
+      'customerId': instance.customerId,
+      'customerName': instance.customerName,
+      'bookingId': instance.bookingId,
+      'collectionTime': instance.collectionTime.toIso8601String(),
+      'amount': instance.amount,
+      'mode': _$PaymentModeEnumMap[instance.mode]!,
+      'emiNumber': instance.emiNumber,
+      'lateFee': instance.lateFee,
+      'chequeNumber': instance.chequeNumber,
+      'transactionId': instance.transactionId,
+      'receiptNumber': instance.receiptNumber,
+      'location': instance.location,
+      'addressAtCollection': instance.addressAtCollection,
+      'photoUrls': instance.photoUrls,
+      'signatureUrl': instance.signatureUrl,
+      'notes': instance.notes,
+      'isVerified': instance.isVerified,
+      'verifiedAt': instance.verifiedAt?.toIso8601String(),
+      'verifiedBy': instance.verifiedBy,
+      'disputeReason': instance.disputeReason,
+    };
 
 const _$PaymentModeEnumMap = {
   PaymentMode.cash: 'cash',
@@ -418,9 +417,9 @@ const _$PaymentModeEnumMap = {
   PaymentMode.bankTransfer: 'bankTransfer',
 };
 
-_$MonthlyCollectionPerformanceImpl _$$MonthlyCollectionPerformanceImplFromJson(
+_MonthlyCollectionPerformance _$MonthlyCollectionPerformanceFromJson(
   Map<String, dynamic> json,
-) => _$MonthlyCollectionPerformanceImpl(
+) => _MonthlyCollectionPerformance(
   id: json['id'] as String,
   year: (json['year'] as num).toInt(),
   month: (json['month'] as num).toInt(),
@@ -451,8 +450,8 @@ _$MonthlyCollectionPerformanceImpl _$$MonthlyCollectionPerformanceImplFromJson(
       : DateTime.parse(json['paidAt'] as String),
 );
 
-Map<String, dynamic> _$$MonthlyCollectionPerformanceImplToJson(
-  _$MonthlyCollectionPerformanceImpl instance,
+Map<String, dynamic> _$MonthlyCollectionPerformanceToJson(
+  _MonthlyCollectionPerformance instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'year': instance.year,
@@ -482,49 +481,46 @@ Map<String, dynamic> _$$MonthlyCollectionPerformanceImplToJson(
   'paidAt': instance.paidAt?.toIso8601String(),
 };
 
-_$LocationTrackingImpl _$$LocationTrackingImplFromJson(
-  Map<String, dynamic> json,
-) => _$LocationTrackingImpl(
-  timestamp: DateTime.parse(json['timestamp'] as String),
-  location: GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
-  activity: json['activity'] as String?,
-  customerId: json['customerId'] as String?,
-);
-
-Map<String, dynamic> _$$LocationTrackingImplToJson(
-  _$LocationTrackingImpl instance,
-) => <String, dynamic>{
-  'timestamp': instance.timestamp.toIso8601String(),
-  'location': instance.location,
-  'activity': instance.activity,
-  'customerId': instance.customerId,
-};
-
-_$EMIDueListImpl _$$EMIDueListImplFromJson(Map<String, dynamic> json) =>
-    _$EMIDueListImpl(
-      id: json['id'] as String,
-      generatedAt: DateTime.parse(json['generatedAt'] as String),
-      agentId: json['agentId'] as String,
-      forDate: DateTime.parse(json['forDate'] as String),
-      dues:
-          (json['dues'] as List<dynamic>?)
-              ?.map((e) => EMIDueItem.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      totalDues: (json['totalDues'] as num?)?.toInt() ?? 0,
-      totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0,
-      highPriorityDues: (json['highPriorityDues'] as num?)?.toInt() ?? 0,
-      mediumPriorityDues: (json['mediumPriorityDues'] as num?)?.toInt() ?? 0,
-      regularDues: (json['regularDues'] as num?)?.toInt() ?? 0,
-      isCompleted: json['isCompleted'] as bool? ?? false,
-      completedAt: json['completedAt'] == null
-          ? null
-          : DateTime.parse(json['completedAt'] as String),
-      collectionsMade: (json['collectionsMade'] as num?)?.toInt() ?? 0,
-      collectedAmount: (json['collectedAmount'] as num?)?.toDouble() ?? 0,
+_LocationTracking _$LocationTrackingFromJson(Map<String, dynamic> json) =>
+    _LocationTracking(
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      location: GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
+      activity: json['activity'] as String?,
+      customerId: json['customerId'] as String?,
     );
 
-Map<String, dynamic> _$$EMIDueListImplToJson(_$EMIDueListImpl instance) =>
+Map<String, dynamic> _$LocationTrackingToJson(_LocationTracking instance) =>
+    <String, dynamic>{
+      'timestamp': instance.timestamp.toIso8601String(),
+      'location': instance.location,
+      'activity': instance.activity,
+      'customerId': instance.customerId,
+    };
+
+_EMIDueList _$EMIDueListFromJson(Map<String, dynamic> json) => _EMIDueList(
+  id: json['id'] as String,
+  generatedAt: DateTime.parse(json['generatedAt'] as String),
+  agentId: json['agentId'] as String,
+  forDate: DateTime.parse(json['forDate'] as String),
+  dues:
+      (json['dues'] as List<dynamic>?)
+          ?.map((e) => EMIDueItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  totalDues: (json['totalDues'] as num?)?.toInt() ?? 0,
+  totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0,
+  highPriorityDues: (json['highPriorityDues'] as num?)?.toInt() ?? 0,
+  mediumPriorityDues: (json['mediumPriorityDues'] as num?)?.toInt() ?? 0,
+  regularDues: (json['regularDues'] as num?)?.toInt() ?? 0,
+  isCompleted: json['isCompleted'] as bool? ?? false,
+  completedAt: json['completedAt'] == null
+      ? null
+      : DateTime.parse(json['completedAt'] as String),
+  collectionsMade: (json['collectionsMade'] as num?)?.toInt() ?? 0,
+  collectedAmount: (json['collectedAmount'] as num?)?.toDouble() ?? 0,
+);
+
+Map<String, dynamic> _$EMIDueListToJson(_EMIDueList instance) =>
     <String, dynamic>{
       'id': instance.id,
       'generatedAt': instance.generatedAt.toIso8601String(),
@@ -542,38 +538,37 @@ Map<String, dynamic> _$$EMIDueListImplToJson(_$EMIDueListImpl instance) =>
       'collectedAmount': instance.collectedAmount,
     };
 
-_$EMIDueItemImpl _$$EMIDueItemImplFromJson(Map<String, dynamic> json) =>
-    _$EMIDueItemImpl(
-      customerId: json['customerId'] as String,
-      customerName: json['customerName'] as String,
-      phone: json['phone'] as String,
-      address: json['address'] as String,
-      bookingId: json['bookingId'] as String,
-      plotNumber: json['plotNumber'] as String,
-      colonyName: json['colonyName'] as String,
-      emiAmount: (json['emiAmount'] as num).toDouble(),
-      dueDate: DateTime.parse(json['dueDate'] as String),
-      daysOverdue: (json['daysOverdue'] as num).toInt(),
-      totalDue: (json['totalDue'] as num).toDouble(),
-      lateFee: (json['lateFee'] as num?)?.toDouble() ?? 0,
-      priority: $enumDecode(_$DuePriorityEnumMap, json['priority']),
-      lastVisitNotes: json['lastVisitNotes'] as String?,
-      lastVisitDate: json['lastVisitDate'] == null
-          ? null
-          : DateTime.parse(json['lastVisitDate'] as String),
-      isCollected: json['isCollected'] as bool?,
-      collectedAmount: (json['collectedAmount'] as num?)?.toDouble(),
-      collectedAt: json['collectedAt'] == null
-          ? null
-          : DateTime.parse(json['collectedAt'] as String),
-      location: json['location'] == null
-          ? null
-          : GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
-      landmark: json['landmark'] as String?,
-      preferredTime: json['preferredTime'] as String?,
-    );
+_EMIDueItem _$EMIDueItemFromJson(Map<String, dynamic> json) => _EMIDueItem(
+  customerId: json['customerId'] as String,
+  customerName: json['customerName'] as String,
+  phone: json['phone'] as String,
+  address: json['address'] as String,
+  bookingId: json['bookingId'] as String,
+  plotNumber: json['plotNumber'] as String,
+  colonyName: json['colonyName'] as String,
+  emiAmount: (json['emiAmount'] as num).toDouble(),
+  dueDate: DateTime.parse(json['dueDate'] as String),
+  daysOverdue: (json['daysOverdue'] as num).toInt(),
+  totalDue: (json['totalDue'] as num).toDouble(),
+  lateFee: (json['lateFee'] as num?)?.toDouble() ?? 0,
+  priority: $enumDecode(_$DuePriorityEnumMap, json['priority']),
+  lastVisitNotes: json['lastVisitNotes'] as String?,
+  lastVisitDate: json['lastVisitDate'] == null
+      ? null
+      : DateTime.parse(json['lastVisitDate'] as String),
+  isCollected: json['isCollected'] as bool?,
+  collectedAmount: (json['collectedAmount'] as num?)?.toDouble(),
+  collectedAt: json['collectedAt'] == null
+      ? null
+      : DateTime.parse(json['collectedAt'] as String),
+  location: json['location'] == null
+      ? null
+      : GeoLocation.fromJson(json['location'] as Map<String, dynamic>),
+  landmark: json['landmark'] as String?,
+  preferredTime: json['preferredTime'] as String?,
+);
 
-Map<String, dynamic> _$$EMIDueItemImplToJson(_$EMIDueItemImpl instance) =>
+Map<String, dynamic> _$EMIDueItemToJson(_EMIDueItem instance) =>
     <String, dynamic>{
       'customerId': instance.customerId,
       'customerName': instance.customerName,
@@ -604,39 +599,38 @@ const _$DuePriorityEnumMap = {
   DuePriority.low: 'low',
 };
 
-_$EMIReminderImpl _$$EMIReminderImplFromJson(Map<String, dynamic> json) =>
-    _$EMIReminderImpl(
-      id: json['id'] as String,
-      customerId: json['customerId'] as String,
-      bookingId: json['bookingId'] as String,
-      customerName: json['customerName'] as String,
-      phone: json['phone'] as String,
-      emiAmount: (json['emiAmount'] as num).toDouble(),
-      dueDate: DateTime.parse(json['dueDate'] as String),
-      type: $enumDecode(_$ReminderTypeEnumMap, json['type']),
-      status: $enumDecode(_$ReminderStatusEnumMap, json['status']),
-      messageContent: json['messageContent'] as String?,
-      scheduledAt: json['scheduledAt'] == null
-          ? null
-          : DateTime.parse(json['scheduledAt'] as String),
-      sentAt: json['sentAt'] == null
-          ? null
-          : DateTime.parse(json['sentAt'] as String),
-      deliveredAt: json['deliveredAt'] == null
-          ? null
-          : DateTime.parse(json['deliveredAt'] as String),
-      isResponded: json['isResponded'] as bool?,
-      respondedAt: json['respondedAt'] == null
-          ? null
-          : DateTime.parse(json['respondedAt'] as String),
-      responseType: json['responseType'] as String?,
-      assignedAgentId: json['assignedAgentId'] as String?,
-      agentAssignedAt: json['agentAssignedAt'] == null
-          ? null
-          : DateTime.parse(json['agentAssignedAt'] as String),
-    );
+_EMIReminder _$EMIReminderFromJson(Map<String, dynamic> json) => _EMIReminder(
+  id: json['id'] as String,
+  customerId: json['customerId'] as String,
+  bookingId: json['bookingId'] as String,
+  customerName: json['customerName'] as String,
+  phone: json['phone'] as String,
+  emiAmount: (json['emiAmount'] as num).toDouble(),
+  dueDate: DateTime.parse(json['dueDate'] as String),
+  type: $enumDecode(_$ReminderTypeEnumMap, json['type']),
+  status: $enumDecode(_$ReminderStatusEnumMap, json['status']),
+  messageContent: json['messageContent'] as String?,
+  scheduledAt: json['scheduledAt'] == null
+      ? null
+      : DateTime.parse(json['scheduledAt'] as String),
+  sentAt: json['sentAt'] == null
+      ? null
+      : DateTime.parse(json['sentAt'] as String),
+  deliveredAt: json['deliveredAt'] == null
+      ? null
+      : DateTime.parse(json['deliveredAt'] as String),
+  isResponded: json['isResponded'] as bool?,
+  respondedAt: json['respondedAt'] == null
+      ? null
+      : DateTime.parse(json['respondedAt'] as String),
+  responseType: json['responseType'] as String?,
+  assignedAgentId: json['assignedAgentId'] as String?,
+  agentAssignedAt: json['agentAssignedAt'] == null
+      ? null
+      : DateTime.parse(json['agentAssignedAt'] as String),
+);
 
-Map<String, dynamic> _$$EMIReminderImplToJson(_$EMIReminderImpl instance) =>
+Map<String, dynamic> _$EMIReminderToJson(_EMIReminder instance) =>
     <String, dynamic>{
       'id': instance.id,
       'customerId': instance.customerId,

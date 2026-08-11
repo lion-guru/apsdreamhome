@@ -6,8 +6,8 @@ part of 'colony_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
-    _$ColonyModelImpl(
+_ColonyModel _$ColonyModelFromJson(Map<String, dynamic> json) =>
+    _ColonyModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
       name: json['name'] as String? ?? '',
       slug: json['slug'] as String?,
@@ -21,6 +21,21 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
       imageUrl: json['image_url'] as String?,
       isActive: json['is_active'] as bool? ?? true,
       isFeatured: json['is_featured'] as bool? ?? false,
+      layoutImage: json['layout_image'] as String?,
+      layoutImageUrl: json['layout_image_url'] as String?,
+      galleryImagesData: (json['gallery_images_data'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      youtubeVideoUrl: json['youtube_video_url'] as String?,
+      virtualTourUrl: json['virtual_tour_url'] as String?,
+      brochurePath: json['brochure_path'] as String?,
+      colonyDocuments: (json['colony_documents'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      mapLinkApi: json['map_link'] as String?,
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      nearbyPlacesRaw: json['nearby_places'] as String?,
       location: json['location'] as String? ?? '',
       state: json['state'] as String? ?? '',
       images: (json['images'] as List<dynamic>?)
@@ -28,15 +43,15 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       masterPlanImage: json['masterPlanImage'] as String?,
       videoUrl: json['videoUrl'] as String?,
-      latitude: (json['latitude'] as num?)?.toDouble(),
-      longitude: (json['longitude'] as num?)?.toDouble(),
       holdPlots: (json['holdPlots'] as num?)?.toInt() ?? 0,
       bookedPlots: (json['bookedPlots'] as num?)?.toInt() ?? 0,
       soldPlots: (json['soldPlots'] as num?)?.toInt() ?? 0,
       tokenAmount: (json['tokenAmount'] as num?)?.toDouble(),
       bookingPercentage: (json['bookingPercentage'] as num?)?.toDouble(),
       blockWisePricing: (json['blockWisePricing'] as Map<String, dynamic>?)
-          ?.map((k, e) => MapEntry(k, (e as num).toDouble())),
+          ?.map(
+            (k, e) => MapEntry(k, (e as num).toDouble()),
+          ),
       amenities: (json['amenities'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -54,10 +69,9 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
       layoutMap: json['layoutMap'] as String?,
       rateList: json['rateList'] as String?,
       handbill: json['handbill'] as String?,
-      mapLink: json['mapLink'] as String?,
     );
 
-Map<String, dynamic> _$$ColonyModelImplToJson(_$ColonyModelImpl instance) =>
+Map<String, dynamic> _$_ColonyModelToJson(_ColonyModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -72,13 +86,22 @@ Map<String, dynamic> _$$ColonyModelImplToJson(_$ColonyModelImpl instance) =>
       'image_url': instance.imageUrl,
       'is_active': instance.isActive,
       'is_featured': instance.isFeatured,
+      'layout_image': instance.layoutImage,
+      'layout_image_url': instance.layoutImageUrl,
+      'gallery_images_data': instance.galleryImagesData,
+      'youtube_video_url': instance.youtubeVideoUrl,
+      'virtual_tour_url': instance.virtualTourUrl,
+      'brochure_path': instance.brochurePath,
+      'colony_documents': instance.colonyDocuments,
+      'map_link': instance.mapLinkApi,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+      'nearby_places': instance.nearbyPlacesRaw,
       'location': instance.location,
       'state': instance.state,
       'images': instance.images,
       'masterPlanImage': instance.masterPlanImage,
       'videoUrl': instance.videoUrl,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
       'holdPlots': instance.holdPlots,
       'bookedPlots': instance.bookedPlots,
       'soldPlots': instance.soldPlots,
@@ -98,5 +121,4 @@ Map<String, dynamic> _$$ColonyModelImplToJson(_$ColonyModelImpl instance) =>
       'layoutMap': instance.layoutMap,
       'rateList': instance.rateList,
       'handbill': instance.handbill,
-      'mapLink': instance.mapLink,
     };

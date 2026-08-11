@@ -6,8 +6,8 @@ part of 'booking_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$BookingModelImpl _$$BookingModelImplFromJson(Map<String, dynamic> json) =>
-    _$BookingModelImpl(
+_BookingModel _$BookingModelFromJson(Map<String, dynamic> json) =>
+    _BookingModel(
       id: json['id'] as String? ?? '',
       plotId: json['plotId'] as String? ?? '',
       plotNumber: json['plotNumber'] as String? ?? '',
@@ -73,7 +73,7 @@ _$BookingModelImpl _$$BookingModelImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$BookingModelImplToJson(_$BookingModelImpl instance) =>
+Map<String, dynamic> _$BookingModelToJson(_BookingModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'plotId': instance.plotId,
@@ -120,42 +120,40 @@ Map<String, dynamic> _$$BookingModelImplToJson(_$BookingModelImpl instance) =>
       'history': instance.history,
     };
 
-_$BookingDocumentImpl _$$BookingDocumentImplFromJson(
-  Map<String, dynamic> json,
-) => _$BookingDocumentImpl(
-  id: json['id'] as String? ?? '',
-  type: json['type'] as String? ?? '',
-  name: json['name'] as String? ?? '',
-  url: json['url'] as String? ?? '',
-  thumbnailUrl: json['thumbnailUrl'] as String?,
-  uploadedAt: json['uploadedAt'] == null
-      ? null
-      : DateTime.parse(json['uploadedAt'] as String),
-  verifiedBy: json['verifiedBy'] as String?,
-  verifiedAt: json['verifiedAt'] == null
-      ? null
-      : DateTime.parse(json['verifiedAt'] as String),
-  status: json['status'] as String?,
-  notes: json['notes'] as String?,
-);
+_BookingDocument _$BookingDocumentFromJson(Map<String, dynamic> json) =>
+    _BookingDocument(
+      id: json['id'] as String? ?? '',
+      type: json['type'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      url: json['url'] as String? ?? '',
+      thumbnailUrl: json['thumbnailUrl'] as String?,
+      uploadedAt: json['uploadedAt'] == null
+          ? null
+          : DateTime.parse(json['uploadedAt'] as String),
+      verifiedBy: json['verifiedBy'] as String?,
+      verifiedAt: json['verifiedAt'] == null
+          ? null
+          : DateTime.parse(json['verifiedAt'] as String),
+      status: json['status'] as String?,
+      notes: json['notes'] as String?,
+    );
 
-Map<String, dynamic> _$$BookingDocumentImplToJson(
-  _$BookingDocumentImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'type': instance.type,
-  'name': instance.name,
-  'url': instance.url,
-  'thumbnailUrl': instance.thumbnailUrl,
-  'uploadedAt': instance.uploadedAt?.toIso8601String(),
-  'verifiedBy': instance.verifiedBy,
-  'verifiedAt': instance.verifiedAt?.toIso8601String(),
-  'status': instance.status,
-  'notes': instance.notes,
-};
+Map<String, dynamic> _$BookingDocumentToJson(_BookingDocument instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'type': instance.type,
+      'name': instance.name,
+      'url': instance.url,
+      'thumbnailUrl': instance.thumbnailUrl,
+      'uploadedAt': instance.uploadedAt?.toIso8601String(),
+      'verifiedBy': instance.verifiedBy,
+      'verifiedAt': instance.verifiedAt?.toIso8601String(),
+      'status': instance.status,
+      'notes': instance.notes,
+    };
 
-_$PaymentModelImpl _$$PaymentModelImplFromJson(Map<String, dynamic> json) =>
-    _$PaymentModelImpl(
+_PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) =>
+    _PaymentModel(
       id: json['id'] as String? ?? '',
       bookingId: json['bookingId'] as String? ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
@@ -177,7 +175,7 @@ _$PaymentModelImpl _$$PaymentModelImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['createdAt'] as String),
     );
 
-Map<String, dynamic> _$$PaymentModelImplToJson(_$PaymentModelImpl instance) =>
+Map<String, dynamic> _$PaymentModelToJson(_PaymentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'bookingId': instance.bookingId,
@@ -196,8 +194,8 @@ Map<String, dynamic> _$$PaymentModelImplToJson(_$PaymentModelImpl instance) =>
       'createdAt': instance.createdAt?.toIso8601String(),
     };
 
-_$BookingHistoryImpl _$$BookingHistoryImplFromJson(Map<String, dynamic> json) =>
-    _$BookingHistoryImpl(
+_BookingHistory _$BookingHistoryFromJson(Map<String, dynamic> json) =>
+    _BookingHistory(
       id: json['id'] as String? ?? '',
       action: json['action'] as String? ?? '',
       performedBy: json['performedBy'] as String? ?? '',
@@ -207,14 +205,13 @@ _$BookingHistoryImpl _$$BookingHistoryImplFromJson(Map<String, dynamic> json) =>
       newValues: json['newValues'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$BookingHistoryImplToJson(
-  _$BookingHistoryImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'action': instance.action,
-  'performedBy': instance.performedBy,
-  'performedAt': instance.performedAt.toIso8601String(),
-  'notes': instance.notes,
-  'oldValues': instance.oldValues,
-  'newValues': instance.newValues,
-};
+Map<String, dynamic> _$BookingHistoryToJson(_BookingHistory instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'action': instance.action,
+      'performedBy': instance.performedBy,
+      'performedAt': instance.performedAt.toIso8601String(),
+      'notes': instance.notes,
+      'oldValues': instance.oldValues,
+      'newValues': instance.newValues,
+    };

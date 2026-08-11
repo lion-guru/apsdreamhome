@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/services/chat_service.dart';
 
@@ -83,6 +84,8 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
             _view = 'chat';
             _showNamePrompt = false;
           });
+          // Load any existing chat history for this session
+          _loadChatHistory(session.token);
           _startPolling();
           // Initial poll right away to get welcome message
           _pollMessages();
@@ -100,6 +103,31 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _loadChatHistory(String token) async {
+    try {
+      final service = ref.read(chatServiceProvider);
+      final history = await service.getChatHistory(token);
+      if (!mounted || history.isEmpty) return;
+
+      setState(() {
+        for (var msg in history) {
+          final role = msg['role']?.toString() ?? 'user';
+          _messages.add(ChatMessage(
+            id: DateTime.now().millisecondsSinceEpoch + _messages.length,
+            text: msg['message'] ?? '',
+            senderType: role,
+            senderName: role == 'user' ? 'You' : 'APS Bot',
+            isMe: role == 'user',
+            createdAt: DateTime.parse(msg['created_at'] ?? DateTime.now().toIso8601String()),
+          ));
+        }
+      });
+      _scrollToBottom();
+    } catch (_) {
+      // Silent fail — history is best-effort
     }
   }
 
@@ -212,7 +240,7 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
     if (_view == 'start') {
       return AppBar(
         title: const Text('Live Chat'),
-        backgroundColor: const Color(0xFF1A237E),
+        backgroundColor: const Color(0xFF075E54),
         foregroundColor: Colors.white,
         elevation: 0,
       );
@@ -220,7 +248,7 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
 
     final isClosed = _session?.status == 'closed';
     return AppBar(
-      backgroundColor: const Color(0xFF1A237E),
+      backgroundColor: const Color(0xFF075E54),
       foregroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
@@ -236,13 +264,13 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
       title: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(21),
             ),
-            child: const Icon(Icons.support_agent, color: Color(0xFF1A237E)),
+            child: const Icon(Icons.support_agent, color: Colors.white),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -250,23 +278,36 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _session?.agentName ?? 'APS Support',
+                  _session?.agentName ?? 'APS Support Team',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text(
-                  isClosed
-                      ? 'Chat ended'
-                      : _isTyping
-                      ? 'Typing...'
-                      : 'Online',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isClosed ? Colors.white54 : Colors.green.shade300,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isClosed ? Colors.grey : const Color(0xFF25D366),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      isClosed
+                          ? 'Offline'
+                          : _isTyping
+                          ? 'typing...'
+                          : 'online',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -313,24 +354,36 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const SizedBox(height: 40),
-          // Hero illustration
+          const SizedBox(height: 32),
+          // Hero illustration - WhatsApp style
           Container(
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
             decoration: BoxDecoration(
-              color: const Color(0xFF1A237E).withValues(alpha: 0.1),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF25D366), Color(0xFF128C7E)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF25D366).withValues(alpha: 0.3),
+                  blurRadius: 24,
+                  spreadRadius: 4,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: const Icon(
               Icons.support_agent,
-              size: 50,
-              color: Color(0xFF1A237E),
+              size: 55,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 24),
           const Text(
-            'Chat with Us',
+            'Chat with APS Support',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -339,7 +392,7 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Have a question? Our team is ready to help you with plots, pricing, site visits, and more.',
+            'Our team typically replies within 5 minutes.\nAvailable 10 AM - 7 PM, Mon - Sat',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -347,7 +400,7 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
 
           // Recent conversations (if any)
           if (_session != null && _messages.isNotEmpty) _buildRecentSession(),
@@ -355,22 +408,56 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
           // Start chat button
           SizedBox(
             width: double.infinity,
-            height: 52,
+            height: 54,
             child: ElevatedButton.icon(
               onPressed: () => _startChat(),
-              icon: const Icon(Icons.chat),
+              icon: const Icon(Icons.chat_rounded),
               label: const Text(
                 'Start New Chat',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1A237E),
+                backgroundColor: const Color(0xFF25D366),
                 foregroundColor: Colors.white,
+                elevation: 4,
+                shadowColor: const Color(0xFF25D366).withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 16),
+
+          // Quick actions
+          Row(
+            children: [
+              Expanded(
+                child: _quickActionCard(
+                  icon: Icons.phone_rounded,
+                  label: 'Call Instead',
+                  color: const Color(0xFF007AFF),
+                  onTap: () async {
+                    final uri = Uri.parse('tel:7007444842');
+                    if (await canLaunchUrl(uri)) await launchUrl(uri);
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _quickActionCard(
+                  icon: Icons.chat_rounded,
+                  label: 'WhatsApp',
+                  color: const Color(0xFF25D366),
+                  onTap: () async {
+                    final uri = Uri.parse(
+                      'https://wa.me/917007444842?text=Hi%20APS%20Dream%20Home%2C%20I%20need%20help',
+                    );
+                    if (await canLaunchUrl(uri)) await launchUrl(uri);
+                  },
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
 
@@ -380,53 +467,95 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.red.shade200),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red.shade700,
-                    size: 20,
-                  ),
+                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       _error!,
-                      style: TextStyle(
-                        color: Colors.red.shade700,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.red.shade700, fontSize: 13),
                     ),
                   ),
                 ],
               ),
             ),
 
-          const SizedBox(height: 24),
-          // Quick info
+          const SizedBox(height: 20),
+          // Feature highlights
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
+              color: const Color(0xFF25D366).withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFF25D366).withValues(alpha: 0.15),
+              ),
             ),
             child: Column(
               children: [
-                _infoRow(Icons.access_time, 'Typically replies in 5 minutes'),
-                const SizedBox(height: 8),
-                _infoRow(Icons.access_time_filled, 'Available 10 AM - 7 PM'),
-                const SizedBox(height: 8),
-                _infoRow(
-                  Icons.headset_mic,
-                  'Get help with bookings, payments & more',
-                ),
+                _featureRow(Icons.bolt_rounded, 'Instant replies from our team'),
+                const SizedBox(height: 10),
+                _featureRow(Icons.lock_rounded, 'Your conversation is private'),
+                const SizedBox(height: 10),
+                _featureRow(Icons.headphones_rounded, 'Expert help with plots, pricing & bookings'),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _quickActionCard({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _featureRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: const Color(0xFF128C7E)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+          ),
+        ),
+      ],
     );
   }
 
@@ -589,9 +718,9 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
     return Align(
       alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 6),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
+          maxWidth: MediaQuery.of(context).size.width * 0.78,
         ),
         child: Column(
           crossAxisAlignment: message.isMe
@@ -600,30 +729,32 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
           children: [
             if (!message.isMe && message.senderName.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(left: 4, bottom: 2),
+                padding: const EdgeInsets.only(left: 12, bottom: 3),
                 child: Text(
                   message.senderName,
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.grey[500],
-                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: message.isMe ? const Color(0xFF1A237E) : Colors.white,
+                color: message.isMe
+                    ? const Color(0xFFDCF8C6)
+                    : Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(16),
-                  topRight: const Radius.circular(16),
-                  bottomLeft: Radius.circular(message.isMe ? 16 : 4),
-                  bottomRight: Radius.circular(message.isMe ? 4 : 16),
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
+                  bottomLeft: Radius.circular(message.isMe ? 18 : 4),
+                  bottomRight: Radius.circular(message.isMe ? 4 : 18),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 4,
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 3,
                     offset: const Offset(0, 1),
                   ),
                 ],
@@ -631,16 +762,33 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
               child: Text(
                 message.text,
                 style: TextStyle(
-                  color: message.isMe ? Colors.white : Colors.black87,
+                  color: message.isMe
+                      ? Colors.black87
+                      : Colors.black87,
                   fontSize: 14,
-                  height: 1.4,
+                  height: 1.35,
                 ),
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              DateFormat('h:mm a').format(message.createdAt),
-              style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 4, left: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    DateFormat('h:mm a').format(message.createdAt),
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                  ),
+                  if (message.isMe) ...[
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.done_all_rounded,
+                      size: 14,
+                      color: Colors.blue.shade400,
+                    ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),
@@ -664,23 +812,30 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
   Widget _buildInputArea() {
     final isClosed = _session?.status == 'closed';
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF0F0F0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, -4),
+            blurRadius: 6,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
       child: SafeArea(
         child: isClosed
-            ? const Center(
-                child: Text(
-                  'This chat has ended. Start a new chat for further assistance.',
-                  style: TextStyle(color: Colors.grey, fontSize: 13),
+            ? Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Chat ended. Start a new chat for further assistance.',
+                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                  ),
                 ),
               )
             : Row(
@@ -689,16 +844,20 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
                     child: TextField(
                       controller: _messageController,
                       decoration: InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: 'Type a message',
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 14,
+                          vertical: 12,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.attach_file, color: Colors.grey.shade500),
+                          onPressed: () {},
                         ),
                       ),
                       textInputAction: TextInputAction.send,
@@ -711,9 +870,7 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: _isSending
-                            ? Colors.grey
-                            : const Color(0xFF1A237E),
+                        color: const Color(0xFF075E54),
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: _isSending
@@ -725,7 +882,7 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Icon(Icons.send, color: Colors.white),
+                          : const Icon(Icons.send, color: Colors.white, size: 20),
                     ),
                   ),
                 ],

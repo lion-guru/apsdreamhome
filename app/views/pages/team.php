@@ -354,18 +354,28 @@
 </section>
 
 <!-- STATS -->
+<?php
+$members_count = count($team_members ?? []);
+$total_exp = 0;
+foreach ($team_members ?? [] as $tm) {
+    if (!empty($tm->experience)) {
+        preg_match('/\d+/', $tm->experience, $em);
+        if (!empty($em[0])) $total_exp += (int)$em[0];
+    }
+}
+?>
 <section class="team-stats">
     <div class="container">
         <div class="row g-4">
             <div class="col-6 col-md-3">
                 <div class="stat-card">
-                    <div class="stat-number">50+</div>
+                    <div class="stat-number"><?= $members_count > 0 ? $members_count . '+' : '50+' ?></div>
                     <div class="stat-label">Team Members</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
-                    <div class="stat-number">75+</div>
+                    <div class="stat-number"><?= $total_exp > 0 ? $total_exp . '+' : '75+' ?></div>
                     <div class="stat-label">Years Combined Exp</div>
                 </div>
             </div>

@@ -99,6 +99,29 @@ class RegisterController extends BaseController
             $_SESSION['role'] = $result['user']['role'];
             $_SESSION['logged_in'] = true;
 
+            // Load role-specific IDs
+            $db = \App\Core\Database\Database::getInstance();
+            $tid = 1;
+            try { $tid = \App\Core\Middleware\TenantContext::getId(); } catch (\Throwable $e) {}
+            $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $params = [$result['user_id']];
+            if ($tid > 1) $params[] = $tid;
+
+            if (in_array($role, ['agent', 'associate'], true)) {
+                try {
+                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
+                    if ($ass) {
+                        $_SESSION['associate_id'] = (int)$ass['id'];
+                        if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
+                    }
+                } catch (\Throwable $e) {}
+            } elseif ($role === 'employee' || $role === 'telecaller') {
+                try {
+                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
+                    if ($emp) $_SESSION['employee_id'] = (int)$emp['id'];
+                } catch (\Throwable $e) {}
+            }
+
             // Mark visitor as converted
             try {
                 $visitorTracking = new \App\Services\VisitorTrackingService();

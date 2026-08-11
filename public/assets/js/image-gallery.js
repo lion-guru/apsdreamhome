@@ -29,6 +29,7 @@
       this.touchStartX = 0;
       this.touchStartY = 0;
       this.touchStartTime = 0;
+      this.lastTapTime = 0;
       this.pinchStartDist = 0;
       this.pinchStartZoom = 1;
       this.isOpen = false;
@@ -271,9 +272,17 @@
               if (dx > 0) this.next();
               else this.prev();
             }
-            // Quick tap — toggle controls visibility
+            // Quick tap — toggle controls visibility (unless it was a double-tap)
             else if (absDx < 10 && absDy < 10 && dt < 200) {
-              this.toggleControls();
+              const now = Date.now();
+              if (this.lastTapTime && (now - this.lastTapTime) < 300) {
+                // Double-tap: toggle zoom
+                if (this.zoom > 1) { this.zoom = 1; } else { this.zoom = 2; }
+                this.applyZoom();
+              } else {
+                this.toggleControls();
+              }
+              this.lastTapTime = now;
             }
           }
           initialDistance = 0;

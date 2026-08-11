@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,2930 +9,2123 @@ part of 'gamification_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
-
-GamificationModel _$GamificationModelFromJson(Map<String, dynamic> json) {
-  return _GamificationModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$GamificationModel {
-  String get userId => throw _privateConstructorUsedError;
-  int get totalPoints => throw _privateConstructorUsedError;
-  int get availablePoints => throw _privateConstructorUsedError;
-  int get redeemedPoints => throw _privateConstructorUsedError;
-  int get currentLevel => throw _privateConstructorUsedError;
-  String get currentRank => throw _privateConstructorUsedError; // Progress
-  int? get pointsToNextLevel => throw _privateConstructorUsedError;
-  double? get levelProgressPercentage =>
-      throw _privateConstructorUsedError; // Streaks
-  int? get currentStreak => throw _privateConstructorUsedError;
-  int? get longestStreak => throw _privateConstructorUsedError;
-  DateTime? get lastActivityDate =>
-      throw _privateConstructorUsedError; // Achievements
-  List<Achievement>? get achievements => throw _privateConstructorUsedError;
-  List<Badge>? get badges =>
-      throw _privateConstructorUsedError; // Recent Activity
-  List<PointsTransaction>? get recentTransactions =>
-      throw _privateConstructorUsedError; // Leaderboard
-  int? get leaderboardRank => throw _privateConstructorUsedError;
-  int? get totalParticipants =>
-      throw _privateConstructorUsedError; // Timestamps
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
+
+ String get userId; int get totalPoints; int get availablePoints; int get redeemedPoints; int get currentLevel; String get currentRank;// Progress
+ int? get pointsToNextLevel; double? get levelProgressPercentage;// Streaks
+ int? get currentStreak; int? get longestStreak; DateTime? get lastActivityDate;// Achievements
+ List<Achievement>? get achievements; List<Badge>? get badges;// Recent Activity
+ List<PointsTransaction>? get recentTransactions;// Leaderboard
+ int? get leaderboardRank; int? get totalParticipants;// Timestamps
+ DateTime? get createdAt; DateTime? get updatedAt;
+/// Create a copy of GamificationModel
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GamificationModelCopyWith<GamificationModel> get copyWith => _$GamificationModelCopyWithImpl<GamificationModel>(this as GamificationModel, _$identity);
 
   /// Serializes this GamificationModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of GamificationModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $GamificationModelCopyWith<GamificationModel> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GamificationModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.totalPoints, totalPoints) || other.totalPoints == totalPoints)&&(identical(other.availablePoints, availablePoints) || other.availablePoints == availablePoints)&&(identical(other.redeemedPoints, redeemedPoints) || other.redeemedPoints == redeemedPoints)&&(identical(other.currentLevel, currentLevel) || other.currentLevel == currentLevel)&&(identical(other.currentRank, currentRank) || other.currentRank == currentRank)&&(identical(other.pointsToNextLevel, pointsToNextLevel) || other.pointsToNextLevel == pointsToNextLevel)&&(identical(other.levelProgressPercentage, levelProgressPercentage) || other.levelProgressPercentage == levelProgressPercentage)&&(identical(other.currentStreak, currentStreak) || other.currentStreak == currentStreak)&&(identical(other.longestStreak, longestStreak) || other.longestStreak == longestStreak)&&(identical(other.lastActivityDate, lastActivityDate) || other.lastActivityDate == lastActivityDate)&&const DeepCollectionEquality().equals(other.achievements, achievements)&&const DeepCollectionEquality().equals(other.badges, badges)&&const DeepCollectionEquality().equals(other.recentTransactions, recentTransactions)&&(identical(other.leaderboardRank, leaderboardRank) || other.leaderboardRank == leaderboardRank)&&(identical(other.totalParticipants, totalParticipants) || other.totalParticipants == totalParticipants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,userId,totalPoints,availablePoints,redeemedPoints,currentLevel,currentRank,pointsToNextLevel,levelProgressPercentage,currentStreak,longestStreak,lastActivityDate,const DeepCollectionEquality().hash(achievements),const DeepCollectionEquality().hash(badges),const DeepCollectionEquality().hash(recentTransactions),leaderboardRank,totalParticipants,createdAt,updatedAt);
+
+@override
+String toString() {
+  return 'GamificationModel(userId: $userId, totalPoints: $totalPoints, availablePoints: $availablePoints, redeemedPoints: $redeemedPoints, currentLevel: $currentLevel, currentRank: $currentRank, pointsToNextLevel: $pointsToNextLevel, levelProgressPercentage: $levelProgressPercentage, currentStreak: $currentStreak, longestStreak: $longestStreak, lastActivityDate: $lastActivityDate, achievements: $achievements, badges: $badges, recentTransactions: $recentTransactions, leaderboardRank: $leaderboardRank, totalParticipants: $totalParticipants, createdAt: $createdAt, updatedAt: $updatedAt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $GamificationModelCopyWith<$Res> {
-  factory $GamificationModelCopyWith(
-    GamificationModel value,
-    $Res Function(GamificationModel) then,
-  ) = _$GamificationModelCopyWithImpl<$Res, GamificationModel>;
-  @useResult
-  $Res call({
-    String userId,
-    int totalPoints,
-    int availablePoints,
-    int redeemedPoints,
-    int currentLevel,
-    String currentRank,
-    int? pointsToNextLevel,
-    double? levelProgressPercentage,
-    int? currentStreak,
-    int? longestStreak,
-    DateTime? lastActivityDate,
-    List<Achievement>? achievements,
-    List<Badge>? badges,
-    List<PointsTransaction>? recentTransactions,
-    int? leaderboardRank,
-    int? totalParticipants,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  });
-}
+abstract mixin class $GamificationModelCopyWith<$Res>  {
+  factory $GamificationModelCopyWith(GamificationModel value, $Res Function(GamificationModel) _then) = _$GamificationModelCopyWithImpl;
+@useResult
+$Res call({
+ String userId, int totalPoints, int availablePoints, int redeemedPoints, int currentLevel, String currentRank, int? pointsToNextLevel, double? levelProgressPercentage, int? currentStreak, int? longestStreak, DateTime? lastActivityDate, List<Achievement>? achievements, List<Badge>? badges, List<PointsTransaction>? recentTransactions, int? leaderboardRank, int? totalParticipants, DateTime? createdAt, DateTime? updatedAt
+});
 
+
+
+
+}
 /// @nodoc
-class _$GamificationModelCopyWithImpl<$Res, $Val extends GamificationModel>
+class _$GamificationModelCopyWithImpl<$Res>
     implements $GamificationModelCopyWith<$Res> {
-  _$GamificationModelCopyWithImpl(this._value, this._then);
+  _$GamificationModelCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final GamificationModel _self;
+  final $Res Function(GamificationModel) _then;
 
-  /// Create a copy of GamificationModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? totalPoints = null,
-    Object? availablePoints = null,
-    Object? redeemedPoints = null,
-    Object? currentLevel = null,
-    Object? currentRank = null,
-    Object? pointsToNextLevel = freezed,
-    Object? levelProgressPercentage = freezed,
-    Object? currentStreak = freezed,
-    Object? longestStreak = freezed,
-    Object? lastActivityDate = freezed,
-    Object? achievements = freezed,
-    Object? badges = freezed,
-    Object? recentTransactions = freezed,
-    Object? leaderboardRank = freezed,
-    Object? totalParticipants = freezed,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            userId: null == userId
-                ? _value.userId
-                : userId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            totalPoints: null == totalPoints
-                ? _value.totalPoints
-                : totalPoints // ignore: cast_nullable_to_non_nullable
-                      as int,
-            availablePoints: null == availablePoints
-                ? _value.availablePoints
-                : availablePoints // ignore: cast_nullable_to_non_nullable
-                      as int,
-            redeemedPoints: null == redeemedPoints
-                ? _value.redeemedPoints
-                : redeemedPoints // ignore: cast_nullable_to_non_nullable
-                      as int,
-            currentLevel: null == currentLevel
-                ? _value.currentLevel
-                : currentLevel // ignore: cast_nullable_to_non_nullable
-                      as int,
-            currentRank: null == currentRank
-                ? _value.currentRank
-                : currentRank // ignore: cast_nullable_to_non_nullable
-                      as String,
-            pointsToNextLevel: freezed == pointsToNextLevel
-                ? _value.pointsToNextLevel
-                : pointsToNextLevel // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            levelProgressPercentage: freezed == levelProgressPercentage
-                ? _value.levelProgressPercentage
-                : levelProgressPercentage // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            currentStreak: freezed == currentStreak
-                ? _value.currentStreak
-                : currentStreak // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            longestStreak: freezed == longestStreak
-                ? _value.longestStreak
-                : longestStreak // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            lastActivityDate: freezed == lastActivityDate
-                ? _value.lastActivityDate
-                : lastActivityDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            achievements: freezed == achievements
-                ? _value.achievements
-                : achievements // ignore: cast_nullable_to_non_nullable
-                      as List<Achievement>?,
-            badges: freezed == badges
-                ? _value.badges
-                : badges // ignore: cast_nullable_to_non_nullable
-                      as List<Badge>?,
-            recentTransactions: freezed == recentTransactions
-                ? _value.recentTransactions
-                : recentTransactions // ignore: cast_nullable_to_non_nullable
-                      as List<PointsTransaction>?,
-            leaderboardRank: freezed == leaderboardRank
-                ? _value.leaderboardRank
-                : leaderboardRank // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            totalParticipants: freezed == totalParticipants
-                ? _value.totalParticipants
-                : totalParticipants // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            createdAt: freezed == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of GamificationModel
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? totalPoints = null,Object? availablePoints = null,Object? redeemedPoints = null,Object? currentLevel = null,Object? currentRank = null,Object? pointsToNextLevel = freezed,Object? levelProgressPercentage = freezed,Object? currentStreak = freezed,Object? longestStreak = freezed,Object? lastActivityDate = freezed,Object? achievements = freezed,Object? badges = freezed,Object? recentTransactions = freezed,Object? leaderboardRank = freezed,Object? totalParticipants = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+  return _then(_self.copyWith(
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,totalPoints: null == totalPoints ? _self.totalPoints : totalPoints // ignore: cast_nullable_to_non_nullable
+as int,availablePoints: null == availablePoints ? _self.availablePoints : availablePoints // ignore: cast_nullable_to_non_nullable
+as int,redeemedPoints: null == redeemedPoints ? _self.redeemedPoints : redeemedPoints // ignore: cast_nullable_to_non_nullable
+as int,currentLevel: null == currentLevel ? _self.currentLevel : currentLevel // ignore: cast_nullable_to_non_nullable
+as int,currentRank: null == currentRank ? _self.currentRank : currentRank // ignore: cast_nullable_to_non_nullable
+as String,pointsToNextLevel: freezed == pointsToNextLevel ? _self.pointsToNextLevel : pointsToNextLevel // ignore: cast_nullable_to_non_nullable
+as int?,levelProgressPercentage: freezed == levelProgressPercentage ? _self.levelProgressPercentage : levelProgressPercentage // ignore: cast_nullable_to_non_nullable
+as double?,currentStreak: freezed == currentStreak ? _self.currentStreak : currentStreak // ignore: cast_nullable_to_non_nullable
+as int?,longestStreak: freezed == longestStreak ? _self.longestStreak : longestStreak // ignore: cast_nullable_to_non_nullable
+as int?,lastActivityDate: freezed == lastActivityDate ? _self.lastActivityDate : lastActivityDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,achievements: freezed == achievements ? _self.achievements : achievements // ignore: cast_nullable_to_non_nullable
+as List<Achievement>?,badges: freezed == badges ? _self.badges : badges // ignore: cast_nullable_to_non_nullable
+as List<Badge>?,recentTransactions: freezed == recentTransactions ? _self.recentTransactions : recentTransactions // ignore: cast_nullable_to_non_nullable
+as List<PointsTransaction>?,leaderboardRank: freezed == leaderboardRank ? _self.leaderboardRank : leaderboardRank // ignore: cast_nullable_to_non_nullable
+as int?,totalParticipants: freezed == totalParticipants ? _self.totalParticipants : totalParticipants // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$GamificationModelImplCopyWith<$Res>
-    implements $GamificationModelCopyWith<$Res> {
-  factory _$$GamificationModelImplCopyWith(
-    _$GamificationModelImpl value,
-    $Res Function(_$GamificationModelImpl) then,
-  ) = __$$GamificationModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String userId,
-    int totalPoints,
-    int availablePoints,
-    int redeemedPoints,
-    int currentLevel,
-    String currentRank,
-    int? pointsToNextLevel,
-    double? levelProgressPercentage,
-    int? currentStreak,
-    int? longestStreak,
-    DateTime? lastActivityDate,
-    List<Achievement>? achievements,
-    List<Badge>? badges,
-    List<PointsTransaction>? recentTransactions,
-    int? leaderboardRank,
-    int? totalParticipants,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  });
 }
 
-/// @nodoc
-class __$$GamificationModelImplCopyWithImpl<$Res>
-    extends _$GamificationModelCopyWithImpl<$Res, _$GamificationModelImpl>
-    implements _$$GamificationModelImplCopyWith<$Res> {
-  __$$GamificationModelImplCopyWithImpl(
-    _$GamificationModelImpl _value,
-    $Res Function(_$GamificationModelImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of GamificationModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? totalPoints = null,
-    Object? availablePoints = null,
-    Object? redeemedPoints = null,
-    Object? currentLevel = null,
-    Object? currentRank = null,
-    Object? pointsToNextLevel = freezed,
-    Object? levelProgressPercentage = freezed,
-    Object? currentStreak = freezed,
-    Object? longestStreak = freezed,
-    Object? lastActivityDate = freezed,
-    Object? achievements = freezed,
-    Object? badges = freezed,
-    Object? recentTransactions = freezed,
-    Object? leaderboardRank = freezed,
-    Object? totalParticipants = freezed,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(
-      _$GamificationModelImpl(
-        userId: null == userId
-            ? _value.userId
-            : userId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        totalPoints: null == totalPoints
-            ? _value.totalPoints
-            : totalPoints // ignore: cast_nullable_to_non_nullable
-                  as int,
-        availablePoints: null == availablePoints
-            ? _value.availablePoints
-            : availablePoints // ignore: cast_nullable_to_non_nullable
-                  as int,
-        redeemedPoints: null == redeemedPoints
-            ? _value.redeemedPoints
-            : redeemedPoints // ignore: cast_nullable_to_non_nullable
-                  as int,
-        currentLevel: null == currentLevel
-            ? _value.currentLevel
-            : currentLevel // ignore: cast_nullable_to_non_nullable
-                  as int,
-        currentRank: null == currentRank
-            ? _value.currentRank
-            : currentRank // ignore: cast_nullable_to_non_nullable
-                  as String,
-        pointsToNextLevel: freezed == pointsToNextLevel
-            ? _value.pointsToNextLevel
-            : pointsToNextLevel // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        levelProgressPercentage: freezed == levelProgressPercentage
-            ? _value.levelProgressPercentage
-            : levelProgressPercentage // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        currentStreak: freezed == currentStreak
-            ? _value.currentStreak
-            : currentStreak // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        longestStreak: freezed == longestStreak
-            ? _value.longestStreak
-            : longestStreak // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        lastActivityDate: freezed == lastActivityDate
-            ? _value.lastActivityDate
-            : lastActivityDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        achievements: freezed == achievements
-            ? _value._achievements
-            : achievements // ignore: cast_nullable_to_non_nullable
-                  as List<Achievement>?,
-        badges: freezed == badges
-            ? _value._badges
-            : badges // ignore: cast_nullable_to_non_nullable
-                  as List<Badge>?,
-        recentTransactions: freezed == recentTransactions
-            ? _value._recentTransactions
-            : recentTransactions // ignore: cast_nullable_to_non_nullable
-                  as List<PointsTransaction>?,
-        leaderboardRank: freezed == leaderboardRank
-            ? _value.leaderboardRank
-            : leaderboardRank // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        totalParticipants: freezed == totalParticipants
-            ? _value.totalParticipants
-            : totalParticipants // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        createdAt: freezed == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [GamificationModel].
+extension GamificationModelPatterns on GamificationModel {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GamificationModel value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GamificationModel() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GamificationModel value)  $default,){
+final _that = this;
+switch (_that) {
+case _GamificationModel():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GamificationModel value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GamificationModel() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  int totalPoints,  int availablePoints,  int redeemedPoints,  int currentLevel,  String currentRank,  int? pointsToNextLevel,  double? levelProgressPercentage,  int? currentStreak,  int? longestStreak,  DateTime? lastActivityDate,  List<Achievement>? achievements,  List<Badge>? badges,  List<PointsTransaction>? recentTransactions,  int? leaderboardRank,  int? totalParticipants,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GamificationModel() when $default != null:
+return $default(_that.userId,_that.totalPoints,_that.availablePoints,_that.redeemedPoints,_that.currentLevel,_that.currentRank,_that.pointsToNextLevel,_that.levelProgressPercentage,_that.currentStreak,_that.longestStreak,_that.lastActivityDate,_that.achievements,_that.badges,_that.recentTransactions,_that.leaderboardRank,_that.totalParticipants,_that.createdAt,_that.updatedAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  int totalPoints,  int availablePoints,  int redeemedPoints,  int currentLevel,  String currentRank,  int? pointsToNextLevel,  double? levelProgressPercentage,  int? currentStreak,  int? longestStreak,  DateTime? lastActivityDate,  List<Achievement>? achievements,  List<Badge>? badges,  List<PointsTransaction>? recentTransactions,  int? leaderboardRank,  int? totalParticipants,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
+switch (_that) {
+case _GamificationModel():
+return $default(_that.userId,_that.totalPoints,_that.availablePoints,_that.redeemedPoints,_that.currentLevel,_that.currentRank,_that.pointsToNextLevel,_that.levelProgressPercentage,_that.currentStreak,_that.longestStreak,_that.lastActivityDate,_that.achievements,_that.badges,_that.recentTransactions,_that.leaderboardRank,_that.totalParticipants,_that.createdAt,_that.updatedAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  int totalPoints,  int availablePoints,  int redeemedPoints,  int currentLevel,  String currentRank,  int? pointsToNextLevel,  double? levelProgressPercentage,  int? currentStreak,  int? longestStreak,  DateTime? lastActivityDate,  List<Achievement>? achievements,  List<Badge>? badges,  List<PointsTransaction>? recentTransactions,  int? leaderboardRank,  int? totalParticipants,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
+switch (_that) {
+case _GamificationModel() when $default != null:
+return $default(_that.userId,_that.totalPoints,_that.availablePoints,_that.redeemedPoints,_that.currentLevel,_that.currentRank,_that.pointsToNextLevel,_that.levelProgressPercentage,_that.currentStreak,_that.longestStreak,_that.lastActivityDate,_that.achievements,_that.badges,_that.recentTransactions,_that.leaderboardRank,_that.totalParticipants,_that.createdAt,_that.updatedAt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$GamificationModelImpl implements _GamificationModel {
-  const _$GamificationModelImpl({
-    this.userId = '',
-    this.totalPoints = 0,
-    this.availablePoints = 0,
-    this.redeemedPoints = 0,
-    this.currentLevel = 0,
-    this.currentRank = '',
-    this.pointsToNextLevel,
-    this.levelProgressPercentage,
-    this.currentStreak,
-    this.longestStreak,
-    this.lastActivityDate,
-    final List<Achievement>? achievements,
-    final List<Badge>? badges,
-    final List<PointsTransaction>? recentTransactions,
-    this.leaderboardRank,
-    this.totalParticipants,
-    this.createdAt,
-    this.updatedAt,
-  }) : _achievements = achievements,
-       _badges = badges,
-       _recentTransactions = recentTransactions;
 
-  factory _$GamificationModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GamificationModelImplFromJson(json);
+class _GamificationModel implements GamificationModel {
+  const _GamificationModel({this.userId = '', this.totalPoints = 0, this.availablePoints = 0, this.redeemedPoints = 0, this.currentLevel = 0, this.currentRank = '', this.pointsToNextLevel, this.levelProgressPercentage, this.currentStreak, this.longestStreak, this.lastActivityDate, final  List<Achievement>? achievements, final  List<Badge>? badges, final  List<PointsTransaction>? recentTransactions, this.leaderboardRank, this.totalParticipants, this.createdAt, this.updatedAt}): _achievements = achievements,_badges = badges,_recentTransactions = recentTransactions;
+  factory _GamificationModel.fromJson(Map<String, dynamic> json) => _$GamificationModelFromJson(json);
 
-  @override
-  @JsonKey()
-  final String userId;
-  @override
-  @JsonKey()
-  final int totalPoints;
-  @override
-  @JsonKey()
-  final int availablePoints;
-  @override
-  @JsonKey()
-  final int redeemedPoints;
-  @override
-  @JsonKey()
-  final int currentLevel;
-  @override
-  @JsonKey()
-  final String currentRank;
-  // Progress
-  @override
-  final int? pointsToNextLevel;
-  @override
-  final double? levelProgressPercentage;
-  // Streaks
-  @override
-  final int? currentStreak;
-  @override
-  final int? longestStreak;
-  @override
-  final DateTime? lastActivityDate;
-  // Achievements
-  final List<Achievement>? _achievements;
-  // Achievements
-  @override
-  List<Achievement>? get achievements {
-    final value = _achievements;
-    if (value == null) return null;
-    if (_achievements is EqualUnmodifiableListView) return _achievements;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  final List<Badge>? _badges;
-  @override
-  List<Badge>? get badges {
-    final value = _badges;
-    if (value == null) return null;
-    if (_badges is EqualUnmodifiableListView) return _badges;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  // Recent Activity
-  final List<PointsTransaction>? _recentTransactions;
-  // Recent Activity
-  @override
-  List<PointsTransaction>? get recentTransactions {
-    final value = _recentTransactions;
-    if (value == null) return null;
-    if (_recentTransactions is EqualUnmodifiableListView)
-      return _recentTransactions;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  // Leaderboard
-  @override
-  final int? leaderboardRank;
-  @override
-  final int? totalParticipants;
-  // Timestamps
-  @override
-  final DateTime? createdAt;
-  @override
-  final DateTime? updatedAt;
-
-  @override
-  String toString() {
-    return 'GamificationModel(userId: $userId, totalPoints: $totalPoints, availablePoints: $availablePoints, redeemedPoints: $redeemedPoints, currentLevel: $currentLevel, currentRank: $currentRank, pointsToNextLevel: $pointsToNextLevel, levelProgressPercentage: $levelProgressPercentage, currentStreak: $currentStreak, longestStreak: $longestStreak, lastActivityDate: $lastActivityDate, achievements: $achievements, badges: $badges, recentTransactions: $recentTransactions, leaderboardRank: $leaderboardRank, totalParticipants: $totalParticipants, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GamificationModelImpl &&
-            (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.totalPoints, totalPoints) ||
-                other.totalPoints == totalPoints) &&
-            (identical(other.availablePoints, availablePoints) ||
-                other.availablePoints == availablePoints) &&
-            (identical(other.redeemedPoints, redeemedPoints) ||
-                other.redeemedPoints == redeemedPoints) &&
-            (identical(other.currentLevel, currentLevel) ||
-                other.currentLevel == currentLevel) &&
-            (identical(other.currentRank, currentRank) ||
-                other.currentRank == currentRank) &&
-            (identical(other.pointsToNextLevel, pointsToNextLevel) ||
-                other.pointsToNextLevel == pointsToNextLevel) &&
-            (identical(
-                  other.levelProgressPercentage,
-                  levelProgressPercentage,
-                ) ||
-                other.levelProgressPercentage == levelProgressPercentage) &&
-            (identical(other.currentStreak, currentStreak) ||
-                other.currentStreak == currentStreak) &&
-            (identical(other.longestStreak, longestStreak) ||
-                other.longestStreak == longestStreak) &&
-            (identical(other.lastActivityDate, lastActivityDate) ||
-                other.lastActivityDate == lastActivityDate) &&
-            const DeepCollectionEquality().equals(
-              other._achievements,
-              _achievements,
-            ) &&
-            const DeepCollectionEquality().equals(other._badges, _badges) &&
-            const DeepCollectionEquality().equals(
-              other._recentTransactions,
-              _recentTransactions,
-            ) &&
-            (identical(other.leaderboardRank, leaderboardRank) ||
-                other.leaderboardRank == leaderboardRank) &&
-            (identical(other.totalParticipants, totalParticipants) ||
-                other.totalParticipants == totalParticipants) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    userId,
-    totalPoints,
-    availablePoints,
-    redeemedPoints,
-    currentLevel,
-    currentRank,
-    pointsToNextLevel,
-    levelProgressPercentage,
-    currentStreak,
-    longestStreak,
-    lastActivityDate,
-    const DeepCollectionEquality().hash(_achievements),
-    const DeepCollectionEquality().hash(_badges),
-    const DeepCollectionEquality().hash(_recentTransactions),
-    leaderboardRank,
-    totalParticipants,
-    createdAt,
-    updatedAt,
-  );
-
-  /// Create a copy of GamificationModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GamificationModelImplCopyWith<_$GamificationModelImpl> get copyWith =>
-      __$$GamificationModelImplCopyWithImpl<_$GamificationModelImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$GamificationModelImplToJson(this);
-  }
+@override@JsonKey() final  String userId;
+@override@JsonKey() final  int totalPoints;
+@override@JsonKey() final  int availablePoints;
+@override@JsonKey() final  int redeemedPoints;
+@override@JsonKey() final  int currentLevel;
+@override@JsonKey() final  String currentRank;
+// Progress
+@override final  int? pointsToNextLevel;
+@override final  double? levelProgressPercentage;
+// Streaks
+@override final  int? currentStreak;
+@override final  int? longestStreak;
+@override final  DateTime? lastActivityDate;
+// Achievements
+ final  List<Achievement>? _achievements;
+// Achievements
+@override List<Achievement>? get achievements {
+  final value = _achievements;
+  if (value == null) return null;
+  if (_achievements is EqualUnmodifiableListView) return _achievements;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
 }
 
-abstract class _GamificationModel implements GamificationModel {
-  const factory _GamificationModel({
-    final String userId,
-    final int totalPoints,
-    final int availablePoints,
-    final int redeemedPoints,
-    final int currentLevel,
-    final String currentRank,
-    final int? pointsToNextLevel,
-    final double? levelProgressPercentage,
-    final int? currentStreak,
-    final int? longestStreak,
-    final DateTime? lastActivityDate,
-    final List<Achievement>? achievements,
-    final List<Badge>? badges,
-    final List<PointsTransaction>? recentTransactions,
-    final int? leaderboardRank,
-    final int? totalParticipants,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
-  }) = _$GamificationModelImpl;
-
-  factory _GamificationModel.fromJson(Map<String, dynamic> json) =
-      _$GamificationModelImpl.fromJson;
-
-  @override
-  String get userId;
-  @override
-  int get totalPoints;
-  @override
-  int get availablePoints;
-  @override
-  int get redeemedPoints;
-  @override
-  int get currentLevel;
-  @override
-  String get currentRank; // Progress
-  @override
-  int? get pointsToNextLevel;
-  @override
-  double? get levelProgressPercentage; // Streaks
-  @override
-  int? get currentStreak;
-  @override
-  int? get longestStreak;
-  @override
-  DateTime? get lastActivityDate; // Achievements
-  @override
-  List<Achievement>? get achievements;
-  @override
-  List<Badge>? get badges; // Recent Activity
-  @override
-  List<PointsTransaction>? get recentTransactions; // Leaderboard
-  @override
-  int? get leaderboardRank;
-  @override
-  int? get totalParticipants; // Timestamps
-  @override
-  DateTime? get createdAt;
-  @override
-  DateTime? get updatedAt;
-
-  /// Create a copy of GamificationModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$GamificationModelImplCopyWith<_$GamificationModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+ final  List<Badge>? _badges;
+@override List<Badge>? get badges {
+  final value = _badges;
+  if (value == null) return null;
+  if (_badges is EqualUnmodifiableListView) return _badges;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
 }
 
-PointsTransaction _$PointsTransactionFromJson(Map<String, dynamic> json) {
-  return _PointsTransaction.fromJson(json);
+// Recent Activity
+ final  List<PointsTransaction>? _recentTransactions;
+// Recent Activity
+@override List<PointsTransaction>? get recentTransactions {
+  final value = _recentTransactions;
+  if (value == null) return null;
+  if (_recentTransactions is EqualUnmodifiableListView) return _recentTransactions;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
 }
+
+// Leaderboard
+@override final  int? leaderboardRank;
+@override final  int? totalParticipants;
+// Timestamps
+@override final  DateTime? createdAt;
+@override final  DateTime? updatedAt;
+
+/// Create a copy of GamificationModel
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GamificationModelCopyWith<_GamificationModel> get copyWith => __$GamificationModelCopyWithImpl<_GamificationModel>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$GamificationModelToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GamificationModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.totalPoints, totalPoints) || other.totalPoints == totalPoints)&&(identical(other.availablePoints, availablePoints) || other.availablePoints == availablePoints)&&(identical(other.redeemedPoints, redeemedPoints) || other.redeemedPoints == redeemedPoints)&&(identical(other.currentLevel, currentLevel) || other.currentLevel == currentLevel)&&(identical(other.currentRank, currentRank) || other.currentRank == currentRank)&&(identical(other.pointsToNextLevel, pointsToNextLevel) || other.pointsToNextLevel == pointsToNextLevel)&&(identical(other.levelProgressPercentage, levelProgressPercentage) || other.levelProgressPercentage == levelProgressPercentage)&&(identical(other.currentStreak, currentStreak) || other.currentStreak == currentStreak)&&(identical(other.longestStreak, longestStreak) || other.longestStreak == longestStreak)&&(identical(other.lastActivityDate, lastActivityDate) || other.lastActivityDate == lastActivityDate)&&const DeepCollectionEquality().equals(other._achievements, _achievements)&&const DeepCollectionEquality().equals(other._badges, _badges)&&const DeepCollectionEquality().equals(other._recentTransactions, _recentTransactions)&&(identical(other.leaderboardRank, leaderboardRank) || other.leaderboardRank == leaderboardRank)&&(identical(other.totalParticipants, totalParticipants) || other.totalParticipants == totalParticipants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,userId,totalPoints,availablePoints,redeemedPoints,currentLevel,currentRank,pointsToNextLevel,levelProgressPercentage,currentStreak,longestStreak,lastActivityDate,const DeepCollectionEquality().hash(_achievements),const DeepCollectionEquality().hash(_badges),const DeepCollectionEquality().hash(_recentTransactions),leaderboardRank,totalParticipants,createdAt,updatedAt);
+
+@override
+String toString() {
+  return 'GamificationModel(userId: $userId, totalPoints: $totalPoints, availablePoints: $availablePoints, redeemedPoints: $redeemedPoints, currentLevel: $currentLevel, currentRank: $currentRank, pointsToNextLevel: $pointsToNextLevel, levelProgressPercentage: $levelProgressPercentage, currentStreak: $currentStreak, longestStreak: $longestStreak, lastActivityDate: $lastActivityDate, achievements: $achievements, badges: $badges, recentTransactions: $recentTransactions, leaderboardRank: $leaderboardRank, totalParticipants: $totalParticipants, createdAt: $createdAt, updatedAt: $updatedAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$GamificationModelCopyWith<$Res> implements $GamificationModelCopyWith<$Res> {
+  factory _$GamificationModelCopyWith(_GamificationModel value, $Res Function(_GamificationModel) _then) = __$GamificationModelCopyWithImpl;
+@override @useResult
+$Res call({
+ String userId, int totalPoints, int availablePoints, int redeemedPoints, int currentLevel, String currentRank, int? pointsToNextLevel, double? levelProgressPercentage, int? currentStreak, int? longestStreak, DateTime? lastActivityDate, List<Achievement>? achievements, List<Badge>? badges, List<PointsTransaction>? recentTransactions, int? leaderboardRank, int? totalParticipants, DateTime? createdAt, DateTime? updatedAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$GamificationModelCopyWithImpl<$Res>
+    implements _$GamificationModelCopyWith<$Res> {
+  __$GamificationModelCopyWithImpl(this._self, this._then);
+
+  final _GamificationModel _self;
+  final $Res Function(_GamificationModel) _then;
+
+/// Create a copy of GamificationModel
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? totalPoints = null,Object? availablePoints = null,Object? redeemedPoints = null,Object? currentLevel = null,Object? currentRank = null,Object? pointsToNextLevel = freezed,Object? levelProgressPercentage = freezed,Object? currentStreak = freezed,Object? longestStreak = freezed,Object? lastActivityDate = freezed,Object? achievements = freezed,Object? badges = freezed,Object? recentTransactions = freezed,Object? leaderboardRank = freezed,Object? totalParticipants = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+  return _then(_GamificationModel(
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,totalPoints: null == totalPoints ? _self.totalPoints : totalPoints // ignore: cast_nullable_to_non_nullable
+as int,availablePoints: null == availablePoints ? _self.availablePoints : availablePoints // ignore: cast_nullable_to_non_nullable
+as int,redeemedPoints: null == redeemedPoints ? _self.redeemedPoints : redeemedPoints // ignore: cast_nullable_to_non_nullable
+as int,currentLevel: null == currentLevel ? _self.currentLevel : currentLevel // ignore: cast_nullable_to_non_nullable
+as int,currentRank: null == currentRank ? _self.currentRank : currentRank // ignore: cast_nullable_to_non_nullable
+as String,pointsToNextLevel: freezed == pointsToNextLevel ? _self.pointsToNextLevel : pointsToNextLevel // ignore: cast_nullable_to_non_nullable
+as int?,levelProgressPercentage: freezed == levelProgressPercentage ? _self.levelProgressPercentage : levelProgressPercentage // ignore: cast_nullable_to_non_nullable
+as double?,currentStreak: freezed == currentStreak ? _self.currentStreak : currentStreak // ignore: cast_nullable_to_non_nullable
+as int?,longestStreak: freezed == longestStreak ? _self.longestStreak : longestStreak // ignore: cast_nullable_to_non_nullable
+as int?,lastActivityDate: freezed == lastActivityDate ? _self.lastActivityDate : lastActivityDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,achievements: freezed == achievements ? _self._achievements : achievements // ignore: cast_nullable_to_non_nullable
+as List<Achievement>?,badges: freezed == badges ? _self._badges : badges // ignore: cast_nullable_to_non_nullable
+as List<Badge>?,recentTransactions: freezed == recentTransactions ? _self._recentTransactions : recentTransactions // ignore: cast_nullable_to_non_nullable
+as List<PointsTransaction>?,leaderboardRank: freezed == leaderboardRank ? _self.leaderboardRank : leaderboardRank // ignore: cast_nullable_to_non_nullable
+as int?,totalParticipants: freezed == totalParticipants ? _self.totalParticipants : totalParticipants // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$PointsTransaction {
-  String get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  int get points => throw _privateConstructorUsedError;
-  String get type =>
-      throw _privateConstructorUsedError; // earned, redeemed, adjusted
-  String get activityType => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
-  String? get metadata => throw _privateConstructorUsedError;
-  int? get balanceBefore => throw _privateConstructorUsedError;
-  int? get balanceAfter => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+
+ String get id; String get userId; int get points; String get type;// earned, redeemed, adjusted
+ String get activityType; String? get description; String? get metadata; int? get balanceBefore; int? get balanceAfter; DateTime? get createdAt;
+/// Create a copy of PointsTransaction
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PointsTransactionCopyWith<PointsTransaction> get copyWith => _$PointsTransactionCopyWithImpl<PointsTransaction>(this as PointsTransaction, _$identity);
 
   /// Serializes this PointsTransaction to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of PointsTransaction
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $PointsTransactionCopyWith<PointsTransaction> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PointsTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.points, points) || other.points == points)&&(identical(other.type, type) || other.type == type)&&(identical(other.activityType, activityType) || other.activityType == activityType)&&(identical(other.description, description) || other.description == description)&&(identical(other.metadata, metadata) || other.metadata == metadata)&&(identical(other.balanceBefore, balanceBefore) || other.balanceBefore == balanceBefore)&&(identical(other.balanceAfter, balanceAfter) || other.balanceAfter == balanceAfter)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,userId,points,type,activityType,description,metadata,balanceBefore,balanceAfter,createdAt);
+
+@override
+String toString() {
+  return 'PointsTransaction(id: $id, userId: $userId, points: $points, type: $type, activityType: $activityType, description: $description, metadata: $metadata, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, createdAt: $createdAt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $PointsTransactionCopyWith<$Res> {
-  factory $PointsTransactionCopyWith(
-    PointsTransaction value,
-    $Res Function(PointsTransaction) then,
-  ) = _$PointsTransactionCopyWithImpl<$Res, PointsTransaction>;
-  @useResult
-  $Res call({
-    String id,
-    String userId,
-    int points,
-    String type,
-    String activityType,
-    String? description,
-    String? metadata,
-    int? balanceBefore,
-    int? balanceAfter,
-    DateTime? createdAt,
-  });
-}
+abstract mixin class $PointsTransactionCopyWith<$Res>  {
+  factory $PointsTransactionCopyWith(PointsTransaction value, $Res Function(PointsTransaction) _then) = _$PointsTransactionCopyWithImpl;
+@useResult
+$Res call({
+ String id, String userId, int points, String type, String activityType, String? description, String? metadata, int? balanceBefore, int? balanceAfter, DateTime? createdAt
+});
 
+
+
+
+}
 /// @nodoc
-class _$PointsTransactionCopyWithImpl<$Res, $Val extends PointsTransaction>
+class _$PointsTransactionCopyWithImpl<$Res>
     implements $PointsTransactionCopyWith<$Res> {
-  _$PointsTransactionCopyWithImpl(this._value, this._then);
+  _$PointsTransactionCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final PointsTransaction _self;
+  final $Res Function(PointsTransaction) _then;
 
-  /// Create a copy of PointsTransaction
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? points = null,
-    Object? type = null,
-    Object? activityType = null,
-    Object? description = freezed,
-    Object? metadata = freezed,
-    Object? balanceBefore = freezed,
-    Object? balanceAfter = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            userId: null == userId
-                ? _value.userId
-                : userId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            points: null == points
-                ? _value.points
-                : points // ignore: cast_nullable_to_non_nullable
-                      as int,
-            type: null == type
-                ? _value.type
-                : type // ignore: cast_nullable_to_non_nullable
-                      as String,
-            activityType: null == activityType
-                ? _value.activityType
-                : activityType // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            metadata: freezed == metadata
-                ? _value.metadata
-                : metadata // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            balanceBefore: freezed == balanceBefore
-                ? _value.balanceBefore
-                : balanceBefore // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            balanceAfter: freezed == balanceAfter
-                ? _value.balanceAfter
-                : balanceAfter // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            createdAt: freezed == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of PointsTransaction
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? points = null,Object? type = null,Object? activityType = null,Object? description = freezed,Object? metadata = freezed,Object? balanceBefore = freezed,Object? balanceAfter = freezed,Object? createdAt = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,points: null == points ? _self.points : points // ignore: cast_nullable_to_non_nullable
+as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,activityType: null == activityType ? _self.activityType : activityType // ignore: cast_nullable_to_non_nullable
+as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
+as String?,balanceBefore: freezed == balanceBefore ? _self.balanceBefore : balanceBefore // ignore: cast_nullable_to_non_nullable
+as int?,balanceAfter: freezed == balanceAfter ? _self.balanceAfter : balanceAfter // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$PointsTransactionImplCopyWith<$Res>
-    implements $PointsTransactionCopyWith<$Res> {
-  factory _$$PointsTransactionImplCopyWith(
-    _$PointsTransactionImpl value,
-    $Res Function(_$PointsTransactionImpl) then,
-  ) = __$$PointsTransactionImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String id,
-    String userId,
-    int points,
-    String type,
-    String activityType,
-    String? description,
-    String? metadata,
-    int? balanceBefore,
-    int? balanceAfter,
-    DateTime? createdAt,
-  });
 }
 
-/// @nodoc
-class __$$PointsTransactionImplCopyWithImpl<$Res>
-    extends _$PointsTransactionCopyWithImpl<$Res, _$PointsTransactionImpl>
-    implements _$$PointsTransactionImplCopyWith<$Res> {
-  __$$PointsTransactionImplCopyWithImpl(
-    _$PointsTransactionImpl _value,
-    $Res Function(_$PointsTransactionImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of PointsTransaction
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? points = null,
-    Object? type = null,
-    Object? activityType = null,
-    Object? description = freezed,
-    Object? metadata = freezed,
-    Object? balanceBefore = freezed,
-    Object? balanceAfter = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _$PointsTransactionImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        userId: null == userId
-            ? _value.userId
-            : userId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        points: null == points
-            ? _value.points
-            : points // ignore: cast_nullable_to_non_nullable
-                  as int,
-        type: null == type
-            ? _value.type
-            : type // ignore: cast_nullable_to_non_nullable
-                  as String,
-        activityType: null == activityType
-            ? _value.activityType
-            : activityType // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        metadata: freezed == metadata
-            ? _value.metadata
-            : metadata // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        balanceBefore: freezed == balanceBefore
-            ? _value.balanceBefore
-            : balanceBefore // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        balanceAfter: freezed == balanceAfter
-            ? _value.balanceAfter
-            : balanceAfter // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        createdAt: freezed == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [PointsTransaction].
+extension PointsTransactionPatterns on PointsTransaction {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PointsTransaction value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PointsTransaction() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PointsTransaction value)  $default,){
+final _that = this;
+switch (_that) {
+case _PointsTransaction():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PointsTransaction value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PointsTransaction() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  int points,  String type,  String activityType,  String? description,  String? metadata,  int? balanceBefore,  int? balanceAfter,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PointsTransaction() when $default != null:
+return $default(_that.id,_that.userId,_that.points,_that.type,_that.activityType,_that.description,_that.metadata,_that.balanceBefore,_that.balanceAfter,_that.createdAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  int points,  String type,  String activityType,  String? description,  String? metadata,  int? balanceBefore,  int? balanceAfter,  DateTime? createdAt)  $default,) {final _that = this;
+switch (_that) {
+case _PointsTransaction():
+return $default(_that.id,_that.userId,_that.points,_that.type,_that.activityType,_that.description,_that.metadata,_that.balanceBefore,_that.balanceAfter,_that.createdAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  int points,  String type,  String activityType,  String? description,  String? metadata,  int? balanceBefore,  int? balanceAfter,  DateTime? createdAt)?  $default,) {final _that = this;
+switch (_that) {
+case _PointsTransaction() when $default != null:
+return $default(_that.id,_that.userId,_that.points,_that.type,_that.activityType,_that.description,_that.metadata,_that.balanceBefore,_that.balanceAfter,_that.createdAt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$PointsTransactionImpl implements _PointsTransaction {
-  const _$PointsTransactionImpl({
-    this.id = '',
-    this.userId = '',
-    this.points = 0,
-    this.type = '',
-    this.activityType = '',
-    this.description,
-    this.metadata,
-    this.balanceBefore,
-    this.balanceAfter,
-    this.createdAt,
-  });
 
-  factory _$PointsTransactionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PointsTransactionImplFromJson(json);
+class _PointsTransaction implements PointsTransaction {
+  const _PointsTransaction({this.id = '', this.userId = '', this.points = 0, this.type = '', this.activityType = '', this.description, this.metadata, this.balanceBefore, this.balanceAfter, this.createdAt});
+  factory _PointsTransaction.fromJson(Map<String, dynamic> json) => _$PointsTransactionFromJson(json);
 
-  @override
-  @JsonKey()
-  final String id;
-  @override
-  @JsonKey()
-  final String userId;
-  @override
-  @JsonKey()
-  final int points;
-  @override
-  @JsonKey()
-  final String type;
-  // earned, redeemed, adjusted
-  @override
-  @JsonKey()
-  final String activityType;
-  @override
-  final String? description;
-  @override
-  final String? metadata;
-  @override
-  final int? balanceBefore;
-  @override
-  final int? balanceAfter;
-  @override
-  final DateTime? createdAt;
+@override@JsonKey() final  String id;
+@override@JsonKey() final  String userId;
+@override@JsonKey() final  int points;
+@override@JsonKey() final  String type;
+// earned, redeemed, adjusted
+@override@JsonKey() final  String activityType;
+@override final  String? description;
+@override final  String? metadata;
+@override final  int? balanceBefore;
+@override final  int? balanceAfter;
+@override final  DateTime? createdAt;
 
-  @override
-  String toString() {
-    return 'PointsTransaction(id: $id, userId: $userId, points: $points, type: $type, activityType: $activityType, description: $description, metadata: $metadata, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, createdAt: $createdAt)';
-  }
+/// Create a copy of PointsTransaction
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PointsTransactionCopyWith<_PointsTransaction> get copyWith => __$PointsTransactionCopyWithImpl<_PointsTransaction>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$PointsTransactionImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.points, points) || other.points == points) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.activityType, activityType) ||
-                other.activityType == activityType) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.metadata, metadata) ||
-                other.metadata == metadata) &&
-            (identical(other.balanceBefore, balanceBefore) ||
-                other.balanceBefore == balanceBefore) &&
-            (identical(other.balanceAfter, balanceAfter) ||
-                other.balanceAfter == balanceAfter) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    userId,
-    points,
-    type,
-    activityType,
-    description,
-    metadata,
-    balanceBefore,
-    balanceAfter,
-    createdAt,
-  );
-
-  /// Create a copy of PointsTransaction
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$PointsTransactionImplCopyWith<_$PointsTransactionImpl> get copyWith =>
-      __$$PointsTransactionImplCopyWithImpl<_$PointsTransactionImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PointsTransactionImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$PointsTransactionToJson(this, );
 }
 
-abstract class _PointsTransaction implements PointsTransaction {
-  const factory _PointsTransaction({
-    final String id,
-    final String userId,
-    final int points,
-    final String type,
-    final String activityType,
-    final String? description,
-    final String? metadata,
-    final int? balanceBefore,
-    final int? balanceAfter,
-    final DateTime? createdAt,
-  }) = _$PointsTransactionImpl;
-
-  factory _PointsTransaction.fromJson(Map<String, dynamic> json) =
-      _$PointsTransactionImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get userId;
-  @override
-  int get points;
-  @override
-  String get type; // earned, redeemed, adjusted
-  @override
-  String get activityType;
-  @override
-  String? get description;
-  @override
-  String? get metadata;
-  @override
-  int? get balanceBefore;
-  @override
-  int? get balanceAfter;
-  @override
-  DateTime? get createdAt;
-
-  /// Create a copy of PointsTransaction
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PointsTransactionImplCopyWith<_$PointsTransactionImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PointsTransaction&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.points, points) || other.points == points)&&(identical(other.type, type) || other.type == type)&&(identical(other.activityType, activityType) || other.activityType == activityType)&&(identical(other.description, description) || other.description == description)&&(identical(other.metadata, metadata) || other.metadata == metadata)&&(identical(other.balanceBefore, balanceBefore) || other.balanceBefore == balanceBefore)&&(identical(other.balanceAfter, balanceAfter) || other.balanceAfter == balanceAfter)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
-Achievement _$AchievementFromJson(Map<String, dynamic> json) {
-  return _Achievement.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,userId,points,type,activityType,description,metadata,balanceBefore,balanceAfter,createdAt);
+
+@override
+String toString() {
+  return 'PointsTransaction(id: $id, userId: $userId, points: $points, type: $type, activityType: $activityType, description: $description, metadata: $metadata, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, createdAt: $createdAt)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PointsTransactionCopyWith<$Res> implements $PointsTransactionCopyWith<$Res> {
+  factory _$PointsTransactionCopyWith(_PointsTransaction value, $Res Function(_PointsTransaction) _then) = __$PointsTransactionCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String userId, int points, String type, String activityType, String? description, String? metadata, int? balanceBefore, int? balanceAfter, DateTime? createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$PointsTransactionCopyWithImpl<$Res>
+    implements _$PointsTransactionCopyWith<$Res> {
+  __$PointsTransactionCopyWithImpl(this._self, this._then);
+
+  final _PointsTransaction _self;
+  final $Res Function(_PointsTransaction) _then;
+
+/// Create a copy of PointsTransaction
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? points = null,Object? type = null,Object? activityType = null,Object? description = freezed,Object? metadata = freezed,Object? balanceBefore = freezed,Object? balanceAfter = freezed,Object? createdAt = freezed,}) {
+  return _then(_PointsTransaction(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,points: null == points ? _self.points : points // ignore: cast_nullable_to_non_nullable
+as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,activityType: null == activityType ? _self.activityType : activityType // ignore: cast_nullable_to_non_nullable
+as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
+as String?,balanceBefore: freezed == balanceBefore ? _self.balanceBefore : balanceBefore // ignore: cast_nullable_to_non_nullable
+as int?,balanceAfter: freezed == balanceAfter ? _self.balanceAfter : balanceAfter // ignore: cast_nullable_to_non_nullable
+as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$Achievement {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get icon => throw _privateConstructorUsedError;
-  int get pointsReward => throw _privateConstructorUsedError;
-  String get category =>
-      throw _privateConstructorUsedError; // sales, recruitment, activity, training
-  String get condition => throw _privateConstructorUsedError;
-  int? get targetValue => throw _privateConstructorUsedError;
-  int? get currentValue => throw _privateConstructorUsedError;
-  double? get progressPercentage => throw _privateConstructorUsedError;
-  bool? get isCompleted => throw _privateConstructorUsedError;
-  DateTime? get completedAt => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+
+ String get id; String get name; String get description; String get icon; int get pointsReward; String get category;// sales, recruitment, activity, training
+ String get condition; int? get targetValue; int? get currentValue; double? get progressPercentage; bool? get isCompleted; DateTime? get completedAt; DateTime? get createdAt;
+/// Create a copy of Achievement
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AchievementCopyWith<Achievement> get copyWith => _$AchievementCopyWithImpl<Achievement>(this as Achievement, _$identity);
 
   /// Serializes this Achievement to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Achievement
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $AchievementCopyWith<Achievement> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Achievement&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.pointsReward, pointsReward) || other.pointsReward == pointsReward)&&(identical(other.category, category) || other.category == category)&&(identical(other.condition, condition) || other.condition == condition)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,description,icon,pointsReward,category,condition,targetValue,currentValue,progressPercentage,isCompleted,completedAt,createdAt);
+
+@override
+String toString() {
+  return 'Achievement(id: $id, name: $name, description: $description, icon: $icon, pointsReward: $pointsReward, category: $category, condition: $condition, targetValue: $targetValue, currentValue: $currentValue, progressPercentage: $progressPercentage, isCompleted: $isCompleted, completedAt: $completedAt, createdAt: $createdAt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $AchievementCopyWith<$Res> {
-  factory $AchievementCopyWith(
-    Achievement value,
-    $Res Function(Achievement) then,
-  ) = _$AchievementCopyWithImpl<$Res, Achievement>;
-  @useResult
-  $Res call({
-    String id,
-    String name,
-    String description,
-    String icon,
-    int pointsReward,
-    String category,
-    String condition,
-    int? targetValue,
-    int? currentValue,
-    double? progressPercentage,
-    bool? isCompleted,
-    DateTime? completedAt,
-    DateTime? createdAt,
-  });
-}
+abstract mixin class $AchievementCopyWith<$Res>  {
+  factory $AchievementCopyWith(Achievement value, $Res Function(Achievement) _then) = _$AchievementCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, String description, String icon, int pointsReward, String category, String condition, int? targetValue, int? currentValue, double? progressPercentage, bool? isCompleted, DateTime? completedAt, DateTime? createdAt
+});
 
+
+
+
+}
 /// @nodoc
-class _$AchievementCopyWithImpl<$Res, $Val extends Achievement>
+class _$AchievementCopyWithImpl<$Res>
     implements $AchievementCopyWith<$Res> {
-  _$AchievementCopyWithImpl(this._value, this._then);
+  _$AchievementCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Achievement _self;
+  final $Res Function(Achievement) _then;
 
-  /// Create a copy of Achievement
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
-    Object? icon = null,
-    Object? pointsReward = null,
-    Object? category = null,
-    Object? condition = null,
-    Object? targetValue = freezed,
-    Object? currentValue = freezed,
-    Object? progressPercentage = freezed,
-    Object? isCompleted = freezed,
-    Object? completedAt = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: null == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String,
-            icon: null == icon
-                ? _value.icon
-                : icon // ignore: cast_nullable_to_non_nullable
-                      as String,
-            pointsReward: null == pointsReward
-                ? _value.pointsReward
-                : pointsReward // ignore: cast_nullable_to_non_nullable
-                      as int,
-            category: null == category
-                ? _value.category
-                : category // ignore: cast_nullable_to_non_nullable
-                      as String,
-            condition: null == condition
-                ? _value.condition
-                : condition // ignore: cast_nullable_to_non_nullable
-                      as String,
-            targetValue: freezed == targetValue
-                ? _value.targetValue
-                : targetValue // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            currentValue: freezed == currentValue
-                ? _value.currentValue
-                : currentValue // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            progressPercentage: freezed == progressPercentage
-                ? _value.progressPercentage
-                : progressPercentage // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            isCompleted: freezed == isCompleted
-                ? _value.isCompleted
-                : isCompleted // ignore: cast_nullable_to_non_nullable
-                      as bool?,
-            completedAt: freezed == completedAt
-                ? _value.completedAt
-                : completedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            createdAt: freezed == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of Achievement
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = null,Object? icon = null,Object? pointsReward = null,Object? category = null,Object? condition = null,Object? targetValue = freezed,Object? currentValue = freezed,Object? progressPercentage = freezed,Object? isCompleted = freezed,Object? completedAt = freezed,Object? createdAt = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as String,pointsReward: null == pointsReward ? _self.pointsReward : pointsReward // ignore: cast_nullable_to_non_nullable
+as int,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,condition: null == condition ? _self.condition : condition // ignore: cast_nullable_to_non_nullable
+as String,targetValue: freezed == targetValue ? _self.targetValue : targetValue // ignore: cast_nullable_to_non_nullable
+as int?,currentValue: freezed == currentValue ? _self.currentValue : currentValue // ignore: cast_nullable_to_non_nullable
+as int?,progressPercentage: freezed == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as double?,isCompleted: freezed == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,completedAt: freezed == completedAt ? _self.completedAt : completedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$AchievementImplCopyWith<$Res>
-    implements $AchievementCopyWith<$Res> {
-  factory _$$AchievementImplCopyWith(
-    _$AchievementImpl value,
-    $Res Function(_$AchievementImpl) then,
-  ) = __$$AchievementImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String id,
-    String name,
-    String description,
-    String icon,
-    int pointsReward,
-    String category,
-    String condition,
-    int? targetValue,
-    int? currentValue,
-    double? progressPercentage,
-    bool? isCompleted,
-    DateTime? completedAt,
-    DateTime? createdAt,
-  });
 }
 
-/// @nodoc
-class __$$AchievementImplCopyWithImpl<$Res>
-    extends _$AchievementCopyWithImpl<$Res, _$AchievementImpl>
-    implements _$$AchievementImplCopyWith<$Res> {
-  __$$AchievementImplCopyWithImpl(
-    _$AchievementImpl _value,
-    $Res Function(_$AchievementImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of Achievement
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
-    Object? icon = null,
-    Object? pointsReward = null,
-    Object? category = null,
-    Object? condition = null,
-    Object? targetValue = freezed,
-    Object? currentValue = freezed,
-    Object? progressPercentage = freezed,
-    Object? isCompleted = freezed,
-    Object? completedAt = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _$AchievementImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: null == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String,
-        icon: null == icon
-            ? _value.icon
-            : icon // ignore: cast_nullable_to_non_nullable
-                  as String,
-        pointsReward: null == pointsReward
-            ? _value.pointsReward
-            : pointsReward // ignore: cast_nullable_to_non_nullable
-                  as int,
-        category: null == category
-            ? _value.category
-            : category // ignore: cast_nullable_to_non_nullable
-                  as String,
-        condition: null == condition
-            ? _value.condition
-            : condition // ignore: cast_nullable_to_non_nullable
-                  as String,
-        targetValue: freezed == targetValue
-            ? _value.targetValue
-            : targetValue // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        currentValue: freezed == currentValue
-            ? _value.currentValue
-            : currentValue // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        progressPercentage: freezed == progressPercentage
-            ? _value.progressPercentage
-            : progressPercentage // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        isCompleted: freezed == isCompleted
-            ? _value.isCompleted
-            : isCompleted // ignore: cast_nullable_to_non_nullable
-                  as bool?,
-        completedAt: freezed == completedAt
-            ? _value.completedAt
-            : completedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        createdAt: freezed == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [Achievement].
+extension AchievementPatterns on Achievement {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Achievement value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Achievement() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Achievement value)  $default,){
+final _that = this;
+switch (_that) {
+case _Achievement():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Achievement value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Achievement() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String icon,  int pointsReward,  String category,  String condition,  int? targetValue,  int? currentValue,  double? progressPercentage,  bool? isCompleted,  DateTime? completedAt,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Achievement() when $default != null:
+return $default(_that.id,_that.name,_that.description,_that.icon,_that.pointsReward,_that.category,_that.condition,_that.targetValue,_that.currentValue,_that.progressPercentage,_that.isCompleted,_that.completedAt,_that.createdAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String icon,  int pointsReward,  String category,  String condition,  int? targetValue,  int? currentValue,  double? progressPercentage,  bool? isCompleted,  DateTime? completedAt,  DateTime? createdAt)  $default,) {final _that = this;
+switch (_that) {
+case _Achievement():
+return $default(_that.id,_that.name,_that.description,_that.icon,_that.pointsReward,_that.category,_that.condition,_that.targetValue,_that.currentValue,_that.progressPercentage,_that.isCompleted,_that.completedAt,_that.createdAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String description,  String icon,  int pointsReward,  String category,  String condition,  int? targetValue,  int? currentValue,  double? progressPercentage,  bool? isCompleted,  DateTime? completedAt,  DateTime? createdAt)?  $default,) {final _that = this;
+switch (_that) {
+case _Achievement() when $default != null:
+return $default(_that.id,_that.name,_that.description,_that.icon,_that.pointsReward,_that.category,_that.condition,_that.targetValue,_that.currentValue,_that.progressPercentage,_that.isCompleted,_that.completedAt,_that.createdAt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AchievementImpl implements _Achievement {
-  const _$AchievementImpl({
-    this.id = '',
-    this.name = '',
-    this.description = '',
-    this.icon = '',
-    this.pointsReward = 0,
-    this.category = '',
-    this.condition = '',
-    this.targetValue,
-    this.currentValue,
-    this.progressPercentage,
-    this.isCompleted,
-    this.completedAt,
-    this.createdAt,
-  });
 
-  factory _$AchievementImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AchievementImplFromJson(json);
+class _Achievement implements Achievement {
+  const _Achievement({this.id = '', this.name = '', this.description = '', this.icon = '', this.pointsReward = 0, this.category = '', this.condition = '', this.targetValue, this.currentValue, this.progressPercentage, this.isCompleted, this.completedAt, this.createdAt});
+  factory _Achievement.fromJson(Map<String, dynamic> json) => _$AchievementFromJson(json);
 
-  @override
-  @JsonKey()
-  final String id;
-  @override
-  @JsonKey()
-  final String name;
-  @override
-  @JsonKey()
-  final String description;
-  @override
-  @JsonKey()
-  final String icon;
-  @override
-  @JsonKey()
-  final int pointsReward;
-  @override
-  @JsonKey()
-  final String category;
-  // sales, recruitment, activity, training
-  @override
-  @JsonKey()
-  final String condition;
-  @override
-  final int? targetValue;
-  @override
-  final int? currentValue;
-  @override
-  final double? progressPercentage;
-  @override
-  final bool? isCompleted;
-  @override
-  final DateTime? completedAt;
-  @override
-  final DateTime? createdAt;
+@override@JsonKey() final  String id;
+@override@JsonKey() final  String name;
+@override@JsonKey() final  String description;
+@override@JsonKey() final  String icon;
+@override@JsonKey() final  int pointsReward;
+@override@JsonKey() final  String category;
+// sales, recruitment, activity, training
+@override@JsonKey() final  String condition;
+@override final  int? targetValue;
+@override final  int? currentValue;
+@override final  double? progressPercentage;
+@override final  bool? isCompleted;
+@override final  DateTime? completedAt;
+@override final  DateTime? createdAt;
 
-  @override
-  String toString() {
-    return 'Achievement(id: $id, name: $name, description: $description, icon: $icon, pointsReward: $pointsReward, category: $category, condition: $condition, targetValue: $targetValue, currentValue: $currentValue, progressPercentage: $progressPercentage, isCompleted: $isCompleted, completedAt: $completedAt, createdAt: $createdAt)';
-  }
+/// Create a copy of Achievement
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AchievementCopyWith<_Achievement> get copyWith => __$AchievementCopyWithImpl<_Achievement>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AchievementImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.icon, icon) || other.icon == icon) &&
-            (identical(other.pointsReward, pointsReward) ||
-                other.pointsReward == pointsReward) &&
-            (identical(other.category, category) ||
-                other.category == category) &&
-            (identical(other.condition, condition) ||
-                other.condition == condition) &&
-            (identical(other.targetValue, targetValue) ||
-                other.targetValue == targetValue) &&
-            (identical(other.currentValue, currentValue) ||
-                other.currentValue == currentValue) &&
-            (identical(other.progressPercentage, progressPercentage) ||
-                other.progressPercentage == progressPercentage) &&
-            (identical(other.isCompleted, isCompleted) ||
-                other.isCompleted == isCompleted) &&
-            (identical(other.completedAt, completedAt) ||
-                other.completedAt == completedAt) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    name,
-    description,
-    icon,
-    pointsReward,
-    category,
-    condition,
-    targetValue,
-    currentValue,
-    progressPercentage,
-    isCompleted,
-    completedAt,
-    createdAt,
-  );
-
-  /// Create a copy of Achievement
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AchievementImplCopyWith<_$AchievementImpl> get copyWith =>
-      __$$AchievementImplCopyWithImpl<_$AchievementImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AchievementImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$AchievementToJson(this, );
 }
 
-abstract class _Achievement implements Achievement {
-  const factory _Achievement({
-    final String id,
-    final String name,
-    final String description,
-    final String icon,
-    final int pointsReward,
-    final String category,
-    final String condition,
-    final int? targetValue,
-    final int? currentValue,
-    final double? progressPercentage,
-    final bool? isCompleted,
-    final DateTime? completedAt,
-    final DateTime? createdAt,
-  }) = _$AchievementImpl;
-
-  factory _Achievement.fromJson(Map<String, dynamic> json) =
-      _$AchievementImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  String get description;
-  @override
-  String get icon;
-  @override
-  int get pointsReward;
-  @override
-  String get category; // sales, recruitment, activity, training
-  @override
-  String get condition;
-  @override
-  int? get targetValue;
-  @override
-  int? get currentValue;
-  @override
-  double? get progressPercentage;
-  @override
-  bool? get isCompleted;
-  @override
-  DateTime? get completedAt;
-  @override
-  DateTime? get createdAt;
-
-  /// Create a copy of Achievement
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AchievementImplCopyWith<_$AchievementImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Achievement&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.pointsReward, pointsReward) || other.pointsReward == pointsReward)&&(identical(other.category, category) || other.category == category)&&(identical(other.condition, condition) || other.condition == condition)&&(identical(other.targetValue, targetValue) || other.targetValue == targetValue)&&(identical(other.currentValue, currentValue) || other.currentValue == currentValue)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
-Badge _$BadgeFromJson(Map<String, dynamic> json) {
-  return _Badge.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,description,icon,pointsReward,category,condition,targetValue,currentValue,progressPercentage,isCompleted,completedAt,createdAt);
+
+@override
+String toString() {
+  return 'Achievement(id: $id, name: $name, description: $description, icon: $icon, pointsReward: $pointsReward, category: $category, condition: $condition, targetValue: $targetValue, currentValue: $currentValue, progressPercentage: $progressPercentage, isCompleted: $isCompleted, completedAt: $completedAt, createdAt: $createdAt)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AchievementCopyWith<$Res> implements $AchievementCopyWith<$Res> {
+  factory _$AchievementCopyWith(_Achievement value, $Res Function(_Achievement) _then) = __$AchievementCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, String description, String icon, int pointsReward, String category, String condition, int? targetValue, int? currentValue, double? progressPercentage, bool? isCompleted, DateTime? completedAt, DateTime? createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$AchievementCopyWithImpl<$Res>
+    implements _$AchievementCopyWith<$Res> {
+  __$AchievementCopyWithImpl(this._self, this._then);
+
+  final _Achievement _self;
+  final $Res Function(_Achievement) _then;
+
+/// Create a copy of Achievement
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = null,Object? icon = null,Object? pointsReward = null,Object? category = null,Object? condition = null,Object? targetValue = freezed,Object? currentValue = freezed,Object? progressPercentage = freezed,Object? isCompleted = freezed,Object? completedAt = freezed,Object? createdAt = freezed,}) {
+  return _then(_Achievement(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as String,pointsReward: null == pointsReward ? _self.pointsReward : pointsReward // ignore: cast_nullable_to_non_nullable
+as int,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,condition: null == condition ? _self.condition : condition // ignore: cast_nullable_to_non_nullable
+as String,targetValue: freezed == targetValue ? _self.targetValue : targetValue // ignore: cast_nullable_to_non_nullable
+as int?,currentValue: freezed == currentValue ? _self.currentValue : currentValue // ignore: cast_nullable_to_non_nullable
+as int?,progressPercentage: freezed == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as double?,isCompleted: freezed == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,completedAt: freezed == completedAt ? _self.completedAt : completedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$Badge {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get icon => throw _privateConstructorUsedError;
-  String get rarity =>
-      throw _privateConstructorUsedError; // bronze, silver, gold, platinum, diamond
-  String get category => throw _privateConstructorUsedError;
-  DateTime? get earnedAt => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+
+ String get id; String get name; String get description; String get icon; String get rarity;// bronze, silver, gold, platinum, diamond
+ String get category; DateTime? get earnedAt; DateTime? get createdAt;
+/// Create a copy of Badge
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$BadgeCopyWith<Badge> get copyWith => _$BadgeCopyWithImpl<Badge>(this as Badge, _$identity);
 
   /// Serializes this Badge to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Badge
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $BadgeCopyWith<Badge> get copyWith => throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Badge&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.category, category) || other.category == category)&&(identical(other.earnedAt, earnedAt) || other.earnedAt == earnedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,description,icon,rarity,category,earnedAt,createdAt);
+
+@override
+String toString() {
+  return 'Badge(id: $id, name: $name, description: $description, icon: $icon, rarity: $rarity, category: $category, earnedAt: $earnedAt, createdAt: $createdAt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $BadgeCopyWith<$Res> {
-  factory $BadgeCopyWith(Badge value, $Res Function(Badge) then) =
-      _$BadgeCopyWithImpl<$Res, Badge>;
-  @useResult
-  $Res call({
-    String id,
-    String name,
-    String description,
-    String icon,
-    String rarity,
-    String category,
-    DateTime? earnedAt,
-    DateTime? createdAt,
-  });
-}
+abstract mixin class $BadgeCopyWith<$Res>  {
+  factory $BadgeCopyWith(Badge value, $Res Function(Badge) _then) = _$BadgeCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, String description, String icon, String rarity, String category, DateTime? earnedAt, DateTime? createdAt
+});
 
+
+
+
+}
 /// @nodoc
-class _$BadgeCopyWithImpl<$Res, $Val extends Badge>
+class _$BadgeCopyWithImpl<$Res>
     implements $BadgeCopyWith<$Res> {
-  _$BadgeCopyWithImpl(this._value, this._then);
+  _$BadgeCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Badge _self;
+  final $Res Function(Badge) _then;
 
-  /// Create a copy of Badge
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
-    Object? icon = null,
-    Object? rarity = null,
-    Object? category = null,
-    Object? earnedAt = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: null == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String,
-            icon: null == icon
-                ? _value.icon
-                : icon // ignore: cast_nullable_to_non_nullable
-                      as String,
-            rarity: null == rarity
-                ? _value.rarity
-                : rarity // ignore: cast_nullable_to_non_nullable
-                      as String,
-            category: null == category
-                ? _value.category
-                : category // ignore: cast_nullable_to_non_nullable
-                      as String,
-            earnedAt: freezed == earnedAt
-                ? _value.earnedAt
-                : earnedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            createdAt: freezed == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of Badge
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = null,Object? icon = null,Object? rarity = null,Object? category = null,Object? earnedAt = freezed,Object? createdAt = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as String,rarity: null == rarity ? _self.rarity : rarity // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,earnedAt: freezed == earnedAt ? _self.earnedAt : earnedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$BadgeImplCopyWith<$Res> implements $BadgeCopyWith<$Res> {
-  factory _$$BadgeImplCopyWith(
-    _$BadgeImpl value,
-    $Res Function(_$BadgeImpl) then,
-  ) = __$$BadgeImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String id,
-    String name,
-    String description,
-    String icon,
-    String rarity,
-    String category,
-    DateTime? earnedAt,
-    DateTime? createdAt,
-  });
 }
 
-/// @nodoc
-class __$$BadgeImplCopyWithImpl<$Res>
-    extends _$BadgeCopyWithImpl<$Res, _$BadgeImpl>
-    implements _$$BadgeImplCopyWith<$Res> {
-  __$$BadgeImplCopyWithImpl(
-    _$BadgeImpl _value,
-    $Res Function(_$BadgeImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of Badge
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
-    Object? icon = null,
-    Object? rarity = null,
-    Object? category = null,
-    Object? earnedAt = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _$BadgeImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: null == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String,
-        icon: null == icon
-            ? _value.icon
-            : icon // ignore: cast_nullable_to_non_nullable
-                  as String,
-        rarity: null == rarity
-            ? _value.rarity
-            : rarity // ignore: cast_nullable_to_non_nullable
-                  as String,
-        category: null == category
-            ? _value.category
-            : category // ignore: cast_nullable_to_non_nullable
-                  as String,
-        earnedAt: freezed == earnedAt
-            ? _value.earnedAt
-            : earnedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        createdAt: freezed == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [Badge].
+extension BadgePatterns on Badge {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Badge value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Badge() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Badge value)  $default,){
+final _that = this;
+switch (_that) {
+case _Badge():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Badge value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Badge() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String icon,  String rarity,  String category,  DateTime? earnedAt,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Badge() when $default != null:
+return $default(_that.id,_that.name,_that.description,_that.icon,_that.rarity,_that.category,_that.earnedAt,_that.createdAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String icon,  String rarity,  String category,  DateTime? earnedAt,  DateTime? createdAt)  $default,) {final _that = this;
+switch (_that) {
+case _Badge():
+return $default(_that.id,_that.name,_that.description,_that.icon,_that.rarity,_that.category,_that.earnedAt,_that.createdAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String description,  String icon,  String rarity,  String category,  DateTime? earnedAt,  DateTime? createdAt)?  $default,) {final _that = this;
+switch (_that) {
+case _Badge() when $default != null:
+return $default(_that.id,_that.name,_that.description,_that.icon,_that.rarity,_that.category,_that.earnedAt,_that.createdAt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$BadgeImpl implements _Badge {
-  const _$BadgeImpl({
-    this.id = '',
-    this.name = '',
-    this.description = '',
-    this.icon = '',
-    this.rarity = '',
-    this.category = '',
-    this.earnedAt,
-    this.createdAt,
-  });
 
-  factory _$BadgeImpl.fromJson(Map<String, dynamic> json) =>
-      _$$BadgeImplFromJson(json);
+class _Badge implements Badge {
+  const _Badge({this.id = '', this.name = '', this.description = '', this.icon = '', this.rarity = '', this.category = '', this.earnedAt, this.createdAt});
+  factory _Badge.fromJson(Map<String, dynamic> json) => _$BadgeFromJson(json);
 
-  @override
-  @JsonKey()
-  final String id;
-  @override
-  @JsonKey()
-  final String name;
-  @override
-  @JsonKey()
-  final String description;
-  @override
-  @JsonKey()
-  final String icon;
-  @override
-  @JsonKey()
-  final String rarity;
-  // bronze, silver, gold, platinum, diamond
-  @override
-  @JsonKey()
-  final String category;
-  @override
-  final DateTime? earnedAt;
-  @override
-  final DateTime? createdAt;
+@override@JsonKey() final  String id;
+@override@JsonKey() final  String name;
+@override@JsonKey() final  String description;
+@override@JsonKey() final  String icon;
+@override@JsonKey() final  String rarity;
+// bronze, silver, gold, platinum, diamond
+@override@JsonKey() final  String category;
+@override final  DateTime? earnedAt;
+@override final  DateTime? createdAt;
 
-  @override
-  String toString() {
-    return 'Badge(id: $id, name: $name, description: $description, icon: $icon, rarity: $rarity, category: $category, earnedAt: $earnedAt, createdAt: $createdAt)';
-  }
+/// Create a copy of Badge
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$BadgeCopyWith<_Badge> get copyWith => __$BadgeCopyWithImpl<_Badge>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$BadgeImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.icon, icon) || other.icon == icon) &&
-            (identical(other.rarity, rarity) || other.rarity == rarity) &&
-            (identical(other.category, category) ||
-                other.category == category) &&
-            (identical(other.earnedAt, earnedAt) ||
-                other.earnedAt == earnedAt) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    name,
-    description,
-    icon,
-    rarity,
-    category,
-    earnedAt,
-    createdAt,
-  );
-
-  /// Create a copy of Badge
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$BadgeImplCopyWith<_$BadgeImpl> get copyWith =>
-      __$$BadgeImplCopyWithImpl<_$BadgeImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$BadgeImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$BadgeToJson(this, );
 }
 
-abstract class _Badge implements Badge {
-  const factory _Badge({
-    final String id,
-    final String name,
-    final String description,
-    final String icon,
-    final String rarity,
-    final String category,
-    final DateTime? earnedAt,
-    final DateTime? createdAt,
-  }) = _$BadgeImpl;
-
-  factory _Badge.fromJson(Map<String, dynamic> json) = _$BadgeImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  String get description;
-  @override
-  String get icon;
-  @override
-  String get rarity; // bronze, silver, gold, platinum, diamond
-  @override
-  String get category;
-  @override
-  DateTime? get earnedAt;
-  @override
-  DateTime? get createdAt;
-
-  /// Create a copy of Badge
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$BadgeImplCopyWith<_$BadgeImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Badge&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.rarity, rarity) || other.rarity == rarity)&&(identical(other.category, category) || other.category == category)&&(identical(other.earnedAt, earnedAt) || other.earnedAt == earnedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
-Reward _$RewardFromJson(Map<String, dynamic> json) {
-  return _Reward.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,description,icon,rarity,category,earnedAt,createdAt);
+
+@override
+String toString() {
+  return 'Badge(id: $id, name: $name, description: $description, icon: $icon, rarity: $rarity, category: $category, earnedAt: $earnedAt, createdAt: $createdAt)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$BadgeCopyWith<$Res> implements $BadgeCopyWith<$Res> {
+  factory _$BadgeCopyWith(_Badge value, $Res Function(_Badge) _then) = __$BadgeCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, String description, String icon, String rarity, String category, DateTime? earnedAt, DateTime? createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$BadgeCopyWithImpl<$Res>
+    implements _$BadgeCopyWith<$Res> {
+  __$BadgeCopyWithImpl(this._self, this._then);
+
+  final _Badge _self;
+  final $Res Function(_Badge) _then;
+
+/// Create a copy of Badge
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = null,Object? icon = null,Object? rarity = null,Object? category = null,Object? earnedAt = freezed,Object? createdAt = freezed,}) {
+  return _then(_Badge(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as String,rarity: null == rarity ? _self.rarity : rarity // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,earnedAt: freezed == earnedAt ? _self.earnedAt : earnedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$Reward {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get imageUrl => throw _privateConstructorUsedError;
-  int get pointsCost => throw _privateConstructorUsedError;
-  int get stockQuantity => throw _privateConstructorUsedError;
-  String? get category =>
-      throw _privateConstructorUsedError; // merchandise, vouchers, cash, experience
-  String? get termsAndConditions => throw _privateConstructorUsedError;
-  bool? get isActive => throw _privateConstructorUsedError;
-  DateTime? get validFrom => throw _privateConstructorUsedError;
-  DateTime? get validUntil => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+
+ String get id; String get name; String get description; String get imageUrl; int get pointsCost; int get stockQuantity; String? get category;// merchandise, vouchers, cash, experience
+ String? get termsAndConditions; bool? get isActive; DateTime? get validFrom; DateTime? get validUntil; DateTime? get createdAt;
+/// Create a copy of Reward
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RewardCopyWith<Reward> get copyWith => _$RewardCopyWithImpl<Reward>(this as Reward, _$identity);
 
   /// Serializes this Reward to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Reward
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $RewardCopyWith<Reward> get copyWith => throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Reward&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.pointsCost, pointsCost) || other.pointsCost == pointsCost)&&(identical(other.stockQuantity, stockQuantity) || other.stockQuantity == stockQuantity)&&(identical(other.category, category) || other.category == category)&&(identical(other.termsAndConditions, termsAndConditions) || other.termsAndConditions == termsAndConditions)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.validFrom, validFrom) || other.validFrom == validFrom)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,description,imageUrl,pointsCost,stockQuantity,category,termsAndConditions,isActive,validFrom,validUntil,createdAt);
+
+@override
+String toString() {
+  return 'Reward(id: $id, name: $name, description: $description, imageUrl: $imageUrl, pointsCost: $pointsCost, stockQuantity: $stockQuantity, category: $category, termsAndConditions: $termsAndConditions, isActive: $isActive, validFrom: $validFrom, validUntil: $validUntil, createdAt: $createdAt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $RewardCopyWith<$Res> {
-  factory $RewardCopyWith(Reward value, $Res Function(Reward) then) =
-      _$RewardCopyWithImpl<$Res, Reward>;
-  @useResult
-  $Res call({
-    String id,
-    String name,
-    String description,
-    String imageUrl,
-    int pointsCost,
-    int stockQuantity,
-    String? category,
-    String? termsAndConditions,
-    bool? isActive,
-    DateTime? validFrom,
-    DateTime? validUntil,
-    DateTime? createdAt,
-  });
-}
+abstract mixin class $RewardCopyWith<$Res>  {
+  factory $RewardCopyWith(Reward value, $Res Function(Reward) _then) = _$RewardCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, String description, String imageUrl, int pointsCost, int stockQuantity, String? category, String? termsAndConditions, bool? isActive, DateTime? validFrom, DateTime? validUntil, DateTime? createdAt
+});
 
+
+
+
+}
 /// @nodoc
-class _$RewardCopyWithImpl<$Res, $Val extends Reward>
+class _$RewardCopyWithImpl<$Res>
     implements $RewardCopyWith<$Res> {
-  _$RewardCopyWithImpl(this._value, this._then);
+  _$RewardCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Reward _self;
+  final $Res Function(Reward) _then;
 
-  /// Create a copy of Reward
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
-    Object? imageUrl = null,
-    Object? pointsCost = null,
-    Object? stockQuantity = null,
-    Object? category = freezed,
-    Object? termsAndConditions = freezed,
-    Object? isActive = freezed,
-    Object? validFrom = freezed,
-    Object? validUntil = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: null == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String,
-            imageUrl: null == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
-            pointsCost: null == pointsCost
-                ? _value.pointsCost
-                : pointsCost // ignore: cast_nullable_to_non_nullable
-                      as int,
-            stockQuantity: null == stockQuantity
-                ? _value.stockQuantity
-                : stockQuantity // ignore: cast_nullable_to_non_nullable
-                      as int,
-            category: freezed == category
-                ? _value.category
-                : category // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            termsAndConditions: freezed == termsAndConditions
-                ? _value.termsAndConditions
-                : termsAndConditions // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            isActive: freezed == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool?,
-            validFrom: freezed == validFrom
-                ? _value.validFrom
-                : validFrom // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            validUntil: freezed == validUntil
-                ? _value.validUntil
-                : validUntil // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            createdAt: freezed == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of Reward
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = null,Object? imageUrl = null,Object? pointsCost = null,Object? stockQuantity = null,Object? category = freezed,Object? termsAndConditions = freezed,Object? isActive = freezed,Object? validFrom = freezed,Object? validUntil = freezed,Object? createdAt = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String,pointsCost: null == pointsCost ? _self.pointsCost : pointsCost // ignore: cast_nullable_to_non_nullable
+as int,stockQuantity: null == stockQuantity ? _self.stockQuantity : stockQuantity // ignore: cast_nullable_to_non_nullable
+as int,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,termsAndConditions: freezed == termsAndConditions ? _self.termsAndConditions : termsAndConditions // ignore: cast_nullable_to_non_nullable
+as String?,isActive: freezed == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool?,validFrom: freezed == validFrom ? _self.validFrom : validFrom // ignore: cast_nullable_to_non_nullable
+as DateTime?,validUntil: freezed == validUntil ? _self.validUntil : validUntil // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$RewardImplCopyWith<$Res> implements $RewardCopyWith<$Res> {
-  factory _$$RewardImplCopyWith(
-    _$RewardImpl value,
-    $Res Function(_$RewardImpl) then,
-  ) = __$$RewardImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String id,
-    String name,
-    String description,
-    String imageUrl,
-    int pointsCost,
-    int stockQuantity,
-    String? category,
-    String? termsAndConditions,
-    bool? isActive,
-    DateTime? validFrom,
-    DateTime? validUntil,
-    DateTime? createdAt,
-  });
 }
 
-/// @nodoc
-class __$$RewardImplCopyWithImpl<$Res>
-    extends _$RewardCopyWithImpl<$Res, _$RewardImpl>
-    implements _$$RewardImplCopyWith<$Res> {
-  __$$RewardImplCopyWithImpl(
-    _$RewardImpl _value,
-    $Res Function(_$RewardImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of Reward
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
-    Object? imageUrl = null,
-    Object? pointsCost = null,
-    Object? stockQuantity = null,
-    Object? category = freezed,
-    Object? termsAndConditions = freezed,
-    Object? isActive = freezed,
-    Object? validFrom = freezed,
-    Object? validUntil = freezed,
-    Object? createdAt = freezed,
-  }) {
-    return _then(
-      _$RewardImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: null == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String,
-        imageUrl: null == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
-        pointsCost: null == pointsCost
-            ? _value.pointsCost
-            : pointsCost // ignore: cast_nullable_to_non_nullable
-                  as int,
-        stockQuantity: null == stockQuantity
-            ? _value.stockQuantity
-            : stockQuantity // ignore: cast_nullable_to_non_nullable
-                  as int,
-        category: freezed == category
-            ? _value.category
-            : category // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        termsAndConditions: freezed == termsAndConditions
-            ? _value.termsAndConditions
-            : termsAndConditions // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        isActive: freezed == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool?,
-        validFrom: freezed == validFrom
-            ? _value.validFrom
-            : validFrom // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        validUntil: freezed == validUntil
-            ? _value.validUntil
-            : validUntil // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        createdAt: freezed == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [Reward].
+extension RewardPatterns on Reward {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Reward value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Reward() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Reward value)  $default,){
+final _that = this;
+switch (_that) {
+case _Reward():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Reward value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Reward() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String imageUrl,  int pointsCost,  int stockQuantity,  String? category,  String? termsAndConditions,  bool? isActive,  DateTime? validFrom,  DateTime? validUntil,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Reward() when $default != null:
+return $default(_that.id,_that.name,_that.description,_that.imageUrl,_that.pointsCost,_that.stockQuantity,_that.category,_that.termsAndConditions,_that.isActive,_that.validFrom,_that.validUntil,_that.createdAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String imageUrl,  int pointsCost,  int stockQuantity,  String? category,  String? termsAndConditions,  bool? isActive,  DateTime? validFrom,  DateTime? validUntil,  DateTime? createdAt)  $default,) {final _that = this;
+switch (_that) {
+case _Reward():
+return $default(_that.id,_that.name,_that.description,_that.imageUrl,_that.pointsCost,_that.stockQuantity,_that.category,_that.termsAndConditions,_that.isActive,_that.validFrom,_that.validUntil,_that.createdAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String description,  String imageUrl,  int pointsCost,  int stockQuantity,  String? category,  String? termsAndConditions,  bool? isActive,  DateTime? validFrom,  DateTime? validUntil,  DateTime? createdAt)?  $default,) {final _that = this;
+switch (_that) {
+case _Reward() when $default != null:
+return $default(_that.id,_that.name,_that.description,_that.imageUrl,_that.pointsCost,_that.stockQuantity,_that.category,_that.termsAndConditions,_that.isActive,_that.validFrom,_that.validUntil,_that.createdAt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$RewardImpl implements _Reward {
-  const _$RewardImpl({
-    this.id = '',
-    this.name = '',
-    this.description = '',
-    this.imageUrl = '',
-    this.pointsCost = 0,
-    this.stockQuantity = 0,
-    this.category,
-    this.termsAndConditions,
-    this.isActive,
-    this.validFrom,
-    this.validUntil,
-    this.createdAt,
-  });
 
-  factory _$RewardImpl.fromJson(Map<String, dynamic> json) =>
-      _$$RewardImplFromJson(json);
+class _Reward implements Reward {
+  const _Reward({this.id = '', this.name = '', this.description = '', this.imageUrl = '', this.pointsCost = 0, this.stockQuantity = 0, this.category, this.termsAndConditions, this.isActive, this.validFrom, this.validUntil, this.createdAt});
+  factory _Reward.fromJson(Map<String, dynamic> json) => _$RewardFromJson(json);
 
-  @override
-  @JsonKey()
-  final String id;
-  @override
-  @JsonKey()
-  final String name;
-  @override
-  @JsonKey()
-  final String description;
-  @override
-  @JsonKey()
-  final String imageUrl;
-  @override
-  @JsonKey()
-  final int pointsCost;
-  @override
-  @JsonKey()
-  final int stockQuantity;
-  @override
-  final String? category;
-  // merchandise, vouchers, cash, experience
-  @override
-  final String? termsAndConditions;
-  @override
-  final bool? isActive;
-  @override
-  final DateTime? validFrom;
-  @override
-  final DateTime? validUntil;
-  @override
-  final DateTime? createdAt;
+@override@JsonKey() final  String id;
+@override@JsonKey() final  String name;
+@override@JsonKey() final  String description;
+@override@JsonKey() final  String imageUrl;
+@override@JsonKey() final  int pointsCost;
+@override@JsonKey() final  int stockQuantity;
+@override final  String? category;
+// merchandise, vouchers, cash, experience
+@override final  String? termsAndConditions;
+@override final  bool? isActive;
+@override final  DateTime? validFrom;
+@override final  DateTime? validUntil;
+@override final  DateTime? createdAt;
 
-  @override
-  String toString() {
-    return 'Reward(id: $id, name: $name, description: $description, imageUrl: $imageUrl, pointsCost: $pointsCost, stockQuantity: $stockQuantity, category: $category, termsAndConditions: $termsAndConditions, isActive: $isActive, validFrom: $validFrom, validUntil: $validUntil, createdAt: $createdAt)';
-  }
+/// Create a copy of Reward
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RewardCopyWith<_Reward> get copyWith => __$RewardCopyWithImpl<_Reward>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$RewardImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl) &&
-            (identical(other.pointsCost, pointsCost) ||
-                other.pointsCost == pointsCost) &&
-            (identical(other.stockQuantity, stockQuantity) ||
-                other.stockQuantity == stockQuantity) &&
-            (identical(other.category, category) ||
-                other.category == category) &&
-            (identical(other.termsAndConditions, termsAndConditions) ||
-                other.termsAndConditions == termsAndConditions) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
-            (identical(other.validFrom, validFrom) ||
-                other.validFrom == validFrom) &&
-            (identical(other.validUntil, validUntil) ||
-                other.validUntil == validUntil) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    name,
-    description,
-    imageUrl,
-    pointsCost,
-    stockQuantity,
-    category,
-    termsAndConditions,
-    isActive,
-    validFrom,
-    validUntil,
-    createdAt,
-  );
-
-  /// Create a copy of Reward
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$RewardImplCopyWith<_$RewardImpl> get copyWith =>
-      __$$RewardImplCopyWithImpl<_$RewardImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$RewardImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$RewardToJson(this, );
 }
 
-abstract class _Reward implements Reward {
-  const factory _Reward({
-    final String id,
-    final String name,
-    final String description,
-    final String imageUrl,
-    final int pointsCost,
-    final int stockQuantity,
-    final String? category,
-    final String? termsAndConditions,
-    final bool? isActive,
-    final DateTime? validFrom,
-    final DateTime? validUntil,
-    final DateTime? createdAt,
-  }) = _$RewardImpl;
-
-  factory _Reward.fromJson(Map<String, dynamic> json) = _$RewardImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  String get description;
-  @override
-  String get imageUrl;
-  @override
-  int get pointsCost;
-  @override
-  int get stockQuantity;
-  @override
-  String? get category; // merchandise, vouchers, cash, experience
-  @override
-  String? get termsAndConditions;
-  @override
-  bool? get isActive;
-  @override
-  DateTime? get validFrom;
-  @override
-  DateTime? get validUntil;
-  @override
-  DateTime? get createdAt;
-
-  /// Create a copy of Reward
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$RewardImplCopyWith<_$RewardImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Reward&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.pointsCost, pointsCost) || other.pointsCost == pointsCost)&&(identical(other.stockQuantity, stockQuantity) || other.stockQuantity == stockQuantity)&&(identical(other.category, category) || other.category == category)&&(identical(other.termsAndConditions, termsAndConditions) || other.termsAndConditions == termsAndConditions)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.validFrom, validFrom) || other.validFrom == validFrom)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
-RewardRedemption _$RewardRedemptionFromJson(Map<String, dynamic> json) {
-  return _RewardRedemption.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,description,imageUrl,pointsCost,stockQuantity,category,termsAndConditions,isActive,validFrom,validUntil,createdAt);
+
+@override
+String toString() {
+  return 'Reward(id: $id, name: $name, description: $description, imageUrl: $imageUrl, pointsCost: $pointsCost, stockQuantity: $stockQuantity, category: $category, termsAndConditions: $termsAndConditions, isActive: $isActive, validFrom: $validFrom, validUntil: $validUntil, createdAt: $createdAt)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RewardCopyWith<$Res> implements $RewardCopyWith<$Res> {
+  factory _$RewardCopyWith(_Reward value, $Res Function(_Reward) _then) = __$RewardCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, String description, String imageUrl, int pointsCost, int stockQuantity, String? category, String? termsAndConditions, bool? isActive, DateTime? validFrom, DateTime? validUntil, DateTime? createdAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$RewardCopyWithImpl<$Res>
+    implements _$RewardCopyWith<$Res> {
+  __$RewardCopyWithImpl(this._self, this._then);
+
+  final _Reward _self;
+  final $Res Function(_Reward) _then;
+
+/// Create a copy of Reward
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = null,Object? imageUrl = null,Object? pointsCost = null,Object? stockQuantity = null,Object? category = freezed,Object? termsAndConditions = freezed,Object? isActive = freezed,Object? validFrom = freezed,Object? validUntil = freezed,Object? createdAt = freezed,}) {
+  return _then(_Reward(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String,pointsCost: null == pointsCost ? _self.pointsCost : pointsCost // ignore: cast_nullable_to_non_nullable
+as int,stockQuantity: null == stockQuantity ? _self.stockQuantity : stockQuantity // ignore: cast_nullable_to_non_nullable
+as int,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,termsAndConditions: freezed == termsAndConditions ? _self.termsAndConditions : termsAndConditions // ignore: cast_nullable_to_non_nullable
+as String?,isActive: freezed == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool?,validFrom: freezed == validFrom ? _self.validFrom : validFrom // ignore: cast_nullable_to_non_nullable
+as DateTime?,validUntil: freezed == validUntil ? _self.validUntil : validUntil // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$RewardRedemption {
-  String get id => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
-  String get rewardId => throw _privateConstructorUsedError;
-  String get rewardName => throw _privateConstructorUsedError;
-  int get pointsSpent => throw _privateConstructorUsedError;
-  String get status =>
-      throw _privateConstructorUsedError; // pending, processing, shipped, delivered, cancelled
-  String? get deliveryAddress => throw _privateConstructorUsedError;
-  String? get trackingNumber => throw _privateConstructorUsedError;
-  DateTime? get requestedAt => throw _privateConstructorUsedError;
-  DateTime? get processedAt => throw _privateConstructorUsedError;
-  DateTime? get shippedAt => throw _privateConstructorUsedError;
-  DateTime? get deliveredAt => throw _privateConstructorUsedError;
-  String? get notes => throw _privateConstructorUsedError;
+
+ String get id; String get userId; String get rewardId; String get rewardName; int get pointsSpent; String get status;// pending, processing, shipped, delivered, cancelled
+ String? get deliveryAddress; String? get trackingNumber; DateTime? get requestedAt; DateTime? get processedAt; DateTime? get shippedAt; DateTime? get deliveredAt; String? get notes;
+/// Create a copy of RewardRedemption
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RewardRedemptionCopyWith<RewardRedemption> get copyWith => _$RewardRedemptionCopyWithImpl<RewardRedemption>(this as RewardRedemption, _$identity);
 
   /// Serializes this RewardRedemption to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of RewardRedemption
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $RewardRedemptionCopyWith<RewardRedemption> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RewardRedemption&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.rewardId, rewardId) || other.rewardId == rewardId)&&(identical(other.rewardName, rewardName) || other.rewardName == rewardName)&&(identical(other.pointsSpent, pointsSpent) || other.pointsSpent == pointsSpent)&&(identical(other.status, status) || other.status == status)&&(identical(other.deliveryAddress, deliveryAddress) || other.deliveryAddress == deliveryAddress)&&(identical(other.trackingNumber, trackingNumber) || other.trackingNumber == trackingNumber)&&(identical(other.requestedAt, requestedAt) || other.requestedAt == requestedAt)&&(identical(other.processedAt, processedAt) || other.processedAt == processedAt)&&(identical(other.shippedAt, shippedAt) || other.shippedAt == shippedAt)&&(identical(other.deliveredAt, deliveredAt) || other.deliveredAt == deliveredAt)&&(identical(other.notes, notes) || other.notes == notes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,userId,rewardId,rewardName,pointsSpent,status,deliveryAddress,trackingNumber,requestedAt,processedAt,shippedAt,deliveredAt,notes);
+
+@override
+String toString() {
+  return 'RewardRedemption(id: $id, userId: $userId, rewardId: $rewardId, rewardName: $rewardName, pointsSpent: $pointsSpent, status: $status, deliveryAddress: $deliveryAddress, trackingNumber: $trackingNumber, requestedAt: $requestedAt, processedAt: $processedAt, shippedAt: $shippedAt, deliveredAt: $deliveredAt, notes: $notes)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $RewardRedemptionCopyWith<$Res> {
-  factory $RewardRedemptionCopyWith(
-    RewardRedemption value,
-    $Res Function(RewardRedemption) then,
-  ) = _$RewardRedemptionCopyWithImpl<$Res, RewardRedemption>;
-  @useResult
-  $Res call({
-    String id,
-    String userId,
-    String rewardId,
-    String rewardName,
-    int pointsSpent,
-    String status,
-    String? deliveryAddress,
-    String? trackingNumber,
-    DateTime? requestedAt,
-    DateTime? processedAt,
-    DateTime? shippedAt,
-    DateTime? deliveredAt,
-    String? notes,
-  });
-}
+abstract mixin class $RewardRedemptionCopyWith<$Res>  {
+  factory $RewardRedemptionCopyWith(RewardRedemption value, $Res Function(RewardRedemption) _then) = _$RewardRedemptionCopyWithImpl;
+@useResult
+$Res call({
+ String id, String userId, String rewardId, String rewardName, int pointsSpent, String status, String? deliveryAddress, String? trackingNumber, DateTime? requestedAt, DateTime? processedAt, DateTime? shippedAt, DateTime? deliveredAt, String? notes
+});
 
+
+
+
+}
 /// @nodoc
-class _$RewardRedemptionCopyWithImpl<$Res, $Val extends RewardRedemption>
+class _$RewardRedemptionCopyWithImpl<$Res>
     implements $RewardRedemptionCopyWith<$Res> {
-  _$RewardRedemptionCopyWithImpl(this._value, this._then);
+  _$RewardRedemptionCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final RewardRedemption _self;
+  final $Res Function(RewardRedemption) _then;
 
-  /// Create a copy of RewardRedemption
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? rewardId = null,
-    Object? rewardName = null,
-    Object? pointsSpent = null,
-    Object? status = null,
-    Object? deliveryAddress = freezed,
-    Object? trackingNumber = freezed,
-    Object? requestedAt = freezed,
-    Object? processedAt = freezed,
-    Object? shippedAt = freezed,
-    Object? deliveredAt = freezed,
-    Object? notes = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            userId: null == userId
-                ? _value.userId
-                : userId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            rewardId: null == rewardId
-                ? _value.rewardId
-                : rewardId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            rewardName: null == rewardName
-                ? _value.rewardName
-                : rewardName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            pointsSpent: null == pointsSpent
-                ? _value.pointsSpent
-                : pointsSpent // ignore: cast_nullable_to_non_nullable
-                      as int,
-            status: null == status
-                ? _value.status
-                : status // ignore: cast_nullable_to_non_nullable
-                      as String,
-            deliveryAddress: freezed == deliveryAddress
-                ? _value.deliveryAddress
-                : deliveryAddress // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            trackingNumber: freezed == trackingNumber
-                ? _value.trackingNumber
-                : trackingNumber // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            requestedAt: freezed == requestedAt
-                ? _value.requestedAt
-                : requestedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            processedAt: freezed == processedAt
-                ? _value.processedAt
-                : processedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            shippedAt: freezed == shippedAt
-                ? _value.shippedAt
-                : shippedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            deliveredAt: freezed == deliveredAt
-                ? _value.deliveredAt
-                : deliveredAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            notes: freezed == notes
-                ? _value.notes
-                : notes // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of RewardRedemption
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? rewardId = null,Object? rewardName = null,Object? pointsSpent = null,Object? status = null,Object? deliveryAddress = freezed,Object? trackingNumber = freezed,Object? requestedAt = freezed,Object? processedAt = freezed,Object? shippedAt = freezed,Object? deliveredAt = freezed,Object? notes = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,rewardId: null == rewardId ? _self.rewardId : rewardId // ignore: cast_nullable_to_non_nullable
+as String,rewardName: null == rewardName ? _self.rewardName : rewardName // ignore: cast_nullable_to_non_nullable
+as String,pointsSpent: null == pointsSpent ? _self.pointsSpent : pointsSpent // ignore: cast_nullable_to_non_nullable
+as int,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,deliveryAddress: freezed == deliveryAddress ? _self.deliveryAddress : deliveryAddress // ignore: cast_nullable_to_non_nullable
+as String?,trackingNumber: freezed == trackingNumber ? _self.trackingNumber : trackingNumber // ignore: cast_nullable_to_non_nullable
+as String?,requestedAt: freezed == requestedAt ? _self.requestedAt : requestedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,processedAt: freezed == processedAt ? _self.processedAt : processedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,shippedAt: freezed == shippedAt ? _self.shippedAt : shippedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,deliveredAt: freezed == deliveredAt ? _self.deliveredAt : deliveredAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$RewardRedemptionImplCopyWith<$Res>
-    implements $RewardRedemptionCopyWith<$Res> {
-  factory _$$RewardRedemptionImplCopyWith(
-    _$RewardRedemptionImpl value,
-    $Res Function(_$RewardRedemptionImpl) then,
-  ) = __$$RewardRedemptionImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String id,
-    String userId,
-    String rewardId,
-    String rewardName,
-    int pointsSpent,
-    String status,
-    String? deliveryAddress,
-    String? trackingNumber,
-    DateTime? requestedAt,
-    DateTime? processedAt,
-    DateTime? shippedAt,
-    DateTime? deliveredAt,
-    String? notes,
-  });
 }
 
-/// @nodoc
-class __$$RewardRedemptionImplCopyWithImpl<$Res>
-    extends _$RewardRedemptionCopyWithImpl<$Res, _$RewardRedemptionImpl>
-    implements _$$RewardRedemptionImplCopyWith<$Res> {
-  __$$RewardRedemptionImplCopyWithImpl(
-    _$RewardRedemptionImpl _value,
-    $Res Function(_$RewardRedemptionImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of RewardRedemption
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? rewardId = null,
-    Object? rewardName = null,
-    Object? pointsSpent = null,
-    Object? status = null,
-    Object? deliveryAddress = freezed,
-    Object? trackingNumber = freezed,
-    Object? requestedAt = freezed,
-    Object? processedAt = freezed,
-    Object? shippedAt = freezed,
-    Object? deliveredAt = freezed,
-    Object? notes = freezed,
-  }) {
-    return _then(
-      _$RewardRedemptionImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        userId: null == userId
-            ? _value.userId
-            : userId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        rewardId: null == rewardId
-            ? _value.rewardId
-            : rewardId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        rewardName: null == rewardName
-            ? _value.rewardName
-            : rewardName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        pointsSpent: null == pointsSpent
-            ? _value.pointsSpent
-            : pointsSpent // ignore: cast_nullable_to_non_nullable
-                  as int,
-        status: null == status
-            ? _value.status
-            : status // ignore: cast_nullable_to_non_nullable
-                  as String,
-        deliveryAddress: freezed == deliveryAddress
-            ? _value.deliveryAddress
-            : deliveryAddress // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        trackingNumber: freezed == trackingNumber
-            ? _value.trackingNumber
-            : trackingNumber // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        requestedAt: freezed == requestedAt
-            ? _value.requestedAt
-            : requestedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        processedAt: freezed == processedAt
-            ? _value.processedAt
-            : processedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        shippedAt: freezed == shippedAt
-            ? _value.shippedAt
-            : shippedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        deliveredAt: freezed == deliveredAt
-            ? _value.deliveredAt
-            : deliveredAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        notes: freezed == notes
-            ? _value.notes
-            : notes // ignore: cast_nullable_to_non_nullable
-                  as String?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [RewardRedemption].
+extension RewardRedemptionPatterns on RewardRedemption {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _RewardRedemption value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _RewardRedemption() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _RewardRedemption value)  $default,){
+final _that = this;
+switch (_that) {
+case _RewardRedemption():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _RewardRedemption value)?  $default,){
+final _that = this;
+switch (_that) {
+case _RewardRedemption() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String rewardId,  String rewardName,  int pointsSpent,  String status,  String? deliveryAddress,  String? trackingNumber,  DateTime? requestedAt,  DateTime? processedAt,  DateTime? shippedAt,  DateTime? deliveredAt,  String? notes)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _RewardRedemption() when $default != null:
+return $default(_that.id,_that.userId,_that.rewardId,_that.rewardName,_that.pointsSpent,_that.status,_that.deliveryAddress,_that.trackingNumber,_that.requestedAt,_that.processedAt,_that.shippedAt,_that.deliveredAt,_that.notes);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String rewardId,  String rewardName,  int pointsSpent,  String status,  String? deliveryAddress,  String? trackingNumber,  DateTime? requestedAt,  DateTime? processedAt,  DateTime? shippedAt,  DateTime? deliveredAt,  String? notes)  $default,) {final _that = this;
+switch (_that) {
+case _RewardRedemption():
+return $default(_that.id,_that.userId,_that.rewardId,_that.rewardName,_that.pointsSpent,_that.status,_that.deliveryAddress,_that.trackingNumber,_that.requestedAt,_that.processedAt,_that.shippedAt,_that.deliveredAt,_that.notes);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String rewardId,  String rewardName,  int pointsSpent,  String status,  String? deliveryAddress,  String? trackingNumber,  DateTime? requestedAt,  DateTime? processedAt,  DateTime? shippedAt,  DateTime? deliveredAt,  String? notes)?  $default,) {final _that = this;
+switch (_that) {
+case _RewardRedemption() when $default != null:
+return $default(_that.id,_that.userId,_that.rewardId,_that.rewardName,_that.pointsSpent,_that.status,_that.deliveryAddress,_that.trackingNumber,_that.requestedAt,_that.processedAt,_that.shippedAt,_that.deliveredAt,_that.notes);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$RewardRedemptionImpl implements _RewardRedemption {
-  const _$RewardRedemptionImpl({
-    this.id = '',
-    this.userId = '',
-    this.rewardId = '',
-    this.rewardName = '',
-    this.pointsSpent = 0,
-    this.status = '',
-    this.deliveryAddress,
-    this.trackingNumber,
-    this.requestedAt,
-    this.processedAt,
-    this.shippedAt,
-    this.deliveredAt,
-    this.notes,
-  });
 
-  factory _$RewardRedemptionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$RewardRedemptionImplFromJson(json);
+class _RewardRedemption implements RewardRedemption {
+  const _RewardRedemption({this.id = '', this.userId = '', this.rewardId = '', this.rewardName = '', this.pointsSpent = 0, this.status = '', this.deliveryAddress, this.trackingNumber, this.requestedAt, this.processedAt, this.shippedAt, this.deliveredAt, this.notes});
+  factory _RewardRedemption.fromJson(Map<String, dynamic> json) => _$RewardRedemptionFromJson(json);
 
-  @override
-  @JsonKey()
-  final String id;
-  @override
-  @JsonKey()
-  final String userId;
-  @override
-  @JsonKey()
-  final String rewardId;
-  @override
-  @JsonKey()
-  final String rewardName;
-  @override
-  @JsonKey()
-  final int pointsSpent;
-  @override
-  @JsonKey()
-  final String status;
-  // pending, processing, shipped, delivered, cancelled
-  @override
-  final String? deliveryAddress;
-  @override
-  final String? trackingNumber;
-  @override
-  final DateTime? requestedAt;
-  @override
-  final DateTime? processedAt;
-  @override
-  final DateTime? shippedAt;
-  @override
-  final DateTime? deliveredAt;
-  @override
-  final String? notes;
+@override@JsonKey() final  String id;
+@override@JsonKey() final  String userId;
+@override@JsonKey() final  String rewardId;
+@override@JsonKey() final  String rewardName;
+@override@JsonKey() final  int pointsSpent;
+@override@JsonKey() final  String status;
+// pending, processing, shipped, delivered, cancelled
+@override final  String? deliveryAddress;
+@override final  String? trackingNumber;
+@override final  DateTime? requestedAt;
+@override final  DateTime? processedAt;
+@override final  DateTime? shippedAt;
+@override final  DateTime? deliveredAt;
+@override final  String? notes;
 
-  @override
-  String toString() {
-    return 'RewardRedemption(id: $id, userId: $userId, rewardId: $rewardId, rewardName: $rewardName, pointsSpent: $pointsSpent, status: $status, deliveryAddress: $deliveryAddress, trackingNumber: $trackingNumber, requestedAt: $requestedAt, processedAt: $processedAt, shippedAt: $shippedAt, deliveredAt: $deliveredAt, notes: $notes)';
-  }
+/// Create a copy of RewardRedemption
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RewardRedemptionCopyWith<_RewardRedemption> get copyWith => __$RewardRedemptionCopyWithImpl<_RewardRedemption>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$RewardRedemptionImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.rewardId, rewardId) ||
-                other.rewardId == rewardId) &&
-            (identical(other.rewardName, rewardName) ||
-                other.rewardName == rewardName) &&
-            (identical(other.pointsSpent, pointsSpent) ||
-                other.pointsSpent == pointsSpent) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.deliveryAddress, deliveryAddress) ||
-                other.deliveryAddress == deliveryAddress) &&
-            (identical(other.trackingNumber, trackingNumber) ||
-                other.trackingNumber == trackingNumber) &&
-            (identical(other.requestedAt, requestedAt) ||
-                other.requestedAt == requestedAt) &&
-            (identical(other.processedAt, processedAt) ||
-                other.processedAt == processedAt) &&
-            (identical(other.shippedAt, shippedAt) ||
-                other.shippedAt == shippedAt) &&
-            (identical(other.deliveredAt, deliveredAt) ||
-                other.deliveredAt == deliveredAt) &&
-            (identical(other.notes, notes) || other.notes == notes));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    userId,
-    rewardId,
-    rewardName,
-    pointsSpent,
-    status,
-    deliveryAddress,
-    trackingNumber,
-    requestedAt,
-    processedAt,
-    shippedAt,
-    deliveredAt,
-    notes,
-  );
-
-  /// Create a copy of RewardRedemption
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$RewardRedemptionImplCopyWith<_$RewardRedemptionImpl> get copyWith =>
-      __$$RewardRedemptionImplCopyWithImpl<_$RewardRedemptionImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$RewardRedemptionImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$RewardRedemptionToJson(this, );
 }
 
-abstract class _RewardRedemption implements RewardRedemption {
-  const factory _RewardRedemption({
-    final String id,
-    final String userId,
-    final String rewardId,
-    final String rewardName,
-    final int pointsSpent,
-    final String status,
-    final String? deliveryAddress,
-    final String? trackingNumber,
-    final DateTime? requestedAt,
-    final DateTime? processedAt,
-    final DateTime? shippedAt,
-    final DateTime? deliveredAt,
-    final String? notes,
-  }) = _$RewardRedemptionImpl;
-
-  factory _RewardRedemption.fromJson(Map<String, dynamic> json) =
-      _$RewardRedemptionImpl.fromJson;
-
-  @override
-  String get id;
-  @override
-  String get userId;
-  @override
-  String get rewardId;
-  @override
-  String get rewardName;
-  @override
-  int get pointsSpent;
-  @override
-  String get status; // pending, processing, shipped, delivered, cancelled
-  @override
-  String? get deliveryAddress;
-  @override
-  String? get trackingNumber;
-  @override
-  DateTime? get requestedAt;
-  @override
-  DateTime? get processedAt;
-  @override
-  DateTime? get shippedAt;
-  @override
-  DateTime? get deliveredAt;
-  @override
-  String? get notes;
-
-  /// Create a copy of RewardRedemption
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$RewardRedemptionImplCopyWith<_$RewardRedemptionImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RewardRedemption&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.rewardId, rewardId) || other.rewardId == rewardId)&&(identical(other.rewardName, rewardName) || other.rewardName == rewardName)&&(identical(other.pointsSpent, pointsSpent) || other.pointsSpent == pointsSpent)&&(identical(other.status, status) || other.status == status)&&(identical(other.deliveryAddress, deliveryAddress) || other.deliveryAddress == deliveryAddress)&&(identical(other.trackingNumber, trackingNumber) || other.trackingNumber == trackingNumber)&&(identical(other.requestedAt, requestedAt) || other.requestedAt == requestedAt)&&(identical(other.processedAt, processedAt) || other.processedAt == processedAt)&&(identical(other.shippedAt, shippedAt) || other.shippedAt == shippedAt)&&(identical(other.deliveredAt, deliveredAt) || other.deliveredAt == deliveredAt)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
-LeaderboardEntry _$LeaderboardEntryFromJson(Map<String, dynamic> json) {
-  return _LeaderboardEntry.fromJson(json);
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,userId,rewardId,rewardName,pointsSpent,status,deliveryAddress,trackingNumber,requestedAt,processedAt,shippedAt,deliveredAt,notes);
+
+@override
+String toString() {
+  return 'RewardRedemption(id: $id, userId: $userId, rewardId: $rewardId, rewardName: $rewardName, pointsSpent: $pointsSpent, status: $status, deliveryAddress: $deliveryAddress, trackingNumber: $trackingNumber, requestedAt: $requestedAt, processedAt: $processedAt, shippedAt: $shippedAt, deliveredAt: $deliveredAt, notes: $notes)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RewardRedemptionCopyWith<$Res> implements $RewardRedemptionCopyWith<$Res> {
+  factory _$RewardRedemptionCopyWith(_RewardRedemption value, $Res Function(_RewardRedemption) _then) = __$RewardRedemptionCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String userId, String rewardId, String rewardName, int pointsSpent, String status, String? deliveryAddress, String? trackingNumber, DateTime? requestedAt, DateTime? processedAt, DateTime? shippedAt, DateTime? deliveredAt, String? notes
+});
+
+
+
+
+}
+/// @nodoc
+class __$RewardRedemptionCopyWithImpl<$Res>
+    implements _$RewardRedemptionCopyWith<$Res> {
+  __$RewardRedemptionCopyWithImpl(this._self, this._then);
+
+  final _RewardRedemption _self;
+  final $Res Function(_RewardRedemption) _then;
+
+/// Create a copy of RewardRedemption
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? rewardId = null,Object? rewardName = null,Object? pointsSpent = null,Object? status = null,Object? deliveryAddress = freezed,Object? trackingNumber = freezed,Object? requestedAt = freezed,Object? processedAt = freezed,Object? shippedAt = freezed,Object? deliveredAt = freezed,Object? notes = freezed,}) {
+  return _then(_RewardRedemption(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,rewardId: null == rewardId ? _self.rewardId : rewardId // ignore: cast_nullable_to_non_nullable
+as String,rewardName: null == rewardName ? _self.rewardName : rewardName // ignore: cast_nullable_to_non_nullable
+as String,pointsSpent: null == pointsSpent ? _self.pointsSpent : pointsSpent // ignore: cast_nullable_to_non_nullable
+as int,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,deliveryAddress: freezed == deliveryAddress ? _self.deliveryAddress : deliveryAddress // ignore: cast_nullable_to_non_nullable
+as String?,trackingNumber: freezed == trackingNumber ? _self.trackingNumber : trackingNumber // ignore: cast_nullable_to_non_nullable
+as String?,requestedAt: freezed == requestedAt ? _self.requestedAt : requestedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,processedAt: freezed == processedAt ? _self.processedAt : processedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,shippedAt: freezed == shippedAt ? _self.shippedAt : shippedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,deliveredAt: freezed == deliveredAt ? _self.deliveredAt : deliveredAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$LeaderboardEntry {
-  String get userId => throw _privateConstructorUsedError;
-  String get userName => throw _privateConstructorUsedError;
-  String get userPhoto => throw _privateConstructorUsedError;
-  int get rank => throw _privateConstructorUsedError;
-  int get totalPoints => throw _privateConstructorUsedError;
-  int get level => throw _privateConstructorUsedError;
-  int get salesCount => throw _privateConstructorUsedError;
-  int get recruitsCount => throw _privateConstructorUsedError;
-  bool? get isCurrentUser => throw _privateConstructorUsedError;
+
+ String get userId; String get userName; String get userPhoto; int get rank; int get totalPoints; int get level; int get salesCount; int get recruitsCount; bool? get isCurrentUser;
+/// Create a copy of LeaderboardEntry
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LeaderboardEntryCopyWith<LeaderboardEntry> get copyWith => _$LeaderboardEntryCopyWithImpl<LeaderboardEntry>(this as LeaderboardEntry, _$identity);
 
   /// Serializes this LeaderboardEntry to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of LeaderboardEntry
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $LeaderboardEntryCopyWith<LeaderboardEntry> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LeaderboardEntry&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userPhoto, userPhoto) || other.userPhoto == userPhoto)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.totalPoints, totalPoints) || other.totalPoints == totalPoints)&&(identical(other.level, level) || other.level == level)&&(identical(other.salesCount, salesCount) || other.salesCount == salesCount)&&(identical(other.recruitsCount, recruitsCount) || other.recruitsCount == recruitsCount)&&(identical(other.isCurrentUser, isCurrentUser) || other.isCurrentUser == isCurrentUser));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,userId,userName,userPhoto,rank,totalPoints,level,salesCount,recruitsCount,isCurrentUser);
+
+@override
+String toString() {
+  return 'LeaderboardEntry(userId: $userId, userName: $userName, userPhoto: $userPhoto, rank: $rank, totalPoints: $totalPoints, level: $level, salesCount: $salesCount, recruitsCount: $recruitsCount, isCurrentUser: $isCurrentUser)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $LeaderboardEntryCopyWith<$Res> {
-  factory $LeaderboardEntryCopyWith(
-    LeaderboardEntry value,
-    $Res Function(LeaderboardEntry) then,
-  ) = _$LeaderboardEntryCopyWithImpl<$Res, LeaderboardEntry>;
-  @useResult
-  $Res call({
-    String userId,
-    String userName,
-    String userPhoto,
-    int rank,
-    int totalPoints,
-    int level,
-    int salesCount,
-    int recruitsCount,
-    bool? isCurrentUser,
-  });
-}
+abstract mixin class $LeaderboardEntryCopyWith<$Res>  {
+  factory $LeaderboardEntryCopyWith(LeaderboardEntry value, $Res Function(LeaderboardEntry) _then) = _$LeaderboardEntryCopyWithImpl;
+@useResult
+$Res call({
+ String userId, String userName, String userPhoto, int rank, int totalPoints, int level, int salesCount, int recruitsCount, bool? isCurrentUser
+});
 
+
+
+
+}
 /// @nodoc
-class _$LeaderboardEntryCopyWithImpl<$Res, $Val extends LeaderboardEntry>
+class _$LeaderboardEntryCopyWithImpl<$Res>
     implements $LeaderboardEntryCopyWith<$Res> {
-  _$LeaderboardEntryCopyWithImpl(this._value, this._then);
+  _$LeaderboardEntryCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final LeaderboardEntry _self;
+  final $Res Function(LeaderboardEntry) _then;
 
-  /// Create a copy of LeaderboardEntry
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? userName = null,
-    Object? userPhoto = null,
-    Object? rank = null,
-    Object? totalPoints = null,
-    Object? level = null,
-    Object? salesCount = null,
-    Object? recruitsCount = null,
-    Object? isCurrentUser = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            userId: null == userId
-                ? _value.userId
-                : userId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            userName: null == userName
-                ? _value.userName
-                : userName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            userPhoto: null == userPhoto
-                ? _value.userPhoto
-                : userPhoto // ignore: cast_nullable_to_non_nullable
-                      as String,
-            rank: null == rank
-                ? _value.rank
-                : rank // ignore: cast_nullable_to_non_nullable
-                      as int,
-            totalPoints: null == totalPoints
-                ? _value.totalPoints
-                : totalPoints // ignore: cast_nullable_to_non_nullable
-                      as int,
-            level: null == level
-                ? _value.level
-                : level // ignore: cast_nullable_to_non_nullable
-                      as int,
-            salesCount: null == salesCount
-                ? _value.salesCount
-                : salesCount // ignore: cast_nullable_to_non_nullable
-                      as int,
-            recruitsCount: null == recruitsCount
-                ? _value.recruitsCount
-                : recruitsCount // ignore: cast_nullable_to_non_nullable
-                      as int,
-            isCurrentUser: freezed == isCurrentUser
-                ? _value.isCurrentUser
-                : isCurrentUser // ignore: cast_nullable_to_non_nullable
-                      as bool?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of LeaderboardEntry
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? userName = null,Object? userPhoto = null,Object? rank = null,Object? totalPoints = null,Object? level = null,Object? salesCount = null,Object? recruitsCount = null,Object? isCurrentUser = freezed,}) {
+  return _then(_self.copyWith(
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
+as String,userPhoto: null == userPhoto ? _self.userPhoto : userPhoto // ignore: cast_nullable_to_non_nullable
+as String,rank: null == rank ? _self.rank : rank // ignore: cast_nullable_to_non_nullable
+as int,totalPoints: null == totalPoints ? _self.totalPoints : totalPoints // ignore: cast_nullable_to_non_nullable
+as int,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as int,salesCount: null == salesCount ? _self.salesCount : salesCount // ignore: cast_nullable_to_non_nullable
+as int,recruitsCount: null == recruitsCount ? _self.recruitsCount : recruitsCount // ignore: cast_nullable_to_non_nullable
+as int,isCurrentUser: freezed == isCurrentUser ? _self.isCurrentUser : isCurrentUser // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$LeaderboardEntryImplCopyWith<$Res>
-    implements $LeaderboardEntryCopyWith<$Res> {
-  factory _$$LeaderboardEntryImplCopyWith(
-    _$LeaderboardEntryImpl value,
-    $Res Function(_$LeaderboardEntryImpl) then,
-  ) = __$$LeaderboardEntryImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String userId,
-    String userName,
-    String userPhoto,
-    int rank,
-    int totalPoints,
-    int level,
-    int salesCount,
-    int recruitsCount,
-    bool? isCurrentUser,
-  });
 }
 
-/// @nodoc
-class __$$LeaderboardEntryImplCopyWithImpl<$Res>
-    extends _$LeaderboardEntryCopyWithImpl<$Res, _$LeaderboardEntryImpl>
-    implements _$$LeaderboardEntryImplCopyWith<$Res> {
-  __$$LeaderboardEntryImplCopyWithImpl(
-    _$LeaderboardEntryImpl _value,
-    $Res Function(_$LeaderboardEntryImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of LeaderboardEntry
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userId = null,
-    Object? userName = null,
-    Object? userPhoto = null,
-    Object? rank = null,
-    Object? totalPoints = null,
-    Object? level = null,
-    Object? salesCount = null,
-    Object? recruitsCount = null,
-    Object? isCurrentUser = freezed,
-  }) {
-    return _then(
-      _$LeaderboardEntryImpl(
-        userId: null == userId
-            ? _value.userId
-            : userId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        userName: null == userName
-            ? _value.userName
-            : userName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        userPhoto: null == userPhoto
-            ? _value.userPhoto
-            : userPhoto // ignore: cast_nullable_to_non_nullable
-                  as String,
-        rank: null == rank
-            ? _value.rank
-            : rank // ignore: cast_nullable_to_non_nullable
-                  as int,
-        totalPoints: null == totalPoints
-            ? _value.totalPoints
-            : totalPoints // ignore: cast_nullable_to_non_nullable
-                  as int,
-        level: null == level
-            ? _value.level
-            : level // ignore: cast_nullable_to_non_nullable
-                  as int,
-        salesCount: null == salesCount
-            ? _value.salesCount
-            : salesCount // ignore: cast_nullable_to_non_nullable
-                  as int,
-        recruitsCount: null == recruitsCount
-            ? _value.recruitsCount
-            : recruitsCount // ignore: cast_nullable_to_non_nullable
-                  as int,
-        isCurrentUser: freezed == isCurrentUser
-            ? _value.isCurrentUser
-            : isCurrentUser // ignore: cast_nullable_to_non_nullable
-                  as bool?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [LeaderboardEntry].
+extension LeaderboardEntryPatterns on LeaderboardEntry {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _LeaderboardEntry value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _LeaderboardEntry() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _LeaderboardEntry value)  $default,){
+final _that = this;
+switch (_that) {
+case _LeaderboardEntry():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _LeaderboardEntry value)?  $default,){
+final _that = this;
+switch (_that) {
+case _LeaderboardEntry() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String userName,  String userPhoto,  int rank,  int totalPoints,  int level,  int salesCount,  int recruitsCount,  bool? isCurrentUser)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _LeaderboardEntry() when $default != null:
+return $default(_that.userId,_that.userName,_that.userPhoto,_that.rank,_that.totalPoints,_that.level,_that.salesCount,_that.recruitsCount,_that.isCurrentUser);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String userName,  String userPhoto,  int rank,  int totalPoints,  int level,  int salesCount,  int recruitsCount,  bool? isCurrentUser)  $default,) {final _that = this;
+switch (_that) {
+case _LeaderboardEntry():
+return $default(_that.userId,_that.userName,_that.userPhoto,_that.rank,_that.totalPoints,_that.level,_that.salesCount,_that.recruitsCount,_that.isCurrentUser);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String userName,  String userPhoto,  int rank,  int totalPoints,  int level,  int salesCount,  int recruitsCount,  bool? isCurrentUser)?  $default,) {final _that = this;
+switch (_that) {
+case _LeaderboardEntry() when $default != null:
+return $default(_that.userId,_that.userName,_that.userPhoto,_that.rank,_that.totalPoints,_that.level,_that.salesCount,_that.recruitsCount,_that.isCurrentUser);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$LeaderboardEntryImpl implements _LeaderboardEntry {
-  const _$LeaderboardEntryImpl({
-    this.userId = '',
-    this.userName = '',
-    this.userPhoto = '',
-    this.rank = 0,
-    this.totalPoints = 0,
-    this.level = 0,
-    this.salesCount = 0,
-    this.recruitsCount = 0,
-    this.isCurrentUser,
-  });
 
-  factory _$LeaderboardEntryImpl.fromJson(Map<String, dynamic> json) =>
-      _$$LeaderboardEntryImplFromJson(json);
+class _LeaderboardEntry implements LeaderboardEntry {
+  const _LeaderboardEntry({this.userId = '', this.userName = '', this.userPhoto = '', this.rank = 0, this.totalPoints = 0, this.level = 0, this.salesCount = 0, this.recruitsCount = 0, this.isCurrentUser});
+  factory _LeaderboardEntry.fromJson(Map<String, dynamic> json) => _$LeaderboardEntryFromJson(json);
 
-  @override
-  @JsonKey()
-  final String userId;
-  @override
-  @JsonKey()
-  final String userName;
-  @override
-  @JsonKey()
-  final String userPhoto;
-  @override
-  @JsonKey()
-  final int rank;
-  @override
-  @JsonKey()
-  final int totalPoints;
-  @override
-  @JsonKey()
-  final int level;
-  @override
-  @JsonKey()
-  final int salesCount;
-  @override
-  @JsonKey()
-  final int recruitsCount;
-  @override
-  final bool? isCurrentUser;
+@override@JsonKey() final  String userId;
+@override@JsonKey() final  String userName;
+@override@JsonKey() final  String userPhoto;
+@override@JsonKey() final  int rank;
+@override@JsonKey() final  int totalPoints;
+@override@JsonKey() final  int level;
+@override@JsonKey() final  int salesCount;
+@override@JsonKey() final  int recruitsCount;
+@override final  bool? isCurrentUser;
 
-  @override
-  String toString() {
-    return 'LeaderboardEntry(userId: $userId, userName: $userName, userPhoto: $userPhoto, rank: $rank, totalPoints: $totalPoints, level: $level, salesCount: $salesCount, recruitsCount: $recruitsCount, isCurrentUser: $isCurrentUser)';
-  }
+/// Create a copy of LeaderboardEntry
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$LeaderboardEntryCopyWith<_LeaderboardEntry> get copyWith => __$LeaderboardEntryCopyWithImpl<_LeaderboardEntry>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LeaderboardEntryImpl &&
-            (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.userName, userName) ||
-                other.userName == userName) &&
-            (identical(other.userPhoto, userPhoto) ||
-                other.userPhoto == userPhoto) &&
-            (identical(other.rank, rank) || other.rank == rank) &&
-            (identical(other.totalPoints, totalPoints) ||
-                other.totalPoints == totalPoints) &&
-            (identical(other.level, level) || other.level == level) &&
-            (identical(other.salesCount, salesCount) ||
-                other.salesCount == salesCount) &&
-            (identical(other.recruitsCount, recruitsCount) ||
-                other.recruitsCount == recruitsCount) &&
-            (identical(other.isCurrentUser, isCurrentUser) ||
-                other.isCurrentUser == isCurrentUser));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    userId,
-    userName,
-    userPhoto,
-    rank,
-    totalPoints,
-    level,
-    salesCount,
-    recruitsCount,
-    isCurrentUser,
-  );
-
-  /// Create a copy of LeaderboardEntry
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LeaderboardEntryImplCopyWith<_$LeaderboardEntryImpl> get copyWith =>
-      __$$LeaderboardEntryImplCopyWithImpl<_$LeaderboardEntryImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$LeaderboardEntryImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$LeaderboardEntryToJson(this, );
 }
 
-abstract class _LeaderboardEntry implements LeaderboardEntry {
-  const factory _LeaderboardEntry({
-    final String userId,
-    final String userName,
-    final String userPhoto,
-    final int rank,
-    final int totalPoints,
-    final int level,
-    final int salesCount,
-    final int recruitsCount,
-    final bool? isCurrentUser,
-  }) = _$LeaderboardEntryImpl;
-
-  factory _LeaderboardEntry.fromJson(Map<String, dynamic> json) =
-      _$LeaderboardEntryImpl.fromJson;
-
-  @override
-  String get userId;
-  @override
-  String get userName;
-  @override
-  String get userPhoto;
-  @override
-  int get rank;
-  @override
-  int get totalPoints;
-  @override
-  int get level;
-  @override
-  int get salesCount;
-  @override
-  int get recruitsCount;
-  @override
-  bool? get isCurrentUser;
-
-  /// Create a copy of LeaderboardEntry
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LeaderboardEntryImplCopyWith<_$LeaderboardEntryImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LeaderboardEntry&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userPhoto, userPhoto) || other.userPhoto == userPhoto)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.totalPoints, totalPoints) || other.totalPoints == totalPoints)&&(identical(other.level, level) || other.level == level)&&(identical(other.salesCount, salesCount) || other.salesCount == salesCount)&&(identical(other.recruitsCount, recruitsCount) || other.recruitsCount == recruitsCount)&&(identical(other.isCurrentUser, isCurrentUser) || other.isCurrentUser == isCurrentUser));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,userId,userName,userPhoto,rank,totalPoints,level,salesCount,recruitsCount,isCurrentUser);
+
+@override
+String toString() {
+  return 'LeaderboardEntry(userId: $userId, userName: $userName, userPhoto: $userPhoto, rank: $rank, totalPoints: $totalPoints, level: $level, salesCount: $salesCount, recruitsCount: $recruitsCount, isCurrentUser: $isCurrentUser)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$LeaderboardEntryCopyWith<$Res> implements $LeaderboardEntryCopyWith<$Res> {
+  factory _$LeaderboardEntryCopyWith(_LeaderboardEntry value, $Res Function(_LeaderboardEntry) _then) = __$LeaderboardEntryCopyWithImpl;
+@override @useResult
+$Res call({
+ String userId, String userName, String userPhoto, int rank, int totalPoints, int level, int salesCount, int recruitsCount, bool? isCurrentUser
+});
+
+
+
+
+}
+/// @nodoc
+class __$LeaderboardEntryCopyWithImpl<$Res>
+    implements _$LeaderboardEntryCopyWith<$Res> {
+  __$LeaderboardEntryCopyWithImpl(this._self, this._then);
+
+  final _LeaderboardEntry _self;
+  final $Res Function(_LeaderboardEntry) _then;
+
+/// Create a copy of LeaderboardEntry
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? userName = null,Object? userPhoto = null,Object? rank = null,Object? totalPoints = null,Object? level = null,Object? salesCount = null,Object? recruitsCount = null,Object? isCurrentUser = freezed,}) {
+  return _then(_LeaderboardEntry(
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
+as String,userPhoto: null == userPhoto ? _self.userPhoto : userPhoto // ignore: cast_nullable_to_non_nullable
+as String,rank: null == rank ? _self.rank : rank // ignore: cast_nullable_to_non_nullable
+as int,totalPoints: null == totalPoints ? _self.totalPoints : totalPoints // ignore: cast_nullable_to_non_nullable
+as int,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as int,salesCount: null == salesCount ? _self.salesCount : salesCount // ignore: cast_nullable_to_non_nullable
+as int,recruitsCount: null == recruitsCount ? _self.recruitsCount : recruitsCount // ignore: cast_nullable_to_non_nullable
+as int,isCurrentUser: freezed == isCurrentUser ? _self.isCurrentUser : isCurrentUser // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
+}
+
+
+}
+
+// dart format on

@@ -42,7 +42,7 @@ class LiveChatService
                 'source' => $source,
                 'status' => 'open',
             ];
-            $insertData = $this->tenantInsertData($insertData);
+            $insertData = array_merge($insertData, $this->tenantInsertData());
             $cols = implode(', ', array_keys($insertData));
             $placeholders = implode(', ', array_fill(0, count($insertData), '?'));
             $stmt = $this->pdo->prepare("INSERT INTO chat_sessions ($cols) VALUES ($placeholders)");
@@ -111,7 +111,7 @@ class LiveChatService
                 'read_by_visitor' => $readVisitor,
                 'read_by_agent' => $readAgent,
             ];
-            $insertData = $this->tenantInsertData($insertData);
+            $insertData = array_merge($insertData, $this->tenantInsertData());
             $cols = implode(', ', array_keys($insertData));
             $placeholders = implode(', ', array_fill(0, count($insertData), '?'));
             $stmt = $this->pdo->prepare("INSERT INTO chat_messages ($cols) VALUES ($placeholders)");

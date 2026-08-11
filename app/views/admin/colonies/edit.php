@@ -71,12 +71,23 @@ $districts = $districts ?? [];
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
+                        <label class="form-label">Layout Image</label>
+                        <input name="layout_image" class="form-control" value="<?php echo htmlspecialchars($colony['layout_image'] ?? ''); ?>">
+                        <small class="text-muted">Colony layout/plan image</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <label class="form-label">Brochure Path</label>
                         <input name="brochure_path" class="form-control" value="<?php echo htmlspecialchars($colony['brochure_path'] ?? ''); ?>">
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">YouTube Video URL</label>
                         <input name="youtube_video_url" class="form-control" value="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Virtual Tour URL</label>
+                        <input name="virtual_tour_url" class="form-control" value="<?php echo htmlspecialchars($colony['virtual_tour_url'] ?? ''); ?>">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -92,7 +103,21 @@ $districts = $districts ?? [];
                 <div class="mb-3"><label class="form-label">Total Plots</label><input name="total_plots" type="number" class="form-control" value="<?php echo $colony['total_plots'] ?? 0; ?>"></div>
                 <div class="mb-3"><label class="form-label">Available Plots</label><input name="available_plots" type="number" class="form-control" value="<?php echo $colony['available_plots'] ?? 0; ?>"></div>
                 <div class="mb-3"><label class="form-label">Starting Price (₹)</label><input name="starting_price" type="number" step="0.01" class="form-control" value="<?php echo $colony['starting_price'] ?? 0; ?>"></div>
-                <div class="mb-3"><label class="form-label">Map Link</label><input name="map_link" class="form-control" value="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>"></div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input name="latitude" type="number" step="0.00000001" class="form-control" value="<?php echo htmlspecialchars($colony['latitude'] ?? ''); ?>" placeholder="26.7606">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input name="longitude" type="number" step="0.00000001" class="form-control" value="<?php echo htmlspecialchars($colony['longitude'] ?? ''); ?>" placeholder="83.3732">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Google Maps Link</label>
+                    <input name="map_link" class="form-control" value="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" id="map_link">
+                    <small class="text-muted">Auto-generated from lat/lng if empty on save</small>
+                </div>
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Contact & SEO</h6></div>
@@ -136,4 +161,14 @@ function loadDistricts(stateId) {
             data.forEach(d => sel.innerHTML += '<option value="' + d.id + '">' + d.name + '</option>');
         });
 }
+function autoMapLink() {
+    const lat = document.querySelector('input[name="latitude"]').value;
+    const lng = document.querySelector('input[name="longitude"]').value;
+    const mapInput = document.getElementById('map_link');
+    if (lat && lng && !mapInput.value) {
+        mapInput.value = 'https://maps.google.com/?q=' + lat + ',' + lng;
+    }
+}
+document.querySelector('input[name="latitude"]')?.addEventListener('change', autoMapLink);
+document.querySelector('input[name="longitude"]')?.addEventListener('change', autoMapLink);
 </script>
