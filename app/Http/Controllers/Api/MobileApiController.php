@@ -7058,4 +7058,145 @@ class MobileApiController extends BaseController
             echo json_encode(['success' => true, 'data' => []]);
         }
     }
+
+    // ─── Property Listing Marketplace APIs ───
+
+    public function getMyListings() {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            return;
+        }
+
+        $stmt = $this->db->query(
+            "SELECT * FROM user_properties WHERE user_id = ? OR posted_by = ? ORDER BY is_featured DESC, created_at DESC",
+            [$userId, $userId]
+        );
+
+        echo json_encode(['success' => true, 'listings' => $stmt->fetchAll()]);
+    }
+
+    public function getListingPackages() {
+        $this->setCorsHeaders();
+        $stmt = $this->db->query(
+            "SELECT * FROM listing_packages WHERE status = 'active' ORDER BY price ASC"
+        );
+        echo json_encode(['success' => true, 'packages' => $stmt->fetchAll()]);
+    }
+
+    public function submitPropertyInquiry() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $propertyId = (int)($input['property_id'] ?? 0);
+        $name = trim($input['name'] ?? '');
+        $phone = trim($input['phone'] ?? '');
+        $message = trim($input['message'] ?? '');
+
+        if (!$propertyId || !$name || !$phone) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+            return;
+        }
+
+        $this->db->query(
+            "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id) VALUES (?, ?, ?, ?, 1)",
+            [$propertyId, $name, $phone, $message]
+        );
+
+        echo json_encode(['success' => true, 'message' => 'Inquiry sent successfully']);
+    }
+
+    public function sendPropertyMessage() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            return;
+        }
+
+        $propertyId = (int)($input['property_id'] ?? 0);
+        $receiverId = (int)($input['receiver_id'] ?? 0);
+        $message = trim($input['message'] ?? '');
+
+        if (!$propertyId || !$receiverId || !$message) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Missing fields']);
+            return;
+        }
+
+        $this->db->query(
+            "INSERT INTO property_messages (property_id, sender_id, receiver_id, message, tenant_id) VALUES (?, ?, ?, ?, 1)",
+            [$propertyId, $userId, $receiverId, $message]
+        );
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function getPropertyMessages($propertyId) {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        $propertyId = (int)$propertyId;
+
+        $stmt = $this->db->query(
+            "SELECT pm.*, u.name as sender_name FROM property_messages pm 
+             LEFT JOIN users u ON pm.sender_id = u.id 
+             WHERE pm.property_id = ? AND (pm.sender_id = ? OR pm.receiver_id = ?) 
+             ORDER BY pm.created_at ASC LIMIT 100",
+            [$propertyId, $userId, $userId]
+        );
+
+        echo json_encode(['success' => true, 'messages' => $stmt->fetchAll()]);
+    }
+
+    public function boostProperty() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        $propertyId = (int)($input['property_id'] ?? 0);
+        $packageId = (int)($input['package_id'] ?? 0);
+
+        if (!$userId || !$propertyId || !$packageId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Missing fields']);
+            return;
+        }
+
+        $pkg = $this->db->fetch("SELECT * FROM listing_packages WHERE id = ? AND status = 'active'", [$packageId]);
+        if (!$pkg) {
+            echo json_encode(['success' => false, 'error' => 'Package not found']);
+            return;
+        }
+
+        $updates = [];
+        $params = [];
+        if ($pkg['is_featured']) { $updates[] = 'is_featured = 1'; }
+        if ($pkg['is_premium']) { $updates[] = 'is_premium = 1'; }
+        if ($pkg['is_urgent']) { $updates[] = 'is_urgent = 1'; }
+
+        if ($updates) {
+            $params[] = $propertyId;
+            $this->db->query("UPDATE user_properties SET " . implode(', ', $updates) . " WHERE id = ?", $params);
+        }
+
+        $expiresAt = date('Y-m-d H:i:s', strtotime("+{$pkg['duration_days']} days"));
+        $this->db->query(
+            "INSERT INTO property_boost_orders (user_id, property_id, package_id, amount, status, starts_at, expires_at, tenant_id) VALUES (?, ?, ?, ?, 'active', NOW(), ?, 1)",
+            [$userId, $propertyId, $packageId, $pkg['price'], $expiresAt]
+        );
+
+        echo json_encode(['success' => true, 'message' => "Property boosted with {$pkg['name']}"]);
+    }
+
+    public function markMessageRead($messageId) {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        $this->db->query(
+            "UPDATE property_messages SET is_read = 1 WHERE id = ? AND receiver_id = ?",
+            [(int)$messageId, $userId]
+        );
+        echo json_encode(['success' => true]);
+    }
 }

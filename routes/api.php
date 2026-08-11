@@ -707,6 +707,15 @@ $router->get('/api/v2/mobile/directory/jobs', 'Api\MobileApiController@directory
 $router->post('/api/v2/mobile/property-valuation/calculate', 'Api\MobileApiController@propertyValuation');
 $router->get('/api/v2/mobile/property-valuation/cities', 'Api\MobileApiController@valuationCities');
 
+// --- Property Marketplace APIs (my listings, packages, messaging, boost) ---
+$router->get('/api/v2/mobile/my-listings', 'Api\MobileApiController@getMyListings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/listing-packages', 'Api\MobileApiController@getListingPackages');
+$router->post('/api/v2/mobile/properties/inquiry', 'Api\MobileApiController@submitPropertyInquiry');
+$router->post('/api/v2/mobile/properties/message', 'Api\MobileApiController@sendPropertyMessage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/properties/{id}/messages', 'Api\MobileApiController@getPropertyMessages')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/properties/boost', 'Api\MobileApiController@boostProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/properties/messages/{id}/read', 'Api\MobileApiController@markMessageRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // --- DigiLocker API (KYC / document fetch) ---
 $router->get('/api/digilocker/auth-url', 'Api\DigiLockerController@getAuthUrl');
 $router->get('/api/digilocker/callback', 'Api\DigiLockerController@callback');

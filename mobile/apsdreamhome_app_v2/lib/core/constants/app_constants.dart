@@ -108,6 +108,14 @@ class AppConstants {
   // Referral
   static const String referralTrackEndpoint = '/referral/track';
 
+  // Property Marketplace
+  static const String propertyInquiryEndpoint = '/properties/inquiry';
+  static const String propertyMessageEndpoint = '/properties/message';
+  static const String propertyMessagesEndpoint = '/properties';
+  static const String myListingsEndpoint = '/my-listings';
+  static const String listingPackagesEndpoint = '/listing-packages';
+  static const String propertyBoostEndpoint = '/properties/boost';
+
   // Favorites
   static const String favoritesEndpoint = '/user/favorites';
   static const String favoritesCheckEndpoint = '/user/favorites/check';

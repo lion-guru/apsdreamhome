@@ -1,0 +1,26 @@
+# =============================================================================
+# APS Dream Home - GitHub Codespaces Setup
+# =============================================================================
+{
+  "name": "APS Dream Home Dev",
+  "displayDescription": "Cloud dev environment: PHP 8.2 + Apache + MySQL 8 + Node.js 20",
+  "dockerComposeFile": ["../docker-compose.dev.yml"],
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "none",
+  "forwardPorts": [80, 3307],
+  "postCreateCommand": "chmod +x .devcontainer/post-create.sh && .devcontainer/post-create.sh",
+  "remoteUser": "root",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-php.vscode-php",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.vscode-json",
+        "esbenp.prettier-vscode",
+        "ms-playwright.playwright"
+      ]
+    }
+  }
+}

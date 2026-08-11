@@ -4,10 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import '../../widgets/glass_card.dart';
 import '../../../data/services/property_listing_service.dart';
 import '../../../data/services/referral_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/constants/app_constants.dart';
 
 class PropertyDetailPage extends ConsumerStatefulWidget {
   const PropertyDetailPage({
@@ -43,6 +47,8 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
   bool _isLoading = true;
   String? _loadError;
   int _galleryIndex = 0;
+  int _viewCount = 0;
+  int _inquiryCount = 0;
 
   @override
   void initState() {
@@ -470,6 +476,179 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
 
               const SizedBox(height: 12),
 
+              // ─── Listing Badges (Featured / Premium / Urgent) ───
+              if (_property != null &&
+                  (_property!.isFeatured ||
+                      _property!.isPremium ||
+                      _property!.isUrgent))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    children: [
+                      if (_property!.isFeatured)
+                        _listingBadge(
+                          'Featured',
+                          Icons.star,
+                          Colors.amber.shade700,
+                        ),
+                      if (_property!.isFeatured) const SizedBox(width: 8),
+                      if (_property!.isPremium)
+                        _listingBadge(
+                          'Premium',
+                          Icons.diamond,
+                          Colors.purple.shade700,
+                        ),
+                      if (_property!.isPremium) const SizedBox(width: 8),
+                      if (_property!.isUrgent)
+                        _listingBadge(
+                          'Urgent Sale',
+                          Icons.bolt,
+                          Colors.red.shade700,
+                        ),
+                    ],
+                  ),
+                ),
+
+              // ─── Property Stats ───
+              GlassCard(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _statItem(Icons.visibility, '$_viewCount', 'Views'),
+                    _statItem(Icons.help_outline, '$_inquiryCount', 'Inquiries'),
+                    _statItem(Icons.share, '', 'Share'),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // ─── Send Inquiry (if not owner) ───
+              if (_property != null)
+                GlassCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.question_answer,
+                            color: Colors.amber.shade700,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Interested in this property?',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Text(
+                                  'Send a message to the owner',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showInquirySheet(),
+                          icon: const Icon(Icons.send, size: 18),
+                          label: const Text('Inquire Now'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFD700),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              // ─── Boost Listing (if owner) ───
+              if (_property != null)
+                GlassCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.rocket_launch,
+                            color: Colors.purple.shade300,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Want more visibility?',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Text(
+                                  'Boost your listing to reach more buyers',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Listing packages coming soon'),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.packages, size: 18),
+                          label: const Text('View Packages'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.purple.shade300,
+                            side: BorderSide(color: Colors.purple.shade300!),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: 12),
+
               // ─── Set Alert action ───
               GlassCard(
                 opacity: 0.08,
@@ -523,6 +702,221 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
               ),
 
               const SizedBox(height: 80),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _listingBadge(String label, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 14),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statItem(IconData icon, String value, String label) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white54, size: 20),
+        const SizedBox(height: 4),
+        Text(
+          value.isNotEmpty ? value : '-',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white54, fontSize: 11),
+        ),
+      ],
+    );
+  }
+
+  void _showInquirySheet() {
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+    final messageController = TextEditingController();
+    bool submitting = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E293B),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Send Inquiry',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _displayTitle,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: nameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Your Name',
+                  hintStyle: const TextStyle(color: Colors.white38),
+                  filled: true,
+                  fillColor: Colors.white10,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                style: const TextStyle(color: Colors.white),
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  hintText: 'Phone Number',
+                  hintStyle: const TextStyle(color: Colors.white38),
+                  filled: true,
+                  fillColor: Colors.white10,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: messageController,
+                style: const TextStyle(color: Colors.white),
+                maxLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Message (optional)',
+                  hintStyle: const TextStyle(color: Colors.white38),
+                  filled: true,
+                  fillColor: Colors.white10,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: submitting
+                      ? null
+                      : () async {
+                          if (nameController.text.trim().isEmpty ||
+                              phoneController.text.trim().isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Name and phone are required'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+                          setModalState(() => submitting = true);
+                          try {
+                            final url = Uri.parse(
+                              '${AppConstants.baseUrl}${AppConstants.apiVersion}${AppConstants.propertyInquiryEndpoint}',
+                            );
+                            await http.post(
+                              url,
+                              headers: {'Content-Type': 'application/json'},
+                              body: jsonEncode({
+                                'property_id': widget.propertyId,
+                                'name': nameController.text.trim(),
+                                'phone': phoneController.text.trim(),
+                                'message': messageController.text.trim(),
+                              }),
+                            );
+                            if (ctx.mounted) Navigator.pop(ctx);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Inquiry sent successfully!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            setModalState(() => submitting = false);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: submitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
+                        )
+                      : const Text('Send Inquiry'),
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
