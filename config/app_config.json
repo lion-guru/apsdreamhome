@@ -29,7 +29,7 @@
     "oauth_prompt": "select_account consent"
   },
   "ai": {
-    "gemini_api_key": "SAFE_REDACTED_TOKEN",
+    "gemini_api_key": "",
     "gemini_model": "gemini-2.5-flash",
     "gemini_project_id": "",
     "openai_api_key": ""

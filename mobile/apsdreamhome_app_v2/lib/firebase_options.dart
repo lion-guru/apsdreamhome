@@ -6,7 +6,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'SAFE_REDACTED_TOKEN',
+    apiKey: 'YOUR_FIREBASE_API_KEY',
     appId: '1:387997879764:android:8a4585e90885466af15a41',
     messagingSenderId: '387997879764',
     projectId: 'apsgroup-163d9',
