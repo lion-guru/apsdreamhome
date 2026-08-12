@@ -16,6 +16,9 @@ class PropertyListingService {
     String? location,
     double? minPrice,
     double? maxPrice,
+    int? bedrooms,
+    String? sortBy, // newest, price_low, price_high, popular
+    int? colonyId,
     int page = 1,
     int limit = 20,
   }) async {
@@ -23,11 +26,16 @@ class PropertyListingService {
       final params = <String, dynamic>{'page': page, 'limit': limit};
       if (type != null && type != 'all') params['type'] = type;
       if (purpose != null && purpose != 'all') params['purpose'] = purpose;
-      if (location != null && location != 'all') params['location'] = location;
+      if (location != null && location.isNotEmpty) params['location'] = location;
       if (minPrice != null && minPrice > 0) params['min_price'] = minPrice;
       if (maxPrice != null && maxPrice < 100000000) {
         params['max_price'] = maxPrice;
       }
+      if (bedrooms != null && bedrooms > 0) params['bedrooms'] = bedrooms;
+      if (sortBy != null && sortBy.isNotEmpty && sortBy != 'newest') {
+        params['sort'] = sortBy;
+      }
+      if (colonyId != null && colonyId > 0) params['colony_id'] = colonyId;
 
       final response = await _api.get(
         '/properties/browse',
@@ -124,6 +132,7 @@ class PropertyListing {
   final bool isPremium;
   final bool isFeatured;
   final bool isUrgent;
+  final int? siteId;
 
   const PropertyListing({
     required this.id,
@@ -149,6 +158,7 @@ class PropertyListing {
     this.isPremium = false,
     this.isFeatured = false,
     this.isUrgent = false,
+    this.siteId,
   });
 
   List<Map<String, dynamic>> get badges {
@@ -219,6 +229,7 @@ class PropertyListing {
       isPremium: json['is_premium'] == true || json['is_premium'] == 1,
       isFeatured: json['is_featured'] == true || json['is_featured'] == 1,
       isUrgent: json['is_urgent'] == true || json['is_urgent'] == 1,
+      siteId: json['site_id'] != null ? _parseInt(json['site_id']) : null,
     );
   }
 

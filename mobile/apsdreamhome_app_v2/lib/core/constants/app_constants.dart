@@ -26,6 +26,7 @@ class AppConstants {
 
   // Endpoints
   static const String loginEndpoint = '/auth/login';
+  static const String googleLoginEndpoint = '/auth/google-login';
   static const String airLoginEndpoint = '/auth/air-login';
   static const String airLoginVerifyEndpoint = '/auth/air-login/verify';
   static const String propertiesEndpoint = '/properties';
@@ -115,6 +116,12 @@ class AppConstants {
   static const String myListingsEndpoint = '/my-listings';
   static const String listingPackagesEndpoint = '/listing-packages';
   static const String propertyBoostEndpoint = '/properties/boost';
+
+  // Listing Upgrade Payment
+  static const String listingCreateOrderEndpoint = '/listing/create-order';
+  static const String listingVerifyPaymentEndpoint = '/listing/verify-payment';
+  static const String listingActivateFreeEndpoint = '/listing/activate-free';
+  static const String listingUpgradeEndpoint = '/properties/boost';
 
   // Favorites
   static const String favoritesEndpoint = '/user/favorites';

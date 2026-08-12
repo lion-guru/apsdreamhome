@@ -6,8 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/services/api_service.dart';
 import '../../../core/services/notification_service.dart';
 import '../../../core/utils/logger.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/services/google_auth_service.dart';
 import '../../widgets/app_widgets.dart';
 import '../../widgets/glass_card.dart';
 
@@ -724,11 +727,54 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
+        onTap: () async {
           if (label == 'Phone') {
             setState(() => _selectedTab = 1);
           } else if (label == 'Google') {
-            setState(() => _selectedTab = 0);
+            setState(() => _isLoading = true);
+            try {
+              final result = await GoogleAuthService.signInWithGoogle();
+              if (result == null) {
+                if (mounted) {
+                  AppWidgets.showInfoSnackBar(
+                    context,
+                    'Google Sign-In cancelled or failed. Try again.',
+                  );
+                }
+                return;
+              }
+              final token = result['token'] as String?;
+              final userData = result['user'] as Map<String, dynamic>?;
+              if (token != null && userData != null) {
+                // Save token
+                final apiService = ApiService();
+                await apiService.saveToken(token);
+                // Create user model
+                final user = User.fromJson(userData);
+                // Set auth state
+                AuthBridge.instance.currentUser.value = user;
+                // Register FCM token
+                try {
+                  final fcmToken = await NotificationService().getToken();
+                  if (fcmToken != null) {
+                    await NotificationService().saveTokenToBackend(fcmToken);
+                  }
+                } catch (_) {}
+                if (mounted) {
+                  final route = defaultRouteForRole(user);
+                  context.go(route);
+                }
+              }
+            } catch (e) {
+              if (mounted) {
+                AppWidgets.showErrorSnackBar(
+                  context,
+                  'Google Sign-In failed: $e',
+                );
+              }
+            } finally {
+              if (mounted) setState(() => _isLoading = false);
+            }
           } else {
             AppWidgets.showInfoSnackBar(
               context,

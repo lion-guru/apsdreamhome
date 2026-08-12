@@ -1,37 +1,57 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-11 — Session 74)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-12 — Session 74)
 
 ---
 
-## Session 74: Colony Detail Enhancement + Chat History (2026-08-11)
+## Session 74: Listing Monetization + Agent Commission + Flutter Pages (2026-08-11/12)
 
 ### What Was Done
 | Feature | Details |
 |---------|---------|
-| **Chat History Persistence** | `chat_history` table created (user_id, session_id, role, message, tenant_id). User messages + bot responses persisted on every send. Endpoint `GET /api/chat/history?session_id=X` returns last 100 messages. |
-| **Chat History Route** | Added `/api/chat/history` GET route to `routes/web.php` |
-| **Flutter Chat History** | `ChatService.getChatHistory()` fetches history from API. `LiveChatPage._loadChatHistory()` loads history on session start. `AppConstants.chatHistoryEndpoint` added. |
-| **Admin Colony Form (Layout)** | Added `layout_image` and `virtual_tour_url` fields to create and edit forms |
-| **Admin Colony Form (Location)** | Added `latitude`, `longitude`, auto-generate `map_link` fields to create and edit forms. JavaScript auto-fills map link from coordinates. |
-| **ColonyController store()** | Now inserts `layout_image`, `virtual_tour_url`, `latitude`, `longitude`. Auto-generates `map_link` from lat/lng if empty. |
-| **ColonyController update()** | Now updates `layout_image`, `virtual_tour_url`, `latitude`, `longitude`. Auto-generates `map_link` from lat/lng if empty. |
-| **E2E Tests** | 153/153 PASS — zero regressions |
+| **Listing Monetization System** | `listing_packages` (5 seeded: Free/Featured ₹499/Premium ₹1499/Urgent ₹999/Premium+Urgent ₹1999), `property_boost_orders`, `property_agents`, `property_messages`, `listing_settings` (12 config keys) tables created |
+| **Admin Listing Settings** | `ListingSettingsController` — manage 12 settings + 5 listing packages. Stats dashboard: total listings, featured, premium, inquiries, messages. 2 views: index (stats + settings form + packages), inquiries (table + pagination) |
+| **Agent Commission Dashboard** | `AgentCommissionController` — admin view of agent activity, commissions, agent listings. Assign agents to properties. 2 views: index (dashboard + top agents + recent commissions), agent_detail (per-agent breakdown) |
+| **Property Inquiry System** | Public `POST /api/v2/mobile/properties/inquiry` + `POST /api/v2/mobile/colonies/inquiry` — name, phone, message. Stored in `property_inquiries` table |
+| **Buyer-Seller Messaging** | `property_messages` table, auth-required GET/POST endpoints for conversation threads |
+| **My Listings API** | `GET /api/v2/mobile/my-listings` — user's posted properties with boost status |
+| **Listing Upgrade API** | `POST /api/v2/mobile/listing/upgrade` — upgrades property to selected package, updates flags |
+| **Flutter My Listings Page** | Dark gradient page — fetches user's listings, shows badges (Featured/Premium/Urgent), Boost button, Pull-to-refresh, FAB: Post Property. Link added to profile page |
+| **Flutter Listing Packages Page** | 5 package cards with price, duration, features, boost score. Animated selection + "Upgrade Now" button. Route: `/listing-packages/:propertyId` |
+| **Flutter Property Detail Enhanced** | Inline expandable inquiry form (Name/Phone/Message → POST). WhatsApp button (`wa.me/917007444842`). Call button (`tel:+917007444842`). Stats row with real views/inquiries data |
+| **Colony Visibility Control** | Admin toggle `show_plots_publicly` per colony — when OFF, plot grid hidden from public |
+| **Chat History Persistence** | `chat_history` table created, messages saved on every send, Flutter loads history on session start |
+| **Admin Colony Forms** | Added layout_image, virtual_tour_url, latitude, longitude fields. Auto-generates map_link from lat/lng |
 
-### Files Modified
+### Files Created/Modified
 | File | Changes |
 |------|---------|
-| `app/Http/Controllers/Front/LiveChatWidgetController.php` | +history persistence in send(), +history() method |
-| `app/Http/Controllers/Admin/ColonyController.php` | +layout_image/virtual_tour_url/lat/lng in store()+update(), auto map_link |
-| `routes/web.php` | +`/api/chat/history` GET route |
-| `app/views/admin/colonies/create.php` | +layout_image, virtual_tour_url, latitude, longitude, auto-map-link JS |
-| `app/views/admin/colonies/edit.php` | +layout_image, virtual_tour_url, latitude, longitude, auto-map-link JS |
-| `mobile/.../app_constants.dart` | +chatHistoryEndpoint |
-| `mobile/.../chat_service.dart` | +getChatHistory() method |
-| `mobile/.../live_chat_page.dart` | +_loadChatHistory() called on session start |
+| `app/Http/Controllers/Admin/ListingSettingsController.php` | NEW — 4 methods (index, updateSettings, updatePackage, inquiries) |
+| `app/Http/Controllers/Admin/AgentCommissionController.php` | NEW — 3 methods (index, agentDetail, assignAgent) |
+| `app/views/admin/listing-settings/index.php` | NEW — stats + settings form + packages |
+| `app/views/admin/listing-settings/inquiries.php` | NEW — inquiries table |
+| `app/views/admin/agent-commission/index.php` | NEW — dashboard + top agents + commissions |
+| `app/views/admin/agent-commission/agent_detail.php` | NEW — agent detail breakdown |
+| `app/Http/Controllers/Admin/ColonyController.php` | +layout_image/virtual_tour_url/lat/lng |
+| `app/Http/Controllers/Front/LiveChatWidgetController.php` | +history persistence |
+| `routes/web.php` | +listing-settings routes, +agent-commission routes, +chat history route |
+| `routes/api.php` | +property/colony inquiry, +my-listings, +listing-packages, +upgrade-listing, +property-messages |
+| `mobile/.../my_listings_page.dart` | NEW — user's posted properties with badges |
+| `mobile/.../listing_packages_page.dart` | NEW — package selection + upgrade |
+| `mobile/.../property_detail_page.dart` | +inquiry form, +WhatsApp/Call buttons, +stats |
+| `mobile/.../app_router.dart` | +my-listings, +listing-packages routes |
+| `mobile/.../app_constants.dart` | +myListingsEndpoint, +listingPackagesEndpoint, +listingUpgradeEndpoint, +propertyInquiryEndpoint |
+| `mobile/.../profile_page.dart` | +My Listings link in More Features |
 
 ### Database Changes
 | Table | Change |
 |-------|--------|
-| `chat_history` | NEW table — id, user_id, session_id, role, message, message_type, tenant_id, created_at |
+| `listing_packages` | NEW — 5 packages seeded (Free/Featured/Premium/Urgent/Combined) |
+| `property_boost_orders` | NEW — tracks paid boost orders with expiry |
+| `property_agents` | NEW — agent/broker listing assignments with commission |
+| `property_messages` | NEW — buyer-seller chat per property |
+| `listing_settings` | NEW — 12 admin-configurable settings seeded |
+| `property_inquiries` | NEW — buyer inquiry form submissions |
+| `chat_history` | NEW — chat message persistence |
+| `colonies` | +layout_image, +colony_documents, +virtual_tour_url, +latitude, +longitude |
 
 ---
 
@@ -101,6 +121,10 @@ _121. **Apache socket can get stuck in TIME_WAIT** — Multiple rapid restarts c
 _122. **PHP module loading in XAMPP** — PHP is loaded via `httpd-xampp.conf` included from `httpd.conf`. If Apache doesn't process PHP files, check that `Include conf/extra/httpd-xampp.conf` is present in `httpd.conf`._
 
 _123. **PowerShell Add-Content can corrupt PHP files** — Using `Add-Content` with PHP code can introduce encoding issues. Use the `Write` tool instead for PHP files._
+
+_124. **`Icons.packages` does not exist in Flutter Material** — Use `Icons.inventory_2_outlined` or `Icons.inventory_2` instead. Causes build error: "Member not found: 'packages'".
+
+_125. **`service_team` column in `property_agents` may not exist** — Use actual DB columns: `commission_type`, `commission_value`, `agent_user_id` (not `agent_id`), `beneficiary_user_id` (not `user_id`), `name` (not `full_name`).
 
 ---
 

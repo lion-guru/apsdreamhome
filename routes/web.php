@@ -4980,3 +4980,21 @@ $router->get('/admin/reports/financial/export', 'App\\Http\\Controllers\\Admin\\
 // BULK OPERATIONS
 // ============================================================
 $router->post('/admin/leads/bulk-action', 'App\\Http\\Controllers\\Admin\\LeadController@bulkAction');
+
+// ============================================================
+// AGENT COMMISSION DASHBOARD
+// ============================================================
+$router->get('/admin/agent-commission', 'App\\Http\\Controllers\\Admin\\AgentCommissionController@index');
+$router->get('/admin/agent-commission/agent/{id}', 'App\\Http\\Controllers\\Admin\\AgentCommissionController@agentDetail');
+$router->post('/admin/agent-commission/assign', 'App\\Http\\Controllers\\Admin\\AgentCommissionController@assignAgent');
+
+// ============================================================
+// AGENT AGREEMENT SIGNING
+// ============================================================
+$router->get('/admin/agent-agreements', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@index');
+$router->get('/admin/agent-agreements/create', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@create');
+$router->post('/admin/agent-agreements/store', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@store');
+$router->get('/admin/agent-agreements/detail/{id}', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@detail');
+$router->post('/admin/agent-agreements/send/{id}', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@send');
+$router->post('/admin/agent-agreements/sign/{id}', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@sign');
+$router->post('/admin/agent-agreements/cancel/{id}', 'App\\Http\\Controllers\\Admin\\AgentAgreementController@cancel');

@@ -31,7 +31,9 @@ class _PropertyMarketplacePageState
   String _selectedPurpose = 'all';
   double _filterMinPrice = 0;
   double _filterMaxPrice = 100000000;
-  String _sortBy = 'newest'; // newest, price_low, price_high
+  String _sortBy = 'newest';
+  String _selectedColony = 'All';
+  int? _selectedColonyId;
 
   // --- View ---
   bool _isGridView = true;
@@ -96,6 +98,8 @@ class _PropertyMarketplacePageState
       purpose: _selectedPurpose == 'all' ? null : _selectedPurpose,
       minPrice: _filterMinPrice > 0 ? _filterMinPrice : null,
       maxPrice: _filterMaxPrice < 100000000 ? _filterMaxPrice : null,
+      sortBy: _sortBy,
+      colonyId: _selectedColonyId,
       page: _currentPage,
       limit: _pageSize,
     );
@@ -167,6 +171,8 @@ class _PropertyMarketplacePageState
       purpose: _selectedPurpose == 'all' ? null : _selectedPurpose,
       minPrice: _filterMinPrice > 0 ? _filterMinPrice : null,
       maxPrice: _filterMaxPrice < 100000000 ? _filterMaxPrice : null,
+      sortBy: _sortBy,
+      colonyId: _selectedColonyId,
       page: _currentPage,
       limit: _pageSize,
     );
@@ -225,6 +231,17 @@ class _PropertyMarketplacePageState
     double tempMin = _filterMinPrice;
     double tempMax = _filterMaxPrice;
     String tempSort = _sortBy;
+    String tempColony = _selectedColony;
+    int? tempColonyId = _selectedColonyId;
+
+    const colonies = [
+      ('All', 'All', null),
+      ('Suryoday Colony', 'Suryoday Colony', 2),
+      ('Braj Radha Nagri', 'Braj Radha Nagri', 3),
+      ('Budh Bihar Colony', 'Budh Bihar Colony', 5),
+      ('Raghunath Nagri', 'Raghunath Nagri', 6),
+      ('APS Motiram Township', 'APS Motiram Township', 7),
+    ];
 
     showModalBottomSheet(
       context: context,
@@ -236,8 +253,8 @@ class _PropertyMarketplacePageState
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
             return DraggableScrollableSheet(
-              initialChildSize: 0.75,
-              maxChildSize: 0.92,
+              initialChildSize: 0.85,
+              maxChildSize: 0.95,
               minChildSize: 0.5,
               expand: false,
               builder: (ctx, scrollCtrl) {
@@ -273,9 +290,11 @@ class _PropertyMarketplacePageState
                                 tempMin = 0;
                                 tempMax = 100000000;
                                 tempSort = 'newest';
+                                tempColony = 'All';
+                                tempColonyId = null;
                               });
                             },
-                            child: const Text('Reset'),
+                            child: const Text('Reset All'),
                           ),
                         ],
                       ),
@@ -292,6 +311,8 @@ class _PropertyMarketplacePageState
                                 ('Plot', 'plot'),
                                 ('House', 'house'),
                                 ('Flat', 'flat'),
+                                ('Apartment', 'apartment'),
+                                ('Villa', 'villa'),
                                 ('Shop', 'shop'),
                                 ('Farmhouse', 'farmhouse'),
                               ],
@@ -312,6 +333,23 @@ class _PropertyMarketplacePageState
                               selected: tempPurpose,
                               onSelected: (val) =>
                                   setSheetState(() => tempPurpose = val),
+                            ),
+                            const SizedBox(height: 20),
+                            _filterSectionTitle('Colony / Location'),
+                            const SizedBox(height: 8),
+                            _buildFilterChips(
+                              options: colonies.map((c) => (c.$1, c.$2)).toList(),
+                              selected: tempColony,
+                              onSelected: (val) {
+                                final match = colonies.firstWhere(
+                                  (c) => c.$2 == val,
+                                  orElse: () => ('All', 'All', null),
+                                );
+                                setSheetState(() {
+                                  tempColony = val;
+                                  tempColonyId = match.$3;
+                                });
+                              },
                             ),
                             const SizedBox(height: 20),
                             _filterSectionTitle('Price Range'),
@@ -363,8 +401,9 @@ class _PropertyMarketplacePageState
                             _buildFilterChips(
                               options: const [
                                 ('Newest', 'newest'),
-                                ('Price Low', 'price_low'),
-                                ('Price High', 'price_high'),
+                                ('Price: Low', 'price_low'),
+                                ('Price: High', 'price_high'),
+                                ('Popular', 'popular'),
                               ],
                               selected: tempSort,
                               onSelected: (val) =>
@@ -388,6 +427,8 @@ class _PropertyMarketplacePageState
                                   _filterMinPrice = tempMin;
                                   _filterMaxPrice = tempMax;
                                   _sortBy = tempSort;
+                                  _selectedColony = tempColony;
+                                  _selectedColonyId = tempColonyId;
                                 });
                                 Navigator.pop(ctx);
                                 _fetchProperties(reset: true);
@@ -523,6 +564,16 @@ class _PropertyMarketplacePageState
 
   // ──────────────────────────── Result Count Bar ─────────────────────────
 
+  int get _activeFilterCount {
+    int count = 0;
+    if (_selectedType != 'all') count++;
+    if (_selectedPurpose != 'all') count++;
+    if (_selectedColony != 'All') count++;
+    if (_filterMinPrice > 0) count++;
+    if (_filterMaxPrice < 100000000) count++;
+    return count;
+  }
+
   Widget _buildResultBar() {
     if (_isLoading) return const SizedBox.shrink();
     final activeFilters = <String>[];
@@ -530,38 +581,109 @@ class _PropertyMarketplacePageState
     if (_selectedPurpose != 'all') {
       activeFilters.add(_selectedPurpose.toUpperCase());
     }
+    if (_selectedColony != 'All') activeFilters.add(_selectedColony);
+    if (_filterMinPrice > 0 || _filterMaxPrice < 100000000) {
+      activeFilters.add(
+        '${_formatPriceShort(_filterMinPrice)} - ${_formatPriceShort(_filterMaxPrice)}',
+      );
+    }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: Colors.white,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Text(
-              'Showing ${_properties.length} properties',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.shade600,
-              ),
-            ),
-          ),
-          if (activeFilters.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                activeFilters.join(' + '),
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.primaryColor,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Showing ${_properties.length} properties',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
               ),
+              if (_activeFilterCount > 0)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedType = 'all';
+                      _selectedPurpose = 'all';
+                      _filterMinPrice = 0;
+                      _filterMaxPrice = 100000000;
+                      _sortBy = 'newest';
+                      _selectedColony = 'All';
+                      _selectedColonyId = null;
+                    });
+                    _fetchProperties(reset: true);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.errorColor.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.close,
+                          size: 12,
+                          color: AppTheme.errorColor,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          'Clear ($_activeFilterCount)',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.errorColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          if (activeFilters.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            SizedBox(
+              height: 24,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: activeFilters.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 6),
+                itemBuilder: (_, i) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      activeFilters[i],
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
+          ],
         ],
       ),
     );
@@ -666,6 +788,8 @@ class _PropertyMarketplacePageState
           _filterMinPrice = 0;
           _filterMaxPrice = 100000000;
           _sortBy = 'newest';
+          _selectedColony = 'All';
+          _selectedColonyId = null;
           _searchController.clear();
         });
         _fetchProperties(reset: true);

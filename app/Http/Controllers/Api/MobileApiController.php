@@ -142,6 +142,132 @@ class MobileApiController extends BaseController
     }
 
     /**
+     * Google Sign-In for mobile app
+     * Accepts id_token + email + name + photo_url from Flutter Google SDK
+     * Creates user if not exists, returns JWT token like login()
+     */
+    public function googleLogin()
+    {
+        $this->setCorsHeaders();
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $idToken = $data['id_token'] ?? '';
+        $email = trim($data['email'] ?? '');
+        $name = trim($data['name'] ?? '');
+        $photoUrl = $data['photo_url'] ?? '';
+
+        if (empty($email)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Email is required']);
+            return;
+        }
+
+        try {
+            $pdo = $this->db->getConnection();
+            $tid = (int)$this->tenantId();
+
+            // Check if user exists
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?{$tidSql} LIMIT 1");
+            $params = [$email];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                // Create new user
+                $password = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
+                $prefix = 'CUS';
+                $customerId = $prefix . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+                $newReferralCode = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
+
+                $cols = "customer_id, name, email, password, role, status, provider, provider_id, avatar, referral_code, created_at, updated_at";
+                $vals = "?, ?, ?, ?, 'customer', 'active', 'google', ?, ?, ?, NOW(), NOW()";
+                $uParams = [$customerId, $name, $email, $password, $idToken, $photoUrl, $newReferralCode];
+
+                $insertExtra = $this->tenantInsertData();
+                if (!empty($insertExtra)) {
+                    $cols .= ", tenant_id";
+                    $vals .= ", ?";
+                    $uParams[] = $insertExtra['tenant_id'];
+                }
+
+                $stmt = $pdo->prepare("INSERT INTO users ($cols) VALUES ($vals)");
+                $stmt->execute($uParams);
+                $userId = $pdo->lastInsertId();
+
+                // Fetch the newly created user
+                $tidSql2 = $tid > 1 ? " AND tenant_id = ?" : "";
+                $stmt2 = $pdo->prepare("SELECT * FROM users WHERE id = ?{$tidSql2} LIMIT 1");
+                $fetchParams = [$userId];
+                if ($tid > 1) $fetchParams[] = $tid;
+                $stmt2->execute($fetchParams);
+                $user = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+                $this->tenantTrackUsage('users');
+            }
+
+            // Generate API token (same pattern as ApiAuthService::login)
+            $token = \App\Core\Security::generateRandomString(64);
+            $expiresAt = date('Y-m-d H:i:s', strtotime('+30 days'));
+
+            $tokenCols = "user_id, token, expires_at, created_at";
+            $tokenVals = "?, ?, ?, NOW()";
+            $tokenParams = [$user['id'], $token, $expiresAt];
+            if ($tid > 1) {
+                $tokenCols .= ", tenant_id";
+                $tokenVals .= ", ?";
+                $tokenParams[] = $tid;
+            }
+            $stmt = $pdo->prepare("INSERT INTO api_tokens ($tokenCols) VALUES ($tokenVals)");
+            $stmt->execute($tokenParams);
+
+            // Fetch profile (same pattern as ApiAuthService::login)
+            try {
+                $profileSql = "SELECT u.id as userId, u.name, u.email, u.phone, u.role,
+                        COALESCE(u.created_at, NOW()) as createdAt,
+                        COALESCE(u.updated_at, NOW()) as updatedAt,
+                        COALESCE(mp.current_level, 'Customer') as rank
+                 FROM users u
+                 LEFT JOIN mlm_profiles mp ON u.id = mp.user_id
+                 WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : "");
+                $stmt = $pdo->prepare($profileSql);
+                $profileParams = [$user['id']];
+                if ($tid > 1) $profileParams[] = $tid;
+                $stmt->execute($profileParams);
+                $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+            } catch (\Throwable $e) {
+                error_log('Google login profile fetch: ' . $e->getMessage());
+                $userData = [
+                    'userId' => $user['id'],
+                    'name' => $user['name'],
+                    'email' => $user['email'],
+                    'phone' => $user['phone'] ?? '',
+                    'role' => $user['role'],
+                    'rank' => 'Customer',
+                ];
+            }
+
+            $userData['avatar'] = $user['avatar'] ?? null;
+            $userData['target'] = 0.0;
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'user' => $userData,
+                    'token' => $token,
+                ],
+                'expires_at' => $expiresAt,
+            ]);
+
+        } catch (\Exception $e) {
+            error_log('MobileApiController::googleLogin failed: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Google login failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
      * API Logout for Mobile
      */
     public function logout()
@@ -218,6 +344,22 @@ class MobileApiController extends BaseController
             $featured = \App\Core\Security::sanitize($_GET['featured'] ?? null);
             if ($featured !== null && $featured === 'true') {
                 $filters['featured'] = true;
+            }
+            $bedrooms = \App\Core\Security::sanitize($_GET['bedrooms'] ?? null);
+            if ($bedrooms !== null && $bedrooms !== '') {
+                $filters['bedrooms'] = (int) $bedrooms;
+            }
+            $sort_by = \App\Core\Security::sanitize($_GET['sort_by'] ?? null);
+            if ($sort_by !== null && $sort_by !== '') {
+                $filters['sort_by'] = $sort_by;
+            }
+            $location = \App\Core\Security::sanitize($_GET['location'] ?? null);
+            if ($location !== null && $location !== '') {
+                $filters['location'] = $location;
+            }
+            $colony_id = \App\Core\Security::sanitize($_GET['colony_id'] ?? null);
+            if ($colony_id !== null && $colony_id !== '') {
+                $filters['colony_id'] = (int) $colony_id;
             }
 
             // Get properties using SyncService if in sync mode
@@ -577,7 +719,32 @@ class MobileApiController extends BaseController
                 $sql .= " AND p.featured = 1";
             }
 
-            $sql .= " ORDER BY p.featured DESC, p.created_at DESC LIMIT :limit OFFSET :offset";
+            if (isset($filters['bedrooms']) && $filters['bedrooms'] > 0) {
+                $sql .= " AND p.bedrooms >= :bedrooms";
+                $params['bedrooms'] = (int) $filters['bedrooms'];
+            }
+
+            if (isset($filters['location'])) {
+                $sql .= " AND (p.location LIKE :location OR p.city LIKE :location2)";
+                $params['location'] = '%' . $filters['location'] . '%';
+                $params['location2'] = '%' . $filters['location'] . '%';
+            }
+
+            if (isset($filters['colony_id']) && $filters['colony_id'] > 0) {
+                $sql .= " AND p.site_id = :colony_id";
+                $params['colony_id'] = (int) $filters['colony_id'];
+            }
+
+            $sortMap = [
+                'newest' => 'p.created_at DESC',
+                'price_low' => 'p.price ASC',
+                'price_high' => 'p.price DESC',
+                'popular' => 'p.featured DESC, p.created_at DESC',
+            ];
+            $sortKey = $filters['sort_by'] ?? 'newest';
+            $orderBy = $sortMap[$sortKey] ?? 'p.created_at DESC';
+
+            $sql .= " ORDER BY {$orderBy} LIMIT :limit OFFSET :offset";
             $params['limit'] = (int)$limit;
             $params['offset'] = (int)$offset;
 
@@ -1301,6 +1468,22 @@ class MobileApiController extends BaseController
 
             if (isset($filters['featured']) && $filters['featured']) {
                 $sql .= " AND featured = 1";
+            }
+
+            if (isset($filters['bedrooms']) && $filters['bedrooms'] > 0) {
+                $sql .= " AND bedrooms >= :bedrooms";
+                $params['bedrooms'] = (int) $filters['bedrooms'];
+            }
+
+            if (isset($filters['location'])) {
+                $sql .= " AND (location LIKE :location OR city LIKE :location2)";
+                $params['location'] = '%' . $filters['location'] . '%';
+                $params['location2'] = '%' . $filters['location'] . '%';
+            }
+
+            if (isset($filters['colony_id']) && $filters['colony_id'] > 0) {
+                $sql .= " AND site_id = :colony_id";
+                $params['colony_id'] = (int) $filters['colony_id'];
             }
 
             $stmt = $this->db->prepare($sql);
@@ -3284,6 +3467,7 @@ class MobileApiController extends BaseController
         $minPrice = isset($_GET['min_price']) ? (float) $_GET['min_price'] : null;
         $maxPrice = isset($_GET['max_price']) ? (float) $_GET['max_price'] : null;
         $bedrooms = isset($_GET['bedrooms']) ? (int) $_GET['bedrooms'] : null;
+        $colonyId = isset($_GET['colony_id']) ? (int) $_GET['colony_id'] : null;
         $sort = $_GET['sort'] ?? 'newest';
 
         try {
@@ -3319,6 +3503,10 @@ class MobileApiController extends BaseController
                 $where .= " AND p.bedrooms >= ?";
                 $params[] = $bedrooms;
             }
+            if ($colonyId !== null) {
+                $where .= " AND p.site_id = ?";
+                $params[] = $colonyId;
+            }
 
             $orderMap = [
                 'newest' => 'p.created_at DESC',
@@ -3335,7 +3523,7 @@ class MobileApiController extends BaseController
 
             $sql = "
                 SELECT p.id, p.title, p.price, p.type, p.location, p.city, p.state,
-                       p.bedrooms, p.bathrooms, p.area_sqft, p.featured, p.created_at,
+                       p.bedrooms, p.bathrooms, p.area_sqft, p.site_id, p.featured, p.created_at,
                        (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) as main_image
                 FROM properties p
                 {$where}

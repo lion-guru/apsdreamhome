@@ -23,6 +23,7 @@ $router->get('/api/voice-assistant', 'Api\VoiceAssistantController@index');
 $router->post('/api/v2/mobile/auth/login', 'Api\MobileApiController@login');
 $router->post('/api/v2/mobile/auth/register', 'Api\MobileApiController@register');
 $router->post('/api/v2/mobile/auth/logout', 'Api\MobileApiController@logout');
+$router->post('/api/v2/mobile/auth/google-login', 'Api\MobileApiController@googleLogin');
 $router->get('/api/v2/mobile/sync', 'Api\MobileApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads', 'Api\CRMController@createLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/batch-sync', 'Api\MobileApiController@batchSyncLeads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -715,6 +716,11 @@ $router->post('/api/v2/mobile/properties/message', 'Api\MobileApiController@send
 $router->get('/api/v2/mobile/properties/{id}/messages', 'Api\MobileApiController@getPropertyMessages')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/properties/boost', 'Api\MobileApiController@boostProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/properties/messages/{id}/read', 'Api\MobileApiController@markMessageRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// --- Listing Upgrade Payment ---
+$router->post('/api/v2/mobile/listing/create-order', 'Api\ListingPaymentController@createOrder')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/listing/verify-payment', 'Api\ListingPaymentController@verifyPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/listing/activate-free', 'Api\ListingPaymentController@activateFree')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // --- DigiLocker API (KYC / document fetch) ---
 $router->get('/api/digilocker/auth-url', 'Api\DigiLockerController@getAuthUrl');
