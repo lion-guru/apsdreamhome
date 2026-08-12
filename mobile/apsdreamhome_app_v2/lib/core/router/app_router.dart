@@ -71,7 +71,7 @@ import '../../presentation/pages/customer/payment_history_page.dart';
 // Customer Features
 import '../../presentation/pages/customer/saved_searches_page.dart';
 import '../../presentation/pages/customer/property_alerts_page.dart';
-import '../../presentation/pages/customer/compare_properties_page.dart';
+import '../../presentation/pages/property/comparison_page.dart';
 import '../../presentation/pages/customer/referral_page.dart';
 import '../../presentation/pages/customer/language_page.dart';
 import '../../presentation/pages/customer/support_tickets_page.dart';
@@ -841,7 +841,7 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: '/compare',
-        builder: (context, state) => const ComparePropertiesPage(),
+        builder: (context, state) => const ComparisonPage(),
       ),
       GoRoute(
         path: '/referral',

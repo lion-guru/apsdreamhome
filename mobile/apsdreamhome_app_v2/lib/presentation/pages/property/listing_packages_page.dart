@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../data/services/payment_service.dart';
 
 /// Provider to fetch listing packages
 final listingPackagesProvider =
@@ -327,31 +328,13 @@ class _ListingPackagesPageState extends ConsumerState<ListingPackagesPage> {
           if (success) context.go('/my-listings');
         }
       } else {
-        final response = await dio.post(
-          '${AppConstants.apiVersion}${AppConstants.listingCreateOrderEndpoint}',
-          data: {
-            'property_id': widget.propertyId,
-            'package_id': packageId,
-          },
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
+        await _startRazorpayPayment(
+          dio: dio,
+          token: token ?? '',
+          packageId: int.tryParse(packageId) ?? 0,
+          packageName: packageName,
+          amount: price.toDouble(),
         );
-
-        if (!mounted) return;
-
-        if (response.data['success'] == true) {
-          final orderId = response.data['order_id']?.toString() ?? '';
-          final amount = double.parse((response.data['amount'] ?? price).toString());
-          _showPaymentDialog(orderId, amount, packageName);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                response.data['message']?.toString() ?? 'Failed to create order',
-              ),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
       }
     } catch (e) {
       if (mounted) {
@@ -367,135 +350,80 @@ class _ListingPackagesPageState extends ConsumerState<ListingPackagesPage> {
     }
   }
 
-  void _showPaymentDialog(String orderId, double amount, String packageName) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1e293b),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.payment, color: AppTheme.accentColor, size: 22),
-            const SizedBox(width: 8),
-            Text(
-              'Upgrade to $packageName',
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0f172a),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF334155)),
+  Future<void> _startRazorpayPayment({
+    required Dio dio,
+    required String token,
+    required int packageId,
+    required String packageName,
+    required double amount,
+  }) async {
+    // Keep a reference for cleanup
+    PaymentService? paymentService;
+
+    paymentService = PaymentService(
+      onPaymentSuccess: (result) async {
+        paymentService?.dispose();
+        if (!mounted) return;
+
+        setState(() => _isUpgrading = true);
+
+        final verified = await paymentService!.verifyPayment(
+          dio: dio,
+          token: token,
+          orderId: (result['order_id'] ?? '').toString(),
+          paymentId: (result['payment_id'] ?? '').toString(),
+          signature: (result['signature'] ?? '').toString(),
+        );
+
+        if (mounted) {
+          setState(() => _isUpgrading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                verified
+                    ? 'Listing upgraded to $packageName!'
+                    : 'Payment received but verification pending. Contact support.',
               ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Total Amount',
-                    style: TextStyle(color: Colors.white54, fontSize: 13),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '\u20B9${amount.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                      color: AppTheme.accentColor,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              backgroundColor: verified ? AppTheme.successColor : Colors.orange,
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Online payment will be available soon. Your order has been saved.',
-              style: TextStyle(color: Colors.white54, fontSize: 13),
+          );
+          if (verified) context.go('/my-listings');
+        }
+      },
+      onPaymentError: (error) {
+        paymentService?.dispose();
+        if (mounted) {
+          setState(() => _isUpgrading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Payment failed: $error'),
+              backgroundColor: Colors.red,
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Order ID: $orderId',
-              style: const TextStyle(
-                color: Colors.white38,
-                fontSize: 11,
-                fontFamily: 'monospace',
-              ),
+          );
+        }
+      },
+      onPaymentCancelled: () {
+        paymentService?.dispose();
+        if (mounted) {
+          setState(() => _isUpgrading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment cancelled'),
+              backgroundColor: Colors.grey,
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              await _simulatePayment(orderId, packageName);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.accentColor,
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text('Activate (Demo)'),
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
-  }
 
-  Future<void> _simulatePayment(String orderId, String packageName) async {
-    setState(() => _isUpgrading = true);
-
-    try {
-      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-      final token = await ref.read(authProvider.notifier).getToken();
-
-      final response = await dio.post(
-        '${AppConstants.apiVersion}${AppConstants.listingVerifyPaymentEndpoint}',
-        data: {
-          'order_id': orderId,
-          'razorpay_payment_id': 'pay_demo_${DateTime.now().millisecondsSinceEpoch}',
-          'razorpay_signature': 'sig_demo',
-        },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-
-      if (mounted) {
-        final success = response.data['success'] == true;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? 'Listing upgraded to $packageName!'
-                  : response.data['message']?.toString() ?? 'Payment verification failed',
-            ),
-            backgroundColor: success ? AppTheme.successColor : Colors.red,
-          ),
-        );
-        if (success) context.go('/my-listings');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Payment failed: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isUpgrading = false);
-    }
+    await paymentService.startPayment(
+      dio: dio,
+      token: token,
+      propertyId: int.tryParse(widget.propertyId) ?? 0,
+      packageId: packageId,
+      packageName: packageName,
+      amount: amount,
+    );
   }
 }
 

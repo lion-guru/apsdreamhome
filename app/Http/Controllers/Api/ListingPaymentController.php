@@ -113,7 +113,7 @@ class ListingPaymentController extends BaseApiController {
             'package_name' => $package['name'],
             'package_id' => (int)$package['id'],
             'property_id' => $propertyId,
-            'razorpay_key_id' => 'rzp_test.placeholder',
+            'razorpay_key_id' => $this->getRazorpayKeyId(),
             'prefill' => [
                 'name' => $property['name'] ?? '',
                 'email' => '',
@@ -263,6 +263,15 @@ class ListingPaymentController extends BaseApiController {
             'message' => 'Listing upgraded to ' . $package['name'] . ' (free)',
             'payment_required' => false
         ]);
+    }
+
+    private function getRazorpayKeyId() {
+        $tid = (int)$this->tenantId();
+        $setting = $this->db->query(
+            "SELECT setting_value FROM listing_settings WHERE setting_key = 'razorpay_key_id' AND tenant_id = ?",
+            [$tid]
+        )->fetch();
+        return $setting['setting_value'] ?? '';
     }
 
     private function activateListing($propertyId, $package, $userId, $tid, $paymentMethod) {

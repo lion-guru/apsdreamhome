@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/app_widgets.dart';
 import '../../../data/services/property_listing_service.dart';
+import '../../../data/services/comparison_service.dart';
 
 class PropertyMarketplacePage extends ConsumerStatefulWidget {
   const PropertyMarketplacePage({super.key});
@@ -466,24 +467,102 @@ class _PropertyMarketplacePageState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey.shade50,
-      child: Column(
-        children: [
-          _buildSearchToolbar(),
-          _buildResultBar(),
-          Expanded(
-            child: _isLoading
-                ? _buildShimmer()
-                : _properties.isEmpty
-                ? _buildEmptyState()
-                : RefreshIndicator(
-                    color: AppTheme.primaryColor,
-                    onRefresh: _onRefresh,
-                    child: _isGridView ? _buildGridView() : _buildListView(),
-                  ),
+    return ListenableBuilder(
+      listenable: ComparisonService(),
+      builder: (context, _) {
+        final compareCount = ComparisonService().count;
+        return Container(
+          color: Colors.grey.shade50,
+          child: Column(
+            children: [
+              _buildSearchToolbar(),
+              _buildResultBar(),
+              Expanded(
+                child: _isLoading
+                    ? _buildShimmer()
+                    : _properties.isEmpty
+                    ? _buildEmptyState()
+                    : RefreshIndicator(
+                        color: AppTheme.primaryColor,
+                        onRefresh: _onRefresh,
+                        child: _isGridView ? _buildGridView() : _buildListView(),
+                      ),
+              ),
+              if (compareCount > 0) _buildCompareBar(compareCount),
+            ],
           ),
-        ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCompareBar(int count) {
+    return GestureDetector(
+      onTap: () => context.push('/compare'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: const BoxDecoration(
+          color: Color(0xFF1e293b),
+          border: Border(top: BorderSide(color: Color(0xFF334155), width: 1)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFf59e0b).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.compare_arrows,
+                  color: Color(0xFFf59e0b),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '$count ${count == 1 ? 'property' : 'properties'} selected',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Text(
+                      'Tap to compare side by side',
+                      style: TextStyle(
+                        color: Color(0xFF94a3b8),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFf59e0b),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'Compare',
+                  style: TextStyle(
+                    color: Color(0xFF0f172a),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -893,23 +972,64 @@ class _PropertyMarketplacePageState
                 Positioned(
                   top: 6,
                   right: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: typeColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      typeName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          final svc = ComparisonService();
+                          if (svc.contains(property.id)) {
+                            svc.remove(property.id);
+                          } else {
+                            final added = svc.add(property);
+                            if (!added && !svc.contains(property.id)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Max 3 properties for comparison'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: ComparisonService().contains(property.id)
+                                ? const Color(0xFFf59e0b)
+                                : Colors.white.withValues(alpha: 0.92),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            ComparisonService().contains(property.id)
+                                ? Icons.check
+                                : Icons.compare_arrows,
+                            size: 14,
+                            color: ComparisonService().contains(property.id)
+                                ? Colors.white
+                                : Colors.grey.shade700,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: typeColor,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          typeName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(

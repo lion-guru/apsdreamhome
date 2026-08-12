@@ -10,6 +10,10 @@
 | **Listing Monetization System** | `listing_packages` (5 seeded: Free/Featured ₹499/Premium ₹1499/Urgent ₹999/Premium+Urgent ₹1999), `property_boost_orders`, `property_agents`, `property_messages`, `listing_settings` (12 config keys) tables created |
 | **Admin Listing Settings** | `ListingSettingsController` — manage 12 settings + 5 listing packages. Stats dashboard: total listings, featured, premium, inquiries, messages. 2 views: index (stats + settings form + packages), inquiries (table + pagination) |
 | **Agent Commission Dashboard** | `AgentCommissionController` — admin view of agent activity, commissions, agent listings. Assign agents to properties. 2 views: index (dashboard + top agents + recent commissions), agent_detail (per-agent breakdown) |
+| **Agent Agreement System** | `AgentAgreementController` — 7 methods: index, create, store, detail, send, sign, cancel. `agent_agreements` table (draft→pending→signed→cancelled). 3 views. Admin can create/send/sign/cancel digital agreements. |
+| **Property Search/Filter** | Backend: `bedrooms`, `sort_by`, `location LIKE`, `colony_id` filters. Flutter: property type chips, price range slider, sort dropdown, colony filter, active filter bar with clear button |
+| **Listing Upgrade Payment** | `ListingPaymentController` — createOrder, verifyPayment, activateFree endpoints. Free packages: instant activation. Paid packages: Razorpay order creation + mock payment flow |
+| **Google Social Login** | `google_sign_in` package added. `GoogleAuthService` Flutter service + `googleLogin()` API endpoint. Web OAuth already built (GoogleAuthController + GoogleAuthService + 5 routes) |
 | **Property Inquiry System** | Public `POST /api/v2/mobile/properties/inquiry` + `POST /api/v2/mobile/colonies/inquiry` — name, phone, message. Stored in `property_inquiries` table |
 | **Buyer-Seller Messaging** | `property_messages` table, auth-required GET/POST endpoints for conversation threads |
 | **My Listings API** | `GET /api/v2/mobile/my-listings` — user's posted properties with boost status |
@@ -26,20 +30,29 @@
 |------|---------|
 | `app/Http/Controllers/Admin/ListingSettingsController.php` | NEW — 4 methods (index, updateSettings, updatePackage, inquiries) |
 | `app/Http/Controllers/Admin/AgentCommissionController.php` | NEW — 3 methods (index, agentDetail, assignAgent) |
+| `app/Http/Controllers/Admin/AgentAgreementController.php` | NEW — 7 methods (index, create, store, detail, send, sign, cancel) |
+| `app/Http/Controllers/Api/ListingPaymentController.php` | NEW — 3 methods (createOrder, verifyPayment, activateFree) |
 | `app/views/admin/listing-settings/index.php` | NEW — stats + settings form + packages |
 | `app/views/admin/listing-settings/inquiries.php` | NEW — inquiries table |
 | `app/views/admin/agent-commission/index.php` | NEW — dashboard + top agents + commissions |
 | `app/views/admin/agent-commission/agent_detail.php` | NEW — agent detail breakdown |
+| `app/views/admin/agent-agreements/index.php` | NEW — agreements list + stats |
+| `app/views/admin/agent-agreements/create.php` | NEW — agreement creation form |
+| `app/views/admin/agent-agreements/detail.php` | NEW — agreement detail + signature |
 | `app/Http/Controllers/Admin/ColonyController.php` | +layout_image/virtual_tour_url/lat/lng |
 | `app/Http/Controllers/Front/LiveChatWidgetController.php` | +history persistence |
-| `routes/web.php` | +listing-settings routes, +agent-commission routes, +chat history route |
-| `routes/api.php` | +property/colony inquiry, +my-listings, +listing-packages, +upgrade-listing, +property-messages |
+| `app/Http/Controllers/Api/MobileApiController.php` | +googleLogin(), +property filter support (bedrooms, sort_by, location, colony_id) |
+| `routes/web.php` | +listing-settings, +agent-commission, +agent-agreements routes |
+| `routes/api.php` | +property/colony inquiry, +my-listings, +listing-packages, +upgrade-listing, +property-messages, +google-login, +listing/payment |
 | `mobile/.../my_listings_page.dart` | NEW — user's posted properties with badges |
-| `mobile/.../listing_packages_page.dart` | NEW — package selection + upgrade |
+| `mobile/.../listing_packages_page.dart` | NEW — package selection + upgrade + payment flow |
+| `mobile/.../google_auth_service.dart` | NEW — Google Sign-In via google_sign_in package |
 | `mobile/.../property_detail_page.dart` | +inquiry form, +WhatsApp/Call buttons, +stats |
+| `mobile/.../property_list_page.dart` | +filter chips, price range, sort, colony filter, active filter bar |
 | `mobile/.../app_router.dart` | +my-listings, +listing-packages routes |
-| `mobile/.../app_constants.dart` | +myListingsEndpoint, +listingPackagesEndpoint, +listingUpgradeEndpoint, +propertyInquiryEndpoint |
+| `mobile/.../app_constants.dart` | +10 new endpoints (listings, packages, payment, google) |
 | `mobile/.../profile_page.dart` | +My Listings link in More Features |
+| `mobile/pubspec.yaml` | +google_sign_in: ^6.2.2 |
 
 ### Database Changes
 | Table | Change |
@@ -50,6 +63,7 @@
 | `property_messages` | NEW — buyer-seller chat per property |
 | `listing_settings` | NEW — 12 admin-configurable settings seeded |
 | `property_inquiries` | NEW — buyer inquiry form submissions |
+| `agent_agreements` | NEW — digital agreement signing (draft→pending→signed→cancelled) |
 | `chat_history` | NEW — chat message persistence |
 | `colonies` | +layout_image, +colony_documents, +virtual_tour_url, +latitude, +longitude |
 
