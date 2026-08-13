@@ -15,22 +15,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mobile drawer toggle
     function initMobileDrawer() {
-        var toggleBtn = document.querySelector('[data-mobile-drawer-toggle]');
-        var drawer = document.querySelector('.mobile-drawer');
+        // Support both data-mobile-drawer-toggle attribute and the hamburger button by ID
+        var toggleBtn = document.querySelector('[data-mobile-drawer-toggle]') || document.getElementById('mobileMenuToggle');
+        var drawer = document.querySelector('.mobile-drawer') || document.getElementById('mobileDrawer');
         var overlay = document.querySelector('.mobile-drawer-overlay');
 
-        if (!toggleBtn || !drawer || !overlay) return;
+        if (!toggleBtn || !drawer) return;
 
         function openDrawer() {
             drawer.classList.add('active');
-            overlay.classList.add('active');
+            if (overlay) overlay.classList.add('active');
             document.body.classList.add('mobile-drawer-open');
             toggleBtn.setAttribute('aria-expanded', 'true');
         }
 
         function closeDrawer() {
             drawer.classList.remove('active');
-            overlay.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
             document.body.classList.remove('mobile-drawer-open');
             toggleBtn.setAttribute('aria-expanded', 'false');
         }
@@ -44,7 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        overlay.addEventListener('click', closeDrawer);
+        if (overlay) {
+            overlay.addEventListener('click', closeDrawer);
+        }
 
         // Close drawer on ESC key
         document.addEventListener('keydown', function(e) {
@@ -59,6 +62,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeDrawer();
             }
         });
+
+        // Global toggleDrawer function for inline onclick handlers
+        window.toggleDrawer = function(event, action) {
+            if (event && event.preventDefault) event.preventDefault();
+            if (action === 'close' || (action === undefined && drawer.classList.contains('active'))) {
+                closeDrawer();
+            } else {
+                openDrawer();
+            }
+        };
 
         // Mobile submenu toggle
         var submenuToggles = drawer.querySelectorAll('[data-submenu-toggle]');

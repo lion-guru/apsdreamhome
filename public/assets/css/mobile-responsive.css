@@ -861,13 +861,18 @@ body.mobile-drawer-open {
 
   .premium-header,
   .mobile-bottom-nav,
-  .mobile-drawer,
   .mobile-drawer-overlay,
   .mobile-top-bar,
   .command-palette-overlay,
   .command-palette {
     transition: none !important;
-    transform: none !important;
+  }
+
+  /* Drawer retains its off-canvas transform even with reduced motion —
+     translateX(100%) is a layout state, not an animation.
+     Only transition is disabled for reduced motion. */
+  .mobile-drawer {
+    transition: none !important;
   }
 
   /* Disable parallax-like effects */
