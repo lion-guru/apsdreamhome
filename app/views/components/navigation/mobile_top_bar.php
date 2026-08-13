@@ -17,7 +17,8 @@
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center m-0" href="<?php echo BASE_URL; ?>" style="flex: 0 0 auto;">
             <?php $brand = $nav->companyName(); ?>
-            <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg'); ?>
+            <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
+                   if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
             <img src="<?php echo BASE_URL . htmlspecialchars($logo); ?>"
                  alt="<?php echo htmlspecialchars($brand); ?>"
                  class="logo"

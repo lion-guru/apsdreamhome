@@ -104,10 +104,12 @@ document.addEventListener('DOMContentLoaded', function() {
             'home': ['/'],
             'properties': ['/properties'],
             'plots': ['/plots'],
+            'projects': ['/projects'],
             'contact': ['/contact'],
             'notifications': ['/user/notifications'],
             'login': ['/login', '/associate/login', '/agent/login', '/employee/login', '/farmer/login'],
             'dashboard': ['/user/dashboard', '/associate/dashboard', '/agent/dashboard', '/admin/dashboard', '/employee/dashboard'],
+            'profile': ['/user/profile', '/associate/profile', '/agent/profile', '/admin/profile', '/employee/profile'],
             'about': ['/about'],
             'search': ['/search']
         };

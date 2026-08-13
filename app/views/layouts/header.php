@@ -457,6 +457,48 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- ============================================================
+     MOBILE BOTTOM NAV ACTIVE STATE HIGHLIGHTING
+     ============================================================ -->
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var bottomNav = document.querySelector('.mobile-bottom-nav');
+    if (!bottomNav) return;
+
+    var path = window.location.pathname;
+    var navMap = {
+        'home': ['/'],
+        'properties': ['/properties'],
+        'plots': ['/plots'],
+        'projects': ['/projects'],
+        'contact': ['/contact'],
+        'notifications': ['/user/notifications', '/employee/notifications'],
+        'login': ['/login', '/associate/login', '/agent/login', '/employee/login', '/farmer/login'],
+        'dashboard': ['/user/dashboard', '/associate/dashboard', '/agent/dashboard', '/admin/dashboard', '/employee/dashboard'],
+        'profile': ['/user/profile', '/associate/profile', '/agent/profile', '/admin/profile', '/employee/profile'],
+        'about': ['/about'],
+        'search': ['/search']
+    };
+
+    var items = bottomNav.querySelectorAll('.nav-item');
+    items.forEach(function(item) {
+        var navKey = item.getAttribute('data-nav-item');
+        if (!navKey || !navMap[navKey]) return;
+
+        var active = navMap[navKey].some(function(url) {
+            if (url === '/' && path === '/') return true;
+            return path === url || path.startsWith(url + '?') || path === url.replace(/\?$/, '');
+        });
+
+        if (active) {
+            item.classList.add('active');
+            var link = item.querySelector('a');
+            if (link) link.classList.add('active');
+        }
+    });
+})();
+</script>
+
+<!-- ============================================================
      GLOBAL COMMAND PALETTE (Ctrl+K)
      ============================================================ -->
 <div class="command-palette-overlay" id="commandPalette">

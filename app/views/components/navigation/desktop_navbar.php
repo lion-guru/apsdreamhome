@@ -17,7 +17,8 @@
         <!-- Logo - Always on the left -->
         <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" style="flex: 0 0 auto;">
             <?php $brand = $nav->companyName(); ?>
-            <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg'); ?>
+            <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
+                   if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
             <img src="<?php echo BASE_URL . htmlspecialchars($logo); ?>"
                  alt="<?php echo htmlspecialchars($brand); ?>"
                  class="logo"
@@ -303,15 +304,6 @@
                             <i class="fas fa-sign-in-alt me-1"></i> <?php echo __('login'); ?> / <?php echo __('register'); ?>
                         </a>
                     <?php endif; ?>
-                </li>
-
-                <!-- Quick Action: Post Property -->
-                <li class="nav-item d-none d-xl-inline-block">
-                    <a class="nav-link btn btn-warning btn-sm text-dark ms-2"
-                       href="<?php echo BASE_URL; ?>/list-property"
-                       style="border-radius: 6px; font-weight: 600;">
-                        <i class="fas fa-plus me-1"></i> <?php echo __('nav_post_property'); ?>
-                    </a>
                 </li>
 
                 <!-- Language Switcher -->
