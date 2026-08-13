@@ -825,6 +825,12 @@ $router->get('/auth/logout', 'Auth\\LoginController@logout');
 // CoreAuth — Unified Auth (replaces all role-specific auth over time)
 $router->post('/auth/smart/role', 'Auth\\OtpAuthController@saveRoleSelection');
 
+// Air Login — OTP-based login without password
+$router->get('/auth/air-login', 'Auth\\OtpAuthController@showAirLogin');
+$router->post('/auth/air-login', 'Auth\\OtpAuthController@requestAirLoginOtp');
+$router->get('/auth/air-login/verify', 'Auth\\OtpAuthController@showAirLoginVerify');
+$router->post('/auth/air-login/verify', 'Auth\\OtpAuthController@verifyAirLoginOtp');
+
 // Profile Photo — Unified upload/delete for all roles
 $router->post('/profile/photo/upload', 'ProfilePhotoController@upload');
 $router->post('/profile/photo/delete', 'ProfilePhotoController@delete');

@@ -1,0 +1,189 @@
+{
+  "timestamp": "2026-08-14T04:22:40.455112",
+  "project_path": "c:\\xampp\\htdocs\\apsdreamhome",
+  "summary": {
+    "php_files": 4373,
+    "css_files": 156,
+    "js_files": 251,
+    "html_files": 57,
+    "total_files": 4837
+  },
+  "issues": {
+    "critical": [],
+    "high": [
+      {
+        "issue": "CSS consolidation needed",
+        "count": 5,
+        "description": "184 CSS files need consolidation into design system"
+      }
+    ],
+    "medium": [],
+    "low": []
+  },
+  "ui_ux": {
+    "files_with_inline_styles": 4,
+    "files_with_inline_js": 5,
+    "files_with_hardcoded_colors": 5,
+    "files_missing_alt_tags": 0,
+    "files_with_unresponsive_tables": 0,
+    "files_missing_viewport": 0
+  },
+  "security": [
+    {
+      "file": "app\\helpers.php",
+      "pattern": "token"
+    },
+    {
+      "file": "config\\bootstrap.php",
+      "pattern": "password"
+    },
+    {
+      "file": "config\\cache.php",
+      "pattern": "password"
+    },
+    {
+      "file": "config\\check-config.php",
+      "pattern": "password"
+    },
+    {
+      "file": "config\\database.php",
+      "pattern": "password"
+    },
+    {
+      "file": "config\\deployment.php",
+      "pattern": "secret"
+    },
+    {
+      "file": "config\\gemini_config.php",
+      "pattern": "api_key"
+    },
+    {
+      "file": "config\\google_oauth_config.php",
+      "pattern": "secret"
+    },
+    {
+      "file": "config\\KeyManager.php",
+      "pattern": "password"
+    },
+    {
+      "file": "config\\logging.php",
+      "pattern": "password"
+    },
+    {
+      "file": "config\\MCPConfigLoader.php",
+      "pattern": "password"
+    },
+    {
+      "file": "lang\\en.php",
+      "pattern": "password"
+    },
+    {
+      "file": "lang\\hi.php",
+      "pattern": "password"
+    },
+    {
+      "file": "routes\\api.php",
+      "pattern": "password"
+    },
+    {
+      "file": "routes\\router.php",
+      "pattern": "password"
+    },
+    {
+      "file": "routes\\web.php",
+      "pattern": "password"
+    },
+    {
+      "file": "scripts\\audit_roles.php",
+      "pattern": "password"
+    },
+    {
+      "file": "scripts\\cron_daily_compliance.php",
+      "pattern": "token"
+    },
+    {
+      "file": "scripts\\cron_followup_reminders.php",
+      "pattern": "password"
+    },
+    {
+      "file": "scripts\\cron_lead_assignment.php",
+      "pattern": "password"
+    }
+  ],
+  "performance": [],
+  "maintenance": {
+    "_archive\\dead_views\\development_cost_calculator.php": [
+      {
+        "type": "inline_js_event",
+        "attr": "onclick=",
+        "count": 4
+      },
+      {
+        "type": "hardcoded_colors",
+        "count": 15
+      }
+    ],
+    "_archive\\dead_views\\employee_unified.php": [
+      {
+        "type": "inline_style",
+        "count": 4
+      },
+      {
+        "type": "inline_js_event",
+        "attr": "onclick=",
+        "count": 1
+      },
+      {
+        "type": "hardcoded_colors",
+        "count": 24
+      }
+    ],
+    "_archive\\dead_views\\feature-disabled.php": [
+      {
+        "type": "hardcoded_colors",
+        "count": 12
+      }
+    ],
+    "_archive\\dead_views\\network_dashboard.php": [
+      {
+        "type": "inline_style",
+        "count": 6
+      },
+      {
+        "type": "inline_js_event",
+        "attr": "onclick=",
+        "count": 2
+      },
+      {
+        "type": "hardcoded_colors",
+        "count": 20
+      }
+    ],
+    "_archive\\legacy_views\\manage_colonies.php": [
+      {
+        "type": "inline_style",
+        "count": 1
+      },
+      {
+        "type": "inline_js_event",
+        "attr": "onclick=",
+        "count": 4
+      },
+      {
+        "type": "hardcoded_colors",
+        "count": 12
+      }
+    ],
+    "_archive\\old_admin_layout\\admin.php": [
+      {
+        "type": "inline_style",
+        "count": 6
+      },
+      {
+        "type": "inline_js_event",
+        "attr": "onclick=",
+        "count": 2
+      }
+    ]
+  }
+}
