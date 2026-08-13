@@ -175,7 +175,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- CSS: base → components → header → premium theme (ALL public pages) → homepage extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=7" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=8" rel="stylesheet">
     <!-- Homepage + public page extras (hero, projects, animations) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=10" rel="stylesheet">
