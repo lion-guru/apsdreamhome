@@ -19,6 +19,7 @@ if (!defined('APS_LOGS')) define('APS_LOGS', APS_ROOT . '/logs');
 
 // Session configuration from bootstrap - session_start() will use these settings
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.save_path', APS_STORAGE . '/sessions');
     session_start();
 }
 

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Services\Security\SecurityService;
+use App\Services\SecurityService;
 use Exception;
 use PDO;
 

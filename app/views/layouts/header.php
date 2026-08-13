@@ -140,9 +140,10 @@ $dashboardUrl = $nav->dashboardUrl();
 $logoutUrl  = $nav->logoutUrl();
 ?>
 
-<?php require __DIR__ . '/../components/navigation/mobile_top_bar.php'; ?>
-
 <header class="<?= $header_class ?>" id="mainHeader">
+
+    <!-- Mobile Top Bar (sm/md) -->
+    <?php require __DIR__ . '/../components/navigation/mobile_top_bar.php'; ?>
 
     <!-- Desktop Navbar (lg+) -->
     <div class="d-none d-xl-block">
@@ -151,6 +152,9 @@ $logoutUrl  = $nav->logoutUrl();
 
     <!-- Mobile Drawer -->
     <?php require __DIR__ . '/../components/navigation/mobile_drawer.php'; ?>
+
+    <!-- ARIA Live Region for Screen Reader Announcements -->
+    <div id="ariaLiveRegion" class="visually-hidden" aria-live="polite" aria-atomic="true" role="status"></div>
 
 </header>
 
@@ -163,6 +167,8 @@ window.BASE_URL = '<?php echo BASE_URL; ?>';
  *   toggleDrawer(null,'close') → closes
  *   toggleDrawer(null,'open')  → opens
  */
+var _drawerPreviousFocus = null;
+
 function toggleDrawer(event, action) {
     var drawer = document.getElementById('mobileDrawer');
     var overlay = document.getElementById('mobileDrawerOverlay');
@@ -174,14 +180,21 @@ function toggleDrawer(event, action) {
     var doOpen = (action === 'open') || (!action && !isOpen);
 
     if (doOpen) {
+        // Save current focus for restoration
+        _drawerPreviousFocus = document.activeElement;
         drawer.classList.add('active');
         overlay?.classList.add('active');
         header?.classList.add('menu-open');
         document.body.classList.add('mobile-drawer-open');
         if (toggler) toggler.setAttribute('aria-expanded', 'true');
         drawer.setAttribute('aria-hidden', 'false');
+        // Focus first interactive element in drawer
+        var firstFocusable = drawer.querySelector('a, button, input, [tabindex]:not([tabindex="-1"])');
+        if (firstFocusable) setTimeout(function() { firstFocusable.focus(); }, 100);
         // Haptic feedback
         if (navigator.vibrate) navigator.vibrate([10]);
+        // Screen reader announcement
+        if (typeof window.apsAnnounce === 'function') window.apsAnnounce('Navigation menu opened');
     } else {
         drawer.classList.remove('active');
         overlay?.classList.remove('active');
@@ -189,7 +202,14 @@ function toggleDrawer(event, action) {
         document.body.classList.remove('mobile-drawer-open');
         if (toggler) toggler.setAttribute('aria-expanded', 'false');
         drawer.setAttribute('aria-hidden', 'true');
+        // Restore focus to element that opened the drawer
+        if (_drawerPreviousFocus && _drawerPreviousFocus.focus) {
+            _drawerPreviousFocus.focus();
+            _drawerPreviousFocus = null;
+        }
         if (navigator.vibrate) navigator.vibrate([5, 15, 5]);
+        // Screen reader announcement
+        if (typeof window.apsAnnounce === 'function') window.apsAnnounce('Navigation menu closed');
     }
 }
 
@@ -281,24 +301,148 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     setupDrawerDropdowns();
 
+    // ── Keyboard Trap for Drawer (Accessibility) ──
+    // When drawer is open, Tab cycles within drawer only
+    drawer.addEventListener('keydown', function(e) {
+        if (e.key !== 'Tab' || !drawer.classList.contains('active')) return;
+
+        var focusables = drawer.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+            // Shift+Tab: if on first element, wrap to last
+            if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            }
+        } else {
+            // Tab: if on last element, wrap to first
+            if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    });
+
+    // ── Swipe-to-Close Drawer Gesture (Mobile) ──
+    var _swipeStartX = 0;
+    var _swipeStartY = 0;
+    var _swipeTracking = false;
+
+    drawer.addEventListener('touchstart', function(e) {
+        if (!drawer.classList.contains('active')) return;
+        var touch = e.touches[0];
+        _swipeStartX = touch.clientX;
+        _swipeStartY = touch.clientY;
+        _swipeTracking = true;
+    }, { passive: true });
+
+    drawer.addEventListener('touchmove', function(e) {
+        if (!_swipeTracking) return;
+        var touch = e.touches[0];
+        var deltaX = touch.clientX - _swipeStartX;
+        var deltaY = Math.abs(touch.clientY - _swipeStartY);
+        // Only track horizontal swipes (right-to-left or left-to-right)
+        if (deltaY > 30) {
+            _swipeTracking = false;
+            return;
+        }
+        // If swiping right by >80px, close the drawer
+        if (deltaX > 80) {
+            _swipeTracking = false;
+            toggleDrawer(null, 'close');
+        }
+    }, { passive: true });
+
+    drawer.addEventListener('touchend', function() {
+        _swipeTracking = false;
+    }, { passive: true });
+
     // Notification count polling
     updateHeaderNotifCount();
     setInterval(updateHeaderNotifCount, 30000);
 
-    // Scroll effect
-    var scrollTimer;
-    window.addEventListener('scroll', function() {
-        if (scrollTimer) cancelAnimationFrame(scrollTimer);
-        scrollTimer = requestAnimationFrame(function() {
-            if (window.scrollY > 50 && !drawer.classList.contains('active')) {
+    // ── Smart Auto-Hiding Header ──
+    // On mobile: hide on scroll down, show on scroll up (app-like UX)
+    // On desktop: always visible with subtle shadow on scroll
+    var lastScrollY = 0;
+    var headerHidden = false;
+    var scrollTick = false;
+
+    // ── ARIA Live Announcements ──
+    function announce(message) {
+        var region = document.getElementById('ariaLiveRegion');
+        if (region) {
+            region.textContent = '';
+            // Small delay so screen readers detect the change
+            setTimeout(function() { region.textContent = message; }, 50);
+        }
+    }
+    window.apsAnnounce = announce;
+
+    function isMobileView() {
+        return window.innerWidth <= 1199.98;
+    }
+
+    function updateHeaderOnScroll() {
+        var currentY = window.scrollY;
+        var delta = currentY - lastScrollY;
+
+        // Don't hide if drawer is open or near top
+        if (drawer.classList.contains('active') || currentY < 10) {
+            if (headerHidden) {
+                header.style.transform = 'translateY(0)';
+                header.classList.remove('header-hidden');
+                headerHidden = false;
+            }
+            // Always remove scrolled class near top
+            if (currentY < 10) {
+                header.classList.remove('header-scrolled');
+            }
+            lastScrollY = currentY;
+            scrollTick = false;
+            return;
+        }
+
+        if (isMobileView()) {
+            // Mobile: auto-hide behavior
+            if (delta > 8 && !headerHidden) {
+                // Scrolling down — hide header
+                header.style.transform = 'translateY(-100%)';
+                header.classList.add('header-hidden');
+                headerHidden = true;
+            } else if (delta < -8 && headerHidden) {
+                // Scrolling up — show header
+                header.style.transform = 'translateY(0)';
+                header.classList.remove('header-hidden');
+                headerHidden = false;
+            }
+        } else {
+            // Desktop: always visible, shadow on scroll
+            if (currentY > 50) {
                 header.classList.add('header-scrolled');
                 header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
-            } else if (!drawer.classList.contains('active')) {
+            } else {
                 header.classList.remove('header-scrolled');
                 header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
             }
-        });
-    });
+        }
+
+        lastScrollY = currentY;
+        scrollTick = false;
+    }
+
+    window.addEventListener('scroll', function() {
+        if (!scrollTick) {
+            requestAnimationFrame(updateHeaderOnScroll);
+            scrollTick = true;
+        }
+    }, { passive: true });
 
     // Sync aria-expanded for Bootstrap dropdowns
     header.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(function(dt) {
@@ -310,6 +454,216 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+</script>
+
+<!-- ============================================================
+     GLOBAL COMMAND PALETTE (Ctrl+K)
+     ============================================================ -->
+<div class="command-palette-overlay" id="commandPalette">
+    <div class="command-palette" role="dialog" aria-label="Search and navigate">
+        <div class="command-palette-input-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text"
+                   class="command-palette-input"
+                   id="cmdPaletteInput"
+                   placeholder="Search properties, pages, actions..."
+                   autocomplete="off"
+                   autofocus>
+            <span class="command-palette-kbd">ESC</span>
+        </div>
+        <div class="command-palette-results" id="cmdPaletteResults"></div>
+        <div class="command-palette-footer">
+            <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> Navigate</span>
+            <span><kbd>&crarr;</kbd> Open</span>
+            <span><kbd>ESC</kbd> Close</span>
+        </div>
+    </div>
+</div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function() {
+    var overlay = document.getElementById('commandPalette');
+    var input = document.getElementById('cmdPaletteInput');
+    var results = document.getElementById('cmdPaletteResults');
+    if (!overlay || !input || !results) return;
+
+    var activeIndex = -1;
+    var currentItems = [];
+    var isOpen = false;
+    var RECENT_KEY = 'aps_recent_searches';
+    var MAX_RECENT = 5;
+
+    function getRecentSearches() {
+        try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; }
+        catch(e) { return []; }
+    }
+
+    function saveRecentSearch(item) {
+        var recents = getRecentSearches().filter(function(r) { return r.label !== item.label; });
+        recents.unshift({ label: item.label, url: item.url, icon: item.icon, group: 'Recent' });
+        if (recents.length > MAX_RECENT) recents = recents.slice(0, MAX_RECENT);
+        try { localStorage.setItem(RECENT_KEY, JSON.stringify(recents)); } catch(e) {}
+    }
+
+    /* ── Static commands + pages ── */
+    var commands = [
+        { label: 'Dashboard', icon: 'fas fa-gauge-high bg-teal', url: BASE_URL + '/admin/dashboard', group: 'Pages' },
+        { label: 'Properties', icon: 'fas fa-building bg-teal', url: BASE_URL + '/properties', group: 'Pages' },
+        { label: 'Colonies', icon: 'fas fa-map-location-dot bg-blue', url: BASE_URL + '/projects', group: 'Pages' },
+        { label: 'Post Property', icon: 'fas fa-plus-circle bg-amber', url: BASE_URL + '/list-property', group: 'Actions' },
+        { label: 'Compare Properties', icon: 'fas fa-code-compare bg-purple', url: BASE_URL + '/compare', group: 'Actions' },
+        { label: 'Saved Searches', icon: 'fas fa-bookmark bg-blue', url: BASE_URL + '/saved-searches', group: 'Pages' },
+        { label: 'Tools Hub', icon: 'fas fa-flask bg-purple', url: BASE_URL + '/tools-hub', group: 'Pages' },
+        { label: 'Partner Tools', icon: 'fas fa-calculator bg-teal', url: BASE_URL + '/partner-tools', group: 'Pages' },
+        { label: 'Contact Us', icon: 'fas fa-phone bg-amber', url: BASE_URL + '/contact', group: 'Pages' },
+        { label: 'About Us', icon: 'fas fa-circle-info bg-blue', url: BASE_URL + '/about', group: 'Pages' },
+        { label: 'My Profile', icon: 'fas fa-user bg-teal', url: BASE_URL + '/user/profile', group: 'Account' },
+        { label: 'My Bookings', icon: 'fas fa-calendar-check bg-blue', url: BASE_URL + '/user/bookings', group: 'Account' },
+        { label: 'My Favorites', icon: 'fas fa-heart bg-purple', url: BASE_URL + '/user/favorites', group: 'Account' },
+        { label: 'Notifications', icon: 'fas fa-bell bg-amber', url: BASE_URL + '/user/notifications', group: 'Account' },
+    ];
+
+    /* ── Dynamic: add property search shortcut ── */
+    function getSearchResults(query) {
+        var q = query.toLowerCase().trim();
+        if (q.length < 1) return [];
+
+        var matches = commands.filter(function(c) {
+            return c.label.toLowerCase().indexOf(q) !== -1;
+        }).slice(0, 5);
+
+        /* Add "search for ..." option */
+        matches.push({
+            label: 'Search for "' + query + '"',
+            icon: 'fas fa-search bg-teal',
+            url: BASE_URL + '/properties?q=' + encodeURIComponent(query),
+            group: 'Search'
+        });
+
+        return matches;
+    }
+
+    function render(items) {
+        currentItems = items.filter(function(i) { return !i.divider; });
+        activeIndex = -1;
+        if (currentItems.length === 0) {
+            results.innerHTML = '<div style="padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;">No results found</div>';
+            return;
+        }
+
+        var groups = {};
+        items.forEach(function(item) {
+            if (item.divider) {
+                if (!groups[item.group]) groups[item.group] = [];
+                return;
+            }
+            if (!groups[item.group]) groups[item.group] = [];
+            groups[item.group].push(item);
+        });
+
+        var html = '';
+        var idx = 0;
+        Object.keys(groups).forEach(function(group) {
+            html += '<div class="command-palette-group">' + group + '</div>';
+            if (!groups[group]) return;
+            groups[group].forEach(function(item) {
+                html += '<a href="' + item.url + '" class="command-palette-item" data-cmd-idx="' + idx + '">'
+                    + '<i class="' + item.icon + '"></i>'
+                    + '<div class="command-palette-item-text"><strong>' + item.label + '</strong></div>'
+                    + '</a>';
+                idx++;
+            });
+        });
+        results.innerHTML = html;
+    }
+
+    function setActive(index) {
+        activeIndex = index;
+        results.querySelectorAll('.command-palette-item').forEach(function(el, i) {
+            el.classList.toggle('active', i === index);
+            if (i === index) el.scrollIntoView({ block: 'nearest' });
+        });
+    }
+
+    function open() {
+        if (isOpen) return;
+        isOpen = true;
+        overlay.classList.add('active');
+        input.value = '';
+        // Show recent searches first, then default commands
+        var recents = getRecentSearches();
+        var items = recents.length > 0
+            ? recents.concat([{ divider: true, group: 'Suggestions' }]).concat(commands.slice(0, 6))
+            : commands.slice(0, 8);
+        render(items);
+        setTimeout(function() { input.focus(); }, 50);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        if (!isOpen) return;
+        isOpen = false;
+        overlay.classList.remove('active');
+        input.value = '';
+        document.body.style.overflow = '';
+    }
+
+    /* ── Keyboard shortcut: Ctrl+K or Cmd+K ── */
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            if (isOpen) close(); else open();
+        }
+        if (e.key === 'Escape' && isOpen) {
+            close();
+        }
+    });
+
+    /* ── Input handler ── */
+    input.addEventListener('input', function() {
+        var q = input.value.trim();
+        if (q.length === 0) {
+            render(commands.slice(0, 8));
+        } else {
+            render(getSearchResults(q));
+        }
+    });
+
+    /* ── Arrow key navigation ── */
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActive(Math.min(activeIndex + 1, currentItems.length - 1));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActive(Math.max(activeIndex - 1, 0));
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeIndex >= 0 && currentItems[activeIndex]) {
+                saveRecentSearch(currentItems[activeIndex]);
+                window.location.href = currentItems[activeIndex].url;
+            }
+        }
+    });
+
+    /* ── Click on item to navigate + save recent ── */
+    results.addEventListener('click', function(e) {
+        var item = e.target.closest('.command-palette-item');
+        if (item) {
+            var idx = parseInt(item.getAttribute('data-cmd-idx'), 10);
+            if (currentItems[idx]) saveRecentSearch(currentItems[idx]);
+        }
+    });
+
+    /* ── Click on overlay to close ── */
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) close();
+    });
+
+    /* ── Expose globally ── */
+    window.openCommandPalette = open;
+    window.closeCommandPalette = close;
+})();
 </script>
 
 <!-- Quick Search Typeahead -->

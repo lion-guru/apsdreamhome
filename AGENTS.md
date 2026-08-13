@@ -23,7 +23,20 @@ _146. **Modular components must be self-contained** — Each navigation componen
 _147. **Drawer width: use `min()` not `max-width`** — `min(320px, 80vw)` ensures the drawer never exceeds viewport width on small screens. The old `max-width: 85vw` with `width: 320px` could still overflow on screens <320px._
 _148. **Mobile bottom nav height must be accounted for** — Added `padding-bottom` on body for mobile to prevent content from being hidden behind the 65px bottom nav. Chat widget also gets `bottom: calc(65px + safe-area)` on mobile._
 _149. **Desktop drawer and Bootstrap collapse conflict** — The `navbar-toggler` was using Bootstrap's `data-bs-toggle="collapse"` on the navbar-collapse, but we have a separate mobile drawer. Must use `onclick="toggleDrawer()"` and NOT Bootstrap collapse to avoid conflicts._
-_150. **NavigationHelper as singleton prevents repeated DB queries** — Site settings and projects data are loaded once per request, cached in the singleton. The old header.php was already using `$GLOBALS['_site_settings_cache']` but the projects query ran on every include._
+_150. **NavigationHelper as singleton prevents repeated DB queries** — Site settings and projects data are loaded once per request, cached in the singleton. The old header.php was already using `$GLOBALS['_site_settings_cache']` but the projects query ran on every include.
+
+_151. **Namespaced classes need explicit `namespace` declaration** — When moving `NavigationHelper` to the `App\Helpers` namespace, the file MUST start with `namespace App\Helpers;`. Without it, PHP treats the class as global-scope (`NavigationHelper` instead of `App\Helpers\NavigationHelper`), causing "Class not found" when autoloader tries to load it.
+
+_152. **Global PHP classes need `\` prefix in namespaced files** — After adding `namespace App\Helpers;` to `NavigationHelper.php`, references to `PDO::FETCH_KEY_PAIR` resolved to `App\Helpers\PDO` (non-existent). Fix: prefix with `\` → `\PDO::FETCH_KEY_PAIR`. Applies to all global classes (Exception, DateTime, PDO, etc.) in namespaced PHP files.
+
+_153. **Use project's `__()` not WordPress's `_e()`** — The translation function is `__($key)` which returns the translated string. `_e($key)` is a WordPress-style echo function that does NOT exist. Use `echo __('text')` instead.
+
+_154. **Autoloader conflicts with `require_once`** — If a class is in a registered namespace (like `App\Helpers\NavigationHelper`), the autoloader will load it automatically — don't use `require_once` in the view file. Double-loading causes "Cannot declare class" fatal errors.
+
+### Session 76 Final Status
+- **153/153 E2E tests PASS** — zero regressions after all fixes
+- Debug APK v1.2.0 (239.7 MB) built and deployed to `public/downloads/apsdreamhome.apk`
+- Committed and pushed: commit `8b0e98e4`_
 
 ---
 
@@ -2732,6 +2745,8 @@ _130. **404 /auth/google/role-selection** — Route exists but requires Google O
 | **Python Agentic Dev System** | `agentic_dev_system/py_agentic/` — 7 specialized agents (Backend, Frontend, QA, Security, DevOps, Architecture, Documentation) with async concurrent execution. Zero external deps, runs on local Ollama. |
 | **AI Integration Plan** | Documented 37+ existing AI services, 13 free API providers, 20 use cases to implement/enhance. |
 | **Frontend CSS Fixes** | Fixed `header.css` breakpoint (991px → 1199.98px), desktop nav `flex-wrap: wrap`, dropdown overflow prevention, inline gradient section text overrides in `premium-theme.css`. |
-| **E2E Tests** | **153/153 PASS** — zero regressions. 
- _ 1 5 4 .   * * D o c u m e n t / E - S i g n   S y s t e m * *      N e w   d o c u m e n t _ e s i g n   t a b l e   w i t h   t e n a n t   s c o p i n g   v i a   S e r v i c e T e n a n t T r a i t .   3 8 3   S Q L   o p e r a t i o n s   b a t c h - f i x e d   w i t h   t e n a n t _ i d .   C a c h e   p r e f i x i n g   p r e v e n t s   c r o s s - t e n a n t   d a t a   l e a k a g e .   E 2 E   t e s t s :   1 5 3 / 1 5 3   P A S S   a f t e r   a l l   c h a n g e s .  
+| **E2E Tests** | **153/153 PASS** — zero regressions.
+ 
+ _ 1 5 4 .   * * D o c u m e n t / E - S i g n   S y s t e m * *      N e w   d o c u m e n t _ e s i g n   t a b l e   w i t h   t e n a n t   s c o p i n g   v i a   S e r v i c e T e n a n t T r a i t .   3 8 3   S Q L   o p e r a t i o n s   b a t c h - f i x e d   w i t h   t e n a n t _ i d .   C a c h e   p r e f i x i n g   p r e v e n t s   c r o s s - t e n a n t   d a t a   l e a k a g e .   E 2 E   t e s t s :   1 5 3 / 1 5 3   P A S S   a f t e r   a l l   c h a n g e s . 
+ 
  

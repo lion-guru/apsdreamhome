@@ -78,62 +78,102 @@
 
                                 <!-- Mega-menu for Properties -->
                                 <?php if ($item['label'] === 'Properties' || $item['label'] === 'Nav Properties'): ?>
-                                    <li class="px-3 py-2">
-                                        <div class="row g-0">
-                                            <div class="col-md-4">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Browse By'); ?></h6>
+                                    <li class="mega-menu px-0 py-0">
+                                        <div class="d-flex gap-0">
+                                            <div class="mega-col flex-grow-1">
+                                                <h6><?php echo __('Browse By Type'); ?></h6>
                                                 <?php
                                                 $subItems = isset($item['submenu']) ? $item['submenu'] : [];
                                                 foreach ($subItems as $sub):
                                                     if (isset($sub['disabled'])) continue;
+                                                    $iconColor = match(true) {
+                                                        str_contains($sub['icon'] ?? '', 'house') => 'mega-icon-teal',
+                                                        str_contains($sub['icon'] ?? '', 'building') => 'mega-icon-blue',
+                                                        str_contains($sub['icon'] ?? '', 'city') => 'mega-icon-purple',
+                                                        default => 'mega-icon-teal'
+                                                    };
                                                 ?>
-                                                    <a class="dropdown-item" href="<?php echo $sub['url']; ?>">
-                                                        <i class="<?php echo $sub['icon']; ?> me-2"></i><?php echo __($sub['label']); ?>
+                                                    <a class="mega-item" href="<?php echo $sub['url']; ?>">
+                                                        <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
+                                                        <span><?php echo __($sub['label']); ?></span>
                                                     </a>
                                                 <?php endforeach; ?>
                                             </div>
-                                            <div class="col-md-4">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Featured'); ?></h6>
-                                                <a class="dropdown-item" href="/featured-properties"><i class="fas fa-star me-2"></i>Featured</a>
-                                                <a class="dropdown-item" href="/properties?status=new"><i class="fas fa-sparkles me-2"></i>New Launch</a>
+                                            <div class="mega-col flex-grow-1">
+                                                <h6><?php echo __('Featured'); ?></h6>
+                                                <a class="mega-item" href="/featured-properties">
+                                                    <i class="fas fa-star mega-icon-amber"></i>
+                                                    <span><?php echo __('Featured'); ?></span>
+                                                </a>
+                                                <a class="mega-item" href="/properties?status=new">
+                                                    <i class="fas fa-sparkles mega-icon-teal"></i>
+                                                    <span><?php echo __('New Launch'); ?></span>
+                                                </a>
+                                                <a class="mega-item" href="/properties?status=verified">
+                                                    <i class="fas fa-shield-check mega-icon-blue"></i>
+                                                    <span><?php echo __('Verified'); ?></span>
+                                                </a>
+
+                                                <h6 class="mt-2"><?php echo __('Price Range'); ?></h6>
+                                                <a class="mega-item" href="/properties?price=0-50">
+                                                    <i class="fas fa-indian-rupee-sign mega-icon-teal"></i>
+                                                    <span>0 - 50L</span>
+                                                </a>
+                                                <a class="mega-item" href="/properties?price=50-100">
+                                                    <i class="fas fa-indian-rupee-sign mega-icon-blue"></i>
+                                                    <span>50L - 1Cr</span>
+                                                </a>
+                                                <a class="mega-item" href="/properties?price=100+">
+                                                    <i class="fas fa-indian-rupee-sign mega-icon-purple"></i>
+                                                    <span>1Cr+</span>
+                                                </a>
                                             </div>
-                                            <div class="col-md-4">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Price Range'); ?></h6>
-                                                <a class="dropdown-item" href="/properties?price=0-50"><i class="fas fa-indian-rupee-sign me-2"></i>0 - 50L</a>
-                                                <a class="dropdown-item" href="/properties?price=50-100"><i class="fas fa-indian-rupee-sign me-2"></i>50L - 1Cr</a>
-                                                <a class="dropdown-item" href="/properties?price=100+"><i class="fas fa-indian-rupee-sign me-2"></i>1Cr+</a>
-                                            </div>
+                                        </div>
+                                        <div class="mega-featured">
+                                            <h6><i class="fas fa-lightbulb me-1"></i> <?php echo __('Quick Tip'); ?></h6>
+                                            <p><?php echo __('Use filters to narrow down by location, budget, and amenities. Save your search for daily alerts.'); ?></p>
                                         </div>
                                     </li>
 
                                 <!-- Mega-menu for Plots -->
                                 <?php elseif ($item['label'] === 'Plots' || $item['label'] === 'Nav Plots'): ?>
-                                    <li class="px-3 py-2">
-                                        <div class="row g-0">
-                                            <div class="col-md-6">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Browse'); ?></h6>
+                                    <li class="mega-menu px-0 py-0">
+                                        <div class="d-flex gap-0">
+                                            <div class="mega-col flex-grow-1">
+                                                <h6><?php echo __('Browse'); ?></h6>
                                                 <?php
                                                 $plotsMenu = $nav->getPlotsSubmenu();
                                                 foreach ($plotsMenu as $sub):
-                                                    if (isset($sub['disabled'])) {
-                                                        continue;
-                                                    }
+                                                    if (isset($sub['disabled'])) continue;
                                                     $badge = $sub['badge'] ?? null;
+                                                    $iconColor = match(true) {
+                                                        str_contains($sub['icon'] ?? '', 'map') => 'mega-icon-teal',
+                                                        str_contains($sub['icon'] ?? '', 'grid') => 'mega-icon-blue',
+                                                        str_contains($sub['icon'] ?? '', 'filter') => 'mega-icon-purple',
+                                                        default => 'mega-icon-teal'
+                                                    };
                                                 ?>
-                                                    <a class="dropdown-item d-flex justify-content-between" href="<?php echo $sub['url']; ?>">
-                                                        <span><i class="<?php echo $sub['icon']; ?> me-2"></i><?php echo __($sub['label']); ?></span>
+                                                    <a class="mega-item" href="<?php echo $sub['url']; ?>">
+                                                        <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
+                                                        <span><?php echo __($sub['label']); ?></span>
                                                         <?php if ($badge): ?>
-                                                            <span class="badge bg-primary rounded-pill"><?php echo $badge; ?></span>
+                                                            <span class="mega-badge"><?php echo $badge; ?></span>
                                                         <?php endif; ?>
                                                     </a>
                                                 <?php endforeach; ?>
                                             </div>
-                                            <div class="col-md-6">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Popular Colonies'); ?></h6>
-                                                <?php foreach ($nav->getAllProjects() as $proj): ?>
-                                                    <?php $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name'])); ?>
-                                                    <a class="dropdown-item" href="/colony/<?php echo $slug; ?>/plots">
-                                                        <i class="fas fa-vector-square me-2"></i><?php echo htmlspecialchars($proj['name']); ?>
+                                            <div class="mega-col flex-grow-1">
+                                                <h6><?php echo __('Popular Colonies'); ?></h6>
+                                                <?php
+                                                $projects = $nav->getAllProjects();
+                                                $projIcons = ['mega-icon-teal', 'mega-icon-blue', 'mega-icon-amber', 'mega-icon-purple', 'mega-icon-teal'];
+                                                foreach ($projects as $idx => $proj):
+                                                    $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
+                                                    $iconClass = $projIcons[$idx % count($projIcons)];
+                                                ?>
+                                                    <a class="mega-item" href="/colony/<?php echo $slug; ?>/plots">
+                                                        <i class="fas fa-vector-square <?php echo $iconClass; ?>"></i>
+                                                        <span><?php echo htmlspecialchars($proj['name']); ?></span>
                                                     </a>
                                                 <?php endforeach; ?>
                                             </div>
@@ -142,17 +182,37 @@
 
                                 <!-- Mega-menu for Projects -->
                                 <?php elseif ($item['label'] === 'Projects' || $item['label'] === 'Nav Projects'): ?>
-                                    <li class="px-3 py-2">
-                                        <div class="row g-0">
-                                            <div class="col-12">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('By Location'); ?></h6>
-                                                <?php foreach ($nav->getProjectLocations() as $loc): ?>
-                                                    <a class="dropdown-item d-flex justify-content-between"
+                                    <li class="mega-menu px-0 py-0">
+                                        <div class="d-flex gap-0">
+                                            <div class="mega-col flex-grow-1">
+                                                <h6><?php echo __('By Location'); ?></h6>
+                                                <?php
+                                                $locIcons = ['mega-icon-teal', 'mega-icon-blue', 'mega-icon-purple', 'mega-icon-amber'];
+                                                foreach ($nav->getProjectLocations() as $idx => $loc):
+                                                    $iconClass = $locIcons[(int)$idx % count($locIcons)];
+                                                ?>
+                                                    <a class="mega-item"
                                                        href="/projects?location=<?php echo urlencode(strtolower($loc['name'])); ?>">
-                                                        <span><i class="fas fa-map-pin me-2"></i><?php echo htmlspecialchars($loc['name']); ?></span>
-                                                        <span class="badge bg-secondary rounded-pill"><?php echo $loc['count']; ?></span>
+                                                        <i class="fas fa-map-pin <?php echo $iconClass; ?>"></i>
+                                                        <span><?php echo htmlspecialchars($loc['name']); ?></span>
+                                                        <span class="mega-badge"><?php echo $loc['count']; ?></span>
                                                     </a>
                                                 <?php endforeach; ?>
+                                            </div>
+                                            <div class="mega-col flex-grow-1">
+                                                <h6><?php echo __('Quick Links'); ?></h6>
+                                                <a class="mega-item" href="/projects">
+                                                    <i class="fas fa-th-large mega-icon-teal"></i>
+                                                    <span><?php echo __('All Projects'); ?></span>
+                                                </a>
+                                                <a class="mega-item" href="/colony-pipeline">
+                                                    <i class="fas fa-diagram-project mega-icon-blue"></i>
+                                                    <span><?php echo __('Upcoming'); ?></span>
+                                                </a>
+                                                <a class="mega-item" href="/properties?status=new">
+                                                    <i class="fas fa-rocket mega-icon-amber"></i>
+                                                    <span><?php echo __('New Launch'); ?></span>
+                                                </a>
                                             </div>
                                         </div>
                                     </li>
@@ -186,6 +246,15 @@
 
                     </li>
                 <?php endforeach; ?>
+
+                <!-- Search Trigger (Ctrl+K) -->
+                <li class="nav-item d-none d-xl-inline-block">
+                    <button class="desktop-search-trigger" onclick="openCommandPalette()" title="Search (Ctrl+K)">
+                        <i class="fas fa-search"></i>
+                        <span class="d-none d-lg-inline">Search</span>
+                        <kbd>Ctrl+K</kbd>
+                    </button>
+                </li>
 
                 <!-- Auth Button / User Menu -->
                 <li class="nav-item dropdown">
@@ -243,6 +312,59 @@
                        style="border-radius: 6px; font-weight: 600;">
                         <i class="fas fa-plus me-1"></i> <?php echo __('nav_post_property'); ?>
                     </a>
+                </li>
+
+                <!-- Language Switcher -->
+                <li class="nav-item dropdown ms-2">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>">
+                        <i class="fas fa-globe"></i>
+                        <span class="d-none d-lg-inline"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिंदी' : 'English' ?></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">🇮🇳</span> Hindi</a></li>
+                    </ul>
+                </li>
+
+                <!-- Quick Action: Call -->
+                <li class="nav-item ms-2 btn-call">
+                    <a href="tel:<?= preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')) ?>"
+                       class="btn btn-call btn-sm">
+                        <i class="fas fa-phone me-1"></i>
+                        <span class="d-none d-lg-inline"><?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?></span>
+                    </a>
+                </li>
+
+                <!-- Quick Action: Compare -->
+                <li class="nav-item ms-2 btn-compare">
+                    <a href="<?php echo BASE_URL; ?>/compare"
+                       class="btn btn-outline-info btn-sm position-relative">
+                        <i class="fas fa-balance-scale"></i> <?= __('compare') ?>
+                        <span id="compareBadge"
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              style="display:none;font-size:10px;">0</span>
+                    </a>
+                </li>
+
+                <!-- Quick Action: Admin (only when logged out) -->
+                <?php if (!$nav->isLoggedIn()): ?>
+                <li class="nav-item ms-2 btn-admin">
+                    <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">
+                        <i class="fas fa-user-lock me-1"></i>
+                        <span class="d-none d-lg-inline"><?= __('admin') ?></span>
+                    </a>
+                </li>
+                <?php endif; ?>
+
+                <!-- Quick Search Typeahead (Desktop) -->
+                <li class="nav-item ms-2 d-none d-xl-inline-block">
+                    <form id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off" class="d-flex align-items-center position-relative">
+                        <input type="search" class="form-control border-start-0" id="quickSearchInput"
+                               placeholder="<?= __('search_properties') ?>..."
+                               aria-label="<?= __('search_properties') ?>"
+                               style="min-width: 200px; border-radius: 20px 0 0 20px; background: rgba(255,255,255,0.95);">
+                        <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" style="display: none;"></div>
+                    </form>
                 </li>
 
             </ul>
