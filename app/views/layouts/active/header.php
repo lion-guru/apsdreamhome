@@ -7,6 +7,15 @@ if (!function_exists('h')) {
     }
 }
 
+// Helper to create safe HTML id attributes
+if (!function_exists('sanitize_for_html_id')) {
+    function sanitize_for_html_id($string)
+    {
+        $id = preg_replace('/[^a-zA-Z0-9]/', '', $string ?? '');
+        return $id ?: 'item';
+    }
+}
+
 // Load site settings if not already loaded
 if (!isset($GLOBALS['_site_settings_cache'])) {
     $GLOBALS['_site_settings_cache'] = [];
@@ -52,10 +61,42 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
             <!-- Navigation & Actions -->
             <div class="collapse navbar-collapse d-none d-xl-flex" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <?php $items = json_decode($site['nav_json'] ?? '[]', true) ?: [];
-                    foreach ($items as $it): ?>
-                        <?php if (($it['active'] ?? true)): ?>
-                            <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL . rtrim('/' . ltrim($it['url'] ?? '#', '/'), ''); ?>"><?php echo h($it['label'] ?? ''); ?></a></li>
+                    <?php foreach ($nav->getDesktopNavItems() as $item): ?>
+                        <?php
+                            $hasSubmenu = isset($item['submenu']);
+                            $isActive   = !$hasSubmenu && $nav->isActive($item['url'] ?? '');
+                        ?>
+                        <?php if ($hasSubmenu): ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="nav_<?php echo sanitize_for_html_id($item['label'] ?? 'item'); ?>D"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
+                                    <?php echo __($item['label']); ?>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="nav_<?php echo sanitize_for_html_id($item['label'] ?? 'item'); ?>D">
+                                    <?php foreach ($item['submenu'] as $sub): ?>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               href="<?php echo $nav->baseUrl($sub['url'] ?? '#'); ?>">
+                                                <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
+                                                <?php echo __($sub['label']); ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-warning fw-bold' : ''; ?>"
+                                   href="<?php echo $nav->baseUrl($item['url'] ?? '#'); ?>">
+                                    <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
+                                    <?php echo __($item['label']); ?>
+                                </a>
+                            </li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </ul>

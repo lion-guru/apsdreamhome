@@ -118,16 +118,22 @@ $supportedRoles = [
         .social-btn:hover{border-color:#0d9488;background:#f0fdfa}
         .social-btn i{font-size:16px}
 
-        @media(max-width:900px){
+         @media(max-width:900px){
             .login-wrapper{flex-direction:column}
             .benefits-panel{flex:none;width:100%;max-width:440px}
         }
         @media(max-width:480px){
             .card-body-custom{padding:1.25rem 1.5rem 1.5rem}
             .card-header-custom{padding:1.25rem 1.5rem 0}
-            .role-links{grid-template-columns:1fr 1fr}
+            .role-links{grid-template-columns:1fr}
             .social-row{grid-template-columns:1fr}
+            .form-group label{font-size:.72rem}
+            .input-wrap input{padding:12px 16px 12px 42px;font-size:16px}
+            .btn-submit{padding:13px;font-size:.9rem}
         }
+        input[type="email"] {font-size:16px !important;}
+        input[type="tel"] {font-size:16px !important;}
+        input[type="text"] {font-size:16px !important;}
     </style>
 </head>
 <body>
@@ -237,12 +243,12 @@ $supportedRoles = [
                 <div class="divider"><span>or</span></div>
 
                 <div class="social-row">
-                    <button type="button" class="social-btn" disabled title="Google login coming soon">
+                    <a href="<?= $base ?>/auth/air-login?method=email" class="social-btn">
                         <i class="fab fa-google" style="color:#ea4335"></i> Google
-                    </button>
-                    <button type="button" class="social-btn" disabled title="Phone login coming soon">
-                        <i class="fas fa-phone" style="color:#0d9488"></i> Phone
-                    </button>
+                    </a>
+                    <a href="<?= $base ?>/auth/air-login?method=phone" class="social-btn">
+                        <i class="fas fa-phone" style="color:#0d9485"></i> Phone
+                    </a>
                 </div>
 
                 <div class="register-link" style="margin-top:1.25rem">

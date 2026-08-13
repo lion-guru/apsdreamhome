@@ -150,13 +150,29 @@ $base = BASE_URL;
                 <form method="POST" action="<?= $base ?>/auth/air-login">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
-                    <div class="form-group">
-                        <label>Email or Phone</label>
-                        <div class="input-wrap">
-                            <input type="text" name="identity" placeholder="Enter email or phone number" required autofocus>
-                            <i class="fas fa-mobile-alt field-icon"></i>
-                        </div>
-                    </div>
+                 <?php $method = $_GET['method'] ?? ''; ?>
+                 <div class="form-group">
+                         <?php
+                             if ($method === 'email'):
+                                 $label = 'Email';
+                                 $placeholder = 'Enter your email address';
+                                 $icon = 'fa-envelope';
+                             elseif ($method === 'phone'):
+                                 $label = 'Phone Number';
+                                 $placeholder = 'Enter your phone number';
+                                 $icon = 'fa-mobile-alt';
+                             else:
+                                 $label = 'Email or Phone';
+                                 $placeholder = 'Enter email or phone number';
+                                 $icon = 'fa-mobile-alt';
+                             endif;
+                         ?>
+                         <label><?= $label ?></label>
+                         <div class="input-wrap">
+                             <input type="text" name="identity" placeholder="<?= $placeholder ?>" required autofocus>
+                             <i class="fas fa-<?= $icon ?> field-icon"></i>
+                         </div>
+                     </div>
 
                     <button type="submit" class="btn-submit">
                         <i class="fas fa-paper-plane"></i> Send OTP
