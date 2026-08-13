@@ -91,9 +91,11 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Drawer (inside <header> to prevent orphaned <li> elements) -->
+    <?php require __DIR__ . '/../components/navigation/mobile_drawer.php'; ?>
 </header>
 
-<?php require __DIR__ . '/../components/navigation/mobile_drawer.php'; ?>
 <?php require __DIR__ . '/../components/navigation/mobile_bottom_nav.php'; ?>
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">

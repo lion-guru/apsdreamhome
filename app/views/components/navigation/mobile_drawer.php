@@ -88,7 +88,7 @@
                  * Each item can have: label, url, icon, submenu, badge, disabled, highlight
                  */
                 $renderAccordion = function(array $items, string $prefix = '') use (&$renderAccordion, $nav) {
-                    $html = '<ul class="mobile-nav-list list-unstyled mb-0">';
+                    echo '<ul class="mobile-nav-list list-unstyled mb-0">';
                     foreach ($items as $item):
                         $hasChildren = isset($item['submenu']);
                         $isDisabled  = isset($item['disabled']);
