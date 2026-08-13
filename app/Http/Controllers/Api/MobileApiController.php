@@ -7287,12 +7287,51 @@ class MobileApiController extends BaseController
             return;
         }
 
+        // Get property owner
+        $property = $this->db->query(
+            "SELECT up.*, u.full_name as owner_name FROM user_properties up 
+             LEFT JOIN users u ON up.user_id = u.id 
+             WHERE up.id = ? AND up.tenant_id = 1",
+            [$propertyId]
+        )->fetch();
+
+        if (!$property) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Property not found']);
+            return;
+        }
+
+        // Save inquiry
         $this->db->query(
             "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id) VALUES (?, ?, ?, ?, 1)",
             [$propertyId, $name, $phone, $message]
         );
 
-        echo json_encode(['success' => true, 'message' => 'Inquiry sent successfully']);
+        $inquiryId = $this->db->query("SELECT LAST_INSERT_ID() as id")->fetch()['id'];
+
+        // Send push notification to property owner
+        if (!empty($property['user_id'])) {
+            try {
+                $pushService = new \App\Services\Communication\PushNotificationService();
+                $pushService->sendToUser(
+                    (int)$property['user_id'],
+                    [
+                        'title' => 'New Property Inquiry',
+                        'body' => "{$name} inquired about {$property['name']}",
+                        'data' => [
+                            'type' => 'property_inquiry',
+                            'inquiry_id' => (string)$inquiryId,
+                            'property_id' => (string)$propertyId,
+                        ],
+                        'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+                    ]
+                );
+            } catch (\Throwable $e) {
+                error_log('Push notification failed: ' . $e->getMessage());
+            }
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Inquiry sent successfully', 'inquiry_id' => $inquiryId]);
     }
 
     public function sendPropertyMessage() {
@@ -7315,12 +7354,42 @@ class MobileApiController extends BaseController
             return;
         }
 
+        // Get sender name
+        $sender = $this->db->query(
+            "SELECT full_name FROM users WHERE id = ?",
+            [$userId]
+        )->fetch();
+        $senderName = $sender['full_name'] ?? 'Someone';
+
         $this->db->query(
             "INSERT INTO property_messages (property_id, sender_id, receiver_id, message, tenant_id) VALUES (?, ?, ?, ?, 1)",
             [$propertyId, $userId, $receiverId, $message]
         );
 
-        echo json_encode(['success' => true]);
+        $messageId = $this->db->query("SELECT LAST_INSERT_ID() as id")->fetch()['id'];
+
+        // Send push notification to receiver
+        try {
+            $pushService = new \App\Services\Communication\PushNotificationService();
+            $pushService->sendToUser(
+                $receiverId,
+                [
+                    'title' => 'New Message',
+                    'body' => "{$senderName}: " . substr($message, 0, 50) . (strlen($message) > 50 ? '...' : ''),
+                    'data' => [
+                        'type' => 'property_message',
+                        'message_id' => (string)$messageId,
+                        'property_id' => (string)$propertyId,
+                        'sender_id' => (string)$userId,
+                    ],
+                    'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+                ]
+            );
+        } catch (\Throwable $e) {
+            error_log('Push notification failed: ' . $e->getMessage());
+        }
+
+        echo json_encode(['success' => true, 'message_id' => $messageId]);
     }
 
     public function getPropertyMessages($propertyId) {

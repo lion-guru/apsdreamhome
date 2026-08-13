@@ -23,7 +23,14 @@ $sc = function ($key, $default = '') {
 
 // Check authentication
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']) || isset($_SESSION['admin_id']);
+
+// NavigationHelper for mobile drawer + bottom nav
+require_once __DIR__ . '/../../Helpers/NavigationHelper.php';
+$nav = \App\Helpers\NavigationHelper::getInstance();
 ?>
+
+<?php require __DIR__ . '/../components/navigation/mobile_top_bar.php'; ?>
+
 <header class="premium-header fixed-top" id="mainHeader">
     <nav class="navbar navbar-expand-xl align-items-center" style="padding: 0.5rem 0;">
         <div class="container d-flex align-items-center">
@@ -37,13 +44,13 @@ $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) ||
                 <?php endif; ?>
             </a>
 
-            <!-- Mobile Toggle -->
-            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Mobile Hamburger Toggle -->
+            <button type="button" class="navbar-toggler ms-auto d-xl-none border-0" id="mobileMenuToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileDrawer">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <!-- Navigation & Actions -->
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse d-none d-xl-flex" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
                     <?php $items = json_decode($site['nav_json'] ?? '[]', true) ?: [];
                     foreach ($items as $it): ?>
@@ -54,7 +61,7 @@ $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) ||
                 </ul>
 
                 <!-- Action Buttons (Desktop) -->
-                <ul class="navbar-nav ms-auto align-items-center d-none d-xl-flex">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <!-- Phone Button -->
                     <li class="nav-item ms-2">
                         <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', $sc('contact_phone', '+91 92771 21112')); ?>" class="btn btn-success btn-sm">
@@ -85,6 +92,17 @@ $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) ||
         </div>
     </nav>
 </header>
+
+<?php require __DIR__ . '/../components/navigation/mobile_drawer.php'; ?>
+<?php require __DIR__ . '/../components/navigation/mobile_bottom_nav.php'; ?>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    // Wire hamburger toggle to unified drawer
+    document.getElementById('mobileMenuToggle')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleDrawer(e, 'toggle');
+    });
+</script>
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     /* Fix navbar alignment - logo strictly on left */
     .premium-header .navbar {

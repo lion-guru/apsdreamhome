@@ -55,6 +55,8 @@ import '../../presentation/pages/common/projects_page.dart';
 import '../../presentation/pages/common/legal_documents_page.dart';
 import '../../presentation/pages/common/legal_document_detail_page.dart';
 import '../../presentation/pages/common/legal_document_preview_page.dart';
+import '../../presentation/pages/common/document_esign_page.dart';
+import '../../presentation/pages/common/document_esign_detail_page.dart';
 import '../../presentation/pages/common/contact_page.dart';
 import '../../presentation/pages/common/team_page.dart';
 import '../../presentation/pages/common/privacy_policy_page.dart';
@@ -258,6 +260,8 @@ GoRouter createRouter() {
       final isBlogDetail = uri.startsWith('/blog/');
       final isLegalDocs = uri == '/legal-documents';
       final isLegalDocDetail = uri.startsWith('/legal-documents/');
+      final isDocEsign = uri == '/document-esign';
+      final isDocEsignDetail = uri.startsWith('/document-esign/');
       final isContact = uri == '/contact';
       final isTeam = uri == '/team';
       final isPrivacy = uri == '/privacy';
@@ -282,6 +286,13 @@ GoRouter createRouter() {
       final isNews = uri == '/news';
       final isWelcome = uri == '/welcome';
       final isSellProperty = uri == '/sell-property';
+      final isFaq = uri == '/faq';
+      final isAbout = uri == '/about';
+      final isCareers = uri == '/careers' || uri.startsWith('/careers/');
+      final isTestimonials = uri == '/testimonials';
+      final isStampDuty = uri == '/stamp-duty-calculator';
+      final isPlotConverter = uri == '/plot-converter';
+      final isCompare = uri == '/compare';
 
       final isPublicRoute =
           isSplash ||
@@ -339,7 +350,18 @@ GoRouter createRouter() {
           isVirtualTour ||
           isNews ||
           isWelcome ||
-          isSellProperty;
+          isSellProperty ||
+          isLegalDocs ||
+          isLegalDocDetail ||
+          isFaq ||
+          isAbout ||
+          isCareers ||
+          isTestimonials ||
+          isStampDuty ||
+          isPlotConverter ||
+          isCompare ||
+          isDocEsign ||
+          isDocEsignDetail;
 
       // Allow all public and auth routes
       if (isPublicRoute) {
@@ -826,6 +848,18 @@ GoRouter createRouter() {
       GoRoute(
         path: '/legal-documents/:id/preview',
         builder: (context, state) => LegalDocumentPreviewPage(
+          documentId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
+
+      // ─── Document E-Sign Routes ───
+      GoRoute(
+        path: '/document-esign',
+        builder: (context, state) => const DocumentEsignPage(),
+      ),
+      GoRoute(
+        path: '/document-esign/:id',
+        builder: (context, state) => DocumentEsignDetailPage(
           documentId: int.parse(state.pathParameters['id']!),
         ),
       ),

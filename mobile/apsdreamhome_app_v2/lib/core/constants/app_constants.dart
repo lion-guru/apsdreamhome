@@ -109,6 +109,19 @@ class AppConstants {
   // Referral
   static const String referralTrackEndpoint = '/referral/track';
 
+  // Agent Portal
+  static const String agentMyTeamEndpoint = '/my-team';
+  static const String agentRankProgressEndpoint = '/rank-progress';
+  static const String agentLeadsEndpoint = '/agent/leads';
+  static const String agentCommissionsEndpoint = '/agent/commissions';
+  static const String agentPayoutsEndpoint = '/agent/payouts';
+  static const String agentPropertyListingsEndpoint = '/agent/properties';
+  static const String agentBookingsEndpoint = '/agent/bookings';
+  static const String agentDocumentsEndpoint = '/agent/documents';
+  static const String agentSiteVisitsEndpoint = '/agent/site-visits';
+  static const String agentFollowUpsEndpoint = '/agent/follow-ups';
+  static const String agentAnalyticsEndpoint = '/agent/analytics';
+
   // Property Marketplace
   static const String propertyInquiryEndpoint = '/properties/inquiry';
   static const String propertyMessageEndpoint = '/properties/message';

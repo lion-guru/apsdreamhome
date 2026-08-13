@@ -746,6 +746,12 @@ $router->get('/api/esign/document/{transactionId}', 'Api\ESignController@getDocu
 $router->get('/api/esign/booking/{bookingId}', 'Api\ESignController@getByBooking');
 $router->post('/api/esign/callback', 'Api\ESignController@callback');
 
+// --- Document E-Sign API (New - Property Transaction Documents) ---
+$router->post('/api/v2/mobile/document-esign/store', 'Api\DocumentEsignApiController@store');
+$router->post('/api/v2/mobile/document-esign/sign/{id}', 'Api\DocumentEsignApiController@sign');
+$router->get('/api/v2/mobile/document-esign/{id}', 'Api\DocumentEsignApiController@getDocument');
+$router->get('/api/v2/mobile/document-esign', 'Api\DocumentEsignApiController@getDocuments');
+
 // ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)
 // ============================================================

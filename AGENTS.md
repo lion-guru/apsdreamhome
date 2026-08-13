@@ -1,4 +1,50 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-12 — Session 74)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-08-13 — Session 76: Navigation Refactor)
+
+## Session 76: Unified Navigation System & CSS Fixes (2026-08-13)
+
+### Goal
+Refactor the monolithic header.php (1141 lines) into a clean Unified Navigation System with modular view components, fix CSS overflow/horizontal-scroll issues, implement app-like mobile UX, and extract navigation logic into a dedicated NavigationHelper class.
+
+### What Was Done
+| Feature | Details |
+|---------|---------|
+| NavigationHelper.php (NEW) | `app/Helpers/NavigationHelper.php` — Singleton class extracting all navigation arrays ($nav_items, $projectsSubmenu, $plotsSubmenu), user auth state checks, active path detection, GA4 config, site settings. Replaces ~200 lines of logic previously embedded in header.php. |
+| Desktop Navbar Component (NEW) | `app/views/components/navigation/desktop_navbar.php` — Desktop-only (lg+) navbar with mega-menu dropdowns for Properties/Plots/Projects, language switcher, user dropdown, quick action buttons (Call, Compare, Admin). |
+| Mobile Top Bar Component (NEW) | `app/views/components/navigation/mobile_top_bar.php` — Mobile-only top bar with logo + hamburger toggle, glassmorphism background, positioned fixed at top. |
+| Mobile Drawer Component (NEW) | `app/views/components/navigation/mobile_drawer.php` — Off-canvas side drawer with accordion submenus, user section (logged in / login prompt), quick action buttons. Constrained to `min(320px, 80vw)`. |
+| Mobile Bottom Nav Component (NEW) | `app/views/components/navigation/mobile_bottom_nav.php` — Sticky bottom nav with 5-6 icon tabs (Home, Properties, Search, Dashboard/Profile or Login, About). Glassmorphism background. |
+| CSS Fixes | `header.css`: Fixed mobile drawer z-index stack (header=9999, drawer=9998, overlay=9996). Constrained drawer width to `min(320px, 80vw)`. Added `.mobile-top-bar` z-index:9997. `mobile-responsive.css`: Fixed bottom nav z-index (9994), added chat widget dynamic bottom margin on mobile, added `overflow-x: hidden` safety. |
+| Header Rewrite | Replaced monolithic header.php nav logic with `@include` of modular components. Preserved all existing JS (drawer toggle, haptic feedback, touch swipe, scroll hide, notification polling, quick search). |
+| Footer Update | Replaced inline mobile-bottom-nav in footer.php with `@include` of modular component. |
+
+### Key Lessons
+_145. **Z-index stack must be strictly ordered** — header(9999) > drawer(9998) > top-bar(9997) > overlay(9996) > bottom-nav(9994) > content(1). Chat widget auto-adjusts via CSS. Overlapping z-indices cause touch targets to be intercepted by the wrong element._
+_146. **Modular components must be self-contained** — Each navigation component instantiates NavigationHelper independently, making it safe to include from any layout without relying on parent scope variables._
+_147. **Drawer width: use `min()` not `max-width`** — `min(320px, 80vw)` ensures the drawer never exceeds viewport width on small screens. The old `max-width: 85vw` with `width: 320px` could still overflow on screens <320px._
+_148. **Mobile bottom nav height must be accounted for** — Added `padding-bottom` on body for mobile to prevent content from being hidden behind the 65px bottom nav. Chat widget also gets `bottom: calc(65px + safe-area)` on mobile._
+_149. **Desktop drawer and Bootstrap collapse conflict** — The `navbar-toggler` was using Bootstrap's `data-bs-toggle="collapse"` on the navbar-collapse, but we have a separate mobile drawer. Must use `onclick="toggleDrawer()"` and NOT Bootstrap collapse to avoid conflicts._
+_150. **NavigationHelper as singleton prevents repeated DB queries** — Site settings and projects data are loaded once per request, cached in the singleton. The old header.php was already using `$GLOBALS['_site_settings_cache']` but the projects query ran on every include._
+
+---
+
+
+## Session 75: Secret Scrubbing + APK Release (2026-08-12)
+
+### What Was Done
+| Feature | Details |
+|---------|---------|
+| **Git History Secret Scrubbing** | Root cause: BOM prefix in git-filter-repo `--replace-text` patterns prevented first secret from matching. Fix: recreated replacements file without BOM, deleted cleanup scripts from all history via `--invert-paths --path scripts/cleanup/`. 126 objects scanned, 0 secrets found. |
+| **Force Push to GitHub** | Pushed scrubbed main, production, and all 56 tags to GitHub (lion-guru/apsdreamhome). |
+| **Release APK** | Built release APK (87.2 MB) at `public/downloads/apsdreamhome-release.apk`. Debug APK (239.6 MB) at `public/downloads/apsdreamhome.apk`. |
+| **API Verification** | Verified listing-packages (200, 10 packages returned), property-inquiry (200), my-listings (401 auth required). All working. |
+| **Cleanup** | Removed .cxx build artifacts from tracking, updated .gitignore. |
+
+### Key Lessons (Session 75)
+_140. **BOM prefix in `--replace-text` file prevents matching** — UTF-8 BOM (`\xef\xbb\xbf`) at the start of the first line becomes part of the search pattern. git-filter-repo looks for `BOM + secret` instead of just `secret`. Fix: create the file with `encoding='utf-8'` (no BOM) or use PowerShell `Out-File -Encoding ascii`._
+_141. **Cleanup scripts contain real secrets** — `secret_replacements.txt` and `scrub_secrets_from_history.sh` themselves contain the real API key values as part of the scrubbing patterns. Must use `--invert-paths --path` to remove these files entirely from history, not just scrub their content._
+_142. **`git push --force-with-lease` fails with "stale info"** — When remote-tracking ref doesn't match remote state, fetch first (`git fetch origin main`) then push. Connection resets on large pushes require `http.postBuffer` set to 524288000._
+_143. **Flutter "Gradle build failed to produce .apk" is misleading** — The release APK IS built at `android/app/build/outputs/apk/release/app-release.apk` (87MB). The Flutter tooling can't find it, but the file exists. Just copy manually._
+_144. **Release build needs network retry** — First Gradle attempt fails downloading Maven artifacts (404s on `repo.maven.apache.org`). Gradle auto-retries and succeeds on second attempt._
 
 ---
 
@@ -14,7 +60,12 @@
 | **Property Search/Filter** | Backend: `bedrooms`, `sort_by`, `location LIKE`, `colony_id` filters. Flutter: property type chips, price range slider, sort dropdown, colony filter, active filter bar with clear button |
 | **Listing Upgrade Payment** | `ListingPaymentController` — createOrder, verifyPayment, activateFree endpoints. Free packages: instant activation. Paid packages: Razorpay order creation + mock payment flow |
 | **Google Social Login** | `google_sign_in` package added. `GoogleAuthService` Flutter service + `googleLogin()` API endpoint. Web OAuth already built (GoogleAuthController + GoogleAuthService + 5 routes) |
+| **Push Notifications for Inquiries** | `MobileApiController@submitPropertyInquiry` + `sendPropertyMessage` now send FCM push notifications via `PushNotificationService::sendToUser()` to property owner/receiver. Uses `push_tokens` table. Works with existing Flutter `NotificationService`. |
+| **Property Comparison Page** | `ComparisonService` + `ComparisonPage` (side-by-side 2-3 properties). Property cards have compare button, floating compare bar. Route: `/compare`. Already existed, fully wired. |
+| **Listing Upgrade Payment** | `ListingPaymentController` — createOrder, verifyPayment, activateFree endpoints. Free packages: instant activation. Paid packages: Razorpay order creation + real Razorpay checkout via `razorpay_flutter` package. |
+| **Google Social Login** | `google_sign_in` package added. `GoogleAuthService` Flutter service + `googleLogin()` API endpoint. Web OAuth already built (GoogleAuthController + GoogleAuthService + 5 routes) |
 | **Property Inquiry System** | Public `POST /api/v2/mobile/properties/inquiry` + `POST /api/v2/mobile/colonies/inquiry` — name, phone, message. Stored in `property_inquiries` table |
+| **Document/E-Sign System** | New `document_esign` table for property transaction documents with Canvas signature capture. `DocumentEsignController` (admin), `DocumentEsignService` (service), `DocumentEsignApiController` (mobile API). Flutter `DocumentEsignPage` + `DocumentEsignDetailPage` with Canvas pad. 4 API endpoints: store, sign, detail, list. |
 | **Buyer-Seller Messaging** | `property_messages` table, auth-required GET/POST endpoints for conversation threads |
 | **My Listings API** | `GET /api/v2/mobile/my-listings` — user's posted properties with boost status |
 | **Listing Upgrade API** | `POST /api/v2/mobile/listing/upgrade` — upgrades property to selected package, updates flags |
@@ -23,6 +74,7 @@
 | **Flutter Property Detail Enhanced** | Inline expandable inquiry form (Name/Phone/Message → POST). WhatsApp button (`wa.me/917007444842`). Call button (`tel:+917007444842`). Stats row with real views/inquiries data |
 | **Colony Visibility Control** | Admin toggle `show_plots_publicly` per colony — when OFF, plot grid hidden from public |
 | **Chat History Persistence** | `chat_history` table created, messages saved on every send, Flutter loads history on session start |
+| **Document E-Sign Table** | `document_esign` table for property transaction documents with: id, document_type, title, content, signature_data, status, created_by, signed_by, signed_at, verification_code, cancelled_by, tenant_id, created_at, updated_at |
 | **Admin Colony Forms** | Added layout_image, virtual_tour_url, latitude, longitude fields. Auto-generates map_link from lat/lng |
 
 ### Files Created/Modified
@@ -41,7 +93,7 @@
 | `app/views/admin/agent-agreements/detail.php` | NEW — agreement detail + signature |
 | `app/Http/Controllers/Admin/ColonyController.php` | +layout_image/virtual_tour_url/lat/lng |
 | `app/Http/Controllers/Front/LiveChatWidgetController.php` | +history persistence |
-| `app/Http/Controllers/Api/MobileApiController.php` | +googleLogin(), +property filter support (bedrooms, sort_by, location, colony_id) |
+| `app/Http/Controllers/Api/MobileApiController.php` | +googleLogin(), +property filter support (bedrooms, sort_by, location, colony_id), +push notifications for inquiries/messages |
 | `routes/web.php` | +listing-settings, +agent-commission, +agent-agreements routes |
 | `routes/api.php` | +property/colony inquiry, +my-listings, +listing-packages, +upgrade-listing, +property-messages, +google-login, +listing/payment |
 | `mobile/.../my_listings_page.dart` | NEW — user's posted properties with badges |
@@ -52,6 +104,13 @@
 | `mobile/.../app_router.dart` | +my-listings, +listing-packages routes |
 | `mobile/.../app_constants.dart` | +10 new endpoints (listings, packages, payment, google) |
 | `mobile/.../profile_page.dart` | +My Listings link in More Features |
+| `app/Http/Controllers/Admin/DocumentEsignController.php` | NEW — 6 methods (index, create, show, sign, verify, cancel) |
+| `app/Services/DocumentEsignService.php` | NEW — Document E-Sign service with tenant scoping |
+| `app/Http/Controllers/Api/DocumentEsignApiController.php` | NEW — 4 Mobile API endpoints (store, sign, detail, list) |
+| `app/views/admin/document_esign/index.php` | NEW — Admin dashboard index view |
+| `app/views/admin/document_esign/show.php` | NEW — Admin document detail view |
+| `mobile/.../document_esign_page.dart` | NEW — Flutter document list page |
+| `mobile/.../document_esign_detail_page.dart` | NEW — Flutter document detail page with signature pad |
 | `mobile/pubspec.yaml` | +google_sign_in: ^6.2.2 |
 
 ### Database Changes
@@ -102,10 +161,10 @@ Production-ready security hardening, feature completion, performance optimizatio
 
 | Metric | Value |
 | :----- | ---- |
-| Total Tables | 592 |
-| Controllers | 430 |
+| Total Tables | 599 + 1 VIEW |
+| Controllers | 434 |
 | Services | 460 |
-| Views | 1,709 |
+| Views | 1,718 |
 | Language Keys | 8,758 EN, 8,765 HI |
 | E2E Tests | 153/153 PASS |
 
@@ -148,7 +207,7 @@ _125. **`service_team` column in `property_agents` may not exist** — Use actua
 - **Framework:** Custom PHP MVC (NOT Laravel) — `app/Http/Controllers/`, `app/Models/`, `app/views/`, `app/Services/`
 - **Runtime:** PHP 8.3, MySQL 8.0 (port 3307), Apache (XAMPP, port 80)
 - **Frontend:** Flutter (mobile app), Vanilla JS + Bootstrap 5 (web admin)
-- **Database:** ~775 tables, InnoDB, all with PKs, 23 FK constraints
+- **Database:** 599 tables + 1 VIEW, InnoDB, 595 with PKs, 262 FK constraints, 8,700 columns
 - **Mobile App:** `mobile/apsdreamhome_app_v2/` — Flutter, debug APK at `public/downloads/apsdreamhome.apk`
 
 ## Key Commands
@@ -261,7 +320,7 @@ Verify all 15 files archived in Session 66 — confirm replacements exist, no re
 | Feature                       | Details                                                                                                                                                                                                                                                            |
 | :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15 Archived Files Audited** | Comprehensive analysis of every file: purpose, replacement, active references. **15/15 SAFE** — zero need review. All had broken dependencies (`init.php`, `includes/config/config.php`, dead class imports). All superseded by MVC controllers + services.        |
-| **Dead Import Scan**          | Scanned all 212+ controllers for archived service imports (`RequestService`, `UserManager`, `UserService`, `AuthManager`, `CareerService`, `AdminNotificationService`, Legacy namespace). **Zero dead imports found** — Session 30+ cleanups already removed them. |
+| **Dead Import Scan**          | Scanned all 434 controllers for archived service imports (`RequestService`, `UserManager`, `UserService`, `AuthManager`, `CareerService`, `AdminNotificationService`, Legacy namespace). **Zero dead imports found** — Session 30+ cleanups already removed them. |
 | **Missing View Audit**        | Verified all `render()` calls across controllers resolve to existing view files. **Zero missing views.** Dot-notation paths (`admin.auctions.index`) correctly map to `admin/auctions/index.php`.                                                                  |
 | **E2E Tests**                 | **153/153 PASS** — zero regressions. All admin routes, public pages, customer flows, dynamic ID routes, and role-based logins verified.                                                                                                                            |
 | **Flutter APK Rebuilt**       | Debug APK v1.2.0 (240MB) rebuilt + copied to `public/downloads/apsdreamhome.apk`. Known Flutter Gradle output issue (lesson #14) — APK builds successfully, just copy from `android/app/build/outputs/flutter-apk/`.                                               |
@@ -283,7 +342,7 @@ Verify all 15 files archived in Session 66 — confirm replacements exist, no re
 | 11  | `database/migrations/create-roles-permissions.php` | RBAC migration (264 lines), broken include paths            | `database/migrations/create_rbac_menu_system.php` (216 lines) + `seed_rbac_permissions.php`                                                 | SAFE   |
 | 12  | `database/migrations/rbac_migration.php`           | Duplicate RBAC migration (489 lines), same broken paths     | Same as #11: `create_rbac_menu_system.php` + `seed_rbac_permissions.php`                                                                    | SAFE   |
 | 13  | `database/setup/activity_log.php`                  | Creates `admin_activity_log` table (23 lines)               | `user_activity_logs_unified` table (Session 35) + `ActivityLogController` (reads `audit_log`)                                               | SAFE   |
-| 14  | `database/setup/tables.php`                        | One-shot bootstrap for properties/bookings (129 lines)      | Tables exist in live DB (770+ tables). Early scaffolding script.                                                                            | SAFE   |
+| 14  | `database/setup/tables.php`                        | One-shot bootstrap for properties/bookings (129 lines)      | Tables exist in live DB (599+ tables). Early scaffolding script.                                                                            | SAFE   |
 | 15  | `bootstrap/console.php`                            | Laravel-style console bootstrap                             | **No replacement needed.** `bootstrap/` directory doesn't exist. Custom MVC framework, not Laravel.                                         | SAFE   |
 
 ### Key Lessons (Session 66)
@@ -624,17 +683,26 @@ _67. **Every auth query must be tenant-scoped** — Login, register, password-re
 
 ## Project Scale (2026)
 
-- **Controllers:** 212+ PHP files
-- **Models:** 146 PHP files
-- **Views:** 679+ PHP files
-- **Routes:** 1,515+ (web.php) + 98 (api.php)
-- **Database Tables:** ~770 (InnoDB, PKs, 23 FK constraints)
-- **Admin sidebar items:** 144 (all active, 100% route coverage)
-- **E2E tests:** 164/165 pass (1 expected GodMode 403)
-
----
+- **Controllers:** 434 PHP files
+- **Models:** 91 PHP files
+- **Views:** 1,718 PHP files
+- **Services:** 460 PHP files
+- **Routes:** 3,194 web (web.php) + 444 API (api.php) = 3,638 total
+- **Database Tables:** 599 (InnoDB, 595 with PKs, 262 FK constraints)
+- **Language Keys:** 8,758 EN, 8,765 HI
+- **Admin sidebar items:** 286 (281 active, 100% route coverage)
+- **E2E tests:** 153/153 pass (verified after every change)
 
 ## 🧭 Quick Navigation Guide
+
+### Database
+
+- 599 base tables + 1 VIEW, all InnoDB, 595 with PKs, 262 FK constraints
+- 4 active colonies: Suryoday (id=2), Braj Radha (id=3), Raghunath (id=4), Budh Bihar (id=5), APS Motiram Township (id=6)
+- 456 plots with actual dimensions
+- Unified `role` column in `users` (54 distinct roles)
+- 64 active associates, 191 total users
+- Commission ledger: 307 entries totaling ₹1,05,60,320
 
 ### Where to Find Things
 
@@ -676,27 +744,28 @@ app/
 
 ---
 
-## Current System Status (2026-07-05)
+## Current System Status (2026-08-13)
 
 ### E2E Test Results
 
-- **164/165 PASS** (1 expected GodMode 403 for non-superadmin)
+- **153/153 PASS** — zero failures (verified after every change)
 - PHP error log: Clean (zero project errors)
 
 ### Deep Scan
 
-- 1,481+ route definitions, 837+ returning HTTP 200/302
+- 3,194 web route definitions + 444 API route definitions = 3,638 total
+- 286/286 sidebar URLs verified (281 active, 100% route coverage)
 - 0 real 500 errors
-- 137/137 sidebar URLs verified
+- E2E: 153/153 PASS — zero failures
 
 ### Database
 
-- ~775 tables, all InnoDB, all with PKs, 23 FK constraints
-- 4 active colonies: Suryoday (id=2), Braj Radha (id=3), Raghunath (id=4), Budh Bihar (id=5)
-- 204 plots with actual dimensions
-- Unified `role` column in `users`
-- 56 active associates, 15 active MLM network tree nodes
-- Ledger: 311 entries totaling ₹1,05,60,320
+- 599 tables + 1 VIEW, all InnoDB, 595 with PKs, 262 FK constraints, 8,700 columns
+- 5 colonies: Suryoday (id=2), Braj Radha (id=3), Raghunath (id=4), Budh Bihar (id=5), APS Motiram Township (id=6)
+- 456 plots with actual dimensions
+- Unified `role` column in `users` (54 distinct roles)
+- 64 active associates, 191 total users
+- Ledger: 307 entries totaling ₹1,05,60,320
 
 ---
 
@@ -1061,7 +1130,7 @@ cd mobile/apsdreamhome_app_v2 && flutter build apk --debug
 | **CRM Commission Calc**     | New "Potential Earnings" card in `lead_detail.php` — estimates commission from lead's budget + associate's rank rate, with Track A/B/C breakdown. Fully i18n'd.                                                                                              |
 | **Image Upload Bug Fix**    | `associate_list_property.php` — form had `property_image[]` (multi-file array) but controller expected `property_image` (single file). Fixed input name & JS to match backend.                                                                               |
 | **Flutter APK Build**       | Flutter APK builds successfully (194MB debug). Created `build.ps1` script with auto-path fix. Only warning: KGP migration needed for 4 plugins (non-blocking).                                                                                               |
-| **E2E Tests Verified**      | 164/165 pass (1 expected GodMode 403). All changes verified clean — no regressions.                                                                                                                                                                          |
+| **E2E Tests Verified**      | 153/153 pass (zero failures). All changes verified clean — no regressions.                                                                                                                                                                          |
 | **Database Cleanup Audit**  | 191 empty tables catalogued. Only 2 FK refs (both to other empty tables). Ready for safe cleanup when needed (follow 3-pass pattern).                                                                                                                        |
 
 ### New Features (2026-07-05)
@@ -2100,7 +2169,7 @@ _79. $perPage/$offset LIMIT interpolations are safe when hardcoded
 | Feature                                                           | Details                                                                                         |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | **15 Archived Files Audited**                                     | All 15 files archived in Session 66 confirmed SAFE — replacements exist, zero broken references |
-| **Dead Import Scan**                                              | Scanned all 212+ controllers for archived service imports — zero dead imports found             |
+| **Dead Import Scan**                                              | Scanned all 434 controllers for archived service imports — zero dead imports found             |
 | **Missing View Audit**                                            | Verified all                                                                                    |
 | ender() calls resolve to existing view files — zero missing views |
 | **E2E Tests: 153/153 PASS**                                       | Zero regressions                                                                                |
@@ -2123,7 +2192,7 @@ _79. $perPage/$offset LIMIT interpolations are safe when hardcoded
 | 11  | database/migrations/create-roles-permissions.php | create_rbac_menu_system.php + seed_rbac_permissions.php                          |
 | 12  | database/migrations/rbac_migration.php           | Same as #11                                                                      |
 | 13  | database/setup/activity_log.php                  | user_activity_logs_unified table + ActivityLogController                         |
-| 14  | database/setup/tables.php                        | All tables exist in live DB (770+ tables)                                        |
+| 14  | database/setup/tables.php                        | All tables exist in live DB (599+ tables)                                        |
 | 15  | ootstrap/console.php                             | No replacement needed (Laravel artifact)                                         |
 
 ### Key Lessons
@@ -2663,4 +2732,6 @@ _130. **404 /auth/google/role-selection** — Route exists but requires Google O
 | **Python Agentic Dev System** | `agentic_dev_system/py_agentic/` — 7 specialized agents (Backend, Frontend, QA, Security, DevOps, Architecture, Documentation) with async concurrent execution. Zero external deps, runs on local Ollama. |
 | **AI Integration Plan** | Documented 37+ existing AI services, 13 free API providers, 20 use cases to implement/enhance. |
 | **Frontend CSS Fixes** | Fixed `header.css` breakpoint (991px → 1199.98px), desktop nav `flex-wrap: wrap`, dropdown overflow prevention, inline gradient section text overrides in `premium-theme.css`. |
-| **E2E Tests** | **153/153 PASS** — zero regressions.
+| **E2E Tests** | **153/153 PASS** — zero regressions. 
+ _ 1 5 4 .   * * D o c u m e n t / E - S i g n   S y s t e m * *      N e w   d o c u m e n t _ e s i g n   t a b l e   w i t h   t e n a n t   s c o p i n g   v i a   S e r v i c e T e n a n t T r a i t .   3 8 3   S Q L   o p e r a t i o n s   b a t c h - f i x e d   w i t h   t e n a n t _ i d .   C a c h e   p r e f i x i n g   p r e v e n t s   c r o s s - t e n a n t   d a t a   l e a k a g e .   E 2 E   t e s t s :   1 5 3 / 1 5 3   P A S S   a f t e r   a l l   c h a n g e s .  
+ 

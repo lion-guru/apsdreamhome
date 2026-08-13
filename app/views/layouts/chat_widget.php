@@ -147,7 +147,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 }
 /* ── Mobile Improvements ── */
 @media(max-width:600px){
-    .cw-wrap{bottom:12px;right:12px}
+    .cw-wrap{bottom:80px;right:12px}
     .cw-toggle{width:52px;height:52px;font-size:20px}
     .cw-box{width:calc(100vw - 24px);right:-12px;bottom:68px;max-height:calc(100dvh - 100px);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.25)}
     .cw-header{padding:12px 14px}

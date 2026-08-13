@@ -810,9 +810,17 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/Auth/RegistrationWizardContr
     $router->post('/register/skip', 'Auth\\RegistrationWizardController@skip');
 }
 
-$router->get('/login', 'Auth\\CustomerAuthController@login');
-$router->post('/login', 'Auth\\CustomerAuthController@authenticate');
-$router->get('/logout', 'Auth\\CustomerAuthController@logout');
+// Unified Authentication (LoginController — replaces CustomerAuthController)
+$router->get('/login', 'Auth\\LoginController@showLogin');
+$router->post('/login', 'Auth\\LoginController@authenticate');
+$router->get('/logout', 'Auth\\LoginController@logout');
+
+// Unified Auth aliases (backward compatibility)
+$router->get('/auth/login', 'Auth\\LoginController@showLogin');
+$router->post('/auth/login', 'Auth\\LoginController@authenticate');
+$router->get('/auth/register', 'Auth\\RegisterController@showRegister');
+$router->post('/auth/register', 'Auth\\RegisterController@handleRegister');
+$router->get('/auth/logout', 'Auth\\LoginController@logout');
 
 // CoreAuth — Unified Auth (replaces all role-specific auth over time)
 $router->post('/auth/smart/role', 'Auth\\OtpAuthController@saveRoleSelection');

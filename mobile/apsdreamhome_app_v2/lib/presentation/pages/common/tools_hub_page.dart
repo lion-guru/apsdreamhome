@@ -129,6 +129,12 @@ class ToolsHubPage extends StatelessWidget {
           '/agreements',
         ),
         _ToolItem(
+          'Document E-Sign',
+          'Sign documents digitally',
+          Icons.draw_rounded,
+          '/document-esign',
+        ),
+        _ToolItem(
           'NACH Mandate Setup',
           'Auto EMI payments',
           Icons.receipt_long_rounded,

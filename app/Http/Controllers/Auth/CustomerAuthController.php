@@ -95,7 +95,7 @@ class CustomerAuthController extends BaseController
         }
 
         // Redirect to unified login
-        header('Location: ' . BASE_URL . '/auth/login');
+        header('Location: ' . BASE_URL . '/login');
         exit;
     }
 
@@ -485,7 +485,7 @@ class CustomerAuthController extends BaseController
         }
 
         session_destroy();
-        header('Location: ' . BASE_URL . '/auth/login');
+        header('Location: ' . BASE_URL . '/login');
         exit;
     }
 

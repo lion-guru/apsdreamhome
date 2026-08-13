@@ -1,0 +1,28 @@
+Files to MOVE from root to _archive/root_temp_files/ (NOT DELETE):
+1. _debug_*.php files (debug HTML captures)
+2. _test_*.php files (test scripts)
+3. check_*.php files (database/check scripts)
+4. db_check*.php files
+5. FIX_XAMPP_PORTS.bat (port fixing batch)
+6. TEST_REPORT.md (test report)
+7. scripts/auto_pull.log (10K lines)
+8. scripts/_*-prefixed files + test_* files from scripts/
+9. Various .bat files for port/cookie/debug fixing
+
+Files to KEEP in root (active):
+- index.php (main entry point)
+- show_html.php
+- google_callback.php (7 references, legit OAuth handler)
+- websocket_server.php (Ratchet WebSocket)
+- websocket_broadcast_server.php (Ratchet WebSocket)
+- public/download-apk.php (chunked PHP download)
+- START_SERVER.bat
+- SERVICE files
+
+Archive subdirectories already exist:
+- _archive/root_temp_files/ 
+- _archive/scripts_temp/
+- _archive/scripts/
+- _archive/root_temp_files/
+- _archive/controllers/
+- etc.

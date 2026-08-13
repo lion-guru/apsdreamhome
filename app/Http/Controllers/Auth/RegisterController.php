@@ -70,7 +70,7 @@ class RegisterController extends BaseController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old_input'] = $_POST;
-            header('Location: ' . BASE_URL . '/auth/register');
+            header('Location: ' . BASE_URL . '/register');
             exit;
         }
 
@@ -87,7 +87,7 @@ class RegisterController extends BaseController
             if (!$result['success']) {
                 $_SESSION['errors'] = [$result['message']];
                 $_SESSION['old_input'] = $_POST;
-                header('Location: ' . BASE_URL . '/auth/register');
+                header('Location: ' . BASE_URL . '/register');
                 exit;
             }
 
@@ -149,7 +149,7 @@ class RegisterController extends BaseController
             error_log("RegisterController registration error: " . $e->getMessage());
             $_SESSION['errors'] = ['Registration failed. Please try again.'];
             $_SESSION['old_input'] = $_POST;
-            header('Location: ' . BASE_URL . '/auth/register');
+            header('Location: ' . BASE_URL . '/register');
             exit;
         }
     }

@@ -1,0 +1,17 @@
+Files moved from root to _archive/root_temp_files/:
+- _debug_*.php (debug capture files)
+- _test_*.php (test script files)
+- check_*.php (check scripts)
+- db_check*.php (database check scripts)
+- FIX_XAMPP_PORTS.bat (XAMPP port fix batch)
+- TEST_REPORT.md (test report)
+- scripts/auto_pull.log (10K lines script)
+- Various .bat files for port fixing and testing
+
+Kept in root (active):
+- index.php (main entry point)
+- show_html.php
+- google_callback.php (7 references, OAuth handler)
+- websocket_server.php (Ratchet WebSocket)
+- websocket_broadcast_server.php (Ratchet WebSocket)
+- public/download-apk.php (chunked PHP download)

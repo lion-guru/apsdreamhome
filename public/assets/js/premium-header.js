@@ -106,7 +106,10 @@ document.addEventListener('DOMContentLoaded', function() {
             'plots': ['/plots'],
             'contact': ['/contact'],
             'notifications': ['/user/notifications'],
-            'login': ['/login', '/associate/login', '/agent/login', '/employee/login', '/farmer/login']
+            'login': ['/login', '/associate/login', '/agent/login', '/employee/login', '/farmer/login'],
+            'dashboard': ['/user/dashboard', '/associate/dashboard', '/agent/dashboard', '/admin/dashboard', '/employee/dashboard'],
+            'about': ['/about'],
+            'search': ['/search']
         };
 
         var items = bottomNav.querySelectorAll('.nav-item');

@@ -154,6 +154,8 @@ class _AgreementPageState extends ConsumerState<AgreementPage> {
                 ),
                 const SizedBox(height: 24),
                 _buildFAQSection(),
+                const SizedBox(height: 24),
+                _buildESignDocumentsLink(),
                 const SizedBox(height: 40),
               ],
             ),
@@ -642,6 +644,53 @@ final _faqItems = [
     'Yes, all signed agreements are available for download from the document locker section.',
   ),
 ];
+
+// ─── Sign Documents Link ───
+
+Widget _buildESignDocumentsLink() {
+  return Builder(
+    builder: (context) => Center(
+      child: GestureDetector(
+        onTap: () => GoRouter.of(context).go('/document-esign'),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppTheme.primaryColor, Color(0xFF1565C0)],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.4),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.draw_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Sign Documents Online →',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
 // ─── Signature Pad Bottom Sheet ───
 
