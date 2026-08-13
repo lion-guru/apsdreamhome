@@ -25,7 +25,7 @@ $sc = function ($key, $default = '') {
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']) || isset($_SESSION['admin_id']);
 
 // NavigationHelper for mobile drawer + bottom nav
-require_once __DIR__ . '/../../Helpers/NavigationHelper.php';
+// Class is autoloaded via App namespace — no require_once needed
 $nav = \App\Helpers\NavigationHelper::getInstance();
 ?>
 

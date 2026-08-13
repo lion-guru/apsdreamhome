@@ -81,7 +81,7 @@
                                     <li class="px-3 py-2">
                                         <div class="row g-0">
                                             <div class="col-md-4">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php _e('Browse By'); ?></h6>
+                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Browse By'); ?></h6>
                                                 <?php
                                                 $subItems = isset($item['submenu']) ? $item['submenu'] : [];
                                                 foreach ($subItems as $sub):
@@ -93,12 +93,12 @@
                                                 <?php endforeach; ?>
                                             </div>
                                             <div class="col-md-4">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php _e('Featured'); ?></h6>
+                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Featured'); ?></h6>
                                                 <a class="dropdown-item" href="/featured-properties"><i class="fas fa-star me-2"></i>Featured</a>
                                                 <a class="dropdown-item" href="/properties?status=new"><i class="fas fa-sparkles me-2"></i>New Launch</a>
                                             </div>
                                             <div class="col-md-4">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php _e('Price Range'); ?></h6>
+                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Price Range'); ?></h6>
                                                 <a class="dropdown-item" href="/properties?price=0-50"><i class="fas fa-indian-rupee-sign me-2"></i>0 - 50L</a>
                                                 <a class="dropdown-item" href="/properties?price=50-100"><i class="fas fa-indian-rupee-sign me-2"></i>50L - 1Cr</a>
                                                 <a class="dropdown-item" href="/properties?price=100+"><i class="fas fa-indian-rupee-sign me-2"></i>1Cr+</a>
@@ -111,7 +111,7 @@
                                     <li class="px-3 py-2">
                                         <div class="row g-0">
                                             <div class="col-md-6">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php _e('Browse'); ?></h6>
+                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Browse'); ?></h6>
                                                 <?php
                                                 $plotsMenu = $nav->getPlotsSubmenu();
                                                 foreach ($plotsMenu as $sub):
@@ -129,7 +129,7 @@
                                                 <?php endforeach; ?>
                                             </div>
                                             <div class="col-md-6">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php _e('Popular Colonies'); ?></h6>
+                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('Popular Colonies'); ?></h6>
                                                 <?php foreach ($nav->getAllProjects() as $proj): ?>
                                                     <?php $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name'])); ?>
                                                     <a class="dropdown-item" href="/colony/<?php echo $slug; ?>/plots">
@@ -145,7 +145,7 @@
                                     <li class="px-3 py-2">
                                         <div class="row g-0">
                                             <div class="col-12">
-                                                <h6 class="text-uppercase small text-muted mb-2"><?php _e('By Location'); ?></h6>
+                                                <h6 class="text-uppercase small text-muted mb-2"><?php echo __('By Location'); ?></h6>
                                                 <?php foreach ($nav->getProjectLocations() as $loc): ?>
                                                     <a class="dropdown-item d-flex justify-content-between"
                                                        href="/projects?location=<?php echo urlencode(strtolower($loc['name'])); ?>">

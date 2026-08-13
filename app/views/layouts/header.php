@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
-require_once __DIR__ . '/../../Helpers/NavigationHelper.php';
 
 // Load site settings from DB (cached in-process)
 if (!isset($GLOBALS['_site_settings_cache'])) {

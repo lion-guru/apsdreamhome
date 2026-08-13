@@ -12,6 +12,8 @@
  *   <?php foreach ($nav->getDesktopNavItems() as $item): ?> …
  */
 
+namespace App\Helpers;
+
 require_once __DIR__ . '/TranslationHelper.php';
 
 class NavigationHelper
@@ -62,7 +64,7 @@ class NavigationHelper
                 $pdo = \App\Core\Database\Database::getInstance()->getPdo();
                 $rows = $pdo->query(
                     "SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND is_active = 1"
-                )->fetchAll(PDO::FETCH_KEY_PAIR);
+                )->fetchAll(\PDO::FETCH_KEY_PAIR);
                 $this->siteSettings = $rows ?: [];
             } catch (\Exception $e) {
             }
@@ -297,7 +299,7 @@ class NavigationHelper
                     LEFT JOIN states s ON d.state_id = s.id
                     WHERE c.is_active = 1
                     ORDER BY d.name, c.name";
-            $projects = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            $projects = $db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($projects as $p) {
                 $district = ucfirst(strtolower($p['district'] ?? 'Other'));
