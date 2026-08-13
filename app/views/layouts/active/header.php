@@ -81,7 +81,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                                     <?php foreach ($item['submenu'] as $sub): ?>
                                         <li>
                                             <a class="dropdown-item"
-                                               href="<?php echo $nav->baseUrl($sub['url'] ?? '#'); ?>">
+                                               href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
                                                 <?php echo __($sub['label']); ?>
                                             </a>
@@ -92,7 +92,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                         <?php else: ?>
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-warning fw-bold' : ''; ?>"
-                                   href="<?php echo $nav->baseUrl($item['url'] ?? '#'); ?>">
+                                   href="<?php echo BASE_URL . rtrim('/' . ltrim($item['url'] ?? '#', '/'), ''); ?>">
                                     <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
                                     <?php echo __($item['label']); ?>
                                 </a>

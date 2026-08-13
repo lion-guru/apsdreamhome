@@ -112,11 +112,10 @@ $supportedRoles = [
         .role-link strong{color:#1e293b;font-size:.7rem;display:block}
         .role-link span{color:#94a3b8;font-size:.6rem;line-height:1.2}
 
-        /* Social login placeholders */
+        /* Social login - wired to Air Login */
         .social-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem}
-        .social-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:.8rem;color:#475569;font-weight:500;font-family:inherit;transition:all .2s}
-        .social-btn:hover{border-color:#0d9488;background:#f0fdfa}
-        .social-btn i{font-size:16px}
+        .social-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:.8rem;color:#475569;font-weight:500;font-family:inherit;text-decoration:none;transition:all .2s}
+        .social-btn:hover{border-color:#0d9488;background:#f0fdfa;color:#0d9488}
 
          @media(max-width:900px){
             .login-wrapper{flex-direction:column}

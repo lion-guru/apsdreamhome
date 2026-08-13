@@ -33,6 +33,12 @@ _153. **Use project's `__()` not WordPress's `_e()`** — The translation functi
 
 _154. **Autoloader conflicts with `require_once`** — If a class is in a registered namespace (like `App\Helpers\NavigationHelper`), the autoloader will load it automatically — don't use `require_once` in the view file. Double-loading causes "Cannot declare class" fatal errors.
 
+_155. **Two header files for public pages** — `base.php` includes `active/header.php` for premium pages (`$isPremiumPage=true`) and `header.php` for standard pages. The `active/header.php` was using `$site['nav_json']` (undefined variable) which returned `[]`, breaking all dropdown submenus. Fix: Replace with `NavigationHelper::getDesktopNavItems()` which provides proper submenu arrays with URLs, icons, and labels. The mobile drawer was already correctly using NavigationHelper.
+
+_156. **Social login buttons should wire to Air Login** — Google and Phone social buttons on `core_login.php` were disabled ("coming soon"). Fixed: Google button links to `/auth/air-login?method=email`, Phone button links to `/auth/air-login?method=phone`. The `air_login.php` view now detects the `method` parameter and adjusts the label/placeholder accordingly (email, phone, or dual mode). Partial Google OAuth2 integration deferred to future — email Air Login provides the same passwordless UX.
+
+_157. **Mobile form zoom prevention** — iOS Safari zooms in on `<input>` focus if `font-size < 16px`. Fix: add `input[type="email"], input[type="tel"], input[type="text"] { font-size: 16px !important; }` and ensure all inputs have explicit 16px font size on mobile via `@media(max-width:480px)` rules. Also stack role links and social buttons to single column on small screens.
+
 ### Session 76 Final Status
 - **153/153 E2E tests PASS** — zero regressions after all fixes
 - Debug APK v1.2.0 (239.7 MB) built and deployed to `public/downloads/apsdreamhome.apk`
