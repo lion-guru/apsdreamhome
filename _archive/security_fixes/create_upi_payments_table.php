@@ -32,4 +32,4 @@ CREATE TABLE IF NOT EXISTS upi_payments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 ");
 
-echo "upi_payments table created/verified\n";
+echo "upi_payments table created/verified\n";?>

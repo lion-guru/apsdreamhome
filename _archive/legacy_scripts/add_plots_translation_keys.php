@@ -41,9 +41,9 @@ $enKeys = [
 ];
 
 $hiKeys = [
-    'nav_plots' => 'प्लॉट्स',
-    'plots_title' => 'उपलब्ध प्लॉट्स',
+    'nav_plots' => 'à¤ªà¥�à¤²à¥‰à¤Ÿà¥�à¤¸',
+    'plots_title' => 'à¤‰à¤ªà¤²à¤¬à¥�à¤§ à¤ªà¥�à¤²à¥‰à¤Ÿà¥�à¤¸',
 ];
 
 addTranslationKeys($enFile, $enKeys);
-addTranslationKeys($hiFile, $hiKeys);
+addTranslationKeys($hiFile, $hiKeys);?>

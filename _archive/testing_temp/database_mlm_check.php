@@ -49,14 +49,14 @@ try {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $totalCommission = 0;
         foreach ($rows as $r) {
-            echo "  Type: " . str_pad($r['commission_type'], 25) . " | Count: " . str_pad($r['count'], 5) . " | Total: ₹" . number_format($r['total'], 2) . "\n";
+            echo "  Type: " . str_pad($r['commission_type'], 25) . " | Count: " . str_pad($r['count'], 5) . " | Total: â‚¹" . number_format($r['total'], 2) . "\n";
             $totalCommission += $r['total'];
         }
-        echo "  TOTAL COMMISSION DISTRIBUTED: ₹" . number_format($totalCommission, 2) . "\n";
+        echo "  TOTAL COMMISSION DISTRIBUTED: â‚¹" . number_format($totalCommission, 2) . "\n";
     } catch (Exception $e) {
         echo "Error reading mlm_commission_ledger: " . $e->getMessage() . "\n";
     }
 
 } catch (Exception $e) {
     echo "Fatal Error: " . $e->getMessage() . "\n";
-}
+}?>

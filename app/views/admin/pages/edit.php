@@ -29,7 +29,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Page Content (HTML)</label>
-                            <textarea name="content" id="pageContent" class="form-control" rows="20" style="font-family: monospace;"><?= htmlspecialchars($page['content'] ?? '') ?></textarea>
+                            <textarea name="content" id="pageContent" class="form-control" rows="20" class="style-14708"><?= htmlspecialchars($page['content'] ?? '') ?></textarea>
                             <div class="form-text">You can use HTML tags. For rich editing, we recommend using the source view.</div>
                         </div>
                         <div class="row mb-3">

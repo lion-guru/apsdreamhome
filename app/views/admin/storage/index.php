@@ -16,7 +16,7 @@ $localCount = (int) ($info['local_count'] ?? 0);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storage Gateways - APS Dream Home</title>
-    <link rel="stylesheet" href="<?= $base ?>/assets/admin/css/admin.css">
+    <link rel="stylesheet" href="<?= $base ?>/assets/admin/css/admin.min.css">
     <style>
         .storage-card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:20px; margin-bottom:16px; }
         .storage-card h3 { margin:0 0 12px 0; font-size:1.15rem; display:flex; align-items:center; gap:8px; }
@@ -41,11 +41,11 @@ $localCount = (int) ($info['local_count'] ?? 0);
     </style>
 </head>
 <body>
-<div class="admin-wrap" style="display:flex; min-height:100vh;">
+<div class="admin-wrap" class="style-32224">
     <?php include __DIR__ . '/../layouts/sidebar.php'; ?>
-    <main style="flex:1; padding:24px; background:#f9fafb;">
-        <h1 style="margin:0 0 8px 0;">Storage Gateways</h1>
-        <p style="color:#6b7280; margin:0 0 20px 0;">Active storage driver + S3 configuration status.</p>
+    <main class="style-10864">
+        <h1 class="style-38351">Storage Gateways</h1>
+        <p class="style-55261">Active storage driver + S3 configuration status.</p>
 
         <?php if (!empty($flash['success'])): ?>
             <div class="alert alert-success"><?= htmlspecialchars($flash['success']) ?></div>
@@ -72,12 +72,12 @@ $localCount = (int) ($info['local_count'] ?? 0);
                 <div class="k">Resolved driver</div><div class="v"><?= htmlspecialchars($driver) ?></div>
                 <div class="k">Driver switch</div>
                 <div class="v">
-                    <form method="post" action="<?= $base ?>/admin/storage/switch" style="display:inline;">
+                    <form method="post" action="<?= $base ?>/admin/storage/switch" class="style-35851">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="driver" value="local">
                         <button class="btn btn-secondary" type="submit" <?= $info['configured_driver'] === 'local' ? 'disabled' : '' ?>>Use Local</button>
                     </form>
-                    <form method="post" action="<?= $base ?>/admin/storage/switch" style="display:inline;">
+                    <form method="post" action="<?= $base ?>/admin/storage/switch" class="style-35851">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="driver" value="s3">
                         <button class="btn btn-secondary" type="submit" <?= $info['configured_driver'] === 's3' ? 'disabled' : '' ?>>Use S3</button>
@@ -103,15 +103,15 @@ $localCount = (int) ($info['local_count'] ?? 0);
                     <div class="k">URL expiry (min)</div><div class="v"><?= (int) $info['s3_url_expiry'] ?></div>
                 </div>
                 <div class="actions">
-                    <form method="post" action="<?= $base ?>/admin/storage/test" style="display:inline;">
+                    <form method="post" action="<?= $base ?>/admin/storage/test" class="style-35851">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button class="btn" type="submit">Test Connection</button>
                     </form>
                     <a class="btn btn-secondary" href="<?= $base ?>/admin/storage/list?prefix=&limit=10" target="_blank">View Bucket (first 10)</a>
                 </div>
             <?php else: ?>
-                <p style="color:#991b1b; margin:8px 0;">AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_BUCKET must be set in <code>.env</code> and <code>STORAGE_DRIVER=s3</code>.</p>
-                <pre style="background:#f3f4f6; padding:10px; border-radius:4px; font-size:.82rem;">STORAGE_DRIVER=s3
+                <p class="style-57887">AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_BUCKET must be set in <code>.env</code> and <code>STORAGE_DRIVER=s3</code>.</p>
+                <pre class="style-17804">STORAGE_DRIVER=s3
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=ap-south-1

@@ -4,7 +4,7 @@ $recent = $recent_activity ?? [];
 $cashFlow = $cash_flow_chart ?? [];
 $pipeline = $lead_pipeline_chart ?? [];
 $updated = $updated_at ?? date('d M Y, h:i A');
-$fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
+$fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
 ?>
 
 <style>
@@ -90,133 +90,133 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 </div>
 
 <!-- Module KPI Cards -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:24px">
-    <div class="erp-module-card mc-land scroll-reveal" style="animation-delay:0ms">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+<div class="style-18727">
+    <div class="erp-module-card mc-land scroll-reveal" class="style-80893">
+        <div class="style-21882">
             <div class="mc-icon icon-land"><i class="fas fa-map-marked-alt"></i></div>
-            <div class="mc-label" style="color:#10b981">Module 1: Land</div>
+            <div class="mc-label" class="style-2154">Module 1: Land</div>
         </div>
         <div class="mc-stats">
             <div><div class="mc-val"><?= (int)($s['land_active_leads'] ?? 0) ?></div><div class="mc-lbl">Active Leads</div></div>
-            <div style="text-align:right"><div class="mc-val" style="font-size:1.4rem"><?= (int)($s['land_acquisitions'] ?? 0) ?></div><div class="mc-lbl">Acquisitions</div></div>
+            <div class="style-59292"><div class="mc-val" class="style-88257"><?= (int)($s['land_acquisitions'] ?? 0) ?></div><div class="mc-lbl">Acquisitions</div></div>
         </div>
     </div>
 
-    <div class="erp-module-card mc-sales scroll-reveal" style="animation-delay:60ms">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <div class="erp-module-card mc-sales scroll-reveal" class="style-2970">
+        <div class="style-21882">
             <div class="mc-icon icon-sales"><i class="fas fa-chart-line"></i></div>
-            <div class="mc-label" style="color:#3b82f6">Module 2: Sales</div>
+            <div class="mc-label" class="style-64047">Module 2: Sales</div>
         </div>
         <div class="mc-stats">
             <div><div class="mc-val"><?= (int)($s['sales_active_bookings'] ?? 0) ?></div><div class="mc-lbl">Active Bookings</div></div>
-            <div style="text-align:right"><div class="mc-val" style="font-size:1.2rem"><?= $fmt($s['sales_booking_value'] ?? 0) ?></div><div class="mc-lbl">Total Value</div></div>
+            <div class="style-59292"><div class="mc-val" class="style-27526"><?= $fmt($s['sales_booking_value'] ?? 0) ?></div><div class="mc-lbl">Total Value</div></div>
         </div>
     </div>
 
-    <div class="erp-module-card mc-money scroll-reveal" style="animation-delay:120ms">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <div class="erp-module-card mc-money scroll-reveal" class="style-42587">
+        <div class="style-21882">
             <div class="mc-icon icon-money"><i class="fas fa-hand-holding-usd"></i></div>
-            <div class="mc-label" style="color:#14b8a6">Module 3: Money</div>
+            <div class="mc-label" class="style-92996">Module 3: Money</div>
         </div>
         <div class="mc-stats">
-            <div><div class="mc-val" style="color:#10b981;font-size:1.3rem"><?= $fmt($s['money_today_collections'] ?? 0) ?></div><div class="mc-lbl">Today In</div></div>
-            <div style="text-align:right"><div class="mc-val" style="color:#ef4444;font-size:1.3rem"><?= $fmt($s['money_today_payments'] ?? 0) ?></div><div class="mc-lbl">Today Out</div></div>
+            <div><div class="mc-val" class="style-63303"><?= $fmt($s['money_today_collections'] ?? 0) ?></div><div class="mc-lbl">Today In</div></div>
+            <div class="style-59292"><div class="mc-val" class="style-87593"><?= $fmt($s['money_today_payments'] ?? 0) ?></div><div class="mc-lbl">Today Out</div></div>
         </div>
     </div>
 
-    <div class="erp-module-card mc-mlm scroll-reveal" style="animation-delay:180ms">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <div class="erp-module-card mc-mlm scroll-reveal" class="style-13180">
+        <div class="style-21882">
             <div class="mc-icon icon-mlm"><i class="fas fa-sitemap"></i></div>
-            <div class="mc-label" style="color:#f59e0b">Module 4: MLM</div>
+            <div class="mc-label" class="style-62735">Module 4: MLM</div>
         </div>
         <div class="mc-stats">
             <div><div class="mc-val"><?= (int)($s['mlm_commissions_paid'] ?? 0) ?></div><div class="mc-lbl">Paid (MTD)</div></div>
-            <div style="text-align:right"><div class="mc-val" style="color:#ef4444"><?= (int)($s['mlm_pending_payouts'] ?? 0) ?></div><div class="mc-lbl">Pending</div></div>
+            <div class="style-59292"><div class="mc-val" class="style-78822"><?= (int)($s['mlm_pending_payouts'] ?? 0) ?></div><div class="mc-lbl">Pending</div></div>
         </div>
     </div>
 
-    <div class="erp-module-card mc-backoffice scroll-reveal" style="animation-delay:240ms">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <div class="erp-module-card mc-backoffice scroll-reveal" class="style-68814">
+        <div class="style-21882">
             <div class="mc-icon icon-backoffice"><i class="fas fa-building"></i></div>
-            <div class="mc-label" style="color:#ef4444">Module 5: Backoffice</div>
+            <div class="mc-label" class="style-78822">Module 5: Backoffice</div>
         </div>
         <div class="mc-stats">
             <div><div class="mc-val"><?= (int)($s['backoffice_active_leads'] ?? 0) ?></div><div class="mc-lbl">Active Leads</div></div>
-            <div style="text-align:right"><div class="mc-val"><?= (int)($s['backoffice_present_today'] ?? 0) ?></div><div class="mc-lbl">Present Today</div></div>
+            <div class="style-59292"><div class="mc-val"><?= (int)($s['backoffice_present_today'] ?? 0) ?></div><div class="mc-lbl">Present Today</div></div>
         </div>
     </div>
 </div>
 
 <!-- EMI Dunning Alerts -->
 <?php if (($s['emi_overdue_count'] ?? 0) > 0): ?>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:24px">
-    <div class="erp-alert-card" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border:1.5px solid #fecaca">
-        <div class="alert-icon" style="background:#fee2e2;color:#dc2626"><i class="fas fa-exclamation-circle"></i></div>
+<div class="style-73917">
+    <div class="erp-alert-card" class="style-16457">
+        <div class="alert-icon" class="style-11364"><i class="fas fa-exclamation-circle"></i></div>
         <div class="alert-content">
-            <div class="alert-val" style="color:#dc2626"><?= (int)($s['emi_overdue_count'] ?? 0) ?></div>
-            <div class="alert-lbl" style="color:#991b1b">Overdue Installments</div>
+            <div class="alert-val" class="style-51061"><?= (int)($s['emi_overdue_count'] ?? 0) ?></div>
+            <div class="alert-lbl" class="style-98858">Overdue Installments</div>
         </div>
-        <a href="<?= BASE_URL ?>/admin/finance/penalties" class="alert-link" style="background:#fee2e2;color:#dc2626">View <i class="fas fa-arrow-right ms-1"></i></a>
+        <a href="<?= BASE_URL ?>/admin/finance/penalties" class="alert-link" class="style-11364">View <i class="fas fa-arrow-right ms-1"></i></a>
     </div>
-    <div class="erp-alert-card" style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border:1.5px solid #fecaca">
-        <div class="alert-icon" style="background:#fee2e2;color:#dc2626"><i class="fas fa-rupee-sign"></i></div>
+    <div class="erp-alert-card" class="style-16457">
+        <div class="alert-icon" class="style-11364"><i class="fas fa-rupee-sign"></i></div>
         <div class="alert-content">
-            <div class="alert-val" style="color:#dc2626"><?= $fmt($s['emi_overdue_amount'] ?? 0) ?></div>
-            <div class="alert-lbl" style="color:#991b1b">Overdue Amount</div>
-        </div>
-    </div>
-    <div class="erp-alert-card" style="background:linear-gradient(135deg,#fffbeb,#fef9c3);border:1.5px solid #fed7aa">
-        <div class="alert-icon" style="background:#fef3c7;color:#ea580c"><i class="fas fa-gavel"></i></div>
-        <div class="alert-content">
-            <div class="alert-val" style="color:#ea580c"><?= $fmt($s['emi_total_penalties'] ?? 0) ?></div>
-            <div class="alert-lbl" style="color:#9a3412">Penalties Accrued</div>
+            <div class="alert-val" class="style-51061"><?= $fmt($s['emi_overdue_amount'] ?? 0) ?></div>
+            <div class="alert-lbl" class="style-98858">Overdue Amount</div>
         </div>
     </div>
-    <div class="erp-alert-card" style="background:linear-gradient(135deg,#faf5ff,#f3e8ff);border:1.5px solid #99f6e4">
-        <div class="alert-icon" style="background:#ede9fe;color:#0f766e"><i class="fas fa-user-slash"></i></div>
+    <div class="erp-alert-card" class="style-14265">
+        <div class="alert-icon" class="style-35274"><i class="fas fa-gavel"></i></div>
         <div class="alert-content">
-            <div class="alert-val" style="color:#0f766e"><?= (int)($s['emi_defaulted_count'] ?? 0) ?></div>
-            <div class="alert-lbl" style="color:#5b21b6">Defaulted Bookings</div>
+            <div class="alert-val" class="style-91406"><?= $fmt($s['emi_total_penalties'] ?? 0) ?></div>
+            <div class="alert-lbl" class="style-94711">Penalties Accrued</div>
+        </div>
+    </div>
+    <div class="erp-alert-card" class="style-53605">
+        <div class="alert-icon" class="style-47041"><i class="fas fa-user-slash"></i></div>
+        <div class="alert-content">
+            <div class="alert-val" class="style-69871"><?= (int)($s['emi_defaulted_count'] ?? 0) ?></div>
+            <div class="alert-lbl" class="style-3510">Defaulted Bookings</div>
         </div>
     </div>
 </div>
 <?php endif; ?>
 
 <!-- Quick Actions + Activity -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+<div class="style-69948">
     <!-- Quick Actions -->
-    <div style="background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.04);overflow:hidden">
-        <div style="padding:18px 24px;border-bottom:1px solid #f1f5f9">
-            <h6 style="margin:0;font-weight:700;color:#1e293b"><i class="fas fa-bolt me-2" style="color:#f59e0b"></i>Quick Actions</h6>
+    <div class="style-87107">
+        <div class="style-52154">
+            <h6 class="style-75784"><i class="fas fa-bolt me-2" class="style-62735"></i>Quick Actions</h6>
         </div>
-        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+        <div class="style-13726">
             <a href="<?= BASE_URL ?>/admin/land-inventory/leads" class="erp-quick-action">
-                <div class="qa-icon" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:#10b981"><i class="fas fa-map-marked-alt"></i></div>
+                <div class="qa-icon" class="style-28848"><i class="fas fa-map-marked-alt"></i></div>
                 <div class="qa-text"><div class="qa-title">Land Inventory</div><div class="qa-desc">Leads, acquisitions & mapping</div></div>
                 <i class="fas fa-chevron-right qa-arrow"></i>
             </a>
             <a href="<?= BASE_URL ?>/admin/sales/bookings" class="erp-quick-action">
-                <div class="qa-icon" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#3b82f6"><i class="fas fa-chart-line"></i></div>
+                <div class="qa-icon" class="style-54968"><i class="fas fa-chart-line"></i></div>
                 <div class="qa-text"><div class="qa-title">Sales Bookings</div><div class="qa-desc">Bookings, EMI & commissions</div></div>
                 <i class="fas fa-chevron-right qa-arrow"></i>
             </a>
-            <a href="<?= BASE_URL ?>/admin/finance/penalties" class="erp-quick-action" <?php if (($s['emi_overdue_count'] ?? 0) > 0) echo 'style="border-color:#fecaca;background:#fffcfc;"'; ?>>
-                <div class="qa-icon" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);color:#ef4444"><i class="fas fa-exclamation-triangle"></i></div>
+            <a href="<?= BASE_URL ?>/admin/finance/penalties" class="erp-quick-action" <?php if (($s['emi_overdue_count'] ?? 0) > 0) echo 'class="style-57175"'; ?>>
+                <div class="qa-icon" class="style-97392"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="qa-text"><div class="qa-title">EMI Dunning</div><div class="qa-desc"><?= ($s['emi_overdue_count'] ?? 0) ?> overdue installments</div></div>
                 <i class="fas fa-chevron-right qa-arrow"></i>
             </a>
             <a href="<?= BASE_URL ?>/admin/finance/cash-book" class="erp-quick-action">
-                <div class="qa-icon" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);color:#14b8a6"><i class="fas fa-wallet"></i></div>
+                <div class="qa-icon" class="style-56789"><i class="fas fa-wallet"></i></div>
                 <div class="qa-text"><div class="qa-title">Finance Hub</div><div class="qa-desc">Cash book, cheques, TDS & GST</div></div>
                 <i class="fas fa-chevron-right qa-arrow"></i>
             </a>
             <a href="<?= BASE_URL ?>/admin/mlm/commissions" class="erp-quick-action">
-                <div class="qa-icon" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#f59e0b"><i class="fas fa-sitemap"></i></div>
+                <div class="qa-icon" class="style-14896"><i class="fas fa-sitemap"></i></div>
                 <div class="qa-text"><div class="qa-title">MLM Network</div><div class="qa-desc">Commissions, payouts & tree</div></div>
                 <i class="fas fa-chevron-right qa-arrow"></i>
             </a>
             <a href="<?= BASE_URL ?>/admin/backoffice" class="erp-quick-action">
-                <div class="qa-icon" style="background:linear-gradient(135deg,#f8fafc,#e2e8f0);color:#64748b"><i class="fas fa-briefcase"></i></div>
+                <div class="qa-icon" class="style-58592"><i class="fas fa-briefcase"></i></div>
                 <div class="qa-text"><div class="qa-title">Backoffice Ops</div><div class="qa-desc">Attendance, leaves & payslips</div></div>
                 <i class="fas fa-chevron-right qa-arrow"></i>
             </a>
@@ -224,16 +224,16 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 
     <!-- Recent Activity -->
-    <div style="background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.04);overflow:hidden">
-        <div style="padding:18px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between">
-            <h6 style="margin:0;font-weight:700;color:#1e293b"><i class="fas fa-clock me-2" style="color:#3b82f6"></i>Recent Activity</h6>
-            <span style="font-size:0.72rem;color:#94a3b8">Last 10 entries</span>
+    <div class="style-87107">
+        <div class="style-81894">
+            <h6 class="style-75784"><i class="fas fa-clock me-2" class="style-64047"></i>Recent Activity</h6>
+            <span class="style-42122">Last 10 entries</span>
         </div>
-        <div style="padding:12px 20px;max-height:420px;overflow-y:auto">
+        <div class="style-24350">
             <?php if (empty($recent)): ?>
-                <div style="text-align:center;padding:32px 0;color:#94a3b8">
-                    <i class="fas fa-inbox fa-2x mb-2" style="color:#e2e8f0"></i>
-                    <p style="margin:0;font-size:0.85rem">No recent activity found.</p>
+                <div class="style-47612">
+                    <i class="fas fa-inbox fa-2x mb-2" class="style-91271"></i>
+                    <p class="style-15051">No recent activity found.</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($recent as $item): ?>
@@ -245,14 +245,14 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
                         $st = htmlspecialchars($item['status'] ?? '');
                     ?>
                     <div class="erp-activity-item">
-                        <span class="ai-badge" style="<?= $src === 'finance' ? 'background:#f5f3ff;color:#0f766e' : 'background:#ecfdf5;color:#059669' ?>"><?= $src === 'finance' ? 'FIN' : 'OPS' ?></span>
-                        <div style="flex:1;min-width:0">
+                        <span class="ai-badge" class="style-64486"><?= $src === 'finance' ? 'FIN' : 'OPS' ?></span>
+                        <div class="style-61884">
                             <div class="ai-type"><?= $type ?></div>
                             <div class="ai-desc"><?= $desc ?></div>
                         </div>
                         <div class="ai-date"><?= $date ?></div>
                         <?php if ($st): ?>
-                            <span style="padding:2px 8px;border-radius:6px;font-size:0.6rem;background:#f8fafc;color:#64748b;font-weight:600"><?= $st ?></span>
+                            <span class="style-69175"><?= $st ?></span>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -262,16 +262,16 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 </div>
 
 <!-- Charts -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+<div class="style-69948">
     <div class="erp-chart-card">
         <div class="chart-header">
-            <h6><i class="fas fa-chart-bar me-2" style="color:#10b981"></i>Cash Flow (Last 7 Days)</h6>
+            <h6><i class="fas fa-chart-bar me-2" class="style-2154"></i>Cash Flow (Last 7 Days)</h6>
         </div>
         <div class="chart-body"><canvas id="cashFlowChart"></canvas></div>
     </div>
     <div class="erp-chart-card">
         <div class="chart-header">
-            <h6><i class="fas fa-chart-pie me-2" style="color:#14b8a6"></i>Lead Pipeline</h6>
+            <h6><i class="fas fa-chart-pie me-2" class="style-92996"></i>Lead Pipeline</h6>
         </div>
         <div class="chart-body"><canvas id="leadPipelineChart"></canvas></div>
     </div>
@@ -288,11 +288,11 @@ if (($s['dept_high_priority'] ?? 0) > 0) $alerts[] = ['warning', '<strong>High-P
 if (($s['dept_overdue'] ?? 0) > 0) $alerts[] = ['error', '<strong>Overdue Requests:</strong> ' . (int)$s['dept_overdue'] . ' department requests are overdue.', BASE_URL . '/admin/department-requests'];
 ?>
 <?php if (!empty($alerts)): ?>
-<div style="margin-bottom:24px">
+<div class="style-84720">
     <?php foreach ($alerts as [$type, $msg, $url]): ?>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:12px;margin-bottom:8px;background:<?= $type === 'warning' ? 'linear-gradient(135deg,#fffbeb,#fef9c3)' : ($type === 'error' ? 'linear-gradient(135deg,#fef2f2,#fee2e2)' : 'linear-gradient(135deg,#eff6ff,#dbeafe)') ?>;border:1px solid <?= $type === 'warning' ? '#fed7aa' : ($type === 'error' ? '#fca5a5' : '#bfdbfe') ?>">
-            <span style="font-size:0.85rem;color:#1e293b"><?= $msg ?></span>
-            <a href="<?= $url ?>" style="font-size:0.8rem;font-weight:600;color:<?= $type === 'warning' ? '#d97706' : ($type === 'error' ? '#dc2626' : '#2563eb') ?>;text-decoration:none;padding:6px 14px;border-radius:8px;background:<?= $type === 'warning' ? '#fef3c7' : ($type === 'error' ? '#fecaca' : '#dbeafe') ?>;white-space:nowrap">View <i class="fas fa-arrow-right ms-1"></i></a>
+        <div class="style-98615">
+            <span class="style-84233"><?= $msg ?></span>
+            <a href="<?= $url ?>" class="style-86806">View <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
     <?php endforeach; ?>
 </div>
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } } } },
-                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: function(v) { return '₹' + v.toLocaleString(); }, font: { size: 11 } } }, x: { grid: { display: false }, ticks: { font: { size: 11 } } } }
+                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: function(v) { return 'â‚¹' + v.toLocaleString(); }, font: { size: 11 } } }, x: { grid: { display: false }, ticks: { font: { size: 11 } } } }
             }
         });
     }
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     } else {
-        document.getElementById('leadPipelineChart').parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8"><i class="fas fa-chart-pie me-2"></i>No pipeline data available</div>';
+        document.getElementById('leadPipelineChart').parentElement.innerHTML = '<div class="style-76227"><i class="fas fa-chart-pie me-2"></i>No pipeline data available</div>';
     }
 });
 </script>

@@ -137,9 +137,9 @@ try {
     $count = $pdo->query("SELECT COUNT(*) FROM insurance_plans")->fetchColumn();
     if ($count == 0) {
         $pdo->exec("INSERT INTO insurance_plans (plan_code, plan_name, plan_category, description, coverage_amount, premium_monthly, premium_yearly, features, insurer_name, is_featured, display_order) VALUES
-            ('HOME-SHIELD', 'Home Shield Plan', 'home', 'Property + Contents coverage up to ₹1 Cr', 10000000.00, 499.00, 5499.00, '[\"Fire, theft, natural disasters\",\"Personal accident cover\",\"Free annual inspection\"]', 'HDFC ERGO', 1, 1),
-            ('FAMILY-HEALTH', 'Family Health Plan', 'health', 'Cashless treatment up to ₹25 Lakh', 2500000.00, 1299.00, 14299.00, '[\"10,000+ network hospitals\",\"Pre & post hospitalization cover\",\"Free annual health check-up\"]', 'Star Health', 1, 2),
-            ('LIFE-SECURE', 'Life Secure Term Plan', 'term_life', 'Pure protection up to ₹1 Cr cover', 10000000.00, 649.00, 7199.00, '[\"Affordable premium\",\"Tax benefits under 80C\",\"Critical illness rider\"]', 'ICICI Pru', 1, 3),
+            ('HOME-SHIELD', 'Home Shield Plan', 'home', 'Property + Contents coverage up to â‚¹1 Cr', 10000000.00, 499.00, 5499.00, '[\"Fire, theft, natural disasters\",\"Personal accident cover\",\"Free annual inspection\"]', 'HDFC ERGO', 1, 1),
+            ('FAMILY-HEALTH', 'Family Health Plan', 'health', 'Cashless treatment up to â‚¹25 Lakh', 2500000.00, 1299.00, 14299.00, '[\"10,000+ network hospitals\",\"Pre & post hospitalization cover\",\"Free annual health check-up\"]', 'Star Health', 1, 2),
+            ('LIFE-SECURE', 'Life Secure Term Plan', 'term_life', 'Pure protection up to â‚¹1 Cr cover', 10000000.00, 649.00, 7199.00, '[\"Affordable premium\",\"Tax benefits under 80C\",\"Critical illness rider\"]', 'ICICI Pru', 1, 3),
             ('VEHICLE-COVER', 'Comprehensive Vehicle Cover', 'vehicle', 'Zero-dep + engine protect', 800000.00, 399.00, 4399.00, '[\"Zero depreciation\",\"Engine protect\",\"24x7 roadside assistance\"]', 'Bajaj Allianz', 0, 4),
             ('TRAVEL-SAFE', 'Travel Safe Plan', 'travel', 'International travel insurance', 5000000.00, 199.00, 2199.00, '[\"Medical emergency\",\"Trip cancellation\",\"Lost baggage cover\"]', 'TATA AIG', 0, 5)
         ");
@@ -153,7 +153,7 @@ try {
             ('PROP-SIP', 'Property SIP', 'sip', 'Builds corpus for property purchase', 500.00, 12.00, 24, '[\"Builds corpus for property purchase\",\"12% projected annual return\",\"Auto-invests in property fund\"]', 'medium', 1, 1),
             ('RE-FUND', 'Real Estate Fund', 'real_estate_fund', 'REIT-backed investment', 50000.00, 15.00, 36, '[\"REIT-backed investment\",\"Quarterly dividend payouts\",\"Liquidity after 1 year\"]', 'medium', 1, 2),
             ('RECURRING-FD', 'Recurring Deposit', 'recurring_deposit', 'Fixed return 7.5% p.a.', 1000.00, 7.50, 36, '[\"Fixed return: 7.5% p.a.\",\"Tax-saving under 80C\",\"Premature withdrawal allowed\"]', 'low', 0, 3),
-            ('GOLD-SAVER', 'Gold Saver', 'gold', 'Digital gold from ₹100', 100.00, 8.00, 60, '[\"24K pure gold, 999 purity\",\"Insured vault storage\",\"Redeemable as coins/bars\"]', 'low', 0, 4)
+            ('GOLD-SAVER', 'Gold Saver', 'gold', 'Digital gold from â‚¹100', 100.00, 8.00, 60, '[\"24K pure gold, 999 purity\",\"Insured vault storage\",\"Redeemable as coins/bars\"]', 'low', 0, 4)
         ");
         echo "Seeded 4 investment_plans\n";
     }
@@ -161,4 +161,4 @@ try {
     echo "\nAll tables and seed data ready.\n";
 } catch (Throwable $e) {
     echo "ERR: " . $e->getMessage() . "\n";
-}
+}?>

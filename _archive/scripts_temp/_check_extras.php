@@ -29,4 +29,4 @@ try {
     echo "Event types: " . json_encode($r) . "\n";
 } catch (Throwable $e) {
     echo "customer_events error: " . $e->getMessage() . "\n";
-}
+}?>

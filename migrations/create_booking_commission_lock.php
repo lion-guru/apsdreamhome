@@ -31,7 +31,7 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
     $pdo->exec($sql);
-    echo "✓ booking_commission_lock table created\n\n";
+    echo "âœ“ booking_commission_lock table created\n\n";
 
     // Verify table structure
     $columns = $pdo->query("SHOW COLUMNS FROM booking_commission_lock")->fetchAll(PDO::FETCH_ASSOC);
@@ -39,9 +39,9 @@ try {
     foreach ($columns as $col) {
         echo "  - {$col['Field']}: {$col['Type']}\n";
     }
-    echo "\n✓ Migration completed successfully!\n";
+    echo "\nâœ“ Migration completed successfully!\n";
 
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

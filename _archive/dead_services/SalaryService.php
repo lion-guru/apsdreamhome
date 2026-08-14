@@ -105,4 +105,4 @@ class SalaryService
 
         return $pf + $esi + $pt + $tds;
     }
-}
+}?>

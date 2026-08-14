@@ -46,13 +46,14 @@ ob_start();
                   pattern="[A-Za-z0-9]{6,16}"
                   required
                   autofocus
-                  style="letter-spacing: 4px; font-family: 'Courier New', monospace;"
+                  class="style-99197"
                 >
                 <small class="form-text text-muted">Codes are 6-16 characters, letters and numbers (e.g. <code>ABCD2345</code>).</small>
               </div>
 
               <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary btn-lg">
+                <?php echo \App\Helpers\SimpleCaptcha::renderField(); ?>
+<button type="submit" class="btn btn-primary btn-lg">
                   <i class="fas fa-sign-in-alt me-1"></i> Verify Backup Code
                 </button>
                 <a href="<?= BASE_URL ?>/user/two-factor/verify" class="btn btn-outline-secondary">

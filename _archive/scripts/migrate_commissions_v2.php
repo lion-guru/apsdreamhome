@@ -63,4 +63,4 @@ foreach ($legacyEntries as $e) {
     }
 }
 
-echo "Migrated: $migrated, Skipped: $skipped\n";
+echo "Migrated: $migrated, Skipped: $skipped\n";?>

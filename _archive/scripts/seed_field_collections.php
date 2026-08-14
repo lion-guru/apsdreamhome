@@ -14,12 +14,12 @@ try {
     // Check if table exists and has data
     $exists = $pdo->query("SHOW TABLES LIKE 'field_collections'")->fetch();
     if (!$exists) {
-        echo "✗ field_collections table does not exist. Run migration first.\n";
+        echo "âœ— field_collections table does not exist. Run migration first.\n";
         exit(1);
     }
     $count = $pdo->query("SELECT COUNT(*) as c FROM field_collections")->fetch()['c'];
     if ($count > 0) {
-        echo "✓ field_collections already has $count rows. Skipping seed.\n";
+        echo "âœ“ field_collections already has $count rows. Skipping seed.\n";
         exit(0);
     }
     // Grab first associate and agent user IDs
@@ -42,8 +42,8 @@ try {
         $stmt->execute([$agentId, 'agent', 'Priya Sharma', '9876543213', 100000.00, 'online', 'Online transfer for plot B-202']);
         $seeded++;
     }
-    echo "✓ Seeded $seeded field collection records.\n";
+    echo "âœ“ Seeded $seeded field collection records.\n";
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

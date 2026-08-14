@@ -1,4 +1,4 @@
-﻿<?php
+Ã¯Â»Â¿<?php
 /**
  * Wrap ALL 10 component view files with __() i18n calls.
  * Run: php scripts/wrap_component_i18n.php
@@ -152,7 +152,7 @@ $count += wrapFile($componentsDir . '/chatbot_widget.php', [
 
 // 10. mobile-header.php
 $count += wrapFile($componentsDir . '/mobile-header.php', [
-    'alt="APS Dream Home" style="height: 32px;"' => 'alt="' . th('aps_dream_home', 'APS Dream Home') . '" style="height: 32px;"',
+    'alt="APS Dream Home" class="style-2609"' => 'alt="' . th('aps_dream_home', 'APS Dream Home') . '" class="style-2609"',
     '<span class="text-lg font-bold text-primary">APS Dream Home</span>' => '<span class="text-lg font-bold text-primary">' . t('aps_dream_home', 'APS Dream Home') . '</span>',
     '>Profile</a>' => '>' . t('component_profile', 'Profile') . '</a>',
     '>Login</a>' => '>' . t('component_login', 'Login') . '</a>',
@@ -173,4 +173,4 @@ $count += wrapFile($componentsDir . '/mobile-header.php', [
     '>Payroll</a>' => '>' . t('component_payroll', 'Payroll') . '</a>',
 ]);
 
-echo "\n=== Component i18n wrapping complete: $count files modified ===\n";
+echo "\n=== Component i18n wrapping complete: $count files modified ===\n";?>

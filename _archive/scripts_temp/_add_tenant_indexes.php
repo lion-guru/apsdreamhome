@@ -15,4 +15,4 @@ foreach ($tables as $t) {
         }
     }
 }
-echo "Done.\n";
+echo "Done.\n";?>

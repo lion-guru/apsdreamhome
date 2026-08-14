@@ -11,4 +11,4 @@ foreach ($roles as $role) {
     } else {
         echo "$role: NOT FOUND\n";
     }
-}
+}?>

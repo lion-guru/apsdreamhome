@@ -21,4 +21,4 @@ foreach ($files as $f) {
         file_put_contents($f, $newC);
         echo "Updated $f ($count occurrences)\n";
     }
-}
+}?>

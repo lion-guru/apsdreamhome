@@ -51,7 +51,7 @@ $channels = $channels ?? [];
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="mb-1"><i class="fas fa-user-plus me-2 text-primary"></i>Smart Registration Analytics</h4>
-            <small class="text-muted">Phone-first registration flow — abandoned recovery dashboard</small>
+            <small class="text-muted">Phone-first registration flow â€” abandoned recovery dashboard</small>
         </div>
         <div>
             <button class="btn btn-sm btn-outline-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
@@ -61,38 +61,38 @@ $channels = $channels ?? [];
     <!-- Stat Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-2">
-            <div class="sr-stat-card" style="border-color: #007bff;">
+            <div class="sr-stat-card" class="style-24145">
                 <div class="stat-value text-primary"><?= number_format($total) ?></div>
                 <div class="stat-label">Total Sessions</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card" style="border-color: #ffc107;">
+            <div class="sr-stat-card" class="style-18251">
                 <div class="stat-value text-warning"><?= number_format($pendingOtp) ?></div>
                 <div class="stat-label">Pending OTP</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card" style="border-color: #17a2b8;">
+            <div class="sr-stat-card" class="style-92805">
                 <div class="stat-value text-info"><?= number_format($otpSent) ?></div>
                 <div class="stat-label">OTP Sent</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card" style="border-color: #dc3545;">
+            <div class="sr-stat-card" class="style-67614">
                 <div class="stat-value text-danger"><?= number_format($abandoned) ?></div>
                 <div class="stat-label">Abandoned</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card" style="border-color: #28a745;">
+            <div class="sr-stat-card" class="style-17789">
                 <div class="stat-value text-success"><?= number_format($completed) ?></div>
                 <div class="stat-label">Completed</div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="sr-stat-card" style="border-color: #6f42c1;">
-                <div class="stat-value text-purple" style="color:#6f42c1;"><?= $conversionRate ?>%</div>
+            <div class="sr-stat-card" class="style-38203">
+                <div class="stat-value text-purple" class="style-70610"><?= $conversionRate ?>%</div>
                 <div class="stat-label">Conversion Rate</div>
             </div>
         </div>
@@ -117,8 +117,8 @@ $channels = $channels ?? [];
                                     <small class="fw-semibold"><?= ucfirst($r['detected_role'] ?? 'Unknown') ?></small>
                                     <small class="text-muted"><?= $r['c'] ?></small>
                                 </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar" style="width: <?= $maxRole > 0 ? ($r['c'] / $maxRole * 100) : 0 ?>%; background: <?= $roleColors[$r['detected_role']] ?? '#6c757d' ?>;"></div>
+                                <div class="progress" class="style-29939">
+                                    <div class="progress-bar" class="style-70351"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -144,9 +144,9 @@ $channels = $channels ?? [];
                                     <span><span class="sr-channel-badge sr-channel-<?= $ch['otp_channel'] ?>"><?= ucfirst($ch['otp_channel']) ?></span></span>
                                     <small class="text-muted"><?= $ch['c'] ?> sessions</small>
                                 </div>
-                                <div class="progress" style="height: 8px;">
+                                <div class="progress" class="style-31164">
                                     <div class="progress-bar bg-<?= $ch['otp_channel'] === 'whatsapp' ? 'success' : ($ch['otp_channel'] === 'sms' ? 'primary' : 'info') ?>"
-                                         style="width: <?= $maxCh > 0 ? ($ch['c'] / $maxCh * 100) : 0 ?>%;"></div>
+                                         class="style-44924"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -176,8 +176,8 @@ $channels = $channels ?? [];
                                 <small><?= $f[0] ?></small>
                                 <small class="text-muted"><?= number_format($f[1]) ?></small>
                             </div>
-                            <div class="progress" style="height: 10px;">
-                                <div class="progress-bar" style="width: <?= round($f[1] / $maxFunnel * 100) ?>%; background: <?= $f[2] ?>;"></div>
+                            <div class="progress" class="style-92162">
+                                <div class="progress-bar" class="style-30512"></div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -191,7 +191,7 @@ $channels = $channels ?? [];
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h6 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Recent Sessions (Last 50)</h6>
             <div class="d-flex gap-2">
-                <select class="form-select form-select-sm" id="filterStatus" style="width:auto;" onchange="filterSessions()">
+                <select class="form-select form-select-sm" id="filterStatus" class="style-68062" onchange="filterSessions()">
                     <option value="">All Status</option>
                     <option value="pending_otp">Pending OTP</option>
                     <option value="otp_sent">OTP Sent</option>
@@ -201,7 +201,7 @@ $channels = $channels ?? [];
                     <option value="profile_complete">Profile Complete</option>
                     <option value="abandoned">Abandoned</option>
                 </select>
-                <select class="form-select form-select-sm" id="filterChannel" style="width:auto;" onchange="filterSessions()">
+                <select class="form-select form-select-sm" id="filterChannel" class="style-68062" onchange="filterSessions()">
                     <option value="">All Channels</option>
                     <option value="whatsapp">WhatsApp</option>
                     <option value="sms">SMS</option>
@@ -232,9 +232,9 @@ $channels = $channels ?? [];
                             <?php foreach ($sessions as $s): ?>
                                 <tr class="sr-session-row" onclick="location.href='<?= BASE_URL ?>/admin/smart-registration/detail?id=<?= $s['id'] ?>'">
                                     <td>#<?= $s['id'] ?></td>
-                                    <td><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($s['phone'] ?? '—') ?></td>
-                                    <td><small><?= htmlspecialchars($s['email'] ?? '—') ?></small></td>
-                                    <td><span class="sr-channel-badge sr-channel-<?= $s['otp_channel'] ?? 'email' ?>"><?= ucfirst($s['otp_channel'] ?? '—') ?></span></td>
+                                    <td><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($s['phone'] ?? 'â€”') ?></td>
+                                    <td><small><?= htmlspecialchars($s['email'] ?? 'â€”') ?></small></td>
+                                    <td><span class="sr-channel-badge sr-channel-<?= $s['otp_channel'] ?? 'email' ?>"><?= ucfirst($s['otp_channel'] ?? 'â€”') ?></span></td>
                                     <td><span class="sr-status-badge sr-status-<?= $s['registration_status'] ?>"><?= str_replace('_', ' ', $s['registration_status']) ?></span></td>
                                     <td>
                                         <?php if ($s['detected_role']): ?>
@@ -245,21 +245,21 @@ $channels = $channels ?? [];
                                                 <?php endif; ?>
                                             </span>
                                         <?php else: ?>
-                                            <span class="text-muted">—</span>
+                                            <span class="text-muted">â€”</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 4px; width: 60px;">
+                                            <div class="progress flex-grow-1 me-2" class="style-78848">
                                                 <div class="progress-bar bg-<?= ($s['profile_completion_pct'] ?? 0) >= 80 ? 'success' : (($s['profile_completion_pct'] ?? 0) >= 40 ? 'warning' : 'danger') ?>"
-                                                     style="width: <?= $s['profile_completion_pct'] ?? 0 ?>%;"></div>
+                                                     class="style-79680"></div>
                                             </div>
                                             <small><?= $s['profile_completion_pct'] ?? 0 ?>%</small>
                                         </div>
                                     </td>
                                     <td>
                                         <small>
-                                            <?= ($s['followup_count'] ?? 0) > 0 ? $s['followup_count'] . ' sent' : '—' ?>
+                                            <?= ($s['followup_count'] ?? 0) > 0 ? $s['followup_count'] . ' sent' : 'â€”' ?>
                                         </small>
                                     </td>
                                     <td><small class="text-muted"><?= date('d M H:i', strtotime($s['created_at'])) ?></small></td>

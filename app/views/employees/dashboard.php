@@ -140,28 +140,28 @@ foreach ($attendance as $att) {
 <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
         <div class="emp-stat">
-            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #7c2d12, #c2410c);"><i class="fas fa-tasks"></i></div>
+            <div class="emp-stat-icon" class="style-95160"><i class="fas fa-tasks"></i></div>
             <div class="emp-stat-num"><?= $pendingTasks ?></div>
             <div class="emp-stat-label">Pending Tasks</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="emp-stat">
-            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #059669, #10b981);"><i class="fas fa-check-circle"></i></div>
+            <div class="emp-stat-icon" class="style-25636"><i class="fas fa-check-circle"></i></div>
             <div class="emp-stat-num"><?= $completedTasks ?></div>
             <div class="emp-stat-label">Completed</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="emp-stat">
-            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);"><i class="fas fa-calendar-check"></i></div>
+            <div class="emp-stat-icon" class="style-81404"><i class="fas fa-calendar-check"></i></div>
             <div class="emp-stat-num"><?= $attendanceDays ?></div>
             <div class="emp-stat-label">Attendance Days</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="emp-stat">
-            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #d97706, #f59e0b);"><i class="fas fa-history"></i></div>
+            <div class="emp-stat-icon" class="style-11227"><i class="fas fa-history"></i></div>
             <div class="emp-stat-num"><?= $totalActivities ?></div>
             <div class="emp-stat-label">Activities</div>
         </div>
@@ -173,14 +173,14 @@ foreach ($attendance as $att) {
         <div class="emp-card">
             <div class="emp-card-header">
                 <h6><i class="fas fa-tasks me-2"></i>My Tasks</h6>
-                <a href="<?= BASE_URL ?>/employee/tasks" class="small text-decoration-none" style="color:#c2410c;">View All</a>
+                <a href="<?= BASE_URL ?>/employee/tasks" class="small text-decoration-none" class="style-8314">View All</a>
             </div>
             <div class="emp-card-body">
                 <?php if (!empty($tasks)): ?>
                     <?php foreach (array_slice($tasks, 0, 6) as $task): ?>
                         <div class="emp-task-item">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1" style="font-size:0.9rem;"><?= htmlspecialchars($task['title'] ?? 'Untitled Task') ?></h6>
+                                <h6 class="mb-1" class="style-51894"><?= htmlspecialchars($task['title'] ?? 'Untitled Task') ?></h6>
                                 <small class="text-muted">
                                     <?php if (!empty($task['description'])): ?>
                                         <?= htmlspecialchars(mb_strimwidth($task['description'], 0, 60, '...')) ?>
@@ -192,7 +192,7 @@ foreach ($attendance as $att) {
                                     <?= date('M d', strtotime($task['created_at'] ?? 'now')) ?>
                                     <?php if (!empty($task['priority'])): ?>
                                         &middot;
-                                        <span class="text-uppercase fw-bold" style="font-size:0.7rem; color: <?= $task['priority'] === 'high' ? '#dc2626' : ($task['priority'] === 'medium' ? '#d97706' : '#2563eb') ?>;">
+                                        <span class="text-uppercase fw-bold" class="style-537">
                                             <?= $task['priority'] ?>
                                         </span>
                                     <?php endif; ?>
@@ -218,17 +218,17 @@ foreach ($attendance as $att) {
         <div class="emp-card">
             <div class="emp-card-header">
                 <h6><i class="fas fa-history me-2"></i>Recent Activity</h6>
-                <a href="<?= BASE_URL ?>/employee/activities" class="small text-decoration-none" style="color:#c2410c;">View All</a>
+                <a href="<?= BASE_URL ?>/employee/activities" class="small text-decoration-none" class="style-8314">View All</a>
             </div>
             <div class="emp-card-body">
                 <?php if (!empty($activities)): ?>
                     <?php foreach (array_slice($activities, 0, 5) as $activity): ?>
                         <div class="emp-activity-item">
-                            <div class="emp-activity-dot" style="background: linear-gradient(135deg, #7c2d12, #c2410c);">
-                                <i class="fas fa-circle" style="font-size:0.5rem;"></i>
+                            <div class="emp-activity-dot" class="style-95160">
+                                <i class="fas fa-circle" class="style-96543"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <p class="mb-1" style="font-size:0.85rem;"><?= htmlspecialchars($activity['activity'] ?? $activity['description'] ?? 'Activity') ?></p>
+                                <p class="mb-1" class="style-47175"><?= htmlspecialchars($activity['activity'] ?? $activity['description'] ?? 'Activity') ?></p>
                                 <small class="text-muted"><?= date('M d, Y h:i A', strtotime($activity['created_at'] ?? 'now')) ?></small>
                             </div>
                         </div>
@@ -295,14 +295,14 @@ foreach ($attendance as $att) {
                 <div class="d-flex justify-content-between">
                     <?php foreach ($weekDays as $wd): ?>
                         <div class="text-center">
-                            <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;margin:0 auto 4px;background:<?= $wd['checked'] ? '#d1fae5' : '#f1f5f9' ?>;color:<?= $wd['checked'] ? '#059669' : '#94a3b8' ?>;">
+                            <div class="style-89970">
                                 <?php if ($wd['checked']): ?>
                                     <i class="fas fa-check"></i>
                                 <?php else: ?>
                                     <?= strtoupper(substr($wd['day'], 0, 1)) ?>
                                 <?php endif; ?>
                             </div>
-                            <small class="text-muted" style="font-size:0.65rem;"><?= $wd['day'] ?></small>
+                            <small class="text-muted" class="style-56522"><?= $wd['day'] ?></small>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -319,8 +319,8 @@ foreach ($attendance as $att) {
                         <small class="text-muted">Tasks Completed</small>
                         <small class="fw-bold"><?= $completedTasks ?></small>
                     </div>
-                    <div class="progress" style="height:8px;">
-                        <div class="progress-bar" role="progressbar" style="width:<?= ($completedTasks + $pendingTasks) > 0 ? round(($completedTasks / ($completedTasks + $pendingTasks)) * 100) : 0 ?>%;background:linear-gradient(90deg,#16a34a,#10b981);"></div>
+                    <div class="progress" class="style-87912">
+                        <div class="progress-bar" role="progressbar" class="style-95451"></div>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -328,12 +328,12 @@ foreach ($attendance as $att) {
                         <small class="text-muted">Pending Tasks</small>
                         <small class="fw-bold"><?= $pendingTasks ?></small>
                     </div>
-                    <div class="progress" style="height:8px;">
-                        <div class="progress-bar" role="progressbar" style="width:<?= ($completedTasks + $pendingTasks) > 0 ? round(($pendingTasks / ($completedTasks + $pendingTasks)) * 100) : 0 ?>%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div>
+                    <div class="progress" class="style-87912">
+                        <div class="progress-bar" role="progressbar" class="style-32981"></div>
                     </div>
                 </div>
                 <div class="text-center mt-3">
-                    <div class="fw-bold" style="font-size:1.5rem;color:#1e293b;">
+                    <div class="fw-bold" class="style-22309">
                         <?= ($completedTasks + $pendingTasks) > 0 ? round(($completedTasks / ($completedTasks + $pendingTasks)) * 100) : 0 ?>%
                     </div>
                     <small class="text-muted">Completion Rate</small>

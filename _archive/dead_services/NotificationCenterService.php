@@ -94,4 +94,4 @@ class NotificationCenterService
     {
         return $this->notifier->cleanup($days);
     }
-}
+}?>

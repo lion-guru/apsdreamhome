@@ -30,4 +30,4 @@ echo "\nBy category:\n";
 $cats = $pdo->query("SELECT category, COUNT(*) as n FROM _migrations GROUP BY category ORDER BY n DESC");
 foreach ($cats as $c) {
     echo sprintf("  %-15s %d\n", $c['category'], $c['n']);
-}
+}?>

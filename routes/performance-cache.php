@@ -15,4 +15,4 @@ $router->delete('/api/performance-cache/clear', 'PerformanceCacheController@cach
 // Cache stats and monitoring
 $router->get('/api/performance-cache/stats', 'PerformanceCacheController@cacheStats');
 $router->get('/api/performance-cache/dashboard', 'PerformanceCacheController@dashboardStats');
-$router->post('/api/performance-cache/invalidate', 'PerformanceCacheController@invalidateDashboard');
+$router->post('/api/performance-cache/invalidate', 'PerformanceCacheController@invalidateDashboard');?>

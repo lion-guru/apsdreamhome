@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-phone-alt"></i> Telecaller Commissions</h4>
         <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
@@ -17,7 +17,7 @@
                     <?php if (empty($commissions ?? [])): ?>
                     <tr>
                         <td colspan="9" class="text-center py-5">
-                            <i class="fas fa-phone-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <i class="fas fa-phone-alt fa-3x text-muted mb-3" class="style-82835"></i>
                             <h5 class="text-muted">No telecaller commissions yet</h5>
                             <p class="text-muted mb-3">Commissions are calculated automatically when telecallers complete qualifying calls or convert leads.</p>
                         </td>
@@ -40,12 +40,12 @@
                         <td><?= date('d-m-Y', strtotime($c['created_at'])) ?></td>
                         <td>
                             <?php if ($c['status'] == 'pending'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/approve/<?= $c['id'] ?>" style="display:inline" onsubmit="return confirm('Approve commission #<?= $c['id'] ?>?')">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/approve/<?= $c['id'] ?>" class="style-71727" onsubmit="return confirm('Approve commission #<?= $c['id'] ?>?')">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-check"></i></button>
                             </form>
                             <?php elseif ($c['status'] == 'approved'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/pay/<?= $c['id'] ?>" style="display:inline" onsubmit="return confirm('Pay commission #<?= $c['id'] ?>?')">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/pay/<?= $c['id'] ?>" class="style-71727" onsubmit="return confirm('Pay commission #<?= $c['id'] ?>?')">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-money-bill"></i></button>
                             </form>

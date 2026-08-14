@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $plot = $plot ?? [];
 $customers = $customers ?? [];
 $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Installment (12 months)', 'Installment (24 months)', 'Construction Linked'];
@@ -26,14 +26,14 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                         <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Details</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th style="width:140px">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
+                                <tr><th class="style-97126">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
                                 <tr><th>Dimensions</th><td><?= !empty($plot['dimension_label']) ? htmlspecialchars($plot['dimension_label']) : number_format($plot['width_ft'] ?? 0) . 'x' . number_format($plot['length_ft'] ?? 0) . ' ft' ?></td></tr>
                                 <tr><th>Area</th><td><?= number_format($plot['area_sqft'] ?? 0) ?> sqft</td></tr>
-                                <tr><th>Price / sqft</th><td>₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0), 2) ?></td></tr>
-                                <tr><th>Total Price</th><td><strong class="text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
+                                <tr><th>Price / sqft</th><td>â‚¹<?= number_format(floatval($plot['price_per_sqft'] ?? 0), 2) ?></td></tr>
+                                <tr><th>Total Price</th><td><strong class="text-primary">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
                                 <tr><th>Status</th><td><span class="badge bg-<?= $plot['status'] === 'available' ? 'success' : 'warning' ?>"><?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?></span></td></tr>
                                 <tr><th>Facing</th><td><?= htmlspecialchars(ucfirst($plot['facing'] ?? 'N/A')) ?></td></tr>
                             </table></div>
@@ -75,7 +75,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Token Amount (₹) <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-bold">Token Amount (â‚¹) <span class="text-danger">*</span></label>
                                         <input type="number" name="token_amount" class="form-control" min="0" step="0.01" value="<?= min(10000, intval($plot['total_price'] ?? 0) * 0.1) ?>" required>
                                         <div class="form-text">Typically 10% of total price</div>
                                     </div>
@@ -93,7 +93,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Negotiated / Deal Price (₹)</label>
+                                    <label class="form-label fw-bold">Negotiated / Deal Price (â‚¹)</label>
                                     <input type="number" name="negotiated_price" class="form-control" min="0" step="0.01" value="<?= floatval($plot['negotiated_price'] ?? $plot['total_price'] ?? 0) ?>">
                                     <div class="form-text">Leave same as total price if no negotiation</div>
                                 </div>

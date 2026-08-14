@@ -11,4 +11,4 @@ foreach ($newTables as $t) {
     if ($r) { $found++; echo "  [OK] $t\n"; }
     else echo "  [MISSING] $t\n";
 }
-echo "Found: $found / " . count($newTables) . "\n";
+echo "Found: $found / " . count($newTables) . "\n";?>

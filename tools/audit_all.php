@@ -88,4 +88,4 @@ foreach ($urls as $path) {
     echo "$path|$code|$hasDoctype|$hasTitle|$hasSidebar|$hasErrors|$redirect\n";
 }
 
-curl_close($c);
+curl_close($c);?>

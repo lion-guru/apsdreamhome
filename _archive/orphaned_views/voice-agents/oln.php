@@ -45,17 +45,17 @@
     </div>
 
     <!-- Pipeline Kanban -->
-    <div class="row mb-4 flex-nowrap" style="overflow-x:auto;gap:12px;padding-bottom:8px;">
+    <div class="row mb-4 flex-nowrap" class="style-79146">
         <!-- New -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">New</span>
                     <span class="badge bg-primary"><?= $stage_new ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php foreach (array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'new'; }) as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-primary lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-primary lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -82,15 +82,15 @@
         </div>
 
         <!-- Contacted -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Contacted</span>
                     <span class="badge bg-info"><?= $stage_contacted ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php foreach (array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'contacted'; }) as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-info lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-info lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -117,15 +117,15 @@
         </div>
 
         <!-- Qualified -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Qualified</span>
                     <span class="badge bg-success"><?= $stage_qualified ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php foreach (array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'qualified'; }) as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-success lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-success lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -152,16 +152,16 @@
         </div>
 
         <!-- Proposal -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Proposal</span>
                     <span class="badge bg-warning text-dark"><?= $stage_proposal ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php $stageItems = array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'proposal'; }); ?>
                     <?php foreach ($stageItems as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-warning lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-warning lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -186,16 +186,16 @@
         </div>
 
         <!-- Negotiation -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Negotiation</span>
                     <span class="badge bg-secondary"><?= $stage_negotiation ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php $stageItems = array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'negotiation'; }); ?>
                     <?php foreach ($stageItems as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-secondary lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-secondary lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -220,16 +220,16 @@
         </div>
 
         <!-- Nurture -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Nurture</span>
                     <span class="badge bg-warning"><?= $stage_nurture ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php $stageItems = array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'nurture'; }); ?>
                     <?php foreach ($stageItems as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-warning lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-warning lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -254,16 +254,16 @@
         </div>
 
         <!-- Closed Won -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Closed Won</span>
                     <span class="badge bg-success"><?= $stage_closed_won ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php $stageItems = array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'closed_won'; }); ?>
                     <?php foreach ($stageItems as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-success lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-success lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -285,16 +285,16 @@
         </div>
 
         <!-- Closed Lost -->
-        <div class="col" style="min-width:220px;max-width:260px;">
+        <div class="col" class="style-55803">
             <div class="card h-100">
                 <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
                     <span class="fw-bold small">Closed Lost</span>
                     <span class="badge bg-danger"><?= $stage_closed_lost ?? 0 ?></span>
                 </div>
-                <div class="card-body p-2" style="max-height:450px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-90270">
                     <?php $stageItems = array_filter($leads ?? [], function($l) { return ($l['status'] ?? '') === 'closed_lost'; }); ?>
                     <?php foreach ($stageItems as $lead): ?>
-                    <div class="card mb-2 border-start border-3 border-danger lead-card" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
+                    <div class="card mb-2 border-start border-3 border-danger lead-card" class="style-78508" data-bs-toggle="modal" data-bs-target="#leadJourneyModal"
                         data-id="<?= $lead['id'] ?>"
                         data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>"
                         data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>"
@@ -360,8 +360,8 @@
                             <small>New</small>
                             <small><?= $stage_new ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-primary" style="width:<?= $total_pipeline > 0 ? round((($stage_new ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-primary" class="style-41346"></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -369,8 +369,8 @@
                             <small>Contacted</small>
                             <small><?= $stage_contacted ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-info" style="width:<?= $total_pipeline > 0 ? round((($stage_contacted ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-info" class="style-73045"></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -378,8 +378,8 @@
                             <small>Qualified</small>
                             <small><?= $stage_qualified ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-success" style="width:<?= $total_pipeline > 0 ? round((($stage_qualified ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-success" class="style-72219"></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -387,8 +387,8 @@
                             <small>Proposal</small>
                             <small><?= $stage_proposal ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-warning" style="width:<?= $total_pipeline > 0 ? round((($stage_proposal ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-warning" class="style-27170"></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -396,8 +396,8 @@
                             <small>Negotiation</small>
                             <small><?= $stage_negotiation ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-secondary" style="width:<?= $total_pipeline > 0 ? round((($stage_negotiation ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-secondary" class="style-59087"></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -405,8 +405,8 @@
                             <small>Nurture</small>
                             <small><?= $stage_nurture ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-warning" style="width:<?= $total_pipeline > 0 ? round((($stage_nurture ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-warning" class="style-1338"></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -414,8 +414,8 @@
                             <small>Closed Won</small>
                             <small><?= $stage_closed_won ?? 0 ?></small>
                         </div>
-                        <div class="progress" style="height:8px">
-                            <div class="progress-bar bg-success" style="width:<?= $total_pipeline > 0 ? round((($stage_closed_won ?? 0) / $total_pipeline) * 100) : 0 ?>%"></div>
+                        <div class="progress" class="style-32124">
+                            <div class="progress-bar bg-success" class="style-57836"></div>
                         </div>
                     </div>
                 </div>
@@ -510,7 +510,7 @@ function showLeadJourney(btn) {
     document.getElementById('journeyLeadName').textContent = btn.dataset.name || 'Unknown';
     document.getElementById('journeyPhone').textContent = btn.dataset.phone || '-';
     document.getElementById('journeyProperty').textContent = btn.dataset.property || '-';
-    document.getElementById('journeyBudget').textContent = btn.dataset.budget ? '₹' + btn.dataset.budget : '-';
+    document.getElementById('journeyBudget').textContent = btn.dataset.budget ? 'â‚¹' + btn.dataset.budget : '-';
 
     var status = btn.dataset.status || '';
     var statusBadge = document.getElementById('journeyStatus');

@@ -26,4 +26,4 @@ for ($level = 1; $level <= 7; $level++) {
     if (!$parent) break;
     echo "  Level $level: User {$parent['id']} ({$parent['name']}) referred_by={$parent['referred_by']}\n";
     $current = $parentId;
-}
+}?>

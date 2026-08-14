@@ -34,5 +34,5 @@ echo "  This will cause an SQL error or NULL result!" . "\n";
 
 echo "\n=== NocRegistryService commission check uses 'source_booking_id' ===\n";
 echo "  'source_booking_id' column DOES NOT EXIST in mlm_commission_ledger." . "\n";
-echo "  Schema has: property_id, sale_amount — no booking_id column." . "\n";
-echo "  This will cause an SQL error!" . "\n";
+echo "  Schema has: property_id, sale_amount â€” no booking_id column." . "\n";
+echo "  This will cause an SQL error!" . "\n";?>

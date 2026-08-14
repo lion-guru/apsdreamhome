@@ -9,4 +9,4 @@ $pdo = new PDO(
 $r = $pdo->query('SHOW COLUMNS FROM plots');
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
     echo $row['Field'] . ' | ' . $row['Type'] . "\n";
-}
+}?>

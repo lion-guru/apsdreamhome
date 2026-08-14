@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Media Details'; ?>
+ï»¿<?php $pageTitle = 'Media Details'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -24,7 +24,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body text-center p-4">
                     <?php if (strpos($media['mime_type'] ?? '', 'image') !== false): ?>
-                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid rounded" alt="<?= $media['title'] ?>" style="max-height:300px">
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid rounded" alt="<?= $media['title'] ?>" class="style-23653">
                     <?php else: ?>
                         <i class="fas fa-file-<?= $media['type'] === 'document' ? 'alt' : 'video' ?> fa-5x text-muted mb-3"></i>
                     <?php endif; ?>

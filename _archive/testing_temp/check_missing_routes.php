@@ -46,4 +46,4 @@ foreach ($items as $item) {
 echo "Total missing routes from web.php: " . count($missingRoutes) . "\n";
 foreach ($missingRoutes as $r) {
     echo $r . "\n";
-}
+}?>

@@ -137,4 +137,4 @@ echo "\n=== Summary ===\n";
 echo "Generated: {$generated}\n";
 echo "Failed: {$failed}\n";
 echo "Output: {$soundDir}\n";
-echo "Asterisk sounds: {$asteriskSoundDir}\n";
+echo "Asterisk sounds: {$asteriskSoundDir}\n";?>

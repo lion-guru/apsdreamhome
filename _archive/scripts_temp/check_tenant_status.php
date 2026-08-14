@@ -23,4 +23,4 @@ echo "Files extending ServiceTenantTrait:\n";
 foreach ($updatedFiles as $f) echo "  $f\n";
 echo "\nFiles with ServiceTenantTrait class:\n";
 foreach ($traitFiles as $f) echo "  $f\n";
-echo "\nSummary: " . count($updatedFiles) . " extending, " . count($traitFiles) . " with trait class\n";
+echo "\nSummary: " . count($updatedFiles) . " extending, " . count($traitFiles) . " with trait class\n";?>

@@ -91,10 +91,10 @@ $variantNames = array_keys($results);
                             <?php else: ?>
                                 <span class="badge bg-secondary">Not yet significant</span>
                             <?php endif; ?>
-                            <span class="text-muted">χ² = <?= number_format((float)$chi['stat'], 2) ?>, df = <?= (int)$chi['df'] ?></span>
+                            <span class="text-muted">Ï‡Â² = <?= number_format((float)$chi['stat'], 2) ?>, df = <?= (int)$chi['df'] ?></span>
                         </div>
                     <?php else: ?>
-                        <h3 class="mb-0 text-muted">—</h3>
+                        <h3 class="mb-0 text-muted">â€”</h3>
                         <div class="text-muted small mt-1">No data yet</div>
                     <?php endif; ?>
                 </div>
@@ -110,7 +110,7 @@ $variantNames = array_keys($results);
                     <?php if (empty($results)): ?>
                         <div class="text-center text-muted py-5">No data yet. Variants will be assigned as users visit pages with this experiment.</div>
                     <?php else: ?>
-                        <canvas id="conversionChart" style="max-height: 360px;"></canvas>
+                        <canvas id="conversionChart" class="style-92289"></canvas>
                     <?php endif; ?>
                 </div>
             </div>
@@ -163,7 +163,7 @@ $variantNames = array_keys($results);
                             <div class="mb-2">
                                 <label class="form-label small">Declare winner (optional)</label>
                                 <select name="winner" class="form-select form-select-sm">
-                                    <option value="">— No winner —</option>
+                                    <option value="">â€” No winner â€”</option>
                                     <?php foreach ($variantNames as $vn): ?>
                                         <option value="<?= htmlspecialchars($vn) ?>"><?= htmlspecialchars($vn) ?></option>
                                     <?php endforeach; ?>

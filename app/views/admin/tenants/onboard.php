@@ -1,4 +1,4 @@
-<!-- Tenant Onboarding Wizard — 5-Step Guided Setup -->
+<!-- Tenant Onboarding Wizard â€” 5-Step Guided Setup -->
 <?php
 $plans      = $plans ?? [];
 $step       = $step ?? 1;
@@ -47,7 +47,7 @@ $steps = [
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-magic me-2"></i>Tenant Onboarding Wizard</h4>
-            <p class="mb-0 mt-1" style="opacity:0.85;">Set up a new tenant in 5 easy steps</p>
+            <p class="mb-0 mt-1" class="style-91394">Set up a new tenant in 5 easy steps</p>
         </div>
         <a href="<?= $base ?>/admin/tenants" class="btn btn-outline-light btn-sm"><i class="fas fa-times me-1"></i>Cancel</a>
     </div>
@@ -144,9 +144,9 @@ $steps = [
                     </div>
                 </div>
                 <!-- Live Preview -->
-                <div class="p-3 rounded mb-3" style="background: <?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?>; color: #fff;">
+                <div class="p-3 rounded mb-3" class="style-40363">
                     <h5 class="mb-0"><?= htmlspecialchars($wizardData['name'] ?? 'Company Name') ?></h5>
-                    <small style="opacity:0.85;">Preview: This is how the sidebar header will look</small>
+                    <small class="style-91394">Preview: This is how the sidebar header will look</small>
                 </div>
                 <div class="d-flex justify-content-between mt-3">
                     <a href="<?= $base ?>/admin/tenants/onboard?step=1" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
@@ -166,10 +166,10 @@ $steps = [
                         <div class="col-lg-3 col-md-6 mb-3">
                             <div class="plan-wizard-card <?= ($wizardData['plan_id'] ?? 1) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
                                 <h6 class="mb-2"><?= htmlspecialchars($plan['name']) ?></h6>
-                                <h4 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h4>
+                                <h4 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">â‚¹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h4>
                                 <div class="small text-muted mt-2">
-                                    <?= $plan['max_users'] ?> users · <?= $plan['max_leads'] ?> leads<br>
-                                    <?= $plan['max_properties'] ?> props · <?= $plan['storage_limit_mb'] ?>MB
+                                    <?= $plan['max_users'] ?> users Â· <?= $plan['max_leads'] ?> leads<br>
+                                    <?= $plan['max_properties'] ?> props Â· <?= $plan['storage_limit_mb'] ?>MB
                                 </div>
                             </div>
                         </div>
@@ -208,12 +208,12 @@ $steps = [
                 <div class="col-md-6">
                     <h6 class="text-muted mb-3">Company Details</h6>
                     <table class="review-table w-100">
-                        <tr><td class="label">Name</td><td class="fw-semibold"><?= htmlspecialchars($wizardData['name'] ?? '—') ?></td></tr>
-                        <tr><td class="label">Slug</td><td><code><?= htmlspecialchars($wizardData['slug'] ?? '—') ?></code></td></tr>
+                        <tr><td class="label">Name</td><td class="fw-semibold"><?= htmlspecialchars($wizardData['name'] ?? 'â€”') ?></td></tr>
+                        <tr><td class="label">Slug</td><td><code><?= htmlspecialchars($wizardData['slug'] ?? 'â€”') ?></code></td></tr>
                         <tr><td class="label">Domain</td><td><?= htmlspecialchars($wizardData['domain'] ?? 'Auto') ?></td></tr>
-                        <tr><td class="label">Contact</td><td><?= htmlspecialchars($wizardData['contact_name'] ?? '—') ?></td></tr>
-                        <tr><td class="label">Email</td><td><?= htmlspecialchars($wizardData['contact_email'] ?? '—') ?></td></tr>
-                        <tr><td class="label">Phone</td><td><?= htmlspecialchars($wizardData['contact_phone'] ?? '—') ?></td></tr>
+                        <tr><td class="label">Contact</td><td><?= htmlspecialchars($wizardData['contact_name'] ?? 'â€”') ?></td></tr>
+                        <tr><td class="label">Email</td><td><?= htmlspecialchars($wizardData['contact_email'] ?? 'â€”') ?></td></tr>
+                        <tr><td class="label">Phone</td><td><?= htmlspecialchars($wizardData['contact_phone'] ?? 'â€”') ?></td></tr>
                         <tr><td class="label">Location</td><td><?= htmlspecialchars(($wizardData['city'] ?? '') . ', ' . ($wizardData['state'] ?? '')) ?></td></tr>
                     </table>
                 </div>
@@ -225,13 +225,13 @@ $steps = [
                     ?>
                     <table class="review-table w-100">
                         <tr><td class="label">Plan</td><td class="fw-semibold"><?= htmlspecialchars($selectedPlan['name'] ?? 'Free') ?></td></tr>
-                        <tr><td class="label">Price</td><td>₹<?= number_format($selectedPlan['price_monthly'] ?? 0) ?>/mo</td></tr>
+                        <tr><td class="label">Price</td><td>â‚¹<?= number_format($selectedPlan['price_monthly'] ?? 0) ?>/mo</td></tr>
                         <tr><td class="label">Users</td><td><?= $wizardData['max_users'] ?? $selectedPlan['max_users'] ?? 1 ?></td></tr>
                         <tr><td class="label">Leads</td><td><?= $wizardData['max_leads'] ?? $selectedPlan['max_leads'] ?? 50 ?></td></tr>
                         <tr><td class="label">Properties</td><td><?= $wizardData['max_properties'] ?? $selectedPlan['max_properties'] ?? 10 ?></td></tr>
                         <tr><td class="label">Storage</td><td><?= $wizardData['storage_limit_mb'] ?? $selectedPlan['storage_limit_mb'] ?? 100 ?>MB</td></tr>
                         <tr><td class="label">Theme</td><td>
-                            <span class="d-inline-block rounded" style="width:16px;height:16px;background:<?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?>;vertical-align:middle;"></span>
+                            <span class="d-inline-block rounded" class="style-21195"></span>
                             <?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?>
                         </td></tr>
                     </table>

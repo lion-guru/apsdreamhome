@@ -131,4 +131,4 @@ try {
     ];
     logHealth('Result: ' . json_encode($output), $logFile);
     exit(2);
-}
+}?>

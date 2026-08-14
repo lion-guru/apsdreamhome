@@ -42,4 +42,4 @@ $matchedMaster = $pdo->query("
     INNER JOIN plots p ON pm.site_id = p.site_id AND pm.plot_no = p.plot_number
 ")->fetchColumn();
 $totalMaster = $pdo->query("SELECT COUNT(*) FROM plot_master")->fetchColumn();
-echo "\nplot_master: $totalMaster\nMatched with plots: $matchedMaster\n";
+echo "\nplot_master: $totalMaster\nMatched with plots: $matchedMaster\n";?>

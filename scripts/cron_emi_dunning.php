@@ -25,7 +25,7 @@ require_once $root . '/config/bootstrap.php';
 $dryRun = in_array('--dry-run', $argv ?? []);
 $statusOnly = in_array('--status', $argv ?? []);
 
-echo "=== APS Dream Home — EMI Dunning Cron ===\n";
+echo "=== APS Dream Home â€” EMI Dunning Cron ===\n";
 echo "Date: " . date('Y-m-d H:i:s') . "\n";
 echo "Mode: " . ($statusOnly ? 'STATUS ONLY' : ($dryRun ? 'DRY RUN (no emails)' : 'LIVE')) . "\n\n";
 
@@ -147,4 +147,4 @@ if ($dunningToday) {
     }
 }
 
-echo "\nDone: " . date('Y-m-d H:i:s') . "\n";
+echo "\nDone: " . date('Y-m-d H:i:s') . "\n";?>

@@ -2,19 +2,19 @@
 /**
  * FINAL CONSOLIDATED SCRIPT: Restore Foreign Key Constraints
  * 
- * Result: 88 new FK constraints added (224 → 312 total)
+ * Result: 88 new FK constraints added (224 â†’ 312 total)
  * 
  * Root causes discovered and fixed:
- *   1. Orphaned records (10) — cleaned up
- *   2. Missing indexes (14) — added idx_fc_*, idx_cr_*, idx_br_*, idx_mp_*
- *   3. Collation mismatches (11 tables) — normalized to utf8mb4_unicode_ci
- *   4. UNSIGNED vs signed column types (13 columns) — removed UNSIGNED from source cols
- *   5. ON DELETE SET NULL with NOT NULL columns (4 tables) — recreated with nullable cols
- *   6. Duplicate indexes (1) — dropped
- *   7. Type mismatch: cheque_register.bank_account_id bigint→int(11) to match bank_accounts.id
+ *   1. Orphaned records (10) â€” cleaned up
+ *   2. Missing indexes (14) â€” added idx_fc_*, idx_cr_*, idx_br_*, idx_mp_*
+ *   3. Collation mismatches (11 tables) â€” normalized to utf8mb4_unicode_ci
+ *   4. UNSIGNED vs signed column types (13 columns) â€” removed UNSIGNED from source cols
+ *   5. ON DELETE SET NULL with NOT NULL columns (4 tables) â€” recreated with nullable cols
+ *   6. Duplicate indexes (1) â€” dropped
+ *   7. Type mismatch: cheque_register.bank_account_id bigintâ†’int(11) to match bank_accounts.id
  * 
  * 1 remaining FK skipped:
- *   - cheque_register.bank_account_id → bank_accounts.id
+ *   - cheque_register.bank_account_id â†’ bank_accounts.id
  *   - bank_accounts table has corrupted internal FK indexes (even new tables can't reference it)
  *   - Existing 7 FKs to bank_accounts still work; this is a MariaDB-level issue
  * 
@@ -60,7 +60,7 @@ foreach ($fks as $fk) {
         $currentTable = $fk['src_table'];
         echo "$currentTable\n";
     }
-    echo "  {$fk['src_col']} → {$fk['ref_table']}.{$fk['ref_col']} (ON DELETE {$fk['DELETE_RULE']})\n";
+    echo "  {$fk['src_col']} â†’ {$fk['ref_table']}.{$fk['ref_col']} (ON DELETE {$fk['DELETE_RULE']})\n";
 }
 
 // Stats by referenced table
@@ -96,4 +96,4 @@ try {
         'success',
         "Consolidated from phases 1-6. 88 new FKs. 1 skipped (bank_accounts corrupted indexes)."
     ]);
-} catch (PDOException $e) {}
+} catch (PDOException $e) {}?>

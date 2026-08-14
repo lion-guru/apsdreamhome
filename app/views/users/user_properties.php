@@ -127,13 +127,13 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                         <div class="card-body">
                             <h6 class="fw-bold mb-1"><?= htmlspecialchars($p['name'] ?: ($p['property_name'] ?? 'Property #' . ($p['id'] ?? ''))) ?></h6>
                             <div class="text-muted small mb-2">
-                                <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($p['location'] ?? $p['address'] ?? '—') ?>
+                                <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($p['location'] ?? $p['address'] ?? 'â€”') ?>
                                 <?php if (!empty($p['district_name']) || !empty($p['state_name'])): ?>
                                     , <?= htmlspecialchars(implode(', ', array_filter([$p['district_name'] ?? '', $p['state_name'] ?? '']))) ?>
                                 <?php endif; ?>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="fw-bold" style="color:#7c2d12;">₹<?= number_format((float)($p['price'] ?? 0)) ?></div>
+                                <div class="fw-bold" class="style-50238">â‚¹<?= number_format((float)($p['price'] ?? 0)) ?></div>
                                 <span class="badge bg-light text-dark"><i class="fas fa-<?= propTypeIcon($p['listing_type'] ?? '') ?> me-1"></i><?= ucfirst(htmlspecialchars($p['listing_type'] ?? $p['type'] ?? '')) ?></span>
                             </div>
                             <?php if (!empty($p['phone'])): ?>

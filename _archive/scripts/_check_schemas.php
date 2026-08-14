@@ -38,4 +38,4 @@ foreach ($m[0] as $r) { echo $r . PHP_EOL; }
 echo PHP_EOL . "=== site_content sections ===" . PHP_EOL;
 foreach ($pdo->query('SELECT DISTINCT section, COUNT(*) as cnt FROM site_content GROUP BY section') as $row) {
     echo $row['section'] . ' (' . $row['cnt'] . ' keys)' . PHP_EOL;
-}
+}?>

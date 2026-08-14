@@ -75,7 +75,7 @@
                 <option value="bank"><?= __('bko_bank_transfer') ?></option>
               </select>
             </div>
-            <div class="col-md-5" id="bank_select_container" style="display: none;">
+            <div class="col-md-5" id="bank_select_container" class="style-54390">
               <label for="bank_account_id" class="form-label fw-bold"><?= __('bko_bank_account') ?></label>
               <select name="bank_account_id" id="bank_account_id" class="form-select">
                 <option value=""><?= __('bko_select_bank_account') ?></option>

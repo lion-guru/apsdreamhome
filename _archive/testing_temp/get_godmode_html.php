@@ -14,4 +14,4 @@ curl_setopt_array($ch, [
 $output = curl_exec($ch);
 curl_close($ch);
 
-echo $output;
+echo $output;?>

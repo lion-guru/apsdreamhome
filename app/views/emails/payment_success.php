@@ -19,7 +19,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✅ Payment Successful!</h1>
+            <h1>âœ… Payment Successful!</h1>
             <p>Your payment has been processed successfully</p>
         </div>
 
@@ -27,7 +27,7 @@
             <div class="payment-card">
                 <h3>Payment Details</h3>
                 <p><strong>Order ID:</strong> #N/A</p>
-                <p><strong>Amount Paid:</strong> <span class="amount">₹0</span></p>
+                <p><strong>Amount Paid:</strong> <span class="amount">â‚¹0</span></p>
                 <p><strong>Payment Method:</strong> Unknown</p>
                 <p><strong>Transaction ID:</strong> N/A</p>
                 <p><strong>Payment Date:</strong> 20 Oct 2025, 10:24 PM</p>
@@ -37,7 +37,7 @@
 
             <p>Thank you for your payment to apsdreamhome. Your transaction has been successfully processed.</p>
 
-            <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <div class="style-97813">
                 <p><strong>What happens next?</strong></p>
                 <ul>
                     <li>You will receive a confirmation SMS shortly</li>
@@ -47,14 +47,14 @@
                 </ul>
             </div>
 
-            <div style="text-align: center; margin: 30px 0;">
+            <div class="style-69368">
                 <a href="<?= $baseUrl ?>/payment/receipt" class="button">Download Receipt</a>
-                <a href="<?= $baseUrl ?>/dashboard" class="button" style="background: #6c757d;">View Dashboard</a>
+                <a href="<?= $baseUrl ?>/dashboard" class="button" class="style-14800">View Dashboard</a>
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>
-            <p>📧 Email: support@apsdreamhome.com<br>
-               📞 Phone: {{company_phone}}</p>
+            <p>ðŸ“§ Email: support@apsdreamhome.com<br>
+               ðŸ“ž Phone: {{company_phone}}</p>
         </div>
 
         <div class="footer">

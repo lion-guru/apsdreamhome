@@ -34,4 +34,4 @@ $router->get('/api/core-functions/csrf-token', 'CoreFunctionsController@getCsrfT
 $router->post('/api/core-functions/log-action', 'CoreFunctionsController@logAction');
 
 // Testing route
-$router->get('/api/core-functions/test', 'CoreFunctionsController@test');
+$router->get('/api/core-functions/test', 'CoreFunctionsController@test');?>

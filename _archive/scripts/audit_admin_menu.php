@@ -15,7 +15,7 @@ echo "=== ADMIN MENU ITEMS: " . count($rows) . " total ===\n\n";
 foreach ($grouped as $section => $items) {
     echo "SECTION: $section (" . count($items) . " items)\n";
     foreach ($items as $item) {
-        echo "  [{$item['id']}] {$item['name']} → {$item['url']}\n";
+        echo "  [{$item['id']}] {$item['name']} â†’ {$item['url']}\n";
     }
     echo "\n";
-}
+}?>

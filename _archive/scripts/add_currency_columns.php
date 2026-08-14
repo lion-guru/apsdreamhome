@@ -3,7 +3,7 @@
  * Migration: Add multi-currency columns to vendor_payments table
  * - currency VARCHAR(3) DEFAULT 'INR'
  * - exchange_rate DECIMAL(10,4) DEFAULT 1.0000
- * - amount_inr DECIMAL(12,2) — computed foreign-currency equivalent in INR
+ * - amount_inr DECIMAL(12,2) â€” computed foreign-currency equivalent in INR
  */
 
 $root = dirname(__DIR__);
@@ -64,4 +64,4 @@ try {
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

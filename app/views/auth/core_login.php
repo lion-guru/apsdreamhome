@@ -1,6 +1,6 @@
 <?php
 /**
- * Core Login — Unified login for all roles (Premium Glassmorphism)
+ * Core Login ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ Unified login for all roles (Premium Glassmorphism)
  * @var string $csrf_token
  * @var string|null $error
  * @var string|null $success
@@ -17,6 +17,9 @@ $supportedRoles = [
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
@@ -139,7 +142,7 @@ $supportedRoles = [
     <div class="login-wrapper">
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
-            <div class="benefits-title"><i class="fas fa-shield-halved" style="color:#0d9488"></i> Why APS Dream Home?</div>
+            <div class="benefits-title"><i class="fas fa-shield-halved" class="style-5793"></i> Why APS Dream Home?</div>
             <div class="benefits-subtitle">Trusted by 5000+ families across Uttar Pradesh for premium real estate investments.</div>
 
             <div class="benefit-item">
@@ -234,7 +237,9 @@ $supportedRoles = [
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-submit">
+                    
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-submit">
                         <i class="fas fa-sign-in-alt"></i> Sign In
                     </button>
                 </form>
@@ -243,14 +248,14 @@ $supportedRoles = [
 
                 <div class="social-row">
                     <a href="<?= $base ?>/auth/air-login?method=email" class="social-btn">
-                        <i class="fab fa-google" style="color:#ea4335"></i> Google
+                        <i class="fab fa-google" class="style-85143"></i> Google
                     </a>
                     <a href="<?= $base ?>/auth/air-login?method=phone" class="social-btn">
-                        <i class="fas fa-phone" style="color:#0d9485"></i> Phone
+                        <i class="fas fa-phone" class="style-85531"></i> Phone
                     </a>
                 </div>
 
-                <div class="register-link" style="margin-top:1.25rem">
+                <div class="register-link" class="style-47816">
                     Don't have an account? <a href="<?= $base ?>/auth/register">Register</a>
                 </div>
                 <div class="otp-link">

@@ -6,4 +6,4 @@ $check = ['data_change_log','import_jobs','business_overview','property_performa
 foreach ($check as $t) {
     $exists = $pdo->query("SHOW TABLES LIKE '$t'")->fetch();
     echo "$t: " . ($exists ? 'EXISTS' : 'GONE') . "\n";
-}
+}?>

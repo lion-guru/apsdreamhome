@@ -30,7 +30,7 @@ class BlockchainController extends AdminController
     {
         $this->requireAdmin();
         $this->render('admin/feature-disabled', [
-            'page_title' => 'Blockchain Verification — Coming Soon',
+            'page_title' => 'Blockchain Verification â€” Coming Soon',
             'feature_name' => 'Blockchain Property Verification',
             'feature_description' => 'Blockchain-based property verification, NFT certificates, and ownership tracking require network integration and smart contract deployment. This feature will be available soon.',
             'icon' => 'fas fa-link',
@@ -547,8 +547,8 @@ class BlockchainController extends AdminController
             'verified_properties' => 8934,
             'network_uptime' => '99.9%',
             'avg_confirmation_time' => '45 seconds',
-            'total_value_secured' => '₹1,250 crores',
-            'gas_fees_saved' => '₹25 lakhs'
+            'total_value_secured' => 'â‚¹1,250 crores',
+            'gas_fees_saved' => 'â‚¹25 lakhs'
         ];
     }
 
@@ -977,9 +977,9 @@ class BlockchainController extends AdminController
     private function getGasFeeAnalysis()
     {
         return [
-            'total_fees_paid' => '₹25,430',
-            'avg_fee_per_transaction' => '₹165',
-            'fees_saved_vs_ethereum' => '₹12,50,000',
+            'total_fees_paid' => 'â‚¹25,430',
+            'avg_fee_per_transaction' => 'â‚¹165',
+            'fees_saved_vs_ethereum' => 'â‚¹12,50,000',
             'cost_efficiency' => '94%'
         ];
     }
@@ -1005,7 +1005,7 @@ class BlockchainController extends AdminController
             return [
                 'total_value' => $result['total_value'] ?? 0,
                 'properties_verified' => 8934,
-                'avg_property_value' => '₹1.4 crores'
+                'avg_property_value' => 'â‚¹1.4 crores'
             ];
         } catch (\Exception $e) {
             return ['total_value' => 0, 'properties_verified' => 0];
@@ -1226,4 +1226,4 @@ class BlockchainController extends AdminController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

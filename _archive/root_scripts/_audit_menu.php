@@ -30,4 +30,4 @@ echo str_pad('ID',4) . ' ' . str_pad('Section',20) . ' ' . str_pad('Name',35) . 
 echo str_repeat('-', 120) . "\n";
 foreach ($items as $i) {
     echo str_pad($i['id'],4) . ' ' . str_pad($i['section'],20) . ' ' . str_pad($i['item_name'],35) . ' ' . $i['url'] . "\n";
-}
+}?>

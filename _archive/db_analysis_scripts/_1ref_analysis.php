@@ -60,4 +60,4 @@ foreach ($oneRef as $t) {
 echo "\nTotal: " . count($oneRef) . "\n";
 $protected = count(array_filter($oneRef, fn($t) => $t['inTry']));
 echo "Protected (safe to drop): $protected\n";
-echo "Unprotected (need wrapping): " . (count($oneRef) - $protected) . "\n";
+echo "Unprotected (need wrapping): " . (count($oneRef) - $protected) . "\n";?>

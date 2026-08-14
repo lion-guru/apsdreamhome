@@ -28,4 +28,4 @@ foreach ($files as $file) {
 }
 
 echo json_encode(['success' => $success, 'errors' => $errors]);
-unlink(__FILE__);
+unlink(__FILE__);?>

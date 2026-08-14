@@ -21,54 +21,54 @@ a:hover{text-decoration:underline}
 }
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<body class="style-51511">
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" style="padding:30px 15px;">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <td align="center" class="style-56039">
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
         <!-- Header -->
         <tr>
-          <td bgcolor="#0d9488" align="center" style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);padding:40px 30px;">
-            <img src="{{logo_url}}" alt="APS Dream Home" width="180" style="display:block;margin:0 auto 15px;max-width:180px;">
-            <h1 class="h1-mobile" style="color:#ffffff;margin:0;font-size:28px;font-weight:700;line-height:34px;">Welcome to APS Dream Home</h1>
-            <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">India's Premier Real Estate Platform</p>
+          <td bgcolor="#0d9488" align="center" class="style-40724">
+            <img src="{{logo_url}}" alt="APS Dream Home" width="180" class="style-97829">
+            <h1 class="h1-mobile" class="style-56865">Welcome to APS Dream Home</h1>
+            <p class="style-9233">India's Premier Real Estate Platform</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" style="padding:40px 40px 20px;">
-            <h2 style="margin:0 0 18px;color:#1a202c;font-size:22px;font-weight:600;">Hi {{name}},</h2>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
-              Thank you for joining <strong>APS Dream Home</strong> — your trusted partner in finding the perfect property across India.
+          <td class="px-mobile" class="style-68782">
+            <h2 class="style-80102">Hi {{name}},</h2>
+            <p class="style-28596">
+              Thank you for joining <strong>APS Dream Home</strong> â€” your trusted partner in finding the perfect property across India.
             </p>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
+            <p class="style-28596">
               You can now:
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 24px;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-95815">
               <tr>
-                <td style="padding:8px 0;font-size:15px;color:#4a5568;">&bull; Browse thousands of verified properties</td>
+                <td class="style-34995">&bull; Browse thousands of verified properties</td>
               </tr>
               <tr>
-                <td style="padding:8px 0;font-size:15px;color:#4a5568;">&bull; Save your favorite listings and get instant alerts</td>
+                <td class="style-34995">&bull; Save your favorite listings and get instant alerts</td>
               </tr>
               <tr>
-                <td style="padding:8px 0;font-size:15px;color:#4a5568;">&bull; Connect with our expert agents for site visits</td>
+                <td class="style-34995">&bull; Connect with our expert agents for site visits</td>
               </tr>
               <tr>
-                <td style="padding:8px 0;font-size:15px;color:#4a5568;">&bull; Track your inquiries and bookings in one place</td>
+                <td class="style-34995">&bull; Track your inquiries and bookings in one place</td>
               </tr>
             </table>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" style="padding:10px 0 30px;">
-                  <a href="{{login_url}}" class="button-mobile" style="display:inline-block;padding:14px 36px;background:#0d9488;color:#ffffff;text-decoration:none;border-radius:6px;font-size:16px;font-weight:600;">Get Started</a>
+                <td align="center" class="style-43583">
+                  <a href="{{login_url}}" class="button-mobile" class="style-99288">Get Started</a>
                 </td>
               </tr>
             </table>
-            <p style="margin:0 0 8px;font-size:15px;line-height:22px;color:#4a5568;">
+            <p class="style-17625">
               If you have any questions, our support team is here to help.
             </p>
-            <p style="margin:20px 0 0;font-size:15px;line-height:22px;color:#4a5568;">
+            <p class="style-16742">
               Best regards,<br>
               <strong>The APS Dream Home Team</strong>
             </p>
@@ -76,13 +76,13 @@ a:hover{text-decoration:underline}
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" style="padding:24px 30px;text-align:center;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 6px;font-size:13px;color:#718096;">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p style="margin:6px 0 0;font-size:12px;color:#a0aec0;">
-              <a href="{{unsubscribe_url}}" style="color:#718096;">Unsubscribe</a> &nbsp;&middot;&nbsp;
-              <a href="{{preferences_url}}" style="color:#718096;">Email Preferences</a>
+          <td bgcolor="#f7fafc" class="style-89423">
+            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p class="style-31566">
+              <a href="{{unsubscribe_url}}" class="style-66032">Unsubscribe</a> &nbsp;&middot;&nbsp;
+              <a href="{{preferences_url}}" class="style-66032">Email Preferences</a>
             </p>
-            <p style="margin:10px 0 0;font-size:11px;color:#cbd5e0;">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

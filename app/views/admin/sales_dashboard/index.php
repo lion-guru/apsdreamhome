@@ -42,7 +42,7 @@
                                 <div>
                                     <div class="text-uppercase small opacity-75">Bookings (30d)</div>
                                     <div class="h2 mb-0 fw-bold"><?php echo number_format($stats['bookings_month']); ?></div>
-                                    <small class="opacity-75">₹<?php echo number_format($stats['revenue_month'] / 1000, 0); ?>K revenue</small>
+                                    <small class="opacity-75">â‚¹<?php echo number_format($stats['revenue_month'] / 1000, 0); ?>K revenue</small>
                                 </div>
                                 <i class="fas fa-handshake fa-3x opacity-50"></i>
                             </div>
@@ -56,7 +56,7 @@
                                 <div>
                                     <div class="text-uppercase small opacity-75">Conversion Rate</div>
                                     <div class="h2 mb-0 fw-bold"><?php echo number_format($stats['conversion_rate'], 1); ?>%</div>
-                                    <small class="opacity-75">₹<?php echo number_format($stats['avg_deal_size'] / 1000, 0); ?>K avg deal</small>
+                                    <small class="opacity-75">â‚¹<?php echo number_format($stats['avg_deal_size'] / 1000, 0); ?>K avg deal</small>
                                 </div>
                                 <i class="fas fa-bullseye fa-3x opacity-50"></i>
                             </div>
@@ -69,7 +69,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Commissions (30d)</div>
-                                    <div class="h2 mb-0 fw-bold">₹<?php echo number_format($stats['commissions_month'] / 1000, 0); ?>K</div>
+                                    <div class="h2 mb-0 fw-bold">â‚¹<?php echo number_format($stats['commissions_month'] / 1000, 0); ?>K</div>
                                     <small class="opacity-75"><?php echo (int)$stats['active_agents']; ?> active agents</small>
                                 </div>
                                 <i class="fas fa-coins fa-3x opacity-50"></i>
@@ -102,7 +102,7 @@
                                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                                 <div>
                                                     <strong class="small"><?php echo htmlspecialchars($l['name']); ?></strong>
-                                                    <br><small class="text-muted"><?php echo htmlspecialchars($l['phone'] ?? $l['email'] ?? '—'); ?></small>
+                                                    <br><small class="text-muted"><?php echo htmlspecialchars($l['phone'] ?? $l['email'] ?? 'â€”'); ?></small>
                                                 </div>
                                                 <div class="text-end">
                                                     <span class="badge bg-<?php
@@ -133,7 +133,7 @@
                                                     <br><small class="text-muted"><?php echo date('M j', strtotime($b['created_at'])); ?></small>
                                                 </div>
                                                 <div class="text-end">
-                                                    <strong class="text-success">₹<?php echo number_format((float)$b['amount'] / 1000, 0); ?>K</strong>
+                                                    <strong class="text-success">â‚¹<?php echo number_format((float)$b['amount'] / 1000, 0); ?>K</strong>
                                                     <br><span class="badge bg-<?php echo ($b['status'] ?? '') === 'confirmed' ? 'success' : 'warning'; ?>"><?php echo htmlspecialchars($b['status'] ?? 'pending'); ?></span>
                                                 </div>
                                             </div>
@@ -155,7 +155,7 @@
                                 <?php foreach ($leaderboard as $i => $p): ?>
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            <span class="badge bg-<?php echo $i === 0 ? 'warning' : ($i === 1 ? 'secondary' : 'light text-dark'); ?> me-2" style="width:24px;"><?php echo $i + 1; ?></span>
+                                            <span class="badge bg-<?php echo $i === 0 ? 'warning' : ($i === 1 ? 'secondary' : 'light text-dark'); ?> me-2" class="style-52796"><?php echo $i + 1; ?></span>
                                             <div>
                                                 <strong class="small"><?php echo htmlspecialchars($p['name']); ?></strong>
                                                 <br><small class="text-muted"><?php echo (int)$p['won_count']; ?> won / <?php echo (int)$p['lead_count']; ?> leads</small>
@@ -192,8 +192,8 @@
                                         <small><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $stage))); ?></small>
                                         <small class="text-muted"><?php echo $count; ?> (<?php echo $pct; ?>%)</small>
                                     </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-<?php echo $color; ?>" style="width: <?php echo $pct; ?>%"></div>
+                                    <div class="progress" class="style-31164">
+                                        <div class="progress-bar bg-<?php echo $color; ?>" class="style-73575"></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

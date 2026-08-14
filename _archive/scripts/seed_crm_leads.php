@@ -65,7 +65,7 @@ $leads = [
     ['name' => 'Ajay Rai', 'phone' => '9876543237', 'email' => 'ajay.r@gmail.com', 'source' => 'google_ads', 'status' => 'negotiation', 'priority' => 'medium', 'property_interest' => 'Plot', 'budget' => 3000000, 'budget_range' => '25-50L', 'location_preference' => 'Gorakhpur', 'lead_score' => 72, 'lead_category' => 'hot', 'notes' => 'Price negotiation ongoing, wants EMI flexibility, close to closing', 'assigned_to' => 77, 'conversion_probability' => 75.00],
 
     // CLOSED_WON leads (2)
-    ['name' => 'Harish Agrawal', 'phone' => '9876543238', 'email' => 'harish.a@gmail.com', 'source' => 'walk_in', 'status' => 'closed_won', 'priority' => 'high', 'property_interest' => 'Plot', 'budget' => 5000000, 'budget_range' => '50L-1Cr', 'location_preference' => 'Gorakhpur', 'lead_score' => 95, 'lead_category' => 'hot', 'notes' => 'BOOKED MT-A-010 on 10-Jun. Token paid ₹2,00,000. Agreement pending.', 'assigned_to' => 36, 'conversion_probability' => 100.00, 'is_converted' => 1, 'total_purchase_value' => 5200000],
+    ['name' => 'Harish Agrawal', 'phone' => '9876543238', 'email' => 'harish.a@gmail.com', 'source' => 'walk_in', 'status' => 'closed_won', 'priority' => 'high', 'property_interest' => 'Plot', 'budget' => 5000000, 'budget_range' => '50L-1Cr', 'location_preference' => 'Gorakhpur', 'lead_score' => 95, 'lead_category' => 'hot', 'notes' => 'BOOKED MT-A-010 on 10-Jun. Token paid â‚¹2,00,000. Agreement pending.', 'assigned_to' => 36, 'conversion_probability' => 100.00, 'is_converted' => 1, 'total_purchase_value' => 5200000],
     ['name' => 'Sunita Verma', 'phone' => '9876543239', 'email' => 'sunita.v@gmail.com', 'source' => 'referral', 'status' => 'closed_won', 'priority' => 'high', 'property_interest' => 'House', 'budget' => 8500000, 'budget_range' => '50L-1Cr', 'location_preference' => 'Varanasi', 'lead_score' => 98, 'lead_category' => 'hot', 'notes' => 'BOOKED Ganga Nagri Villa on 18-Jun. Full payment done.', 'assigned_to' => 36, 'conversion_probability' => 100.00, 'is_converted' => 1, 'total_purchase_value' => 8500000],
 ];
 
@@ -218,17 +218,17 @@ foreach ($leads as $i => $lead) {
                 $leadId,
                 $assignedTo,
                 "Follow up with {$lead['name']}",
-                "Check progress on {$lead['property_interest']} inquiry. Budget: ₹" . number_format($lead['budget']),
+                "Check progress on {$lead['property_interest']} inquiry. Budget: â‚¹" . number_format($lead['budget']),
                 $lead['priority'],
                 $taskDate,
                 $now,
             ]);
         }
 
-        echo "  ✓ {$lead['name']} ({$leadNumber}) — {$lead['status']}, score={$lead['lead_score']}, assigned to user {$assignedTo}\n";
+        echo "  âœ“ {$lead['name']} ({$leadNumber}) â€” {$lead['status']}, score={$lead['lead_score']}, assigned to user {$assignedTo}\n";
 
     } catch (PDOException $e) {
-        echo "  ✗ {$lead['name']}: " . $e->getMessage() . "\n";
+        echo "  âœ— {$lead['name']}: " . $e->getMessage() . "\n";
     }
 }
 
@@ -266,4 +266,4 @@ echo "  CONTACTED: 5\n";
 echo "  QUALIFIED: 5\n";
 echo "  PROPOSAL: 5\n";
 echo "  NEGOTIATION: 3\n";
-echo "  CLOSED_WON: 2\n";
+echo "  CLOSED_WON: 2\n";?>

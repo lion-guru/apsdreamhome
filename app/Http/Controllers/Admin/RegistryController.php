@@ -153,10 +153,10 @@ class RegistryController extends AdminController
             $notes = $_POST['notes'] ?? '';
 
             $stmt = $this->db->prepare("UPDATE bookings SET stamp_duty_amount = ?, registration_fees = ?, registry_status = 'stamp_duty_pending', registry_notes = CONCAT(IFNULL(registry_notes,''), ?) WHERE id = ? AND tenant_id = ?");
-            $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: ₹$stampDuty, Reg fees: ₹$regFees. " . $notes;
+            $note = "\n[" . date('Y-m-d H:i') . "] Stamp duty: â‚¹$stampDuty, Reg fees: â‚¹$regFees. " . $notes;
             $stmt->execute([$stampDuty, $regFees, $note, $id, $this->tenantId()]);
 
-            $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: ₹$stampDuty, Registration Fees: ₹$regFees. $notes");
+            $this->logRegistryActivity($id, 'stamp_duty_recorded', "Stamp Duty: â‚¹$stampDuty, Registration Fees: â‚¹$regFees. $notes");
 
             $this->setFlash('success', 'Stamp duty details recorded successfully');
             $this->redirect('/admin/registry/show/' . $id);
@@ -439,7 +439,7 @@ class RegistryController extends AdminController
             <tr><th>Mutation Date</th><td>$mutationDate</td></tr>
         </table>
 
-        <p style="margin-top:20px;">This certificate serves as conclusive proof of registration and may be produced as evidence in any court of law or before any government authority.</p>
+        <p class="style-9412">This certificate serves as conclusive proof of registration and may be produced as evidence in any court of law or before any government authority.</p>
     </div>
 
     <div class="signatures">
@@ -447,11 +447,11 @@ class RegistryController extends AdminController
             <tr>
                 <td>
                     <div class="signature-line">Authorized Signatory</div>
-                    <div style="font-size:9pt; color:#666;">APS Dream Home</div>
+                    <div class="style-8200">APS Dream Home</div>
                 </td>
                 <td>
                     <div class="signature-line">Buyer / Authorized Person</div>
-                    <div style="font-size:9pt; color:#666;">$customerName</div>
+                    <div class="style-8200">$customerName</div>
                 </td>
             </tr>
         </table>

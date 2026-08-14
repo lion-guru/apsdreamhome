@@ -40,4 +40,4 @@ foreach ($tables as $t) {
     // Sample data
     if ($rows > 0) { echo "  Sample:\n"; $sample = $pdo->query("SELECT * FROM `$t` LIMIT 2")->fetchAll(PDO::FETCH_ASSOC); foreach ($sample as $r) echo "    " . json_encode($r) . "\n"; }
     echo "\n";
-}
+}?>

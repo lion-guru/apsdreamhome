@@ -63,7 +63,7 @@ foreach ($logDirs as $dir) {
         $name = basename($file);
 
         if ($size < $maxSizeBytes) {
-            echo "  [OK]   $name (" . formatSize($size) . ") — within threshold" . PHP_EOL;
+            echo "  [OK]   $name (" . formatSize($size) . ") â€” within threshold" . PHP_EOL;
             $skipped++;
             continue;
         }
@@ -75,30 +75,30 @@ foreach ($logDirs as $dir) {
             // Compress current log into rotated copy
             $content = file_get_contents($file);
             if ($content === false) {
-                echo "  [ERR]  $name — failed to read" . PHP_EOL;
+                echo "  [ERR]  $name â€” failed to read" . PHP_EOL;
                 $errors++;
                 continue;
             }
 
             $gzContent = gzencode($content);
             if ($gzContent === false) {
-                echo "  [ERR]  $name — failed to compress" . PHP_EOL;
+                echo "  [ERR]  $name â€” failed to compress" . PHP_EOL;
                 $errors++;
                 continue;
             }
 
             if (file_put_contents($rotatedFile, $gzContent) === false) {
-                echo "  [ERR]  $name — failed to write rotated copy" . PHP_EOL;
+                echo "  [ERR]  $name â€” failed to write rotated copy" . PHP_EOL;
                 $errors++;
                 continue;
             }
 
             // Truncate original (preserve inode for processes writing to it)
             file_put_contents($file, '');
-            echo "  [ROT]  $name (" . formatSize($size) . ") → " . basename($rotatedFile) . PHP_EOL;
+            echo "  [ROT]  $name (" . formatSize($size) . ") â†’ " . basename($rotatedFile) . PHP_EOL;
             $rotated++;
         } else {
-            echo "  [PLAN] $name (" . formatSize($size) . ") → " . basename($rotatedFile) . PHP_EOL;
+            echo "  [PLAN] $name (" . formatSize($size) . ") â†’ " . basename($rotatedFile) . PHP_EOL;
             $rotated++;
         }
     }
@@ -112,7 +112,7 @@ foreach ($logDirs as $dir) {
     // Group by base name
     $groups = [];
     foreach ($rotatedFiles as $rFile) {
-        // Extract base name: "php_error.log.2026-06-15_000000.gz" → "php_error.log"
+        // Extract base name: "php_error.log.2026-06-15_000000.gz" â†’ "php_error.log"
         if (preg_match('/^(.+\.log)\.\d{4}-\d{2}-\d{2}_\d{6}\.gz$/', basename($rFile), $m)) {
             $groups[$m[1]][] = $rFile;
         }
@@ -150,4 +150,4 @@ function formatSize($bytes)
         return round($bytes / 1024, 1) . ' KB';
     }
     return $bytes . ' B';
-}
+}?>

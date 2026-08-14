@@ -3,7 +3,7 @@ $page_title = 'Astrology & Property - APS Dream Home';
 $page_description = 'Explore how Vedic astrology influences property selection and investment timing. Get personalized astrological guidance for your dream home.';
 ?>
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('assets/images/astrology-hero.jpg') ?>'); background-size: cover; background-position: center;">
+<section class="hero-section text-white text-center py-5" class="style-75379">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -64,7 +64,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" style="width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
                             <i class="fas fa-star display-5"></i>
                         </div>
                         <h4>Lagna (Ascendant)</h4>
@@ -75,7 +75,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" style="width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
                             <i class="fas fa-home display-5"></i>
                         </div>
                         <h4>4th House</h4>
@@ -86,7 +86,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" style="width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" class="style-84502">
                             <i class="fas fa-gem display-5"></i>
                         </div>
                         <h4>Jupiter (Guru)</h4>
@@ -161,13 +161,13 @@ $page_description = 'Explore how Vedic astrology influences property selection a
                 <div class="col-md-6 col-lg-3" data-aos="fade-up">
                     <div class="card h-100 border-0 shadow-sm overflow-hidden">
                         <div class="position-relative">
-                            <img src="<?= BASE_URL . '/' . htmlspecialchars($colony['image_path'] ?? 'assets/images/default-banner.jpg') ?>" alt="<?= htmlspecialchars($colony['name']) ?>" class="card-img-top" style="height:180px;object-fit:cover">
+                            <img src="<?= BASE_URL . '/' . htmlspecialchars($colony['image_path'] ?? 'assets/images/default-banner.jpg') ?>" alt="<?= htmlspecialchars($colony['name']) ?>" class="card-img-top" class="style-58348">
                             <span class="badge bg-info text-dark position-absolute top-0 end-0 m-2">Astrology OK</span>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title"><?= htmlspecialchars($colony['name'] ?? '') ?></h5>
                             <p class="text-muted small mb-2"><?= htmlspecialchars($colony['location'] ?? '') ?></p>
-                            <p class="fw-bold text-primary mb-0"><?= !empty($colony['starting_price']) ? '₹' . number_format($colony['starting_price']) : 'Contact Us' ?></p>
+                            <p class="fw-bold text-primary mb-0"><?= !empty($colony['starting_price']) ? 'â‚¹' . number_format($colony['starting_price']) : 'Contact Us' ?></p>
                         </div>
                         <div class="card-footer bg-white border-0 text-center">
                             <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug'] ?? $colony['name'] ?? '') ?>" class="btn btn-sm btn-outline-primary">View Details</a>

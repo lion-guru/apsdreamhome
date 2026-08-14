@@ -1,9 +1,9 @@
 <?php
 /**
- * Audit Hot Indexes — finds missing indexes on tables with >1000 rows
+ * Audit Hot Indexes â€” finds missing indexes on tables with >1000 rows
  *
  * Usage: php scripts/audit_hot_indexes.php
- * Safe: READ-ONLY — never runs CREATE INDEX, only reports.
+ * Safe: READ-ONLY â€” never runs CREATE INDEX, only reports.
  */
 
 define('DB_HOST', '127.0.0.1');
@@ -20,10 +20,10 @@ $pdo = new PDO(
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 );
 
-echo "=== APS Dream Home — Hot Index Audit ===\n";
+echo "=== APS Dream Home â€” Hot Index Audit ===\n";
 echo "Threshold: tables with more than " . number_format(MIN_ROWS) . " rows\n\n";
 
-// ── Step 1: find hot tables ──────────────────────────────────────────────────
+// â”€â”€ Step 1: find hot tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $hotStmt = $pdo->query("
     SELECT TABLE_NAME, TABLE_ROWS
     FROM information_schema.TABLES
@@ -36,11 +36,11 @@ $hotTables = $hotStmt->fetchAll(PDO::FETCH_ASSOC);
 echo count($hotTables) . " table(s) exceed " . number_format(MIN_ROWS) . " rows:\n\n";
 
 foreach ($hotTables as $t) {
-    echo "  {$t['TABLE_NAME']} — " . number_format($t['TABLE_ROWS']) . " rows\n";
+    echo "  {$t['TABLE_NAME']} â€” " . number_format($t['TABLE_ROWS']) . " rows\n";
 }
 echo "\n";
 
-// ── Step 2: expected indexes per table ───────────────────────────────────────
+// â”€â”€ Step 2: expected indexes per table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $expectedIndexes = [
     'plot_bookings' => [
         ['cols' => ['user_id'],         'name' => 'idx_plot_bookings_user_id'],
@@ -83,7 +83,7 @@ $expectedIndexes = [
     ],
 ];
 
-// ── Step 3: for each hot table, fetch existing indexes ───────────────────────
+// â”€â”€ Step 3: for each hot table, fetch existing indexes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $missingByTable = [];
 
 foreach ($hotTables as $t) {
@@ -148,11 +148,11 @@ foreach ($hotTables as $t) {
     }
 }
 
-// ── Step 4: report ───────────────────────────────────────────────────────────
+// â”€â”€ Step 4: report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $allMissing = [];
 
 foreach ($missingByTable as $table => $missing) {
-    echo "─── {$table} ───\n";
+    echo "â”€â”€â”€ {$table} â”€â”€â”€\n";
     echo "  Existing indexes:\n";
 
     $idxStmt = $pdo->prepare("
@@ -170,7 +170,7 @@ foreach ($missingByTable as $table => $missing) {
     } else {
         foreach ($existing as $e) {
             $type = $e['NON_UNIQUE'] ? 'INDEX' : 'UNIQUE';
-            echo "    {$e['INDEX_NAME']} → ({$e['cols']}) [{$type}]\n";
+            echo "    {$e['INDEX_NAME']} â†’ ({$e['cols']}) [{$type}]\n";
         }
     }
 
@@ -178,17 +178,17 @@ foreach ($missingByTable as $table => $missing) {
     foreach ($missing as $m) {
         $colList = implode('_', $m['cols']);
         $sql = "CREATE INDEX {$m['name']} ON `{$table}` (`" . implode('`, `', $m['cols']) . "`);";
-        echo "    ✗ {$m['name']} on ({$colList})\n";
+        echo "    âœ— {$m['name']} on ({$colList})\n";
         echo "      SQL: {$sql}\n";
         $allMissing[] = ['table' => $table, 'index' => $m['name'], 'sql' => $sql];
     }
     echo "\n";
 }
 
-// ── Step 5: summary ──────────────────────────────────────────────────────────
-echo "════════════════════════════════════════════════════════════════════\n";
+// â”€â”€ Step 5: summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+echo "â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n";
 echo "SUMMARY\n";
-echo "════════════════════════════════════════════════════════════════════\n";
+echo "â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n";
 echo "Hot tables checked:     " . count($hotTables) . "\n";
 echo "Tables with expected:   " . count($expectedIndexes) . "\n";
 echo "Missing indexes found:  " . count($allMissing) . "\n";
@@ -203,4 +203,4 @@ if (!empty($allMissing)) {
     echo "\nAll expected indexes are present. Nothing to create.\n";
 }
 
-echo "\nDone. " . date('Y-m-d H:i:s') . "\n";
+echo "\nDone. " . date('Y-m-d H:i:s') . "\n";?>

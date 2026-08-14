@@ -1,8 +1,8 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-5">
             <h1 class="text-white fw-bold display-5"><i class="fas fa-toolbox me-2"></i><?php echo __('tool_hub_title', [], 'Tools Hub'); ?></h1>
-            <p class="text-white-50 fs-5"><?php echo __('tool_hub_subtitle', [], 'Make your property journey smarter — all calculators in one place'); ?></p>
+            <p class="text-white-50 fs-5"><?php echo __('tool_hub_subtitle', [], 'Make your property journey smarter â€” all calculators in one place'); ?></p>
         </div>
         <div class="row g-4">
             <?php
@@ -17,7 +17,7 @@
                 ['url' => BASE_URL . '/property-tax-calculator', 'gradient' => 'linear-gradient(135deg, #fc5c7d, #6a82fb)', 'icon' => 'fa-file-invoice-dollar', 'title_key' => 'tool_prop_tax', 'title_default' => 'Property Tax Calculator', 'desc_key' => 'tool_prop_tax_desc', 'desc_default' => 'Estimate your annual property tax with detailed breakdown'],
                 ['url' => BASE_URL . '/property-valuation', 'gradient' => 'linear-gradient(135deg, #fa709a, #fee140)', 'icon' => 'fa-house-chimney', 'title_key' => 'tool_prop_val', 'title_default' => 'Property Valuation', 'desc_key' => 'tool_prop_val_desc', 'desc_default' => 'Get an instant estimate of your property market value'],
                 ['url' => BASE_URL . '/sip-vs-realestate', 'gradient' => 'linear-gradient(135deg, #ffecd2, #fcb69f)', 'icon' => 'fa-chart-line', 'title_key' => 'tool_sip_vs_re', 'title_default' => 'SIP vs Real Estate', 'desc_key' => 'tool_sip_vs_re_desc', 'desc_default' => 'Compare returns between SIP investments and real estate'],
-                ['url' => BASE_URL . '/gst-calculator', 'gradient' => 'linear-gradient(135deg, #a8edea, #fed6e3)', 'icon' => 'fa-receipt', 'title_key' => 'tool_gst_calc', 'title_default' => 'GST Calculator', 'desc_key' => 'tool_gst_calc_desc', 'desc_default' => 'See GST on property — view base price and GST separately'],
+                ['url' => BASE_URL . '/gst-calculator', 'gradient' => 'linear-gradient(135deg, #a8edea, #fed6e3)', 'icon' => 'fa-receipt', 'title_key' => 'tool_gst_calc', 'title_default' => 'GST Calculator', 'desc_key' => 'tool_gst_calc_desc', 'desc_default' => 'See GST on property â€” view base price and GST separately'],
                 ['url' => BASE_URL . '/capital-gains-calculator', 'gradient' => 'linear-gradient(135deg, #89f7fe, #66a6ff)', 'icon' => 'fa-coins', 'title_key' => 'tool_cap_gains', 'title_default' => 'Capital Gains Calculator', 'desc_key' => 'tool_cap_gains_desc', 'desc_default' => 'Calculate tax on property sale with capital gains calculator'],
             ];
 

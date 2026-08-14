@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 /**
  * God Mode Dashboard - Admin Super Powers
  * User Impersonation, Role Switching, System Control
@@ -288,7 +288,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
     <!-- Role Switch Warning -->
     <?php if ($roleSwitched): ?>
     <div class="container mt-3">
-        <div class="alert alert-warning-god" style="background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #1e1b4b; padding: 15px; border-radius: 10px;">
+        <div class="alert alert-warning-god" class="style-11821">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <i class="fas fa-exchange-alt me-2"></i>
@@ -304,10 +304,11 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
 
     <!-- Header -->
     <header class="god-header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-crown fa-2x" style="color: var(--god-accent);"></i>
+                    <i class="fas fa-crown fa-2x" class="style-15063"></i>
                     <div>
                         <h4 class="mb-0">God Mode</h4>
                         <small class="opacity-75">Super Admin Control Panel</small>
@@ -388,18 +389,18 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                     <div class="mb-3">
                         <small class="text-muted">Quick Filters:</small>
                         <div class="mt-2">
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('customer')">users</span>
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('associate')">users</span>
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('agent')">users</span>
-                            <span class="badge bg-secondary me-1" style="cursor: pointer;" onclick="filterUsers('employee')">users</span>
+                            <span class="badge bg-secondary me-1" class="style-75920" onclick="filterUsers('customer')">users</span>
+                            <span class="badge bg-secondary me-1" class="style-75920" onclick="filterUsers('associate')">users</span>
+                            <span class="badge bg-secondary me-1" class="style-75920" onclick="filterUsers('agent')">users</span>
+                            <span class="badge bg-secondary me-1" class="style-75920" onclick="filterUsers('employee')">users</span>
                         </div>
                     </div>
                     
-                    <div id="usersList" style="max-height: 400px; overflow-y: auto;">
+                    <div id="usersList" class="style-61454">
                         <?php foreach ($users as $user): ?>
                         <div class="user-card" data-user-id="<?php echo $user['id']; ?>">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" class="style-72966">
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div>
@@ -440,7 +441,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                         </div>
                     </div>
                     
-                    <div class="alert alert-info" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5);">
+                    <div class="alert alert-info" class="style-91427">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Current Role:</strong> <?php echo ucfirst($_SESSION['admin_role'] ?? 'admin'); ?><br>
                         <small>Your permissions will change based on the selected role.</small>

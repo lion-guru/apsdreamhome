@@ -16,4 +16,4 @@ foreach ($iterator as $file) {
 
 echo "Files extending ServiceTenantTrait:\n";
 foreach ($extended as $f) echo "  $f\n";
-echo "Total: " . count($extended) . "\n";
+echo "Total: " . count($extended) . "\n";?>

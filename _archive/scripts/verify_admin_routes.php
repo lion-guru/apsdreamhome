@@ -116,4 +116,4 @@ if (empty($failed) && empty($unexpected)) {
     echo "\nAll routes returned 200/302/403. No bugs detected.\n";
 }
 
-echo "\nDone.\n";
+echo "\nDone.\n";?>

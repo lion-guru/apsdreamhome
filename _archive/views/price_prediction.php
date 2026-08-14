@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         </div>
                         <div class="col-md-4">
                             <p class="text-muted mb-1">Current Price</p>
-                            <h5 class="text-primary">₹<?php echo number_format($property['price'] ?? 0); ?></h5>
+                            <h5 class="text-primary">â‚¹<?php echo number_format($property['price'] ?? 0); ?></h5>
                         </div>
                         <div class="col-md-4">
                             <p class="text-muted mb-1">Type</p>
@@ -72,12 +72,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <div class="row align-items-center">
                                 <div class="col-md-6">
                                     <p class="mb-1">Predicted Price</p>
-                                    <h2 class="mb-0">₹<?php echo number_format($current_prediction['predicted_price'] ?? 0); ?></h2>
+                                    <h2 class="mb-0">â‚¹<?php echo number_format($current_prediction['predicted_price'] ?? 0); ?></h2>
                                     <small>Confidence: <?php echo $current_prediction['accuracy'] ?? 87.5; ?>%</small>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="mb-1">Price Range</p>
-                                    <h5>₹<?php echo number_format($current_prediction['confidence_range']['lower'] ?? 0); ?> - ₹<?php echo number_format($current_prediction['confidence_range']['upper'] ?? 0); ?></h5>
+                                    <h5>â‚¹<?php echo number_format($current_prediction['confidence_range']['lower'] ?? 0); ?> - â‚¹<?php echo number_format($current_prediction['confidence_range']['upper'] ?? 0); ?></h5>
                                 </div>
                             </div>
                             <hr class="my-3 bg-white opacity-25">
@@ -132,8 +132,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-body text-center">
                             <h6 class="text-muted">Model Accuracy</h6>
                             <h2 class="text-success mb-2"><?php echo $prediction_accuracy; ?>%</h2>
-                            <div class="progress" style="height: 10px;">
-                                <div class="progress-bar bg-success" style="width: <?php echo $prediction_accuracy; ?>%"></div>
+                            <div class="progress" class="style-92162">
+                                <div class="progress-bar bg-success" class="style-6695"></div>
                             </div>
                             <small class="text-muted">Based on historical predictions</small>
                         </div>

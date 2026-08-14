@@ -8,7 +8,7 @@ $location = $location ?? '';
 $locationName = ucfirst($location);
 ?>
 <!-- Hero Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+<section class="py-5 text-white" class="style-68644">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-map-marker-alt me-3"></i><?php echo $locationName; ?> <?= __('projects_location_hero') ?></h1>
         <p class="lead"><?= __('projects_location_explore') ?> <?php echo $locationName; ?></p>
@@ -39,8 +39,8 @@ $locationName = ucfirst($location);
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 shadow-sm border-0 overflow-hidden">
-                        <div class="position-relative" style="height: 200px;">
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
+                        <div class="position-relative" class="style-17333">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" class="style-86926" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 start-0 m-2">
                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'primary'; ?>">
                                     <?php echo $project->status === 'active' ? __('colony_available') : __('projects_completed'); ?>
@@ -104,7 +104,7 @@ $locationName = ucfirst($location);
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+<section class="py-5 text-center text-white" class="style-68644">
     <div class="container">
         <h3><?= __('projects_location_interested') ?> <?php echo $locationName; ?> <?= __('projects_location_properties') ?></h3>
         <p class="mb-4"><?= __('projects_location_cta_desc') ?></p>

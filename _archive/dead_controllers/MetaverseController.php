@@ -19,7 +19,7 @@ class MetaverseController extends AdminController
     {
         $this->requireAdmin();
         $this->render('admin/feature-disabled', [
-            'page_title' => 'Metaverse — Coming Soon',
+            'page_title' => 'Metaverse â€” Coming Soon',
             'feature_name' => 'Metaverse Integration',
             'feature_description' => 'VR property showrooms, virtual development, NFT certificates, and collaborative spaces require additional infrastructure. This feature will be available soon.',
             'icon' => 'fas fa-vr-cardboard',
@@ -1131,13 +1131,13 @@ class MetaverseController extends AdminController
 
         $economy_data = [
             'virtual_currency' => 'VRC (Virtual Real Estate Coin)',
-            'exchange_rate' => '1 VRC = ₹100',
-            'market_cap' => '₹50,00,000',
-            'daily_volume' => '₹2,50,000',
+            'exchange_rate' => '1 VRC = â‚¹100',
+            'market_cap' => 'â‚¹50,00,000',
+            'daily_volume' => 'â‚¹2,50,000',
             'top_traded_assets' => [
-                ['name' => 'Virtual Apartments', 'volume' => '₹1,20,000', 'change' => '+15%'],
-                ['name' => 'VR Showrooms', 'volume' => '₹80,000', 'change' => '+8%'],
-                ['name' => 'Metaverse Land', 'volume' => '₹50,000', 'change' => '+22%']
+                ['name' => 'Virtual Apartments', 'volume' => 'â‚¹1,20,000', 'change' => '+15%'],
+                ['name' => 'VR Showrooms', 'volume' => 'â‚¹80,000', 'change' => '+8%'],
+                ['name' => 'Metaverse Land', 'volume' => 'â‚¹50,000', 'change' => '+22%']
             ]
         ];
 
@@ -1256,4 +1256,4 @@ class MetaverseController extends AdminController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

@@ -46,7 +46,8 @@ class DocumentGeneratorAgent
             $colonyName = $payment['colony_name'] ?? 'N/A';
             $method = $payment['payment_method'] ?? 'N/A';
 
-            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Receipt</title>';
+            $html = '<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8"><title>Receipt</title>';
             $html .= '<style>body{font-family:sans-serif;margin:40px;color:#333}.hdr{text-align:center;border-bottom:3px solid #0d9488;padding-bottom:20px;margin-bottom:30px}.hdr h1{color:#0d9488;margin:0}.box{border:2px solid #0d9488;border-radius:12px;padding:30px;background:#f8f9ff}.r{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}.r:last-child{border:none}.l{font-weight:600;color:#555}.amt{font-size:24px;color:#0d9488;font-weight:700}.stamp{text-align:center;margin-top:30px;padding:15px;background:#e8ffe8;border-radius:8px;color:#2d7a2d;font-weight:600}.ft{text-align:center;margin-top:30px;color:#888;font-size:12px}</style></head><body>';
             $html .= '<div class="hdr"><h1>APS Dream Home</h1><p>Payment Receipt</p></div>';
             $html .= '<div class="box">';

@@ -50,4 +50,4 @@ echo "\n=== ADMIN MENU ITEMS COUNT BY SECTION ===\n";
 $rows = $db->fetchAll("SELECT section, COUNT(*) as cnt FROM admin_menu_items WHERE is_active=1 GROUP BY section ORDER BY section");
 foreach($rows as $r) {
     echo $r['section'] . ': ' . $r['cnt'] . "\n";
-}
+}?>

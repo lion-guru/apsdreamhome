@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Land Management'; ?>
+ï»¿<?php $pageTitle = 'Land Management'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -30,7 +30,7 @@
                         <?php if (empty($landRecords)): ?>
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No land records found</h5>
                                     <p class="text-muted mb-3">Add land parcels to your inventory to track acquisitions, pricing, and availability across all colonies.</p>
                                     <a href="<?= BASE_URL ?>/admin/land/create" class="btn btn-primary">
@@ -40,7 +40,7 @@
                             </tr>
                         <?php else: ?>
                             <?php foreach ($landRecords as $i => $l): ?>
-                            <tr><td class="ps-4"><?= $i+1 ?></td><td><strong><?= $l['title'] ?? 'Land #'.$l['id'] ?></strong></td><td><?= $l['location'] ?? '-' ?></td><td><?= number_format($l['area_sqft'] ?? 0) ?> sqft</td><td class="fw-bold">₹<?= number_format($l['price'] ?? 0, 2) ?></td><td><span class="badge bg-<?= ($l['status'] ?? 'available') === 'available' ? 'success' : (($l['status'] ?? 'available') === 'sold' ? 'danger' : 'warning') ?>-subtle text-<?= ($l['status'] ?? 'available') === 'available' ? 'success' : (($l['status'] ?? 'available') === 'sold' ? 'danger' : 'warning') ?> rounded-pill px-3"><?= ucfirst($l['status'] ?? 'Available') ?></span></td><td class="text-end pe-4"><a href="<?= BASE_URL ?>/admin/land/show/<?= $l['id'] ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a> <a href="<?= BASE_URL ?>/admin/land/edit/<?= $l['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a></td></tr>
+                            <tr><td class="ps-4"><?= $i+1 ?></td><td><strong><?= $l['title'] ?? 'Land #'.$l['id'] ?></strong></td><td><?= $l['location'] ?? '-' ?></td><td><?= number_format($l['area_sqft'] ?? 0) ?> sqft</td><td class="fw-bold">â‚¹<?= number_format($l['price'] ?? 0, 2) ?></td><td><span class="badge bg-<?= ($l['status'] ?? 'available') === 'available' ? 'success' : (($l['status'] ?? 'available') === 'sold' ? 'danger' : 'warning') ?>-subtle text-<?= ($l['status'] ?? 'available') === 'available' ? 'success' : (($l['status'] ?? 'available') === 'sold' ? 'danger' : 'warning') ?> rounded-pill px-3"><?= ucfirst($l['status'] ?? 'Available') ?></span></td><td class="text-end pe-4"><a href="<?= BASE_URL ?>/admin/land/show/<?= $l['id'] ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a> <a href="<?= BASE_URL ?>/admin/land/edit/<?= $l['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>

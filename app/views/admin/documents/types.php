@@ -66,7 +66,7 @@
                                             <td><span class="badge bg-<?= ($t['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($t['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span></td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editType<?= (int)$t['id'] ?>"><i class="fas fa-edit"></i></button>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/delete/<?= (int)$t['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this type?');">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/delete/<?= (int)$t['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this type?');">
                                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                                                 </form>

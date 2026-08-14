@@ -60,4 +60,4 @@ if ($count < 5) {
     echo "Testimonials table has $count records, skipping seed\n";
 }
 
-echo "DONE\n";
+echo "DONE\n";?>

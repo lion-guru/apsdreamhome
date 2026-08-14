@@ -11,4 +11,4 @@ foreach ($tables as $t) {
         echo "  {$c['Field']} {$c['Type']} $null$def" . PHP_EOL;
     }
     echo PHP_EOL;
-}
+}?>

@@ -97,4 +97,4 @@ foreach ($allTables as $t) {
 }
 echo "Orphan tables (0 refs + 0 rows): " . count($orphans) . "\n";
 foreach (array_slice($orphans, 0, 30) as $t) echo "  - $t\n";
-if (count($orphans) > 30) echo "  ... and " . (count($orphans) - 30) . " more\n";
+if (count($orphans) > 30) echo "  ... and " . (count($orphans) - 30) . " more\n";?>

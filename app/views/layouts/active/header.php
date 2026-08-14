@@ -34,22 +34,23 @@ $sc = function ($key, $default = '') {
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']) || isset($_SESSION['admin_id']);
 
 // NavigationHelper for mobile drawer + bottom nav
-// Class is autoloaded via App namespace — no require_once needed
+// Class is autoloaded via App namespace â€” no require_once needed
 $nav = \App\Helpers\NavigationHelper::getInstance();
 ?>
 
 <?php require __DIR__ . '/../components/navigation/mobile_top_bar.php'; ?>
 
 <header class="premium-header fixed-top" id="mainHeader">
-    <nav class="navbar navbar-expand-xl align-items-center" style="padding: 0.5rem 0;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <nav class="navbar navbar-expand-xl align-items-center" class="style-53424">
         <div class="container d-flex align-items-center">
             <!-- Logo - Always on the left -->
-            <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" style="flex: 0 0 auto;">
+            <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" class="style-38085">
                 <?php $brand = $sc('company_name', 'APS Dream Home');
                 $logo = $sc('company_logo', '/assets/images/logo/apslogonew.jpg'); ?>
-                <img src="<?php echo BASE_URL . h($logo); ?>" alt="<?php echo h($brand); ?>" class="logo" style="height: 32px; width: auto; max-width: 110px;" loading="eager" fetchpriority="high">
+                <img src="<?php echo BASE_URL . h($logo); ?>" alt="<?php echo h($brand); ?>" class="logo" class="style-11857" loading="eager" fetchpriority="high">
                 <?php if (isset($brand)): ?>
-                    <span class="brand-text d-none d-md-inline ms-2 fw-bold" style="color: #1a1a1a; font-size: 1.1rem;"><?php echo h($brand); ?></span>
+                    <span class="brand-text d-none d-md-inline ms-2 fw-bold" class="style-38619"><?php echo h($brand); ?></span>
                 <?php endif; ?>
             </a>
 
@@ -115,7 +116,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                     <li class="nav-item ms-2">
                         <a href="<?php echo BASE_URL; ?>/compare" class="btn btn-outline-info btn-sm position-relative">
                             <i class="fas fa-balance-scale"></i> Compare
-                            <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;font-size:10px;">0</span>
+                            <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" class="style-62224">0</span>
                         </a>
                     </li>
 
@@ -143,10 +144,10 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
 window.BASE_URL = '<?php echo BASE_URL; ?>';
 
 /**
- * Unified drawer toggle — replaces openMenu/closeMenu pattern.
- *   toggleDrawer(event)      → toggles open state
- *   toggleDrawer(null,'close') → closes
- *   toggleDrawer(null,'open')  → opens
+ * Unified drawer toggle â€” replaces openMenu/closeMenu pattern.
+ *   toggleDrawer(event)      â†’ toggles open state
+ *   toggleDrawer(null,'close') â†’ closes
+ *   toggleDrawer(null,'open')  â†’ opens
  */
 var _drawerPreviousFocus = null;
 
@@ -257,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mobile drawer dropdowns — accordion-style
+    // Mobile drawer dropdowns â€” accordion-style
     function setupDrawerDropdowns() {
         drawer.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(function(dt) {
             dt.addEventListener('click', function(e) {
@@ -500,7 +501,7 @@ window.apsAnnounce = announce;
         currentItems = items.filter(function(i) { return !i.divider; });
         activeIndex = -1;
         if (currentItems.length === 0) {
-            results.innerHTML = '<div style="padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;">No results found</div>';
+            results.innerHTML = '<div class="style-68356">No results found</div>';
             return;
         }
 

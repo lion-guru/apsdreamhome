@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div class="card-header text-white p-4" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+                <div class="card-header text-white p-4" class="style-68644">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <i class="fas fa-robot fa-2x"></i>
@@ -19,13 +19,13 @@
                     </div>
                 </div>
 
-                <div class="chat-container d-flex flex-column" style="height: 520px; background: #f8f9fa;">
-                    <div class="chat-messages p-4" id="chatMessages" style="flex: 1; overflow-y: auto;">
+                <div class="chat-container d-flex flex-column" class="style-52621">
+                    <div class="chat-messages p-4" id="chatMessages" class="style-34411">
                         <div class="text-center mb-4">
-                            <div class="d-inline-block p-3 rounded-circle mb-2" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+                            <div class="d-inline-block p-3 rounded-circle mb-2" class="style-68644">
                                 <i class="fas fa-robot fa-2x text-white"></i>
                             </div>
-                            <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> 🙏</h4>
+                            <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> ðŸ™�</h4>
                             <p class="text-muted mb-0"><?= __('aiast_welcome', [], "I'm your APS Dream Home AI assistant. Ask me anything about properties, pricing, site visits, or loans!") ?></p>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                         </div>
                     </div>
 
-                    <div class="loading text-center py-2 text-muted small" id="loading" style="display: none;">
+                    <div class="loading text-center py-2 text-muted small" id="loading" class="style-54390">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <em>Typing<span class="dots">...</span></em>
                     </div>
@@ -121,11 +121,11 @@
         wrapper.className = 'message mb-3 clearfix';
         if (role === 'user') {
             wrapper.innerHTML =
-                '<div class="p-3 rounded-4 shadow-sm" style="max-width: 85%; margin-left: auto; background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: #fff;">'
+                '<div class="p-3 rounded-4 shadow-sm" class="style-8242">'
                 + escapeHtml(text) + '</div>';
         } else {
             wrapper.innerHTML =
-                '<div class="p-3 rounded-4 bg-white shadow-sm" style="max-width: 85%; margin-right: auto; border-left: 4px solid #0d9488;">'
+                '<div class="p-3 rounded-4 bg-white shadow-sm" class="style-65334">'
                 + escapeHtml(text) + '</div>';
         }
         messages.appendChild(wrapper);

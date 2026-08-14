@@ -177,6 +177,7 @@ class InvoiceService
         <!DOCTYPE html>
         <html>
         <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 body { font-family: Arial, sans-serif; font-size: 12px; }
                 .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; }

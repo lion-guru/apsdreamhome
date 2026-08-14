@@ -36,7 +36,7 @@
                            class="list-group-item list-group-item-action d-flex align-items-center">
                             <div class="flex-shrink-0 me-3">
                                 <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                     style="width: 48px; height: 48px; border-radius: 50%; font-weight: bold; font-size: 18px;">
+                                     class="style-75007">
                                     <?= strtoupper(substr($conv['other_user_name'] ?? '?', 0, 1)) ?>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                     <h6 class="mb-0 <?= ($conv['unread_count'] ?? 0) > 0 ? 'fw-bold' : '' ?>">
                                         <?= htmlspecialchars($conv['other_user_name'] ?? 'Unknown') ?>
                                     </h6>
-                                    <small class="text-muted ms-2" style="white-space: nowrap;">
+                                    <small class="text-muted ms-2" class="style-64704">
                                         <?php if (!empty($conv['last_message_time'])): ?>
                                             <?php
                                             $date = new DateTime($conv['last_message_time']);
@@ -65,11 +65,11 @@
                                     </small>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted text-truncate d-block" style="max-width: 300px;">
+                                    <small class="text-muted text-truncate d-block" class="style-33818">
                                         <span class="badge bg-<?php
                                             $role = $conv['other_user_role'] ?? 'user';
                                             echo match($role) {'admin' => 'danger', 'associate' => 'success', 'agent' => 'info', 'employee' => 'warning', default => 'secondary'};
-                                        ?> me-1" style="font-size: 10px;"><?= ucfirst($role) ?></span>
+                                        ?> me-1" class="style-61659"><?= ucfirst($role) ?></span>
                                         <?= htmlspecialchars(mb_substr($conv['last_message'] ?? 'No messages', 0, 60)) ?>
                                         <?= strlen($conv['last_message'] ?? '') > 60 ? '...' : '' ?>
                                     </small>

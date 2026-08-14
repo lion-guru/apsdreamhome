@@ -53,4 +53,4 @@ echo "\nTesting ColonyFeasibilityService query...\n";
 $row = $db->fetch('SELECT COALESCE(SUM(acquisition_cost), 0) AS total FROM land_acquisitions WHERE colony_id = 2 AND status IN ("registered", "active", "sold", "under_development")');
 print_r($row);
 
-echo "\nAll tests passed!\n";
+echo "\nAll tests passed!\n";?>

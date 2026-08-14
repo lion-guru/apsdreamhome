@@ -12,4 +12,4 @@ foreach ($tables as $t) {
     if (stripos($t, 'state') !== false || stripos($t, 'district') !== false || stripos($t, 'city') !== false || stripos($t, 'location') !== false || stripos($t, 'area') !== false || stripos($t, 'region') !== false) {
         echo "$t\n";
     }
-}
+}?>

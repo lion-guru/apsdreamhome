@@ -70,7 +70,7 @@ class EmailTemplateController extends AdminController
 
         if (!$result['ok']) {
             http_response_code(404);
-            echo '<div style="font-family:Arial;padding:30px;color:#c00;">'
+            echo '<div class="style-48911">'
                . '<h2>Template not found</h2>'
                . '<p>' . htmlspecialchars($result['error'] ?? 'Unknown error') . '</p>'
                . '</div>';

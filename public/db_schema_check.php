@@ -18,4 +18,4 @@ function query($pdo, $sql) {
 
 echo "<pre>";
 query($pdo, "DESCRIBE users");
-echo "</pre>";
+echo "</pre>";?>

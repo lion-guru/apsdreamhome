@@ -35,4 +35,4 @@ $stmt = $pdo->query("SELECT id, name, state_id FROM districts LIMIT 10");
 echo "  Sample data:\n";
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo "    " . json_encode($row) . "\n";
-}
+}?>

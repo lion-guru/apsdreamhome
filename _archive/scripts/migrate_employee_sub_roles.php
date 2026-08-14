@@ -3,7 +3,7 @@
  * Employee Sub-Role System Migration
  * 
  * Maps employee designations/departments to RBAC sub-roles.
- * When role=employee, AdminMenuService looks up designation → sub-role → menu permissions.
+ * When role=employee, AdminMenuService looks up designation â†’ sub-role â†’ menu permissions.
  * 
  * Run: php scripts/migrate_employee_sub_roles.php
  */
@@ -172,4 +172,4 @@ try {
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

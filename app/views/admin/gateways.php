@@ -57,7 +57,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">
                     <i class="fas fa-list me-1"></i>
-                    <?= htmlspecialchars(ucfirst($gateway)) ?> — last 100 calls
+                    <?= htmlspecialchars(ucfirst($gateway)) ?> Ã¢â‚¬â€� last 100 calls
                 </h6>
                                 <a href="<?= $baseUrl ?>/admin/gateways" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left me-1"></i><?= __('admin_btn_back_cards', null, 'Back to cards') ?>
@@ -96,7 +96,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                 <td><?= (int)($row['duration_ms'] ?? 0) ?>ms</td>
                                 <td>$<?= number_format((float)($row['cost'] ?? 0), 4) ?></td>
                                 <td><span title="<?= htmlspecialchars((string)$row['created_at']) ?>"><?= htmlspecialchars((string)$row['created_at']) ?></span></td>
-                                <td class="text-truncate" style="max-width: 240px;" title="<?= htmlspecialchars((string)($row['error_message'] ?? '')) ?>">
+                                <td class="text-truncate" class="style-96974" title="<?= htmlspecialchars((string)($row['error_message'] ?? '')) ?>">
                                     <?= htmlspecialchars((string)($row['error_message'] ?? '')) ?>
                                 </td>
                             </tr>
@@ -152,7 +152,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                             <hr/>
 
                             <p class="small text-muted mb-2"><?= __('admin_gw_last_5', null, 'Last 5 calls:') ?></p>
-                            <ul class="list-group list-group-flush mb-2" style="max-height: 180px; overflow-y: auto;">
+                            <ul class="list-group list-group-flush mb-2" class="style-85686">
                                 <?php if (empty($card['last_5'])): ?>
                                     <li class="list-group-item text-muted small"><?= __('admin_gw_no_calls_yet', null, 'No calls yet.') ?></li>
                                 <?php else: foreach ($card['last_5'] as $row): ?>
@@ -163,7 +163,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                             </span>
                                             <code><?= htmlspecialchars((string)($row['action'] ?? '-')) ?></code>
                                             <?php if (!empty($row['recipient'])): ?>
-                                                <span class="text-muted">→ <?= htmlspecialchars((string)$row['recipient']) ?></span>
+                                                <span class="text-muted">Ã¢â€ â€™ <?= htmlspecialchars((string)$row['recipient']) ?></span>
                                             <?php endif; ?>
                                         </span>
                                         <span class="text-muted"><?= htmlspecialchars((string)($row['created_at'] ?? '')) ?></span>
@@ -177,7 +177,8 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                     <div class="input-group input-group-sm">
                                         <input type="tel" name="phone" class="form-control" placeholder="+91xxxxxxxxxx"
                                                value="<?= htmlspecialchars($admin_phone) ?>" required>
-                                        <button class="btn btn-primary" type="submit">
+                                        <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button class="btn btn-primary" type="submit">
                                             <i class="fas fa-paper-plane me-1"></i><?= __('admin_gw_btn_test', null, 'Test') ?>
                                         </button>
                                     </div>
@@ -213,7 +214,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                         </h6>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <p class="mb-2"><strong>Twilio</strong> — set in <code>.env</code>:</p>
+                        <p class="mb-2"><strong>Twilio</strong> Ã¢â‚¬â€� set in <code>.env</code>:</p>
                         <pre class="bg-light p-2 small mb-3">TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=your_auth_token
 TWILIO_FROM_NUMBER=+15555555555
@@ -221,7 +222,7 @@ TWILIO_WHATSAPP_NUMBER=+14155238886
 TWILIO_VERIFY_SERVICE_SID=VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
 
-                        <p class="mb-2"><strong>Razorpay / Stripe / PhonePe</strong> — payment gateways are wired through their SDK; use the existing test mode flags.</p>
+                        <p class="mb-2"><strong>Razorpay / Stripe / PhonePe</strong> Ã¢â‚¬â€� payment gateways are wired through their SDK; use the existing test mode flags.</p>
 
                         <p class="mb-0 text-muted small">All gateway calls are logged to the <code>gateway_logs</code> table (success and failure). Rate-limited at 100 calls/min per process by default.</p>
                     </div>

@@ -9,15 +9,15 @@ $callDigits = preg_replace('/[^0-9]/', '', $cPhone);
 $userRole = isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest'));
 $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 ?>
-<!-- ═══════════════════════════════════════════════════════════════
-     APS AI Chatbot + WhatsApp + Call + Voice — Unified Widget v3
-      Unified widget: AI chatbot + voice + WhatsApp + call — all in one place.
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+     APS AI Chatbot + WhatsApp + Call + Voice â€” Unified Widget v3
+      Unified widget: AI chatbot + voice + WhatsApp + call â€” all in one place.
+     â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .cw-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 @media(min-width:768px){.cw-wrap{bottom:24px;right:24px}}
 
-/* ── Toggle Buttons (Chatbot + WhatsApp side by side) ── */
+/* â”€â”€ Toggle Buttons (Chatbot + WhatsApp side by side) â”€â”€ */
 .cw-toggles{display:flex;gap:10px;align-items:center}
 .cw-toggle{width:56px;height:56px;border-radius:50%;border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;flex-shrink:0}
 @media(min-width:768px){.cw-toggle{width:60px;height:60px;font-size:24px}}
@@ -36,13 +36,13 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 #cwCallToggle{background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 6px 20px rgba(99,102,241,0.4);text-decoration:none;color:#fff}
 #cwCallToggle:hover{box-shadow:0 8px 28px rgba(99,102,241,0.5);color:#fff}
 
-/* ── Chat Box ── */
+/* â”€â”€ Chat Box â”€â”€ */
 .cw-box{position:absolute;bottom:72px;right:0;width:calc(100vw - 32px);max-width:380px;height:calc(100dvh - 140px);max-height:540px;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.2),0 0 0 1px rgba(0,0,0,0.04);display:none;flex-direction:column;overflow:hidden}
 @media(min-width:768px){.cw-box{bottom:76px}}
 .cw-box.cw-show{display:flex;animation:cwSlideUp 0.35s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes cwSlideUp{from{opacity:0;transform:translateY(16px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-/* ── Header ── */
+/* â”€â”€ Header â”€â”€ */
 .cw-header{background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;flex-shrink:0}
 .cw-header::before{content:'';position:absolute;top:-50%;right:-30%;width:120%;height:120%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%);pointer-events:none}
 .cw-header-avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1}
@@ -56,7 +56,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;position:relative;z-index:1}
 .cw-close:hover{background:rgba(255,255,255,0.3)}
 
-/* ── Messages ── */
+/* â”€â”€ Messages â”€â”€ */
 .cw-messages{flex:1;overflow-y:auto;padding:12px;background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
 .cw-messages::-webkit-scrollbar{width:4px}
 .cw-messages::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
@@ -71,12 +71,12 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-bot .cw-bubble{background:#fff;border-bottom-left-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .cw-user .cw-bubble{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-bottom-right-radius:4px}
 
-/* ── Quick Replies ── */
+/* â”€â”€ Quick Replies â”€â”€ */
 .cw-quick{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding-left:32px}
 .cw-quick-btn{background:#fff;border:1.5px solid #e0e7ff;color:#0d9488;padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.25s ease;white-space:nowrap}
 .cw-quick-btn:hover{background:#0d9488;color:#fff;border-color:#0d9488;transform:translateY(-1px);box-shadow:0 3px 8px rgba(13,148,136,0.2)}
 
-/* ── Feedback Buttons ── */
+/* â”€â”€ Feedback Buttons â”€â”€ */
 .cw-feedback{display:flex;gap:4px;margin-top:4px;padding-left:32px;opacity:0;transition:opacity 0.3s}
 .cw-msg:hover .cw-feedback{opacity:1}
 .cw-fb-btn{background:none;border:1.5px solid #e2e8f0;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.2s;color:#94a3b8}
@@ -84,7 +84,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-fb-btn.cw-fb-active{border-color:#0d9488;color:#fff;background:#0d9488}
 .cw-fb-btn.cw-fb-active.cw-fb-down{border-color:#ef4444;background:#ef4444}
 
-/* ── Typing ── */
+/* â”€â”€ Typing â”€â”€ */
 .cw-typing{display:flex;gap:6px;align-self:flex-start;max-width:88%}
 .cw-typing .cw-typing-bubble{background:#fff;border-radius:14px;border-bottom-left-radius:4px;padding:10px 14px;display:flex;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .cw-typing-dot{width:6px;height:6px;background:#5eead4;border-radius:50%;animation:cwTypingBounce 1.4s infinite}
@@ -92,7 +92,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-typing-dot:nth-child(3){animation-delay:0.4s}
 @keyframes cwTypingBounce{0%,60%,100%{transform:translateY(0);background:#5eead4}30%{transform:translateY(-5px);background:#0d9488}}
 
-/* ── Input Area ── */
+/* â”€â”€ Input Area â”€â”€ */
 .cw-input-area{padding:10px 12px;background:#fff;border-top:1px solid #f1f5f9;display:flex;gap:6px;align-items:center;flex-shrink:0}
 .cw-voice-btn{width:38px;height:38px;border-radius:50%;background:#f1f5f9;border:1.5px solid #e2e8f0;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s;flex-shrink:0;font-size:14px}
 .cw-voice-btn:hover{background:#e0f2fe;border-color:#0ea5e9;color:#0284c7}
@@ -105,14 +105,14 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-send:hover{transform:scale(1.08);box-shadow:0 4px 14px rgba(13,148,136,0.3)}
 .cw-send:disabled{opacity:0.4;cursor:not-allowed;transform:none}
 
-/* ── Lead Form ── */
+/* â”€â”€ Lead Form â”€â”€ */
 .cw-lead-form{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:0 0 0 32px}
 .cw-lead-form input{width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 10px;font-size:0.8rem;margin-bottom:6px;outline:none;transition:border 0.2s;color:#1e293b}
 .cw-lead-form input:focus{border-color:#0d9488}
 .cw-lead-form button{width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:8px;padding:9px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s}
 .cw-lead-form button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,185,129,0.3)}
 
-/* ── Conversation Chips (Action Flows) ── */
+/* â”€â”€ Conversation Chips (Action Flows) â”€â”€ */
 .cw-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding-left:32px}
 .cw-chip{background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:1.5px solid #99f6e4;color:#0d9488;padding:6px 14px;border-radius:20px;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.25s ease;white-space:nowrap}
 .cw-chip:hover{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-color:#0d9488;transform:translateY(-1px);box-shadow:0 3px 10px rgba(13,148,136,0.25)}
@@ -123,12 +123,12 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-chip.cw-chip-cancel{background:#fef2f2;border-color:#fecaca;color:#dc2626}
 .cw-chip.cw-chip-cancel:hover{background:#dc2626;color:#fff;border-color:#dc2626}
 
-/* ── Progress Bar ── */
+/* â”€â”€ Progress Bar â”€â”€ */
 .cw-progress{padding:4px 12px 4px 32px;font-size:0.65rem;color:#64748b;font-weight:500;letter-spacing:0.5px}
 .cw-progress-bar{height:3px;background:#e2e8f0;border-radius:3px;margin-top:4px;overflow:hidden}
 .cw-progress-fill{height:100%;background:linear-gradient(90deg,#0d9488,#10b981);border-radius:3px;transition:width 0.4s ease}
 
-/* ── WhatsApp Templates Panel ── */
+/* â”€â”€ WhatsApp Templates Panel â”€â”€ */
 .cw-wa-templates{padding:12px;display:flex;flex-direction:column;gap:8px}
 .cw-wa-templates h5{margin:0;font-size:0.85rem;color:#1e293b;font-weight:700}
 .cw-wa-tpl{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#1e293b}
@@ -138,14 +138,14 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-wa-tpl .cw-wa-tpl-info strong{font-size:0.8rem;display:block}
 .cw-wa-tpl .cw-wa-tpl-info small{font-size:0.7rem;color:#64748b}
 
-/* ── Mobile Fullscreen ── */
+/* â”€â”€ Mobile Fullscreen â”€â”€ */
 @media(max-width:480px){
     .cw-box{width:calc(100vw - 16px);right:-8px;max-height:calc(100dvh - 110px);border-radius:16px}
     .cw-quick{padding-left:0}
     .cw-lead-form{margin-left:0}
     .cw-wa-tpl{padding:8px 10px}
 }
-/* ── Mobile Improvements ── */
+/* â”€â”€ Mobile Improvements â”€â”€ */
 @media(max-width:600px){
     .cw-wrap{bottom:80px;right:12px}
     .cw-toggle{width:52px;height:52px;font-size:20px}
@@ -167,13 +167,13 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     .cw-box{padding-bottom:env(safe-area-inset-bottom,0)}
     .cw-input-area{padding-bottom:max(8px,env(safe-area-inset-bottom,0))}
 }
-/* ── Very small screens (< 360px) ── */
+/* â”€â”€ Very small screens (< 360px) â”€â”€ */
 @media(max-width:360px){
     .cw-box{width:calc(100vw - 16px);right:-8px;border-radius:12px}
     .cw-header-info h4{font-size:0.8rem}
     .cw-bubble{font-size:0.78rem;padding:8px 10px}
 }
-/* ── Landscape mobile ── */
+/* â”€â”€ Landscape mobile â”€â”€ */
 @media(max-height:500px) and (orientation:landscape){
     .cw-box{max-height:calc(100vh - 80px)}
 }
@@ -235,16 +235,16 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     var cwUserName = <?= json_encode($userName) ?>;
     var cwWAPhone = '<?= $waPhone ?>';
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // RBAC-AWARE GREETING
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     var cwGreetings = {
-        admin: cwUserName ? ('Hello ' + cwUserName + '! Admin dashboard ready.\n\n• View analytics\n• Manage leads\n• Commission reports\n• Team performance\n\nWhat would you like to do?') : 'Hello Admin! Welcome back.\n\n• View analytics\n• Manage leads\n• Commission reports\n• Team performance\n\nChoose an option or type your question!',
-        associate: cwUserName ? ('Hello ' + cwUserName + '! Ready to grow your network.\n\n• Add new leads\n• Post properties\n• Check commissions\n• View your team\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• Add new leads\n• Post properties\n• Check commissions\n• View your team\n\nChoose an option or type your question!',
-        agent: cwUserName ? ('Hello ' + cwUserName + '! Property agent dashboard.\n\n• Add leads\n• Post properties\n• Site visits\n• Search properties\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• Add leads\n• Post properties\n• Site visits\n• Search properties\n\nChoose an option or type your question!',
-        employee: cwUserName ? ('Hello ' + cwUserName + '! Employee portal ready.\n\n• My tasks\n• Attendance\n• Add leads\n• Support tickets\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• My tasks\n• Attendance\n• Add leads\n• Support tickets\n\nChoose an option or type your question!',
-        customer: cwUserName ? ('Hello ' + cwUserName + '! Your dashboard is ready.\n\n• Browse properties\n• Check booking status\n• View EMI details\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\n• View Plots & Prices\n• Schedule a Site Visit\n• Use the EMI Calculator\n\nChoose an option below or type your question!',
-        guest: 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\n• View Plots & Prices\n• Schedule a Site Visit\n• Use the EMI Calculator\n\nChoose an option below or type your question!'
+        admin: cwUserName ? ('Hello ' + cwUserName + '! Admin dashboard ready.\n\nâ€¢ View analytics\nâ€¢ Manage leads\nâ€¢ Commission reports\nâ€¢ Team performance\n\nWhat would you like to do?') : 'Hello Admin! Welcome back.\n\nâ€¢ View analytics\nâ€¢ Manage leads\nâ€¢ Commission reports\nâ€¢ Team performance\n\nChoose an option or type your question!',
+        associate: cwUserName ? ('Hello ' + cwUserName + '! Ready to grow your network.\n\nâ€¢ Add new leads\nâ€¢ Post properties\nâ€¢ Check commissions\nâ€¢ View your team\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nâ€¢ Add new leads\nâ€¢ Post properties\nâ€¢ Check commissions\nâ€¢ View your team\n\nChoose an option or type your question!',
+        agent: cwUserName ? ('Hello ' + cwUserName + '! Property agent dashboard.\n\nâ€¢ Add leads\nâ€¢ Post properties\nâ€¢ Site visits\nâ€¢ Search properties\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nâ€¢ Add leads\nâ€¢ Post properties\nâ€¢ Site visits\nâ€¢ Search properties\n\nChoose an option or type your question!',
+        employee: cwUserName ? ('Hello ' + cwUserName + '! Employee portal ready.\n\nâ€¢ My tasks\nâ€¢ Attendance\nâ€¢ Add leads\nâ€¢ Support tickets\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nâ€¢ My tasks\nâ€¢ Attendance\nâ€¢ Add leads\nâ€¢ Support tickets\n\nChoose an option or type your question!',
+        customer: cwUserName ? ('Hello ' + cwUserName + '! Your dashboard is ready.\n\nâ€¢ Browse properties\nâ€¢ Check booking status\nâ€¢ View EMI details\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\nâ€¢ View Plots & Prices\nâ€¢ Schedule a Site Visit\nâ€¢ Use the EMI Calculator\n\nChoose an option below or type your question!',
+        guest: 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\nâ€¢ View Plots & Prices\nâ€¢ Schedule a Site Visit\nâ€¢ Use the EMI Calculator\n\nChoose an option below or type your question!'
     };
 
     var cwQuickOptions = {
@@ -294,9 +294,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         ]
     };
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // INIT GREETING
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     function cwInitGreeting() {
         // Try to load conversation history first
         cwLoadHistory();
@@ -316,7 +316,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
                 var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
                 cwRenderQuickReplies(quicks);
             } else {
-                // No history — show fresh greeting
+                // No history â€” show fresh greeting
                 var greeting = cwGreetings[cwUserRole] || cwGreetings.guest;
                 cwAddMsg(greeting, 'bot');
                 var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
@@ -353,9 +353,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     }
     cwInitGreeting();
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // TOGGLE CHAT
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwToggle = function(){
         cwOpen = !cwOpen;
         var box = document.getElementById('cwBox');
@@ -372,9 +372,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         }
     };
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // VOICE MODE (STT + TTS)
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwToggleVoice = function() {
         cwVoiceMode = !cwVoiceMode;
         var btn = document.getElementById('cwVoiceBtn');
@@ -427,9 +427,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         window.speechSynthesis.speak(u);
     }
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // SEND MESSAGE
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwSend = function(){
         var input = document.getElementById('cwInput');
         var msg = input.value.trim();
@@ -481,16 +481,16 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         input.focus();
     };
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // KEYBOARD SUPPORT
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     document.getElementById('cwInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') cwSend();
     });
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // HUMAN REQUEST + LEAD FORM
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwRequestHuman = function(){
         cwAddMsg('I want to talk to a human agent', 'user');
         cwShowTyping();
@@ -523,9 +523,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         .catch(function(){cwHideTyping();cwAddMsg('Details saved! We will contact you soon.','bot');});
     };
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // WHATSAPP TRACKING
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwTrackWhatsApp = function(source) {
         try {
             fetch('<?= BASE_URL ?>/api/track/whatsapp-click', {
@@ -536,9 +536,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         } catch(e) {}
     };
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // WHATSAPP TEMPLATES PANEL
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwShowWATemplates = function() {
         var msgs = document.getElementById('cwMessages');
         var qr = document.getElementById('cwQuickReplies');
@@ -546,7 +546,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 
         var panel = document.createElement('div');
         panel.className = 'cw-wa-templates';
-        panel.innerHTML = '<h5><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Templates</h5>';
+        panel.innerHTML = '<h5><i class="fab fa-whatsapp" class="style-37777"></i> WhatsApp Templates</h5>';
 
         var templates = [
             {icon:'fa-home', title:'Property Inquiry', msg:'Hello! I would like to know about available plots. Are there any available?', key:'property'},
@@ -562,7 +562,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             link.target = '_blank';
             link.href = 'https://wa.me/' + cwWAPhone + '?text=' + encodeURIComponent(t.msg);
             link.onclick = function() { cwTrackWhatsApp('template_' + t.key); };
-            link.innerHTML = '<i class="fas ' + t.icon + '"></i><div class="cw-wa-tpl-info"><strong>' + t.title + '</strong><small>Click to open WhatsApp</small></div><i class="fas fa-arrow-right" style="color:#25D366;font-size:12px"></i>';
+            link.innerHTML = '<i class="fas ' + t.icon + '"></i><div class="cw-wa-tpl-info"><strong>' + t.title + '</strong><small>Click to open WhatsApp</small></div><i class="fas fa-arrow-right" class="style-79086"></i>';
             panel.appendChild(link);
         });
 
@@ -570,9 +570,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         msgs.scrollTop = msgs.scrollHeight;
     };
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // FALLBACK RESPONSES (when API fails)
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     function cwFallback(userMsg){
         setTimeout(function(){
             cwHideTyping();
@@ -590,9 +590,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         },700);
     }
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // CONVERSATION CHIPS + PROGRESS (Action Flows)
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     function cwRenderChips(suggestions, step, action) {
         var c = document.getElementById('cwMessages');
         // Remove old chips
@@ -606,9 +606,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             var btn = document.createElement('button');
             btn.className = 'cw-chip';
             // Style based on chip type
-            if (s.indexOf('✅') !== -1 || s.indexOf('Confirm') !== -1) btn.className += ' cw-chip-confirm';
-            else if (s.indexOf('❌') !== -1 || s.indexOf('Cancel') !== -1) btn.className += ' cw-chip-cancel';
-            else if (s.indexOf('✏️') !== -1 || s.indexOf('Edit') !== -1) btn.className += ' cw-chip-action';
+            if (s.indexOf('âœ…') !== -1 || s.indexOf('Confirm') !== -1) btn.className += ' cw-chip-confirm';
+            else if (s.indexOf('â�Œ') !== -1 || s.indexOf('Cancel') !== -1) btn.className += ' cw-chip-cancel';
+            else if (s.indexOf('âœ�ï¸�') !== -1 || s.indexOf('Edit') !== -1) btn.className += ' cw-chip-action';
             btn.textContent = s;
             btn.onclick = function() {
                 document.getElementById('cwInput').value = s;
@@ -633,17 +633,17 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         var div = document.createElement('div');
         div.className = 'cw-progress';
         div.innerHTML = 'Step ' + currentStep + ' of ' + totalSteps +
-            '<div class="cw-progress-bar"><div class="cw-progress-fill" style="width:' + pct + '%"></div></div>';
+            '<div class="cw-progress-bar"><div class="cw-progress-fill" class="style-74257"></div></div>';
 
         c.appendChild(div);
         c.scrollTop = c.scrollHeight;
     }
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // HELPER FUNCTIONS
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     function cwLinkify(t){
-        return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:#0d9488;text-decoration:underline;word-break:break-all">$1</a>');
+        return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" class="style-65078">$1</a>');
     }
     function cwAddMsg(text, type, msgId){
         var c = document.getElementById('cwMessages');
@@ -674,7 +674,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         var d = document.createElement('div');
         d.id = 'cwTyping';
         d.className = 'cw-typing';
-        d.innerHTML = '<div class="cw-msg-avatar" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff"><i class="fas fa-robot"></i></div><div class="cw-typing-bubble"><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span></div>';
+        d.innerHTML = '<div class="cw-msg-avatar" class="style-81721"><i class="fas fa-robot"></i></div><div class="cw-typing-bubble"><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span></div>';
         c.appendChild(d);
         c.scrollTop = c.scrollHeight;
     }
@@ -684,9 +684,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         if(t) t.remove();
     }
 
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     // FEEDBACK (Thumbs Up/Down)
-    // ═══════════════════════════════════════════════
+    // â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
     window.cwFeedback = function(btn, positive) {
         var container = btn.closest('.cw-feedback');
         if (!container) return;

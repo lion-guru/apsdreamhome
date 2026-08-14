@@ -19,4 +19,4 @@ foreach ($results as $r) {
 }
 echo "Done\n";
 flush();
-ob_flush();
+ob_flush();?>

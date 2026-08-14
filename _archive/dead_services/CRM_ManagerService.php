@@ -367,7 +367,7 @@ class CRMManager
                         }
 
                         // 2. Send Slack/Telegram Notification to Admin
-                        $adminMsg = "🚀 *New Lead Created!*\n" .
+                        $adminMsg = "ðŸš€ *New Lead Created!*\n" .
                             "*Name:* {$leadData['name']}\n" .
                             "*Phone:* {$leadData['phone']}\n" .
                             "*Interest:* {$leadData['property_interest']}\n" .
@@ -1238,4 +1238,4 @@ class CRMManager
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

@@ -24,4 +24,4 @@ $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
 echo "=== marketing_campaigns ===\n";
 echo $row2['Create Table'] . "\n";
 
-echo "</pre>";
+echo "</pre>";?>

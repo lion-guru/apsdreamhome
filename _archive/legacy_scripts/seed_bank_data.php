@@ -15,7 +15,7 @@ echo "Seeding Bank Master Data...\n\n";
 // Check if already seeded
 $count = $db->fetch("SELECT COUNT(*) as cnt FROM banks");
 if ($count['cnt'] > 0) {
-    echo "⚠️  Data already exists. Skipping...\n";
+    echo "âš ï¸�  Data already exists. Skipping...\n";
     echo "   Banks: {$count['cnt']}\n";
     exit;
 }
@@ -117,7 +117,7 @@ foreach ($banks as $bank) {
         }
     }
     
-    echo "✅ Added Bank: {$bank[0]} ({$bank[1]})\n";
+    echo "âœ… Added Bank: {$bank[0]} ({$bank[1]})\n";
 }
 
-echo "\n✅ Seeded " . count($banks) . " banks with $totalBranches branches!\n";
+echo "\nâœ… Seeded " . count($banks) . " banks with $totalBranches branches!\n";?>

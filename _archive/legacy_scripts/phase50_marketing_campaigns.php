@@ -102,12 +102,12 @@ echo "OK marketing_unsubscribes table created\n";
 // Seed default templates
 $db->exec("INSERT INTO marketing_campaign_templates (name, type, subject, body, variables, created_by) VALUES
 ('New Property Launch', 'email', 'New {{property_type}} Available in {{city}}!',
-'Hi {{name}},\n\nWe have a new {{property_type}} available in {{city}} that matches your preferences.\n\nPrice: ₹{{price}}\nLocation: {{location}}\nArea: {{area}} sqft\n\nView details: {{link}}\n\nBest regards,\nAPS Dream Home Team',
+'Hi {{name}},\n\nWe have a new {{property_type}} available in {{city}} that matches your preferences.\n\nPrice: â‚¹{{price}}\nLocation: {{location}}\nArea: {{area}} sqft\n\nView details: {{link}}\n\nBest regards,\nAPS Dream Home Team',
 JSON_ARRAY('name','property_type','city','price','location','area','link'), NULL)");
 
 $db->exec("INSERT INTO marketing_campaign_templates (name, type, subject, body, variables) VALUES
 ('Price Drop Alert', 'email', 'Price Reduced on {{property_type}} in {{city}}!',
-'Hi {{name}},\n\nGreat news! The price has been reduced on a {{property_type}} in {{city}}.\n\nNew Price: ₹{{new_price}}\nOld Price: ₹{{old_price}}\nSavings: ₹{{savings}}\n\nView: {{link}}\n\nDon''t miss this opportunity!\n\nAPS Dream Home', JSON_ARRAY('name','property_type','city','new_price','old_price','savings','link'))");
+'Hi {{name}},\n\nGreat news! The price has been reduced on a {{property_type}} in {{city}}.\n\nNew Price: â‚¹{{new_price}}\nOld Price: â‚¹{{old_price}}\nSavings: â‚¹{{savings}}\n\nView: {{link}}\n\nDon''t miss this opportunity!\n\nAPS Dream Home', JSON_ARRAY('name','property_type','city','new_price','old_price','savings','link'))");
 
 $db->exec("INSERT INTO marketing_campaign_templates (name, type, subject, body, variables) VALUES
 ('Welcome Email', 'email', 'Welcome to APS Dream Home!',
@@ -120,7 +120,7 @@ JSON_ARRAY('name','property','city','time'))");
 
 $db->exec("INSERT INTO marketing_campaign_templates (name, type, subject, body, variables) VALUES
 ('Property Update WhatsApp', 'whatsapp', NULL,
-'🏠 *New Property Match!*\n\nHi {{name}},\n\nWe found a {{property_type}} in {{city}} that matches your needs.\n\n💰 Price: ₹{{price}}\n📍 Location: {{location}}\n📏 Area: {{area}} sqft\n\nView: {{link}}\n\nReply STOP to unsubscribe.',
+'ðŸ�  *New Property Match!*\n\nHi {{name}},\n\nWe found a {{property_type}} in {{city}} that matches your needs.\n\nðŸ’° Price: â‚¹{{price}}\nðŸ“� Location: {{location}}\nðŸ“� Area: {{area}} sqft\n\nView: {{link}}\n\nReply STOP to unsubscribe.',
 JSON_ARRAY('name','property_type','city','price','location','area','link'))");
 
 $db->exec("INSERT INTO marketing_campaign_templates (name, type, subject, body, variables) VALUES
@@ -128,4 +128,4 @@ $db->exec("INSERT INTO marketing_campaign_templates (name, type, subject, body, 
 'Hi {{name}},\n\nCelebrate this festival with your dream home! Special offers up to {{discount}}% on select properties.\n\nView offers: {{link}}\n\nLimited time only!\n\nAPS Dream Home', JSON_ARRAY('name','discount','link'))");
 
 echo "OK 6 default templates seeded\n";
-echo "DONE\n";
+echo "DONE\n";?>

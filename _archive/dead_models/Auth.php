@@ -422,4 +422,4 @@ class Auth extends Model
         unset($data['password']);
         return $data;
     }
-}
+}?>

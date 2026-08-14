@@ -89,4 +89,4 @@ echo "\n=== Final state ===\n";
 echo "Total: " . count($rows) . " associates\n";
 foreach ($rows as $r) {
     echo "  ID={$r['id']} user_id={$r['user_id']} code={$r['referral_code']} level={$r['level']} email={$r['email']}\n";
-}
+}?>

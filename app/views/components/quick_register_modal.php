@@ -52,7 +52,7 @@
                     </div>
                 </form>
                 
-                <div id="qrLoading" style="display: none;">
+                <div id="qrLoading" class="style-54390">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -100,7 +100,7 @@
                     </button>
                 </form>
                 
-                <div id="rrLoading" style="display: none;">
+                <div id="rrLoading" class="style-54390">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -109,7 +109,7 @@
                     </div>
                 </div>
                 
-                <div id="rrResult" style="display: none;">
+                <div id="rrResult" class="style-54390">
                     <div class="alert alert-success mt-3">
                         <h6 class="fw-bold"><i class="fas fa-check-circle me-2"></i><?= __('component_referral_code_sent', 'Referral Code Sent!') ?></h6>
                         <p class="mb-2"><?= __('component_your_referral_code', 'Your company referral code:') ?></p>

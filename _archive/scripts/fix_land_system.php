@@ -28,21 +28,21 @@ function run($db, $sql, $desc, &$results) {
 }
 
 // 1. Rename legacy table
-run($db, "RENAME TABLE land_acquisitions TO land_acquisitions_legacy", "Rename land_acquisitions → land_acquisitions_legacy", $results);
+run($db, "RENAME TABLE land_acquisitions TO land_acquisitions_legacy", "Rename land_acquisitions â†’ land_acquisitions_legacy", $results);
 
 // 2. Create view for backward compatibility
-run($db, "CREATE VIEW land_acquisitions AS SELECT * FROM land_deals", "Create land_acquisitions view → land_deals", $results);
+run($db, "CREATE VIEW land_acquisitions AS SELECT * FROM land_deals", "Create land_acquisitions view â†’ land_deals", $results);
 
 // 3. Add missing FKs
-run($db, "ALTER TABLE land_deals ADD CONSTRAINT fk_land_deals_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE SET NULL", "FK: land_deals.colony_id → colonies.id", $results);
-run($db, "ALTER TABLE land_leads ADD CONSTRAINT fk_land_leads_assigned FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL", "FK: land_leads.assigned_to → users.id", $results);
-run($db, "ALTER TABLE land_deal_payments ADD CONSTRAINT fk_land_payments_deal FOREIGN KEY (land_deal_id) REFERENCES land_deals(id) ON DELETE CASCADE", "FK: land_deal_payments.land_deal_id → land_deals.id", $results);
-run($db, "ALTER TABLE colony_development_costs ADD CONSTRAINT fk_cdc_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_development_costs.colony_id → colonies.id", $results);
-run($db, "ALTER TABLE colony_layouts ADD CONSTRAINT fk_layouts_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_layouts.colony_id → colonies.id", $results);
-run($db, "ALTER TABLE land_site_visits ADD CONSTRAINT fk_lsv_lead FOREIGN KEY (land_lead_id) REFERENCES land_leads(id) ON DELETE CASCADE", "FK: land_site_visits.land_lead_id → land_leads.id", $results);
-run($db, "ALTER TABLE land_legal_opinions ADD CONSTRAINT fk_llo_lead FOREIGN KEY (land_lead_id) REFERENCES land_leads(id) ON DELETE CASCADE", "FK: land_legal_opinions.land_lead_id → land_leads.id", $results);
-run($db, "ALTER TABLE land_documents ADD CONSTRAINT fk_ld_lead FOREIGN KEY (land_lead_id) REFERENCES land_leads(id) ON DELETE CASCADE", "FK: land_documents.land_lead_id → land_leads.id", $results);
-run($db, "ALTER TABLE land_documents ADD CONSTRAINT fk_ld_deal FOREIGN KEY (land_deal_id) REFERENCES land_deals(id) ON DELETE SET NULL", "FK: land_documents.land_deal_id → land_deals.id", $results);
+run($db, "ALTER TABLE land_deals ADD CONSTRAINT fk_land_deals_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE SET NULL", "FK: land_deals.colony_id â†’ colonies.id", $results);
+run($db, "ALTER TABLE land_leads ADD CONSTRAINT fk_land_leads_assigned FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL", "FK: land_leads.assigned_to â†’ users.id", $results);
+run($db, "ALTER TABLE land_deal_payments ADD CONSTRAINT fk_land_payments_deal FOREIGN KEY (land_deal_id) REFERENCES land_deals(id) ON DELETE CASCADE", "FK: land_deal_payments.land_deal_id â†’ land_deals.id", $results);
+run($db, "ALTER TABLE colony_development_costs ADD CONSTRAINT fk_cdc_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_development_costs.colony_id â†’ colonies.id", $results);
+run($db, "ALTER TABLE colony_layouts ADD CONSTRAINT fk_layouts_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_layouts.colony_id â†’ colonies.id", $results);
+run($db, "ALTER TABLE land_site_visits ADD CONSTRAINT fk_lsv_lead FOREIGN KEY (land_lead_id) REFERENCES land_leads(id) ON DELETE CASCADE", "FK: land_site_visits.land_lead_id â†’ land_leads.id", $results);
+run($db, "ALTER TABLE land_legal_opinions ADD CONSTRAINT fk_llo_lead FOREIGN KEY (land_lead_id) REFERENCES land_leads(id) ON DELETE CASCADE", "FK: land_legal_opinions.land_lead_id â†’ land_leads.id", $results);
+run($db, "ALTER TABLE land_documents ADD CONSTRAINT fk_ld_lead FOREIGN KEY (land_lead_id) REFERENCES land_leads(id) ON DELETE CASCADE", "FK: land_documents.land_lead_id â†’ land_leads.id", $results);
+run($db, "ALTER TABLE land_documents ADD CONSTRAINT fk_ld_deal FOREIGN KEY (land_deal_id) REFERENCES land_deals(id) ON DELETE SET NULL", "FK: land_documents.land_deal_id â†’ land_deals.id", $results);
 
 // 4. Migrate data from legacy to new if needed
 $legacyCount = $db->fetch("SELECT COUNT(*) as c FROM land_acquisitions_legacy")['c'];
@@ -75,4 +75,4 @@ echo "========================================\n";
 echo "Done: " . count($results['done']) . "\n";
 foreach ($results['done'] as $d) echo "  - $d\n";
 echo "Failed: " . count($results['failed']) . "\n";
-foreach ($results['failed'] as $f) echo "  - $f\n";
+foreach ($results['failed'] as $f) echo "  - $f\n";?>

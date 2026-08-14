@@ -22,4 +22,4 @@ if ((int)$exists > 0) {
     ");
     $ins->execute(['Payout Batches', $parentId, (int)$maxOrder + 1]);
     echo "Payout Batches sidebar inserted: id=" . $pdo->lastInsertId() . "\n";
-}
+}?>

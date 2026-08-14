@@ -136,7 +136,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <small id="completionText"><?php echo $completionPct; ?>% Complete</small>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: <?php echo $completionPct; ?>%"></div>
+                    <div class="progress-fill" id="progressFill" class="style-28620"></div>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                 <ul class="benefit-list">
                     <li><i class="fas fa-check-circle"></i> Save favorite properties</li>
                     <li><i class="fas fa-check-circle"></i> Get personalized recommendations</li>
-                    <li><i class="fas fa-check-circle"></i> Earn ₹500 referral bonus</li>
+                    <li><i class="fas fa-check-circle"></i> Earn â‚¹500 referral bonus</li>
                     <li><i class="fas fa-check-circle"></i> Priority customer support</li>
                 </ul>
             </div>
@@ -204,10 +204,10 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                         <label class="form-label-custom">Budget Range</label>
                         <select class="form-select" name="budget_range">
                             <option value="">Select budget</option>
-                            <option value="10-25l">₹10-25 Lakhs</option>
-                            <option value="25-50l">₹25-50 Lakhs</option>
-                            <option value="50l-1cr">₹50 Lakhs - 1 Crore</option>
-                            <option value="1cr+">Above ₹1 Crore</option>
+                            <option value="10-25l">â‚¹10-25 Lakhs</option>
+                            <option value="25-50l">â‚¹25-50 Lakhs</option>
+                            <option value="50l-1cr">â‚¹50 Lakhs - 1 Crore</option>
+                            <option value="1cr+">Above â‚¹1 Crore</option>
                         </select>
                     </div>
 

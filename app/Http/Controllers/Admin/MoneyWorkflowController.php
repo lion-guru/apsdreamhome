@@ -1153,7 +1153,8 @@ class MoneyWorkflowController extends AdminController
         $ob = ob_start();
         ?>
         <!DOCTYPE html>
-        <html><head><meta charset="utf-8"><title>Invoice <?= htmlspecialchars($invoice['invoice_number']) ?></title>
+        <html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"><title>Invoice <?= htmlspecialchars($invoice['invoice_number']) ?></title>
         <style>body{font-family:Arial,sans-serif;margin:40px;color:#333}table{width:100%;border-collapse:collapse;margin:20px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f5f5f5}.text-right{text-align:right}.total{font-size:1.2em;font-weight:bold}</style>
         </head><body>
         <h1>Invoice #<?= htmlspecialchars($invoice['invoice_number']) ?></h1>

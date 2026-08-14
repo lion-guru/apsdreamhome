@@ -27,9 +27,9 @@ ob_start();
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if ($a['image_url']): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title']) ?>" style="height: 180px; object-fit: cover;">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title']) ?>" class="style-24482">
                         <?php else: ?>
-                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" class="style-32569">
                                 <i class="fas fa-gavel fa-3x"></i>
                             </div>
                         <?php endif; ?>
@@ -42,7 +42,7 @@ ob_start();
                             <div class="d-flex justify-content-between my-3">
                                 <div>
                                     <small class="text-muted d-block"><?= __('auction_current_bid', [], 'Current Bid') ?></small>
-                                    <strong class="text-success">₹<?= number_format($a['current_bid'] ?? $a['start_price']) ?></strong>
+                                    <strong class="text-success">â‚¹<?= number_format($a['current_bid'] ?? $a['start_price']) ?></strong>
                                 </div>
                                 <div>
                                     <small class="text-muted d-block"><?= __('auction_bids', [], 'Bids') ?></small>
@@ -75,7 +75,7 @@ ob_start();
                             <span class="badge bg-info mb-2"><?= __('auction_badge_scheduled', [], 'SCHEDULED') ?></span>
                             <h6><?= htmlspecialchars($a['title']) ?></h6>
                             <p class="text-muted small"><?= __('auction_starts', [], 'Starts:') ?> <?= date('M j, Y H:i', strtotime($a['starts_at'])) ?></p>
-                            <p class="mb-2"><strong><?= __('auction_start_price', [], 'Start:') ?> ₹<?= number_format($a['start_price']) ?></strong></p>
+                            <p class="mb-2"><strong><?= __('auction_start_price', [], 'Start:') ?> â‚¹<?= number_format($a['start_price']) ?></strong></p>
                             <a href="<?= BASE_URL ?>/auctions/<?= $a['id'] ?>" class="btn btn-outline-primary btn-sm w-100"><?= __('auction_view_details', [], 'View Details') ?></a>
                         </div>
                     </div>
@@ -95,7 +95,7 @@ ob_start();
                         <div class="card-body aps-cp-card-body">
                             <span class="badge bg-success mb-2"><?= __('auction_badge_sold', [], 'SOLD') ?></span>
                             <h6><?= htmlspecialchars($a['title']) ?></h6>
-                            <p class="text-success mb-0"><strong><?= __('auction_final_price', [], 'Final:') ?> ₹<?= number_format($a['winning_bid'] ?? 0) ?></strong></p>
+                            <p class="text-success mb-0"><strong><?= __('auction_final_price', [], 'Final:') ?> â‚¹<?= number_format($a['winning_bid'] ?? 0) ?></strong></p>
                         </div>
                     </div>
                 </div>

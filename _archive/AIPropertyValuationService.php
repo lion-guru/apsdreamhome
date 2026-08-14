@@ -465,7 +465,7 @@ class AIPropertyValuationService
             return [
                 'trend' => $latest['trend_direction'],
                 'price_change_30d' => $latest['price_change_percent'] . '%',
-                'forecast' => $latest['forecast_next_month'] ? '₹' . number_format($latest['forecast_next_month']) : 'steady',
+                'forecast' => $latest['forecast_next_month'] ? 'â‚¹' . number_format($latest['forecast_next_month']) : 'steady',
                 'transactions' => $latest['transactions_count'],
                 'demand_supply_ratio' => round($latest['demand_index'] / max($latest['supply_index'], 1), 2),
                 'recommendation' => $this->getMarketRecommendation($latest)
@@ -512,7 +512,7 @@ class AIPropertyValuationService
             $recommendations[] = 'Construction could 3x the property value';
         }
         
-        $recommendations[] = 'Best selling price range: ₹' . number_format($predictedPrice * 0.95) . ' - ₹' . number_format($predictedPrice * 1.05);
+        $recommendations[] = 'Best selling price range: â‚¹' . number_format($predictedPrice * 0.95) . ' - â‚¹' . number_format($predictedPrice * 1.05);
         
         return $recommendations;
     }
@@ -597,4 +597,4 @@ class AIPropertyValuationService
             return [];
         }
     }
-}
+}?>

@@ -189,10 +189,10 @@ class AIContentGenerationService
             
             // Headline
             $headlines = [
-                "🏠 Your Dream Home Awaits in {$propertyData['location']}!",
-                "💎 Premium {$propertyData['property_type']} Available Now!",
-                "🔥 Hot Property Alert: {$propertyData['location']}",
-                "✨ Luxury Living at {$propertyData['location']}"
+                "ðŸ�  Your Dream Home Awaits in {$propertyData['location']}!",
+                "ðŸ’Ž Premium {$propertyData['property_type']} Available Now!",
+                "ðŸ”¥ Hot Property Alert: {$propertyData['location']}",
+                "âœ¨ Luxury Living at {$propertyData['location']}"
             ];
             
             // Body text
@@ -207,10 +207,10 @@ class AIContentGenerationService
             
             // CTA
             $ctas = [
-                "📞 Call now: +91 92771 21112",
-                "📱 WhatsApp us for details",
-                "🔍 Visit: apsdreamhome.com",
-                "⏰ Limited time offer!"
+                "ðŸ“ž Call now: +91 92771 21112",
+                "ðŸ“± WhatsApp us for details",
+                "ðŸ”� Visit: apsdreamhome.com",
+                "â�° Limited time offer!"
             ];
             
             // Platform-specific optimization
@@ -226,10 +226,10 @@ class AIContentGenerationService
                     
                 case 'whatsapp':
                     $adCopies[] = [
-                        'message' => "🏠 *{$propertyData['bedrooms']} BHK {$propertyData['property_type']}*\n\n" .
-                                    "📍 Location: {$propertyData['location']}\n" .
-                                    "📐 Area: {$propertyData['area_sqft']} sqft\n" .
-                                    "💰 Price: " . $this->formatPrice($propertyData['price'] ?? 0) . "\n\n" .
+                        'message' => "ðŸ�  *{$propertyData['bedrooms']} BHK {$propertyData['property_type']}*\n\n" .
+                                    "ðŸ“� Location: {$propertyData['location']}\n" .
+                                    "ðŸ“� Area: {$propertyData['area_sqft']} sqft\n" .
+                                    "ðŸ’° Price: " . $this->formatPrice($propertyData['price'] ?? 0) . "\n\n" .
                                     $ctas[1]
                     ];
                     break;
@@ -280,11 +280,11 @@ class AIContentGenerationService
                     'body' => $this->generateInquiryEmail($data)
                 ],
                 'price_drop' => [
-                    'subject' => "🔥 Price Drop Alert: {$data['property_title']}",
+                    'subject' => "ðŸ”¥ Price Drop Alert: {$data['property_title']}",
                     'body' => $this->generatePriceDropEmail($data)
                 ],
                 'new_property' => [
-                    'subject' => "🏠 New Property Matching Your Preferences",
+                    'subject' => "ðŸ�  New Property Matching Your Preferences",
                     'body' => $this->generateNewPropertyEmail($data)
                 ],
                 'follow_up' => [
@@ -462,11 +462,11 @@ class AIContentGenerationService
     private function formatPrice(float $price): string
     {
         if ($price >= 10000000) {
-            return '₹' . round($price / 10000000, 2) . ' Cr';
+            return 'â‚¹' . round($price / 10000000, 2) . ' Cr';
         } elseif ($price >= 100000) {
-            return '₹' . round($price / 100000, 2) . ' L';
+            return 'â‚¹' . round($price / 100000, 2) . ' L';
         } else {
-            return '₹' . number_format($price);
+            return 'â‚¹' . number_format($price);
         }
     }
     
@@ -552,4 +552,4 @@ class AIContentGenerationService
     private function generateFollowUpEmail(array $data): string { return ''; }
     private function personalizeEmail(string $body, array $data): string { return $body; }
     private function calculateSpamScore(string $subject, string $body): int { return 5; }
-}
+}?>

@@ -564,6 +564,7 @@ class Sentinel
         echo '<!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Access Blocked - APS Dream Home</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }

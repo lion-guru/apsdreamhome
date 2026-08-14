@@ -18,4 +18,4 @@ foreach ($lines as $i => $line) {
 echo "Lines matching /admin/*: $count\n";
 echo "Unique admin route URLs extracted: " . count($adminRouteUrls) . "\n\n";
 ksort($adminRouteUrls);
-echo implode("\n", array_keys($adminRouteUrls)) . "\n";
+echo implode("\n", array_keys($adminRouteUrls)) . "\n";?>

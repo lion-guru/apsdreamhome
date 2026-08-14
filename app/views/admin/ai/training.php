@@ -60,7 +60,7 @@ $recentLearning = $recentLearning ?? [];
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="aps-cp-card"><div class="aps-cp-card-body text-center">
-                <div class="aps-cp-stat-label">Model R² Score</div>
+                <div class="aps-cp-stat-label">Model RÂ² Score</div>
                 <div class="aps-cp-stat-value text-<?= $avgAccuracy > 0.7 ? 'success' : ($avgAccuracy > 0.4 ? 'warning' : 'danger') ?>"><?= round($avgAccuracy, 4) ?></div>
                 <small class="text-muted">Avg accuracy across models</small>
             </div></div>
@@ -127,7 +127,7 @@ $recentLearning = $recentLearning ?? [];
                         <?php foreach ($recentLearning as $rl): ?>
                             <div class="mb-2">
                                 <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($rl['action_type']) ?></small><small><?= $rl['cnt'] ?> records</small></div>
-                                <div class="progress" style="height:6px"><div class="progress-bar bg-primary" style="width:<?= min(100, $rl['cnt']) ?>%"></div></div>
+                                <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-74689"></div></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -142,7 +142,7 @@ $recentLearning = $recentLearning ?? [];
                         <?php foreach (array_slice($models, 0, 5) as $m): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div><strong class="small"><?= htmlspecialchars($m['property_type']) ?></strong><br><small class="text-muted">Samples: <?= $m['sample_size'] ?></small></div>
-                                <span class="aps-cp-badge badge bg-<?= $m['r_squared'] > 0.7 ? 'success' : ($m['r_squared'] > 0.4 ? 'warning' : 'danger') ?>">R² <?= round($m['r_squared'], 3) ?></span>
+                                <span class="aps-cp-badge badge bg-<?= $m['r_squared'] > 0.7 ? 'success' : ($m['r_squared'] > 0.4 ? 'warning' : 'danger') ?>">RÂ² <?= round($m['r_squared'], 3) ?></span>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

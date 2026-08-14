@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><?= htmlspecialchars($pageTitle ?? 'Marketing Analytics') ?></h1>
         <div class="btn-group">
-            <select id="periodSelect" class="form-select form-select-sm" onchange="changePeriod(this.value)" style="width:auto;">
+            <select id="periodSelect" class="form-select form-select-sm" onchange="changePeriod(this.value)" class="style-68062">
                 <option value="7">Last 7 Days</option>
                 <option value="30" selected>Last 30 Days</option>
                 <option value="90">Last 90 Days</option>

@@ -70,4 +70,4 @@ class TestimonialController extends BaseController
             ]
         ], 'layouts/base');
     }
-}
+}?>

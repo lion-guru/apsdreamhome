@@ -1,6 +1,6 @@
 <?php
 /**
- * Employee Department Page — shared view for 16 department routes
+ * Employee Department Page â€” shared view for 16 department routes
  * Data: $dept_title, $dept_icon, $dept_desc, $dept_color, $dept_slug, $employee_name, $stats
  */
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
@@ -11,7 +11,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($dept_title) ?> — APS Dream Home</title>
+    <title><?= htmlspecialchars($dept_title) ?> â€” APS Dream Home</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,8 +69,8 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                 <i class="<?= $dept_icon ?>"></i>
             </div>
             <div>
-                <h3 class="fw-bold mb-0" style="color: #1e293b;"><?= htmlspecialchars($dept_title) ?></h3>
-                <p class="mb-0 mt-1" style="color: #64748b; font-size: 14px;"><?= htmlspecialchars($dept_desc) ?></p>
+                <h3 class="fw-bold mb-0" class="style-10134"><?= htmlspecialchars($dept_title) ?></h3>
+                <p class="mb-0 mt-1" class="style-62698"><?= htmlspecialchars($dept_desc) ?></p>
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Total Items</div>
                         <div class="stat-value"><?= number_format($stats['total'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" style="background: <?= $dept_color ?>12; color: <?= $dept_color ?>;">
+                    <div class="stat-icon" class="style-64797">
                         <i class="fas fa-layer-group"></i>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Active</div>
                         <div class="stat-value"><?= number_format($stats['active'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" style="background: #10b98112; color: #10b981;">
+                    <div class="stat-icon" class="style-48798">
                         <i class="fas fa-check-circle"></i>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Pending</div>
                         <div class="stat-value"><?= number_format($stats['pending'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" style="background: #f59e0b12; color: #f59e0b;">
+                    <div class="stat-icon" class="style-45343">
                         <i class="fas fa-clock"></i>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                         <div class="stat-label">Completed</div>
                         <div class="stat-value"><?= number_format($stats['completed'] ?? 0) ?></div>
                     </div>
-                    <div class="stat-icon" style="background: #3b82f612; color: #3b82f6;">
+                    <div class="stat-icon" class="style-29521">
                         <i class="fas fa-flag-checkered"></i>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
         <!-- Main Content -->
         <div class="col-lg-8">
             <div class="section-card">
-                <h6><i class="fas fa-list me-2" style="color: <?= $dept_color ?>;"></i>Recent Activity</h6>
+                <h6><i class="fas fa-list me-2" class="style-94187"></i>Recent Activity</h6>
                 <div class="empty-state">
                     <i class="<?= $dept_icon ?>"></i>
                     <h5><?= htmlspecialchars($dept_title) ?></h5>
@@ -150,7 +150,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
         <!-- Sidebar -->
         <div class="col-lg-4">
             <div class="section-card mb-3">
-                <h6><i class="fas fa-bolt me-2" style="color: <?= $dept_color ?>;"></i>Quick Actions</h6>
+                <h6><i class="fas fa-bolt me-2" class="style-94187"></i>Quick Actions</h6>
                 <div class="d-flex flex-column gap-2">
                     <?php
                     $quickActions = match($dept_slug) {
@@ -210,16 +210,16 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                     };
                     foreach ($quickActions as $action): ?>
                         <a href="<?= $base ?><?= $action['url'] ?>" class="quick-action">
-                            <i class="<?= $action['icon'] ?>" style="color: <?= $action['color'] ?>;"></i>
+                            <i class="<?= $action['icon'] ?>" class="style-83279"></i>
                             <span><?= $action['label'] ?></span>
                         </a>
                     <?php endforeach; ?>
                     <a href="<?= $base ?>/employee/dashboard" class="quick-action">
-                        <i class="fas fa-arrow-left" style="color: #64748b;"></i>
+                        <i class="fas fa-arrow-left" class="style-81715"></i>
                         <span>Back to Dashboard</span>
                     </a>
                     <a href="<?= $base ?>/employee/attendance" class="quick-action">
-                        <i class="fas fa-calendar-check" style="color: #10b981;"></i>
+                        <i class="fas fa-calendar-check" class="style-19115"></i>
                         <span>Attendance</span>
                     </a>
                 </div>

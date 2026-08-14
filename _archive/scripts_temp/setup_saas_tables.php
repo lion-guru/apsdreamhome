@@ -1,6 +1,6 @@
 <?php
 /**
- * SaaS Multi-Tenancy Foundation — Database Setup
+ * SaaS Multi-Tenancy Foundation â€” Database Setup
  * Creates: tenants, subscription_plans, tenant_subscriptions tables
  * Seeds: 4 subscription plans (Free/Pro/Enterprise/Custom)
  */
@@ -11,7 +11,7 @@ $db = \App\Core\Database\Database::getInstance()->getConnection();
 
 echo "=== SaaS Multi-Tenancy Setup ===\n\n";
 
-// ── 1. tenants table ─────────────────────────────────────
+// â”€â”€ 1. tenants table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $db->exec("CREATE TABLE IF NOT EXISTS tenants (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
@@ -44,9 +44,9 @@ $db->exec("CREATE TABLE IF NOT EXISTS tenants (
     KEY idx_status (status),
     KEY idx_plan (plan_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-echo "✅ tenants table created\n";
+echo "âœ… tenants table created\n";
 
-// ── 2. subscription_plans table ───────────────────────────
+// â”€â”€ 2. subscription_plans table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $db->exec("CREATE TABLE IF NOT EXISTS subscription_plans (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -76,9 +76,9 @@ $db->exec("CREATE TABLE IF NOT EXISTS subscription_plans (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY idx_slug (slug)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-echo "✅ subscription_plans table created\n";
+echo "âœ… subscription_plans table created\n";
 
-// ── 3. tenant_subscriptions table ─────────────────────────
+// â”€â”€ 3. tenant_subscriptions table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $db->exec("CREATE TABLE IF NOT EXISTS tenant_subscriptions (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL,
@@ -97,9 +97,9 @@ $db->exec("CREATE TABLE IF NOT EXISTS tenant_subscriptions (
     KEY idx_plan (plan_id),
     KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-echo "✅ tenant_subscriptions table created\n";
+echo "âœ… tenant_subscriptions table created\n";
 
-// ── 4. tenant_usage table (tracks usage per billing cycle) ─
+// â”€â”€ 4. tenant_usage table (tracks usage per billing cycle) â”€
 $db->exec("CREATE TABLE IF NOT EXISTS tenant_usage (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT UNSIGNED NOT NULL,
@@ -116,9 +116,9 @@ $db->exec("CREATE TABLE IF NOT EXISTS tenant_usage (
     UNIQUE KEY idx_tenant_period (tenant_id, period_start),
     KEY idx_tenant (tenant_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-echo "✅ tenant_usage table created\n";
+echo "âœ… tenant_usage table created\n";
 
-// ── Seed Subscription Plans ────────────────────────────────
+// â”€â”€ Seed Subscription Plans â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $plans = [
     ['Free', 'free', 'Perfect for trying out the platform', 0, 0, 1, 50, 10, 0, 100, 0,0,0,0,0,0,0,0,0, 1],
     ['Starter', 'starter', 'For small real estate teams', 999, 9999, 5, 500, 50, 10, 500, 0,0,0,0,1,0,0,0,0, 2],
@@ -133,21 +133,21 @@ $stmt = $db->prepare("INSERT IGNORE INTO subscription_plans
 
 foreach ($plans as $p) {
     $stmt->execute($p);
-    echo "  → Plan: {$p[0]} (₹{$p[3]}/mo)\n";
+    echo "  â†’ Plan: {$p[0]} (â‚¹{$p[3]}/mo)\n";
 }
-echo "✅ 4 subscription plans seeded\n";
+echo "âœ… 4 subscription plans seeded\n";
 
-// ── Seed APS Dream Home as first tenant ────────────────────
+// â”€â”€ Seed APS Dream Home as first tenant â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $check = $db->query("SELECT COUNT(*) FROM tenants WHERE slug = 'apsdreamhome'")->fetchColumn();
 if ($check == 0) {
     $db->exec("INSERT INTO tenants (name, slug, domain, contact_name, contact_email, contact_phone, plan_id, status, max_users, max_leads, max_properties, storage_limit_mb, onboarded_at)
         VALUES ('APS Dream Home', 'apsdreamhome', 'localhost', 'Abhaay Singh', 'admin@apsdreamhome.com', '+91-9918061919', 4, 'active', 999, 99999, 9999, 10240, NOW())");
-    echo "✅ APS Dream Home seeded as first tenant (Enterprise plan)\n";
+    echo "âœ… APS Dream Home seeded as first tenant (Enterprise plan)\n";
 } else {
-    echo "→ APS Dream Home tenant already exists\n";
+    echo "â†’ APS Dream Home tenant already exists\n";
 }
 
 echo "\n=== SaaS Setup Complete ===\n";
 echo "Tables: tenants, subscription_plans, tenant_subscriptions, tenant_usage\n";
-echo "Plans: Free (₹0), Starter (₹999), Professional (₹2,999), Enterprise (₹9,999)\n";
-echo "Tenant: APS Dream Home (Enterprise, active)\n";
+echo "Plans: Free (â‚¹0), Starter (â‚¹999), Professional (â‚¹2,999), Enterprise (â‚¹9,999)\n";
+echo "Tenant: APS Dream Home (Enterprise, active)\n";?>

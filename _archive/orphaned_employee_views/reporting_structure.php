@@ -176,7 +176,7 @@
                                 <div class="manager-stats">
                                     <h6>Manager's Team Performance</h6>
                                     <div class="progress mb-2">
-                                        <div class="progress-bar bg-success" style="width: <?= $reporting_structure['manager']['team_performance'] ?? 75 ?>%">
+                                        <div class="progress-bar bg-success" class="style-17654">
                                             <?= $reporting_structure['manager']['team_performance'] ?? 75 ?>%
                                         </div>
                                     </div>
@@ -300,7 +300,7 @@
                             </p>
                             <p class="mb-2">
                                 <strong>Budget:</strong>
-                                ₹<?= number_format($dept['annual_budget'] ?? 0) ?>
+                                â‚¹<?= number_format($dept['annual_budget'] ?? 0) ?>
                             </p>
                             <p class="mb-3">
                                 <strong>Description:</strong><br>
@@ -353,13 +353,13 @@
                         </div>
 
                         <div class="progress mb-3">
-                            <div class="progress-bar bg-info" style="width: <?= $dept['productivity_score'] ?? 0 ?>%">
+                            <div class="progress-bar bg-info" class="style-58923">
                                 Productivity: <?= $dept['productivity_score'] ?? 0 ?>%
                             </div>
                         </div>
 
                         <div class="progress mb-3">
-                            <div class="progress-bar bg-success" style="width: <?= $dept['satisfaction_score'] ?? 0 ?>%">
+                            <div class="progress-bar bg-success" class="style-38542">
                                 Satisfaction: <?= $dept['satisfaction_score'] ?? 0 ?>%
                             </div>
                         </div>

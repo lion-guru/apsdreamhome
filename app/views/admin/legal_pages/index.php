@@ -26,7 +26,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
                     <?php endif; ?>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="bg-light rounded p-3 mb-3" style="max-height:120px;overflow-y:auto">
+                    <div class="bg-light rounded p-3 mb-3" class="style-3144">
                         <?= strip_tags($terms_content['content'] ?? '<em>No content yet</em>') ?>
                     </div>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#termsModal"><i class="fas fa-edit me-1"></i>Edit Terms & Conditions</button>
@@ -42,7 +42,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
                     <?php endif; ?>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="bg-light rounded p-3 mb-3" style="max-height:120px;overflow-y:auto">
+                    <div class="bg-light rounded p-3 mb-3" class="style-3144">
                         <?= strip_tags($privacy_content['content'] ?? '<em>No content yet</em>') ?>
                     </div>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#privacyModal"><i class="fas fa-edit me-1"></i>Edit Privacy Policy</button>
@@ -59,7 +59,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
             <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($terms_content['title'] ?? 'Terms and Conditions') ?>"></div>
-            <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea name="content" class="form-control" rows="15" style="font-family:monospace;font-size:13px"><?= htmlspecialchars($terms_content['content'] ?? '') ?></textarea></div>
+            <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea name="content" class="form-control" rows="15" class="style-65267"><?= htmlspecialchars($terms_content['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Terms</button></div>
     </form>
@@ -72,7 +72,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
             <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($privacy_content['title'] ?? 'Privacy Policy') ?>"></div>
-            <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea name="content" class="form-control" rows="15" style="font-family:monospace;font-size:13px"><?= htmlspecialchars($privacy_content['content'] ?? '') ?></textarea></div>
+            <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea name="content" class="form-control" rows="15" class="style-65267"><?= htmlspecialchars($privacy_content['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Privacy Policy</button></div>
     </form>

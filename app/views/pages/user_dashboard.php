@@ -18,7 +18,7 @@ $kycStatus = $kycStatus ?? 'not_started';
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-hand-sparkles me-2"></i><?= __('dash_welcome_back', ['name' => htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? '')], 'Welcome back, %s!') ?></h2>
-            <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments — all in one place.') ?></p>
+            <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments â€” all in one place.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0">
             <div class="aps-cp-hero-actions justify-content-md-end">
@@ -125,9 +125,9 @@ $dashBookingCount = count($dashBookings);
 <?php if ($dashBookingCount > 0): ?>
 <div class="row g-3 mb-4">
     <div class="col-12">
-        <div class="aps-cp-card" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(79, 70, 229, 0.15);">
-                <h5><i class="fas fa-file-invoice-dollar" style="color:#0d9488;"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
+        <div class="aps-cp-card" class="style-77408">
+            <div class="aps-cp-card-header" class="style-61577">
+                <h5><i class="fas fa-file-invoice-dollar" class="style-23621"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
                 <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
@@ -140,19 +140,19 @@ $dashBookingCount = count($dashBookings);
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-amber" style="color:#f59e0b;" data-aps-count="<?= $dashActiveEmis ?>">0</div>
+                            <div class="fw-bold fs-4 text-amber" class="style-62159" data-aps-count="<?= $dashActiveEmis ?>">0</div>
                             <small class="text-muted"><?= __('dash_active_emis', null, 'Active EMIs') ?></small>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-success">₹<?= number_format($dashTotalPaid) ?></div>
+                            <div class="fw-bold fs-4 text-success">â‚¹<?= number_format($dashTotalPaid) ?></div>
                             <small class="text-muted"><?= __('dash_total_paid', null, 'Total Paid') ?></small>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-danger">₹<?= number_format($dashTotalPending > 0 ? $dashTotalPending : 0) ?></div>
+                            <div class="fw-bold fs-4 text-danger">â‚¹<?= number_format($dashTotalPending > 0 ? $dashTotalPending : 0) ?></div>
                             <small class="text-muted"><?= __('dash_pending_amount', null, 'Pending Amount') ?></small>
                         </div>
                     </div>
@@ -210,9 +210,9 @@ $dashBookingCount = count($dashBookings);
                             <tr>
                                 <td><strong>#<?= htmlspecialchars($b['plot_number'] ?? $b['property_id'] ?? 'N/A') ?></strong></td>
                                 <td><?= htmlspecialchars($b['colony_name'] ?? 'N/A') ?></td>
-                                <td>₹<?= number_format($totalAmt) ?></td>
+                                <td>â‚¹<?= number_format($totalAmt) ?></td>
                                 <td>
-                                    ₹<?= number_format($tokenPaid) ?>
+                                    â‚¹<?= number_format($tokenPaid) ?>
                                     <?php if ($tokenPaid > 0 && $tokenRequired > 0): ?>
                                         <br><small class="text-muted"><?= round(($tokenPaid / $tokenRequired) * 100) ?>% <?= __('dash_pct_of_token', null, 'of token') ?></small>
                                     <?php endif; ?>
@@ -228,7 +228,7 @@ $dashBookingCount = count($dashBookings);
                                 <td><?= date('M d, Y', strtotime($b['created_at'] ?? $b['booking_date'] ?? 'now')) ?></td>
                                 <td class="text-end">
                                     <?php if ($bStatus === 'pending' && $tokenRequired > $tokenPaid): ?>
-                                        <a href="<?= BASE_URL ?>/booking/<?= (int)$b['id'] ?>/pay" class="aps-cp-icon-btn" title="<?= __('dash_btn_pay_token', null, 'Pay Token') ?>" style="width:auto; padding: 0 0.6rem;">
+                                        <a href="<?= BASE_URL ?>/booking/<?= (int)$b['id'] ?>/pay" class="aps-cp-icon-btn" title="<?= __('dash_btn_pay_token', null, 'Pay Token') ?>" class="style-10106">
                                             <i class="fas fa-credit-card me-1"></i><?= __('dash_btn_pay_token', null, 'Pay Token') ?>
                                         </a>
                                     <?php endif; ?>
@@ -262,26 +262,26 @@ $dashBookingCount = count($dashBookings);
         <?php endif; ?>
 
         <?php if (!empty($paymentSummary) && (($paymentSummary['total_overdue'] ?? 0) > 0 || ($paymentSummary['total_accrued_penalties'] ?? 0) > 0)): ?>
-        <div class="aps-cp-card mb-4" style="border-left: 4px solid #ef4444;">
-            <div class="aps-cp-card-header" style="background: #fef2f2;">
+        <div class="aps-cp-card mb-4" class="style-14478">
+            <div class="aps-cp-card-header" class="style-83182">
                 <h5><i class="fas fa-exclamation-triangle text-danger"></i> Payment Alerts</h5>
                 <span class="badge bg-danger"><?= ($paymentSummary['total_overdue'] ?? 0) ?> overdue</span>
             </div>
             <div class="aps-cp-card-body">
                 <div class="row g-3 mb-3">
                     <div class="col-sm-4">
-                        <div class="aps-cp-stat aps-cp-stat--red" style="border-radius:10px;">
+                        <div class="aps-cp-stat aps-cp-stat--red" class="style-83240">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" style="font-size:1.2rem;">₹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-value" class="style-30322">â‚¹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
                                 <div class="aps-cp-stat-label">Overdue Amount</div>
                             </div>
                         </div>
                     </div>
                     <?php if (($paymentSummary['total_accrued_penalties'] ?? 0) > 0): ?>
                     <div class="col-sm-4">
-                        <div class="aps-cp-stat" style="border-left-color:#f59e0b; border-radius:10px;">
+                        <div class="aps-cp-stat" class="style-84622">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" style="font-size:1.2rem; color:#f59e0b;">₹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-value" class="style-98499">â‚¹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
                                 <div class="aps-cp-stat-label">Accrued Penalties (18% p.a.)</div>
                             </div>
                         </div>
@@ -289,9 +289,9 @@ $dashBookingCount = count($dashBookings);
                     <?php endif; ?>
                     <?php if (($paymentSummary['worst_overdue_days'] ?? 0) > 0): ?>
                     <div class="col-sm-4">
-                        <div class="aps-cp-stat" style="border-left-color:#dc2626; border-radius:10px;">
+                        <div class="aps-cp-stat" class="style-90504">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" style="font-size:1.2rem; color:#dc2626;"><?= (int)($paymentSummary['worst_overdue_days'] ?? 0) ?> days</div>
+                                <div class="aps-cp-stat-value" class="style-39987"><?= (int)($paymentSummary['worst_overdue_days'] ?? 0) ?> days</div>
                                 <div class="aps-cp-stat-label">Longest Overdue</div>
                             </div>
                         </div>
@@ -321,8 +321,8 @@ $dashBookingCount = count($dashBookings);
                                 <td><small><?= htmlspecialchars($inst['plot_number'] ?? '') ?></small></td>
                                 <td>#<?= (int)($inst['installment_no'] ?? 0) ?></td>
                                 <td><?= date('d M Y', strtotime($inst['due_date'] ?? 'now')) ?></td>
-                                <td class="text-end">₹<?= number_format((float)($inst['amount'] ?? 0)) ?></td>
-                                <td class="text-end text-danger">₹<?= number_format((float)($inst['accrued_penalty'] ?? 0)) ?></td>
+                                <td class="text-end">â‚¹<?= number_format((float)($inst['amount'] ?? 0)) ?></td>
+                                <td class="text-end text-danger">â‚¹<?= number_format((float)($inst['accrued_penalty'] ?? 0)) ?></td>
                                 <td><span class="badge bg-danger"><?= (int)($inst['days_overdue'] ?? 0) ?>d</span></td>
                                 <td>
                                     <a href="<?= BASE_URL ?>/user/installments/<?= (int)($inst['id'] ?? 0) ?>/pay" class="btn btn-sm btn-success">
@@ -337,12 +337,12 @@ $dashBookingCount = count($dashBookings);
                 <?php endif; ?>
 
                 <?php if (!empty($paymentSummary['nach_mandate'])): ?>
-                <div class="d-flex align-items-center gap-2 mt-3 p-2" style="background: #f0fdf4; border-radius: 8px;">
+                <div class="d-flex align-items-center gap-2 mt-3 p-2" class="style-62608">
                     <i class="fas fa-university text-success"></i>
                     <span class="text-success fw-semibold">NACH Auto-Debit Active</span>
                     <span class="text-muted ms-auto">
                         Next debit: <?= date('d M Y', strtotime($paymentSummary['nach_mandate']['next_debit_date'] ?? 'now')) ?>
-                        &mdash; ₹<?= number_format((float)($paymentSummary['nach_mandate']['mandate_amount'] ?? 0)) ?>/mo
+                        &mdash; â‚¹<?= number_format((float)($paymentSummary['nach_mandate']['mandate_amount'] ?? 0)) ?>/mo
                     </span>
                 </div>
                 <?php endif; ?>
@@ -369,15 +369,15 @@ $dashBookingCount = count($dashBookings);
                 <div class="row g-3">
                     <?php foreach (array_slice($properties, 0, 4) as $property): ?>
                         <div class="col-md-6">
-                            <div class="aps-cp-card" style="border: 1px solid var(--aps-cp-border);">
+                            <div class="aps-cp-card" class="style-49683">
                                 <div class="d-flex gap-3 p-3">
-                                    <div class="aps-cp-stat-icon" style="width: 56px; height: 56px; background: var(--aps-cp-primary-light);">
+                                    <div class="aps-cp-stat-icon" class="style-99228">
                                         <i class="fas fa-home"></i>
                                     </div>
                                     <div class="flex-grow-1 min-w-0">
                                         <h6 class="mb-1 text-truncate"><?= htmlspecialchars($property['property_type'] ?? $property['title'] ?? __('dash_fallback_property', null, 'Property')) ?></h6>
                                         <p class="text-muted mb-1 small text-truncate"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['address'] ?? $property['location'] ?? '') ?></p>
-                                        <p class="mb-2"><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></p>
+                                        <p class="mb-2"><strong>â‚¹<?= number_format($property['price'] ?? 0) ?></strong></p>
                                         <span class="badge bg-<?= ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning' ?>">
                                             <?= ucfirst($property['status'] ?? 'pending') ?>
                                         </span>
@@ -443,30 +443,30 @@ $dashBookingCount = count($dashBookings);
         $lvl = $invStats['level'] ?? 'Bronze';
         $lvlColor = match($lvl) { 'Diamond' => 'indigo', 'Platinum' => 'purple', 'Gold' => 'orange', 'Silver' => 'secondary', default => 'primary' };
         ?>
-        <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
-                <h5><i class="fas fa-trophy" style="color:#14b8a6"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
+        <div class="aps-cp-card mb-4" class="style-77408">
+            <div class="aps-cp-card-header" class="style-95171">
+                <h5><i class="fas fa-trophy" class="style-92996"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
-                <div class="display-5 fw-bold mb-1" style="color: var(--aps-cp-<?= $lvlColor ?>);"><?= htmlspecialchars($lvl) ?></div>
-                <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
-                <div class="aps-cp-progress" style="height:12px;">
-                    <div class="aps-cp-progress-bar" style="width:<?= (float)($invStats['progress_pct'] ?? 0) ?>%; background: linear-gradient(90deg, #0d9488, #14b8a6);"></div>
+                <div class="display-5 fw-bold mb-1" class="style-12445"><?= htmlspecialchars($lvl) ?></div>
+                <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: â‚¹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
+                <div class="aps-cp-progress" class="style-51045">
+                    <div class="aps-cp-progress-bar" class="style-9161"></div>
                 </div>
-                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
+                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest â‚¹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
                 <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> <?= __('dash_btn_upgrade', null, 'Upgrade') ?></a>
             </div>
         </div>
 
         <?php if (!empty($referral_code)): ?>
-        <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(245, 158, 11, 0.2);">
+        <div class="aps-cp-card mb-4" class="style-77104">
+            <div class="aps-cp-card-header" class="style-39246">
                 <h5><i class="fas fa-gift text-warning"></i> <?= __('dash_refer_earn_title', null, 'Refer & Earn') ?></h5>
                 <a href="<?= BASE_URL ?>/user/referral" class="btn btn-sm btn-outline-warning"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
                 <div class="text-center mb-3">
-                    <div class="display-6 fw-bold text-warning mb-1" style="letter-spacing: 0.15em; font-family: 'Courier New', monospace;" id="dashRefCode">
+                    <div class="display-6 fw-bold text-warning mb-1" class="style-28340" id="dashRefCode">
                         <?= htmlspecialchars($referral_code) ?>
                     </div>
                     <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
@@ -480,7 +480,7 @@ $dashBookingCount = count($dashBookings);
                     </div>
                     <div class="col-6">
                         <div class="bg-white rounded-3 p-2 border">
-                            <div class="fw-bold text-success fs-5">₹<?= number_format((float)($referral_earnings ?? 0), 2) ?></div>
+                            <div class="fw-bold text-success fs-5">â‚¹<?= number_format((float)($referral_earnings ?? 0), 2) ?></div>
                             <small class="text-muted"><?= __('dash_earnings', null, 'Earnings') ?></small>
                         </div>
                     </div>
@@ -493,8 +493,8 @@ $dashBookingCount = count($dashBookings);
                     </button>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-3">
-                    <a href="https://wa.me/?text=<?= urlencode(sprintf(__('dash_share_whatsapp_msg', null, 'Join APS Dream Home! Use my referral code: %s Register here: %s'), $referral_code, $referral_link)) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #25d366; color: #fff; border-color: #25d366;" title="<?= __('dash_share_whatsapp', null, 'Share on WhatsApp') ?>"><i class="fab fa-whatsapp"></i></a>
-                    <a href="sms:?body=<?= urlencode(sprintf(__('dash_share_sms_msg', null, 'Use my referral code %s to register at APS Dream Home: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" style="background: #6c757d; color: #fff; border-color: #6c757d;" title="<?= __('dash_share_sms', null, 'Share via SMS') ?>"><i class="fas fa-sms"></i></a>
+                    <a href="https://wa.me/?text=<?= urlencode(sprintf(__('dash_share_whatsapp_msg', null, 'Join APS Dream Home! Use my referral code: %s Register here: %s'), $referral_code, $referral_link)) ?>" target="_blank" class="aps-cp-icon-btn" class="style-66842" title="<?= __('dash_share_whatsapp', null, 'Share on WhatsApp') ?>"><i class="fab fa-whatsapp"></i></a>
+                    <a href="sms:?body=<?= urlencode(sprintf(__('dash_share_sms_msg', null, 'Use my referral code %s to register at APS Dream Home: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" class="style-95721" title="<?= __('dash_share_sms', null, 'Share via SMS') ?>"><i class="fas fa-sms"></i></a>
                     <a href="mailto:?subject=<?= urlencode(__('dash_share_email_subject', null, 'Join APS Dream Home')) ?>&body=<?= urlencode(sprintf(__('dash_share_email_body', null, 'Use my referral code %s to register: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" title="<?= __('dash_share_email', null, 'Share via Email') ?>"><i class="fas fa-envelope"></i></a>
                 </div>
                 <?php endif; ?>
@@ -587,14 +587,14 @@ $dashBookingCount = count($dashBookings);
         $dashOpenTickets = (int)($stats['open_tickets'] ?? 0);
         $dashTotalTickets = (int)($stats['total_tickets'] ?? 0);
         ?>
-        <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #ecfdf5 100%);">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
-                <h5><i class="fas fa-headset" style="color:#10b981;"></i> <?= __('dash_need_help', null, 'Need Help?') ?></h5>
+        <div class="aps-cp-card mb-4" class="style-38523">
+            <div class="aps-cp-card-header" class="style-70066">
+                <h5><i class="fas fa-headset" class="style-54781"></i> <?= __('dash_need_help', null, 'Need Help?') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
                 <div class="d-flex justify-content-center gap-4 mb-3">
                     <div>
-                        <div class="fw-bold fs-4" style="color: <?= $dashOpenTickets > 0 ? '#ef4444' : '#10b981' ?>;" data-aps-count="<?= $dashOpenTickets ?>">0</div>
+                        <div class="fw-bold fs-4" class="style-3908" data-aps-count="<?= $dashOpenTickets ?>">0</div>
                         <small class="text-muted"><?= __('dash_stat_open_tickets', null, 'Open Tickets') ?></small>
                     </div>
                     <div>
@@ -658,17 +658,17 @@ $dashBookingCount = count($dashBookings);
             <div class="aps-cp-card-body">
                 <div class="d-flex flex-column gap-2 small">
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-user text-muted me-2" style="width: 16px;"></i>
+                        <i class="fas fa-user text-muted me-2" class="style-18746"></i>
                         <strong class="me-2"><?= __('dash_label_name', null, 'Name') ?>:</strong>
                         <span class="text-truncate"><?= htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? 'N/A') ?></span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-envelope text-muted me-2" style="width: 16px;"></i>
+                        <i class="fas fa-envelope text-muted me-2" class="style-18746"></i>
                         <strong class="me-2"><?= __('dash_label_email', null, 'Email') ?>:</strong>
                         <span class="text-truncate"><?= htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? 'N/A') ?></span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-phone text-muted me-2" style="width: 16px;"></i>
+                        <i class="fas fa-phone text-muted me-2" class="style-18746"></i>
                         <strong class="me-2"><?= __('dash_label_phone', null, 'Phone') ?>:</strong>
                         <span class="text-truncate"><?= htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? 'N/A') ?></span>
                     </div>
@@ -679,8 +679,8 @@ $dashBookingCount = count($dashBookings);
             </div>
         </div>
 
-        <div class="aps-cp-card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05);">
+        <div class="aps-cp-card" class="style-86209">
+            <div class="aps-cp-card-header" class="style-17078">
                 <h5><i class="fas fa-bell text-primary"></i> <?= __('dash_section_notifications', null, 'Notifications') ?></h5>
             </div>
             <div class="aps-cp-card-body">
@@ -691,14 +691,14 @@ $dashBookingCount = count($dashBookings);
             </div>
         </div>
 
-        <div class="aps-cp-card" style="background: <?= $twoFactorEnabled ? 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' ?>;">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05);">
+        <div class="aps-cp-card" class="style-16398">
+            <div class="aps-cp-card-header" class="style-17078">
                 <h5><i class="fas fa-shield-alt <?= $twoFactorEnabled ? 'text-success' : 'text-warning' ?>"></i> <?= __('dash_section_security', null, 'Security') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <?php if ($twoFactorEnabled): ?>
                     <div class="d-flex align-items-center mb-3">
-                        <div class="aps-cp-stat-icon" style="background: var(--aps-cp-success-light); color: var(--aps-cp-success);"><i class="fas fa-check-circle"></i></div>
+                        <div class="aps-cp-stat-icon" class="style-49988"><i class="fas fa-check-circle"></i></div>
                         <div class="ms-3">
                             <p class="mb-0 fw-bold text-success"><?= __('dash_2fa_enabled', null, '2FA Enabled') ?></p>
                             <small class="text-muted"><?= __('dash_2fa_protected', null, 'Your account is protected') ?></small>
@@ -709,7 +709,7 @@ $dashBookingCount = count($dashBookings);
                     </a>
                 <?php else: ?>
                     <div class="d-flex align-items-center mb-3">
-                        <div class="aps-cp-stat-icon" style="background: var(--aps-cp-warning-light); color: var(--aps-cp-warning);"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="aps-cp-stat-icon" class="style-22946"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="ms-3">
                             <p class="mb-0 fw-bold text-warning"><?= __('dash_2fa_disabled', null, '2FA Not Enabled') ?></p>
                             <small class="text-muted"><?= __('dash_2fa_extra_security', null, 'Add an extra layer of security') ?></small>
@@ -754,13 +754,13 @@ $dashBookingCount = count($dashBookings);
             default => __('dash_kyc_not_completed_desc', null, 'Complete your KYC to unlock property bookings, loans, and payouts.')
         };
         ?>
-        <div class="aps-cp-card mt-4" style="background: <?= $kycBg ?>;">
-            <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(0,0,0,0.05);">
+        <div class="aps-cp-card mt-4" class="style-259">
+            <div class="aps-cp-card-header" class="style-17078">
                 <h5><i class="fas fa-id-card text-<?= $kycColor ?>"></i> <?= $kycLabel ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="aps-cp-stat-icon" style="background: var(--aps-cp-<?= $kycColor ?>-light, #f0f4ff); color: var(--aps-cp-<?= $kycColor ?>, #0d9488);"><i class="<?= $kycIcon ?>"></i></div>
+                    <div class="aps-cp-stat-icon" class="style-86186"><i class="<?= $kycIcon ?>"></i></div>
                     <div class="ms-3">
                         <p class="mb-0 fw-bold text-<?= $kycColor ?>"><?= $kycLabel ?></p>
                         <small class="text-muted"><?= $kycDesc ?></small>

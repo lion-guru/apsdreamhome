@@ -15,4 +15,4 @@ foreach ($other as $t) {
     } catch (Exception $e) {
         echo "$t: MISSING\n";
     }
-}
+}?>

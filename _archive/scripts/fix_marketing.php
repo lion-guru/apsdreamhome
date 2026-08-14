@@ -53,4 +53,4 @@ $c = str_replace('$this->viewRenderer->render(', '$this->render(', $c);
 $c = preg_replace('/\n{3,}/', "\n\n", $c);
 
 file_put_contents($f, $c);
-echo "Fixed MarketingAutomationController\n";
+echo "Fixed MarketingAutomationController\n";?>

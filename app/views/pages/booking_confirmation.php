@@ -66,10 +66,10 @@ foreach ($statusSteps as $i => $step) {
             <div class="conf-card">
                 <h5 class="fw-bold mb-3"><i class="fas fa-file-invoice"></i> <?= __('booking_details') ?></h5>
                 <table class="table">
-                    <tr><th style="width:160px"><?= __('booking_number') ?></th><td><strong>#<?= $booking['id'] ?> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</strong></td></tr>
-                    <tr><th><?= __('booking_plot') ?></th><td><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
+                    <tr><th class="style-17160"><?= __('booking_number') ?></th><td><strong>#<?= $booking['id'] ?> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</strong></td></tr>
+                    <tr><th><?= __('booking_plot') ?></th><td><?= htmlspecialchars($booking['plot_number'] ?? '') ?> â€” <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
                     <tr><th><?= __('booking_dimension') ?></th><td><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> | <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft</td></tr>
-                    <tr><th><?= __('booking_total_price') ?></th><td class="fw-bold fs-5 text-primary">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></td></tr>
+                    <tr><th><?= __('booking_total_price') ?></th><td class="fw-bold fs-5 text-primary">â‚¹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></td></tr>
                     <tr><th><?= __('booking_status') ?></th><td><span class="badge bg-<?= $currentStatus === 'confirmed' || $currentStatus === 'completed' ? 'success' : ($currentStatus === 'cancelled' ? 'danger' : 'warning') ?> fs-6"><?= ucfirst($currentStatus) ?></span></td></tr>
                     <tr><th><?= __('booking_date') ?></th><td><?= date('d M Y', strtotime($booking['booking_date'] ?? $booking['created_at'] ?? 'now')) ?></td></tr>
                 </table>
@@ -90,8 +90,8 @@ foreach ($statusSteps as $i => $step) {
                             <tr>
                                 <td><?= $emi['installment_no'] ?></td>
                                 <td><?= date('d M Y', strtotime($emi['due_date'])) ?></td>
-                                <td>₹<?= number_format(intval($emi['amount'])) ?></td>
-                                <td>₹<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
+                                <td>â‚¹<?= number_format(intval($emi['amount'])) ?></td>
+                                <td>â‚¹<?= number_format(intval($emi['paid_amount'] ?? 0)) ?></td>
                                 <td><span class="badge bg-<?= $emi['status'] === 'paid' ? 'success' : ($emi['status'] === 'overdue' ? 'danger' : 'warning') ?>"><?= ucfirst($emi['status']) ?></span></td>
                             </tr>
                             <?php endforeach; ?>
@@ -99,7 +99,7 @@ foreach ($statusSteps as $i => $step) {
                     </table>
                 </div>
                 <div class="alert alert-info mt-2">
-                    <i class="fas fa-info-circle"></i> <strong><?= __('common_note') ?>:</strong> <?= __('booking_token_note') ?> <strong>₹<?= number_format(intval($emis[0]['amount'] ?? 0)) ?></strong> <?= __('booking_token_within') ?>
+                    <i class="fas fa-info-circle"></i> <strong><?= __('common_note') ?>:</strong> <?= __('booking_token_note') ?> <strong>â‚¹<?= number_format(intval($emis[0]['amount'] ?? 0)) ?></strong> <?= __('booking_token_within') ?>
                     <?php if ($currentStatus === 'pending'): ?>
                     Please complete the token payment to confirm your booking.
                     <?php endif; ?>

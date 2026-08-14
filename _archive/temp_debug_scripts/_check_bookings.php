@@ -9,4 +9,4 @@ $pdo = new PDO(
 $r = $pdo->query('SHOW COLUMNS FROM plot_bookings');
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
     echo $row['Field'] . ' | ' . $row['Type'] . ' | ' . ($row['Key'] ?: '') . "\n";
-}
+}?>

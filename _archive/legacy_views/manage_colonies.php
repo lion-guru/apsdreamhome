@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -44,9 +44,9 @@ $colonies = [
         'available_plots' => 0,
         'completion_status' => 'Complete',
         'status' => 'sold_out',
-        'starting_price' => 'Γé╣12,00,000',
-        'current_price' => 'Γé╣15,00,000',
-        'revenue_generated' => 'Γé╣30,00,00,000',
+        'starting_price' => 'Î“Ã©â•£12,00,000',
+        'current_price' => 'Î“Ã©â•£15,00,000',
+        'revenue_generated' => 'Î“Ã©â•£30,00,00,000',
         'completion_date' => '2023-12-31',
         'features' => ['24/7 Security', 'Wide Roads', 'Green Spaces', 'Community Hall', 'Children Play Area'],
         'amenities' => ['Power Backup', 'Water Supply', 'Sewage System', 'Street Lights', 'Landscaped Gardens'],
@@ -65,9 +65,9 @@ $colonies = [
         'available_plots' => 25,
         'completion_status' => 'Phase 2 Ongoing',
         'status' => 'active',
-        'starting_price' => 'Γé╣10,00,000',
-        'current_price' => 'Γé╣13,00,000',
-        'revenue_generated' => 'Γé╣29,25,00,000',
+        'starting_price' => 'Î“Ã©â•£10,00,000',
+        'current_price' => 'Î“Ã©â•£13,00,000',
+        'revenue_generated' => 'Î“Ã©â•£29,25,00,000',
         'completion_date' => '2024-06-30',
         'features' => ['Prime Location', 'Modern Infrastructure', 'Investment Opportunity', 'Easy Financing'],
         'amenities' => ['Club House', 'Swimming Pool', 'Gym', 'Jogging Track', 'Security'],
@@ -86,9 +86,9 @@ $colonies = [
         'available_plots' => 80,
         'completion_status' => 'Development Started',
         'status' => 'active',
-        'starting_price' => 'Γé╣15,00,000',
-        'current_price' => 'Γé╣18,00,000',
-        'revenue_generated' => 'Γé╣39,60,00,000',
+        'starting_price' => 'Î“Ã©â•£15,00,000',
+        'current_price' => 'Î“Ã©â•£18,00,000',
+        'revenue_generated' => 'Î“Ã©â•£39,60,00,000',
         'completion_date' => '2024-12-31',
         'features' => ['Premium Location', 'High Appreciation', 'Modern Design', 'Luxury Living'],
         'amenities' => ['Community Hall', 'Landscaped Gardens', 'Security', 'Power Backup', 'Water Management'],
@@ -107,9 +107,9 @@ $colonies = [
         'available_plots' => 0,
         'completion_status' => 'Complete',
         'status' => 'sold_out',
-        'starting_price' => 'Γé╣8,00,000',
-        'current_price' => 'Γé╣11,00,000',
-        'revenue_generated' => 'Γé╣16,50,00,000',
+        'starting_price' => 'Î“Ã©â•£8,00,000',
+        'current_price' => 'Î“Ã©â•£11,00,000',
+        'revenue_generated' => 'Î“Ã©â•£16,50,00,000',
         'completion_date' => '2023-06-30',
         'features' => ['Peaceful Environment', 'Complete Infrastructure', 'High Appreciation', 'Sold Out'],
         'amenities' => ['Complete Infrastructure', 'Roads', 'Electricity', 'Water', 'Sewage'],
@@ -125,7 +125,7 @@ $total_plots = array_sum(array_column($colonies, 'total_plots'));
 $total_sold = array_sum(array_column($colonies, 'sold_plots'));
 $total_available = array_sum(array_column($colonies, 'available_plots'));
 $total_revenue = array_sum(array_map(function ($colony) {
-    return (float)str_replace(['Γé╣', ','], '', $colony['revenue_generated']);
+    return (float)str_replace(['Î“Ã©â•£', ','], '', $colony['revenue_generated']);
 }, $colonies));
 
 ?>
@@ -373,7 +373,7 @@ $total_revenue = array_sum(array_map(function ($colony) {
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="summary-stat">
-                            <span class="summary-number">Γé╣<?php echo number_format($total_revenue / 10000000, 1); ?>Cr</span>
+                            <span class="summary-number">Î“Ã©â•£<?php echo number_format($total_revenue / 10000000, 1); ?>Cr</span>
                             <span class="summary-label">Total Revenue</span>
                         </div>
                     </div>
@@ -432,7 +432,7 @@ $total_revenue = array_sum(array_map(function ($colony) {
                                         <span><?php echo round(($colony['sold_plots'] / $colony['total_plots']) * 100, 1); ?>%</span>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar bg-success" style="width: <?php echo ($colony['sold_plots'] / $colony['total_plots']) * 100; ?>%"></div>
+                                        <div class="progress-bar bg-success" class="style-19061"></div>
                                     </div>
                                 </div>
 

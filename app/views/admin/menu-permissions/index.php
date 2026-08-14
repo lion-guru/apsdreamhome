@@ -118,7 +118,7 @@ $active_page = 'menu-permissions';
                             </div>
                         </div>
 
-                        <div id="userPermissionsContent" style="display: none;">
+                        <div id="userPermissionsContent" class="style-54390">
                             <div class="card aps-cp-card">
                                 <div class="card-header aps-cp-card-header">
                                     <strong>Custom Permissions for: <span id="selectedUserName"></span></strong>
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const permission = data.permissions.find(p => p.menu_item_id == item.id) || {};
                                 const row = document.createElement('tr');
                                 row.innerHTML = `
-                                    <td style="padding-left: ${level * 20}px">
+                                    <td class="style-97773">
                                         <i class="fas ${item.icon} me-2"></i>
                                         ${item.name}
                                     </td>

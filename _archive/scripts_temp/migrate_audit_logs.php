@@ -38,4 +38,4 @@ foreach ($oldLogs as $log) {
     }
 }
 
-echo "Migrated $migrated logs\n";
+echo "Migrated $migrated logs\n";?>

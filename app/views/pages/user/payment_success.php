@@ -25,11 +25,11 @@ $token_amount = $token_amount ?? 25000;
     <div class="col-lg-7">
 
         <div class="text-center mb-4">
-            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 8px 24px rgba(16,185,129,0.3);">
-                <i class="fas fa-check" style="font-size:36px;color:#fff;"></i>
+            <div class="style-75714">
+                <i class="fas fa-check" class="style-3728"></i>
             </div>
             <h3 class="mt-2"><?= __('user_payment_success_thank_you', 'Thank You,') ?> <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
-            <p class="text-muted"><?= __('user_payment_success_received_prefix', 'Your token payment of') ?> <strong class="text-success">₹<?= number_format($token_amount) ?></strong> <?= __('user_payment_success_received_suffix', 'has been received.') ?></p>
+            <p class="text-muted"><?= __('user_payment_success_received_prefix', 'Your token payment of') ?> <strong class="text-success">â‚¹<?= number_format($token_amount) ?></strong> <?= __('user_payment_success_received_suffix', 'has been received.') ?></p>
         </div>
 
         <div class="aps-cp-card mb-4">
@@ -48,7 +48,7 @@ $token_amount = $token_amount ?? 25000;
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_amount_paid', 'Amount Paid') ?></small>
-                        <strong class="text-success fs-5">₹<?= number_format((float)($payment['amount'] ?? $token_amount)) ?></strong>
+                        <strong class="text-success fs-5">â‚¹<?= number_format((float)($payment['amount'] ?? $token_amount)) ?></strong>
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_payment_method', 'Payment Method') ?></small>
@@ -84,8 +84,8 @@ $token_amount = $token_amount ?? 25000;
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-flex align-items-start mb-3">
-                    <div class="me-3" style="width:32px;height:32px;border-radius:50%;background:var(--aps-cp-primary-bg,#eef2ff);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fas fa-file-signature text-primary" style="font-size:14px;"></i>
+                    <div class="me-3" class="style-89166">
+                        <i class="fas fa-file-signature text-primary" class="style-10933"></i>
                     </div>
                     <div>
                         <strong><?= __('user_payment_success_step1_title', 'Sign Agreement') ?></strong>
@@ -93,8 +93,8 @@ $token_amount = $token_amount ?? 25000;
                     </div>
                 </div>
                 <div class="d-flex align-items-start mb-3">
-                    <div class="me-3" style="width:32px;height:32px;border-radius:50%;background:var(--aps-cp-primary-bg,#eef2ff);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fas fa-calendar-check text-primary" style="font-size:14px;"></i>
+                    <div class="me-3" class="style-89166">
+                        <i class="fas fa-calendar-check text-primary" class="style-10933"></i>
                     </div>
                     <div>
                         <strong><?= __('user_payment_success_step2_title', 'EMI Schedule') ?></strong>
@@ -102,8 +102,8 @@ $token_amount = $token_amount ?? 25000;
                     </div>
                 </div>
                 <div class="d-flex align-items-start">
-                    <div class="me-3" style="width:32px;height:32px;border-radius:50%;background:var(--aps-cp-primary-bg,#eef2ff);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fas fa-key text-primary" style="font-size:14px;"></i>
+                    <div class="me-3" class="style-89166">
+                        <i class="fas fa-key text-primary" class="style-10933"></i>
                     </div>
                     <div>
                         <strong><?= __('user_payment_success_step3_title', 'Allotment & Possession') ?></strong>

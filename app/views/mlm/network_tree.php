@@ -36,7 +36,7 @@
 <?php
 function buildTreeView($nodes, $depth = 0) {
     if (empty($nodes)) return '<p class="text-muted small mb-0">No members</p>';
-    $html = '<ul class="list-unstyled mb-0" style="padding-left: ' . ($depth * 30) . 'px">';
+    $html = '<ul class="list-unstyled mb-0" class="style-33429">';
     foreach ($nodes as $node) {
         $status = $node['status'] ?? 'active';
         $badge = $status === 'active' ? 'success' : 'secondary';

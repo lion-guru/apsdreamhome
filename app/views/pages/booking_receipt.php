@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Booking Receipt #<?= $booking['id'] ?> - APS Dream Home</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -44,7 +45,7 @@
         </div>
 
         <table class="table table-bordered">
-            <tr><th style="width:180px"><?= __('receipt_booking_number', [], 'Booking Number') ?></th><td><strong>#<?= $booking['id'] ?></strong> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</td></tr>
+            <tr><th class="style-83841"><?= __('receipt_booking_number', [], 'Booking Number') ?></th><td><strong>#<?= $booking['id'] ?></strong> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</td></tr>
             <tr><th><?= __('receipt_plot_details', [], 'Plot Details') ?></th><td>
                 <strong><?= __('receipt_plot_no', [], 'Plot #') ?><?= htmlspecialchars($booking['plot_number'] ?? '') ?></strong><br>
                 <?= htmlspecialchars($booking['colony_name'] ?? '') ?>
@@ -52,7 +53,7 @@
                 <?php if (!empty($booking['state_name'])): ?>, <?= htmlspecialchars($booking['state_name']) ?><?php endif; ?>
             </td></tr>
             <tr><th><?= __('receipt_plot_size', [], 'Plot Size') ?></th><td>
-                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> — <?php endif; ?>
+                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> â€” <?php endif; ?>
                 <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft
             </td></tr>
             <tr><th><?= __('receipt_block', [], 'Block') ?></th><td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td></tr>
@@ -101,7 +102,7 @@
                 <i class="fas fa-check-circle text-success me-1"></i> <?= __('receipt_park_facing', [], 'Park Facing:') ?> <?= !empty($booking['park_facing']) ? __('receipt_yes', [], 'Yes') : __('receipt_no_label', [], 'No') ?><br>
             </div>
             <div class="col-6 text-end">
-                <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" style="max-height:60px;" onerror="this.style.display='none'" /><br>
+                <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="style-78171" onerror="this.style.display='none'" /><br>
                 <small class="text-muted"><?= __('receipt_authorized_sig', [], 'Authorized Signature') ?></small>
             </div>
         </div>

@@ -18,4 +18,4 @@ echo "\nKeys in hi.php but missing in en.php:\n";
 $missingInEn = array_diff($hiKeys, $enKeys);
 foreach ($missingInEn as $k) {
     echo "  $k\n";
-}
+}?>

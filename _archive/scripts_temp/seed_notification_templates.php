@@ -9,7 +9,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 echo "=== Seeding Notification Templates ===\n\n";
 
-// ── 1. Ensure sms_templates table exists ──
+// â”€â”€ 1. Ensure sms_templates table exists â”€â”€
 $db->exec("CREATE TABLE IF NOT EXISTS sms_templates (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     template_code VARCHAR(100) NOT NULL UNIQUE,
@@ -21,7 +21,7 @@ $db->exec("CREATE TABLE IF NOT EXISTS sms_templates (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 echo "[OK] sms_templates table ready\n";
 
-// ── 2. Seed SMS templates ──
+// â”€â”€ 2. Seed SMS templates â”€â”€
 $smsTemplates = [
     [
         'template_code' => 'welcome_customer',
@@ -76,7 +76,7 @@ foreach ($smsTemplates as $t) {
     echo "[OK] SMS template: {$t['template_name']}\n";
 }
 
-// ── 3. Ensure whatsapp_templates table exists ──
+// â”€â”€ 3. Ensure whatsapp_templates table exists â”€â”€
 $db->exec("CREATE TABLE IF NOT EXISTS whatsapp_templates (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     template_name VARCHAR(200) NOT NULL UNIQUE,
@@ -96,14 +96,14 @@ $db->exec("CREATE TABLE IF NOT EXISTS whatsapp_templates (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 echo "\n[OK] whatsapp_templates table ready\n";
 
-// ── 4. Seed WhatsApp templates ──
+// â”€â”€ 4. Seed WhatsApp templates â”€â”€
 $waTemplates = [
     [
         'template_name' => 'welcome_message',
         'category' => 'UTILITY',
         'header_text' => 'Welcome to APS Dream Home',
-        'body_text' => "Hi {{1}}! 🏠\n\nWelcome to APS Dream Home. We're thrilled to have you on board.\n\nYour dream property is just a few taps away. Browse our curated collection of premium plots, apartments, and commercial spaces.\n\n📞 Need help? Contact us anytime.",
-        'footer_text' => 'APS Dream Home — Your Dream, Our Mission',
+        'body_text' => "Hi {{1}}! ðŸ� \n\nWelcome to APS Dream Home. We're thrilled to have you on board.\n\nYour dream property is just a few taps away. Browse our curated collection of premium plots, apartments, and commercial spaces.\n\nðŸ“ž Need help? Contact us anytime.",
+        'footer_text' => 'APS Dream Home â€” Your Dream, Our Mission',
         'buttons' => json_encode([['type' => 'QUICK_REPLY', 'text' => 'Browse Properties'], ['type' => 'URL', 'text' => 'Visit Website', 'url' => '{{2}}']]),
         'variables' => json_encode(['name', 'website_url']),
         'status' => 'DRAFT',
@@ -111,8 +111,8 @@ $waTemplates = [
     [
         'template_name' => 'login_alert',
         'category' => 'AUTHENTICATION',
-        'header_text' => '🔐 Security Alert',
-        'body_text' => "Hi {{1}}!\n\nA new login was detected on your APS Dream Home account.\n\n⏰ Time: {{2}}\n📱 Device: {{3}}\n🌐 Location: {{4}}\n\nIf this wasn't you, please secure your account immediately.",
+        'header_text' => 'ðŸ”� Security Alert',
+        'body_text' => "Hi {{1}}!\n\nA new login was detected on your APS Dream Home account.\n\nâ�° Time: {{2}}\nðŸ“± Device: {{3}}\nðŸŒ� Location: {{4}}\n\nIf this wasn't you, please secure your account immediately.",
         'footer_text' => 'APS Dream Home Security',
         'buttons' => json_encode([['type' => 'QUICK_REPLY', 'text' => 'This was me'], ['type' => 'QUICK_REPLY', 'text' => 'Secure my account']]),
         'variables' => json_encode(['name', 'time', 'device', 'location']),
@@ -121,8 +121,8 @@ $waTemplates = [
     [
         'template_name' => 'booking_confirmation',
         'category' => 'UTILITY',
-        'header_text' => 'Booking Confirmed ✅',
-        'body_text' => "Hi {{1}}!\n\nYour property booking has been confirmed.\n\n🏠 Property: {{2}}\n📍 Location: {{3}}\n💰 Amount: ₹{{4}}\n🆔 Booking ID: {{5}}\n\nOur team will contact you shortly with next steps.",
+        'header_text' => 'Booking Confirmed âœ…',
+        'body_text' => "Hi {{1}}!\n\nYour property booking has been confirmed.\n\nðŸ�  Property: {{2}}\nðŸ“� Location: {{3}}\nðŸ’° Amount: â‚¹{{4}}\nðŸ†” Booking ID: {{5}}\n\nOur team will contact you shortly with next steps.",
         'footer_text' => 'APS Dream Home',
         'buttons' => json_encode([['type' => 'QUICK_REPLY', 'text' => 'View Booking'], ['type' => 'URL', 'text' => 'Download Receipt', 'url' => '{{6}}']]),
         'variables' => json_encode(['name', 'property_title', 'location', 'amount', 'booking_id', 'receipt_url']),
@@ -132,7 +132,7 @@ $waTemplates = [
         'template_name' => 'payment_reminder',
         'category' => 'UTILITY',
         'header_text' => 'Payment Reminder',
-        'body_text' => "Hi {{1}}!\n\nThis is a friendly reminder for your upcoming EMI payment.\n\n📋 Booking: {{2}}\n💰 Amount: ₹{{3}}\n📅 Due Date: {{4}}\n\nPlease ensure timely payment to avoid late fees.",
+        'body_text' => "Hi {{1}}!\n\nThis is a friendly reminder for your upcoming EMI payment.\n\nðŸ“‹ Booking: {{2}}\nðŸ’° Amount: â‚¹{{3}}\nðŸ“… Due Date: {{4}}\n\nPlease ensure timely payment to avoid late fees.",
         'footer_text' => 'APS Dream Home',
         'buttons' => json_encode([['type' => 'QUICK_REPLY', 'text' => 'Pay Now']]),
         'variables' => json_encode(['name', 'booking_id', 'amount', 'due_date']),
@@ -149,7 +149,7 @@ foreach ($waTemplates as $t) {
     echo "[OK] WhatsApp template: {$t['template_name']}\n";
 }
 
-// ── 5. Add welcome + login_alert to notification preferences ──
+// â”€â”€ 5. Add welcome + login_alert to notification preferences â”€â”€
 echo "\n=== Adding notification preference types ===\n";
 
 // Check if user_notification_preferences table exists
@@ -182,7 +182,7 @@ try {
     echo "[WARN] user_notification_preferences: {$e->getMessage()}\n";
 }
 
-// ── 6. Ensure notification_logs table has proper schema ──
+// â”€â”€ 6. Ensure notification_logs table has proper schema â”€â”€
 $db->exec("CREATE TABLE IF NOT EXISTS notification_logs (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(50) NOT NULL DEFAULT 'general',
@@ -204,4 +204,4 @@ echo "\n[OK] notification_logs table ready\n";
 
 echo "\n=== All notification templates seeded successfully! ===\n";
 echo "SMS templates: " . $db->query("SELECT COUNT(*) FROM sms_templates")->fetchColumn() . " total\n";
-echo "WhatsApp templates: " . $db->query("SELECT COUNT(*) FROM whatsapp_templates")->fetchColumn() . " total\n";
+echo "WhatsApp templates: " . $db->query("SELECT COUNT(*) FROM whatsapp_templates")->fetchColumn() . " total\n";?>

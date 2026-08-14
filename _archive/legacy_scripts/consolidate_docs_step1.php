@@ -46,4 +46,4 @@ foreach ($migrations as $table => $cfg) {
 }
 
 echo "Total migrated: $total\n";
-echo "Tables: " . $pdo->query('SHOW TABLES')->rowCount() . "\n";
+echo "Tables: " . $pdo->query('SHOW TABLES')->rowCount() . "\n";?>

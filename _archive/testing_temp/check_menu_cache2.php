@@ -15,4 +15,4 @@ if (file_exists($cacheFile)) {
     }
 } else {
     echo "Cache file does not exist.\n";
-}
+}?>

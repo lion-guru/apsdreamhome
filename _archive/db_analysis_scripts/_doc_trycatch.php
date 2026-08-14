@@ -30,4 +30,4 @@ foreach ($refs as $table) {
         }
     }
     echo "$table: $protected protected, $unprotected UNPROTECTED\n";
-}
+}?>

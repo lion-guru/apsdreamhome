@@ -170,7 +170,7 @@ if (!empty($plots)) {
         $db->exec("INSERT INTO plot_bookings (user_id, plot_id, colony_id, booking_amount, status, payment_status, booking_date, created_at) 
                     VALUES ($custId, {$plot['id']}, {$plot['colony_id']}, $bookingAmount, '$status', 'partial', CURDATE(), NOW())");
         $bookingId = $db->lastInsertId();
-        echo "  Created booking #$bookingId: Plot {$plot['plot_number']} (₹" . number_format($bookingAmount) . ") status=$status\n";
+        echo "  Created booking #$bookingId: Plot {$plot['plot_number']} (â‚¹" . number_format($bookingAmount) . ") status=$status\n";
         
         // Update plot status
         $db->exec("UPDATE plots SET status='booked', customer_id=$custId, booking_date=CURDATE() WHERE id={$plot['id']}");
@@ -220,13 +220,13 @@ if (!empty($completedBookings)) {
         // Record in commission ledger for the associate who sold
         $db->exec("INSERT INTO mlm_commission_ledger (user_id, beneficiary_user_id, booking_id, type, amount, description, status, created_at) 
                     VALUES ($level1Id, $level1Id, {$booking['id']}, 'direct_sale', $directComm, 'Direct sale commission for booking #{$booking['id']}', 'approved', NOW())");
-        echo "    Direct sale commission: ₹" . number_format($directComm) . " to Rajesh Leader\n";
+        echo "    Direct sale commission: â‚¹" . number_format($directComm) . " to Rajesh Leader\n";
         
         // Override commission for parent (2.5% differential)
         $overrideComm = $booking['total_price'] * 0.025;
         $db->exec("INSERT INTO mlm_commission_ledger (user_id, beneficiary_user_id, booking_id, type, amount, description, status, created_at) 
                     VALUES ($level1Id, 1, {$booking['id']}, 'override', $overrideComm, 'Override commission from booking #{$booking['id']}', 'approved', NOW())");
-        echo "    Override commission: ₹" . number_format($overrideComm) . " to Admin (upline)\n";
+        echo "    Override commission: â‚¹" . number_format($overrideComm) . " to Admin (upline)\n";
     }
 } else {
     echo "  No unprocessed completed bookings found\n";
@@ -239,7 +239,7 @@ if (!empty($completedBookings)) {
         $directComm = $pendingBooking['total_price'] * 0.05;
         $db->exec("INSERT INTO mlm_commission_ledger (user_id, beneficiary_user_id, booking_id, type, amount, description, status, created_at) 
                     VALUES ($level1Id, $level1Id, {$pendingBooking['id']}, 'direct_sale', $directComm, 'Direct sale commission for booking #{$pendingBooking['id']}', 'approved', NOW())");
-        echo "  Force-completed booking #{$pendingBooking['id']} + recorded ₹" . number_format($directComm) . " commission\n";
+        echo "  Force-completed booking #{$pendingBooking['id']} + recorded â‚¹" . number_format($directComm) . " commission\n";
     }
 }
 
@@ -264,7 +264,7 @@ $r = $db->query("SELECT COUNT(*) as c FROM booking_payment_schedules")->fetch();
 echo "EMI schedules: {$r['c']}\n";
 
 $r = $db->query("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total FROM mlm_commission_ledger")->fetch();
-echo "Commission ledger: {$r['c']} entries, total ₹" . number_format($r['total']) . "\n";
+echo "Commission ledger: {$r['c']} entries, total â‚¹" . number_format($r['total']) . "\n";
 
 $r = $db->query("SELECT COUNT(*) as c FROM wallet_points WHERE user_id IN (" . implode(',', $allAssocIds) . ")")->fetch();
 echo "Associate wallets: {$r['c']}\n";
@@ -273,8 +273,8 @@ echo "\n=== SEEDING COMPLETE ===\n";
 echo "Login credentials: Aps@2026 for all test users\n";
 echo "\nHierarchy:\n";
 echo "  Admin (id=1)\n";
-echo "    └── Rajesh Leader (leader.associate@apsdreamhome.com)\n";
-echo "        ├── Mohan Middle (mohan.middle@apsdreamhome.com)\n";
-echo "        │   ├── Deepak Bottom (deepak.bottom@apsdreamhome.com)\n";
-echo "        │   └── Ramesh Bottom (ramesh.bottom@apsdreamhome.com)\n";
-echo "        └── Suresh Middle (suresh.middle@apsdreamhome.com)\n";
+echo "    â””â”€â”€ Rajesh Leader (leader.associate@apsdreamhome.com)\n";
+echo "        â”œâ”€â”€ Mohan Middle (mohan.middle@apsdreamhome.com)\n";
+echo "        â”‚   â”œâ”€â”€ Deepak Bottom (deepak.bottom@apsdreamhome.com)\n";
+echo "        â”‚   â””â”€â”€ Ramesh Bottom (ramesh.bottom@apsdreamhome.com)\n";
+echo "        â””â”€â”€ Suresh Middle (suresh.middle@apsdreamhome.com)\n";?>

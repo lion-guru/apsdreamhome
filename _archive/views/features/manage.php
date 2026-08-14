@@ -7,7 +7,7 @@
         <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Feature Management</h5>
             <div class="d-flex gap-2">
-                <select id="bulkAction" class="form-select form-select-sm" style="width:auto;">
+                <select id="bulkAction" class="form-select form-select-sm" class="style-68062">
                     <option value="">Bulk Actions</option>
                     <option value="activate">Activate</option>
                     <option value="deactivate">Deactivate</option>

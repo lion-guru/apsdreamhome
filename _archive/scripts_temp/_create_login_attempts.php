@@ -15,4 +15,4 @@ $sql = "CREATE TABLE IF NOT EXISTS login_attempts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
 $db->exec($sql);
-echo "login_attempts table created successfully\n";
+echo "login_attempts table created successfully\n";?>

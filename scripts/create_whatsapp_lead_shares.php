@@ -25,4 +25,4 @@ try {
     echo "whatsapp_lead_shares table created OK\n";
 } catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

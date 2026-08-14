@@ -46,11 +46,11 @@ try {
 echo "\n--- notification menu items ---\n";
 $r = $pdo->query("SELECT id, name, url, section FROM admin_menu_items WHERE name LIKE '%notif%' OR url LIKE '%notif%'");
 while ($row = $r->fetch()) {
-    echo "  Menu: {$row['name']} → {$row['url']} (section={$row['section']})\n";
+    echo "  Menu: {$row['name']} â†’ {$row['url']} (section={$row['section']})\n";
 }
 
 // Check what notification services exist
 echo "\n--- notification service files ---\n";
 $serviceDir = dirname(__DIR__) . '/app/Services';
 $files = glob($serviceDir . '/**/*otif*');
-foreach ($files as $f) echo "  " . basename($f) . "\n";
+foreach ($files as $f) echo "  " . basename($f) . "\n";?>

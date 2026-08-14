@@ -85,7 +85,7 @@ $totalPending = $totalPending ?? 0;
         <div class="col-md-5">
             <div class="aps-cp-card mb-3">
                 <div class="aps-cp-card-header"><i class="fas fa-clock me-2"></i>Upcoming Calls</div>
-                <div class="aps-cp-card-body" style="max-height:300px;overflow-y:auto">
+                <div class="aps-cp-card-body" class="style-82023">
                     <?php if (empty($upcoming)): ?>
                         <div class="text-center text-muted py-3"><i class="fas fa-info-circle me-1"></i>No upcoming calls</div>
                     <?php else: ?>
@@ -100,7 +100,7 @@ $totalPending = $totalPending ?? 0;
             </div>
             <div class="aps-cp-card">
                 <div class="aps-cp-card-header"><i class="fas fa-check-circle me-2"></i>Recently Completed</div>
-                <div class="aps-cp-card-body" style="max-height:200px;overflow-y:auto">
+                <div class="aps-cp-card-body" class="style-68333">
                     <?php if (empty($recentCompleted)): ?>
                         <div class="text-center text-muted py-3"><i class="fas fa-info-circle me-1"></i>No completed calls</div>
                     <?php else: ?>

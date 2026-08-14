@@ -1,6 +1,6 @@
 <?php
 /**
- * Executive AI Assistant — Chat Interface
+ * Executive AI Assistant â€” Chat Interface
  * Role-context-aware AI assistant for all executive roles
  */
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
@@ -78,11 +78,11 @@ $focusAreas = $focusAreas ?? [];
             <h3><?= htmlspecialchars($userName) ?></h3>
             <span class="role-badge"><?= htmlspecialchars($roleTitle) ?></span>
             <?php if (!empty($focusAreas)): ?>
-            <div style="margin-top: 12px;">
-                <div style="color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Focus Areas</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+            <div class="style-17873">
+                <div class="style-83709">Focus Areas</div>
+                <div class="style-47731">
                     <?php foreach ($focusAreas as $area): ?>
-                    <span style="background: rgba(255,255,255,0.06); color: #94a3b8; padding: 3px 8px; border-radius: 6px; font-size: 11px;"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $area))) ?></span>
+                    <span class="style-56820"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $area))) ?></span>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -95,11 +95,11 @@ $focusAreas = $focusAreas ?? [];
         
         <div class="ai-quick-queries">
             <h4>Quick Queries</h4>
-            <button class="quick-query-btn" onclick="sendQuickQuery('What are my top priorities today?')">🎯 Today's Priorities</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('Give me a quick performance summary')">📊 Performance Summary</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('What actions should I take this week?')">⚡ This Week Actions</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('Show me any alerts or issues')">🚨 Alerts & Issues</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('Compare this month vs last month')">📈 Month Comparison</button>
+            <button class="quick-query-btn" onclick="sendQuickQuery('What are my top priorities today?')">ðŸŽ¯ Today's Priorities</button>
+            <button class="quick-query-btn" onclick="sendQuickQuery('Give me a quick performance summary')">ðŸ“Š Performance Summary</button>
+            <button class="quick-query-btn" onclick="sendQuickQuery('What actions should I take this week?')">âš¡ This Week Actions</button>
+            <button class="quick-query-btn" onclick="sendQuickQuery('Show me any alerts or issues')">ðŸš¨ Alerts & Issues</button>
+            <button class="quick-query-btn" onclick="sendQuickQuery('Compare this month vs last month')">ðŸ“ˆ Month Comparison</button>
         </div>
     </div>
     
@@ -109,13 +109,13 @@ $focusAreas = $focusAreas ?? [];
             <div class="avatar"><i class="fas fa-robot"></i></div>
             <div class="info">
                 <h3>APS AI Assistant</h3>
-                <p>Role-aware • Real-time data • Hinglish</p>
+                <p>Role-aware â€¢ Real-time data â€¢ Hinglish</p>
             </div>
         </div>
         
         <div class="ai-chat-messages" id="chatMessages">
             <div class="welcome-message">
-                <div class="icon">🤖</div>
+                <div class="icon">ðŸ¤–</div>
                 <h2>Namaste, <?= htmlspecialchars($userName) ?>!</h2>
                 <p>Main aapka <?= htmlspecialchars($roleTitle) ?> AI assistant hoon. Ask me anything about your department, KPIs, or business decisions.</p>
             </div>

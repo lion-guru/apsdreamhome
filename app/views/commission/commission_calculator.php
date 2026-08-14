@@ -86,7 +86,7 @@
             <div class="col-lg-8 mx-auto">
                 <div class="calculator-card">
                     <div class="card-header aps-cp-card-header">
-                        <h4>📊 Earnings Parameters</h4>
+                        <h4>ðŸ“Š Earnings Parameters</h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <form id="commissionCalculator">
@@ -97,11 +97,11 @@
                                         <i class="fas fa-home me-2"></i>Average Property Sale Amount
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text">₹</span>
+                                        <span class="input-group-text">â‚¹</span>
                                         <input type="number" class="form-control" id="propertyAmount" value="1000000" min="100000" step="50000">
                                         <span class="input-group-text">Lakhs</span>
                                     </div>
-                                    <div class="form-text">Typical property value (₹10L - ₹5Cr)</div>
+                                    <div class="form-text">Typical property value (â‚¹10L - â‚¹5Cr)</div>
                                 </div>
                                 
                                 <!-- Direct Referrals -->
@@ -179,11 +179,11 @@
 </section>
 
 <!-- Results Section -->
-<section id="resultsSection" class="results-section py-5 bg-light" style="display: none;">
+<section id="resultsSection" class="results-section py-5 bg-light" class="style-54390">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">💰 Your Potential Earnings</h2>
+                <h2 class="section-title">ðŸ’° Your Potential Earnings</h2>
                 <p class="section-subtitle">Based on your parameters, here's your earning potential</p>
             </div>
         </div>
@@ -194,10 +194,10 @@
                 <div class="result-card main-result">
                     <div class="result-header">
                         <h4>Monthly Earnings</h4>
-                        <div class="result-icon">📅</div>
+                        <div class="result-icon">ðŸ“…</div>
                     </div>
                     <div class="result-body">
-                        <h2 id="monthlyEarnings">₹0</h2>
+                        <h2 id="monthlyEarnings">â‚¹0</h2>
                         <p class="result-description">Your estimated monthly income</p>
                     </div>
                 </div>
@@ -208,10 +208,10 @@
                 <div class="result-card">
                     <div class="result-header">
                         <h4>Annual Earnings</h4>
-                        <div class="result-icon">📊</div>
+                        <div class="result-icon">ðŸ“Š</div>
                     </div>
                     <div class="result-body">
-                        <h2 id="annualEarnings">₹0</h2>
+                        <h2 id="annualEarnings">â‚¹0</h2>
                         <p class="result-description">Your estimated annual income</p>
                     </div>
                 </div>
@@ -222,10 +222,10 @@
                 <div class="result-card">
                     <div class="result-header">
                         <h4>Effective Hourly Rate</h4>
-                        <div class="result-icon">⏰</div>
+                        <div class="result-icon">â�°</div>
                     </div>
                     <div class="result-body">
-                        <h2 id="hourlyRate">₹0</h2>
+                        <h2 id="hourlyRate">â‚¹0</h2>
                         <p class="result-description">Your effective earnings per hour</p>
                     </div>
                 </div>
@@ -236,10 +236,10 @@
                 <div class="result-card">
                     <div class="result-header">
                         <h4>Network Value</h4>
-                        <div class="result-icon">🌐</div>
+                        <div class="result-icon">ðŸŒ�</div>
                     </div>
                     <div class="result-body">
-                        <h2 id="networkValue">₹0</h2>
+                        <h2 id="networkValue">â‚¹0</h2>
                         <p class="result-description">Total value of your network</p>
                     </div>
                 </div>
@@ -251,43 +251,43 @@
             <div class="col-lg-12">
                 <div class="breakdown-card">
                     <div class="card-header aps-cp-card-header">
-                        <h4>📈 Commission Breakdown</h4>
+                        <h4>ðŸ“ˆ Commission Breakdown</h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">Direct Commissions (Level 1)</span>
-                                    <span class="breakdown-value" id="directCommission">₹0</span>
+                                    <span class="breakdown-value" id="directCommission">â‚¹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-success" id="directCommissionBar" style="width: 0%"></div>
+                                        <div class="progress-bar bg-success" id="directCommissionBar" class="style-73819"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">Level 2-3 Commissions</span>
-                                    <span class="breakdown-value" id="level23Commission">₹0</span>
+                                    <span class="breakdown-value" id="level23Commission">â‚¹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-info" id="level23CommissionBar" style="width: 0%"></div>
+                                        <div class="progress-bar bg-info" id="level23CommissionBar" class="style-73819"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">Level 4-7 Commissions</span>
-                                    <span class="breakdown-value" id="level47Commission">₹0</span>
+                                    <span class="breakdown-value" id="level47Commission">â‚¹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-warning" id="level47CommissionBar" style="width: 0%"></div>
+                                        <div class="progress-bar bg-warning" id="level47CommissionBar" class="style-73819"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">Level 8-10 Commissions</span>
-                                    <span class="breakdown-value" id="level810Commission">₹0</span>
+                                    <span class="breakdown-value" id="level810Commission">â‚¹0</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-secondary" id="level810CommissionBar" style="width: 0%"></div>
+                                        <div class="progress-bar bg-secondary" id="level810CommissionBar" class="style-73819"></div>
                                     </div>
                                 </div>
                             </div>
@@ -304,7 +304,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">🎯 Commission Structure</h2>
+                <h2 class="section-title">ðŸŽ¯ Commission Structure</h2>
                 <p class="section-subtitle">Multi-level commission rates for maximum earning potential</p>
             </div>
         </div>
@@ -378,7 +378,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">🏆 Real Success Examples</h2>
+                <h2 class="section-title">ðŸ�† Real Success Examples</h2>
                 <p class="section-subtitle">See how others are earning with APS Dream Homes MLM</p>
             </div>
         </div>
@@ -388,7 +388,7 @@
                 <div class="example-card">
                     <div class="example-header">
                         <h5>Part-Time Agent</h5>
-                        <span class="badge bg-success">₹25K/Month</span>
+                        <span class="badge bg-success">â‚¹25K/Month</span>
                     </div>
                     <div class="example-body">
                         <div class="example-params">
@@ -397,7 +397,7 @@
                             <p><strong>15 hours/week</strong></p>
                         </div>
                         <div class="example-result">
-                            <h4>₹25,000/month</h4>
+                            <h4>â‚¹25,000/month</h4>
                             <p>Working part-time while building network</p>
                         </div>
                     </div>
@@ -408,7 +408,7 @@
                 <div class="example-card">
                     <div class="example-header">
                         <h5>Full-Time Agent</h5>
-                        <span class="badge bg-warning">₹75K/Month</span>
+                        <span class="badge bg-warning">â‚¹75K/Month</span>
                     </div>
                     <div class="example-body">
                         <div class="example-params">
@@ -417,7 +417,7 @@
                             <p><strong>40 hours/week</strong></p>
                         </div>
                         <div class="example-result">
-                            <h4>₹75,000/month</h4>
+                            <h4>â‚¹75,000/month</h4>
                             <p>Dedicated full-time effort</p>
                         </div>
                     </div>
@@ -428,7 +428,7 @@
                 <div class="example-card">
                     <div class="example-header">
                         <h5>Team Leader</h5>
-                        <span class="badge bg-danger">₹1.5L/Month</span>
+                        <span class="badge bg-danger">â‚¹1.5L/Month</span>
                     </div>
                     <div class="example-body">
                         <div class="example-params">
@@ -437,7 +437,7 @@
                             <p><strong>50 hours/week</strong></p>
                         </div>
                         <div class="example-result">
-                            <h4>₹1,50,000/month</h4>
+                            <h4>â‚¹1,50,000/month</h4>
                             <p>Leading large network</p>
                         </div>
                     </div>
@@ -463,10 +463,10 @@
                     </a>
                 </div>
                 <div class="trust-badges">
-                    <span>✅ Free to Join</span>
-                    <span>✅ No Hidden Charges</span>
-                    <span>✅ Instant Commission Tracking</span>
-                    <span>✅ 24/7 Support</span>
+                    <span>âœ… Free to Join</span>
+                    <span>âœ… No Hidden Charges</span>
+                    <span>âœ… Instant Commission Tracking</span>
+                    <span>âœ… 24/7 Support</span>
                 </div>
             </div>
         </div>
@@ -519,17 +519,17 @@ function calculateCommissions() {
     const networkValue = activeTeam * propertyAmount * 0.05; // 5% of network value
     
     // Update display
-    document.getElementById('monthlyEarnings').textContent = '₹' + Math.round(monthlyEarnings).toLocaleString('en-IN');
-    document.getElementById('annualEarnings').textContent = '₹' + Math.round(annualEarnings).toLocaleString('en-IN');
-    document.getElementById('hourlyRate').textContent = '₹' + Math.round(hourlyRate).toLocaleString('en-IN');
-    document.getElementById('networkValue').textContent = '₹' + Math.round(networkValue).toLocaleString('en-IN');
+    document.getElementById('monthlyEarnings').textContent = 'â‚¹' + Math.round(monthlyEarnings).toLocaleString('en-IN');
+    document.getElementById('annualEarnings').textContent = 'â‚¹' + Math.round(annualEarnings).toLocaleString('en-IN');
+    document.getElementById('hourlyRate').textContent = 'â‚¹' + Math.round(hourlyRate).toLocaleString('en-IN');
+    document.getElementById('networkValue').textContent = 'â‚¹' + Math.round(networkValue).toLocaleString('en-IN');
     
     // Update breakdown
     const totalCommission = monthlyEarnings;
-    document.getElementById('directCommission').textContent = '₹' + Math.round(directCommission).toLocaleString('en-IN');
-    document.getElementById('level23Commission').textContent = '₹' + Math.round(level2Commission + level3Commission).toLocaleString('en-IN');
-    document.getElementById('level47Commission').textContent = '₹' + Math.round(level4Commission + level5Commission + level6Commission + level7Commission).toLocaleString('en-IN');
-    document.getElementById('level810Commission').textContent = '₹' + Math.round(level8_10Commission).toLocaleString('en-IN');
+    document.getElementById('directCommission').textContent = 'â‚¹' + Math.round(directCommission).toLocaleString('en-IN');
+    document.getElementById('level23Commission').textContent = 'â‚¹' + Math.round(level2Commission + level3Commission).toLocaleString('en-IN');
+    document.getElementById('level47Commission').textContent = 'â‚¹' + Math.round(level4Commission + level5Commission + level6Commission + level7Commission).toLocaleString('en-IN');
+    document.getElementById('level810Commission').textContent = 'â‚¹' + Math.round(level8_10Commission).toLocaleString('en-IN');
     
     // Update progress bars
     document.getElementById('directCommissionBar').style.width = (directCommission / totalCommission * 100) + '%';

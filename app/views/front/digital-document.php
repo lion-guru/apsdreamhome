@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 /** @var array $booking */
 /** @var array $document */
 $base = BASE_URL ?? '/apsdreamhome';
@@ -32,8 +32,8 @@ $base = BASE_URL ?? '/apsdreamhome';
                         </span>
                     <?php endif; ?>
                 </div>
-                <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
-                    <div class="document-content" style="font-family: Georgia, serif; line-height: 1.8; white-space: pre-wrap;">
+                <div class="card-body" class="style-18847">
+                    <div class="document-content" class="style-80284">
                         <?= nl2br(htmlspecialchars($document['content'] ?? '')) ?>
                     </div>
                 </div>
@@ -43,8 +43,8 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Digital Signature</label>
-                            <div class="border rounded p-3" style="min-height: 120px; background: #f8f9fa;">
-                                <canvas id="signatureCanvas" width="600" height="100" style="border: 1px dashed #ccc; cursor: crosshair; touch-action: none;"></canvas>
+                            <div class="border rounded p-3" class="style-36355">
+                                <canvas id="signatureCanvas" width="600" height="100" class="style-76084"></canvas>
                                 <div class="mt-2">
                                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSignature()">Clear</button>
                                     <span class="ms-2 text-muted small">Draw your signature above</span>
@@ -81,7 +81,7 @@ $base = BASE_URL ?? '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+            <div class="card border-0 shadow-sm sticky-top" class="style-76854">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">Document Info</h5>
                 </div>

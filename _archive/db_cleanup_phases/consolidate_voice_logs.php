@@ -23,7 +23,7 @@ echo "1. Backing up ai_call_logs...\n";
 $pdo->exec("DROP TABLE IF EXISTS ai_call_logs_backup_20260603");
 $pdo->exec("CREATE TABLE ai_call_logs_backup_20260603 AS SELECT * FROM ai_call_logs");
 $backupRows = $pdo->query("SELECT COUNT(*) FROM ai_call_logs_backup_20260603")->fetchColumn();
-echo "   ✓ Backed up $backupRows rows to ai_call_logs_backup_20260603\n\n";
+echo "   âœ“ Backed up $backupRows rows to ai_call_logs_backup_20260603\n\n";
 
 // Step 2: Add missing columns to ai_call_sessions
 echo "2. Adding columns to ai_call_sessions...\n";
@@ -34,7 +34,7 @@ foreach ($pdo->query("DESCRIBE ai_call_sessions")->fetchAll(PDO::FETCH_ASSOC) as
 
 if (!in_array('call_sid', $existingCols)) {
     $pdo->exec("ALTER TABLE ai_call_sessions ADD COLUMN call_sid VARCHAR(100) NULL");
-    echo "   ✓ Added call_sid\n";
+    echo "   âœ“ Added call_sid\n";
 } else {
     echo "   - call_sid already exists\n";
 }
@@ -42,7 +42,7 @@ if (!in_array('call_sid', $existingCols)) {
 if (!in_array('sentiment', $existingCols)) {
     // Need to handle the case where sentiment_score exists - add sentiment as separate column
     $pdo->exec("ALTER TABLE ai_call_sessions ADD COLUMN sentiment ENUM('positive','neutral','negative') NULL");
-    echo "   ✓ Added sentiment\n";
+    echo "   âœ“ Added sentiment\n";
 } else {
     echo "   - sentiment already exists\n";
 }
@@ -60,9 +60,9 @@ foreach ($logs as $log) {
     if ($sessionId) {
         $stmt = $pdo->prepare("UPDATE ai_call_sessions SET call_sid = ?, sentiment = ? WHERE id = ?");
         $stmt->execute([$log['call_sid'], $log['sentiment'], $sessionId]);
-        echo "   ✓ Migrated log id={$log['id']} -> session id=$sessionId\n";
+        echo "   âœ“ Migrated log id={$log['id']} -> session id=$sessionId\n";
     } else {
-        echo "   ⚠ No matching session for log id={$log['id']} (lead_id={$log['lead_id']}, agent_id={$log['agent_id']})\n";
+        echo "   âš  No matching session for log id={$log['id']} (lead_id={$log['lead_id']}, agent_id={$log['agent_id']})\n";
     }
 }
 echo "\n";
@@ -78,4 +78,4 @@ echo "5. To complete consolidation:\n";
 echo "   a. Update 3 code references in: AICallingAgent.php, LeadFollowUpAgent.php, VoiceCallService.php\n";
 echo "   b. Run: DROP TABLE ai_call_logs; (after verifying E2E)\n";
 echo "   c. To rollback: DROP TABLE ai_call_sessions_sentiment_added; RENAME TABLE ai_call_logs_backup_20260603 TO ai_call_logs;\n";
-echo "   d. ALTER TABLE ai_call_sessions DROP COLUMN call_sid, DROP COLUMN sentiment;\n";
+echo "   d. ALTER TABLE ai_call_sessions DROP COLUMN call_sid, DROP COLUMN sentiment;\n";?>

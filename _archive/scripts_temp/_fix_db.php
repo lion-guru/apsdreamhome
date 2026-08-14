@@ -60,4 +60,4 @@ try {
     }
 } catch (Throwable $e) {
     echo "FK check error: " . $e->getMessage() . "\n";
-}
+}?>

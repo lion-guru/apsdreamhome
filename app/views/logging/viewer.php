@@ -42,7 +42,7 @@
                             <?php foreach ($log_entries as $e): ?>
                                 <tr class="log-row" data-level="<?= htmlspecialchars($e['level'] ?? 'info') ?>" data-message="<?= htmlspecialchars($e['message'] ?? '') ?>">
                                     <td><span class="badge bg-<?= ($e['level'] ?? 'info') === 'error' ? 'danger' : (($e['level'] ?? 'info') === 'warning' ? 'warning' : (($e['level'] ?? 'info') === 'debug' ? 'secondary' : 'info')) ?>"><?= htmlspecialchars($e['level'] ?? 'info') ?></span></td>
-                                    <td class="text-truncate" style="max-width:350px"><?= htmlspecialchars($e['message'] ?? '') ?></td>
+                                    <td class="text-truncate" class="style-89018"><?= htmlspecialchars($e['message'] ?? '') ?></td>
                                     <td><?= htmlspecialchars(basename($e['file'] ?? '-')) ?></td>
                                     <td><?= (int)($e['line'] ?? 0) ?></td>
                                     <td><?= htmlspecialchars($e['ip'] ?? '-') ?></td>

@@ -54,7 +54,7 @@ $health = $health ?? ['worker_status' => 'unknown', 'queue_size' => 0, 'last_hea
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Health Details</h6></div>
         <div class="card-body aps-cp-card-body">
             <div class="table-responsive"><table class="table table-bordered">
-                <tr><th style="width:200px">Last Heartbeat</th><td><?= !empty($health['last_heartbeat']) ? htmlspecialchars($health['last_heartbeat']) : '<span class="text-danger">No heartbeat detected</span>' ?></td></tr>
+                <tr><th class="style-47085">Last Heartbeat</th><td><?= !empty($health['last_heartbeat']) ? htmlspecialchars($health['last_heartbeat']) : '<span class="text-danger">No heartbeat detected</span>' ?></td></tr>
                 <tr><th>Uptime</th><td><?= htmlspecialchars($health['uptime'] ?? '0') ?> seconds</td></tr>
                 <tr><th>Failed Tasks</th><td><span class="badge bg-<?= ($health['failed_tasks'] ?? 0) > 0 ? 'danger' : 'success' ?>"><?= number_format($health['failed_tasks'] ?? 0) ?></span></td></tr>
                 <tr><th>Worker PID</th><td><?= htmlspecialchars($health['pid'] ?? 'N/A') ?></td></tr>

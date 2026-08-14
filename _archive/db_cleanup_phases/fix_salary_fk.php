@@ -28,4 +28,4 @@ $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 echo "Dropped salary_structures + backup\n";
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "Tables: $after\n";
+echo "Tables: $after\n";?>

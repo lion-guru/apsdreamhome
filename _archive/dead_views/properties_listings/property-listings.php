@@ -44,7 +44,7 @@ try {
             'type' => 'residential',
             'location' => 'Gorakhpur - NH-28',
             'size' => '1000-5000 Sq.Ft',
-            'price' => '₹2,500/Sq.Ft',
+            'price' => 'â‚¹2,500/Sq.Ft',
             'description' => 'Premium residential plots with modern amenities',
             'amenities' => json_encode(['24/7 Security', 'Wide Roads', 'Underground Drainage', 'Central Park']),
             'image_url' => getPlaceholderUrl(400, 300, 'APS Anant City'),
@@ -694,11 +694,11 @@ try {
                         <label class="form-label">Price Range</label>
                         <select class="form-select">
                             <option value="">All Prices</option>
-                            <option value="0-25">Under ₹25 Lakhs</option>
-                            <option value="25-50">₹25-50 Lakhs</option>
-                            <option value="50-75">₹50-75 Lakhs</option>
-                            <option value="75-100">₹75 Lakhs - ₹1 Crore</option>
-                            <option value="100+">Above ₹1 Crore</option>
+                            <option value="0-25">Under â‚¹25 Lakhs</option>
+                            <option value="25-50">â‚¹25-50 Lakhs</option>
+                            <option value="50-75">â‚¹50-75 Lakhs</option>
+                            <option value="75-100">â‚¹75 Lakhs - â‚¹1 Crore</option>
+                            <option value="100+">Above â‚¹1 Crore</option>
                         </select>
                     </div>
 
@@ -832,13 +832,13 @@ try {
                                             <?php
                                             $image = !empty($property['image_path']) ? (defined('BASE_URL') ? BASE_URL : '') . '/' . $property['image_path'] : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                                             ?>
-                                            <img src="<?= htmlspecialchars($image) ?>" class="img-fluid" alt="<?php echo htmlspecialchars($property['title'] ?? 'Property'); ?>" loading="lazy">
+                                             src="<?= htmlspecialchars($image) ? loading="lazy">" class="img-fluid" alt="<?php echo htmlspecialchars($property['title'] ?? 'Property'); ?>" loading="lazy">
                                             <?php if (!empty($property['featured'])): ?>
                                                 <span class="property-badge featured">Featured</span>
                                             <?php elseif (!empty($property['status']) && $property['status'] != 'available'): ?>
                                                 <span class="property-badge"><?php echo ucfirst(htmlspecialchars($property['status'])); ?></span>
                                             <?php elseif (!empty($property['source']) && $property['source'] == 'ai_fetched'): ?>
-                                                <span class="property-badge" style="background: var(--secondary);"><i class="fas fa-globe me-1"></i>Web Listing</span>
+                                                <span class="property-badge" class="style-91659"><i class="fas fa-globe me-1"></i>Web Listing</span>
                                             <?php else: ?>
                                                 <span class="property-badge new">Available</span>
                                             <?php endif; ?>
@@ -847,7 +847,7 @@ try {
                                             </div>
                                         </div>
                                         <div class="property-content">
-                                            <div class="property-price">₹<?php echo number_format($property['price'] ?? 0); ?></div>
+                                            <div class="property-price">â‚¹<?php echo number_format($property['price'] ?? 0); ?></div>
                                             <h3 class="property-title"><?php echo htmlspecialchars($property['title'] ?? 'Property'); ?></h3>
                                             <div class="property-location">
                                                 <i class="fas fa-map-marker-alt"></i>

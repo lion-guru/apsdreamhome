@@ -111,4 +111,4 @@ echo "Total: " . count($allTables) . "\n";
 echo "Added: $added\n";
 echo "Skipped: $skipped\n";
 echo "Errors: " . count($errors) . "\n";
-foreach ($errors as $e) echo "  $e\n";
+foreach ($errors as $e) echo "  $e\n";?>

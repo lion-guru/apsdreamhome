@@ -59,7 +59,7 @@
                     <div class="row g-3">
                         <?php foreach ($user_avatars as $key => $avatar): ?>
                         <div class="col-md-3 text-center">
-                            <img src="<?= BASE_URL ?>/<?= htmlspecialchars($avatar['preview'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle mb-2 border" style="width:60px;height:60px;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/hero.svg'">
+                             src="<?= BASE_URL ? loading="lazy">/<?= htmlspecialchars($avatar['preview'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle mb-2 border" class="style-10719" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/hero.svg'">
                             <h6 class="small"><?= ($avatar['name'] ?? $key) ?></h6>
                         </div>
                         <?php endforeach; ?>
@@ -81,7 +81,7 @@
                         <?php foreach ($active_users as $user): ?>
                         <li class="list-group-item px-0 d-flex align-items-center">
                             <span class="position-relative">
-                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($user['avatar'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle me-3" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/hero.svg'">
+                                 src="<?= BASE_URL ? loading="lazy">/<?= htmlspecialchars($user['avatar'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle me-3" class="style-25739" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/hero.svg'">
                                 <span class="position-absolute bottom-0 start-50 translate-middle p-1 bg-success border border-light rounded-circle"><span class="visually-hidden">Online</span></span>
                             </span>
                             <div>

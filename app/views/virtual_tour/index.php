@@ -17,7 +17,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0 position-relative">
-                    <div id="panoramaViewer" style="height:500px;background:linear-gradient(135deg,#0f172a,#1e3a5f,#1e293b);" class="rounded">
+                    <div id="panoramaViewer" class="style-19581" class="rounded">
                         <div class="d-flex align-items-center justify-content-center h-100">
                             <div class="text-center text-white">
                                 <i class="fas fa-vr-cardboard fa-5x mb-3 opacity-50"></i>
@@ -69,7 +69,7 @@
                         <?php foreach ($tour_data['panoramas'] as $pano): ?>
                         <div class="col-md-4">
                             <div class="border rounded p-2 text-center">
-                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" style="height:120px;width:100%;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($pano['thumbnail_path'] ?? $pano['file_path'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="img-fluid rounded mb-2" class="style-93542" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                 <small class="text-muted text-capitalize d-block"><?= ($pano['panorama_type'] ?? 'interior') ?></small>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                     <h5><?= ($property['title'] ?? 'Property') ?></h5>
                     <p class="text-muted small"><?= ($property['city'] ?? '') ?>, <?= ($property['state'] ?? '') ?></p>
                     <hr>
-                    <div class="d-flex justify-content-between mb-2"><span>Price</span><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Price</span><strong>â‚¹<?= number_format($property['price'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Status</span><strong class="text-success"><?= ($property['status'] ?? 'Available') ?></strong></div>
                 </div>
             </div>

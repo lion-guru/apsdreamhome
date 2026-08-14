@@ -4,7 +4,7 @@
 ?>
 
 <!-- Hero Section -->
-<section class="resell-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
+<section class="resell-hero text-center" class="style-66359">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
@@ -47,7 +47,7 @@
 
 <!-- Filters Section -->
 <section class="container mt-n5 position-relative z-index-2">
-    <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3" style="margin-top: -50px;">
+    <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3" class="style-50828">
         <form action="<?= BASE_URL ?>/resell" method="GET" class="row g-3">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
@@ -133,7 +133,7 @@
                                 <img src="<?= !empty($prop['image']) ? htmlspecialchars(get_asset_url($prop['image'])) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img img-fluid" alt="<?= htmlspecialchars($prop['title'] ?? '') ?>" loading="lazy">
 
                                 <div class="price-badge position-absolute bottom-0 start-0 bg-dark text-white px-3 py-2 rounded-end-3 mb-3">
-                                    ₹<?= number_format($prop['price'] ?? 0) ?>
+                                    â‚¹<?= number_format($prop['price'] ?? 0) ?>
                                 </div>
                             </div>
 

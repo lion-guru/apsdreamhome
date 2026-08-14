@@ -95,7 +95,7 @@ $active_page = 'agreements';
                 </h5>
             </div>
             <div class="card-body p-0">
-                <div class="preview-container" style="max-height: 800px; overflow-y: auto; background: #f5f5f5; padding: 20px;">
+                <div class="preview-container" class="style-60710">
                     <?= $preview_html ?? '<p class="text-muted p-3">Preview not available.</p>' ?>
                 </div>
             </div>

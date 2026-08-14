@@ -89,7 +89,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
     <div class="row g-4">
         <?php foreach ($plots as $plot): ?>
         <div class="col-md-6 col-lg-4">
-            <div class="aps-cp-card h-100 d-flex flex-column" style="transition:transform .2s;">
+            <div class="aps-cp-card h-100 d-flex flex-column" class="style-2133">
                 <div class="aps-cp-card-body flex-grow-1">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
@@ -108,12 +108,12 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
                     <div class="my-3">
                         <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span class="fs-5 fw-bold text-primary">₹<?= number_format($plot['total_price']) ?></span>
+                            <span class="fs-5 fw-bold text-primary">â‚¹<?= number_format($plot['total_price']) ?></span>
                         </div>
                         <?php
-                        $psf = $plot['area_sqft'] > 0 ? number_format(round($plot['total_price'] / $plot['area_sqft'])) : '—';
+                        $psf = $plot['area_sqft'] > 0 ? number_format(round($plot['total_price'] / $plot['area_sqft'])) : 'â€”';
                         ?>
-                        <small class="text-muted">₹<?= $psf ?> / <?= __('sqft') ?></small>
+                        <small class="text-muted">â‚¹<?= $psf ?> / <?= __('sqft') ?></small>
                     </div>
 
                     <div class="row g-2 mb-3">
@@ -126,7 +126,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                         <div class="col-6">
                             <div class="bg-light rounded p-2 text-center">
                                 <small class="text-muted d-block"><?= __('browse_dimensions') ?></small>
-                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? '—') ?></strong>
+                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? 'â€”') ?></strong>
                             </div>
                         </div>
                     </div>

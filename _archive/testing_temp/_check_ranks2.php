@@ -16,9 +16,9 @@ echo count($rows) . " rows\n";
 foreach ($rows as $r) echo "  level=" . $r['level'] . " name=" . ($r['name'] ?? 'N/A') . " rate=" . ($r['rate'] ?? 'N/A') . "\n";
 
 echo "\n=== DIFFERENTIAL ISSUES ===\n";
-echo "DifferentialCommissionCalculator casts current_level to (int) — 'Ass.' becomes 0\n";
-echo "AssociateAuthController sets current_level to 1 (integer) — should be 'Ass.'\n";
+echo "DifferentialCommissionCalculator casts current_level to (int) â€” 'Ass.' becomes 0\n";
+echo "AssociateAuthController sets current_level to 1 (integer) â€” should be 'Ass.'\n";
 echo "MLMCommissionEngine RANK_ORDER = lowercase ['associate','bronze','silver','gold','platinum','diamond']\n";
 echo "mlm_rank_benefits uses ['Ass.','Sr. Ass.','BDM','Sr. BDM','V.P.','President','Site Manager']\n";
 echo "mlm_levels uses ['Associate','Bronze','Silver','Gold','Platinum','Diamond','Crown','Ambassador','Royal Ambassador','Global Director']\n";
-echo "\nTHREE DIFFERENT NAMING CONVENTIONS!\n";
+echo "\nTHREE DIFFERENT NAMING CONVENTIONS!\n";?>

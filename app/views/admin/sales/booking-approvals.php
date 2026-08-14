@@ -23,7 +23,7 @@ $statusBadge = function ($s) {
 <div class="aps-cp-card mb-3">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-clipboard-check me-2"></i><?= __('sale_booking_approvals') ?? 'Booking Approvals' ?></h5>
-        <span class="badge bg-warning text-dark" style="font-size:0.85rem;"><?= $pendingCount ?> Pending</span>
+        <span class="badge bg-warning text-dark" class="style-47175"><?= $pendingCount ?> Pending</span>
     </div>
     <div class="aps-cp-card-body">
         <!-- Filter Tabs -->
@@ -81,10 +81,10 @@ $statusBadge = function ($s) {
                                     <?= htmlspecialchars($b['booking_number'] ?? '') ?>
                                 </a>
                             </td>
-                            <td><?= htmlspecialchars($b['customer_name'] ?? '—') ?></td>
-                            <td><?= htmlspecialchars($b['plot_code'] ?? '—') ?></td>
-                            <td><?= htmlspecialchars($b['associate_name'] ?? '—') ?></td>
-                            <td class="text-end">₹<?= number_format((float)($b['agreement_value'] ?? 0)) ?></td>
+                            <td><?= htmlspecialchars($b['customer_name'] ?? 'â€”') ?></td>
+                            <td><?= htmlspecialchars($b['plot_code'] ?? 'â€”') ?></td>
+                            <td><?= htmlspecialchars($b['associate_name'] ?? 'â€”') ?></td>
+                            <td class="text-end">â‚¹<?= number_format((float)($b['agreement_value'] ?? 0)) ?></td>
                             <td><span class="badge <?= $statusBadge($apStatus) ?>"><?= ucfirst($apStatus) ?></span></td>
                             <td><?= htmlspecialchars($b['booking_date'] ?? '') ?></td>
                             <td>
@@ -98,7 +98,7 @@ $statusBadge = function ($s) {
                                         </button>
                                     </div>
                                 <?php else: ?>
-                                    <span class="text-muted" style="font-size:0.8rem;"><?= htmlspecialchars($b['approval_notes'] ?? '—') ?></span>
+                                    <span class="text-muted" class="style-64777"><?= htmlspecialchars($b['approval_notes'] ?? 'â€”') ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>

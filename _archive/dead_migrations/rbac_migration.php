@@ -44,7 +44,7 @@ class RBACMigration
         $this->insertDefaultPermissions();
         $this->assignPermissionsToRoles();
 
-        echo "\n✅ RBAC Migration completed successfully!\n";
+        echo "\nâœ… RBAC Migration completed successfully!\n";
     }
 
     private function createRolesTable()
@@ -72,7 +72,7 @@ class RBACMigration
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->pdo->exec($sql);
-        echo "  ✅ roles table created\n";
+        echo "  âœ… roles table created\n";
     }
 
     private function createPermissionsTable()
@@ -97,7 +97,7 @@ class RBACMigration
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->pdo->exec($sql);
-        echo "  ✅ permissions table created\n";
+        echo "  âœ… permissions table created\n";
     }
 
     private function createRolePermissionsTable()
@@ -118,7 +118,7 @@ class RBACMigration
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->pdo->exec($sql);
-        echo "  ✅ role_permissions table created\n";
+        echo "  âœ… role_permissions table created\n";
     }
 
     private function createUserRolesTable()
@@ -144,7 +144,7 @@ class RBACMigration
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->pdo->exec($sql);
-        echo "  ✅ user_roles table created\n";
+        echo "  âœ… user_roles table created\n";
     }
 
     private function createAuditLogTable()
@@ -170,7 +170,7 @@ class RBACMigration
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->pdo->exec($sql);
-        echo "  ✅ permission_audit_log table created\n";
+        echo "  âœ… permission_audit_log table created\n";
     }
 
     private function insertDefaultRoles()
@@ -264,7 +264,7 @@ class RBACMigration
             $stmt->execute($role);
         }
 
-        echo "  ✅ " . count($roles) . " roles inserted\n";
+        echo "  âœ… " . count($roles) . " roles inserted\n";
     }
 
     private function insertDefaultPermissions()
@@ -402,7 +402,7 @@ class RBACMigration
             $stmt->execute($perm);
         }
 
-        echo "  ✅ " . count($permissions) . " permissions inserted\n";
+        echo "  âœ… " . count($permissions) . " permissions inserted\n";
     }
 
     private function assignPermissionsToRoles()
@@ -449,7 +449,7 @@ class RBACMigration
             }
         }
 
-        echo "  ✅ $assignments role-permission assignments created\n";
+        echo "  âœ… $assignments role-permission assignments created\n";
     }
 
     public function down()
@@ -457,21 +457,21 @@ class RBACMigration
         echo "Rolling back RBAC tables...\n";
 
         $this->pdo->exec("DROP TABLE IF EXISTS `permission_audit_log`");
-        echo "  ✅ permission_audit_log dropped\n";
+        echo "  âœ… permission_audit_log dropped\n";
 
         $this->pdo->exec("DROP TABLE IF EXISTS `user_roles`");
-        echo "  ✅ user_roles dropped\n";
+        echo "  âœ… user_roles dropped\n";
 
         $this->pdo->exec("DROP TABLE IF EXISTS `role_permissions`");
-        echo "  ✅ role_permissions dropped\n";
+        echo "  âœ… role_permissions dropped\n";
 
         $this->pdo->exec("DROP TABLE IF EXISTS `permissions`");
-        echo "  ✅ permissions dropped\n";
+        echo "  âœ… permissions dropped\n";
 
         $this->pdo->exec("DROP TABLE IF EXISTS `roles`");
-        echo "  ✅ roles dropped\n";
+        echo "  âœ… roles dropped\n";
 
-        echo "\n✅ RBAC tables dropped successfully!\n";
+        echo "\nâœ… RBAC tables dropped successfully!\n";
     }
 }
 
@@ -486,4 +486,4 @@ if (php_sapi_name() === 'cli' && isset($argv[1])) {
     } else {
         echo "Usage: php rbac_migration.php up|down\n";
     }
-}
+}?>

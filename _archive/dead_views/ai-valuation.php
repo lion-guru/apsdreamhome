@@ -103,14 +103,14 @@ include __DIR__ . '/../layouts/base.php';
                 </div>
                 
                 <div class="col-lg-6">
-                    <div class="valuation-results-card" id="valuationResults" style="display: none;">
+                    <div class="valuation-results-card" id="valuationResults" class="style-54390">
                         <h3><i class="fas fa-chart-pie me-2"></i>Valuation Results</h3>
                         <div class="results-content">
                             <!-- Results will be populated here -->
                         </div>
                     </div>
                     
-                    <div class="market-trends-card" id="marketTrends" style="display: none;">
+                    <div class="market-trends-card" id="marketTrends" class="style-54390">
                         <h3><i class="fas fa-chart-area me-2"></i>Market Trends</h3>
                         <div class="trends-content">
                             <!-- Market trends will be populated here -->
@@ -121,7 +121,7 @@ include __DIR__ . '/../layouts/base.php';
             
             <div class="row mt-4">
                 <div class="col-12">
-                    <div class="investment-analysis-card" id="investmentAnalysis" style="display: none;">
+                    <div class="investment-analysis-card" id="investmentAnalysis" class="style-54390">
                         <h3><i class="fas fa-coins me-2"></i>Investment Analysis</h3>
                         <div class="analysis-content">
                             <!-- Investment analysis will be populated here -->
@@ -346,7 +346,7 @@ function displayValuationResults(valuation) {
     const resultsHTML = `
         <div class="valuation-metric">
             <h4>Estimated Value</h4>
-            <div class="value">₹${valuation.estimated_price.toLocaleString('en-IN')}</div>
+            <div class="value">â‚¹${valuation.estimated_price.toLocaleString('en-IN')}</div>
         </div>
         
         <div class="confidence-score">
@@ -389,7 +389,7 @@ function displayMarketTrends(trends) {
     const trendsHTML = `
         <div class="trend-item">
             <span class="trend-label">Average Price per sqft</span>
-            <span class="trend-value">₹${trends.avg_price_per_sqft.toLocaleString('en-IN')}</span>
+            <span class="trend-value">â‚¹${trends.avg_price_per_sqft.toLocaleString('en-IN')}</span>
         </div>
         <div class="trend-item">
             <span class="trend-label">6 Months Change</span>

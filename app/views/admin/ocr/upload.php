@@ -35,18 +35,18 @@ $doc_type_labels = $doc_type_labels ?? [];
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4" style="position:relative;z-index:1">
+        <div class="container-fluid px-4" class="style-84072">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="mb-1 fw-bold text-white"><i class="fas fa-cloud-upload-alt me-2"></i>Upload Document</h4>
-                    <p class="mb-0" style="color:#94a3b8;font-size:13px">Upload a document for OCR field extraction and verification</p>
+                    <p class="mb-0" class="style-29848">Upload a document for OCR field extraction and verification</p>
                 </div>
                 <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline"><i class="fas fa-arrow-left"></i>Back</a>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid px-4" style="margin-top:24px">
+    <div class="container-fluid px-4" class="style-86238">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ocr-card">
@@ -80,8 +80,8 @@ $doc_type_labels = $doc_type_labels ?? [];
                         <div class="ocr-upload-zone" id="uploadZone">
                             <input type="file" name="document_file" id="documentFile" class="ocr-file-input" accept=".jpg,.jpeg,.png,.pdf">
                             <div class="ocr-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                            <div class="ocr-upload-text">Drag & drop your file here or <span style="color:#3b82f6;text-decoration:underline">browse</span></div>
-                            <div class="ocr-upload-hint">JPG, PNG, or PDF — Max 10MB</div>
+                            <div class="ocr-upload-text">Drag & drop your file here or <span class="style-50045">browse</span></div>
+                            <div class="ocr-upload-hint">JPG, PNG, or PDF â€” Max 10MB</div>
                             <div class="ocr-file-name" id="fileName"></div>
                         </div>
 

@@ -159,7 +159,7 @@ class CRMFormController extends AdminController
         }
         
         $baseUrl = defined('BASE_URL') ? BASE_URL : '';
-        $embedCode = '<iframe src="' . $baseUrl . '/form/' . $id . '" width="100%" height="500" frameborder="0" style="border-radius:8px"></iframe>';
+        $embedCode = '<iframe src="' . $baseUrl . '/form/' . $id . '" width="100%" height="500" frameborder="0" class="style-37644"></iframe>';
         $scriptCode = '<script src="' . $baseUrl . '/assets/js/lead-form-embed.js" data-form-id="' . $id . '"></script>';
         
         return $this->render('admin/crm/forms/embed', [

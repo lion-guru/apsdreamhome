@@ -1,6 +1,6 @@
 <?php
 /**
- * APS Dream Home — Single-Endpoint Benchmark
+ * APS Dream Home â€” Single-Endpoint Benchmark
  *
  * Hammer one endpoint N times, output histogram + stats.
  * No external deps. Uses curl to fetch with timing.
@@ -20,9 +20,9 @@ $outputMode  = strtolower($argv[3] ?? 'both');
 
 $url = $baseUrl . $path;
 
-echo "╔════════════════════════════════════════════════════════════════╗\n";
-echo "║         APS Dream Home — Endpoint Benchmark                  ║\n";
-echo "╚════════════════════════════════════════════════════════════════╝\n\n";
+echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
+echo "â•‘         APS Dream Home â€” Endpoint Benchmark                  â•‘\n";
+echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
 echo "URL        : {$url}\n";
 echo "Iterations : {$iterations}\n\n";
 
@@ -136,19 +136,19 @@ if ($outputMode === 'json' || $outputMode === 'both') {
         $out['histogram'][] = ['bucket' => $bucketLabels[$i], 'count' => $c];
     }
     file_put_contents($jsonFile, json_encode($out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-    echo "📄 JSON → " . realpath($jsonFile) . "\n";
+    echo "ðŸ“„ JSON â†’ " . realpath($jsonFile) . "\n";
 }
 
 if ($outputMode === 'human' || $outputMode === 'both') {
     echo "\n";
-    $hr = str_repeat('─', 64);
+    $hr = str_repeat('â”€', 64);
     echo $hr . "\n";
     echo "  URL           : {$url}\n";
     echo "  Iterations    : {$count}\n";
     echo "  Wall time     : " . round($wallTime, 2) . "s\n";
     echo "  Throughput    : " . round($count / max($wallTime, 0.001), 1) . " req/s\n";
     echo "  Total bytes   : " . number_format($bytes) . "B\n";
-    echo "  Errors (≥500) : {$errors}\n";
+    echo "  Errors (â‰¥500) : {$errors}\n";
     echo $hr . "\n";
     printf("  %-12s : %8s\n", 'Min', number_format($min * 1000, 1) . 'ms');
     printf("  %-12s : %8s\n", 'Max', number_format($max * 1000, 1) . 'ms');
@@ -171,7 +171,7 @@ if ($outputMode === 'human' || $outputMode === 'both') {
     echo "  Histogram (20 buckets, max=" . $maxBucketCount . "):\n";
     foreach ($buckets as $i => $c) {
         $barLen = $maxBucketCount > 0 ? (int)round(($c / $maxBucketCount) * 30) : 0;
-        $bar = str_repeat('█', $barLen);
+        $bar = str_repeat('â–ˆ', $barLen);
         printf("    %s : %4d  %s\n", $bucketLabels[$i], $c, $bar);
     }
     echo $hr . "\n\n";
@@ -183,7 +183,7 @@ if ($outputMode === 'human' || $outputMode === 'both') {
     echo "  Iterations    : {$count}\n";
     echo "  Wall time     : " . round($wallTime, 2) . "s\n";
     echo "  Throughput    : " . round($count / max($wallTime, 0.001), 1) . " req/s\n";
-    echo "  Errors (≥500) : {$errors}\n";
+    echo "  Errors (â‰¥500) : {$errors}\n";
     echo $hr . "\n";
     printf("  %-12s : %8s\n", 'Min',    number_format($min * 1000, 1) . 'ms');
     printf("  %-12s : %8s\n", 'Max',    number_format($max * 1000, 1) . 'ms');
@@ -193,8 +193,8 @@ if ($outputMode === 'human' || $outputMode === 'both') {
     printf("  %-12s : %8s\n", 'p99',    number_format($p99 * 1000, 1) . 'ms');
     $txt = ob_get_clean();
     file_put_contents($reportFile, $txt);
-    echo "📄 Report → " . realpath($reportFile) . "\n";
+    echo "ðŸ“„ Report â†’ " . realpath($reportFile) . "\n";
 }
 
-echo "\n✅ Benchmark complete.\n";
-exit(0);
+echo "\nâœ… Benchmark complete.\n";
+exit(0);?>

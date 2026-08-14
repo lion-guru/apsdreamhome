@@ -82,4 +82,4 @@ if ($unprotected > 0) {
     }
 } else {
     echo "All methods are protected!\n";
-}
+}?>

@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -24,7 +24,7 @@
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Basic Information</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th style="width:160px">Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
+                                <tr><th class="style-17160">Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
                                 <tr><th>Status</th><td>
@@ -45,7 +45,7 @@
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Dimensions & Area</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th style="width:160px">Dimensions</th>
+                                <tr><th class="style-17160">Dimensions</th>
                                     <td>
                                         <?php if (!empty($plot['dimension_label'])): ?>
                                             <span class="badge bg-primary fs-6 px-3 py-2"><?= htmlspecialchars($plot['dimension_label']) ?></span>
@@ -53,7 +53,7 @@
                                             <span class="text-muted">Not set</span>
                                         <?php endif; ?>
                                         <?php if (!empty($plot['width_ft']) && !empty($plot['length_ft'])): ?>
-                                            <span class="text-muted ms-2">(<?= floatval($plot['width_ft']) ?>ft × <?= floatval($plot['length_ft']) ?>ft)</span>
+                                            <span class="text-muted ms-2">(<?= floatval($plot['width_ft']) ?>ft Ã— <?= floatval($plot['length_ft']) ?>ft)</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -80,20 +80,20 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Base Price/sqft</div>
-                            <div class="fs-5 fw-bold">₹<?= number_format(floatval($plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0), 2) ?></div>
+                            <div class="fs-5 fw-bold">â‚¹<?= number_format(floatval($plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Current Price/sqft</div>
-                            <div class="fs-5 fw-bold">₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0), 2) ?></div>
+                            <div class="fs-5 fw-bold">â‚¹<?= number_format(floatval($plot['price_per_sqft'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Total Price</div>
-                            <div class="fs-4 fw-bold text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></div>
+                            <div class="fs-4 fw-bold text-primary">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Negotiated / Deal Price</div>
                             <div class="fs-5 fw-bold <?= !empty($plot['negotiated_price']) && $plot['negotiated_price'] != $plot['total_price'] ? 'text-success' : 'text-muted' ?>">
-                                <?= !empty($plot['negotiated_price']) ? '₹' . number_format(intval($plot['negotiated_price'])) : '—' ?>
+                                <?= !empty($plot['negotiated_price']) ? 'â‚¹' . number_format(intval($plot['negotiated_price'])) : 'â€”' ?>
                             </div>
                             <?php if (!empty($plot['price_override_reason'])): ?>
                                 <div class="text-muted small mt-1"><em><?= htmlspecialchars($plot['price_override_reason']) ?></em></div>
@@ -114,8 +114,8 @@
                             <?php foreach ($priceHistory as $ph): ?>
                             <tr>
                                 <td><?= date('d M Y H:i', strtotime($ph['created_at'] ?? 'now')) ?></td>
-                                <td>₹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
-                                <td>₹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
+                                <td>â‚¹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
+                                <td>â‚¹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($ph['change_type'] ?? 'override') ?></span></td>
                                 <td><?= htmlspecialchars($ph['reason'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($ph['changed_by_name'] ?? 'Admin') ?></td>
@@ -159,7 +159,7 @@
                             <tr>
                                 <td><a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $bk['id'] ?>">#<?= $bk['id'] ?></a></td>
                                 <td><?= htmlspecialchars($bk['customer_name'] ?? 'N/A') ?></td>
-                                <td>₹<?= number_format(intval($bk['amount'] ?? $bk['total_amount'] ?? 0)) ?></td>
+                                <td>â‚¹<?= number_format(intval($bk['amount'] ?? $bk['total_amount'] ?? 0)) ?></td>
                                 <td><span class="badge bg-<?= $bk['status'] === 'confirmed' ? 'success' : ($bk['status'] === 'pending' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($bk['status'] ?? '') ?></span></td>
                                 <td><?= htmlspecialchars($bk['booking_date'] ?? $bk['created_at'] ?? '') ?></td>
                             </tr>

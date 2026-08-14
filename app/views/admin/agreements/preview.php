@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title) ?></title>
     <style>
@@ -193,7 +194,7 @@
             <td><?= ($ii < $numInstallments) ? 'Monthly' : 'On possession' ?></td>
         </tr>
         <?php endfor; ?>
-        <tr style="font-weight: bold; background: #e8e8e8;">
+        <tr class="style-19077">
             <td></td>
             <td>Total</td>
             <td></td>
@@ -233,14 +234,14 @@
         <div class="table-responsive"><table>
             <tr>
                 <td>
-                    <div style="margin-top: 25px;">
+                    <div class="style-8484">
                         <div class="line"></div>
                         <div class="label">BUYER</div>
                         <div><?= htmlspecialchars($data['customer_name'] ?? '___________________') ?></div>
                     </div>
                 </td>
                 <td>
-                    <div style="margin-top: 25px;">
+                    <div class="style-8484">
                         <div class="line"></div>
                         <div class="label">SELLER (Authorized Signatory)</div>
                         <div>For <?= htmlspecialchars($companyName) ?></div>
@@ -249,13 +250,13 @@
             </tr>
             <tr>
                 <td>
-                    <div style="margin-top: 25px;">
+                    <div class="style-8484">
                         <div class="line"></div>
                         <div class="label">WITNESS 1</div>
                     </div>
                 </td>
                 <td>
-                    <div style="margin-top: 25px;">
+                    <div class="style-8484">
                         <div class="line"></div>
                         <div class="label">WITNESS 2</div>
                     </div>

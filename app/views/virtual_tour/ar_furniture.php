@@ -18,7 +18,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0">
-                    <div id="arViewer" style="height:400px;background:linear-gradient(135deg,#0d9488,#0f766e);" class="rounded-top d-flex align-items-center justify-content-center">
+                    <div id="arViewer" class="style-3518" class="rounded-top d-flex align-items-center justify-content-center">
                         <div class="text-center text-white">
                             <i class="fas fa-cube fa-5x mb-3 opacity-50"></i>
                             <p class="lead">AR Furniture Placement</p>
@@ -65,7 +65,7 @@
                         <div class="col-6">
                             <button class="btn btn-outline-info btn-sm w-100" onclick="alert('Placing <?= ($item['name'] ?? '') ?> in AR view')">
                                 <i class="fas fa-cube me-1"></i><?= ($item['name'] ?? 'Item') ?><br>
-                                <small>₹<?= number_format($item['price'] ?? 0) ?></small>
+                                <small>â‚¹<?= number_format($item['price'] ?? 0) ?></small>
                             </button>
                         </div>
                         <?php endforeach; ?>

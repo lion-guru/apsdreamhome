@@ -110,4 +110,4 @@ echo "\n";
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
 echo "Tables after: $after\n";
-echo "Migration complete. Update code references next.\n";
+echo "Migration complete. Update code references next.\n";?>

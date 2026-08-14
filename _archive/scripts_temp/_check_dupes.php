@@ -21,4 +21,4 @@ $counts = $db->fetchAll("SELECT section, COUNT(*) as cnt FROM admin_menu_items G
 foreach ($counts as $c) {
     echo "{$c['section']}: {$c['cnt']}" . PHP_EOL;
 }
-echo "TOTAL: " . array_sum(array_column($counts, 'cnt')) . PHP_EOL;
+echo "TOTAL: " . array_sum(array_column($counts, 'cnt')) . PHP_EOL;?>

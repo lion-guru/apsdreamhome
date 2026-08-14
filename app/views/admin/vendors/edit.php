@@ -119,18 +119,18 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="pan_number" class="form-label fw-semibold">PAN Number</label>
-                                <input type="text" class="form-control" id="pan_number" name="pan_number" value="<?= htmlspecialchars($vendor['pan_number'] ?? '') ?>" maxlength="10" style="text-transform:uppercase">
+                                <input type="text" class="form-control" id="pan_number" name="pan_number" value="<?= htmlspecialchars($vendor['pan_number'] ?? '') ?>" maxlength="10" class="style-36130">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="gstin" class="form-label fw-semibold">GSTIN</label>
-                                <input type="text" class="form-control" id="gstin" name="gstin" value="<?= htmlspecialchars($vendor['gstin'] ?? $vendor['gst_number'] ?? '') ?>" maxlength="15" style="text-transform:uppercase">
+                                <input type="text" class="form-control" id="gstin" name="gstin" value="<?= htmlspecialchars($vendor['gstin'] ?? $vendor['gst_number'] ?? '') ?>" maxlength="15" class="style-36130">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label class="form-label fw-semibold">TDS Section</label>
-                                <input type="text" class="form-control" id="tds_section_display" value="<?= htmlspecialchars($vendor['tds_section'] ?? '194C') ?>" readonly style="background:#f8f9fa">
+                                <input type="text" class="form-control" id="tds_section_display" value="<?= htmlspecialchars($vendor['tds_section'] ?? '194C') ?>" readonly class="style-92816">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label fw-semibold">TDS Rate</label>
@@ -138,7 +138,7 @@
                                 $et = $vendor['entity_type'] ?? 'individual';
                                 $tdsRate = in_array($et, ['individual', 'proprietorship']) ? '1%' : '2%';
                                 ?>
-                                <input type="text" class="form-control" id="tds_rate_display" value="<?= $tdsRate ?>" readonly style="background:#f8f9fa">
+                                <input type="text" class="form-control" id="tds_rate_display" value="<?= $tdsRate ?>" readonly class="style-92816">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label fw-semibold">TDS Applicable</label>

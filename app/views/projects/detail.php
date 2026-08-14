@@ -48,7 +48,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section position-relative" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); min-height: 60vh;">
+<section class="hero-section position-relative" class="style-41301">
     <div class="container-fluid h-100">
         <div class="row h-100 align-items-center">
             <div class="col-lg-6 text-white">
@@ -64,7 +64,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <div class="col-md-4">
                         <div class="stat-item text-center">
                             <i class="fas fa-rupee-sign fa-2x mb-2"></i>
-                            <h4>₹<?= number_format($project['base_price'], 0) ?></h4>
+                            <h4>â‚¹<?= number_format($project['base_price'], 0) ?></h4>
                             <small>Starting Price</small>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     </tr>
                                     <tr>
                                         <td><strong>Price per sqft:</strong></td>
-                                        <td>₹<?= number_format($project['price_per_sqft'] ?? 0) ?></td>
+                                        <td>â‚¹<?= number_format($project['price_per_sqft'] ?? 0) ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Possession:</strong></td>
@@ -281,7 +281,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     <?= $project['latitude'] ?>, <?= $project['longitude'] ?>
                                 </p>
                             </div>
-                            <div id="map" style="height: 400px; width: 100%;"></div>
+                            <div id="map" class="style-71242"></div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -293,7 +293,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img src="<?= htmlspecialchars($project['layout_map']) ?>" class="img-fluid" alt="Project Layout" style="max-height: 600px;" loading="lazy">
+                            <img src="<?= htmlspecialchars($project['layout_map']) ?>" class="img-fluid" alt="Project Layout" class="style-52003" loading="lazy">
                         </div>
                     </div>
                 <?php endif; ?>
@@ -316,7 +316,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                         <div class="info-item mb-3">
                             <strong>Booking Amount:</strong>
-                            <span class="text-primary">₹<?= number_format($project['booking_amount'] ?? 0) ?></span>
+                            <span class="text-primary">â‚¹<?= number_format($project['booking_amount'] ?? 0) ?></span>
                         </div>
 
                         <?php if ($project['emi_available']): ?>
@@ -358,7 +358,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
-                            <label for="loanAmount" class="form-label">Loan Amount (₹)</label>
+                            <label for="loanAmount" class="form-label">Loan Amount (â‚¹)</label>
                             <input type="number" class="form-control" id="loanAmount" placeholder="Enter loan amount">
                         </div>
                         <div class="mb-3">
@@ -376,7 +376,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             </select>
                         </div>
                         <button class="btn btn-primary w-100" onclick="calculateEMI()">Calculate EMI</button>
-                        <div id="emiResult" class="mt-3 text-center" style="display: none;">
+                        <div id="emiResult" class="mt-3 text-center" class="style-54390">
                             <h5>Monthly EMI: <span id="monthlyEMI" class="text-primary"></span></h5>
                             <small class="text-muted">Total Amount: <span id="totalAmount"></span></small>
                         </div>
@@ -560,8 +560,8 @@ function calculateEMI() {
     const emi = principal * rate * Math.pow(1 + rate, tenure) / (Math.pow(1 + rate, tenure) - 1);
     const totalAmount = emi * tenure;
 
-    document.getElementById('monthlyEMI').textContent = '₹' + Math.round(emi).toLocaleString();
-    document.getElementById('totalAmount').textContent = '₹' + Math.round(totalAmount).toLocaleString();
+    document.getElementById('monthlyEMI').textContent = 'â‚¹' + Math.round(emi).toLocaleString();
+    document.getElementById('totalAmount').textContent = 'â‚¹' + Math.round(totalAmount).toLocaleString();
     document.getElementById('emiResult').style.display = 'block';
 }
 

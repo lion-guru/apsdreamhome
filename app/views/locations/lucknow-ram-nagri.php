@@ -4,7 +4,7 @@
  * Migrated from resources/views/Views/lucknow-ram-nagri.php
  */
 
-// init.php not found — helpers.php already loaded from bootstrap
+// init.php not found â€” helpers.php already loaded from bootstrap
 
 $page_title = 'Ram Nagri Lucknow | APS Dream Homes';
 $layout = 'modern';
@@ -14,7 +14,7 @@ ob_start();
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="page-banner mb-5" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('<?= get_asset_url('banner/lucknow-banner.jpg', 'images') ?>') center/cover; padding: 100px 0; color: #fff; border-radius: 20px;">
+        <div class="page-banner mb-5" class="style-52090">
             <div class="container text-center">
                 <h1 class="display-4 fw-bold animate-fade-up">Ram Nagri - Lucknow</h1>
                 <p class="lead animate-fade-up">Premium Integrated Township at Haidergarh Highway</p>
@@ -92,5 +92,5 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// Layout (modern.php) not found — render content directly
+// Layout (modern.php) not found â€” render content directly
 echo $content;

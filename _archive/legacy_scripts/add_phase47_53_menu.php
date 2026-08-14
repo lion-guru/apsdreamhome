@@ -25,4 +25,4 @@ foreach ($items as $i) {
         }
     } catch (Exception $e) { echo "Skip {$i[0]}: " . $e->getMessage() . "\n"; }
 }
-echo "Added $added new menu items\n";
+echo "Added $added new menu items\n";?>

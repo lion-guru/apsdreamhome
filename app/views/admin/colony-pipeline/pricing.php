@@ -21,7 +21,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
       <h1 class="h3 mb-1"><?= __('cp_pricing') ?></h1>
       <span class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?></span>
       <?php if ($minPpsf > 0): ?>
-        <span class="badge bg-info ms-2"><?= __('cp_min_price_guard') ?>: ₹<?= number_format($minPpsf, 2) ?>/sqft</span>
+        <span class="badge bg-info ms-2"><?= __('cp_min_price_guard') ?>: â‚¹<?= number_format($minPpsf, 2) ?>/sqft</span>
       <?php endif; ?>
     </div>
     <div>
@@ -34,7 +34,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
     </div>
   </div>
 
-  <!-- ── Stats Cards ────────────────────────────────────── -->
+  <!-- â”€â”€ Stats Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
   <div class="row g-3 mb-4">
     <div class="col-md-2">
       <div class="card aps-cp-card">
@@ -47,7 +47,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
     <div class="col-md-2">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
-          <div class="fs-3 text-info">₹<?= number_format((float)($plotStats['avg_ppsf'] ?? 0), 0) ?></div>
+          <div class="fs-3 text-info">â‚¹<?= number_format((float)($plotStats['avg_ppsf'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_avg_per_sqft') ?></div>
         </div>
       </div>
@@ -55,7 +55,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
     <div class="col-md-2">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
-          <div class="fs-3 text-success">₹<?= number_format((float)($plotStats['min_price'] ?? 0) / 100000, 1) ?>L</div>
+          <div class="fs-3 text-success">â‚¹<?= number_format((float)($plotStats['min_price'] ?? 0) / 100000, 1) ?>L</div>
           <div class="text-muted small"><?= __('cp_min_price') ?></div>
         </div>
       </div>
@@ -63,7 +63,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
     <div class="col-md-3">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
-          <div class="fs-3 text-danger">₹<?= number_format((float)($plotStats['max_price'] ?? 0) / 100000, 1) ?>L</div>
+          <div class="fs-3 text-danger">â‚¹<?= number_format((float)($plotStats['max_price'] ?? 0) / 100000, 1) ?>L</div>
           <div class="text-muted small"><?= __('cp_max_price') ?></div>
         </div>
       </div>
@@ -71,7 +71,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
     <div class="col-md-3">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
-          <div class="fs-3 text-warning">₹<?= number_format((float)($plotStats['total_value'] ?? 0) / 10000000, 2) ?> Cr</div>
+          <div class="fs-3 text-warning">â‚¹<?= number_format((float)($plotStats['total_value'] ?? 0) / 10000000, 2) ?> Cr</div>
           <div class="text-muted small"><?= __('cp_total_value') ?></div>
         </div>
       </div>
@@ -79,7 +79,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
   </div>
 
   <div class="row g-4">
-    <!-- ── Left Column ──────────────────────────────────── -->
+    <!-- â”€â”€ Left Column â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="col-md-6">
       <!-- Dev Costs -->
       <div class="card aps-cp-card mb-4">
@@ -95,15 +95,15 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                   <?php $dcTotal = (float)($dc['total_amount'] ?? 0) + (float)($dc['total_gst'] ?? 0); ?>
                   <tr>
                     <td><?= htmlspecialchars(ucwords(str_replace('_', ' ', $dc['cost_type'] ?? ''))) ?></td>
-                    <td>₹<?= number_format((float)($dc['total_amount'] ?? 0), 0) ?></td>
-                    <td>₹<?= number_format((float)($dc['total_gst'] ?? 0), 0) ?></td>
-                    <td><strong>₹<?= number_format($dcTotal, 0) ?></strong></td>
+                    <td>â‚¹<?= number_format((float)($dc['total_amount'] ?? 0), 0) ?></td>
+                    <td>â‚¹<?= number_format((float)($dc['total_gst'] ?? 0), 0) ?></td>
+                    <td><strong>â‚¹<?= number_format($dcTotal, 0) ?></strong></td>
                   </tr>
                 <?php endforeach; ?>
                 <tr class="table-active">
                   <td><strong><?= __('cp_total') ?></strong></td>
                   <td colspan="2"></td>
-                  <td><strong>₹<?= number_format($totalDevCost, 0) ?></strong></td>
+                  <td><strong>â‚¹<?= number_format($totalDevCost, 0) ?></strong></td>
                 </tr>
               <?php endif; ?>
             </tbody>
@@ -125,14 +125,14 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
           <?php if ($minPpsf > 0): ?>
             <div class="alert alert-info mt-3 mb-0 py-2 small">
               <i class="fas fa-shield-alt me-1"></i>
-              <?= __('cp_min_price_guard') ?>: <strong>₹<?= number_format($minPpsf, 2) ?>/sqft</strong>
-              — <?= __('cp_breakeven_explain') ?>
+              <?= __('cp_min_price_guard') ?>: <strong>â‚¹<?= number_format($minPpsf, 2) ?>/sqft</strong>
+              â€” <?= __('cp_breakeven_explain') ?>
             </div>
           <?php endif; ?>
         </div>
       </div>
 
-      <!-- ── Pending Approvals ─────────────────────────────── -->
+      <!-- â”€â”€ Pending Approvals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <?php if (!empty($pendingApprovals)): ?>
       <div class="card aps-cp-card mb-4 border-warning">
         <div class="card-header aps-cp-card-header bg-warning text-dark">
@@ -144,17 +144,17 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
               <div class="d-flex justify-content-between align-items-start">
                 <div>
                   <strong><?= __('cp_plot') ?> #<?= htmlspecialchars($pa['plot_number'] ?? '') ?></strong>
-                  (<?= htmlspecialchars($pa['block'] ?? '') ?>) — <?= number_format((float)($pa['area_sqft'] ?? 0)) ?> sqft
+                  (<?= htmlspecialchars($pa['block'] ?? '') ?>) â€” <?= number_format((float)($pa['area_sqft'] ?? 0)) ?> sqft
                   <br>
                   <span class="text-muted small">
-                    <?= __('cp_current') ?>: ₹<?= number_format((float)($pa['current_price_per_sqft'] ?? 0), 2) ?>/sqft →
-                    <span class="text-danger"><strong>₹<?= number_format((float)($pa['requested_price_per_sqft'] ?? 0), 2) ?>/sqft</strong></span>
+                    <?= __('cp_current') ?>: â‚¹<?= number_format((float)($pa['current_price_per_sqft'] ?? 0), 2) ?>/sqft â†’
+                    <span class="text-danger"><strong>â‚¹<?= number_format((float)($pa['requested_price_per_sqft'] ?? 0), 2) ?>/sqft</strong></span>
                     (<?= round(((float)($pa['current_price_per_sqft'] ?? 0) - (float)($pa['requested_price_per_sqft'] ?? 0)) / max((float)($pa['current_price_per_sqft'] ?? 1), 1) * 100, 1) ?>% <?= __('cp_discount') ?>)
                   </span>
                   <?php if (!empty($pa['reason'])): ?>
                     <br><em class="small text-muted">"<?= htmlspecialchars($pa['reason']) ?>"</em>
                   <?php endif; ?>
-                  <br><span class="small text-muted"><?= __('cp_by') ?>: <?= htmlspecialchars($pa['requested_by_name'] ?? '') ?> — <?= htmlspecialchars($pa['requested_at'] ?? '') ?></span>
+                  <br><span class="small text-muted"><?= __('cp_by') ?>: <?= htmlspecialchars($pa['requested_by_name'] ?? '') ?> â€” <?= htmlspecialchars($pa['requested_at'] ?? '') ?></span>
                 </div>
                 <div class="d-flex gap-1">
                   <form method="post" action="<?= $postUrl ?>" class="d-inline">
@@ -170,7 +170,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                     <input type="hidden" name="sub_action" value="reject_discount">
                     <input type="hidden" name="approval_id" value="<?= (int)($pa['id'] ?? 0) ?>">
                     <div class="input-group input-group-sm">
-                      <input type="text" name="approval_notes" class="form-control form-control-sm" placeholder="<?= __('cp_reason') ?>" style="width:100px">
+                      <input type="text" name="approval_notes" class="form-control form-control-sm" placeholder="<?= __('cp_reason') ?>" class="style-50190">
                       <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('<?= __('cp_confirm_reject') ?>');">
                         <i class="fas fa-times"></i>
                       </button>
@@ -185,7 +185,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
       <?php endif; ?>
     </div>
 
-    <!-- ── Right Column ─────────────────────────────────── -->
+    <!-- â”€â”€ Right Column â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="col-md-6">
       <!-- Price Band Distribution -->
       <?php if (!empty($priceBands)): ?>
@@ -203,8 +203,8 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                 <span class="small"><?= htmlspecialchars($band['price_band'] ?? '') ?></span>
                 <span class="small fw-bold"><?= $bc ?> <?= __('cp_plots') ?> (<?= $pct ?>%)</span>
               </div>
-              <div class="progress" style="height: 18px;">
-                <div class="progress-bar bg-info" style="width: <?= $pct ?>%"></div>
+              <div class="progress" class="style-12292">
+                <div class="progress-bar bg-info" class="style-75742"></div>
               </div>
             </div>
           <?php endforeach; ?>
@@ -212,7 +212,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
       </div>
       <?php endif; ?>
 
-      <!-- ── Apply Pricing Form ───────────────────────────── -->
+      <!-- â”€â”€ Apply Pricing Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <div class="card aps-cp-card mb-4">
         <div class="card-header aps-cp-card-header"><strong><i class="fas fa-tag me-2"></i><?= __('cp_apply_pricing') ?></strong></div>
         <div class="card-body aps-cp-card-body">
@@ -225,7 +225,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                 <label class="form-label"><?= __('cp_base_price_per_sqft') ?> <i class="fas fa-info-circle text-muted small" title="<?= __('cp_base_price_help') ?>"></i></label>
                 <input type="number" name="base_price_per_sqft" class="form-control" value="2500" min="500" max="100000" step="50" required>
                 <?php if ($minPpsf > 0): ?>
-                  <small class="text-muted"><?= __('cp_min_floor') ?>: ₹<?= number_format($minPpsf, 2) ?></small>
+                  <small class="text-muted"><?= __('cp_min_floor') ?>: â‚¹<?= number_format($minPpsf, 2) ?></small>
                 <?php endif; ?>
               </div>
               <div class="col-md-2">
@@ -285,7 +285,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
         </div>
       </div>
 
-      <!-- ── Single Plot Price Override ────────────────────── -->
+      <!-- â”€â”€ Single Plot Price Override â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <div class="card aps-cp-card mb-4">
         <div class="card-header aps-cp-card-header"><strong><i class="fas fa-edit me-2"></i><?= __('cp_single_plot_override') ?></strong></div>
         <div class="card-body aps-cp-card-body">
@@ -298,7 +298,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
             </div>
             <div class="col-md-3">
               <label class="form-label small"><?= __('cp_new_price_psf') ?></label>
-              <input type="number" name="new_price_per_sqft" class="form-control" placeholder="₹/sqft" required min="1" step="0.01">
+              <input type="number" name="new_price_per_sqft" class="form-control" placeholder="â‚¹/sqft" required min="1" step="0.01">
             </div>
             <div class="col-md-4">
               <label class="form-label small"><?= __('cp_reason') ?></label>
@@ -311,7 +311,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
         </div>
       </div>
 
-      <!-- ── Request Discount (Below Min Price) ───────────── -->
+      <!-- â”€â”€ Request Discount (Below Min Price) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <div class="card aps-cp-card mb-4">
         <div class="card-header aps-cp-card-header"><strong><i class="fas fa-percent me-2"></i><?= __('cp_request_discount') ?></strong></div>
         <div class="card-body aps-cp-card-body">
@@ -324,7 +324,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
             </div>
             <div class="col-md-3">
               <label class="form-label small"><?= __('cp_requested_price_psf') ?></label>
-              <input type="number" name="requested_price_per_sqft" class="form-control" placeholder="₹/sqft" required min="1" step="0.01">
+              <input type="number" name="requested_price_per_sqft" class="form-control" placeholder="â‚¹/sqft" required min="1" step="0.01">
             </div>
             <div class="col-md-4">
               <label class="form-label small"><?= __('cp_reason') ?></label>
@@ -337,7 +337,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
         </div>
       </div>
 
-      <!-- ── Approval History ─────────────────────────────── -->
+      <!-- â”€â”€ Approval History â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <?php if (!empty($approvalHistory)): ?>
       <div class="card aps-cp-card mb-4">
         <div class="card-header aps-cp-card-header"><strong><i class="fas fa-history me-2"></i><?= __('cp_approval_history') ?></strong></div>
@@ -348,7 +348,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
               <?php foreach ($approvalHistory as $ah): ?>
                 <tr>
                   <td><?= htmlspecialchars($ah['plot_number'] ?? '') ?> (<?= htmlspecialchars($ah['block'] ?? '') ?>)</td>
-                  <td>₹<?= number_format((float)($ah['requested_price_per_sqft'] ?? 0), 0) ?>/sf</td>
+                  <td>â‚¹<?= number_format((float)($ah['requested_price_per_sqft'] ?? 0), 0) ?>/sf</td>
                   <td>
                     <?php if ($ah['status'] === 'approved'): ?>
                       <span class="badge bg-success"><?= __('cp_approved') ?></span>
@@ -368,7 +368,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
       </div>
       <?php endif; ?>
 
-      <!-- ── Recently Overridden Plots ────────────────────── -->
+      <!-- â”€â”€ Recently Overridden Plots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <?php if (!empty($recentlyOverridden)): ?>
       <div class="card aps-cp-card mb-4">
         <div class="card-header aps-cp-card-header"><strong><i class="fas fa-exclamation-triangle me-2"></i><?= __('cp_overridden_plots') ?></strong></div>
@@ -379,8 +379,8 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
               <?php foreach ($recentlyOverridden as $ro): ?>
                 <tr>
                   <td><?= htmlspecialchars($ro['plot_number'] ?? '') ?> (<?= htmlspecialchars($ro['block'] ?? '') ?>)</td>
-                  <td>₹<?= number_format((float)($ro['price_per_sqft'] ?? 0), 0) ?></td>
-                  <td>₹<?= number_format((float)($ro['negotiated_price'] ?? 0), 0) ?></td>
+                  <td>â‚¹<?= number_format((float)($ro['price_per_sqft'] ?? 0), 0) ?></td>
+                  <td>â‚¹<?= number_format((float)($ro['negotiated_price'] ?? 0), 0) ?></td>
                   <td class="small"><?= htmlspecialchars(mb_substr($ro['price_override_reason'] ?? '', 0, 40)) ?></td>
                   <td><?= !empty($ro['negotiated_price_approved']) ? '<span class="badge bg-success">'.__('cp_yes').'</span>' : '<span class="badge bg-secondary">'.__('cp_no').'</span>' ?></td>
                 </tr>

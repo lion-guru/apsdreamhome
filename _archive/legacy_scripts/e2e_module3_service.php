@@ -121,4 +121,4 @@ $stats = $svc->getDashboardStats();
 foreach ($stats as $k => $v) {
     if (is_array($v)) { $v = json_encode($v); }
     echo "  $k = $v" . PHP_EOL;
-}
+}?>

@@ -114,7 +114,7 @@ foreach ($results as $variant => $r) {
                         <p class="text-muted small"><?= htmlspecialchars($chi['note']) ?></p>
                     <?php else: ?>
                         <div class="mb-2">
-                            <span class="text-muted small">χ² statistic:</span>
+                            <span class="text-muted small">Ï‡Â² statistic:</span>
                             <strong class="float-end"><?= number_format((float)$chi['stat'], 4) ?></strong>
                         </div>
                         <div class="mb-2">
@@ -128,10 +128,10 @@ foreach ($results as $variant => $r) {
                         <div class="alert alert-<?= $chi['significant'] ? 'success' : 'secondary' ?> mb-0">
                             <?php if ($chi['significant']): ?>
                                 <i class="fas fa-check-circle me-1"></i>
-                                <strong>Significant</strong> at p &lt; 0.05 — results are unlikely due to chance.
+                                <strong>Significant</strong> at p &lt; 0.05 â€” results are unlikely due to chance.
                             <?php else: ?>
                                 <i class="fas fa-info-circle me-1"></i>
-                                Not significant — need more data to draw conclusions.
+                                Not significant â€” need more data to draw conclusions.
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
@@ -171,8 +171,8 @@ foreach ($results as $variant => $r) {
                             <td class="text-end"><?= number_format($c) ?></td>
                             <td class="text-end"><strong><?= number_format($r_pct, 2) ?>%</strong></td>
                             <td>
-                                <div class="progress" style="height: 8px; min-width: 80px;">
-                                    <div class="progress-bar bg-primary" style="width: <?= $width ?>%"></div>
+                                <div class="progress" class="style-89219">
+                                    <div class="progress-bar bg-primary" class="style-68754"></div>
                                 </div>
                             </td>
                         </tr>
@@ -194,7 +194,7 @@ foreach ($results as $variant => $r) {
                         <label class="form-label small">Set Winner Variant</label>
                         <div class="input-group">
                             <select name="winner" class="form-select">
-                                <option value="">— pick variant —</option>
+                                <option value="">â€” pick variant â€”</option>
                                 <?php foreach ($results as $variant => $r): ?>
                                     <option value="<?= htmlspecialchars($variant) ?>" <?= ($experiment['winner'] ?? '') === $variant ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($variant) ?>

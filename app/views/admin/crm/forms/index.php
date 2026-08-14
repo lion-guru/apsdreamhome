@@ -44,7 +44,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <p class="text-muted mb-2" style="font-size:13px"><?= htmlspecialchars(mb_strimwidth($f['description'] ?? '', 0, 80, '...')) ?></p>
+                            <p class="text-muted mb-2" class="style-87981"><?= htmlspecialchars(mb_strimwidth($f['description'] ?? '', 0, 80, '...')) ?></p>
                             <div class="d-flex gap-2 mb-2">
                                 <span class="badge bg-primary-subtle text-primary-emphasis"><i class="fas fa-fields me-1"></i><?= count($fields) ?> fields</span>
                                 <?php if (!empty($settings['auto_assign'])): ?>
@@ -54,7 +54,7 @@
                                     <span class="badge bg-info-subtle text-info-emphasis"><i class="fas fa-envelope-open me-1"></i>Drip campaign</span>
                                 <?php endif; ?>
                             </div>
-                            <div class="text-muted" style="font-size:12px">
+                            <div class="text-muted" class="style-86354">
                                 Created <?= date('d M Y', strtotime($f['created_at'])) ?>
                             </div>
                         </div>

@@ -42,4 +42,4 @@ if (preg_match_all('/function\s+(\w*[Nn]otif\w*)\s*\(/', $code, $m)) {
 // Check if there's already a notification preferences view
 echo "\n--- notification preference views ---\n";
 $views = glob(dirname(__DIR__) . '/app/views/**/*notif*');
-foreach ($views as $v) echo "  " . str_replace(dirname(__DIR__) . '/app/views/', '', $v) . "\n";
+foreach ($views as $v) echo "  " . str_replace(dirname(__DIR__) . '/app/views/', '', $v) . "\n";?>

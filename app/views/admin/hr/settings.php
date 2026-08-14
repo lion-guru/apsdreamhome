@@ -20,7 +20,7 @@ $page_title = $page_title ?? 'HR Settings';
                         <?php else: ?>
                             <?php foreach ($leave_types as $lt): ?>
                                 <tr>
-                                    <td><span class="badge" style="background:<?= htmlspecialchars($lt['color'] ?? '#007bff') ?>;">&nbsp;&nbsp;</span> <?= htmlspecialchars($lt['name'] ?? '') ?></td>
+                                    <td><span class="badge" class="style-37131">&nbsp;&nbsp;</span> <?= htmlspecialchars($lt['name'] ?? '') ?></td>
                                     <td><code><?= htmlspecialchars($lt['code'] ?? '') ?></code></td>
                                     <td><?= (int)($lt['days_per_year'] ?? 0) ?></td>
                                     <td><span class="badge bg-success"><?= htmlspecialchars($lt['status'] ?? '') ?></span></td>

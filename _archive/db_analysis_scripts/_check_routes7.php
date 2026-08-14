@@ -46,4 +46,4 @@ foreach ($unique as $r) {
 }
 
 echo "Found " . count($missing) . " issues:\n";
-foreach ($missing as $m) echo "  $m\n";
+foreach ($missing as $m) echo "  $m\n";?>

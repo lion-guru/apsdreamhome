@@ -38,7 +38,8 @@ require_once APS_ROOT . '/routes/web.php';
 
 echo "<!DOCTYPE html>";
 echo "<html>";
-echo "<head>";
+echo "<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">";
 echo "<title>Router Debug - APS Dream Home</title>";
 echo "<style>";
 echo "body { font-family: Arial, sans-serif; padding: 20px; }";

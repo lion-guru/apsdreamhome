@@ -5,4 +5,4 @@ $rows = $pdo->query('SELECT designation, department, sub_role, dashboard_view FR
 foreach ($rows as $r) {
     echo $r['designation'] . '|' . ($r['department'] ?? 'NULL') . '|' . $r['sub_role'] . '|' . ($r['dashboard_view'] ?? 'NULL') . PHP_EOL;
 }
-echo "\nTotal: " . count($rows) . PHP_EOL;
+echo "\nTotal: " . count($rows) . PHP_EOL;?>

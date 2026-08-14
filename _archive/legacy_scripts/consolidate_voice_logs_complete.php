@@ -17,7 +17,7 @@ foreach ($logs as $i => $log) {
     if (isset($sessions[$i])) {
         $stmt = $pdo->prepare("UPDATE ai_call_sessions SET sentiment = ? WHERE id = ?");
         $stmt->execute([$log['sentiment'], $sessions[$i]]);
-        echo "  ✓ log id={$log['id']} -> session id={$sessions[$i]} (sentiment: {$log['sentiment']})\n";
+        echo "  âœ“ log id={$log['id']} -> session id={$sessions[$i]} (sentiment: {$log['sentiment']})\n";
     }
 }
 echo "\n";
@@ -29,7 +29,7 @@ echo "Migrated: $migrated sessions with sentiment\n\n";
 // Step 3: Drop ai_call_logs (with safety)
 echo "Dropping ai_call_logs (backup exists at ai_call_logs_backup_20260603)...\n";
 $pdo->exec("DROP TABLE IF EXISTS ai_call_logs");
-echo "  ✓ Dropped ai_call_logs\n\n";
+echo "  âœ“ Dropped ai_call_logs\n\n";
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "Tables: now $after\n";
+echo "Tables: now $after\n";?>

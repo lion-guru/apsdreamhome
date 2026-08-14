@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 /**
  * Add Colonies and Plots Tables
@@ -70,16 +70,16 @@ $success = true;
 foreach ($sql as $query) {
     try {
         $pdo->exec($query);
-        echo "Γ£à Executed successfully: " . substr($query, 0, 100) . "...\n";
+        echo "Î“Â£Ã  Executed successfully: " . substr($query, 0, 100) . "...\n";
     } catch (PDOException $e) {
-        echo "Γ¥î Error: " . $e->getMessage() . "\n";
+        echo "Î“Â¥Ã® Error: " . $e->getMessage() . "\n";
         $success = false;
     }
 }
 
 // Insert sample data if tables were created successfully
 if ($success) {
-    echo "\n≡ƒôÑ Inserting sample data...\n";
+    echo "\nâ‰¡Æ’Ã´Ã‘ Inserting sample data...\n";
 
     // Sample colonies data
     $colonies = [
@@ -161,7 +161,7 @@ if ($success) {
         $colonyId = $pdo->lastInsertId();
         if ($colonyId) {
             $colonyIds[$colony['name']] = $colonyId;
-            echo "Γ£à Added colony: " . $colony['name'] . " (ID: $colonyId)\n";
+            echo "Î“Â£Ã  Added colony: " . $colony['name'] . " (ID: $colonyId)\n";
         } else {
             // If colony already exists, get its ID
             $stmt = $pdo->prepare("SELECT id FROM colonies WHERE name = ?");
@@ -169,7 +169,7 @@ if ($success) {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) {
                 $colonyIds[$colony['name']] = $result['id'];
-                echo "Γä╣∩╕Å  Colony already exists: " . $colony['name'] . " (ID: " . $result['id'] . ")\n";
+                echo "Î“Ã¤â•£âˆ©â••Ã…  Colony already exists: " . $colony['name'] . " (ID: " . $result['id'] . ")\n";
             }
         }
     }
@@ -195,10 +195,10 @@ if ($success) {
     foreach ($plots as $plot) {
         $stmt = $pdo->prepare("INSERT IGNORE INTO plots (" . implode(',', array_keys($plot)) . ") VALUES (" . str_repeat('?,', count($plot) - 1) . "?)");
         $stmt->execute(array_values($plot));
-        echo "Γ£à Added plot: " . $plot['plot_number'] . " (Colony ID: " . $plot['colony_id'] . ")\n";
+        echo "Î“Â£Ã  Added plot: " . $plot['plot_number'] . " (Colony ID: " . $plot['colony_id'] . ")\n";
     }
 
-    echo "\nΓ£à Sample data inserted successfully!\n";
+    echo "\nÎ“Â£Ã  Sample data inserted successfully!\n";
 }
 
-echo "\n≡ƒÅü Script execution completed!\n";
+echo "\nâ‰¡Æ’Ã…Ã¼ Script execution completed!\n";?>

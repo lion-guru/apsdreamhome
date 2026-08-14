@@ -3,7 +3,7 @@
  * RBAC Migration: Create admin_role_menu_permissions + admin_user_menu_permissions
  * 
  * These tables support the AdminMenuService for role-based sidebar filtering.
- * AdminMenuService.php already references these tables — they were dropped
+ * AdminMenuService.php already references these tables â€” they were dropped
  * during a DB cleanup session.
  * 
  * Run: php scripts/migrate_rbac_tables.php
@@ -22,7 +22,7 @@ try {
 
     echo "=== RBAC TABLE MIGRATION ===\n\n";
 
-    // 1. admin_role_menu_permissions — maps role → menu_item access
+    // 1. admin_role_menu_permissions â€” maps role â†’ menu_item access
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS `admin_role_menu_permissions` (
             `id` INT NOT NULL AUTO_INCREMENT,
@@ -44,7 +44,7 @@ try {
     ");
     echo "  [OK] admin_role_menu_permissions table created\n";
 
-    // 2. admin_user_menu_permissions — per-user overrides
+    // 2. admin_user_menu_permissions â€” per-user overrides
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS `admin_user_menu_permissions` (
             `id` INT NOT NULL AUTO_INCREMENT,
@@ -76,4 +76,4 @@ try {
 } catch (Exception $e) {
     echo "  [ERROR] " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

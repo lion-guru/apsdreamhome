@@ -36,4 +36,4 @@ echo "\n=== USER_TYPES ===\n";
 $rows6 = $db->fetchAll("SELECT user_type, role, COUNT(*) as c FROM users GROUP BY user_type, role ORDER BY user_type");
 foreach ($rows6 as $r) {
     echo "user_type:{$r['user_type']} | role:{$r['role']} | count:{$r['c']}\n";
-}
+}?>

@@ -26,4 +26,4 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$name, $category, $description, $rows, 0]);
 $elapsed = (int)((microtime(true) - $start) * 1000);
 
-echo "✓ Tracked: $name (category: $category" . ($rows ? ", rows: $rows" : "") . ")\n";
+echo "âœ“ Tracked: $name (category: $category" . ($rows ? ", rows: $rows" : "") . ")\n";?>

@@ -15,7 +15,7 @@ $salesVelocity = $data['sales_velocity'] ?? [];
 $milestones    = $data['milestone_progress'] ?? [];
 $roi           = $data['roi_projection'] ?? [];
 
-function inr($n) { return '₹' . number_format($n); }
+function inr($n) { return 'â‚¹' . number_format($n); }
 ?>
 
 <div class="container-fluid py-4">
@@ -35,7 +35,7 @@ function inr($n) { return '₹' . number_format($n); }
         <i class="fas fa-arrow-left me-1"></i> Back to Colony
       </a>
       <h2 class="mb-1"><i class="fas fa-chart-line me-2 text-success"></i>Colony Analytics</h2>
-      <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?> — <?= htmlspecialchars($colony['location'] ?? '') ?></small>
+      <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?> â€” <?= htmlspecialchars($colony['location'] ?? '') ?></small>
     </div>
     <div>
       <a href="/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-primary btn-sm">
@@ -60,7 +60,7 @@ function inr($n) { return '₹' . number_format($n); }
             <i class="fas fa-rupee-sign fa-2x opacity-50"></i>
           </div>
           <div class="mt-2 small opacity-75">
-            <?= number_format($plotStats['total'] ?? 0) ?> plots × avg <?= inr($plotStats['avg_price_sqft'] ?? 0) ?>/sqft
+            <?= number_format($plotStats['total'] ?? 0) ?> plots Ã— avg <?= inr($plotStats['avg_price_sqft'] ?? 0) ?>/sqft
           </div>
         </div>
       </div>
@@ -141,8 +141,8 @@ function inr($n) { return '₹' . number_format($n); }
                   <i class="fas <?= $info['icon'] ?> fa-2x text-<?= $info['color'] ?>"></i>
                   <h4 class="mb-0 mt-2"><?= $count ?></h4>
                   <small class="text-muted"><?= $info['label'] ?></small>
-                  <div class="progress mt-2" style="height:4px">
-                    <div class="progress-bar bg-<?= $info['color'] ?>" style="width:<?= $pct ?>%"></div>
+                  <div class="progress mt-2" class="style-21032">
+                    <div class="progress-bar bg-<?= $info['color'] ?>" class="style-21859"></div>
                   </div>
                 </div>
               </div>
@@ -165,7 +165,7 @@ function inr($n) { return '₹' . number_format($n); }
         <div class="card-header bg-transparent border-0">
           <h6 class="mb-0"><i class="fas fa-hard-hat me-2 text-warning"></i>Development Costs by Type</h6>
         </div>
-        <div class="card-body" style="max-height:300px;overflow-y:auto">
+        <div class="card-body" class="style-82023">
           <?php if (empty($devCosts)): ?>
             <div class="text-center text-muted py-4">
               <i class="fas fa-inbox fa-2x mb-2"></i><br>No development costs recorded yet
@@ -213,7 +213,7 @@ function inr($n) { return '₹' . number_format($n); }
               <tbody>
               <?php foreach ($blockBreakdown as $b): ?>
                 <tr>
-                  <td><strong><?= htmlspecialchars($b['block'] ?? '—') ?></strong></td>
+                  <td><strong><?= htmlspecialchars($b['block'] ?? 'â€”') ?></strong></td>
                   <td class="text-end"><?= $b['count'] ?? 0 ?></td>
                   <td class="text-end text-success"><?= $b['available'] ?? 0 ?></td>
                   <td class="text-end text-danger"><?= $b['sold'] ?? 0 ?></td>
@@ -240,7 +240,7 @@ function inr($n) { return '₹' . number_format($n); }
             </div>
           <?php else: ?>
             <table class="table table-sm table-hover mb-0">
-              <thead><tr><th>Type</th><th class="text-end">Count</th><th class="text-end">Area (sqft)</th><th class="text-end">Value</th><th class="text-end">Avg ₹/sqft</th></tr></thead>
+              <thead><tr><th>Type</th><th class="text-end">Count</th><th class="text-end">Area (sqft)</th><th class="text-end">Value</th><th class="text-end">Avg â‚¹/sqft</th></tr></thead>
               <tbody>
               <?php foreach ($typeBreakdown as $t): ?>
                 <tr>
@@ -314,8 +314,8 @@ function inr($n) { return '₹' . number_format($n); }
         <div class="col-md-2">
           <div class="p-3">
             <small class="text-muted">Realization %</small>
-            <div class="progress mt-1" style="height:20px">
-              <div class="progress-bar bg-info" style="width:<?= $roi['realization_pct'] ?? 0 ?>%"><?= $roi['realization_pct'] ?? 0 ?>%</div>
+            <div class="progress mt-1" class="style-40280">
+              <div class="progress-bar bg-info" class="style-13536"><?= $roi['realization_pct'] ?? 0 ?>%</div>
             </div>
           </div>
         </div>

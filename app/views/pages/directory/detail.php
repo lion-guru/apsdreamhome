@@ -26,14 +26,14 @@
                         <?php if ($listing['rating'] > 0): ?>
                             <div class="text-end">
                                 <h2 class="text-warning mb-0"><?= number_format($listing['rating'], 1) ?></h2>
-                                <span class="text-warning"><?= str_repeat('★', (int)$listing['rating']) ?><?= str_repeat('☆', 5 - (int)$listing['rating']) ?></span>
+                                <span class="text-warning"><?= str_repeat('â˜…', (int)$listing['rating']) ?><?= str_repeat('â˜†', 5 - (int)$listing['rating']) ?></span>
                                 <br><small class="text-muted"><?= $listing['review_count'] ?> reviews</small>
                             </div>
                         <?php endif; ?>
                     </div>
 
                     <?php if ($listing['photo']): ?>
-                        <img src="<?= htmlspecialchars($listing['photo']) ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name']) ?>" class="img-fluid rounded mb-3" style="max-height:300px;width:100%;object-fit:cover;">
+                        <img src="<?= htmlspecialchars($listing['photo']) ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name']) ?>" class="img-fluid rounded mb-3" class="style-22862">
                     <?php endif; ?>
 
                     <?php if ($listing['description']): ?>
@@ -71,7 +71,7 @@
                                 <div class="star-rating">
                                     <?php for ($i = 5; $i >= 1; $i--): ?>
                                         <input type="radio" name="rating" value="<?= $i ?>" id="star<?= $i ?>" <?= $i === 5 ? 'checked' : '' ?>>
-                                        <label for="star<?= $i ?>" class="fs-4 text-warning" style="cursor:pointer;">★</label>
+                                        <label for="star<?= $i ?>" class="fs-4 text-warning" class="style-10432">â˜…</label>
                                     <?php endfor; ?>
                                 </div>
                             </div>
@@ -89,7 +89,7 @@
                             <div class="border-bottom pb-3 mb-3">
                                 <div class="d-flex justify-content-between">
                                     <strong><?= htmlspecialchars($r['reviewer_name'] ?? 'Anonymous') ?></strong>
-                                    <span class="text-warning"><?= str_repeat('★', (int)$r['rating']) ?></span>
+                                    <span class="text-warning"><?= str_repeat('â˜…', (int)$r['rating']) ?></span>
                                 </div>
                                 <?php if ($r['review']): ?>
                                     <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($r['review'])) ?></p>

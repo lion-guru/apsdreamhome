@@ -33,9 +33,9 @@ echo "ZERO-ROW TABLES (0 rows):\n";
 echo sprintf("%-45s %s %s\n", "TABLE", "CODE_REFS", "FKs");
 echo str_repeat("-", 65) . "\n";
 foreach ($zeroRow as $t) {
-    $flag = ($t['code'] <= 2 && $t['fk'] == 0) ? " ← SAFE" : "";
+    $flag = ($t['code'] <= 2 && $t['fk'] == 0) ? " â†� SAFE" : "";
     echo sprintf("%-45s %5d     %3d%s\n", $t['name'], $t['code'], $t['fk'], $flag);
 }
 echo "\nTotal zero-row: " . count($zeroRow) . "\n";
 $safe = count(array_filter($zeroRow, fn($t) => $t['code'] <= 2 && $t['fk'] == 0));
-echo "Safe to drop (<=2 refs, 0 FKs): $safe\n";
+echo "Safe to drop (<=2 refs, 0 FKs): $safe\n";?>

@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);">
+<section class="py-5" class="style-50777">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-home me-2"></i><?php echo __('tool_valuation_title', [], 'Property Valuation Calculator'); ?></h1>
@@ -76,7 +76,7 @@
                             </div>
                         </div>
 
-                        <div id="valResults" style="display:none;">
+                        <div id="valResults" class="style-2248">
                             <div class="row g-3 text-center mb-3">
                                 <div class="col-md-3 col-6">
                                     <div class="bg-light rounded-3 p-3">
@@ -108,8 +108,8 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <small class="text-muted"><?php echo __('confidence_score', [], 'Confidence Score'); ?></small>
-                                            <div class="progress mt-1" style="width:200px;height:8px;">
-                                                <div class="progress-bar bg-success" id="confBar" style="width:70%"></div>
+                                            <div class="progress mt-1" class="style-98142">
+                                                <div class="progress-bar bg-success" id="confBar" class="style-88324"></div>
                                             </div>
                                         </div>
                                         <span class="badge bg-success" id="confBadge">70%</span>

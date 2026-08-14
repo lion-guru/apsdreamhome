@@ -16,4 +16,4 @@ class CodeAssistant {
     public function debugCode($code, $error) {
         return "Fix: Check for null values in the input.";
     }
-}
+}?>

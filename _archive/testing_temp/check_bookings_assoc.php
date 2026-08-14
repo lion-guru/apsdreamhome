@@ -9,4 +9,4 @@ foreach ($bookings as $b) {
     $stmt2->execute([$b['associate_id']]);
     $assoc = $stmt2->fetch(PDO::FETCH_ASSOC);
     echo "Booking $b[id]: associate_id=$b[associate_id], has_assoc=" . ($assoc ? 'YES' : 'NO') . ", customer=$b[customer_id]\n";
-}
+}?>

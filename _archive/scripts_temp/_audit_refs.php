@@ -45,4 +45,4 @@ foreach ($files as $f) {
     echo $f['file'] . " (refs: " . $f['refs'] . ")\n";
     foreach ($f['ref_files'] as $r) echo "  -> $r\n";
 }
-echo "\nTotal: " . count($files) . "\n";
+echo "\nTotal: " . count($files) . "\n";?>

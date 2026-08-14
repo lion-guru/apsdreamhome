@@ -7,4 +7,4 @@ foreach (['business_overview','property_performance','property_summary','revenue
     echo "DROPPED: $t\n";
 }
 $count = $pdo->query('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA="apsdreamhome"')->fetchColumn();
-echo "Remaining: $count\n";
+echo "Remaining: $count\n";?>

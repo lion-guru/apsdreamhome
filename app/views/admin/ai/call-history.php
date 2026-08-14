@@ -17,34 +17,34 @@ $base = BASE_URL . '/admin/ai-calling/history';
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid var(--bs-primary);border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-27108">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fas fa-phone-volume"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700"><?= number_format($totalCalls) ?></div><div class="small text-muted text-uppercase">Total Calls</div></div>
+                    <div><div class="style-49205"><?= number_format($totalCalls) ?></div><div class="small text-muted text-uppercase">Total Calls</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid #16a34a;border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-62228">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-check-circle"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700" class="text-success"><?= number_format($completedCalls) ?></div><div class="small text-muted text-uppercase">Completed</div><div class="small text-muted"><?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>% rate</div></div>
+                    <div><div class="style-49205" class="text-success"><?= number_format($completedCalls) ?></div><div class="small text-muted text-uppercase">Completed</div><div class="small text-muted"><?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>% rate</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid #dc2626;border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-84448">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-danger rounded-pill p-2"><i class="fas fa-times-circle"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700" class="text-danger"><?= number_format($failedCalls) ?></div><div class="small text-muted text-uppercase">Failed</div></div>
+                    <div><div class="style-49205" class="text-danger"><?= number_format($failedCalls) ?></div><div class="small text-muted text-uppercase">Failed</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid #f59e0b;border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-63620">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-star"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700" class="text-warning"><?= number_format($interestedCount) ?></div><div class="small text-muted text-uppercase">Interested</div></div>
+                    <div><div class="style-49205" class="text-warning"><?= number_format($interestedCount) ?></div><div class="small text-muted text-uppercase">Interested</div></div>
                 </div></div>
             </div>
         </div>
@@ -104,13 +104,13 @@ $base = BASE_URL . '/admin/ai-calling/history';
                     <tbody>
                         <?php if (empty($calls)): ?>
                         <tr><td colspan="8" class="text-center text-muted py-5">
-                            <i class="fas fa-phone-slash fa-3x mb-3" style="opacity:0.15"></i>
+                            <i class="fas fa-phone-slash fa-3x mb-3" class="style-39608"></i>
                             <h5 class="text-muted">No call records found</h5>
                             <p class="text-muted mb-0">Calls will appear here after the auto-dialer runs.</p>
                         </td></tr>
                         <?php else: ?>
                         <?php foreach ($calls as $call): ?>
-                        <tr style="cursor:pointer" onclick="viewCallDetail(<?= $call['id'] ?>)">
+                        <tr class="style-78508" onclick="viewCallDetail(<?= $call['id'] ?>)">
                             <td><?= $call['id'] ?></td>
                             <td><i class="fas fa-phone text-muted me-1"></i><?= htmlspecialchars($call['phone'] ?? '') ?></td>
                             <td><?= htmlspecialchars($call['lead_name'] ?? 'Unknown') ?></td>
@@ -183,7 +183,7 @@ async function viewCallDetail(id) {
         const c = data.call;
         let html = '<div class="row mb-3"><div class="col-md-6"><strong>Phone:</strong> ' + (c.phone||'') + '</div><div class="col-md-6"><strong>Status:</strong> <span class="badge bg-info">' + (c.status||'') + '</span></div></div>';
         html += '<div class="row mb-3"><div class="col-md-6"><strong>Duration:</strong> ' + (c.duration_seconds||0) + 's</div><div class="col-md-6"><strong>Response:</strong> ' + (c.customer_response||'N/A') + '</div></div>';
-        if (c.call_transcript) { html += '<hr><h6>Transcript</h6><div style="max-height:300px;overflow-y:auto;background:#f8fafc;padding:12px;border-radius:8px;font-size:0.85rem;white-space:pre-wrap">' + c.call_transcript + '</div>'; }
+        if (c.call_transcript) { html += '<hr><h6>Transcript</h6><div class="style-73334">' + c.call_transcript + '</div>'; }
         document.getElementById('callDetailBody').innerHTML = html;
     } catch(e) { document.getElementById('callDetailBody').innerHTML = '<div class="alert alert-danger">Failed to load</div>'; }
 }

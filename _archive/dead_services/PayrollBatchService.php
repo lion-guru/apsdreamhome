@@ -76,7 +76,7 @@ class PayrollBatchService
     }
 
     /**
-     * Process payments: mark pending → paid.
+     * Process payments: mark pending â†’ paid.
      */
     public function processPayments(array $paymentIds, string $method, string $reference, int $processedBy): int
     {
@@ -164,7 +164,7 @@ class PayrollBatchService
         ];
     }
 
-    // ─── Helpers ─────────────────────────────────
+    // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private function getActiveStructures(): array
     {
         return $this->fetchAll(
@@ -196,4 +196,4 @@ class PayrollBatchService
         $stmt->execute($params);
         return $stmt->fetchColumn();
     }
-}
+}?>

@@ -1,20 +1,20 @@
 <?php
 /**
  * SalaryCalculationService
- * Indian payroll calculation engine: Gross → Deductions → Net
- * Handles PF (12% cap ₹15K), ESI (0.75% if gross ≤ ₹21K), TDS, Professional Tax.
+ * Indian payroll calculation engine: Gross â†’ Deductions â†’ Net
+ * Handles PF (12% cap â‚¹15K), ESI (0.75% if gross â‰¤ â‚¹21K), TDS, Professional Tax.
  */
 namespace App\Services;
 
 class SalaryCalculationService
 {
-    private const PF_RATE = 0.12;           // 12% of basic (capped at ₹15,000 basic)
+    private const PF_RATE = 0.12;           // 12% of basic (capped at â‚¹15,000 basic)
     private const PF_CAP = 15000;           // Max basic for PF calculation
     private const ESI_RATE_EE = 0.0075;     // 0.75% employee
     private const ESI_RATE_ER = 0.0375;     // 3.75% employer
-    private const ESI_GROSS_CAP = 21000;    // ESI applicable if gross ≤ ₹21,000
-    private const PROFESSIONAL_TAX = 200;   // ₹200/month (Maharashtra slab)
-    private const STANDARD_DEDUCTION = 50000; // ₹50,000/year for TDS
+    private const ESI_GROSS_CAP = 21000;    // ESI applicable if gross â‰¤ â‚¹21,000
+    private const PROFESSIONAL_TAX = 200;   // â‚¹200/month (Maharashtra slab)
+    private const STANDARD_DEDUCTION = 50000; // â‚¹50,000/year for TDS
 
     /**
      * Calculate full salary breakdown from basic + allowances.
@@ -32,12 +32,12 @@ class SalaryCalculationService
 
         $gross = $basic + $hra + $conveyance + $medical + $special + $other;
 
-        // PF: 12% of basic (capped at ₹15,000 basic)
+        // PF: 12% of basic (capped at â‚¹15,000 basic)
         $pfBasic = min($basic, self::PF_CAP);
         $pfEmployee = round($pfBasic * self::PF_RATE, 2);
         $pfEmployer = round($pfBasic * self::PF_RATE, 2);
 
-        // ESI: applicable only if gross ≤ ₹21,000
+        // ESI: applicable only if gross â‰¤ â‚¹21,000
         $esiEmployee = 0;
         $esiEmployer = 0;
         if ($gross <= self::ESI_GROSS_CAP) {
@@ -45,7 +45,7 @@ class SalaryCalculationService
             $esiEmployer = round($gross * self::ESI_RATE_ER, 2);
         }
 
-        // Professional Tax: ₹200 for gross > ₹15,000
+        // Professional Tax: â‚¹200 for gross > â‚¹15,000
         $pt = $gross > 15000 ? self::PROFESSIONAL_TAX : 0;
 
         // TDS: calculated on annual income (simplified monthly TDS)
@@ -106,7 +106,7 @@ class SalaryCalculationService
             $tax += ($taxableIncome - 300000) * 0.05;
         }
 
-        // Rebate u/s 87A: full tax rebate if taxable ≤ ₹7L
+        // Rebate u/s 87A: full tax rebate if taxable â‰¤ â‚¹7L
         if ($taxableIncome <= 700000) {
             $tax = 0;
         }
@@ -137,4 +137,4 @@ class SalaryCalculationService
             'special_allowance' => max(0, $special),
         ]);
     }
-}
+}?>

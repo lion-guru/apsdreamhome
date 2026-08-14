@@ -19,4 +19,4 @@ try {
     echo nl2br($out);
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
-}
+}?>

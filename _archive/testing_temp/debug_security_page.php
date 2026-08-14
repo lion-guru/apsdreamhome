@@ -30,4 +30,4 @@ curl_close($ch);
 
 echo "HTTP Code: $httpCode\n\n";
 echo "Output:\n";
-echo $output;
+echo $output;?>

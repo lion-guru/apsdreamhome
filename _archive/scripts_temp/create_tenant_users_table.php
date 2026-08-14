@@ -17,4 +17,4 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS tenant_users (
     KEY idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-echo "tenant_users table created OK\n";
+echo "tenant_users table created OK\n";?>

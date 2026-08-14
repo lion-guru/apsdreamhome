@@ -4,7 +4,7 @@
  * 
  * SINGLE SOURCE OF TRUTH: mlm_rank_benefits
  * 
- * 7 Ranks: associate → senior_associate → bdm → sr_bdm → vice_president → president → site_manager
+ * 7 Ranks: associate â†’ senior_associate â†’ bdm â†’ sr_bdm â†’ vice_president â†’ president â†’ site_manager
  * 
  * Changes:
  * 1. associates.level ENUM updated to match mlm_rank_benefits
@@ -48,9 +48,9 @@ $targetEnum = "'associate','senior_associate','bdm','sr_bdm','vice_president','p
 $count = $pdo->exec("UPDATE associates SET level = 'associate' WHERE level = '' OR level IS NULL");
 echo "  Set {$count} empty/NULL levels to 'associate'\n";
 
-// Step 2: Any remaining old values → 'associate'
+// Step 2: Any remaining old values â†’ 'associate'
 $count = $pdo->exec("UPDATE associates SET level = 'associate' WHERE level NOT IN ('associate','senior_associate','bdm','sr_bdm','vice_president','president','site_manager')");
-echo "  Mapped {$count} other old values → 'associate'\n";
+echo "  Mapped {$count} other old values â†’ 'associate'\n";
 
 // Step 4: ALTER the ENUM
 $pdo->exec("ALTER TABLE associates MODIFY COLUMN `level` ENUM($targetEnum) NOT NULL DEFAULT 'associate'");
@@ -79,7 +79,7 @@ $levelMap = [
 foreach ($levelMap as $num => $name) {
     $stmt = $pdo->prepare("UPDATE mlm_levels SET level_name = ? WHERE level_number = ?");
     $stmt->execute([$name, $num]);
-    echo "  Level {$num} → '{$name}' ({$stmt->rowCount()} rows)\n";
+    echo "  Level {$num} â†’ '{$name}' ({$stmt->rowCount()} rows)\n";
 }
 
 // Drop rows 8-10 (not in our 7-rank plan)
@@ -164,11 +164,11 @@ foreach ($valid as $v) {
 }
 
 echo "\n=== PHASE 7: SUMMARY ===\n";
-echo "  associates.level ENUM: 7 new values ✓\n";
-echo "  associates.level data: all set to 'associate' ✓\n";
-echo "  mlm_profiles.current_level: all 'associate' ✓\n";
-echo "  mlm_rank_benefits: 7 rows, new ENUM names ✓\n";
-echo "  mlm_levels: 7 rows, updated names ✓\n";
-echo "  mlm_commission_levels: DROPPED ✓\n";
+echo "  associates.level ENUM: 7 new values âœ“\n";
+echo "  associates.level data: all set to 'associate' âœ“\n";
+echo "  mlm_profiles.current_level: all 'associate' âœ“\n";
+echo "  mlm_rank_benefits: 7 rows, new ENUM names âœ“\n";
+echo "  mlm_levels: 7 rows, updated names âœ“\n";
+echo "  mlm_commission_levels: DROPPED âœ“\n";
 echo "  Backup: {$backupFile}\n";
-echo "\nDone! All rank systems unified to 7 consistent names.\n";
+echo "\nDone! All rank systems unified to 7 consistent names.\n";?>

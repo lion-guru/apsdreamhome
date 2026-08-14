@@ -9,4 +9,4 @@ function tailCustom($filepath, $lines = 10) {
     $data = fread($f, 1000);
     $linesArr = explode("\n", $data);
     return implode("\n", array_slice($linesArr, -$lines));
-}
+}?>

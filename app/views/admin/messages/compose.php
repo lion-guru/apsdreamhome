@@ -48,7 +48,7 @@ $users = $users ?? [];
                     </div>
 
                     <!-- Users List -->
-                    <div id="usersList" style="max-height: 400px; overflow-y: auto;">
+                    <div id="usersList" class="style-61454">
                         <?php if (empty($users)): ?>
                             <div class="text-center py-4">
                                 <i class="fas fa-users fa-3x text-muted mb-3"></i>
@@ -65,11 +65,7 @@ $users = $users ?? [];
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0 me-3">
                                                 <div class="avatar-circle d-flex align-items-center justify-content-center text-white fw-bold"
-                                                     style="width: 40px; height: 40px; border-radius: 50%; background-color: <?php
-                                                        $role = $user['role'] ?? 'user';
-                                                        $colors = ['admin'=>'#dc3545','associate'=>'#198754','agent'=>'#0dcaf0','employee'=>'#ffc107','customer'=>'#6c757d'];
-                                                        echo $colors[$role] ?? '#6c757d';
-                                                     ?>;">
+                                                     class="style-74621">
                                                     <?= strtoupper(substr($user['name'] ?? '?', 0, 1)) ?>
                                                 </div>
                                             </div>
@@ -108,7 +104,7 @@ $users = $users ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">To:</label>
-                            <div id="selectedUser" class="text-muted" style="min-height: 24px;">
+                            <div id="selectedUser" class="text-muted" class="style-68125">
                                 Select a user from the list
                             </div>
                         </div>
@@ -117,7 +113,7 @@ $users = $users ?? [];
                             <label class="form-label">Message:</label>
                             <textarea name="message" class="form-control" rows="6"
                                       placeholder="Type your message..." required
-                                      style="resize: none;"></textarea>
+                                      class="style-6407"></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100" id="sendBtn" disabled>
@@ -176,7 +172,7 @@ function searchUsers(query) {
                         + ' data-user-id="' + u.id + '" data-user-name="' + escapeHtml(u.name || '') + '" data-user-role="' + (u.role || 'user') + '"'
                         + ' onclick="selectUser(this)">'
                         + '<div class="d-flex align-items-center">'
-                        + '<div class="flex-shrink-0 me-3"><div class="d-flex align-items-center justify-content-center text-white fw-bold" style="width:40px;height:40px;border-radius:50%;background-color:' + color + ';">' + initial + '</div></div>'
+                        + '<div class="flex-shrink-0 me-3"><div class="d-flex align-items-center justify-content-center text-white fw-bold" class="style-51805">' + initial + '</div></div>'
                         + '<div><strong>' + escapeHtml(u.name || '') + '</strong><br><small class="text-muted"><span class="badge bg-' + badge + '">' + (u.role || 'user').charAt(0).toUpperCase() + (u.role || 'user').slice(1) + '</span> ' + escapeHtml(u.email || '') + (u.phone ? ' &middot; ' + escapeHtml(u.phone) : '') + '</small></div>'
                         + '</div></a>';
                 });

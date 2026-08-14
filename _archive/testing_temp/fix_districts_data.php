@@ -158,4 +158,4 @@ $klCount = $db->fetch('SELECT COUNT(*) as count FROM districts WHERE state_id = 
 echo $klCount['count'] . "\n";
 
 echo "\n=== Fix Complete ===\n";
-echo "Added $addedCount new Uttar Pradesh districts\n";
+echo "Added $addedCount new Uttar Pradesh districts\n";?>

@@ -28,4 +28,4 @@ $server = IoServer::factory(
     $port
 );
 echo "Broadcast HTTP endpoint listening on http://localhost:{$port}/broadcast\n";
-$server->run();
+$server->run();?>

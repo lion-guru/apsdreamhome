@@ -8,4 +8,4 @@ if ($count === 0) {
     echo "OK menu item added\n";
 } else {
     echo "Menu item already exists\n";
-}
+}?>

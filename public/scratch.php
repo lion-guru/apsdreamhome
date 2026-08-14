@@ -20,4 +20,4 @@ echo "<pre>";
 query($pdo, "DESCRIBE user_wallets");
 query($pdo, "DESCRIBE telecaller_performance");
 query($pdo, "DESCRIBE employees");
-echo "</pre>";
+echo "</pre>";?>

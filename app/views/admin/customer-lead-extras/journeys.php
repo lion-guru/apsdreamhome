@@ -130,7 +130,7 @@ $page_description = 'Track and analyze customer journeys';
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 200px;" title="<?php echo htmlspecialchars($journey['journey'] ?? ''); ?>">
+                                        <div class="text-truncate" class="style-65684" title="<?php echo htmlspecialchars($journey['journey'] ?? ''); ?>">
                                             <?php echo htmlspecialchars($journey['journey'] ?? 'No journey'); ?>
                                         </div>
                                     </td>

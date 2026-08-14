@@ -37,4 +37,4 @@ CREATE TABLE IF NOT EXISTS bank_branches (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 ");
 
-echo "Bank branches table created/verified\n";
+echo "Bank branches table created/verified\n";?>

@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Site Details'; ?>
+ï»¿<?php $pageTitle = 'Site Details'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -38,7 +38,7 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Site Stats</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="mb-3"><small class="text-muted d-block">Development Progress</small><div class="progress" style="height:8px"><div class="progress-bar bg-success" style="width:<?= ($site['total_area'] ?? 0) > 0 ? round(($site['developed_area'] ?? 0) / $site['total_area'] * 100) : 0 ?>%"></div></div><small class="text-muted"><?= ($site['total_area'] ?? 0) > 0 ? round(($site['developed_area'] ?? 0) / $site['total_area'] * 100) : 0 ?>% developed</small></div>
+                    <div class="mb-3"><small class="text-muted d-block">Development Progress</small><div class="progress" class="style-32124"><div class="progress-bar bg-success" class="style-56613"></div></div><small class="text-muted"><?= ($site['total_area'] ?? 0) > 0 ? round(($site['developed_area'] ?? 0) / $site['total_area'] * 100) : 0 ?>% developed</small></div>
                     <div class="mb-3"><small class="text-muted d-block">Plot Availability</small><strong class="text-success"><?= number_format($site['available_plots'] ?? 0) ?></strong> / <?= number_format($site['total_plots'] ?? 0) ?> available</div>
                     <div class="mb-3"><small class="text-muted d-block">Created</small><?= date('d M Y', strtotime($site['created_at'] ?? 'now')) ?></div>
                     <div><small class="text-muted d-block">Last Updated</small><?= date('d M Y', strtotime($site['updated_at'] ?? 'now')) ?></div>

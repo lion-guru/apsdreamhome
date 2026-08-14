@@ -17,25 +17,25 @@ $recent_shares = $recent_shares ?? [];
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div style="font-size:1.8rem;font-weight:700;color:#6366f1;"><?= number_format($total_shares) ?></div>
+                <div class="style-38176"><?= number_format($total_shares) ?></div>
                 <div class="text-muted small">Total Shares</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div style="font-size:1.8rem;font-weight:700;color:#10b981;"><?= count($shares_by_user) ?></div>
+                <div class="style-23322"><?= count($shares_by_user) ?></div>
                 <div class="text-muted small">Active Sharers</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div style="font-size:1.8rem;font-weight:700;color:#f59e0b;"><?= count($shares_by_platform) ?></div>
+                <div class="style-39581"><?= count($shares_by_platform) ?></div>
                 <div class="text-muted small">Platforms Used</div>
             </div>
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div style="font-size:1.8rem;font-weight:700;color:#ef4444;"><?= count($recent_shares) ?></div>
+                <div class="style-50200"><?= count($recent_shares) ?></div>
                 <div class="text-muted small">Recent Shares</div>
             </div>
         </div>
@@ -60,7 +60,7 @@ $recent_shares = $recent_shares ?? [];
                             $color = $colors[$p['platform']] ?? '#94a3b8';
                             ?>
                             <div class="d-flex align-items-center mb-3">
-                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;background:<?= $color ?>;color:#fff;display:flex;align-items:center;justify-content:center;">
+                                <div class="me-3" class="style-23730">
                                     <i class="fas fa-<?= $p['platform'] === 'whatsapp' ? 'whatsapp' : ($p['platform'] === 'copy' ? 'copy' : 'share-alt') ?>"></i>
                                 </div>
                                 <div class="flex-grow-1">
@@ -68,8 +68,8 @@ $recent_shares = $recent_shares ?? [];
                                         <span class="fw-bold small"><?= ucfirst($p['platform']) ?></span>
                                         <span class="text-muted small"><?= $p['cnt'] ?> shares (<?= $pct ?>%)</span>
                                     </div>
-                                    <div class="progress" style="height:6px;">
-                                        <div class="progress-bar" style="width:<?= $pct ?>%;background:<?= $color ?>;"></div>
+                                    <div class="progress" class="style-12222">
+                                        <div class="progress-bar" class="style-61744"></div>
                                     </div>
                                 </div>
                             </div>

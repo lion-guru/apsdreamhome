@@ -25,7 +25,7 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="d-flex align-items-center mb-2">
-                                <div class="rounded-circle bg-<?= ($agent['status'] ?? '') === 'active' ? 'success' : (($agent['status'] ?? '') === 'busy' ? 'warning' : 'secondary') ?> text-white d-flex align-items-center justify-content-center me-3" style="width:44px;height:44px;font-size:1.2rem;">
+                                <div class="rounded-circle bg-<?= ($agent['status'] ?? '') === 'active' ? 'success' : (($agent['status'] ?? '') === 'busy' ? 'warning' : 'secondary') ?> text-white d-flex align-items-center justify-content-center me-3" class="style-65746">
                                     <i class="fas fa-robot"></i>
                                 </div>
                                 <div>
@@ -54,11 +54,11 @@
                                 <input type="hidden" name="agent_id" value="<?= htmlspecialchars($agent['agent_id']) ?>">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="small"><?= (int)($agent['current_calls'] ?? 0) ?>/<?= (int)($agent['max_concurrent_calls'] ?? 5) ?></span>
-                                    <div class="progress" style="width:50px;height:6px">
+                                    <div class="progress" class="style-27818">
                                         <?php $pct = ($agent['max_concurrent_calls'] ?? 5) > 0 ? min(100, round((($agent['current_calls'] ?? 0) / $agent['max_concurrent_calls']) * 100)) : 0; ?>
-                                        <div class="progress-bar bg-<?= $pct > 80 ? 'danger' : ($pct > 50 ? 'warning' : 'success') ?>" style="width:<?= $pct ?>%"></div>
+                                        <div class="progress-bar bg-<?= $pct > 80 ? 'danger' : ($pct > 50 ? 'warning' : 'success') ?>" class="style-21859"></div>
                                     </div>
-                                    <select name="agent_status" class="form-select form-select-sm" style="width:auto" onchange="this.form.submit()">
+                                    <select name="agent_status" class="form-select form-select-sm" class="style-30246" onchange="this.form.submit()">
                                         <option value="active" <?= ($agent['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                                         <option value="busy" <?= ($agent['status'] ?? '') === 'busy' ? 'selected' : '' ?>>Busy</option>
                                         <option value="paused" <?= ($agent['status'] ?? '') === 'paused' ? 'selected' : '' ?>>Paused</option>
@@ -120,7 +120,8 @@
                                 ?>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> Save Provider Settings</button>
+                        <?php echo \App\Helpers\SimpleCaptcha::renderField(); ?>
+<button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> Save Provider Settings</button>
                     </form>
                 </div>
             </div>

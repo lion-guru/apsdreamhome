@@ -779,9 +779,9 @@ $router->post('/register', 'Auth\\RegisterController@handleRegister');
 $router->get('/register/unified', 'Auth\\RegisterController@showRegister');
 $router->post('/register/unified', 'Auth\\RegisterController@handleRegister');
 
-// Direct Customer-only registration (legacy)
-$router->get('/register/customer', 'Auth\\CustomerAuthController@register');
-$router->post('/register/customer', 'Auth\\CustomerAuthController@handleRegister');
+// Direct Customer-only registration — redirect to unified register with role=customer
+$router->get('/register/customer', function() { header('Location: ' . BASE_URL . '/register?role=customer'); exit; });
+$router->post('/register/customer', function() { $_POST['role'] = 'customer'; header('Location: ' . BASE_URL . '/register'); exit; });
 
 // Smart Registration (Phone-First One-Click)
 $router->get('/register/smart', 'Auth\\OtpAuthController@showPhoneInput');
@@ -810,17 +810,17 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/Auth/RegistrationWizardContr
     $router->post('/register/skip', 'Auth\\RegistrationWizardController@skip');
 }
 
-// Unified Authentication (LoginController — replaces CustomerAuthController)
-$router->get('/login', 'Auth\\LoginController@showLogin');
-$router->post('/login', 'Auth\\LoginController@authenticate');
-$router->get('/logout', 'Auth\\LoginController@logout');
+// Unified Authentication (AuthController — consolidates LoginController + AuthenticationController + AuthController + CustomerAuthController)
+$router->get('/login', 'Auth\\AuthController@showLogin');
+$router->post('/login', 'Auth\\AuthController@authenticate');
+$router->get('/logout', 'Auth\\AuthController@logout');
 
 // Unified Auth aliases (backward compatibility)
-$router->get('/auth/login', 'Auth\\LoginController@showLogin');
-$router->post('/auth/login', 'Auth\\LoginController@authenticate');
+$router->get('/auth/login', 'Auth\\AuthController@showLogin');
+$router->post('/auth/login', 'Auth\\AuthController@authenticate');
 $router->get('/auth/register', 'Auth\\RegisterController@showRegister');
 $router->post('/auth/register', 'Auth\\RegisterController@handleRegister');
-$router->get('/auth/logout', 'Auth\\LoginController@logout');
+$router->get('/auth/logout', 'Auth\\AuthController@logout');
 
 // CoreAuth — Unified Auth (replaces all role-specific auth over time)
 $router->post('/auth/smart/role', 'Auth\\OtpAuthController@saveRoleSelection');
@@ -1624,13 +1624,15 @@ $router->get('/admin/commission/calculations', 'App\Http\Controllers\Admin\Commi
 $router->get('/admin/commission/payments', 'App\Http\Controllers\Admin\CommissionAdminController@payments');
 $router->get('/admin/commission/reports', 'App\Http\Controllers\Admin\CommissionAdminController@reports');
 
-// Authentication Routes (Note: /login, /register, /logout already defined earlier)
-$router->get('/forgot-password', 'App\Http\Controllers\AuthController@forgotPassword');
-$router->post('/forgot-password', 'App\Http\Controllers\Auth\AuthenticationController@forgotPassword');
-$router->get('/reset-password', 'App\Http\Controllers\Auth\AuthenticationController@showResetPassword');
-$router->post('/reset-password', 'App\Http\Controllers\Auth\AuthenticationController@resetPassword');
-$router->get('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
-$router->post('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
+// Password Reset (consolidated into AuthController)
+$router->get('/forgot-password', 'Auth\\AuthController@showForgotPassword');
+$router->post('/forgot-password', 'Auth\\AuthController@forgotPassword');
+$router->get('/reset-password', 'Auth\\AuthController@showResetPassword');
+$router->post('/reset-password', 'Auth\\AuthController@resetPassword');
+$router->get('/change-password', 'Auth\\AuthController@showChangePassword');
+$router->post('/change-password', 'Auth\\AuthController@changePassword');
+$router->get('/verify-email', 'Auth\\AuthController@verifyEmail');
+$router->post('/verify-email', 'Auth\\AuthController@verifyEmailPost');
 
 // Legacy /customer/* routes removed — customers use /user/dashboard via Front\UserController
 // AppCoreService handles any lingering /customer/dashboard URLs with a redirect

@@ -6,4 +6,4 @@ App\Core\ConfigService::getInstance();
 $db = App\Core\Database\Database::getInstance();
 
 $db->execute("ALTER TABLE pincodes ADD COLUMN IF NOT EXISTS is_active TINYINT(1) DEFAULT 1");
-echo "✅ Added is_active column to pincodes\n";
+echo "âœ… Added is_active column to pincodes\n";?>

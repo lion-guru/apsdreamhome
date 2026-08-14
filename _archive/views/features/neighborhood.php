@@ -11,7 +11,7 @@
                     <?php if (!empty($property)): ?>
                         <h6><?= htmlspecialchars($property['name'] ?? '') ?></h6>
                         <p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location'] ?? '') ?></p>
-                        <p class="text-muted small mb-0"><i class="fas fa-tag me-1"></i>₹<?= number_format((int)($property['price'] ?? 0)) ?></p>
+                        <p class="text-muted small mb-0"><i class="fas fa-tag me-1"></i>â‚¹<?= number_format((int)($property['price'] ?? 0)) ?></p>
                     <?php else: ?>
                         <p class="text-muted">Property not selected.</p>
                     <?php endif; ?>
@@ -40,7 +40,7 @@
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Neighborhood Stats</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
-                        <div class="col-md-4"><div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Avg. Property Price</small><strong>₹<?= number_format((int)($neighborhood['avg_price'] ?? 0)) ?></strong></div></div>
+                        <div class="col-md-4"><div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Avg. Property Price</small><strong>â‚¹<?= number_format((int)($neighborhood['avg_price'] ?? 0)) ?></strong></div></div>
                         <div class="col-md-4"><div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Price Trend (YoY)</small><strong class="<?= ((float)($neighborhood['price_trend'] ?? 0) >= 0) ? 'text-success' : 'text-danger' ?>"><?= round((float)($neighborhood['price_trend'] ?? 0), 1) ?>%</strong></div></div>
                         <div class="col-md-4"><div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Properties Nearby</small><strong><?= (int)($neighborhood['properties_nearby'] ?? 0) ?></strong></div></div>
                     </div>
@@ -68,15 +68,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h6>Crime Index</h6>
-                            <div class="progress mb-3" style="height:20px">
-                                <div class="progress-bar bg-<?= ((int)($neighborhood['crime_index'] ?? 0) < 30) ? 'success' : (((int)($neighborhood['crime_index'] ?? 0) < 60) ? 'warning' : 'danger') ?>" style="width:<?= min(100, (int)($neighborhood['crime_index'] ?? 0)) ?>%"><?= (int)($neighborhood['crime_index'] ?? 0) ?>/100</div>
+                            <div class="progress mb-3" class="style-40280">
+                                <div class="progress-bar bg-<?= ((int)($neighborhood['crime_index'] ?? 0) < 30) ? 'success' : (((int)($neighborhood['crime_index'] ?? 0) < 60) ? 'warning' : 'danger') ?>" class="style-3498"><?= (int)($neighborhood['crime_index'] ?? 0) ?>/100</div>
                             </div>
                             <h6>Population Density</h6>
-                            <p class="text-muted"><?= number_format((int)($neighborhood['population_density'] ?? 0)) ?> / km²</p>
+                            <p class="text-muted"><?= number_format((int)($neighborhood['population_density'] ?? 0)) ?> / kmÂ²</p>
                         </div>
                         <div class="col-md-6">
                             <h6>Avg. Income Level</h6>
-                            <p class="text-muted">₹<?= number_format((int)($neighborhood['avg_income'] ?? 0)) ?>/yr</p>
+                            <p class="text-muted">â‚¹<?= number_format((int)($neighborhood['avg_income'] ?? 0)) ?>/yr</p>
                             <h6>Growth Potential</h6>
                             <p class="text-muted"><?= round((float)($neighborhood['growth_potential'] ?? 0), 1) ?> / 10</p>
                         </div>

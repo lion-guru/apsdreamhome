@@ -315,11 +315,11 @@ class AIAgentPersonality {
 
         // Add mood-based touches
         if ($this->current_mood === 'energetic') {
-            $response = "🚀 " . $response;
+            $response = "ðŸš€ " . $response;
         } elseif ($this->current_mood === 'focused') {
-            $response = "💡 " . $response;
+            $response = "ðŸ’¡ " . $response;
         } elseif ($this->current_mood === 'reflective') {
-            $response = "🤔 " . $response;
+            $response = "ðŸ¤” " . $response;
         }
 
         // Add empathy for frustrated users
@@ -329,7 +329,7 @@ class AIAgentPersonality {
 
         // Add celebration for positive interactions
         if ($user_analysis['emotional_state'] === 'positive') {
-            $response = "That's fantastic! " . $response . " 🎉";
+            $response = "That's fantastic! " . $response . " ðŸŽ‰";
         }
 
         // Add follow-up questions for complex queries
@@ -662,4 +662,4 @@ function getAISelfReflection() {
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

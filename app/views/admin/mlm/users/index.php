@@ -24,7 +24,7 @@
                     <?php if (empty($associates)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-user-plus fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-user-plus fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No associates found</h5>
                                 <p class="text-muted mb-3">Register your first MLM associate to start building your network and tracking commissions.</p>
                                 <a href="<?= BASE_URL ?>/admin/mlm/users/create" class="btn btn-primary">
@@ -43,7 +43,7 @@
                                     <?= htmlspecialchars(ucfirst($a['level'] ?? 'Bronze')) ?>
                                 </span></td>
                                 <td><?= $a['total_downline'] ?? $a['downline_count'] ?? 0 ?></td>
-                                <td>₹<?= number_format($a['earnings'] ?? $a['total_earnings'] ?? 0, 2) ?></td>
+                                <td>â‚¹<?= number_format($a['earnings'] ?? $a['total_earnings'] ?? 0, 2) ?></td>
                                 <td><?php $s = $a['status'] ?? 'active'; ?>
                                     <span class="badge bg-<?= $s === 'active' ? 'success' : ($s === 'inactive' ? 'secondary' : 'warning') ?>">
                                         <?= ucfirst($s) ?>

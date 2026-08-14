@@ -944,18 +944,18 @@ foreach ($tables as $name => $sql) {
     try {
         $pdo->exec($sql);
         $created++;
-        echo "  ✓ $name\n";
+        echo "  âœ“ $name\n";
     } catch (Exception $e) {
         if (strpos($e->getMessage(), 'already exists') !== false) {
             $exists++;
             echo "  - $name (exists)\n";
         } else {
             $failed++;
-            echo "  ✗ $name: " . substr($e->getMessage(), 0, 80) . "\n";
+            echo "  âœ— $name: " . substr($e->getMessage(), 0, 80) . "\n";
         }
     }
 }
 
 echo PHP_EOL . "=== PHASE 24-33 TABLES COMPLETE ===" . PHP_EOL;
 echo "Created: $created | Exists: $exists | Failed: $failed" . PHP_EOL;
-echo "Total tables in script: " . count($tables) . PHP_EOL;
+echo "Total tables in script: " . count($tables) . PHP_EOL;?>

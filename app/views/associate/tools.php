@@ -28,7 +28,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card tool-card h-100 border-0 shadow-sm" data-tool-id="<?= $tool['id'] ?>">
                 <div class="card-header bg-white border-0 py-3 px-4">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="tool-icon-wrapper" style="background: linear-gradient(135deg, <?= $tool['color'] ?>, <?= $tool['color'] ?>cc);">
+                        <div class="tool-icon-wrapper" class="style-97798">
                             <i class="fas <?= $tool['icon'] ?> text-white fs-4"></i>
                         </div>
                     </div>
@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <p class="text-muted small mb-3"><?= htmlspecialchars($tool['description']) ?></p>
                     
                     <!-- Tool Form (collapsible) -->
-                    <div class="tool-form" style="display: none;">
+                    <div class="tool-form" class="style-54390">
                         <form id="tool-form-<?= $tool['id'] ?>" class="tool-calc-form">
     <?php echo CSRFProtection::csrfField(); ?>
                             <?php foreach ($tool['fields'] as $field): ?>
@@ -73,7 +73,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <i class="fas fa-times me-1"></i> Close
                                 </button>
                             </div>
-                            <div class="tool-result mt-3 p-3 bg-light rounded" style="display: none;"></div>
+                            <div class="tool-result mt-3 p-3 bg-light rounded" class="style-54390"></div>
                         </form>
                     </div>
                     
@@ -193,18 +193,18 @@ document.querySelectorAll('.tool-calc-form').forEach(form => {
                 html += '<h6 class="mb-2"><i class="fas fa-check-circle me-1"></i> Result</h6>';
                 
                 if (toolId === 'emi') {
-                    html += `<p class="mb-1"><strong>Monthly EMI:</strong> ₹${data.emi.toLocaleString('en-IN')}</p>`;
-                    html += `<p class="mb-1"><strong>Total Interest:</strong> ₹${data.total_interest.toLocaleString('en-IN')}</p>`;
-                    html += `<p class="mb-0"><strong>Total Payable:</strong> ₹${data.total_payable.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-1"><strong>Monthly EMI:</strong> â‚¹${data.emi.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-1"><strong>Total Interest:</strong> â‚¹${data.total_interest.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-0"><strong>Total Payable:</strong> â‚¹${data.total_payable.toLocaleString('en-IN')}</p>`;
                 } else if (toolId === 'stamp-duty') {
-                    html += `<p class="mb-1"><strong>Stamp Duty:</strong> ₹${data.stamp_duty.toLocaleString('en-IN')}</p>`;
-                    html += `<p class="mb-1"><strong>Registration (1%):</strong> ₹${data.registration.toLocaleString('en-IN')}</p>`;
-                    html += `<p class="mb-0"><strong>Total:</strong> ₹${data.total.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-1"><strong>Stamp Duty:</strong> â‚¹${data.stamp_duty.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-1"><strong>Registration (1%):</strong> â‚¹${data.registration.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-0"><strong>Total:</strong> â‚¹${data.total.toLocaleString('en-IN')}</p>`;
                     html += `<small class="text-muted">Rate used: ${data.rate_used}</small>`;
                 } else if (toolId === 'plot-converter') {
                     html += `<p class="mb-0"><strong>${data.input} ${data.from} = ${data.result.toLocaleString('en-IN')} ${data.to}</strong></p>`;
                 } else if (toolId === 'commission') {
-                    html += `<p class="mb-1"><strong>Commission:</strong> ₹${data.commission.toLocaleString('en-IN')}</p>`;
+                    html += `<p class="mb-1"><strong>Commission:</strong> â‚¹${data.commission.toLocaleString('en-IN')}</p>`;
                     html += `<p class="mb-0"><strong>Effective Rate:</strong> ${data.effective_rate}%</p>`;
                 }
                 

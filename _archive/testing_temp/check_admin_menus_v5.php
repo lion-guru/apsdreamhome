@@ -46,4 +46,4 @@ foreach ($items as $item) {
         $results[] = str_pad($httpCode, 5) . " | " . str_pad($isError, 10) . " | " . str_pad($item['name'], 30) . " | " . $item['url'];
     }
 }
-echo count($results) > 0 ? implode("\n", $results) : "All routes OK";
+echo count($results) > 0 ? implode("\n", $results) : "All routes OK";?>

@@ -24,4 +24,4 @@ foreach ($rows3 as $r) echo "  desig={$r['designation']} dept={$r['department']}
 // 4. Actual employees
 echo "\n=== EMPLOYEES TABLE ===\n";
 $rows4 = $pdo->query("SELECT id, user_id, name, designation, department, status FROM employees ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
-foreach ($rows4 as $r) echo "  id={$r['id']} user_id={$r['user_id']} name={$r['name']} desig={$r['designation']} dept={$r['department']} status={$r['status']}\n";
+foreach ($rows4 as $r) echo "  id={$r['id']} user_id={$r['user_id']} name={$r['name']} desig={$r['designation']} dept={$r['department']} status={$r['status']}\n";?>

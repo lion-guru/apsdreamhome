@@ -103,4 +103,4 @@ if (count($uncategorized) > 0) {
     foreach ($uncategorized as $name => $info) {
         echo sprintf("  %-50s %3d cols  %4d rows\n", $name, $info['col_count'], $info['rows']);
     }
-}
+}?>

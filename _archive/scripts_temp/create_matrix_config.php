@@ -63,4 +63,4 @@ try {
     echo "Note: " . $e->getMessage() . " (column may already exist)\n";
 }
 
-echo "\n=== Done! ===\n";
+echo "\n=== Done! ===\n";?>

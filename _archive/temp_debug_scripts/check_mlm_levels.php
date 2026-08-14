@@ -37,4 +37,4 @@ echo "mlm_joining_packages table: " . ($r->fetch() ? 'EXISTS' : 'NOT FOUND') . "
 
 // Check mlm_associate_registrations
 $r = $pdo->query("SHOW TABLES LIKE 'mlm_associate_registrations'");
-echo "mlm_associate_registrations table: " . ($r->fetch() ? 'EXISTS' : 'NOT FOUND') . "\n";
+echo "mlm_associate_registrations table: " . ($r->fetch() ? 'EXISTS' : 'NOT FOUND') . "\n";?>

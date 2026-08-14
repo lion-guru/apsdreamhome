@@ -50,7 +50,7 @@ $logged_in = $logged_in ?? false;
                                 <div class="rating-input">
                                     <?php for ($i = 5; $i >= 1; $i--): ?>
                                         <input type="radio" name="rating" value="<?= $i ?>" id="r<?= $i ?>" <?= ($_POST['rating'] ?? 5) == $i ? 'checked' : '' ?>>
-                                        <label for="r<?= $i ?>" class="me-2" style="font-size: 28px; color: #f59e0b; cursor: pointer;">★</label>
+                                        <label for="r<?= $i ?>" class="me-2" class="style-15810">â˜…</label>
                                     <?php endfor; ?>
                                 </div>
                             </div>

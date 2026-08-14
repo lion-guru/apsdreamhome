@@ -55,4 +55,4 @@ try {
 } catch (\Exception $e) {
     echo "[" . date('Y-m-d H:i:s') . "] CRON ERROR: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

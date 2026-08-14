@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $property = $data['property'] ?? null;
 $property_images = $data['property_images'] ?? [];
 $related = $data['related_properties'] ?? [];
@@ -157,11 +157,11 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
         </div>
         <?php if ($property): ?>
             <h1><?= htmlspecialchars($property['title'] ?? $property['name'] ?? 'Property') ?></h1>
-            <div class="pd-location" style="color:rgba(255,255,255,0.8);font-size:0.9rem">
+            <div class="pd-location" class="style-74939">
                 <i class="fas fa-map-marker-alt"></i>
                 <?= htmlspecialchars($property['location'] ?? $property['address'] ?? '') ?>
                 <?php if (!empty($property['status'])): ?>
-                    <span class="badge" style="background:rgba(16,185,129,0.2);color:#10b981;border:1px solid rgba(16,185,129,0.3);margin-left:12px;padding:4px 12px;border-radius:8px;font-size:0.75rem">
+                    <span class="badge" class="style-55710">
                         <?= ucfirst($property['status']) ?>
                     </span>
                 <?php endif; ?>
@@ -172,7 +172,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
     </div>
 </div>
 
-<div class="container" style="position:relative;z-index:5">
+<div class="container" class="style-54650">
 <?php if ($property): ?>
 <div class="row g-4">
     <!-- Main Content -->
@@ -184,15 +184,15 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                     <?php foreach ($images as $i => $img): ?>
                         <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
                             <?php $src = !empty($img['image_path']) ? $img['image_path'] : BASE_URL . '/assets/images/placeholder/property.svg'; ?>
-                            <img src="<?= htmlspecialchars($src) ?>" class="d-block w-100 gallery-trigger" style="height:420px;object-fit:cover;cursor:pointer" alt="Property image <?= $i+1 ?>" onclick="openLightbox(<?= $i ?>)">
+                            <img src="<?= htmlspecialchars($src) ?>" class="d-block w-100 gallery-trigger" class="style-18064" alt="Property image <?= $i+1 ?>" onclick="openLightbox(<?= $i ?>)">
                         </div>
                     <?php endforeach; ?>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" style="background:rgba(0,0,0,0.5);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center"></span>
+                    <span class="carousel-control-prev-icon" class="style-34381"></span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" style="background:rgba(0,0,0,0.5);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center"></span>
+                    <span class="carousel-control-next-icon" class="style-34381"></span>
                 </button>
                 <div class="gallery-counter"><?= count($images) ?> photos</div>
                 <button class="gallery-fullscreen" onclick="openLightbox(0)" title="View fullscreen"><i class="fas fa-expand"></i></button>
@@ -218,24 +218,24 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                             <?= htmlspecialchars($property['location'] ?? $property['address'] ?? '') ?>
                         </div>
                     </div>
-                    <button class="btn btn-sm" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px" onclick="toggleWishlist(this)" data-id="<?= $property['id'] ?? 0 ?>">
-                        <i class="far fa-heart" style="color:#ef4444"></i>
+                    <button class="btn btn-sm" class="style-34225" onclick="toggleWishlist(this)" data-id="<?= $property['id'] ?? 0 ?>">
+                        <i class="far fa-heart" class="style-78822"></i>
                     </button>
                 </div>
             </div>
 
             <div class="pd-price-bar">
                 <div class="pd-price">
-                    ₹<?= number_format((float)($property['price'] ?? 0)) ?>
+                    â‚¹<?= number_format((float)($property['price'] ?? 0)) ?>
                     <?php if (!empty($property['price_type'])): ?>
                         <small><?= $property['price_type'] ?></small>
                     <?php endif; ?>
                 </div>
                 <div class="pd-actions">
-                    <button class="btn" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border:none;border-radius:10px;padding:8px 20px;font-weight:600" onclick="document.getElementById('enquiryForm').scrollIntoView({behavior:'smooth'})">
+                    <button class="btn" class="style-58242" onclick="document.getElementById('enquiryForm').scrollIntoView({behavior:'smooth'})">
                         <i class="fas fa-envelope me-1"></i> Enquire
                     </button>
-                    <a href="tel:+919277121112" class="btn" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:10px;padding:8px 20px;font-weight:600;text-decoration:none">
+                    <a href="tel:+919277121112" class="btn" class="style-88142">
                         <i class="fas fa-phone me-1"></i> Call
                     </a>
                 </div>
@@ -279,7 +279,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
             <?php endif; ?>
 
-            <div class="pd-section" style="border-top:1px solid #f1f5f9">
+            <div class="pd-section" class="style-50873">
                 <h5><i class="fas fa-info-circle"></i> Property Details</h5>
                 <div class="pd-detail-grid">
                     <?php if (!empty($property['bedrooms'])): ?>
@@ -340,7 +340,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
 
             <?php if (!empty($amenities)): ?>
-            <div class="pd-section" style="border-top:1px solid #f1f5f9">
+            <div class="pd-section" class="style-50873">
                 <h5><i class="fas fa-star"></i> Amenities</h5>
                 <div class="pd-amenities">
                     <?php foreach ($amenities as $amenity): ?>
@@ -403,7 +403,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 </div>
                 <?php if (!empty($property['price'])): ?>
                 <a href="<?= BASE_URL ?>/payment/initiate?property_id=<?= $property['id'] ?? 0 ?>&amount=<?= $property['price'] ?>" class="btn btn-buy w-100 mt-2">
-                    <i class="fas fa-credit-card me-1"></i> Buy Now — ₹<?= number_format($property['price']) ?>
+                    <i class="fas fa-credit-card me-1"></i> Buy Now â€” â‚¹<?= number_format($property['price']) ?>
                 </a>
                 <?php endif; ?>
             </div>
@@ -412,18 +412,18 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
         <!-- Related Properties -->
         <?php if (!empty($related)): ?>
         <div class="pd-sidebar-card scroll-reveal">
-            <div class="card-head" style="background:linear-gradient(135deg,#6366f1,#0d9488)">
+            <div class="card-head" class="style-30826">
                 <h5><i class="fas fa-th-large me-2"></i> Similar Properties</h5>
             </div>
-            <div class="card-body-padded" style="padding:8px 22px">
+            <div class="card-body-padded" class="style-36111">
                 <?php foreach (array_slice($related, 0, 4) as $rel): ?>
                     <a href="/property/<?= $rel['id'] ?>" class="pd-related-item">
                         <?php $relImg = !empty($rel['image']) ? BASE_URL.'/assets/images/properties/'.$rel['image'] : BASE_URL.'/assets/images/placeholder/property.svg'; ?>
                         <img src="<?= $relImg ?>" alt="<?= htmlspecialchars($rel['title'] ?? $rel['name'] ?? '') ?>">
                         <div>
                             <div class="rel-name"><?= htmlspecialchars($rel['title'] ?? $rel['name'] ?? '') ?></div>
-                            <div class="rel-price">₹<?= number_format($rel['price'] ?? 0) ?></div>
-                            <small style="color:#94a3b8;font-size:0.75rem"><?= htmlspecialchars($rel['location'] ?? $rel['address'] ?? '') ?></small>
+                            <div class="rel-price">â‚¹<?= number_format($rel['price'] ?? 0) ?></div>
+                            <small class="style-6286"><?= htmlspecialchars($rel['location'] ?? $rel['address'] ?? '') ?></small>
                         </div>
                     </a>
                 <?php endforeach; ?>
@@ -435,10 +435,10 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 
 <!-- Reviews Section -->
 <div class="pd-reviews-card mt-4 mb-5 scroll-reveal">
-    <div style="padding:20px 28px;border-bottom:1px solid #f1f5f9;background:linear-gradient(135deg,#fefce8,#fef9c3)">
-        <h5 style="margin:0;font-weight:700;color:#1e293b"><i class="fas fa-star me-2" style="color:#f59e0b"></i> Customer Reviews</h5>
+    <div class="style-9749">
+        <h5 class="style-75784"><i class="fas fa-star me-2" class="style-62735"></i> Customer Reviews</h5>
     </div>
-    <div style="padding:20px 28px">
+    <div class="style-93593">
         <?php if (!empty($reviews)): ?>
             <?php foreach ($reviews as $review): ?>
                 <div class="pd-review-item">
@@ -456,42 +456,42 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             <?php endforeach; ?>
         <?php else: ?>
             <div class="text-center py-4">
-                <i class="fas fa-comment-dots fa-2x mb-2" style="color:#e2e8f0"></i>
+                <i class="fas fa-comment-dots fa-2x mb-2" class="style-91271"></i>
                 <p class="text-muted mb-0">No reviews yet. Be the first to review!</p>
             </div>
         <?php endif; ?>
 
-        <hr style="margin:24px 0;border-color:#f1f5f9">
-        <h6 class="fw-bold mb-3" style="color:#1e293b">Write a Review</h6>
+        <hr class="style-98128">
+        <h6 class="fw-bold mb-3" class="style-8420">Write a Review</h6>
         <form action="<?= BASE_URL ?>/property/review" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="property_id" value="<?= $property['id'] ?? 0 ?>">
             <div class="row mb-3">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#475569">Name *</label>
-                    <input type="text" name="name" class="form-control" style="border-radius:10px;border:1.5px solid #e2e8f0" required>
+                    <label class="form-label" class="style-32973">Name *</label>
+                    <input type="text" name="name" class="form-control" class="style-48720" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#475569">Email *</label>
-                    <input type="email" name="email" class="form-control" style="border-radius:10px;border:1.5px solid #e2e8f0" required>
+                    <label class="form-label" class="style-32973">Email *</label>
+                    <input type="email" name="email" class="form-control" class="style-48720" required>
                 </div>
             </div>
             <div class="mb-3">
-                <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#475569">Rating *</label>
-                <select name="rating" class="form-select" style="border-radius:10px;border:1.5px solid #e2e8f0" required>
+                <label class="form-label" class="style-32973">Rating *</label>
+                <select name="rating" class="form-select" class="style-48720" required>
                     <option value="">Select Rating</option>
-                    <option value="5">5 — Excellent</option>
-                    <option value="4">4 — Good</option>
-                    <option value="3">3 — Average</option>
-                    <option value="2">2 — Poor</option>
-                    <option value="1">1 — Terrible</option>
+                    <option value="5">5 â€” Excellent</option>
+                    <option value="4">4 â€” Good</option>
+                    <option value="3">3 â€” Average</option>
+                    <option value="2">2 â€” Poor</option>
+                    <option value="1">1 â€” Terrible</option>
                 </select>
             </div>
             <div class="mb-3">
-                <label class="form-label" style="font-size:0.8rem;font-weight:600;color:#475569">Your Review *</label>
-                <textarea name="review_text" class="form-control" rows="4" style="border-radius:10px;border:1.5px solid #e2e8f0" required placeholder="Share your experience..."></textarea>
+                <label class="form-label" class="style-32973">Your Review *</label>
+                <textarea name="review_text" class="form-control" rows="4" class="style-48720" required placeholder="Share your experience..."></textarea>
             </div>
-            <button type="submit" class="btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-weight:600">
+            <button type="submit" class="btn" class="style-86133">
                 <i class="fas fa-paper-plane me-1"></i> Submit Review
             </button>
         </form>
@@ -501,12 +501,12 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 <?php else: ?>
 <!-- Property Not Found -->
 <div class="text-center py-5 scroll-reveal">
-    <div style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#fef2f2,#fecaca);display:flex;align-items:center;justify-content:center;margin:0 auto 24px">
-        <i class="fas fa-home fa-3x" style="color:#ef4444"></i>
+    <div class="style-11515">
+        <i class="fas fa-home fa-3x" class="style-78822"></i>
     </div>
-    <h3 style="color:#1e293b;font-weight:700">Property Not Found</h3>
-    <p style="color:#64748b;max-width:400px;margin:12px auto 24px">The property you're looking for doesn't exist or has been removed.</p>
-    <a href="/properties" class="btn px-4" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:12px;font-weight:600">
+    <h3 class="style-34088">Property Not Found</h3>
+    <p class="style-3672">The property you're looking for doesn't exist or has been removed.</p>
+    <a href="/properties" class="btn px-4" class="style-58735">
         <i class="fas fa-search me-1"></i> Browse Properties
     </a>
 </div>

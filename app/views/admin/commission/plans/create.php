@@ -30,7 +30,7 @@ $ranks = [
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0" style="color:#e0e0e0"><i class="fas fa-plus-circle me-2" style="color:#4f8cff"></i>Create Commission Plan</h5>
+        <h5 class="m-0" class="style-43926"><i class="fas fa-plus-circle me-2" class="style-13856"></i>Create Commission Plan</h5>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
@@ -44,7 +44,7 @@ $ranks = [
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan Code *</label>
-                    <input type="text" name="plan_code" class="cp-input" required placeholder="e.g. STD" style="text-transform:uppercase" maxlength="20">
+                    <input type="text" name="plan_code" class="cp-input" required placeholder="e.g. STD" class="style-36130" maxlength="20">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan Type</label>
@@ -65,7 +65,7 @@ $ranks = [
                 </div>
             </div>
 
-            <h6 style="color:#a855f7;margin-bottom:1rem"><i class="fas fa-cog me-1"></i>Global Commission Parameters</h6>
+            <h6 class="style-36277"><i class="fas fa-cog me-1"></i>Global Commission Parameters</h6>
             <div class="row mb-4">
                 <div class="col-md-2">
                     <label class="cp-label">Global Cap %</label>
@@ -97,28 +97,28 @@ $ranks = [
                 </div>
             </div>
 
-            <h6 style="color:#a855f7;margin-bottom:1rem"><i class="fas fa-layer-group me-1"></i>Rank Levels (Default 7)</h6>
-            <div style="margin-bottom:1.5rem;overflow-x:auto">
+            <h6 class="style-36277"><i class="fas fa-layer-group me-1"></i>Rank Levels (Default 7)</h6>
+            <div class="style-15107">
                 <table class="table rank-table m-0">
                     <thead>
                         <tr>
                             <th>#</th><th>Rank Name</th><th>Direct %</th><th>Team %</th>
                             <th>Level Bonus %</th><th>Matching %</th><th>Leadership %</th>
-                            <th>Performance %</th><th>GBV Threshold (₹)</th>
+                            <th>Performance %</th><th>GBV Threshold (â‚¹)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($ranks as $r): ?>
                         <tr>
-                            <td style="color:#8892b0"><?= $r[1] ?></td>
-                            <td style="color:#e0e0e0;font-weight:600"><?= $r[0] ?></td>
+                            <td class="style-53581"><?= $r[1] ?></td>
+                            <td class="style-93158"><?= $r[0] ?></td>
                             <td><input type="number" value="<?= $r[2] ?>" step="0.5" min="0" max="100"></td>
                             <td><input type="number" value="<?= $r[3] ?>" step="0.5" min="0" max="100"></td>
                             <td><input type="number" value="<?= $r[4] ?>" step="0.5" min="0" max="100"></td>
                             <td><input type="number" value="<?= $r[5] ?>" step="0.5" min="0" max="100"></td>
                             <td><input type="number" value="<?= $r[6] ?>" step="0.5" min="0" max="100"></td>
                             <td><input type="number" value="<?= $r[7] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[8] ?>" step="100000" min="0" style="text-align:left"></td>
+                            <td><input type="number" value="<?= $r[8] ?>" step="100000" min="0" class="style-19004"></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

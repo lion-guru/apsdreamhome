@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="news-hero-section text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
+<section class="news-hero-section text-white py-5" class="style-656">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -55,7 +55,7 @@
                     $newsImage = $news['image'];
                     $newsImageUrl = str_starts_with($newsImage, 'http') ? $newsImage : get_asset_url($newsImage);
                     ?>
-                    <img src="<?= htmlspecialchars($newsImageUrl) ?>" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" class="img-fluid rounded mb-4 w-100" style="max-height: 450px; object-fit: cover;">
+                    <img src="<?= htmlspecialchars($newsImageUrl) ?>" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" class="img-fluid rounded mb-4 w-100" class="style-64278">
                 <?php endif; ?>
 
                 <div class="d-flex align-items-center gap-3 mb-4">

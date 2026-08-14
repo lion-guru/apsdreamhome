@@ -20,4 +20,4 @@ foreach ($iterator as $file) {
 
 echo "Services needing tenant scoping:\n";
 foreach ($unscoped as $f) echo "  $f\n";
-echo "Total: " . count($unscoped) . "\n";
+echo "Total: " . count($unscoped) . "\n";?>

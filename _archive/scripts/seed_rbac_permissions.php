@@ -1,9 +1,9 @@
 <?php
 /**
- * RBAC Seed: Populate admin_role_menu_permissions with role→menu access defaults
+ * RBAC Seed: Populate admin_role_menu_permissions with roleâ†’menu access defaults
  * 
  * Logic:
- * - super_admin / admin: FULL access to all 135 items (no rows needed — AdminMenuService bypasses)
+ * - super_admin / admin: FULL access to all 135 items (no rows needed â€” AdminMenuService bypasses)
  * - manager: access to most items except system/security settings
  * - employee: limited to operational sections (backoffice, operations)
  * - associate: MLM + limited leads
@@ -103,7 +103,7 @@ try {
             if (isset($sectionPerms[$section])) {
                 $perms = $sectionPerms[$section];
             } else {
-                // Section not listed → no access (skip)
+                // Section not listed â†’ no access (skip)
                 continue;
             }
 
@@ -142,4 +142,4 @@ try {
 } catch (Exception $e) {
     echo "  [ERROR] " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

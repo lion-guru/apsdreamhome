@@ -35,7 +35,7 @@ foreach ($colonies as $colony) {
     $entries = [
         ['projects', "$name mein kitne plot hain", "{$name} mein total $total plots hain, jismein $available available hain. Area: {$minArea}-{$maxArea} sqft."],
         ['projects', "$name kaha hai", "{$name} Gorakhpur, Uttar Pradesh mein hai. Premium colony with all modern amenities."],
-        ['pricing', "$name ka price kya hai", "{$name} mein plots ₹5.5 Lakh se ₹15 Lakh tak available hain. Size: {$minArea}-{$maxArea} sqft."],
+        ['pricing', "$name ka price kya hai", "{$name} mein plots â‚¹5.5 Lakh se â‚¹15 Lakh tak available hain. Size: {$minArea}-{$maxArea} sqft."],
         ['amenities', "$name mein kya kya hai", "{$name} mein hain: 24/7 security, paved roads, water supply, electricity, parks, green spaces."],
     ];
 
@@ -61,7 +61,7 @@ foreach ($propTypes as $pt) {
     $db->execute(
         "INSERT INTO ai_knowledge_base (category, question_pattern, answer, usage_count, effectiveness_score, created_at, updated_at)
          VALUES (?, ?, ?, 0, 0.00, NOW(), NOW())",
-        ['pricing', "{$pt['type']} ka price kitna hai", ucfirst($pt['type']) . " available hain ₹{$minP} Lakh se ₹{$maxP} Lakh tak. Total {$pt['cnt']} available."]
+        ['pricing', "{$pt['type']} ka price kitna hai", ucfirst($pt['type']) . " available hain â‚¹{$minP} Lakh se â‚¹{$maxP} Lakh tak. Total {$pt['cnt']} available."]
     );
     echo "  Added: {$pt['type']} pricing\n";
 }
@@ -72,7 +72,7 @@ $services = [
     ['services', 'commission kaise milega', 'APS Dream Home mein commission milta hai: Direct Sale 5-20%, Level 1 Referral 7%, Level 2 Referral 5%. Associate banein aur earning shuru karein!'],
     ['services', 'site visit kaise karein', 'Site visit ke liye call karein +91 92771 21112 ya WhatsApp karein. Mon-Sat 9AM-6PM available. Free transportation bhi milta hai!'],
     ['contact', 'phone number kya hai', 'Call us: +91 92771 21112\nWhatsApp: +91 92771 21112\nEmail: info@apsdreamhome.com\nOffice: Raghunath Nagri, Gorakhpur'],
-    ['projects', 'aps dream home kya hai', 'APS Dream Home premium real estate company hai Gorakhpur, UP mein. 4 colonies: Suryoday, Raghunath, Braj Radha, Budh Bihar. Plots from ₹5.5L.'],
+    ['projects', 'aps dream home kya hai', 'APS Dream Home premium real estate company hai Gorakhpur, UP mein. 4 colonies: Suryoday, Raghunath, Braj Radha, Budh Bihar. Plots from â‚¹5.5L.'],
 ];
 
 foreach ($services as $s) {
@@ -88,4 +88,4 @@ foreach ($services as $s) {
 
 echo "\n=== Done ===\n";
 $total = $db->fetch("SELECT COUNT(*) as cnt FROM ai_knowledge_base")['cnt'];
-echo "Total knowledge base entries: $total\n";
+echo "Total knowledge base entries: $total\n";?>

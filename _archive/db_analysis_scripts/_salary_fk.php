@@ -17,4 +17,4 @@ foreach ($iter as $f) {
             echo "  Code ref: " . basename($f->getPathname()) . "\n";
         }
     }
-}
+}?>

@@ -5,7 +5,7 @@
         <div>
             <a href="<?= BASE_URL ?>/admin/documents" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
             <a href="<?= !empty($document['file_path']) ? BASE_URL . '/admin/documents/download/' . (int)($document['id'] ?? 0) : '#' ?>" class="btn btn-success <?= empty($document['file_path']) ? 'disabled' : '' ?>"><i class="fas fa-download me-1"></i>Download</a>
-            <form method="POST" action="<?= BASE_URL ?>/admin/documents/delete/<?= (int)($document['id'] ?? 0) ?>" style="display:inline" onsubmit="return confirm('Delete this document permanently?');">
+            <form method="POST" action="<?= BASE_URL ?>/admin/documents/delete/<?= (int)($document['id'] ?? 0) ?>" class="style-71727" onsubmit="return confirm('Delete this document permanently?');">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Delete</button>
             </form>
@@ -21,7 +21,7 @@
                         <p class="text-muted"><?= htmlspecialchars($document['description'] ?? 'No description') ?></p>
 
                         <div class="table-responsive"><table class="table table-bordered mt-3">
-                            <tr><th style="width:200px;">Document Type</th><td><span class="badge bg-info"><?= htmlspecialchars(ucfirst($document['type'] ?? 'N/A')) ?></span></td></tr>
+                            <tr><th class="style-58160">Document Type</th><td><span class="badge bg-info"><?= htmlspecialchars(ucfirst($document['type'] ?? 'N/A')) ?></span></td></tr>
                             <tr><th>File Name</th><td><?= htmlspecialchars(basename($document['file_path'] ?? 'N/A')) ?></td></tr>
                             <tr><th>File Size</th><td><?= isset($document['file_size']) ? number_format($document['file_size'] / 1024, 1) . ' KB' : 'N/A' ?></td></tr>
                             <tr><th>Related Entity</th><td><?= htmlspecialchars(ucfirst($document['related_type'] ?? 'N/A')) ?> <?= !empty($document['related_id']) ? '(ID: ' . (int)$document['related_id'] . ')' : '' ?></td></tr>

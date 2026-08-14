@@ -162,10 +162,10 @@ $logoutUrl  = $nav->logoutUrl();
 window.BASE_URL = '<?php echo BASE_URL; ?>';
 
 /**
- * Unified drawer toggle — replaces openMenu/closeMenu pattern.
- *   toggleDrawer(event)      → toggles open state
- *   toggleDrawer(null,'close') → closes
- *   toggleDrawer(null,'open')  → opens
+ * Unified drawer toggle â€” replaces openMenu/closeMenu pattern.
+ *   toggleDrawer(event)      â†’ toggles open state
+ *   toggleDrawer(null,'close') â†’ closes
+ *   toggleDrawer(null,'open')  â†’ opens
  */
 var _drawerPreviousFocus = null;
 
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     setupDrawerDropdowns();
 
-    // ── Keyboard Trap for Drawer (Accessibility) ──
+    // â”€â”€ Keyboard Trap for Drawer (Accessibility) â”€â”€
     // When drawer is open, Tab cycles within drawer only
     drawer.addEventListener('keydown', function(e) {
         if (e.key !== 'Tab' || !drawer.classList.contains('active')) return;
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ── Swipe-to-Close Drawer Gesture (Mobile) ──
+    // â”€â”€ Swipe-to-Close Drawer Gesture (Mobile) â”€â”€
     var _swipeStartX = 0;
     var _swipeStartY = 0;
     var _swipeTracking = false;
@@ -367,14 +367,14 @@ document.addEventListener('DOMContentLoaded', function() {
     updateHeaderNotifCount();
     setInterval(updateHeaderNotifCount, 30000);
 
-    // ── Smart Auto-Hiding Header ──
+    // â”€â”€ Smart Auto-Hiding Header â”€â”€
     // On mobile: hide on scroll down, show on scroll up (app-like UX)
     // On desktop: always visible with subtle shadow on scroll
     var lastScrollY = 0;
     var headerHidden = false;
     var scrollTick = false;
 
-    // ── ARIA Live Announcements ──
+    // â”€â”€ ARIA Live Announcements â”€â”€
     function announce(message) {
         var region = document.getElementById('ariaLiveRegion');
         if (region) {
@@ -412,12 +412,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isMobileView()) {
             // Mobile: auto-hide behavior
             if (delta > 8 && !headerHidden) {
-                // Scrolling down — hide header
+                // Scrolling down â€” hide header
                 header.style.transform = 'translateY(-100%)';
                 header.classList.add('header-hidden');
                 headerHidden = true;
             } else if (delta < -8 && headerHidden) {
-                // Scrolling up — show header
+                // Scrolling up â€” show header
                 header.style.transform = 'translateY(0)';
                 header.classList.remove('header-hidden');
                 headerHidden = false;
@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try { localStorage.setItem(RECENT_KEY, JSON.stringify(recents)); } catch(e) {}
     }
 
-    /* ── Static commands + pages ── */
+    /* â”€â”€ Static commands + pages â”€â”€ */
     var commands = [
         { label: 'Dashboard', icon: 'fas fa-gauge-high bg-teal', url: BASE_URL + '/admin/dashboard', group: 'Pages' },
         { label: 'Properties', icon: 'fas fa-building bg-teal', url: BASE_URL + '/properties', group: 'Pages' },
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { label: 'Notifications', icon: 'fas fa-bell bg-amber', url: BASE_URL + '/user/notifications', group: 'Account' },
     ];
 
-    /* ── Dynamic: add property search shortcut ── */
+    /* â”€â”€ Dynamic: add property search shortcut â”€â”€ */
     function getSearchResults(query) {
         var q = query.toLowerCase().trim();
         if (q.length < 1) return [];
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentItems = items.filter(function(i) { return !i.divider; });
         activeIndex = -1;
         if (currentItems.length === 0) {
-            results.innerHTML = '<div style="padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;">No results found</div>';
+            results.innerHTML = '<div class="style-68356">No results found</div>';
             return;
         }
 
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     }
 
-    /* ── Keyboard shortcut: Ctrl+K or Cmd+K ── */
+    /* â”€â”€ Keyboard shortcut: Ctrl+K or Cmd+K â”€â”€ */
     document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    /* ── Input handler ── */
+    /* â”€â”€ Input handler â”€â”€ */
     input.addEventListener('input', function() {
         var q = input.value.trim();
         if (q.length === 0) {
@@ -671,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    /* ── Arrow key navigation ── */
+    /* â”€â”€ Arrow key navigation â”€â”€ */
     input.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    /* ── Click on item to navigate + save recent ── */
+    /* â”€â”€ Click on item to navigate + save recent â”€â”€ */
     results.addEventListener('click', function(e) {
         var item = e.target.closest('.command-palette-item');
         if (item) {
@@ -697,12 +697,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    /* ── Click on overlay to close ── */
+    /* â”€â”€ Click on overlay to close â”€â”€ */
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) close();
     });
 
-    /* ── Expose globally ── */
+    /* â”€â”€ Expose globally â”€â”€ */
     window.openCommandPalette = open;
     window.closeCommandPalette = close;
 })();

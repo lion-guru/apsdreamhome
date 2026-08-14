@@ -23,7 +23,7 @@ $department_id = $department_id ?? '';
         <table class="table table-bordered table-sm">
             <thead class="table-light">
                 <tr>
-                    <th style="min-width:150px">Employee</th>
+                    <th class="style-82720">Employee</th>
                     <?php foreach ($week_dates as $wd): ?>
                         <th class="text-center <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
                             <?= htmlspecialchars($wd['day']) ?><br><small><?= htmlspecialchars($wd['date']) ?></small>
@@ -42,7 +42,7 @@ $department_id = $department_id ?? '';
                                 <?php $shift = $schedule_grid[$emp['id']][$wd['date']] ?? null; ?>
                                 <td class="text-center align-middle <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
                                     <?php if ($shift): ?>
-                                        <span class="badge" style="background:<?= htmlspecialchars($shift['color'] ?? '#007bff') ?>">
+                                        <span class="badge" class="style-22927">
                                             <?= htmlspecialchars($shift['shift_type_name'] ?? '') ?>
                                         </span>
                                         <br><small><?= htmlspecialchars($shift['shift_start_time'] ?? '') ?>-<?= htmlspecialchars($shift['shift_end_time'] ?? '') ?></small>

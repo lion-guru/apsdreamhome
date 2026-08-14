@@ -116,25 +116,25 @@ $base = BASE_URL ?? '';
     </div>
 
     <!-- Bulk Actions Bar (hidden by default) -->
-    <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display:none;">
+    <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" class="style-2248">
         <div class="card-body py-2 d-flex align-items-center gap-3">
             <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
-            <select id="bulkAction" class="form-select form-select-sm" style="width:auto;">
+            <select id="bulkAction" class="form-select form-select-sm" class="style-68062">
                 <option value="">Bulk Actions...</option>
                 <option value="status">Change Status</option>
                 <option value="assign">Assign To</option>
                 <option value="delete">Delete Selected</option>
             </select>
-            <select id="bulkStatus" class="form-select form-select-sm" style="width:auto;display:none;">
+            <select id="bulkStatus" class="form-select form-select-sm" class="style-15753">
                 <?php foreach (['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'] as $s): ?>
                     <option value="<?= $s ?>"><?= ucfirst($s) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="bulkAssign" class="form-select form-select-sm" style="width:auto;display:none;">
+            <select id="bulkAssign" class="form-select form-select-sm" class="style-15753">
                 <option value="">Select User...</option>
             </select>
-            <button type="button" class="btn btn-sm btn-warning" id="bulkApply" style="display:none;">Apply</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" id="bulkDelete" style="display:none;">Delete</button>
+            <button type="button" class="btn btn-sm btn-warning" id="bulkApply" class="style-2248">Apply</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" id="bulkDelete" class="style-2248">Delete</button>
         </div>
     </div>
 
@@ -224,7 +224,7 @@ $base = BASE_URL ?? '';
                 <!-- Pagination -->
                 <?php if ($total_pages > 1): ?>
                 <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
-                    <small class="text-muted">Showing <?= (($page - 1) * $per_page) + 1 ?>–<?= min($page * $per_page, $total) ?> of <?= number_format($total) ?> leads</small>
+                    <small class="text-muted">Showing <?= (($page - 1) * $per_page) + 1 ?>â€“<?= min($page * $per_page, $total) ?> of <?= number_format($total) ?> leads</small>
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">

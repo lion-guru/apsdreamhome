@@ -13,4 +13,4 @@ foreach ($tables as $t) {
     } catch (Exception $e) {
         echo $t . ': ERROR - ' . $e->getMessage() . "\n";
     }
-}
+}?>

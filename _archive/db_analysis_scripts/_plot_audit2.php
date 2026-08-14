@@ -22,4 +22,4 @@ foreach ($tables as $t) {
         foreach ($fks as $f) echo "    $t.{$f['COLUMN_NAME']} -> {$f['REFERENCED_TABLE_NAME']}.{$f['REFERENCED_COLUMN_NAME']}\n";
     }
     echo "\n";
-}
+}?>

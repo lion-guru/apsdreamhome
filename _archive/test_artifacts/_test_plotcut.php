@@ -32,4 +32,4 @@ if (!empty($plots)) {
     echo "Keys: " . implode(', ', array_keys($plots[0])) . "\n";
     echo "Plot 0: " . json_encode($plots[0]) . "\n";
     echo "Plot 1: " . json_encode($plots[1]) . "\n";
-}
+}?>

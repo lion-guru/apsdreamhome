@@ -93,4 +93,4 @@ echo "\nFinal mlm_commission_plans schema:\n";
 $r = $pdo->query("DESCRIBE mlm_commission_plans");
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
     echo "  {$row['Field']} {$row['Type']} " . ($row['Null'] === 'YES' ? 'NULL' : 'NOT NULL') . " DEFAULT " . ($row['Default'] ?? 'NONE') . "\n";
-}
+}?>

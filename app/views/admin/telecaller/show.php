@@ -38,7 +38,7 @@ $ratingBadge = function($rating) {
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
                         <tr>
-                            <th style="width: 200px;" class="text-muted">Telecaller</th>
+                            <th class="style-869" class="text-muted">Telecaller</th>
                             <td><strong><?php echo htmlspecialchars($task['telecaller_name'] ?? 'N/A'); ?></strong></td>
                         </tr>
                         <tr>
@@ -106,24 +106,24 @@ $ratingBadge = function($rating) {
                     ?>
                     <div class="mb-3">
                         <label class="text-muted small">Target Achievement</label>
-                        <div class="progress" style="height: 24px;">
-                            <div class="progress-bar bg-<?php echo $achievePct >= 100 ? 'success' : ($achievePct >= 50 ? 'warning' : 'danger'); ?>" role="progressbar" style="width: <?php echo min($achievePct, 100); ?>%">
+                        <div class="progress" class="style-70613">
+                            <div class="progress-bar bg-<?php echo $achievePct >= 100 ? 'success' : ($achievePct >= 50 ? 'warning' : 'danger'); ?>" role="progressbar" class="style-53489">
                                 <?php echo $achievePct; ?>%
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="text-muted small">Connection Rate</label>
-                        <div class="progress" style="height: 24px;">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: <?php echo $connectRate; ?>%">
+                        <div class="progress" class="style-70613">
+                            <div class="progress-bar bg-info" role="progressbar" class="style-35864">
                                 <?php echo $connectRate; ?>%
                             </div>
                         </div>
                     </div>
                     <div class="mb-0">
                         <label class="text-muted small">Conversion Rate</label>
-                        <div class="progress" style="height: 24px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $convertRate; ?>%">
+                        <div class="progress" class="style-70613">
+                            <div class="progress-bar bg-success" role="progressbar" class="style-41126">
                                 <?php echo $convertRate; ?>%
                             </div>
                         </div>

@@ -35,7 +35,7 @@
         <div class="card-body aps-cp-card-body">
           <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leads/<?= $lead['id'] ?? '' ?>/advance" class="d-flex gap-2">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-            <select name="new_stage" class="form-select" style="max-width:250px">
+            <select name="new_stage" class="form-select" class="style-14945">
               <?php foreach(['new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold'] as $s): ?>
                 <option value="<?= $s ?>" <?= ($lead['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
               <?php endforeach; ?>
@@ -67,7 +67,7 @@
 
       <div class="card aps-cp-card">
         <div class="card-header aps-cp-card-header"><strong><?= __('bko_timeline') ?></strong></div>
-        <div class="card-body aps-cp-card-body" style="max-height:400px;overflow-y:auto">
+        <div class="card-body aps-cp-card-body" class="style-23214">
           <?php if (empty($timeline)): ?>
             <p class="text-muted"><?= __('bko_no_activities') ?></p>
           <?php else: ?>

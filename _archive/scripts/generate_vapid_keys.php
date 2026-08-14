@@ -79,4 +79,4 @@ echo "  Private: {$privateKeyFile}\n";
 echo "  Public:  {$publicKeyFile}\n\n";
 echo "Add to .env:\n";
 echo "  VAPID_PUBLIC_KEY={$publicKey}\n";
-echo "  VAPID_PRIVATE_KEY=PEM:config/vapid_private.key\n";
+echo "  VAPID_PRIVATE_KEY=PEM:config/vapid_private.key\n";?>

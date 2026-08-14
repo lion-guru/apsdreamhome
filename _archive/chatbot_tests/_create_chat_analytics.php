@@ -13,4 +13,4 @@ $db->exec('CREATE TABLE IF NOT EXISTS chat_analytics (
     INDEX idx_created (created_at),
     INDEX idx_session (session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
-echo "chat_analytics table created\n";
+echo "chat_analytics table created\n";?>

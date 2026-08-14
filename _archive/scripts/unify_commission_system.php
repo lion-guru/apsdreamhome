@@ -147,4 +147,4 @@ echo "1. Update BookingLifecycleService::calculateCommission() - remove booking_
 echo "2. Update BookingLifecycleController::commissions() - query mlm_commission_ledger\n";
 echo "3. Update BookingLifecycleController::fetchCommissions() - query mlm_commission_ledger\n";
 echo "4. Update admin/sales/commissions.php view\n";
-echo "5. Drop booking_commissions table\n";
+echo "5. Drop booking_commissions table\n";?>

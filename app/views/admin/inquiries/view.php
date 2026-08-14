@@ -55,7 +55,7 @@
                 <h5 class="mb-0">Message</h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;"><?php echo htmlspecialchars($inquiry['message'] ?? ''); ?></pre>
+                <pre class="mb-0" class="style-92067"><?php echo htmlspecialchars($inquiry['message'] ?? ''); ?></pre>
             </div>
         </div>
     </div>

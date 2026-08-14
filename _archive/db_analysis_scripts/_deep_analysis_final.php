@@ -56,4 +56,4 @@ foreach ($lowRef as $t) {
 echo "Count: " . count($lowRef) . "\n\n";
 
 $total = count($zeroRow) + count($unused) + count($lowRef);
-echo "TOTAL DROP CANDIDATES: $total\n";
+echo "TOTAL DROP CANDIDATES: $total\n";?>

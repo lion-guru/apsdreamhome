@@ -20,7 +20,7 @@ try {
     $stmt1 = $pdo->prepare("UPDATE users SET password = ?");
     $stmt1->execute([$hash]);
     $usersUpdated = $stmt1->rowCount();
-    echo "✓ Updated {$usersUpdated} users to password '{$newPassword}'.\n";
+    echo "âœ“ Updated {$usersUpdated} users to password '{$newPassword}'.\n";
 
     // 2. Update associates table (if exists and has password column)
     $hasAssociates = $pdo->query("SHOW TABLES LIKE 'associates'")->rowCount() > 0;
@@ -31,7 +31,7 @@ try {
             $stmt2 = $pdo->prepare("UPDATE associates SET password = ?");
             $stmt2->execute([$hash]);
             $associatesUpdated = $stmt2->rowCount();
-            echo "✓ Updated {$associatesUpdated} associates to password '{$newPassword}'.\n";
+            echo "âœ“ Updated {$associatesUpdated} associates to password '{$newPassword}'.\n";
         }
     }
 
@@ -39,4 +39,4 @@ try {
 
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

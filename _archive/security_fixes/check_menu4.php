@@ -13,4 +13,4 @@ while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $count++;
     echo "ID: " . $r['id'] . " | " . $r['label'] . " | URL: " . $r['url'] . " | Icon: " . $r['icon'] . " | Order: " . $r['sort_order'] . " | Parent: " . $r['parent_id'] . "\n";
 }
-echo "Total: $count\n";
+echo "Total: $count\n";?>

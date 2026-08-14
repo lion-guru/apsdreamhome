@@ -28,4 +28,4 @@ try {
     echo "Done.\n";
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
-}
+}?>

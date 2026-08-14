@@ -53,4 +53,4 @@ if (empty(GOOGLE_CLIENT_ID) || empty(GOOGLE_CLIENT_SECRET)) {
 }
 
 // Log OAuth configuration for debugging
-error_log('Google OAuth Config - Redirect URL: ' . GOOGLE_REDIRECT_URL);
+error_log('Google OAuth Config - Redirect URL: ' . GOOGLE_REDIRECT_URL);?>

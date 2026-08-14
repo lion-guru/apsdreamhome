@@ -114,12 +114,12 @@ class PDFService
     <div class="watermark">DEMAND LETTER</div>
     <div class="page">
         ' . self::companyHeader() . '
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div class="style-1051">
             <div>
                 <strong>Date:</strong> ' . $today . '<br>
                 <strong>Ref:</strong> DL-' . $bookingNo . '-' . str_pad($instNo, 2, '0', STR_PAD_LEFT) . '
             </div>
-            ' . ($isOverdue ? '<span style="background:#dc2626;color:#fff;padding:4px 16px;border-radius:20px;font-weight:700;font-size:13px;">OVERDUE</span>' : '<span style="background:#f59e0b;color:#fff;padding:4px 16px;border-radius:20px;font-weight:700;font-size:13px;">DUE</span>') . '
+            ' . ($isOverdue ? '<span class="style-8565">OVERDUE</span>' : '<span class="style-44758">DUE</span>') . '
         </div>
 
         <div class="body-text">
@@ -127,7 +127,7 @@ class PDFService
             <p>This is to inform you that Installment <strong>#' . $instNo . '</strong> under your Booking Reference 
             <strong>' . $bookingNo . '</strong> for Plot <strong>' . $plotNo . ($block ? ' (Block ' . $block . ')' : '') . '</strong> 
             at <strong>' . $colonyName . '</strong> (' . $area . ', ' . $dimLabel . ') is ' . ($isOverdue ? '<span class="highlight">overdue</span>' : 'due for payment') . '.</p>
-            <p>Please arrange payment of <strong>₹' . $totalDue . '</strong> on or before <strong>' . $dueDate . '</strong> to avoid additional late fees and penalties.</p>
+            <p>Please arrange payment of <strong>â‚¹' . $totalDue . '</strong> on or before <strong>' . $dueDate . '</strong> to avoid additional late fees and penalties.</p>
         </div>
 
         <h3 class="section-title">Installment Breakdown</h3>
@@ -135,7 +135,7 @@ class PDFService
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th class="amount">Amount (₹)</th>
+                    <th class="amount">Amount (â‚¹)</th>
                 </tr>
             </thead>
             <tbody>
@@ -149,15 +149,15 @@ class PDFService
                 </tr>' . '
                 ' . ((float)$lateFee > 0 ? '<tr>
                     <td>Late Fee</td>
-                    <td class="amount" style="color:#dc2626;">' . $lateFee . '</td>
+                    <td class="amount" class="style-78245">' . $lateFee . '</td>
                 </tr>' : '') . '
                 ' . ((float)$penalty > 0 ? '<tr>
                     <td>Accrued Penalty</td>
-                    <td class="amount" style="color:#dc2626;">' . $penalty . '</td>
+                    <td class="amount" class="style-78245">' . $penalty . '</td>
                 </tr>' : '') . '
                 <tr class="total-row">
                     <td>Total Amount Due</td>
-                    <td class="amount">₹' . $totalDue . '</td>
+                    <td class="amount">â‚¹' . $totalDue . '</td>
                 </tr>
             </tbody>
         </table>
@@ -177,16 +177,16 @@ class PDFService
                     IFSC: HDFC0001234<br>
                     UPI: apsdreamhome@hdfcbank
                 </p>
-                <p style="margin-top:8px;"><strong>Note:</strong> Please share the transaction reference number via email or WhatsApp after payment.</p>
+                <p class="style-29694"><strong>Note:</strong> Please share the transaction reference number via email or WhatsApp after payment.</p>
             </div>
-            <p style="text-align:center; color:#6b7280;">
+            <p class="style-31100">
                 For queries, contact us at <strong>' . self::$companyPhone . '</strong> or <strong>' . self::$companyEmail . '</strong><br>
                 This is a system-generated document. No signature required.
             </p>
         </div>
 
-        <div class="no-print" style="text-align:center; margin-top:24px;">
-            <button onclick="window.print()" style="background:#0d9488;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
+        <div class="no-print" class="style-18221">
+            <button onclick="window.print()" class="style-37441">
                 <i class="fas fa-print"></i> Print / Save as PDF
             </button>
         </div>
@@ -229,7 +229,7 @@ class PDFService
     <div class="watermark">BOOKING RECEIPT</div>
     <div class="page">
         ' . self::companyHeader() . '
-        <div style="text-align:center; margin-bottom:20px;">
+        <div class="style-9828">
             <span class="receipt-badge"><i class="fas fa-check-circle"></i> BOOKING CONFIRMATION RECEIPT</span>
         </div>
 
@@ -262,7 +262,7 @@ class PDFService
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th class="amount">Amount (₹)</th>
+                    <th class="amount">Amount (â‚¹)</th>
                 </tr>
             </thead>
             <tbody>
@@ -272,23 +272,23 @@ class PDFService
                 </tr>
                 <tr>
                     <td>Token / Booking Amount Paid</td>
-                    <td class="amount" style="color:#059669;">' . $bookingAmt . '</td>
+                    <td class="amount" class="style-7250">' . $bookingAmt . '</td>
                 </tr>
                 <tr class="total-row">
                     <td>Balance Amount</td>
-                    <td class="amount">₹' . number_format((float)($booking['total_plot_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) . '</td>
+                    <td class="amount">â‚¹' . number_format((float)($booking['total_plot_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) . '</td>
                 </tr>
             </tbody>
         </table>
 
-        <div class="body-text" style="margin-top:24px;">
+        <div class="body-text" class="style-30245">
             <p><strong>Terms & Conditions:</strong></p>
-            <ol style="padding-left:20px; color:#475569;">
-                <li style="margin-bottom:6px;">This booking is subject to verification of customer credentials and KYC documents.</li>
-                <li style="margin-bottom:6px;">The balance amount is payable as per the agreed EMI schedule.</li>
-                <li style="margin-bottom:6px;">In case of cancellation, the booking amount is refundable as per the cancellation policy.</li>
-                <li style="margin-bottom:6px;">Stamp duty, registration charges, and other statutory fees are additional and payable by the customer.</li>
-                <li style="margin-bottom:6px;">Possession will be handed over as per the agreed timeline mentioned in the allotment letter.</li>
+            <ol class="style-97297">
+                <li class="style-15049">This booking is subject to verification of customer credentials and KYC documents.</li>
+                <li class="style-15049">The balance amount is payable as per the agreed EMI schedule.</li>
+                <li class="style-15049">In case of cancellation, the booking amount is refundable as per the cancellation policy.</li>
+                <li class="style-15049">Stamp duty, registration charges, and other statutory fees are additional and payable by the customer.</li>
+                <li class="style-15049">Possession will be handed over as per the agreed timeline mentioned in the allotment letter.</li>
             </ol>
         </div>
 
@@ -302,13 +302,13 @@ class PDFService
         </div>
 
         <div class="footer">
-            <p style="text-align:center; color:#6b7280;">
+            <p class="style-31100">
                 This is a system-generated receipt. For queries, call <strong>' . self::$companyPhone . '</strong> or email <strong>' . self::$companyEmail . '</strong>
             </p>
         </div>
 
-        <div class="no-print" style="text-align:center; margin-top:24px;">
-            <button onclick="window.print()" style="background:#0d9488;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
+        <div class="no-print" class="style-18221">
+            <button onclick="window.print()" class="style-37441">
                 <i class="fas fa-print"></i> Print / Save as PDF
             </button>
         </div>
@@ -354,7 +354,7 @@ class PDFService
             <div class="noc-number">NOC No: ' . $nocNumber . '</div>
         </div>
 
-        <div style="margin-bottom:16px;">
+        <div class="style-38798">
             <strong>Date:</strong> ' . $today . '
         </div>
 
@@ -371,17 +371,17 @@ class PDFService
             <div class="row"><span class="label">Plot No:</span> <span class="value">' . $plotNo . ($block ? ' (Block ' . $block . ')' : '') . '</span></div>
             <div class="row"><span class="label">Area:</span> <span class="value">' . $area . '</span></div>
             <div class="row"><span class="label">Booking Ref:</span> <span class="value">' . $bookingNo . '</span></div>
-            <div class="row"><span class="label">Total Value:</span> <span class="value">₹' . $totalValue . '</span></div>
+            <div class="row"><span class="label">Total Value:</span> <span class="value">â‚¹' . $totalValue . '</span></div>
         </div>
 
         <div class="body-text">
             <p>' . self::$companyName . ' hereby certifies that it has no objection to the registration and/or transfer of the above-mentioned plot in favor of the said customer, subject to:</p>
-            <ol style="padding-left:20px; color:#475569;">
-                <li style="margin-bottom:8px;">All outstanding dues against the said plot have been cleared.</li>
-                <li style="margin-bottom:8px;">All terms and conditions of the original booking agreement have been fulfilled.</li>
-                <li style="margin-bottom:8px;">The customer has provided all required KYC and legal documents.</li>
-                <li style="margin-bottom:8px;">Stamp duty and registration charges have been deposited as applicable.</li>
-                <li style="margin-bottom:8px;">This NOC is valid for a period of 30 days from the date of issuance.</li>
+            <ol class="style-97297">
+                <li class="style-51016">All outstanding dues against the said plot have been cleared.</li>
+                <li class="style-51016">All terms and conditions of the original booking agreement have been fulfilled.</li>
+                <li class="style-51016">The customer has provided all required KYC and legal documents.</li>
+                <li class="style-51016">Stamp duty and registration charges have been deposited as applicable.</li>
+                <li class="style-51016">This NOC is valid for a period of 30 days from the date of issuance.</li>
             </ol>
         </div>
 
@@ -395,14 +395,14 @@ class PDFService
         </div>
 
         <div class="footer">
-            <p style="text-align:center; color:#6b7280;">
+            <p class="style-31100">
                 ' . self::$companyName . ' | ' . self::$companyAddress . '<br>
                 Ph: ' . self::$companyPhone . ' | Email: ' . self::$companyEmail . '
             </p>
         </div>
 
-        <div class="no-print" style="text-align:center; margin-top:24px;">
-            <button onclick="window.print()" style="background:#0d9488;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
+        <div class="no-print" class="style-18221">
+            <button onclick="window.print()" class="style-37441">
                 <i class="fas fa-print"></i> Print / Save as PDF
             </button>
         </div>

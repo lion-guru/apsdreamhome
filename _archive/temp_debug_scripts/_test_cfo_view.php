@@ -10,4 +10,4 @@ $data = [
 ];
 extract($data);
 include 'C:\xampp\htdocs\apsdreamhome\app\views\admin\dashboards\cfo.php';
-echo 'Done';
+echo 'Done';?>

@@ -14,34 +14,34 @@ $totalCompleted = $totalCompleted ?? 0;
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid var(--bs-primary);border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-27108">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fas fa-bullhorn"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700"><?= $totalCampaigns ?></div><div class="small text-muted text-uppercase">Total Campaigns</div></div>
+                    <div><div class="style-49205"><?= $totalCampaigns ?></div><div class="small text-muted text-uppercase">Total Campaigns</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid #16a34a;border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-62228">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-play-circle"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700" class="text-success"><?= $activeCampaigns ?></div><div class="small text-muted text-uppercase">Active</div></div>
+                    <div><div class="style-49205" class="text-success"><?= $activeCampaigns ?></div><div class="small text-muted text-uppercase">Active</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid #0ea5e9;border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-61873">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-info rounded-pill p-2"><i class="fas fa-calendar-check"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700" class="text-info"><?= number_format($totalScheduled) ?></div><div class="small text-muted text-uppercase">Total Scheduled</div></div>
+                    <div><div class="style-49205" class="text-info"><?= number_format($totalScheduled) ?></div><div class="small text-muted text-uppercase">Total Scheduled</div></div>
                 </div></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="border-left:4px solid #8b5cf6;border-radius:10px">
+            <div class="card border-0 shadow-sm" class="style-413">
                 <div class="card-body py-3"><div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3"><span class="badge bg-purple rounded-pill p-2" style="background:#8b5cf6"><i class="fas fa-check-double"></i></span></div>
-                    <div><div style="font-size:1.5rem;font-weight:700"><?= number_format($totalCompleted) ?></div><div class="small text-muted text-uppercase">Completed</div></div>
+                    <div class="flex-shrink-0 me-3"><span class="badge bg-purple rounded-pill p-2" class="style-58541"><i class="fas fa-check-double"></i></span></div>
+                    <div><div class="style-49205"><?= number_format($totalCompleted) ?></div><div class="small text-muted text-uppercase">Completed</div></div>
                 </div></div>
             </div>
         </div>
@@ -70,7 +70,7 @@ $totalCompleted = $totalCompleted ?? 0;
                     <tbody>
                         <?php if (empty($campaigns)): ?>
                         <tr><td colspan="9" class="text-center text-muted py-5">
-                            <i class="fas fa-bullhorn fa-3x mb-3" style="opacity:0.15"></i>
+                            <i class="fas fa-bullhorn fa-3x mb-3" class="style-39608"></i>
                             <h5 class="text-muted">No campaigns yet</h5>
                             <p class="text-muted mb-0">Create your first calling campaign to start automated outreach.</p>
                         </td></tr>

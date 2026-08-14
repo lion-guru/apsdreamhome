@@ -17,8 +17,8 @@
                                 <td><?= htmlspecialchars($s['phone'] ?? '') ?></td>
                                 <td>
                                     <?php $score = $s['lead_score'] ?? 0; ?>
-                                    <div class="progress" style="height: 20px; width: 100px;">
-                                        <div class="progress-bar bg-<?= $score >= 70 ? 'success' : ($score >= 40 ? 'warning' : 'danger') ?>" style="width: <?= $score ?>%"><?= $score ?></div>
+                                    <div class="progress" class="style-48235">
+                                        <div class="progress-bar bg-<?= $score >= 70 ? 'success' : ($score >= 40 ? 'warning' : 'danger') ?>" class="style-83489"><?= $score ?></div>
                                     </div>
                                 </td>
                                 <td><?= $s['conversion_probability'] ?? 0 ?>%</td>

@@ -31,17 +31,17 @@ try {
         $keepId = array_shift($ids);
         foreach ($ids as $delId) {
             $pdo->exec("DELETE FROM admin_menu_items WHERE id = $delId");
-            echo "  ✓ Removed duplicate: {$d['url']} (id=$delId, kept id=$keepId)\n";
+            echo "  âœ“ Removed duplicate: {$d['url']} (id=$delId, kept id=$keepId)\n";
             $removed++;
         }
     }
-    echo "  → Removed $removed duplicates\n\n";
+    echo "  â†’ Removed $removed duplicates\n\n";
 
     // STEP 2: Merge bookings section INTO sales section
     echo "STEP 2: Merging 'bookings' section into 'sales'...\n";
     $maxSalesOrder = (int)$pdo->query("SELECT COALESCE(MAX(order_index), 0) FROM admin_menu_items WHERE section = 'sales'")->fetchColumn();
     $moved = $pdo->exec("UPDATE admin_menu_items SET section = 'sales', order_index = order_index + $maxSalesOrder WHERE section = 'bookings'");
-    echo "  ✓ Moved $moved items from 'bookings' to 'sales'\n\n";
+    echo "  âœ“ Moved $moved items from 'bookings' to 'sales'\n\n";
 
     // STEP 3: Move CRM items from marketing to crm
     echo "STEP 3: Moving CRM items from 'marketing' to 'crm'...\n";
@@ -59,9 +59,9 @@ try {
     foreach ($crmUrls as $url) {
         $r = $pdo->prepare("UPDATE admin_menu_items SET section = 'crm' WHERE url = ?");
         $r->execute([$url]);
-        if ($r->rowCount() > 0) { echo "  ✓ Moved to crm: $url\n"; $movedCrm++; }
+        if ($r->rowCount() > 0) { echo "  âœ“ Moved to crm: $url\n"; $movedCrm++; }
     }
-    echo "  → Moved $movedCrm items\n\n";
+    echo "  â†’ Moved $movedCrm items\n\n";
 
     // STEP 4: Fix incorrect URLs
     echo "STEP 4: Fixing wrong URLs...\n";
@@ -78,10 +78,10 @@ try {
             $e2->execute([$newUrl]);
             if (!$e2->fetch()) {
                 $pdo->prepare("UPDATE admin_menu_items SET url = ? WHERE url = ?")->execute([$newUrl, $oldUrl]);
-                echo "  ✓ Fixed: $oldUrl → $newUrl\n";
+                echo "  âœ“ Fixed: $oldUrl â†’ $newUrl\n";
             } else {
                 $pdo->prepare("DELETE FROM admin_menu_items WHERE url = ?")->execute([$oldUrl]);
-                echo "  ✓ Removed old: $oldUrl\n";
+                echo "  âœ“ Removed old: $oldUrl\n";
             }
         }
     }
@@ -106,13 +106,13 @@ try {
         if (!$check->fetch()) {
             $pdo->prepare("INSERT INTO admin_menu_items (name, icon, url, section, order_index, permission_key, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, 1, NOW())")
                 ->execute([$name, $icon, $url, $section, $order, $permKey]);
-            echo "  ✓ Added: $name → $url\n";
+            echo "  âœ“ Added: $name â†’ $url\n";
             $addedCount++;
         } else {
             echo "  - Exists: $url\n";
         }
     }
-    echo "  → Added $addedCount items\n\n";
+    echo "  â†’ Added $addedCount items\n\n";
 
     // STEP 6: Rename confusing items
     echo "STEP 6: Fixing naming...\n";
@@ -130,32 +130,32 @@ try {
     foreach ($renames as [$url, $newName]) {
         $r = $pdo->prepare("UPDATE admin_menu_items SET name = ? WHERE url = ?");
         $r->execute([$newName, $url]);
-        if ($r->rowCount() > 0) echo "  ✓ Renamed: $url → \"$newName\"\n";
+        if ($r->rowCount() > 0) echo "  âœ“ Renamed: $url â†’ \"$newName\"\n";
     }
     echo "\n";
 
-    // STEP 7: Rename technology → ai_tech
+    // STEP 7: Rename technology â†’ ai_tech
     echo "STEP 7: Renaming 'technology' to 'ai_tech'...\n";
     $r = $pdo->exec("UPDATE admin_menu_items SET section = 'ai_tech' WHERE section = 'technology'");
-    echo "  ✓ Renamed $r items\n\n";
+    echo "  âœ“ Renamed $r items\n\n";
 
     // VERIFY
     echo "=== VERIFICATION ===\n\n";
     $remainDupes = $pdo->query("SELECT url, COUNT(*) as cnt FROM admin_menu_items WHERE is_active = 1 GROUP BY url HAVING cnt > 1")->fetchAll(PDO::FETCH_ASSOC);
-    echo empty($remainDupes) ? "✅ ZERO duplicate URLs remaining\n\n" : "⚠️  Duplicates still exist!\n\n";
+    echo empty($remainDupes) ? "âœ… ZERO duplicate URLs remaining\n\n" : "âš ï¸�  Duplicates still exist!\n\n";
     
     $sections = $pdo->query("SELECT section, COUNT(*) as items FROM admin_menu_items WHERE is_active = 1 GROUP BY section ORDER BY section")->fetchAll(PDO::FETCH_ASSOC);
     echo "SECTIONS (" . count($sections) . " total):\n";
     $total = 0;
     foreach ($sections as $s) {
-        echo "  " . str_pad($s['section'], 18) . " → " . str_pad($s['items'], 3) . " items\n";
+        echo "  " . str_pad($s['section'], 18) . " â†’ " . str_pad($s['items'], 3) . " items\n";
         $total += $s['items'];
     }
-    echo "  " . str_pad('TOTAL', 18) . " → $total items\n\n";
-    echo "✅ COMPLETE! Admin menu structure has been fixed.\n";
-    echo "→ Reload: <a href='/apsdreamhome/admin/dashboard' style='color:#38bdf8'>Admin Dashboard</a>\n";
+    echo "  " . str_pad('TOTAL', 18) . " â†’ $total items\n\n";
+    echo "âœ… COMPLETE! Admin menu structure has been fixed.\n";
+    echo "â†’ Reload: <a href='/apsdreamhome/admin/dashboard' style='color:#38bdf8'>Admin Dashboard</a>\n";
 
 } catch (\Exception $e) {
-    echo "❌ ERROR: " . $e->getMessage() . "\n";
+    echo "â�Œ ERROR: " . $e->getMessage() . "\n";
 }
-echo "</pre>";
+echo "</pre>";?>

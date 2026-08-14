@@ -16,6 +16,9 @@ $base = BASE_URL;
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo __('auth_agent_portal_login', 'Agent Portal Login'); ?> - APS Dream Home</title>
@@ -508,7 +511,7 @@ $base = BASE_URL;
                     <span class="quick-stat-label">Commission</span>
                 </div>
                 <div class="quick-stat">
-                    <span class="quick-stat-value">₹3.5L+</span>
+                    <span class="quick-stat-value">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹3.5L+</span>
                     <span class="quick-stat-label">Avg. Monthly</span>
                 </div>
                 <div class="quick-stat">
@@ -559,12 +562,14 @@ $base = BASE_URL;
                 <div class="form-options">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label" for="remember" style="color:#666;"><?php echo __('auth_remember_me', 'Remember me'); ?></label>
+                        <label class="form-check-label" for="remember" class="style-78225"><?php echo __('auth_remember_me', 'Remember me'); ?></label>
                     </div>
                     <a href="<?php echo $base; ?>/forgot-password" class="forgot-link"><?php echo __('auth_forgot_password', 'Forgot Password?'); ?></a>
                 </div>
 
-                <button type="submit" class="btn-login" id="submitBtn">
+                
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-login" id="submitBtn">
                     <i class="fas fa-sign-in-alt me-2"></i><?php echo __('auth_sign_in', 'Sign In'); ?>
                 </button>
             </form>

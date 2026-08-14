@@ -15,7 +15,7 @@
           <form id="emiForm">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="mb-3">
-              <label class="form-label">Loan Amount (₹)</label>
+              <label class="form-label">Loan Amount (â‚¹)</label>
               <input type="number" name="principal" class="form-control" value="5000000" required>
             </div>
             <div class="mb-3">
@@ -38,14 +38,14 @@
           <h5 class="mb-0">Results</h5>
         </div>
         <div class="card-body">
-          <div id="results" style="display:none;">
+          <div id="results" class="style-2248">
             <div class="text-center mb-4">
-              <h2 class="text-primary mb-0" id="emiAmount">₹0</h2>
+              <h2 class="text-primary mb-0" id="emiAmount">â‚¹0</h2>
               <small class="text-muted">Monthly EMI</small>
             </div>
             <table class="table table-bordered">
-              <tr><th>Total Payment</th><td id="totalPayment">₹0</td></tr>
-              <tr><th>Total Interest</th><td id="totalInterest">₹0</td></tr>
+              <tr><th>Total Payment</th><td id="totalPayment">â‚¹0</td></tr>
+              <tr><th>Total Interest</th><td id="totalInterest">â‚¹0</td></tr>
               <tr><th>Interest % of Principal</th><td id="interestPercent">0%</td></tr>
             </table>
           </div>
@@ -69,9 +69,9 @@ function calculateEMI() {
   const totalInterest = totalPayment - p;
   const interestPercent = (totalInterest / p * 100).toFixed(1);
 
-  document.getElementById('emiAmount').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
-  document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPayment).toLocaleString('en-IN');
-  document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInterest).toLocaleString('en-IN');
+  document.getElementById('emiAmount').textContent = 'â‚¹' + Math.round(emi).toLocaleString('en-IN');
+  document.getElementById('totalPayment').textContent = 'â‚¹' + Math.round(totalPayment).toLocaleString('en-IN');
+  document.getElementById('totalInterest').textContent = 'â‚¹' + Math.round(totalInterest).toLocaleString('en-IN');
   document.getElementById('interestPercent').textContent = interestPercent + '%';
 
   document.getElementById('results').style.display = 'block';

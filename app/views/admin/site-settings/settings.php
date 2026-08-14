@@ -85,7 +85,7 @@ $tabs = [
         <input type="hidden" name="active_tab" value="<?= htmlspecialchars($active_tab) ?>">
 
         <?php if ($active_tab === 'general'): ?>
-        <!-- ═══ GENERAL TAB ═══ -->
+        <!-- â•�â•�â•� GENERAL TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="settings-group">
@@ -100,7 +100,7 @@ $tabs = [
                             <?php if (!empty($settings['company_logo']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_logo'], '/'))): ?>
                                 <div class="mb-2"><img src="<?= BASE_URL ?>/<?= sc($settings, 'company_logo') ?>" class="img-preview" alt="Logo"></div>
                             <?php elseif (!empty($settings['company_logo'])): ?>
-                                <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" style="height:80px;"><small class="text-muted">Logo file missing</small></div></div>
+                                <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" class="style-84517"><small class="text-muted">Logo file missing</small></div></div>
                             <?php endif; ?>
                             <input type="file" name="settings_image[company_logo]" class="form-control" accept="image/*">
                             <input type="hidden" name="settings[company_logo]" value="<?= sc($settings, 'company_logo') ?>">
@@ -142,10 +142,10 @@ $tabs = [
                         <label class="form-label">Favicon</label>
                         <?php if (!empty($settings['company_favicon']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_favicon'], '/'))): ?>
                             <div class="mb-2 text-center">
-                                <img src="<?= BASE_URL ?>/<?= sc($settings, 'company_favicon') ?>" class="img-preview" alt="Favicon" style="max-height:40px;">
+                                <img src="<?= BASE_URL ?>/<?= sc($settings, 'company_favicon') ?>" class="img-preview" alt="Favicon" class="style-24361">
                             </div>
                         <?php elseif (!empty($settings['company_favicon'])): ?>
-                            <div class="mb-2 text-center"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" style="height:40px;"><small class="text-muted">Favicon missing</small></div></div>
+                            <div class="mb-2 text-center"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" class="style-70997"><small class="text-muted">Favicon missing</small></div></div>
                         <?php endif; ?>
                         <input type="file" name="settings_image[company_favicon]" class="form-control" accept="image/*">
                         <input type="hidden" name="settings[company_favicon]" value="<?= sc($settings, 'company_favicon') ?>">
@@ -164,7 +164,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'contact'): ?>
-        <!-- ═══ CONTACT TAB ═══ -->
+        <!-- â•�â•�â•� CONTACT TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -243,7 +243,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'social'): ?>
-        <!-- ═══ SOCIAL TAB ═══ -->
+        <!-- â•�â•�â•� SOCIAL TAB â•�â•�â•� -->
         <div class="settings-group">
             <h6><i class="fas fa-share-alt me-2"></i>Social Media Links</h6>
             <p class="text-muted small mb-4">Enter full URLs including https://. Leave blank to hide the icon.</p>
@@ -276,7 +276,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'seo'): ?>
-        <!-- ═══ SEO TAB ═══ -->
+        <!-- â•�â•�â•� SEO TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="settings-group">
@@ -304,10 +304,10 @@ $tabs = [
                     <h6><i class="fas fa-image me-2"></i>OG Image (Social Share)</h6>
                     <?php if (!empty($settings['seo_og_image']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['seo_og_image'], '/'))): ?>
                         <div class="mb-2 text-center">
-                            <img src="<?= BASE_URL ?>/<?= sc($settings, 'seo_og_image') ?>" class="img-fluid rounded" style="max-height:120px;" alt="OG Image">
+                            <img src="<?= BASE_URL ?>/<?= sc($settings, 'seo_og_image') ?>" class="img-fluid rounded" class="style-29190" alt="OG Image">
                         </div>
                     <?php elseif (!empty($settings['seo_og_image'])): ?>
-                        <div class="mb-2 text-center"><div class="d-flex align-items-center justify-content-center bg-light border rounded" style="height:120px;"><small class="text-muted">OG Image file missing</small></div></div>
+                        <div class="mb-2 text-center"><div class="d-flex align-items-center justify-content-center bg-light border rounded" class="style-3604"><small class="text-muted">OG Image file missing</small></div></div>
                     <?php endif; ?>
                     <input type="file" name="settings_image[seo_og_image]" class="form-control" accept="image/*">
                     <input type="hidden" name="settings[seo_og_image]" value="<?= sc($settings, 'seo_og_image') ?>">
@@ -316,7 +316,7 @@ $tabs = [
                 <div class="settings-group">
                     <h6><i class="fas fa-eye me-2"></i>Preview</h6>
                     <div class="border rounded p-3 bg-light">
-                        <div class="fw-bold text-primary" style="font-size:0.95rem;" id="seoPreviewTitle"><?= sc($settings, 'seo_title', 'Page Title') ?></div>
+                        <div class="fw-bold text-primary" class="style-77830" id="seoPreviewTitle"><?= sc($settings, 'seo_title', 'Page Title') ?></div>
                         <div class="text-success small" id="seoPreviewUrl">apsdreamhome.com</div>
                         <div class="text-muted small" id="seoPreviewDesc"><?= sc($settings, 'seo_description', 'Page description...') ?></div>
                     </div>
@@ -325,7 +325,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'footer'): ?>
-        <!-- ═══ FOOTER TAB ═══ -->
+        <!-- â•�â•�â•� FOOTER TAB â•�â•�â•� -->
         <div class="settings-group">
             <h6><i class="fas fa-shoe-prints me-2"></i>Footer Content</h6>
             <div class="row">
@@ -335,7 +335,7 @@ $tabs = [
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Copyright Text</label>
-                    <input type="text" name="settings[footer_copyright]" class="form-control" value="<?= sc($settings, 'footer_copyright', '© 2026 APS Dream Home. All rights reserved.') ?>">
+                    <input type="text" name="settings[footer_copyright]" class="form-control" value="<?= sc($settings, 'footer_copyright', 'Â© 2026 APS Dream Home. All rights reserved.') ?>">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Developer Credit</label>
@@ -345,7 +345,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'hero'): ?>
-        <!-- ═══ HOMEPAGE TAB ═══ -->
+        <!-- â•�â•�â•� HOMEPAGE TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="settings-group">
@@ -404,7 +404,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'widget'): ?>
-        <!-- ═══ WIDGETS TAB ═══ -->
+        <!-- â•�â•�â•� WIDGETS TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -422,14 +422,14 @@ $tabs = [
                     </div>
                     <div class="alert alert-info small mb-0">
                         <i class="fas fa-info-circle me-1"></i>
-                        WhatsApp number is taken from the <strong>Contact</strong> tab → WhatsApp Number field.
+                        WhatsApp number is taken from the <strong>Contact</strong> tab â†’ WhatsApp Number field.
                     </div>
                 </div>
             </div>
         </div>
 
         <?php elseif ($active_tab === 'email'): ?>
-        <!-- ═══ EMAIL/SMTP TAB ═══ -->
+        <!-- â•�â•�â•� EMAIL/SMTP TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -504,13 +504,13 @@ $tabs = [
                 </div>
                 <div class="alert alert-warning small mb-0">
                     <i class="fas fa-exclamation-triangle me-1"></i>
-                    <strong>Gmail Users:</strong> Enable 2-Factor Auth → Generate App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>
+                    <strong>Gmail Users:</strong> Enable 2-Factor Auth â†’ Generate App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>
                 </div>
             </div>
         </div>
 
         <?php elseif ($active_tab === 'payment'): ?>
-        <!-- ═══ PAYMENT GATEWAY TAB ═══ -->
+        <!-- â•�â•�â•� PAYMENT GATEWAY TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -576,7 +576,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'sms'): ?>
-        <!-- ═══ SMS & WHATSAPP TAB ═══ -->
+        <!-- â•�â•�â•� SMS & WHATSAPP TAB â•�â•�â•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -596,7 +596,7 @@ $tabs = [
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
-                        <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> → API section</div>
+                        <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> â†’ API section</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sender ID</label>

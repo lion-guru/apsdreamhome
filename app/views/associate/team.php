@@ -143,7 +143,7 @@ body {
     <!-- Modern Header -->
     <div class="modern-header flex-wrap gap-3">
         <div>
-            <h4 class="mb-1 fw-bold"><i class="fas fa-users text-primary me-2" style="text-shadow: 0 0 15px rgba(59,130,246,0.5);"></i><?= __('assoc_team_title', [], 'My Team') ?></h4>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-users text-primary me-2" class="style-37609"></i><?= __('assoc_team_title', [], 'My Team') ?></h4>
             <div class="text-white-50 small"><?= __('assoc_team_subtitle', [], 'Manage and track your team members\' performance') ?></div>
         </div>
         <div>
@@ -156,7 +156,7 @@ body {
     <!-- Stats Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" style="--icon-bg: linear-gradient(135deg, #8b5cf6, #6366f1); --icon-shadow: rgba(99,102,241,0.3);">
+            <div class="stat-card-glass" class="style-61710">
                 <div class="stat-icon-wrapper"><i class="fas fa-users"></i></div>
                 <div>
                     <div class="stat-value"><?= $team_stats['total'] ?></div>
@@ -165,7 +165,7 @@ body {
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" style="--icon-bg: linear-gradient(135deg, #10b981, #059669); --icon-shadow: rgba(16,185,129,0.3);">
+            <div class="stat-card-glass" class="style-47504">
                 <div class="stat-icon-wrapper"><i class="fas fa-user-check"></i></div>
                 <div>
                     <div class="stat-value"><?= $team_stats['active'] ?></div>
@@ -174,19 +174,19 @@ body {
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" style="--icon-bg: linear-gradient(135deg, #f59e0b, #d97706); --icon-shadow: rgba(245,158,11,0.3);">
+            <div class="stat-card-glass" class="style-58217">
                 <div class="stat-icon-wrapper"><i class="fas fa-chart-line"></i></div>
                 <div>
-                    <div class="stat-value">₹<?= number_format($team_stats['total_sales']) ?></div>
+                    <div class="stat-value">â‚¹<?= number_format($team_stats['total_sales']) ?></div>
                     <div class="stat-label"><?= __('assoc_team_sales', [], 'Team Sales') ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card-glass" style="--icon-bg: linear-gradient(135deg, #06b6d4, #0891b2); --icon-shadow: rgba(6,182,212,0.3);">
+            <div class="stat-card-glass" class="style-48682">
                 <div class="stat-icon-wrapper"><i class="fas fa-coins"></i></div>
                 <div>
-                    <div class="stat-value">₹<?= number_format($team_stats['total_commission']) ?></div>
+                    <div class="stat-value">â‚¹<?= number_format($team_stats['total_commission']) ?></div>
                     <div class="stat-label"><?= __('assoc_team_earned', [], 'Team Earned') ?></div>
                 </div>
             </div>
@@ -203,7 +203,7 @@ body {
             <div class="d-flex gap-3">
                 <div class="input-group input-group-sm rounded-pill overflow-hidden shadow-sm border">
                     <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" id="teamSearch" class="form-control border-0 shadow-none" placeholder="<?= __('assoc_team_search', [], 'Search by name...') ?>" autocomplete="off" style="width: 200px;">
+                    <input type="text" id="teamSearch" class="form-control border-0 shadow-none" placeholder="<?= __('assoc_team_search', [], 'Search by name...') ?>" autocomplete="off" class="style-869">
                 </div>
                 <a href="<?= BASE_URL ?>/become-associate" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" target="_blank">
                     <i class="fas fa-user-plus me-1"></i><?= __('assoc_team_invite', [], 'Invite') ?>
@@ -215,7 +215,7 @@ body {
             <?php if (empty($team)): ?>
                 <div class="text-center py-5">
                     <div class="mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 100px; height: 100px;">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" class="style-78270">
                             <i class="fas fa-user-friends fa-3x text-muted opacity-50"></i>
                         </div>
                     </div>
@@ -253,13 +253,13 @@ body {
                                     <div class="small text-muted"><i class="far fa-envelope me-1"></i><?= htmlspecialchars($m['email'] ?? '') ?></div>
                                 </td>
                                 <td>
-                                    <span class="rank-pill" style="background:<?= $color ?>; box-shadow: 0 2px 5px <?= $color ?>80;">
+                                    <span class="rank-pill" class="style-19790">
                                         <?= htmlspecialchars($label) ?>
                                     </span>
                                 </td>
                                 <td class="text-end fw-bold text-dark"><?= (int)($m['team_size'] ?? 0) ?></td>
-                                <td class="text-end fw-bold text-success">₹<?= number_format((float)($m['lifetime_sales'] ?? 0)) ?></td>
-                                <td class="text-end fw-bold text-primary">₹<?= number_format((float)($m['total_earned'] ?? 0)) ?></td>
+                                <td class="text-end fw-bold text-success">â‚¹<?= number_format((float)($m['lifetime_sales'] ?? 0)) ?></td>
+                                <td class="text-end fw-bold text-primary">â‚¹<?= number_format((float)($m['total_earned'] ?? 0)) ?></td>
                                 <td>
                                     <?php $isAct = ($m['status'] ?? '') === 'active'; ?>
                                     <span class="badge rounded-pill bg-<?= $isAct ? 'success' : 'secondary' ?> bg-opacity-10 text-<?= $isAct ? 'success' : 'secondary' ?> px-3 border border-<?= $isAct ? 'success' : 'secondary' ?>">

@@ -23,7 +23,7 @@ $pdo->exec("
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 ");
 
-echo "✓ Created _migrations table\n";
+echo "âœ“ Created _migrations table\n";
 
 // Backfill: record all past cleanup phases
 $phases = [
@@ -47,10 +47,10 @@ foreach ($phases as [$name, $cat, $desc]) {
     $stmt->execute([$name, $cat, $desc]);
     $count++;
 }
-echo "✓ Backfilled $count phase records\n";
+echo "âœ“ Backfilled $count phase records\n";
 
 $total = $pdo->query("SELECT COUNT(*) FROM _migrations")->fetchColumn();
 echo "\nFinal: $total migrations tracked\n";
 echo "\nUsage:\n";
 echo "  - Run: scripts/track_migration.php <name> <category> [description]\n";
-echo "  - View: SELECT * FROM _migrations ORDER BY applied_at DESC;\n";
+echo "  - View: SELECT * FROM _migrations ORDER BY applied_at DESC;\n";?>

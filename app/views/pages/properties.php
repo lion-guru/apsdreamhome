@@ -55,7 +55,7 @@ if (!empty($properties) && is_array($properties)) {
 $seo = is_array($seo ?? null) ? $seo : [];
 $seo['json_ld'] = $jsonLd;
 
-$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across India.';
+$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties â€” plots, flats, villas, farmhouses â€” from APS Dream Home across India.';
 $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' . implode(', ', array_filter([
     $currentFilters['location'] ?? null,
     $currentFilters['type'] ?? null
@@ -122,10 +122,10 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 }
 </style>
 
-<div class="hero-premium pt-5 pb-5 mb-0" style="margin-bottom: -30px !important; background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%) !important;">
+<div class="hero-premium pt-5 pb-5 mb-0" class="style-59409">
     <div class="container hero-content premium-reveal fade-up position-relative z-2">
         <h1 class="display-4 fw-bold text-white mb-2"><i class="fas fa-building me-3"></i><?= __('properties') ?></h1>
-        <p class="lead text-white-50 mb-4">Discover premium properties across India — plots, flats, villas, farmhouses & more</p>
+        <p class="lead text-white-50 mb-4">Discover premium properties across India â€” plots, flats, villas, farmhouses & more</p>
         <div class="d-flex flex-wrap gap-2">
             <div class="capsule-badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 shadow-sm px-3 py-2">
                 <i class="fas fa-check-circle text-success me-1"></i>
@@ -141,21 +141,21 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     </div>
 </div>
 
-<div class="container" style="position:relative;z-index:5">
+<div class="container" class="style-54650">
     <!-- Filters -->
     <div class="props-filter-glass mb-4">
         <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" role="button">
-            <h6><i class="fas fa-sliders-h me-2" style="color:#0d9488"></i><?= __('advanced_search') ?></h6>
+            <h6><i class="fas fa-sliders-h me-2" class="style-5793"></i><?= __('advanced_search') ?></h6>
             <div class="d-flex align-items-center gap-2">
                 <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
-                    <button type="button" class="btn btn-sm" style="background:#0d9488;color:#fff;border-radius:8px;padding:4px 12px;font-size:0.75rem" onclick="event.stopPropagation();triggerSaveSearch()">
+                    <button type="button" class="btn btn-sm" class="style-26680" onclick="event.stopPropagation();triggerSaveSearch()">
                         <i class="fas fa-bookmark me-1"></i>Save
                     </button>
                 <?php endif; ?>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();resetFilters()" style="border-radius:8px;font-size:0.75rem">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();resetFilters()" class="style-94626">
                     <i class="fas fa-redo"></i>
                 </button>
-                <i class="fas fa-chevron-down" style="color:#94a3b8;transition:transform 0.3s" id="filterChevron"></i>
+                <i class="fas fa-chevron-down" class="style-8890" id="filterChevron"></i>
             </div>
         </div>
         <div class="collapse" id="advancedFilters">
@@ -256,10 +256,10 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         <input type="number" class="form-control" id="area_max" name="area_max" placeholder="Max" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
                     </div>
                     <div class="col-12 d-flex gap-2 align-items-center pt-2">
-                        <button type="submit" class="btn px-4" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:10px;font-weight:600">
+                        <button type="submit" class="btn px-4" class="style-55218">
                             <i class="fas fa-search me-1"></i><?= __('search') ?>
                         </button>
-                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary" style="border-radius:10px">
+                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary" class="style-46740">
                             <i class="fas fa-times me-1"></i><?= __('clear_all') ?>
                         </a>
                     </div>
@@ -271,15 +271,15 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <!-- Cross-link Section: Also Explore -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-2 align-items-center" style="background:rgba(13,148,136,0.04);border:1px solid rgba(13,148,136,0.12);border-radius:12px;padding:14px 18px;">
+            <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
-                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" style="background:rgba(13,148,136,0.1);color:#0d9488;border-radius:8px;border:1px solid rgba(13,148,136,0.2);">
+                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" class="style-6722">
                     <i class="fas fa-vector-square me-1"></i><?= __('company_plots') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" style="background:rgba(10,25,47,0.1);color:#0a192f;border-radius:8px;border:1px solid rgba(10,25,47,0.2);">
+                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" class="style-97522">
                     <i class="fas fa-project-diagram me-1"></i><?= __('company_projects') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" style="background:rgba(16,185,129,0.1);color:#10b981;border-radius:8px;border:1px solid rgba(16,185,129,0.2);">
+                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" class="style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -288,13 +288,13 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
     <!-- View Toggle Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted" style="font-size:0.85rem">
+        <span class="text-muted" class="style-49273">
             Showing <strong><?= count($properties ?? []) ?></strong> of <strong><?= number_format($total ?? 0) ?></strong> properties
         </span>
         <div class="d-flex gap-2">
             <div class="btn-group btn-group-sm" role="group">
-                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="setView('grid')" style="border-radius:8px 0 0 8px"><i class="fas fa-th-large"></i></button>
-                <button type="button" class="btn btn-outline-secondary" id="mapViewBtn" onclick="setView('map')" disabled style="border-radius:0 8px 8px 0" title="Coming soon"><i class="fas fa-map-marked-alt"></i></button>
+                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="setView('grid')" class="style-38876"><i class="fas fa-th-large"></i></button>
+                <button type="button" class="btn btn-outline-secondary" id="mapViewBtn" onclick="setView('map')" disabled class="style-31431" title="Coming soon"><i class="fas fa-map-marked-alt"></i></button>
             </div>
         </div>
     </div>
@@ -307,7 +307,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         ?>
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $idx => $property): ?>
-                <div class="<?= htmlspecialchars($cardColClass) ?> mb-4 scroll-reveal" style="animation-delay:<?= min($idx * 50, 400) ?>ms">
+                <div class="<?= htmlspecialchars($cardColClass) ?> mb-4 scroll-reveal" class="style-86452">
                     <div class="card props-grid-card glass-card h-100" data-property-id="<?= (int)($property['id'] ?? 0) ?>">
                         <div class="card-img-wrap">
                             <?php
@@ -323,11 +323,11 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
 
                             <div class="img-badges">
-                                <span class="badge" style="background:<?= $propListingType === 'rent' ? 'rgba(14,165,233,0.9)' : 'rgba(16,185,129,0.9)' ?>;color:#fff">
+                                <span class="badge" class="style-55032">
                                     <?= $propListingType === 'rent' ? 'FOR RENT' : 'FOR SALE' ?>
                                 </span>
                                 <?php if (!empty($propType)): ?>
-                                    <span class="badge" style="background:rgba(13,148,136,0.85);color:#fff">
+                                    <span class="badge" class="style-11190">
                                         <?= strtoupper($propType) ?>
                                     </span>
                                 <?php endif; ?>
@@ -335,7 +335,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                             <div class="img-actions">
                                 <button class="btn favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="<?= __('add_to_favorites') ?>" onclick="toggleFavorite(this)">
-                                    <i class="far fa-heart" style="color:#ef4444;font-size:0.85rem"></i>
+                                    <i class="far fa-heart" class="style-53984"></i>
                                 </button>
                             </div>
                         </div>
@@ -348,7 +348,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                             </div>
 
                             <?php if (!empty($property['description'])): ?>
-                                <p style="color:#64748b;font-size:0.82rem;line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                                <p class="style-88890">
                                     <?= htmlspecialchars($property['description']) ?>
                                 </p>
                             <?php endif; ?>
@@ -414,7 +414,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <h5><?= __('no_properties') ?></h5>
                     <p class="mb-3"><?= __('no_results_tip') ?></p>
-                    <a href="<?= BASE_URL ?>/properties" class="btn px-4" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:10px">
+                    <a href="<?= BASE_URL ?>/properties" class="btn px-4" class="style-11181">
                         <?= __('view_all') ?> Properties
                     </a>
                 </div>
@@ -431,7 +431,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         <div class="props-pagination scroll-reveal">
             <?php if (($page ?? 1) > 1): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page - 1)])) ?>">
-                    <i class="fas fa-chevron-left" style="font-size:0.75rem"></i>
+                    <i class="fas fa-chevron-left" class="style-5315"></i>
                 </a>
             <?php endif; ?>
             <?php
@@ -443,7 +443,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
             <?php endfor; ?>
             <?php if (($page ?? 1) < $totalPages): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page + 1)])) ?>">
-                    <i class="fas fa-chevron-right" style="font-size:0.75rem"></i>
+                    <i class="fas fa-chevron-right" class="style-5315"></i>
                 </a>
             <?php endif; ?>
         </div>
@@ -562,11 +562,11 @@ function submitPropertyInterest(e) {
 </script>
 
 <div class="modal fade" id="propertyInterestModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
-        <div class="modal-content" style="border-radius:20px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.15)">
+    <div class="modal-dialog modal-dialog-centered" class="style-77674">
+        <div class="modal-content" class="style-51436">
             <div class="modal-header border-0 pb-0">
                 <div>
-                    <h6 class="fw-bold mb-0" style="color:#1e293b">I'm Interested</h6>
+                    <h6 class="fw-bold mb-0" class="style-8420">I'm Interested</h6>
                     <small class="text-muted" id="propInterestName"></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -578,27 +578,27 @@ function submitPropertyInterest(e) {
                     <input type="hidden" name="source" value="property_listing">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-control" style="border-radius:10px" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                        <input type="tel" name="phone" class="form-control" class="style-46740" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Your Name</label>
-                        <input type="text" name="name" class="form-control" style="border-radius:10px" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                        <input type="text" name="name" class="form-control" class="style-46740" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Budget Range</label>
                         <div class="d-flex flex-wrap gap-2">
                             <?php foreach (['Under 10L','10L-25L','25L-50L','50L-1Cr','1Cr+'] as $budget): ?>
-                            <button type="button" class="btn btn-sm prop-budget-chip" style="border:1.5px solid #e2e8f0;border-radius:8px;color:#475569" onclick="selectPropBudget(this)"><?= $budget ?></button>
+                            <button type="button" class="btn btn-sm prop-budget-chip" class="style-35248" onclick="selectPropBudget(this)"><?= $budget ?></button>
                             <?php endforeach; ?>
                         </div>
                         <input type="hidden" name="budget" id="propInterestBudget">
                     </div>
-                    <button type="submit" class="btn w-100" id="propInterestSubmitBtn" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:10px;font-weight:600">
+                    <button type="submit" class="btn w-100" id="propInterestSubmitBtn" class="style-55218">
                         <i class="fas fa-paper-plane me-1"></i>Submit Interest
                     </button>
                 </form>
-                <div id="propInterestSuccess" class="text-center py-3" style="display:none;">
-                    <i class="fas fa-check-circle fa-3x mb-3" style="color:#10b981"></i>
+                <div id="propInterestSuccess" class="text-center py-3" class="style-2248">
+                    <i class="fas fa-check-circle fa-3x mb-3" class="style-2154"></i>
                     <h6 class="fw-bold">Interest Recorded!</h6>
                     <p class="text-muted small mb-0">Our team will contact you shortly.</p>
                 </div>

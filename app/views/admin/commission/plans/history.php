@@ -34,14 +34,14 @@ $actionIcon = fn($a) => match($a) {
 
 <div class="cp-card">
     <div class="cp-card-header">
-        <h5 class="m-0" style="color:#e0e0e0"><i class="fas fa-history me-2" style="color:#a855f7"></i>Plan Change History</h5>
+        <h5 class="m-0" class="style-43926"><i class="fas fa-history me-2" class="style-20955"></i>Plan Change History</h5>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
         <form method="GET" class="mb-4">
             <div class="row">
                 <div class="col-md-4">
-                    <label style="color:#8892b0;font-size:.75rem;text-transform:uppercase">Filter by Plan</label>
+                    <label class="style-33220">Filter by Plan</label>
                     <select name="plan_id" class="cp-input" onchange="this.form.submit()">
                         <option value="0">All Plans</option>
                         <?php foreach ($plans as $p): ?>
@@ -55,8 +55,8 @@ $actionIcon = fn($a) => match($a) {
         </form>
 
         <?php if (empty($auditLog)): ?>
-            <div style="text-align:center;padding:3rem;color:#8892b0">
-                <i class="fas fa-history" style="font-size:2rem;margin-bottom:1rem;display:block"></i>
+            <div class="style-52260">
+                <i class="fas fa-history" class="style-10910"></i>
                 No audit entries found.
             </div>
         <?php else: ?>
@@ -68,12 +68,12 @@ $actionIcon = fn($a) => match($a) {
                     <div class="timeline-content">
                         <div>
                             <strong><?= htmlspecialchars($entry['plan_name']) ?></strong>
-                            <span class="cp-version" style="margin-left:4px">v<?= $entry['version'] ?></span>
-                            <span style="color:#8892b0;margin-left:6px">
+                            <span class="cp-version" class="style-44520">v<?= $entry['version'] ?></span>
+                            <span class="style-92023">
                                 <?= ucfirst($entry['action']) ?> by
                                 <?= htmlspecialchars($entry['changer_name'] ?? 'System') ?>
                             </span>
-                            <span class="time" style="margin-left:8px"><?= date('M d, Y H:i', strtotime($entry['created_at'])) ?></span>
+                            <span class="time" class="style-11248"><?= date('M d, Y H:i', strtotime($entry['created_at'])) ?></span>
                         </div>
                         <?php if ($entry['changed_fields']): ?>
                             <div class="detail">

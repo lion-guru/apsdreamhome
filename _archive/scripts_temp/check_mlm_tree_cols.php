@@ -21,4 +21,4 @@ echo "\n=== ReferralService column check ===\n";
 foreach (['ancestor_user_id', 'descendant_user_id'] as $col) {
     $exists = in_array($col, $cols);
     echo "$col in mlm_network_tree: " . ($exists ? "YES" : "NO") . "\n";
-}
+}?>

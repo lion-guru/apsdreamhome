@@ -10,4 +10,4 @@ echo 'Total bank_accounts: ' . $db->fetchOne("SELECT COUNT(*) c FROM bank_accoun
 echo PHP_EOL . "Latest 5:" . PHP_EOL;
 foreach ($db->fetchAll("SELECT id, account_name, bank_name, account_number, created_at FROM bank_accounts ORDER BY id DESC LIMIT 5") as $r) {
     echo "  #{$r['id']} {$r['account_name']} | {$r['bank_name']} | {$r['account_number']} | {$r['created_at']}" . PHP_EOL;
-}
+}?>

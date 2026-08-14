@@ -25,4 +25,4 @@ $assoc = $pdo->query("SELECT u.name, a.level, mp.current_level FROM users u LEFT
 
 foreach ($assoc as $a) {
     echo sprintf("%s - associates.level: %s, mlm_profiles.current_level: %s\n", $a['name'], $a['level'], $a['current_level']);
-}
+}?>

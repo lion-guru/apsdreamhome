@@ -84,7 +84,7 @@ $isEdit = !empty($template['id']);
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="fw-bold"><i class="fas fa-eye me-1"></i> Preview</h6>
-                    <div id="templatePreview" class="p-3 bg-light rounded" style="min-height:200px;font-size:14px">
+                    <div id="templatePreview" class="p-3 bg-light rounded" class="style-64467">
                         <em class="text-muted">Start typing to see preview...</em>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         body = body.replace(/\{\{phone\}\}/g, '98XX-XXX-XXXX');
         body = body.replace(/\{\{email\}\}/g, 'john@example.com');
         body = body.replace(/\{\{city\}\}/g, 'Your City');
-        body = body.replace(/\{\{budget\}\}/g, '₹XX,XX,XXX');
+        body = body.replace(/\{\{budget\}\}/g, 'â‚¹XX,XX,XXX');
         body = body.replace(/\{\{source\}\}/g, 'Channel');
         preview.innerHTML = body;
     }

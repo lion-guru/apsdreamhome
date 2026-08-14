@@ -5,4 +5,4 @@ $rows = $db->fetchAll('SELECT id, name, url, section FROM admin_menu_items WHERE
 foreach ($rows as $r) {
     echo $r['id'] . ' | ' . $r['section'] . ' | ' . $r['url'] . ' | ' . $r['name'] . "\n";
 }
-echo "Total: " . count($rows) . "\n";
+echo "Total: " . count($rows) . "\n";?>

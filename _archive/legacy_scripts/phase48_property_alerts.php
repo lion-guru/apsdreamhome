@@ -61,4 +61,4 @@ $db->exec("
         INDEX idx_user (user_id, created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
-echo "OK property_alert_log table created\n";
+echo "OK property_alert_log table created\n";?>

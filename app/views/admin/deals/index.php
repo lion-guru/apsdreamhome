@@ -31,7 +31,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Pipeline Value</h6>
-                            <h3 class="mb-0">₹<?= number_format(floatval($stats['pipeline_value'] ?? 0), 0) ?>L</h3>
+                            <h3 class="mb-0">â‚¹<?= number_format(floatval($stats['pipeline_value'] ?? 0), 0) ?>L</h3>
                         </div>
                         <i class="fas fa-funnel-dollar fa-2x opacity-50"></i>
                     </div>
@@ -57,7 +57,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Total Revenue</h6>
-                            <h3 class="mb-0">₹<?= number_format(floatval($stats['total_revenue'] ?? 0), 0) ?>L</h3>
+                            <h3 class="mb-0">â‚¹<?= number_format(floatval($stats['total_revenue'] ?? 0), 0) ?>L</h3>
                         </div>
                         <i class="fas fa-rupee-sign fa-2x opacity-50"></i>
                     </div>
@@ -139,7 +139,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                         <?php if (empty($deals ?? [])): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
-                                <i class="fas fa-handshake fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-handshake fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No deals in pipeline</h5>
                                 <p class="text-muted mb-3">Start tracking your sales deals through the pipeline. Create a deal from a qualified lead to begin managing your sales process.</p>
                                 <a href="<?= BASE_URL ?>/admin/deals/create" class="btn btn-primary me-2">
@@ -160,7 +160,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                                     <br><small class="text-muted"><?= htmlspecialchars($deal['lead_email'] ?? '') ?></small>
                                 </td>
                                 <td><?= htmlspecialchars($deal['property_title'] ?? 'Not specified') ?></td>
-                                <td><strong>₹<?= number_format(floatval($deal['deal_value'] ?? 0), 0) ?>L</strong></td>
+                                <td><strong>â‚¹<?= number_format(floatval($deal['deal_value'] ?? 0), 0) ?>L</strong></td>
                                 <td>
                                     <span class="badge bg-<?= $stageColor ?>">
                                         <?= ucfirst($deal['stage']) ?>

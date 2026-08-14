@@ -69,7 +69,7 @@ try {
     if (!empty($result['results'])) {
         foreach ($result['results'] as $r) {
             $line = sprintf(
-                "  Installment #%d (Booking %s): %s — ₹%s",
+                "  Installment #%d (Booking %s): %s â€” â‚¹%s",
                 $r['installment_id'] ?? 0,
                 $r['booking_number'] ?? '?',
                 $r['status'] ?? 'unknown',
@@ -97,4 +97,4 @@ try {
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
     exit(1);
-}
+}?>

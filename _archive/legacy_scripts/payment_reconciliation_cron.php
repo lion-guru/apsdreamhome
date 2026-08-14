@@ -402,4 +402,4 @@ function logReconciliation(PDO $pdo, string $gateway, string $action, string $or
         @file_put_contents(__DIR__ . '/../logs/payment_reconciliation.log',
             '[' . date('Y-m-d H:i:s') . "] logReconciliation failed: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
     }
-}
+}?>

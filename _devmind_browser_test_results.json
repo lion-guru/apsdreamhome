@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-08-14 21:44:56",
+  "results": [
+    {
+      "page": "Homepage",
+      "url": "/apsdreamhome/",
+      "status": 200,
+      "issues": []
+    },
+    {
+      "page": "Login",
+      "url": "/apsdreamhome/login",
+      "status": 200,
+      "issues": []
+    },
+    {
+      "page": "Index",
+      "url": "/apsdreamhome/index.php",
+      "status": 302,
+      "issues": []
+    },
+    {
+      "page": "Admin",
+      "url": "/apsdreamhome/admin",
+      "status": 302,
+      "issues": []
+    },
+    {
+      "page": "Properties",
+      "url": "/apsdreamhome/properties",
+      "status": 200,
+      "issues": []
+    },
+    {
+      "page": "Cart",
+      "url": "/apsdreamhome/cart",
+      "status": 404,
+      "issues": []
+    },
+    {
+      "page": "Checkout",
+      "url": "/apsdreamhome/checkout",
+      "status": 404,
+      "issues": []
+    },
+    {
+      "page": "Contact",
+      "url": "/apsdreamhome/contact",
+      "status": 200,
+      "issues": []
+    },
+    {
+      "page": "Services",
+      "url": "/apsdreamhome/services",
+      "status": 200,
+      "issues": []
+    }
+  ],
+  "accessible": 5
+}

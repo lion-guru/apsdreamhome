@@ -98,7 +98,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
             <div class="card guide-card">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-2">
-                        <div class="me-3" style="width:40px;height:40px;background:<?= $p['color'] ?>;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                        <div class="me-3" class="style-56564">
                             <i class="fas <?= $p['icon'] ?> text-white"></i>
                         </div>
                         <div>
@@ -129,7 +129,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
             <div class="card guide-card">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-2">
-                        <div class="me-3" style="width:40px;height:40px;background:<?= $p['color'] ?>;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                        <div class="me-3" class="style-56564">
                             <i class="fas <?= $p['icon'] ?> text-white"></i>
                         </div>
                         <div>

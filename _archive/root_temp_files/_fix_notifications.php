@@ -35,4 +35,4 @@ try {
     echo 'ALL DONE';
 } catch (Exception $e) {
     echo 'ERROR: '.$e->getMessage().PHP_EOL;
-}
+}?>

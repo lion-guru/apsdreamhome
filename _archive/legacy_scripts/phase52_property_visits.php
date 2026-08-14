@@ -85,4 +85,4 @@ if ((int)$stmt->fetchColumn() < 30) {
     echo "Time slots already exist\n";
 }
 
-echo "DONE\n";
+echo "DONE\n";?>

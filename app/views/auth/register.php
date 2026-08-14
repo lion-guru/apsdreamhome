@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic register view — redirects to role-specific register pages.
+ * Generic register view â€” redirects to role-specific register pages.
  * Used by AuthenticationController as a unified entry point.
  */
 ?>
@@ -45,7 +45,9 @@
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>
-                        <button type="submit" class="btn btn-primary w-100 mt-4">Register</button>
+                        
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary w-100 mt-4">Register</button>
                     </form>
                     <div class="text-center mt-3">
                         Already have an account? <a href="<?= BASE_URL ?>/login" class="text-decoration-none">Login</a>

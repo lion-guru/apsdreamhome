@@ -28,12 +28,12 @@ $booking_id = $booking_id ?? 0;
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-8">
                 <select name="booking_id" class="form-select" required>
-                    <option value="">— Select a Booking —</option>
+                    <option value="">â€” Select a Booking â€”</option>
                     <?php foreach ($eligible_bookings as $b): ?>
                         <option value="<?= $b['id'] ?>" <?= $booking_id == $b['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($b['booking_number']) ?> — <?= htmlspecialchars($b['customer_name']) ?>
+                            <?= htmlspecialchars($b['booking_number']) ?> â€” <?= htmlspecialchars($b['customer_name']) ?>
                             (<?= htmlspecialchars($b['plot_no']) ?>, <?= htmlspecialchars($b['colony_name']) ?>)
-                            — ₹<?= number_format($b['total_price'] ?? 0, 0) ?>
+                            â€” â‚¹<?= number_format($b['total_price'] ?? 0, 0) ?>
                             [<?= htmlspecialchars($b['status']) ?>]
                         </option>
                     <?php endforeach; ?>
@@ -98,7 +98,7 @@ $booking_id = $booking_id ?? 0;
                                     </div>
                                     <div>
                                         <div class="fw-semibold small"><?= htmlspecialchars($check['label']) ?></div>
-                                        <div class="text-muted" style="font-size:.8rem;"><?= htmlspecialchars($check['message']) ?></div>
+                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message']) ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -141,7 +141,7 @@ $booking_id = $booking_id ?? 0;
                                     </div>
                                     <div>
                                         <div class="fw-semibold small"><?= htmlspecialchars($check['label']) ?></div>
-                                        <div class="text-muted" style="font-size:.8rem;"><?= htmlspecialchars($check['message']) ?></div>
+                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message']) ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

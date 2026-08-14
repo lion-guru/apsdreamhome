@@ -29,4 +29,4 @@ foreach ($tables as $t) {
     echo "  $t: $rows rows, " . count($cols) . " cols\n";
     foreach ($cols as $c) echo "      - " . $c['Field'] . " (" . $c['Type'] . ")\n";
     echo "\n";
-}
+}?>

@@ -13,4 +13,4 @@ foreach ($pdo->query("DESCRIBE audit_log_archive")->fetchAll(PDO::FETCH_ASSOC) a
 echo "\n=== Sample archive data ===\n";
 foreach ($pdo->query("SELECT * FROM audit_log_archive LIMIT 1")->fetchAll(PDO::FETCH_ASSOC) as $r) {
     print_r($r);
-}
+}?>

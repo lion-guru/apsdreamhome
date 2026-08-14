@@ -69,4 +69,4 @@ foreach ($indexes as $idx) {
         }
     }
 }
-echo "\nSummary: $added added, $skipped skipped, $errors errors\n";
+echo "\nSummary: $added added, $skipped skipped, $errors errors\n";?>

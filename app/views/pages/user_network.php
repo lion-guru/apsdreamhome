@@ -116,7 +116,7 @@ try {
         <div class="col-md-3">
             <div class="card bg-info text-white">
                 <div class="card-body text-center">
-                    <h3 class="mb-0">₹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
+                    <h3 class="mb-0">â‚¹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
                     <small><?php echo __('network_total_earnings', [], 'Total Earnings'); ?></small>
                 </div>
             </div>
@@ -220,7 +220,7 @@ try {
                                         </div>
                                         <div class="text-end">
                                             <?php if (($activity['amount'] ?? 0) > 0): ?>
-                                                <span class="text-success">+₹<?= number_format($activity['amount']) ?></span>
+                                                <span class="text-success">+â‚¹<?= number_format($activity['amount']) ?></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -240,7 +240,7 @@ try {
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i><?php echo __('network_tree', [], 'Network Tree'); ?></h5>
                 </div>
-                <div class="card-body text-center" style="min-height: 400px; overflow-x: auto;">
+                <div class="card-body text-center" class="style-58653">
                     <!-- Simple Tree Visualization -->
                     <div class="network-tree">
                         <div class="tree-level">

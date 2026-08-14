@@ -61,7 +61,7 @@ try {
 
         if ($daysInactive >= 90) {
             $reason = "Inactive for {$daysInactive} days (last activity: $lastActivity)";
-            echo "  🔸 #{$agent['id']} {$agent['name']} ({$agent['email']}) — $reason\n";
+            echo "  ðŸ”¸ #{$agent['id']} {$agent['name']} ({$agent['email']}) â€” $reason\n";
 
             if (!$dryRun) {
                 try {
@@ -79,13 +79,13 @@ try {
                         'created_at' => date('Y-m-d H:i:s')
                     ]);
 
-                    echo "    → DEACTIVATED\n";
+                    echo "    â†’ DEACTIVATED\n";
                 } catch (\Throwable $e) {
                     $errors[] = "Agent #{$agent['id']}: " . $e->getMessage();
-                    echo "    → ERROR: " . $e->getMessage() . "\n";
+                    echo "    â†’ ERROR: " . $e->getMessage() . "\n";
                 }
             } else {
-                echo "    → Would deactivate (dry run)\n";
+                echo "    â†’ Would deactivate (dry run)\n";
             }
             $deactivated++;
         }
@@ -98,4 +98,4 @@ try {
 
 echo "\n=== Summary ===\n";
 echo "Agents to deactivate: $deactivated\n";
-echo "Errors: " . count($errors) . "\n";
+echo "Errors: " . count($errors) . "\n";?>

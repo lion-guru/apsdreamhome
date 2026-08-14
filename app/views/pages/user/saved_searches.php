@@ -92,11 +92,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="card-body aps-cp-card-body">
             <?php if (empty($searches)): ?>
                 <div class="text-center py-5">
-                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 100px; height: 100px;">
+                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" class="style-78270">
                         <i class="fas fa-search-location fa-3x text-muted opacity-25"></i>
                     </div>
                     <h5 class="fw-bold"><?= __('saved_empty_title', null, 'No saved searches yet') ?></h5>
-                    <p class="text-muted mx-auto" style="max-width: 400px;"><?= __('saved_empty_desc', null, 'Apply filters on the properties page and click "Save this search" to get notified when new properties match your criteria.') ?></p>
+                    <p class="text-muted mx-auto" class="style-44213"><?= __('saved_empty_desc', null, 'Apply filters on the properties page and click "Save this search" to get notified when new properties match your criteria.') ?></p>
                     <a href="<?= BASE_URL ?>/properties" class="btn btn-primary rounded-pill px-4 mt-2"><?= __('saved_btn_start', null, 'Start Searching') ?></a>
                 </div>
             <?php else: ?>
@@ -108,14 +108,14 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         if (!empty($filters['type'])) $filterBadges[] = ['Type', ucfirst($filters['type'])];
                         if (!empty($filters['listing'])) $filterBadges[] = ['Listing', ucfirst($filters['listing'])];
                         if (!empty($filters['location'])) $filterBadges[] = ['Location', $filters['location']];
-                        if (!empty($filters['min_price'])) $filterBadges[] = ['Min ₹', number_format($filters['min_price'])];
-                        if (!empty($filters['max_price'])) $filterBadges[] = ['Max ₹', number_format($filters['max_price'])];
+                        if (!empty($filters['min_price'])) $filterBadges[] = ['Min â‚¹', number_format($filters['min_price'])];
+                        if (!empty($filters['max_price'])) $filterBadges[] = ['Max â‚¹', number_format($filters['max_price'])];
                         if (!empty($filters['bedrooms'])) $filterBadges[] = ['Beds', $filters['bedrooms'] . '+'];
                         if (!empty($filters['bathrooms'])) $filterBadges[] = ['Baths', $filters['bathrooms'] . '+'];
                         if (!empty($filters['furnished'])) $filterBadges[] = ['Furnished', ucfirst($filters['furnished'])];
-                        if (!empty($filters['year_built'])) $filterBadges[] = ['Year ≥', $filters['year_built']];
-                        if (!empty($filters['area_min'])) $filterBadges[] = ['Area ≥', $filters['area_min'] . ' sqft'];
-                        if (!empty($filters['area_max'])) $filterBadges[] = ['Area ≤', $filters['area_max'] . ' sqft'];
+                        if (!empty($filters['year_built'])) $filterBadges[] = ['Year â‰¥', $filters['year_built']];
+                        if (!empty($filters['area_min'])) $filterBadges[] = ['Area â‰¥', $filters['area_min'] . ' sqft'];
+                        if (!empty($filters['area_max'])) $filterBadges[] = ['Area â‰¤', $filters['area_max'] . ' sqft'];
 
                         $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                         $queryString = http_build_query($filters);
@@ -198,14 +198,14 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <?php foreach ($alertLog as $log): ?>
                             <tr>
                                 <td><small><?= date('d M Y, H:i', strtotime($log['sent_at'] ?? 'now')) ?></small></td>
-                                <td><?= htmlspecialchars($log['search_name'] ?? '—') ?></td>
+                                <td><?= htmlspecialchars($log['search_name'] ?? 'â€”') ?></td>
                                 <td>
                                     <?php if (!empty($log['property_id'])): ?>
                                         <a href="<?= BASE_URL ?>/listing/<?= (int)$log['property_id'] ?>" target="_blank">
                                             <?= htmlspecialchars($log['property_name'] ?? 'Property #' . $log['property_id']) ?>
                                         </a>
                                     <?php else: ?>
-                                        —
+                                        â€”
                                     <?php endif; ?>
                                 </td>
                                 <td>

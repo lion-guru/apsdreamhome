@@ -331,36 +331,36 @@ class PasswordOtpService
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your OTP - APS Dream Home</title>
 </head>
-<body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background-color: #f4f4f7;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f7; padding: 40px 0;">
+<body class="style-25082">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="style-6542">
         <tr>
             <td align="center">
-                <table width="500" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                <table width="500" cellpadding="0" cellspacing="0" border="0" class="style-72925">
                     <tr>
-                        <td style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); padding: 32px 40px; text-align: center;">
-                            <h1 style="margin:0; color: #ffffff; font-size: 24px; font-weight: 700;">🔐 Verification Code</h1>
-                            <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px;">APS Dream Home - Real Estate</p>
+                        <td class="style-26748">
+                            <h1 class="style-68412">ðŸ”� Verification Code</h1>
+                            <p class="style-53513">APS Dream Home - Real Estate</p>
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 40px;">
-                            <p style="margin: 0 0 16px; color: #333; font-size: 16px; line-height: 1.5;">Hi <strong>{$name}</strong>,</p>
-                            <p style="margin: 0 0 24px; color: #555; font-size: 15px; line-height: 1.5;">Use the following One-Time Password (OTP) to {$action}. This code is valid for <strong>10 minutes</strong>:</p>
+                        <td class="style-14825">
+                            <p class="style-87071">Hi <strong>{$name}</strong>,</p>
+                            <p class="style-76092">Use the following One-Time Password (OTP) to {$action}. This code is valid for <strong>10 minutes</strong>:</p>
 
-                            <div style="background: linear-gradient(135deg, #f6f8fc 0%, #e9ecf5 100%); border: 2px dashed #0d9488; border-radius: 12px; padding: 32px; text-align: center; margin: 24px 0;">
-                                <p style="margin: 0 0 8px; color: #888; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Your OTP Code</p>
-                                <p style="margin: 0; font-size: 42px; font-weight: 700; color: #0d9488; letter-spacing: 8px; font-family: 'Courier New', monospace;">{$otp}</p>
+                            <div class="style-14957">
+                                <p class="style-46196">Your OTP Code</p>
+                                <p class="style-77963">{$otp}</p>
                             </div>
 
-                            <div style="background-color: #fff7ed; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 8px; margin: 24px 0;">
-                                <p style="margin: 0; color: #92400e; font-size: 14px;"><strong>⚠️ Security Tip:</strong> Never share this code with anyone. APS Dream Home staff will never ask for your OTP.</p>
+                            <div class="style-73851">
+                                <p class="style-61628"><strong>âš ï¸� Security Tip:</strong> Never share this code with anyone. APS Dream Home staff will never ask for your OTP.</p>
                             </div>
 
-                            <p style="margin: 24px 0 0; color: #777; font-size: 14px; line-height: 1.5;">If you didn't request this code, please ignore this email or contact our support team if you have concerns.</p>
+                            <p class="style-49139">If you didn't request this code, please ignore this email or contact our support team if you have concerns.</p>
 
-                            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+                            <hr class="style-69678">
 
-                            <p style="margin: 0; color: #999; font-size: 12px; text-align: center;">This is an automated email from <a href="{$baseUrl}" style="color: #0d9488; text-decoration: none;">APS Dream Home</a>. Please do not reply.</p>
+                            <p class="style-71176">This is an automated email from <a href="{$baseUrl}" class="style-82449">APS Dream Home</a>. Please do not reply.</p>
                         </td>
                     </tr>
                 </table>

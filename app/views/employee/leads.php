@@ -46,10 +46,10 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" style="color:#1e40af;font-weight:700;">
+        <h4 class="mb-1" class="style-86030">
             <i class="fas fa-user-tie me-2"></i>My Leads
         </h4>
-        <p class="text-muted mb-0">Leads assigned to you — track and convert</p>
+        <p class="text-muted mb-0">Leads assigned to you â€” track and convert</p>
     </div>
     <div class="d-flex gap-2">
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/employee/leads">
@@ -105,7 +105,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="col">
         <a href="<?= $base ?>/employee/leads?status=site_visit<?= $search ? '&search=' . urlencode($search) : '' ?>" class="card emp-lead-stat <?= $currentStatus === 'site_visit' ? 'active shadow-sm' : 'shadow-none' ?>">
             <div class="card-body py-2 px-3 text-center">
-                <div class="stat-num" style="color:#7c3aed;"><?= $stats['site_visit'] ?></div>
+                <div class="stat-num" class="style-90386"><?= $stats['site_visit'] ?></div>
                 <div class="text-muted small">Site Visit</div>
             </div>
         </a>
@@ -131,8 +131,8 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
 <?php if (empty($leads)): ?>
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
-        <div style="width:80px;height:80px;border-radius:50%;background:#dbeafe;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
-            <i class="fas fa-user-plus fa-2x" style="color:#1e40af;"></i>
+        <div class="style-33323">
+            <i class="fas fa-user-plus fa-2x" class="style-54138"></i>
         </div>
         <h5 class="text-muted"><?= $currentStatus ? 'No leads with this status' : ($search ? 'No leads match your search' : 'No leads assigned yet') ?></h5>
         <p class="text-muted mb-0">Leads assigned to you will appear here</p>
@@ -143,16 +143,16 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead style="background:#eff6ff;">
+                <thead class="style-15736">
                     <tr>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Name</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Contact</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Property</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Budget</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Score</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Status</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Date</th>
-                        <th class="px-3 py-3" style="color:#1e40af;font-weight:600;">Actions</th>
+                        <th class="px-3 py-3" class="style-75080">Name</th>
+                        <th class="px-3 py-3" class="style-75080">Contact</th>
+                        <th class="px-3 py-3" class="style-75080">Property</th>
+                        <th class="px-3 py-3" class="style-75080">Budget</th>
+                        <th class="px-3 py-3" class="style-75080">Score</th>
+                        <th class="px-3 py-3" class="style-75080">Status</th>
+                        <th class="px-3 py-3" class="style-75080">Date</th>
+                        <th class="px-3 py-3" class="style-75080">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -166,7 +166,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                                 ?>
                                 <span class="score-dot <?= $scoreClass ?> me-2" title="Score: <?= $scoreVal ?>"></span>
                                 <div>
-                                    <a href="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>" class="text-decoration-none fw-semibold" style="color:#1e40af;">
+                                    <a href="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>" class="text-decoration-none fw-semibold" class="style-54138">
                                         <?= htmlspecialchars($lead['name'] ?? 'Unknown') ?>
                                     </a>
                                     <?php if (!empty($lead['city'])): ?>
@@ -180,7 +180,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                             <div><small class="text-muted"><?= htmlspecialchars($lead['email'] ?? '-') ?></small></div>
                         </td>
                         <td class="px-3"><small><?= htmlspecialchars($lead['property_interest'] ?? '-') ?></small></td>
-                        <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? '₹' . number_format((float)$lead['budget']) : '-' ?></small></td>
+                        <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? 'â‚¹' . number_format((float)$lead['budget']) : '-' ?></small></td>
                         <td class="px-3">
                             <span class="badge <?= $scoreClass === 'score-hot' ? 'bg-danger' : ($scoreClass === 'score-warm' ? 'bg-warning text-dark' : ($scoreClass === 'score-lukewarm' ? 'bg-info' : 'bg-secondary')) ?>">
                                 <?= $scoreVal ?>
@@ -204,7 +204,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 <?php endif; ?>
-                                <form method="POST" action="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>/delete" style="display:inline;" onsubmit="return confirm('Move this lead to trash?')">
+                                <form method="POST" action="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>/delete" class="style-35851" onsubmit="return confirm('Move this lead to trash?')">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                         <i class="fas fa-trash"></i>

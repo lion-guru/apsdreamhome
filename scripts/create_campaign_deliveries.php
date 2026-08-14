@@ -31,4 +31,4 @@ try {
     echo "campaign_deliveries table created OK\n";
 } catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

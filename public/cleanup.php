@@ -17,4 +17,4 @@ foreach ($files as $file) {
     } else {
         echo "Not found or invalid: $file (resolved: " . ($real ?: 'false') . ")\n";
     }
-}
+}?>

@@ -10,7 +10,7 @@
             <div class="card-header aps-cp-card-header"><i class="fas fa-user me-2"></i>Lead Information</div>
             <div class="card-body aps-cp-card-body">
                 <table class="table table-sm mb-0">
-                    <tr><th style="width:120px">Name</th><td><?= htmlspecialchars($call['lead_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
+                    <tr><th class="style-72730">Name</th><td><?= htmlspecialchars($call['lead_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
                     <tr><th>Phone</th><td><?= htmlspecialchars($call['phone'] ?: ($call['lead_phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td></tr>
                     <tr><th>Email</th><td><?= htmlspecialchars($call['lead_email'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
                     <tr><th>Interest</th><td><?= htmlspecialchars($call['property_interest'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
@@ -25,7 +25,7 @@
             <div class="card-header aps-cp-card-header"><i class="fas fa-calendar me-2"></i>Schedule Details</div>
             <div class="card-body aps-cp-card-body">
                 <table class="table table-sm mb-0">
-                    <tr><th style="width:120px">Agent</th><td><i class="fas fa-robot me-1 text-primary"></i><?= htmlspecialchars($call['agent_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
+                    <tr><th class="style-72730">Agent</th><td><i class="fas fa-robot me-1 text-primary"></i><?= htmlspecialchars($call['agent_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
                     <tr><th>Date/Time</th><td><?= date('d M Y', strtotime($call['scheduled_date'] ?? '')) ?> at <?= date('h:i A', strtotime($call['scheduled_time'] ?? '')) ?></td></tr>
                     <tr><th>Priority</th><td><span class="badge bg-<?= $call['priority'] === 'urgent' ? 'danger' : ($call['priority'] === 'high' ? 'warning' : 'primary') ?>"><?= $call['priority'] ?? 'medium' ?></span></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-<?= $call['status'] === 'completed' ? 'success' : ($call['status'] === 'failed' ? 'danger' : ($call['status'] === 'cancelled' ? 'secondary' : 'warning')) ?>"><?= $call['status'] ?? 'pending' ?></span></td></tr>
@@ -61,7 +61,7 @@
         <?php if (!empty($session['call_transcript'])): ?>
         <div class="mt-2">
             <strong>Transcript:</strong>
-            <pre class="bg-light p-3 rounded mt-1" style="max-height:200px;overflow-y:auto;font-size:12px;white-space:pre-wrap"><?= htmlspecialchars($session['call_transcript'], ENT_QUOTES, 'UTF-8') ?></pre>
+            <pre class="bg-light p-3 rounded mt-1" class="style-53016"><?= htmlspecialchars($session['call_transcript'], ENT_QUOTES, 'UTF-8') ?></pre>
         </div>
         <?php endif; ?>
         <?php if (!empty($session['ai_summary'])): ?>
@@ -79,7 +79,7 @@
     <div class="card-header aps-cp-card-header"><i class="fas fa-database me-2"></i>Extracted Lead Data</div>
     <div class="card-body aps-cp-card-body">
         <table class="table table-sm mb-0">
-            <tr><th style="width:150px">Name</th><td><?= htmlspecialchars($extractedLead['extracted_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
+            <tr><th class="style-33863">Name</th><td><?= htmlspecialchars($extractedLead['extracted_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
             <tr><th>Phone</th><td><?= htmlspecialchars($extractedLead['extracted_phone'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
             <tr><th>Email</th><td><?= htmlspecialchars($extractedLead['extracted_email'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
             <tr><th>Budget</th><td><?= htmlspecialchars($extractedLead['extracted_budget'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>

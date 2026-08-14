@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Income Ledger'; ?>
+ï»¿<?php $pageTitle = 'Income Ledger'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -20,7 +20,7 @@
             <div class="row align-items-center">
                 <div class="col"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Income Records</h5></div>
                 <div class="col-auto">
-                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search income..." style="width:200px"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
+                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search income..." class="style-47085"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
     <?php echo CSRFProtection::csrfField(); ?>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                             <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-coins fa-3x d-block mb-3"></i>No income records found</td></tr>
                         <?php else: ?>
                             <?php $i=1; foreach ($incomeList as $inc): ?>
-                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($inc['date'])) ?></td><td><?= $inc['source'] ?? '-' ?></td><td><?= $inc['description'] ?></td><td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $inc['category'] ?? 'General' ?></span></td><td class="text-end pe-4 fw-bold text-success">+₹<?= number_format($inc['amount'] ?? 0, 2) ?></td></tr>
+                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($inc['date'])) ?></td><td><?= $inc['source'] ?? '-' ?></td><td><?= $inc['description'] ?></td><td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $inc['category'] ?? 'General' ?></span></td><td class="text-end pe-4 fw-bold text-success">+â‚¹<?= number_format($inc['amount'] ?? 0, 2) ?></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>

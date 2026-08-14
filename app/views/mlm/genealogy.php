@@ -467,8 +467,8 @@
             <div class="label">Network Depth</div>
         </div>
         <div class="stat-card">
-            <div class="icon" style="color: #f472b6;"><i class="fas fa-rupee-sign"></i></div>
-            <div class="value">₹<?php echo number_format($stats['total_team_commission'], 2); ?></div>
+            <div class="icon" class="style-34277"><i class="fas fa-rupee-sign"></i></div>
+            <div class="value">â‚¹<?php echo number_format($stats['total_team_commission'], 2); ?></div>
             <div class="label">Team Commission</div>
         </div>
     </div>
@@ -520,15 +520,15 @@
         <!-- Legend -->
         <div class="legend">
             <div class="legend-item">
-                <div class="legend-color" style="background: #fbbf24;"></div>
+                <div class="legend-color" class="style-91901"></div>
                 <span>You (Root)</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: #0d9488;"></div>
+                <div class="legend-color" class="style-88862"></div>
                 <span>Direct Referral</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: #0f766e;"></div>
+                <div class="legend-color" class="style-18736"></div>
                 <span>Extended Network</span>
             </div>
         </div>
@@ -544,11 +544,11 @@
             
             <div class="member-stats">
                 <div class="member-stat">
-                    <div class="value" id="modalWallet">₹0</div>
+                    <div class="value" id="modalWallet">â‚¹0</div>
                     <div class="label">Wallet</div>
                 </div>
                 <div class="member-stat">
-                    <div class="value" id="modalCommission">₹0</div>
+                    <div class="value" id="modalCommission">â‚¹0</div>
                     <div class="label">Commission</div>
                 </div>
                 <div class="member-stat">
@@ -886,7 +886,7 @@
             container.innerHTML = results.map(member => `
                 <div class="search-result-item" onclick="focusOnNode(${member.id})">
                     <div class="name">${member.name}</div>
-                    <div class="id">${member.customer_id} • Level ${member.level}</div>
+                    <div class="id">${member.customer_id} â€¢ Level ${member.level}</div>
                 </div>
             `).join('');
             
@@ -948,8 +948,8 @@
                     document.getElementById('modalAvatar').textContent = member.name.charAt(0).toUpperCase();
                     document.getElementById('modalName').textContent = member.name;
                     document.getElementById('modalId').textContent = `ID: ${member.customer_id}`;
-                    document.getElementById('modalWallet').textContent = '₹' + parseFloat(member.points_balance || 0).toLocaleString();
-                    document.getElementById('modalCommission').textContent = '₹' + parseFloat(member.commission_earnings || 0).toLocaleString();
+                    document.getElementById('modalWallet').textContent = 'â‚¹' + parseFloat(member.points_balance || 0).toLocaleString();
+                    document.getElementById('modalCommission').textContent = 'â‚¹' + parseFloat(member.commission_earnings || 0).toLocaleString();
                     document.getElementById('modalTeam').textContent = member.total_team_size || 0;
                     document.getElementById('modalViewProfile').href = `${baseUrl}/admin/users/${member.id}`;
                     

@@ -30,4 +30,4 @@ foreach ($tables as $t) {
     echo "$t: $count refs\n";
     foreach ($files as $f) echo "  - $f\n";
     echo "\n";
-}
+}?>

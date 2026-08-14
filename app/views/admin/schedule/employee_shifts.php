@@ -69,7 +69,7 @@ $filters = $filters ?? [];
                             <tr>
                                 <td><?= htmlspecialchars($a['employee_name'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($a['department'] ?? '') ?></td>
-                                <td><span class="badge" style="background:<?= htmlspecialchars($a['color'] ?? '#007bff') ?>"><?= htmlspecialchars($a['shift_type_name'] ?? '') ?></span></td>
+                                <td><span class="badge" class="style-36083"><?= htmlspecialchars($a['shift_type_name'] ?? '') ?></span></td>
                                 <td><?= htmlspecialchars($a['shift_date'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($a['shift_start_time'] ?? '') ?>-<?= htmlspecialchars($a['shift_end_time'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($a['status'] ?? '') ?></td>

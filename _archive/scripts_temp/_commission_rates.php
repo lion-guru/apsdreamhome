@@ -33,4 +33,4 @@ foreach ($lvl as $l) {
     if (isset($l['override_pct']) && $l['override_pct'] !== null) echo " | override_pct={$l['override_pct']}%";
     if (isset($l['bonus_fixed']) && $l['bonus_fixed'] !== null) echo " | bonus_fixed=Rs{$l['bonus_fixed']}";
     echo PHP_EOL;
-}
+}?>

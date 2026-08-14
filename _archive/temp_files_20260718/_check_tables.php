@@ -15,4 +15,4 @@ foreach (['departments', 'designations', 'employees'] as $table) {
         $r3 = $pdo->query("SELECT COUNT(*) as cnt FROM $table");
         echo "  Rows: " . $r3->fetch()['cnt'] . PHP_EOL;
     }
-}
+}?>

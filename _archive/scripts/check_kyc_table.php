@@ -7,4 +7,4 @@ try {
     print_r($rows);
 } catch (Exception $e) {
     echo 'Table does not exist: ' . $e->getMessage();
-}
+}?>

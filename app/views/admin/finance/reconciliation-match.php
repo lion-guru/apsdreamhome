@@ -17,9 +17,9 @@
     <?php if ($recon): ?>
     <div class="row g-3 mb-4">
         <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Bank</div><div class="aps-cp-stat-meta"><?= htmlspecialchars($recon['account_name'] ?? '-') ?></div></div></div></div>
-        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Statement Balance</div><div class="aps-cp-stat-value">₹<?= number_format((float)($recon['statement_balance'] ?? 0), 2) ?></div></div></div></div>
-        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Book Balance</div><div class="aps-cp-stat-value">₹<?= number_format((float)($recon['book_balance'] ?? 0), 2) ?></div></div></div></div>
-        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Difference</div><div class="aps-cp-stat-value text-warning">₹<?= number_format((float)($recon['difference'] ?? 0), 2) ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Statement Balance</div><div class="aps-cp-stat-value">â‚¹<?= number_format((float)($recon['statement_balance'] ?? 0), 2) ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Book Balance</div><div class="aps-cp-stat-value">â‚¹<?= number_format((float)($recon['book_balance'] ?? 0), 2) ?></div></div></div></div>
+        <div class="col-md-3"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label">Difference</div><div class="aps-cp-stat-value text-warning">â‚¹<?= number_format((float)($recon['difference'] ?? 0), 2) ?></div></div></div></div>
     </div>
     <?php endif; ?>
 
@@ -30,12 +30,12 @@
                 <thead class="table-light"><tr><th>Date</th><th>Description</th><th class="text-end">Amount</th><th>Type</th><th>Status</th><th>Matched Cashbook</th><th></th></tr></thead>
                 <tbody>
                 <?php if (empty($items)): ?>
-                    <tr><td colspan="7" class="text-center text-muted py-4">No items — add some from the bank statement</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-4">No items â€” add some from the bank statement</td></tr>
                 <?php else: foreach ($items as $it): ?>
                     <tr>
                         <td><?= htmlspecialchars($it['transaction_date'] ?? '-') ?></td>
                         <td><?= htmlspecialchars($it['description'] ?? '-') ?></td>
-                        <td class="text-end">₹<?= number_format((float)($it['amount'] ?? 0), 2) ?></td>
+                        <td class="text-end">â‚¹<?= number_format((float)($it['amount'] ?? 0), 2) ?></td>
                         <td><span class="badge bg-<?= ($it['type'] ?? '') === 'credit' ? 'success' : 'danger' ?>"><?= htmlspecialchars($it['type'] ?? '-') ?></span></td>
                         <td><span class="badge bg-<?= ($it['status'] ?? '') === 'matched' ? 'success' : 'warning' ?>"><?= htmlspecialchars($it['status'] ?? 'pending') ?></span></td>
                         <td><?= !empty($it['matched_cashbook_id']) ? '#' . (int)$it['matched_cashbook_id'] : '-' ?></td>
@@ -46,7 +46,7 @@
                                 <input type="hidden" name="item_id" value="<?= (int)$it['id'] ?>">
                                 <input type="hidden" name="recon_id" value="<?= (int)($recon['id'] ?? 0) ?>">
                                 <input type="hidden" name="status" value="matched">
-                                <input type="number" name="cashbook_id" placeholder="CB #" class="form-control form-control-sm d-inline-block" style="width:80px">
+                                <input type="number" name="cashbook_id" placeholder="CB #" class="form-control form-control-sm d-inline-block" class="style-31652">
                                 <button class="btn btn-sm btn-outline-success"><i class="fas fa-link"></i></button>
                             </form>
                             <?php endif; ?>

@@ -52,7 +52,7 @@ $project_id = $project_id ?? 0;
 ?>
 
 <!-- Hero Section -->
-<section class="project-hero text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920'); background-size: cover; background-position: center; background-attachment: fixed;">
+<section class="project-hero text-white text-center py-5 mb-5" class="style-35257">
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -150,12 +150,12 @@ $project_id = $project_id ?? 0;
             </div>
             <div class="col-lg-6">
                 <div class="map-container">
-                    <div id="projectMap" style="height: 400px; border-radius: 15px; overflow: hidden;">
+                    <div id="projectMap" class="style-88943">
                         <iframe src="https://maps.google.com/maps?q=<?php echo $project['location']['lat']; ?>,<?php echo $project['location']['lng']; ?>&z=15&output=embed" 
                                 width="100%" 
                                 height="100%" 
                                 frameborder="0" 
-                                style="border:0" 
+                                class="style-69986" 
                                 allowfullscreen>
                         </iframe>
                     </div>
@@ -195,7 +195,7 @@ $project_id = $project_id ?? 0;
                     <div class="row g-4">
                         <?php foreach ($project['images'] as $index => $image): ?>
                             <div class="col-lg-4 col-md-6">
-                                <div class="photo-card animate-fade-up" style="animation-delay: <?php echo $index * 0.1; ?>s;">
+                                <div class="photo-card animate-fade-up" class="style-88811">
                                     <div class="photo-container">
                                         <img src="<?php echo htmlspecialchars($image['src'] ?? $image['url'] ?? $image['image'] ?? ''); ?>"
                                              alt="<?php echo htmlspecialchars($image['title'] ?? 'Photo'); ?>"
@@ -228,7 +228,7 @@ $project_id = $project_id ?? 0;
                     <div class="row g-4">
                         <?php foreach ($project['videos'] as $index => $video): ?>
                             <div class="col-lg-6">
-                                <div class="video-card animate-fade-up" style="animation-delay: <?php echo $index * 0.1; ?>s;">
+                                <div class="video-card animate-fade-up" class="style-88811">
                                     <div class="video-container">
                                         <iframe src="<?php echo htmlspecialchars($video['url']); ?>" 
                                                 frameborder="0" 
@@ -331,7 +331,7 @@ $project_id = $project_id ?? 0;
         <div class="modal-content bg-dark">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100" style="height: 500px;"></iframe>
+                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100" class="style-49460"></iframe>
             </div>
         </div>
     </div>

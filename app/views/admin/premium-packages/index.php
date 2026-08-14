@@ -11,7 +11,7 @@
           <?php if (empty($packages)): ?>
             <tr>
                 <td colspan="9" class="text-center py-5">
-                    <i class="fas fa-crown fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                    <i class="fas fa-crown fa-3x text-muted mb-3" class="style-82835"></i>
                     <h5 class="text-muted">No packages defined yet</h5>
                     <p class="text-muted mb-3">Create premium membership packages to offer exclusive benefits and priority listing access to customers.</p>
                     <a href="<?= BASE_URL ?>/admin/premium-packages/create" class="btn btn-primary">
@@ -25,8 +25,8 @@
               <tr>
                 <td>#<?= $pkg['id'] ?></td>
                 <td><strong><?= htmlspecialchars($pkg['name']) ?></strong></td>
-                <td><span class="badge" style="background:<?= htmlspecialchars($pkg['badge_color'] ?? '#6b7280') ?>"><?= htmlspecialchars($pkg['badge_label'] ?? '') ?></span></td>
-                <td>₹<?= number_format($pkg['price']) ?></td>
+                <td><span class="badge" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? '') ?></span></td>
+                <td>â‚¹<?= number_format($pkg['price']) ?></td>
                 <td><?= $pkg['duration_days'] ?> days</td>
                 <td><?= $pkg['priority_order'] ?></td>
                 <td><?= $pkg['is_active'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>' ?></td>

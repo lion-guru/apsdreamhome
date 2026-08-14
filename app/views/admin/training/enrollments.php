@@ -110,11 +110,11 @@ $page_description = 'Manage course enrollments';
                             <small class="text-muted"><?php echo htmlspecialchars($e['user_email'] ?? ''); ?></small>
                         </td>
                         <td><?php echo htmlspecialchars($e['course_title'] ?? ''); ?></td>
-                        <td style="min-width: 120px;">
+                        <td class="style-74978">
                             <div class="d-flex align-items-center gap-2">
-                                <div class="progress flex-grow-1" style="height: 8px;">
+                                <div class="progress flex-grow-1" class="style-31164">
                                     <div class="progress-bar <?php echo ($e['progress_percentage'] ?? 0) >= 100 ? 'bg-success' : 'bg-primary'; ?>" 
-                                         style="width: <?php echo min(100, $e['progress_percentage'] ?? 0); ?>%"></div>
+                                         class="style-72116"></div>
                                 </div>
                                 <small class="text-muted"><?php echo (int)($e['progress_percentage'] ?? 0); ?>%</small>
                             </div>

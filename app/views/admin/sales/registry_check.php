@@ -27,15 +27,15 @@ $isEligible   = $eligibility['eligible'] ?? false;
         <div class="row g-3">
             <div class="col-md-3">
                 <small class="text-muted d-block">Customer</small>
-                <strong><?= htmlspecialchars((string)($booking['customer_name'] ?? '—')) ?></strong>
+                <strong><?= htmlspecialchars((string)($booking['customer_name'] ?? 'â€”')) ?></strong>
             </div>
             <div class="col-md-3">
                 <small class="text-muted d-block">Plot</small>
-                <strong><?= htmlspecialchars((string)($booking['plot_number'] ?? '—')) ?></strong>
+                <strong><?= htmlspecialchars((string)($booking['plot_number'] ?? 'â€”')) ?></strong>
             </div>
             <div class="col-md-3">
                 <small class="text-muted d-block">Colony</small>
-                <strong><?= htmlspecialchars((string)($booking['colony_name'] ?? '—')) ?></strong>
+                <strong><?= htmlspecialchars((string)($booking['colony_name'] ?? 'â€”')) ?></strong>
             </div>
             <div class="col-md-3">
                 <small class="text-muted d-block">Status</small>
@@ -56,7 +56,7 @@ $isEligible   = $eligibility['eligible'] ?? false;
         <?php if ($isEligible): ?>
             <div class="text-center py-4">
                 <div class="mb-3">
-                    <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    <i class="fas fa-check-circle text-success" class="style-22918"></i>
                 </div>
                 <h5 class="text-success">Eligible for Registry / NOC</h5>
                 <p class="text-muted">All financial obligations have been met. You may proceed with NOC generation.</p>
@@ -68,12 +68,12 @@ $isEligible   = $eligibility['eligible'] ?? false;
                 >
                     <i class="fas fa-file-signature me-2"></i>Generate NOC
                 </button>
-                <div id="noc-result" class="mt-3" style="display: none;"></div>
+                <div id="noc-result" class="mt-3" class="style-54390"></div>
             </div>
         <?php else: ?>
             <div class="text-center py-4">
                 <div class="mb-3">
-                    <i class="fas fa-times-circle text-danger" style="font-size: 3rem;"></i>
+                    <i class="fas fa-times-circle text-danger" class="style-22918"></i>
                 </div>
                 <h5 class="text-danger">Not Eligible</h5>
                 <p class="text-muted">This booking has unresolved financial obligations that block NOC / Registry generation.</p>
@@ -84,7 +84,7 @@ $isEligible   = $eligibility['eligible'] ?? false;
                 <table class="table table-bordered mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width:5%">#</th>
+                            <th class="style-69407">#</th>
                             <th>Blocking Reason</th>
                         </tr>
                     </thead>
@@ -92,7 +92,7 @@ $isEligible   = $eligibility['eligible'] ?? false;
                         <?php if (empty($eligibility['reasons'] ?? [])): ?>
                         <tr>
                             <td colspan="2" class="text-center py-5">
-                                <i class="fas fa-check-circle fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-check-circle fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No blocking reasons</h5>
                                 <p class="text-muted mb-3">There are no outstanding issues preventing registry or NOC generation.</p>
                             </td>
@@ -124,14 +124,14 @@ $isEligible   = $eligibility['eligible'] ?? false;
                 <?php if (($eligibility['pending_amount'] ?? 0) > 0): ?>
                     <div class="col-md-4">
                         <div class="alert alert-warning mb-0">
-                            <strong>₹<?= number_format($eligibility['pending_amount'], 2) ?></strong> Pending Amount
+                            <strong>â‚¹<?= number_format($eligibility['pending_amount'], 2) ?></strong> Pending Amount
                         </div>
                     </div>
                 <?php endif; ?>
                 <?php if (($eligibility['penalty_amount'] ?? 0) > 0): ?>
                     <div class="col-md-4">
                         <div class="alert alert-danger mb-0">
-                            <strong>₹<?= number_format($eligibility['penalty_amount'], 2) ?></strong> Accrued Penalties
+                            <strong>â‚¹<?= number_format($eligibility['penalty_amount'], 2) ?></strong> Accrued Penalties
                         </div>
                     </div>
                 <?php endif; ?>

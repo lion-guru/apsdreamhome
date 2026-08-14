@@ -125,7 +125,7 @@ $defectLabels = [
                     <?php if (empty($bookings)): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
-                                <i class="fas fa-key fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-key fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No possession records found</h5>
                                 <p class="text-muted mb-3">Possession records are generated from completed registry processes. Track property handover status once bookings are registered.</p>
                                 <a href="<?= BASE_URL ?>/admin/possession/dashboard" class="btn btn-primary">

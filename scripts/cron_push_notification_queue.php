@@ -134,4 +134,4 @@ if ($stale->rowCount() > 0) {
     echo "\nCleaned up " . $stale->rowCount() . " stale processing items\n";
 }
 
-echo "[" . date('Y-m-d H:i:s') . "] Push Notification Queue Processor completed\n";
+echo "[" . date('Y-m-d H:i:s') . "] Push Notification Queue Processor completed\n";?>

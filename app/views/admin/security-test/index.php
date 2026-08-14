@@ -27,7 +27,7 @@ $testLabels = [
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold mb-1"><i class="fas fa-shield-alt me-2 text-primary"></i>Security Test Suite</h4>
-            <p class="text-muted small mb-0">Automated security posture validation — 10 checks across your stack.</p>
+            <p class="text-muted small mb-0">Automated security posture validation â€” 10 checks across your stack.</p>
         </div>
         <div class="d-flex gap-2">
             <a href="<?= $base ?>/admin/security-test/report" target="_blank" class="btn btn-outline-secondary btn-sm">
@@ -46,8 +46,8 @@ $testLabels = [
         <div class="col-md-4">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-body text-center py-5">
-                    <div style="width:120px;height:120px;border-radius:50%;border:8px solid <?= $scoreColor ?>;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
-                        <span style="font-size:36px;font-weight:800;color:<?= $scoreColor ?>"><?= $overallScore ?></span>
+                    <div class="style-20273">
+                        <span class="style-43086"><?= $overallScore ?></span>
                     </div>
                     <h5 class="fw-bold mb-1">Overall Security Score</h5>
                     <span class="badge bg-<?= $scoreBg ?> fs-6"><?= $overallScore >= 80 ? 'Secure' : ($overallScore >= 50 ? 'Needs Improvement' : 'Critical') ?></span>
@@ -127,8 +127,8 @@ $testLabels = [
                         </div>
                         <span class="badge bg-<?= $statusCls ?>"><?= strtoupper($result['status']) ?></span>
                     </div>
-                    <div class="progress mb-2" style="height:6px">
-                        <div class="progress-bar bg-<?= $statusCls ?>" style="width:<?= $result['score'] ?>%"></div>
+                    <div class="progress mb-2" class="style-51910">
+                        <div class="progress-bar bg-<?= $statusCls ?>" class="style-52052"></div>
                     </div>
                     <small class="text-muted d-block mb-1"><?= htmlspecialchars($result['details']) ?></small>
                     <?php if (!empty($result['recommendation'])): ?>

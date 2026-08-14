@@ -79,4 +79,4 @@ $pdo->exec("DELETE FROM gallery WHERE image_path = '' OR image_path IS NULL");
 $deleted = $pdo->query("SELECT ROW_COUNT()")->fetchColumn();
 echo "OK: Cleaned " . $deleted . " empty gallery rows" . PHP_EOL;
 
-echo PHP_EOL . "DONE" . PHP_EOL;
+echo PHP_EOL . "DONE" . PHP_EOL;?>

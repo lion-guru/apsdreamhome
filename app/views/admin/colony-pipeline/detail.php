@@ -67,7 +67,7 @@ $blocks = $blocks ?? [];
     <div class="col-md-2">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
-          <div class="fs-3 text-info">₹<?= number_format((float)($plotStats['total_value'] ?? 0) / 100000, 1) ?>L</div>
+          <div class="fs-3 text-info">â‚¹<?= number_format((float)($plotStats['total_value'] ?? 0) / 100000, 1) ?>L</div>
           <div class="text-muted small"><?= __('cp_total_value') ?></div>
         </div>
       </div>
@@ -80,19 +80,19 @@ $blocks = $blocks ?? [];
     <div class="card-body aps-cp-card-body">
       <div class="row text-center">
         <div class="col-md-3">
-          <div class="fw-bold fs-5">₹<?= number_format((float)($devCost['total_cost'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5">â‚¹<?= number_format((float)($devCost['total_cost'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_total_cost') ?></div>
         </div>
         <div class="col-md-3">
-          <div class="fw-bold fs-5">₹<?= number_format((float)($devCost['total_gst'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5">â‚¹<?= number_format((float)($devCost['total_gst'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_total_gst') ?></div>
         </div>
         <div class="col-md-3">
-          <div class="fw-bold fs-5 text-success">₹<?= number_format((float)($devCost['total_paid'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5 text-success">â‚¹<?= number_format((float)($devCost['total_paid'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_paid') ?></div>
         </div>
         <div class="col-md-3">
-          <div class="fw-bold fs-5 text-danger">₹<?= number_format((float)($devCost['total_balance'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5 text-danger">â‚¹<?= number_format((float)($devCost['total_balance'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_balance') ?></div>
         </div>
       </div>
@@ -118,8 +118,8 @@ $blocks = $blocks ?? [];
               <td><?= $bc ?></td>
               <td><?= $ba ?></td>
               <td>
-                <div class="progress" style="height: 20px;">
-                  <div class="progress-bar bg-<?= $occ >= 80 ? 'success' : ($occ >= 50 ? 'warning' : 'primary') ?>" style="width: <?= $occ ?>%"><?= $occ ?>%</div>
+                <div class="progress" class="style-51309">
+                  <div class="progress-bar bg-<?= $occ >= 80 ? 'success' : ($occ >= 50 ? 'warning' : 'primary') ?>" class="style-5688"><?= $occ ?>%</div>
                 </div>
               </td>
             </tr>
@@ -171,7 +171,7 @@ $blocks = $blocks ?? [];
     <div class="col-md-3">
       <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>/map" class="card aps-cp-card text-decoration-none">
         <div class="card-body aps-cp-card-body text-center">
-          <i class="fas fa-map-marked-alt fa-2x" style="color:#0d9488 mb-2"></i>
+          <i class="fas fa-map-marked-alt fa-2x" class="style-3064"></i>
           <div class="fw-semibold">Interactive Map</div>
           <small class="text-muted">Leaflet plot map with filters</small>
         </div>
@@ -181,7 +181,7 @@ $blocks = $blocks ?? [];
 
   <div class="text-muted small">
     <?= __('cp_avg_area') ?>: <?= number_format((float)($plotStats['avg_area'] ?? 0), 0) ?> <?= __('cp_sqft') ?>
-    &middot; <?= __('cp_starting_price') ?>: ₹<?= number_format((float)($colony['starting_price'] ?? 0), 0) ?>
+    &middot; <?= __('cp_starting_price') ?>: â‚¹<?= number_format((float)($colony['starting_price'] ?? 0), 0) ?>
     &middot; <?= __('cp_location') ?>: <?= htmlspecialchars($colony['location'] ?? '') ?>
   </div>
 </div>

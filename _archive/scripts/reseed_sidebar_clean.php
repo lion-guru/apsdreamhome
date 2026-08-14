@@ -27,24 +27,24 @@ try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
     try {
         $pdo->exec("TRUNCATE TABLE admin_role_menu_permissions");
-        echo "✓ Truncated admin_role_menu_permissions\n";
+        echo "âœ“ Truncated admin_role_menu_permissions\n";
     } catch (PDOException $e) {
-        echo "⚠️ Could not truncate admin_role_menu_permissions: " . $e->getMessage() . "\n";
+        echo "âš ï¸� Could not truncate admin_role_menu_permissions: " . $e->getMessage() . "\n";
     }
     try {
         $pdo->exec("TRUNCATE TABLE admin_user_menu_permissions");
-        echo "✓ Truncated admin_user_menu_permissions\n";
+        echo "âœ“ Truncated admin_user_menu_permissions\n";
     } catch (PDOException $e) {
-        echo "⚠️ Could not truncate admin_user_menu_permissions: " . $e->getMessage() . "\n";
+        echo "âš ï¸� Could not truncate admin_user_menu_permissions: " . $e->getMessage() . "\n";
     }
     try {
         $pdo->exec("TRUNCATE TABLE admin_menu_items");
-        echo "✓ Truncated admin_menu_items\n";
+        echo "âœ“ Truncated admin_menu_items\n";
     } catch (PDOException $e) {
-        echo "⚠️ Could not truncate admin_menu_items: " . $e->getMessage() . "\n";
+        echo "âš ï¸� Could not truncate admin_menu_items: " . $e->getMessage() . "\n";
     }
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
-    echo "✓ Truncated menu and permission tables\n";
+    echo "âœ“ Truncated menu and permission tables\n";
 
     // 3. Define clean consolidated menu items (No duplicates, organized strictly by section)
     $menuItems = [
@@ -230,7 +230,7 @@ try {
         ]);
         $inserted++;
     }
-    echo "✓ Successfully seeded {$inserted} unique menu items!\n";
+    echo "âœ“ Successfully seeded {$inserted} unique menu items!\n";
 
     // 5. Grant permissions to roles
     $menuIds = $pdo->query("SELECT id FROM admin_menu_items")->fetchAll(PDO::FETCH_COLUMN);
@@ -251,14 +251,14 @@ try {
             $grantedCount++;
         }
     }
-    echo "✓ Successfully granted {$grantedCount} role permissions across " . count($roles) . " roles!\n";
+    echo "âœ“ Successfully granted {$grantedCount} role permissions across " . count($roles) . " roles!\n";
 
     // 6. Invalidate menu cache
     \App\Services\CacheService::invalidateAdminMenu();
-    echo "✓ Cleared Admin Sidebar Cache\n\n";
+    echo "âœ“ Cleared Admin Sidebar Cache\n\n";
 
     echo "=== SIDEBAR FIXED SUCCESSFULLY! ===\n";
 
 } catch (Exception $e) {
     echo "FAILED: " . $e->getMessage() . "\n";
-}
+}?>

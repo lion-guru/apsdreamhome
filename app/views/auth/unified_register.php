@@ -667,7 +667,7 @@ $base = BASE_URL;
 
             <!-- Error Box -->
             <?php if (!empty($errors)): ?>
-                <div style="padding: 0 1.5rem;">
+                <div class="style-54467">
                     <div class="error-box">
                         <div class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix these errors</div>
                         <ul>
@@ -868,7 +868,7 @@ $base = BASE_URL;
         const benefits = {
             customer: [
                 { icon: 'fas fa-shield-halved', text: 'RERA Approved', highlight: true },
-                { icon: 'fas fa-percent', text: 'EMI from ₹8,333/mo' },
+                { icon: 'fas fa-percent', text: 'EMI from â‚¹8,333/mo' },
                 { icon: 'fas fa-gift', text: 'Refer & Earn Points' },
                 { icon: 'fas fa-map-marker-alt', text: '204+ Plots Available' }
             ],
@@ -939,8 +939,8 @@ $base = BASE_URL;
             if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
             if (/[0-9]/.test(pwd)) score++;
             if (/[^A-Za-z0-9]/.test(pwd)) score++;
-            if (score <= 1) return { level: 'weak', text: 'Weak — add more characters', color: '#ef4444' };
-            if (score <= 2) return { level: 'fair', text: 'Fair — try adding numbers', color: '#f59e0b' };
+            if (score <= 1) return { level: 'weak', text: 'Weak â€” add more characters', color: '#ef4444' };
+            if (score <= 2) return { level: 'fair', text: 'Fair â€” try adding numbers', color: '#f59e0b' };
             if (score <= 3) return { level: 'strong', text: 'Strong password', color: '#22c55e' };
             return { level: 'very-strong', text: 'Excellent password!', color: '#0d9488' };
         }
@@ -995,7 +995,7 @@ $base = BASE_URL;
             const str = checkPwdStrength(this.value);
             const el = document.getElementById('pwdStrength');
             el.className = 'pwd-strength ' + str.level;
-            document.getElementById('pwdHint').innerHTML = '<i class="fas fa-info-circle" style="color:' + str.color + '"></i> <span>' + str.text + '</span>';
+            document.getElementById('pwdHint').innerHTML = '<i class="fas fa-info-circle" class="style-50939"></i> <span>' + str.text + '</span>';
 
             if (confirmInput.value) {
                 validateField('confirm', this.value === confirmInput.value, this.value === confirmInput.value ? 'Passwords match' : 'Passwords do not match');

@@ -35,7 +35,7 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Commission</h6>
-                            <h3 class="mb-0">₹<?= number_format((float)$stats['total_commission']) ?></h3>
+                            <h3 class="mb-0">â‚¹<?= number_format((float)$stats['total_commission']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Paid Out</h6>
-                            <h3 class="mb-0">₹<?= number_format((float)$stats['paid_out']) ?></h3>
+                            <h3 class="mb-0">â‚¹<?= number_format((float)$stats['paid_out']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Pending</h6>
-                            <h3 class="mb-0">₹<?= number_format((float)$stats['pending']) ?></h3>
+                            <h3 class="mb-0">â‚¹<?= number_format((float)$stats['pending']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -105,19 +105,19 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                     <div class="row g-3">
                         <div class="col-md-4">
                             <a href="<?php echo BASE_URL; ?>/admin/payouts" class="btn btn-outline-primary w-100 py-3">
-                                <i class="fas fa-wallet mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                <i class="fas fa-wallet mb-2 d-block" class="style-41417"></i>
                                 Process Payouts
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="<?php echo BASE_URL; ?>/admin/commission/calculator" class="btn btn-outline-success w-100 py-3">
-                                <i class="fas fa-calculator mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                <i class="fas fa-calculator mb-2 d-block" class="style-41417"></i>
                                 Calculator
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="<?php echo BASE_URL; ?>/admin/mlm" class="btn btn-outline-info w-100 py-3">
-                                <i class="fas fa-sitemap mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                <i class="fas fa-sitemap mb-2 d-block" class="style-41417"></i>
                                 MLM Network
                             </a>
                         </div>

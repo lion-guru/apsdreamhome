@@ -128,9 +128,9 @@
                             <td class="text-center small"><?= ucfirst(str_replace('_', ' ', $lead['buying_timeline'] ?? '-')) ?></td>
                             <td class="text-center">
                                 <div class="d-flex align-items-center justify-content-center">
-                                    <div class="progress" style="width:60px;height:6px">
+                                    <div class="progress" class="style-2489">
                                         <?php $score = (int)($lead['quality_score'] ?? 0); ?>
-                                        <div class="progress-bar bg-<?= $score >= 70 ? 'success' : ($score >= 40 ? 'warning' : 'danger') ?>" style="width:<?= $score ?>%"></div>
+                                        <div class="progress-bar bg-<?= $score >= 70 ? 'success' : ($score >= 40 ? 'warning' : 'danger') ?>" class="style-12479"></div>
                                     </div>
                                     <small class="ms-1"><?= $score ?></small>
                                 </div>

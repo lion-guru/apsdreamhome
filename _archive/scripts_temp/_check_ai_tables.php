@@ -17,4 +17,4 @@ foreach ($tables as $t) {
     } else {
         echo "$t: DOES NOT EXIST\n";
     }
-}
+}?>

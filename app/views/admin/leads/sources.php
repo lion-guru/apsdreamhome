@@ -56,11 +56,11 @@
                         <?php foreach ($sourceData as $i => $s): $pct = round(($s['count'] / ($totalLeads ?: 1)) * 100, 1); ?>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span><i class="fas fa-circle me-2" style="color:<?= $colors[$i % count($colors)] ?>"></i><?= htmlspecialchars(ucfirst($s['source'] ?? 'unknown')) ?></span>
+                                    <span><i class="fas fa-circle me-2" class="style-22350"></i><?= htmlspecialchars(ucfirst($s['source'] ?? 'unknown')) ?></span>
                                     <strong><?= $s['count'] ?> (<?= $pct ?>%)</strong>
                                 </div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" style="width:<?= $pct ?>%;background:<?= $colors[$i % count($colors)] ?>"></div>
+                                <div class="progress" class="style-87912">
+                                    <div class="progress-bar" class="style-92574"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -75,12 +75,12 @@
                 <div class="card-header bg-white"><h5 class="mb-0">Monthly Trend</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($monthlyTrend)): ?>
-                        <div class="d-flex align-items-end gap-2" style="height:200px;">
+                        <div class="d-flex align-items-end gap-2" class="style-27924">
                             <?php $maxM = max(array_column($monthlyTrend, 'count')) ?: 1; ?>
                             <?php foreach ($monthlyTrend as $m): $h = round(($m['count'] / $maxM) * 180); ?>
                                 <div class="flex-fill text-center">
-                                    <div style="height:<?= $h ?>px;background:linear-gradient(180deg,#3498db,#2980b9);border-radius:4px 4px 0 0;min-width:30px;" title="<?= $m['month'] ?>: <?= $m['count'] ?>"></div>
-                                    <small class="text-muted" style="font-size:10px;"><?= htmlspecialchars(substr($m['month'], 0, 3)) ?></small>
+                                    <div class="style-526" title="<?= $m['month'] ?>: <?= $m['count'] ?>"></div>
+                                    <small class="text-muted" class="style-32412"><?= htmlspecialchars(substr($m['month'], 0, 3)) ?></small>
                                 </div>
                             <?php endforeach; ?>
                         </div>

@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-gavel"></i> Telecaller Commission Rules</h4>
         <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-5">
             <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header" style="background:#6f42c1;color:white;"><i class="fas fa-plus"></i> Add Rule</div>
+                <div class="card-header aps-cp-card-header" class="style-3150"><i class="fas fa-plus"></i> Add Rule</div>
                 <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -29,7 +29,7 @@
                             </select>
                         </div>
                         <div class="mb-2 form-check"><input type="checkbox" name="is_active" class="form-check-input" checked id="a"><label class="form-check-label" for="a">Active</label></div>
-                        <button type="submit" class="btn" style="background:#6f42c1;color:white;"><i class="fas fa-save"></i> Save Rule</button>
+                        <button type="submit" class="btn" class="style-3150"><i class="fas fa-save"></i> Save Rule</button>
                     </form>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                             <?php if (empty($rules ?? [])): ?>
                             <tr>
                                 <td colspan="8" class="text-center py-5">
-                                    <i class="fas fa-gavel fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-gavel fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No telecaller rules defined</h5>
                                     <p class="text-muted mb-3">Create commission rules for telecallers based on calls, leads, or conversions.</p>
                                 </td>
@@ -60,11 +60,11 @@
                                 <td><?= $r['target_type'] ?></td>
                                 <td><span class="badge bg-<?= $r['is_active']?'success':'secondary' ?>"><?= $r['is_active']?'Yes':'No' ?></span></td>
                                 <td>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/toggle/<?= $r['id'] ?>" style="display:inline">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/toggle/<?= $r['id'] ?>" class="style-71727">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-toggle-<?= $r['is_active']?'on':'off' ?>"></i></button>
                                     </form>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/delete/<?= $r['id'] ?>" style="display:inline" onsubmit="return confirm('Delete rule #<?= $r['id'] ?>?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/delete/<?= $r['id'] ?>" class="style-71727" onsubmit="return confirm('Delete rule #<?= $r['id'] ?>?')">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                     </form>

@@ -105,11 +105,11 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                         ?>
                         <div class="d-flex mb-3 <?= $isAdmin ? '' : 'flex-row-reverse' ?>">
                             <div class="flex-shrink-0 ms-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:<?= $isAdmin ? '#10b981' : '#0d9488' ?>;color:#fff;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-75348">
                                     <i class="fas fa-<?= $isAdmin ? 'shield-alt' : 'user' ?>"></i>
                                 </div>
                             </div>
-                            <div class="flex-grow-1" style="max-width: 85%;">
+                            <div class="flex-grow-1" class="style-80611">
                                 <div class="p-3 rounded <?= $isAdmin ? 'bg-success bg-opacity-10 border-start border-success border-4' : 'bg-primary bg-opacity-10 border-start border-primary border-4' ?>">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong class="<?= $isAdmin ? 'text-success' : 'text-primary' ?>">
@@ -120,7 +120,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                                         </strong>
                                         <small class="text-muted"><?= date('d M Y, h:i A', strtotime($r['created_at'])) ?></small>
                                     </div>
-                                    <div style="white-space: pre-wrap;"><?= htmlspecialchars($r['message'] ?? '') ?></div>
+                                    <div class="style-19219"><?= htmlspecialchars($r['message'] ?? '') ?></div>
                                 </div>
                             </div>
                         </div>

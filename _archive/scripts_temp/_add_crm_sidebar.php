@@ -25,4 +25,4 @@ foreach ($items as [$name, $url, $icon, $section, $order]) {
     echo "ADDED: $name (id: {$pdo->lastInsertId()})\n";
 }
 
-echo "\nDone.\n";
+echo "\nDone.\n";?>

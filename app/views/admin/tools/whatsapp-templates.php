@@ -109,7 +109,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                                 <td><span class="badge bg-info"><?= htmlspecialchars($t['category'] ?? 'general') ?></span></td>
                                 <td><small><?= strtoupper(htmlspecialchars($t['language'] ?? 'en')) ?></small></td>
                                 <td>
-                                    <small class="text-muted d-inline-block" style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                    <small class="text-muted d-inline-block" class="style-41350">
                                         <?= htmlspecialchars(mb_substr(strip_tags($t['content'] ?? ''), 0, 80)) ?>
                                     </small>
                                 </td>
@@ -126,7 +126,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                                         <button class="btn btn-outline-primary" title="Edit" onclick='editTemplate(<?= json_encode($t) ?>)'>
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/tools/whatsapp-templates/<?= $t['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this template?')">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/tools/whatsapp-templates/<?= $t['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this template?')">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                             <button type="submit" class="btn btn-outline-danger" title="Delete">
                                                 <i class="fas fa-trash"></i>

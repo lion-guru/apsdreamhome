@@ -23,8 +23,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 <?php echo round($lang['completion'] ?? 0); ?>%
                             </span>
                         </div>
-                        <div class="progress mb-2" style="height: 6px;">
-                            <div class="progress-bar bg-primary" style="width: <?php echo $lang['completion'] ?? 0; ?>%"></div>
+                        <div class="progress mb-2" class="style-29939">
+                            <div class="progress-bar bg-primary" class="style-16029"></div>
                         </div>
                         <small class="text-muted">
                             <?php echo $lang['translated'] ?? 0; ?> / <?php echo $lang['total'] ?? 0; ?> keys

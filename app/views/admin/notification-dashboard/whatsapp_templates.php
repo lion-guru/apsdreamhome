@@ -40,7 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <div class="page-header">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1><i class="fab fa-whatsapp me-2" style="color: #25d366;"></i>WhatsApp Templates</h1>
+                <h1><i class="fab fa-whatsapp me-2" class="style-35478"></i>WhatsApp Templates</h1>
                 <p>Manage WhatsApp Business API message templates</p>
             </div>
             <a href="<?= $base ?>/admin/notification-dashboard" class="btn-back"><i class="fas fa-arrow-left me-1"></i>Back to Dashboard</a>
@@ -63,7 +63,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <tbody>
                         <?php foreach ($templates as $t): ?>
                             <tr>
-                                <td style="font-weight: 600;"><?= htmlspecialchars($t['name']) ?></td>
+                                <td class="style-50091"><?= htmlspecialchars($t['name']) ?></td>
                                 <td><span class="badge-category"><?= htmlspecialchars($t['category'] ?? 'utility') ?></span></td>
                                 <td>
                                     <?php
@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <span class="badge-status badge-<?= $statusClass ?>"><?= ucfirst(htmlspecialchars($t['status'] ?? 'draft')) ?></span>
                                 </td>
                                 <td><?= number_format($t['usage_count'] ?? 0) ?></td>
-                                <td style="white-space: nowrap;"><?= date('d M Y', strtotime($t['created_at'] ?? '')) ?></td>
+                                <td class="style-64704"><?= date('d M Y', strtotime($t['created_at'] ?? '')) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

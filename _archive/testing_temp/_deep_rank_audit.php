@@ -44,36 +44,36 @@ echo "  CODE REFERENCE MAP\n";
 echo "================================================================\n";
 
 echo "\n--- WRITES to mlm_profiles.current_level ---\n";
-echo "1. MLMCommissionEngine.php:334 → writes \$newRank from RANK_ORDER (lowercase)\n";
-echo "2. RankEvaluationService.php:65 → writes from mlm_levels.level_name (title case)\n";
-echo "3. AssociateAuthController.php:125 → writes integer 1\n";
+echo "1. MLMCommissionEngine.php:334 â†’ writes \$newRank from RANK_ORDER (lowercase)\n";
+echo "2. RankEvaluationService.php:65 â†’ writes from mlm_levels.level_name (title case)\n";
+echo "3. AssociateAuthController.php:125 â†’ writes integer 1\n";
 
 echo "\n--- READS current_level and compares to rank names ---\n";
-echo "1. DifferentialCommissionCalculator.php:130 → (int) cast → BROKEN with non-numeric\n";
-echo "2. RankEvaluationService.php:102 → === mlm_levels.level_name\n";
-echo "3. MobileApiController.php:1987 → 'Associate' default, searches in hardcoded array\n";
-echo "4. MLMCommissionEngine.php:290 → array_search in RANK_ORDER (lowercase)\n";
-echo "5. AssociateController.php:103 → 'Associate' default, display only\n";
+echo "1. DifferentialCommissionCalculator.php:130 â†’ (int) cast â†’ BROKEN with non-numeric\n";
+echo "2. RankEvaluationService.php:102 â†’ === mlm_levels.level_name\n";
+echo "3. MobileApiController.php:1987 â†’ 'Associate' default, searches in hardcoded array\n";
+echo "4. MLMCommissionEngine.php:290 â†’ array_search in RANK_ORDER (lowercase)\n";
+echo "5. AssociateController.php:103 â†’ 'Associate' default, display only\n";
 
 echo "\n--- READS current_level for display (no comparison) ---\n";
-echo "6. EngagementService.php:35,81 → SELECT only\n";
-echo "7. NetworkTree.php:18,44 → SELECT only\n";
-echo "8. ApiAuthService.php:49 → COALESCE default 'Customer'\n";
-echo "9. MLMController.php:101,206,226,250,252,257 → display + GROUP BY\n";
-echo "10. MLMGrowthReportController.php:126,131,132 → GROUP BY + display\n";
-echo "11. MLMSettingsController.php:121,126 → display + ORDER BY\n";
-echo "12. views/mlm/genealogy.php:33,133,168,196 → strtolower for CSS class\n";
-echo "13. views/mlm/tree.php:33,148,201 → strtolower for CSS class\n";
-echo "14. views/mlm/ranks.php:210 → display\n";
-echo "15. views/mlm-settings/evaluate.php:58 → display\n";
-echo "16. views/mlm-settings/associate_progress.php:29 → display\n";
+echo "6. EngagementService.php:35,81 â†’ SELECT only\n";
+echo "7. NetworkTree.php:18,44 â†’ SELECT only\n";
+echo "8. ApiAuthService.php:49 â†’ COALESCE default 'Customer'\n";
+echo "9. MLMController.php:101,206,226,250,252,257 â†’ display + GROUP BY\n";
+echo "10. MLMGrowthReportController.php:126,131,132 â†’ GROUP BY + display\n";
+echo "11. MLMSettingsController.php:121,126 â†’ display + ORDER BY\n";
+echo "12. views/mlm/genealogy.php:33,133,168,196 â†’ strtolower for CSS class\n";
+echo "13. views/mlm/tree.php:33,148,201 â†’ strtolower for CSS class\n";
+echo "14. views/mlm/ranks.php:210 â†’ display\n";
+echo "15. views/mlm-settings/evaluate.php:58 â†’ display\n";
+echo "16. views/mlm-settings/associate_progress.php:29 â†’ display\n";
 
 echo "\n--- WRITES current_level (from Gamification on users table) ---\n";
-echo "17. GamificationService.php:105,113,115,120,207 → users.current_level (INTEGER, different table!)\n";
+echo "17. GamificationService.php:105,113,115,120,207 â†’ users.current_level (INTEGER, different table!)\n";
 
 echo "\n--- HARDWRITES specific rank names ---\n";
-echo "18. AssociateAuthController.php:125 → 'current_level' => 1 (INTEGER)\n";
-echo "19. Agent/MainController.php:52 → 'current_level' => 'Agent' (not in any rank system)\n";
-echo "20. Customer.php:1368 → 'current_level' => 'Bronze' (title case)\n";
-echo "21. MLMController.php:274 → 'current_level' => 'Gold' (title case)\n";
-echo "22. Gamification.php:454 → 'current_level' => 1 (INTEGER, different table)\n";
+echo "18. AssociateAuthController.php:125 â†’ 'current_level' => 1 (INTEGER)\n";
+echo "19. Agent/MainController.php:52 â†’ 'current_level' => 'Agent' (not in any rank system)\n";
+echo "20. Customer.php:1368 â†’ 'current_level' => 'Bronze' (title case)\n";
+echo "21. MLMController.php:274 â†’ 'current_level' => 'Gold' (title case)\n";
+echo "22. Gamification.php:454 â†’ 'current_level' => 1 (INTEGER, different table)\n";?>

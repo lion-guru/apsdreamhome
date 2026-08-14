@@ -20,4 +20,4 @@ $sql = "CREATE TABLE IF NOT EXISTS calls_log (
     INDEX idx_action (action)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 $db->execute($sql);
-echo "calls_log table created: " . ($db->fetch("SELECT COUNT(*) as c FROM calls_log") ? "OK" : "FAIL") . "\n";
+echo "calls_log table created: " . ($db->fetch("SELECT COUNT(*) as c FROM calls_log") ? "OK" : "FAIL") . "\n";?>

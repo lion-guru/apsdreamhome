@@ -17,29 +17,29 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<body class="style-51511">
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" style="padding:30px 15px;">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <td align="center" class="style-56039">
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
         <!-- Header -->
         <tr>
-          <td bgcolor="#ef4444" align="center" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);padding:40px 30px;">
-            <div style="width:64px;height:64px;background:rgba(255,255,255,0.2);border-radius:50%;margin:0 auto 16px;line-height:64px;font-size:36px;color:#fff;text-align:center;">&#10060;</div>
-            <h1 class="h1-mobile" style="color:#ffffff;margin:0;font-size:28px;font-weight:700;line-height:34px;">Booking Cancelled</h1>
-            <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">Your booking has been cancelled</p>
+          <td bgcolor="#ef4444" align="center" class="style-59428">
+            <div class="style-90702">&#10060;</div>
+            <h1 class="h1-mobile" class="style-56865">Booking Cancelled</h1>
+            <p class="style-9233">Your booking has been cancelled</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" style="padding:40px 40px 20px;">
-            <h2 style="margin:0 0 18px;color:#1a202c;font-size:22px;font-weight:600;">Hi {{user_name}},</h2>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
+          <td class="px-mobile" class="style-68782">
+            <h2 class="style-80102">Hi {{user_name}},</h2>
+            <p class="style-28596">
               Your booking has been cancelled as per your request.
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;margin:0 0 24px;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-87013">
               <tr>
-                <td style="padding:16px 18px;font-size:14px;color:#991b1b;line-height:22px;">
+                <td class="style-6557">
                   <strong>Cancellation Details:</strong><br>
                   Booking: {{booking_number}}<br>
                   Plot: {{plot_number}}, {{colony_name}}<br>
@@ -50,22 +50,22 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
                 </td>
               </tr>
             </table>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
+            <p class="style-28596">
               Your refund will be processed within <strong>7-10 business days</strong> to your original payment method.
             </p>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
+            <p class="style-28596">
               If you have any questions about the cancellation or refund, please contact our support team.
             </p>
-            <p style="margin:0;font-size:15px;line-height:22px;color:#4a5568;">
+            <p class="style-25661">
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" style="padding:24px 30px;text-align:center;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 6px;font-size:13px;color:#718096;">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p style="margin:10px 0 0;font-size:11px;color:#cbd5e0;">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" class="style-89423">
+            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

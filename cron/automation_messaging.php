@@ -55,7 +55,7 @@ $cronTenantSql = $cronTenantId > 1 ? " AND tenant_id = " . (int)$cronTenantId : 
 $cronTenantCol = $cronTenantId > 1 ? ", tenant_id" : "";
 $cronTenantVal = $cronTenantId > 1 ? ", " . (int)$cronTenantId : "";
 
-// ─── 1. Birthday & Festival Greetings ────────────────────────
+// â”€â”€â”€ 1. Birthday & Festival Greetings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 logMsg("--- Birthday & Festival Greetings ---");
 try {
     $greetingResults = $auto->sendAutomatedGreetings();
@@ -69,7 +69,7 @@ try {
     logMsg("Greetings ERROR: " . $e->getMessage());
 }
 
-// ─── 2. Newsletter Processing (weekly — only on Mondays) ──────
+// â”€â”€â”€ 2. Newsletter Processing (weekly â€” only on Mondays) â”€â”€â”€â”€â”€â”€
 if (date('N') == 1) {
     logMsg("--- Newsletter Processing (Monday) ---");
     try {
@@ -82,7 +82,7 @@ if (date('N') == 1) {
     logMsg("--- Newsletter: Skipped (not Monday) ---");
 }
 
-// ─── 3. Payment Reminder Chasers ─────────────────────────────
+// â”€â”€â”€ 3. Payment Reminder Chasers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 logMsg("--- Payment Reminder Chasers ---");
 try {
     $pdo = $db->getConnection();
@@ -107,10 +107,10 @@ try {
     
     foreach ($overdue as $emi) {
         $daysOverdue = (int)((time() - strtotime($emi['due_date'])) / 86400);
-        $message = "Dear {$emi['customer_name']}, your EMI installment #{$emi['installment_number']} of ₹" . number_format($emi['amount']) . " was due on " . date('d M Y', strtotime($emi['due_date'])) . ". {$daysOverdue} days overdue";
+        $message = "Dear {$emi['customer_name']}, your EMI installment #{$emi['installment_number']} of â‚¹" . number_format($emi['amount']) . " was due on " . date('d M Y', strtotime($emi['due_date'])) . ". {$daysOverdue} days overdue";
         
         if ($emi['accrued_penalty'] > 0) {
-            $message .= ". Late fee: ₹" . number_format($emi['accrued_penalty']);
+            $message .= ". Late fee: â‚¹" . number_format($emi['accrued_penalty']);
         }
         $message .= ". Please pay at the earliest to avoid further charges. - APS Dream Home";
         
@@ -148,6 +148,6 @@ try {
     logMsg("Payment chaser ERROR: " . $e->getMessage());
 }
 
-// ─── Summary ──────────────────────────────────────────────────
+// â”€â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $elapsed = round((microtime(true) - $startTime) * 1000);
-logMsg("=== Completed in {$elapsed}ms ===");
+logMsg("=== Completed in {$elapsed}ms ===");?>

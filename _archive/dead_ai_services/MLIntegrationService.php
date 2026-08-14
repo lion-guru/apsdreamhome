@@ -495,4 +495,4 @@ class MLIntegration {
 // Global helper function for ML integration
 function ml_integration() {
     return new MLIntegration();
-}
+}?>

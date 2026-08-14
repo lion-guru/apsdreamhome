@@ -18,7 +18,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0 position-relative">
-                    <div class="vr-viewport" style="height: 500px; background: linear-gradient(135deg, #0a0a1a, #0f172a, #24243e);">
+                    <div class="vr-viewport" class="style-91315">
                         <div class="d-flex align-items-center justify-content-center h-100">
                             <div class="text-center text-white">
                                 <i class="fas fa-vr-cardboard fa-5x mb-3 opacity-50"></i>
@@ -65,7 +65,7 @@
                     <hr>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Price</span>
-                        <strong>₹<?= number_format($property['price'] ?? 0) ?></strong>
+                        <strong>â‚¹<?= number_format($property['price'] ?? 0) ?></strong>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Area</span>
@@ -103,7 +103,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-2">
                         <span class="me-2">Ambient:</span>
-                        <span class="badge bg-secondary d-inline-block" style="width:30px;height:30px;background:<?= ($vr_data['lighting']['ambient'] ?? '#ffffff') ?> !important;"></span>
+                        <span class="badge bg-secondary d-inline-block" class="style-21654"></span>
                     </div>
                     <div class="d-flex justify-content-between mb-1">
                         <span>Intensity</span>

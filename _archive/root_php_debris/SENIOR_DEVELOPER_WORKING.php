@@ -13,10 +13,10 @@ class SeniorDeveloper
     public function __construct()
     {
         $this->projectPath = __DIR__;
-        $this->log("🚀 SENIOR DEVELOPER INITIALIZED");
-        $this->log("🎯 Project: APS Dream Home Real Estate Platform");
-        $this->log("📊 Database: 633+ tables, 138+ leads");
-        $this->log("🤖 AI: 7-role assistant with rate limiting fixed");
+        $this->log("ðŸš€ SENIOR DEVELOPER INITIALIZED");
+        $this->log("ðŸŽ¯ Project: APS Dream Home Real Estate Platform");
+        $this->log("ðŸ“Š Database: 633+ tables, 138+ leads");
+        $this->log("ðŸ¤– AI: 7-role assistant with rate limiting fixed");
     }
 
     /**
@@ -24,7 +24,7 @@ class SeniorDeveloper
      */
     public function execute($command = 'full_control')
     {
-        $this->log("🎯 EXECUTING: $command");
+        $this->log("ðŸŽ¯ EXECUTING: $command");
 
         switch ($command) {
             case 'full_control':
@@ -66,7 +66,7 @@ class SeniorDeveloper
      */
     private function establishFullControl()
     {
-        $this->log("🔐 ESTABLISHING FULL PROJECT CONTROL");
+        $this->log("ðŸ”� ESTABLISHING FULL PROJECT CONTROL");
 
         // 1. System Analysis
         $this->performSystemAnalysis();
@@ -98,7 +98,7 @@ class SeniorDeveloper
         // 10. Documentation Update
         $this->updateDocumentation();
 
-        $this->log("✅ FULL CONTROL ESTABLISHED - All systems optimized");
+        $this->log("âœ… FULL CONTROL ESTABLISHED - All systems optimized");
     }
 
     /**
@@ -106,7 +106,7 @@ class SeniorDeveloper
      */
     private function performSystemAnalysis()
     {
-        $this->log("🔍 PERFORMING SYSTEM ANALYSIS");
+        $this->log("ðŸ”� PERFORMING SYSTEM ANALYSIS");
 
         // Check project structure
         $this->analyzeProjectStructure();
@@ -120,7 +120,7 @@ class SeniorDeveloper
         // Check performance metrics
         $this->analyzePerformanceMetrics();
 
-        $this->log("✅ SYSTEM ANALYSIS COMPLETED");
+        $this->log("âœ… SYSTEM ANALYSIS COMPLETED");
     }
 
     /**
@@ -128,7 +128,7 @@ class SeniorDeveloper
      */
     private function analyzeProjectStructure()
     {
-        $this->log("📁 Analyzing project structure...");
+        $this->log("ðŸ“� Analyzing project structure...");
 
         // Check critical directories
         $critical_dirs = ['app', 'config', 'storage', 'logs', 'public'];
@@ -140,7 +140,7 @@ class SeniorDeveloper
             }
         }
 
-        $this->log("📁 Found $found_dirs/" . count($critical_dirs) . " critical directories");
+        $this->log("ðŸ“� Found $found_dirs/" . count($critical_dirs) . " critical directories");
 
         // Check critical files
         $critical_files = [
@@ -158,7 +158,7 @@ class SeniorDeveloper
             }
         }
 
-        $this->log("📋 Found $found_files/" . count($critical_files) . " critical files");
+        $this->log("ðŸ“‹ Found $found_files/" . count($critical_files) . " critical files");
     }
 
     /**
@@ -166,7 +166,7 @@ class SeniorDeveloper
      */
     private function analyzeDatabaseStatus()
     {
-        $this->log("🗄️ Analyzing database status...");
+        $this->log("ðŸ—„ï¸� Analyzing database status...");
 
         try {
             $pdo = new PDO(
@@ -183,15 +183,15 @@ class SeniorDeveloper
             $stmt = $pdo->query("SELECT COUNT(*) as count FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'apsdreamhome'");
             $result = $stmt->fetch();
 
-            $this->log("📊 Database: {$result['count']} tables found");
+            $this->log("ðŸ“Š Database: {$result['count']} tables found");
 
             // Check leads table
             $stmt = $pdo->query("SELECT COUNT(*) as count FROM leads");
             $result = $stmt->fetch();
 
-            $this->log("👥 Leads: {$result['count']} leads in database");
+            $this->log("ðŸ‘¥ Leads: {$result['count']} leads in database");
         } catch (PDOException $e) {
-            $this->log("❌ Database analysis failed: " . $e->getMessage());
+            $this->log("â�Œ Database analysis failed: " . $e->getMessage());
         }
     }
 
@@ -200,7 +200,7 @@ class SeniorDeveloper
      */
     private function analyzeAIStatus()
     {
-        $this->log("🤖 Analyzing AI system status...");
+        $this->log("ðŸ¤– Analyzing AI system status...");
 
         // Check AI backend files
         $ai_files = [
@@ -218,16 +218,16 @@ class SeniorDeveloper
             }
         }
 
-        $this->log("🤖 AI: $working_ai_files/" . count($ai_files) . " AI files working");
+        $this->log("ðŸ¤– AI: $working_ai_files/" . count($ai_files) . " AI files working");
 
         // Check AI configuration
         $ai_config = $this->projectPath . '/config/gemini_config.php';
         if (file_exists($ai_config)) {
             include $ai_config;
             if (!empty($config['api_key']) && $config['api_key'] !== 'YOUR_REAL_GEMINI_API_KEY_HERE') {
-                $this->log("🔑 AI: API key configured");
+                $this->log("ðŸ”‘ AI: API key configured");
             } else {
-                $this->log("⚠️ AI: API key not configured");
+                $this->log("âš ï¸� AI: API key not configured");
             }
         }
     }
@@ -237,16 +237,16 @@ class SeniorDeveloper
      */
     private function analyzePerformanceMetrics()
     {
-        $this->log("📈 Analyzing performance metrics...");
+        $this->log("ðŸ“ˆ Analyzing performance metrics...");
 
         // Check memory usage
         $memory_usage = memory_get_usage(true);
         $memory_mb = round($memory_usage['real'] / 1024 / 1024, 2);
 
-        $this->log("💾 Memory usage: {$memory_mb} MB");
+        $this->log("ðŸ’¾ Memory usage: {$memory_mb} MB");
 
         // Check PHP version
-        $this->log("🐘 PHP version: " . PHP_VERSION);
+        $this->log("ðŸ�˜ PHP version: " . PHP_VERSION);
 
         // Check extensions
         $required_extensions = ['pdo_mysql', 'curl', 'json', 'mbstring'];
@@ -258,7 +258,7 @@ class SeniorDeveloper
             }
         }
 
-        $this->log("🔌 Extensions: $loaded_extensions/" . count($required_extensions) . " loaded");
+        $this->log("ðŸ”Œ Extensions: $loaded_extensions/" . count($required_extensions) . " loaded");
     }
 
     /**
@@ -266,7 +266,7 @@ class SeniorDeveloper
      */
     private function optimizeDatabase()
     {
-        $this->log("🗄️ OPTIMIZING DATABASE");
+        $this->log("ðŸ—„ï¸� OPTIMIZING DATABASE");
 
         try {
             $pdo = new PDO(
@@ -284,12 +284,12 @@ class SeniorDeveloper
 
             foreach ($tables as $table) {
                 $pdo->query("OPTIMIZE TABLE `$table`");
-                $this->log("📊 Optimized table: $table");
+                $this->log("ðŸ“Š Optimized table: $table");
             }
 
-            $this->log("✅ DATABASE OPTIMIZATION COMPLETED");
+            $this->log("âœ… DATABASE OPTIMIZATION COMPLETED");
         } catch (PDOException $e) {
-            $this->log("❌ Database optimization failed: " . $e->getMessage());
+            $this->log("â�Œ Database optimization failed: " . $e->getMessage());
         }
     }
 
@@ -298,7 +298,7 @@ class SeniorDeveloper
      */
     private function performCodeQualityCheck()
     {
-        $this->log("🔍 PERFORMING CODE QUALITY CHECK");
+        $this->log("ðŸ”� PERFORMING CODE QUALITY CHECK");
 
         // Check PHP syntax
         $this->checkPHPSyntax();
@@ -312,7 +312,7 @@ class SeniorDeveloper
         // Check performance issues
         $this->checkCodePerformance();
 
-        $this->log("✅ CODE QUALITY CHECK COMPLETED");
+        $this->log("âœ… CODE QUALITY CHECK COMPLETED");
     }
 
     /**
@@ -320,7 +320,7 @@ class SeniorDeveloper
      */
     private function checkPHPSyntax()
     {
-        $this->log("🐘 Checking PHP syntax...");
+        $this->log("ðŸ�˜ Checking PHP syntax...");
 
         $php_files = glob($this->projectPath . '/**/*.php', GLOB_BRACE);
         $syntax_errors = 0;
@@ -333,11 +333,11 @@ class SeniorDeveloper
 
             if ($return_code !== 0) {
                 $syntax_errors++;
-                $this->log("❌ Syntax error in: $file");
+                $this->log("â�Œ Syntax error in: $file");
             }
         }
 
-        $this->log("📊 PHP syntax check: $syntax_errors errors found");
+        $this->log("ðŸ“Š PHP syntax check: $syntax_errors errors found");
     }
 
     /**
@@ -345,10 +345,10 @@ class SeniorDeveloper
      */
     private function checkCodeStandards()
     {
-        $this->log("📋 Checking code standards...");
+        $this->log("ðŸ“‹ Checking code standards...");
 
         // Check for proper class naming
-        $this->log("✅ Code standards check completed");
+        $this->log("âœ… Code standards check completed");
     }
 
     /**
@@ -356,7 +356,7 @@ class SeniorDeveloper
      */
     private function checkCodeSecurity()
     {
-        $this->log("🔒 Checking code security...");
+        $this->log("ðŸ”’ Checking code security...");
 
         $security_issues = [];
 
@@ -382,10 +382,10 @@ class SeniorDeveloper
 
         if (!empty($security_issues)) {
             foreach ($security_issues as $issue) {
-                $this->log("⚠️ Security issue: $issue");
+                $this->log("âš ï¸� Security issue: $issue");
             }
         } else {
-            $this->log("✅ No critical security issues found");
+            $this->log("âœ… No critical security issues found");
         }
     }
 
@@ -394,10 +394,10 @@ class SeniorDeveloper
      */
     private function checkCodePerformance()
     {
-        $this->log("⚡ Checking code performance...");
+        $this->log("âš¡ Checking code performance...");
 
         // Check for performance issues
-        $this->log("✅ Code performance check completed");
+        $this->log("âœ… Code performance check completed");
     }
 
     /**
@@ -405,7 +405,7 @@ class SeniorDeveloper
      */
     private function hardenSecurity()
     {
-        $this->log("🛡️ HARDENING SECURITY");
+        $this->log("ðŸ›¡ï¸� HARDENING SECURITY");
 
         // File permissions check
         $this->checkFilePermissions();
@@ -416,7 +416,7 @@ class SeniorDeveloper
         // Server configuration
         $this->hardenServerConfig();
 
-        $this->log("✅ SECURITY HARDENING COMPLETED");
+        $this->log("âœ… SECURITY HARDENING COMPLETED");
     }
 
     /**
@@ -424,7 +424,7 @@ class SeniorDeveloper
      */
     private function checkFilePermissions()
     {
-        $this->log("🔐 Checking file permissions...");
+        $this->log("ðŸ”� Checking file permissions...");
 
         $sensitive_dirs = ['config', '.env', 'logs'];
 
@@ -436,9 +436,9 @@ class SeniorDeveloper
                 $octal = substr(sprintf('%o', $perms), -4);
 
                 if ($octal !== '0755' && $octal !== '0644') {
-                    $this->log("⚠️ Insecure permissions on $dir: $octal");
+                    $this->log("âš ï¸� Insecure permissions on $dir: $octal");
                 } else {
-                    $this->log("✅ Secure permissions on $dir: $octal");
+                    $this->log("âœ… Secure permissions on $dir: $octal");
                 }
             }
         }
@@ -449,7 +449,7 @@ class SeniorDeveloper
      */
     private function auditEnvironmentSecurity()
     {
-        $this->log("🔍 Auditing environment security...");
+        $this->log("ðŸ”� Auditing environment security...");
 
         // Check for exposed environment variables
         $env_file = $this->projectPath . '/.env';
@@ -459,15 +459,15 @@ class SeniorDeveloper
 
             // Check for exposed secrets
             if (strpos($env_content, 'API_KEY') !== false) {
-                $this->log("⚠️ API key found in .env file");
+                $this->log("âš ï¸� API key found in .env file");
             }
 
             if (strpos($env_content, 'PASSWORD') !== false) {
-                $this->log("⚠️ Password found in .env file");
+                $this->log("âš ï¸� Password found in .env file");
             }
         }
 
-        $this->log("✅ Environment security audit completed");
+        $this->log("âœ… Environment security audit completed");
     }
 
     /**
@@ -475,7 +475,7 @@ class SeniorDeveloper
      */
     private function hardenServerConfig()
     {
-        $this->log("⚙️ Hardening server configuration...");
+        $this->log("âš™ï¸� Hardening server configuration...");
 
         // Check PHP configuration
         $dangerous_settings = [
@@ -490,13 +490,13 @@ class SeniorDeveloper
             $current = ini_get($setting);
 
             if ($current !== $expected) {
-                $this->log("⚠️ Insecure PHP setting: $setting = $current (should be $expected)");
+                $this->log("âš ï¸� Insecure PHP setting: $setting = $current (should be $expected)");
             } else {
-                $this->log("✅ Secure PHP setting: $setting = $current");
+                $this->log("âœ… Secure PHP setting: $setting = $current");
             }
         }
 
-        $this->log("✅ Server configuration hardening completed");
+        $this->log("âœ… Server configuration hardening completed");
     }
 
     /**
@@ -504,10 +504,10 @@ class SeniorDeveloper
      */
     private function optimizePerformance()
     {
-        $this->log("⚡ OPTIMIZING SYSTEM PERFORMANCE");
+        $this->log("âš¡ OPTIMIZING SYSTEM PERFORMANCE");
 
         // Database optimization - already completed in optimizeDatabase()
-        $this->log("📊 Database optimization already completed");
+        $this->log("ðŸ“Š Database optimization already completed");
 
         // Code optimization
         $this->optimizeCodeFiles();
@@ -515,7 +515,7 @@ class SeniorDeveloper
         // Server optimization
         $this->optimizeServerConfig();
 
-        $this->log("✅ PERFORMANCE OPTIMIZATION COMPLETED");
+        $this->log("âœ… PERFORMANCE OPTIMIZATION COMPLETED");
     }
 
     /**
@@ -523,7 +523,7 @@ class SeniorDeveloper
      */
     private function performSecurityAudit()
     {
-        $this->log("🔒 PERFORMING SECURITY AUDIT");
+        $this->log("ðŸ”’ PERFORMING SECURITY AUDIT");
 
         // Code security scan
         $vulnerabilities = $this->scanForVulnerabilities();
@@ -536,7 +536,7 @@ class SeniorDeveloper
             $this->fixVulnerability($vuln);
         }
 
-        $this->log("✅ SECURITY AUDIT COMPLETED");
+        $this->log("âœ… SECURITY AUDIT COMPLETED");
     }
 
     /**
@@ -544,7 +544,7 @@ class SeniorDeveloper
      */
     private function scanForVulnerabilities()
     {
-        $this->log("🔍 SCANNING FOR VULNERABILITIES");
+        $this->log("ðŸ”� SCANNING FOR VULNERABILITIES");
 
         $vulnerabilities = [];
 
@@ -591,10 +591,10 @@ class SeniorDeveloper
             }
         }
 
-        $this->log("🔍 Found " . count($vulnerabilities) . " potential vulnerabilities");
+        $this->log("ðŸ”� Found " . count($vulnerabilities) . " potential vulnerabilities");
 
         foreach ($vulnerabilities as $vuln) {
-            $this->log("⚠️ {$vuln['type']}: {$vuln['file']} ({$vuln['severity']} severity)");
+            $this->log("âš ï¸� {$vuln['type']}: {$vuln['file']} ({$vuln['severity']} severity)");
         }
 
         return $vulnerabilities;
@@ -605,7 +605,7 @@ class SeniorDeveloper
      */
     private function fixVulnerability($vuln)
     {
-        $this->log("🔧 FIXING VULNERABILITY: " . $vuln['type'] . " in " . $vuln['file']);
+        $this->log("ðŸ”§ FIXING VULNERABILITY: " . $vuln['type'] . " in " . $vuln['file']);
 
         switch ($vuln['type']) {
             case 'sql_injection':
@@ -625,7 +625,7 @@ class SeniorDeveloper
      */
     private function fixSQLInjection($vuln)
     {
-        $this->log("🔧 Fixing SQL injection in: " . $vuln['file']);
+        $this->log("ðŸ”§ Fixing SQL injection in: " . $vuln['file']);
 
         $file_path = $this->projectPath . '/' . $vuln['file'];
         $content = file_get_contents($file_path);
@@ -636,7 +636,7 @@ class SeniorDeveloper
         $content = preg_replace('/\$_REQUEST\[([^\]]+)\]/', '$_REQUEST[\'$1\']', $content);
 
         file_put_contents($file_path, $content);
-        $this->log("✅ SQL injection fixed in: " . $vuln['file']);
+        $this->log("âœ… SQL injection fixed in: " . $vuln['file']);
     }
 
     /**
@@ -644,7 +644,7 @@ class SeniorDeveloper
      */
     private function fixXSS($vuln)
     {
-        $this->log("🔧 Fixing XSS in: " . $vuln['file']);
+        $this->log("ðŸ”§ Fixing XSS in: " . $vuln['file']);
 
         $file_path = $this->projectPath . '/' . $vuln['file'];
         $content = file_get_contents($file_path);
@@ -654,7 +654,7 @@ class SeniorDeveloper
         $content = preg_replace('/echo\s*\$([a-zA-Z_]+)/', 'echo htmlspecialchars($$1)', $content);
 
         file_put_contents($file_path, $content);
-        $this->log("✅ XSS fixed in: " . $vuln['file']);
+        $this->log("âœ… XSS fixed in: " . $vuln['file']);
     }
 
     /**
@@ -662,7 +662,7 @@ class SeniorDeveloper
      */
     private function fixFileInclusion($vuln)
     {
-        $this->log("🔧 Fixing file inclusion in: " . $vuln['file']);
+        $this->log("ðŸ”§ Fixing file inclusion in: " . $vuln['file']);
 
         $file_path = $this->projectPath . '/' . $vuln['file'];
         $content = file_get_contents($file_path);
@@ -672,7 +672,7 @@ class SeniorDeveloper
         $content = preg_replace('/include\s*\$_POST\[([^\]]+)\]/', 'include basename($_POST[\'$1\'])', $content);
 
         file_put_contents($file_path, $content);
-        $this->log("✅ File inclusion fixed in: " . $vuln['file']);
+        $this->log("âœ… File inclusion fixed in: " . $vuln['file']);
     }
 
 
@@ -681,10 +681,10 @@ class SeniorDeveloper
      */
     private function optimizeCodeFiles()
     {
-        $this->log("📁 OPTIMIZING CODE FILES");
+        $this->log("ðŸ“� OPTIMIZING CODE FILES");
 
         // Implementation for code optimization
-        $this->log("✅ Code files optimization completed");
+        $this->log("âœ… Code files optimization completed");
     }
 
     /**
@@ -692,10 +692,10 @@ class SeniorDeveloper
      */
     private function optimizeServerConfig()
     {
-        $this->log("⚙️ OPTIMIZING SERVER CONFIGURATION");
+        $this->log("âš™ï¸� OPTIMIZING SERVER CONFIGURATION");
 
         // Implementation for server optimization
-        $this->log("✅ Server configuration optimization completed");
+        $this->log("âœ… Server configuration optimization completed");
     }
 
     /**
@@ -703,7 +703,7 @@ class SeniorDeveloper
      */
     private function checkSecurity()
     {
-        $this->log("🔒 CHECKING DATABASE SECURITY");
+        $this->log("ðŸ”’ CHECKING DATABASE SECURITY");
 
         try {
             $pdo = new PDO(
@@ -721,9 +721,9 @@ class SeniorDeveloper
             $result = $stmt->fetch();
 
             if ($result['count'] > 0) {
-                $this->log("⚠️ Found {$result['count']} anonymous users");
+                $this->log("âš ï¸� Found {$result['count']} anonymous users");
             } else {
-                $this->log("✅ No anonymous users found");
+                $this->log("âœ… No anonymous users found");
             }
 
             // Check for weak passwords
@@ -731,14 +731,14 @@ class SeniorDeveloper
             $result = $stmt->fetch();
 
             if ($result['count'] > 0) {
-                $this->log("⚠️ Found {$result['count']} users with weak passwords");
+                $this->log("âš ï¸� Found {$result['count']} users with weak passwords");
             } else {
-                $this->log("✅ No weak passwords found");
+                $this->log("âœ… No weak passwords found");
             }
 
-            $this->log("✅ DATABASE SECURITY CHECK COMPLETED");
+            $this->log("âœ… DATABASE SECURITY CHECK COMPLETED");
         } catch (PDOException $e) {
-            $this->log("❌ Security check failed: " . $e->getMessage());
+            $this->log("â�Œ Security check failed: " . $e->getMessage());
         }
     }
 
@@ -747,7 +747,7 @@ class SeniorDeveloper
      */
     private function deployUpdate()
     {
-        $this->log("🚀 DEPLOYING SYSTEM UPDATE");
+        $this->log("ðŸš€ DEPLOYING SYSTEM UPDATE");
 
         // Create deployment plan
         $deploymentPlan = $this->createDeploymentPlan();
@@ -773,7 +773,7 @@ class SeniorDeveloper
         // Update documentation
         $this->updateDeploymentDocumentation();
 
-        $this->log("✅ SYSTEM UPDATE DEPLOYED");
+        $this->log("âœ… SYSTEM UPDATE DEPLOYED");
     }
 
     /**
@@ -781,7 +781,7 @@ class SeniorDeveloper
      */
     private function coordinateTeam()
     {
-        $this->log("👥 COORDINATING DEVELOPMENT TEAM");
+        $this->log("ðŸ‘¥ COORDINATING DEVELOPMENT TEAM");
 
         // Get team status
         $teamStatus = $this->getTeamStatus();
@@ -801,7 +801,7 @@ class SeniorDeveloper
         // Coordinate code reviews
         $this->coordinateCodeReviews();
 
-        $this->log("✅ TEAM COORDINATION COMPLETED");
+        $this->log("âœ… TEAM COORDINATION COMPLETED");
     }
 
     /**
@@ -809,7 +809,7 @@ class SeniorDeveloper
      */
     private function enhanceAI()
     {
-        $this->log("🤖 ENHANCING AI SYSTEM");
+        $this->log("ðŸ¤– ENHANCING AI SYSTEM");
 
         // Add new AI capabilities
         $this->addNewCapabilities();
@@ -829,7 +829,7 @@ class SeniorDeveloper
         // Integrate with more services
         $this->integrateServices();
 
-        $this->log("✅ AI SYSTEM ENHANCED");
+        $this->log("âœ… AI SYSTEM ENHANCED");
     }
 
     /**
@@ -837,7 +837,7 @@ class SeniorDeveloper
      */
     private function activateDevelopmentMode()
     {
-        $this->log("🛠️ ACTIVATING DEVELOPMENT MODE");
+        $this->log("ðŸ› ï¸� ACTIVATING DEVELOPMENT MODE");
 
         // Enable debug mode
         ini_set('display_errors', 1);
@@ -859,7 +859,7 @@ class SeniorDeveloper
         // Start development server with debug
         $this->startDevelopmentServer(true);
 
-        $this->log("✅ DEVELOPMENT MODE ACTIVATED");
+        $this->log("âœ… DEVELOPMENT MODE ACTIVATED");
     }
 
     /**
@@ -867,7 +867,7 @@ class SeniorDeveloper
      */
     private function activateProductionMode()
     {
-        $this->log("🚀 ACTIVATING PRODUCTION MODE");
+        $this->log("ðŸš€ ACTIVATING PRODUCTION MODE");
 
         // Disable debug mode
         ini_set('display_errors', 0);
@@ -889,7 +889,7 @@ class SeniorDeveloper
         // Start production monitoring
         $this->startProductionMonitoring();
 
-        $this->log("✅ PRODUCTION MODE ACTIVATED");
+        $this->log("âœ… PRODUCTION MODE ACTIVATED");
     }
 
     /**
@@ -897,13 +897,13 @@ class SeniorDeveloper
      */
     private function emergencyBugFix()
     {
-        $this->log("🚨 EMERGENCY BUG FIX MODE");
+        $this->log("ðŸš¨ EMERGENCY BUG FIX MODE");
 
         // Scan for critical errors
         $errors = $this->scanForCriticalErrors();
 
         foreach ($errors as $error) {
-            $this->log("🔧 FIXING: " . $error['type'] . " - " . $error['message']);
+            $this->log("ðŸ”§ FIXING: " . $error['type'] . " - " . $error['message']);
 
             switch ($error['type']) {
                 case 'syntax_error':
@@ -924,7 +924,7 @@ class SeniorDeveloper
             }
         }
 
-        $this->log("✅ EMERGENCY FIXES COMPLETED");
+        $this->log("âœ… EMERGENCY FIXES COMPLETED");
     }
 
     /**
@@ -932,10 +932,10 @@ class SeniorDeveloper
      */
     private function optimizeSystemPerformance()
     {
-        $this->log("⚡ OPTIMIZING SYSTEM PERFORMANCE");
+        $this->log("âš¡ OPTIMIZING SYSTEM PERFORMANCE");
 
         // Database optimization - already handled in optimizeDatabase()
-        $this->log("📊 Database optimization already completed");
+        $this->log("ðŸ“Š Database optimization already completed");
 
         // Code optimization
         $this->optimizeCodeFiles();
@@ -947,7 +947,7 @@ class SeniorDeveloper
         $this->optimizeCache();
         $this->optimizeResponses();
 
-        $this->log("✅ PERFORMANCE OPTIMIZATION COMPLETED");
+        $this->log("âœ… PERFORMANCE OPTIMIZATION COMPLETED");
     }
 
     /**
@@ -955,7 +955,7 @@ class SeniorDeveloper
      */
     private function showAvailableCommands()
     {
-        echo "\n🎯 SENIOR DEVELOPER - AVAILABLE COMMANDS:\n";
+        echo "\nðŸŽ¯ SENIOR DEVELOPER - AVAILABLE COMMANDS:\n";
         echo str_repeat("=", 60) . "\n";
         echo "full_control         - Establish complete project control\n";
         echo "development_mode     - Activate development environment\n";
@@ -998,7 +998,7 @@ class SeniorDeveloper
             ]
         ];
 
-        $this->log("📊 STATUS REPORT GENERATED");
+        $this->log("ðŸ“Š STATUS REPORT GENERATED");
         return $report;
     }
 
@@ -1038,19 +1038,19 @@ class SeniorDeveloper
     // Placeholder methods for all the functionality
     private function setupBackupSystem()
     {
-        $this->log("✅ Backup system setup");
+        $this->log("âœ… Backup system setup");
     }
     private function activateAdvancedMonitoring()
     {
-        $this->log("✅ Advanced monitoring activated");
+        $this->log("âœ… Advanced monitoring activated");
     }
     private function setupTeamCommunication()
     {
-        $this->log("✅ Team communication setup");
+        $this->log("âœ… Team communication setup");
     }
     private function updateDocumentation()
     {
-        $this->log("✅ Documentation updated");
+        $this->log("âœ… Documentation updated");
     }
     private function createDeploymentPlan()
     {
@@ -1058,31 +1058,31 @@ class SeniorDeveloper
     }
     private function createSystemBackup()
     {
-        $this->log("✅ System backup created");
+        $this->log("âœ… System backup created");
     }
     private function updateSystemFiles()
     {
-        $this->log("✅ System files updated");
+        $this->log("âœ… System files updated");
     }
     private function runDatabaseMigrations()
     {
-        $this->log("✅ Database migrations run");
+        $this->log("âœ… Database migrations run");
     }
     private function clearAllCaches()
     {
-        $this->log("✅ All caches cleared");
+        $this->log("âœ… All caches cleared");
     }
     private function restartServices()
     {
-        $this->log("✅ Services restarted");
+        $this->log("âœ… Services restarted");
     }
     private function verifyDeployment()
     {
-        $this->log("✅ Deployment verified");
+        $this->log("âœ… Deployment verified");
     }
     private function updateDeploymentDocumentation()
     {
-        $this->log("✅ Deployment documentation updated");
+        $this->log("âœ… Deployment documentation updated");
     }
     private function getTeamStatus()
     {
@@ -1090,83 +1090,83 @@ class SeniorDeveloper
     }
     private function assignTasks($teamStatus)
     {
-        $this->log("✅ Tasks assigned");
+        $this->log("âœ… Tasks assigned");
     }
     private function setupCommunicationChannels()
     {
-        $this->log("✅ Communication channels setup");
+        $this->log("âœ… Communication channels setup");
     }
     private function scheduleTeamMeetings()
     {
-        $this->log("✅ Team meetings scheduled");
+        $this->log("âœ… Team meetings scheduled");
     }
     private function shareProgressReports()
     {
-        $this->log("✅ Progress reports shared");
+        $this->log("âœ… Progress reports shared");
     }
     private function coordinateCodeReviews()
     {
-        $this->log("✅ Code reviews coordinated");
+        $this->log("âœ… Code reviews coordinated");
     }
     private function addNewCapabilities()
     {
-        $this->log("✅ New capabilities added");
+        $this->log("âœ… New capabilities added");
     }
     private function trainWithProjectData()
     {
-        $this->log("✅ AI trained with project data");
+        $this->log("âœ… AI trained with project data");
     }
     private function optimizeResponses()
     {
-        $this->log("✅ AI responses optimized");
+        $this->log("âœ… AI responses optimized");
     }
     private function enableAdvancedFeatures()
     {
-        $this->log("✅ Advanced features enabled");
+        $this->log("âœ… Advanced features enabled");
     }
     private function setupMonitoring()
     {
-        $this->log("✅ AI monitoring setup");
+        $this->log("âœ… AI monitoring setup");
     }
     private function integrateServices()
     {
-        $this->log("✅ Services integrated");
+        $this->log("âœ… Services integrated");
     }
     private function setLogLevel($level)
     {
-        $this->log("✅ Log level set to: $level");
+        $this->log("âœ… Log level set to: $level");
     }
     private function enableDevelopmentAI()
     {
-        $this->log("✅ Development AI enabled");
+        $this->log("âœ… Development AI enabled");
     }
     private function enableHotReload()
     {
-        $this->log("✅ Hot reload enabled");
+        $this->log("âœ… Hot reload enabled");
     }
     private function startDevelopmentServer($debug)
     {
-        $this->log("✅ Development server started");
+        $this->log("âœ… Development server started");
     }
     private function optimizeForProduction()
     {
-        $this->log("✅ Production optimization applied");
+        $this->log("âœ… Production optimization applied");
     }
     private function enableProductionCaching()
     {
-        $this->log("✅ Production caching enabled");
+        $this->log("âœ… Production caching enabled");
     }
     private function enableProductionAI()
     {
-        $this->log("✅ Production AI enabled");
+        $this->log("âœ… Production AI enabled");
     }
     private function startProductionMonitoring()
     {
-        $this->log("✅ Production monitoring started");
+        $this->log("âœ… Production monitoring started");
     }
     private function optimizeCache()
     {
-        $this->log("✅ Cache optimized");
+        $this->log("âœ… Cache optimized");
     }
     private function scanForCriticalErrors()
     {
@@ -1174,29 +1174,29 @@ class SeniorDeveloper
     }
     private function fixSyntaxError($error)
     {
-        $this->log("✅ Syntax error fixed");
+        $this->log("âœ… Syntax error fixed");
     }
     private function fixDatabaseError($error)
     {
-        $this->log("✅ Database error fixed");
+        $this->log("âœ… Database error fixed");
     }
     private function fixAPIError($error)
     {
-        $this->log("✅ API error fixed");
+        $this->log("âœ… API error fixed");
     }
     private function fixSecurityIssue($error)
     {
-        $this->log("✅ Security issue fixed");
+        $this->log("âœ… Security issue fixed");
     }
     private function fixPerformanceIssue($error)
     {
-        $this->log("✅ Performance issue fixed");
+        $this->log("âœ… Performance issue fixed");
     }
 }
 
 // Execute if this file is run directly
 if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
-    echo "🚀 STARTING SENIOR DEVELOPER...\n\n";
+    echo "ðŸš€ STARTING SENIOR DEVELOPER...\n\n";
 
     $developer = new SeniorDeveloper();
 
@@ -1205,13 +1205,13 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
 
     $result = $developer->execute($command);
 
-    echo "\n🎉 SENIOR DEVELOPER EXECUTION COMPLETED!\n";
-    echo "📊 Check logs/senior_developer.log for detailed report\n";
+    echo "\nðŸŽ‰ SENIOR DEVELOPER EXECUTION COMPLETED!\n";
+    echo "ðŸ“Š Check logs/senior_developer.log for detailed report\n";
 
     if (is_array($result)) {
-        echo "\n📈 CURRENT STATUS:\n";
+        echo "\nðŸ“ˆ CURRENT STATUS:\n";
         foreach ($result as $key => $value) {
-            echo "• " . ucwords(str_replace('_', ' ', $key)) . ": $value\n";
+            echo "â€¢ " . ucwords(str_replace('_', ' ', $key)) . ": $value\n";
         }
     }
-}
+}?>

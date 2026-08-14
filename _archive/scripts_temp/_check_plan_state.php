@@ -22,13 +22,13 @@ while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
 echo "\n=== mlm_rank_slabs ===\n";
 $r = $pdo->query("SELECT id, rank_slug, rank_name, min_gbv, max_gbv, commission_rate FROM mlm_rank_slabs ORDER BY min_gbv");
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
-    echo "  {$row['rank_slug']} ({$row['rank_name']}) | ₹" . number_format($row['min_gbv']) . " - " . ($row['max_gbv'] > 0 ? '₹' . number_format($row['max_gbv']) : '∞') . " | {$row['commission_rate']}%\n";
+    echo "  {$row['rank_slug']} ({$row['rank_name']}) | â‚¹" . number_format($row['min_gbv']) . " - " . ($row['max_gbv'] > 0 ? 'â‚¹' . number_format($row['max_gbv']) : 'âˆž') . " | {$row['commission_rate']}%\n";
 }
 
 echo "\n=== mlm_commission_ledger (counts by type) ===\n";
 $r = $pdo->query("SELECT commission_type, COUNT(*) as cnt, SUM(amount) as total FROM mlm_commission_ledger GROUP BY commission_type ORDER BY total DESC");
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
-    echo "  {$row['commission_type']}: {$row['cnt']} entries, ₹" . number_format($row['total']) . "\n";
+    echo "  {$row['commission_type']}: {$row['cnt']} entries, â‚¹" . number_format($row['total']) . "\n";
 }
 
 echo "\n=== commission_recalculations ===\n";
@@ -39,4 +39,4 @@ echo "\n=== mlm_commission_ledger new cols ===\n";
 $r = $pdo->query("SELECT plan_id, plan_version, calculation_engine FROM mlm_commission_ledger LIMIT 1")->fetch(PDO::FETCH_ASSOC);
 if ($r) {
     echo "  plan_id=" . var_export($r['plan_id'], true) . " plan_version=" . var_export($r['plan_version'], true) . " engine=" . var_export($r['calculation_engine'], true) . "\n";
-}
+}?>

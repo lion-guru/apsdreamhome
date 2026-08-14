@@ -270,7 +270,7 @@ class EmailService
             
             if (!$commission) return false;
             
-            $subject = "Commission Credited - ₹" . number_format($commission['commission_amount'], 2);
+            $subject = "Commission Credited - â‚¹" . number_format($commission['commission_amount'], 2);
             
             $body = $this->getCommissionCreditTemplate([
                 'name' => $commission['name'],
@@ -469,6 +469,7 @@ class EmailService
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -543,7 +544,7 @@ HTML;
             <div class="referral-box">
                 <p>Your Referral Code</p>
                 <div class="referral-code">{$data['referral_code']}</div>
-                <p style="margin-top: 15px;">Share this code with friends & family</p>
+                <p class="style-4053">Share this code with friends & family</p>
             </div>
             
             <p><strong>Your Referral Link:</strong></p>
@@ -597,7 +598,7 @@ HTML;
         </div>
         <div class="content">
             <div class="success-box">
-                <h2>₹{$data['amount']}</h2>
+                <h2>â‚¹{$data['amount']}</h2>
                 <p>Paid Successfully</p>
             </div>
             
@@ -607,7 +608,7 @@ HTML;
             <div class="details">
                 <h3>Payment Details</h3>
                 <table>
-                    <tr><td><strong>Amount</strong></td><td>₹{$data['amount']}</td></tr>
+                    <tr><td><strong>Amount</strong></td><td>â‚¹{$data['amount']}</td></tr>
                     <tr><td><strong>Transaction ID</strong></td><td>{$data['transaction_id']}</td></tr>
                     <tr><td><strong>Booking ID</strong></td><td>#{$data['booking_id']}</td></tr>
                     <tr><td><strong>Property</strong></td><td>{$data['property_title']}</td></tr>
@@ -649,7 +650,7 @@ HTML;
         </div>
         <div class="content">
             <div class="approved-box">
-                <h2>✓ Your listing is now live</h2>
+                <h2>âœ“ Your listing is now live</h2>
             </div>
             
             <p>Hi {$data['name']},</p>
@@ -659,7 +660,7 @@ HTML;
             <ul>
                 <li><strong>Type:</strong> {$data['property_type']}</li>
                 <li><strong>Location:</strong> {$data['location']}</li>
-                <li><strong>Price:</strong> ₹{$data['price']}</li>
+                <li><strong>Price:</strong> â‚¹{$data['price']}</li>
             </ul>
             
             <center>
@@ -701,12 +702,12 @@ HTML;
             
             <div class="commission-box">
                 <p>Commission Amount</p>
-                <div class="amount">₹{$data['amount']}</div>
+                <div class="amount">â‚¹{$data['amount']}</div>
                 <p>Level {$data['level']} ({$data['percentage']}%)</p>
             </div>
             
             <p><strong>Referred User:</strong> {$data['referred_user']}</p>
-            <p><strong>Current Wallet Balance:</strong> ₹{$data['wallet_balance']}</p>
+            <p><strong>Current Wallet Balance:</strong> â‚¹{$data['wallet_balance']}</p>
             
             <center>
                 <a href="{$data['payout_url']}" class="button">Request Payout</a>
@@ -831,7 +832,7 @@ HTML;
                     <div>Bookings</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">₹{$data['revenue']}</div>
+                    <div class="stat-number">â‚¹{$data['revenue']}</div>
                     <div>Revenue</div>
                 </div>
             </div>

@@ -45,7 +45,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
 
             <?php if ($success): ?>
-            <div class="aps-cp-card mb-3" style="border-left: 4px solid var(--aps-cp-success); background: var(--aps-cp-success-light);">
+            <div class="aps-cp-card mb-3" class="style-1416">
                 <div class="aps-cp-card-body py-3">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-check-circle text-success fa-lg me-3"></i>
@@ -57,7 +57,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <?php endif; ?>
 
             <?php if ($error): ?>
-            <div class="aps-cp-card mb-3" style="border-left: 4px solid var(--aps-cp-danger); background: var(--aps-cp-danger-light);">
+            <div class="aps-cp-card mb-3" class="style-53011">
                 <div class="aps-cp-card-body py-3">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-exclamation-circle text-danger fa-lg me-3"></i>
@@ -71,9 +71,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <div class="row g-4">
                 <div class="col-lg-7">
                     <div class="aps-cp-card">
-                        <div class="aps-cp-card-header" style="background: linear-gradient(135deg, var(--aps-cp-primary) 0%, #0f766e 100%); border-bottom: none;">
-                            <h4 style="color: #fff;">
-                                <i class="fas <?= $bankAccount ? 'fa-edit' : 'fa-plus-circle' ?>" style="color: #fff;"></i>
+                        <div class="aps-cp-card-header" class="style-75848">
+                            <h4 class="style-56551">
+                                <i class="fas <?= $bankAccount ? 'fa-edit' : 'fa-plus-circle' ?>" class="style-56551"></i>
                                 <?= $bankAccount ? __('bank_form_update_title', null, 'Update Bank Account') : __('bank_form_add_title', null, 'Add Bank Account') ?>
                             </h4>
                         </div>
@@ -122,7 +122,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                             <input type="text" name="ifsc_code" id="ifsc_code" class="form-control"
                                                    value="<?= htmlspecialchars($bankAccount['ifsc_code'] ?? '') ?>"
                                                    placeholder="<?= __('bank_ph_ifsc', null, 'e.g., SBIN0001234') ?>"
-                                                   style="text-transform: uppercase" maxlength="11" required
+                                                   class="style-32119" maxlength="11" required
                                                    data-aps-ifsc
                                                    data-aps-ifsc-status="#ifscStatus"
                                                    data-aps-ifsc-bank="#bank_name"
@@ -239,7 +239,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                         UPI: <?= htmlspecialchars($acc['upi_id']) ?>
                                     </div>
                                     <?php endif; ?>
-                                    <div class="text-muted mt-1" style="font-size: 0.75rem;">
+                                    <div class="text-muted mt-1" class="style-11723">
                                         <?= ucfirst($acc['account_type'] ?? 'savings') ?> &middot;
                                         Added <?= date('M d, Y', strtotime($acc['created_at'] ?? 'now')) ?>
                                     </div>

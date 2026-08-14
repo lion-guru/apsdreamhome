@@ -53,4 +53,4 @@ foreach ($colonies as $c) {
     echo "  Generated slug '$slug' for '{$c['name']}'\n";
 }
 
-echo "\nDone! Colonies table updated.\n";
+echo "\nDone! Colonies table updated.\n";?>

@@ -34,4 +34,4 @@ foreach ($hotTables as $t) {
         echo sprintf("  %s: %s\n", $name, implode(', ', $cols));
     }
     echo "\n";
-}
+}?>

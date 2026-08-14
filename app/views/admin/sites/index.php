@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $page_title = 'Site Management';
 $active_page = 'sites';
 ?>
@@ -172,7 +172,7 @@ $active_page = 'sites';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" id="deleteForm" style="display: inline;">
+                <form method="POST" id="deleteForm" class="style-26772">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-danger">Delete Site</button>
                 </form>

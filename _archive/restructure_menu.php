@@ -107,4 +107,4 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     echo "{$row['section']}: {$row['items']} items" . PHP_EOL;
 }
 
-echo "=== DONE ===" . PHP_EOL;
+echo "=== DONE ===" . PHP_EOL;?>

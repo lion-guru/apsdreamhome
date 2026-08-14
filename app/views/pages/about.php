@@ -13,55 +13,55 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- ============================================ -->
 <!-- HERO SECTION -->
 <!-- ============================================ -->
-<section class="position-relative overflow-hidden" style="min-height:500px;padding:120px 0 80px;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0d9488 100%)">
-    <div style="position:absolute;inset:0;background:url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;0.04&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
-    <div class="container position-relative" style="z-index:2">
+<section class="position-relative overflow-hidden" class="style-63679">
+    <div class="style-80207"></div>
+    <div class="container position-relative" class="style-9174">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:50px;padding:8px 20px;color:#fff;font-size:0.8rem;font-weight:600;margin-bottom:24px">
+                <div class="style-51245">
                     <i class="fas fa-building"></i> EST. APRIL 2022 &bull; CIN: U70109UP2022PTC163047
                 </div>
-                <h1 class="display-3 fw-bold mb-4" style="color:#fff;line-height:1.15">
+                <h1 class="display-3 fw-bold mb-4" class="style-98841">
                     Building Dreams,<br>
-                    <span style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Creating Communities</span>
+                    <span class="style-95406">Creating Communities</span>
                 </h1>
-                <p class="lead mb-4" style="color:rgba(255,255,255,0.85);max-width:600px;font-size:1.15rem">
+                <p class="lead mb-4" class="style-99993">
                     APS Dream Homes Private Limited is a trusted name in real estate across Eastern Uttar Pradesh, 
                     transforming land into thriving communities since 2022.
                 </p>
-                <div style="display:flex;gap:12px;flex-wrap:wrap">
-                    <a href="#leadership" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0f172a;padding:12px 28px;border-radius:12px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.3s">
+                <div class="style-39474">
+                    <a href="#leadership" class="style-97811">
                         <i class="fas fa-users"></i> Meet Our Team
                     </a>
-                    <a href="#story" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:12px 28px;border-radius:12px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.3s">
+                    <a href="#story" class="style-46547">
                         Our Story <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
             <div class="col-lg-4 d-none d-lg-block text-center">
-                <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:32px;text-align:center">
-                    <div style="width:80px;height:80px;background:linear-gradient(135deg,#10b981,#06b6d4);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
+                <div class="style-90775">
+                    <div class="style-3666">
                         <i class="fas fa-home"></i>
                     </div>
-                    <h3 style="color:#fff;font-weight:800;font-size:2.5rem;margin-bottom:4px">4+</h3>
-                    <p style="color:rgba(255,255,255,0.7);margin:0;font-size:0.85rem">Active Projects</p>
-                    <div style="width:100%;height:1px;background:rgba(255,255,255,0.1);margin:16px 0"></div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <h3 class="style-27686">4+</h3>
+                    <p class="style-87435">Active Projects</p>
+                    <div class="style-85876"></div>
+                    <div class="style-79490">
                         <div>
-                            <h4 style="color:#10b981;font-weight:800;font-size:1.3rem;margin:0">5000+</h4>
-                            <p style="color:rgba(255,255,255,0.6);margin:0;font-size:0.75rem">Plots Sold</p>
+                            <h4 class="style-88510">5000+</h4>
+                            <p class="style-78372">Plots Sold</p>
                         </div>
                         <div>
-                            <h4 style="color:#06b6d4;font-weight:800;font-size:1.3rem;margin:0">500+</h4>
-                            <p style="color:rgba(255,255,255,0.6);margin:0;font-size:0.75rem">Happy Families</p>
+                            <h4 class="style-20250">500+</h4>
+                            <p class="style-78372">Happy Families</p>
                         </div>
                         <div>
-                            <h4 style="color:#f59e0b;font-weight:800;font-size:1.3rem;margin:0">4+</h4>
-                            <p style="color:rgba(255,255,255,0.6);margin:0;font-size:0.75rem">Colonies</p>
+                            <h4 class="style-45146">4+</h4>
+                            <p class="style-78372">Colonies</p>
                         </div>
                         <div>
-                            <h4 style="color:#ec4899;font-weight:800;font-size:1.3rem;margin:0">500+</h4>
-                            <p style="color:rgba(255,255,255,0.6);margin:0;font-size:0.75rem">Active Users</p>
+                            <h4 class="style-63220">500+</h4>
+                            <p class="style-78372">Active Users</p>
                         </div>
                     </div>
                 </div>
@@ -215,7 +215,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <p class="story-text mb-4">
                     APS Dream Homes Private Limited was incorporated on <strong>April 26, 2022</strong> under the 
                     Companies Act, 2013 (CIN: U70109UP2022PTC163047). Registered with the Registrar of Companies, 
-                    Kanpur, we set out with a singular vision — to make quality housing accessible to families in 
+                    Kanpur, we set out with a singular vision â€” to make quality housing accessible to families in 
                     Eastern Uttar Pradesh.
                 </p>
                 <p class="story-text mb-4">
@@ -232,23 +232,23 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="story-detail">
-                    <h6><i class="fas fa-calendar-alt me-2" style="color:#0d9488"></i> Founded</h6>
+                    <h6><i class="fas fa-calendar-alt me-2" class="style-5793"></i> Founded</h6>
                     <p>April 26, 2022 &bull; Incorporated under the Companies Act, 2013</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-map-marker-alt me-2" style="color:#0d9488"></i> Headquarters</h6>
+                    <h6><i class="fas fa-map-marker-alt me-2" class="style-5793"></i> Headquarters</h6>
                     <p>Virat Bhawan, Singhariya Kunraghat, Gorakhpur, UP 273008</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-briefcase me-2" style="color:#0d9488"></i> Industry</h6>
-                    <p>Real Estate Activities (NIC Code: 7010) — Plot & Land, Residential Floors</p>
+                    <h6><i class="fas fa-briefcase me-2" class="style-5793"></i> Industry</h6>
+                    <p>Real Estate Activities (NIC Code: 7010) â€” Plot & Land, Residential Floors</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-chart-line me-2" style="color:#0d9488"></i> Capital</h6>
-                    <p>Authorized & Paid-up Capital: ₹10,00,000</p>
+                    <h6><i class="fas fa-chart-line me-2" class="style-5793"></i> Capital</h6>
+                    <p>Authorized & Paid-up Capital: â‚¹10,00,000</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-star me-2" style="color:#0d9488"></i> Rating</h6>
+                    <h6><i class="fas fa-star me-2" class="style-5793"></i> Rating</h6>
                     <p>5.0/5 Stars on India Online &bull; Trusted by 500+ Families</p>
                 </div>
             </div>
@@ -262,16 +262,16 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-highlights">
     <div class="container">
         <div class="text-center mb-5">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+            <div class="style-74105">
                 <i class="fas fa-concierge-bell"></i> What We Do
             </div>
-            <h2 style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">Our <span style="background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Services</span></h2>
-            <p style="color:#64748b;font-size:0.95rem;max-width:600px;margin:0 auto">End-to-end real estate solutions — from finding the perfect plot to handing over the keys.</p>
+            <h2 class="style-84813">Our <span class="style-79458">Services</span></h2>
+            <p class="style-95961">End-to-end real estate solutions â€” from finding the perfect plot to handing over the keys.</p>
         </div>
         <div class="row g-4">
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="plot-selling" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#f0fdfa;color:#0d9488">
+                    <div class="icon-wrap" class="style-75269">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
                     <h5>Plot Selling</h5>
@@ -281,7 +281,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="construction" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#eff6ff;color:#3b82f6">
+                    <div class="icon-wrap" class="style-46608">
                         <i class="fas fa-hard-hat"></i>
                     </div>
                     <h5>Construction & Development</h5>
@@ -291,7 +291,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="legal" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#fef3c7;color:#f59e0b">
+                    <div class="icon-wrap" class="style-64138">
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <h5>Legal & Documentation</h5>
@@ -301,17 +301,17 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="payment" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#fce7f3;color:#ec4899">
+                    <div class="icon-wrap" class="style-10633">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                     <h5>Flexible Payment Plans</h5>
-                    <p>EMI options, easy installment plans, and transparent pricing. No hidden charges — what you see is what you pay.</p>
+                    <p>EMI options, easy installment plans, and transparent pricing. No hidden charges â€” what you see is what you pay.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="resale" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#f0fdf4;color:#16a34a">
+                    <div class="icon-wrap" class="style-547">
                         <i class="fas fa-home"></i>
                     </div>
                     <h5>Resale & Resale Assistance</h5>
@@ -321,7 +321,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="site-visit" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#fef2f2;color:#dc2626">
+                    <div class="icon-wrap" class="style-2487">
                         <i class="fas fa-car"></i>
                     </div>
                     <h5>Free Site Visits</h5>
@@ -331,7 +331,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="flats" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#f5f3ff;color:#7c3aed">
+                    <div class="icon-wrap" class="style-98426">
                         <i class="fas fa-couch"></i>
                     </div>
                     <h5>Furnished Flats</h5>
@@ -341,11 +341,11 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="highlight-card service-card scroll-reveal" data-service="community" role="button" tabindex="0">
-                    <div class="icon-wrap" style="background:#ecfeff;color:#0891b2">
+                    <div class="icon-wrap" class="style-62789">
                         <i class="fas fa-users"></i>
                     </div>
                     <h5>Community Building</h5>
-                    <p>We don't just sell plots — we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
+                    <p>We don't just sell plots â€” we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
@@ -363,7 +363,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div class="service-modal-icon" id="serviceModalIcon"></div>
             <div>
                 <h3 id="serviceModalTitle"></h3>
-                <p id="serviceModalSubtitle" style="margin:0;opacity:.85;font-size:.85rem"></p>
+                <p id="serviceModalSubtitle" class="style-43781"></p>
             </div>
         </div>
         <div class="service-modal-body">
@@ -423,13 +423,13 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="dept-heads">
     <div class="container">
         <div class="text-center mb-5">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+            <div class="style-74105">
                 <i class="fas fa-user-tie"></i> Department Heads
             </div>
-            <h2 style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px;margin-bottom:12px">
-                The <span style="background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Experts</span> Leading Our Teams
+            <h2 class="style-14450">
+                The <span class="style-79458">Experts</span> Leading Our Teams
             </h2>
-            <p style="color:#64748b;font-size:0.95rem;max-width:600px;margin:0 auto">
+            <p class="style-95961">
                 Each department is led by experienced professionals committed to excellence.
             </p>
         </div>
@@ -453,7 +453,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     </div>
                     <h5><?= htmlspecialchars($dName) ?></h5>
                     <div class="dept-role"><?= htmlspecialchars($dRole) ?></div>
-                    <div class="dept-exp"><i class="fas fa-briefcase me-1" style="color:#f59e0b"></i> <?= htmlspecialchars($dExp) ?></div>
+                    <div class="dept-exp"><i class="fas fa-briefcase me-1" class="style-62735"></i> <?= htmlspecialchars($dExp) ?></div>
                     <p><?= htmlspecialchars($dBio) ?></p>
                 </div>
             </div>
@@ -468,18 +468,18 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-mvv">
     <div class="container">
         <div class="text-center mb-5">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+            <div class="style-74105">
                 <i class="fas fa-bullseye"></i> Our Foundation
             </div>
-            <h2 style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">
-                Mission, Vision & <span style="background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Values</span>
+            <h2 class="style-84813">
+                Mission, Vision & <span class="style-79458">Values</span>
             </h2>
         </div>
         
         <div class="row g-4">
             <div class="col-lg-4">
                 <div class="mvv-card mission scroll-reveal">
-                    <div class="mvv-icon" style="background:#f0fdfa;color:#0d9488">
+                    <div class="mvv-icon" class="style-75269">
                         <i class="fas fa-rocket"></i>
                     </div>
                     <h4>Our Mission</h4>
@@ -490,7 +490,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-4">
                 <div class="mvv-card vision scroll-reveal">
-                    <div class="mvv-icon" style="background:#eff6ff;color:#3b82f6">
+                    <div class="mvv-icon" class="style-46608">
                         <i class="fas fa-eye"></i>
                     </div>
                     <h4>Our Vision</h4>
@@ -501,13 +501,13 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-4">
                 <div class="mvv-card values scroll-reveal">
-                    <div class="mvv-icon" style="background:#fef3c7;color:#f59e0b">
+                    <div class="mvv-icon" class="style-64138">
                         <i class="fas fa-heart"></i>
                     </div>
                     <h4>Our Values</h4>
                     <p><strong>Trust</strong> in every transaction. <strong>Transparency</strong> in every deal. 
                     <strong>Quality</strong> in every plot. <strong>Community</strong> in every project. These are 
-                    not just words — they are the foundation of every decision we make.</p>
+                    not just words â€” they are the foundation of every decision we make.</p>
                 </div>
             </div>
         </div>
@@ -518,33 +518,33 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- STATS SECTION -->
 <!-- ============================================ -->
 <section class="about-stats">
-    <div class="container position-relative" style="z-index:2">
+    <div class="container position-relative" class="style-9174">
         <div class="text-center mb-5">
-            <h2 style="color:#fff;font-size:2rem;font-weight:800;letter-spacing:-0.5px">Our Numbers Speak</h2>
-            <p style="color:rgba(255,255,255,0.7);font-size:0.95rem">Building trust one project at a time</p>
+            <h2 class="style-69158">Our Numbers Speak</h2>
+            <p class="style-57302">Building trust one project at a time</p>
         </div>
         <div class="row g-4">
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" style="color:#10b981">5000+</div>
+                    <div class="stat-num" class="style-2154">5000+</div>
                     <div class="stat-label">Plots Sold</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" style="color:#3b82f6">500+</div>
+                    <div class="stat-num" class="style-64047">500+</div>
                     <div class="stat-label">Happy Families</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" style="color:#f59e0b">4+</div>
+                    <div class="stat-num" class="style-62735">4+</div>
                     <div class="stat-label">Colonies Delivered</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num" style="color:#ec4899">3</div>
+                    <div class="stat-num" class="style-80751">3</div>
                     <div class="stat-label">Cities Covered</div>
                 </div>
             </div>
@@ -558,10 +558,10 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-offices">
     <div class="container">
         <div class="text-center mb-5">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+            <div class="style-74105">
                 <i class="fas fa-map-marked-alt"></i> Our Offices
             </div>
-            <h2 style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">Visit Us <span style="background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Anywhere</span></h2>
+            <h2 class="style-84813">Visit Us <span class="style-79458">Anywhere</span></h2>
         </div>
         
         <div class="row g-4">
@@ -601,7 +601,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <!-- Working Office -->
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
-                    <div class="office-header" style="background:linear-gradient(135deg,#3b82f6,#14b8a6)">
+                    <div class="office-header" class="style-85097">
                         <h5><i class="fas fa-hard-hat me-2"></i> Working Office</h5>
                         <small>Gorakhpur, Uttar Pradesh</small>
                     </div>
@@ -634,7 +634,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <!-- Sehwan Office -->
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
-                    <div class="office-header" style="background:linear-gradient(135deg,#14b8a6,#6366f1)">
+                    <div class="office-header" class="style-21462">
                         <h5><i class="fas fa-store me-2"></i> Sehwan Office</h5>
                         <small>Pachrukhi, Gorakhpur</small>
                     </div>
@@ -668,50 +668,50 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <!-- Projects Across Cities -->
         <div class="row g-4 mt-4">
             <div class="col-12">
-                <div style="background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06);overflow:hidden">
-                    <div style="background:linear-gradient(135deg,#0d9488,#0f766e);padding:20px 28px;color:#fff">
-                        <h5 style="font-weight:700;margin:0"><i class="fas fa-project-diagram me-2"></i> Our Projects Across Cities</h5>
+                <div class="style-80841">
+                    <div class="style-78042">
+                        <h5 class="style-77763"><i class="fas fa-project-diagram me-2"></i> Our Projects Across Cities</h5>
                     </div>
-                    <div style="padding:24px">
+                    <div class="style-57825">
                         <div class="row g-4">
                             <div class="col-md-3 col-6">
-                                <div style="text-align:center">
-                                    <div style="width:50px;height:50px;border-radius:12px;background:#f0fdfa;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
-                                        <i class="fas fa-city" style="color:#0d9488;font-size:1.2rem"></i>
+                                <div class="style-88083">
+                                    <div class="style-57901">
+                                        <i class="fas fa-city" class="style-67779"></i>
                                     </div>
-                                    <h6 style="font-weight:700;color:#1e293b;margin-bottom:4px">Gorakhpur</h6>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">Suryoday Colony (1050+)</p>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">Braj Radha Nagri (1550+)</p>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">Raghunath Nagri (780+)</p>
+                                    <h6 class="style-22646">Gorakhpur</h6>
+                                    <p class="style-724">Suryoday Colony (1050+)</p>
+                                    <p class="style-724">Braj Radha Nagri (1550+)</p>
+                                    <p class="style-724">Raghunath Nagri (780+)</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div style="text-align:center">
-                                    <div style="width:50px;height:50px;border-radius:12px;background:#eff6ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
-                                        <i class="fas fa-city" style="color:#3b82f6;font-size:1.2rem"></i>
+                                <div class="style-88083">
+                                    <div class="style-35621">
+                                        <i class="fas fa-city" class="style-26370"></i>
                                     </div>
-                                    <h6 style="font-weight:700;color:#1e293b;margin-bottom:4px">Lucknow</h6>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">APS Valley (800+)</p>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">Awadhpuri</p>
+                                    <h6 class="style-22646">Lucknow</h6>
+                                    <p class="style-724">APS Valley (800+)</p>
+                                    <p class="style-724">Awadhpuri</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div style="text-align:center">
-                                    <div style="width:50px;height:50px;border-radius:12px;background:#fef3c7;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
-                                        <i class="fas fa-city" style="color:#f59e0b;font-size:1.2rem"></i>
+                                <div class="style-88083">
+                                    <div class="style-12044">
+                                        <i class="fas fa-city" class="style-57730"></i>
                                     </div>
-                                    <h6 style="font-weight:700;color:#1e293b;margin-bottom:4px">Kushinagar</h6>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">Budh Bihar Colony (1280+)</p>
+                                    <h6 class="style-22646">Kushinagar</h6>
+                                    <p class="style-724">Budh Bihar Colony (1280+)</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div style="text-align:center">
-                                    <div style="width:50px;height:50px;border-radius:12px;background:#fce7f3;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px">
-                                        <i class="fas fa-building" style="color:#ec4899;font-size:1.2rem"></i>
+                                <div class="style-88083">
+                                    <div class="style-44154">
+                                        <i class="fas fa-building" class="style-94843"></i>
                                     </div>
-                                    <h6 style="font-weight:700;color:#1e293b;margin-bottom:4px">Prayagraj</h6>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">APS Heights (200 Flats)</p>
-                                    <p style="color:#64748b;font-size:0.8rem;margin:0">Naini, ₹65 Lakh+</p>
+                                    <h6 class="style-22646">Prayagraj</h6>
+                                    <p class="style-724">APS Heights (200 Flats)</p>
+                                    <p class="style-724">Naini, â‚¹65 Lakh+</p>
                                 </div>
                             </div>
                         </div>
@@ -728,16 +728,16 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <section class="about-certs">
     <div class="container">
         <div class="text-center mb-5">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+            <div class="style-74105">
                 <i class="fas fa-certificate"></i> Legal & Compliance
             </div>
-            <h2 style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">Registered & <span style="background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Certified</span></h2>
+            <h2 class="style-84813">Registered & <span class="style-79458">Certified</span></h2>
         </div>
         
         <div class="row g-4 justify-content-center">
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" style="background:#f0fdfa;color:#0d9488">
+                    <div class="cert-icon" class="style-75269">
                         <i class="fas fa-file-alt"></i>
                     </div>
                     <h6>CIN Number</h6>
@@ -746,7 +746,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" style="background:#eff6ff;color:#3b82f6">
+                    <div class="cert-icon" class="style-46608">
                         <i class="fas fa-landmark"></i>
                     </div>
                     <h6>ROC Kanpur</h6>
@@ -755,7 +755,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" style="background:#fef3c7;color:#f59e0b">
+                    <div class="cert-icon" class="style-64138">
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <h6>UP RERA</h6>
@@ -764,7 +764,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-md-3 col-6">
                 <div class="cert-card scroll-reveal">
-                    <div class="cert-icon" style="background:#fce7f3;color:#ec4899">
+                    <div class="cert-icon" class="style-10633">
                         <i class="fas fa-star"></i>
                     </div>
                     <h6>5.0 Rating</h6>
@@ -778,24 +778,24 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 <!-- ============================================ -->
 <!-- CTA SECTION -->
 <!-- ============================================ -->
-<section style="padding:80px 0;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0d9488 100%);position:relative;overflow:hidden">
-    <div style="position:absolute;inset:0;background:url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;0.04&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
-    <div class="container position-relative" style="z-index:2">
+<section class="style-69610">
+    <div class="style-80207"></div>
+    <div class="container position-relative" class="style-9174">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h2 style="color:#fff;font-size:2.2rem;font-weight:800;margin-bottom:16px;letter-spacing:-0.5px">
+                <h2 class="style-19049">
                     Ready to Find Your Dream Plot?
                 </h2>
-                <p style="color:rgba(255,255,255,0.8);font-size:1.05rem;max-width:600px;margin-bottom:0">
+                <p class="style-40126">
                     Join 500+ families who trust APS Dream Homes for their property needs. 
                     Browse our available plots or schedule a site visit today.
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                <a href="<?= BASE_URL ?>/properties" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0f172a;padding:14px 32px;border-radius:12px;font-weight:700;font-size:1rem;text-decoration:none;transition:all 0.3s;margin-right:8px">
+                <a href="<?= BASE_URL ?>/properties" class="style-15737">
                     <i class="fas fa-search"></i> Browse Properties
                 </a>
-                <a href="<?= BASE_URL ?>/contact" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:14px 32px;border-radius:12px;font-weight:700;font-size:1rem;text-decoration:none;transition:all 0.3s;margin-top:8px">
+                <a href="<?= BASE_URL ?>/contact" class="style-29836">
                     <i class="fas fa-phone"></i> Contact Us
                 </a>
             </div>
@@ -830,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Plot Selling',
             subtitle: 'RERA-registered plots with clear titles',
             icon: 'fas fa-map-marked-alt',
-            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Every plot comes with clear legal title, RERA registration, and transparent pricing — so you invest with complete peace of mind.',
+            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Every plot comes with clear legal title, RERA registration, and transparent pricing â€” so you invest with complete peace of mind.',
             steps: [
                 'Browse available plots & colonies on our listings',
                 'Shortlist by location, budget & plot size',
@@ -844,7 +844,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Construction & Development',
             subtitle: 'From raw land to livable neighborhoods',
             icon: 'fas fa-hard-hat',
-            desc: 'We handle complete colony development — internal roads, drainage, 24x7 water supply, electricity, street lighting, parks and community spaces. Our in-house team manages the entire lifecycle from land acquisition to a finished, livable township.',
+            desc: 'We handle complete colony development â€” internal roads, drainage, 24x7 water supply, electricity, street lighting, parks and community spaces. Our in-house team manages the entire lifecycle from land acquisition to a finished, livable township.',
             steps: [
                 'Land survey, planning & layout design',
                 'Infrastructure: roads, drainage, water & power',
@@ -872,7 +872,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Flexible Payment Plans',
             subtitle: 'No hidden charges, ever',
             icon: 'fas fa-hand-holding-usd',
-            desc: 'Choose from EMI options and easy installment plans designed around your cash flow. Transparent pricing means what you see is exactly what you pay — no surprises, no hidden charges.',
+            desc: 'Choose from EMI options and easy installment plans designed around your cash flow. Transparent pricing means what you see is exactly what you pay â€” no surprises, no hidden charges.',
             steps: [
                 'Pick a plan: EMI or installment',
                 'Pay a comfortable booking amount',
@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Resale & Resale Assistance',
             subtitle: 'Sell at fair market value',
             icon: 'fas fa-home',
-            desc: 'Want to sell your plot? We connect you with genuine, verified buyers, handle all the documentation, and ensure you get fair market value — making resale simple and secure.',
+            desc: 'Want to sell your plot? We connect you with genuine, verified buyers, handle all the documentation, and ensure you get fair market value â€” making resale simple and secure.',
             steps: [
                 'List your property with us',
                 'We match verified interested buyers',
@@ -900,7 +900,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Free Site Visits',
             subtitle: 'See before you decide',
             icon: 'fas fa-car',
-            desc: 'Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas — so you can experience the location, roads and surroundings firsthand.',
+            desc: 'Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas â€” so you can experience the location, roads and surroundings firsthand.',
             steps: [
                 'Request a site visit (call or form)',
                 'We schedule & arrange transport',
@@ -914,12 +914,12 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Furnished Flats',
             subtitle: 'Ready-to-move in APS Heights, Prayagraj',
             icon: 'fas fa-couch',
-            desc: 'Move in without the hassle. Our ready-to-move flats in APS Heights, Prayagraj offer 2BHK & 3BHK options with modern fittings, modular kitchen and dedicated parking — fully furnished and livable from day one.',
+            desc: 'Move in without the hassle. Our ready-to-move flats in APS Heights, Prayagraj offer 2BHK & 3BHK options with modern fittings, modular kitchen and dedicated parking â€” fully furnished and livable from day one.',
             steps: [
                 'Explore available flat configurations',
                 'Visit the model flat on site',
                 'Choose 2BHK / 3BHK & book',
-                'Move in — fully furnished & ready'
+                'Move in â€” fully furnished & ready'
             ],
             link: '<?= BASE_URL ?>/properties',
             linkText: 'View Flats'
@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Community Building',
             subtitle: 'We build neighborhoods, not just plots',
             icon: 'fas fa-users',
-            desc: 'We don’t just sell plots — we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
+            desc: 'We donâ€™t just sell plots â€” we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
             steps: [
                 'Planned green & community spaces',
                 'Nearby temples, schools & essentials',

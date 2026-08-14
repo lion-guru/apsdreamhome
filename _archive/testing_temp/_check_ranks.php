@@ -17,4 +17,4 @@ echo "associate, bronze, silver, gold, platinum, diamond\n";
 echo "\n=== mlm_commission_levels table ===\n";
 $rows = $pdo->query('SELECT * FROM mlm_commission_levels ORDER BY level ASC')->fetchAll(PDO::FETCH_ASSOC);
 echo count($rows) . " rows\n";
-foreach ($rows as $r) echo "  level=" . $r['level'] . " rate=" . ($r['rate'] ?? 'N/A') . " name=" . ($r['name'] ?? 'N/A') . "\n";
+foreach ($rows as $r) echo "  level=" . $r['level'] . " rate=" . ($r['rate'] ?? 'N/A') . " name=" . ($r['name'] ?? 'N/A') . "\n";?>

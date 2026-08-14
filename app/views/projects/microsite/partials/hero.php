@@ -2,8 +2,8 @@
 $heroImage = $media['hero'] ?? '/assets/images/projects/placeholder-hero.jpg';
 $palette = $theme['palette'] ?? ['primary' => '#4e73df', 'accent' => '#1cc88a'];
 ?>
-<section class="microsite-hero" style="--primary-color: <?php echo h($palette['primary']); ?>; --accent-color: <?php echo h($palette['accent']); ?>;">
-    <div class="microsite-hero__bg" style="background-image: url('<?php echo h($heroImage); ?>');"></div>
+<section class="microsite-hero" class="style-95846">
+    <div class="microsite-hero__bg" class="style-50707"></div>
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -47,7 +47,7 @@ $palette = $theme['palette'] ?? ['primary' => '#4e73df', 'accent' => '#1cc88a'];
                             <div class="col-6">
                                 <div class="microsite-stat">
                                     <small class="text-muted">Price / Sq.Ft.</small>
-                                    <p class="h5 mb-0">₹<?php echo number_format((float)$project['price_per_sqft']); ?></p>
+                                    <p class="h5 mb-0">â‚¹<?php echo number_format((float)$project['price_per_sqft']); ?></p>
                                 </div>
                             </div>
                             <?php endif; ?>

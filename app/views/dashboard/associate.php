@@ -62,7 +62,7 @@ $notifications = $notifications ?? [];
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-uppercase mb-2 small opacity-75">Team Revenue</h6>
-                            <h3 class="mb-0 fw-bold">₹<?= number_format($user['performance']['total_revenue'] ?? 0) ?></h3>
+                            <h3 class="mb-0 fw-bold">â‚¹<?= number_format($user['performance']['total_revenue'] ?? 0) ?></h3>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-chart-line fa-2x opacity-50"></i>
@@ -70,7 +70,7 @@ $notifications = $notifications ?? [];
                     </div>
                     <?php if (isset($rank_info['next_rank_info'])): ?>
                         <div class="mt-3 small opacity-75">
-                            Target: ₹<?= number_format($rank_info['next_rank_info']['required_bv']) ?>
+                            Target: â‚¹<?= number_format($rank_info['next_rank_info']['required_bv']) ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -82,7 +82,7 @@ $notifications = $notifications ?? [];
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-uppercase mb-2 small opacity-75">Commission Paid</h6>
-                            <h3 class="mb-0 fw-bold">₹<?= number_format($user['performance']['commission_earned'] ?? 0) ?></h3>
+                            <h3 class="mb-0 fw-bold">â‚¹<?= number_format($user['performance']['commission_earned'] ?? 0) ?></h3>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-wallet fa-2x opacity-50"></i>
@@ -118,15 +118,15 @@ $notifications = $notifications ?? [];
                 <h5 class="mb-0">Current Rank: <span class="text-primary"><?= $rank_info['rank'] ?></span></h5>
                 <span class="badge bg-light text-primary border"><?= $rank_info['performance'] ?>% Progress</span>
             </div>
-            <div class="progress" style="height: 10px;">
+            <div class="progress" class="style-92162">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
-                     style="width: <?= $rank_info['performance'] ?>%" 
+                     class="style-56845" 
                      aria-valuenow="<?= $rank_info['performance'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <?php if ($rank_info['next_rank_info']): ?>
                 <div class="mt-2 small text-muted">
                     Need <?= $rank_info['next_rank_info']['members_needed'] ?> more members and 
-                    ₹<?= number_format($rank_info['next_rank_info']['bv_needed']) ?> BV to reach 
+                    â‚¹<?= number_format($rank_info['next_rank_info']['bv_needed']) ?> BV to reach 
                     <strong><?= $rank_info['next_rank_info']['next_rank'] ?></strong>
                 </div>
             <?php endif; ?>
@@ -163,7 +163,7 @@ $notifications = $notifications ?? [];
                                             <td>
                                                 <span class="text-capitalize"><?= $activity['subtype'] ?></span>
                                             </td>
-                                            <td class="fw-bold text-success">₹<?= number_format($activity['amount']) ?></td>
+                                            <td class="fw-bold text-success">â‚¹<?= number_format($activity['amount']) ?></td>
                                             <td><span class="badge bg-success">Paid</span></td>
                                         </tr>
                                     <?php endforeach; ?>

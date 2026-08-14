@@ -17,7 +17,7 @@
                 <div class="col-auto">
                     <form method="GET" class="d-flex">
     <?php echo CSRFProtection::csrfField(); ?>
-                        <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search property or user..." value="<?= htmlspecialchars($search ?? '') ?>" style="width:250px">
+                        <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search property or user..." value="<?= htmlspecialchars($search ?? '') ?>" class="style-79252">
                         <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-search"></i></button>
                         <?php if (!empty($search)): ?>
                             <a href="<?= BASE_URL ?>/admin/property-features/favorites" class="btn btn-sm btn-outline-secondary ms-2"><i class="fas fa-times"></i></a>
@@ -38,7 +38,7 @@
                             <tr>
                                 <td class="ps-4"><?= $i + 1 ?></td>
                                 <td><strong><?= htmlspecialchars($f['property_title'] ?? 'Property #' . $f['property_id']) ?></strong></td>
-                                <td>₹<?= number_format(floatval($f['property_price'] ?? 0), 2) ?></td>
+                                <td>â‚¹<?= number_format(floatval($f['property_price'] ?? 0), 2) ?></td>
                                 <td><?= htmlspecialchars($f['user_name'] ?? '-') ?></td>
                                 <td><?= htmlspecialchars($f['user_email'] ?? '-') ?></td>
                                 <td class="text-end pe-4 small"><?= date('d M Y, h:i A', strtotime($f['created_at'] ?? 'now')) ?></td>

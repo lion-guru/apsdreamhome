@@ -18,4 +18,4 @@ try {
     echo "ERROR: " . $e->getMessage() . "\n";
     echo "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
     echo "Stack: " . $e->getTraceAsString() . "\n";
-}
+}?>

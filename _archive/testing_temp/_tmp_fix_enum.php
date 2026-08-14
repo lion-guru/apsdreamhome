@@ -9,7 +9,7 @@ $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '',
 $current = $pdo->query("SHOW COLUMNS FROM mlm_commission_ledger LIKE 'commission_type'")->fetch();
 echo "Current: " . $current['Type'] . "\n";
 
-// Try adding via individual ALTERs — but ENUM doesn't support ADD VALUE in MySQL < 8.0
+// Try adding via individual ALTERs â€” but ENUM doesn't support ADD VALUE in MySQL < 8.0
 // So we need the full MODIFY. Let's try with explicit DEFAULT
 try {
     $pdo->exec("ALTER TABLE mlm_commission_ledger 
@@ -40,4 +40,4 @@ try {
 
 // Verify
 $r = $pdo->query("SHOW COLUMNS FROM mlm_commission_ledger LIKE 'commission_type'");
-echo "\nResult: " . $r->fetch()['Type'] . "\n";
+echo "\nResult: " . $r->fetch()['Type'] . "\n";?>

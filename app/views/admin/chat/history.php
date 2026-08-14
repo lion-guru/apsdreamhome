@@ -18,11 +18,11 @@ $statusColors = [
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1">📋 Chat History</h2>
+            <h2 class="mb-1">ðŸ“‹ Chat History</h2>
             <p class="text-muted mb-0"><?=$total?> conversations found</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="<?=$base?>/admin/chat-analytics" class="btn btn-outline-primary btn-sm">📊 Analytics</a>
+            <a href="<?=$base?>/admin/chat-analytics" class="btn btn-outline-primary btn-sm">ðŸ“Š Analytics</a>
         </div>
     </div>
 
@@ -98,7 +98,7 @@ $statusColors = [
                         </tr>
                         <?php if (!empty($collected)): ?>
                         <tr>
-                            <td colspan="8" class="small text-muted" style="background:#f8f9fa">
+                            <td colspan="8" class="small text-muted" class="style-92816">
                                 <?php foreach ($collected as $k => $v): ?>
                                 <span class="me-3"><strong><?=$k?>:</strong> <?=htmlspecialchars(is_null($v) ? '(skip)' : (string)$v)?></span>
                                 <?php endforeach; ?>

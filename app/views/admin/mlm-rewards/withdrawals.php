@@ -76,8 +76,8 @@ $stats = $stats ?? [];
                         <thead class="table-light">
                             <tr>
                                 <th>Associate</th>
-                                <th>Amount (₹)</th>
-                                <th>Balance (₹)</th>
+                                <th>Amount (â‚¹)</th>
+                                <th>Balance (â‚¹)</th>
                                 <th>Method</th>
                                 <th>Status</th>
                                 <th>Request Date</th>
@@ -88,8 +88,8 @@ $stats = $stats ?? [];
                             <?php foreach ($requests as $r): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($r['associate_name'] ?? 'N/A') ?></strong></td>
-                                <td>₹<?= number_format(floatval($r['amount'] ?? 0), 2) ?></td>
-                                <td>₹<?= number_format(floatval($r['available_balance'] ?? 0), 2) ?></td>
+                                <td>â‚¹<?= number_format(floatval($r['amount'] ?? 0), 2) ?></td>
+                                <td>â‚¹<?= number_format(floatval($r['available_balance'] ?? 0), 2) ?></td>
                                 <td>
                                     <span class="badge bg-info"><?= ucfirst(str_replace('_', ' ', htmlspecialchars($r['payment_method'] ?? ''))) ?></span>
                                 </td>
@@ -124,7 +124,7 @@ $stats = $stats ?? [];
                                         <i class="fas fa-check-double me-1"></i>Mark Processed
                                     </button>
                                     <?php else: ?>
-                                        <span class="text-muted small">—</span>
+                                        <span class="text-muted small">â€”</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -137,7 +137,7 @@ $stats = $stats ?? [];
     </div>
 </div>
 
-<form method="POST" id="statusForm" style="display:none">
+<form method="POST" id="statusForm" class="style-24280">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <input type="hidden" name="status" id="statusInput">
     <input type="hidden" name="admin_notes" id="notesInput">

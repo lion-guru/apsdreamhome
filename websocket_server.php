@@ -23,4 +23,4 @@ $server = IoServer::factory(
 
 echo "WebSocket server started on ws://localhost:8080\n";
 echo "(For HTTP cross-process broadcast, run: php websocket_broadcast_server.php)\n";
-$server->run();
+$server->run();?>

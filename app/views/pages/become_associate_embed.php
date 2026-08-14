@@ -4,8 +4,8 @@ $referral_code = $referral_code ?? '';
 $referral_link = $referral_link ?? '';
 $base = $base ?? BASE_URL;
 
-$shareText = "Join APS Dream Home as an Associate using my referral code and start earning! 🏡💰";
-$whatsappUrl = "https://wa.me/?text=" . urlencode($shareText . "\n\n🔗 Register here: " . $referral_link);
+$shareText = "Join APS Dream Home as an Associate using my referral code and start earning! ðŸ�¡ðŸ’°";
+$whatsappUrl = "https://wa.me/?text=" . urlencode($shareText . "\n\nðŸ”— Register here: " . $referral_link);
 $facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . urlencode($referral_link) . "&quote=" . urlencode($shareText);
 $twitterUrl = "https://twitter.com/intent/tweet?text=" . urlencode($shareText) . "&url=" . urlencode($referral_link);
 $linkedinUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" . urlencode($referral_link);
@@ -55,17 +55,17 @@ $smsUrl = "sms:?body=" . urlencode($shareText . " Register: " . $referral_link);
 
 <div class="container-fluid px-4 py-3 promo-section">
     <!-- Referral Code Card -->
-    <div class="promo-card" style="padding: 0; overflow: hidden;">
+    <div class="promo-card" class="style-96762">
         <div class="referral-display">
-            <div style="font-size: 0.85rem; opacity: 0.8;">Your Personal Referral Code</div>
+            <div class="style-69504">Your Personal Referral Code</div>
             <div class="referral-code-text" id="refCode"><?= htmlspecialchars($referral_code) ?></div>
             <div class="referral-link-box" id="refLink"><?= htmlspecialchars($referral_link) ?></div>
             <div class="d-flex gap-2 justify-content-center flex-wrap">
                 <button class="btn-copy" onclick="copyCode()"><i class="fas fa-copy me-1"></i> Copy Code</button>
-                <button class="btn-copy" onclick="copyLink()" style="background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3);"><i class="fas fa-link me-1"></i> Copy Link</button>
+                <button class="btn-copy" onclick="copyLink()" class="style-38019"><i class="fas fa-link me-1"></i> Copy Link</button>
             </div>
         </div>
-        <div style="padding: 24px;">
+        <div class="style-67734">
             <!-- QR Code -->
             <div class="text-center mb-4">
                 <h6 class="fw-bold mb-3"><i class="fas fa-qrcode me-2 text-primary"></i>Scan to Register Instantly</h6>

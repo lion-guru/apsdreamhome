@@ -7,7 +7,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preview: <?= htmlspecialchars($doc['document_number'] ?? $doc['title'] ?? 'Document') ?></title>
-    <link href="<?= BASE_URL ?>/assets/admin/css/admin.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/admin/css/admin.min.css" rel="stylesheet">
     <style>
         @media print { .no-print { display: none !important; } body { background: #fff; } .print-container { box-shadow: none; margin: 0; padding: 20px; } }
         body { background: #f5f5f5; font-family: 'Times New Roman', Times, serif; }
@@ -23,12 +23,12 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     </div>
     <div class="status-badge no-print">
         <span class="badge bg-<?= match($doc['status']) { 'signed' => 'success', 'final' => 'info', 'draft' => 'secondary', 'expired' => 'warning', 'cancelled' => 'danger', default => 'secondary' } ?> fs-6"><?= $doc['status'] ?></span>
-        <?php if (!empty($doc['kyc_verified'])): ?><span class="badge bg-info fs-6 ms-1">KYC ✓</span><?php endif; ?>
+        <?php if (!empty($doc['kyc_verified'])): ?><span class="badge bg-info fs-6 ms-1">KYC Ã¢Å“â€œ</span><?php endif; ?>
     </div>
     <div class="print-container">
         <?= $doc['content'] ?? '<p class="text-muted text-center py-5">No content</p>' ?>
         <?php if (!empty($doc['notes'])): ?>
-            <div style="margin-top:30px;padding:10px;background:#f9f9f9;border:1px solid #eee;font-size:12px;color:#666;">
+            <div class="style-85491">
                 <strong>Internal Notes:</strong> <?= nl2br(htmlspecialchars($doc['notes'])) ?>
             </div>
         <?php endif; ?>

@@ -351,4 +351,4 @@ class FeatureFlagManager {
 // Global helper function for feature flag management
 function feature_flags($storageMode = FeatureFlagManager::STORAGE_MEMORY) {
     return new FeatureFlagManager($storageMode);
-}
+}?>

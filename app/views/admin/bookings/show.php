@@ -62,7 +62,7 @@ $extraHead = '<style>
                         </p>
 
                         <p><strong><?= __('admin_total') ?>:</strong><br>
-                            <span class="text-success fw-bold">₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></span>
+                            <span class="text-success fw-bold">â‚¹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></span>
                         </p>
 
                         <p><strong><?= __('admin_booking_date') ?>:</strong><br>
@@ -109,28 +109,28 @@ $extraHead = '<style>
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label fw-bold"><?= __('admin_total') ?></label>
-                    <h4 class="text-primary">₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></h4>
+                    <h4 class="text-primary">â‚¹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold"><?= __('admin_total_paid') ?></label>
-                    <h4 class="text-success">₹<?= number_format($total_paid, 2) ?></h4>
+                    <h4 class="text-success">â‚¹<?= number_format($total_paid, 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold"><?= __('admin_balance_due') ?></label>
-                    <h4 class="text-danger">₹<?= number_format(floatval($booking['total_amount'] ?? 0) - $total_paid, 2) ?></h4>
+                    <h4 class="text-danger">â‚¹<?= number_format(floatval($booking['total_amount'] ?? 0) - $total_paid, 2) ?></h4>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold"><?= __('admin_total_commission') ?></label>
-                    <h4 class="text-info">₹<?= number_format($total_commission, 2) ?></h4>
+                    <h4 class="text-info">â‚¹<?= number_format($total_commission, 2) ?></h4>
                 </div>
 
                 <div class="progress mb-3">
                     <?php $payment_percentage = ($booking['total_amount'] > 0) ? ($total_paid / $booking['total_amount']) * 100 : 0; ?>
                     <div class="progress-bar" role="progressbar"
-                        style="width: <?= min($payment_percentage, 100) ?>%"
+                        class="style-3614"
                         aria-valuenow="<?= $payment_percentage ?>"
                         aria-valuemin="0" aria-valuemax="100">
                         <?= round($payment_percentage, 1) ?>% Paid
@@ -226,7 +226,7 @@ $extraHead = '<style>
                         <?php foreach ($payments as $payment): ?>
                             <tr class="payment-row">
                                 <td><?= date('d M Y h:i A', strtotime($payment['created_at'])) ?></td>
-                                <td class="fw-bold text-success">₹<?= number_format(floatval($payment['amount'] ?? 0), 2) ?></td>
+                                <td class="fw-bold text-success">â‚¹<?= number_format(floatval($payment['amount'] ?? 0), 2) ?></td>
                                 <td><?= ucfirst(htmlspecialchars($payment['payment_method'] ?? '')) ?></td>
                                 <td><?= htmlspecialchars($payment['transaction_id'] ?? 'N/A') ?></td>
                                 <td>
@@ -287,7 +287,7 @@ $extraHead = '<style>
                                 <td><?= date('d M Y h:i A', strtotime($commission['created_at'])) ?></td>
                                 <td><?= htmlspecialchars($commission['user_id'] ?? '') ?></td>
                                 <td><?= ucfirst(htmlspecialchars($commission['commission_type'] ?? '')) ?></td>
-                                <td class="fw-bold text-info">₹<?= number_format(floatval($commission['amount'] ?? 0), 2) ?></td>
+                                <td class="fw-bold text-info">â‚¹<?= number_format(floatval($commission['amount'] ?? 0), 2) ?></td>
                                 <td>
                                     <span class="badge bg-<?= $commission['status'] == 'paid' ? 'success' : 'warning' ?>">
                                         <?= ucfirst(htmlspecialchars($commission['status'] ?? '')) ?>
@@ -317,7 +317,7 @@ $extraHead = '<style>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
-                <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" style="display: inline;">
+                <form method="POST" action="<?= BASE_URL ?>admin/bookings/<?= $booking['id'] ?>/destroy" class="style-26772">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>
@@ -339,9 +339,9 @@ $extraHead = '<style>
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
                     <div class="mb-3">
-                        <label for="amount" class="form-label"><?= __('admin_amount_label') ?> (₹)</label>
+                        <label for="amount" class="form-label"><?= __('admin_amount_label') ?> (â‚¹)</label>
                         <div class="input-group">
-                            <span class="input-group-text">₹</span>
+                            <span class="input-group-text">â‚¹</span>
                             <input type="number" class="form-control" id="amount" name="amount"
                                 step="0.01" min="0" required>
                         </div>

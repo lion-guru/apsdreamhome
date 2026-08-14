@@ -712,7 +712,7 @@ class CoreFunctionsController extends BaseController
         try {
             $data = $_REQUEST;
             $amount = (float)($data['amount'] ?? 0);
-            $currency = $data['currency'] ?? '₹';
+            $currency = $data['currency'] ?? 'â‚¹';
 
             $formatted = $currency . number_format($amount, 2);
 
@@ -1051,4 +1051,4 @@ class CoreFunctionsController extends BaseController
         }
         exit;
     }
-}
+}?>

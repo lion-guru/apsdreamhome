@@ -15,6 +15,9 @@ $base = BASE_URL;
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo __('auth_associate_login_title', 'Associate Login'); ?> - APS Dream Home</title>
@@ -164,31 +167,31 @@ $base = BASE_URL;
             </div>
 
             <div class="earnings-display">
-                <h4><i class="fas fa-calculator me-2"></i>Example: ₹1 Lakh Sale</h4>
+                <h4><i class="fas fa-calculator me-2"></i>Example: ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹1 Lakh Sale</h4>
                 <div class="earnings-row">
                     <span class="label">Track A (Direct Sale)</span>
-                    <span class="value">₹15,000</span>
+                    <span class="value">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹15,000</span>
                 </div>
                 <div class="earnings-row">
                     <span class="label">Track B (Performance)</span>
-                    <span class="value">₹3,000</span>
+                    <span class="value">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹3,000</span>
                 </div>
                 <div class="earnings-row">
                     <span class="label">Track C (Milestone)</span>
-                    <span class="value">₹2,000</span>
+                    <span class="value">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹2,000</span>
                 </div>
-                <div class="earnings-row" style="border-top:2px solid #ea580c;padding-top:.5rem;margin-top:.3rem">
-                    <span class="label" style="font-weight:700">Total Earning</span>
-                    <span class="value" style="font-size:1rem">₹20,000</span>
+                <div class="earnings-row" class="style-24496">
+                    <span class="label" class="style-14635">Total Earning</span>
+                    <span class="value" class="style-36688">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹20,000</span>
                 </div>
             </div>
 
             <?php
                 $s = $stats ?? ['total_paid' => 10560320, 'commission_count' => 311, 'rank_count' => 7, 'max_rate' => 20];
                 $formatAmount = function($amt) {
-                    if ($amt >= 10000000) return '₹' . round($amt / 10000000, 2) . 'Cr';
-                    if ($amt >= 100000) return '₹' . round($amt / 100000, 2) . 'L';
-                    return '₹' . number_format($amt);
+                    if ($amt >= 10000000) return 'ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹' . round($amt / 10000000, 2) . 'Cr';
+                    if ($amt >= 100000) return 'ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹' . round($amt / 100000, 2) . 'L';
+                    return 'ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹' . number_format($amt);
                 };
             ?>
             <div class="stats-bar">
@@ -266,12 +269,14 @@ $base = BASE_URL;
                     <div class="form-options">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                            <label class="form-check-label" for="remember" style="color:#666"><?php echo __('auth_remember_me', 'Remember me'); ?></label>
+                            <label class="form-check-label" for="remember" class="style-27797"><?php echo __('auth_remember_me', 'Remember me'); ?></label>
                         </div>
                         <a href="<?php echo $base; ?>/associate/forgot-password" class="forgot-link"><?php echo __('auth_forgot_password', 'Forgot Password?'); ?></a>
                     </div>
 
-                    <button type="submit" class="btn-login" id="submitBtn">
+                    
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-login" id="submitBtn">
                         <i class="fas fa-sign-in-alt me-2"></i><?php echo __('auth_login', 'Login'); ?>
                     </button>
                 </form>

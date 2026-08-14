@@ -82,16 +82,16 @@
                             <table class="table table-bordered mb-0" id="itemsTable">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width:3%">#</th>
-                                        <th style="width:25%">Item Name <span class="text-danger">*</span></th>
-                                        <th style="width:20%">Description</th>
-                                        <th style="width:5%">Type</th>
-                                        <th style="width:8%">Qty</th>
-                                        <th style="width:12%">Unit Price</th>
-                                        <th style="width:8%">Disc %</th>
-                                        <th style="width:8%">Tax %</th>
-                                        <th style="width:11%">Line Total</th>
-                                        <th style="width:3%"></th>
+                                        <th class="style-42149">#</th>
+                                        <th class="style-14247">Item Name <span class="text-danger">*</span></th>
+                                        <th class="style-14637">Description</th>
+                                        <th class="style-69407">Type</th>
+                                        <th class="style-60520">Qty</th>
+                                        <th class="style-2707">Unit Price</th>
+                                        <th class="style-60520">Disc %</th>
+                                        <th class="style-60520">Tax %</th>
+                                        <th class="style-93361">Line Total</th>
+                                        <th class="style-42149"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="itemsBody">
@@ -111,7 +111,7 @@
                                             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="<?= $item['unit_price'] ?? 0 ?>" min="0" step="0.01"></td>
                                             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="<?= $item['discount_percent'] ?? 0 ?>" min="0" max="100" step="0.01"></td>
                                             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="<?= $item['tax_percent'] ?? 18 ?>" min="0" max="100" step="0.01"></td>
-                                            <td class="fw-bold item-total">₹<?= number_format($item['line_total'] ?? 0, 2) ?></td>
+                                            <td class="fw-bold item-total">â‚¹<?= number_format($item['line_total'] ?? 0, 2) ?></td>
                                             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove"><i class="fas fa-times"></i></button></td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -131,15 +131,15 @@
                                             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
                                             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
                                             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
-                                            <td class="fw-bold item-total">₹0.00</td>
+                                            <td class="fw-bold item-total">â‚¹0.00</td>
                                             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove"><i class="fas fa-times"></i></button></td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
                                 <tfoot>
-                                    <tr><td colspan="8" class="text-end border-0"><strong>Subtotal:</strong></td><td class="fw-bold" id="subtotalDisplay">₹0.00</td><td class="border-0"></td></tr>
-                                    <tr><td colspan="8" class="text-end border-0"><strong>Tax (GST):</strong></td><td class="fw-bold text-primary" id="taxDisplay">₹0.00</td><td class="border-0"></td></tr>
-                                    <tr class="table-active"><td colspan="8" class="text-end border-0"><strong>Total:</strong></td><td class="fw-bold" id="totalDisplay">₹0.00</td><td class="border-0"></td></tr>
+                                    <tr><td colspan="8" class="text-end border-0"><strong>Subtotal:</strong></td><td class="fw-bold" id="subtotalDisplay">â‚¹0.00</td><td class="border-0"></td></tr>
+                                    <tr><td colspan="8" class="text-end border-0"><strong>Tax (GST):</strong></td><td class="fw-bold text-primary" id="taxDisplay">â‚¹0.00</td><td class="border-0"></td></tr>
+                                    <tr class="table-active"><td colspan="8" class="text-end border-0"><strong>Total:</strong></td><td class="fw-bold" id="totalDisplay">â‚¹0.00</td><td class="border-0"></td></tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
-            <td class="fw-bold item-total">₹0.00</td>
+            <td class="fw-bold item-total">â‚¹0.00</td>
             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-times"></i></button></td>
         `;
         tbody.appendChild(row);
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const discAmt = gross * disc / 100;
         const taxable = gross - discAmt;
         const taxAmt = taxable * tax / 100;
-        row.querySelector('.item-total').textContent = '₹' + (taxable + taxAmt).toFixed(2);
+        row.querySelector('.item-total').textContent = 'â‚¹' + (taxable + taxAmt).toFixed(2);
     }
 
     function renumberRows() {
@@ -309,9 +309,9 @@ document.addEventListener('DOMContentLoaded', function() {
             subtotal += taxable + taxAmt;
             totalTax += taxAmt;
         });
-        document.getElementById('subtotalDisplay').textContent = '₹' + subtotal.toFixed(2);
-        document.getElementById('taxDisplay').textContent = '₹' + totalTax.toFixed(2);
-        document.getElementById('totalDisplay').textContent = '₹' + subtotal.toFixed(2);
+        document.getElementById('subtotalDisplay').textContent = 'â‚¹' + subtotal.toFixed(2);
+        document.getElementById('taxDisplay').textContent = 'â‚¹' + totalTax.toFixed(2);
+        document.getElementById('totalDisplay').textContent = 'â‚¹' + subtotal.toFixed(2);
     }
 
     recalcAll();

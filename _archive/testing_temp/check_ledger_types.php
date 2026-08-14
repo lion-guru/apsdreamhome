@@ -14,4 +14,4 @@ $invalid = $pdo->query("
 echo "\nInvalid types:\n";
 foreach ($invalid as $r) {
     echo sprintf("  %-25s %d\n", $r['commission_type'], $r['cnt']);
-}
+}?>

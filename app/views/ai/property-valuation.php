@@ -34,7 +34,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Valuation Results -->
-                    <div id="valuation-results" style="display: none;">
+                    <div id="valuation-results" class="style-54390">
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="card bg-light">
@@ -45,11 +45,11 @@ include __DIR__ . '/../layouts/base.php';
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <strong>Base Valuation:</strong>
-                                                <p class="text-primary" id="base-valuation">₹0</p>
+                                                <p class="text-primary" id="base-valuation">â‚¹0</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <strong>Final Valuation:</strong>
-                                                <p class="text-success" id="final-valuation">₹0</p>
+                                                <p class="text-success" id="final-valuation">â‚¹0</p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -65,7 +65,7 @@ include __DIR__ . '/../layouts/base.php';
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <strong>Amenity Value:</strong>
-                                                <p class="text-info" id="amenity-value">₹0</p>
+                                                <p class="text-info" id="amenity-value">â‚¹0</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <strong>Market Adjustment:</strong>
@@ -76,7 +76,7 @@ include __DIR__ . '/../layouts/base.php';
                                             <div class="col-md-12">
                                                 <strong>Confidence Score:</strong>
                                                 <div class="progress">
-                                                    <div class="progress-bar" id="confidence-bar" style="width: 0%">0%</div>
+                                                    <div class="progress-bar" id="confidence-bar" class="style-73819">0%</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -104,9 +104,9 @@ include __DIR__ . '/../layouts/base.php';
                                         <div class="mb-3">
                                             <strong>Price Range:</strong>
                                             <small>
-                                                <div>Min: ₹<span id="price-min">0</span></div>
-                                                <div>Avg: ₹<span id="price-avg">0</span></div>
-                                                <div>Max: ₹<span id="price-max">0</span></div>
+                                                <div>Min: â‚¹<span id="price-min">0</span></div>
+                                                <div>Avg: â‚¹<span id="price-avg">0</span></div>
+                                                <div>Max: â‚¹<span id="price-max">0</span></div>
                                             </small>
                                         </div>
                                     </div>
@@ -116,7 +116,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Recommendations -->
-                    <div id="recommendations" style="display: none;">
+                    <div id="recommendations" class="style-54390">
                         <div class="card aps-cp-card">
                             <div class="card-header aps-cp-card-header">
                                 <h5><i class="fas fa-lightbulb"></i> AI Recommendations</h5>
@@ -128,7 +128,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Loading State -->
-                    <div id="loading-state" style="display: none;">
+                    <div id="loading-state" class="style-54390">
                         <div class="text-center">
                             <div class="spinner-border" role="status">
                                 <span class="sr-only">Loading...</span>
@@ -138,7 +138,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
 
                     <!-- Error State -->
-                    <div id="error-state" style="display: none;">
+                    <div id="error-state" class="style-54390">
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-triangle"></i>
                             <span id="error-message">Error occurred during valuation</span>
@@ -254,11 +254,11 @@ include __DIR__ . '/../layouts/base.php';
 
     function displayValuationResults(data) {
         // Update valuation summary
-        document.getElementById('base-valuation').textContent = '₹' + data.base_valuation.toLocaleString();
-        document.getElementById('final-valuation').textContent = '₹' + data.final_valuation.toLocaleString();
+        document.getElementById('base-valuation').textContent = 'â‚¹' + data.base_valuation.toLocaleString();
+        document.getElementById('final-valuation').textContent = 'â‚¹' + data.final_valuation.toLocaleString();
         document.getElementById('location-multiplier').textContent = data.location_multiplier + 'x';
         document.getElementById('type-multiplier').textContent = data.type_multiplier + 'x';
-        document.getElementById('amenity-value').textContent = '₹' + data.amenity_value.toLocaleString();
+        document.getElementById('amenity-value').textContent = 'â‚¹' + data.amenity_value.toLocaleString();
         document.getElementById('market-adjustment').textContent = data.market_adjustment;
 
         // Update confidence score

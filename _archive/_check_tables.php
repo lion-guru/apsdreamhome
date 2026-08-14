@@ -33,4 +33,4 @@ foreach ($withoutTenant as $t) {
     if (!$skip) {
         echo "  $t\n";
     }
-}
+}?>

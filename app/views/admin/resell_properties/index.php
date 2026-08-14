@@ -1,4 +1,4 @@
-﻿<div class="d-flex justify-content-between align-items-center mb-4">
+ï»¿<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Resell Properties</h1>
         <p class="text-muted mb-0">Manage all resell property listings</p>
@@ -55,7 +55,7 @@
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/admin/resell-properties">
     <?php echo CSRFProtection::csrfField(); ?>
             <input type="text" class="form-control form-control-sm" name="search" placeholder="Search..." value="<?= htmlspecialchars($search) ?>">
-            <select class="form-select form-select-sm" name="status" style="width:auto">
+            <select class="form-select form-select-sm" name="status" class="style-30246">
                 <option value="">All Status</option>
                 <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>
                 <option value="verified" <?= $status === 'verified' ? 'selected' : '' ?>>Verified</option>
@@ -103,7 +103,7 @@
                                 <td><span class="badge bg-primary"><?= ucfirst(htmlspecialchars($p['property_type'] ?? '')) ?></span></td>
                                 <td><?= htmlspecialchars($p['seller_name'] ?? $p['name'] ?? 'N/A') ?></td>
                                 <td><?= htmlspecialchars($p['location'] ?? $p['city_name'] ?? '') ?></td>
-                                    <td><strong>₹<?= number_format((float)($p['price'] ?? 0)) ?></strong></td>
+                                    <td><strong>â‚¹<?= number_format((float)($p['price'] ?? 0)) ?></strong></td>
                                 <td>
                                     <?php
                                     $statusColors = [

@@ -137,7 +137,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     <i class="fas fa-bars"></i>
                 </button>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" style="font-size:.85rem">
+                    <ol class="breadcrumb mb-0" class="style-93188">
                         <li class="breadcrumb-item"><a href="<?php echo $base; ?>/employee/dashboard">Employee</a></li>
                         <li class="breadcrumb-item active"><?php echo htmlspecialchars($active_page ?? 'Dashboard'); ?></li>
                     </ol>
@@ -154,10 +154,10 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($employee_name,0,1)); ?></div>
                         <div>
-                            <div style="font-size:.85rem;font-weight:600;color:#1e293b"><?php echo htmlspecialchars($employee_name); ?></div>
-                            <div style="font-size:.7rem;color:#64748b"><?php echo htmlspecialchars($employee_email); ?></div>
+                            <div class="style-46756"><?php echo htmlspecialchars($employee_name); ?></div>
+                            <div class="style-46475"><?php echo htmlspecialchars($employee_email); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down ms-2" style="font-size:.7rem;color:#64748b"></i>
+                        <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo $base; ?>/employee/profile"><i class="fas fa-user me-2"></i>Profile</a></li>

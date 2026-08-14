@@ -26,7 +26,7 @@
             <?php if (!empty($plot['image_path'])): ?>
                 <img src="<?= htmlspecialchars($plot['image_path']) ?>" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
             <?php else: ?>
-                <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center" style="height:350px">
+                <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center" class="style-68724">
                     <div class="text-center text-muted">
                         <i class="fas fa-map-marked-alt fa-4x mb-3"></i>
                         <p class="mb-0"><?= __('plot_detail_location_image') ?></p>
@@ -61,7 +61,7 @@
                     <span class="badge bg-<?= $statusColor ?> fs-6 px-3 py-2"><?= $statusLabel ?></span>
                 </div>
 
-                <div class="price-tag mb-3">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></div>
+                <div class="price-tag mb-3">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></div>
                 
                 <div class="row g-2 mb-4">
                     <div class="col-6">
@@ -74,21 +74,21 @@
                     <div class="col-6">
                         <div class="spec-item">
                             <i class="fas fa-arrows-alt"></i>
-                            <div class="detail-value"><?= htmlspecialchars($plot['dimension_label'] ?? '—') ?></div>
+                            <div class="detail-value"><?= htmlspecialchars($plot['dimension_label'] ?? 'â€”') ?></div>
                             <div class="detail-label"><?= __('plot_detail_dimension') ?></div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="spec-item">
                             <i class="fas fa-tag"></i>
-                            <div class="detail-value">₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?></div>
+                            <div class="detail-value">â‚¹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?></div>
                             <div class="detail-label"><?= __('plot_detail_per_sqft') ?></div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="spec-item">
                             <i class="fas fa-layer-group"></i>
-                            <div class="detail-value"><?= htmlspecialchars($plot['block'] ?? '—') ?></div>
+                            <div class="detail-value"><?= htmlspecialchars($plot['block'] ?? 'â€”') ?></div>
                             <div class="detail-label"><?= __('colony_block_label') ?></div>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                         </a>
                     <?php endif; ?>
                 </div>
-                <div class="text-center mt-2" id="compareMsg" style="display:none;">
+                <div class="text-center mt-2" id="compareMsg" class="style-2248">
                     <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('plot_detail_added_compare') ?> <a href="<?= BASE_URL ?>/compare"><?= __('compare_plot_header') ?></a></small>
                 </div>
             </div>
@@ -172,7 +172,7 @@
                     <?php $a = is_string($amenity) ? str_replace(['[', ']', '"', '\\'], '', $amenity) : ''; ?>
                     <?php if (!empty($a)): ?>
                     <div class="col-md-4 col-6">
-                        <span class="amenity-tag" style="display:inline-block;padding:6px 14px;border-radius:20px;background:#e8f5e9;color:#2e7d32;margin:2px">
+                        <span class="amenity-tag" class="style-80567">
                             <i class="fas fa-check-circle text-success me-1"></i> <?= htmlspecialchars(trim($a)) ?>
                         </span>
                     </div>
@@ -194,8 +194,8 @@
                     <?php foreach ($priceHistory as $ph): ?>
                     <tr>
                         <td><?= htmlspecialchars($ph['created_at'] ?? '') ?></td>
-                        <td>₹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
-                        <td>₹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
+                        <td>â‚¹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
+                        <td>â‚¹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
                         <td><span class="badge bg-info"><?= htmlspecialchars($ph['change_type'] ?? '') ?></span></td>
                         <td><?= htmlspecialchars($ph['reason'] ?? '') ?></td>
                     </tr>
@@ -223,7 +223,7 @@
                             <span class="badge bg-<?= $npStatusColor ?>"><?= $npStatusLabel ?></span>
                         </div>
                         <div class="text-muted small">
-                            <?= number_format(floatval($np['area_sqft'] ?? 0)) ?> sqft | <?= htmlspecialchars($np['dimension_label'] ?? '') ?> | ₹<?= number_format(intval($np['total_price'] ?? 0)) ?>
+                            <?= number_format(floatval($np['area_sqft'] ?? 0)) ?> sqft | <?= htmlspecialchars($np['dimension_label'] ?? '') ?> | â‚¹<?= number_format(intval($np['total_price'] ?? 0)) ?>
                         </div>
                     </div>
                 </div>

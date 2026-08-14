@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Document Detail — OCR';
+$page_title = $page_title ?? 'Document Detail â€” OCR';
 $doc = $doc ?? [];
 $fields = $fields ?? [];
 $structured_data = $structured_data ?? [];
@@ -50,11 +50,11 @@ $conf = (float)($doc['confidence_score'] ?? 0);
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4" style="position:relative;z-index:1">
+        <div class="container-fluid px-4" class="style-84072">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
                     <h4 class="mb-1 fw-bold text-white"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($doc['original_name'] ?? 'Document') ?></h4>
-                    <p class="mb-0" style="color:#94a3b8;font-size:13px"><?= $doc_type_label ?> &middot; #<?= $doc['id'] ?? 0 ?> &middot; <?= date('d M Y, h:i A', strtotime($doc['created_at'] ?? 'now')) ?></p>
+                    <p class="mb-0" class="style-29848"><?= $doc_type_label ?> &middot; #<?= $doc['id'] ?? 0 ?> &middot; <?= date('d M Y, h:i A', strtotime($doc['created_at'] ?? 'now')) ?></p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline"><i class="fas fa-arrow-left"></i>Back</a>
@@ -63,7 +63,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
         </div>
     </div>
 
-    <div class="container-fluid px-4" style="margin-top:24px">
+    <div class="container-fluid px-4" class="style-86238">
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="ocr-card mb-4">
@@ -71,7 +71,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                         <h6><i class="fas fa-info-circle me-1"></i>Document Info</h6>
                         <div class="d-flex gap-2">
                             <?php if ($doc_status === 'pending'): ?>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/ocr/process/<?= $doc['id'] ?>" style="display:inline">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/ocr/process/<?= $doc['id'] ?>" class="style-71727">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                                     <button type="submit" class="ocr-btn ocr-btn-warning"><i class="fas fa-play me-1"></i>Run OCR</button>
                                 </form>
@@ -90,9 +90,9 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                             </div>
                             <div class="ocr-info-item">
                                 <label>Confidence</label>
-                                <span style="color:<?= $conf >= 0.7 ? '#34d399' : ($conf >= 0.4 ? '#fbbf24' : '#f87171') ?>"><?= number_format($conf * 100, 0) ?>%</span>
+                                <span class="style-70911"><?= number_format($conf * 100, 0) ?>%</span>
                                 <div class="ocr-confidence-bar">
-                                    <div class="ocr-confidence-fill" style="width:<?= $conf * 100 ?>%;background:<?= $conf >= 0.7 ? '#10b981' : ($conf >= 0.4 ? '#f59e0b' : '#ef4444') ?>"></div>
+                                    <div class="ocr-confidence-fill" class="style-21270"></div>
                                 </div>
                             </div>
                             <div class="ocr-info-item">
@@ -110,13 +110,13 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                         </div>
 
                         <?php if (!empty($doc['error_message'])): ?>
-                            <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px;margin-top:12px;color:#f87171;font-size:13px">
+                            <div class="style-49565">
                                 <i class="fas fa-exclamation-triangle me-1"></i><?= htmlspecialchars($doc['error_message']) ?>
                             </div>
                         <?php endif; ?>
 
                         <?php if (!empty($doc['rejection_reason'])): ?>
-                            <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:12px;margin-top:12px;color:#f87171;font-size:13px">
+                            <div class="style-49565">
                                 <i class="fas fa-ban me-1"></i><strong>Rejection Reason:</strong> <?= htmlspecialchars($doc['rejection_reason']) ?>
                             </div>
                         <?php endif; ?>
@@ -146,7 +146,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                                     </div>
                                 <?php endforeach;
                             else: ?>
-                                <p style="color:#64748b;font-size:13px;margin:0">No fields extracted yet. Run OCR processing first.</p>
+                                <p class="style-67067">No fields extracted yet. Run OCR processing first.</p>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -169,19 +169,19 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                     <div class="ocr-card-header">
                         <h6><i class="fas fa-image me-1"></i>Preview</h6>
                     </div>
-                    <div class="ocr-card-body" style="text-align:center">
+                    <div class="ocr-card-body" class="style-88083">
                         <?php if (!empty($doc['file_path'])): ?>
                             <?php if (strpos($doc['mime_type'] ?? '', 'image') !== false): ?>
-                                <img src="<?= BASE_URL . $doc['file_path'] ?>" alt="Document" style="max-width:100%;border-radius:8px;border:1px solid #334155">
+                                <img src="<?= BASE_URL . $doc['file_path'] ?>" alt="Document" class="style-44476">
                             <?php else: ?>
-                                <div style="padding:40px;color:#64748b">
-                                    <i class="fas fa-file-pdf" style="font-size:48px;color:#ef4444;margin-bottom:12px;display:block"></i>
-                                    <p style="font-size:13px;margin:0">PDF Document</p>
-                                    <a href="<?= BASE_URL . $doc['file_path'] ?>" target="_blank" class="ocr-btn ocr-btn-outline mt-2" style="font-size:12px"><i class="fas fa-external-link-alt me-1"></i>Open PDF</a>
+                                <div class="style-4209">
+                                    <i class="fas fa-file-pdf" class="style-19932"></i>
+                                    <p class="style-40870">PDF Document</p>
+                                    <a href="<?= BASE_URL . $doc['file_path'] ?>" target="_blank" class="ocr-btn ocr-btn-outline mt-2" class="style-86354"><i class="fas fa-external-link-alt me-1"></i>Open PDF</a>
                                 </div>
                             <?php endif; ?>
                         <?php else: ?>
-                            <div style="padding:40px;color:#64748b"><i class="fas fa-image" style="font-size:48px;opacity:.3"></i><p style="font-size:13px">No preview available</p></div>
+                            <div class="style-4209"><i class="fas fa-image" class="style-29812"></i><p class="style-87981">No preview available</p></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -192,28 +192,28 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                     </div>
                     <div class="ocr-card-body">
                         <?php if ($validation === 'valid'): ?>
-                            <div style="text-align:center;padding:16px 0">
-                                <i class="fas fa-shield-alt" style="font-size:32px;color:#10b981;margin-bottom:8px;display:block"></i>
-                                <p style="color:#34d399;font-weight:600;margin:0">Verified & Approved</p>
+                            <div class="style-41883">
+                                <i class="fas fa-shield-alt" class="style-50363"></i>
+                                <p class="style-91466">Verified & Approved</p>
                             </div>
                         <?php elseif ($validation === 'invalid'): ?>
-                            <div style="text-align:center;padding:16px 0">
-                                <i class="fas fa-ban" style="font-size:32px;color:#ef4444;margin-bottom:8px;display:block"></i>
-                                <p style="color:#f87171;font-weight:600;margin:0">Rejected</p>
+                            <div class="style-41883">
+                                <i class="fas fa-ban" class="style-95217"></i>
+                                <p class="style-20478">Rejected</p>
                             </div>
                         <?php else: ?>
-                            <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">Review extracted fields and verify the document.</p>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/approve/<?= $doc['id'] ?>" style="margin-bottom:10px">
+                            <p class="style-93017">Review extracted fields and verify the document.</p>
+                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/approve/<?= $doc['id'] ?>" class="style-57864">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                <button type="submit" class="ocr-btn ocr-btn-success" style="width:100%;justify-content:center"><i class="fas fa-check me-1"></i>Approve & Verify</button>
+                                <button type="submit" class="ocr-btn ocr-btn-success" class="style-16158"><i class="fas fa-check me-1"></i>Approve & Verify</button>
                             </form>
-                            <button type="button" class="ocr-btn ocr-btn-danger" style="width:100%;justify-content:center" onclick="document.getElementById('rejectSection').classList.toggle('show')"><i class="fas fa-times me-1"></i>Reject</button>
+                            <button type="button" class="ocr-btn ocr-btn-danger" class="style-16158" onclick="document.getElementById('rejectSection').classList.toggle('show')"><i class="fas fa-times me-1"></i>Reject</button>
                             <div id="rejectSection" class="ocr-reject-form">
                                 <form method="POST" action="<?= BASE_URL ?>/admin/ocr/reject/<?= $doc['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                    <label style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Rejection Reason</label>
+                                    <label class="style-60951">Rejection Reason</label>
                                     <textarea name="rejection_reason" class="ocr-textarea" placeholder="Enter reason for rejection..." required></textarea>
-                                    <button type="submit" class="ocr-btn ocr-btn-danger mt-2" style="font-size:12px"><i class="fas fa-times me-1"></i>Confirm Rejection</button>
+                                    <button type="submit" class="ocr-btn ocr-btn-danger mt-2" class="style-86354"><i class="fas fa-times me-1"></i>Confirm Rejection</button>
                                 </form>
                             </div>
                         <?php endif; ?>
@@ -227,7 +227,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                     <div class="ocr-card-body d-flex flex-column gap-2">
                         <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" onsubmit="return confirm('Delete this document permanently? This cannot be undone.')">
                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                            <button type="submit" class="ocr-btn ocr-btn-danger" style="width:100%;justify-content:center"><i class="fas fa-trash me-1"></i>Delete Document</button>
+                            <button type="submit" class="ocr-btn ocr-btn-danger" class="style-16158"><i class="fas fa-trash me-1"></i>Delete Document</button>
                         </form>
                     </div>
                 </div>

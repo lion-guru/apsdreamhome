@@ -13,20 +13,20 @@ $tier_counts = $tier_counts ?? [];
     <div class="row g-4">
         <?php foreach ($tiers as $tier): ?>
         <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100" style="border-top: 4px solid <?= $tier['color'] ?>;">
+            <div class="card border-0 shadow-sm h-100" class="style-49381">
                 <div class="card-body text-center">
-                    <div style="font-size:2.5rem;color:<?= $tier['color'] ?>;">
+                    <div class="style-28245">
                         <i class="<?= $tier['icon'] ?>"></i>
                     </div>
                     <h5 class="mt-2 mb-1"><?= $tier['label'] ?></h5>
                     <div class="text-muted small mb-3"><?= $tier['min_referrals'] ?>+ referrals needed</div>
                     
                     <div class="mb-3">
-                        <div class="fw-bold" style="color:<?= $tier['color'] ?>;font-size:1.2rem;">₹<?= number_format($tier['bonus_per_referral']) ?></div>
+                        <div class="fw-bold" class="style-54778">â‚¹<?= number_format($tier['bonus_per_referral']) ?></div>
                         <div class="text-muted small">per signup</div>
                     </div>
                     <div class="mb-3">
-                        <div class="fw-bold" style="color:<?= $tier['color'] ?>;font-size:1.2rem;">₹<?= number_format($tier['bonus_on_booking']) ?></div>
+                        <div class="fw-bold" class="style-54778">â‚¹<?= number_format($tier['bonus_on_booking']) ?></div>
                         <div class="text-muted small">on booking</div>
                     </div>
 

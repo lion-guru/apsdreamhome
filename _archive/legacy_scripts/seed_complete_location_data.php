@@ -21,7 +21,7 @@ echo "India ID: $indiaId\n\n";
 // Check if we already have states
 $stateCount = $db->fetch("SELECT COUNT(*) as cnt FROM states");
 if ($stateCount['cnt'] > 5) {
-    echo "⚠️  Already have {$stateCount['cnt']} states. Skipping...\n";
+    echo "âš ï¸�  Already have {$stateCount['cnt']} states. Skipping...\n";
     exit;
 }
 
@@ -156,13 +156,13 @@ foreach ($indiaData as $stateData) {
     
     if ($existing) {
         $stateId = $existing['id'];
-        echo "⏭️  State exists: $stateName\n";
+        echo "â�­ï¸�  State exists: $stateName\n";
     } else {
         $db->execute("INSERT INTO states (country_id, name, code) VALUES (?, ?, ?)",
             [$indiaId, $stateName, $stateCode]);
         $stateId = $db->lastInsertId();
         $totalStates++;
-        echo "✅ Added State: $stateName\n";
+        echo "âœ… Added State: $stateName\n";
     }
     
     foreach ($districts as $districtName => $cities) {
@@ -194,14 +194,14 @@ foreach ($indiaData as $stateData) {
             }
         }
         
-        echo "   ✅ District: $districtName (" . count($cities) . " cities)\n";
+        echo "   âœ… District: $districtName (" . count($cities) . " cities)\n";
     }
     echo "\n";
 }
 
 echo "==========================================\n";
-echo "✅ Completed!\n";
+echo "âœ… Completed!\n";
 echo "   New States: $totalStates\n";
 echo "   New Districts: $totalDistricts\n";
 echo "   New Cities: $totalCities\n";
-echo "==========================================\n";
+echo "==========================================\n";?>

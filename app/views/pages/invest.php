@@ -1,6 +1,6 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <!-- Hero Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+<section class="py-5 text-white" class="style-22627">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-chart-line me-3"></i><?= __('invest_hero_title') ?></h1>
         <p class="lead"><?= __('invest_hero_desc') ?></p>

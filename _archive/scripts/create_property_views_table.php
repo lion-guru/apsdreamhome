@@ -1,6 +1,6 @@
 <?php
 /**
- * Create property_views table for tracking property浏览 behavior
+ * Create property_views table for tracking propertyæµ�è§ˆ behavior
  * and auto-generating leads from browsing patterns
  */
 
@@ -35,7 +35,7 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 
-    echo "OK — property_views table created\n";
+    echo "OK â€” property_views table created\n";
 
     // Verify leads table has the columns we need
     $cols = [];
@@ -66,7 +66,7 @@ try {
             echo "  + Added source\n";
         }
     } else {
-        echo "OK — leads table has all required columns\n";
+        echo "OK â€” leads table has all required columns\n";
     }
 
     echo "\nDone! Property views tracking is ready.\n";
@@ -74,4 +74,4 @@ try {
 } catch (PDOException $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

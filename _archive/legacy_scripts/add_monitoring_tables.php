@@ -76,4 +76,4 @@ foreach ($statements as $table => $sql) {
 }
 
 echo PHP_EOL . "Migration complete. Created: {$created}, Skipped: {$skipped}" . PHP_EOL;
-exit(0);
+exit(0);?>

@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card aps-cp-card" style="background:#6f42c1;color:white;">
+            <div class="card aps-cp-card" class="style-3150">
                 <div class="card-body text-center">
                     <h6>Telecaller</h6>
                     <h3>&#8377;<?= number_format((float)($stats['tc_comm_stats']['pending'] ?? 0)) ?></h3>
@@ -99,7 +99,7 @@
                             <?php if (empty($stats['agent_rates'] ?? [])): ?>
                             <tr>
                                 <td colspan="3" class="text-center py-5">
-                                    <i class="fas fa-dollar-sign fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-dollar-sign fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No agent rates found</h5>
                                     <p class="text-muted mb-3">Commission rate cards for agents have not been configured yet.</p>
                                 </td>
@@ -129,7 +129,7 @@
                             <?php if (empty($stats['structure_levels'] ?? [])): ?>
                             <tr>
                                 <td colspan="3" class="text-center py-5">
-                                    <i class="fas fa-layer-group fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-layer-group fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No structure levels found</h5>
                                     <p class="text-muted mb-3">Associate hierarchy levels have not been set up yet.</p>
                                 </td>
@@ -159,7 +159,7 @@
                             <?php if (empty($tc_rules ?? [])): ?>
                             <tr>
                                 <td colspan="3" class="text-center py-5">
-                                    <i class="fas fa-phone fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-phone fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No telecaller rules found</h5>
                                     <p class="text-muted mb-3">Telecaller commission rules have not been defined yet.</p>
                                 </td>
@@ -177,7 +177,7 @@
                         </tbody>
                     </table></div>
                 </div>
-                <div class="card-footer"><a href="<?= BASE_URL ?>/admin/commission/telecaller/rules" class="btn btn-sm" style="background:#6f42c1;color:white;">Manage Rules</a></div>
+                <div class="card-footer"><a href="<?= BASE_URL ?>/admin/commission/telecaller/rules" class="btn btn-sm" class="style-3150">Manage Rules</a></div>
             </div>
         </div>
     </div>
@@ -196,8 +196,8 @@
                         <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/mlm/analytics" class="btn btn-outline-dark btn-sm w-100">MLM Analytics</a></div>
                         <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/mlm/ledger-legacy" class="btn btn-outline-danger btn-sm w-100">Legacy Ledger</a></div>
                         <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/revenue/daily" class="btn btn-outline-primary btn-sm w-100">Revenue Daily</a></div>
-                        <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/telecaller/rules" class="btn btn-outline-purple btn-sm w-100" style="border-color:#6f42c1;color:#6f42c1;">TC Rules</a></div>
-                        <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/telecaller/commissions" class="btn btn-outline-purple btn-sm w-100" style="border-color:#6f42c1;color:#6f42c1;">TC Commissions</a></div>
+                        <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/telecaller/rules" class="btn btn-outline-purple btn-sm w-100" class="style-2592">TC Rules</a></div>
+                        <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/telecaller/commissions" class="btn btn-outline-purple btn-sm w-100" class="style-2592">TC Commissions</a></div>
                         <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/rules" class="btn btn-outline-info btn-sm w-100">Old Rules</a></div>
                         <div class="col-6 col-md-2 mb-2"><a href="<?= BASE_URL ?>/admin/commission/reports" class="btn btn-outline-info btn-sm w-100">Reports</a></div>
                     </div>

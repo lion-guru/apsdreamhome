@@ -170,7 +170,7 @@ try {
     foreach ($queries as $q) {
         $pdo->exec($q);
     }
-    echo "✓ All 9 missing AI tables created successfully!\n";
+    echo "âœ“ All 9 missing AI tables created successfully!\n";
 } catch (Exception $e) {
-    echo "✗ Error creating tables: " . $e->getMessage() . "\n";
-}
+    echo "âœ— Error creating tables: " . $e->getMessage() . "\n";
+}?>

@@ -20,9 +20,9 @@ $hiFlat = flatten($hi);
 
 $same = [];
 foreach ($enFlat as $k => $v) {
-    if (isset($hiFlat[$k]) && $hiFlat[$k] === $v && strlen($v) > 3 && !preg_match('/^[0-9₹$%. ,]+$/', $v)) {
+    if (isset($hiFlat[$k]) && $hiFlat[$k] === $v && strlen($v) > 3 && !preg_match('/^[0-9â‚¹$%. ,]+$/', $v)) {
         $same[$k] = $v;
     }
 }
 echo "Identical en/hi values (flat): " . count($same) . "\n";
-foreach ($same as $k => $v) echo "  $k => $v\n";
+foreach ($same as $k => $v) echo "  $k => $v\n";?>

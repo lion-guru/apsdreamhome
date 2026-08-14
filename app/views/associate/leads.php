@@ -52,7 +52,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <div class="d-flex gap-2">
             <form method="POST" action="<?= BASE_URL ?>/associate/leads/recalculate-all-scores" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <button type="submit" class="btn btn-sm" style="border-color:#14b8a6;color:#14b8a6;" onclick="return confirm('Recalculate AI scores for all your leads?')">
+                <button type="submit" class="btn btn-sm" class="style-44944" onclick="return confirm('Recalculate AI scores for all your leads?')">
                     <i class="fas fa-brain me-1"></i> <?= __('assoc_leads_score_all', [], 'Score All') ?>
                 </button>
             </form>
@@ -67,13 +67,13 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <?php
         $pipelineCounts = $pipeline_counts ?? [];
         ?>
-        <div class="crm-stage" style="background: #eff6ff; color: #2563eb;" onclick="filterLeads('')">
+        <div class="crm-stage" class="style-59017" onclick="filterLeads('')">
             <i class="fas fa-layer-group"></i> <?= __('assoc_leads_all', [], 'All') ?>
             <span class="count"><?= number_format($total_count) ?></span>
         </div>
         <?php foreach ($statuses as $key => $s): ?>
         <div class="crm-stage <?= $status_filter === $key ? 'active' : '' ?>" 
-             style="background: <?= $status_filter === $key ? 'var(--bs-' . $s['color'] . ')' : 'rgba(var(--bs-' . $s['color'] . '-rgb), 0.1)' ?>; color: <?= $status_filter === $key ? '#fff' : '' ?>;"
+             class="style-33170"
              onclick="filterLeads('<?= $key ?>')">
             <i class="fas <?= $s['icon'] ?>"></i> <?= $s['label'] ?>
             <span class="count"><?= $pipelineCounts[$key] ?? 0 ?></span>
@@ -139,7 +139,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <div><i class="fas fa-phone text-muted me-1"></i><?= htmlspecialchars($lead['phone'] ?: '—') ?></div>
+                                    <div><i class="fas fa-phone text-muted me-1"></i><?= htmlspecialchars($lead['phone'] ?: 'â€”') ?></div>
                                     <?php if ($lead['email']): ?>
                                         <div><small class="text-muted"><?= htmlspecialchars($lead['email']) ?></small></div>
                                     <?php endif; ?>
@@ -148,7 +148,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                     <?php if ($lead['property_interest']): ?>
                                         <span class="badge bg-light text-dark"><?= htmlspecialchars($lead['property_interest']) ?></span>
                                     <?php else: ?>
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted">â€”</span>
                                     <?php endif; ?>
                                     <?php if ($lead['budget_range']): ?>
                                         <br><small class="text-muted"><?= htmlspecialchars($lead['budget_range']) ?></small>
@@ -182,7 +182,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                             <?php if ($isOverdue): ?><span class="badge bg-danger ms-1"><?= __('assoc_leads_overdue', [], 'Overdue') ?></span><?php endif; ?>
                                         </small>
                                     <?php else: ?>
-                                        <small class="text-muted">—</small>
+                                        <small class="text-muted">â€”</small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -193,7 +193,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                         <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-sm btn-outline-success" title="Call">
                                             <i class="fas fa-phone"></i>
                                         </a>
-                                        <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= (int)$lead['id'] ?>/delete" style="display:inline;" onsubmit="return confirm('Move this lead to trash?')">
+                                        <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= (int)$lead['id'] ?>/delete" class="style-35851" onsubmit="return confirm('Move this lead to trash?')">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                                 <i class="fas fa-trash"></i>

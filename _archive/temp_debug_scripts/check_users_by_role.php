@@ -11,4 +11,4 @@ foreach ($rows as $r) {
         echo "\n[$currentRole]\n";
     }
     echo "  id={$r['id']} name={$r['name']} email={$r['email']}\n";
-}
+}?>

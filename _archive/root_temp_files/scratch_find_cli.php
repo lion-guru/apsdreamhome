@@ -11,4 +11,4 @@ function findFiles($dir, $pattern) {
 }
 
 $files = findFiles('C:\\xampp\\htdocs\\apsdreamhome', '/(unified|login|register)/i');
-file_put_contents('C:\\xampp\\htdocs\\apsdreamhome\\scratch_find_out.txt', implode("\n", $files));
+file_put_contents('C:\\xampp\\htdocs\\apsdreamhome\\scratch_find_out.txt', implode("\n", $files));?>

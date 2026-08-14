@@ -1,6 +1,6 @@
 <?php
 /**
- * Diagnostic: Simulate telecaller login → sidebar render to find the real role
+ * Diagnostic: Simulate telecaller login â†’ sidebar render to find the real role
  */
 $root = dirname(__DIR__);
 $config = require $root . '/config/database.php';
@@ -97,7 +97,7 @@ if (preg_match('/sidebar-nav[\s\S]*?<\/ul>/', $dash['body'], $sidebarMatch)) {
     echo "First 500 chars: " . substr($dash['body'], 0, 500) . "\n";
 }
 
-// Step 3: Simulate what AdminMenuService does — set session and run query directly
+// Step 3: Simulate what AdminMenuService does â€” set session and run query directly
 echo "\n=== DIRECT ROLE CHECK ===\n";
 $pdo = new PDO(
     "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
@@ -130,4 +130,4 @@ $allTc = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 echo "All users with role LIKE %telecaller%: " . count($allTc) . "\n";
 foreach ($allTc as $tc) {
     echo "  ID={$tc['id']} email={$tc['email']} role={$tc['role']} status={$tc['status']}\n";
-}
+}?>

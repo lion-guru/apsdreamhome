@@ -96,7 +96,7 @@ $isDelayed = $currentStatus === 'delayed';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
             <div class="card-body aps-cp-card-body">
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th style="width:140px">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
+                    <tr><th class="style-97126">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
                     <tr><th>Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
                     <tr><th>Plot #</th><td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td></tr>
                     <tr><th>Colony</th><td><?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?></td></tr>
@@ -167,7 +167,7 @@ $isDelayed = $currentStatus === 'delayed';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-sticky-note"></i> Handover Notes</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['handover_notes'])): ?>
-                    <pre style="white-space: pre-wrap; font-family: inherit; background: #f8f9fa; padding: 12px; border-radius: 6px; max-height: 200px; overflow-y: auto;"><?= htmlspecialchars($booking['handover_notes']) ?></pre>
+                    <pre class="style-86263"><?= htmlspecialchars($booking['handover_notes']) ?></pre>
                 <?php else: ?>
                     <p class="text-muted">No handover notes yet.</p>
                 <?php endif; ?>
@@ -190,11 +190,11 @@ $isDelayed = $currentStatus === 'delayed';
                     <?php $completedCount = 0; foreach ($checklist as $item): if ($item['is_completed']) $completedCount++; endforeach; ?>
                     <div class="mb-2">
                         <small class="text-muted"><?= $completedCount ?> / <?= count($checklist) ?> completed</small>
-                        <div class="progress" style="height:6px;">
-                            <div class="progress-bar bg-success" style="width:<?= count($checklist) > 0 ? ($completedCount / count($checklist)) * 100 : 0 ?>%"></div>
+                        <div class="progress" class="style-12222">
+                            <div class="progress-bar bg-success" class="style-24354"></div>
                         </div>
                     </div>
-                    <div style="max-height: 300px; overflow-y: auto;">
+                    <div class="style-52319">
                         <?php foreach ($checklist as $item): ?>
                             <div class="checklist-item <?= $item['is_completed'] ? 'completed' : '' ?>">
                                 <span class="badge bg-<?= $item['is_completed'] ? 'success' : 'secondary' ?>">
@@ -260,7 +260,7 @@ $isDelayed = $currentStatus === 'delayed';
                 <?php if (empty($defects)): ?>
                     <p class="text-muted">No defect reports for this booking.</p>
                 <?php else: ?>
-                    <div style="max-height: 400px; overflow-y: auto;">
+                    <div class="style-61454">
                         <?php foreach ($defects as $d): ?>
                             <?php $priorityClass = ['low' => 'success', 'medium' => 'warning', 'high' => 'danger', 'critical' => 'dark']; ?>
                             <?php $statusClass = ['open' => 'danger', 'in_progress' => 'warning', 'resolved' => 'success', 'closed' => 'secondary']; ?>

@@ -4,7 +4,7 @@ namespace App\Services\Filing;
 use PDO;
 
 /**
- * TDSFilingService — TDS-specific e-filing operations
+ * TDSFilingService â€” TDS-specific e-filing operations
  * Form 26Q generation, Challan 281, Form 16A, TRACES API client
  */
 class TDSFilingService
@@ -134,7 +134,7 @@ class TDSFilingService
                 'filing_mode' => 'offline',
                 'total_records' => count($records),
                 'total_amount' => array_sum(array_column($records, 'gross_amount')),
-                'notes' => "Form 26Q {$quarter} {$fy}: " . count($records) . " records, TDS total ₹" .
+                'notes' => "Form 26Q {$quarter} {$fy}: " . count($records) . " records, TDS total â‚¹" .
                     number_format(array_sum(array_column($records, 'tds_amount')), 2),
             ]);
             $this->efiling->updateSubmissionStatus($submissionId, 'prepared', ['json_file_path' => $filepath]);
@@ -212,7 +212,7 @@ class TDSFilingService
             'filing_mode' => 'offline',
             'total_records' => 1,
             'total_amount' => $totalWithCharges,
-            'notes' => "Challan 281: {$data['tds_section']} ₹" . number_format($totalWithCharges, 2),
+            'notes' => "Challan 281: {$data['tds_section']} â‚¹" . number_format($totalWithCharges, 2),
         ]);
 
         return $challanId;
@@ -388,9 +388,9 @@ class TDSFilingService
                 <th>S.No.</th>
                 <th>Date of Payment/Credit</th>
                 <th>Section</th>
-                <th>Gross Amount (₹)</th>
+                <th>Gross Amount (â‚¹)</th>
                 <th>TDS Rate (%)</th>
-                <th>TDS Amount (₹)</th>
+                <th>TDS Amount (â‚¹)</th>
             </tr>';
 
         $sno = 0;
@@ -412,7 +412,7 @@ class TDSFilingService
         }
 
         $html .= '
-            <tr style="font-weight:bold; background-color:#f0f0f0;">
+            <tr class="style-68792">
                 <td colspan="3">TOTAL</td>
                 <td class="amount">' . number_format($totalGross, 2) . '</td>
                 <td></td>
@@ -421,20 +421,20 @@ class TDSFilingService
         </table>
 
         <div class="section-title">VERIFICATION</div>
-        <p style="font-size:9px; text-align:justify;">
+        <p class="style-99994">
             I hereby certify that the tax has been deducted and deposited to the credit of the Central Government
             for the quarter ending as mentioned above. The information given above is true and correct to the best
             of my knowledge and belief.
         </p>
 
-        <table style="border:none; margin-top:20px;">
-            <tr style="border:none;">
-                <td style="border:none; width:50%; text-align:center;">
+        <table class="style-18770">
+            <tr class="style-54176">
+                <td class="style-96895">
                     <br><br><br>
                     <strong>Signature of Deductor</strong><br>
                     ' . htmlspecialchars($data['deductor']['name'] ?? '') . '
                 </td>
-                <td style="border:none; width:50%; text-align:center;">
+                <td class="style-96895">
                     <br><br><br>
                     <strong>Date and Place</strong><br>
                     ' . date('d-m-Y') . '
@@ -494,7 +494,7 @@ class TDSFilingService
 
     public function getAssessmentYear(string $fy): string
     {
-        // FY 2025-26 → AY 2026-27
+        // FY 2025-26 â†’ AY 2026-27
         $startYear = (int)substr($fy, 0, 4);
         return ($startYear + 1) . '-' . substr($startYear + 2, -2);
     }
@@ -532,7 +532,7 @@ class TDSFilingService
             '194C' => ['rate_indiv' => 1, 'rate_co' => 2, 'desc' => 'Contractor'],
             '194H' => ['rate' => 5, 'desc' => 'Commission/Brokerage'],
             '194I' => ['rate' => 2, 'desc' => 'Rent - Plant/Machinery'],
-            '194IA'=> ['rate' => 1, 'desc' => 'Immovable Property (≥50L)'],
+            '194IA'=> ['rate' => 1, 'desc' => 'Immovable Property (â‰¥50L)'],
             '194IB'=> ['rate' => 5, 'desc' => 'Rent by Individual (50K+/month)'],
             '194J' => ['rate' => 10, 'desc' => 'Professional/Technical Fees'],
             '194LA'=> ['rate' => 10, 'desc' => 'Compulsory Acquisition'],

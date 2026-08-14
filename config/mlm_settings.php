@@ -9,4 +9,4 @@ return [
     'MLM_LEVEL_DIFFERENCE_ENABLED' => 'true',
     'MLM_MATCHING_BONUS_ENABLED' => 'true',
     'MLM_LEADERSHIP_BONUS_ENABLED' => 'true',
-];
+];?>

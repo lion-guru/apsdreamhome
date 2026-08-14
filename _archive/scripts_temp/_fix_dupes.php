@@ -9,7 +9,7 @@ $updates = [
 ];
 
 foreach ($updates as $u) {
-    echo "Deactivating id={$u['id']} ({$u['name']}) — {$u['reason']}" . PHP_EOL;
+    echo "Deactivating id={$u['id']} ({$u['name']}) â€” {$u['reason']}" . PHP_EOL;
     $db->query("UPDATE admin_menu_items SET is_active = 0 WHERE id = ?", [$u['id']]);
     echo "  => Done" . PHP_EOL;
 }
@@ -22,4 +22,4 @@ foreach ($remaining as $r) {
 }
 
 $total = $db->fetchAll("SELECT COUNT(*) as cnt FROM admin_menu_items WHERE is_active = 1");
-echo PHP_EOL . "Active menu items: " . $total[0]['cnt'] . " (was 253, now " . $total[0]['cnt'] . ")" . PHP_EOL;
+echo PHP_EOL . "Active menu items: " . $total[0]['cnt'] . " (was 253, now " . $total[0]['cnt'] . ")" . PHP_EOL;?>

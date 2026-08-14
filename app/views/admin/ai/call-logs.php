@@ -44,19 +44,19 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
             </div></div></div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card cl-stat-card border-0 shadow-sm" style="border-left-color:#16a34a !important"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
+            <div class="card cl-stat-card border-0 shadow-sm" class="style-93507"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-check-circle"></i></span></div>
                 <div><div class="cl-stat-value text-success"><?= number_format($completedCalls) ?></div><div class="cl-stat-label">Completed</div><div class="cl-stat-meta"><?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>% success</div></div>
             </div></div></div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card cl-stat-card border-0 shadow-sm" style="border-left-color:#dc2626 !important"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
+            <div class="card cl-stat-card border-0 shadow-sm" class="style-56775"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><span class="badge bg-danger rounded-pill p-2"><i class="fas fa-times-circle"></i></span></div>
                 <div><div class="cl-stat-value text-danger"><?= number_format($failedCalls + $noAnswerCalls) ?></div><div class="cl-stat-label">Failed / No Answer</div><div class="cl-stat-meta"><?= $failedCalls ?> failed, <?= $noAnswerCalls ?> no answer</div></div>
             </div></div></div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="card cl-stat-card border-0 shadow-sm" style="border-left-color:#f59e0b !important"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
+            <div class="card cl-stat-card border-0 shadow-sm" class="style-37744"><div class="card-body py-3 px-3"><div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-clock"></i></span></div>
                 <div><div class="cl-stat-value"><?= round($avgDuration) ?>s</div><div class="cl-stat-label">Avg Duration</div><div class="cl-stat-meta"><?= $interestedCount ?> interested</div></div>
             </div></div></div>
@@ -131,7 +131,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th style="width:50px">#</th><th>Lead / Phone</th><th>Agent</th><th>Script</th><th>Duration</th><th>Sentiment</th><th>Response</th><th>Interest</th><th>Status</th><th>Date</th></tr>
+                        <tr><th class="style-1979">#</th><th>Lead / Phone</th><th>Agent</th><th>Script</th><th>Duration</th><th>Sentiment</th><th>Response</th><th>Interest</th><th>Status</th><th>Date</th></tr>
                     </thead>
                     <tbody>
 <?php if (empty($calls)): ?>

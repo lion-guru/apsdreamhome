@@ -70,7 +70,7 @@
     }
 </style>
 
-<div style="display:flex;flex-direction:column;height:80vh;background:#0a0a1a;border-radius:12px;overflow:hidden;margin:20px 0;">
+<div class="style-47021">
     <div class="ai-header">
         <div class="ai-avatar"><i class="fas fa-robot"></i></div>
         <div class="ai-info">
@@ -178,7 +178,7 @@
         var div = document.createElement('div');
         div.id = 'typingIndicator';
         div.className = 'ai-typing';
-        div.innerHTML = '<div class="ai-msg-av" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="fas fa-robot"></i></div><div class="ai-typing-bubble"><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span></div>';
+        div.innerHTML = '<div class="ai-msg-av" class="style-87578"><i class="fas fa-robot"></i></div><div class="ai-typing-bubble"><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span></div>';
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return div;
@@ -206,7 +206,7 @@
         return text.replace(urlRegex, function(url) {
             var cleanUrl = url.replace(/[.,;:!?)}\]]+$/, '');
             var suffix = url.substring(cleanUrl.length);
-            return '<a href="' + cleanUrl + '" target="_blank" rel="noopener" style="color:#14b8a6;text-decoration:underline;word-break:break-all;">' + cleanUrl + '</a>' + suffix;
+            return '<a href="' + cleanUrl + '" target="_blank" rel="noopener" class="style-95271">' + cleanUrl + '</a>' + suffix;
         });
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Cron health check — verifies the 3 daily cron jobs are running on schedule.
+ * Cron health check â€” verifies the 3 daily cron jobs are running on schedule.
  *
  * Run daily (e.g. 11:00, after compliance has finished):
  *   C:\xampp\php\php.exe C:\xampp\htdocs\apsdreamhome\scripts\cron_health_check.php
@@ -135,14 +135,14 @@ foreach ($tasks as $task) {
         'reason'      => $reason,
     ];
 
-    logMsg(sprintf('  %-26s  %s', $task['name'], $status . ($reason ? ' — ' . $reason : '')));
+    logMsg(sprintf('  %-26s  %s', $task['name'], $status . ($reason ? ' â€” ' . $reason : '')));
 }
 
 $ok = empty($staleNames);
 
 if (!$ok) {
     $subject = '[APS Cron] ' . count($staleNames) . ' task(s) overdue at ' . date('Y-m-d H:i:s');
-    $body    = '<h2>APS Dream Home Cron Health Check — Issues Found</h2>'
+    $body    = '<h2>APS Dream Home Cron Health Check â€” Issues Found</h2>'
              . '<p><strong>Time:</strong> ' . date('Y-m-d H:i:s') . '</p>'
              . '<p>The following scheduled tasks have not run in the last 24 hours:</p><ul>';
     foreach ($staleNames as $name) {
@@ -178,4 +178,4 @@ logMsg('=== Cron health check complete: ' . ($ok ? 'OK' : 'ISSUES FOUND') . ' ==
 // Final line is always valid JSON for machine consumers.
 echo json_encode($response, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL;
 
-exit($ok ? 0 : 1);
+exit($ok ? 0 : 1);?>

@@ -1,4 +1,4 @@
-﻿<?php $page_title = $page_title ?? 'Custom Fields'; $fields = $fields ?? []; ?>
+ï»¿<?php $page_title = $page_title ?? 'Custom Fields'; $fields = $fields ?? []; ?>
 <style>.cf-card{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:24px;transition:.3s}.cf-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}.cf-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase}</style>
 
 <div class="container-fluid px-4 py-4">
@@ -16,7 +16,7 @@
             <div class="cf-card h-100">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div><h6 class="fw-bold mb-0"><?= htmlspecialchars($f['field_label']) ?></h6><small class="text-muted"><?= htmlspecialchars($f['field_name']) ?></small></div>
-                    <span class="cf-badge" style="background:<?= $f['is_active'] ? '#d4edda;color:#155724' : '#f8d7da;color:#721c24' ?>"><?= $f['is_active'] ? 'Active' : 'Inactive' ?></span>
+                    <span class="cf-badge" class="style-77342"><?= $f['is_active'] ? 'Active' : 'Inactive' ?></span>
                 </div>
                 <div class="mt-2">
                     <span class="badge bg-light text-dark me-1"><i class="fas fa-tag me-1"></i><?= ucfirst($f['field_type']) ?></span>

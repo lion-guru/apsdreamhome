@@ -30,4 +30,4 @@ $rows = $pdo->query('SELECT rank_name, direct_sale_pct, l1_pct, l2_pct, l3_pct F
 foreach ($rows as $r) {
     echo sprintf("  %-20s direct=%s%%  l1=%s%%  l2=%s%%  l3=%s%%\n", $r['rank_name'], $r['direct_sale_pct'], $r['l1_pct'], $r['l2_pct'], $r['l3_pct']);
 }
-echo "\nDone. Rates updated to 5%-20% differential model.\n";
+echo "\nDone. Rates updated to 5%-20% differential model.\n";?>

@@ -86,7 +86,7 @@
                     <label class="form-label">Photo</label>
                     <?php if ($isEdit && !empty($member['photo'])): ?>
                     <div class="mb-2">
-                        <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($member['photo']); ?>" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
+                        <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($member['photo']); ?>" alt="" class="style-51156">
                     </div>
                     <?php endif; ?>
                     <input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp">

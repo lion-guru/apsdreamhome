@@ -94,7 +94,7 @@ foreach ($rank_benefits as $rb) {
         <div class="card border-0 shadow-sm text-center h-100">
             <div class="card-body py-3">
                 <div class="text-muted small mb-1"><?= __('assoc_mlm_total_earned', [], 'Total Earned') ?></div>
-                <h4 class="mb-0">₹<?= number_format($user_commission_total) ?></h4>
+                <h4 class="mb-0">â‚¹<?= number_format($user_commission_total) ?></h4>
             </div>
         </div>
     </div>
@@ -105,11 +105,11 @@ foreach ($rank_benefits as $rb) {
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="fw-bold"><?= __('assoc_mlm_progress_to', [], 'Progress to') ?> <strong><?= htmlspecialchars($next_rank['level_name'] ?? $next_rank['rank_name'] ?? '') ?></strong></span>
-            <span class="text-muted small">₹<?= number_format((float)($user_profile['lifetime_sales'] ?? 0)) ?> / ₹<?= number_format((float)($next_rank['team_size_required'] ?? $next_rank['min_qualifying_volume'] ?? 0)) ?></span>
+            <span class="text-muted small">â‚¹<?= number_format((float)($user_profile['lifetime_sales'] ?? 0)) ?> / â‚¹<?= number_format((float)($next_rank['team_size_required'] ?? $next_rank['min_qualifying_volume'] ?? 0)) ?></span>
         </div>
         <div class="progress-track">
             <?php $pct = min(100, ((float)($user_profile['lifetime_sales'] ?? 0) / max(1, (float)($next_rank['team_size_required'] ?? $next_rank['min_qualifying_volume'] ?? 1))) * 100); ?>
-            <div class="progress-fill" style="width: <?= number_format($pct, 1) ?>%"></div>
+            <div class="progress-fill" class="style-50517"></div>
         </div>
         <div class="d-flex justify-content-between mt-1">
             <small class="text-muted"><?= htmlspecialchars($current_rank) ?></small>
@@ -121,7 +121,7 @@ foreach ($rank_benefits as $rb) {
 <?php endif; ?>
 
 <div class="mb-4">
-    <h4 class="fw-bold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i><?= __('assoc_mlm_how_it_works', [], 'How It Works — 3 Simple Steps') ?></h4>
+    <h4 class="fw-bold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i><?= __('assoc_mlm_how_it_works', [], 'How It Works â€” 3 Simple Steps') ?></h4>
     <div class="row g-4">
         <div class="col-md-4">
             <div class="track-box text-center">
@@ -152,7 +152,7 @@ foreach ($rank_benefits as $rb) {
     <div class="row g-4">
         <div class="col-md-6">
             <div class="track-box">
-                <h5><i class="fas fa-handshake text-primary me-2"></i><?= __('assoc_mlm_track_a_title', [], 'Track A — Direct & Upline Commission') ?></h5>
+                <h5><i class="fas fa-handshake text-primary me-2"></i><?= __('assoc_mlm_track_a_title', [], 'Track A â€” Direct & Upline Commission') ?></h5>
                 <p class="text-muted small"><?= __('assoc_mlm_track_a_desc', [], 'Earn on every plot sale in your network. Commission flows from the agent who made the sale, up through their upline as differential commission.') ?></p>
                 <div class="bg-white rounded-3 p-3 mb-2">
                     <?php
@@ -172,19 +172,19 @@ foreach ($rank_benefits as $rb) {
                     $total = $agentComm + $upline1 + $upline2 + $upline3;
                     $cap = (int)($exampleSale * 0.20);
                     ?>
-                    <strong class="small text-muted"><?= __('assoc_mlm_example', [], 'EXAMPLE: Associate sells plot for ₹15,00,000') ?></strong>
+                    <strong class="small text-muted"><?= __('assoc_mlm_example', [], 'EXAMPLE: Associate sells plot for â‚¹15,00,000') ?></strong>
                     <table class="table table-sm mt-2 mb-0">
-                        <tr><td><?= __('assoc_mlm_ex_agent', [], 'Agent (Associate') ?> — <?= $associateRate ?>%)</td><td class="text-end fw-bold">₹<?= number_format($agentComm) ?></td></tr>
+                        <tr><td><?= __('assoc_mlm_ex_agent', [], 'Agent (Associate') ?> â€” <?= $associateRate ?>%)</td><td class="text-end fw-bold">â‚¹<?= number_format($agentComm) ?></td></tr>
                         <?php if ($upline1 > 0): ?>
-                        <tr><td><?= __('assoc_mlm_ex_upline1', [], 'Upline L1 (Sr. Associate') ?> — <?= $srAssocRate ?>% − <?= $associateRate ?>% = <?= $srAssocRate - $associateRate ?>%)</td><td class="text-end fw-bold">₹<?= number_format($upline1) ?></td></tr>
+                        <tr><td><?= __('assoc_mlm_ex_upline1', [], 'Upline L1 (Sr. Associate') ?> â€” <?= $srAssocRate ?>% âˆ’ <?= $associateRate ?>% = <?= $srAssocRate - $associateRate ?>%)</td><td class="text-end fw-bold">â‚¹<?= number_format($upline1) ?></td></tr>
                         <?php endif; ?>
                         <?php if ($upline2 > 0): ?>
-                        <tr><td><?= __('assoc_mlm_ex_upline2', [], 'Upline L2 (BDM') ?> — <?= $bdmRate ?>% − <?= $srAssocRate ?>% = <?= $bdmRate - $srAssocRate ?>%)</td><td class="text-end fw-bold">₹<?= number_format($upline2) ?></td></tr>
+                        <tr><td><?= __('assoc_mlm_ex_upline2', [], 'Upline L2 (BDM') ?> â€” <?= $bdmRate ?>% âˆ’ <?= $srAssocRate ?>% = <?= $bdmRate - $srAssocRate ?>%)</td><td class="text-end fw-bold">â‚¹<?= number_format($upline2) ?></td></tr>
                         <?php endif; ?>
                         <?php if ($upline3 > 0): ?>
-                        <tr><td><?= __('assoc_mlm_ex_upline3', [], 'Upline L3 (Sr. BDM') ?> — <?= $srBdmRate ?>% − <?= $bdmRate ?>% = <?= $srBdmRate - $bdmRate ?>%)</td><td class="text-end fw-bold">₹<?= number_format($upline3) ?></td></tr>
+                        <tr><td><?= __('assoc_mlm_ex_upline3', [], 'Upline L3 (Sr. BDM') ?> â€” <?= $srBdmRate ?>% âˆ’ <?= $bdmRate ?>% = <?= $srBdmRate - $bdmRate ?>%)</td><td class="text-end fw-bold">â‚¹<?= number_format($upline3) ?></td></tr>
                         <?php endif; ?>
-                        <tr class="table-primary"><td><strong><?= __('assoc_mlm_total_capped', [], 'Total Commission (capped at 20%)') ?></strong></td><td class="text-end fw-bold">₹<?= number_format($total) ?></td></tr>
+                        <tr class="table-primary"><td><strong><?= __('assoc_mlm_total_capped', [], 'Total Commission (capped at 20%)') ?></strong></td><td class="text-end fw-bold">â‚¹<?= number_format($total) ?></td></tr>
                     </table>
                 </div>
                 <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_a_note', [], 'Upline earns the <strong>difference</strong> between their rank rate and the downline\'s rate. Total per sale is capped at 20%.') ?></small>
@@ -192,7 +192,7 @@ foreach ($rank_benefits as $rb) {
         </div>
         <div class="col-md-6">
             <div class="track-box">
-                <h5><i class="fas fa-chart-line text-success me-2"></i><?= __('assoc_mlm_track_b_title', [], 'Track B — Performance Bonus') ?></h5>
+                <h5><i class="fas fa-chart-line text-success me-2"></i><?= __('assoc_mlm_track_b_title', [], 'Track B â€” Performance Bonus') ?></h5>
                 <p class="text-muted small"><?= __('assoc_mlm_track_b_desc', [], 'Earn extra when your team hits consistent monthly sales targets. Consecutive qualifying months unlock bonus multipliers.') ?></p>
                 <div class="bg-white rounded-3 p-3 mb-2">
                     <strong class="small text-muted"><?= __('assoc_mlm_bonus_structure', [], 'BONUS STRUCTURE:') ?></strong>
@@ -202,35 +202,35 @@ foreach ($rank_benefits as $rb) {
                         <tr><td><?= __('assoc_mlm_bonus_12m', [], '12 consecutive qualifying months') ?></td><td class="text-end fw-bold">+1.5% <?= __('assoc_mlm_bonus', [], 'bonus') ?></td></tr>
                     </table>
                 </div>
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_b_note', [], 'A "qualifying month" means your team generated at least ₹50,000 in sales that month.') ?></small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_b_note', [], 'A "qualifying month" means your team generated at least â‚¹50,000 in sales that month.') ?></small>
             </div>
         </div>
         <div class="col-md-6">
             <div class="track-box">
-                <h5><i class="fas fa-trophy text-warning me-2"></i><?= __('assoc_mlm_track_c_title', [], 'Track C — Milestone Escrow') ?></h5>
+                <h5><i class="fas fa-trophy text-warning me-2"></i><?= __('assoc_mlm_track_c_title', [], 'Track C â€” Milestone Escrow') ?></h5>
                 <p class="text-muted small"><?= __('assoc_mlm_track_c_desc', [], '2% of every sale goes into a personal escrow. When it reaches your milestone threshold, you receive a bonus payout.') ?></p>
                 <div class="bg-white rounded-3 p-3 mb-2">
                     <strong class="small text-muted"><?= __('assoc_mlm_milestone_tiers', [], 'MILESTONE TIERS:') ?></strong>
                     <table class="table table-sm mt-2 mb-0">
-                        <tr><td>₹50,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_bronze', [], 'Bronze Milestone') ?></td></tr>
-                        <tr><td>₹2,00,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_silver', [], 'Silver Milestone') ?></td></tr>
-                        <tr><td>₹5,00,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_gold', [], 'Gold Milestone') ?></td></tr>
-                        <tr><td>₹15,00,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_diamond', [], 'Diamond Milestone') ?></td></tr>
+                        <tr><td>â‚¹50,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_bronze', [], 'Bronze Milestone') ?></td></tr>
+                        <tr><td>â‚¹2,00,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_silver', [], 'Silver Milestone') ?></td></tr>
+                        <tr><td>â‚¹5,00,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_gold', [], 'Gold Milestone') ?></td></tr>
+                        <tr><td>â‚¹15,00,000 <?= __('assoc_mlm_accumulated', [], 'accumulated') ?></td><td class="text-end fw-bold"><?= __('assoc_mlm_diamond', [], 'Diamond Milestone') ?></td></tr>
                     </table>
                 </div>
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_c_note', [], 'Escrow is separate from Track A. This is your personal reserve — not shared with upline.') ?></small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_c_note', [], 'Escrow is separate from Track A. This is your personal reserve â€” not shared with upline.') ?></small>
             </div>
         </div>
         <div class="col-md-6">
             <div class="track-box">
-                <h5><i class="fas fa-crown text-danger me-2"></i><?= __('assoc_mlm_track_d_title', [], 'Track D — Royalty Pool (Senior Leaders)') ?></h5>
+                <h5><i class="fas fa-crown text-danger me-2"></i><?= __('assoc_mlm_track_d_title', [], 'Track D â€” Royalty Pool (Senior Leaders)') ?></h5>
                 <p class="text-muted small"><?= __('assoc_mlm_track_d_desc', [], 'Vice President and above share 2% of all company sales, distributed proportional to lifetime sales volume.') ?></p>
                 <div class="bg-white rounded-3 p-3 mb-2">
                     <strong class="small text-muted"><?= __('assoc_mlm_eligibility', [], 'ELIGIBILITY:') ?></strong>
                     <table class="table table-sm mt-2 mb-0">
-                        <tr><td><?= __('assoc_rank_vp', [], 'Vice President') ?> (GBV ≥ ₹1.5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
-                        <tr><td><?= __('assoc_rank_president', [], 'President') ?> (GBV ≥ ₹3 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
-                        <tr><td><?= __('assoc_rank_site_manager', [], 'Site Manager') ?> (GBV ≥ ₹5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
+                        <tr><td><?= __('assoc_rank_vp', [], 'Vice President') ?> (GBV â‰¥ â‚¹1.5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
+                        <tr><td><?= __('assoc_rank_president', [], 'President') ?> (GBV â‰¥ â‚¹3 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
+                        <tr><td><?= __('assoc_rank_site_manager', [], 'Site Manager') ?> (GBV â‰¥ â‚¹5 Cr)</td><td class="text-end fw-bold"><?= __('assoc_mlm_eligible', [], 'Eligible') ?></td></tr>
                     </table>
                 </div>
                 <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_d_note', [], 'Distributed monthly. This is additional income on top of Tracks A/B/C.') ?></small>
@@ -241,7 +241,7 @@ foreach ($rank_benefits as $rb) {
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-0 py-3">
-        <h5 class="card-title mb-0 fw-bold"><i class="fas fa-layer-group text-primary me-2"></i><?= __('assoc_mlm_rank_ladder', [], 'Rank Ladder — Your Path to the Top') ?></h5>
+        <h5 class="card-title mb-0 fw-bold"><i class="fas fa-layer-group text-primary me-2"></i><?= __('assoc_mlm_rank_ladder', [], 'Rank Ladder â€” Your Path to the Top') ?></h5>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -271,7 +271,7 @@ foreach ($rank_benefits as $rb) {
                         <tr class="<?= $rowClass ?>">
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="rank-badge me-1" style="width:32px;height:32px;font-size:.8rem;background:<?= htmlspecialchars($colorCode) ?>;">
+                                    <span class="rank-badge me-1" class="style-72672">
                                         <i class="fas <?= $rankIcons[$i] ?? 'fa-user' ?>"></i>
                                     </span>
                                     <div>
@@ -283,7 +283,7 @@ foreach ($rank_benefits as $rb) {
                                 </div>
                             </td>
                             <td><?= (int)($rb['min_leg_count'] ?? 0) ?> <?= __('assoc_mlm_legs', [], 'legs') ?></td>
-                            <td>₹<?= number_format((float)($rb['min_qualifying_volume'] ?? 0)) ?></td>
+                            <td>â‚¹<?= number_format((float)($rb['min_qualifying_volume'] ?? 0)) ?></td>
                             <td><strong><?= number_format((float)($rb['direct_sale_pct'] ?? 0), 1) ?>%</strong></td>
                             <td><?= number_format((float)($rb['l1_pct'] ?? 0), 1) ?>%</td>
                             <td><small class="text-muted"><?= htmlspecialchars($perkText) ?></small></td>
@@ -297,11 +297,11 @@ foreach ($rank_benefits as $rb) {
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-0 py-3">
-        <h5 class="card-title mb-0 fw-bold"><i class="fas fa-project-diagram text-info me-2"></i><?= __('assoc_mlm_commission_flow', [], 'Commission Flow — How Payment Travels') ?></h5>
+        <h5 class="card-title mb-0 fw-bold"><i class="fas fa-project-diagram text-info me-2"></i><?= __('assoc_mlm_commission_flow', [], 'Commission Flow â€” How Payment Travels') ?></h5>
     </div>
     <div class="card-body">
         <div class="text-center mb-4">
-            <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-center" style="font-size:.9rem;">
+            <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-center" class="style-60432">
                 <span class="badge bg-success p-2 px-3"><i class="fas fa-user me-1"></i><?= __('assoc_mlm_flow_customer', [], 'Customer Pays') ?></span>
                 <i class="fas fa-arrow-right text-muted"></i>
                 <span class="badge bg-primary p-2 px-3"><i class="fas fa-credit-card me-1"></i><?= __('assoc_mlm_flow_payment', [], 'Payment Recorded') ?></span>
@@ -377,7 +377,7 @@ foreach ($rank_benefits as $rb) {
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4"><?= __('assoc_mlm_faq4_q', [], 'Can I lose my rank?') ?></button>
                 </h2>
                 <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#mlmFaqs">
-                    <div class="accordion-body"><?= __('assoc_mlm_faq4_a', [], 'No — once you achieve a rank, you keep it. Ranks only go up, never down. Monthly evaluations check if you qualify for the next rank based on team size and qualifying volume.') ?></div>
+                    <div class="accordion-body"><?= __('assoc_mlm_faq4_a', [], 'No â€” once you achieve a rank, you keep it. Ranks only go up, never down. Monthly evaluations check if you qualify for the next rank based on team size and qualifying volume.') ?></div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -385,7 +385,7 @@ foreach ($rank_benefits as $rb) {
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5"><?= __('assoc_mlm_faq5_q', [], 'What is the difference between direct commission and differential commission?') ?></button>
                 </h2>
                 <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#mlmFaqs">
-                    <div class="accordion-body"><?= __('assoc_mlm_faq5_a', [], '<strong>Direct commission</strong> is what the agent who makes the sale earns (5-20% based on rank). <strong>Differential commission</strong> is what upline members earn — the difference between their rank\'s rate and the direct agent\'s rate. For example, if you\'re a BDM (10%) and your downline Associate (5%) makes a sale, you earn the 5% difference. The total never exceeds your rank\'s rate.') ?></div>
+                    <div class="accordion-body"><?= __('assoc_mlm_faq5_a', [], '<strong>Direct commission</strong> is what the agent who makes the sale earns (5-20% based on rank). <strong>Differential commission</strong> is what upline members earn â€” the difference between their rank\'s rate and the direct agent\'s rate. For example, if you\'re a BDM (10%) and your downline Associate (5%) makes a sale, you earn the 5% difference. The total never exceeds your rank\'s rate.') ?></div>
                 </div>
             </div>
             <div class="accordion-item">

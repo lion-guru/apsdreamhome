@@ -13,10 +13,10 @@
                         <p class="text-muted small">Payment Confirmation</p>
                     </div>
                     <div class="table-responsive"><table class="table table-bordered table-responsive">
-                        <tr><th class="bg-light" style="width:180px">Order ID</th><td>#<?= h($receipt['order_id'] ?? 'N/A') ?></td></tr>
+                        <tr><th class="bg-light" class="style-83841">Order ID</th><td>#<?= h($receipt['order_id'] ?? 'N/A') ?></td></tr>
                         <tr><th class="bg-light">Customer</th><td><?= h($receipt['customer_name'] ?? 'N/A') ?></td></tr>
                         <tr><th class="bg-light">Property</th><td><?= h($receipt['property_title'] ?? 'N/A') ?></td></tr>
-                        <tr><th class="bg-light">Amount</th><td>₹<?= number_format($receipt['amount'] ?? 0) ?></td></tr>
+                        <tr><th class="bg-light">Amount</th><td>â‚¹<?= number_format($receipt['amount'] ?? 0) ?></td></tr>
                         <tr><th class="bg-light">Payment Date</th><td><?= h($receipt['payment_date'] ?? date('Y-m-d H:i:s')) ?></td></tr>
                         <tr><th class="bg-light">Transaction ID</th><td><code><?= h($receipt['transaction_id'] ?? 'N/A') ?></code></td></tr>
                         <tr><th class="bg-light">Payment Method</th><td><?= h(ucfirst($receipt['payment_method'] ?? 'N/A')) ?></td></tr>

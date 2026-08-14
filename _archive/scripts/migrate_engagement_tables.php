@@ -22,7 +22,7 @@ try {
     echo "Connected to database\n\n";
 
     $tables = [
-        // 1. engagement_goals — used by EngagementController raw queries
+        // 1. engagement_goals â€” used by EngagementController raw queries
         "CREATE TABLE IF NOT EXISTS `engagement_goals` (
             `id` INT(11) NOT NULL AUTO_INCREMENT,
             `title` VARCHAR(255) NOT NULL,
@@ -43,7 +43,7 @@ try {
             KEY `idx_eg_dates` (`start_date`,`end_date`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
-        // 2. mlm_associate_metrics — EngagementService getAssociateMetrics()
+        // 2. mlm_associate_metrics â€” EngagementService getAssociateMetrics()
         "CREATE TABLE IF NOT EXISTS `mlm_associate_metrics` (
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `user_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -71,7 +71,7 @@ try {
             KEY `idx_am_user_period` (`user_id`,`period_start`,`period_end`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
-        // 3. mlm_leaderboard_snapshots — EngagementService getLeaderboardSnapshot()
+        // 3. mlm_leaderboard_snapshots â€” EngagementService getLeaderboardSnapshot()
         "CREATE TABLE IF NOT EXISTS `mlm_leaderboard_snapshots` (
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `metric_type` VARCHAR(50) NOT NULL,
@@ -89,7 +89,7 @@ try {
             KEY `idx_lbs_rank` (`rank_position`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
-        // 4. mlm_goals — EngagementService getGoals(), createGoal(), updateGoal(), updateGoalStatus()
+        // 4. mlm_goals â€” EngagementService getGoals(), createGoal(), updateGoal(), updateGoalStatus()
         "CREATE TABLE IF NOT EXISTS `mlm_goals` (
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `goal_type` ENUM('sales','recruits','commission','custom') NOT NULL DEFAULT 'sales',
@@ -112,7 +112,7 @@ try {
             KEY `idx_mg_active_user` (`status`,`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
-        // 5. mlm_goal_progress — EngagementService getGoalProgress(), recordGoalProgress()
+        // 5. mlm_goal_progress â€” EngagementService getGoalProgress(), recordGoalProgress()
         "CREATE TABLE IF NOT EXISTS `mlm_goal_progress` (
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `goal_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -127,7 +127,7 @@ try {
             KEY `idx_mgp_goal` (`goal_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
-        // 6. mlm_goal_events — EngagementService getGoalEvents(), logGoalEvent()
+        // 6. mlm_goal_events â€” EngagementService getGoalEvents(), logGoalEvent()
         "CREATE TABLE IF NOT EXISTS `mlm_goal_events` (
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `goal_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -140,7 +140,7 @@ try {
             KEY `idx_mge_type` (`event_type`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
-        // 7. mlm_notification_preferences — EngagementService getNotificationPreferences()
+        // 7. mlm_notification_preferences â€” EngagementService getNotificationPreferences()
         "CREATE TABLE IF NOT EXISTS `mlm_notification_preferences` (
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             `user_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -175,4 +175,4 @@ try {
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

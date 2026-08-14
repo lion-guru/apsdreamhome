@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Follow-up Reminder Cron — APS Dream Home
+ * Follow-up Reminder Cron â€” APS Dream Home
  * ==========================================
  * Sends reminders for pending CRM follow-up tasks.
  *
@@ -22,13 +22,13 @@ $config = require $root . '/config/database.php';
 
 $dryRun = in_array('--dry-run', $argv ?? []);
 
-echo "╔═══════════════════════════════════════════════════════════╗" . PHP_EOL;
-echo "║  Follow-up Reminder Cron                                 ║" . PHP_EOL;
-echo "║  " . date('Y-m-d H:i:s') . str_repeat(' ', 38) . "║" . PHP_EOL;
+echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—" . PHP_EOL;
+echo "â•‘  Follow-up Reminder Cron                                 â•‘" . PHP_EOL;
+echo "â•‘  " . date('Y-m-d H:i:s') . str_repeat(' ', 38) . "â•‘" . PHP_EOL;
 if ($dryRun) {
-    echo "║  ⚠  DRY RUN                                             ║" . PHP_EOL;
+    echo "â•‘  âš   DRY RUN                                             â•‘" . PHP_EOL;
 }
-echo "╚═══════════════════════════════════════════════════════════╝" . PHP_EOL . PHP_EOL;
+echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�" . PHP_EOL . PHP_EOL;
 
 try {
     $pdo = new PDO(
@@ -36,7 +36,7 @@ try {
         $config['username'], $config['password'],
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-    echo "[✓] Database connected" . PHP_EOL . PHP_EOL;
+    echo "[âœ“] Database connected" . PHP_EOL . PHP_EOL;
 
     // Set tenant context for TenantContext consumers
     require_once __DIR__ . '/../app/Core/autoload.php';
@@ -114,23 +114,23 @@ try {
             ");
             $updateStmt->execute([$task['id']]);
 
-            echo "    ✅ Reminder logged + marked sent" . PHP_EOL;
+            echo "    âœ… Reminder logged + marked sent" . PHP_EOL;
             $sent++;
         } catch (\Throwable $e) {
-            echo "    ❌ Error: " . $e->getMessage() . PHP_EOL;
+            echo "    â�Œ Error: " . $e->getMessage() . PHP_EOL;
             $errors++;
         }
         echo PHP_EOL;
     }
 
-    echo "╔═══════════════════════════════════════════════════════════╗" . PHP_EOL;
-    echo "║  SUMMARY                                                ║" . PHP_EOL;
-    echo "╠═══════════════════════════════════════════════════════════╣" . PHP_EOL;
-    echo "║  Tasks processed: {$sent}" . PHP_EOL;
-    echo "║  Errors:          {$errors}" . PHP_EOL;
-    echo "╚═══════════════════════════════════════════════════════════╝" . PHP_EOL;
+    echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—" . PHP_EOL;
+    echo "â•‘  SUMMARY                                                â•‘" . PHP_EOL;
+    echo "â• â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•£" . PHP_EOL;
+    echo "â•‘  Tasks processed: {$sent}" . PHP_EOL;
+    echo "â•‘  Errors:          {$errors}" . PHP_EOL;
+    echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�" . PHP_EOL;
 
 } catch (\Throwable $e) {
-    echo PHP_EOL . "❌ FATAL: " . $e->getMessage() . PHP_EOL;
+    echo PHP_EOL . "â�Œ FATAL: " . $e->getMessage() . PHP_EOL;
     exit(1);
-}
+}?>

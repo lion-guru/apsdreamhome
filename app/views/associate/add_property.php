@@ -28,7 +28,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     @media (max-width: 576px) { .type-selector { grid-template-columns: repeat(2, 1fr); } }
 </style>
 
-<div class="container-fluid px-3 py-3" style="max-width: 700px; margin: 0 auto;">
+<div class="container-fluid px-3 py-3" class="style-63221">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="m-0 fw-bold"><i class="fas fa-plus-circle me-2 text-primary"></i><?= __('assoc_ap_title', [], 'Add Property') ?></h5>
         <a href="<?= $base ?>/associate/properties" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('assoc_ap_my_properties', [], 'My Properties') ?></a>
@@ -70,7 +70,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
             <div class="row g-3">
                 <div class="col-8">
-                    <label class="form-label"><?= __('assoc_ap_price', [], 'Price (₹)') ?> *</label>
+                    <label class="form-label"><?= __('assoc_ap_price', [], 'Price (â‚¹)') ?> *</label>
                     <input type="text" name="price" id="price" class="form-control" placeholder="<?= __('assoc_ap_price_placeholder', [], 'e.g. 25,00,000') ?>" required inputmode="numeric">
                 </div>
                 <div class="col-4">
@@ -127,7 +127,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         </div>
 
         <div class="prop-section text-center">
-            <button type="submit" class="btn btn-primary btn-lg w-100 py-3" style="border-radius:14px;font-weight:700;">
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-3" class="style-80393">
                 <i class="fas fa-paper-plane me-2"></i><?= __('assoc_ap_submit', [], 'Submit Property') ?>
             </button>
             <div class="text-muted small mt-2"><i class="fas fa-shield-alt me-1"></i><?= __('assoc_ap_verified', [], 'Verified before publishing') ?></div>

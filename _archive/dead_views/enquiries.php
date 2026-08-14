@@ -48,7 +48,7 @@
                                     </td>
                                     <td><?= h($inquiry['subject']) ?></td>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 250px;" title="<?= h($inquiry['message']) ?>">
+                                        <div class="text-truncate" class="style-14387" title="<?= h($inquiry['message']) ?>">
                                             <?= h($inquiry['message']) ?>
                                         </div>
                                     </td>

@@ -33,7 +33,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Body <span class="text-danger">*</span></label>
-                            <textarea name="body" class="form-control" rows="4" placeholder="e.g. Check out our new 3BHK apartments in Lucknow starting at ₹45 Lakh!" required maxlength="300"></textarea>
+                            <textarea name="body" class="form-control" rows="4" placeholder="e.g. Check out our new 3BHK apartments in Lucknow starting at â‚¹45 Lakh!" required maxlength="300"></textarea>
                             <small class="text-muted">Max 300 characters. The main notification message.</small>
                         </div>
 
@@ -58,7 +58,7 @@
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-3"><i class="fas fa-info-circle text-primary me-1"></i> How it works</h6>
-                    <ul class="small text-muted mb-0" style="padding-left: 18px;">
+                    <ul class="small text-muted mb-0" class="style-51338">
                         <li>Push notifications are sent to all users with an active browser subscription</li>
                         <li>Users must have granted push permission in their browser</li>
                         <li>Notifications appear even when the site is not open</li>
@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div id="result" class="mt-3" style="display:none;"></div>
+    <div id="result" class="mt-3" class="style-2248"></div>
 </div>
 
 <script>

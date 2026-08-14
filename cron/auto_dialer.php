@@ -1,5 +1,5 @@
 <?php
-// Auto-Dialer Cron — Processes scheduled AI calls automatically
+// Auto-Dialer Cron â€” Processes scheduled AI calls automatically
 // Features: pending calls, calling hours check, agent limits, EMI reminders
 // Run: php cron/auto_dialer.php
 // Schedule: */5 * * * * via cron
@@ -42,14 +42,14 @@ try {
     $asterisk = new AsteriskService();
     $voiceService = new VoiceCallService();
 
-    // ── Step 1: Check calling hours ──
+    // â”€â”€ Step 1: Check calling hours â”€â”€
     $hour = (int)date('H');
     if ($hour < 9 || $hour >= 20) {
         dialerLog("Outside calling hours (9AM-8PM). Skipping.");
         exit(0);
     }
 
-    // ── Step 2: Check Asterisk connectivity ──
+    // â”€â”€ Step 2: Check Asterisk connectivity â”€â”€
     $connected = $asterisk->ping();
     if (!$connected) {
         dialerLog("Asterisk AMI not reachable. Skipping this cycle.");
@@ -57,7 +57,7 @@ try {
     }
     dialerLog("Asterisk AMI connected.");
 
-    // ── Step 3: Get active agents with capacity ──
+    // â”€â”€ Step 3: Get active agents with capacity â”€â”€
     $agents = $db->fetchAll(
         "SELECT agent_id, agent_name, current_calls, max_concurrent_calls, daily_call_limit, 
                 total_calls_made, status
@@ -71,7 +71,7 @@ try {
     }
     dialerLog("Available agents: " . count($agents));
 
-    // ── Step 4: Get pending scheduled calls ──
+    // â”€â”€ Step 4: Get pending scheduled calls â”€â”€
     $pendingCalls = $db->fetchAll(
         "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.property_interest
          FROM ai_calling_schedule s
@@ -89,7 +89,7 @@ try {
 
     dialerLog("Pending calls found: " . count($pendingCalls));
 
-    // ── Step 5: Process each call ──
+    // â”€â”€ Step 5: Process each call â”€â”€
     $agentIndex = 0;
     $callsInitiated = 0;
     $callsSkipped = 0;
@@ -167,7 +167,7 @@ try {
         usleep(500000);
     }
 
-    // ── Step 6: Process EMI reminder calls ──
+    // â”€â”€ Step 6: Process EMI reminder calls â”€â”€
     dialerLog("Checking EMI reminders...");
     
     $overdueEMIs = $db->fetchAll(
@@ -256,7 +256,7 @@ try {
         dialerLog("EMI reminder: {$custName} Rs{$amount}, {$daysOverdue}d overdue - {$script}");
     }
 
-    // ── Step 7: Summary ──
+    // â”€â”€ Step 7: Summary â”€â”€
     $summaryFile = $_LOG_DIR . '/dialer_summary_' . date('Y-m-d') . '.json';
     $summary = [
         'time' => date('Y-m-d H:i:s'),
@@ -281,4 +281,4 @@ try {
 }
 
 dialerLog("=== Auto-Dialer Completed ===\n");
-exit(0);
+exit(0);?>

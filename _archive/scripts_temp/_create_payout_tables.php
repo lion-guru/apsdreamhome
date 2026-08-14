@@ -60,4 +60,4 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS payout_entries (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 echo "  OK\n";
 
-echo "=== DONE ===\n";
+echo "=== DONE ===\n";?>

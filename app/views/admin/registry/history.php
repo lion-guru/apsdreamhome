@@ -29,10 +29,10 @@ $active_page = 'registry';
         <?php if (empty($activities)): ?>
             <p class="text-muted text-center py-4">No activity recorded yet.</p>
         <?php else: ?>
-            <div class="timeline" style="position: relative; padding-left: 30px;">
+            <div class="timeline" class="style-37179">
                 <?php foreach ($activities as $a): ?>
-                    <div style="position: relative; padding-bottom: 20px; border-left: 2px solid #dee2e6; padding-left: 20px; margin-left: 0;">
-                        <div style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #0d6efd; border: 2px solid #fff;"></div>
+                    <div class="style-36833">
+                        <div class="style-79878"></div>
                         <small class="text-muted"><?= date('d M Y h:i A', strtotime($a['created_at'])) ?></small>
                         <br>
                         <strong><?= ucfirst(str_replace('_', ' ', $a['action'])) ?></strong>

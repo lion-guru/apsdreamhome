@@ -24,4 +24,4 @@ foreach ($tables as $name => $scripts) {
 }
 fclose($out);
 echo "Total unique tables dropped: " . count($tables) . PHP_EOL;
-echo "Written to _dropped_tables.csv" . PHP_EOL;
+echo "Written to _dropped_tables.csv" . PHP_EOL;?>

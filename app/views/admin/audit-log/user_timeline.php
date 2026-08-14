@@ -38,20 +38,15 @@ ob_start();
         <div class="timeline">
           <?php foreach ($timeline as $index => $log): ?>
             <div class="timeline-item position-relative">
-              <div class="timeline-marker position-absolute" style="left: 20px; top: 8px;">
+              <div class="timeline-marker position-absolute" class="style-19702">
                 <div class="rounded-circle bg-<?= match($log['status'] ?? 'success') {
                   'success' => 'success',
                   'failed' => 'danger',
                   'pending' => 'warning',
                   default => 'secondary'
-                } ?>" style="width: 16px; height: 16px; border: 3px solid white; box-shadow: 0 0 0 2px <?= match($log['status'] ?? 'success') {
-                  'success' => '#198754',
-                  'failed' => '#dc3545',
-                  'pending' => '#ffc107',
-                  default => '#6c757d'
-                } ?>;"></div>
+                } ?>" class="style-98478"></div>
               </div>
-              <div class="ps-5 pb-4 border-start" style="border-left: 2px solid #e9ecef; padding-left: 50px;">
+              <div class="ps-5 pb-4 border-start" class="style-43064">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <div>
                     <span class="badge bg-<?= match($log['action_type'] ?? 'update') {

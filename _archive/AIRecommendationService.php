@@ -599,4 +599,4 @@ class AIRecommendationService
             return [];
         }
     }
-}
+}?>

@@ -64,9 +64,9 @@ ob_start();
                         $weeks = ceil(($daysInMonth + $firstDay - 1) / 7);
                         
                         for ($week = 0; $week < $weeks; $week++): ?>
-                        <tr style="height: 120px;">
+                        <tr class="style-380">
                             <?php for ($d = 1; $d <= 7; $d++): ?>
-                            <td class="<?= ($d == 7) ? 'bg-light' : '' ?>" style="vertical-align: top; width: 14.28%;">
+                            <td class="<?= ($d == 7) ? 'bg-light' : '' ?>" class="style-97884">
                                 <?php
                                 if (($week == 0 && $d < $firstDay) || $day > $daysInMonth) {
                                     echo '&nbsp;';

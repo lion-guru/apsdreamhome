@@ -37,12 +37,12 @@ $filesToFix = [
     ],
     'app/views/testimonials/index.php' => [
         'search' => [
-            'style="width: {{ $percentage }}%"',
+            'class="style-56580"',
             'onclick="playVideo(\'{{ $video[\'video_url\'] }}\')"',
             'background: conic-gradient(#ffc107 0deg {{ ($testimonials_stats[\'average_rating\'] ?? 4.8) * 72 }}deg, #e9ecef 0deg)'
         ],
         'replace' => [
-            'style="width: {{ $percentage }}%;"',
+            'class="style-36467"',
             'onclick="playVideo(\'{{ $video[\'video_url\'] }}\');"',
             'background: conic-gradient(#ffc107 0deg {{ ($testimonials_stats[\'average_rating\'] ?? 4.8) * 72 }}deg, #e9ecef 0deg);'
         ]

@@ -20,4 +20,4 @@ if ($stmt->rowCount() > 0) {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         echo "  {$row['state_code']} - {$row['state_name']} (M: {$row['male_rate']}%, F: {$row['female_rate']}%)\n";
     }
-}
+}?>

@@ -70,9 +70,9 @@ $recentCalls = $recentCalls ?? [];
             <div class="aps-cp-card">
                 <div class="aps-cp-card-header"><i class="fas fa-chart-pie me-2"></i>Call Outcomes</div>
                 <div class="aps-cp-card-body">
-                    <div class="mb-2"><div class="d-flex justify-content-between"><small>Completed</small><small class="text-success"><?= $completedCalls ?></small></div><div class="progress" style="height:8px"><div class="progress-bar bg-success" style="width:<?= $totalCalls > 0 ? round($completedCalls/$totalCalls*100) : 0 ?>%"></div></div></div>
-                    <div class="mb-2"><div class="d-flex justify-content-between"><small>Failed</small><small class="text-danger"><?= $failedCalls ?></small></div><div class="progress" style="height:8px"><div class="progress-bar bg-danger" style="width:<?= $totalCalls > 0 ? round($failedCalls/$totalCalls*100) : 0 ?>%"></div></div></div>
-                    <div class="mb-2"><div class="d-flex justify-content-between"><small>Interested</small><small class="text-primary"><?= $interestedCount ?></small></div><div class="progress" style="height:8px"><div class="progress-bar bg-primary" style="width:<?= $totalCalls > 0 ? round($interestedCount/$totalCalls*100) : 0 ?>%"></div></div></div>
+                    <div class="mb-2"><div class="d-flex justify-content-between"><small>Completed</small><small class="text-success"><?= $completedCalls ?></small></div><div class="progress" class="style-32124"><div class="progress-bar bg-success" class="style-8771"></div></div></div>
+                    <div class="mb-2"><div class="d-flex justify-content-between"><small>Failed</small><small class="text-danger"><?= $failedCalls ?></small></div><div class="progress" class="style-32124"><div class="progress-bar bg-danger" class="style-92356"></div></div></div>
+                    <div class="mb-2"><div class="d-flex justify-content-between"><small>Interested</small><small class="text-primary"><?= $interestedCount ?></small></div><div class="progress" class="style-32124"><div class="progress-bar bg-primary" class="style-5652"></div></div></div>
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="news-hero-section text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
+<section class="news-hero-section text-white py-5" class="style-656">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -73,7 +73,7 @@
                                 ?>
                                 <img src="<?= htmlspecialchars($imageUrl) ?>"
                                     alt="<?= htmlspecialchars($news['title'] ?? '') ?>"
-                                    class="img-fluid w-100" style="height:200px;object-fit:cover;" loading="lazy">
+                                    class="img-fluid w-100" class="style-27608" loading="lazy">
                                 <?php if (!empty($news['category'])): ?>
                                 <div class="news-category position-absolute top-0 start-0 m-3">
                                     <span class="badge bg-primary"><?= htmlspecialchars($news['category']) ?></span>
@@ -114,7 +114,7 @@
                             <input type="email" class="form-control" name="email" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
                             <button class="btn btn-primary" type="submit"><?= __('newsletter_subscribe_btn') ?></button>
                         </div>
-                        <div id="newsletterMsg" class="mt-2 small" style="display:none;"></div>
+                        <div id="newsletterMsg" class="mt-2 small" class="style-2248"></div>
                     </div>
                 </div>
             </form>
@@ -139,7 +139,7 @@ document.getElementById('newsletterForm').addEventListener('submit', function(e)
         msg.style.display = 'block';
         if (d.success) {
             msg.className = 'mt-2 small text-success';
-            msg.textContent = '✓ Subscribed successfully!';
+            msg.textContent = 'âœ“ Subscribed successfully!';
             btn.textContent = 'Subscribed!';
             btn.classList.replace('btn-primary', 'btn-success');
             this.reset();

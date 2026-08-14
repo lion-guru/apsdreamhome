@@ -21,4 +21,4 @@ echo 'ServiceController@ count: ' . substr_count($content, 'ServiceController@')
 echo 'AIController@ count: ' . substr_count($content, 'AIController@') . "\n";
 echo 'ContactController@ count: ' . substr_count($content, 'ContactController@') . "\n";
 echo 'UserDashboardController@ count: ' . substr_count($content, 'UserDashboardController@') . "\n";
-echo 'AssociateController@ count: ' . substr_count($content, 'AssociateController@') . "\n";
+echo 'AssociateController@ count: ' . substr_count($content, 'AssociateController@') . "\n";?>

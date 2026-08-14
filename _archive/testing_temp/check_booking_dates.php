@@ -51,4 +51,4 @@ foreach ($bookingIds as $bid) {
         ORDER BY installment_no DESC LIMIT 3
     ")->fetchColumn();
     echo "  Booking $bid: consecutive overdue = $consecutive\n";
-}
+}?>

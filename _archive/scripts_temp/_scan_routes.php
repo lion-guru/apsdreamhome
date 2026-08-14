@@ -19,4 +19,4 @@ if (empty($dupes)) {
     echo "DUPLICATE ROUTES:\n";
     foreach ($dupes as $d) echo "  " . $d . "\n";
 }
-echo "Total route definitions: " . count($lines) . "\n";
+echo "Total route definitions: " . count($lines) . "\n";?>

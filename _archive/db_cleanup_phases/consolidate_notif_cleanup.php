@@ -34,4 +34,4 @@ $pdo->exec("DROP TABLE payment_notifications");
 echo "   Dropped payment_notifications ($migrated rows migrated)\n\n";
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "Tables after: $after\n";
+echo "Tables after: $after\n";?>

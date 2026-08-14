@@ -22,4 +22,4 @@ $db->exec("
         INDEX idx_token (share_token)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
-echo "OK property_comparisons table created\n";
+echo "OK property_comparisons table created\n";?>

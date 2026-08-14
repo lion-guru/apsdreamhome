@@ -31,4 +31,4 @@ echo PHP_EOL . "--- All sidebar items with /admin/ URLs ---" . PHP_EOL;
 $r = $pdo->query("SELECT id, name, url FROM admin_menu_items WHERE url LIKE '/admin/%' ORDER BY url");
 foreach ($r->fetchAll(PDO::FETCH_ASSOC) as $row) {
     echo "[{$row['id']}] {$row['name']}: {$row['url']}" . PHP_EOL;
-}
+}?>

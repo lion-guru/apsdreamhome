@@ -61,4 +61,4 @@ for ($i = 1; $i <= $target; $i++) {
         break;
     }
 }
-echo "Seeded $count leads.\n";
+echo "Seeded $count leads.\n";?>

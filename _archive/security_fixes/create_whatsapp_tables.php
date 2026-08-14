@@ -92,4 +92,4 @@ foreach ($configs as $config) {
 
 echo "Inserted/Updated $inserted WhatsApp config entries\n";
 
-echo "\n=== All communication tables created successfully ===\n";
+echo "\n=== All communication tables created successfully ===\n";?>

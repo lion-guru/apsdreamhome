@@ -30,14 +30,15 @@ $page_description = $page_description ?? 'Login to your APS Dream Home account';
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
                                 <label class="form-check-label" for="remember"><?= __('remember_me') ?></label>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 mb-3"><?= __('login') ?></button>
+                            <?php echo \App\Helpers\SimpleCaptcha::renderField(); ?>
+<button type="submit" class="btn btn-primary w-100 mb-3"><?= __('login') ?></button>
 
                             <!-- Google Login Button -->
-                            <div class="text-center mb-3" style="position: relative;">
-                                <span style="background: #f8f9fa; padding: 0 1rem; position: relative; z-index: 1; color: #666; font-size: 0.85rem;"><?= __('or_continue_with') ?></span>
-                                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #dee2e6; z-index: 0;"></div>
+                            <div class="text-center mb-3" class="style-98881">
+                                <span class="style-4805"><?= __('or_continue_with') ?></span>
+                                <div class="style-53230"></div>
                             </div>
-                            <a href="<?php echo BASE_URL; ?>/auth/google" class="btn btn-outline-secondary w-100 mb-3" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <a href="<?php echo BASE_URL; ?>/auth/google" class="btn btn-outline-secondary w-100 mb-3" class="style-94542">
                                 <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />

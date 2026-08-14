@@ -23,4 +23,4 @@ $router->post('/api/request-middleware/register', 'RequestMiddlewareController@r
 $router->post('/api/request-middleware/apply', 'RequestMiddlewareController@applyMiddleware');
 
 // Testing route
-$router->get('/api/request-middleware/test', 'RequestMiddlewareController@testMiddleware');
+$router->get('/api/request-middleware/test', 'RequestMiddlewareController@testMiddleware');?>

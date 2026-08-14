@@ -34,23 +34,23 @@ try {
     $_SERVER['REQUEST_URI'] = '/';
 
     $controller = new App\Http\Controllers\Front\PageController();
-    echo "✅ PageController instantiated successfully\n";
+    echo "âœ… PageController instantiated successfully\n";
 
     // Test home method
     ob_start();
     $controller->home();
     $output = ob_get_clean();
 
-    echo "✅ Home method executed successfully\n";
+    echo "âœ… Home method executed successfully\n";
     echo "Output length: " . strlen($output) . " characters\n";
 
     if (strpos($output, '<!DOCTYPE html') !== false) {
-        echo "✅ HTML output generated correctly\n";
+        echo "âœ… HTML output generated correctly\n";
     } else {
-        echo "❌ HTML output not found\n";
+        echo "â�Œ HTML output not found\n";
         echo "First 200 chars: " . substr($output, 0, 200) . "\n";
     }
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo "â�Œ Error: " . $e->getMessage() . "\n";
     echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
-}
+}?>

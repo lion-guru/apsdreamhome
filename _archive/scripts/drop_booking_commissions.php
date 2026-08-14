@@ -27,4 +27,4 @@ if ($exists['c'] == 0) {
     echo "Confirmed: booking_commissions table no longer exists.\n";
 } else {
     echo "ERROR: Table still exists!\n";
-}
+}?>

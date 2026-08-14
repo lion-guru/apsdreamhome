@@ -43,4 +43,4 @@ foreach ($it as $f) {
 }
 
 foreach ($results as $r) echo $r . "\n";
-echo "\nTotal with real writes to existing tables: " . count($results) . "\n";
+echo "\nTotal with real writes to existing tables: " . count($results) . "\n";?>

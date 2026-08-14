@@ -582,4 +582,4 @@ class CareerService
         // Mock email sending
         error_log("Interview invitation sent for application ID {$applicationId}, Type {$interviewData['type']}, Date {$interviewData['scheduled_date']}");
     }
-}
+}?>

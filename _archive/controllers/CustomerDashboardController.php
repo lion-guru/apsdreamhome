@@ -68,4 +68,4 @@ class CustomerDashboardController extends BaseController
         }
         echo ob_get_clean();
     }
-}
+}?>

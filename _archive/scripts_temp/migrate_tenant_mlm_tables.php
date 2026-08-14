@@ -55,4 +55,4 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

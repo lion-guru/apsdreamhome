@@ -18,4 +18,4 @@ function query($pdo, $sql) {
 
 echo "<pre>";
 query($pdo, "DESCRIBE mlm_commission_ledger");
-echo "</pre>";
+echo "</pre>";?>

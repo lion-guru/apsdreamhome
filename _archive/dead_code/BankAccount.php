@@ -17,4 +17,4 @@ class BankAccount extends UnifiedModel
         'branch_name',
         'status'
     ];
-}
+}?>

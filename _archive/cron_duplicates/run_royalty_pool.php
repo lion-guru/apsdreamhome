@@ -4,12 +4,12 @@
  * Royalty Pool Distribution Cron Script
  *
  * Monthly cron to distribute 2% royalty pool to qualified Site Managers.
- * Uses HybridCommissionEngine::distributeRoyaltyPool() — no reimplementation.
+ * Uses HybridCommissionEngine::distributeRoyaltyPool() â€” no reimplementation.
  *
  * Tables involved:
- *   mlm_royalty_pool          — monthly accumulator (written by contributeToRoyaltyPool)
- *   mlm_royalty_contributions — per-booking audit trail
- *   mlm_commission_ledger     — distribution entries
+ *   mlm_royalty_pool          â€” monthly accumulator (written by contributeToRoyaltyPool)
+ *   mlm_royalty_contributions â€” per-booking audit trail
+ *   mlm_commission_ledger     â€” distribution entries
  *
  * Usage:
  *   php scripts/run_royalty_pool.php                          # Distribute current month
@@ -55,10 +55,10 @@ $engine = new \App\Services\HybridCommissionEngine($pdo);
 // 1. Show current pool status
 $status = $engine->getRoyaltyPoolStatus($targetMonth);
 if (!empty($status)) {
-    echo "Pool Total:       ₹" . number_format($status['total_pool_amount'] ?? 0) . "\n";
+    echo "Pool Total:       â‚¹" . number_format($status['total_pool_amount'] ?? 0) . "\n";
     echo "Status:           " . ($status['distributed_status'] ?? 'unknown') . "\n";
     echo "Qualified Mgrs:   " . ($status['total_qualified_managers'] ?? 0) . "\n";
-    echo "Per Manager Share: ₹" . number_format($status['per_manager_share'] ?? 0) . "\n";
+    echo "Per Manager Share: â‚¹" . number_format($status['per_manager_share'] ?? 0) . "\n";
     if (!empty($status['distributed_at'])) {
         echo "Distributed At:   " . $status['distributed_at'] . "\n";
     }
@@ -89,12 +89,12 @@ echo "\nDistributing pool...\n";
 $result = $engine->distributeRoyaltyPool($targetMonth);
 
 if ($result['success']) {
-    echo "\n✓ Distribution successful!\n";
-    echo "  Pool Amount:        ₹" . number_format($result['pool_amount']) . "\n";
+    echo "\nâœ“ Distribution successful!\n";
+    echo "  Pool Amount:        â‚¹" . number_format($result['pool_amount']) . "\n";
     echo "  Qualified Managers: " . $result['qualified_managers'] . "\n";
-    echo "  Per Manager Share:  ₹" . number_format($result['per_share']) . "\n";
+    echo "  Per Manager Share:  â‚¹" . number_format($result['per_share']) . "\n";
     echo "  Ledger Entries:     " . count($result['ledger_ids']) . "\n";
 } else {
-    echo "\n✗ Distribution failed: " . ($result['error'] ?? 'unknown error') . "\n";
+    echo "\nâœ— Distribution failed: " . ($result['error'] ?? 'unknown error') . "\n";
     exit(1);
-}
+}?>

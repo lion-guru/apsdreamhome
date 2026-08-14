@@ -77,4 +77,4 @@ class AgentManager {
         }
         return $statuses;
     }
-}
+}?>

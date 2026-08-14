@@ -78,7 +78,7 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                     <td>
                                         <strong><?= htmlspecialchars($exp['name']) ?></strong>
                                         <?php if (!empty($exp['description'])): ?>
-                                            <div class="small text-muted text-truncate" style="max-width: 240px;">
+                                            <div class="small text-muted text-truncate" class="style-96974">
                                                 <?= htmlspecialchars($exp['description']) ?>
                                             </div>
                                         <?php endif; ?>
@@ -99,10 +99,10 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                         <?php if (!empty($exp['winner'])): ?>
                                             <span class="badge bg-warning text-dark"><i class="fas fa-trophy me-1"></i><?= htmlspecialchars($exp['winner']) ?></span>
                                         <?php else: ?>
-                                            <span class="text-muted">—</span>
+                                            <span class="text-muted">â€”</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="small text-muted"><?= !empty($exp['started_at']) ? htmlspecialchars($exp['started_at']) : '—' ?></td>
+                                    <td class="small text-muted"><?= !empty($exp['started_at']) ? htmlspecialchars($exp['started_at']) : 'â€”' ?></td>
                                     <td class="text-end">
                                         <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/results" class="btn btn-sm btn-outline-success" title="View Results Dashboard">
                                             <i class="fas fa-chart-line"></i>

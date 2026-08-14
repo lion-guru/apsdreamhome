@@ -18,90 +18,90 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<body class="style-51511">
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" style="padding:30px 15px;">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <td align="center" class="style-56039">
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
         <!-- Header -->
         <tr>
-          <td bgcolor="#10b981" align="center" style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:40px 30px;">
-            <div style="width:64px;height:64px;background:rgba(255,255,255,0.2);border-radius:50%;margin:0 auto 16px;line-height:64px;font-size:36px;color:#fff;text-align:center;">&#10003;</div>
-            <h1 class="h1-mobile" style="color:#ffffff;margin:0;font-size:28px;font-weight:700;line-height:34px;">Booking Confirmed!</h1>
-            <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">Your property is reserved</p>
+          <td bgcolor="#10b981" align="center" class="style-87574">
+            <div class="style-90702">&#10003;</div>
+            <h1 class="h1-mobile" class="style-56865">Booking Confirmed!</h1>
+            <p class="style-9233">Your property is reserved</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" style="padding:40px 40px 20px;">
-            <p style="margin:0 0 18px;font-size:16px;line-height:24px;color:#4a5568;">Hi <strong>{{customer_name}}</strong>,</p>
-            <p style="margin:0 0 24px;font-size:16px;line-height:24px;color:#4a5568;">
-              Great news! Your booking has been <strong style="color:#10b981;">confirmed</strong>. Below are the details of your reservation.
+          <td class="px-mobile" class="style-68782">
+            <p class="style-31228">Hi <strong>{{customer_name}}</strong>,</p>
+            <p class="style-118">
+              Great news! Your booking has been <strong class="style-54781">confirmed</strong>. Below are the details of your reservation.
             </p>
             <!-- Booking Details Card -->
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;margin:0 0 24px;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-1712">
               <tr>
-                <td style="padding:24px;">
+                <td class="style-41466">
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                     <tr>
-                      <td style="padding:6px 0;font-size:13px;color:#718096;text-transform:uppercase;letter-spacing:0.5px;">Booking ID</td>
-                      <td align="right" style="padding:6px 0;font-size:15px;color:#1a202c;font-weight:600;">{{booking_id}}</td>
+                      <td class="style-29531">Booking ID</td>
+                      <td align="right" class="style-80037">{{booking_id}}</td>
                     </tr>
                     <tr>
-                      <td colspan="2" style="padding:0;"><div style="border-top:1px solid #e2e8f0;margin:6px 0;"></div></td>
+                      <td colspan="2" class="style-97767"><div class="style-11642"></div></td>
                     </tr>
                     <tr>
-                      <td style="padding:6px 0;font-size:13px;color:#718096;text-transform:uppercase;letter-spacing:0.5px;">Property</td>
-                      <td align="right" style="padding:6px 0;font-size:15px;color:#1a202c;font-weight:600;">{{property_name}}</td>
+                      <td class="style-29531">Property</td>
+                      <td align="right" class="style-80037">{{property_name}}</td>
                     </tr>
                     <tr>
-                      <td colspan="2" style="padding:0;"><div style="border-top:1px solid #e2e8f0;margin:6px 0;"></div></td>
+                      <td colspan="2" class="style-97767"><div class="style-11642"></div></td>
                     </tr>
                     <tr>
-                      <td style="padding:6px 0;font-size:13px;color:#718096;text-transform:uppercase;letter-spacing:0.5px;">Location</td>
-                      <td align="right" style="padding:6px 0;font-size:15px;color:#1a202c;">{{property_location}}</td>
+                      <td class="style-29531">Location</td>
+                      <td align="right" class="style-79385">{{property_location}}</td>
                     </tr>
                     <tr>
-                      <td colspan="2" style="padding:0;"><div style="border-top:1px solid #e2e8f0;margin:6px 0;"></div></td>
+                      <td colspan="2" class="style-97767"><div class="style-11642"></div></td>
                     </tr>
                     <tr>
-                      <td style="padding:6px 0;font-size:13px;color:#718096;text-transform:uppercase;letter-spacing:0.5px;">Booking Date</td>
-                      <td align="right" style="padding:6px 0;font-size:15px;color:#1a202c;">{{booking_date}}</td>
+                      <td class="style-29531">Booking Date</td>
+                      <td align="right" class="style-79385">{{booking_date}}</td>
                     </tr>
                     <tr>
-                      <td colspan="2" style="padding:0;"><div style="border-top:1px solid #e2e8f0;margin:6px 0;"></div></td>
+                      <td colspan="2" class="style-97767"><div class="style-11642"></div></td>
                     </tr>
                     <tr>
-                      <td style="padding:8px 0 0;font-size:14px;color:#1a202c;font-weight:600;">Total Amount</td>
-                      <td align="right" style="padding:8px 0 0;font-size:22px;color:#10b981;font-weight:700;">&#8377;{{amount}}</td>
+                      <td class="style-13332">Total Amount</td>
+                      <td align="right" class="style-90391">&#8377;{{amount}}</td>
                     </tr>
                   </table>
                 </td>
               </tr>
             </table>
-            <p style="margin:0 0 16px;font-size:15px;line-height:22px;color:#4a5568;">
+            <p class="style-3736">
               Our team will contact you within 24 hours to guide you through the next steps. Please keep your booking ID handy for any future reference.
             </p>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" style="padding:16px 0 30px;">
-                  <a href="{{booking_url}}" style="display:inline-block;padding:14px 36px;background:#10b981;color:#ffffff;text-decoration:none;border-radius:6px;font-size:16px;font-weight:600;">View Booking Details</a>
+                <td align="center" class="style-27587">
+                  <a href="{{booking_url}}" class="style-59532">View Booking Details</a>
                 </td>
               </tr>
             </table>
-            <p style="margin:0;font-size:15px;line-height:22px;color:#4a5568;">
+            <p class="style-25661">
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" style="padding:24px 30px;text-align:center;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 6px;font-size:13px;color:#718096;">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p style="margin:6px 0 0;font-size:12px;color:#a0aec0;">
-              <a href="{{unsubscribe_url}}" style="color:#718096;">Unsubscribe</a>
+          <td bgcolor="#f7fafc" class="style-89423">
+            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p class="style-31566">
+              <a href="{{unsubscribe_url}}" class="style-66032">Unsubscribe</a>
             </p>
-            <p style="margin:10px 0 0;font-size:11px;color:#cbd5e0;">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

@@ -94,13 +94,13 @@
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <h3 id="total-commission">₹0</h3>
+                    <h3 id="total-commission">â‚¹0</h3>
                     <p>Total Commission</p>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <h3 id="pending-commission">₹0</h3>
+                    <h3 id="pending-commission">â‚¹0</h3>
                     <p>Pending Commission</p>
                 </div>
             </div>
@@ -109,20 +109,20 @@
         <!-- Rank Insight -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="dashboard-card bg-gradient" style="background: linear-gradient(135deg, #ff9966, #ff5e62); color:white;">
+                <div class="dashboard-card bg-gradient" class="style-5510">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center">
                         <div class="mb-3 mb-lg-0">
                             <div class="rank-badge" id="rank-badge">
                                 <i class="fas fa-trophy"></i>
                                 <span id="rank-label">Rank: Associate</span>
                             </div>
-                            <p class="mb-0" id="rank-reward" style="opacity:0.85;">Reward: Mobile</p>
+                            <p class="mb-0" id="rank-reward" class="style-91394">Reward: Mobile</p>
                             <small id="plan-mode" class="opacity-75"></small>
                         </div>
                         <div class="flex-grow-1 ms-lg-4 w-100">
                             <span id="next-rank-label" class="fw-semibold"></span>
                             <div class="progress mt-2">
-                                <div id="rank-progress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div id="rank-progress" class="progress-bar" role="progressbar" class="style-16671" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <small id="rank-target" class="opacity-75"></small>
                         </div>
@@ -179,12 +179,12 @@
                 <div class="dashboard-card">
                     <h5><i class="fas fa-sitemap me-2"></i>Network Tree</h5>
                     <div class="search-toolbar">
-                        <div class="input-group" style="max-width:320px;">
+                        <div class="input-group" class="style-8934">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" id="tree-search" placeholder="Search name or email">
                         </div>
                         <div>
-                            <select class="form-select" id="rank-filter" style="min-width:180px;">
+                            <select class="form-select" id="rank-filter" class="style-12456">
                                 <option value="">All Ranks</option>
                             </select>
                         </div>
@@ -245,8 +245,8 @@
         function updateStats(data) {
             document.getElementById('direct-referrals').textContent = data.stats.direct_referrals;
             document.getElementById('total-team').textContent = data.stats.total_team;
-            document.getElementById('total-commission').textContent = '₹' + data.stats.total_commission.toLocaleString();
-            document.getElementById('pending-commission').textContent = '₹' + data.stats.pending_commission.toLocaleString();
+            document.getElementById('total-commission').textContent = 'â‚¹' + data.stats.total_commission.toLocaleString();
+            document.getElementById('pending-commission').textContent = 'â‚¹' + data.stats.pending_commission.toLocaleString();
             
             document.getElementById('referral-link').textContent = data.stats.referral_link;
             document.getElementById('qr-code').innerHTML = `<img loading="lazy" src="${data.stats.qr_code}" alt="QR Code" class="img-fluid">`;
@@ -266,7 +266,7 @@
                 if (rank.next) {
                     document.getElementById('next-rank-label').textContent = `Progress to ${rank.next.label}`;
                     const needed = Math.max(rank.next.required - rank.business, 0);
-                    document.getElementById('rank-target').textContent = `Need ₹${needed.toLocaleString()} more business for ${rank.next.label} (${rank.next.reward}).`;
+                    document.getElementById('rank-target').textContent = `Need â‚¹${needed.toLocaleString()} more business for ${rank.next.label} (${rank.next.reward}).`;
                 } else {
                     document.getElementById('next-rank-label').textContent = 'You have reached the top rank!';
                     document.getElementById('rank-target').textContent = '';
@@ -335,7 +335,7 @@
                         <strong>${member.name}</strong><br>
                         <small>${member.type}</small><br>
                         <small>Level ${member.level}</small>
-                        <div class="node-rank" style="background:${member.rank_color || '#0d9488'};">
+                        <div class="node-rank" class="style-86678">
                             ${member.rank_label || 'Associate'}
                         </div>
                     </div>

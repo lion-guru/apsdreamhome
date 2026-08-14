@@ -54,4 +54,4 @@ if (preg_match('/<nav[^>]*sidebar[^>]*>(.*?)<\/nav>/si', $html, $nav)) {
     foreach (array_slice($sideclasses[0], 0, 10) as $c) {
         echo "  $c\n";
     }
-}
+}?>

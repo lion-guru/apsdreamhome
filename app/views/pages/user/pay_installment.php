@@ -18,7 +18,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
         <div class="col-md-8">
             <h2><i class="fas fa-credit-card me-2"></i><?= __('user_pay_installment_hero_heading', 'Pay Installment') ?></h2>
             <?php if ($booking): ?>
-                <p><?= __('user_pay_installment_hero_subtitle_prefix', 'Secure payment for Installment') ?> #<?= (int)($installment['installment_number'] ?? 0) ?> — <?= __('user_pay_installment_hero_subtitle_plot', 'Plot') ?> <?= htmlspecialchars($booking['plot_number'] ?? '') ?></p>
+                <p><?= __('user_pay_installment_hero_subtitle_prefix', 'Secure payment for Installment') ?> #<?= (int)($installment['installment_number'] ?? 0) ?> â€” <?= __('user_pay_installment_hero_subtitle_plot', 'Plot') ?> <?= htmlspecialchars($booking['plot_number'] ?? '') ?></p>
             <?php else: ?>
                 <p><?= __('user_pay_installment_hero_subtitle_default', 'Complete your EMI installment payment.') ?></p>
             <?php endif; ?>
@@ -67,7 +67,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_pay_installment_total_plot_value', 'Total Plot Value') ?></small>
-                        <strong>₹<?= number_format((float)($booking['total_plot_value'] ?? 0)) ?></strong>
+                        <strong>â‚¹<?= number_format((float)($booking['total_plot_value'] ?? 0)) ?></strong>
                     </div>
                 </div>
             </div>
@@ -100,29 +100,29 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                         <tbody>
                             <tr>
                                 <td><?= __('user_pay_installment_emi_amount', 'EMI Amount') ?></td>
-                                <td class="text-end">₹<?= number_format($emi_amount) ?></td>
+                                <td class="text-end">â‚¹<?= number_format($emi_amount) ?></td>
                             </tr>
                             <?php if ($paid_amount > 0): ?>
                             <tr>
                                 <td><small class="text-muted">(<?= __('user_pay_installment_previously_paid', 'Previously Paid') ?>)</small></td>
-                                <td class="text-end text-danger">- ₹<?= number_format($paid_amount) ?></td>
+                                <td class="text-end text-danger">- â‚¹<?= number_format($paid_amount) ?></td>
                             </tr>
                             <?php endif; ?>
                             <?php if ($late_fee > 0): ?>
                             <tr>
                                 <td><?= __('user_pay_installment_late_fee', 'Late Fee') ?></td>
-                                <td class="text-end text-warning">₹<?= number_format($late_fee) ?></td>
+                                <td class="text-end text-warning">â‚¹<?= number_format($late_fee) ?></td>
                             </tr>
                             <?php endif; ?>
                             <?php if ($penalty > 0): ?>
                             <tr>
                                 <td><?= __('user_pay_installment_accrued_penalty', 'Accrued Penalty') ?></td>
-                                <td class="text-end text-danger">₹<?= number_format($penalty) ?></td>
+                                <td class="text-end text-danger">â‚¹<?= number_format($penalty) ?></td>
                             </tr>
                             <?php endif; ?>
-                            <tr style="border-top: 2px solid var(--aps-cp-border, #e5e7eb);">
+                            <tr class="style-33948">
                                 <td class="fw-bold fs-5"><?= __('user_pay_installment_total_due', 'Total Due') ?></td>
-                                <td class="text-end fw-bold fs-5 text-primary">₹<?= number_format($amount_due) ?></td>
+                                <td class="text-end fw-bold fs-5 text-primary">â‚¹<?= number_format($amount_due) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -135,10 +135,10 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                 <h5><i class="fas fa-money-bill-wave text-success"></i> <?= __('user_pay_installment_payment_summary_header', 'Payment Summary') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background: var(--aps-cp-primary-bg, #eef2ff); border-radius: 10px;">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3" class="style-11131">
                     <div>
                         <small class="text-muted"><?= __('user_pay_installment_amount_to_pay', 'Amount to Pay') ?></small>
-                        <h3 class="mb-0 mt-1 text-primary">₹<?= number_format($amount_due) ?></h3>
+                        <h3 class="mb-0 mt-1 text-primary">â‚¹<?= number_format($amount_due) ?></h3>
                     </div>
                     <div class="text-end">
                         <small class="text-muted"><?= __('user_pay_installment_installment_number', 'Installment #') ?></small>
@@ -174,12 +174,12 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
             <div class="aps-cp-card-body text-center py-4">
                 <?php if ($razorpay['test']): ?>
                     <div class="alert alert-info mb-3">
-                        <i class="fas fa-flask me-1"></i> <?= __('user_pay_installment_test_mode', 'Test Mode — No real money will be charged') ?>
+                        <i class="fas fa-flask me-1"></i> <?= __('user_pay_installment_test_mode', 'Test Mode â€” No real money will be charged') ?>
                     </div>
                 <?php endif; ?>
 
-                <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3" style="font-size: 1.1rem; border-radius: 10px;">
-                    <i class="fas fa-lock me-2"></i><?= __('user_pay_installment_pay_now_prefix', 'Pay') ?> ₹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>
+                <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3" class="style-4415">
+                    <i class="fas fa-lock me-2"></i><?= __('user_pay_installment_pay_now_prefix', 'Pay') ?> â‚¹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>
                 </button>
 
                 <div class="mt-3">
@@ -209,7 +209,7 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         amount: <?= (int)($amount_due * 100) ?>,
         currency: 'INR',
         name: 'APS Dream Home',
-        description: '<?= __('user_pay_installment_js_description_prefix', 'EMI Installment') ?> #<?= (int)($installment["installment_number"] ?? 0) ?> — <?= __('user_pay_installment_js_description_plot', 'Plot') ?> <?= htmlspecialchars($booking["plot_number"] ?? "", ENT_QUOTES) ?>',
+        description: '<?= __('user_pay_installment_js_description_prefix', 'EMI Installment') ?> #<?= (int)($installment["installment_number"] ?? 0) ?> â€” <?= __('user_pay_installment_js_description_plot', 'Plot') ?> <?= htmlspecialchars($booking["plot_number"] ?? "", ENT_QUOTES) ?>',
         order_id: <?= json_encode($order_id) ?>,
         handler: function(response) {
             btn.disabled = true;
@@ -252,7 +252,7 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         modal: {
             ondismiss: function() {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-lock me-2"></i>₹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>';
+                btn.innerHTML = '<i class="fas fa-lock me-2"></i>â‚¹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>';
             }
         }
     };
@@ -261,13 +261,13 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         var rzp = new Razorpay(options);
         rzp.on('payment.failed', function(response) {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-lock me-2"></i>₹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>';
+            btn.innerHTML = '<i class="fas fa-lock me-2"></i>â‚¹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>';
             alert('<?= __('user_pay_installment_js_payment_failed_prefix', 'Payment failed:') ?> ' + (response.error?.description || '<?= __('user_pay_installment_js_payment_failed_unknown', 'Unknown error. Please try again.') ?>'));
         });
         rzp.open();
     } catch(e) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-lock me-2"></i>₹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>';
+        btn.innerHTML = '<i class="fas fa-lock me-2"></i>â‚¹<?= number_format($amount_due) ?> <?= __('user_pay_installment_pay_now_suffix', 'Now') ?>';
         alert('<?= __('user_pay_installment_js_init_error', 'Unable to initialize payment. Please try again later.') ?>');
     }
 });

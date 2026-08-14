@@ -638,4 +638,4 @@ return getPerformanceManager();
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Create Buyer Tables — APS Dream Home
+ * Create Buyer Tables â€” APS Dream Home
  * Creates buyer_interests and property_commissions tables
  */
 
@@ -41,7 +41,7 @@ try {
             INDEX idx_budget (budget_min, budget_max)
         )
     ");
-    echo "  ✅ buyer_interests created" . PHP_EOL;
+    echo "  âœ… buyer_interests created" . PHP_EOL;
 
     echo "Creating property_commissions table..." . PHP_EOL;
     $pdo->exec("
@@ -75,19 +75,19 @@ try {
             INDEX idx_status (status)
         )
     ");
-    echo "  ✅ property_commissions created" . PHP_EOL;
+    echo "  âœ… property_commissions created" . PHP_EOL;
 
     // Check if metadata column exists in user_properties
     $check = $pdo->query("SHOW COLUMNS FROM user_properties LIKE 'metadata'");
     if ($check->rowCount() === 0) {
         echo "Adding metadata column to user_properties..." . PHP_EOL;
         $pdo->exec("ALTER TABLE user_properties ADD COLUMN metadata JSON AFTER status");
-        echo "  ✅ metadata column added" . PHP_EOL;
+        echo "  âœ… metadata column added" . PHP_EOL;
     }
 
-    echo PHP_EOL . "✅ All buyer/commission tables created!" . PHP_EOL;
+    echo PHP_EOL . "âœ… All buyer/commission tables created!" . PHP_EOL;
 
 } catch (\Throwable $e) {
-    echo "❌ Error: " . $e->getMessage() . PHP_EOL;
+    echo "â�Œ Error: " . $e->getMessage() . PHP_EOL;
     exit(1);
-}
+}?>

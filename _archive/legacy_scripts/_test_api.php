@@ -25,4 +25,4 @@ try {
 } catch (Throwable $e) {
     echo "Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n";
     echo $e->getTraceAsString() . "\n";
-}
+}?>

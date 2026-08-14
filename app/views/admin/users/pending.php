@@ -6,7 +6,7 @@
         <p class="text-muted mb-0"><?php echo $total ?? 0; ?> users awaiting approval</p>
     </div>
     <div>
-        <button onclick="bulkApprove()" class="btn btn-success" id="bulkApproveBtn" style="display:none">
+        <button onclick="bulkApprove()" class="btn btn-success" id="bulkApproveBtn" class="style-24280">
             <i class="fas fa-check-double me-2"></i>Approve Selected (<span id="selectedCount">0</span>)
         </button>
         <a href="<?php echo BASE_URL; ?>/admin/users" class="btn btn-outline-secondary">
@@ -29,7 +29,7 @@
             <table class="table table-hover mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4" style="width:40px">
+                        <th class="border-0 ps-4" class="style-89354">
                             <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
                         </th>
                         <th class="border-0">User</th>
@@ -48,7 +48,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="avatar bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                <div class="avatar bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" class="style-48301">
                                     <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
                                 </div>
                                 <div>
@@ -64,7 +64,7 @@
                             <?php if (!empty($user['referred_by'])): ?>
                                 <span class="badge bg-info">Has Sponsor</span>
                             <?php else: ?>
-                                <span class="text-muted">—</span>
+                                <span class="text-muted">â€”</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-end pe-4">

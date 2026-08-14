@@ -43,8 +43,8 @@
                         <?php foreach ($stats['by_stage'] as $stage => $count): ?>
                             <div class="mb-2">
                                 <div class="d-flex justify-content-between"><small><?= ucfirst($stage) ?></small><small><?= $count ?></small></div>
-                                <div class="progress" style="height:6px">
-                                    <div class="progress-bar" style="width:<?= $count > 0 ? ($count/max(array_sum($stats['by_stage']),1))*100 : 0 ?>%"></div>
+                                <div class="progress" class="style-51910">
+                                    <div class="progress-bar" class="style-13630"></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>

@@ -19,4 +19,4 @@ foreach ($items as [$name, $icon, $url, $order]) {
     );
     echo "ADDED: $name (id=" . $db->lastInsertId() . ")\n";
 }
-echo "Done.\n";
+echo "Done.\n";?>

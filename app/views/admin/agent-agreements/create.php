@@ -19,7 +19,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 style="color: #f8fafc; margin:0;"><i class="fas fa-file-signature me-2"></i>Create Agent Agreement</h4>
+        <h4 class="style-76816"><i class="fas fa-file-signature me-2"></i>Create Agent Agreement</h4>
         <a href="<?= $base ?>/admin/agent-agreements" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back
         </a>
@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <select name="property_id">
                         <option value="">-- General Agreement --</option>
                         <?php foreach ($properties as $p): ?>
-                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>
+                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> â€” <?= htmlspecialchars($p['location'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -75,7 +75,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <textarea name="content" placeholder="Leave empty to auto-generate terms and conditions..."></textarea>
 
             <label>Notes (Internal)</label>
-            <textarea name="notes" style="min-height:60px;" placeholder="Optional internal notes..."></textarea>
+            <textarea name="notes" class="style-58999" placeholder="Optional internal notes..."></textarea>
 
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">

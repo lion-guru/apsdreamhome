@@ -24,7 +24,7 @@
             <div class="tab-pane fade show active" id="registries" role="tabpanel">
                 <?php if (empty($registries)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-file-contract fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                    <i class="fas fa-file-contract fa-3x text-muted mb-3" class="style-82835"></i>
                     <h5 class="text-muted">No registry records found</h5>
                     <p class="text-muted mb-3">Registry records are created when property bookings reach the registration stage. Check eligibility to get started.</p>
                     <a href="<?= BASE_URL ?>/admin/legal/noc-eligibility" class="btn btn-primary">
@@ -52,16 +52,16 @@
                             <?php foreach ($registries as $r): ?>
                             <tr>
                                 <td><?= (int)$r['id'] ?></td>
-                                <td><?= htmlspecialchars($r['booking_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['customer_name'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['plot_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['registration_no'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['sub_registrar_office'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['registration_date'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td>₹<?= number_format((float)($r['total_registry_cost'] ?? 0), 2) ?></td>
+                                <td><?= htmlspecialchars($r['booking_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['customer_name'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['plot_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['registration_no'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['sub_registrar_office'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['registration_date'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td>â‚¹<?= number_format((float)($r['total_registry_cost'] ?? 0), 2) ?></td>
                                 <td>
                                     <span class="badge bg-<?= match($r['status'] ?? '') { 'completed' => 'success', 'pending' => 'warning', 'failed' => 'danger', default => 'secondary' } ?>">
-                                        <?= htmlspecialchars($r['status'] ?? '—', ENT_QUOTES, 'UTF-8') ?>
+                                        <?= htmlspecialchars($r['status'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?>
                                     </span>
                                 </td>
                                 <td>
@@ -80,7 +80,7 @@
             <div class="tab-pane fade" id="nocs" role="tabpanel">
                 <?php if (empty($nocs)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-file-signature fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                    <i class="fas fa-file-signature fa-3x text-muted mb-3" class="style-82835"></i>
                     <h5 class="text-muted">No NOC records found</h5>
                     <p class="text-muted mb-3">No Objection Certificates are required during property transfer processes. Check eligibility to request an NOC.</p>
                     <a href="<?= BASE_URL ?>/admin/legal/noc-eligibility" class="btn btn-primary">
@@ -106,14 +106,14 @@
                             <?php foreach ($nocs as $n): ?>
                             <tr>
                                 <td><?= (int)$n['id'] ?></td>
-                                <td><?= htmlspecialchars($n['booking_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['customer_name'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['plot_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['noc_type'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['created_at'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['booking_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['customer_name'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['plot_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['noc_type'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['created_at'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
                                 <td>
                                     <span class="badge bg-<?= match($n['status'] ?? '') { 'approved' => 'success', 'pending' => 'warning', 'blocked' => 'danger', 'rejected' => 'danger', default => 'secondary' } ?>">
-                                        <?= htmlspecialchars($n['status'] ?? '—', ENT_QUOTES, 'UTF-8') ?>
+                                        <?= htmlspecialchars($n['status'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?>
                                     </span>
                                 </td>
                                 <td>

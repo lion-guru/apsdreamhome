@@ -2,7 +2,7 @@
 $config = require __DIR__ . '/../config/database.php';
 $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
-// These are VIEWS, not tables — DROP TABLE doesn't work
+// These are VIEWS, not tables â€” DROP TABLE doesn't work
 $views = ['business_overview','property_performance','property_summary','revenue_summary','user_summary'];
 
 foreach ($views as $v) {
@@ -19,4 +19,4 @@ echo "\nRemaining tables: $count\n";
 
 // Also count views
 $vcount = $pdo->query("SELECT COUNT(*) FROM information_schema.VIEWS WHERE TABLE_SCHEMA='apsdreamhome'")->fetchColumn();
-echo "Remaining views: $vcount\n";
+echo "Remaining views: $vcount\n";?>

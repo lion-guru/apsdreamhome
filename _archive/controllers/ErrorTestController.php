@@ -68,4 +68,4 @@ class ErrorTestController extends BaseController
     {
         throw new \Exception("This is a test exception to verify error handling works correctly.");
     }
-}
+}?>

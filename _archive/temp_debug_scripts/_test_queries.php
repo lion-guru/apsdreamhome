@@ -53,4 +53,4 @@ try {
     echo "activity_logs_unified query OK: " . count($activities) . " rows\n";
 } catch (Exception $e) {
     echo "activity_logs_unified query ERROR: " . $e->getMessage() . "\n";
-}
+}?>

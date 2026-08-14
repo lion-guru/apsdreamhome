@@ -20,4 +20,4 @@ if (!$secret) {
 }
 $token = JWT::encode(['user_id' => 1, 'role' => 'admin', 'exp' => time() + 3600], $secret, 'HS256');
 file_put_contents(__DIR__ . '/jwt_token.txt', $token);
-echo "Token (secret len: " . strlen($secret) . "): " . substr($token, 0, 60) . "...\n";
+echo "Token (secret len: " . strlen($secret) . "): " . substr($token, 0, 60) . "...\n";?>

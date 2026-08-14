@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="page-hero" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
+<section class="page-hero" class="style-66359">
     <div class="container">
         <h1 class="display-4 fw-bold"><?= __('testi_hero_title', null, 'Client Testimonials') ?></h1>
         <p class="lead mb-0"><?= __('testi_hero_subtitle', null, 'What our clients say about us') ?></p>
@@ -54,7 +54,7 @@
                                 </p>
                                 <div class="d-flex align-items-center mt-auto">
                                     <div class="flex-shrink-0">
-                                        <div class="avatar bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                        <div class="avatar bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold" class="style-65954">
                                             <?= strtoupper(substr($name, 0, 1)) ?>
                                         </div>
                                     </div>

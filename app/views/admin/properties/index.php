@@ -84,7 +84,7 @@ $active_page = 'properties';
                     <?php if (empty($properties)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-home fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-home fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No properties found</h5>
                                 <p class="text-muted mb-3">Add your first property listing to start showcasing plots, apartments, and commercial spaces to potential buyers.</p>
                                 <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary">
@@ -112,7 +112,7 @@ $active_page = 'properties';
                                 </td>
                                 <td>
                                     <?php if ($property['price'] > 0): ?>
-                                        ₹<?= number_format(floatval($property['price'] ?? 0), 2) ?>
+                                        â‚¹<?= number_format(floatval($property['price'] ?? 0), 2) ?>
                                     <?php else: ?>
                                         <span class="text-muted">Not Set</span>
                                     <?php endif; ?>
@@ -194,7 +194,7 @@ $active_page = 'properties';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" id="deleteForm" style="display: inline;">
+                <form method="POST" id="deleteForm" class="style-26772">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger">Delete Property</button>
                 </form>

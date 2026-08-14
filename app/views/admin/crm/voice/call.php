@@ -1,4 +1,4 @@
-﻿<?php $page_title = $page_title ?? 'Voice Call'; $lead = $lead ?? []; ?>
+ï»¿<?php $page_title = $page_title ?? 'Voice Call'; $lead = $lead ?? []; ?>
 <style>.voice-call-ui{max-width:500px;margin:0 auto;text-align:center;padding:40px 20px}.lead-avatar-lg{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:700;color:#fff;margin:0 auto 20px}.call-btn{width:70px;height:70px;border-radius:50%;border:none;font-size:24px;color:#fff;cursor:pointer;transition:.3s}.call-btn:hover{transform:scale(1.1)}.call-btn.end{background:#ef4444}.call-btn.mute{background:#6b7280}.call-btn.note{background:#3b82f6}</style>
 
 <div class="container-fluid px-4 py-4">
@@ -6,7 +6,7 @@
 
     <div class="voice-call-ui">
         <?php $initials = strtoupper(substr($lead['name'] ?? 'L', 0, 1)); ?>
-        <div class="lead-avatar-lg" style="background:linear-gradient(135deg,#667eea,#764ba2)"><?= $initials ?></div>
+        <div class="lead-avatar-lg" class="style-43228"><?= $initials ?></div>
         <h3 class="fw-bold"><?= htmlspecialchars($lead['name'] ?? 'Unknown Lead') ?></h3>
         <p class="text-muted mb-1"><?= htmlspecialchars($lead['phone'] ?? 'No phone') ?></p>
         <p class="text-muted mb-4"><?= htmlspecialchars($lead['email'] ?? '') ?></p>
@@ -19,14 +19,14 @@
             <button class="call-btn end" id="btn-end" onclick="endCall()" title="End Call" disabled><i class="fas fa-phone-slash"></i></button>
         </div>
 
-        <div class="card border-0 shadow-sm mb-3" style="border-radius:14px"><div class="card-body text-start">
+        <div class="card border-0 shadow-sm mb-3" class="style-56956"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-sticky-note me-1"></i>Voice Note</h6>
             <div class="mb-2"><button class="btn btn-sm btn-outline-primary" id="btn-dictate" onclick="startDictation()"><i class="fas fa-microphone me-1"></i>Start Dictating</button></div>
             <textarea id="note-text" class="form-control" rows="3" placeholder="Or type your note here..."></textarea>
             <button class="btn btn-primary btn-sm mt-2" onclick="saveNote()"><i class="fas fa-save me-1"></i>Save Note</button>
         </div></div>
 
-        <div class="card border-0 shadow-sm" style="border-radius:14px"><div class="card-body text-start">
+        <div class="card border-0 shadow-sm" class="style-56956"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-microphone me-1"></i>Voice Commands</h6>
             <div class="input-group"><input type="text" id="voice-cmd" class="form-control" placeholder="Type or speak a command (Hindi/English)"><button class="btn btn-primary" onclick="sendCommand()"><i class="fas fa-paper-plane"></i></button></div>
             <div id="cmd-result" class="mt-2"></div>

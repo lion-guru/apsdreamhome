@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_plot_converter_title', [], 'Plot Size Converter'); ?></h1>

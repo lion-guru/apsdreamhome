@@ -28,7 +28,7 @@
     <?php endif; ?>
 
     <div class="card">
-        <div class="card-body" style="height: calc(100vh - 280px); overflow-y: auto;" id="messageContainer">
+        <div class="card-body" class="style-78382" id="messageContainer">
             <?php if (empty($messages)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-comment-dots fa-3x text-muted mb-3"></i>
@@ -63,7 +63,7 @@
 
                     <div class="d-flex mb-3 <?= $isMine ? 'justify-content-end' : 'justify-content-start' ?>">
                         <div class="<?= $isMine ? 'order-1' : '' ?>"
-                             style="max-width: 75%; <?= $isMine ? '' : 'margin-right: auto;' ?>">
+                             class="style-23652">
                             <?php if (!$isMine): ?>
                                 <small class="text-muted ms-1 mb-1 d-block">
                                     <?= htmlspecialchars($msg['sender_name'] ?? '') ?>
@@ -96,7 +96,7 @@
                 <div class="input-group">
                     <textarea name="message" class="form-control" rows="2"
                               placeholder="Type your message..." required
-                              style="resize: none;"></textarea>
+                              class="style-6407"></textarea>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> Send
                     </button>

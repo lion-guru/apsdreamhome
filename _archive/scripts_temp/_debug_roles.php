@@ -50,4 +50,4 @@ echo "Role value: '" . $stmt->fetchColumn() . "'\n";
 $createTable = $pdo->query("SHOW CREATE TABLE users")->fetch(PDO::FETCH_ASSOC);
 echo "\n=== CREATE TABLE (role portion) ===\n";
 preg_match('/`role`[^,]+/', $createTable['Create Table'], $matches);
-echo ($matches[0] ?? 'NOT FOUND') . "\n";
+echo ($matches[0] ?? 'NOT FOUND') . "\n";?>

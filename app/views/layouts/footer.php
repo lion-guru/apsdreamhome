@@ -50,7 +50,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                         <i class="fas fa-paper-plane"></i> <?= __('subscribe') ?>
                     </button>
                 </form>
-                <div id="newsletterMessage" class="mt-2" style="display: none;"></div>
+                <div id="newsletterMessage" class="mt-2" class="style-54390"></div>
             </div>
         </div>
         
@@ -107,7 +107,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/about" class="text-light text-decoration-none"><?= __('about_us') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/contact" class="text-light text-decoration-none"><?= __('contact_us') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/admin/login" class="text-light text-decoration-none"><?= __('admin') ?></a></li>
-                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/mobile-app" class="text-light text-decoration-none"><i class="fas fa-mobile-alt me-1"></i>📱 Download App</a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/mobile-app" class="text-light text-decoration-none"><i class="fas fa-mobile-alt me-1"></i>ðŸ“± Download App</a></li>
                 </ul>
             </div>
 

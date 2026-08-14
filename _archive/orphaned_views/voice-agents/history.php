@@ -163,11 +163,11 @@
                 </div>
                 <div class="mb-3">
                     <label class="small text-muted fw-bold">AI Summary</label>
-                    <p id="modalSummary" class="bg-light p-3 rounded mb-0" style="min-height:60px;">-</p>
+                    <p id="modalSummary" class="bg-light p-3 rounded mb-0" class="style-58999">-</p>
                 </div>
                 <div>
                     <label class="small text-muted fw-bold">Transcript</label>
-                    <div id="modalTranscript" class="bg-dark text-light p-3 rounded small" style="max-height:300px;overflow-y:auto;white-space:pre-wrap;min-height:60px;">-</div>
+                    <div id="modalTranscript" class="bg-dark text-light p-3 rounded small" class="style-54046">-</div>
                 </div>
             </div>
             <div class="modal-footer">

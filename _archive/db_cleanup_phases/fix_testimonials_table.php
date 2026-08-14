@@ -15,7 +15,7 @@ try {
     $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    echo "🔍 Checking testimonials table structure...\n";
+    echo "ðŸ”� Checking testimonials table structure...\n";
     
     // Check current structure
     $result = $conn->query("SHOW COLUMNS FROM testimonials");
@@ -25,48 +25,48 @@ try {
         echo "   - {$row['Field']} ({$row['Type']})\n";
     }
     
-    echo "\n🔧 Adding missing columns...\n";
+    echo "\nðŸ”§ Adding missing columns...\n";
     
     // Add missing columns
     if (!in_array('customer_name', $existingColumns)) {
         $conn->query("ALTER TABLE testimonials ADD COLUMN customer_name VARCHAR(255) AFTER id");
-        echo "✅ Added customer_name column\n";
+        echo "âœ… Added customer_name column\n";
     }
     
     if (!in_array('customer_email', $existingColumns)) {
         $conn->query("ALTER TABLE testimonials ADD COLUMN customer_email VARCHAR(255) AFTER customer_name");
-        echo "✅ Added customer_email column\n";
+        echo "âœ… Added customer_email column\n";
     }
     
     if (!in_array('customer_phone', $existingColumns)) {
         $conn->query("ALTER TABLE testimonials ADD COLUMN customer_phone VARCHAR(50) AFTER customer_email");
-        echo "✅ Added customer_phone column\n";
+        echo "âœ… Added customer_phone column\n";
     }
     
     if (!in_array('content', $existingColumns)) {
         $conn->query("ALTER TABLE testimonials ADD COLUMN content TEXT AFTER rating");
-        echo "✅ Added content column\n";
+        echo "âœ… Added content column\n";
     }
     
     if (!in_array('is_featured', $existingColumns)) {
         $conn->query("ALTER TABLE testimonials ADD COLUMN is_featured TINYINT(1) DEFAULT 0 AFTER status");
-        echo "✅ Added is_featured column\n";
+        echo "âœ… Added is_featured column\n";
     }
     
     if (!in_array('property_id', $existingColumns)) {
         $conn->query("ALTER TABLE testimonials ADD COLUMN property_id INT NULL AFTER is_featured");
-        echo "✅ Added property_id column\n";
+        echo "âœ… Added property_id column\n";
     }
     
-    echo "\n✅ Testimonials table structure fixed!\n";
+    echo "\nâœ… Testimonials table structure fixed!\n";
     
     // Verify final structure
-    echo "\n🔍 Final table structure:\n";
+    echo "\nðŸ”� Final table structure:\n";
     $result = $conn->query("SHOW COLUMNS FROM testimonials");
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "   - {$row['Field']} ({$row['Type']})\n";
     }
     
 } catch (PDOException $e) {
-    echo "❌ Error: " . $e->getMessage() . "\n";
-}
+    echo "â�Œ Error: " . $e->getMessage() . "\n";
+}?>

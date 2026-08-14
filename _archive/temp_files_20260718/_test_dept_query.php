@@ -26,4 +26,4 @@ echo "Active: " . $r->fetchColumn() . PHP_EOL;
 $r = $pdo->query("SELECT COUNT(*) FROM designations");
 echo "Designations: " . $r->fetchColumn() . PHP_EOL;
 $r = $pdo->query("SELECT COUNT(*) FROM employees");
-echo "Employees: " . $r->fetchColumn() . PHP_EOL;
+echo "Employees: " . $r->fetchColumn() . PHP_EOL;?>

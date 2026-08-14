@@ -8,10 +8,10 @@ echo str_pad('Rank', 20) . str_pad('Min Qualification', 20) . str_pad('Direct %'
 echo str_repeat('-', 75) . "\n";
 foreach ($rows as $r) {
     echo str_pad($r['rank_name'], 20) 
-        . str_pad('₹' . number_format($r['min_qualification']), 20) 
+        . str_pad('â‚¹' . number_format($r['min_qualification']), 20) 
         . str_pad($r['direct_commission_pct'] . '%', 10) 
         . str_pad($r['team_override_pct'] . '%', 10) 
-        . str_pad('₹' . number_format($r['monthly_salary']), 15) 
+        . str_pad('â‚¹' . number_format($r['monthly_salary']), 15) 
         . PHP_EOL;
 }
-echo "\nTotal rows: " . count($rows) . "\n";
+echo "\nTotal rows: " . count($rows) . "\n";?>

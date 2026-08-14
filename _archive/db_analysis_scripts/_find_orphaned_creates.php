@@ -22,4 +22,4 @@ foreach ($iter as $f) {
         }
     }
 }
-echo "\nTotal orphaned CREATE TABLE statements: $found\n";
+echo "\nTotal orphaned CREATE TABLE statements: $found\n";?>

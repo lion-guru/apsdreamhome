@@ -111,4 +111,4 @@ echo $added === 0 ? "OK: all required columns already present.\n" : "OK: added $
 try {
     $count = (int)$pdo->query('SELECT COUNT(*) FROM gateway_logs')->fetchColumn();
     echo "INFO: gateway_logs has $count existing rows.\n";
-} catch (\Throwable $e) { /* ignore */ }
+} catch (\Throwable $e) { /* ignore */ }?>

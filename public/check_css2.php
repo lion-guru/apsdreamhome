@@ -9,4 +9,4 @@ foreach ($files as $f) {
             echo trim($match) . "\n\n";
         }
     }
-}
+}?>

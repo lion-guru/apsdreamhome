@@ -37,4 +37,4 @@ try {
     echo "nach_mandates table created OK\n";
 } catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

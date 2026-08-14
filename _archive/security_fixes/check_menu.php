@@ -13,4 +13,4 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 foreach ($items as $item) {
     $parent = $item['parent_id'] ? " (parent: {$item['parent_id']})" : '';
     echo "ID: {$item['id']} | {$item['label']} | URL: {$item['url']} | Icon: {$item['icon']} | Order: {$item['sort_order']}{$parent}\n";
-}
+}?>

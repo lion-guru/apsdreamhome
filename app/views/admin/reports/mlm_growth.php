@@ -58,7 +58,7 @@ $report = $report ?? [
                                 Total Commissions
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                ₹<?= number_format(array_sum(array_column($report['commission_trends'], 'total_commissions')) ?? 0, 2) ?>
+                                â‚¹<?= number_format(array_sum(array_column($report['commission_trends'], 'total_commissions')) ?? 0, 2) ?>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -98,7 +98,7 @@ $report = $report ?? [
                                 Avg Commission
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                ₹<?= number_format(array_sum(array_column($report['commission_trends'], 'avg_commission')) / (count($report['commission_trends']) ?: 1), 2) ?>
+                                â‚¹<?= number_format(array_sum(array_column($report['commission_trends'], 'avg_commission')) / (count($report['commission_trends']) ?: 1), 2) ?>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -170,7 +170,7 @@ $report = $report ?? [
                         <?php if (empty($report['top_performers'] ?? [])): ?>
                         <tr>
                             <td colspan="7" class="text-center py-5">
-                                <i class="fas fa-trophy fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-trophy fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No top performers found</h5>
                                 <p class="text-muted mb-3">Performance data will appear once associates start earning commissions.</p>
                             </td>
@@ -183,7 +183,7 @@ $report = $report ?? [
                             <td><?= htmlspecialchars($performer['email']) ?></td>
                             <td><code><?= htmlspecialchars($performer['referral_code'] ?? '') ?></code></td>
                             <td><?= $performer['direct_referrals'] ?></td>
-                            <td>₹<?= number_format($performer['total_commissions'] ?? 0, 2) ?></td>
+                            <td>â‚¹<?= number_format($performer['total_commissions'] ?? 0, 2) ?></td>
                             <td><?= date('M Y', strtotime($performer['created_at'])) ?></td>
                         </tr>
                         <?php endforeach; ?>
@@ -214,7 +214,7 @@ $report = $report ?? [
                         <?php if (empty($report['monthly_comparison'] ?? [])): ?>
                         <tr>
                             <td colspan="4" class="text-center py-5">
-                                <i class="fas fa-chart-bar fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-chart-bar fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No monthly comparison data</h5>
                                 <p class="text-muted mb-3">Month-over-month metrics will appear after at least two periods of data are collected.</p>
                             </td>
@@ -225,7 +225,7 @@ $report = $report ?? [
                             <td><strong><?= $comparison['period'] ?></strong></td>
                             <td><?= $comparison['new_associates'] ?></td>
                             <td><?= $comparison['new_referrals'] ?></td>
-                            <td>₹<?= number_format($comparison['total_commissions'], 2) ?></td>
+                            <td>â‚¹<?= number_format($comparison['total_commissions'], 2) ?></td>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>

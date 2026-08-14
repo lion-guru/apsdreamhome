@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-history me-2"></i>Email Logs</h4>
         <a href="<?= BASE_URL ?>/admin/email-logs" class="btn btn-outline-secondary btn-sm">
@@ -151,7 +151,7 @@ function viewLog(log) {
         <div class="mb-3">
             <strong>Sent At:</strong> ${log.sent_at || 'Not sent yet'}
         </div>
-        ${log.body_html ? `<div class="mb-3"><strong>HTML Preview:</strong><div class="border rounded p-3 mt-1" style="max-height:300px;overflow:auto;">${log.body_html}</div></div>` : ''}
+        ${log.body_html ? `<div class="mb-3"><strong>HTML Preview:</strong><div class="border rounded p-3 mt-1" class="style-11952">${log.body_html}</div></div>` : ''}
     `;
     new bootstrap.Modal(document.getElementById('logModal')).show();
 }

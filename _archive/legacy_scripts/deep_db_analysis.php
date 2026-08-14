@@ -136,4 +136,4 @@ echo "Total FK constraints: $fks\n";
 
 echo "\n=== STEP 10: DB size ===\n";
 $size = $pdo->query("SELECT SUM(DATA_LENGTH + INDEX_LENGTH) FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'apsdreamhome'")->fetchColumn();
-echo "Total DB size: " . round($size/1024/1024, 2) . " MB\n";
+echo "Total DB size: " . round($size/1024/1024, 2) . " MB\n";?>

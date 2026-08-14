@@ -348,4 +348,4 @@ class AuthManager
             return [];
         }
     }
-}
+}?>

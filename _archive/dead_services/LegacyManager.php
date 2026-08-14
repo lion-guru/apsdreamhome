@@ -195,7 +195,7 @@ class SecurityManager {
      */
     private function sanitizeHTML($input) {
         // Allow only specific HTML tags
-        $allowed_tags = '<p><br><strong><em><u><h1><h2><h3><h4><h5><h6><ul><ol><li><blockquote><a><img><div><span>';
+        $allowed_tags = '<p><br><strong><em><u><h1><h2><h3><h4><h5><h6><ul><ol><li><blockquote><a><img alt="image"><div><span>';
 
         return strip_tags($input, $allowed_tags);
     }

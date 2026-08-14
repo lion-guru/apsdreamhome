@@ -11,7 +11,7 @@
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
             <h1 class="display-5 fw-bold mb-3">Real Estate Services Directory</h1>
-            <p class="lead text-muted mb-4">Find trusted masons, plumbers, electricians, architects, material suppliers and more — all for your dream home</p>
+            <p class="lead text-muted mb-4">Find trusted masons, plumbers, electricians, architects, material suppliers and more â€” all for your dream home</p>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="#categories" class="btn btn-primary btn-lg"><i class="fas fa-search me-2"></i>Browse Services</a>
                 <a href="<?= BASE_URL ?>/services/jobs" class="btn btn-outline-success btn-lg"><i class="fas fa-briefcase me-2"></i>Jobs</a>
@@ -37,7 +37,7 @@
                 <div class="col-md-4 col-lg-3 mb-4">
                     <div class="card h-100 shadow-sm border-0">
                         <?php if ($f['photo']): ?>
-                            <img src="<?= htmlspecialchars($f['photo']) ?>" loading="lazy" class="card-img-top" alt="<?= htmlspecialchars($f['business_name']) ?>" style="height:160px;object-fit:cover;">
+                            <img src="<?= htmlspecialchars($f['photo']) ?>" loading="lazy" class="card-img-top" alt="<?= htmlspecialchars($f['business_name']) ?>" class="style-66292">
                         <?php else: ?>
                             <div class="bg-light text-center py-5"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-building') ?> fa-3x text-muted"></i></div>
                         <?php endif; ?>
@@ -49,7 +49,7 @@
                             <p class="text-muted small mb-1"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-tag') ?> me-1"></i><?= htmlspecialchars($f['category_name'] ?? '') ?></p>
                             <?php if ($f['city']): ?><p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($f['city']) ?></p><?php endif; ?>
                             <?php if ($f['rating'] > 0): ?>
-                                <p class="mb-1"><span class="text-warning"><?= str_repeat('★', (int)$f['rating']) ?></span><span class="text-muted"> (<?= $f['review_count'] ?>)</span></p>
+                                <p class="mb-1"><span class="text-warning"><?= str_repeat('â˜…', (int)$f['rating']) ?></span><span class="text-muted"> (<?= $f['review_count'] ?>)</span></p>
                             <?php endif; ?>
                             <a href="<?= BASE_URL ?>/services/listing/<?= $f['id'] ?>" class="btn btn-sm btn-outline-primary mt-2">View Details</a>
                         </div>

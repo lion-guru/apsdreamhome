@@ -73,4 +73,4 @@ foreach ($items as $item) {
     if (empty($item['url']) || $item['url'] === '#') {
         echo "  EMPTY: {$item['name']} (section: {$item['section']})\n";
     }
-}
+}?>

@@ -42,5 +42,4 @@ class AIPropertyRecommendations {
     public function trackAction($userId, $propertyId, $actionType) {
         return $this->aiManager->trackAction($userId, $propertyId, $actionType);
     }
-}
-
+}?>

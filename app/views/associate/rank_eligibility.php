@@ -36,12 +36,12 @@ $currentConfig = $rankConfig[$currentRank] ?? $rankConfig['associate'];
 $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
 ?>
 
-<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, <?= $currentConfig['color'] ?> 0%, <?= $currentConfig['color'] ?>dd 100%); color: #fff;">
+<div class="card border-0 shadow-sm mb-4" class="style-61068">
     <div class="card-body p-4">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 70px; height: 70px; background: rgba(255,255,255,0.2);">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" class="style-47783">
                         <i class="<?= $currentConfig['icon'] ?> fa-2x"></i>
                     </div>
                     <div>
@@ -51,25 +51,25 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                 </div>
                 <div class="row g-3">
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                        <div class="p-2 rounded" class="style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_monthly_vol', [], 'Monthly Volume') ?></div>
-                            <div class="fw-bold">₹<?= number_format($monthlyVolume) ?></div>
+                            <div class="fw-bold">â‚¹<?= number_format($monthlyVolume) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                        <div class="p-2 rounded" class="style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_lifetime_vol', [], 'Lifetime Volume') ?></div>
-                            <div class="fw-bold">₹<?= number_format($lifetimeVolume) ?></div>
+                            <div class="fw-bold">â‚¹<?= number_format($lifetimeVolume) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                        <div class="p-2 rounded" class="style-93131">
                             <div class="small opacity-75"><?= __('assoc_mlm_team_size', [], 'Team Size') ?></div>
                             <div class="fw-bold"><?= $teamSize ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
-                        <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                        <div class="p-2 rounded" class="style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_direct_legs', [], 'Direct Legs') ?></div>
                             <div class="fw-bold"><?= $directLegs ?></div>
                         </div>
@@ -77,7 +77,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                 </div>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <div class="p-3 rounded" style="background: rgba(255,255,255,0.2);">
+                <div class="p-3 rounded" class="style-58007">
                     <i class="fas fa-gift fa-2x mb-2"></i>
                     <h5 class="mb-0"><?= $currentConfig['reward'] ?></h5>
                     <small class="opacity-75"><?= __('assoc_rank_reward', [], 'Your Rank Reward') ?></small>
@@ -111,16 +111,16 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
             <div class="col-md-6">
                 <div class="d-flex justify-content-between mb-2">
                     <span class="fw-bold"><?= __('assoc_rank_biz_volume', [], 'Business Volume') ?></span>
-                    <span>₹<?= number_format($lifetimeVolume) ?> / ₹<?= number_format($targetVolume) ?></span>
+                    <span>â‚¹<?= number_format($lifetimeVolume) ?> / â‚¹<?= number_format($targetVolume) ?></span>
                 </div>
-                <div class="progress" style="height: 20px; border-radius: 10px;">
+                <div class="progress" class="style-58663">
                     <div class="progress-bar <?= $volumePct >= 100 ? 'bg-success' : '' ?>" role="progressbar" 
-                         style="width: <?= $volumePct ?>%; <?= $volumePct < 100 ? 'background: linear-gradient(90deg, #0d9488, #0f766e);' : '' ?> border-radius: 10px;">
+                         class="style-89737">
                         <?= $volumePct ?>%
                     </div>
                 </div>
                 <?php if ($volumePct < 100): ?>
-                    <small class="text-muted"><?= __('assoc_rank_more_needed', [], '₹%s more needed') ?></small>
+                    <small class="text-muted"><?= __('assoc_rank_more_needed', [], 'â‚¹%s more needed') ?></small>
                 <?php else: ?>
                     <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('assoc_rank_target_achieved', [], 'Target achieved!') ?></small>
                 <?php endif; ?>
@@ -130,9 +130,9 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                     <span class="fw-bold"><?= __('assoc_rank_direct_legs_title', [], 'Direct Legs (Team)') ?></span>
                     <span><?= $directLegs ?> / <?= $targetLegs ?> <?= __('assoc_rank_required', [], 'required') ?></span>
                 </div>
-                <div class="progress" style="height: 20px; border-radius: 10px;">
+                <div class="progress" class="style-58663">
                     <div class="progress-bar <?= $legsPct >= 100 ? 'bg-success' : '' ?>" role="progressbar" 
-                         style="width: <?= $legsPct ?>%; <?= $legsPct < 100 ? 'background: linear-gradient(90deg, #f59e0b, #f97316);' : '' ?> border-radius: 10px;">
+                         class="style-5454">
                         <?= $legsPct ?>%
                     </div>
                 </div>
@@ -145,7 +145,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
         </div>
         
         <?php $bgColor = $overallPct >= 100 ? '#dcfce7' : '#fef3c7'; ?>
-        <div class="mt-4 p-3 rounded-3 text-center" style="background: <?php echo $bgColor; ?>;">
+        <div class="mt-4 p-3 rounded-3 text-center" class="style-11775">
             <?php if ($overallPct >= 100): ?>
                 <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
                 <h5 class="text-success mb-1"><?= __('assoc_rank_eligible', [], "You're Eligible for Promotion!") ?></h5>
@@ -189,13 +189,13 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center me-2" 
-                                         style="width: 35px; height: 35px; background: <?= $config['color'] ?>; color: #fff;">
+                                         class="style-66722">
                                         <i class="<?= $config['icon'] ?>"></i>
                                     </div>
                                     <strong><?= $rankDisplay[$rankName] ?? $rank['rank_name'] ?></strong>
                                 </div>
                             </td>
-                            <td>₹<?= number_format($rank['min_qualifying_volume']) ?></td>
+                            <td>â‚¹<?= number_format($rank['min_qualifying_volume']) ?></td>
                             <td><?= $rank['min_leg_count'] ?> <?= __('assoc_rank_members', [], 'members') ?></td>
                             <td><?= $rank['direct_sale_pct'] ?>%</td>
                             <td><span class="badge bg-light text-dark"><?= $config['reward'] ?></span></td>

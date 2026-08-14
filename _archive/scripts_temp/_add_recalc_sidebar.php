@@ -27,4 +27,4 @@ $ins = $pdo->prepare("
     VALUES (?, 'fas fa-calculator', '/admin/commission/recalculations', ?, 'commission', ?, 1, NOW())
 ");
 $ins->execute(['Recalculations', $parentId, (int)$maxOrder + 1]);
-echo "Sidebar item inserted: id=" . $pdo->lastInsertId() . "\n";
+echo "Sidebar item inserted: id=" . $pdo->lastInsertId() . "\n";?>

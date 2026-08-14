@@ -234,4 +234,4 @@ out("  --methods=GET,PUT,POST                   (default: GET,HEAD)");
 out("  --headers=*                              (default: *)");
 out("  --max-age=3000                           (default: 3000)");
 out("  --yes                                    skip the confirmation prompt");
-exit(0);
+exit(0);?>

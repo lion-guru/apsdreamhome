@@ -11,4 +11,4 @@ try {
     echo json_encode($fields, JSON_PRETTY_PRINT);
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
-}
+}?>

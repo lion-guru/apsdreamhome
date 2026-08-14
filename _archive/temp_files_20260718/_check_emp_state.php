@@ -29,4 +29,4 @@ if ($test) {
     }
 } else {
     echo "  NO users with role='employee'!\n";
-}
+}?>

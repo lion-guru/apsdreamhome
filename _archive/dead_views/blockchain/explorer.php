@@ -15,8 +15,8 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Status</th><td><span class="badge bg-<?= ($verification['blockchain_status'] ?? '') === 'verified' ? 'success' : 'warning' ?>"><?= strtoupper($verification['blockchain_status'] ?? 'UNKNOWN') ?></span></td></tr>
-                        <tr><th>Blockchain Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>
-                        <tr><th>Transaction Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['transaction_hash'] ?? '-') ?></code></td></tr>
+                        <tr><th>Blockchain Hash</th><td class="style-85847"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>
+                        <tr><th>Transaction Hash</th><td class="style-85847"><code><?= htmlspecialchars($verification['transaction_hash'] ?? '-') ?></code></td></tr>
                     </table></div>
                 </div>
             </div>

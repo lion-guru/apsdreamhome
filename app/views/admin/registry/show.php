@@ -81,7 +81,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
             <div class="card-body aps-cp-card-body">
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th style="width:140px">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
+                    <tr><th class="style-97126">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
                     <tr><th>Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
                     <tr><th>Plot #</th><td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td></tr>
                     <tr><th>Colony</th><td><?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?></td></tr>
@@ -150,7 +150,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-calendar-check"></i> Appointment</h5></div>
             <div class="card-body aps-cp-card-body">
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th style="width:140px">Office</th><td><?= htmlspecialchars($booking['sub_registrar_office'] ?? 'Not scheduled') ?></td></tr>
+                    <tr><th class="style-97126">Office</th><td><?= htmlspecialchars($booking['sub_registrar_office'] ?? 'Not scheduled') ?></td></tr>
                     <tr><th>Appointment</th><td><?= !empty($booking['appointment_date']) ? date('d M Y h:i A', strtotime($booking['appointment_date'])) : 'Not scheduled' ?></td></tr>
                 </table></div>
                 <?php if ($currentStep <= 3 && $currentStep >= 2 && !$isCancelled): ?>
@@ -181,7 +181,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-check-circle"></i> Registration</h5></div>
             <div class="card-body aps-cp-card-body">
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th style="width:140px">Registry #</th><td><?= htmlspecialchars($booking['registry_number'] ?? 'Not registered') ?></td></tr>
+                    <tr><th class="style-97126">Registry #</th><td><?= htmlspecialchars($booking['registry_number'] ?? 'Not registered') ?></td></tr>
                     <tr><th>Registry Date</th><td><?= !empty($booking['registry_date']) ? date('d M Y', strtotime($booking['registry_date'])) : 'N/A' ?></td></tr>
                 </table></div>
                 <?php if ($currentStep <= 4 && $currentStep >= 3 && !$isCancelled): ?>
@@ -215,7 +215,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['mutation_number'])): ?>
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th style="width:140px">Mutation #</th><td><?= htmlspecialchars($booking['mutation_number']) ?></td></tr>
+                    <tr><th class="style-97126">Mutation #</th><td><?= htmlspecialchars($booking['mutation_number']) ?></td></tr>
                     <tr><th>Mutation Date</th><td><?= !empty($booking['mutation_date']) ? date('d M Y', strtotime($booking['mutation_date'])) : 'N/A' ?></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-<?= ($booking['mutation_status'] ?? '') === 'completed' ? 'success' : (($booking['mutation_status'] ?? '') === 'in_progress' ? 'warning' : 'secondary') ?>"><?= ucfirst($booking['mutation_status'] ?? 'pending') ?></span></td></tr>
                 </table></div>
@@ -258,7 +258,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-sticky-note"></i> Registry Notes</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['registry_notes'])): ?>
-                    <pre style="white-space: pre-wrap; font-family: inherit; background: #f8f9fa; padding: 12px; border-radius: 6px; max-height: 300px; overflow-y: auto;"><?= htmlspecialchars($booking['registry_notes']) ?></pre>
+                    <pre class="style-33711"><?= htmlspecialchars($booking['registry_notes']) ?></pre>
                 <?php else: ?>
                     <p class="text-muted">No notes yet.</p>
                 <?php endif; ?>
@@ -269,7 +269,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-history"></i> Recent Activity</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($activities)): ?>
-                    <ul class="list-unstyled" style="max-height: 250px; overflow-y: auto;">
+                    <ul class="list-unstyled" class="style-93475">
                         <?php $count = 0; foreach ($activities as $a): if ($count++ >= 5) break; ?>
                             <li class="mb-2 pb-2 border-bottom">
                                 <small class="text-muted"><?= date('d M Y h:i A', strtotime($a['created_at'])) ?></small><br>

@@ -377,4 +377,4 @@ function getAIPropertyRecommendations($user_preferences)
     );
     $result = $ai->getPropertyRecommendations($user_preferences);
     return $result['success'] ?? $result['error'] ?? 'AI service unavailable';
-}
+}?>

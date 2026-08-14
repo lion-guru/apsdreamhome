@@ -35,4 +35,4 @@ foreach ($items as $item) {
     $db->prepare("INSERT INTO admin_menu_items ($colStr) VALUES ($placeholders)")->execute($vals);
     echo "Added: {$item['name']}" . PHP_EOL;
 }
-echo 'Done - ' . count($items) . ' billing sidebar items added' . PHP_EOL;
+echo 'Done - ' . count($items) . ' billing sidebar items added' . PHP_EOL;?>

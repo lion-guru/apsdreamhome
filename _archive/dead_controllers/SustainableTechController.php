@@ -19,7 +19,7 @@ class SustainableTechController extends AdminController
     {
         $this->requireAdmin();
         $this->render('admin/feature-disabled', [
-            'page_title' => 'Sustainable Tech — Coming Soon',
+            'page_title' => 'Sustainable Tech â€” Coming Soon',
             'feature_name' => 'Green Technology & Sustainability',
             'feature_description' => 'Carbon footprint tracking, energy efficiency monitoring, ESG reporting, and green certifications require sensor integration and data pipeline setup. This feature will be available soon.',
             'icon' => 'fas fa-leaf',
@@ -204,19 +204,19 @@ class SustainableTechController extends AdminController
             'data_center_optimization' => [
                 'strategy' => 'Use energy-efficient servers and cooling',
                 'potential_reduction' => '40%',
-                'implementation_cost' => '₹15,00,000',
+                'implementation_cost' => 'â‚¹15,00,000',
                 'payback_period' => '18 months'
             ],
             'edge_computing' => [
                 'strategy' => 'Process data closer to users',
                 'potential_reduction' => '60%',
-                'implementation_cost' => '₹25,00,000',
+                'implementation_cost' => 'â‚¹25,00,000',
                 'payback_period' => '12 months'
             ],
             'renewable_energy' => [
                 'strategy' => 'Switch to 100% renewable energy sources',
                 'potential_reduction' => '85%',
-                'implementation_cost' => '₹50,00,000',
+                'implementation_cost' => 'â‚¹50,00,000',
                 'payback_period' => '24 months'
             ]
         ];
@@ -231,19 +231,19 @@ class SustainableTechController extends AdminController
             'tree_plantation' => [
                 'program' => 'Tree Plantation Initiative',
                 'carbon_offset' => '500 tons CO2/year',
-                'cost' => '₹2,50,000/year',
+                'cost' => 'â‚¹2,50,000/year',
                 'trees_planted' => 2500
             ],
             'renewable_energy_credits' => [
                 'program' => 'Renewable Energy Credits',
                 'carbon_offset' => '300 tons CO2/year',
-                'cost' => '₹1,80,000/year',
+                'cost' => 'â‚¹1,80,000/year',
                 'energy_generated' => '500 MWh/year'
             ],
             'carbon_capture' => [
                 'program' => 'Carbon Capture Technology',
                 'carbon_offset' => '200 tons CO2/year',
-                'cost' => '₹3,00,000/year',
+                'cost' => 'â‚¹3,00,000/year',
                 'technology' => 'Direct Air Capture'
             ]
         ];
@@ -299,19 +299,19 @@ class SustainableTechController extends AdminController
             'server_optimization' => [
                 'improvement' => 'Energy-efficient server deployment',
                 'energy_saved' => '25%',
-                'cost_savings' => '₹3,50,000/year',
+                'cost_savings' => 'â‚¹3,50,000/year',
                 'implementation_time' => '3 months'
             ],
             'ai_power_management' => [
                 'improvement' => 'AI-powered energy management',
                 'energy_saved' => '30%',
-                'cost_savings' => '₹4,20,000/year',
+                'cost_savings' => 'â‚¹4,20,000/year',
                 'implementation_time' => '6 months'
             ],
             'edge_processing' => [
                 'improvement' => 'Data processing at edge locations',
                 'energy_saved' => '40%',
-                'cost_savings' => '₹5,60,000/year',
+                'cost_savings' => 'â‚¹5,60,000/year',
                 'implementation_time' => '4 months'
             ]
         ];
@@ -327,19 +327,19 @@ class SustainableTechController extends AdminController
                 'capacity' => '50 kW',
                 'generation' => '180 kWh/day',
                 'coverage' => '35% of total consumption',
-                'installation_cost' => '₹25,00,000'
+                'installation_cost' => 'â‚¹25,00,000'
             ],
             'wind_energy' => [
                 'capacity' => '25 kW',
                 'generation' => '90 kWh/day',
                 'coverage' => '20% of total consumption',
-                'installation_cost' => '₹18,00,000'
+                'installation_cost' => 'â‚¹18,00,000'
             ],
             'hydroelectric' => [
                 'capacity' => '15 kW',
                 'generation' => '45 kWh/day',
                 'coverage' => '10% of total consumption',
-                'installation_cost' => '₹12,00,000'
+                'installation_cost' => 'â‚¹12,00,000'
             ]
         ];
     }
@@ -381,25 +381,25 @@ class SustainableTechController extends AdminController
                 'technology' => 'ARM-based Energy-Efficient Servers',
                 'adoption_date' => '2024-01-15',
                 'energy_savings' => '40%',
-                'cost_savings' => '₹8,00,000/year'
+                'cost_savings' => 'â‚¹8,00,000/year'
             ],
             'ai_power_management' => [
                 'technology' => 'AI-Powered Power Management',
                 'adoption_date' => '2024-03-20',
                 'energy_savings' => '25%',
-                'cost_savings' => '₹5,50,000/year'
+                'cost_savings' => 'â‚¹5,50,000/year'
             ],
             'edge_computing' => [
                 'technology' => 'Edge Computing for Data Locality',
                 'adoption_date' => '2024-02-10',
                 'energy_savings' => '35%',
-                'cost_savings' => '₹7,20,000/year'
+                'cost_savings' => 'â‚¹7,20,000/year'
             ],
             'green_cloud_services' => [
                 'technology' => 'Green Cloud Service Integration',
                 'adoption_date' => '2024-04-05',
                 'energy_savings' => '20%',
-                'cost_savings' => '₹4,30,000/year'
+                'cost_savings' => 'â‚¹4,30,000/year'
             ]
         ];
     }
@@ -439,15 +439,15 @@ class SustainableTechController extends AdminController
     private function getCostBenefitAnalysis()
     {
         return [
-            'investment_required' => '₹75,00,000',
-            'annual_savings' => '₹25,00,000',
+            'investment_required' => 'â‚¹75,00,000',
+            'annual_savings' => 'â‚¹25,00,000',
             'payback_period' => '3 years',
             'roi_over_5_years' => '233%',
             'breakdown' => [
-                'energy_cost_savings' => '₹15,00,000/year',
-                'operational_efficiency' => '₹6,00,000/year',
-                'maintenance_reduction' => '₹3,00,000/year',
-                'regulatory_compliance' => '₹1,00,000/year'
+                'energy_cost_savings' => 'â‚¹15,00,000/year',
+                'operational_efficiency' => 'â‚¹6,00,000/year',
+                'maintenance_reduction' => 'â‚¹3,00,000/year',
+                'regulatory_compliance' => 'â‚¹1,00,000/year'
             ]
         ];
     }
@@ -493,7 +493,7 @@ class SustainableTechController extends AdminController
                 'count' => 456,
                 'avg_rating' => '85+ score',
                 'energy_savings' => '25%',
-                'cost_premium' => '₹2,50,000 average'
+                'cost_premium' => 'â‚¹2,50,000 average'
             ],
             'solar_powered' => [
                 'count' => 123,
@@ -614,12 +614,12 @@ class SustainableTechController extends AdminController
     {
         return [
             'energy_performance' => [
-                'building_energy_intensity' => '45 kWh/m²/year',
+                'building_energy_intensity' => '45 kWh/mÂ²/year',
                 'renewable_energy_percentage' => '35%',
                 'energy_star_score' => '82'
             ],
             'water_performance' => [
-                'water_use_intensity' => '0.8 m³/m²/year',
+                'water_use_intensity' => '0.8 mÂ³/mÂ²/year',
                 'water_efficiency' => '40% better than baseline',
                 'rainwater_harvesting' => '25% of water needs met'
             ],
@@ -674,7 +674,7 @@ class SustainableTechController extends AdminController
             'social_report' => [
                 'employee_satisfaction' => '4.6/5',
                 'diversity_inclusion' => '78% diverse workforce',
-                'community_impact' => '₹15,00,000 in community programs',
+                'community_impact' => 'â‚¹15,00,000 in community programs',
                 'customer_satisfaction' => '4.7/5'
             ],
             'governance_report' => [
@@ -767,11 +767,11 @@ class SustainableTechController extends AdminController
     private function getGreenBonds()
     {
         return [
-            'issued_bonds' => '₹50 crores',
+            'issued_bonds' => 'â‚¹50 crores',
             'green_projects_funded' => 45,
             'interest_rate' => '6.5%',
             'maturity_period' => '7 years',
-            'investor_interest' => '₹125 crores oversubscribed'
+            'investor_interest' => 'â‚¹125 crores oversubscribed'
         ];
     }
 
@@ -781,10 +781,10 @@ class SustainableTechController extends AdminController
     private function getSustainableInvestments()
     {
         return [
-            'total_aum' => '₹200 crores',
-            'sustainable_properties' => '₹150 crores',
-            'green_technologies' => '₹30 crores',
-            'renewable_energy' => '₹20 crores',
+            'total_aum' => 'â‚¹200 crores',
+            'sustainable_properties' => 'â‚¹150 crores',
+            'green_technologies' => 'â‚¹30 crores',
+            'renewable_energy' => 'â‚¹20 crores',
             'annual_returns' => '12.5%'
         ];
     }
@@ -797,7 +797,7 @@ class SustainableTechController extends AdminController
         return [
             'credits_generated' => '1,500 tons CO2',
             'credits_sold' => '1,200 tons CO2',
-            'market_value' => '₹25,00,000',
+            'market_value' => 'â‚¹25,00,000',
             'trading_platform' => 'Carbon Credit Exchange',
             'verification_standard' => 'Verified Carbon Standard'
         ];
@@ -809,7 +809,7 @@ class SustainableTechController extends AdminController
     private function getImpactInvesting()
     {
         return [
-            'impact_funds' => '₹75 crores',
+            'impact_funds' => 'â‚¹75 crores',
             'social_impact' => '15,000 beneficiaries',
             'environmental_impact' => '500 tons CO2 reduction',
             'financial_returns' => '11.8%',
@@ -1067,7 +1067,7 @@ class SustainableTechController extends AdminController
                 'Equipment' => '18%',
                 'Water heating' => '15%'
             ],
-            'savings_potential' => '₹15 lakhs/year',
+            'savings_potential' => 'â‚¹15 lakhs/year',
             'last_audit' => '2024-11-15'
         ];
     }
@@ -1088,8 +1088,8 @@ class SustainableTechController extends AdminController
                 ['name' => 'Rainwater Harvesting', 'status' => 'active', 'adoption' => '55%', 'roi_months' => 30],
                 ['name' => 'EV Charging Stations', 'status' => 'expanding', 'adoption' => '18%', 'roi_months' => 42]
             ],
-            'investment_committed' => '₹2.5 crores',
-            'annual_savings' => '₹85 lakhs',
+            'investment_committed' => 'â‚¹2.5 crores',
+            'annual_savings' => 'â‚¹85 lakhs',
             'carbon_saved' => 450
         ];
     }
@@ -1285,7 +1285,7 @@ class SustainableTechController extends AdminController
                 'title' => 'Office Building Green Transformation',
                 'challenge' => 'Reduce energy consumption by 40%',
                 'solution' => 'Comprehensive green retrofit with AI optimization',
-                'results' => ['42% energy reduction', '₹15,00,000 annual savings', 'Improved employee productivity'],
+                'results' => ['42% energy reduction', 'â‚¹15,00,000 annual savings', 'Improved employee productivity'],
                 'implementation_time' => '8 months',
                 'roi_achieved' => '285%'
             ],
@@ -1293,7 +1293,7 @@ class SustainableTechController extends AdminController
                 'title' => 'Carbon Neutral Data Center',
                 'challenge' => 'Achieve carbon neutrality for data operations',
                 'solution' => '100% renewable energy + carbon capture',
-                'results' => ['100% carbon neutral', '₹8,00,000 annual savings', 'Industry recognition'],
+                'results' => ['100% carbon neutral', 'â‚¹8,00,000 annual savings', 'Industry recognition'],
                 'implementation_time' => '12 months',
                 'roi_achieved' => '195%'
             ],
@@ -1301,7 +1301,7 @@ class SustainableTechController extends AdminController
                 'title' => 'Sustainable Property Development',
                 'challenge' => 'Develop eco-friendly residential complex',
                 'solution' => 'LEED Platinum design with smart sustainability features',
-                'results' => ['LEED Platinum certification', '35% energy savings', '₹25 premium pricing'],
+                'results' => ['LEED Platinum certification', '35% energy savings', 'â‚¹25 premium pricing'],
                 'implementation_time' => '18 months',
                 'roi_achieved' => '320%'
             ]
@@ -1393,19 +1393,19 @@ class SustainableTechController extends AdminController
         if (!self::FEATURE_ENABLED) { $this->featureNotAvailable(); return; }
         $investment_data = [
             'green_bonds' => [
-                'total_issued' => '₹200 crores',
+                'total_issued' => 'â‚¹200 crores',
                 'investor_returns' => '7.2% annual',
                 'maturity_periods' => ['3 years', '5 years', '7 years'],
                 'use_of_proceeds' => ['Renewable energy projects', 'Green building development', 'Carbon reduction initiatives']
             ],
             'sustainable_properties' => [
                 'properties_available' => 234,
-                'avg_premium' => '₹3,50,000',
+                'avg_premium' => 'â‚¹3,50,000',
                 'rental_yield' => '4.2%',
                 'appreciation_rate' => '12.5% annually'
             ],
             'green_technologies' => [
-                'investment_required' => '₹50 crores',
+                'investment_required' => 'â‚¹50 crores',
                 'expected_returns' => '18% IRR',
                 'technologies' => ['Solar energy', 'Energy storage', 'Smart grid', 'Carbon capture'],
                 'risk_level' => 'Medium'
@@ -1447,7 +1447,7 @@ class SustainableTechController extends AdminController
                 ]
             ],
             'market_insights' => [
-                'green_premium' => '₹5-15% premium for sustainable properties',
+                'green_premium' => 'â‚¹5-15% premium for sustainable properties',
                 'investor_preference' => '78% of investors prefer sustainable assets',
                 'regulatory_pressure' => 'Increasing regulations for green compliance',
                 'consumer_demand' => '65% of buyers prefer eco-friendly properties'
@@ -1557,14 +1557,14 @@ class SustainableTechController extends AdminController
             'green_building_pioneer' => [
                 'title' => 'Green Building Innovation',
                 'story' => 'First LEED Platinum certified real estate platform in India',
-                'key_achievements' => ['Platinum certification', '35% energy savings', '₹15,00,000 annual savings'],
+                'key_achievements' => ['Platinum certification', '35% energy savings', 'â‚¹15,00,000 annual savings'],
                 'impact' => 'Set new industry standards for sustainability',
                 'lessons_learned' => 'Sustainability drives both environmental and business value'
             ],
             'community_impact' => [
                 'title' => 'Community Environmental Impact',
                 'story' => 'How sustainability initiatives benefited local communities',
-                'key_achievements' => ['15,000 trees planted', '150 green jobs created', '₹50,00,000 community investment'],
+                'key_achievements' => ['15,000 trees planted', '150 green jobs created', 'â‚¹50,00,000 community investment'],
                 'impact' => 'Improved environmental awareness and economic opportunities',
                 'lessons_learned' => 'Sustainability creates shared value for all stakeholders'
             ]
@@ -1673,4 +1673,4 @@ class SustainableTechController extends AdminController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

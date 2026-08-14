@@ -10,7 +10,7 @@ $error = $_SESSION['flash_error'] ?? null;
 unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 ?>
 
-<div class="aps-cp-hero" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+<div class="aps-cp-hero" class="style-6804">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-map-marker-alt me-2"></i>My Site Visits</h2>
@@ -88,17 +88,17 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 $color = $statusColors[$v['status']] ?? 'secondary';
                 $isOverdue = $isPast && $v['status'] === 'scheduled';
             ?>
-            <div class="p-3 border-bottom <?= $isToday ? 'bg-light' : '' ?>" style="<?= $isToday ? 'border-left:4px solid #0d9488 !important;' : '' ?>">
+            <div class="p-3 border-bottom <?= $isToday ? 'bg-light' : '' ?>" class="style-32192">
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                     <div class="d-flex align-items-start gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:45px;height:45px;background:rgba(var(--bs-<?= $color ?>-rgb),0.1);flex-shrink:0;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-23127">
                             <i class="fas fa-map-marker-alt text-<?= $color ?>"></i>
                         </div>
                         <div>
                             <strong><?= date('D, d M Y', strtotime($v['visit_date'])) ?> at <?= date('h:i A', strtotime($v['visit_time'])) ?></strong>
                             <?php if ($isToday): ?><span class="badge bg-primary ms-2">Today</span><?php endif; ?>
                             <?php if ($isOverdue): ?><span class="badge bg-danger ms-2">Missed</span><?php endif; ?>
-                            <div class="text-muted" style="font-size:0.85rem;">
+                            <div class="text-muted" class="style-47175">
                                 <?php if (!empty($v['colony_name'])): ?>
                                     <i class="fas fa-building me-1"></i><?= htmlspecialchars($v['colony_name']) ?>
                                 <?php endif; ?>
@@ -107,7 +107,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                 <?php endif; ?>
                             </div>
                             <?php if (!empty($v['notes'])): ?>
-                                <div style="font-size:0.82rem;color:#475569;"><?= htmlspecialchars($v['notes']) ?></div>
+                                <div class="style-69622"><?= htmlspecialchars($v['notes']) ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -141,7 +141,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <div class="mb-3">
                         <label class="form-label fw-bold">Colony / Location</label>
                         <select class="form-select" name="colony_id">
-                            <option value="">— Select —</option>
+                            <option value="">â€” Select â€”</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
                             <?php endforeach; ?>

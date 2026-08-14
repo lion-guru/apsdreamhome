@@ -17,7 +17,7 @@ $today = date('Y-m-d');
 $matured = 0;
 $errors = [];
 
-echo "=== Investment Maturity Cron — $today ===\n\n";
+echo "=== Investment Maturity Cron â€” $today ===\n\n";
 
 // Set tenant context for TenantContext consumers
 $cronTenantId = 1;
@@ -63,22 +63,22 @@ try {
                 $activityLogData = [
                     'user_id' => $inv['user_id'],
                     'user_type' => 'customer',
-                    'action' => "Investment {$inv['investment_ref']} matured. Principal: ₹" . number_format($inv['principal_amount']) . ", Final Value: ₹" . number_format($inv['current_value']),
+                    'action' => "Investment {$inv['investment_ref']} matured. Principal: â‚¹" . number_format($inv['principal_amount']) . ", Final Value: â‚¹" . number_format($inv['current_value']),
                     'ip_address' => '127.0.0.1',
                     'created_at' => date('Y-m-d H:i:s')
                 ];
                 if ($cronTenantId > 1) $activityLogData['tenant_id'] = $cronTenantId;
                 $db->insert('activity_logs_unified', $activityLogData);
             } catch (\Throwable $e) {
-                // Non-fatal — logging failure doesn't block maturity
+                // Non-fatal â€” logging failure doesn't block maturity
             }
 
-            echo "  ✅ #{$inv['id']} {$inv['investment_ref']} — ₹" . number_format($inv['principal_amount']) . " ({$inv['plan_name']})\n";
+            echo "  âœ… #{$inv['id']} {$inv['investment_ref']} â€” â‚¹" . number_format($inv['principal_amount']) . " ({$inv['plan_name']})\n";
             $matured++;
 
         } catch (\Throwable $e) {
             $errors[] = "Investment #{$inv['id']}: " . $e->getMessage();
-            echo "  ❌ #{$inv['id']} {$inv['investment_ref']} — ERROR: " . $e->getMessage() . "\n";
+            echo "  â�Œ #{$inv['id']} {$inv['investment_ref']} â€” ERROR: " . $e->getMessage() . "\n";
         }
     }
 
@@ -96,4 +96,4 @@ if (!empty($errors)) {
     foreach ($errors as $e) {
         echo "  - $e\n";
     }
-}
+}?>

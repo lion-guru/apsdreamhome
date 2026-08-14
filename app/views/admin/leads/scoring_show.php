@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Lead Scoring Details'; ?>
+ï»¿<?php $pageTitle = 'Lead Scoring Details'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -23,8 +23,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center">
                 <div class="card-body py-4">
-                    <div style="width:120px;height:120px;border-radius:50%;margin:0 auto 1rem;background:conic-gradient(#0d6efd <?= min($score['total_score'] ?? 0, 100) ?>%, #e9ecef 0);display:flex;align-items:center;justify-content:center">
-                        <div style="width:90px;height:90px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column"><span style="font-size:28px;font-weight:700;color:#0d6efd;line-height:1"><?= $score['total_score'] ?? 0 ?></span><small style="font-size:11px;color:#6c757d">/100</small></div>
+                    <div class="style-66597">
+                        <div class="style-67189"><span class="style-44801"><?= $score['total_score'] ?? 0 ?></span><small class="style-65753">/100</small></div>
                     </div>
                     <h5 class="mb-1">Lead Score</h5>
                     <span class="badge bg-<?= ($score['total_score'] ?? 0) >= 70 ? 'success' : (($score['total_score'] ?? 0) >= 40 ? 'warning' : 'danger') ?>-subtle text-<?= ($score['total_score'] ?? 0) >= 70 ? 'success' : (($score['total_score'] ?? 0) >= 40 ? 'warning' : 'danger') ?> rounded-pill px-3"><?= ($score['total_score'] ?? 0) >= 70 ? 'Hot' : (($score['total_score'] ?? 0) >= 40 ? 'Warm' : 'Cold') ?></span>

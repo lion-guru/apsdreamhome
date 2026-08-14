@@ -12,4 +12,4 @@ foreach (['api_keys'] as $t) {
     } catch (\Exception $e) {
         echo "$t: TABLE NOT FOUND\n";
     }
-}
+}?>

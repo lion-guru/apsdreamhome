@@ -14,7 +14,7 @@ if (!defined('BASE_URL')) {
 ?>
 
 <!-- Hero Section -->
-<section class="favorites-hero py-5" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+<section class="favorites-hero py-5" class="style-68644">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -119,7 +119,7 @@ if (!defined('BASE_URL')) {
 
                                 <div class="property-footer">
                                     <div class="property-price">
-                                        <span class="price-amount">₹<?php echo number_format($property['price']); ?></span>
+                                        <span class="price-amount">â‚¹<?php echo number_format($property['price']); ?></span>
                                     </div>
                                     <div class="property-actions">
                                         <button class="btn btn-outline-primary btn-sm favorite-toggle"

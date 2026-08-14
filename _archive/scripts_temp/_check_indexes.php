@@ -13,4 +13,4 @@ echo "Indexed on tenant_id: $indexed\n";
 echo "Missing index: " . count($missing) . "\n";
 if (count($missing) > 0) {
     echo "First 30: " . implode(', ', array_slice($missing, 0, 30)) . "\n";
-}
+}?>

@@ -34,11 +34,11 @@ $doc_type_labels = $doc_type_labels ?? [];
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4" style="position:relative;z-index:1">
+        <div class="container-fluid px-4" class="style-84072">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
                     <h4 class="mb-1 fw-bold text-white"><i class="fas fa-cogs me-2"></i>OCR Templates</h4>
-                    <p class="mb-0" style="color:#94a3b8;font-size:13px">Manage field extraction templates for each document type</p>
+                    <p class="mb-0" class="style-29848">Manage field extraction templates for each document type</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline"><i class="fas fa-arrow-left"></i>Back</a>
@@ -48,13 +48,13 @@ $doc_type_labels = $doc_type_labels ?? [];
         </div>
     </div>
 
-    <div class="container-fluid px-4" style="margin-top:24px">
+    <div class="container-fluid px-4" class="style-86238">
         <?php if (empty($templates)): ?>
             <div class="ocr-card">
                 <div class="ocr-empty">
                     <i class="fas fa-cogs d-block"></i>
                     <h6 class="mb-2">No templates created yet</h6>
-                    <p style="font-size:13px;margin-bottom:16px">Templates define which fields to extract from each document type</p>
+                    <p class="style-83988">Templates define which fields to extract from each document type</p>
                     <a href="<?= BASE_URL ?>/admin/ocr/templates/create" class="ocr-btn ocr-btn-primary"><i class="fas fa-plus me-1"></i>Create Template</a>
                 </div>
             </div>
@@ -88,14 +88,14 @@ $doc_type_labels = $doc_type_labels ?? [];
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
-                            <p style="color:#475569;font-size:12px;margin-bottom:12px">No fields defined</p>
+                            <p class="style-82830">No fields defined</p>
                         <?php endif; ?>
 
                         <div class="ocr-template-actions">
-                            <a href="<?= BASE_URL ?>/admin/ocr/templates/edit/<?= $t['id'] ?>" class="ocr-btn ocr-btn-outline" style="padding:5px 12px;font-size:11px"><i class="fas fa-edit me-1"></i>Edit</a>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/templates/delete/<?= $t['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this template?')">
+                            <a href="<?= BASE_URL ?>/admin/ocr/templates/edit/<?= $t['id'] ?>" class="ocr-btn ocr-btn-outline" class="style-95261"><i class="fas fa-edit me-1"></i>Edit</a>
+                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/templates/delete/<?= $t['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this template?')">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                <button type="submit" class="ocr-btn ocr-btn-danger" style="padding:5px 12px;font-size:11px"><i class="fas fa-trash me-1"></i>Delete</button>
+                                <button type="submit" class="ocr-btn ocr-btn-danger" class="style-95261"><i class="fas fa-trash me-1"></i>Delete</button>
                             </form>
                         </div>
                     </div>

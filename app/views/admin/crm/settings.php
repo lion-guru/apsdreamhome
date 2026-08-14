@@ -33,10 +33,10 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-cogs me-2"></i>CRM Settings & Controls</h4>
-            <p class="mb-0 mt-1" style="opacity:0.85;">Configure CRM features, permissions, and automation for your team</p>
+            <p class="mb-0 mt-1" class="style-91394">Configure CRM features, permissions, and automation for your team</p>
         </div>
         <div>
-            <span class="badge bg-white text-dark" style="font-size:0.9rem;"><i class="fas fa-shield-alt me-1"></i>SaaS-Ready</span>
+            <span class="badge bg-white text-dark" class="style-51894"><i class="fas fa-shield-alt me-1"></i>SaaS-Ready</span>
         </div>
     </div>
 </div>
@@ -47,14 +47,14 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <!-- Global CRM Toggle -->
     <div class="card setting-card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h6 class="mb-0" style="color:#7c3aed;"><i class="fas fa-power-off me-2"></i>Global CRM</h6>
+            <h6 class="mb-0" class="style-90386"><i class="fas fa-power-off me-2"></i>Global CRM</h6>
         </div>
         <div class="card-body">
             <div class="setting-section">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="fw-semibold">Enable CRM Module</div>
-                        <small class="text-muted">Master toggle — disabling hides CRM from all users</small>
+                        <small class="text-muted">Master toggle â€” disabling hides CRM from all users</small>
                     </div>
                     <div class="toggle-switch <?= $val('crm_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_enabled').value = this.classList.contains('active') ? '1' : '0';">
                         <input type="hidden" id="crm_enabled" name="crm_enabled" value="<?= $val('crm_enabled') ?>">
@@ -67,7 +67,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <!-- Lead Permissions -->
     <div class="card setting-card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h6 class="mb-0" style="color:#7c3aed;"><i class="fas fa-user-shield me-2"></i>Lead Permissions</h6>
+            <h6 class="mb-0" class="style-90386"><i class="fas fa-user-shield me-2"></i>Lead Permissions</h6>
         </div>
         <div class="card-body">
             <div class="setting-section mb-3">
@@ -98,7 +98,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <!-- Auto-Assignment -->
     <div class="card setting-card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h6 class="mb-0" style="color:#7c3aed;"><i class="fas fa-random me-2"></i>Auto-Assignment</h6>
+            <h6 class="mb-0" class="style-90386"><i class="fas fa-random me-2"></i>Auto-Assignment</h6>
         </div>
         <div class="card-body">
             <div class="setting-section">
@@ -141,7 +141,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <!-- Lead Scoring -->
     <div class="card setting-card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h6 class="mb-0" style="color:#7c3aed;"><i class="fas fa-star me-2"></i>Lead Scoring</h6>
+            <h6 class="mb-0" class="style-90386"><i class="fas fa-star me-2"></i>Lead Scoring</h6>
         </div>
         <div class="card-body">
             <div class="setting-section">
@@ -177,7 +177,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <!-- Automation Features -->
     <div class="card setting-card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h6 class="mb-0" style="color:#7c3aed;"><i class="fas fa-robot me-2"></i>Automation Features</h6>
+            <h6 class="mb-0" class="style-90386"><i class="fas fa-robot me-2"></i>Automation Features</h6>
         </div>
         <div class="card-body">
             <div class="row g-3">
@@ -210,7 +210,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     <!-- SLA & Data Settings -->
     <div class="card setting-card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h6 class="mb-0" style="color:#7c3aed;"><i class="fas fa-clock me-2"></i>SLA & Data Settings</h6>
+            <h6 class="mb-0" class="style-90386"><i class="fas fa-clock me-2"></i>SLA & Data Settings</h6>
         </div>
         <div class="card-body">
             <div class="row g-3">

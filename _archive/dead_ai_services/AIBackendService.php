@@ -74,4 +74,4 @@ if ($response && $http_code === 200) {
         'error' => 'Google API connection failed. HTTP Code: ' . $http_code,
         'status' => 'connection_error'
     ]);
-}
+}?>

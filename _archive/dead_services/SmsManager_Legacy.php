@@ -137,4 +137,4 @@ class SmsManager {
 
         return false;
     }
-}
+}?>

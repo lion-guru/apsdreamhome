@@ -61,7 +61,7 @@
         }
     </style>
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--primary);">
+    <nav class="navbar navbar-expand-lg navbar-dark" class="style-91831">
         <div class="container">
             <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>">
                 <i class="fas fa-home me-2"></i>APS Dream Home
@@ -131,7 +131,7 @@
     </section>
 
     <!-- Footer -->
-    <footer style="background: var(--primary); color: white; padding: 40px 0;">
+    <footer class="style-99070">
         <div class="container text-center">
             <p class="mb-0">&copy; 2024 APS Dream Home. All rights reserved.</p>
             <p class="small mt-2">

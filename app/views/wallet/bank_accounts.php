@@ -288,7 +288,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">IFSC Code *</label>
-                <input type="text" class="form-control" id="ifscCode" name="ifsc_code" required placeholder="e.g., SBIN0001234" pattern="[A-Z]{4}[0-9]{7}" style="text-transform: uppercase;">
+                <input type="text" class="form-control" id="ifscCode" name="ifsc_code" required placeholder="e.g., SBIN0001234" pattern="[A-Z]{4}[0-9]{7}" class="style-73536">
             </div>
             
             <div class="mb-3">
@@ -360,7 +360,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">IFSC Code *</label>
-                <input type="text" class="form-control" id="editIfscCode" name="ifsc_code" required pattern="[A-Z]{4}[0-9]{7}" style="text-transform: uppercase;">
+                <input type="text" class="form-control" id="editIfscCode" name="ifsc_code" required pattern="[A-Z]{4}[0-9]{7}" class="style-73536">
             </div>
             
             <div class="mb-3">

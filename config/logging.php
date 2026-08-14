@@ -145,4 +145,4 @@ return [
         'max_context_depth' => 3,
         'max_string_length' => 256
     ]
-];
+];?>

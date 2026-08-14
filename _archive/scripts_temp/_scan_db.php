@@ -64,4 +64,4 @@ try {
     ")->fetchAll(PDO::FETCH_COLUMN);
     $orphaned = array_diff($allTables, $referencedTables);
     echo "  Tables not referenced by FK: " . count($orphaned) . " (this is normal for root tables)\n";
-} catch (Throwable $e) {}
+} catch (Throwable $e) {}?>

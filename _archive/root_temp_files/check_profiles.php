@@ -13,4 +13,4 @@ echo "\n=== Count by Level ===\n";
 $counts = $pdo->query("SELECT current_level, COUNT(*) as cnt FROM mlm_profiles GROUP BY current_level")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($counts as $c) {
     echo "Level: '{$c['current_level']}', Count: {$c['cnt']}\n";
-}
+}?>

@@ -8,23 +8,23 @@ if (!function_exists('navUrl')) {
 }
 ?>
 
-<nav class="navbar navbar-expand-xl align-items-center" style="padding: 0.5rem 0;">
+<nav class="navbar navbar-expand-xl align-items-center" class="style-53424">
     <div class="container d-flex align-items-center">
 
         <!-- Logo - Always on the left -->
-        <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" style="flex: 0 0 auto;">
+        <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" class="style-38085">
             <?php $brand = $nav->companyName(); ?>
             <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                    if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
             <img src="<?php echo navUrl($logo); ?>"
                  alt="<?php echo htmlspecialchars($brand); ?>"
                  class="logo"
-                 style="height: 32px; width: auto; max-width: 110px;"
+                 class="style-11857"
                  loading="eager"
                  fetchpriority="high">
             <?php if (isset($brand)): ?>
                 <span class="brand-text d-none d-md-inline ms-2 fw-bold"
-                      style="color: #1a1a1a; font-size: 1.1rem;">
+                      class="style-38619">
                     <?php echo htmlspecialchars($brand); ?>
                 </span>
             <?php endif; ?>
@@ -236,7 +236,7 @@ if (!function_exists('navUrl')) {
                         <?php else: ?>
                             <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-primary fw-bold' : ''; ?>"
                                 href="<?php echo navUrl($item['url'] ?? '#'); ?>"
-                               <?php echo ($item['highlight'] ?? false) ? 'style="color:#dc3545 !important;"' : ''; ?>>
+                               <?php echo ($item['highlight'] ?? false) ? 'class="style-66454"' : ''; ?>>
                                 <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
                                 <?php echo __($item['label']); ?>
                             </a>
@@ -265,7 +265,7 @@ if (!function_exists('navUrl')) {
                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <div class="avatar avatar-sm">
-                                    <span class="avatar-title bg-primary bg-gradient rounded-circle" style="width:32px;height:32px;font-size:14px;">
+                                    <span class="avatar-title bg-primary bg-gradient rounded-circle" class="style-43341">
                                         <?php
                                         $name = $nav->userName();
                                         echo strtoupper(substr($name, 0, 1));
@@ -297,7 +297,7 @@ if (!function_exists('navUrl')) {
                     <?php else: ?>
                         <a class="nav-link btn btn-primary btn-sm text-white ms-3"
                            href="<?php echo BASE_URL; ?>/login"
-                           style="border-radius: 6px;">
+                           class="style-60873">
                             <i class="fas fa-sign-in-alt me-1"></i> <?php echo __('login'); ?> / <?php echo __('register'); ?>
                         </a>
                     <?php endif; ?>
@@ -307,11 +307,11 @@ if (!function_exists('navUrl')) {
                 <li class="nav-item dropdown ms-2">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>">
                         <i class="fas fa-globe"></i>
-                        <span class="d-none d-lg-inline"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिंदी' : 'English' ?></span>
+                        <span class="d-none d-lg-inline"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'à¤¹à¤¿à¤‚à¤¦à¥€' : 'English' ?></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
-                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">🇮🇳</span> Hindi</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">ðŸ‡¬ðŸ‡§</span> English</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">ðŸ‡®ðŸ‡³</span> Hindi</a></li>
                     </ul>
                 </li>
 
@@ -331,7 +331,7 @@ if (!function_exists('navUrl')) {
                         <i class="fas fa-balance-scale"></i> <?= __('compare') ?>
                         <span id="compareBadge"
                               class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                              style="display:none;font-size:10px;">0</span>
+                              class="style-62224">0</span>
                     </a>
                 </li>
 
@@ -352,8 +352,8 @@ if (!function_exists('navUrl')) {
                         <input type="search" class="form-control border-start-0" id="quickSearchInput"
                                placeholder="<?= __('search_properties') ?>..."
                                aria-label="<?= __('search_properties') ?>"
-                               style="min-width: 200px; border-radius: 20px 0 0 20px; background: rgba(255,255,255,0.95);">
-                        <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" style="display: none;"></div>
+                               class="style-13204">
+                        <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" class="style-54390"></div>
                     </form>
                 </li>
 

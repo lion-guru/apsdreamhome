@@ -26,7 +26,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'apsdreamhome');
 
-echo "=== APS Dream Home — Mobile Test Data Seeder ===\n\n";
+echo "=== APS Dream Home â€” Mobile Test Data Seeder ===\n\n";
 
 try {
     $pdo = new PDO(
@@ -45,7 +45,7 @@ try {
     exit(1);
 }
 
-// ── Cleanup previous test data ──────────────────────────────────
+// â”€â”€ Cleanup previous test data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 echo "=== CLEANUP PREVIOUS TEST DATA ===\n";
 try {
     // Delete in reverse FK order
@@ -86,7 +86,7 @@ try {
 }
 echo "  Cleanup complete.\n\n";
 
-// ── Start transaction ──────────────────────────────────────────
+// â”€â”€ Start transaction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $pdo->beginTransaction();
 $committed = false;
 
@@ -94,7 +94,7 @@ try {
     // ============================================================
     // SECTION 0: Pre-flight checks & discovery
     // ============================================================
-    echo "── Section 0: Pre-flight checks ──\n";
+    echo "â”€â”€ Section 0: Pre-flight checks â”€â”€\n";
 
     // Find the associate ID for user 2 (needed for plot_bookings.associate_id FK)
     $stmt = $pdo->query("SELECT id FROM associates WHERE user_id = 2 LIMIT 1");
@@ -119,7 +119,7 @@ try {
     // ============================================================
     // SECTION 1: Create 5 test customers
     // ============================================================
-    echo "\n── Section 1: Creating 5 test customers ──\n";
+    echo "\nâ”€â”€ Section 1: Creating 5 test customers â”€â”€\n";
 
     $bcryptHash = password_hash('Test1234', PASSWORD_DEFAULT);
 
@@ -136,7 +136,7 @@ try {
     foreach ($customers as $c) {
         if (isset($existingUsers[$c['email']])) {
             $customerIds[$c['email']] = (int)$existingUsers[$c['email']];
-            echo "   [SKIP] {$c['name']} ({$c['email']}) — already exists, id={$customerIds[$c['email']]}\n";
+            echo "   [SKIP] {$c['name']} ({$c['email']}) â€” already exists, id={$customerIds[$c['email']]}\n";
             continue;
         }
 
@@ -160,7 +160,7 @@ try {
 
         $id = (int)$pdo->lastInsertId();
         $customerIds[$c['email']] = $id;
-        echo "   [ADD] {$c['name']} — id=$id, email={$c['email']}\n";
+        echo "   [ADD] {$c['name']} â€” id=$id, email={$c['email']}\n";
     }
 
     $allCustomerIds = array_values($customerIds);
@@ -169,7 +169,7 @@ try {
     // ============================================================
     // SECTION 2: Create 5 plot bookings
     // ============================================================
-    echo "\n── Section 2: Creating 5 plot bookings ──\n";
+    echo "\nâ”€â”€ Section 2: Creating 5 plot bookings â”€â”€\n";
 
     // We need 5 plots. Use cheapest available from colony 4.
     if (count($availablePlots) < 5) {
@@ -191,7 +191,7 @@ try {
     // Check existing bookings for test customers by email pattern
     $existingBookings = $pdo->query("SELECT COUNT(*) FROM plot_bookings pb JOIN users u ON pb.customer_id = u.id WHERE u.email LIKE '%@test.com'")->fetchColumn();
     if ($existingBookings >= 5) {
-        echo "   [SKIP] $existingBookings bookings already exist for test customers — reusing existing\n";
+        echo "   [SKIP] $existingBookings bookings already exist for test customers â€” reusing existing\n";
     }
 
     foreach ($bookingSpecs as $idx => $spec) {
@@ -206,7 +206,7 @@ try {
         $stmt = $pdo->prepare("SELECT id FROM plot_bookings WHERE customer_id = ? LIMIT 1");
         $stmt->execute([$custId]);
         if ($stmt->fetch()) {
-            echo "   [SKIP] {$customers[$custIdx]['name']} — already has a booking\n";
+            echo "   [SKIP] {$customers[$custIdx]['name']} â€” already has a booking\n";
             $bookingIds[$custEmail] = null;
             continue;
         }
@@ -249,13 +249,13 @@ try {
         $pdo->prepare("UPDATE plots SET status = ?, customer_id = ?, booking_date = ? WHERE id = ?")
             ->execute([$plotStatus, $custId, $bookingDate, $plotId]);
 
-        echo "   [ADD] Booking $bookingNum — {$customers[$custIdx]['name']}, plot={$plot['plot_number']}, status=$status, id=$bId\n";
+        echo "   [ADD] Booking $bookingNum â€” {$customers[$custIdx]['name']}, plot={$plot['plot_number']}, status=$status, id=$bId\n";
     }
 
     // ============================================================
     // SECTION 3: Create EMI payment schedules (12 per booking)
     // ============================================================
-    echo "\n── Section 3: Creating EMI payment schedules ──\n";
+    echo "\nâ”€â”€ Section 3: Creating EMI payment schedules â”€â”€\n";
 
     foreach ($bookingIds as $custEmail => $bId) {
         if (!$bId) continue;
@@ -264,7 +264,7 @@ try {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM booking_payment_schedules WHERE booking_id = ?");
         $stmt->execute([$bId]);
         if ((int)$stmt->fetchColumn() > 0) {
-            echo "   [SKIP] Booking #$bId — schedules already exist\n";
+            echo "   [SKIP] Booking #$bId â€” schedules already exist\n";
             continue;
         }
 
@@ -338,13 +338,13 @@ try {
             ]);
         }
 
-        echo "   [ADD] Booking #$bId — 12 installments (paid=$paidCount, overdue=$overdueCount, pending=" . (12 - $paidCount - $overdueCount) . ")\n";
+        echo "   [ADD] Booking #$bId â€” 12 installments (paid=$paidCount, overdue=$overdueCount, pending=" . (12 - $paidCount - $overdueCount) . ")\n";
     }
 
     // ============================================================
     // SECTION 4: Create 10 diverse leads
     // ============================================================
-    echo "\n── Section 4: Creating 10 diverse leads ──\n";
+    echo "\nâ”€â”€ Section 4: Creating 10 diverse leads â”€â”€\n";
 
     // Check existing lead count to avoid duplicates by name+email
     $leadData = [
@@ -378,7 +378,7 @@ try {
         $stmt = $pdo->prepare("SELECT id FROM leads WHERE email = ? LIMIT 1");
         $stmt->execute([$ld['email']]);
         if ($stmt->fetch()) {
-            echo "   [SKIP] {$ld['name']} — lead already exists\n";
+            echo "   [SKIP] {$ld['name']} â€” lead already exists\n";
             continue;
         }
 
@@ -399,28 +399,28 @@ try {
         ]);
 
         $leadCount++;
-        echo "   [ADD] Lead $leadNumber — {$ld['name']}, source={$ld['source']}, stage={$ld['stage']}, score={$ld['score']}\n";
+        echo "   [ADD] Lead $leadNumber â€” {$ld['name']}, source={$ld['source']}, stage={$ld['stage']}, score={$ld['score']}\n";
     }
     echo "   Total leads inserted: $leadCount\n";
 
     // ============================================================
     // SECTION 5: Create MLM network tree
     // ============================================================
-    echo "\n── Section 5: Building MLM network tree under user 2 ──\n";
+    echo "\nâ”€â”€ Section 5: Building MLM network tree under user 2 â”€â”€\n";
 
     // Create 9 new users for the MLM tree (3 L1 + 6 L2)
     $mlmUsers = [
-        // L1 — sponsored by user 2
+        // L1 â€” sponsored by user 2
         ['name' => 'MLM Agent L1A',  'email' => 'mlm.l1a@test.com',  'phone' => '9876540101', 'gender' => 'male',   'pos' => 'left'],
         ['name' => 'MLM Agent L1B',  'email' => 'mlm.l1b@test.com',  'phone' => '9876540102', 'gender' => 'female', 'pos' => 'right'],
         ['name' => 'MLM Agent L1C',  'email' => 'mlm.l1c@test.com',  'phone' => '9876540103', 'gender' => 'male',   'pos' => 'left'],
-        // L2 — sponsored by L1A (users 111)
+        // L2 â€” sponsored by L1A (users 111)
         ['name' => 'MLM Agent L2A1', 'email' => 'mlm.l2a1@test.com', 'phone' => '9876540104', 'gender' => 'male',   'pos' => 'left',  'l1Idx' => 0],
         ['name' => 'MLM Agent L2A2', 'email' => 'mlm.l2a2@test.com', 'phone' => '9876540105', 'gender' => 'female', 'pos' => 'right', 'l1Idx' => 0],
-        // L2 — sponsored by L1B (users 112)
+        // L2 â€” sponsored by L1B (users 112)
         ['name' => 'MLM Agent L2B1', 'email' => 'mlm.l2b1@test.com', 'phone' => '9876540106', 'gender' => 'male',   'pos' => 'left',  'l1Idx' => 1],
         ['name' => 'MLM Agent L2B2', 'email' => 'mlm.l2b2@test.com', 'phone' => '9876540107', 'gender' => 'female', 'pos' => 'right', 'l1Idx' => 1],
-        // L2 — sponsored by L1C (users 113)
+        // L2 â€” sponsored by L1C (users 113)
         ['name' => 'MLM Agent L2C1', 'email' => 'mlm.l2c1@test.com', 'phone' => '9876540108', 'gender' => 'male',   'pos' => 'left',  'l1Idx' => 2],
         ['name' => 'MLM Agent L2C2', 'email' => 'mlm.l2c2@test.com', 'phone' => '9876540109', 'gender' => 'female', 'pos' => 'right', 'l1Idx' => 2],
     ];
@@ -444,7 +444,7 @@ try {
     foreach ($mlmUsers as $idx => $mu) {
         if (isset($existingMlmUsers[$mu['email']])) {
             $mlmUserIds[$idx] = (int)$existingMlmUsers[$mu['email']];
-            echo "   [SKIP] {$mu['name']} — already exists, id={$mlmUserIds[$idx]}\n";
+            echo "   [SKIP] {$mu['name']} â€” already exists, id={$mlmUserIds[$idx]}\n";
             continue;
         }
 
@@ -458,7 +458,7 @@ try {
         ]);
 
         $mlmUserIds[$idx] = (int)$pdo->lastInsertId();
-        echo "   [ADD] {$mu['name']} — id={$mlmUserIds[$idx]}, referred_by=$referredBy\n";
+        echo "   [ADD] {$mu['name']} â€” id={$mlmUserIds[$idx]}, referred_by=$referredBy\n";
     }
 
     // Create associates extension records for new MLM users
@@ -495,7 +495,7 @@ try {
             direct_referrals = VALUES(direct_referrals)
     ");
 
-    // L1 users (3) — each has 2 direct referrals (their L2 downlines)
+    // L1 users (3) â€” each has 2 direct referrals (their L2 downlines)
     foreach ([0, 1, 2] as $l1Idx) {
         $uid      = $mlmUserIds[$l1Idx];
         $refCode  = 'MLM' . str_pad($l1Idx + 1, 3, '0', STR_PAD_LEFT) . rand(10, 99);
@@ -505,7 +505,7 @@ try {
         ]);
     }
 
-    // L2 users (6) — 0 direct referrals
+    // L2 users (6) â€” 0 direct referrals
     foreach ([3, 4, 5, 6, 7, 8] as $l2Idx) {
         $uid      = $mlmUserIds[$l2Idx];
         $refCode  = 'MLM' . str_pad($l2Idx + 1, 3, '0', STR_PAD_LEFT) . rand(10, 99);
@@ -515,7 +515,7 @@ try {
         ]);
     }
 
-    // Update user 2's mlm_profiles — 3 direct referrals, 9 total team
+    // Update user 2's mlm_profiles â€” 3 direct referrals, 9 total team
     $pdo->prepare("
         UPDATE mlm_profiles SET 
             direct_referrals = 3, 
@@ -550,19 +550,19 @@ try {
     }
     echo "   6 L2 network_tree records inserted.\n";
 
-    echo "   Network tree: user 2 → 3 L1 → 6 L2 (9 total downlines)\n";
+    echo "   Network tree: user 2 â†’ 3 L1 â†’ 6 L2 (9 total downlines)\n";
 
     // ============================================================
     // SECTION 6: Create 5 commission ledger entries
     // ============================================================
-    echo "\n── Section 6: Creating 5 commission ledger entries ──\n";
+    echo "\nâ”€â”€ Section 6: Creating 5 commission ledger entries â”€â”€\n";
 
     $commissionEntries = [
-        ['beneficiary' => 2,     'source' => 3,     'type' => 'direct_sale',       'amount' => 5000,  'level' => 1,  'notes' => 'Direct sale commission — Rajesh Kumar booking'],
-        ['beneficiary' => 2,     'source' => 3,     'type' => 'team_bonus',        'amount' => 12000, 'level' => 1,  'notes' => 'Team bonus — Priya Sharma booking via associate'],
-        ['beneficiary' => $mlmUserIds[0] ?? 111, 'source' => 2, 'type' => 'override', 'amount' => 8500, 'level' => 2, 'notes' => 'Override commission — Gen2 team sale'],
-        ['beneficiary' => 2,     'source' => 3,     'type' => 'performance_bonus', 'amount' => 15000, 'level' => null, 'notes' => 'Monthly performance bonus — 3 consecutive bookings'],
-        ['beneficiary' => $mlmUserIds[1] ?? 112, 'source' => 2, 'type' => 'level_bonus', 'amount' => 3500, 'level' => 3, 'notes' => 'Level 3 bonus — deep network activation'],
+        ['beneficiary' => 2,     'source' => 3,     'type' => 'direct_sale',       'amount' => 5000,  'level' => 1,  'notes' => 'Direct sale commission â€” Rajesh Kumar booking'],
+        ['beneficiary' => 2,     'source' => 3,     'type' => 'team_bonus',        'amount' => 12000, 'level' => 1,  'notes' => 'Team bonus â€” Priya Sharma booking via associate'],
+        ['beneficiary' => $mlmUserIds[0] ?? 111, 'source' => 2, 'type' => 'override', 'amount' => 8500, 'level' => 2, 'notes' => 'Override commission â€” Gen2 team sale'],
+        ['beneficiary' => 2,     'source' => 3,     'type' => 'performance_bonus', 'amount' => 15000, 'level' => null, 'notes' => 'Monthly performance bonus â€” 3 consecutive bookings'],
+        ['beneficiary' => $mlmUserIds[1] ?? 112, 'source' => 2, 'type' => 'level_bonus', 'amount' => 3500, 'level' => 3, 'notes' => 'Level 3 bonus â€” deep network activation'],
     ];
 
     $commInsert = $pdo->prepare("
@@ -592,20 +592,20 @@ try {
             $ce['notes'], $createdAt,
         ]);
 
-        echo "   [ADD] Commission {$ce['type']} — ₹" . number_format($ce['amount']) . " → user #{$ce['beneficiary']}\n";
+        echo "   [ADD] Commission {$ce['type']} â€” â‚¹" . number_format($ce['amount']) . " â†’ user #{$ce['beneficiary']}\n";
     }
 
     // ============================================================
     // SECTION 7: Insert property_images for 10 plots
     // ============================================================
-    echo "\n── Section 7: Creating property images for plots ──\n";
+    echo "\nâ”€â”€ Section 7: Creating property images for plots â”€â”€\n";
 
     // Use existing user_properties IDs
     $stmt = $pdo->query("SELECT id FROM user_properties ORDER BY id LIMIT 15");
     $propertyIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
     if (count($propertyIds) < 5) {
-        echo "   [WARN] Less than 5 user_properties found — creating images for available count\n";
+        echo "   [WARN] Less than 5 user_properties found â€” creating images for available count\n";
     }
 
     $imagePaths = [
@@ -666,7 +666,7 @@ try {
     // ============================================================
     // SECTION 8: Final summary
     // ============================================================
-    echo "\n── Section 8: Summary ──\n";
+    echo "\nâ”€â”€ Section 8: Summary â”€â”€\n";
 
     // Count records
     $counts = [];
@@ -689,7 +689,7 @@ try {
     $stmt = $pdo->prepare("SELECT id, name, email, phone, role, status FROM users WHERE email IN ($placeholders)");
     $stmt->execute($testEmails);
     foreach ($stmt->fetchAll() as $row) {
-        echo "     #{$row['id']} {$row['name']} — {$row['email']} ({$row['phone']}) [{$row['role']}, {$row['status']}]\n";
+        echo "     #{$row['id']} {$row['name']} â€” {$row['email']} ({$row['phone']}) [{$row['role']}, {$row['status']}]\n";
     }
 
     // Verify bookings
@@ -703,7 +703,7 @@ try {
     ");
     $stmt->execute($allCustomerIds);
     foreach ($stmt->fetchAll() as $row) {
-        echo "     {$row['booking_number']} — {$row['customer']}, plot {$row['plot_number']}, ₹" . number_format($row['total_plot_value']) . ", {$row['status']}, {$row['channel']}\n";
+        echo "     {$row['booking_number']} â€” {$row['customer']}, plot {$row['plot_number']}, â‚¹" . number_format($row['total_plot_value']) . ", {$row['status']}, {$row['channel']}\n";
     }
 
     // Verify MLM tree
@@ -718,14 +718,14 @@ try {
         ORDER BY nt.level, nt.sponsor_id
     ");
     foreach ($stmt->fetchAll() as $row) {
-        echo "     L{$row['level']} [{$row['position']}] {$row['name']} (id={$row['associate_id']}) ← sponsor #{$row['sponsor_id']}\n";
+        echo "     L{$row['level']} [{$row['position']}] {$row['name']} (id={$row['associate_id']}) â†� sponsor #{$row['sponsor_id']}\n";
     }
 
-    // ── Commit ──────────────────────────────────────────────────
+    // â”€â”€ Commit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     $pdo->commit();
     $committed = true;
 
-    echo "\n=== ALL DONE — Transaction committed successfully ===\n";
+    echo "\n=== ALL DONE â€” Transaction committed successfully ===\n";
 
 } catch (\Throwable $e) {
     if (!$committed) {
@@ -736,4 +736,4 @@ try {
     echo "  Stack: " . $e->getTraceAsString() . "\n";
     echo "\nTransaction rolled back. No data was inserted.\n";
     exit(1);
-}
+}?>

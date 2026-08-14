@@ -12,4 +12,4 @@ foreach ($tables as $t) {
         echo "  {$c['Field']} ({$c['Type']})\n";
     }
     echo "\n";
-}
+}?>

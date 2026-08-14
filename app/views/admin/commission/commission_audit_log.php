@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-book"></i> MLM Commission Ledger (Legacy Audit)</h4>
         <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
@@ -12,7 +12,7 @@
                     <?php if (empty($ledger ?? [])): ?>
                     <tr>
                         <td colspan="5" class="text-center py-5">
-                            <i class="fas fa-book fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <i class="fas fa-book fa-3x text-muted mb-3" class="style-82835"></i>
                             <h5 class="text-muted">No audit log entries found</h5>
                             <p class="text-muted mb-3">Commission audit entries will appear here as transactions are processed.</p>
                         </td>

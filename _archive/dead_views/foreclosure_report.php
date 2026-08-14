@@ -93,7 +93,7 @@
                     <h6 class="m-0 font-weight-bold text-primary"><?= $mlSupport->translate('Foreclosure Trends (Last 12 Months)') ?></h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="chart-area" style="height: 320px;">
+                    <div class="chart-area" class="style-57198">
                         <canvas id="foreclosureChart"></canvas>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
                 { data: 'attempted_at', render: function(data) { return new Date(data).toLocaleDateString(); } },
                 { data: 'customer_name' },
                 { data: 'property_title' },
-                { data: 'foreclosure_amount', render: function(data) { return '₹' + parseFloat(data).toLocaleString(); } },
+                { data: 'foreclosure_amount', render: function(data) { return 'â‚¹' + parseFloat(data).toLocaleString(); } },
                 { data: 'admin_name' },
                 { 
                     data: 'foreclosure_status',

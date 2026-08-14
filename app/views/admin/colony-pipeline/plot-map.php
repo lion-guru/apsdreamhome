@@ -15,7 +15,7 @@
 <div class="container-fluid py-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h4 class="mb-1"><i class="fas fa-map-marked-alt" style="color:#0d9488"></i> Plot Map &mdash; <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
+            <h4 class="mb-1"><i class="fas fa-map-marked-alt" class="style-5793"></i> Plot Map &mdash; <?= htmlspecialchars($colony['name'] ?? '') ?></h4>
             <span class="text-muted small"><?= count($plots) ?> plots &middot; <?= htmlspecialchars($colony['district_name'] ?? '') ?></span>
         </div>
         <div>
@@ -24,22 +24,22 @@
         </div>
     </div>
     <div class="map-stats-bar" id="mapStats">
-        <span class="map-stat" data-status="available"><span class="dot" style="background:#22c55e"></span> Available: <strong id="statAvail">0</strong></span>
-        <span class="map-stat" data-status="booked"><span class="dot" style="background:#eab308"></span> Booked: <strong id="statBooked">0</strong></span>
-        <span class="map-stat" data-status="sold"><span class="dot" style="background:#ef4444"></span> Sold: <strong id="statSold">0</strong></span>
-        <span class="map-stat" data-status="hold"><span class="dot" style="background:#6b7280"></span> Hold: <strong id="statHold">0</strong></span>
-        <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">₹0</strong></span>
+        <span class="map-stat" data-status="available"><span class="dot" class="style-26706"></span> Available: <strong id="statAvail">0</strong></span>
+        <span class="map-stat" data-status="booked"><span class="dot" class="style-4960"></span> Booked: <strong id="statBooked">0</strong></span>
+        <span class="map-stat" data-status="sold"><span class="dot" class="style-68656"></span> Sold: <strong id="statSold">0</strong></span>
+        <span class="map-stat" data-status="hold"><span class="dot" class="style-99107"></span> Hold: <strong id="statHold">0</strong></span>
+        <span class="map-stat ms-auto text-muted">Total Value: <strong id="statValue">Ã¢â€šÂ¹0</strong></span>
     </div>
     <div class="map-filter-bar mb-3">
         <button class="btn btn-sm btn-light border active btn-map-filter" data-filter="all">All</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="available" style="color:#16a34a">Available</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="booked" style="color:#ca8a04">Booked</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="sold" style="color:#dc2626">Sold</button>
-        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="hold" style="color:#4b5563">Hold</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="available" class="style-82740">Available</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="booked" class="style-67064">Booked</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="sold" class="style-51061">Sold</button>
+        <button class="btn btn-sm btn-light border btn-map-filter" data-filter="hold" class="style-79191">Hold</button>
     </div>
     <div id="plotMap"></div>
 </div>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.min.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function() {
@@ -52,11 +52,11 @@
     var legend = L.control({ position: 'bottomright' });
     legend.onAdd = function() {
         var div = L.DomUtil.create('div', 'legend');
-        div.innerHTML = '<div style="background:white;padding:8px 12px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);font-size:12px;line-height:2">' +
-            '<div><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#22c55e;margin-right:5px"></span>Available</div>' +
-            '<div><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#eab308;margin-right:5px"></span>Booked</div>' +
-            '<div><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#ef4444;margin-right:5px"></span>Sold</div>' +
-            '<div><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#6b7280;margin-right:5px"></span>Hold</div></div>';
+        div.innerHTML = '<div class="style-45261">' +
+            '<div><span class="style-96563"></span>Available</div>' +
+            '<div><span class="style-42723"></span>Booked</div>' +
+            '<div><span class="style-62460"></span>Sold</div>' +
+            '<div><span class="style-60540"></span>Hold</div></div>';
         return div;
     };
     legend.addTo(map);
@@ -80,10 +80,10 @@
                             '<div class="info-row"><span class="label">Block</span><span class="value">' + (p.block || '-') + '</span></div>' +
                             '<div class="info-row"><span class="label">Area</span><span class="value">' + (p.area_sqft || 0) + ' sqft</span></div>' +
                             '<div class="info-row"><span class="label">Size</span><span class="value">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
-                            (p.price_per_sqft ? '<div class="info-row"><span class="label">Rate</span><span class="value">₹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
-                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold" style="color:#0d9488">₹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
-                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value" style="color:#16a34a">✓</span></div>' : '') +
-                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value" style="color:#16a34a">✓</span></div>' : '') +
+                            (p.price_per_sqft ? '<div class="info-row"><span class="label">Rate</span><span class="value">Ã¢â€šÂ¹' + Number(p.price_per_sqft).toLocaleString() + '/sqft</span></div>' : '') +
+                            (p.total_price ? '<div class="info-row"><span class="label">Price</span><span class="value fw-bold" class="style-5793">Ã¢â€šÂ¹' + Number(p.total_price).toLocaleString() + '</span></div>' : '') +
+                            (p.corner_plot ? '<div class="info-row"><span class="label">Corner Plot</span><span class="value" class="style-82740">Ã¢Å“â€œ</span></div>' : '') +
+                            (p.park_facing ? '<div class="info-row"><span class="label">Park Facing</span><span class="value" class="style-82740">Ã¢Å“â€œ</span></div>' : '') +
                             (p.gata_number ? '<div class="info-row"><span class="label">Gata</span><span class="value">' + p.gata_number + '</span></div>' : '') +
                             '<hr class="my-2"><a href="' + baseUrl + '/admin/colony-pipeline/' + colonyId + '/plots?block=' + encodeURIComponent(p.block || '') + '" class="btn btn-sm btn-outline-primary w-100"><i class="fas fa-eye me-1"></i>View Details</a></div>';
                         layer.bindPopup(html, { maxWidth: 300 });
@@ -111,7 +111,7 @@
         document.getElementById('statBooked').textContent = (byStatus['booked'] || 0);
         document.getElementById('statSold').textContent = (byStatus['sold'] || 0);
         document.getElementById('statHold').textContent = (byStatus['hold'] || 0) + (byStatus['reserved'] || 0);
-        document.getElementById('statValue').textContent = '₹' + totalValue.toLocaleString();
+        document.getElementById('statValue').textContent = 'Ã¢â€šÂ¹' + totalValue.toLocaleString();
     }
 
     function applyFilter(activeBtn) {

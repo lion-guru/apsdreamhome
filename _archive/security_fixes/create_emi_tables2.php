@@ -61,4 +61,4 @@ CREATE TABLE IF NOT EXISTS booking_emi_installments (
 
 echo "booking_emi_installments table created/verified\n";
 
-echo "\nAll EMI tables created successfully!\n";
+echo "\nAll EMI tables created successfully!\n";?>

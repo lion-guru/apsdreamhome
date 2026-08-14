@@ -18,11 +18,11 @@ $user_role = $this->getUserRole() ?? 'customer';
     </button>
     
     <!-- Chat Popup -->
-    <div id="ai-chat-popup" class="ai-chat-popup" style="display: none;">
+    <div id="ai-chat-popup" class="ai-chat-popup" class="style-54390">
         <!-- Chat Header -->
         <div class="ai-chat-header">
             <div class="ai-chat-info">
-                <div class="ai-chat-avatar">🤖</div>
+                <div class="ai-chat-avatar">ðŸ¤–</div>
                 <div class="ai-chat-details">
                     <h4>APS AI Assistant</h4>
                     <p id="ai-status-text">Ready to help</p>
@@ -42,13 +42,13 @@ $user_role = $this->getUserRole() ?? 'customer';
         <div id="ai-chat-messages" class="ai-chat-messages">
             <div class="ai-message ai-welcome">
                 <div class="ai-message-content">
-                    <strong>🙏 Namaste!</strong><br>
+                    <strong>ðŸ™� Namaste!</strong><br>
                     Main APS Dream Home ki AI hoon. Aapki kya madad kar sakta hoon?<br><br>
                     <strong>Available help:</strong><br>
-                    • Property information<br>
-                    • Sales guidance<br>
-                    • Technical support<br>
-                    • General assistance<br><br>
+                    â€¢ Property information<br>
+                    â€¢ Sales guidance<br>
+                    â€¢ Technical support<br>
+                    â€¢ General assistance<br><br>
                     <small>Type your message below...</small>
                 </div>
             </div>
@@ -522,7 +522,7 @@ function showLeadCaptureNotification(leadData) {
         max-width: 300px;
     `;
     notification.innerHTML = `
-        <strong>🎯 Lead Captured!</strong><br>
+        <strong>ðŸŽ¯ Lead Captured!</strong><br>
         ${leadData.name ? 'Name: ' + leadData.name + '<br>' : ''}
         ${leadData.phone ? 'Phone: ' + leadData.phone + '<br>' : ''}
         <small>Saved to database</small>

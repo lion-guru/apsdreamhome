@@ -17,8 +17,8 @@
     <div class="col-md-3 col-sm-6">
         <div class="card h-100">
             <div class="card-body text-center">
-                <div class="avatar avatar-lg mx-auto mb-2" style="background: var(--card-bg);">
-                    <i class="fas fa-building fa-2x" style="color: var(--text-primary);"></i>
+                <div class="avatar avatar-lg mx-auto mb-2" class="style-24697">
+                    <i class="fas fa-building fa-2x" class="style-60251"></i>
                 </div>
                 <h5 class="card-title"><?= htmlspecialchars($dept['name']) ?></h5>
                 <p class="text-muted small mb-2"><?= htmlspecialchars($dept['code']) ?></p>

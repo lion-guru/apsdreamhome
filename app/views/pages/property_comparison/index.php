@@ -54,7 +54,7 @@ $view_count = $view_count ?? 0;
                 </button>
             <?php endif; ?>
             <?php if ($count > 0): ?>
-                <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" style="display:inline;">
+                <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" class="style-35851">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-outline-danger" onclick="return confirm('<?= __('cmp_clear_confirm', [], 'Clear all?') ?>')">
                         <i class="fas fa-trash me-1"></i> <?= __('cmp_clear_all', [], 'Clear All') ?>
@@ -79,18 +79,18 @@ $view_count = $view_count ?? 0;
     <?php else: ?>
         <div class="cmp-card">
             <div class="cmp-row">
-                <div class="label cmp-image" style="background:#f9fafb;"><i class="fas fa-image"></i></div>
+                <div class="label cmp-image" class="style-833"><i class="fas fa-image"></i></div>
                 <?php foreach ($properties as $p): ?>
-                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>" style="background:linear-gradient(135deg, #0d948820 0%, #0f766e20 100%);">
+                    <div class="cmp-image position-relative <?= ($comparison['best_value_id'] ?? null) == $p['id'] ? 'cmp-best' : '' ?>" class="style-47346">
                         <?php if (!empty($p['image'])): ?>
-                            <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" style="max-width:100%; max-height:100%;">
+                            <img src="<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" class="style-25330">
                         <?php else: ?>
                             <i class="fas fa-home text-muted"></i>
                         <?php endif; ?>
-                        <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" style="position:absolute; top:5px; right:5px;">
+                        <form method="POST" action="<?= BASE_URL ?>/property-comparison/remove" class="style-15676">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?= $p['id'] ?>">
-                            <button type="submit" class="btn btn-sm btn-danger" style="padding: 2px 8px;" title="Remove">
+                            <button type="submit" class="btn btn-sm btn-danger" class="style-82522" title="Remove">
                                 <i class="fas fa-times"></i>
                             </button>
                         </form>
@@ -111,7 +111,7 @@ $view_count = $view_count ?? 0;
                 <?php foreach ($properties as $p): ?>
                     <div><strong><?= htmlspecialchars(ucfirst($p['property_type'] ?? 'N/A')) ?></strong></div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -122,14 +122,14 @@ $view_count = $view_count ?? 0;
                         <?= htmlspecialchars($p['city'] ?? $p['address'] ?? 'N/A') ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
                 <div class="label"><i class="fas fa-rupee-sign me-1"></i> <?= __('cmp_price', [], 'Price') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div>
-                        <strong class="text-success">₹<?= number_format($p['price'] ?? 0) ?></strong>
+                        <strong class="text-success">â‚¹<?= number_format($p['price'] ?? 0) ?></strong>
                         <?php if (($comparison['cheapest'] ?? 0) > 0 && ($p['price'] ?? 0) == $comparison['cheapest']): ?>
                             <i class="fas fa-arrow-down text-success ms-1" title="Cheapest"></i>
                         <?php elseif (($comparison['priciest'] ?? 0) > 0 && ($p['price'] ?? 0) == $comparison['priciest']): ?>
@@ -137,7 +137,7 @@ $view_count = $view_count ?? 0;
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -150,7 +150,7 @@ $view_count = $view_count ?? 0;
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -159,29 +159,29 @@ $view_count = $view_count ?? 0;
                     $ps = (!empty($p['price']) && !empty($p['area_sqft']) && $p['area_sqft'] > 0) ? round($p['price'] / $p['area_sqft'], 2) : 0;
                 ?>
                     <div>
-                        <strong>₹<?= number_format($ps) ?></strong>
+                        <strong>â‚¹<?= number_format($ps) ?></strong>
                         <?php if (($comparison['best_value_id'] ?? null) == $p['id']): ?>
                             <span class="badge bg-success ms-1"><?= __('cmp_best', [], 'Best') ?></span>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
                 <div class="label"><i class="fas fa-bed me-1"></i> <?= __('cmp_bedrooms', [], 'Bedrooms') ?></div>
                 <?php foreach ($properties as $p): ?>
-                    <div><?= htmlspecialchars($p['bedrooms'] ?? '—') ?></div>
+                    <div><?= htmlspecialchars($p['bedrooms'] ?? 'â€”') ?></div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
                 <div class="label"><i class="fas fa-bath me-1"></i> <?= __('cmp_bathrooms', [], 'Bathrooms') ?></div>
                 <?php foreach ($properties as $p): ?>
-                    <div><?= htmlspecialchars($p['bathrooms'] ?? '—') ?></div>
+                    <div><?= htmlspecialchars($p['bathrooms'] ?? 'â€”') ?></div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -193,7 +193,7 @@ $view_count = $view_count ?? 0;
                         </span>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -205,7 +205,7 @@ $view_count = $view_count ?? 0;
                         </span>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
 
             <div class="cmp-row">
@@ -220,7 +220,7 @@ $view_count = $view_count ?? 0;
                         </a>
                     </div>
                 <?php endforeach; ?>
-                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">—</div><?php endfor; ?>
+                <?php for ($i = $count; $i < 4; $i++): ?><div class="text-muted">â€”</div><?php endfor; ?>
             </div>
         </div>
 
@@ -230,7 +230,7 @@ $view_count = $view_count ?? 0;
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
                             <p class="text-muted small mb-1"><?= __('cmp_cheapest', [], 'Cheapest') ?></p>
-                            <h4 class="text-success mb-0">₹<?= number_format($comparison['cheapest'] ?? 0) ?></h4>
+                            <h4 class="text-success mb-0">â‚¹<?= number_format($comparison['cheapest'] ?? 0) ?></h4>
                         </div>
                     </div>
                 </div>
@@ -238,7 +238,7 @@ $view_count = $view_count ?? 0;
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
                             <p class="text-muted small mb-1"><?= __('cmp_most_expensive', [], 'Most Expensive') ?></p>
-                            <h4 class="text-danger mb-0">₹<?= number_format($comparison['priciest'] ?? 0) ?></h4>
+                            <h4 class="text-danger mb-0">â‚¹<?= number_format($comparison['priciest'] ?? 0) ?></h4>
                         </div>
                     </div>
                 </div>
@@ -246,7 +246,7 @@ $view_count = $view_count ?? 0;
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
                             <p class="text-muted small mb-1"><?= __('cmp_avg_price', [], 'Average Price') ?></p>
-                            <h4 class="text-info mb-0">₹<?= number_format($comparison['avg_price'] ?? 0) ?></h4>
+                            <h4 class="text-info mb-0">â‚¹<?= number_format($comparison['avg_price'] ?? 0) ?></h4>
                         </div>
                     </div>
                 </div>

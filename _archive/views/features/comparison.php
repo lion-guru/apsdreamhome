@@ -44,7 +44,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-bordered align-middle mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th style="width:25%">Attribute</th><th style="width:37.5%"><?= htmlspecialchars($comparison['a']['name'] ?? 'Property A') ?></th><th style="width:37.5%"><?= htmlspecialchars($comparison['b']['name'] ?? 'Property B') ?></th></tr>
+                        <tr><th class="style-14247">Attribute</th><th class="style-50449"><?= htmlspecialchars($comparison['a']['name'] ?? 'Property A') ?></th><th class="style-50449"><?= htmlspecialchars($comparison['b']['name'] ?? 'Property B') ?></th></tr>
                     </thead>
                     <tbody>
                         <?php $attrs = ['price' => 'Price', 'area' => 'Area (sqft)', 'type' => 'Type', 'location' => 'Location', 'bedrooms' => 'Bedrooms', 'bathrooms' => 'Bathrooms', 'status' => 'Status', 'amenities' => 'Amenities']; ?>

@@ -13,13 +13,13 @@
                         <option value="delete">Delete Selected</option>
                     </select>
                 </div>
-                <div class="col-md-3" id="assignTo" style="display:none">
+                <div class="col-md-3" id="assignTo" class="style-24280">
                     <label class="form-label">Assign To</label>
                     <select name="assign_to" class="form-select">
                         <option value="">Select User</option>
                     </select>
                 </div>
-                <div class="col-md-3" id="statusTo" style="display:none">
+                <div class="col-md-3" id="statusTo" class="style-24280">
                     <label class="form-label">New Status</label>
                     <select name="new_status" class="form-select">
                         <option value="new">New</option>

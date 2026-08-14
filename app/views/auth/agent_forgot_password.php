@@ -11,7 +11,9 @@
                             <label class="form-label">Email Address</label>
                             <input type="email" name="email" class="form-control" required autofocus>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
+                        
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
                     </form>
                     <div class="text-center mt-3">
                         <a href="<?= BASE_URL ?>/agent/login" class="text-decoration-none">Back to Login</a>

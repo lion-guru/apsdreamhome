@@ -9,13 +9,13 @@ if (!$file || !file_exists($file)) {
 $content = file_get_contents($file);
 
 $replacements = [
-    'â‚¹' => '₹',
-    'â€™' => "'",
-    'â€œ' => '"',
-    'â€' => '"',
-    'â€”' => '—',
-    'â€¢' => '•',
-    'â€“' => '–',
+    'Ã¢â€šÂ¹' => 'â‚¹',
+    'Ã¢â‚¬â„¢' => "'",
+    'Ã¢â‚¬Å“' => '"',
+    'Ã¢â‚¬Â�' => '"',
+    'Ã¢â‚¬â€�' => 'â€”',
+    'Ã¢â‚¬Â¢' => 'â€¢',
+    'Ã¢â‚¬â€œ' => 'â€“',
 ];
 
 foreach ($replacements as $search => $replace) {
@@ -23,4 +23,4 @@ foreach ($replacements as $search => $replace) {
 }
 
 file_put_contents($file, $content);
-echo "Fixed characters in $file\n";
+echo "Fixed characters in $file\n";?>

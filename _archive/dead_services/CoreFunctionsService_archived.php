@@ -49,4 +49,4 @@ $router->get('/api/core-functions/get-whatsapp-templates', 'CoreFunctionsControl
 
 // Password handling
 $router->post('/api/core-functions/hash-password', 'CoreFunctionsControllerNew@hashPassword');
-$router->post('/api/core-functions/verify-password-hash', 'CoreFunctionsControllerNew@verifyPasswordHash');
+$router->post('/api/core-functions/verify-password-hash', 'CoreFunctionsControllerNew@verifyPasswordHash');?>

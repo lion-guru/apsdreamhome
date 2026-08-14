@@ -136,15 +136,15 @@ try {
     $pdo->exec("DROP TABLE IF EXISTS mlm_rank_benefits_backup_20260626");
     $pdo->exec("CREATE TABLE mlm_rank_benefits_backup_20260626 LIKE mlm_rank_benefits");
     $pdo->exec("INSERT INTO mlm_rank_benefits_backup_20260626 SELECT * FROM mlm_rank_benefits");
-    echo "✓ Backup created\n\n";
+    echo "âœ“ Backup created\n\n";
 
     echo "Step 2: Truncating mlm_rank_benefits table...\n";
     $pdo->exec("TRUNCATE TABLE mlm_rank_benefits");
-    echo "✓ Table truncated\n\n";
+    echo "âœ“ Table truncated\n\n";
 
     echo "Step 3: Altering rank_name ENUM to include new ranks...\n";
     $pdo->exec("ALTER TABLE mlm_rank_benefits MODIFY COLUMN rank_name ENUM('Ass.','Sr. Ass.','BDM','Sr. BDM','V.P.','President','Site Manager') NOT NULL");
-    echo "✓ ENUM updated\n\n";
+    echo "âœ“ ENUM updated\n\n";
 
     echo "Step 4: Inserting new ranks...\n";
     $stmt = $pdo->prepare("INSERT INTO mlm_rank_benefits (rank_name, rank_order, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_pct, l2_pct, l3_pct, perks, color_code, badge_icon, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
@@ -164,7 +164,7 @@ try {
             $rank['badge_icon'],
             $rank['is_active']
         ]);
-        echo "✓ Inserted: " . $rank['rank_name'] . "\n";
+        echo "âœ“ Inserted: " . $rank['rank_name'] . "\n";
     }
     echo "\n";
 
@@ -176,7 +176,7 @@ try {
         $stmt->execute([$newRank, $oldRank]);
         $count = $stmt->rowCount();
         if ($count > 0) {
-            echo "✓ Migrated $count associates from $oldRank to $newRank\n";
+            echo "âœ“ Migrated $count associates from $oldRank to $newRank\n";
         }
     }
     echo "\n";
@@ -198,7 +198,7 @@ try {
         $stmt->execute([$newRank, $oldRank]);
         $count = $stmt->rowCount();
         if ($count > 0) {
-            echo "✓ Migrated $count profiles from $oldRank to $newRank\n";
+            echo "âœ“ Migrated $count profiles from $oldRank to $newRank\n";
         }
     }
     echo "\n";
@@ -215,10 +215,10 @@ try {
         $stmt->execute([$newRank, $oldRank]);
         $count2 = $stmt->rowCount();
         if ($count1 > 0 || $count2 > 0) {
-            echo "✓ Updated rank history from $oldRank to $newRank\n";
+            echo "âœ“ Updated rank history from $oldRank to $newRank\n";
         }
     }
-    echo "✓ Rank history updated\n\n";
+    echo "âœ“ Rank history updated\n\n";
 
     echo "Step 8: Skipping mlm_commission_ledger update (no rank_at_time column exists)\n";
     echo "Note: Ledger uses 'level' column (numeric), not rank names\n\n";
@@ -240,11 +240,11 @@ try {
     }
     echo "\n";
 
-    echo "✓ All migrations completed successfully!\n";
-    echo "✓ Backup saved in mlm_rank_benefits_backup_20260626\n";
+    echo "âœ“ All migrations completed successfully!\n";
+    echo "âœ“ Backup saved in mlm_rank_benefits_backup_20260626\n";
 
 } catch (PDOException $e) {
-    echo "❌ Migration failed: " . $e->getMessage() . "\n";
+    echo "â�Œ Migration failed: " . $e->getMessage() . "\n";
     echo "Rolling back...\n";
 
     // Restore from backup
@@ -254,10 +254,10 @@ try {
         // Then restore data
         $pdo->exec("TRUNCATE TABLE mlm_rank_benefits");
         $pdo->exec("INSERT INTO mlm_rank_benefits SELECT * FROM mlm_rank_benefits_backup_20260626");
-        echo "✓ Rolled back to backup\n";
+        echo "âœ“ Rolled back to backup\n";
     } catch (PDOException $rollbackError) {
-        echo "❌ Rollback failed: " . $rollbackError->getMessage() . "\n";
+        echo "â�Œ Rollback failed: " . $rollbackError->getMessage() . "\n";
     }
 
     exit(1);
-}
+}?>

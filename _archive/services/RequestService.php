@@ -448,4 +448,4 @@ class RequestService
         $_SESSION['flash'] = [];
         return $messages;
     }
-}
+}?>

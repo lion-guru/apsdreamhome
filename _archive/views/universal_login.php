@@ -103,7 +103,8 @@ $active_page = 'login';
                                 </div>
 
                                 <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+                                    <?php echo \App\Helpers\SimpleCaptcha::renderField(); ?>
+<button type="submit" class="btn btn-primary btn-lg">
                                         <i class="fas fa-sign-in-alt me-2"></i>Login with Email
                                     </button>
                                     <button type="button" class="btn btn-outline-secondary" onclick="switchToTab('mobile-tab')">

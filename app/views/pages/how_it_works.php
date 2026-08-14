@@ -23,7 +23,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                 <div class="row g-4 mb-5">
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width:70px;height:70px;">
+                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" class="style-89554">
                                 <i class="fas fa-search fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">1. Explore</h5>
@@ -32,7 +32,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     </div>
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width:70px;height:70px;">
+                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" class="style-89554">
                                 <i class="fas fa-calendar-check fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">2. Schedule Visit</h5>
@@ -41,16 +41,16 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     </div>
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width:70px;height:70px;">
+                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" class="style-89554">
                                 <i class="fas fa-file-contract fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">3. Verify Documents</h5>
-                            <p class="text-muted mb-0">Our legal team verifies all property documents — title, encumbrance certificate, RERA registration, and government approvals.</p>
+                            <p class="text-muted mb-0">Our legal team verifies all property documents â€” title, encumbrance certificate, RERA registration, and government approvals.</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width:70px;height:70px;">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" class="style-89554">
                                 <i class="fas fa-handshake fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">4. Book Your Plot</h5>
@@ -59,16 +59,16 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     </div>
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width:70px;height:70px;">
+                            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 mx-auto" class="style-89554">
                                 <i class="fas fa-credit-card fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">5. Easy Payments</h5>
-                            <p class="text-muted mb-0">Choose flexible payment options — full payment, easy EMI, or construction-linked plans. Set up auto-pay with NACH/e-Mandate.</p>
+                            <p class="text-muted mb-0">Choose flexible payment options â€” full payment, easy EMI, or construction-linked plans. Set up auto-pay with NACH/e-Mandate.</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-                            <div class="rounded-circle bg-warning text-dark d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width:70px;height:70px;">
+                            <div class="rounded-circle bg-warning text-dark d-inline-flex align-items-center justify-content-center mb-3 mx-auto" class="style-89554">
                                 <i class="fas fa-key fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">6. Get Possession</h5>

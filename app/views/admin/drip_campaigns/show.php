@@ -15,8 +15,8 @@ ob_start();
                 <span class="badge bg-<?= ['active' => 'success', 'paused' => 'warning', 'draft' => 'secondary'][$campaign['status']] ?? 'secondary' ?>">
                     <?= ucfirst($campaign['status']) ?>
                 </span>
-                · Trigger: <strong><?= ucfirst(str_replace('_', ' ', $campaign['trigger_event'])) ?></strong>
-                · <?= count($emails) ?> emails in sequence
+                Â· Trigger: <strong><?= ucfirst(str_replace('_', ' ', $campaign['trigger_event'])) ?></strong>
+                Â· <?= count($emails) ?> emails in sequence
             </p>
         </div>
         <a href="<?= BASE_URL ?>/admin/drip-campaigns" class="btn btn-outline-secondary">
@@ -72,7 +72,7 @@ ob_start();
                 <div class="timeline">
                     <?php foreach ($emails as $i => $e): ?>
                         <div class="d-flex mb-3">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; min-width: 40px;">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" class="style-93328">
                                 <strong><?= $e['sequence_order'] ?></strong>
                             </div>
                             <div class="flex-grow-1">
@@ -82,9 +82,9 @@ ob_start();
                                     <?= $e['delay_days'] > 0 ? $e['delay_days'] . ' day(s)' : '' ?>
                                     <?= $e['delay_hours'] > 0 ? ' ' . $e['delay_hours'] . ' hour(s)' : '' ?>
                                     <?= ($e['delay_days'] == 0 && $e['delay_hours'] == 0) ? 'enrollment' : '' ?>
-                                    · <span class="badge bg-light text-dark"><?= ucfirst($e['channel']) ?></span>
+                                    Â· <span class="badge bg-light text-dark"><?= ucfirst($e['channel']) ?></span>
                                 </p>
-                                <pre class="bg-light p-2 small rounded mb-0" style="white-space: pre-wrap; font-family: inherit; max-height: 100px; overflow-y: auto;"><?= htmlspecialchars($e['body']) ?></pre>
+                                <pre class="bg-light p-2 small rounded mb-0" class="style-12331"><?= htmlspecialchars($e['body']) ?></pre>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -131,12 +131,12 @@ ob_start();
                                         </span>
                                     </td>
                                     <td><small><?= date('M j, H:i', strtotime($e['enrolled_at'])) ?></small></td>
-                                    <td><small><?= $e['last_sent_at'] ? date('M j, H:i', strtotime($e['last_sent_at'])) : '—' ?></small></td>
+                                    <td><small><?= $e['last_sent_at'] ? date('M j, H:i', strtotime($e['last_sent_at'])) : 'â€”' ?></small></td>
                                     <td>
                                         <?php if ($e['next_send_at'] && $e['status'] === 'active'): ?>
                                             <small><?= date('M j, H:i', strtotime($e['next_send_at'])) ?></small>
                                         <?php else: ?>
-                                            <small class="text-muted">—</small>
+                                            <small class="text-muted">â€”</small>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

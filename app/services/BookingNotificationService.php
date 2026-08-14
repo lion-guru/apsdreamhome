@@ -228,9 +228,9 @@ class BookingNotificationService
         return $stats;
     }
 
-    // ──────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Private helpers
-    // ──────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private function sendEmail(string $to, string $subject, string $html): bool
     {
@@ -313,9 +313,9 @@ class BookingNotificationService
         }
     }
 
-    // ──────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Email templates
-    // ──────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private function buildBookingConfirmationEmail(array $booking, array $user, array $plot, array $colony): string
     {
@@ -332,29 +332,30 @@ class BookingNotificationService
         return <<<HTML
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f1f5f9;">
-<div style="background: #0d9488; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
-    <h1 style="margin: 0; font-size: 24px;">APS Dream Home</h1>
-    <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Booking Confirmation</p>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"></head>
+<body class="style-26942">
+<div class="style-34817">
+    <h1 class="style-85930">APS Dream Home</h1>
+    <p class="style-8849">Booking Confirmation</p>
 </div>
-<div style="padding: 24px; background: #ffffff;">
-    <p style="font-size: 16px; color: #1e293b;">Dear <strong>{$userName}</strong>,</p>
-    <p style="color: #475569; line-height: 1.6;">Your booking has been confirmed! Here are the details:</p>
-    <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Booking Number</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$bookingNumber}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Booking Date</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$bookingDate}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Colony</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$colonyName}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Plot</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$block} - {$plotNo}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Area</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$areaSqft} sq ft</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Total Amount</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">₹{$totalAmount}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Token Paid</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">₹{$tokenAmount}</td></tr>
+<div class="style-38030">
+    <p class="style-33752">Dear <strong>{$userName}</strong>,</p>
+    <p class="style-10698">Your booking has been confirmed! Here are the details:</p>
+    <table class="style-73344">
+        <tr><td class="style-20120">Booking Number</td><td class="style-85150">{$bookingNumber}</td></tr>
+        <tr><td class="style-20120">Booking Date</td><td class="style-85150">{$bookingDate}</td></tr>
+        <tr><td class="style-20120">Colony</td><td class="style-85150">{$colonyName}</td></tr>
+        <tr><td class="style-20120">Plot</td><td class="style-85150">{$block} - {$plotNo}</td></tr>
+        <tr><td class="style-20120">Area</td><td class="style-85150">{$areaSqft} sq ft</td></tr>
+        <tr><td class="style-20120">Total Amount</td><td class="style-85150">â‚¹{$totalAmount}</td></tr>
+        <tr><td class="style-20120">Token Paid</td><td class="style-85150">â‚¹{$tokenAmount}</td></tr>
     </table>
-    <p style="color: #475569; line-height: 1.6;">Thank you for choosing APS Dream Home! Our team will contact you shortly for the next steps.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
+    <p class="style-10698">Thank you for choosing APS Dream Home! Our team will contact you shortly for the next steps.</p>
+    <p class="style-10698">For any queries, call us at <strong class="style-22019">+91 92771 21112</strong></p>
 </div>
-<div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
-    <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
+<div class="style-1322">
+    <p class="style-85082">&copy; APS Dream Home. All rights reserved.</p>
 </div>
 </body>
 </html>
@@ -375,29 +376,29 @@ HTML;
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f1f5f9;">
-<div style="background: #059669; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
-    <h1 style="margin: 0; font-size: 24px;">APS Dream Home</h1>
-    <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Payment Receipt</p>
+<body class="style-26942">
+<div class="style-58159">
+    <h1 class="style-85930">APS Dream Home</h1>
+    <p class="style-8849">Payment Receipt</p>
 </div>
-<div style="padding: 24px; background: #ffffff;">
-    <p style="font-size: 16px; color: #1e293b;">Dear <strong>{$userName}</strong>,</p>
-    <p style="color: #475569; line-height: 1.6;">We have received your payment. Here are the details:</p>
-    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center;">
-        <p style="margin: 0; font-size: 12px; color: #166534; text-transform: uppercase; letter-spacing: 1px;">Amount Received</p>
-        <p style="margin: 4px 0 0; font-size: 28px; font-weight: bold; color: #166534;">₹{$formattedAmount}</p>
+<div class="style-38030">
+    <p class="style-33752">Dear <strong>{$userName}</strong>,</p>
+    <p class="style-10698">We have received your payment. Here are the details:</p>
+    <div class="style-84747">
+        <p class="style-63380">Amount Received</p>
+        <p class="style-19032">â‚¹{$formattedAmount}</p>
     </div>
-    <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Booking Number</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$bookingNumber}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Plot</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$plotNo}, {$colonyName}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Transaction ID</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$txnId}</td></tr>
-        <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Payment Date</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$paymentDate}</td></tr>
+    <table class="style-73344">
+        <tr><td class="style-20120">Booking Number</td><td class="style-85150">{$bookingNumber}</td></tr>
+        <tr><td class="style-20120">Plot</td><td class="style-85150">{$plotNo}, {$colonyName}</td></tr>
+        <tr><td class="style-20120">Transaction ID</td><td class="style-85150">{$txnId}</td></tr>
+        <tr><td class="style-20120">Payment Date</td><td class="style-85150">{$paymentDate}</td></tr>
     </table>
-    <p style="color: #475569; line-height: 1.6;">This receipt confirms your payment has been successfully processed.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
+    <p class="style-10698">This receipt confirms your payment has been successfully processed.</p>
+    <p class="style-10698">For any queries, call us at <strong class="style-22019">+91 92771 21112</strong></p>
 </div>
-<div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
-    <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
+<div class="style-1322">
+    <p class="style-85082">&copy; APS Dream Home. All rights reserved.</p>
 </div>
 </body>
 </html>
@@ -429,27 +430,27 @@ HTML;
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f1f5f9;">
-<div style="background: {$newColor}; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
-    <h1 style="margin: 0; font-size: 24px;">APS Dream Home</h1>
-    <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Booking Status Update</p>
+<body class="style-26942">
+<div class="style-87330">
+    <h1 class="style-85930">APS Dream Home</h1>
+    <p class="style-8849">Booking Status Update</p>
 </div>
-<div style="padding: 24px; background: #ffffff;">
-    <p style="font-size: 16px; color: #1e293b;">Dear <strong>{$userName}</strong>,</p>
-    <p style="color: #475569; line-height: 1.6;">Your booking status has been updated:</p>
-    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
-        <table style="width: 100%; font-size: 14px;">
-            <tr><td style="padding: 4px 0; color: #64748b;">Booking:</td><td style="padding: 4px 0; font-weight: bold; color: #1e293b;">{$bookingNumber}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Plot:</td><td style="padding: 4px 0; color: #1e293b;">{$plotNo}, {$colonyName}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Previous Status:</td><td style="padding: 4px 0; color: #ef4444;">{$oldLabel}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">New Status:</td><td style="padding: 4px 0; font-weight: bold; color: {$newColor};">{$newLabel}</td></tr>
+<div class="style-38030">
+    <p class="style-33752">Dear <strong>{$userName}</strong>,</p>
+    <p class="style-10698">Your booking status has been updated:</p>
+    <div class="style-467">
+        <table class="style-61075">
+            <tr><td class="style-89250">Booking:</td><td class="style-79766">{$bookingNumber}</td></tr>
+            <tr><td class="style-89250">Plot:</td><td class="style-40961">{$plotNo}, {$colonyName}</td></tr>
+            <tr><td class="style-89250">Previous Status:</td><td class="style-45989">{$oldLabel}</td></tr>
+            <tr><td class="style-89250">New Status:</td><td class="style-79176">{$newLabel}</td></tr>
         </table>
     </div>
-    <p style="color: #475569; line-height: 1.6;">If you have any questions, please contact our support team.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
+    <p class="style-10698">If you have any questions, please contact our support team.</p>
+    <p class="style-10698">For any queries, call us at <strong class="style-22019">+91 92771 21112</strong></p>
 </div>
-<div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
-    <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
+<div class="style-1322">
+    <p class="style-85082">&copy; APS Dream Home. All rights reserved.</p>
 </div>
 </body>
 </html>
@@ -470,29 +471,29 @@ HTML;
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f1f5f9;">
-<div style="background: #dc2626; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
-    <h1 style="margin: 0; font-size: 24px;">APS Dream Home</h1>
-    <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Payment Overdue Reminder</p>
+<body class="style-26942">
+<div class="style-10137">
+    <h1 class="style-85930">APS Dream Home</h1>
+    <p class="style-8849">Payment Overdue Reminder</p>
 </div>
-<div style="padding: 24px; background: #ffffff;">
-    <p style="font-size: 16px; color: #1e293b;">Dear <strong>{$userName}</strong>,</p>
-    <p style="color: #475569; line-height: 1.6;">This is a reminder that your installment payment is overdue.</p>
-    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 16px 0;">
-        <table style="width: 100%; font-size: 14px;">
-            <tr><td style="padding: 4px 0; color: #64748b;">Booking:</td><td style="padding: 4px 0; font-weight: bold; color: #1e293b;">{$bookingNumber}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Installment:</td><td style="padding: 4px 0; color: #1e293b;">#{$instNo}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Amount Due:</td><td style="padding: 4px 0; font-weight: bold; color: #dc2626;">₹{$amount}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Due Date:</td><td style="padding: 4px 0; color: #1e293b;">{$dueDate}</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Days Overdue:</td><td style="padding: 4px 0; font-weight: bold; color: #dc2626;">{$daysOverdue} days</td></tr>
-            <tr><td style="padding: 4px 0; color: #64748b;">Total Due (with penalty):</td><td style="padding: 4px 0; font-weight: bold; color: #dc2626;">₹{$totalDue}</td></tr>
+<div class="style-38030">
+    <p class="style-33752">Dear <strong>{$userName}</strong>,</p>
+    <p class="style-10698">This is a reminder that your installment payment is overdue.</p>
+    <div class="style-30515">
+        <table class="style-61075">
+            <tr><td class="style-89250">Booking:</td><td class="style-79766">{$bookingNumber}</td></tr>
+            <tr><td class="style-89250">Installment:</td><td class="style-40961">#{$instNo}</td></tr>
+            <tr><td class="style-89250">Amount Due:</td><td class="style-34699">â‚¹{$amount}</td></tr>
+            <tr><td class="style-89250">Due Date:</td><td class="style-40961">{$dueDate}</td></tr>
+            <tr><td class="style-89250">Days Overdue:</td><td class="style-34699">{$daysOverdue} days</td></tr>
+            <tr><td class="style-89250">Total Due (with penalty):</td><td class="style-34699">â‚¹{$totalDue}</td></tr>
         </table>
     </div>
-    <p style="color: #475569; line-height: 1.6;">Please make the payment at the earliest to avoid further penalties.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
+    <p class="style-10698">Please make the payment at the earliest to avoid further penalties.</p>
+    <p class="style-10698">For any queries, call us at <strong class="style-22019">+91 92771 21112</strong></p>
 </div>
-<div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
-    <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
+<div class="style-1322">
+    <p class="style-85082">&copy; APS Dream Home. All rights reserved.</p>
 </div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $device = $device ?? [];
 $readings = $readings ?? [];
 $history = $history ?? [];
@@ -16,9 +16,9 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <div class="card-body">
                 <div class="d-flex justify-content-between border-bottom py-2"><span>Status</span><span class="badge bg-<?= match($device['status'] ?? 'offline') { 'online'=>'success','fault'=>'danger','configuring'=>'warning',default=>'secondary' } ?>"><?= ucfirst($device['status'] ?? 'offline') ?></span></div>
                 <div class="d-flex justify-content-between border-bottom py-2"><span>Category</span><strong><?= ucfirst($device['category'] ?? 'smart') ?></strong></div>
-                <div class="d-flex justify-content-between border-bottom py-2"><span>Location</span><strong><?= htmlspecialchars($device['location'] ?? '—') ?></strong></div>
-                <div class="d-flex justify-content-between border-bottom py-2"><span>UID</span><strong><?= htmlspecialchars($device['device_uid'] ?? '—') ?></strong></div>
-                <div class="d-flex justify-content-between py-2"><span>Last Seen</span><strong><?= !empty($device['last_seen_at']) ? date('M d, H:i', strtotime($device['last_seen_at'])) : '—' ?></strong></div>
+                <div class="d-flex justify-content-between border-bottom py-2"><span>Location</span><strong><?= htmlspecialchars($device['location'] ?? 'â€”') ?></strong></div>
+                <div class="d-flex justify-content-between border-bottom py-2"><span>UID</span><strong><?= htmlspecialchars($device['device_uid'] ?? 'â€”') ?></strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Last Seen</span><strong><?= !empty($device['last_seen_at']) ? date('M d, H:i', strtotime($device['last_seen_at'])) : 'â€”' ?></strong></div>
             </div>
         </div>
 
@@ -31,7 +31,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row">
                         <div class="col-5 mb-2"><input type="text" name="metric" class="form-control" placeholder="metric" value="temperature" required></div>
                         <div class="col-4 mb-2"><input type="number" step="0.01" name="value" class="form-control" placeholder="value" required></div>
-                        <div class="col-3 mb-2"><input type="text" name="unit" class="form-control" placeholder="unit" value="°C"></div>
+                        <div class="col-3 mb-2"><input type="text" name="unit" class="form-control" placeholder="unit" value="Â°C"></div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i> Record</button>
                 </form>
@@ -61,7 +61,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <?php if (empty($history)): ?>
                     <p class="text-muted text-center py-3">No history.</p>
                 <?php else: ?>
-                    <div class="table-responsive" style="max-height:280px;overflow:auto;">
+                    <div class="table-responsive" class="style-63664">
                         <table class="table table-sm mb-0"><tbody>
                         <?php foreach ($history as $h): ?>
                             <tr><td><?= htmlspecialchars($h['metric']) ?></td><td class="text-end"><?= $h['value'] ?> <?= htmlspecialchars($h['unit'] ?? '') ?></td><td class="text-end"><small class="text-muted"><?= date('M d H:i', strtotime($h['recorded_at'])) ?></small></td></tr>

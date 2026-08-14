@@ -44,8 +44,8 @@
                                             <td><?= (int)($a['unique_users'] ?? 0) ?></td>
                                             <td><?= htmlspecialchars($a['avg_duration'] ?? '-') ?></td>
                                             <td>
-                                                <div class="progress" style="height:8px;max-width:120px">
-                                                    <div class="progress-bar bg-success" style="width:<?= min(100, (float)($a['success_rate'] ?? 0)) ?>%"></div>
+                                                <div class="progress" class="style-174">
+                                                    <div class="progress-bar bg-success" class="style-11980"></div>
                                                 </div>
                                                 <small><?= round((float)($a['success_rate'] ?? 0), 1) ?>%</small>
                                             </td>

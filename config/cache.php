@@ -45,4 +45,4 @@ return [
         'admin_dashboard'   => 120,  // 2 minutes
         'property_filters'  => 3600, // 1 hour
     ],
-];
+];?>

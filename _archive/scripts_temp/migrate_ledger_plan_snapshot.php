@@ -82,4 +82,4 @@ while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
     if (in_array($row['Field'], ['plan_id','plan_version','plan_snapshot','calculation_engine'])) {
         echo "  {$row['Field']} {$row['Type']}\n";
     }
-}
+}?>

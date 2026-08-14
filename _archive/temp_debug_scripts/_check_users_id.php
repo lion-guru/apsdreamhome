@@ -5,4 +5,4 @@ foreach ($cols as $c) {
     if (in_array($c['Field'], ['id', 'email', 'role'])) {
         echo "  {$c['Field']} ({$c['Type']}) {$c['Null']} {$c['Key']}\n";
     }
-}
+}?>

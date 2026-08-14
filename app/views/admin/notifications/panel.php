@@ -32,7 +32,7 @@
                     ?>
                     <div class="list-group-item list-group-item-action py-3 px-3 notification-item d-flex align-items-start gap-3 <?= empty($n['is_read']) ? 'bg-light' : '' ?>" data-id="<?= $n['id'] ?>">
                         <div class="mt-1">
-                            <span class="badge rounded-circle p-2 <?= $badgeClass ?> d-inline-flex align-items-center justify-content-center" style="width:32px;height:32px">
+                            <span class="badge rounded-circle p-2 <?= $badgeClass ?> d-inline-flex align-items-center justify-content-center" class="style-63078">
                                 <i class="fas <?= $icon ?> fa-fw small"></i>
                             </span>
                         </div>

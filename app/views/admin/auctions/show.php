@@ -14,8 +14,8 @@ ob_start();
                 <span class="badge bg-<?= ['live'=>'danger','scheduled'=>'info','ended'=>'secondary','sold'=>'success','cancelled'=>'dark'][$auction['status']] ?? 'secondary' ?>">
                     <?= strtoupper($auction['status']) ?>
                 </span>
-                · Type: <?= ucfirst($auction['auction_type']) ?>
-                · <?= $auction['bid_count'] ?> bids
+                Â· Type: <?= ucfirst($auction['auction_type']) ?>
+                Â· <?= $auction['bid_count'] ?> bids
             </p>
         </div>
         <a href="<?= BASE_URL ?>/admin/auctions" class="btn btn-light"><i class="fas fa-arrow-left me-1"></i> Back</a>
@@ -29,27 +29,27 @@ ob_start();
                     <div class="row g-2">
                         <div class="col-md-6">
                             <small class="text-muted d-block">Start Price</small>
-                            <strong>₹<?= number_format($auction['start_price']) ?></strong>
+                            <strong>â‚¹<?= number_format($auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Current Bid</small>
-                            <strong class="text-success">₹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
+                            <strong class="text-success">â‚¹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Bid Increment</small>
-                            <strong>₹<?= number_format($auction['bid_increment']) ?></strong>
+                            <strong>â‚¹<?= number_format($auction['bid_increment']) ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Buy Now Price</small>
-                            <strong><?= $auction['buy_now_price'] ? '₹' . number_format($auction['buy_now_price']) : '—' ?></strong>
+                            <strong><?= $auction['buy_now_price'] ? 'â‚¹' . number_format($auction['buy_now_price']) : 'â€”' ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Deposit Required</small>
-                            <strong><?= $auction['deposit_amount'] ? '₹' . number_format($auction['deposit_amount']) : 'None' ?></strong>
+                            <strong><?= $auction['deposit_amount'] ? 'â‚¹' . number_format($auction['deposit_amount']) : 'None' ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Reserve Price</small>
-                            <strong><?= $auction['reserve_price'] ? '₹' . number_format($auction['reserve_price']) : '—' ?></strong>
+                            <strong><?= $auction['reserve_price'] ? 'â‚¹' . number_format($auction['reserve_price']) : 'â€”' ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Starts</small>
@@ -75,7 +75,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0">Bid History (<?= count($bids) ?>)</h6>
                 </div>
-                <div class="card-body aps-cp-card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="card-body aps-cp-card-body" class="style-97603">
                     <?php if (empty($bids)): ?>
                         <p class="text-muted text-center small">No bids yet</p>
                     <?php else: ?>
@@ -87,8 +87,8 @@ ob_start();
                                         <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
                                     </div>
                                     <div class="text-end">
-                                        <strong>₹<?= number_format($b['bid_amount']) ?></strong>
-                                        <br><span class="badge bg-<?= ['winning'=>'success','outbid'=>'secondary','won'=>'success','lost'=>'dark'][$b['status']] ?? 'secondary' ?>" style="font-size: 0.65rem;"><?= ucfirst($b['status']) ?></span>
+                                        <strong>â‚¹<?= number_format($b['bid_amount']) ?></strong>
+                                        <br><span class="badge bg-<?= ['winning'=>'success','outbid'=>'secondary','won'=>'success','lost'=>'dark'][$b['status']] ?? 'secondary' ?>" class="style-65487"><?= ucfirst($b['status']) ?></span>
                                     </div>
                                 </div>
                             </div>

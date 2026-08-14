@@ -60,7 +60,7 @@ $states = $states ?? [];
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label fw-bold"><?= __('assoc_ep_price', [], 'Price (₹)') ?> *</label>
+                        <label class="form-label fw-bold"><?= __('assoc_ep_price', [], 'Price (â‚¹)') ?> *</label>
                         <input type="number" name="price" class="form-control" value="<?= (int)($property['price'] ?? 0) ?>" min="1" required>
                     </div>
                     <div class="col-md-4">
@@ -81,7 +81,7 @@ $states = $states ?? [];
                         <?php if (!empty($property['image'])): ?>
                             <div class="mt-2">
                                 <small class="text-muted"><?= __('assoc_ep_current', [], 'Current') ?>:</small><br>
-                                <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($property['image']) ?>" alt="Current" style="max-height:80px;border-radius:8px;">
+                                <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($property['image']) ?>" alt="Current" class="style-57868">
                             </div>
                         <?php endif; ?>
                     </div>

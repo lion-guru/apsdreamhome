@@ -56,8 +56,8 @@
             <?php $convRate = ($funnel['warm_leads'] ?? 0) > 0 ? round(($funnel['closed_deals'] ?? 0) * 100 / $funnel['warm_leads'], 1) : 0; ?>
             <h1 class="display-4 text-primary"><?= $convRate ?>%</h1>
             <p class="text-muted">Overall Lead-to-Deal Conversion</p>
-            <div class="progress" style="height:30px;">
-                <div class="progress-bar bg-success" style="width:<?= min($convRate, 100) ?>%"><?= $convRate ?>%</div>
+            <div class="progress" class="style-20185">
+                <div class="progress-bar bg-success" class="style-751"><?= $convRate ?>%</div>
             </div>
         </div>
     </div>

@@ -17,7 +17,7 @@ class WhatsAppAgent extends BaseAgent {
     }
 
     /**
-     * Process incoming WhatsApp message — delegates to Chat system
+     * Process incoming WhatsApp message â€” delegates to Chat system
      */
     public function process($input, $context = []) {
         $this->status = 'processing';
@@ -44,7 +44,7 @@ class WhatsAppAgent extends BaseAgent {
             $whatsappService = new \App\Services\Communication\WhatsAppIntegrationService();
             $whatsappService->sendMessage($sender, $response['response'] ?? '...');
         } catch (\Exception $e) {
-            // WhatsApp not configured — return response anyway
+            // WhatsApp not configured â€” return response anyway
         }
 
         $this->status = 'ready';
@@ -64,7 +64,7 @@ class WhatsAppAgent extends BaseAgent {
     }
 
     /**
-     * Handle multimedia (stub — media processing not implemented)
+     * Handle multimedia (stub â€” media processing not implemented)
      */
     public function handleMedia($mediaUrl, $type, $sender) {
         $this->logActivity('MEDIA_RECEIVED', "Type: $type, From: $sender", ['url' => $mediaUrl]);
@@ -72,10 +72,10 @@ class WhatsAppAgent extends BaseAgent {
     }
 
     /**
-     * Schedule a message (stub — async scheduling not implemented)
+     * Schedule a message (stub â€” async scheduling not implemented)
      */
     public function scheduleMessage($to, $message, $time, $timezone = 'Asia/Kolkata') {
         $this->logActivity('MESSAGE_SCHEDULED', "To: $to, Time: $time", ['timezone' => $timezone]);
         return ['success' => true, 'status' => 'scheduled'];
     }
-}
+}?>

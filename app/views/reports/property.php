@@ -11,7 +11,7 @@
             <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Info</h6></div>
                 <div class="card-body aps-cp-card-body"><div class="table-responsive"><table class="table table-sm table-responsive"><tbody>
                     <tr><th>Type</th><td><?= htmlspecialchars(ucfirst($property['type'] ?? '-')) ?></td></tr>
-                    <tr><th>Price</th><td>₹<?= number_format($property['price'] ?? 0) ?></td></tr>
+                    <tr><th>Price</th><td>â‚¹<?= number_format($property['price'] ?? 0) ?></td></tr>
                     <tr><th>Area</th><td><?= htmlspecialchars($property['area'] ?? '-') ?> sq.ft.</td></tr>
                     <tr><th>Location</th><td><?= htmlspecialchars($property['location'] ?? $property['city'] ?? '-') ?></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-<?= ($property['status'] ?? '') === 'available' ? 'success' : 'danger' ?>"><?= ucfirst($property['status'] ?? '-') ?></span></td></tr>
@@ -35,7 +35,7 @@
         <div class="card-body aps-cp-card-body">
             <?php if (empty($history)): ?><p class="text-muted mb-0 text-center py-3">No activity recorded for this property</p>
             <?php else: ?><ul class="list-unstyled mb-0"><?php foreach ($history as $h): ?>
-                <li class="py-2 border-bottom"><i class="fas fa-circle text-<?= $h['type'] === 'created' ? 'success' : ($h['type'] === 'inquiry' ? 'info' : 'secondary') ?> me-2" style="font-size:8px"></i><strong><?= htmlspecialchars(ucfirst($h['type'] ?? 'event')) ?></strong> — <?= htmlspecialchars($h['description'] ?? '') ?> <span class="float-end text-muted small"><?= htmlspecialchars($h['date'] ?? '') ?></span></li>
+                <li class="py-2 border-bottom"><i class="fas fa-circle text-<?= $h['type'] === 'created' ? 'success' : ($h['type'] === 'inquiry' ? 'info' : 'secondary') ?> me-2" class="style-67926"></i><strong><?= htmlspecialchars(ucfirst($h['type'] ?? 'event')) ?></strong> â€” <?= htmlspecialchars($h['description'] ?? '') ?> <span class="float-end text-muted small"><?= htmlspecialchars($h['date'] ?? '') ?></span></li>
             <?php endforeach; ?></ul><?php endif; ?>
         </div>
     </div>

@@ -41,4 +41,4 @@ class AIRecommendationEngine {
         }
         throw new \Exception("Method {$name} does not exist in AIRecommendationEngine proxy.");
     }
-}
+}?>

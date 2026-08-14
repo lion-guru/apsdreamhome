@@ -29,4 +29,4 @@ $stmt = $db->query("SELECT setting_key, setting_value FROM mlm_settings WHERE se
 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     echo "  {$row['setting_key']} = {$row['setting_value']}\n";
 }
-echo "\nDone.\n";
+echo "\nDone.\n";?>

@@ -132,7 +132,7 @@ $GLOBALS['_html_doc_started'] = true;
             <div class="header-actions">
                 <a href="<?= BASE_URL ?>/user/notifications" class="btn btn-sm btn-outline-primary position-relative me-2">
                     <i class="fas fa-bell"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="font-size:9px;">0</span>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" class="style-32982">0</span>
                 </a>
                 <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>

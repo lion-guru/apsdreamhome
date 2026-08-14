@@ -15,4 +15,4 @@ foreach ($items as $i) {
     } else {
         echo "Exists: {$i[0]}\n";
     }
-}
+}?>

@@ -34,10 +34,10 @@
                         <div class="card-body text-center">
                             <h6 class="text-muted mb-2">Price Range</h6>
                             <p class="h5 text-primary mb-1">
-                                ₹<?= number_format($comparison['price_range']['min']) ?> - 
-                                ₹<?= number_format($comparison['price_range']['max']) ?>
+                                â‚¹<?= number_format($comparison['price_range']['min']) ?> - 
+                                â‚¹<?= number_format($comparison['price_range']['max']) ?>
                             </p>
-                            <small class="text-muted">Avg: ₹<?= number_format($comparison['price_range']['avg']) ?></small>
+                            <small class="text-muted">Avg: â‚¹<?= number_format($comparison['price_range']['avg']) ?></small>
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                                     <?php if ($prop['id'] == $comparison['best_value']): ?>
                                     <p class="h5 text-info mb-1"><?= htmlspecialchars($prop['title']) ?></p>
                                     <small class="text-muted">
-                                        ₹<?= number_format($comparison['price_per_sqft'][$prop['id']], 2) ?>/sqft
+                                        â‚¹<?= number_format($comparison['price_per_sqft'][$prop['id']], 2) ?>/sqft
                                     </small>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
@@ -111,9 +111,9 @@
                     <?php if ($property['primary_image']): ?>
                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                          class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
-                         style="height: 200px; object-fit: cover;">
+                         class="style-12213">
                     <?php else: ?>
-                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <div class="bg-light d-flex align-items-center justify-content-center" class="style-17333">
                         <i class="fas fa-home fa-3x text-muted"></i>
                     </div>
                     <?php endif; ?>
@@ -147,13 +147,13 @@
                     </p>
                     
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="text-primary mb-0">₹<?= number_format($property['price']) ?></h4>
+                        <h4 class="text-primary mb-0">â‚¹<?= number_format($property['price']) ?></h4>
                     </div>
 
                     <!-- Price per sqft -->
                     <div class="alert alert-light py-2 mb-3">
                         <small class="text-muted">Price per sqft:</small>
-                        <strong class="float-end">₹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></strong>
+                        <strong class="float-end">â‚¹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></strong>
                     </div>
                 </div>
 
@@ -208,9 +208,9 @@
                         <table class="table table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th style="width: 20%;">Feature</th>
+                                    <th class="style-26295">Feature</th>
                                     <?php foreach ($properties as $property): ?>
-                                    <th style="width: <?= 80 / $propertiesCount ?>%;">
+                                    <th class="style-37463">
                                         <?= htmlspecialchars($property['title']) ?>
                                     </th>
                                     <?php endforeach; ?>
@@ -220,7 +220,7 @@
                                 <tr>
                                     <td class="fw-bold"><i class="fas fa-tag me-2"></i>Price</td>
                                     <?php foreach ($properties as $property): ?>
-                                    <td class="text-primary fw-bold">₹<?= number_format($property['price']) ?></td>
+                                    <td class="text-primary fw-bold">â‚¹<?= number_format($property['price']) ?></td>
                                     <?php endforeach; ?>
                                 </tr>
                                 <tr>
@@ -232,7 +232,7 @@
                                 <tr>
                                     <td class="fw-bold"><i class="fas fa-money-bill-wave me-2"></i>Price/sqft</td>
                                     <?php foreach ($properties as $property): ?>
-                                    <td>₹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></td>
+                                    <td>â‚¹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></td>
                                     <?php endforeach; ?>
                                 </tr>
                                 <tr>

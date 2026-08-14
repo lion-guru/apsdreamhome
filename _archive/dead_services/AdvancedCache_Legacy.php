@@ -367,4 +367,4 @@ class AdvancedCache {
 // Global helper function for easy caching
 function cache($driver = AdvancedCache::DRIVER_MEMORY) {
     return new AdvancedCache($driver);
-}
+}?>

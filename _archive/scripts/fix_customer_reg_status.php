@@ -15,4 +15,4 @@ echo "\nCustomers NOT approved: " . ($wrongCount['cnt'] ?? 0) . "\n";
 
 // Fix: set all active customers to approved
 $db->query("UPDATE users SET registration_status = 'approved' WHERE role = 'customer' AND status = 'active' AND registration_status != 'approved'");
-echo "Fixed all active customers to approved\n";
+echo "Fixed all active customers to approved\n";?>

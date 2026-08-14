@@ -77,4 +77,4 @@ echo "\n=== VERIFICATION ===\n";
 $roles = $pdo->query("SELECT role, COUNT(*) as c FROM users WHERE role IN ('sales_director','finance_director','hr_director','it_manager','sales_manager','team_lead','accountant','ceo','cfo','cto') GROUP BY role ORDER BY role")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($roles as $r) {
     echo "  {$r['role']}: {$r['c']} users\n";
-}
+}?>

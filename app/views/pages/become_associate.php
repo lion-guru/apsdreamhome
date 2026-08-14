@@ -220,7 +220,7 @@
             </button>
             <div class="text-center mt-4">
                 <div class="qr-code">
-                    <div style="width: 150px; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                    <div class="style-32164">
                         <i class="fas fa-qrcode fa-4x text-muted"></i>
                     </div>
                     <small class="text-muted d-block mt-2"><?= __('assoc_scan_join') ?></small>
@@ -299,19 +299,19 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
-                        <div class="earning-amount">₹200</div>
+                        <div class="earning-amount">â‚¹200</div>
                         <p><?= __('assoc_per_associate') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
-                        <div class="earning-amount">₹250</div>
+                        <div class="earning-amount">â‚¹250</div>
                         <p><?= __('assoc_per_agent') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
-                        <div class="earning-amount">₹100</div>
+                        <div class="earning-amount">â‚¹100</div>
                         <p><?= __('assoc_per_customer') ?></p>
                     </div>
                 </div>

@@ -35,14 +35,14 @@ try {
         KEY `idx_status` (`status`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-    echo "✓ customer_referrals table created successfully\n";
+    echo "âœ“ customer_referrals table created successfully\n";
 
     // Verify
     $stmt = $pdo->query("SHOW TABLES LIKE 'customer_referrals'");
     if ($stmt->fetch()) {
-        echo "✓ Table verified in database\n";
+        echo "âœ“ Table verified in database\n";
     }
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

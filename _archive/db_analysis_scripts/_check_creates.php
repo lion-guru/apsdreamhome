@@ -36,4 +36,4 @@ if ($bad) {
         echo "TABLE: $table\n";
         foreach (array_unique($files) as $f) echo "  $f\n";
     }
-}
+}?>

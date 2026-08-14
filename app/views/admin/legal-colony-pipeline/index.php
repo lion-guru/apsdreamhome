@@ -10,7 +10,7 @@ $stages       = $stages ?? [];
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h3 mb-1"><i class="fas fa-gavel me-2 text-warning"></i>Legal Colony Development Pipeline</h1>
-      <small class="text-muted">7-Phase Legal Colony Development: Land → Planning → Plots → RERA → Dev → Pricing → Sales</small>
+      <small class="text-muted">7-Phase Legal Colony Development: Land â†’ Planning â†’ Plots â†’ RERA â†’ Dev â†’ Pricing â†’ Sales</small>
     </div>
     <a href="/admin/legal-colony-pipeline/start-acquisition" class="btn btn-warning">
       <i class="fas fa-plus me-1"></i> Start New Acquisition
@@ -101,7 +101,7 @@ $stages       = $stages ?? [];
         $stageColors = ['warning', 'info', 'primary', 'danger', 'secondary', 'success', 'dark'];
         foreach ($stageKeys as $i => $sk): ?>
           <div class="text-center flex-fill">
-            <div class="rounded-circle bg-<?= $stageColors[$i] ?> d-inline-flex align-items-center justify-content-center mb-1" style="width:40px;height:40px;">
+            <div class="rounded-circle bg-<?= $stageColors[$i] ?> d-inline-flex align-items-center justify-content-center mb-1" class="style-75848">
               <i class="fas <?= $stageIcons[$i] ?> text-white"></i>
             </div>
             <div class="small fw-bold text-<?= $stageColors[$i] ?>"><?= $stageLabels[$i] ?></div>
@@ -150,7 +150,7 @@ function autoAdvance() {
   <!-- Filtered Colonies Table -->
   <div class="card border-0 shadow-sm">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <strong><i class="fas fa-list me-1"></i> Colonies <?= $filterStage ? '— ' . ucfirst(str_replace('_', ' ', $filterStage)) : 'All Stages' ?></strong>
+      <strong><i class="fas fa-list me-1"></i> Colonies <?= $filterStage ? 'â€” ' . ucfirst(str_replace('_', ' ', $filterStage)) : 'All Stages' ?></strong>
       <?php if ($filterStage): ?>
         <a href="/admin/legal-colony-pipeline" class="btn btn-sm btn-outline-light"><i class="fas fa-times me-1"></i> Clear Filter</a>
       <?php endif; ?>
@@ -210,17 +210,17 @@ function autoAdvance() {
                       $color = $health['grade_color'];
                   ?>
                     <div class="d-flex align-items-center gap-2">
-                      <div class="position-relative" style="width:36px;height:36px;">
+                      <div class="position-relative" class="style-39775">
                         <svg viewBox="0 0 36 36" class="w-100 h-100">
                           <circle cx="18" cy="18" r="15.915" fill="none" stroke="#333" stroke-width="2.5"/>
                           <circle cx="18" cy="18" r="15.915" fill="none" stroke="<?= $color ?>" stroke-width="2.5"
                             stroke-dasharray="<?= $score ?> <?= 100 - $score ?>"
                             stroke-dashoffset="25" stroke-linecap="round"/>
                         </svg>
-                        <span class="position-absolute top-50 start-50 translate-middle fw-bold small" style="color:<?= $color ?>;font-size:11px;"><?= $letter ?></span>
+                        <span class="position-absolute top-50 start-50 translate-middle fw-bold small" class="style-59543"><?= $letter ?></span>
                       </div>
                       <div>
-                        <span class="fw-bold" style="color:<?= $color ?>;"><?= $score ?>%</span>
+                        <span class="fw-bold" class="style-2221"><?= $score ?>%</span>
                         <?php if ($health['risks'] > 0): ?>
                           <br><small class="text-danger" title="<?= htmlspecialchars($health['top_risk'] ?? '') ?>">
                             <i class="fas fa-exclamation-triangle"></i> <?= $health['risks'] ?> risk<?= $health['risks'] > 1 ? 's' : '' ?>
@@ -235,7 +235,7 @@ function autoAdvance() {
                 <td><?= (int)($c['plot_count'] ?? 0) ?></td>
                 <td class="text-success"><?= (int)($c['available_count'] ?? 0) ?></td>
                 <td class="text-danger"><?= (int)($c['sold_count'] ?? 0) ?></td>
-                <td>₹<?= number_format(floatval($c['dev_cost_total'] ?? 0)) ?></td>
+                <td>â‚¹<?= number_format(floatval($c['dev_cost_total'] ?? 0)) ?></td>
                 <td>
                   <div class="btn-group btn-group-sm">
                     <a href="/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-outline-info" title="Pipeline Detail">

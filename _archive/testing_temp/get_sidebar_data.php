@@ -18,4 +18,4 @@ foreach ($bySection as $sec => $its) {
             $it['id'], $it['order_index'], $it['name'], $it['url'], $it['is_active']);
     }
     echo "\n";
-}
+}?>

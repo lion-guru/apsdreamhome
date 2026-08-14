@@ -76,4 +76,4 @@ $elapsed = number_format((microtime(true) - $startedAt) * 1000, 1);
 $log("Completed in {$elapsed}ms");
 $log('=== monitoring_cron end ===');
 
-exit($exitCode);
+exit($exitCode);?>

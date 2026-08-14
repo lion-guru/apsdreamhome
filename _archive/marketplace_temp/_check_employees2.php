@@ -5,4 +5,4 @@ foreach ($pdo->query('DESCRIBE employees') as $r) echo $r['Field'] . ' ' . $r['T
 echo "\n=== Employee department options ===\n";
 $s = $pdo->query("SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != ''");
 foreach ($s as $r) echo $r['department'] . "\n";
-echo "\n=== Admin sidebar file ===\n";
+echo "\n=== Admin sidebar file ===\n";?>

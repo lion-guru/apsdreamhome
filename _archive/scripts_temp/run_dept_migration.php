@@ -38,14 +38,14 @@ try {
     // 2. Update existing 8 departments with correct codes
     echo "Updating existing departments...\n";
     $updates = [
-        ['SALES', 'Sales & Marketing — Lead generation, sales, customer acquisition', NULL, 1],
-        ['FIN', 'Finance & Accounts — Financial management, accounting, TDS, GST, audits', NULL, 1],
-        ['CS', 'Customer Success — Post-sale support, complaints, customer satisfaction', NULL, 1],
-        ['OPS', 'Operations — Billing, invoicing, payment processing', NULL, 1],
-        ['LEGAL', 'Legal & Compliance — Agreements, RERA, title verification, compliance', NULL, 1],
-        ['HR', 'HR & Administration — Recruitment, attendance, payroll, employee welfare', NULL, 1],
-        ['SALES', 'Marketing & Branding — Digital marketing, content, SEO, social media', NULL, 1],
-        ['IT', 'IT & Digital — Software, infrastructure, data, digital marketing', NULL, 1],
+        ['SALES', 'Sales & Marketing â€” Lead generation, sales, customer acquisition', NULL, 1],
+        ['FIN', 'Finance & Accounts â€” Financial management, accounting, TDS, GST, audits', NULL, 1],
+        ['CS', 'Customer Success â€” Post-sale support, complaints, customer satisfaction', NULL, 1],
+        ['OPS', 'Operations â€” Billing, invoicing, payment processing', NULL, 1],
+        ['LEGAL', 'Legal & Compliance â€” Agreements, RERA, title verification, compliance', NULL, 1],
+        ['HR', 'HR & Administration â€” Recruitment, attendance, payroll, employee welfare', NULL, 1],
+        ['SALES', 'Marketing & Branding â€” Digital marketing, content, SEO, social media', NULL, 1],
+        ['IT', 'IT & Digital â€” Software, infrastructure, data, digital marketing', NULL, 1],
     ];
 
     // Wait - the existing 8 rows have different names. Let me map them properly:
@@ -58,14 +58,14 @@ try {
     // id=7: "Marketing & Branding" -> MKTG (need a new code)
     // id=8: "IT & Systems" -> IT
 
-    $pdo->exec("UPDATE departments SET code='SALES', description='Sales & Marketing — Lead generation, sales, customer acquisition', parent_dept_id=1 WHERE id=1");
-    $pdo->exec("UPDATE departments SET code='FIN', description='Finance & Accounts — Financial management, accounting, TDS, GST, audits', parent_dept_id=1 WHERE id=2");
-    $pdo->exec("UPDATE departments SET code='CS', description='Customer Success — Post-sale support, complaints, customer satisfaction', parent_dept_id=1 WHERE id=3");
-    $pdo->exec("UPDATE departments SET code='OPS', description='Operations — Day-to-day operations, billing, vendor management', parent_dept_id=1 WHERE id=4");
-    $pdo->exec("UPDATE departments SET code='LEGAL', description='Legal & Compliance — Agreements, RERA, title verification, compliance', parent_dept_id=1 WHERE id=5");
-    $pdo->exec("UPDATE departments SET code='HR', description='HR & Administration — Recruitment, attendance, payroll, employee welfare', parent_dept_id=1 WHERE id=6");
-    $pdo->exec("UPDATE departments SET code='MKTG', description='Marketing & Branding — Digital marketing, content, SEO, social media', parent_dept_id=1 WHERE id=7");
-    $pdo->exec("UPDATE departments SET code='IT', description='IT & Digital — Software, infrastructure, data, digital marketing', parent_dept_id=1 WHERE id=8");
+    $pdo->exec("UPDATE departments SET code='SALES', description='Sales & Marketing â€” Lead generation, sales, customer acquisition', parent_dept_id=1 WHERE id=1");
+    $pdo->exec("UPDATE departments SET code='FIN', description='Finance & Accounts â€” Financial management, accounting, TDS, GST, audits', parent_dept_id=1 WHERE id=2");
+    $pdo->exec("UPDATE departments SET code='CS', description='Customer Success â€” Post-sale support, complaints, customer satisfaction', parent_dept_id=1 WHERE id=3");
+    $pdo->exec("UPDATE departments SET code='OPS', description='Operations â€” Day-to-day operations, billing, vendor management', parent_dept_id=1 WHERE id=4");
+    $pdo->exec("UPDATE departments SET code='LEGAL', description='Legal & Compliance â€” Agreements, RERA, title verification, compliance', parent_dept_id=1 WHERE id=5");
+    $pdo->exec("UPDATE departments SET code='HR', description='HR & Administration â€” Recruitment, attendance, payroll, employee welfare', parent_dept_id=1 WHERE id=6");
+    $pdo->exec("UPDATE departments SET code='MKTG', description='Marketing & Branding â€” Digital marketing, content, SEO, social media', parent_dept_id=1 WHERE id=7");
+    $pdo->exec("UPDATE departments SET code='IT', description='IT & Digital â€” Software, infrastructure, data, digital marketing', parent_dept_id=1 WHERE id=8");
     echo "Updated 8 existing departments with codes.\n";
 
     // 3. Insert EXEC and CONST departments
@@ -128,7 +128,7 @@ try {
         ['Performance Marketer', $deptMap['MKTG'], 2, 50000, 100000, 'employee_marketing_executive', NULL],
         ['Graphic Designer', $deptMap['MKTG'], 2, 40000, 80000, 'employee_marketing_executive', NULL],
 
-        // LAND (Land & Acquisition — mapped to existing code LAND... wait, we don't have LAND)
+        // LAND (Land & Acquisition â€” mapped to existing code LAND... wait, we don't have LAND)
         // Actually let me check. The 8 existing are: SALES, FIN, CS, OPS, LEGAL, HR, MKTG, IT
         // Plus EXEC, CONST = 10
         // We need LAND too. Let me add it as 11th dept.
@@ -332,9 +332,9 @@ try {
     $roleCount = $pdo->query("SELECT COUNT(*) FROM employee_designation_roles")->fetchColumn();
     echo "\nFinal counts: $deptCount departments, $desigCount designations, $roleCount role mappings.\n";
 
-    echo "\n✅ Migration complete!\n";
+    echo "\nâœ… Migration complete!\n";
 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";
     echo "Stack: " . $e->getTraceAsString() . "\n";
-}
+}?>

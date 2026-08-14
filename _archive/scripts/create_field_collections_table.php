@@ -40,8 +40,8 @@ try {
         KEY `idx_fc_status` (`status`),
         KEY `idx_fc_booking` (`plot_booking_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
-    echo "✓ field_collections table created successfully!\n";
+    echo "âœ“ field_collections table created successfully!\n";
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

@@ -224,4 +224,4 @@ function haversineDistance($lat1, $lon1, $lat2, $lon2): float {
     return $earthRadius * $c;
 }
 
-echo "\n=== Distance to Landmarks calculation completed ===\n";
+echo "\n=== Distance to Landmarks calculation completed ===\n";?>

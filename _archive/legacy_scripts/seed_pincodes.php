@@ -28,9 +28,9 @@ $createTable = "CREATE TABLE IF NOT EXISTS pincodes (
 
 try {
     $db->execute($createTable);
-    echo "✅ Table created/verified: pincodes\n";
+    echo "âœ… Table created/verified: pincodes\n";
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo "â�Œ Error: " . $e->getMessage() . "\n";
     exit(1);
 }
 
@@ -40,7 +40,7 @@ echo "Current pincodes: " . $count['cnt'] . "\n";
 $force = isset($argv[1]) && $argv[1] === '--force';
 
 if ($count['cnt'] > 0 && !$force) {
-    echo "⏭️  Skipping - table already has data. Use --force to re-seed.\n";
+    echo "â�­ï¸�  Skipping - table already has data. Use --force to re-seed.\n";
     exit(0);
 }
 
@@ -61,13 +61,13 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($httpCode !== 200) {
-    echo "❌ API Error: HTTP $httpCode\n";
+    echo "â�Œ API Error: HTTP $httpCode\n";
     exit(1);
 }
 
 $data = json_decode($response, true);
 if (!isset($data['records'])) {
-    echo "❌ Invalid API response\n";
+    echo "â�Œ Invalid API response\n";
     exit(1);
 }
 
@@ -101,7 +101,7 @@ foreach ($data['records'] as $record) {
     }
 }
 
-echo "\n✅ Done! Inserted: $inserted, Skipped: $skipped\n";
+echo "\nâœ… Done! Inserted: $inserted, Skipped: $skipped\n";
 
 $finalCount = $db->fetch("SELECT COUNT(*) as cnt FROM pincodes");
-echo "Total pincodes in DB: " . $finalCount['cnt'] . "\n";
+echo "Total pincodes in DB: " . $finalCount['cnt'] . "\n";?>

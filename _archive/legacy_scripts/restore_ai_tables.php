@@ -71,7 +71,7 @@ foreach ($missing as $table) {
     $createSQL = preg_replace('/,\s*CONSTRAINT\s+`[^`]+`\s+FOREIGN\s+KEY[^,]*REFERENCES[^,]*?,/i', '', $createSQL);
 
     // Remove inline ENUM/CHECK constraints that may fail (e.g. user_type=)
-    // Keep them — match current schema needs
+    // Keep them â€” match current schema needs
 
     try {
         $pdo->exec($createSQL);
@@ -88,4 +88,4 @@ $log("Total missing:  " . count($missing));
 $log("Restored:       $restored");
 $log("Failed:         $failed");
 $log("Skipped:        $skipped");
-$log("=== DONE ===");
+$log("=== DONE ===");?>

@@ -43,7 +43,7 @@ $milestoneIcons = [
   'default'               => 'fa-flag-checkered',
 ];
 
-function inr($n) { return '₹' . number_format($n); }
+function inr($n) { return 'â‚¹' . number_format($n); }
 $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['total']) * 100) : 0;
 ?>
 
@@ -73,7 +73,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
       <h2 class="mb-1"><i class="fas fa-tasks me-2 text-danger"></i>RERA Milestone Tracker</h2>
       <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?>
         <?php if ($rera): ?>
-          — RERA: <?= htmlspecialchars($rera['rera_number'] ?? '') ?>
+          â€” RERA: <?= htmlspecialchars($rera['rera_number'] ?? '') ?>
         <?php endif; ?>
       </small>
     </div>
@@ -136,8 +136,8 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
         <div class="card border-0 shadow-sm text-center p-3">
           <div class="small text-muted">Completion</div>
           <h3 class="mb-0 text-info"><?= $completionPct ?>%</h3>
-          <div class="progress mt-1" style="height:6px">
-            <div class="progress-bar bg-info" style="width:<?= $completionPct ?>%"></div>
+          <div class="progress mt-1" class="style-51910">
+            <div class="progress-bar bg-info" class="style-17987"></div>
           </div>
         </div>
       </div>
@@ -173,11 +173,11 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
               <div class="timeline-item mb-4 position-relative ps-5">
                 <!-- Timeline dot -->
                 <div class="position-absolute top-0 start-0 translate-middle">
-                  <div class="rounded-circle bg-<?= $color ?> d-flex align-items-center justify-content-center" style="width:36px;height:36px;z-index:1">
+                  <div class="rounded-circle bg-<?= $color ?> d-flex align-items-center justify-content-center" class="style-20148">
                     <i class="fas <?= $icon ?> text-white fa-sm"></i>
                   </div>
                   <?php if ($i < count($milestones) - 1): ?>
-                    <div class="position-absolute top-100 start-50 translate-middle-x bg-<?= $color ?>-subtle" style="width:2px;height:calc(100% + 1.5rem);margin-top:4px"></div>
+                    <div class="position-absolute top-100 start-50 translate-middle-x bg-<?= $color ?>-subtle" class="style-90913"></div>
                   <?php endif; ?>
                 </div>
 
@@ -190,7 +190,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
                         <div class="small text-muted">
                           <?= $milestoneTypeLabels[$type] ?? ucfirst(str_replace('_', ' ', $type)) ?>
                           <?php if (!empty($m['description'])): ?>
-                            — <?= htmlspecialchars($m['description']) ?>
+                            â€” <?= htmlspecialchars($m['description']) ?>
                           <?php endif; ?>
                         </div>
                       </div>
@@ -204,7 +204,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
 
                     <div class="d-flex justify-content-between align-items-center mt-2">
                       <div class="small">
-                        <span class="text-muted"><i class="fas fa-calendar me-1"></i> Planned: <?= $planned ?: '—' ?></span>
+                        <span class="text-muted"><i class="fas fa-calendar me-1"></i> Planned: <?= $planned ?: 'â€”' ?></span>
                         <?php if ($completed): ?>
                           <span class="text-success ms-3"><i class="fas fa-check-circle me-1"></i> Completed: <?= $completed ?></span>
                         <?php endif; ?>

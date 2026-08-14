@@ -16,7 +16,7 @@ try {
 
 // Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
 // Controller must perform auth check via $this->requireAdmin() / requireLogin()
-// NOTE: This file is a legacy/dead view — not referenced by any controller.
+// NOTE: This file is a legacy/dead view â€” not referenced by any controller.
 
 // Get all available plans
 $plans_query = "SELECT * FROM mlm_commission_plans WHERE status != 'archived' ORDER BY status DESC, created_at DESC";
@@ -399,24 +399,24 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                                         <div class="mb-4">
                                             <label class="form-label">
-                                                <i class="fas fa-rupee-sign me-1"></i>Property Value per Sale (₹)
+                                                <i class="fas fa-rupee-sign me-1"></i>Property Value per Sale (â‚¹)
                                             </label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" name="property_value"
                                                     value="5000000" min="100000" step="100000" required>
-                                                <span class="input-group-text">₹</span>
+                                                <span class="input-group-text">â‚¹</span>
                                             </div>
                                             <small class="text-muted">Average value of properties being sold</small>
                                         </div>
 
                                         <div class="mb-4">
                                             <label class="form-label">
-                                                <i class="fas fa-chart-line me-1"></i>Total Monthly Sales Volume (₹)
+                                                <i class="fas fa-chart-line me-1"></i>Total Monthly Sales Volume (â‚¹)
                                             </label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" name="total_sales"
                                                     value="100000000" min="1000000" step="1000000" required>
-                                                <span class="input-group-text">₹</span>
+                                                <span class="input-group-text">â‚¹</span>
                                             </div>
                                             <small class="text-muted">Total sales across all users</small>
                                         </div>
@@ -468,7 +468,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             <div class="col-6">
                                                 <div class="result-card text-center">
                                                     <i class="fas fa-rupee-sign fa-2x text-success mb-2"></i>
-                                                    <h4>₹<?php echo number_format($calculation_result['summary']['total_payout']); ?></h4>
+                                                    <h4>â‚¹<?php echo number_format($calculation_result['summary']['total_payout']); ?></h4>
                                                     <small class="text-muted">Total Payout</small>
                                                 </div>
                                             </div>
@@ -479,7 +479,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             <h6>Company Profitability</h6>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <strong>Total Sales:</strong> ₹<?php echo number_format($calculation_result['summary']['total_commission'] + $calculation_result['summary']['company_margin']); ?>
+                                                    <strong>Total Sales:</strong> â‚¹<?php echo number_format($calculation_result['summary']['total_commission'] + $calculation_result['summary']['company_margin']); ?>
                                                 </div>
                                                 <div class="profitability-indicator <?php echo $calculation_result['summary']['company_margin'] > 0 ? 'profitable' : 'unprofitable'; ?>">
                                                     <?php echo $calculation_result['summary']['company_margin'] > 0 ? 'Profitable' : 'Loss'; ?>
@@ -487,7 +487,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <strong>Company Margin:</strong> ₹<?php echo number_format($calculation_result['summary']['company_margin']); ?>
+                                                    <strong>Company Margin:</strong> â‚¹<?php echo number_format($calculation_result['summary']['company_margin']); ?>
                                                 </div>
                                                 <div>
                                                     <strong>Margin %:</strong> <?php echo number_format($calculation_result['summary']['company_margin_percentage'], 2); ?>%
@@ -505,57 +505,57 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                                                     <div class="breakdown-row">
                                                         <span>Monthly Sales:</span>
-                                                        <span>₹<?php echo number_format($level_data['monthly_sales']); ?></span>
+                                                        <span>â‚¹<?php echo number_format($level_data['monthly_sales']); ?></span>
                                                     </div>
 
                                                     <div class="breakdown-row">
                                                         <span>Direct Commission:</span>
-                                                        <span class="text-success">₹<?php echo number_format($level_data['commissions']['direct']); ?></span>
+                                                        <span class="text-success">â‚¹<?php echo number_format($level_data['commissions']['direct']); ?></span>
                                                     </div>
 
                                                     <div class="breakdown-row">
                                                         <span>Team Commission:</span>
-                                                        <span class="text-info">₹<?php echo number_format($level_data['commissions']['team']); ?></span>
+                                                        <span class="text-info">â‚¹<?php echo number_format($level_data['commissions']['team']); ?></span>
                                                     </div>
 
                                                     <?php if ($level_data['commissions']['level_bonus'] > 0): ?>
                                                         <div class="breakdown-row">
                                                             <span>Level Bonus:</span>
-                                                            <span class="text-warning">₹<?php echo number_format($level_data['commissions']['level_bonus']); ?></span>
+                                                            <span class="text-warning">â‚¹<?php echo number_format($level_data['commissions']['level_bonus']); ?></span>
                                                         </div>
                                                     <?php endif; ?>
 
                                                     <?php if ($level_data['commissions']['matching'] > 0): ?>
                                                         <div class="breakdown-row">
                                                             <span>Matching Bonus:</span>
-                                                            <span class="text-primary">₹<?php echo number_format($level_data['commissions']['matching']); ?></span>
+                                                            <span class="text-primary">â‚¹<?php echo number_format($level_data['commissions']['matching']); ?></span>
                                                         </div>
                                                     <?php endif; ?>
 
                                                     <?php if ($level_data['commissions']['leadership'] > 0): ?>
                                                         <div class="breakdown-row">
                                                             <span>Leadership Bonus:</span>
-                                                            <span class="text-secondary">₹<?php echo number_format($level_data['commissions']['leadership']); ?></span>
+                                                            <span class="text-secondary">â‚¹<?php echo number_format($level_data['commissions']['leadership']); ?></span>
                                                         </div>
                                                     <?php endif; ?>
 
                                                     <?php if ($level_data['commissions']['performance'] > 0): ?>
                                                         <div class="breakdown-row">
                                                             <span>Performance Bonus:</span>
-                                                            <span class="text-danger">₹<?php echo number_format($level_data['commissions']['performance']); ?></span>
+                                                            <span class="text-danger">â‚¹<?php echo number_format($level_data['commissions']['performance']); ?></span>
                                                         </div>
                                                     <?php endif; ?>
 
                                                     <div class="breakdown-row total">
                                                         <span><strong>Total for Level:</strong></span>
-                                                        <span class="text-success"><strong>₹<?php echo number_format($level_data['total_commission']); ?></strong></span>
+                                                        <span class="text-success"><strong>â‚¹<?php echo number_format($level_data['total_commission']); ?></strong></span>
                                                     </div>
                                                 </div>
                                             <?php endforeach; ?>
 
-                                            <div class="breakdown-row total" style="background: linear-gradient(135deg, var(--success-color), #20c997); color: white; margin-top: 1rem; padding: 1rem; border-radius: 10px;">
+                                            <div class="breakdown-row total" class="style-34971">
                                                 <span><strong>Grand Total Payout:</strong></span>
-                                                <span><strong>₹<?php echo number_format($calculation_result['summary']['total_payout']); ?></strong></span>
+                                                <span><strong>â‚¹<?php echo number_format($calculation_result['summary']['total_payout']); ?></strong></span>
                                             </div>
                                         </div>
 
@@ -694,7 +694,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                     label: function(context) {
                                         const total = <?php echo array_sum($data); ?>;
                                         const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                        return context.label + ': ₹' + context.parsed.toLocaleString('en-IN') + ' (' + percentage + '%)';
+                                        return context.label + ': â‚¹' + context.parsed.toLocaleString('en-IN') + ' (' + percentage + '%)';
                                     }
                                 }
                             }

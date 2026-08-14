@@ -4,16 +4,16 @@
  * Run: php scripts/migrate_module2_sales_lifecycle.php
  *
  * Creates 10 tables:
- *  1. plot_bookings                    — central sales lifecycle (Inquiry → Possession)
- *  2. booking_payment_schedules        — installment plan
- *  3. booking_demand_letters           — RERA demand notices
- *  4. booking_documents                — uploaded docs (KYC, agreements, etc.)
- *  5. booking_status_history           — audit trail of stage changes
- *  6. booking_payment_receipts         — receipts (separate from generic payments)
- *  7. booking_refunds                  — refund/cancellation TDS
- *  8. booking_transfers                — name transfer / co-owner add
- *  9. booking_commissions              — associate/agent/broker commission split
- * 10. rera_compliance_log              — RERA 70% escrow, quarterly filing audit
+ *  1. plot_bookings                    â€” central sales lifecycle (Inquiry â†’ Possession)
+ *  2. booking_payment_schedules        â€” installment plan
+ *  3. booking_demand_letters           â€” RERA demand notices
+ *  4. booking_documents                â€” uploaded docs (KYC, agreements, etc.)
+ *  5. booking_status_history           â€” audit trail of stage changes
+ *  6. booking_payment_receipts         â€” receipts (separate from generic payments)
+ *  7. booking_refunds                  â€” refund/cancellation TDS
+ *  8. booking_transfers                â€” name transfer / co-owner add
+ *  9. booking_commissions              â€” associate/agent/broker commission split
+ * 10. rera_compliance_log              â€” RERA 70% escrow, quarterly filing audit
  */
 
 $root = dirname(__DIR__);
@@ -39,7 +39,7 @@ if ($stale) {
         $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
         $pdo->exec("DROP TABLE plot_bookings");
         $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
-        echo "  ✓ dropped\n\n";
+        echo "  âœ“ dropped\n\n";
     }
 }
 
@@ -91,7 +91,7 @@ $queries = [
         `possession_letter_no` varchar(100) DEFAULT NULL,
         `handover_date` date DEFAULT NULL,
         `defect_liability_end_date` date DEFAULT NULL,
-        `tds_section_194ia_applicable` tinyint(1) DEFAULT 1 COMMENT '1% TDS on transfer of immovable property > ₹50L',
+        `tds_section_194ia_applicable` tinyint(1) DEFAULT 1 COMMENT '1% TDS on transfer of immovable property > â‚¹50L',
         `tds_amount_collected` decimal(15,2) DEFAULT 0.00,
         `rera_70pct_escrow_required` tinyint(1) DEFAULT 1,
         `rera_project_id` varchar(100) DEFAULT NULL,
@@ -474,10 +474,10 @@ foreach ($queries as $i => $sql) {
     }
     try {
         $pdo->exec($sql);
-        echo "✓ [{$n}/10] Created table: {$tableName}\n";
+        echo "âœ“ [{$n}/10] Created table: {$tableName}\n";
         $created++;
     } catch (Exception $e) {
-        echo "✗ [{$n}/10] Failed: {$tableName} - " . $e->getMessage() . "\n";
+        echo "âœ— [{$n}/10] Failed: {$tableName} - " . $e->getMessage() . "\n";
         $errors[] = $tableName;
     }
 }
@@ -500,4 +500,4 @@ foreach ($rows as $r) {
     printf("  %-35s engine=%s rows=%s\n", $r['TABLE_NAME'], $r['ENGINE'], $r['TABLE_ROWS']);
 }
 
-echo "\n✓ Module 2 migration complete!\n";
+echo "\nâœ“ Module 2 migration complete!\n";?>

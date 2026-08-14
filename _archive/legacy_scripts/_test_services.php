@@ -31,4 +31,4 @@ foreach ($services as $class => $file) {
         $fail++;
     }
 }
-echo "\nResult: $ok OK / $fail FAIL\n";
+echo "\nResult: $ok OK / $fail FAIL\n";?>

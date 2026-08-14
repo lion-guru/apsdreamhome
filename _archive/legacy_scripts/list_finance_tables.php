@@ -15,4 +15,4 @@ echo "Module 3 / finance-related tables (" . count($financeTables) . "):" . PHP_
 foreach ($financeTables as $t) {
     $c = $db->fetchOne("SELECT COUNT(*) AS c FROM `$t`")['c'];
     echo "  $t : $c rows" . PHP_EOL;
-}
+}?>

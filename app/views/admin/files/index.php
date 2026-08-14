@@ -1,6 +1,6 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">📁 File Manager</h1>
+        <h1 class="h3 mb-0">ðŸ“� File Manager</h1>
         <div>
             <a href="<?= BASE_URL ?>/admin/files/upload" class="btn btn-primary me-2">
                 <i class="fas fa-upload"></i> Upload File
@@ -152,7 +152,7 @@
                         <?php if (empty($files['files'] ?? [])): ?>
                         <tr>
                             <td colspan="6" class="text-center py-5">
-                                <i class="fas fa-folder-open fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-folder-open fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No files found</h5>
                                 <p class="text-muted mb-3">Upload your first file to get started with the file manager.</p>
                             </td>
@@ -184,7 +184,7 @@
                                 <a href="<?= BASE_URL ?>/admin/files/download/<?= $file['uuid'] ?>" class="btn btn-sm btn-success">
                                     <i class="fas fa-download"></i>
                                 </a>
-                                <form action="<?= BASE_URL ?>/admin/files/delete/<?= $file['uuid'] ?>" method="POST" style="display: inline;">
+                                <form action="<?= BASE_URL ?>/admin/files/delete/<?= $file['uuid'] ?>" method="POST" class="style-26772">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this file?')">
                                         <i class="fas fa-trash"></i>

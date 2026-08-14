@@ -74,7 +74,7 @@ class LeadStatusHistory extends Model
             return '';
         }
         return sprintf(
-            '<span class="badge" style="background-color: %s; color: %s">%s</span>',
+            '<span class="badge" class="style-63314">%s</span>',
             $status->color,
             $this->getContrastColor($status->color),
             htmlspecialchars($status->name)
@@ -91,7 +91,7 @@ class LeadStatusHistory extends Model
             return '<span class="badge bg-secondary">None</span>';
         }
         return sprintf(
-            '<span class="badge" style="background-color: %s; color: %s">%s</span>',
+            '<span class="badge" class="style-63314">%s</span>',
             $previousStatus->color,
             $this->getContrastColor($previousStatus->color),
             htmlspecialchars($previousStatus->name)

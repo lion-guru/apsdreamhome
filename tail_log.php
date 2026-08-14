@@ -6,4 +6,4 @@ if (file_exists($file)) {
     echo implode("", $last_lines);
 } else {
     echo "File not found.";
-}
+}?>

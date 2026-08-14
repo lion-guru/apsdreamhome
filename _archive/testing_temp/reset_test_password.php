@@ -11,4 +11,4 @@ echo "Updated rows: " . $stmt->rowCount() . "\n";
 $stmt2 = $pdo->prepare('SELECT password FROM users WHERE email=?');
 $stmt2->execute(['customer1@apsdreamhome.com']);
 $row = $stmt2->fetch();
-echo "Verify: " . (password_verify('Test1234', $row['password']) ? 'OK' : 'FAIL') . "\n";
+echo "Verify: " . (password_verify('Test1234', $row['password']) ? 'OK' : 'FAIL') . "\n";?>

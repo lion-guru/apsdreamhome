@@ -57,20 +57,20 @@ foreach ($indexes as $table => $tableIndexes) {
 
     foreach ($tableIndexes as $idxName => $col) {
         if (in_array($idxName, $existing)) {
-            echo "  ⊘ $idxName already exists\n";
+            echo "  âŠ˜ $idxName already exists\n";
             $skipped++;
             continue;
         }
         try {
             $pdo->exec("CREATE INDEX `$idxName` ON `$table`(`$col`)");
-            echo "  ✓ Created $idxName on $table($col)\n";
+            echo "  âœ“ Created $idxName on $table($col)\n";
             $applied++;
         } catch (PDOException $e) {
-            echo "  ✗ Failed $idxName: {$e->getMessage()}\n";
+            echo "  âœ— Failed $idxName: {$e->getMessage()}\n";
             $failed++;
         }
     }
 }
 
 echo "\n=== SUMMARY ===\n";
-echo "Applied: $applied | Skipped: $skipped | Failed: $failed\n";
+echo "Applied: $applied | Skipped: $skipped | Failed: $failed\n";?>

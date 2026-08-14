@@ -51,7 +51,7 @@ try {
             CONSTRAINT `fk_nach_customer` FOREIGN KEY (`customer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
-    echo "✓ Created nach_mandates table\n";
+    echo "âœ“ Created nach_mandates table\n";
 
     // 2. NACH debit log (audit trail for auto-debit attempts)
     $pdo->exec("
@@ -73,17 +73,17 @@ try {
             KEY `idx_ndl_status_date` (`status`, `debit_date`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
-    echo "✓ Created nach_debit_log table\n";
+    echo "âœ“ Created nach_debit_log table\n";
 
     // 3. Add early_payment_discount column to booking_payment_schedules
     try {
         $pdo->exec("ALTER TABLE `booking_payment_schedules` 
             ADD COLUMN `early_payment_discount` DECIMAL(10,2) NOT NULL DEFAULT 0.00 
             AFTER `accrued_penalty`");
-        echo "✓ Added early_payment_discount column to booking_payment_schedules\n";
+        echo "âœ“ Added early_payment_discount column to booking_payment_schedules\n";
     } catch (PDOException $e) {
         if (str_contains($e->getMessage(), 'Duplicate column')) {
-            echo "○ early_payment_discount column already exists\n";
+            echo "â—‹ early_payment_discount column already exists\n";
         } else {
             throw $e;
         }
@@ -94,18 +94,18 @@ try {
         $pdo->exec("ALTER TABLE `booking_payment_schedules` 
             ADD COLUMN `discount_applied` TINYINT(1) NOT NULL DEFAULT 0 
             AFTER `early_payment_discount`");
-        echo "✓ Added discount_applied column to booking_payment_schedules\n";
+        echo "âœ“ Added discount_applied column to booking_payment_schedules\n";
     } catch (PDOException $e) {
         if (str_contains($e->getMessage(), 'Duplicate column')) {
-            echo "○ discount_applied column already exists\n";
+            echo "â—‹ discount_applied column already exists\n";
         } else {
             throw $e;
         }
     }
 
-    echo "\n✅ Migration complete — NACH mandate + early payment discount tables ready\n";
+    echo "\nâœ… Migration complete â€” NACH mandate + early payment discount tables ready\n";
 
 } catch (Exception $e) {
-    echo "✗ Migration failed: " . $e->getMessage() . "\n";
+    echo "âœ— Migration failed: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

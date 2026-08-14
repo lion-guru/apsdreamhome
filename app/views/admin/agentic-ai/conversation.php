@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $_conv = $conversation ?? null;
 $_msgs = $messages ?? [];
 $_ag = $agents ?? [];
@@ -8,7 +8,7 @@ $_ag = $agents ?? [];
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-comment-dots" style="color:#3b82f6"></i> Conversation #<?= $_conv['id'] ?? '?' ?></h1>
+                    <h1 class="m-0"><i class="fas fa-comment-dots" class="style-64047"></i> Conversation #<?= $_conv['id'] ?? '?' ?></h1>
                     <small class="text-muted">
                         Lead: <?= htmlspecialchars($_conv['lead_name'] ?? 'Unknown') ?> | Channel: <?= htmlspecialchars($_conv['channel'] ?? '', ENT_QUOTES, 'UTF-8') ?>
                     </small>
@@ -27,7 +27,7 @@ $_ag = $agents ?? [];
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card card-outline">
-                        <div class="card-body" style="height:500px;overflow-y:auto" id="msgContainer">
+                        <div class="card-body" class="style-55767" id="msgContainer">
                             <?php if (empty($_msgs)): ?>
                             <div class="text-center py-5 text-muted">
                                 <i class="fas fa-comment-dots fa-3x mb-3 opacity-25"></i>
@@ -36,11 +36,11 @@ $_ag = $agents ?? [];
                             <?php else: ?>
                             <?php foreach ($_msgs as $m): ?>
                             <div class="d-flex mb-3 <?= $m['sender_type'] === 'customer' ? '' : 'flex-row-reverse' ?>">
-                                <div style="max-width:70%">
+                                <div class="style-70085">
                                     <div class="p-2 rounded <?= $m['sender_type'] === 'customer' ? 'bg-light' : 'bg-primary text-white' ?>">
                                         <?= nl2br(htmlspecialchars($m['message'])) ?>
                                     </div>
-                                    <small class="text-muted"><?= $m['sender_type'] === 'customer' ? 'Customer' : 'Agent' ?> · <?= date('H:i', strtotime($m['created_at'])) ?></small>
+                                    <small class="text-muted"><?= $m['sender_type'] === 'customer' ? 'Customer' : 'Agent' ?> Â· <?= date('H:i', strtotime($m['created_at'])) ?></small>
                                 </div>
                             </div>
                             <?php endforeach; ?>

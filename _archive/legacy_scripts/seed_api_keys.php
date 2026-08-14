@@ -24,4 +24,4 @@ if ($existing == 0) {
 } else {
     echo "Keys already exist: $existing\n";
 }
-echo "Total: " . $pdo->query("SELECT COUNT(*) FROM api_keys")->fetchColumn() . "\n";
+echo "Total: " . $pdo->query("SELECT COUNT(*) FROM api_keys")->fetchColumn() . "\n";?>

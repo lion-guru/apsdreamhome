@@ -6,5 +6,5 @@ foreach ($rows as $r) echo $r['id'] . '|' . $r['name'] . '|' . $r['url'] . '|' .
 
 echo "\n--- RBAC perms for employee dashboards ---\n";
 $perms = $pdo->query("SELECT role, menu_item_id FROM admin_role_menu_permissions WHERE role LIKE 'employee_%'")->fetchAll(PDO::FETCH_ASSOC);
-foreach ($perms as $p) echo $p['role'] . ' → menu_item_id=' . $p['menu_item_id'] . PHP_EOL;
-echo "Total perms: " . count($perms) . PHP_EOL;
+foreach ($perms as $p) echo $p['role'] . ' â†’ menu_item_id=' . $p['menu_item_id'] . PHP_EOL;
+echo "Total perms: " . count($perms) . PHP_EOL;?>

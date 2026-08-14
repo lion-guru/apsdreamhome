@@ -31,4 +31,4 @@ $router->get('/api/events/dashboard', 'EventController@getDashboard');
 $router->get('/api/events/statistics', 'EventController@getStatistics');
 
 // Event demonstration route
-$router->post('/api/events/demonstrate', 'EventController@demonstrate');
+$router->post('/api/events/demonstrate', 'EventController@demonstrate');?>

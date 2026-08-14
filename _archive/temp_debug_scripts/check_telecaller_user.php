@@ -50,4 +50,4 @@ if ($u) {
     echo "  ID={$u['id']} email={$u['email']} role={$u['role']} name={$u['name']}\n";
 } else {
     echo "  NOT FOUND\n";
-}
+}?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Real-Time Analytics Dashboard
- * APS Dream Home — Live metrics + Chart.js + WebSocket auto-refresh
+ * APS Dream Home â€” Live metrics + Chart.js + WebSocket auto-refresh
  */
 
 $m = $metrics ?? [];
@@ -9,152 +9,152 @@ $cd = $chart_data ?? [];
 $acts = $activities ?? [];
 $updated = date('d M Y, h:i A');
 
-$fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
+$fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
 ?>
 
 <!-- Title Bar -->
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+<div class="style-30464">
     <div>
-        <h1 style="margin:0;font-size:1.6rem;font-weight:700;color:#1e293b;">
-            <i class="fas fa-chart-line" style="color:#6366f1;margin-right:8px;"></i>Real-Time Analytics
+        <h1 class="style-79140">
+            <i class="fas fa-chart-line" class="style-78618"></i>Real-Time Analytics
         </h1>
-        <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b;">
+        <p class="style-61566">
             <span id="rt-updated">Last updated: <?= htmlspecialchars($updated) ?></span>
-            <span id="rt-ws-status" style="margin-left:12px;font-size:0.75rem;color:#94a3b8;">
-                <i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle;"></i> Connecting&hellip;
+            <span id="rt-ws-status" class="style-56313">
+                <i class="fas fa-circle" class="style-338"></i> Connecting&hellip;
             </span>
-            <span id="rt-refresh-badge" style="display:none;margin-left:8px;font-size:0.75rem;color:#10b981;font-weight:600;">
+            <span id="rt-refresh-badge" class="style-14210">
                 <i class="fas fa-sync-alt fa-spin"></i> Refreshing&hellip;
             </span>
         </p>
     </div>
-    <div style="display:flex;gap:10px;">
-        <button onclick="rtRefreshAll()" class="btn btn-sm btn-outline-primary" style="border-radius:8px;">
+    <div class="style-85880">
+        <button onclick="rtRefreshAll()" class="btn btn-sm btn-outline-primary" class="style-69165">
             <i class="fas fa-sync-alt"></i> Refresh Now
         </button>
-        <a href="<?= BASE_URL ?>/admin/erp" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;">
+        <a href="<?= BASE_URL ?>/admin/erp" class="btn btn-sm btn-outline-secondary" class="style-69165">
             <i class="fas fa-th-large"></i> ERP Overview
         </a>
     </div>
 </div>
 
-<!-- ROW 1 — 4 KPI Cards -->
-<div id="rt-kpi-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;">
+<!-- ROW 1 â€” 4 KPI Cards -->
+<div id="rt-kpi-cards" class="style-94863">
 
     <!-- Leads Today -->
-    <div class="aps-cp-card" style="border-left:4px solid #3b82f6;transition:transform 0.15s;">
-        <div class="aps-cp-card-body" style="padding:18px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                <div style="width:40px;height:40px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-user-plus" style="color:#3b82f6;font-size:1rem;"></i>
+    <div class="aps-cp-card" class="style-95460">
+        <div class="aps-cp-card-body" class="style-67049">
+            <div class="style-67208">
+                <div class="style-25782">
+                    <i class="fas fa-user-plus" class="style-50292"></i>
                 </div>
-                <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#3b82f6;letter-spacing:0.05em;">Leads Today</span>
+                <span class="style-82769">Leads Today</span>
             </div>
-            <div id="rt-kpi-leads" style="font-size:2rem;font-weight:800;color:#1e293b;"><?= (int)($m['leads_today'] ?? 0) ?></div>
-            <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">New inquiries received</div>
+            <div id="rt-kpi-leads" class="style-89425"><?= (int)($m['leads_today'] ?? 0) ?></div>
+            <div class="style-28983">New inquiries received</div>
         </div>
     </div>
 
     <!-- Bookings This Month -->
-    <div class="aps-cp-card" style="border-left:4px solid #10b981;transition:transform 0.15s;">
-        <div class="aps-cp-card-body" style="padding:18px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                <div style="width:40px;height:40px;border-radius:10px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-file-signature" style="color:#10b981;font-size:1rem;"></i>
+    <div class="aps-cp-card" class="style-74913">
+        <div class="aps-cp-card-body" class="style-67049">
+            <div class="style-67208">
+                <div class="style-66150">
+                    <i class="fas fa-file-signature" class="style-40926"></i>
                 </div>
-                <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#10b981;letter-spacing:0.05em;">Bookings This Month</span>
+                <span class="style-88669">Bookings This Month</span>
             </div>
-            <div id="rt-kpi-bookings" style="font-size:2rem;font-weight:800;color:#1e293b;"><?= (int)($m['bookings_month'] ?? 0) ?></div>
-            <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">Active plot bookings</div>
+            <div id="rt-kpi-bookings" class="style-89425"><?= (int)($m['bookings_month'] ?? 0) ?></div>
+            <div class="style-28983">Active plot bookings</div>
         </div>
     </div>
 
     <!-- Revenue This Month -->
-    <div class="aps-cp-card" style="border-left:4px solid #14b8a6;transition:transform 0.15s;">
-        <div class="aps-cp-card-body" style="padding:18px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                <div style="width:40px;height:40px;border-radius:10px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-rupee-sign" style="color:#14b8a6;font-size:1rem;"></i>
+    <div class="aps-cp-card" class="style-24973">
+        <div class="aps-cp-card-body" class="style-67049">
+            <div class="style-67208">
+                <div class="style-57731">
+                    <i class="fas fa-rupee-sign" class="style-24030"></i>
                 </div>
-                <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#14b8a6;letter-spacing:0.05em;">Revenue This Month</span>
+                <span class="style-39510">Revenue This Month</span>
             </div>
-            <div id="rt-kpi-revenue" style="font-size:2rem;font-weight:800;color:#1e293b;"><?= $fmt($m['revenue_month'] ?? 0) ?></div>
-            <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">Booking value booked</div>
+            <div id="rt-kpi-revenue" class="style-89425"><?= $fmt($m['revenue_month'] ?? 0) ?></div>
+            <div class="style-28983">Booking value booked</div>
         </div>
     </div>
 
     <!-- Collections Today -->
-    <div class="aps-cp-card" style="border-left:4px solid #f59e0b;transition:transform 0.15s;">
-        <div class="aps-cp-card-body" style="padding:18px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                <div style="width:40px;height:40px;border-radius:10px;background:#fffbeb;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-hand-holding-usd" style="color:#f59e0b;font-size:1rem;"></i>
+    <div class="aps-cp-card" class="style-22499">
+        <div class="aps-cp-card-body" class="style-67049">
+            <div class="style-67208">
+                <div class="style-28637">
+                    <i class="fas fa-hand-holding-usd" class="style-15659"></i>
                 </div>
-                <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#f59e0b;letter-spacing:0.05em;">Collections Today</span>
+                <span class="style-70531">Collections Today</span>
             </div>
-            <div id="rt-kpi-collections" style="font-size:2rem;font-weight:800;color:#1e293b;"><?= $fmt($m['collections_today'] ?? 0) ?></div>
-            <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">Cash receipts collected</div>
+            <div id="rt-kpi-collections" class="style-89425"><?= $fmt($m['collections_today'] ?? 0) ?></div>
+            <div class="style-28983">Cash receipts collected</div>
         </div>
     </div>
 </div>
 
-<!-- ROW 2 — Charts (2×2 grid) -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;">
+<!-- ROW 2 â€” Charts (2Ã—2 grid) -->
+<div class="style-38908">
 
     <!-- Chart 1: Leads over last 7 days (Line) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" style="font-weight:700;">
-            <span><i class="fas fa-chart-area" style="color:#3b82f6;margin-right:6px;"></i>Leads — Last 7 Days</span>
-            <span class="badge bg-primary-subtle text-primary-emphasis" style="font-size:0.65rem;">LINE</span>
+        <div class="aps-cp-card-header" class="style-48741">
+            <span><i class="fas fa-chart-area" class="style-9981"></i>Leads â€” Last 7 Days</span>
+            <span class="badge bg-primary-subtle text-primary-emphasis" class="style-56522">LINE</span>
         </div>
-        <div class="aps-cp-card-body" style="padding:16px;height:260px;">
+        <div class="aps-cp-card-body" class="style-47072">
             <canvas id="rtChartLeads7d"></canvas>
         </div>
     </div>
 
     <!-- Chart 2: Revenue by Colony (Bar) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" style="font-weight:700;">
-            <span><i class="fas fa-chart-bar" style="color:#10b981;margin-right:6px;"></i>Revenue by Colony</span>
-            <span class="badge bg-success-subtle text-success-emphasis" style="font-size:0.65rem;">BAR</span>
+        <div class="aps-cp-card-header" class="style-48741">
+            <span><i class="fas fa-chart-bar" class="style-28560"></i>Revenue by Colony</span>
+            <span class="badge bg-success-subtle text-success-emphasis" class="style-56522">BAR</span>
         </div>
-        <div class="aps-cp-card-body" style="padding:16px;height:260px;">
+        <div class="aps-cp-card-body" class="style-47072">
             <canvas id="rtChartRevenueColony"></canvas>
         </div>
     </div>
 
     <!-- Chart 3: Lead Sources (Doughnut) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" style="font-weight:700;">
-            <span><i class="fas fa-chart-pie" style="color:#14b8a6;margin-right:6px;"></i>Lead Sources Breakdown</span>
-            <span class="badge bg-purple-subtle text-purple-emphasis" style="font-size:0.65rem;">DOUGHNUT</span>
+        <div class="aps-cp-card-header" class="style-48741">
+            <span><i class="fas fa-chart-pie" class="style-22590"></i>Lead Sources Breakdown</span>
+            <span class="badge bg-purple-subtle text-purple-emphasis" class="style-56522">DOUGHNUT</span>
         </div>
-        <div class="aps-cp-card-body" style="padding:16px;height:260px;">
+        <div class="aps-cp-card-body" class="style-47072">
             <canvas id="rtChartLeadSources"></canvas>
         </div>
     </div>
 
     <!-- Chart 4: Booking Trend 30 days (Line) -->
     <div class="aps-cp-card">
-        <div class="aps-cp-card-header" style="font-weight:700;">
-            <span><i class="fas fa-chart-line" style="color:#f59e0b;margin-right:6px;"></i>Booking Trend — Last 30 Days</span>
-            <span class="badge bg-warning-subtle text-warning-emphasis" style="font-size:0.65rem;">LINE</span>
+        <div class="aps-cp-card-header" class="style-48741">
+            <span><i class="fas fa-chart-line" class="style-39559"></i>Booking Trend â€” Last 30 Days</span>
+            <span class="badge bg-warning-subtle text-warning-emphasis" class="style-56522">LINE</span>
         </div>
-        <div class="aps-cp-card-body" style="padding:16px;height:260px;">
+        <div class="aps-cp-card-body" class="style-47072">
             <canvas id="rtChartBookings30d"></canvas>
         </div>
     </div>
 </div>
 
-<!-- ROW 3 — Live Activity Feed -->
-<div class="aps-cp-card" style="margin-bottom:28px;">
-    <div class="aps-cp-card-header" style="font-weight:700;">
-        <span><i class="fas fa-stream" style="color:#6366f1;margin-right:6px;"></i>Live Activity Feed</span>
-        <span class="badge bg-light text-dark" style="font-size:0.65rem;" id="rt-activity-count"><?= count($acts) ?> events</span>
+<!-- ROW 3 â€” Live Activity Feed -->
+<div class="aps-cp-card" class="style-99970">
+    <div class="aps-cp-card-header" class="style-48741">
+        <span><i class="fas fa-stream" class="style-26991"></i>Live Activity Feed</span>
+        <span class="badge bg-light text-dark" class="style-56522" id="rt-activity-count"><?= count($acts) ?> events</span>
     </div>
-    <div class="aps-cp-card-body" style="padding:16px;max-height:340px;overflow-y:auto;" id="rt-activity-list">
+    <div class="aps-cp-card-body" class="style-86260" id="rt-activity-list">
         <?php if (empty($acts)): ?>
-            <p style="color:#94a3b8;text-align:center;padding:24px 0;">No recent activity.</p>
+            <p class="style-2934">No recent activity.</p>
         <?php else: ?>
             <?php foreach ($acts as $act): ?>
                 <?php
@@ -164,15 +164,15 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
                     $actIcon = $act['icon'] ?? 'fa-circle';
                     $actColor = $act['color'] ?? '#64748b';
                 ?>
-                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;">
-                    <div style="width:34px;height:34px;border-radius:8px;background:<?= $actColor ?>15;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        <i class="fas <?= $actIcon ?>" style="color:<?= $actColor ?>;font-size:0.8rem;"></i>
+                <div class="style-78578">
+                    <div class="style-79572">
+                        <i class="fas <?= $actIcon ?>" class="style-59362"></i>
                     </div>
-                    <div style="flex:1;min-width:0;">
-                        <div style="font-size:0.82rem;font-weight:600;color:#1e293b;text-transform:capitalize;"><?= $actType ?></div>
-                        <div style="font-size:0.75rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= $actDesc ?></div>
+                    <div class="style-65975">
+                        <div class="style-36189"><?= $actType ?></div>
+                        <div class="style-57020"><?= $actDesc ?></div>
                     </div>
-                    <div style="font-size:0.7rem;color:#94a3b8;white-space:nowrap;"><?= $actTime ?></div>
+                    <div class="style-38661"><?= $actTime ?></div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -186,7 +186,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 (function() {
     'use strict';
 
-    /* ════════════════════════ Chart Instances ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Chart Instances â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
     let chartLeads7d    = null;
     let chartRevenue    = null;
     let chartSources    = null;
@@ -204,9 +204,9 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         palette:   ['#3b82f6','#10b981','#f59e0b','#ef4444','#14b8a6','#06b6d4','#ec4899','#84cc16']
     };
 
-    function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+    function fmt(n) { return 'â‚¹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0}); }
 
-    /* ════════════════════════ Chart Renderers ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Chart Renderers â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     function renderLeads7d(data) {
         const ctx = document.getElementById('rtChartLeads7d');
@@ -360,7 +360,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         }
     }
 
-    /* ════════════════════════ Helpers ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Helpers â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     function chartOpts(yLabel) {
         return {
@@ -397,7 +397,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         return result;
     }
 
-    /* ════════════════════════ KPI Updater ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� KPI Updater â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     function updateKPIs(m) {
         animateNumber('rt-kpi-leads', m.leads_today);
@@ -418,7 +418,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         setTimeout(function() { el.style.transform = 'scale(1)'; }, 300);
     }
 
-    /* ════════════════════════ Activity Feed Updater ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Activity Feed Updater â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     function updateActivityFeed(activities) {
         var list = document.getElementById('rt-activity-list');
@@ -426,7 +426,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         if (!list) return;
 
         if (!activities || activities.length === 0) {
-            list.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:24px 0;">No recent activity.</p>';
+            list.innerHTML = '<p class="style-2934">No recent activity.</p>';
             if (count) count.textContent = '0 events';
             return;
         }
@@ -438,18 +438,18 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
             var time  = (a.created_at || '').replace(/</g, '&lt;');
             var icon  = a.icon  || 'fa-circle';
             var color = a.color || '#64748b';
-            html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;">'
-                + '<div style="width:34px;height:34px;border-radius:8px;background:'+color+'15;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
-                + '<i class="fas '+icon+'" style="color:'+color+';font-size:0.8rem;"></i></div>'
-                + '<div style="flex:1;min-width:0;"><div style="font-size:0.82rem;font-weight:600;color:#1e293b;text-transform:capitalize;">'+type+'</div>'
-                + '<div style="font-size:0.75rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+desc+'</div></div>'
-                + '<div style="font-size:0.7rem;color:#94a3b8;white-space:nowrap;">'+time+'</div></div>';
+            html += '<div class="style-78578">'
+                + '<div class="style-80599">'
+                + '<i class="fas '+icon+'" class="style-54303"></i></div>'
+                + '<div class="style-65975"><div class="style-36189">'+type+'</div>'
+                + '<div class="style-57020">'+desc+'</div></div>'
+                + '<div class="style-38661">'+time+'</div></div>';
         });
         list.innerHTML = html;
         if (count) count.textContent = activities.length + ' events';
     }
 
-    /* ════════════════════════ Data Fetchers ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Data Fetchers â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     function showRefreshBadge() {
         var badge = document.getElementById('rt-refresh-badge');
@@ -494,7 +494,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         Promise.all([fetchMetrics(), fetchChartData()]).then(hideRefreshBadge).catch(hideRefreshBadge);
     }
 
-    /* ════════════════════════ WebSocket ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� WebSocket â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     var ws = null;
     var wsReconnectAttempts = 0;
@@ -524,7 +524,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
                     // Immediate refresh on analytics broadcast
                     rtRefreshAll();
                 } else if (msg.type === 'pong' || msg.type === 'connection') {
-                    // heartbeat / connection ack — ignore
+                    // heartbeat / connection ack â€” ignore
                 }
             } catch(e) { /* ignore parse errors */ }
         };
@@ -545,9 +545,9 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         var el = document.getElementById('rt-ws-status');
         if (!el) return;
         if (connected) {
-            el.innerHTML = '<i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle;color:#10b981;"></i> <span style="color:#10b981;font-weight:600;">Live</span>';
+            el.innerHTML = '<i class="fas fa-circle" class="style-81605"></i> <span class="style-75447">Live</span>';
         } else {
-            el.innerHTML = '<i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle;color:#94a3b8;"></i> <span style="color:#94a3b8;">Reconnecting&hellip;</span>';
+            el.innerHTML = '<i class="fas fa-circle" class="style-8418"></i> <span class="style-27277">Reconnecting&hellip;</span>';
         }
     }
 
@@ -558,7 +558,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
         }
     }, 30000);
 
-    /* ════════════════════════ Init ════════════════════════ */
+    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Init â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
 
     document.addEventListener('DOMContentLoaded', function() {
         // Initial render from server-side data

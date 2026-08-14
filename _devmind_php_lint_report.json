@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-08-14 18:26:30",
+  "total_files": 3337,
+  "clean_files": 2983,
+  "errors_found": 17,
+  "top_errors": [
+    {
+      "file": "public\\check_css.php",
+      "error": "-1 brace imbalance"
+    },
+    {
+      "file": "public\\check_css2.php",
+      "error": "1 brace imbalance"
+    },
+    {
+      "file": "routes\\router.php",
+      "error": "-1 brace imbalance"
+    },
+    {
+      "file": "tools\\dev_tools\\mvc_pattern_analysis.php",
+      "error": "2 brace imbalance"
+    },
+    {
+      "file": "testing\\root_scripts\\adminer.php",
+      "error": "46 brace imbalance"
+    },
+    {
+      "file": "testing\\root_scripts\\deep_interactive_test.php",
+      "error": "1 brace imbalance"
+    },
+    {
+      "file": "app\\Core\\BackupManager.php",
+      "error": "10 brace imbalance"
+    },
+    {
+      "file": "app\\Models\\LayoutTemplate.php",
+      "error": "1 brace imbalance"
+    },
+    {
+      "file": "app\\views\\layouts\\base.php",
+      "error": "1 brace imbalance"
+    },
+    {
+      "file": "app\\views\\pages\\ai_assistant.php",
+      "error": "-1 brace imbalance"
+    },
+    {
+      "file": "app\\views\\properties\\property_detail.php",
+      "error": "-1 brace imbalance"
+    },
+    {
+      "file": "app\\views\\properties\\single.php",
+      "error": "2 brace imbalance"
+    },
+    {
+      "file": "app\\views\\team\\dashboard.php",
+      "error": "1 brace imbalance"
+    },
+    {
+      "file": "app\\Services\\AI\\AIContentGenerationService.php",
+      "error": "2 brace imbalance"
+    },
+    {
+      "file": "app\\Services\\AI\\AIImageTagger.php",
+      "error": "1 brace imbalance"
+    },
+    {
+      "file": "app\\Services\\Monitoring\\RequestService.php",
+      "error": "-3 brace imbalance"
+    },
+    {
+      "file": "app\\Services\\Security\\SecurityTestSuite.php",
+      "error": "3 brace imbalance"
+    }
+  ]
+}

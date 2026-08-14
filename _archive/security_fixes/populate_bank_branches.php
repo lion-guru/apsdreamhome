@@ -120,4 +120,4 @@ echo "Inserted/Updated $inserted bank branches\n";
 
 // Verify
 $count = $pdo->query("SELECT COUNT(*) FROM bank_branches")->fetchColumn();
-echo "Total branches in table: $count\n";
+echo "Total branches in table: $count\n";?>

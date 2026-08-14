@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-08-14T18:14:17.469379",
+  "total_pages": 9,
+  "accessible": 5,
+  "results": [
+    {
+      "page": "Homepage",
+      "url": "/apsdreamhome/",
+      "http_status": 200,
+      "navigated": false,
+      "issues": [],
+      "content_length": 307766
+    },
+    {
+      "page": "Login Page",
+      "url": "/apsdreamhome/login",
+      "http_status": 200,
+      "navigated": false,
+      "issues": [],
+      "content_length": 17305
+    },
+    {
+      "page": "Main Index",
+      "url": "/apsdreamhome/index.php",
+      "http_status": 302,
+      "navigated": false,
+      "issues": [],
+      "content_length": 0
+    },
+    {
+      "page": "Admin Dashboard",
+      "url": "/apsdreamhome/admin",
+      "http_status": 302,
+      "navigated": false,
+      "issues": [],
+      "content_length": 0
+    },
+    {
+      "page": "Product Listing",
+      "url": "/apsdreamhome/properties",
+      "http_status": 200,
+      "navigated": false,
+      "issues": [],
+      "content_length": 272361
+    },
+    {
+      "page": "Shopping Cart",
+      "url": "/apsdreamhome/cart",
+      "http_status": 404,
+      "navigated": false,
+      "issues": [],
+      "content_length": 0
+    },
+    {
+      "page": "Checkout",
+      "url": "/apsdreamhome/checkout",
+      "http_status": 404,
+      "navigated": false,
+      "issues": [],
+      "content_length": 0
+    },
+    {
+      "page": "Contact Page",
+      "url": "/apsdreamhome/contact",
+      "http_status": 200,
+      "navigated": false,
+      "issues": [],
+      "content_length": 192452
+    },
+    {
+      "page": "Services",
+      "url": "/apsdreamhome/services",
+      "http_status": 200,
+      "navigated": false,
+      "issues": [],
+      "content_length": 185834
+    }
+  ]
+}

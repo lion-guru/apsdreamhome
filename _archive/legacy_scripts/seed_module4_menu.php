@@ -60,4 +60,4 @@ foreach ($items as $i) {
         echo "ERROR url=" . $i['url'] . " msg=" . $e->getMessage() . "\n";
     }
 }
-echo "DONE inserted=$inserted updated=$updated\n";
+echo "DONE inserted=$inserted updated=$updated\n";?>

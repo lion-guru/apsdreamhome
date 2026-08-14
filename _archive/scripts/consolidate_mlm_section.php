@@ -1,6 +1,6 @@
 <?php
 /**
- * MLM Section Consolidation — reduce 35 items to ~18 essential items
+ * MLM Section Consolidation â€” reduce 35 items to ~18 essential items
  * Run: php scripts/consolidate_mlm_section.php
  */
 
@@ -19,17 +19,17 @@ try {
     
     // Items to REMOVE (redundant/overlapping):
     $removals = [
-        // Network/Tree: keep Network Tree (93), remove Genealogy (118) — same thing
+        // Network/Tree: keep Network Tree (93), remove Genealogy (118) â€” same thing
         118,
         // MLM Dashboard (295): keep MLM overview (37), remove standalone dashboard
         295,
-        // MLM Settings (151): merge into Commission Rules (152) — keep rules
+        // MLM Settings (151): merge into Commission Rules (152) â€” keep rules
         151,
-        // MLM Levels (161): merge into Commission Structure (158) — keep structure
+        // MLM Levels (161): merge into Commission Structure (158) â€” keep structure
         161,
-        // MLM Records (162): merge into MLM Analytics (163) — keep analytics
+        // MLM Records (162): merge into MLM Analytics (163) â€” keep analytics
         162,
-        // MLM Analytics (163): keep — covers records + analytics
+        // MLM Analytics (163): keep â€” covers records + analytics
         // Revenue Daily (164): merge into MLM Analytics (163)
         164,
         // Rank Evaluation (153): merge into Rank Criteria (180)
@@ -55,9 +55,9 @@ try {
         // Calculations (159): merge into Associate Structure (158)
         159,
         // Telecaller Rules (165): move to CRM/telecalling section
-        // Actually, let's remove it from MLM — telecaller has its own section
+        // Actually, let's remove it from MLM â€” telecaller has its own section
         165,
-        // Telecaller Comm. (166): same — remove from MLM
+        // Telecaller Comm. (166): same â€” remove from MLM
         166,
         // Agent Rates (157): merge into Commissions (69)
         157,
@@ -73,15 +73,15 @@ try {
     
     // Now update the Rank Criteria item to reflect it's the consolidated rank page
     $pdo->exec("UPDATE admin_menu_items SET name = 'Rank Management', url = '/admin/mlm-settings/evaluate' WHERE id = 180");
-    echo "\n2. Updated id=180 → 'Rank Management' at /admin/mlm-settings/evaluate\n";
+    echo "\n2. Updated id=180 â†’ 'Rank Management' at /admin/mlm-settings/evaluate\n";
     
     // Update Associate Structure to include calculations
     $pdo->exec("UPDATE admin_menu_items SET name = 'Associate Commission' WHERE id = 158");
-    echo "3. Updated id=158 → 'Associate Commission'\n";
+    echo "3. Updated id=158 â†’ 'Associate Commission'\n";
     
     // Update MLM Analytics to include records
     $pdo->exec("UPDATE admin_menu_items SET name = 'MLM Analytics & Records' WHERE id = 163");
-    echo "4. Updated id=163 → 'MLM Analytics & Records'\n";
+    echo "4. Updated id=163 â†’ 'MLM Analytics & Records'\n";
     
     // Final count
     $result = $pdo->query("SELECT COUNT(*) as cnt FROM admin_menu_items WHERE is_active=1 AND section='mlm'");
@@ -98,9 +98,9 @@ try {
     echo "\nFinal MLM section:\n";
     $items = $pdo->query("SELECT id, name, url, order_index FROM admin_menu_items WHERE is_active=1 AND section='mlm' ORDER BY order_index");
     while ($row = $items->fetch()) {
-        echo "  [{$row['id']}] {$row['name']} → {$row['url']}\n";
+        echo "  [{$row['id']}] {$row['name']} â†’ {$row['url']}\n";
     }
     
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

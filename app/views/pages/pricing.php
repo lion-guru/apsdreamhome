@@ -1,6 +1,6 @@
 <?php
 /**
- * SaaS Pricing Page — Public plan comparison and signup
+ * SaaS Pricing Page â€” Public plan comparison and signup
  * Variable: $plans (array of subscription_plans rows)
  */
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing Plans — APS Dream Home SaaS</title>
+    <title>Pricing Plans â€” APS Dream Home SaaS</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style>
@@ -293,14 +293,14 @@ foreach ($plans as $plan):
             <?php if ($isFree): ?>
                 Free
             <?php else: ?>
-                <span class="currency">₹</span><span class="amount"><?= number_format($plan['price_monthly'] ?? 0) ?></span>
+                <span class="currency">â‚¹</span><span class="amount"><?= number_format($plan['price_monthly'] ?? 0) ?></span>
                 <span class="period">/mo</span>
             <?php endif; ?>
         </div>
 
         <?php if (!$isFree && ($plan['price_yearly'] ?? 0) > 0): ?>
             <div class="plan-annual" data-yearly-price="<?= number_format($plan['price_yearly'] ?? 0) ?>">
-                ₹<?= number_format($plan['price_yearly'] ?? 0) ?>/year (save <?= round((1 - ($plan['price_yearly'] / ($plan['price_monthly'] * 12))) * 100) ?>%)
+                â‚¹<?= number_format($plan['price_yearly'] ?? 0) ?>/year (save <?= round((1 - ($plan['price_yearly'] / ($plan['price_monthly'] * 12))) * 100) ?>%)
             </div>
         <?php endif; ?>
 
@@ -334,7 +334,7 @@ foreach ($plans as $plan):
     <table class="comparison-table">
         <thead>
             <tr>
-                <th style="text-align:left">Feature</th>
+                <th class="style-19004">Feature</th>
                 <?php foreach ($plans as $p): ?>
                     <th><?= htmlspecialchars($p['name']) ?></th>
                 <?php endforeach; ?>
@@ -368,43 +368,43 @@ foreach ($plans as $plan):
             <tr>
                 <td>CRM Pipeline</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-check" style="color:#00c853"></i></td>
+                    <td><i class="fas fa-check" class="style-84511"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>Kanban Board</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['slug'] ?? '') === 'free' ? 'xmark' : 'check' ?>" style="color:<?= ($p['slug'] ?? '') === 'free' ? '#ff5252' : '#00c853' ?>"></i></td>
+                    <td><i class="fas fa-<?= ($p['slug'] ?? '') === 'free' ? 'xmark' : 'check' ?>" class="style-22637"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>API Access</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['api_access'] ?? 0) ? 'check' : 'xmark' ?>" style="color:<?= ($p['api_access'] ?? 0) ? '#00c853' : '#ff5252' ?>"></i></td>
+                    <td><i class="fas fa-<?= ($p['api_access'] ?? 0) ? 'check' : 'xmark' ?>" class="style-64853"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>White Label</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['white_label'] ?? 0) ? 'check' : 'xmark' ?>" style="color:<?= ($p['white_label'] ?? 0) ? '#00c853' : '#ff5252' ?>"></i></td>
+                    <td><i class="fas fa-<?= ($p['white_label'] ?? 0) ? 'check' : 'xmark' ?>" class="style-75536"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>MLM Engine</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['mlm_engine'] ?? 0) ? 'check' : 'xmark' ?>" style="color:<?= ($p['mlm_engine'] ?? 0) ? '#00c853' : '#ff5252' ?>"></i></td>
+                    <td><i class="fas fa-<?= ($p['mlm_engine'] ?? 0) ? 'check' : 'xmark' ?>" class="style-24574"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>AI Features</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['ai_features'] ?? 0) ? 'check' : 'xmark' ?>" style="color:<?= ($p['ai_features'] ?? 0) ? '#00c853' : '#ff5252' ?>"></i></td>
+                    <td><i class="fas fa-<?= ($p['ai_features'] ?? 0) ? 'check' : 'xmark' ?>" class="style-793"></i></td>
                 <?php endforeach; ?>
             </tr>
             <tr>
                 <td>Priority Support</td>
                 <?php foreach ($plans as $p): ?>
-                    <td><i class="fas fa-<?= ($p['priority_support'] ?? 0) ? 'check' : 'xmark' ?>" style="color:<?= ($p['priority_support'] ?? 0) ? '#00c853' : '#ff5252' ?>"></i></td>
+                    <td><i class="fas fa-<?= ($p['priority_support'] ?? 0) ? 'check' : 'xmark' ?>" class="style-7763"></i></td>
                 <?php endforeach; ?>
             </tr>
         </tbody>
@@ -414,7 +414,7 @@ foreach ($plans as $plan):
 <div class="cta-section">
     <h2>Ready to Grow Your Real Estate Business?</h2>
     <p>Start your 14-day free trial. No credit card required.</p>
-    <a href="<?= $base ?>/tenant-signup" class="btn-plan primary" style="max-width:300px;margin:0 auto">Get Started Now</a>
+    <a href="<?= $base ?>/tenant-signup" class="btn-plan primary" class="style-49967">Get Started Now</a>
 </div>
 
 <div class="footer-note">

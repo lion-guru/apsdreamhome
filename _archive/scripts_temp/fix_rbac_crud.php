@@ -37,4 +37,4 @@ foreach($rows as $r) {
     echo $r['role'] . ': total=' . $r['total'] . ' create=' . $r['create_count'] . ' edit=' . $r['edit_count'] . ' delete=' . $r['delete_count'] . "\n";
 }
 
-echo "\nDone!\n";
+echo "\nDone!\n";?>

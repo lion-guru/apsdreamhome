@@ -36,7 +36,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <tbody>
                                         <?php foreach ($categorySettings as $key => $setting): ?>
                                             <tr>
-                                                <td class="text-muted" style="width: 40%;"><?php echo htmlspecialchars(str_replace('_', ' ', $key)); ?></td>
+                                                <td class="text-muted" class="style-34790"><?php echo htmlspecialchars(str_replace('_', ' ', $key)); ?></td>
                                                 <td class="fw-semibold">
                                                     <?php 
                                                         $value = $setting['setting_value'] ?? '';

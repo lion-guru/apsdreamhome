@@ -5,7 +5,7 @@
  * CHANGES:
  * 1. Remove duplicate URLs (same URL in multiple sections)
  * 2. Merge bookings section into sales section
- * 3. Move CRM items out of marketing → crm section
+ * 3. Move CRM items out of marketing â†’ crm section
  * 4. Fix wrong URLs (departments = /admin/hrm/departments)
  * 5. Add missing menu items with correct URLs
  * 6. Rename confusing menu items
@@ -38,11 +38,11 @@ try {
         $keepId = array_shift($ids); // keep first (lowest id)
         foreach ($ids as $delId) {
             $pdo->exec("DELETE FROM admin_menu_items WHERE id = $delId");
-            echo "  ✓ Removed duplicate: {$d['url']} (id=$delId, kept id=$keepId)\n";
+            echo "  âœ“ Removed duplicate: {$d['url']} (id=$delId, kept id=$keepId)\n";
             $removed++;
         }
     }
-    echo "  → Removed $removed duplicates\n\n";
+    echo "  â†’ Removed $removed duplicates\n\n";
 
     // -------------------------------------------------------
     // STEP 2: Merge bookings section INTO sales section
@@ -58,10 +58,10 @@ try {
         SET section = 'sales', order_index = order_index + $maxSalesOrder
         WHERE section = 'bookings'
     ");
-    echo "  ✓ Moved $moved items from 'bookings' to 'sales'\n\n";
+    echo "  âœ“ Moved $moved items from 'bookings' to 'sales'\n\n";
 
     // -------------------------------------------------------
-    // STEP 3: Move CRM-specific items OUT of marketing → crm
+    // STEP 3: Move CRM-specific items OUT of marketing â†’ crm
     // -------------------------------------------------------
     echo "STEP 3: Moving CRM items from 'marketing' to 'crm'...\n";
     $crmUrls = [
@@ -86,11 +86,11 @@ try {
         $r = $pdo->prepare("UPDATE admin_menu_items SET section = 'crm' WHERE url = ?");
         $r->execute([$url]);
         if ($r->rowCount() > 0) {
-            echo "  ✓ Moved to crm: $url\n";
+            echo "  âœ“ Moved to crm: $url\n";
             $movedCrm++;
         }
     }
-    echo "  → Moved $movedCrm items to 'crm' section\n\n";
+    echo "  â†’ Moved $movedCrm items to 'crm' section\n\n";
 
     // -------------------------------------------------------
     // STEP 4: Fix incorrect department/designation URLs
@@ -113,11 +113,11 @@ try {
             $newExists->execute([$newUrl]);
             if (!$newExists->fetch()) {
                 $pdo->prepare("UPDATE admin_menu_items SET url = ? WHERE url = ?")->execute([$newUrl, $oldUrl]);
-                echo "  ✓ Fixed URL: $oldUrl → $newUrl\n";
+                echo "  âœ“ Fixed URL: $oldUrl â†’ $newUrl\n";
             } else {
                 // New URL already exists, remove old
                 $pdo->prepare("DELETE FROM admin_menu_items WHERE url = ?")->execute([$oldUrl]);
-                echo "  ✓ Removed duplicate: $oldUrl (new URL already exists)\n";
+                echo "  âœ“ Removed duplicate: $oldUrl (new URL already exists)\n";
             }
         }
     }
@@ -149,13 +149,13 @@ try {
     foreach ($newItems as [$name, $icon, $url, $section, $order, $permKey]) {
         $addStmt->execute([$name, $icon, $url, $section, $order, $permKey, $url]);
         if ($addStmt->rowCount() > 0) {
-            echo "  ✓ Added: $name → $url ($section)\n";
+            echo "  âœ“ Added: $name â†’ $url ($section)\n";
             $addedCount++;
         } else {
             echo "  - Skipped (exists): $url\n";
         }
     }
-    echo "  → Added $addedCount items\n\n";
+    echo "  â†’ Added $addedCount items\n\n";
 
     // -------------------------------------------------------
     // STEP 6: Rename confusing menu items
@@ -180,7 +180,7 @@ try {
         $r = $pdo->prepare("UPDATE admin_menu_items SET name = ? WHERE url = ?");
         $r->execute([$newName, $url]);
         if ($r->rowCount() > 0) {
-            echo "  ✓ Renamed: $url → \"$newName\"\n";
+            echo "  âœ“ Renamed: $url â†’ \"$newName\"\n";
         }
     }
     echo "\n";
@@ -190,7 +190,7 @@ try {
     // -------------------------------------------------------
     echo "STEP 7: Renaming 'technology' section to 'ai_tech'...\n";
     $r = $pdo->exec("UPDATE admin_menu_items SET section = 'ai_tech' WHERE section = 'technology'");
-    echo "  ✓ Renamed $r items from 'technology' to 'ai_tech'\n\n";
+    echo "  âœ“ Renamed $r items from 'technology' to 'ai_tech'\n\n";
 
     // -------------------------------------------------------
     // STEP 8: Fix referral/lead segments in marketing (CRM items from marketing)
@@ -205,7 +205,7 @@ try {
         $r = $pdo->prepare("UPDATE admin_menu_items SET section = 'crm' WHERE url = ?");
         $r->execute([$url]);
         if ($r->rowCount() > 0) {
-            echo "  ✓ Moved to crm: $url\n";
+            echo "  âœ“ Moved to crm: $url\n";
         }
     }
     echo "\n";
@@ -223,9 +223,9 @@ try {
     ")->fetchAll(PDO::FETCH_ASSOC);
     
     if (empty($remainDupes)) {
-        echo "✅ ZERO duplicate URLs remaining\n\n";
+        echo "âœ… ZERO duplicate URLs remaining\n\n";
     } else {
-        echo "⚠️  Still has duplicates:\n";
+        echo "âš ï¸�  Still has duplicates:\n";
         foreach ($remainDupes as $d) {
             echo "   {$d['url']} (count={$d['cnt']})\n";
         }
@@ -242,15 +242,15 @@ try {
     echo "SECTION SUMMARY (" . count($sections) . " sections):\n";
     $total = 0;
     foreach ($sections as $s) {
-        echo "  " . str_pad($s['section'], 15) . " → " . $s['items'] . " items\n";
+        echo "  " . str_pad($s['section'], 15) . " â†’ " . $s['items'] . " items\n";
         $total += $s['items'];
     }
-    echo "  " . str_pad('TOTAL', 15) . " → $total items\n\n";
+    echo "  " . str_pad('TOTAL', 15) . " â†’ $total items\n\n";
     
-    echo "✅ Admin menu structure fix COMPLETE!\n";
-    echo "→ Next: Reload admin panel at http://localhost/apsdreamhome/admin/dashboard\n";
+    echo "âœ… Admin menu structure fix COMPLETE!\n";
+    echo "â†’ Next: Reload admin panel at http://localhost/apsdreamhome/admin/dashboard\n";
     
 } catch (\Exception $e) {
-    echo "❌ ERROR: " . $e->getMessage() . "\n";
+    echo "â�Œ ERROR: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString() . "\n";
-}
+}?>

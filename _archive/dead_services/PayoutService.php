@@ -552,4 +552,4 @@ class PayoutService
         $html .= "</ul>";
         return $html;
     }
-}
+}?>

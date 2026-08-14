@@ -116,7 +116,7 @@ class ImageOptimizer {
         $html .= 'fetchpriority="' . $options['fetchpriority'] . '" ';
 
         if ($options['style']) {
-            $html .= 'style="' . h($options['style']) . '" ';
+            $html .= 'class="style-97800" ';
         }
 
         $html .= '/>';

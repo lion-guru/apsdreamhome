@@ -105,4 +105,4 @@ foreach ($roleUpdates as [$role, $email]) {
     }
 }
 
-echo "\nFixed: $fixed / " . count($roleUpdates) . "\n";
+echo "\nFixed: $fixed / " . count($roleUpdates) . "\n";?>

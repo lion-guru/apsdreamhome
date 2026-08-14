@@ -51,4 +51,4 @@ echo "\n=== Booking #9003 Details ===\n";
 $stmt = $pdo->prepare("SELECT id, sales_manager_id, associate_id, customer_id, agreement_value FROM plot_bookings WHERE id = 9003");
 $stmt->execute();
 $booking = $stmt->fetch(PDO::FETCH_ASSOC);
-echo "Booking: " . json_encode($booking, JSON_PRETTY_PRINT) . "\n";
+echo "Booking: " . json_encode($booking, JSON_PRETTY_PRINT) . "\n";?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Debug: Telecaller Sidebar — why 145 items instead of ~18?
+ * Debug: Telecaller Sidebar â€” why 145 items instead of ~18?
  * Checks: 1) DB query result, 2) Cache state, 3) Role detection, 4) Redis availability
  */
 
@@ -92,7 +92,7 @@ $stmt5 = $pdo->prepare("
 ");
 $stmt5->execute(['telecaller']);
 while ($row = $stmt5->fetch(PDO::FETCH_ASSOC)) {
-    echo "  [{$row['section']}] {$row['url']} — {$row['name']}\n";
+    echo "  [{$row['section']}] {$row['url']} â€” {$row['name']}\n";
 }
 
 // 8. Check cache state
@@ -129,4 +129,4 @@ try {
     echo "Redis: UNAVAILABLE ({$e->getMessage()})\n";
 }
 
-echo "\n=== DEBUG COMPLETE ===\n";
+echo "\n=== DEBUG COMPLETE ===\n";?>

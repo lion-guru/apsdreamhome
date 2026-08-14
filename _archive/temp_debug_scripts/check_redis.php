@@ -21,4 +21,4 @@ if ($ok) {
     }
 } else {
     echo 'Cannot connect to Redis on 127.0.0.1:6379' . PHP_EOL;
-}
+}?>

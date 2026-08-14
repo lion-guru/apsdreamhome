@@ -11,13 +11,13 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
 <?php if (!$customer): ?>
     <div class="alert alert-danger"><?= __('assoc_cd_not_found', [], 'Customer not found.') ?></div>
 <?php else: ?>
-    <div class="card border-0 shadow-sm mb-4" style="<?= $isAssociate ? 'border-left: 4px solid #10b981 !important;' : '' ?>">
+    <div class="card border-0 shadow-sm mb-4" class="style-64392">
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <div class="d-flex align-items-center mb-3">
                         <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
-                             style="width: 60px; height: 60px; background: <?= $isAssociate ? '#dcfce7' : '#f3f4f6' ?>; color: <?= $isAssociate ? '#10b981' : '#6b7280' ?>; font-size: 1.5rem;">
+                             class="style-89487">
                             <i class="fas fa-<?= $isAssociate ? 'user-tie' : 'user' ?>"></i>
                         </div>
                         <div>
@@ -82,7 +82,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-3">
                     <div class="text-muted small mb-1"><?= __('assoc_cd_total_business', [], 'Total Business') ?></div>
-                    <h3 class="text-success mb-0">₹<?= number_format($totalBusiness) ?></h3>
+                    <h3 class="text-success mb-0">â‚¹<?= number_format($totalBusiness) ?></h3>
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-3">
                     <div class="text-muted small mb-1"><?= __('assoc_cd_amount_paid', [], 'Amount Paid') ?></div>
-                    <h3 class="text-info mb-0">₹<?= number_format($totalPaid) ?></h3>
+                    <h3 class="text-info mb-0">â‚¹<?= number_format($totalPaid) ?></h3>
                 </div>
             </div>
         </div>
@@ -98,7 +98,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-3">
                     <div class="text-muted small mb-1"><?= __('assoc_cd_pending', [], 'Pending') ?></div>
-                    <h3 class="text-danger mb-0">₹<?= number_format($pendingAmount) ?></h3>
+                    <h3 class="text-danger mb-0">â‚¹<?= number_format($pendingAmount) ?></h3>
                 </div>
             </div>
         </div>
@@ -146,8 +146,8 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                                     <td><strong>#<?= htmlspecialchars($b['booking_number'] ?? $b['id']) ?></strong></td>
                                     <td><?= __('assoc_cd_plot', [], 'Plot') ?> #<?= htmlspecialchars($b['plot_number'] ?? __('assoc_cd_na', [], 'N/A')) ?></td>
                                     <td><?= htmlspecialchars($b['colony_name'] ?? __('assoc_cd_na', [], 'N/A')) ?></td>
-                                    <td>₹<?= number_format($b['total_plot_value'] ?? 0) ?></td>
-                                    <td class="<?= $bookingPaid > 0 ? 'text-success' : 'text-danger' ?>">₹<?= number_format($bookingPaid) ?></td>
+                                    <td>â‚¹<?= number_format($b['total_plot_value'] ?? 0) ?></td>
+                                    <td class="<?= $bookingPaid > 0 ? 'text-success' : 'text-danger' ?>">â‚¹<?= number_format($bookingPaid) ?></td>
                                     <td><span class="badge bg-<?= $statusClass ?>"><?= ucfirst(str_replace('_', ' ', $b['status'] ?? '')) ?></span></td>
                                     <td><?= date('d M Y', strtotime($b['created_at'] ?? '')) ?></td>
                                 </tr>
@@ -186,7 +186,7 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                                 <tr>
                                     <td><strong><?= htmlspecialchars($r['receipt_number'] ?? __('assoc_cd_na', [], 'N/A')) ?></strong></td>
                                     <td>#<?= $r['booking_id'] ?? __('assoc_cd_na', [], 'N/A') ?></td>
-                                    <td><strong class="text-success">₹<?= number_format($r['amount'] ?? 0) ?></strong></td>
+                                    <td><strong class="text-success">â‚¹<?= number_format($r['amount'] ?? 0) ?></strong></td>
                                     <td><span class="badge bg-light text-dark"><?= ucfirst($r['payment_mode'] ?? __('assoc_cd_na', [], 'N/A')) ?></span></td>
                                     <td><?= date('d M Y', strtotime($r['receipt_date'] ?? $r['created_at'] ?? '')) ?></td>
                                     <td>
@@ -230,9 +230,9 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                     <div class="alert alert-success">
                         <h6 class="alert-heading"><i class="fas fa-chart-line me-1"></i><?= __('assoc_cd_invite_earning', [], 'Earning Potential') ?>:</h6>
                         <table class="table table-sm mb-0">
-                            <tr><td><?= __('assoc_cd_invite_row1', [], 'Sell 1 plot (₹10L)') ?></td><td class="text-end fw-bold">₹50,000</td></tr>
-                            <tr><td><?= __('assoc_cd_invite_row2', [], 'Build team of 5 → Senior Associate') ?></td><td class="text-end fw-bold">₹70,000/<?= __('assoc_cd_lakh', [], 'lakh') ?></td></tr>
-                            <tr><td><?= __('assoc_cd_invite_row3', [], 'Top rank → Site Manager') ?></td><td class="text-end fw-bold">₹2,00,000/<?= __('assoc_cd_lakh', [], 'lakh') ?> + Car</td></tr>
+                            <tr><td><?= __('assoc_cd_invite_row1', [], 'Sell 1 plot (â‚¹10L)') ?></td><td class="text-end fw-bold">â‚¹50,000</td></tr>
+                            <tr><td><?= __('assoc_cd_invite_row2', [], 'Build team of 5 â†’ Senior Associate') ?></td><td class="text-end fw-bold">â‚¹70,000/<?= __('assoc_cd_lakh', [], 'lakh') ?></td></tr>
+                            <tr><td><?= __('assoc_cd_invite_row3', [], 'Top rank â†’ Site Manager') ?></td><td class="text-end fw-bold">â‚¹2,00,000/<?= __('assoc_cd_lakh', [], 'lakh') ?> + Car</td></tr>
                         </table>
                     </div>
                 </div>

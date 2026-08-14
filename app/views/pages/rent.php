@@ -67,11 +67,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 </style>
 
 <!-- Hero -->
-<section class="rent-hero py-5 text-white position-relative" style="margin-bottom:0">
-    <div class="container text-center py-4 position-relative" style="z-index:2">
+<section class="rent-hero py-5 text-white position-relative" class="style-45611">
+    <div class="container text-center py-4 position-relative" class="style-9174">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-key me-3"></i>Properties for Rent</h1>
-        <p class="lead mb-4" style="color:rgba(255,255,255,0.85)">Find your perfect rental home, flat, or commercial space across India</p>
-        <div class="row g-3 justify-content-center" style="max-width:700px;margin:0 auto">
+        <p class="lead mb-4" class="style-49619">Find your perfect rental home, flat, or commercial space across India</p>
+        <div class="row g-3 justify-content-center" class="style-23275">
             <div class="col-6 col-md-3">
                 <div class="rent-stat-card">
                     <div class="stat-value"><?= number_format($stats['total'] ?? 0) ?></div>
@@ -101,7 +101,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 </section>
 
 <!-- Filters -->
-<div class="container" style="position:relative;z-index:5">
+<div class="container" class="style-54650">
     <div class="rent-filter-glass mb-4">
         <form method="GET" action="<?= BASE_URL ?>/rent" class="row g-3 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
@@ -140,7 +140,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                 <input type="number" class="form-control" name="max_price" placeholder="50000" value="<?= (int)($filters['max_price'] ?? 0) ?: '' ?>">
             </div>
             <div class="col-md-1">
-                <button type="submit" class="btn w-100" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;padding:8px">
+                <button type="submit" class="btn w-100" class="style-96284">
                     <i class="fas fa-search me-1"></i>Search
                 </button>
             </div>
@@ -149,11 +149,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 
     <!-- Results Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold mb-0" style="color:#1e293b">
-            <i class="fas fa-home me-2" style="color:#667eea"></i>
+        <h5 class="fw-bold mb-0" class="style-8420">
+            <i class="fas fa-home me-2" class="style-23141"></i>
             <?= number_format($total) ?> Rental <?= $total === 1 ? 'Property' : 'Properties' ?> Found
         </h5>
-        <a href="<?= BASE_URL ?>/list-property" class="btn btn-sm" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px">
+        <a href="<?= BASE_URL ?>/list-property" class="btn btn-sm" class="style-18366">
             <i class="fas fa-plus me-1"></i>List Your Property
         </a>
     </div>
@@ -174,11 +174,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                         <div class="card-img-wrap">
                             <img src="<?= $propImage ?>" alt="<?= htmlspecialchars($propTitle) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>/assets/images/properties/placeholder.jpg'">
                             <div class="img-badges">
-                                <span class="badge" style="background:rgba(102,126,234,0.9);color:#fff">
+                                <span class="badge" class="style-90511">
                                     <i class="fas fa-key me-1"></i>For Rent
                                 </span>
                                 <?php if (!empty($property['is_featured'])): ?>
-                                    <span class="badge" style="background:rgba(245,158,11,0.9);color:#fff">
+                                    <span class="badge" class="style-7462">
                                         <i class="fas fa-star me-1"></i>Featured
                                     </span>
                                 <?php endif; ?>
@@ -192,7 +192,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                             </div>
 
                             <?php if (!empty($property['description'])): ?>
-                                <p style="color:#64748b;font-size:0.82rem;line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                                <p class="style-88890">
                                     <?= htmlspecialchars($property['description']) ?>
                                 </p>
                             <?php endif; ?>
@@ -254,10 +254,10 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                     <h5>No rental properties found</h5>
                     <p class="text-muted mb-3">Try adjusting your filters or check back later for new listings.</p>
                     <div class="d-flex gap-2 justify-content-center">
-                        <a href="<?= BASE_URL ?>/rent" class="btn px-4" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px">
+                        <a href="<?= BASE_URL ?>/rent" class="btn px-4" class="style-18366">
                             Clear Filters
                         </a>
-                        <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary px-4" style="border-radius:10px">
+                        <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary px-4" class="style-46740">
                             <i class="fas fa-phone me-2"></i>Call Us
                         </a>
                     </div>
@@ -272,7 +272,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
         <div class="rent-pagination">
             <?php if ($page > 1): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => $page - 1])) ?>">
-                    <i class="fas fa-chevron-left" style="font-size:0.75rem"></i>
+                    <i class="fas fa-chevron-left" class="style-5315"></i>
                 </a>
             <?php endif; ?>
             <?php
@@ -284,7 +284,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
             <?php endfor; ?>
             <?php if ($page < $totalPages): ?>
                 <a class="page-btn" href="?<?= http_build_query(array_merge($paginationParams, ['page' => $page + 1])) ?>">
-                    <i class="fas fa-chevron-right" style="font-size:0.75rem"></i>
+                    <i class="fas fa-chevron-right" class="style-5315"></i>
                 </a>
             <?php endif; ?>
         </div>
@@ -292,11 +292,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 </div>
 
 <!-- CTA Section -->
-<section class="py-5 mt-4" style="background:linear-gradient(135deg,#f8fafc,#f1f5f9)">
+<section class="py-5 mt-4" class="style-83847">
     <div class="container text-center">
-        <h3 class="fw-bold mb-3" style="color:#1e293b">Have a Property to Rent Out?</h3>
+        <h3 class="fw-bold mb-3" class="style-8420">Have a Property to Rent Out?</h3>
         <p class="text-muted mb-4">List your property for free and reach thousands of potential tenants</p>
-        <a href="<?= BASE_URL ?>/list-property" class="btn btn-lg px-5" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(102,126,234,0.3)">
+        <a href="<?= BASE_URL ?>/list-property" class="btn btn-lg px-5" class="style-32749">
             <i class="fas fa-plus-circle me-2"></i>List Property for Free
         </a>
     </div>

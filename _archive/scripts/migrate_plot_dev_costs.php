@@ -74,4 +74,4 @@ foreach ($legacy as $row) {
     echo "Migrated: colony_id={$row['colony_id']} type={$costType} amount={$row['amount']}\n";
 }
 
-echo "\nMigration complete. Inserted $inserted new records.\n";
+echo "\nMigration complete. Inserted $inserted new records.\n";?>

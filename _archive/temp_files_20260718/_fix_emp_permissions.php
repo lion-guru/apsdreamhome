@@ -189,4 +189,4 @@ foreach ($hrItems as $e) {
     echo "  [{$e['id']}] {$e['name']}\n";
 }
 
-echo "\nDONE! Employee RBAC permissions fixed.\n";
+echo "\nDONE! Employee RBAC permissions fixed.\n";?>

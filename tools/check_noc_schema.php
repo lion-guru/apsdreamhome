@@ -27,4 +27,4 @@ foreach ($stmt as $row) echo "  {$row['Field']}: {$row['Type']} Null={$row['Null
 
 echo "\n=== booking_documents ===\n";
 $stmt = $pdo->query("DESCRIBE booking_documents");
-foreach ($stmt as $row) echo "  {$row['Field']}: {$row['Type']} Null={$row['Null']} Default={$row['Default']}\n";
+foreach ($stmt as $row) echo "  {$row['Field']}: {$row['Type']} Null={$row['Null']} Default={$row['Default']}\n";?>

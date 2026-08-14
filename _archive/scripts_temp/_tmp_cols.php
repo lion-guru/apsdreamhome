@@ -9,4 +9,4 @@ foreach ($db->fetchAll('SHOW COLUMNS FROM ai_call_sessions') as $c) {
     echo $c['Field'] . ' ' . $c['Type'] . ($c['Null'] === 'NO' ? ' NOT NULL' : '') . PHP_EOL;
 }
 echo "=== existing voice chat routes? ===\n";
-$chk = $db->fetch("SELECT COUNT(*) c FROM ai_call_sessions WHERE 1=0");
+$chk = $db->fetch("SELECT COUNT(*) c FROM ai_call_sessions WHERE 1=0");?>

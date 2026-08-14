@@ -637,4 +637,4 @@ class PerformanceCacheController extends BaseController
         }
         return $this->getCache($_REQUEST);
     }
-}
+}?>

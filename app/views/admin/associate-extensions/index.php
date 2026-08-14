@@ -38,10 +38,10 @@
                                     <td><?= htmlspecialchars($a['email'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($a['phone'] ?? '') ?></td>
                                     <td><span class="badge bg-warning text-dark"><?= (int)($a['points'] ?? 0) ?></span></td>
-                                    <td><?= htmlspecialchars($a['badges'] ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($a['badges'] ?? 'â€”') ?></td>
                                     <td>
-                                        <div class="progress" style="height:20px;">
-                                            <div class="progress-bar bg-info" style="width:<?= (int)($a['training_progress'] ?? 0) ?>%"><?= (int)($a['training_progress'] ?? 0) ?>%</div>
+                                        <div class="progress" class="style-39312">
+                                            <div class="progress-bar bg-info" class="style-97207"><?= (int)($a['training_progress'] ?? 0) ?>%</div>
                                         </div>
                                     </td>
                                     <td><?= (int)($a['total_visits'] ?? 0) ?></td>

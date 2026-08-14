@@ -38,4 +38,4 @@ foreach ($tables as $t) {
     }
 }
 
-echo "\nDropped $dropped indexes, $failed failures\n";
+echo "\nDropped $dropped indexes, $failed failures\n";?>

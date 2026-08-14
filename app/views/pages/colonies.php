@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('assets/images/hero-1.jpg') ?>'); background-size: cover; background-position: center;">
+<section class="hero-section text-white text-center py-5" class="style-26625">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -100,7 +100,7 @@
                             }
                             ?>
                             <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="<?php echo htmlspecialchars($colony['name']); ?>" class="img-fluid" loading="lazy">
-                            <div class="colony-placeholder" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; flex-direction: column; background: #eee; color: #555;">
+                            <div class="colony-placeholder" class="style-57012">
                                 <i class="fas fa-city fa-3x mb-2"></i>
                                 <p class="mb-0 text-center px-2"><?php echo $colony['name']; ?></p>
                             </div>

@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $_convs = $conversations ?? [];
 $_ag = $agents ?? [];
 ?>
@@ -7,7 +7,7 @@ $_ag = $agents ?? [];
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-comments" style="color:#3b82f6"></i> All Conversations</h1>
+                    <h1 class="m-0"><i class="fas fa-comments" class="style-64047"></i> All Conversations</h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="<?= BASE_URL ?>/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
@@ -52,7 +52,7 @@ $_ag = $agents ?? [];
                                     ?>
                                     <span class="badge badge-<?= $badge ?>"><?= $c['status'] ?></span>
                                 </td>
-                                <td class="small text-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= htmlspecialchars($c['last_message'] ?? '') ?></td>
+                                <td class="small text-muted" class="style-82232"><?= htmlspecialchars($c['last_message'] ?? '') ?></td>
                                 <td>
                                     <a href="<?= BASE_URL ?>/admin/agentic-ai/conversation/<?= $c['id'] ?>" class="btn btn-xs btn-outline-primary"><i class="fas fa-eye"></i></a>
                                 </td>

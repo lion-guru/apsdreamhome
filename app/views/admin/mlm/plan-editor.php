@@ -22,11 +22,11 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
     <!-- RANK BENEFITS TABLE -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-medal text-warning me-2"></i>Rank Benefits — Commission Rates & Thresholds</h5>
+            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-medal text-warning me-2"></i>Rank Benefits â€” Commission Rates & Thresholds</h5>
         </div>
         <div class="alert alert-info mb-3 mx-3 mt-3" role="alert">
             <h6 class="alert-heading"><i class="fas fa-layer-group me-2"></i>Differential Commission Model Active</h6>
-            <p class="mb-1"><strong>Upline Override = Upline Rate − Rate of Level Below</strong></p>
+            <p class="mb-1"><strong>Upline Override = Upline Rate âˆ’ Rate of Level Below</strong></p>
             <p class="mb-0 small">The <code>direct_sale_pct</code> below is each rank's own commission rate. Upline overrides are calculated dynamically as the difference between their rate and the rate of the person directly below them. <strong>L1/L2/L3 columns are no longer used</strong> (set to 0 in DB). Same-rank breakaway: 2% Gen 1, 1% Gen 2, 0% Gen 3+.</p>
         </div>
         <div class="card-body p-0">
@@ -37,7 +37,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                             <th>Order</th>
                             <th>Rank Name</th>
                             <th>Min Legs</th>
-                            <th>Min Volume (₹)</th>
+                            <th>Min Volume (â‚¹)</th>
                             <th>Direct %</th>
                             <th>Commission Model</th>
                             <th>Badge</th>
@@ -49,32 +49,32 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                         ?>
                             <tr>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][rank_order]" value="<?= (int)$b['rank_order'] ?>" class="form-control form-control-sm" style="width:60px" min="1" max="99">
+                                    <input type="number" name="benefits[<?= $rn ?>][rank_order]" value="<?= (int)$b['rank_order'] ?>" class="form-control form-control-sm" class="style-30170" min="1" max="99">
                                 </td>
                                 <td class="fw-bold">
-                                    <span class="badge" style="background:<?= htmlspecialchars($b['color_code'] ?? '#94a3b8') ?>;color:#fff;font-size:.85rem;">
+                                    <span class="badge" class="style-61509">
                                         <i class="fas <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?>"></i>
                                     </span>
                                     <?= $rn ?>
                                 </td>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][min_legs]" value="<?= (int)($b['min_leg_count'] ?? 0) ?>" class="form-control form-control-sm" style="width:70px" min="0">
+                                    <input type="number" name="benefits[<?= $rn ?>][min_legs]" value="<?= (int)($b['min_leg_count'] ?? 0) ?>" class="form-control form-control-sm" class="style-73350" min="0">
                                 </td>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][min_volume]" value="<?= (float)$b['min_qualifying_volume'] ?>" class="form-control form-control-sm" style="width:110px" min="0" step="1000">
+                                    <input type="number" name="benefits[<?= $rn ?>][min_volume]" value="<?= (float)$b['min_qualifying_volume'] ?>" class="form-control form-control-sm" class="style-39472" min="0" step="1000">
                             </td>
                             <td>
-                                <input type="number" name="benefits[<?= $rn ?>][direct_sale_pct]" value="<?= (float)$b['direct_sale_pct'] ?>" class="form-control form-control-sm" style="width:70px" min="0" max="100" step="0.1" required>
+                                <input type="number" name="benefits[<?= $rn ?>][direct_sale_pct]" value="<?= (float)$b['direct_sale_pct'] ?>" class="form-control form-control-sm" class="style-73350" min="0" max="100" step="0.1" required>
                             </td>
                             <td class="text-center">
                                 <span class="text-muted small">Differential</span>
                                 <input type="hidden" name="benefits[<?= $rn ?>][l1_pct]" value="0">
                                 <input type="hidden" name="benefits[<?= $rn ?>][l2_pct]" value="0">
                                 <input type="hidden" name="benefits[<?= $rn ?>][l3_pct]" value="0">
-                                <div class="form-text small text-info"><i class="fas fa-info-circle"></i> Upline gets (their rate − rate below)</div>
+                                <div class="form-text small text-info"><i class="fas fa-info-circle"></i> Upline gets (their rate âˆ’ rate below)</div>
                             </td>
                                 <td>
-                                    <span class="badge" style="background:<?= htmlspecialchars($b['color_code'] ?? '#94a3b8') ?>;color:#fff;">
+                                    <span class="badge" class="style-39009">
                                         <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?>
                                     </span>
                                 </td>
@@ -129,7 +129,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 </table>
             </div>
             <div class="card-footer bg-white">
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>To edit differential levels, go to <a href="<?= htmlspecialchars($base) ?>/admin/mlm-settings/levels">MLM Settings → Levels</a></small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>To edit differential levels, go to <a href="<?= htmlspecialchars($base) ?>/admin/mlm-settings/levels">MLM Settings â†’ Levels</a></small>
             </div>
         </div>
     </div>
@@ -159,12 +159,12 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                     <small class="text-muted">Shared by VP+ ranks from total sales</small>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Min Qualifying Volume (₹)</label>
+                    <label class="form-label fw-bold">Min Qualifying Volume (â‚¹)</label>
                     <input type="number" name="settings[min_qualifying_volume]" value="<?= htmlspecialchars($settings['min_qualifying_volume'] ?? '50000') ?>" class="form-control" min="0" step="10000">
                     <small class="text-muted">Min monthly team sales for Track B</small>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Escrow Release Threshold (₹)</label>
+                    <label class="form-label fw-bold">Escrow Release Threshold (â‚¹)</label>
                     <input type="number" name="settings[escrow_release_threshold]" value="<?= htmlspecialchars($settings['escrow_release_threshold'] ?? '100000') ?>" class="form-control" min="10000" step="10000">
                     <small class="text-muted">Min escrow balance to trigger payout</small>
                 </div>
@@ -250,7 +250,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
     <!-- INFINITY OVERRIDE SETTINGS -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-infinity text-purple me-2" style="color:#0f766e;"></i>Infinity Override</h5>
+            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-infinity text-purple me-2" class="style-58381"></i>Infinity Override</h5>
             <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" name="settings[infinity_override_enabled]" value="1" id="infinityToggle"
                     <?= ($settings['infinity_override_enabled'] ?? '1') === '1' ? 'checked' : '' ?>>
@@ -316,7 +316,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-2 col-sm-4">
                     <label class="form-label fw-semibold small"><?= $rl ?></label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text">₹</span>
+                        <span class="input-group-text">â‚¹</span>
                         <input type="number" name="rank_bonus[<?= $rk ?>]" value="<?= (int)($rankBonusAmounts[$rk] ?? 0) ?>"
                                class="form-control rank-bonus-input" min="0" step="1000" data-rank="<?= $rk ?>">
                     </div>
@@ -342,7 +342,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">Min Monthly Volume (₹)</label>
+                    <label class="form-label fw-bold">Min Monthly Volume (â‚¹)</label>
                     <input type="number" name="settings[min_monthly_volume]" value="<?= htmlspecialchars($settings['min_monthly_volume'] ?? '10000') ?>" class="form-control" min="0" step="1000">
                     <small class="text-muted">Associate must achieve this volume monthly to stay active</small>
                 </div>

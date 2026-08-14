@@ -51,7 +51,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 <div class="col-md-3">
                     <label class="form-label small">Broker</label>
                     <select name="broker_id" class="form-select form-select-sm">
-                        <option value="">— None —</option>
+                        <option value="">â€” None â€”</option>
                         <?php foreach ($brokers as $b): ?>
                             <option value="<?= (int)$b['id'] ?>" <?= ($lead['broker_id'] ?? '') == $b['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($b['broker_name']) ?>
@@ -136,7 +136,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                            value="<?= htmlspecialchars($lead['area_sqft'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label small">Expected Price (₹)</label>
+                    <label class="form-label small">Expected Price (â‚¹)</label>
                     <input type="number" step="0.01" name="expected_price" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['expected_price'] ?? '') ?>">
                 </div>
@@ -146,7 +146,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
             </div>
         </div>
-        <div class="aps-cp-card-body text-end" style="border-top:1px solid var(--card-border)">
+        <div class="aps-cp-card-body text-end" class="style-60001">
             <a href="<?= BASE_URL ?>/admin/land-inventory/leads" class="btn btn-secondary btn-sm">Cancel</a>
             <button type="submit" class="btn btn-primary btn-sm">
                 <i class="fas fa-save me-1"></i><?= $mode === 'edit' ? 'Update Lead' : 'Create Lead' ?>

@@ -22,4 +22,4 @@ $cols = array_column($rows, 'Field');
 $rbCols = $pdo->query("SHOW COLUMNS FROM mlm_rank_benefits")->fetchAll(PDO::FETCH_COLUMN);
 echo "  " . (in_array('color_code', $rbCols) ? 'YES' : 'NO') . "\n";
 echo "  " . (in_array('badge_icon', $rbCols) ? 'YES' : 'NO') . "\n";
-echo "  " . (in_array('rank_order', $rbCols) ? 'YES' : 'NO') . "\n";
+echo "  " . (in_array('rank_order', $rbCols) ? 'YES' : 'NO') . "\n";?>

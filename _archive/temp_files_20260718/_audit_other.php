@@ -23,4 +23,4 @@ foreach ($pages as $url) {
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     echo ($status == 200 ? 'OK' : "HTTP $status") . ": $url\n";
-}
+}?>

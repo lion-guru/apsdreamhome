@@ -194,4 +194,4 @@ function runStep(string $script, callable $log): int
         $log('    x exit ' . $exit);
     }
     return (int)$exit;
-}
+}?>

@@ -6,4 +6,4 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 echo "HTTP Code: $httpCode\n";
-echo substr($body, 0, 500);
+echo substr($body, 0, 500);?>

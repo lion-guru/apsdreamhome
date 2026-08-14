@@ -65,4 +65,4 @@ try {
     echo "Foreign key may already exist\n";
 }
 
-echo "\n=== Property Image Tagging tables created successfully ===\n";
+echo "\n=== Property Image Tagging tables created successfully ===\n";?>

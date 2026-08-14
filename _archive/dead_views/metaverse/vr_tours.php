@@ -46,7 +46,7 @@
                         <div class="card-body aps-cp-card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="flex-shrink-0">
-                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($tour['thumbnail'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="rounded" style="width:80px;height:80px;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                                     src="<?= BASE_URL ? loading="lazy">/<?= htmlspecialchars($tour['thumbnail'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="rounded" class="style-29935" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                 </div>
                                 <div class="ms-3">
                                     <h5 class="mb-1"><?= ($tour['title'] ?? 'Untitled Tour') ?></h5>

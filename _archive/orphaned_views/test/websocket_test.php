@@ -61,7 +61,7 @@ require __DIR__ . '/../layouts/header.php';
                     <h5 class="mb-0">Live Event Log</h5>
                 </div>
                 <div class="card-body p-0">
-                    <pre id="logBox" style="height: 500px; overflow-y: auto; background: #1e1e1e; color: #d4d4d4; padding: 15px; font-size: 12px; margin: 0; border-radius: 0 0 4px 4px;"></pre>
+                    <pre id="logBox" class="style-44669"></pre>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@ require __DIR__ . '/../layouts/header.php';
         var ts = d.toTimeString().split(' ')[0] + '.' + String(d.getMilliseconds()).padStart(3, '0');
         var colors = { INFO: '#4ec9b0', OK: '#b5cea8', WARN: '#dcdcaa', ERR: '#f48771', RECV: '#9cdcfe' };
         var c = colors[level] || '#d4d4d4';
-        logEl.innerHTML += '<span style="color:#808080">' + ts + '</span> <span style="color:' + c + '; font-weight:bold">[' + level + ']</span> ' + escapeHtml(msg) + '\n';
+        logEl.innerHTML += '<span class="style-66501">' + ts + '</span> <span class="style-93734">[' + level + ']</span> ' + escapeHtml(msg) + '\n';
         logEl.scrollTop = logEl.scrollHeight;
     }
 

@@ -5,7 +5,7 @@ $payments = $payments ?? [];
 $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payment'=>null];
 ?>
 
-<div class="aps-cp-hero" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+<div class="aps-cp-hero" class="style-75867">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-receipt me-2"></i>Payment History</h2>
@@ -20,7 +20,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
         <div class="aps-cp-stat aps-cp-stat--green">
             <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">₹<?= number_format($stats['total_paid']) ?></div>
+                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['total_paid']) ?></div>
                 <div class="aps-cp-stat-label">Total Paid</div>
             </div>
         </div>
@@ -38,7 +38,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
         <div class="aps-cp-stat aps-cp-stat--orange">
             <div class="aps-cp-stat-icon"><i class="fas fa-calendar"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">₹<?= number_format($stats['this_month']) ?></div>
+                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['this_month']) ?></div>
                 <div class="aps-cp-stat-label">This Month</div>
             </div>
         </div>
@@ -51,7 +51,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                     <?php if ($stats['last_payment']): ?>
                         <?= date('d M', strtotime($stats['last_payment']['payment_date'] ?? $stats['last_payment']['created_at'] ?? 'now')) ?>
                     <?php else: ?>
-                        —
+                        â€”
                     <?php endif; ?>
                 </div>
                 <div class="aps-cp-stat-label">Last Payment</div>
@@ -93,7 +93,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                         ?>
                         <tr>
                             <td>
-                                <strong><?= $payDate ? date('d M Y', strtotime($payDate)) : '—' ?></strong>
+                                <strong><?= $payDate ? date('d M Y', strtotime($payDate)) : 'â€”' ?></strong>
                                 <?php if ($payDate): ?>
                                     <br><small class="text-muted"><?= date('h:i A', strtotime($payDate)) ?></small>
                                 <?php endif; ?>
@@ -102,7 +102,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                                 <small class="text-muted"><?= htmlspecialchars($p['booking_number'] ?? '') ?></small>
                             </td>
                             <td>
-                                <?= htmlspecialchars($p['plot_number'] ?? '—') ?>
+                                <?= htmlspecialchars($p['plot_number'] ?? 'â€”') ?>
                                 <br><small class="text-muted"><?= htmlspecialchars($p['colony_name'] ?? '') ?></small>
                             </td>
                             <td>
@@ -111,22 +111,22 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                                 <?php elseif (!empty($p['due_date'])): ?>
                                     <small class="text-muted">Due: <?= date('d M', strtotime($p['due_date'])) ?></small>
                                 <?php else: ?>
-                                    —
+                                    â€”
                                 <?php endif; ?>
                             </td>
-                            <td class="fw-bold text-success">₹<?= number_format($amount) ?></td>
+                            <td class="fw-bold text-success">â‚¹<?= number_format($amount) ?></td>
                             <td>
                                 <span class="badge bg-light text-dark">
-                                    <?= ucfirst(htmlspecialchars($p['payment_method'] ?? $p['mode'] ?? '—')) ?>
+                                    <?= ucfirst(htmlspecialchars($p['payment_method'] ?? $p['mode'] ?? 'â€”')) ?>
                                 </span>
                             </td>
                             <td>
                                 <?php if (!empty($p['transaction_id'])): ?>
-                                    <small class="text-muted" style="font-family:monospace;"><?= htmlspecialchars($p['transaction_id']) ?></small>
+                                    <small class="text-muted" class="style-79813"><?= htmlspecialchars($p['transaction_id']) ?></small>
                                 <?php elseif (!empty($p['reference_number'])): ?>
                                     <small class="text-muted"><?= htmlspecialchars($p['reference_number']) ?></small>
                                 <?php else: ?>
-                                    <span class="text-muted">—</span>
+                                    <span class="text-muted">â€”</span>
                                 <?php endif; ?>
                             </td>
                         </tr>

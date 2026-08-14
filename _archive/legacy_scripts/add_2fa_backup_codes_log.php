@@ -25,4 +25,4 @@ try {
 } catch (\Throwable $e) {
     echo "[ERR] " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

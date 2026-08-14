@@ -142,28 +142,28 @@ class LegalAIService
         $body = $this->getFallbackBody($category, $data);
 
         return <<<HTML
-<div style="font-family: 'Times New Roman', serif; max-width: 800px; margin: 0 auto; padding: 40px;">
-    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px;">
-        <h1 style="font-size: 24px; margin: 0;">{$coName}</h1>
-        <p style="margin: 5px 0;">{$coAddr}</p>
-        <hr style="border: none; border-top: 1px solid #000; margin: 10px 0;">
-        <h2 style="font-size: 18px; margin: 0;">{$promptName}</h2>
+<div class="style-87404">
+    <div class="style-72630">
+        <h1 class="style-14489">{$coName}</h1>
+        <p class="style-82242">{$coAddr}</p>
+        <hr class="style-97333">
+        <h2 class="style-50572">{$promptName}</h2>
     </div>
-    <p style="text-align: right; font-size: 14px;">Date: {$date}</p>
-    <p style="font-size: 14px;">To,<br><strong>{$custName}</strong><br>{$custAddr}</p>
-    <p style="font-size: 14px;"><strong>Subject:</strong> {$promptName} - {$plotNo} {$colonyName}</p>
-    <div style="margin-top: 20px; line-height: 1.8;">
+    <p class="style-13754">Date: {$date}</p>
+    <p class="style-99309">To,<br><strong>{$custName}</strong><br>{$custAddr}</p>
+    <p class="style-99309"><strong>Subject:</strong> {$promptName} - {$plotNo} {$colonyName}</p>
+    <div class="style-12638">
         {$body}
     </div>
-    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc;">
-        <table style="width: 100%; font-size: 14px;">
+    <div class="style-78837">
+        <table class="style-61075">
             <tr>
-                <td style="text-align: center;">
+                <td class="style-93517">
                     <p>_________________________</p>
                     <p><strong>For {$coName}</strong></p>
                     <p>Authorised Signatory</p>
                 </td>
-                <td style="text-align: center;">
+                <td class="style-93517">
                     <p>_________________________</p>
                     <p><strong>{$custName}</strong></p>
                     <p>Customer</p>
@@ -171,7 +171,7 @@ class LegalAIService
             </tr>
         </table>
     </div>
-    <div style="margin-top: 20px; font-size: 11px; color: #666; border-top: 1px solid #ddd; padding-top: 10px;">
+    <div class="style-29983">
         <p>This is a computer-generated document. Signature verification recommended.</p>
         <p>Document generated on: {$date}</p>
     </div>

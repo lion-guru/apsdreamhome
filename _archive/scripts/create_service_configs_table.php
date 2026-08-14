@@ -20,7 +20,7 @@ try {
     exit(1);
 }
 
-// ── Create table ──
+// â”€â”€ Create table â”€â”€
 $pdo->exec("CREATE TABLE IF NOT EXISTS `service_configs` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `service_name` varchar(100) NOT NULL COMMENT 'e.g. leegality, gstn, tin, razorpay, exchange_rate',
@@ -37,9 +37,9 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS `service_configs` (
     UNIQUE KEY `uk_service_key` (`service_name`,`config_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-echo "✓ Table service_configs created\n";
+echo "âœ“ Table service_configs created\n";
 
-// ── Seed defaults ──
+// â”€â”€ Seed defaults â”€â”€
 $rows = [
     // Leegality
     ['leegality', 'api_key',    '',    'password', 'Leegality API key',                        1, 'integrations', 10],
@@ -113,5 +113,5 @@ foreach ($rows as $r) {
     $inserted += $stmt->rowCount();
 }
 
-echo "✓ Seeded {$inserted} new config rows (total attempted: " . count($rows) . ")\n";
-echo "Done.\n";
+echo "âœ“ Seeded {$inserted} new config rows (total attempted: " . count($rows) . ")\n";
+echo "Done.\n";?>

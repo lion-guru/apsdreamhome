@@ -1,7 +1,7 @@
 <?php
 /**
  * Seed complete pipeline test data for Braj Radha Nagri (id=3).
- * Covers: Colony → Development Costs → Plots → Pricing → Layout
+ * Covers: Colony â†’ Development Costs â†’ Plots â†’ Pricing â†’ Layout
  *
  * Usage: php scripts/seed_colony3_pipeline.php
  */
@@ -23,11 +23,11 @@ $parkPremium = 1.15;
 
 echo "=== Colony Pipeline Seeder: {$colonyName} (ID: {$colonyId}) ===\n\n";
 
-// ── Step 0: FK checks ──────────────────────────────────────────────────────
+// â”€â”€ Step 0: FK checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 echo "[OK] FK checks disabled\n";
 
-// ── Step 1: Verify colony exists ────────────────────────────────────────────
+// â”€â”€ Step 1: Verify colony exists â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt = $pdo->prepare('SELECT id, name, total_plots, available_plots FROM colonies WHERE id = ?');
 $stmt->execute([$colonyId]);
 $colony = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -37,7 +37,7 @@ if (!$colony) {
 }
 echo "[OK] Colony: {$colony['name']} (existing plots: {$colony['total_plots']})\n";
 
-// ── Step 2: Check existing plots — skip if already seeded ──────────────────
+// â”€â”€ Step 2: Check existing plots â€” skip if already seeded â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $stmt = $pdo->prepare('SELECT COUNT(*) AS cnt FROM plots WHERE colony_id = ?');
 $stmt->execute([$colonyId]);
 $existingPlots = (int) $stmt->fetch(PDO::FETCH_ASSOC)['cnt'];
@@ -50,7 +50,7 @@ if ($existingPlots >= 40) {
     $plotsSeeded = true;
 }
 
-// ── Step 3: Development costs ──────────────────────────────────────────────
+// â”€â”€ Step 3: Development costs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 echo "\n--- Inserting development costs ---\n";
 
 $devCosts = [
@@ -84,11 +84,11 @@ foreach ($devCosts as $dc) {
     ]);
     $totalCost += $dc[3];
     $totalGst += $dc[4];
-    echo "  ✓ {$dc[1]}: ₹" . number_format($dc[3]) . " + GST ₹" . number_format($dc[4]) . "\n";
+    echo "  âœ“ {$dc[1]}: â‚¹" . number_format($dc[3]) . " + GST â‚¹" . number_format($dc[4]) . "\n";
 }
-echo "[OK] 4 development costs inserted. Total: ₹" . number_format($totalCost) . " + GST ₹" . number_format($totalGst) . " = ₹" . number_format($totalCost + $totalGst) . "\n";
+echo "[OK] 4 development costs inserted. Total: â‚¹" . number_format($totalCost) . " + GST â‚¹" . number_format($totalGst) . " = â‚¹" . number_format($totalCost + $totalGst) . "\n";
 
-// ── Step 4: Generate plots ──────────────────────────────────────────────────
+// â”€â”€ Step 4: Generate plots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if ($plotsSeeded) {
     echo "\n--- Generating plots ---\n";
 
@@ -163,7 +163,7 @@ if ($plotsSeeded) {
             if ($isCorner) $flags[] = 'CORNER';
             if ($isParkFacing) $flags[] = 'PARK';
             $flagStr = !empty($flags) ? ' [' . implode(',', $flags) . ']' : '';
-            echo "  ✓ {$plotNumber}: {$dimKey} ({$area} sqft) ₹" . number_format($totalPrice) . "{$flagStr}\n";
+            echo "  âœ“ {$plotNumber}: {$dimKey} ({$area} sqft) â‚¹" . number_format($totalPrice) . "{$flagStr}\n";
 
             $plotMap[] = [
                 'plot_number' => $plotNumber,
@@ -178,7 +178,7 @@ if ($plotsSeeded) {
     }
     echo "[OK] {$plotCount} plots generated\n";
 
-    // ── Step 6: Save layout ─────────────────────────────────────────────────
+    // â”€â”€ Step 6: Save layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     echo "\n--- Saving colony layout ---\n";
 
     $layoutJson = json_encode($plotMap, JSON_UNESCAPED_UNICODE);
@@ -207,12 +207,12 @@ if ($plotsSeeded) {
     echo "     Total plots: {$plotCount}, Total area: " . number_format($totalArea) . " sqft\n";
     echo "     Road area: 15%, Common area: 8%\n";
 
-    // ── Step 7: Update colonies table ───────────────────────────────────────
+    // â”€â”€ Step 7: Update colonies table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     echo "\n--- Updating colony summary ---\n";
     $startingPrice = $minPrice;
     $pdo->prepare('UPDATE colonies SET total_plots = ?, available_plots = ?, starting_price = ?, show_plots_publicly = 1 WHERE id = ?')
         ->execute([$plotCount, $plotCount, $startingPrice, $colonyId]);
-    echo "[OK] Colony updated: total_plots={$plotCount}, available_plots={$plotCount}, starting_price=₹" . number_format($startingPrice) . "\n";
+    echo "[OK] Colony updated: total_plots={$plotCount}, available_plots={$plotCount}, starting_price=â‚¹" . number_format($startingPrice) . "\n";
 } else {
     echo "[SKIP] Layout and colony update skipped (plots already exist)\n";
     $minPrice = 0;
@@ -222,20 +222,20 @@ if ($plotsSeeded) {
     $plotMap = [];
 }
 
-// ── Re-enable FK checks ────────────────────────────────────────────────────
+// â”€â”€ Re-enable FK checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
 echo "\n[OK] FK checks re-enabled\n";
 
-// ── Step 8: Summary ────────────────────────────────────────────────────────
+// â”€â”€ Step 8: Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 echo "\n========================================\n";
 echo "  COLONY PIPELINE SUMMARY\n";
 echo "========================================\n";
 echo "  Colony:          {$colonyName} (ID: {$colonyId})\n";
-echo "  Development:     4 projects, ₹" . number_format($totalCost) . " + GST ₹" . number_format($totalGst) . " = ₹" . number_format($totalCost + $totalGst) . "\n";
+echo "  Development:     4 projects, â‚¹" . number_format($totalCost) . " + GST â‚¹" . number_format($totalGst) . " = â‚¹" . number_format($totalCost + $totalGst) . "\n";
 echo "  Plots:           {$plotCount} plots across blocks A(20), B(20)\n";
-echo "  Base price:      ₹" . number_format($basePricePerSqft) . "/sqft\n";
+echo "  Base price:      â‚¹" . number_format($basePricePerSqft) . "/sqft\n";
 echo "  Corner premium:  +10%  |  Park facing: +15%\n";
-echo "  Pricing range:   ₹" . number_format($minPrice) . " — ₹" . number_format($maxPrice) . "\n";
+echo "  Pricing range:   â‚¹" . number_format($minPrice) . " â€” â‚¹" . number_format($maxPrice) . "\n";
 echo "  Total area:      " . number_format($totalArea) . " sqft\n";
 if ($plotCount > 0 && $totalArea > 0) {
     $colonyValue = 0;
@@ -246,7 +246,7 @@ if ($plotCount > 0 && $totalArea > 0) {
     } else {
         $colonyValue = $plotCount * $basePricePerSqft * ($totalArea / $plotCount);
     }
-    echo "  Colony value:    ₹" . number_format($colonyValue) . "\n";
+    echo "  Colony value:    â‚¹" . number_format($colonyValue) . "\n";
 }
 echo "========================================\n";
-echo "Done.\n";
+echo "Done.\n";?>

@@ -419,4 +419,4 @@ try {
     // Log configuration error
     error_log("Configuration Validation Error: " . $e->getMessage());
     die("Application configuration error. Please contact support.");
-}
+}?>

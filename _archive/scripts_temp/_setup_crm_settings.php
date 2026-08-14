@@ -32,4 +32,4 @@ foreach ($defaults as $k => $v) {
     $stmt->execute([$k, $v]);
 }
 
-echo "crm_settings table created with " . count($defaults) . " default settings\n";
+echo "crm_settings table created with " . count($defaults) . " default settings\n";?>

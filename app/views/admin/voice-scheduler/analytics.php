@@ -78,8 +78,8 @@
                         <td><?= (int)($a['completed'] ?? 0) ?></td>
                         <td>
                             <?php $rate = (int)($a['total_calls'] ?? 0) > 0 ? round(((int)($a['completed'] ?? 0) / (int)($a['total_calls'] ?? 0)) * 100, 1) : 0; ?>
-                            <div class="progress" style="height:8px;">
-                                <div class="progress-bar bg-success" style="width:<?= $rate ?>%"></div>
+                            <div class="progress" class="style-87912">
+                                <div class="progress-bar bg-success" class="style-41591"></div>
                             </div>
                             <small class="text-muted"><?= $rate ?>%</small>
                         </td>

@@ -32,7 +32,7 @@ $associate_email = $associate_email ?? '';
     .type-option span { font-size: 0.75rem; font-weight: 600; }
     .price-input-group { position: relative; }
     .price-input-group .form-control { padding-left: 30px; }
-    .price-input-group::before { content: '₹'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; font-weight: 600; z-index: 1; }
+    .price-input-group::before { content: 'â‚¹'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; font-weight: 600; z-index: 1; }
     .quick-price { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
     .quick-price button { padding: 4px 12px; border: 1.5px solid #d1d5db; border-radius: 20px; background: #fff; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .quick-price button:hover { border-color: #6366f1; color: #6366f1; }
@@ -42,7 +42,7 @@ $associate_email = $associate_email ?? '';
     }
 </style>
 
-<div class="container-fluid px-3 py-3" style="max-width: 700px; margin: 0 auto;">
+<div class="container-fluid px-3 py-3" class="style-63221">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="m-0 fw-bold"><i class="fas fa-home me-2 text-primary"></i>Post Property</h5>
@@ -291,7 +291,7 @@ $associate_email = $associate_email ?? '';
 
         <!-- Submit -->
         <div class="prop-section text-center">
-            <button type="submit" class="btn btn-primary btn-lg w-100 py-3" style="border-radius:14px;font-weight:700;">
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-3" class="style-80393">
                 <i class="fas fa-paper-plane me-2"></i>Post Property
             </button>
             <div class="text-muted small mt-2">

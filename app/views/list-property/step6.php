@@ -53,8 +53,8 @@ $uploaded = $d['images'] ?? [];
                                 <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple class="d-none">
                                 <button type="button" class="btn btn-primary" id="browse-btn"><i class="fas fa-folder-open me-1"></i> Browse</button>
                             </div>
-                            <div id="upload-progress" class="mt-3" style="display:none">
-                                <div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%"></div></div>
+                            <div id="upload-progress" class="mt-3" class="style-24280">
+                                <div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" class="style-55795"></div></div>
                             </div>
                             <div id="thumbnails" class="d-flex flex-wrap gap-2 mt-3"></div>
                         </div>

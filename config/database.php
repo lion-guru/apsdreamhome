@@ -6,4 +6,4 @@ return [
     'username' => getenv('DB_USERNAME') ?: 'root',
     'password' => getenv('DB_PASSWORD') ?: '',
     'charset' => 'utf8mb4',
-];
+];?>

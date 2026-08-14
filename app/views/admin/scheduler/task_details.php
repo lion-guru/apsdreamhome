@@ -17,7 +17,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($task['name'] ?? '') ?></h6></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
-                        <tr><th style="width:200px">Task Name</th><td><?= htmlspecialchars($task['name'] ?? '') ?></td></tr>
+                        <tr><th class="style-47085">Task Name</th><td><?= htmlspecialchars($task['name'] ?? '') ?></td></tr>
                         <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($task['type'] ?? '') ?></span></td></tr>
                         <tr><th>Status</th>
                             <td>

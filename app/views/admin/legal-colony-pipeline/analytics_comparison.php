@@ -4,7 +4,7 @@ $colonies = $data['colonies'] ?? [];
 $summary  = $data['summary'] ?? [];
 $colonyHealth = $colony_health ?? [];
 
-function inr($n) { return '₹' . number_format($n); }
+function inr($n) { return 'â‚¹' . number_format($n); }
 
 $stageColors = [
   'land_acquisition'  => '#ffc107',
@@ -187,17 +187,17 @@ foreach ($colonies as $c) {
                 </td>
                 <td class="text-center">
                   <?php if ($health): ?>
-                    <span class="fw-bold" style="color:<?= $health['grade_color'] ?>;"><?= $health['score'] ?>% (<?= $health['grade'] ?>)</span>
+                    <span class="fw-bold" class="style-14182"><?= $health['score'] ?>% (<?= $health['grade'] ?>)</span>
                   <?php else: ?>
-                    <span class="text-muted">—</span>
+                    <span class="text-muted">â€”</span>
                   <?php endif; ?>
                 </td>
                 <td class="text-end"><?= number_format($c['total_area_acres'] ?? 0, 2) ?></td>
                 <td class="text-end"><?= $c['plot_count'] ?? 0 ?></td>
                 <td class="text-end text-danger fw-bold"><?= $c['sold_plots'] ?? 0 ?></td>
                 <td class="text-center">
-                  <div class="progress" style="height:8px;width:80px;display:inline-block">
-                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?>" style="width:<?= $occPct ?>%"></div>
+                  <div class="progress" class="style-90048">
+                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?>" class="style-1203"></div>
                   </div>
                   <br><small><?= $occPct ?>%</small>
                 </td>
@@ -249,7 +249,7 @@ foreach ($colonies as $c) {
 <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // ── Health Score Chart ──
+  // â”€â”€ Health Score Chart â”€â”€
   const healthData = <?= json_encode(array_map(function($c) use ($colonyHealth) {
       $hid = (int)($c['id'] ?? 0);
       $h = $colonyHealth[$hid] ?? null;
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('healthChart'), {
       type: 'bar',
       data: {
-        labels: healthData.map(d => d.name.length > 12 ? d.name.substring(0,12) + '…' : d.name),
+        labels: healthData.map(d => d.name.length > 12 ? d.name.substring(0,12) + 'â€¦' : d.name),
         datasets: [{
           label: 'Health %',
           data: healthData.map(d => d.score),
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ── Stage Distribution Doughnut ──
+  // â”€â”€ Stage Distribution Doughnut â”€â”€
   const stageData = <?= json_encode($stageCounts) ?>;
   const stageLabels = <?= json_encode($stageLabels) ?>;
   const stageColors = <?= json_encode($stageColors) ?>;
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ── Profit Margin Chart ──
+  // â”€â”€ Profit Margin Chart â”€â”€
   const roiData = <?= json_encode(array_map(function($c) {
       return [
           'name'   => $c['name'] ?? '',
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('roiChart'), {
       type: 'bar',
       data: {
-        labels: roiData.map(d => d.name.length > 12 ? d.name.substring(0,12) + '…' : d.name),
+        labels: roiData.map(d => d.name.length > 12 ? d.name.substring(0,12) + 'â€¦' : d.name),
         datasets: [{
           label: 'Margin %',
           data: roiData.map(d => d.margin),
@@ -417,8 +417,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td class="text-end"><?= $c['plot_count'] ?? 0 ?></td>
                 <td class="text-end text-danger fw-bold"><?= $c['sold_plots'] ?? 0 ?></td>
                 <td class="text-center">
-                  <div class="progress" style="height:8px;width:80px;display:inline-block">
-                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?>" style="width:<?= $occPct ?>%"></div>
+                  <div class="progress" class="style-90048">
+                    <div class="progress-bar bg-<?= $occPct >= 50 ? 'success' : ($occPct >= 25 ? 'warning' : 'danger') ?>" class="style-1203"></div>
                   </div>
                   <br><small><?= $occPct ?>%</small>
                 </td>

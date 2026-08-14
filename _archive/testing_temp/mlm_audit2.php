@@ -4,7 +4,7 @@ $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8m
 echo "=== Distinct current_level values ===\n";
 $rows = $pdo->query("SELECT current_level, COUNT(*) as cnt FROM mlm_profiles GROUP BY current_level ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as $r) {
-    echo "  '{$r['current_level']}' → {$r['cnt']} profiles\n";
+    echo "  '{$r['current_level']}' â†’ {$r['cnt']} profiles\n";
 }
 
 echo "\n=== mlm_commission_ledger missing columns ===\n";
@@ -35,7 +35,7 @@ try {
         echo "  EXISTS: " . $cols[0]['Type'] . "\n";
         $rows = $pdo->query("SELECT level, COUNT(*) as cnt FROM associates GROUP BY level")->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $r) {
-            echo "    '{$r['level']}' → {$r['cnt']}\n";
+            echo "    '{$r['level']}' â†’ {$r['cnt']}\n";
         }
     } else {
         echo "  NOT EXISTS\n";
@@ -63,4 +63,4 @@ $mlmFile = file_get_contents(__DIR__ . '/../app/Services/MLM/MLMCommissionEngine
 preg_match_all('/override/', $mlmFile, $matches2);
 echo "  override refs in MLMCommissionEngine: " . count($matches2[0]) . "\n";
 
-echo "\n=== DONE ===\n";
+echo "\n=== DONE ===\n";?>

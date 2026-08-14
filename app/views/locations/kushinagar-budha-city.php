@@ -4,7 +4,7 @@
  * Migrated from resources/views/Views/budhacity.php
  */
 
-// init.php not found — helpers.php already loaded from bootstrap
+// init.php not found â€” helpers.php already loaded from bootstrap
 
 // --- Dynamic Data Section ---
 $amenities = [];
@@ -39,7 +39,7 @@ ob_start();
 <div class="row">
     <div class="col-lg-12">
         <!-- Hero Banner -->
-        <div class="page-banner mb-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('breadcrumb.jpg', 'images') ?>') center/cover; padding: 120px 0; color: #fff; border-radius: 0 0 50px 50px;">
+        <div class="page-banner mb-5" class="style-22214">
             <div class="container text-center">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up">Budha City</h1>
                 <p class="lead animate-fade-up">Integrated Township at Premwaliya, Kushinagar Highway</p>
@@ -94,7 +94,7 @@ ob_start();
                     <?php foreach ($amenities as $amenity): ?>
                         <div class="col-lg-3 col-md-6">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-lift h-100">
-                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= h($amenity['alt_text']) ?>" style="height: 200px; object-fit: cover;">
+                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= h($amenity['alt_text']) ?>" class="style-12213">
                                 <div class="card-body text-center p-3">
                                     <h6 class="fw-bold mb-0"><?= h($amenity['title']) ?></h6>
                                 </div>

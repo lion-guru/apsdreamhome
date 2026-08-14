@@ -17,12 +17,12 @@ echo "=== SELF-LEARNING AI TEST ===\n\n";
 echo "1. IntentDetector tests:\n";
 $tests = [
     'I want to buy a 3BHK flat in Gorakhpur' => 'buy_property',
-    'मुझे प्लाट खरीदना है' => 'buy_property',
+    'à¤®à¥�à¤�à¥‡ à¤ªà¥�à¤²à¤¾à¤Ÿ à¤–à¤°à¥€à¤¦à¤¨à¤¾ à¤¹à¥ˆ' => 'buy_property',
     'Hello there!' => 'greeting',
-    'नमस्ते' => 'greeting',
+    'à¤¨à¤®à¤¸à¥�à¤¤à¥‡' => 'greeting',
     'I need a home loan' => 'loan',
     'What is the price?' => 'price_inquiry',
-    'कितना दाम है?' => 'price_inquiry',
+    'à¤•à¤¿à¤¤à¤¨à¤¾ à¤¦à¤¾à¤® à¤¹à¥ˆ?' => 'price_inquiry',
     'Thanks for the help' => 'thanks',
     'Schedule a site visit please' => 'site_visit',
 ];
@@ -30,8 +30,8 @@ $tests = [
 $passed = 0;
 foreach ($tests as $msg => $expected) {
     $result = $ai->getIntentDetector()->detect($msg);
-    $ok = $result['intent'] === $expected ? '✓' : '✗';
-    if ($ok === '✓') $passed++;
+    $ok = $result['intent'] === $expected ? 'âœ“' : 'âœ—';
+    if ($ok === 'âœ“') $passed++;
     echo sprintf("  %s '%s' => %s (conf: %s, lang: %s)\n",
         $ok, substr($msg, 0, 40), $result['intent'], $result['confidence'], $result['language']);
 }
@@ -64,16 +64,16 @@ echo "\n";
 echo "4. Price Prediction:\n";
 $prediction = $ai->predictPrice('plot', null, 1000, 0, 0);
 echo "  Plot in any district, 1000 sqft:\n";
-echo "  Predicted: ₹" . number_format($prediction['predicted_price']) . "\n";
-echo "  Range: ₹" . number_format($prediction['low_estimate']) . " - ₹" . number_format($prediction['high_estimate']) . "\n";
+echo "  Predicted: â‚¹" . number_format($prediction['predicted_price']) . "\n";
+echo "  Range: â‚¹" . number_format($prediction['low_estimate']) . " - â‚¹" . number_format($prediction['high_estimate']) . "\n";
 echo "  Confidence: " . ($prediction['confidence'] * 100) . "%\n";
-echo "  R²: {$prediction['r_squared']}, Samples: {$prediction['sample_size']}\n\n";
+echo "  RÂ²: {$prediction['r_squared']}, Samples: {$prediction['sample_size']}\n\n";
 
 // 5. Test behavior tracking
 echo "5. Behavior Tracking:\n";
 $ai->track(1, 'view_property', '/properties/123', 'property', 123, ['duration' => 5000], 'test_session', 5000);
 $ai->track(1, 'inquiry', '/contact', 'lead', null, ['source' => 'web'], 'test_session', 2000);
-echo "  ✓ Tracked 2 events\n\n";
+echo "  âœ“ Tracked 2 events\n\n";
 
 // 6. Get recommendations
 echo "6. Recommendations:\n";
@@ -96,4 +96,4 @@ foreach ($stats as $k => $v) {
     echo "  $k: $v\n";
 }
 
-echo "\n=== ALL TESTS COMPLETE ===\n";
+echo "\n=== ALL TESTS COMPLETE ===\n";?>

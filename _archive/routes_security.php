@@ -30,4 +30,4 @@ $router->get('/api/security/dashboard', 'SecurityController@getDashboard');
 $router->get('/api/security/recommendations', 'SecurityController@getRecommendations');
 
 // Component testing
-$router->post('/api/security/test-component', 'SecurityController@testComponent');
+$router->post('/api/security/test-component', 'SecurityController@testComponent');?>

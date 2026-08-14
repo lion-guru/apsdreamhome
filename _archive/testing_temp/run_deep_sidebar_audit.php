@@ -27,7 +27,7 @@ try {
         echo "WARNING: No active menu items found.\n";
         exit;
     }
-    echo "✓ Loaded " . count($menuItems) . " active menu items from database.\n";
+    echo "âœ“ Loaded " . count($menuItems) . " active menu items from database.\n";
 
     // 2. Load and parse routes/web.php
     $webFile = $root . '/routes/web.php';
@@ -50,28 +50,28 @@ try {
             'handler' => $handler
         ];
     }
-    echo "✓ Parsed " . count($routes) . " routes from routes/web.php.\n";
+    echo "âœ“ Parsed " . count($routes) . " routes from routes/web.php.\n";
 
     // 3. Define section names from rbac_sidebar.php
     $sectionNames = [
-        'dashboards' => '📊 Dashboards',
-        'crm' => '👥 CRM & Sales',
-        'properties' => '🏠 Properties',
-        'mlm' => '🔗 MLM Network',
-        'finance' => '💰 Finance',
-        'bookings' => '📅 Bookings',
-        'cms' => '📝 Content',
-        'marketing' => '📢 Marketing',
-        'reports' => '📈 Reports',
-        'operations' => '⚙️ Operations',
-        'users' => '👤 Users & Team',
-        'locations' => '📍 Locations',
-        'settings' => '🔧 Settings',
-        'hrm' => '👔 HR & Payroll',
-        'legal' => '⚖️ Legal',
-        'sales' => '🏷️ Sales',
-        'system' => '⚙️ System',
-        'services' => '🛎️ Services'
+        'dashboards' => 'ðŸ“Š Dashboards',
+        'crm' => 'ðŸ‘¥ CRM & Sales',
+        'properties' => 'ðŸ�  Properties',
+        'mlm' => 'ðŸ”— MLM Network',
+        'finance' => 'ðŸ’° Finance',
+        'bookings' => 'ðŸ“… Bookings',
+        'cms' => 'ðŸ“� Content',
+        'marketing' => 'ðŸ“¢ Marketing',
+        'reports' => 'ðŸ“ˆ Reports',
+        'operations' => 'âš™ï¸� Operations',
+        'users' => 'ðŸ‘¤ Users & Team',
+        'locations' => 'ðŸ“� Locations',
+        'settings' => 'ðŸ”§ Settings',
+        'hrm' => 'ðŸ‘” HR & Payroll',
+        'legal' => 'âš–ï¸� Legal',
+        'sales' => 'ðŸ�·ï¸� Sales',
+        'system' => 'âš™ï¸� System',
+        'services' => 'ðŸ›Žï¸� Services'
     ];
 
     $report = "# Deep Sidebar & Routing Audit Report\n";
@@ -92,13 +92,13 @@ try {
         $urlNorm = rtrim($url, '/');
 
         // A. Verify Section Name
-        $sectionValid = isset($sectionNames[$section]) ? "✅ Yes" : "❌ Invalid";
+        $sectionValid = isset($sectionNames[$section]) ? "âœ… Yes" : "â�Œ Invalid";
         if (!isset($sectionNames[$section])) {
             $warnings[] = "Menu ID [$id] ('$name') uses unregistered section '$section'.";
         }
 
         // B. Verify Route Mapped in routes/web.php
-        $routeStatus = "❌ Missing Route";
+        $routeStatus = "â�Œ Missing Route";
         $controllerName = "N/A";
         $methodName = "N/A";
         $controllerExists = "N/A";
@@ -121,7 +121,7 @@ try {
         }
 
         if ($matchedRoute) {
-            $routeStatus = "✅ Registered (" . $matchedRoute['method'] . ")";
+            $routeStatus = "âœ… Registered (" . $matchedRoute['method'] . ")";
             $handler = $matchedRoute['handler'];
 
             if ($handler !== 'Closure') {
@@ -142,47 +142,47 @@ try {
                     $controllerFile = $root . '/app/' . $classPath . '.php';
 
                     if (file_exists($controllerFile)) {
-                        $controllerExists = "✅ Exists";
+                        $controllerExists = "âœ… Exists";
                         
                         // Static scan file for public function
                         $fileContent = file_get_contents($controllerFile);
                         if (preg_match('/public\s+function\s+' . $methodName . '\s*\(/i', $fileContent)) {
-                            $methodExists = "✅ Exists";
+                            $methodExists = "âœ… Exists";
                         } else {
-                            $methodExists = "❌ Missing Method";
+                            $methodExists = "â�Œ Missing Method";
                             $failedCount++;
                             $warnings[] = "Controller Class '$class' exists but method '$methodName' is missing.";
                         }
                     } else {
-                        $controllerExists = "❌ Missing File";
-                        $methodExists = "❌ N/A";
+                        $controllerExists = "â�Œ Missing File";
+                        $methodExists = "â�Œ N/A";
                         $failedCount++;
                         $warnings[] = "Controller File not found: '$controllerFile' for Class '$class'.";
                     }
                 } else {
                     $controllerName = "Inline / Closure";
-                    $controllerExists = "✅ N/A";
-                    $methodExists = "✅ N/A";
+                    $controllerExists = "âœ… N/A";
+                    $methodExists = "âœ… N/A";
                 }
             } else {
                 $controllerName = "Closure";
-                $controllerExists = "✅ N/A";
-                $methodExists = "✅ N/A";
+                $controllerExists = "âœ… N/A";
+                $methodExists = "âœ… N/A";
             }
         } else {
             $failedCount++;
             $warnings[] = "Menu URL '$url' for item '$name' is not registered in routes/web.php.";
         }
 
-        // C. Verify View File existence — resolve from actual controller render() call
-        $viewExists = "✅ Exists";
+        // C. Verify View File existence â€” resolve from actual controller render() call
+        $viewExists = "âœ… Exists";
         
         if ($handler === 'Closure') {
-            // Closure routes render views inline — skip view check
-            $viewExists = "✅ N/A (Closure)";
+            // Closure routes render views inline â€” skip view check
+            $viewExists = "âœ… N/A (Closure)";
         } elseif (strpos($url, '/api/') !== false || strpos($url, '/ajax/') !== false) {
-            $viewExists = "✅ N/A (API)";
-        } elseif ($methodExists === "✅ Exists" && file_exists($controllerFile) && 
+            $viewExists = "âœ… N/A (API)";
+        } elseif ($methodExists === "âœ… Exists" && file_exists($controllerFile) && 
                   !in_array($id, [3, 4, 6, 111])) { // Known indirect-render controllers (getRoleDashboard, shared index)
             // Parse the controller file to find the actual render() call in the target method
             $fileContent = file_get_contents($controllerFile);
@@ -214,30 +214,30 @@ try {
                 $fullViewPath = $root . '/app/views/' . $resolvedPath . '.php';
                 
                 if (file_exists($fullViewPath)) {
-                    $viewExists = "✅ Exists";
+                    $viewExists = "âœ… Exists";
                 } else {
-                    $viewExists = "❌ Missing View ($resolvedPath.php)";
+                    $viewExists = "â�Œ Missing View ($resolvedPath.php)";
                     $warnings[] = "Menu ID [$id] ('$name'): Controller renders '$viewPath' but file not found at '$fullViewPath'.";
                 }
             } else {
-                // Could not parse render call — fall back to URL-based heuristic
+                // Could not parse render call â€” fall back to URL-based heuristic
                 $viewPathGuess = preg_replace('#^/admin/#', '', $url);
                 $possibleViews = [
                     $root . '/app/views/admin/' . $viewPathGuess . '.php',
                     $root . '/app/views/admin/' . $viewPathGuess . '/index.php',
                     $root . '/app/views/' . $viewPathGuess . '.php',
                 ];
-                $viewExists = "❌ Missing View";
+                $viewExists = "â�Œ Missing View";
                 foreach ($possibleViews as $pv) {
-                    if (file_exists($pv)) { $viewExists = "✅ Exists"; break; }
+                    if (file_exists($pv)) { $viewExists = "âœ… Exists"; break; }
                 }
-                if ($viewExists === "❌ Missing View") {
+                if ($viewExists === "â�Œ Missing View") {
                     $warnings[] = "Menu ID [$id] ('$name'): Could not parse render() call; URL heuristic also failed for '$url'.";
                 }
             }
         } else {
-            // Controller or method not found — view check skipped
-            $viewExists = "⚠️ Skipped (no controller)";
+            // Controller or method not found â€” view check skipped
+            $viewExists = "âš ï¸� Skipped (no controller)";
         }
 
         // Append to report table
@@ -246,10 +246,10 @@ try {
 
     $report .= "\n\n## Detailed Warnings & Failures (" . count($warnings) . " issues)\n\n";
     if (empty($warnings)) {
-        $report .= "✅ **All systems clear! No errors or missing routes detected.**\n";
+        $report .= "âœ… **All systems clear! No errors or missing routes detected.**\n";
     } else {
         foreach ($warnings as $w) {
-            $report .= "* ⚠️ $w\n";
+            $report .= "* âš ï¸� $w\n";
         }
     }
 
@@ -266,14 +266,14 @@ try {
     echo "  Report written to: storage/reports/sidebar_deep_audit.md\n\n";
 
     if (count($warnings) > 0) {
-        echo "⚠️ WARNING: Some menu items have missing routes, controller classes, methods, or views. Please review the detailed report.\n";
+        echo "âš ï¸� WARNING: Some menu items have missing routes, controller classes, methods, or views. Please review the detailed report.\n";
         foreach ($warnings as $w) {
             echo "  - $w\n";
         }
     } else {
-        echo "✅ SUCCESS: All menu items are 100% syntactically and logically correct!\n";
+        echo "âœ… SUCCESS: All menu items are 100% syntactically and logically correct!\n";
     }
 
 } catch (Exception $e) {
     echo "FAILED: " . $e->getMessage() . "\n";
-}
+}?>

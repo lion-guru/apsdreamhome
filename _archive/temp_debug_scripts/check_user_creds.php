@@ -17,4 +17,4 @@ if ($user) {
     foreach ($users as $u) {
         echo "  - {$u['id']}: {$u['email']} ({$u['status']})\n";
     }
-}
+}?>

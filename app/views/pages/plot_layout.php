@@ -123,10 +123,10 @@
         </div>
         <div class="sidebar-legend">
             <h3><?= __('plot_legend_title', [], 'Status Legend') ?></h3>
-            <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> Available</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Booked / Reserved</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Sold</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#6b7280"></div> Hold / Other</div>
+            <div class="legend-item"><div class="legend-dot" class="style-6546"></div> Available</div>
+            <div class="legend-item"><div class="legend-dot" class="style-6351"></div> Booked / Reserved</div>
+            <div class="legend-item"><div class="legend-dot" class="style-68656"></div> Sold</div>
+            <div class="legend-item"><div class="legend-dot" class="style-99107"></div> Hold / Other</div>
         </div>
         <div class="sidebar-chart">
             <h3><?= __('plot_distribution', [], 'Distribution') ?></h3>
@@ -134,10 +134,10 @@
         </div>
         <div class="sidebar-stats" id="sidebarStats">
             <div class="stat-row"><span class="label"><?= __('plot_stat_total', [], 'Total Plots') ?></span><span class="value" id="statTotal"><?= $total_stats['total'] ?></span></div>
-            <div class="stat-row"><span class="label"><?= __('plot_stat_available', [], 'Available') ?></span><span class="value" style="color:#10b981" id="statAvail"><?= $total_stats['available'] ?></span></div>
-            <div class="stat-row"><span class="label"><?= __('plot_stat_booked', [], 'Booked') ?></span><span class="value" style="color:#f59e0b" id="statBooked"><?= $total_stats['booked'] ?></span></div>
-            <div class="stat-row"><span class="label"><?= __('plot_stat_sold', [], 'Sold') ?></span><span class="value" style="color:#ef4444" id="statSold"><?= $total_stats['sold'] ?></span></div>
-            <div class="stat-row"><span class="label"><?= __('plot_stat_blocked', [], 'Blocked') ?></span><span class="value" style="color:#94a3b8" id="statBlocked"><?= $total_stats['blocked'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_available', [], 'Available') ?></span><span class="value" class="style-2154" id="statAvail"><?= $total_stats['available'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_booked', [], 'Booked') ?></span><span class="value" class="style-62735" id="statBooked"><?= $total_stats['booked'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_sold', [], 'Sold') ?></span><span class="value" class="style-78822" id="statSold"><?= $total_stats['sold'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_blocked', [], 'Blocked') ?></span><span class="value" class="style-41689" id="statBlocked"><?= $total_stats['blocked'] ?></span></div>
         </div>
     </div>
 
@@ -286,7 +286,7 @@ function renderSVG() {
     colsToShow.forEach(function(colony) {
         var plots = colony.plots;
         if (!plots || plots.length === 0) {
-            html += '<div class="empty-colony"><i class="fas fa-map" style="font-size:28px;margin-right:10px"></i> No plots in ' + escHtml(colony.name) + '</div>';
+            html += '<div class="empty-colony"><i class="fas fa-map" class="style-35440"></i> No plots in ' + escHtml(colony.name) + '</div>';
             return;
         }
 
@@ -329,7 +329,7 @@ function renderSVG() {
 
                 var status = getDisplayStatus(plot.status);
                 var isVisible = matchPlot(plot);
-                var opacity = isVisible ? '' : ' style="opacity:0.15"';
+                var opacity = isVisible ? '' : ' class="style-39608"';
 
                 html += '<g class="plot-group" data-id="' + plot.id + '"' + opacity + '>';
                 html += '<rect class="plot-rect" x="' + curX + '" y="' + runningY + '" width="' + w + '" height="' + h + '" rx="4" fill="' + status.color + '" stroke="' + status.border + '" stroke-width="1" onclick="showPlotDetail(' + plot.id + ')" data-status="' + plot.status + '" />';
@@ -359,7 +359,7 @@ function renderSVG() {
 
     var svgWidth = Math.max(maxSvgWidth + 40, 800);
     var svgHeight = runningY + 40;
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + svgWidth + ' ' + svgHeight + '" width="' + svgWidth + '" height="' + svgHeight + '" style="background:#fff;border-radius:12px">' + html + '</svg>';
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + svgWidth + ' ' + svgHeight + '" width="' + svgWidth + '" height="' + svgHeight + '" class="style-23623">' + html + '</svg>';
     wrapper.innerHTML = svg;
     applyZoom();
 }
@@ -393,16 +393,16 @@ function showPlotDetail(id) {
     var status = getDisplayStatus(plot.status);
     document.getElementById('detailTitle').textContent = 'Plot ' + escHtml(plot.plot_number);
 
-    var body = '<div class="detail-field"><div class="label">Status</div><div class="value"><span class="detail-status-badge" style="background:' + status.color + '">' + status.label + '</span></div></div>';
+    var body = '<div class="detail-field"><div class="label">Status</div><div class="value"><span class="detail-status-badge" class="style-63612">' + status.label + '</span></div></div>';
     body += '<div class="detail-field"><div class="label">Plot Number</div><div class="value">' + escHtml(plot.plot_number) + '</div></div>';
     body += '<div class="detail-field"><div class="label">Colony</div><div class="value">' + escHtml(plot.colony_name) + '</div></div>';
     body += '<div class="detail-field"><div class="label">Block</div><div class="value">' + escHtml(plot.block || '-') + '</div></div>';
     body += '<div class="detail-field"><div class="label">Dimensions</div><div class="value">' + (plot.width_ft || '-') + ' ft x ' + (plot.length_ft || '-') + ' ft</div></div>';
     body += '<div class="detail-field"><div class="label">Area</div><div class="value">' + (parseFloat(plot.area_sqft) ? Math.round(plot.area_sqft) + ' sqft' : '-') + '</div></div>';
-    body += '<div class="detail-field"><div class="label">Total Price</div><div class="value" style="color:#0d9488;font-size:16px">&#8377; ' + formatPrice(plot.total_price) + '</div></div>';
+    body += '<div class="detail-field"><div class="label">Total Price</div><div class="value" class="style-76270">&#8377; ' + formatPrice(plot.total_price) + '</div></div>';
     if (plot.facing) body += '<div class="detail-field"><div class="label">Facing</div><div class="value">' + escHtml(plot.facing) + '</div></div>';
-    if (plot.corner_plot == 1) body += '<div class="detail-field"><div class="label">Corner Plot</div><div class="value" style="color:#10b981"><i class="fas fa-check-circle"></i> Yes</div></div>';
-    if (plot.park_facing == 1) body += '<div class="detail-field"><div class="label">Park Facing</div><div class="value" style="color:#10b981"><i class="fas fa-check-circle"></i> Yes</div></div>';
+    if (plot.corner_plot == 1) body += '<div class="detail-field"><div class="label">Corner Plot</div><div class="value" class="style-2154"><i class="fas fa-check-circle"></i> Yes</div></div>';
+    if (plot.park_facing == 1) body += '<div class="detail-field"><div class="label">Park Facing</div><div class="value" class="style-2154"><i class="fas fa-check-circle"></i> Yes</div></div>';
     if (plot.last_status_change) body += '<div class="detail-field"><div class="label">Last Status Change</div><div class="value">' + escHtml(plot.last_status_change) + '</div></div>';
 
     document.getElementById('detailBody').innerHTML = body;

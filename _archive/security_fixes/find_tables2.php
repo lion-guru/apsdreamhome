@@ -7,4 +7,4 @@ foreach ($tables as $t) {
     if (stripos($t, 'state') !== false || stripos($t, 'district') !== false || stripos($t, 'city') !== false || stripos($t, 'pincode') !== false || stripos($t, 'pin_code') !== false || stripos($t, 'bank') !== false || stripos($t, 'ifsc') !== false) {
         echo "$t\n";
     }
-}
+}?>

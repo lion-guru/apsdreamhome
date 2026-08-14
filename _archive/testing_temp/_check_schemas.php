@@ -20,4 +20,4 @@ echo $row['Type'] . PHP_EOL . PHP_EOL;
 echo "=== mlm_settings current state ===" . PHP_EOL;
 foreach ($pdo->query("SELECT setting_key, LEFT(setting_value, 80) as val FROM mlm_settings ORDER BY id") as $r) {
     echo $r['setting_key'] . ' = ' . $r['val'] . PHP_EOL;
-}
+}?>

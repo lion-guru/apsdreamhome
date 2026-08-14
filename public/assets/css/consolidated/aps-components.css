@@ -126,6 +126,7 @@
   margin: 0 0 0.4rem;
   position: relative;
   z-index: 1;
+  color: var(--aps-cp-text, #1e293b);
 }
 .aps-cp-hero p {
   margin: 0;
@@ -389,6 +390,7 @@
   font-size: 0.95rem;
   transition: all var(--aps-cp-transition);
   background: var(--aps-cp-card-bg, #fff);
+  color: var(--aps-cp-text, #1e293b);
 }
 .aps-cp-form-section .form-control:focus,
 .aps-cp-form-section .form-select:focus {

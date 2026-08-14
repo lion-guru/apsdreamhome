@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $page_title = $page_title ?? 'AI Calling System - APS Dream Home';
 $page_heading = $page_heading ?? 'AI Calling System';
 
@@ -116,7 +116,7 @@ $ai_agents = $ai_agents ?? [];
                                     </button>
                                 </div>
                             </div>
-                            <div id="quickCallStatus" class="mt-2" style="display:none;"></div>
+                            <div id="quickCallStatus" class="mt-2" class="style-2248"></div>
                         </div>
                     </div>
                 </div>

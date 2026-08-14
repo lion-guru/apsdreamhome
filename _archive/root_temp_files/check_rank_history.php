@@ -11,4 +11,4 @@ echo "=== Current Data ===\n";
 $data = $pdo->query("SELECT * FROM mlm_rank_history LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($data as $row) {
     print_r($row);
-}
+}?>

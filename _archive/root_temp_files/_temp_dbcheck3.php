@@ -27,4 +27,4 @@ echo 'active employees: ' . $r->fetch()['cnt'] . PHP_EOL;
 
 // Employees sample
 $r = $db->query("SELECT id, name, department, designation, role FROM employees LIMIT 5");
-foreach ($r as $row) echo 'employee: ' . json_encode($row) . PHP_EOL;
+foreach ($r as $row) echo 'employee: ' . json_encode($row) . PHP_EOL;?>

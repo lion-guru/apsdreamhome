@@ -1,6 +1,6 @@
 <?php
 /**
- * APS Dream Home — API Load Test
+ * APS Dream Home â€” API Load Test
  *
  * Login as test user to grab session/JWT, then spam a protected API endpoint.
  * Detects when rate limit kicks in (expects HTTP 429).
@@ -19,9 +19,9 @@ $password = $argv[2] ?? 'Test1234';
 $apiPath  = $argv[3] ?? '/api/mobile/dashboard';
 $iterations = max(1, (int)($argv[4] ?? 100));
 
-echo "╔════════════════════════════════════════════════════════════════╗\n";
-echo "║         APS Dream Home — API Load Test                        ║\n";
-echo "╚════════════════════════════════════════════════════════════════╝\n\n";
+echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
+echo "â•‘         APS Dream Home â€” API Load Test                        â•‘\n";
+echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
 echo "Base URL   : {$baseUrl}\n";
 echo "Login as   : {$email}\n";
 echo "Target API : {$apiPath}\n";
@@ -80,7 +80,7 @@ $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $urlAfter = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
 curl_close($ch);
 
-echo "Login POST: HTTP {$code} → " . ($urlAfter ?: '(no redirect)') . "\n";
+echo "Login POST: HTTP {$code} â†’ " . ($urlAfter ?: '(no redirect)') . "\n";
 
 // Determine if session is authenticated
 $isAuthed = (stripos((string)$urlAfter, '/login') === false && stripos((string)$urlAfter, '/dashboard') !== false)
@@ -103,9 +103,9 @@ curl_close($ch);
 $isAuthed = $isAuthed || ($probeCode === 200);
 
 if (!$isAuthed) {
-    echo "⚠️  Login may have failed (probed /user/dashboard → HTTP {$probeCode}). Will continue anyway.\n\n";
+    echo "âš ï¸�  Login may have failed (probed /user/dashboard â†’ HTTP {$probeCode}). Will continue anyway.\n\n";
 } else {
-    echo "✅ Authenticated. Session cookie stored.\n\n";
+    echo "âœ… Authenticated. Session cookie stored.\n\n";
 }
 
 // -------- 2) Spam the API endpoint --------
@@ -186,7 +186,7 @@ $report = [
 $jsonFile = __DIR__ . '/api_load_results.json';
 file_put_contents($jsonFile, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-$hr = str_repeat('─', 64);
+$hr = str_repeat('â”€', 64);
 echo "\n" . $hr . "\n";
 echo "  WALL TIME    : " . round($wallTime, 2) . "s\n";
 echo "  THROUGHPUT   : " . round($count / max($wallTime, 0.001), 1) . " req/s\n";
@@ -195,7 +195,7 @@ echo "  p50          : " . round($p50 * 1000, 1) . "ms\n";
 echo "  p95          : " . round($p95 * 1000, 1) . "ms\n";
 echo "  p99          : " . round($p99 * 1000, 1) . "ms\n";
 echo "  ERRORS       : {$errors}\n";
-echo "  RATE LIMITED : {$rateLimited}" . ($first429At ? " (first 429 at request #{$first429At})" : " (no 429 — no rate limit enforced or limit > {$iterations})") . "\n";
+echo "  RATE LIMITED : {$rateLimited}" . ($first429At ? " (first 429 at request #{$first429At})" : " (no 429 â€” no rate limit enforced or limit > {$iterations})") . "\n";
 echo $hr . "\n";
 echo "  STATUS DISTRIBUTION\n";
 foreach ($statuses as $code => $cnt) {
@@ -203,6 +203,6 @@ foreach ($statuses as $code => $cnt) {
     printf("    HTTP %-3s : %4d  (%5.1f%%)\n", $code, $cnt, $pct);
 }
 echo $hr . "\n";
-echo "📄 JSON → " . realpath($jsonFile) . "\n";
-echo "\n✅ API load test complete.\n";
-exit(0);
+echo "ðŸ“„ JSON â†’ " . realpath($jsonFile) . "\n";
+echo "\nâœ… API load test complete.\n";
+exit(0);?>

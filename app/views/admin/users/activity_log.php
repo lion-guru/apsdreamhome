@@ -52,7 +52,7 @@ $actionIcons = [
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th style="width:50px"></th>
+                        <th class="style-1979"></th>
                         <th>Action</th>
                         <th>Details</th>
                         <th>Admin</th>
@@ -79,13 +79,13 @@ $actionIcons = [
                                     $details[] = 'User #' . $context['user_id'];
                                 }
                                 if (isset($context['amount'])) {
-                                    $details[] = '₹' . number_format($context['amount']);
+                                    $details[] = 'â‚¹' . number_format($context['amount']);
                                 }
                                 if (isset($context['reason'])) {
                                     $details[] = $context['reason'];
                                 }
                                 if (isset($context['new_sponsor_id'])) {
-                                    $details[] = 'Sponsor → #' . $context['new_sponsor_id'];
+                                    $details[] = 'Sponsor â†’ #' . $context['new_sponsor_id'];
                                 }
                                 if (isset($context['new_code'])) {
                                     $details[] = 'Code: ' . $context['new_code'];
@@ -96,13 +96,13 @@ $actionIcons = [
                                 if (isset($context['changes'])) {
                                     $details[] = 'Fields: ' . implode(', ', array_keys($context['changes']));
                                 }
-                                echo htmlspecialchars(implode(' · ', $details) ?: '—');
+                                echo htmlspecialchars(implode(' Â· ', $details) ?: 'â€”');
                                 ?>
                             </small>
                         </td>
                         <td><small><?= htmlspecialchars($log['admin_name'] ?? 'System') ?></small></td>
-                        <td><code class="small"><?= htmlspecialchars($log['ip_address'] ?? '—') ?></code></td>
-                        <td><small class="text-muted"><?= isset($log['created_at']) ? date('M d, Y h:i A', strtotime($log['created_at'])) : '—' ?></small></td>
+                        <td><code class="small"><?= htmlspecialchars($log['ip_address'] ?? 'â€”') ?></code></td>
+                        <td><small class="text-muted"><?= isset($log['created_at']) ? date('M d, Y h:i A', strtotime($log['created_at'])) : 'â€”' ?></small></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

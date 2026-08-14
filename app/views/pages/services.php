@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="page-hero" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-1.jpg') ?>'); background-size: cover; background-position: center;">
+<section class="page-hero" class="style-88494">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">

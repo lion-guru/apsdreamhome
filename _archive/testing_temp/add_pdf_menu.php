@@ -26,4 +26,4 @@ if ($existing) {
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array_values($menu));
     echo "Inserted PDF Generator menu item (id=" . $pdo->lastInsertId() . ")\n";
-}
+}?>

@@ -54,4 +54,4 @@ foreach ($customerPages as $url) {
 }
 
 echo "\n=== CUSTOMER PORTAL ISSUES ===\n";
-foreach ($issues as $i) echo "$i\n";
+foreach ($issues as $i) echo "$i\n";?>

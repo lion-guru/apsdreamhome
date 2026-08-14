@@ -82,7 +82,7 @@ ob_start();
                         <?php if (empty($reviews)): ?>
                             <tr>
                                 <td colspan="9" class="text-center py-5">
-                                    <i class="fas fa-star fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-star fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No reviews yet</h5>
                                     <p class="text-muted mb-3">Customer reviews will appear here once buyers start sharing feedback about their property experience.</p>
                                 </td>
@@ -175,7 +175,7 @@ ob_start();
                         <?php if (empty($testimonials)): ?>
                             <tr>
                                 <td colspan="9" class="text-center py-5">
-                                    <i class="fas fa-quote-left fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-quote-left fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No testimonials yet</h5>
                                     <p class="text-muted mb-3">Add customer testimonials to build trust and showcase your best property experiences.</p>
                                     <a href="<?= BASE_URL ?>/admin/testimonials/create" class="btn btn-primary">
@@ -190,7 +190,7 @@ ob_start();
                                     <td>
                                         <strong><?= htmlspecialchars($t['customer_name']) ?></strong>
                                         <?php if (!empty($t['client_photo'])): ?>
-                                            <br><img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="rounded-circle mt-1" style="width:30px;height:30px;" />
+                                            <br><img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="rounded-circle mt-1" class="style-91602" />
                                         <?php endif; ?>
                                     </td>
                                     <td>

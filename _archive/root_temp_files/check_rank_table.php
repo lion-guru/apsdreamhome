@@ -11,4 +11,4 @@ echo "=== Current Data ===\n";
 $data = $pdo->query("SELECT * FROM mlm_rank_benefits")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($data as $row) {
     echo "ID: {$row['id']}, Name: '{$row['rank_name']}', Order: {$row['rank_order']}\n";
-}
+}?>

@@ -1,2 +1,2 @@
 <?php
-// Cleanup
+// Cleanup?>

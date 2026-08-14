@@ -8,4 +8,4 @@ foreach ($tables as $t) {
     } catch(Exception $e) {
         echo $t . ': TABLE_NOT_FOUND (' . $e->getMessage() . ')' . PHP_EOL;
     }
-}
+}?>

@@ -100,4 +100,4 @@ echo "\n=== Final state ===\n";
 $total = $pdo->query("SELECT COUNT(*) FROM employees")->fetchColumn();
 echo "Total employees: $total\n";
 $linked = $pdo->query("SELECT COUNT(*) FROM employees WHERE user_id IS NOT NULL")->fetchColumn();
-echo "Linked to users: $linked\n";
+echo "Linked to users: $linked\n";?>

@@ -71,4 +71,4 @@ foreach ($newPosts as $post) {
 
 echo "\nAdded: $added\n";
 $final = $db->fetchOne("SELECT COUNT(*) as c FROM blog_posts");
-echo "Total blog posts: " . $final['c'] . "\n";
+echo "Total blog posts: " . $final['c'] . "\n";?>

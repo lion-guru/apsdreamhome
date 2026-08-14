@@ -9,4 +9,4 @@ echo "HTTP Code: $httpCode\n";
 echo substr($body, 0, 500);
 if (strpos($body, 'Fatal error') !== false) {
     echo "\n\nFound Fatal Error!\n";
-}
+}?>

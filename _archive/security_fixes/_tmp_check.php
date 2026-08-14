@@ -29,4 +29,4 @@ try {
     foreach($rows5 as $r) echo $r['id'] . ' | ' . $r['name'] . ' | ' . $r['url'] . PHP_EOL;
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . PHP_EOL;
-}
+}?>

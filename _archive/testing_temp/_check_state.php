@@ -1,6 +1,6 @@
 <?php
 /**
- * Full DB State Audit — Updated 2026-06-26
+ * Full DB State Audit â€” Updated 2026-06-26
  *
  * Run: php testing/_check_state.php
  */
@@ -34,7 +34,7 @@ echo "\n=== 4. MLM_LEVELS TABLE ===\n";
 try {
     $rows = $pdo->query("SELECT id, level_name, level_number, team_size_required, direct_referrals_required, monthly_target FROM mlm_levels ORDER BY level_number")->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as $r) {
-        echo "  #{$r['level_number']} {$r['level_name']} — team={$r['team_size_required']} direct={$r['direct_referrals_required']} monthly=₹{$r['monthly_target']}\n";
+        echo "  #{$r['level_number']} {$r['level_name']} â€” team={$r['team_size_required']} direct={$r['direct_referrals_required']} monthly=â‚¹{$r['monthly_target']}\n";
     }
 } catch (Exception $e) {
     echo "  Error: " . $e->getMessage() . "\n";
@@ -43,9 +43,9 @@ try {
 echo "\n=== 5. MLM_COMMISSION_LEVELS TABLE ===\n";
 try {
     $pdo->query("SELECT 1 FROM mlm_commission_levels LIMIT 1");
-    echo "  TABLE EXISTS (should have been dropped — leftover!)\n";
+    echo "  TABLE EXISTS (should have been dropped â€” leftover!)\n";
 } catch (Exception $e) {
-    echo "  Table dropped (correct) ✓\n";
+    echo "  Table dropped (correct) âœ“\n";
 }
 
 echo "\n=== 6. MLMCommissionEngine::RANK_ORDER ===\n";
@@ -58,7 +58,7 @@ foreach ($rows as $r) {
 }
 
 echo "\n=== 8. SERVICES READING current_level ===\n";
-echo "  DifferentialCommissionCalculator: name→number via rankMap (lowercase)\n";
+echo "  DifferentialCommissionCalculator: nameâ†’number via rankMap (lowercase)\n";
 echo "  RankEvaluationService: case-insensitive comparison with mlm_levels.level_name\n";
 echo "  MobileApiController: threshold lookup with lowercase rank names\n";
 echo "  MLMCommissionEngine: searches in RANK_ORDER (7 lowercase names)\n";
@@ -84,8 +84,8 @@ foreach ($investCols as $c) {
 }
 
 echo "\n=== SUMMARY ===\n";
-echo "  RANK SYSTEM: UNIFIED — 7 ranks across all tables (lowercase names)\n";
+echo "  RANK SYSTEM: UNIFIED â€” 7 ranks across all tables (lowercase names)\n";
 echo "  mlm_commission_levels: DROPPED (was redundant with mlm_rank_benefits)\n";
 echo "  Royalty Pool: HybridCommissionEngine handles everything (mlm_royalty_pool active)\n";
 echo "  users table: has total_points + current_level columns (for Gamification points system)\n";
-echo "  Investment reversal: HybridCommissionEngine::reverseInvestmentCommissions() available\n";
+echo "  Investment reversal: HybridCommissionEngine::reverseInvestmentCommissions() available\n";?>

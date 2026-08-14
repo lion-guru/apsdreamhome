@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -201,7 +201,7 @@
                         </div>
                     </div>
 
-                    <div class="row" id="multipleDayFields" style="display: none;">
+                    <div class="row" id="multipleDayFields" class="style-54390">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="start_date" class="form-label">From Date *</label>

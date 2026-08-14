@@ -47,4 +47,4 @@ try {
     echo "FATAL: " . $e->getMessage() . "\n";
     echo "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
     exit(1);
-}
+}?>

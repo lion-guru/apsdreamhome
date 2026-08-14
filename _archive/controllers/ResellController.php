@@ -26,8 +26,8 @@ class ResellController extends BaseController
                     'id' => 1,
                     'title' => '3BHK Apartment in Gomti Nagar',
                     'location' => 'Gomti Nagar, Lucknow',
-                    'original_price' => '₹85 Lakhs',
-                    'resell_price' => '₹75 Lakhs',
+                    'original_price' => 'â‚¹85 Lakhs',
+                    'resell_price' => 'â‚¹75 Lakhs',
                     'bedrooms' => 3,
                     'bathrooms' => 2,
                     'area' => 1500,
@@ -40,8 +40,8 @@ class ResellController extends BaseController
                     'id' => 2,
                     'title' => 'Independent House in Indira Nagar',
                     'location' => 'Indira Nagar, Lucknow',
-                    'original_price' => '₹1.5 Crore',
-                    'resell_price' => '₹1.35 Crore',
+                    'original_price' => 'â‚¹1.5 Crore',
+                    'resell_price' => 'â‚¹1.35 Crore',
                     'bedrooms' => 4,
                     'bathrooms' => 3,
                     'area' => 2000,
@@ -54,8 +54,8 @@ class ResellController extends BaseController
                     'id' => 3,
                     'title' => '2BHK Apartment in Alambagh',
                     'location' => 'Alambagh, Lucknow',
-                    'original_price' => '₹45 Lakhs',
-                    'resell_price' => '₹38 Lakhs',
+                    'original_price' => 'â‚¹45 Lakhs',
+                    'resell_price' => 'â‚¹38 Lakhs',
                     'bedrooms' => 2,
                     'bathrooms' => 2,
                     'area' => 1000,
@@ -68,8 +68,8 @@ class ResellController extends BaseController
                     'id' => 4,
                     'title' => 'Commercial Space in Vibhuti Khand',
                     'location' => 'Vibhuti Khand, Gomti Nagar',
-                    'original_price' => '₹1.2 Crore',
-                    'resell_price' => '₹95 Lakhs',
+                    'original_price' => 'â‚¹1.2 Crore',
+                    'resell_price' => 'â‚¹95 Lakhs',
                     'bedrooms' => 0,
                     'bathrooms' => 2,
                     'area' => 1200,
@@ -81,4 +81,4 @@ class ResellController extends BaseController
             ]
         ], 'layouts/base');
     }
-}
+}?>

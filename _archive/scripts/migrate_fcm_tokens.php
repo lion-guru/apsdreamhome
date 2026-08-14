@@ -45,7 +45,7 @@ try {
             INDEX `idx_last_used` (`last_used_at`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
-    echo "✓ push_tokens table ready\n";
+    echo "âœ“ push_tokens table ready\n";
 
     // 2. Create notification_logs table if it doesn't exist (for FCM response logging)
     $pdo->exec("
@@ -64,7 +64,7 @@ try {
             INDEX `idx_created` (`created_at`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
-    echo "✓ notification_logs table ready\n";
+    echo "âœ“ notification_logs table ready\n";
 
     // 3. Ensure push_notifications table exists (notification queue)
     $pdo->exec("
@@ -83,7 +83,7 @@ try {
             INDEX `idx_status_created` (`status`, `created_at`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
-    echo "✓ push_notifications table ready\n";
+    echo "âœ“ push_notifications table ready\n";
 
     // 4. Show current token count
     $stmt = $pdo->query("SELECT COUNT(*) FROM push_tokens WHERE is_active = 1");
@@ -106,17 +106,17 @@ try {
     ")->fetchAll(PDO::FETCH_ASSOC);
 
     if (!empty($orphaned)) {
-        echo "\n⚠ Orphaned tokens (user not in users table):\n";
+        echo "\nâš  Orphaned tokens (user not in users table):\n";
         foreach ($orphaned as $o) {
             echo "  - ID {$o['id']}: user_id={$o['user_id']} ({$o['user_type']}) token={$o['token_start']}...\n";
         }
     } else {
-        echo "\n✓ No orphaned tokens\n";
+        echo "\nâœ“ No orphaned tokens\n";
     }
 
-    echo "\n✅ Migration complete\n";
+    echo "\nâœ… Migration complete\n";
 
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

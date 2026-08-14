@@ -8,4 +8,4 @@ for ($i = 203; $i <= 210; $i++) {
     echo "Line " . ($i+1) . " hex (first 120 chars): " . bin2hex(substr($line, 0, 120)) . "\n";
     echo "Line " . ($i+1) . " raw: " . $line;
     echo "\n";
-}
+}?>

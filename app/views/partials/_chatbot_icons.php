@@ -3,7 +3,7 @@
 // These are normally in base.php layout, but standalone pages need them too.
 ?>
 <!-- AI Chatbot & WhatsApp icons -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/chatbot.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/chatbot.min.css">
 
 <div class="ai-chatbot-container" id="ai-chatbot">
     <button class="ai-float-btn" id="aiFloatBtn" onclick="toggleChat()">

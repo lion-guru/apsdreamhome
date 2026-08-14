@@ -21,4 +21,4 @@ foreach ($iter as $f) {
     if (preg_match('/notifications_unified/', $content)) {
         echo "  Ref: " . basename($f->getPathname()) . "\n";
     }
-}
+}?>

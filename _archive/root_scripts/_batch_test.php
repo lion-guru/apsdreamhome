@@ -90,4 +90,4 @@ if (count($results['other'])) {
 }
 
 // Cleanup
-unlink('cookies.txt');
+unlink('cookies.txt');?>

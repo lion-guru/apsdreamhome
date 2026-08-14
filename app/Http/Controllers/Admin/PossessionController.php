@@ -598,11 +598,11 @@ class PossessionController extends AdminController
             <tr>
                 <td>
                     <div class="signature-line">{$handoverByName}</div>
-                    <div style="font-size:9pt; color:#666;">Authorized Signatory<br>APS Dream Home</div>
+                    <div class="style-8200">Authorized Signatory<br>APS Dream Home</div>
                 </td>
                 <td>
                     <div class="signature-line">{$customerName}</div>
-                    <div style="font-size:9pt; color:#666;">Allottee / Buyer</div>
+                    <div class="style-8200">Allottee / Buyer</div>
                 </td>
             </tr>
         </table>

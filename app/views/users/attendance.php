@@ -35,7 +35,7 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
         </div>
         <form method="get" class="d-flex gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
-            <input type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month) ?>" style="max-width:170px;">
+            <input type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month) ?>" class="style-79467">
             <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Filter</button>
         </form>
     </div>
@@ -48,7 +48,7 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
                 <span class="fw-bold fs-5 text-<?= $attendanceRate >= 90 ? 'success' : ($attendanceRate >= 75 ? 'warning' : 'danger') ?>"><?= $attendanceRate ?>%</span>
             </div>
             <div class="emp-att-meter">
-                <div class="emp-att-meter-fill bg-<?= $attendanceRate >= 90 ? 'success' : ($attendanceRate >= 75 ? 'warning' : 'danger') ?>" style="width:<?= $attendanceRate ?>%"></div>
+                <div class="emp-att-meter-fill bg-<?= $attendanceRate >= 90 ? 'success' : ($attendanceRate >= 75 ? 'warning' : 'danger') ?>" class="style-48309"></div>
             </div>
             <div class="d-flex justify-content-between mt-2">
                 <small class="text-muted"><?= $workingDays ?> days worked</small>
@@ -124,28 +124,28 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
                             ?>
                                 <tr class="emp-att-row">
                                     <td>
-                                        <div class="fw-semibold"><?= $date ? date('d M Y', strtotime($date)) : '—' ?></div>
+                                        <div class="fw-semibold"><?= $date ? date('d M Y', strtotime($date)) : 'â€”' ?></div>
                                     </td>
                                     <td class="text-muted small"><?= $dayOfWeek ?></td>
                                     <td>
                                         <?php if (!empty($a['check_in'])): ?>
                                             <span class="fw-semibold"><?= date('h:i A', strtotime($a['check_in'])) ?></span>
                                         <?php else: ?>
-                                            <span class="text-muted">—</span>
+                                            <span class="text-muted">â€”</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if (!empty($a['check_out'])): ?>
                                             <span class="fw-semibold"><?= date('h:i A', strtotime($a['check_out'])) ?></span>
                                         <?php else: ?>
-                                            <span class="text-muted">—</span>
+                                            <span class="text-muted">â€”</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end">
                                         <?php if (!empty($a['hours'])): ?>
                                             <span class="fw-semibold"><?= number_format((float)$a['hours'], 1) ?>h</span>
                                         <?php else: ?>
-                                            <span class="text-muted">—</span>
+                                            <span class="text-muted">â€”</span>
                                         <?php endif; ?>
                                     </td>
                                     <td><?= attStatusBadge($a['status'] ?? 'absent') ?></td>

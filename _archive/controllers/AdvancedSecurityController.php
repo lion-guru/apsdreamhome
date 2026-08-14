@@ -1694,4 +1694,4 @@ class AdvancedSecurityController extends BaseController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

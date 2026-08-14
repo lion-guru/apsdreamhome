@@ -21,8 +21,8 @@
                                     <td><?= htmlspecialchars($a['entity'] ?? '-') ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height:6px;">
-                                                <div class="progress-bar bg-<?= ($a['risk_score'] ?? 0) > 80 ? 'danger' : (($a['risk_score'] ?? 0) > 50 ? 'warning' : 'success') ?>" style="width:<?= min(100, $a['risk_score'] ?? 0) ?>%"></div>
+                                            <div class="progress flex-grow-1 me-2" class="style-12222">
+                                                <div class="progress-bar bg-<?= ($a['risk_score'] ?? 0) > 80 ? 'danger' : (($a['risk_score'] ?? 0) > 50 ? 'warning' : 'success') ?>" class="style-30026"></div>
                                             </div>
                                             <small><?= $a['risk_score'] ?? 0 ?></small>
                                         </div>

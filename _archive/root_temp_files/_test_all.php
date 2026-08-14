@@ -46,7 +46,7 @@ foreach ($menus as $m) {
 foreach ($tree as $parent) {
     echo "  [{$parent['section']}] {$parent['menu_text']} -> {$parent['url']}\n";
     foreach ($parent['children'] as $child) {
-        echo "    └─ {$child['menu_text']} -> {$child['url']}\n";
+        echo "    â””â”€ {$child['menu_text']} -> {$child['url']}\n";
     }
 }
 
@@ -126,7 +126,7 @@ foreach ($flattened as $item) {
 
 echo "\nBROKEN MENU ITEMS (" . count($broken) . "):\n";
 foreach ($broken as $b) {
-    echo "  ✗ {$b['menu_text']} -> {$b['url']}\n";
+    echo "  âœ— {$b['menu_text']} -> {$b['url']}\n";
 }
 
 // =============================================
@@ -216,4 +216,4 @@ foreach ($requiredCols as $c) {
     echo ($exists ? '  OK' : '  MISSING') . ": {$c}\n";
 }
 
-echo "\n\nDONE.\n";
+echo "\n\nDONE.\n";?>

@@ -52,7 +52,7 @@
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Sort Order</label>
-                        <input type="number" class="form-control" name="sort_order" value="0" min="0" style="max-width:150px">
+                        <input type="number" class="form-control" name="sort_order" value="0" min="0" class="style-86527">
                     </div>
 
                     <div class="d-flex gap-3">

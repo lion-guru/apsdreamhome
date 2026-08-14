@@ -8,7 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Database\Database;
 
-echo "🧪 VALIDATION TEST: New Features\n";
+echo "ðŸ§ª VALIDATION TEST: New Features\n";
 echo str_repeat("=", 60) . "\n\n";
 
 $tests = [
@@ -23,7 +23,7 @@ $tests = [
 ];
 
 // Test 1: Database Tables
-echo "🗄️  Testing Database Tables...\n";
+echo "ðŸ—„ï¸�  Testing Database Tables...\n";
 try {
     $db = Database::getInstance()->getConnection();
     
@@ -31,18 +31,18 @@ try {
     foreach ($tables as $table) {
         $stmt = $db->query("SHOW TABLES LIKE '{$table}'");
         if ($stmt->rowCount() > 0) {
-            echo "   ✅ {$table} table exists\n";
+            echo "   âœ… {$table} table exists\n";
         } else {
-            echo "   ❌ {$table} table missing\n";
+            echo "   â�Œ {$table} table missing\n";
         }
     }
     $tests['Database Tables'] = true;
 } catch (Exception $e) {
-    echo "   ❌ Error: " . $e->getMessage() . "\n";
+    echo "   â�Œ Error: " . $e->getMessage() . "\n";
 }
 
 // Test 2: Controllers
-echo "\n🎮 Testing Controllers...\n";
+echo "\nðŸŽ® Testing Controllers...\n";
 $controllers = [
     'App\Http\Controllers\Admin\Reports\MLMGrowthReportController',
     'App\Http\Controllers\Admin\Reports\ROICalculatorController',
@@ -52,16 +52,16 @@ $controllers = [
 
 foreach ($controllers as $controller) {
     if (class_exists($controller)) {
-        echo "   ✅ {$controller}\n";
+        echo "   âœ… {$controller}\n";
     } else {
-        echo "   ❌ {$controller} not found\n";
+        echo "   â�Œ {$controller} not found\n";
     }
 }
 $tests['MLM Growth Controller'] = class_exists('App\Http\Controllers\Admin\Reports\MLMGrowthReportController');
 $tests['ROI Calculator Controller'] = class_exists('App\Http\Controllers\Admin\Reports\ROICalculatorController');
 
 // Test 3: Services
-echo "\n⚙️  Testing Services...\n";
+echo "\nâš™ï¸�  Testing Services...\n";
 $services = [
     'App\Services\AI\AIGeminiChatbotService',
     'App\Services\Payment\PhonePeGatewayService',
@@ -70,9 +70,9 @@ $services = [
 
 foreach ($services as $service) {
     if (class_exists($service)) {
-        echo "   ✅ {$service}\n";
+        echo "   âœ… {$service}\n";
     } else {
-        echo "   ❌ {$service} not found\n";
+        echo "   â�Œ {$service} not found\n";
     }
 }
 $tests['Gemini Chatbot Service'] = class_exists('App\Services\AI\AIGeminiChatbotService');
@@ -80,7 +80,7 @@ $tests['Payment Gateway Services'] = class_exists('App\Services\Payment\PhonePeG
                                      class_exists('App\Services\Payment\GooglePayService');
 
 // Test 4: Views
-echo "\n🎨 Testing Views...\n";
+echo "\nðŸŽ¨ Testing Views...\n";
 $views = [
     'admin/reports/mlm_growth.php',
     'admin/reports/roi_calculator.php',
@@ -90,15 +90,15 @@ $views = [
 foreach ($views as $view) {
     $path = __DIR__ . '/../app/views/' . $view;
     if (file_exists($path)) {
-        echo "   ✅ {$view}\n";
+        echo "   âœ… {$view}\n";
     } else {
-        echo "   ❌ {$view} not found\n";
+        echo "   â�Œ {$view} not found\n";
     }
 }
 $tests['Views'] = true; // If we got here, views were created
 
 // Test 5: Routes
-echo "\n🛣️  Testing Routes...\n";
+echo "\nðŸ›£ï¸�  Testing Routes...\n";
 $routeFiles = [
     __DIR__ . '/../routes/web.php',
     __DIR__ . '/../routes/api.php'
@@ -121,44 +121,44 @@ foreach ($routeFiles as $file) {
                 $found++;
             }
         }
-        echo "   ✅ Routes file: " . basename($file) . " ({$found}/" . count($requiredRoutes) . " routes)\n";
+        echo "   âœ… Routes file: " . basename($file) . " ({$found}/" . count($requiredRoutes) . " routes)\n";
     }
 }
 $tests['API Routes'] = true;
 
 // Test 6: Admin Sidebar
-echo "\n📋 Testing Admin Sidebar...\n";
+echo "\nðŸ“‹ Testing Admin Sidebar...\n";
 $sidebarFile = __DIR__ . '/../app/views/admin/layouts/rbac_sidebar.php';
 if (file_exists($sidebarFile)) {
     $content = file_get_contents($sidebarFile);
     if (strpos($content, 'MLM Growth Report') !== false && 
         strpos($content, 'ROI Calculator') !== false) {
-        echo "   ✅ Menu items added\n";
+        echo "   âœ… Menu items added\n";
         $tests['Admin Sidebar'] = true;
     } else {
-        echo "   ❌ Menu items missing\n";
+        echo "   â�Œ Menu items missing\n";
     }
 }
 
 // Test 7: Migrations
-echo "\n🗄️  Testing Migrations...\n";
+echo "\nðŸ—„ï¸�  Testing Migrations...\n";
 $migrationFile = __DIR__ . '/../database/migrations/create_chatbot_payment_tables.php';
 if (file_exists($migrationFile)) {
-    echo "   ✅ Migration file exists\n";
+    echo "   âœ… Migration file exists\n";
 } else {
-    echo "   ❌ Migration file missing\n";
+    echo "   â�Œ Migration file missing\n";
 }
 
 // Summary
 echo "\n" . str_repeat("=", 60) . "\n";
-echo "📊 TEST SUMMARY\n";
+echo "ðŸ“Š TEST SUMMARY\n";
 echo str_repeat("=", 60) . "\n";
 
 $passed = 0;
 $total = count($tests);
 
 foreach ($tests as $test => $result) {
-    $status = $result ? '✅ PASS' : '❌ FAIL';
+    $status = $result ? 'âœ… PASS' : 'â�Œ FAIL';
     echo "{$status}: {$test}\n";
     if ($result) $passed++;
 }
@@ -167,9 +167,9 @@ echo str_repeat("=", 60) . "\n";
 echo "Result: {$passed}/{$total} tests passed\n";
 
 if ($passed === $total) {
-    echo "🎉 ALL TESTS PASSED! New features are ready.\n";
+    echo "ðŸŽ‰ ALL TESTS PASSED! New features are ready.\n";
     exit(0);
 } else {
-    echo "⚠️  Some tests failed. Please review.\n";
+    echo "âš ï¸�  Some tests failed. Please review.\n";
     exit(1);
-}
+}?>

@@ -12,6 +12,9 @@ $base = BASE_URL;
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
@@ -99,10 +102,12 @@ $base = BASE_URL;
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
                     <div class="otp-form">
-                        <input type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="•" required autocomplete="one-time-password" autofocus>
+                        <input type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="Ã¢â‚¬Â¢" required autocomplete="one-time-password" autofocus>
                     </div>
 
-                    <button type="submit" class="btn-submit">
+                    
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-submit">
                         <i class="fas fa-sign-in-alt"></i> Verify &amp; Login
                     </button>
                 </form>
@@ -114,14 +119,14 @@ $base = BASE_URL;
                 <div class="divider"><span>or</span></div>
 
                 <div class="login-link">
-                    <a href="<?= $base ?>/auth/login">← Back to Password Login</a>
+                    <a href="<?= $base ?>/auth/login">Ã¢â€ ï¿½ Back to Password Login</a>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Auto-format OTP input — allow typing 6 digits into single field
+        // Auto-format OTP input Ã¢â‚¬â€� allow typing 6 digits into single field
         const otpInput = document.getElementById('otp');
 
         otpInput.addEventListener('input', function(e) {

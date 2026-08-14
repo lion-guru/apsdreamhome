@@ -15,4 +15,4 @@ if (strpos($body, 'id="page-content"') !== false) {
     if (strpos($body, 'login') !== false) {
         echo "It seems it's the login page.\n";
     }
-}
+}?>

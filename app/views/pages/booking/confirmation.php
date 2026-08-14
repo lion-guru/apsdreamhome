@@ -25,7 +25,7 @@ foreach ($statusSteps as $i => $step) {
 <div class="container py-4">
 
     <!-- Success Banner -->
-    <div class="alert alert-success py-4 mb-4 text-center" style="border-radius:14px;">
+    <div class="alert alert-success py-4 mb-4 text-center" class="style-84037">
         <i class="fas fa-check-circle fa-3x mb-2"></i>
         <h3 class="fw-bold mb-1"><?= __('booking_conf_heading', [], 'Booking Confirmed!') ?></h3>
         <p class="mb-0">
@@ -50,13 +50,12 @@ foreach ($statusSteps as $i => $step) {
                     <span><i class="fas fa-clock me-2"></i><?= __('booking_conf_progress', [], 'Booking Progress') ?></span>
                 </div>
                 <div class="aps-cp-card-body">
-                    <div class="position-relative" style="padding-left: 24px;">
-                        <div class="position-absolute" style="left: 10px; top: 0; bottom: 0; width: 2px; background: #e0e0e0;"></div>
+                    <div class="position-relative" class="style-66736">
+                        <div class="position-absolute" class="style-985"></div>
                         <?php foreach ($statusSteps as $i => $step): ?>
                         <div class="position-relative pb-3">
                             <div class="position-absolute rounded-circle d-flex align-items-center justify-content-center"
-                                 style="left: -18px; top: 2px; width: 16px; height: 16px; z-index:1;
-                                        background: <?= $i <= $currentStep ? '#10b981' : '#e0e0e0' ?>;">
+                                 class="style-36086">
                             </div>
                             <div class="<?= $i <= $currentStep ? '' : 'opacity-50' ?>">
                                 <i class="<?= $step['icon'] ?> me-1"></i>
@@ -80,11 +79,11 @@ foreach ($statusSteps as $i => $step) {
                     <div class="row g-3">
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_number', [], 'Booking Number') ?></small>
-                            <strong><?= htmlspecialchars($booking['booking_number'] ?? '—') ?></strong>
+                            <strong><?= htmlspecialchars($booking['booking_number'] ?? 'â€”') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_date', [], 'Booking Date') ?></small>
-                            <strong><?= htmlspecialchars($booking['booking_date'] ?? '—') ?></strong>
+                            <strong><?= htmlspecialchars($booking['booking_date'] ?? 'â€”') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_status', [], 'Status') ?></small>
@@ -92,7 +91,7 @@ foreach ($statusSteps as $i => $step) {
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_plot', [], 'Plot') ?></small>
-                            <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
+                            <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> â€” <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_area', [], 'Area') ?></small>
@@ -100,11 +99,11 @@ foreach ($statusSteps as $i => $step) {
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_dimensions', [], 'Dimensions') ?></small>
-                            <strong><?= htmlspecialchars($booking['dimension_label'] ?? '—') ?></strong>
+                            <strong><?= htmlspecialchars($booking['dimension_label'] ?? 'â€”') ?></strong>
                         </div>
                         <div class="col-12">
                             <small class="text-muted d-block"><?= __('booking_conf_total_amount', [], 'Total Amount') ?></small>
-                            <strong class="fs-5 text-primary">₹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
+                            <strong class="fs-5 text-primary">â‚¹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
                         </div>
                     </div>
                 </div>
@@ -116,7 +115,7 @@ foreach ($statusSteps as $i => $step) {
                 <div class="aps-cp-card-header">
                     <span><i class="fas fa-calendar-alt me-2"></i><?= __('booking_conf_payment_schedule', [], 'Payment Schedule') ?></span>
                 </div>
-                <div class="aps-cp-card-body" style="overflow-x:auto;">
+                <div class="aps-cp-card-body" class="style-10754">
                     <table class="table table-sm table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -131,7 +130,7 @@ foreach ($statusSteps as $i => $step) {
                             <tr>
                                 <td><?= (int)$inst['installment_no'] ?></td>
                                 <td><?= htmlspecialchars($inst['due_date']) ?></td>
-                                <td class="text-end">₹<?= number_format((float)$inst['amount']) ?></td>
+                                <td class="text-end">â‚¹<?= number_format((float)$inst['amount']) ?></td>
                                 <td class="text-center">
                                     <?php
                                     $statusClass = match($inst['status'] ?? 'pending') {
@@ -148,7 +147,7 @@ foreach ($statusSteps as $i => $step) {
                         <tfoot class="table-light">
                             <tr>
                                 <th colspan="2"><?= __('booking_conf_totals', [], 'Totals') ?></th>
-                                <th class="text-end">₹<?= number_format($totalPaid + $totalPending) ?></th>
+                                <th class="text-end">â‚¹<?= number_format($totalPaid + $totalPending) ?></th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -169,28 +168,28 @@ foreach ($statusSteps as $i => $step) {
                 <div class="aps-cp-card-body">
                     <ol class="list-unstyled mb-0">
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">1</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">1</span>
                             <div>
                                 <strong><?= __('booking_conf_step1_title', [], 'Admin Confirmation') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step1_desc', [], 'Our team will review and confirm your booking within 24 hours.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">2</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">2</span>
                             <div>
                                 <strong><?= __('booking_conf_step2_title', [], 'Pay Token Amount') ?></strong>
-                                <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (₹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
+                                <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (â‚¹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">3</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">3</span>
                             <div>
                                 <strong><?= __('booking_conf_step3_title', [], 'Sign Agreement') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step3_desc', [], 'Visit our office or complete online agreement signing.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
-                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">4</span>
+                            <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">4</span>
                             <div>
                                 <strong><?= __('booking_conf_step4_title', [], 'Registration') ?></strong>
                                 <small class="d-block text-muted"><?= __('booking_conf_step4_desc', [], 'Complete registration at the Sub-Registrar office.') ?></small>

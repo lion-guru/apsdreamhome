@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 /**
  * Property Images Management Page
@@ -81,7 +81,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 <button class="btn btn-primary btn-lg">
                     <i class="fas fa-folder-open me-2"></i>Select Files
                 </button>
-                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                <input type="file" id="fileInput" multiple accept="image/*" class="style-54390">
             </div>
         </div>
     </div>
@@ -145,7 +145,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                 <img src="<?php echo $base; ?>/<?php echo htmlspecialchars($image['thumbnail_path'] ?? $image['image_path']); ?>"
                                     alt="Property Image"
                                     class="card-img-top"
-                                    style="height: 200px; object-fit: cover;"
+                                    class="style-12213"
                                     onclick="openLightbox('<?php echo $base; ?>/<?php echo $image['image_path']; ?>')" loading="lazy">
                                 <div class="card-body p-2">
                                     <input type="text"
@@ -191,7 +191,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 </div>
 
 <!-- Upload Progress Panel -->
-<div class="upload-progress" id="uploadProgress" style="display: none;">
+<div class="upload-progress" id="uploadProgress" class="style-54390">
     <h6 class="mb-3"><i class="fas fa-upload me-2"></i>Uploading...</h6>
     <div id="progressList"></div>
 </div>

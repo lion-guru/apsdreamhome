@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-percentage me-2"></i><?php echo __('tool_gst_calculator_title', [], 'GST Calculator'); ?></h1>
@@ -9,13 +9,13 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('base_price_rs', [], 'Base Price (₹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('base_price_rs', [], 'Base Price (â‚¹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="basePrice" value="5000000" oninput="calcGST()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
                             <select class="form-select" id="propType" onchange="calcGST()">
-                                <option value="affordable"><?php echo __('affordable_housing', [], 'Affordable Housing (Up to ₹45L, ≤60 sqm)'); ?></option>
+                                <option value="affordable"><?php echo __('affordable_housing', [], 'Affordable Housing (Up to â‚¹45L, â‰¤60 sqm)'); ?></option>
                                 <option value="under_construction"><?php echo __('under_construction', [], 'Under Construction'); ?></option>
                                 <option value="ready"><?php echo __('ready_to_move', [], 'Ready to Move (No GST)'); ?></option>
                                 <option value="commercial_prop"><?php echo __('commercial_property', [], 'Commercial Property'); ?></option>
@@ -32,13 +32,13 @@
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('gst_amount', [], 'GST Amount'); ?></small>
-                                    <h4 class="text-danger mb-0" id="gstAmt">₹2,50,000</h4>
+                                    <h4 class="text-danger mb-0" id="gstAmt">â‚¹2,50,000</h4>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_price', [], 'Total Price (incl. GST)'); ?></small>
-                                    <h4 class="mb-0" id="totalPrice">₹52,50,000</h4>
+                                    <h4 class="mb-0" id="totalPrice">â‚¹52,50,000</h4>
                                 </div>
                             </div>
                         </div>

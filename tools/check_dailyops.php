@@ -38,4 +38,4 @@ echo "  internal method (checkNocDocumentStatus), not in checkRegistryEligibilit
 echo "\n=== GAP 2: Duplicate NOC pipelines ===\n";
 echo "  MoneyWorkflowService::generateNoc writes to daily_operations_log\n";
 echo "  NocRegistryService::createNocRequest writes to noc_requests\n";
-echo "  These are completely independent — no cross-referencing.\n";
+echo "  These are completely independent â€” no cross-referencing.\n";?>

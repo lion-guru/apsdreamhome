@@ -10,4 +10,4 @@ echo "=== leads ===\n";
 $r = $pdo->query('SHOW COLUMNS FROM leads');
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
     echo $row['Field'] . ' | ' . $row['Type'] . ' | ' . ($row['Key'] ?: '') . "\n";
-}
+}?>

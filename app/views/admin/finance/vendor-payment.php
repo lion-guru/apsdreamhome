@@ -1,5 +1,5 @@
 <?php $page_title = $page_title ?? __('vpay_record_payment'); $page_heading = $page_heading ?? __('vpay_record_payment');
- $currencies = $currencies ?? ['INR' => ['symbol' => '₹', 'name' => 'Indian Rupee', 'rate' => 1.0]];
+ $currencies = $currencies ?? ['INR' => ['symbol' => 'â‚¹', 'name' => 'Indian Rupee', 'rate' => 1.0]];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -38,7 +38,7 @@
                         <select name="currency" id="vCurrency" class="form-select" onchange="vUpdateFx()">
                             <?php foreach ($currencies as $code => $c): ?>
                                 <option value="<?= $code ?>" data-rate="<?= $c['rate'] ?>" data-symbol="<?= $c['symbol'] ?>">
-                                    <?= $code ?> — <?= $c['name'] ?>
+                                    <?= $code ?> â€” <?= $c['name'] ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -53,7 +53,7 @@
                                 <i class="fas fa-sync-alt" id="vFxIcon"></i>
                             </button>
                         </div>
-                        <small class="text-muted"><?= __('vpay_exchange_hint') ?> <span id="vFxStatus" class="badge bg-secondary ms-1" style="display:none"></span></small>
+                        <small class="text-muted"><?= __('vpay_exchange_hint') ?> <span id="vFxStatus" class="badge bg-secondary ms-1" class="style-24280"></span></small>
                     </div>
 
                     <div class="col-md-3">
@@ -118,7 +118,7 @@ function vUpdateFx() {
     const opt  = sel.options[sel.selectedIndex];
     const rate = parseFloat(opt.getAttribute('data-rate')) || 1;
     document.getElementById('vFxRate').value = rate.toFixed(4);
-    document.getElementById('vAmtLabel').innerHTML = '<?= __("vpay_amount") ?> (' + (FX_RATES[code]?.symbol || '₹') + ') <span class="text-danger">*</span>';
+    document.getElementById('vAmtLabel').innerHTML = '<?= __("vpay_amount") ?> (' + (FX_RATES[code]?.symbol || 'â‚¹') + ') <span class="text-danger">*</span>';
     // Show/hide INR conversion row
     document.getElementById('vInrWrap').style.display = code === 'INR' ? 'none' : '';
     vCalc();
@@ -166,7 +166,7 @@ function vFetchLiveRate() {
             if (data.success && data.rate) {
                 document.getElementById('vFxRate').value = parseFloat(data.rate).toFixed(4);
                 status.className = 'badge bg-success ms-1';
-                status.textContent = (data.cached ? '<?= __('vpay_cached') ?>' : '<?= __('vpay_live') ?>') + ' — ' + data.fetched_at;
+                status.textContent = (data.cached ? '<?= __('vpay_cached') ?>' : '<?= __('vpay_live') ?>') + ' â€” ' + data.fetched_at;
                 vCalc();
             } else {
                 status.className = 'badge bg-danger ms-1';

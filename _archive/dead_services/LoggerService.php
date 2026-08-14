@@ -310,4 +310,4 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 }, E_ALL);
 
 // Return logger instance for dependency injection
-return logger();
+return logger();?>

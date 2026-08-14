@@ -16,14 +16,14 @@ $message = $message ?? '';
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fab fa-whatsapp me-2" style="color:#25d366;"></i><?= __('assoc_bw_title', [], 'Bulk WhatsApp Messages') ?></h5>
+                    <h5 class="mb-0"><i class="fab fa-whatsapp me-2" class="style-43764"></i><?= __('assoc_bw_title', [], 'Bulk WhatsApp Messages') ?></h5>
                 </div>
                 <div class="card-body">
                     <?php if (empty($leads)): ?>
                         <p class="text-muted"><?= __('assoc_bw_select_hint', [], 'Select leads from the') ?> <a href="<?= BASE_URL ?>/associate/leads"><?= __('assoc_bw_leads_list', [], 'leads list') ?></a> <?= __('assoc_bw_send_hint', [], 'to send bulk messages.') ?></p>
-                        <div class="alert alert-info border-0" style="background:#f0fdf4;">
+                        <div class="alert alert-info border-0" class="style-15087">
                             <h6><i class="fas fa-info-circle me-2"></i><?= __('assoc_bw_how_to', [], 'How to use') ?></h6>
-                            <ol class="mb-0" style="font-size:0.85rem;">
+                            <ol class="mb-0" class="style-47175">
                                 <li><?= __('assoc_bw_step1', [], 'Go to My Leads') ?></li>
                                 <li><?= __('assoc_bw_step2', [], 'Check the boxes next to leads you want to message') ?></li>
                                 <li><?= __('assoc_bw_step3', [], 'Click "Bulk WhatsApp" button') ?></li>
@@ -57,7 +57,7 @@ $message = $message ?? '';
                                     <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_welcome', [], "Hi {name}, thank you for your interest in APS Dream Home! We have premium plots available in prime locations. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team") ?>')">
                                         <i class="fas fa-hand-wave me-1"></i> <?= __('assoc_bw_welcome_msg', [], 'Welcome Message') ?>
                                     </button>
-                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_launch', [], "Hi {name}, exciting news! We have new plots launching in Greater Noida starting from ₹30 Lakh. Limited slots available. Book your site visit today!\n\nCall us: +91 7007444842") ?>')">
+                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_launch', [], "Hi {name}, exciting news! We have new plots launching in Greater Noida starting from â‚¹30 Lakh. Limited slots available. Book your site visit today!\n\nCall us: +91 7007444842") ?>')">
                                         <i class="fas fa-rocket me-1"></i> <?= __('assoc_bw_new_launch', [], 'New Launch') ?>
                                     </button>
                                     <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_followup', [], "Hi {name}, just following up on your property inquiry. Do you have any questions? We're happy to help!\n\nView properties: https://apsdreamhome.in/properties") ?>')">

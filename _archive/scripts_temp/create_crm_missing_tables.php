@@ -40,4 +40,4 @@ $db->query("CREATE TABLE IF NOT EXISTS crm_lead_sources_extended (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 echo "OK\n";
 
-echo "\nDone!\n";
+echo "\nDone!\n";?>

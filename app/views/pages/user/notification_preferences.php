@@ -98,11 +98,11 @@ $frequencyOptions = [
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th style="min-width:220px;"><?= __('notif_th_type', null, 'Notification Type') ?></th>
+                                <th class="style-85607"><?= __('notif_th_type', null, 'Notification Type') ?></th>
                                 <?php foreach ($channels as $ch):
                                     $meta = $channelMeta[$ch] ?? ['label' => ucfirst($ch), 'icon' => 'fas fa-circle'];
                                 ?>
-                                <th class="text-center" style="min-width:90px;">
+                                <th class="text-center" class="style-94101">
                                     <i class="<?= $meta['icon'] ?>"></i><br>
                                     <small><?= htmlspecialchars($meta['label']) ?></small>
                                 </th>

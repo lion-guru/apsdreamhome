@@ -21,4 +21,4 @@ foreach ($db->fetchAll("SELECT * FROM petty_cash") as $r) {
 echo PHP_EOL . "=== expenses (latest 5) ===" . PHP_EOL;
 foreach ($db->fetchAll("SELECT * FROM expenses ORDER BY id DESC LIMIT 5") as $r) {
     echo "  id={$r['id']} cat={$r['category']} amount={$r['amount']} desc={$r['description']} created={$r['created_at']}" . PHP_EOL;
-}
+}?>

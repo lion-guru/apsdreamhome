@@ -17,4 +17,4 @@ foreach ($fixes as $fix) {
     echo "Fixed ID $id -> $url\n";
 }
 
-echo "Done!\n";
+echo "Done!\n";?>

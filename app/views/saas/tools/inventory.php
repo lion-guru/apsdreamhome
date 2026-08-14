@@ -63,9 +63,9 @@
                                         <?php echo ucfirst($plot['status'] ?? 'available'); ?>
                                     </span>
                                 </td>
-                                <td style="width: 150px;">
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar bg-info" style="width: <?php echo $plot['progress'] ?? 45; ?>%"></div>
+                                <td class="style-10944">
+                                    <div class="progress" class="style-29939">
+                                        <div class="progress-bar bg-info" class="style-91460"></div>
                                     </div>
                                     <small class="text-muted"><?php echo $plot['progress'] ?? 45; ?>%</small>
                                 </td>

@@ -76,7 +76,7 @@
                         <option value="lead">Lead</option>
                     </select>
                 </div>
-                <div class="mb-3" id="relatedIdField" style="display:none;">
+                <div class="mb-3" id="relatedIdField" class="style-2248">
                     <label class="form-label">Related ID</label>
                     <input type="number" name="related_id" class="form-control" placeholder="Enter ID number">
                 </div>

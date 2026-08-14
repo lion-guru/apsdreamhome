@@ -116,11 +116,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="col-md-2">
           <label class="form-label small">Min Price</label>
-          <input type="number" name="min_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>" placeholder="Min ₹">
+          <input type="number" name="min_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>" placeholder="Min â‚¹">
         </div>
         <div class="col-md-2">
           <label class="form-label small">Max Price</label>
-          <input type="number" name="max_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>" placeholder="Max ₹">
+          <input type="number" name="max_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>" placeholder="Max â‚¹">
         </div>
         <div class="col-md-2">
           <label class="form-label small">Location</label>
@@ -138,7 +138,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
   <?php if (!empty($premiumListings)): ?>
   <div class="mb-4">
     <div class="d-flex align-items-center gap-2 mb-3">
-      <i class="fas fa-crown text-warning" style="font-size:1.3rem;"></i>
+      <i class="fas fa-crown text-warning" class="style-34894"></i>
       <h5 class="mb-0 fw-bold">Premium Listings</h5>
       <span class="badge bg-warning text-dark"><?= count($premiumListings) ?> featured</span>
       <span class="text-muted small ms-2"><i class="fas fa-arrow-right"></i> Scroll to see all</span>
@@ -153,7 +153,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         $img = !empty($p['image']) ? ($base . '/' . $p['image']) : '';
       ?>
       <a href="<?= $base ?>/marketplace/<?= $p['id'] ?>" class="text-decoration-none text-dark premium-card">
-        <div class="ribbon" style="background:<?= $pColor ?>;color:#fff;"><?= $ptype ?></div>
+        <div class="ribbon" class="style-35829"><?= $ptype ?></div>
         <?php if ($img): ?>
         <img src="<?= $img ?>" class="p-img" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
         <?php else: ?>
@@ -162,7 +162,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="p-body">
           <h6><?= htmlspecialchars(mb_substr($p['name'], 0, 35)) ?></h6>
           <p class="small text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($p['city_name'] ?? $p['location'] ?? 'N/A') ?></p>
-          <div class="price">₹<?= number_format($p['price']) ?></div>
+          <div class="price">â‚¹<?= number_format($p['price']) ?></div>
           <div class="d-flex gap-1 mt-1">
             <span class="badge bg-light text-dark text-capitalize"><?= $p['property_type'] ?></span>
             <span class="badge bg-light text-dark"><?= number_format($p['area_sqft'] ?? 0) ?> sqft</span>
@@ -180,9 +180,9 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <i class="fas fa-crown text-warning"></i>
     <span>Want to sell faster? Try our premium packages:
     <?php foreach ($packages as $pkg): ?>
-      <span class="badge ms-1" style="background:<?= htmlspecialchars($pkg['badge_color'] ?? '#6b7280') ?>"><?= htmlspecialchars($pkg['badge_label'] ?? $pkg['name']) ?> ₹<?= number_format($pkg['price']) ?></span>
+      <span class="badge ms-1" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? $pkg['name']) ?> â‚¹<?= number_format($pkg['price']) ?></span>
     <?php endforeach; ?>
-    — <a href="<?= $base ?>/list-property" class="text-decoration-underline fw-bold">List now</a></span>
+    â€” <a href="<?= $base ?>/list-property" class="text-decoration-underline fw-bold">List now</a></span>
   </div>
   <?php endif; ?>
 
@@ -210,7 +210,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="col-lg-4 col-md-6">
           <div class="reg-card">
             <?php if ($badge): ?>
-            <span class="position-absolute top-0 end-0 m-2 premium-badge-sm <?= $bc ?>" style="z-index:2;<?= $bc === 'bg-warning text-dark' ? '' : '' ?>"><i class="fas fa-crown me-1"></i><?= $badge ?></span>
+            <span class="position-absolute top-0 end-0 m-2 premium-badge-sm <?= $bc ?>" class="style-58936"><i class="fas fa-crown me-1"></i><?= $badge ?></span>
             <?php endif; ?>
             <?php if ($img): ?>
             <img src="<?= $img ?>" class="r-img" alt="<?= htmlspecialchars($prop['name']) ?>" loading="lazy">
@@ -225,7 +225,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <span class="badge bg-secondary text-capitalize"><?= $prop['listing_type'] ?></span>
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <div class="price">₹<?= number_format($prop['price']) ?></div>
+                <div class="price">â‚¹<?= number_format($prop['price']) ?></div>
                 <small class="text-muted"><?= number_format($prop['area_sqft'] ?? 0) ?> sqft</small>
               </div>
               <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">

@@ -16,7 +16,7 @@ foreach ($bookings as $booking) {
     if ($saleValue <= 0) continue;
     echo "\n";
     
-    echo sprintf("Booking #%d: Sale Value = ₹%s\n", $booking['id'], number_format($saleValue));
+    echo sprintf("Booking #%d: Sale Value = â‚¹%s\n", $booking['id'], number_format($saleValue));
     
     $result = $engine->calculateBookingCommission($booking['id']);
     
@@ -24,12 +24,12 @@ foreach ($bookings as $booking) {
     $totalPct = 0;
     $totalAmt = 0;
     foreach ($result['entries'] as $e) {
-        echo sprintf("    Level %d: User %d, Type: %s, Rate: %s%%, Amount: ₹%s\n", 
+        echo sprintf("    Level %d: User %d, Type: %s, Rate: %s%%, Amount: â‚¹%s\n", 
             $e['level'], $e['beneficiary_user_id'], $e['commission_type'], 
             number_format($e['pct'], 2), number_format($e['amount'], 2));
         $totalPct += $e['pct'];
         $totalAmt += $e['amount'];
     }
-    echo sprintf("  TOTAL: %.2f%% = ₹%s (Cap: 20%% = ₹%s)\n\n", 
+    echo sprintf("  TOTAL: %.2f%% = â‚¹%s (Cap: 20%% = â‚¹%s)\n\n", 
         $totalPct, number_format($totalAmt, 2), number_format($saleValue * 0.20, 2));
-}
+}?>

@@ -12,4 +12,4 @@ class QuickTestController extends AdminController
             'colonies' => $colonies,
         ]);
     }
-}
+}?>

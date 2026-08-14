@@ -13,4 +13,4 @@ echo "Total rows: " . count($results) . "\n";
 foreach ($results as $r) {
     echo "ID: " . $r['id'] . " | " . $r['label'] . " | URL: " . $r['url'] . " | Icon: " . $r['icon'] . " | Order: " . $r['sort_order'] . " | Parent: " . $r['parent_id'] . "\n";
 }
-echo "Done\n";
+echo "Done\n";?>

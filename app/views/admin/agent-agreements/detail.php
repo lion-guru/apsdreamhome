@@ -33,8 +33,8 @@ $statusBadgeClass = [
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 style="color: #f8fafc; margin:0;"><i class="fas fa-file-signature me-2"></i><?= htmlspecialchars($agreement['title'] ?? 'Agreement') ?></h4>
-            <span class="aag-badge <?= $statusBadgeClass[$agreement['status']] ?? '' ?>" style="margin-top:6px;">
+            <h4 class="style-76816"><i class="fas fa-file-signature me-2"></i><?= htmlspecialchars($agreement['title'] ?? 'Agreement') ?></h4>
+            <span class="aag-badge <?= $statusBadgeClass[$agreement['status']] ?? '' ?>" class="style-91038">
                 <?= ucfirst($agreement['status']) ?>
             </span>
         </div>
@@ -46,9 +46,9 @@ $statusBadgeClass = [
     </div>
 
     <?php if (!empty($_SESSION['flash_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" style="background:#10b98120;color:#10b981;border-color:#10b98140;">
+        <div class="alert alert-success alert-dismissible fade show" class="style-99395">
             <?= $_SESSION['flash_success'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter:invert(1);"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" class="style-22908"></button>
         </div>
         <?php unset($_SESSION['flash_success']); ?>
     <?php endif; ?>
@@ -58,34 +58,34 @@ $statusBadgeClass = [
         <div class="aag-info-item">
             <div class="label">Agent</div>
             <div class="value"><?= htmlspecialchars($agreement['agent_name'] ?? 'N/A') ?></div>
-            <div style="font-size:12px;color:#64748b;margin-top:2px;"><?= htmlspecialchars($agreement['agent_email'] ?? '') ?></div>
+            <div class="style-70095"><?= htmlspecialchars($agreement['agent_email'] ?? '') ?></div>
         </div>
         <div class="aag-info-item">
             <div class="label">Property</div>
             <div class="value"><?= htmlspecialchars($agreement['property_name'] ?? 'General') ?></div>
-            <div style="font-size:12px;color:#64748b;margin-top:2px;"><?= htmlspecialchars($agreement['property_location'] ?? '') ?></div>
+            <div class="style-70095"><?= htmlspecialchars($agreement['property_location'] ?? '') ?></div>
         </div>
         <div class="aag-info-item">
             <div class="label">Commission</div>
-            <div class="value" style="color:#10b981;"><?= (float)$agreement['commission_pct'] ?>%</div>
+            <div class="value" class="style-54781"><?= (float)$agreement['commission_pct'] ?>%</div>
         </div>
         <div class="aag-info-item">
             <div class="label">Duration</div>
-            <div class="value" style="font-size:13px;">
-                <?= $agreement['start_date'] ? date('d M Y', strtotime($agreement['start_date'])) : '—' ?>
-                →
-                <?= $agreement['end_date'] ? date('d M Y', strtotime($agreement['end_date'])) : '—' ?>
+            <div class="value" class="style-24590">
+                <?= $agreement['start_date'] ? date('d M Y', strtotime($agreement['start_date'])) : 'â€”' ?>
+                â†’
+                <?= $agreement['end_date'] ? date('d M Y', strtotime($agreement['end_date'])) : 'â€”' ?>
             </div>
         </div>
         <div class="aag-info-item">
             <div class="label">Created</div>
-            <div class="value" style="font-size:13px;"><?= date('d M Y, h:i A', strtotime($agreement['created_at'])) ?></div>
+            <div class="value" class="style-24590"><?= date('d M Y, h:i A', strtotime($agreement['created_at'])) ?></div>
         </div>
     </div>
 
     <!-- Agreement Content -->
     <div class="aag-card">
-        <h5><i class="fas fa-file-alt me-2" style="color:#3b82f6;"></i>Agreement Content</h5>
+        <h5><i class="fas fa-file-alt me-2" class="style-75937"></i>Agreement Content</h5>
         <div class="aag-content">
             <?= $agreement['content'] ?>
         </div>
@@ -93,19 +93,19 @@ $statusBadgeClass = [
 
     <?php if (!empty($agreement['signed_at'])): ?>
     <div class="aag-card">
-        <h5><i class="fas fa-check-circle me-2" style="color:#10b981;"></i>Signature Details</h5>
+        <h5><i class="fas fa-check-circle me-2" class="style-54781"></i>Signature Details</h5>
         <div class="aag-info">
             <div class="aag-info-item">
                 <div class="label">Signed At</div>
-                <div class="value" style="font-size:13px;"><?= date('d M Y, h:i A', strtotime($agreement['signed_at'])) ?></div>
+                <div class="value" class="style-24590"><?= date('d M Y, h:i A', strtotime($agreement['signed_at'])) ?></div>
             </div>
             <div class="aag-info-item">
                 <div class="label">Signed By</div>
-                <div class="value" style="font-size:13px;"><?= htmlspecialchars($agreement['signed_by_name'] ?? 'N/A') ?></div>
+                <div class="value" class="style-24590"><?= htmlspecialchars($agreement['signed_by_name'] ?? 'N/A') ?></div>
             </div>
             <div class="aag-info-item">
                 <div class="label">IP Address</div>
-                <div class="value" style="font-size:13px;"><?= htmlspecialchars($agreement['signed_ip'] ?? 'N/A') ?></div>
+                <div class="value" class="style-24590"><?= htmlspecialchars($agreement['signed_ip'] ?? 'N/A') ?></div>
             </div>
         </div>
     </div>
@@ -113,16 +113,16 @@ $statusBadgeClass = [
 
     <?php if (!empty($agreement['notes'])): ?>
     <div class="aag-card">
-        <h5><i class="fas fa-sticky-note me-2" style="color:#f59e0b;"></i>Notes</h5>
-        <p style="color:#94a3b8;font-size:13px;margin:0;"><?= nl2br(htmlspecialchars($agreement['notes'])) ?></p>
+        <h5><i class="fas fa-sticky-note me-2" class="style-62159"></i>Notes</h5>
+        <p class="style-77298"><?= nl2br(htmlspecialchars($agreement['notes'])) ?></p>
     </div>
     <?php endif; ?>
 
     <!-- Actions -->
     <?php if (in_array($agreement['status'], ['draft', 'pending'])): ?>
     <div class="aag-card">
-        <h5><i class="fas fa-cogs me-2" style="color:#8b5cf6;"></i>Actions</h5>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <h5><i class="fas fa-cogs me-2" class="style-22437"></i>Actions</h5>
+        <div class="style-83366">
             <?php if ($agreement['status'] === 'draft'): ?>
                 <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$agreement['id'] ?>">
     <?php echo CSRFProtection::csrfField(); ?>

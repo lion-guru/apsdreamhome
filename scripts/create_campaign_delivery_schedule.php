@@ -27,4 +27,4 @@ try {
     echo "campaign_delivery_schedule table created OK\n";
 } catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

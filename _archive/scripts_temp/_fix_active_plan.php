@@ -21,4 +21,4 @@ foreach ($active as $p) {
     echo "    #{$p['id']} {$p['plan_name']} ({$p['status']})\n";
 }
 
-echo "\n=== DONE ===\n";
+echo "\n=== DONE ===\n";?>

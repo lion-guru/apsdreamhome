@@ -50,4 +50,4 @@ echo "  customer_id fallback = {$b['customer_id']}\n";
 echo "\n=== BUG DIAGNOSIS ===\n";
 echo "  The engine resolves associate_id via: SELECT user_id FROM associates WHERE user_id = ?\n";
 echo "  But associate_id={$b['associate_id']} is the associates TABLE id, not user_id!\n";
-echo "  associates id=319 has user_id=2112, but engine looks for user_id=319 → NOT FOUND → falls to customer_id=3\n";
+echo "  associates id=319 has user_id=2112, but engine looks for user_id=319 â†’ NOT FOUND â†’ falls to customer_id=3\n";?>

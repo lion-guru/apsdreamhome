@@ -11,5 +11,6 @@ $logs = $db->fetch(
 );
 ?><!DOCTYPE html>
 <html lang='en'>
-<head><meta charset='UTF-8'><title>My Activity Timeline</title><link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'></head>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset='UTF-8'><title>My Activity Timeline</title><link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'></head>
 <body><div class='container py-4'><h2>My Activity Timeline</h2><ul class='list-group'><?php foreach($logs as $l): ?><li class='list-group-item'><strong><?= htmlspecialchars($l['action']) ?>:</strong> <?= htmlspecialchars($l['details']) ?> <em>(<?= $l['created_at'] ?>)</em></li><?php endforeach; ?></ul></div></body></html>

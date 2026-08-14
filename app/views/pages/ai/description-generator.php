@@ -27,7 +27,7 @@
                                 <input type="text" id="location" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_location', [], 'e.g. Gorakhpur, UP') ?>">
                             </div>
                             <div class="col-md-4">
-                                <label for="price" class="form-label fw-bold"><?= __('aigen_label_price', [], 'Price (₹)') ?></label>
+                                <label for="price" class="form-label fw-bold"><?= __('aigen_label_price', [], 'Price (â‚¹)') ?></label>
                                 <input type="number" id="price" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_price', [], 'e.g. 5000000') ?>">
                             </div>
                             
@@ -57,14 +57,14 @@
                         </div>
                     </form>
 
-                    <div class="loading text-center py-4 mt-4 border-top" id="loading" style="display: none;">
+                    <div class="loading text-center py-4 mt-4 border-top" id="loading" class="style-54390">
                         <div class="spinner-border text-primary mb-2" role="status"></div>
                         <p class="text-muted"><?= __('aigen_loading', [], 'AI is generating the description, please wait...') ?></p>
                     </div>
                     
-                    <div id="resultContainer" class="mt-5 pt-4 border-top" style="display: none;">
+                    <div id="resultContainer" class="mt-5 pt-4 border-top" class="style-54390">
                         <h4 class="fw-bold mb-3"><?= __('aigen_result_heading', [], 'Generated Description:') ?></h4>
-                        <div id="generatedDescription" class="p-4 bg-light rounded-4 border position-relative" style="white-space: pre-wrap; font-size: 1.1rem; line-height: 1.6;">
+                        <div id="generatedDescription" class="p-4 bg-light rounded-4 border position-relative" class="style-76392">
                         </div>
                         <div class="mt-3 text-end">
                             <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="copyToClipboard()">
@@ -89,7 +89,7 @@ document.getElementById('propertyForm').addEventListener('submit', async (e) => 
     const details = `
         Property Type: ${document.getElementById('propertyType').value}
         Location: ${document.getElementById('location').value}
-        Price: ₹${document.getElementById('price').value}
+        Price: â‚¹${document.getElementById('price').value}
         Area: ${document.getElementById('area').value} sq ft
         Bedrooms: ${document.getElementById('bedrooms').value || 'N/A'}
         Bathrooms: ${document.getElementById('bathrooms').value || 'N/A'}

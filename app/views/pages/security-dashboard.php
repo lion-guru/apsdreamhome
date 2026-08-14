@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-danger text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" class="style-17697"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -42,8 +42,8 @@ $base = $base ?? BASE_URL;
                     <div class="card-body text-center">
                         <div class="display-5 text-primary mb-2"><?= htmlspecialchars($security_stats['security_score'] ?? 0) ?><small class="fs-6">%</small></div>
                         <h6 class="text-muted mb-0"><?= __('security_dash_score', [], 'Security Score') ?></h6>
-                        <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-<?= ($security_stats['security_score'] ?? 0) >= 80 ? 'success' : (($security_stats['security_score'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" style="width: <?= htmlspecialchars($security_stats['security_score'] ?? 0) ?>%"></div>
+                        <div class="progress mt-2" class="style-83142">
+                            <div class="progress-bar bg-<?= ($security_stats['security_score'] ?? 0) >= 80 ? 'success' : (($security_stats['security_score'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" class="style-81737"></div>
                         </div>
                     </div>
                 </div>

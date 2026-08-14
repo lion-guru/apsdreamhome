@@ -14,4 +14,4 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS user_activity_log (
     INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-echo "user_activity_log table created successfully\n";
+echo "user_activity_log table created successfully\n";?>

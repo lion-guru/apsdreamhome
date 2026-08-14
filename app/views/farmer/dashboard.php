@@ -18,7 +18,7 @@ $land_holdings = $land_holdings ?? [];
 ?>
 
 <div class="container py-4">
-    <div class="card border-0 shadow-sm mb-4" style="background:linear-gradient(135deg,#16a34a,#15803d);border-radius:16px;">
+    <div class="card border-0 shadow-sm mb-4" class="style-97153">
         <div class="card-body p-4 text-white">
             <div class="row align-items-center">
                 <div class="col-md-8">
@@ -52,7 +52,7 @@ $land_holdings = $land_holdings ?? [];
         <div class="col-md-3 col-6">
             <div class="farmer-stat-card">
                 <div class="stat-icon-f orange"><i class="fas fa-hand-holding-usd"></i></div>
-                <div class="stat-value-f">₹<?php echo number_format($stats['amount_received']); ?></div>
+                <div class="stat-value-f">â‚¹<?php echo number_format($stats['amount_received']); ?></div>
                 <div class="stat-label-f">Amount Received</div>
             </div>
         </div>
@@ -89,7 +89,7 @@ $land_holdings = $land_holdings ?? [];
                                 <tr>
                                     <td><?php echo date('d M Y', strtotime($t['created_at'] ?? 'now')); ?></td>
                                     <td><span class="badge bg-<?php echo ($t['transaction_type'] ?? '') === 'credit' ? 'success' : (($t['transaction_type'] ?? '') === 'debit' ? 'danger' : 'info'); ?>"><?php echo ucfirst($t['transaction_type'] ?? 'N/A'); ?></span></td>
-                                    <td><strong>₹<?php echo number_format($t['amount'] ?? 0); ?></strong></td>
+                                    <td><strong>â‚¹<?php echo number_format($t['amount'] ?? 0); ?></strong></td>
                                     <td><?php echo htmlspecialchars($t['payment_method'] ?? 'N/A'); ?></td>
                                     <td><span class="badge bg-<?php echo ($t['status'] ?? '') === 'completed' ? 'success' : (($t['status'] ?? '') === 'pending' ? 'warning' : 'secondary'); ?>"><?php echo ucfirst($t['status'] ?? 'N/A'); ?></span></td>
                                 </tr>
@@ -134,8 +134,8 @@ $land_holdings = $land_holdings ?? [];
                         <span class="fw-bold"><?php echo $acquired; ?></span>
                     </div>
                     <?php if ($total > 0): ?>
-                    <div class="progress mb-3" style="height:8px;border-radius:4px;">
-                        <div class="progress-bar bg-success" style="width:<?php echo ($acquired/$total)*100; ?>%"></div>
+                    <div class="progress mb-3" class="style-79794">
+                        <div class="progress-bar bg-success" class="style-21974"></div>
                     </div>
                     <?php endif; ?>
                     <div class="mb-2 d-flex justify-content-between">

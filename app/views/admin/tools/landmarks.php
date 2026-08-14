@@ -156,8 +156,8 @@ $categories = $categories ?? [];
                                 <td><span class="badge bg-info"><?= ucfirst(htmlspecialchars($l['category'])) ?></span></td>
                                 <td>
                                     <small class="text-muted">
-                                        <?= $l['latitude'] ? round($l['latitude'], 4) : '—' ?>, 
-                                        <?= $l['longitude'] ? round($l['longitude'], 4) : '—' ?>
+                                        <?= $l['latitude'] ? round($l['latitude'], 4) : 'â€”' ?>, 
+                                        <?= $l['longitude'] ? round($l['longitude'], 4) : 'â€”' ?>
                                     </small>
                                 </td>
                                 <td><span class="badge bg-success"><?= $l['linked_colonies'] ?> colonies</span></td>
@@ -169,7 +169,7 @@ $categories = $categories ?? [];
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/tools/landmarks/<?= $l['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this landmark?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/tools/landmarks/<?= $l['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this landmark?')">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                             <i class="fas fa-trash"></i>

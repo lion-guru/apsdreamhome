@@ -3,9 +3,9 @@
  * Migration: Add vendor KYC fields + entity type for 194C TDS auto-detection
  *
  * Adds:
- *   - gstin VARCHAR(15) — GST Identification Number
- *   - entity_type ENUM('individual','company','partnership','proprietorship') — for TDS classification
- *   - tds_section VARCHAR(10) DEFAULT '194C' — auto-detected from entity_type
+ *   - gstin VARCHAR(15) â€” GST Identification Number
+ *   - entity_type ENUM('individual','company','partnership','proprietorship') â€” for TDS classification
+ *   - tds_section VARCHAR(10) DEFAULT '194C' â€” auto-detected from entity_type
  *   - is_tds_applicable TINYINT(1) DEFAULT 1
  *   - kyc_status ENUM('pending','verified','rejected')
  *   - kyc_verified_at DATETIME NULL
@@ -73,4 +73,4 @@ try {
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . PHP_EOL;
     exit(1);
-}
+}?>

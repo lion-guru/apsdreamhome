@@ -17,7 +17,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0">
-                    <div class="vr-viewport" style="height: 450px; background: linear-gradient(135deg, #0a0a1a, #0f172a, #24243e);">
+                    <div class="vr-viewport" class="style-77836">
                         <div class="d-flex align-items-center justify-content-center h-100">
                             <div class="text-center text-white">
                                 <i class="fas fa-cube fa-5x mb-3 opacity-50"></i>
@@ -73,7 +73,7 @@
                     <ul class="list-group list-group-flush">
                         <?php foreach ($participants as $p): ?>
                         <li class="list-group-item px-0 d-flex align-items-center">
-                            <img src="<?= BASE_URL ?>/<?= htmlspecialchars($p['avatar'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle me-3" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/hero.svg'">
+                             src="<?= BASE_URL ? loading="lazy">/<?= htmlspecialchars($p['avatar'] ?? 'assets/img/avatar.png') ?>" alt="" class="rounded-circle me-3" class="style-25739" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/hero.svg'">
                             <div>
                                 <strong><?= ($p['name'] ?? 'User') ?></strong>
                                 <small class="d-block text-muted"><i class="fas fa-clock me-1"></i><?= ($p['joined_at'] ?? 'Just now') ?></small>

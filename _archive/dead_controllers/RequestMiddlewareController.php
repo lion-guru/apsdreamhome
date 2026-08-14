@@ -277,4 +277,4 @@ class RequestMiddlewareController extends BaseController
     {
         return $this->jsonResponse(['success' => true, 'message' => 'Middleware test completed', 'tests' => []]);
     }
-}
+}?>

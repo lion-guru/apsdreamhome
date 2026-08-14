@@ -52,4 +52,4 @@ $rows = $db->fetchAll("SELECT id, name, email, role, password FROM users WHERE s
 foreach($rows as $r) {
     $verify = password_verify('Aps@2026', $r['password']);
     echo $r['role'] . ' | ' . $r['email'] . ' | Aps@206: ' . ($verify ? 'YES' : 'NO') . "\n";
-}
+}?>

@@ -575,4 +575,4 @@ class BackupIntegrityService
             return 0;
         }
     }
-}
+}?>

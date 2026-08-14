@@ -43,4 +43,4 @@ foreach ($tables as $sql) {
     }
 }
 
-echo "\nTotal tables created: $created\n";
+echo "\nTotal tables created: $created\n";?>

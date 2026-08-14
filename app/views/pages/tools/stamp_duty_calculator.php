@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i><?php echo __('tool_stamp_duty_calc_title', [], 'Stamp Duty & Registration Calculator'); ?></h1>
@@ -10,7 +10,7 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (â‚¹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" min="0" placeholder="<?php echo __('enter_property_value', [], 'Enter property value'); ?>">
                             </div>
                             <div class="col-md-6">
@@ -48,25 +48,25 @@
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('stamp_duty', [], 'Stamp Duty'); ?></small>
-                                    <h5 class="text-primary mb-0" id="stampDuty">₹2,50,000</h5>
+                                    <h5 class="text-primary mb-0" id="stampDuty">â‚¹2,50,000</h5>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('registration_fee', [], 'Registration Fee'); ?></small>
-                                    <h5 class="text-success mb-0" id="regFee">₹30,000</h5>
+                                    <h5 class="text-success mb-0" id="regFee">â‚¹30,000</h5>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('property_value', [], 'Property Value'); ?></small>
-                                    <h6 class="text-secondary mb-0" id="baseVal">₹50,00,000</h6>
+                                    <h6 class="text-secondary mb-0" id="baseVal">â‚¹50,00,000</h6>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_cost', [], 'Total Cost'); ?></small>
-                                    <h5 class="mb-0" id="totalCost">₹52,80,000</h5>
+                                    <h5 class="mb-0" id="totalCost">â‚¹52,80,000</h5>
                                 </div>
                             </div>
                         </div>
@@ -84,10 +84,10 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <small class="text-muted"><?php echo __('registration_cap', [], 'Registration Cap:'); ?></small>
-                                        <span class="fw-bold" id="regCap">₹30,000</span>
+                                        <span class="fw-bold" id="regCap">â‚¹30,000</span>
                                         <br>
                                         <small class="text-muted"><?php echo __('woman_rebate', [], 'Woman Rebate:'); ?></small>
-                                        <span class="fw-bold text-success" id="rebate">₹0</span>
+                                        <span class="fw-bold text-success" id="rebate">â‚¹0</span>
                                     </div>
                                 </div>
                             </div>

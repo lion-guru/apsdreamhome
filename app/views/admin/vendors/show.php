@@ -65,7 +65,7 @@ $contracts = $contracts ?? [];
                         <small class="text-muted d-block">Rating</small>
                         <?php $rating = floatval($vendor['rating'] ?? 0); ?>
                         <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <i class="fas fa-star<?= $i <= $rating ? '' : ' text-muted' ?>" style="color: <?= $i <= $rating ? '#ffc107' : '#dee2e6' ?>;"></i>
+                            <i class="fas fa-star<?= $i <= $rating ? '' : ' text-muted' ?>" class="style-42188"></i>
                         <?php endfor; ?>
                         <span class="text-muted">(<?= $rating ?>)</span>
                     </div>

@@ -38,7 +38,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                             <small class="text-muted">Available merge fields:</small>
                             <div class="dropdown d-inline-block ms-2">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Insert Field</button>
-                                <div class="dropdown-menu p-2" style="max-height: 300px; overflow-y: auto;">
+                                <div class="dropdown-menu p-2" class="style-52319">
                                     <?php foreach ($merge_fields as $group => $fields): ?>
                                         <h6 class="dropdown-header"><?= ucfirst($group) ?></h6>
                                         <?php foreach ($fields as $key => $label): ?>
@@ -47,7 +47,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                                     <?php endforeach; ?>
                                 </div>
                             </div>
-                            <small class="text-muted ms-2">Change notes: <input type="text" name="change_notes" class="form-control-sm" placeholder="What changed?" style="width:250px"></small>
+                            <small class="text-muted ms-2">Change notes: <input type="text" name="change_notes" class="form-control-sm" placeholder="What changed?" class="style-79252"></small>
                         </div>
                         <textarea name="content" id="content" class="form-control font-monospace" rows="20"><?= htmlspecialchars($template['content'] ?? '') ?></textarea>
                     </div>
@@ -67,7 +67,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                     <?php if (empty($versions)): ?>
                         <div class="text-center text-muted py-3 small">No version history</div>
                     <?php else: ?>
-                        <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                        <div class="list-group list-group-flush" class="style-61454">
                             <?php foreach ($versions as $v): ?>
                                 <div class="list-group-item p-2">
                                     <div class="d-flex justify-content-between">

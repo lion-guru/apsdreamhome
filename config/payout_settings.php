@@ -14,4 +14,4 @@ return [
     'PAYOUT_DAILY_LIMIT' => '50000',
     'PAYOUT_MONTHLY_LIMIT' => '500000',
     'PAYOUT_EMERGENCY_LIMIT' => '100000',
-];
+];?>

@@ -9,9 +9,9 @@ use App\Core\Router;
  * API documentation controller.
  *
  * Exposes:
- *   GET /api/docs         — Swagger UI
- *   GET /api/docs/spec    — Auto-generated OpenAPI 3.0 spec (JSON)
- *   GET /api/docs/list    — Lightweight route catalog
+ *   GET /api/docs         â€” Swagger UI
+ *   GET /api/docs/spec    â€” Auto-generated OpenAPI 3.0 spec (JSON)
+ *   GET /api/docs/list    â€” Lightweight route catalog
  *
  * Spec is generated at request time by introspecting the live Router,
  * so adding a new route to routes/api.php is the only step required
@@ -22,7 +22,7 @@ class DocsController extends BaseController
     /** Methods we include in the OpenAPI spec. */
     private const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-    /** Group → tag map for nicer Swagger UI grouping. */
+    /** Group â†’ tag map for nicer Swagger UI grouping. */
     private const GROUP_TAGS = [
         'auth'        => 'Authentication',
         'mobile'      => 'Mobile API',
@@ -352,9 +352,10 @@ class DocsController extends BaseController
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>APS Dream Home API Docs</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.min.css">
     <style>body { margin: 0; padding: 0; }</style>
 </head>
 <body>

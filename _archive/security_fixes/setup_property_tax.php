@@ -191,4 +191,4 @@ foreach ($upCities as $city) {
 
 echo "Total rates inserted/updated: $inserted\n";
 
-echo "\n=== Property Tax tables and rates created successfully ===\n";
+echo "\n=== Property Tax tables and rates created successfully ===\n";?>

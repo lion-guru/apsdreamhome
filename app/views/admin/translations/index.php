@@ -6,7 +6,7 @@
 $page_title = $page_title ?? 'Translation Management';
 $languages = $languages ?? [];
 $translation_stats = $translation_stats ?? [];
-$supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'native_name' => 'English', 'flag' => '🇺🇸']];
+$supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'native_name' => 'English', 'flag' => 'ðŸ‡ºðŸ‡¸']];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -28,7 +28,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
-                            <span class="badge bg-primary rounded-pill p-2 fs-5"><?= $info['flag'] ?? '🌐' ?></span>
+                            <span class="badge bg-primary rounded-pill p-2 fs-5"><?= $info['flag'] ?? 'ðŸŒ�' ?></span>
                         </div>
                         <div>
                             <div class="aps-cp-stat-label"><?= htmlspecialchars($info['name']) ?> (<?= $code ?>)</div>
@@ -38,8 +38,8 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                             </div>
                         </div>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        <div class="progress-bar bg-primary" style="width: <?= $stats['percentage'] ?? 0 ?>%"></div>
+                    <div class="progress mt-2" class="style-29939">
+                        <div class="progress-bar bg-primary" class="style-58879"></div>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
     <div class="card aps-cp-card">
         <div class="card-header aps-cp-card-header d-flex justify-content-between align-items-center">
             <i class="fas fa-list me-2"></i>Translations
-            <div class="input-group" style="width: 300px;">
+            <div class="input-group" class="style-61646">
                 <input type="text" class="form-control form-control-sm" id="translationSearch" placeholder="Search translations...">
             </div>
         </div>

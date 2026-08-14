@@ -20,4 +20,4 @@ echo "Linked to users: $linked\n";
 $rows = $pdo->query("SELECT id, user_id, name, email, employee_code FROM employees ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as $r) {
     echo "  ID={$r['id']} user_id={$r['user_id']} code={$r['employee_code']} email={$r['email']}\n";
-}
+}?>

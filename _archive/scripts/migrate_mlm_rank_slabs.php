@@ -17,7 +17,7 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
-    // ── 1. mlm_rank_slabs ──────────────────────────────────
+    // â”€â”€ 1. mlm_rank_slabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     $pdo->exec("CREATE TABLE IF NOT EXISTS mlm_rank_slabs (
         id INT AUTO_INCREMENT PRIMARY KEY,
         rank_slug VARCHAR(30) UNIQUE NOT NULL,
@@ -49,9 +49,9 @@ try {
             reward_value = VALUES(reward_value)
     ");
 
-    echo "✓ mlm_rank_slabs created and seeded (7 tiers)\n";
+    echo "âœ“ mlm_rank_slabs created and seeded (7 tiers)\n";
 
-    // ── 2. mlm_royalty_pool ────────────────────────────────
+    // â”€â”€ 2. mlm_royalty_pool â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     $pdo->exec("CREATE TABLE IF NOT EXISTS mlm_royalty_pool (
         id INT AUTO_INCREMENT PRIMARY KEY,
         month_year VARCHAR(7) NOT NULL COMMENT 'Format: YYYY-MM',
@@ -67,9 +67,9 @@ try {
         KEY idx_status (distributed_status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    echo "✓ mlm_royalty_pool created\n";
+    echo "âœ“ mlm_royalty_pool created\n";
 
-    // ── 3. mlm_royalty_contributions (audit trail) ──────────
+    // â”€â”€ 3. mlm_royalty_contributions (audit trail) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     $pdo->exec("CREATE TABLE IF NOT EXISTS mlm_royalty_contributions (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         month_year VARCHAR(7) NOT NULL,
@@ -81,9 +81,9 @@ try {
         KEY idx_booking (booking_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    echo "✓ mlm_royalty_contributions created (audit trail)\n";
+    echo "âœ“ mlm_royalty_contributions created (audit trail)\n";
 
-    // ── 4. mlm_career_rewards ──────────────────────────────
+    // â”€â”€ 4. mlm_career_rewards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     $pdo->exec("CREATE TABLE IF NOT EXISTS mlm_career_rewards (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -99,9 +99,9 @@ try {
         KEY idx_status (status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    echo "✓ mlm_career_rewards created\n";
+    echo "âœ“ mlm_career_rewards created\n";
 
-    // ── Summary ─────────────────────────────────────────────
+    // â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     echo "\nMigration complete. Tables created:\n";
     echo "  1. mlm_rank_slabs (7 tiers seeded)\n";
     echo "  2. mlm_royalty_pool (monthly accumulator)\n";
@@ -109,6 +109,6 @@ try {
     echo "  4. mlm_career_rewards (achievement tracking)\n";
 
 } catch (Exception $e) {
-    echo "✗ Migration failed: " . $e->getMessage() . "\n";
+    echo "âœ— Migration failed: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

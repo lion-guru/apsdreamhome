@@ -1,4 +1,4 @@
-<!-- Tenant Dashboard — Super Admin Overview -->
+<!-- Tenant Dashboard â€” Super Admin Overview -->
 <?php
 $stats = $stats ?? [];
 $plans = $plans ?? [];
@@ -15,7 +15,7 @@ $base = BASE_URL ?? '';
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4 class="mb-0"><i class="fas fa-cloud me-2"></i>SaaS Tenant Dashboard</h4>
-            <p class="mb-0 mt-1" style="opacity:0.85;">Manage all tenants, plans, and subscriptions</p>
+            <p class="mb-0 mt-1" class="style-91394">Manage all tenants, plans, and subscriptions</p>
         </div>
         <a href="<?= $base ?>/admin/tenants/onboard" class="btn btn-light btn-sm">
             <i class="fas fa-plus me-1"></i>New Tenant
@@ -69,7 +69,7 @@ $base = BASE_URL ?? '';
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-rupee-sign me-2 text-success"></i>Monthly Revenue</h6></div>
             <div class="card-body text-center">
-                <h2 style="color:#10b981;">₹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h2>
+                <h2 class="style-54781">â‚¹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h2>
                 <small class="text-muted">from active subscriptions</small>
             </div>
         </div>
@@ -81,7 +81,7 @@ $base = BASE_URL ?? '';
                 <?php if (!empty($stats['by_plan'])): ?>
                     <div class="d-flex flex-wrap gap-3">
                         <?php foreach ($stats['by_plan'] as $plan): ?>
-                            <div class="text-center flex-fill" style="min-width:100px;">
+                            <div class="text-center flex-fill" class="style-3848">
                                 <h4><?= $plan['count'] ?></h4>
                                 <small class="text-muted"><?= htmlspecialchars($plan['name']) ?></small>
                             </div>
@@ -151,7 +151,7 @@ $base = BASE_URL ?? '';
                     <div class="card border h-100">
                         <div class="card-body text-center">
                             <h5 class="card-title"><?= htmlspecialchars($plan['name']) ?></h5>
-                            <h3 class="text-primary">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h3>
+                            <h3 class="text-primary">â‚¹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h3>
                             <hr>
                             <ul class="list-unstyled small text-start">
                                 <li class="mb-1"><i class="fas fa-users text-muted me-2"></i><?= $plan['max_users'] ?> users</li>

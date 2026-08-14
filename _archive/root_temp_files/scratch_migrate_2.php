@@ -20,4 +20,4 @@ if (!in_array('tenant_id', $cols)) {
     $conn->exec("ALTER TABLE mlm_settings ADD UNIQUE INDEX tenant_setting_key (tenant_id, setting_key)");
 } else {
     echo "tenant_id already in mlm_settings\n";
-}
+}?>

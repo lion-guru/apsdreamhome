@@ -1,4 +1,4 @@
-﻿
+ï»¿
 
 <div class="container-fluid">
     <div class="row">
@@ -78,7 +78,7 @@
                                 <?php if (empty($states ?? [])): ?>
                                 <tr>
                                     <td colspan="6" class="text-center py-5">
-                                        <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                        <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" class="style-82835"></i>
                                         <h5 class="text-muted">No states found</h5>
                                         <p class="text-muted mb-3">Add states to start building your location hierarchy.</p>
                                     </td>

@@ -17,10 +17,10 @@
             <?php elseif (isset($tour)): ?>
                 <h1 class="mb-4"><?= h($tour['property_title'] ?? __('virtual_tour_default_title')) ?></h1>
                 
-                <div id="viewer-container" style="width: 100%; height: 600px; background: #000; position: relative;">
+                <div id="viewer-container" class="style-43831">
                     <?php if (!empty($tour['assets'])): ?>
                         <!-- 360 Viewer Implementation -->
-                        <div id="viewer" style="width: 100%; height: 100%;"></div>
+                        <div id="viewer" class="style-80928"></div>
                         
                         <script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/photo-sphere-viewer.min.js"></script>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4/dist/photo-sphere-viewer.min.css">
@@ -59,7 +59,7 @@
                         <div class="row g-3">
                             <?php foreach ($tour['assets'] as $asset): ?>
                                 <div class="col-md-3">
-                                    <div class="card h-100 tour-scene-card" style="cursor: pointer;">
+                                    <div class="card h-100 tour-scene-card" class="style-75920">
                                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= h($asset['title']) ?>">
                                         <div class="card-body p-2">
                                             <p class="card-text small mb-0"><?= h($asset['title']) ?></p>

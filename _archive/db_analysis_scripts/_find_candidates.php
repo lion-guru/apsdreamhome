@@ -28,4 +28,4 @@ foreach ($domains as $name => $group) {
         echo sprintf("  %-40s %d rows\n", $t['name'], $t['rows']);
     }
     echo "\n";
-}
+}?>

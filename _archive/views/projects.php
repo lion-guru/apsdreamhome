@@ -6,7 +6,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-warning text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #232526 0%, #414345 50%, #0d9488 100%);"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" class="style-70913"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -29,12 +29,12 @@ $base = $base ?? BASE_URL;
             <?php foreach ($projects as $project): ?>
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm h-100 project-card">
-                    <div class="position-relative overflow-hidden" style="height: 220px;">
+                    <div class="position-relative overflow-hidden" class="style-59431">
                         <?php if (!empty($project->image_path ?? $project['image_path'] ?? '')): ?>
-                        <img src="<?= htmlspecialchars($project->image_path ?? $project['image_path'] ?? '') ?>" class="card-img-top h-100" style="object-fit: cover;" alt="<?= htmlspecialchars($project->name ?? $project['name'] ?? 'Project') ?>" loading="lazy">
+                         src="<?= htmlspecialchars($project- loading="lazy">image_path ?? $project['image_path'] ?? '') ?>" class="card-img-top h-100" class="style-86926" alt="<?= htmlspecialchars($project->name ?? $project['name'] ?? 'Project') ?>" loading="lazy">
                         <?php else: ?>
                         <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center h-100">
-                            <i class="fas fa-building fa-4x text-secondary" style="opacity:0.3;"></i>
+                            <i class="fas fa-building fa-4x text-secondary" class="style-73058"></i>
                         </div>
                         <?php endif; ?>
                         <div class="position-absolute top-0 end-0 m-2">
@@ -73,7 +73,7 @@ $base = $base ?? BASE_URL;
         <?php else: ?>
         <div class="text-center py-5">
             <div class="mb-4">
-                <i class="fas fa-tools fa-4x text-muted" style="opacity:0.5;"></i>
+                <i class="fas fa-tools fa-4x text-muted" class="style-69062"></i>
             </div>
             <h3 class="text-muted"><?= __('projects_coming_soon') ?></h3>
             <p class="text-muted mb-4"><?= __('projects_coming_soon_desc') ?></p>

@@ -37,7 +37,7 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="d-flex align-items-start">
                             <div class="me-3">
-                                <div class="avatar-sm bg-<?= match($notification['type'] ?? 'info') { 'success' => 'success', 'warning' => 'warning', 'danger' => 'danger', default => 'primary' } ?> text-white rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
+                                <div class="avatar-sm bg-<?= match($notification['type'] ?? 'info') { 'success' => 'success', 'warning' => 'warning', 'danger' => 'danger', default => 'primary' } ?> text-white rounded-circle d-flex align-items-center justify-content-center" class="style-75848">
                                     <i class="fas fa-<?= match($notification['type'] ?? 'info') { 'success' => 'check-circle', 'warning' => 'exclamation-triangle', 'danger' => 'times-circle', default => 'info-circle' } ?>"></i>
                                 </div>
                             </div>

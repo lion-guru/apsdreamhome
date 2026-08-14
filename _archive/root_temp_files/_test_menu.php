@@ -6,7 +6,7 @@ $items = $pdo->query('SELECT id, name, url, parent_id, section FROM admin_menu_i
 echo "Total: " . count($items) . " items\n\n";
 
 foreach ($items as $i) {
-    $indent = $i['parent_id'] ? '  ∟ ' : '  ';
+    $indent = $i['parent_id'] ? '  âˆŸ ' : '  ';
     echo $indent . str_pad($i['name'], 30) . ' -> ' . $i['url'] . ' [' . $i['section'] . "]\n";
 }
 
@@ -44,4 +44,4 @@ foreach ($urls as $url) {
 }
 
 echo "\n=== BROKEN (" . count($broken) . ") ===\n";
-foreach ($broken as $b) echo "  $b\n";
+foreach ($broken as $b) echo "  $b\n";?>

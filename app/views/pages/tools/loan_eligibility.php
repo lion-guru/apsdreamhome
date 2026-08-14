@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-calculator me-2"></i><?php echo __('tool_loan_eligibility_title', [], 'Home Loan Eligibility Calculator'); ?></h1>
@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_income_rs', [], 'Monthly Income (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('monthly_income_rs', [], 'Monthly Income (â‚¹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="income" value="80000" oninput="calcLoan()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_emi_rs', [], 'Monthly Existing EMIs (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('monthly_emi_rs', [], 'Monthly Existing EMIs (â‚¹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="existEmi" value="0" oninput="calcLoan()">
                             </div>
                         </div>
@@ -40,19 +40,19 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('max_loan', [], 'Max Loan Amount'); ?></small>
-                                    <h4 class="text-primary mb-0" id="maxLoan">₹53,00,000</h4>
+                                    <h4 class="text-primary mb-0" id="maxLoan">â‚¹53,00,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('max_monthly_emi', [], 'Max Monthly EMI'); ?></small>
-                                    <h4 class="text-danger mb-0" id="maxEmi">₹40,000</h4>
+                                    <h4 class="text-danger mb-0" id="maxEmi">â‚¹40,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-success text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_interest', [], 'Total Interest Payable'); ?></small>
-                                    <h5 class="mb-0" id="totalInt">₹45,20,000</h5>
+                                    <h5 class="mb-0" id="totalInt">â‚¹45,20,000</h5>
                                 </div>
                             </div>
                         </div>
@@ -63,13 +63,13 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <small class="text-muted"><?php echo __('net_monthly_income', [], 'Net Monthly Income:'); ?></small>
-                                        <span class="fw-bold" id="netIncome">₹80,000</span><br>
+                                        <span class="fw-bold" id="netIncome">â‚¹80,000</span><br>
                                         <small class="text-muted"><?php echo __('available_for_emi', [], 'Available for EMI:'); ?></small>
-                                        <span class="fw-bold text-success" id="availEmi">₹40,000</span>
+                                        <span class="fw-bold text-success" id="availEmi">â‚¹40,000</span>
                                     </div>
                                     <div class="col-sm-6">
                                         <small class="text-muted"><?php echo __('total_payment', [], 'Total Payment:'); ?></small>
-                                        <span class="fw-bold" id="totalPay">₹98,20,000</span><br>
+                                        <span class="fw-bold" id="totalPay">â‚¹98,20,000</span><br>
                                         <small class="text-muted"><?php echo __('loan_to_value', [], 'Loan to Value:'); ?></small>
                                         <span class="fw-bold" id="ltv">80%</span>
                                     </div>

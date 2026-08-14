@@ -7,4 +7,4 @@ foreach ($db->fetchAll("SHOW TABLES") as $r) {
     if (stripos($t, 'demand') !== false || stripos($t, 'letter') !== false || stripos($t, 'template') !== false || stripos($t, 'forecast') !== false || stripos($t, 'voucher') !== false || stripos($t, 'reconciliation') !== false) {
         echo $t . " : " . $db->fetchOne("SELECT COUNT(*) c FROM `$t`")['c'] . " rows" . PHP_EOL;
     }
-}
+}?>

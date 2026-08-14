@@ -123,4 +123,4 @@ foreach ($replacements as $old => $new) {
 
 file_put_contents('C:\xampp\htdocs\apsdreamhome\routes\web.php', $content);
 echo "\nTotal replacements: $count\n";
-echo "Routes updated successfully!\n";
+echo "Routes updated successfully!\n";?>

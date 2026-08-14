@@ -49,19 +49,19 @@ $base = BASE_URL ?? '/apsdreamhome';
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Total Plot Value</label>
-                            <div class="fw-bold text-primary fs-5">₹<?= number_format((float)($booking['total_plot_value'] ?? 0), 2) ?></div>
+                            <div class="fw-bold text-primary fs-5">â‚¹<?= number_format((float)($booking['total_plot_value'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Agreement Value</label>
-                            <div class="fw-bold text-success fs-5">₹<?= number_format((float)($booking['agreement_value'] ?? 0), 2) ?></div>
+                            <div class="fw-bold text-success fs-5">â‚¹<?= number_format((float)($booking['agreement_value'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Token Paid</label>
-                            <div class="fw-bold">₹<?= number_format((float)($booking['booking_amount'] ?? 0), 2) ?></div>
+                            <div class="fw-bold">â‚¹<?= number_format((float)($booking['booking_amount'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Balance</label>
-                            <div class="fw-bold text-danger">₹<?= number_format((float)($booking['agreement_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) ?></div>
+                            <div class="fw-bold text-danger">â‚¹<?= number_format((float)($booking['agreement_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) ?></div>
                         </div>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="text-muted small">Total Principal</div>
-                                <div class="fw-bold" id="emiTotalPrincipal">₹0</div>
+                                <div class="fw-bold" id="emiTotalPrincipal">â‚¹0</div>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="text-muted small">Total Interest</div>
-                                <div class="fw-bold text-danger" id="emiTotalInterest">₹0</div>
+                                <div class="fw-bold text-danger" id="emiTotalInterest">â‚¹0</div>
                             </div>
                         </div>
                     </div>
@@ -204,7 +204,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="text-muted small">Total Payable</div>
-                                <div class="fw-bold text-primary" id="emiTotalPayable">₹0</div>
+                                <div class="fw-bold text-primary" id="emiTotalPayable">â‚¹0</div>
                             </div>
                         </div>
                     </div>
@@ -230,7 +230,7 @@ $base = BASE_URL ?? '/apsdreamhome';
             </div>
             
             <div id="videoRecorder">
-                <video id="preview" autoplay muted playsinline class="w-100 border rounded mb-3 d-none" style="max-height: 300px;"></video>
+                <video id="preview" autoplay muted playsinline class="w-100 border rounded mb-3 d-none" class="style-39110"></video>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <button type="button" class="btn btn-outline-primary w-100" id="startRecording">
@@ -261,7 +261,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                 </div>
             </div>
             <div id="videoPreview" class="d-none mt-3">
-                <video controls class="w-100 border rounded" style="max-height: 300px;"></video>
+                <video controls class="w-100 border rounded" class="style-39110"></video>
                 <div class="mt-2">
                     <button type="button" class="btn btn-success" id="submitVideoConsent">
                         <i class="fas fa-check me-1"></i>Submit Video Consent
@@ -405,9 +405,9 @@ async function previewEMI() {
         
         if (data.success) {
             renderEMITable(data.schedule);
-            document.getElementById('emiTotalPrincipal').textContent = '₹' + data.summary.total_principal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('emiTotalInterest').textContent = '₹' + data.summary.total_interest.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('emiTotalPayable').textContent = '₹' + data.summary.total_payable.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('emiTotalPrincipal').textContent = 'â‚¹' + data.summary.total_principal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('emiTotalInterest').textContent = 'â‚¹' + data.summary.total_interest.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('emiTotalPayable').textContent = 'â‚¹' + data.summary.total_payable.toLocaleString('en-IN', {minimumFractionDigits: 2});
             document.getElementById('emiPreview').classList.remove('d-none');
         } else {
             alert('Error: ' + data.error);
@@ -427,10 +427,10 @@ function renderEMITable(schedule) {
         row.innerHTML = `
             <td>${index + 1}</td>
             <td>${new Date(inst.due_date).toLocaleDateString('en-IN')}</td>
-            <td>₹${Number(inst.principal_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-            <td>₹${Number(inst.interest_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-            <td><strong>₹${Number(inst.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
-            <td>₹${Number(inst.balance_after).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td>â‚¹${Number(inst.principal_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td>â‚¹${Number(inst.interest_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td><strong>â‚¹${Number(inst.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+            <td>â‚¹${Number(inst.balance_after).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
         `;
         tbody.appendChild(row);
     });

@@ -17,7 +17,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($file['original_name'] ?? '') ?></h6></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
-                        <tr><th style="width:180px">File Name</th><td><?= htmlspecialchars($file['original_name'] ?? '') ?></td></tr>
+                        <tr><th class="style-83841">File Name</th><td><?= htmlspecialchars($file['original_name'] ?? '') ?></td></tr>
                         <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($file['mime_type'] ?? $file['file_type'] ?? '') ?></span></td></tr>
                         <tr><th>Category</th><td><span class="badge bg-primary"><?= htmlspecialchars($file['file_category'] ?? '') ?></span></td></tr>
                         <tr><th>Size</th><td><?php $b = floatval($file['size_bytes'] ?? 0); echo $b >= 1048576 ? number_format($b / 1048576, 2) . ' MB' : ($b >= 1024 ? number_format($b / 1024, 2) . ' KB' : number_format($b) . ' B'); ?></td></tr>
@@ -39,7 +39,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
                     $isPdf = $mime === 'application/pdf';
                     ?>
                     <?php if ($isImage): ?>
-                        <img src="<?= $base ?>/admin/files/download/<?= htmlspecialchars($file['uuid'] ?? '') ?>" alt="<?= htmlspecialchars($file['original_name'] ?? '') ?>" class="img-fluid rounded" style="max-height:300px">
+                        <img src="<?= $base ?>/admin/files/download/<?= htmlspecialchars($file['uuid'] ?? '') ?>" alt="<?= htmlspecialchars($file['original_name'] ?? '') ?>" class="img-fluid rounded" class="style-23653">
                     <?php elseif ($isPdf): ?>
                         <i class="fas fa-file-pdf fa-5x text-danger"></i>
                         <p class="mt-2">PDF document - <a href="<?= $base ?>/admin/files/download/<?= $file['uuid'] ?? '' ?>">Download to view</a></p>

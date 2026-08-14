@@ -293,4 +293,4 @@ class WorkflowEngine {
         $sql = "SELECT * FROM ai_workflows WHERE id = ?";
         return $this->db->fetch($sql, [$id]);
     }
-}
+}?>

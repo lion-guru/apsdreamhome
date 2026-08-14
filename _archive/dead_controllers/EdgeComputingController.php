@@ -30,7 +30,7 @@ class EdgeComputingController extends AdminController
     {
         $this->requireAdmin();
         $this->render('admin/feature-disabled', [
-            'page_title' => 'Edge Computing — Coming Soon',
+            'page_title' => 'Edge Computing â€” Coming Soon',
             'feature_name' => 'Edge Computing & 5G',
             'feature_description' => 'Edge node deployment, 5G integration, real-time processing, and distributed computing require hardware infrastructure and network partnerships. This feature will be available soon.',
             'icon' => 'fas fa-network-wired',
@@ -354,7 +354,7 @@ class EdgeComputingController extends AdminController
             'peak_download_speed' => '2.1 Gbps',
             'average_upload_speed' => '450 Mbps',
             'network_latency' => '8ms',
-            'connection_density' => '1M devices/km²',
+            'connection_density' => '1M devices/kmÂ²',
             'reliability' => '99.999%'
         ];
     }
@@ -702,16 +702,16 @@ class EdgeComputingController extends AdminController
         if (!self::FEATURE_ENABLED) { $this->featureNotAvailable(); return; }
         $cost_data = [
             'infrastructure_costs' => [
-                'edge_servers' => '₹25,00,000',
-                'networking_equipment' => '₹15,00,000',
-                'deployment_services' => '₹8,00,000',
-                'maintenance_annual' => '₹5,00,000'
+                'edge_servers' => 'â‚¹25,00,000',
+                'networking_equipment' => 'â‚¹15,00,000',
+                'deployment_services' => 'â‚¹8,00,000',
+                'maintenance_annual' => 'â‚¹5,00,000'
             ],
             'operational_benefits' => [
-                'bandwidth_savings' => '₹12,00,000/year',
-                'latency_reduction' => '₹8,00,000/year',
-                'improved_performance' => '₹15,00,000/year',
-                'scalability_benefits' => '₹6,00,000/year'
+                'bandwidth_savings' => 'â‚¹12,00,000/year',
+                'latency_reduction' => 'â‚¹8,00,000/year',
+                'improved_performance' => 'â‚¹15,00,000/year',
+                'scalability_benefits' => 'â‚¹6,00,000/year'
             ],
             'roi_timeline' => [
                 'break_even_period' => '18 months',
@@ -1083,8 +1083,8 @@ class EdgeComputingController extends AdminController
                 'industry_growth' => '150% YoY growth'
             ],
             'economic_impact' => [
-                'cost_savings' => '₹50 crores in bandwidth costs',
-                'revenue_increase' => '₹150 crores from improved performance',
+                'cost_savings' => 'â‚¹50 crores in bandwidth costs',
+                'revenue_increase' => 'â‚¹150 crores from improved performance',
                 'job_creation' => '15,000 new edge computing jobs',
                 'gdp_contribution' => '0.8% increase in tech sector GDP'
             ]
@@ -1216,4 +1216,4 @@ class EdgeComputingController extends AdminController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

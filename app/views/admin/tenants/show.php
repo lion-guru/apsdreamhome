@@ -1,4 +1,4 @@
-<!-- Tenant Detail / Show — Super Admin -->
+<!-- Tenant Detail / Show â€” Super Admin -->
 <?php
 $tenant = $tenant ?? [];
 $plans = $plans ?? [];
@@ -27,20 +27,20 @@ function tenantUsageBar($used, $max, $color = 'primary') {
 <div class="tenant-detail-header">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-3">
-            <div style="width:60px;height:60px;border-radius:12px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;"><?= strtoupper(substr($tenant['name'] ?? 'T', 0, 2)) ?></div>
+            <div class="style-37054"><?= strtoupper(substr($tenant['name'] ?? 'T', 0, 2)) ?></div>
             <div>
                 <h4 class="mb-0"><?= htmlspecialchars($tenant['name'] ?? '') ?></h4>
-                <p class="mb-0" style="opacity:0.85;">
+                <p class="mb-0" class="style-91394">
                     <code><?= htmlspecialchars($tenant['slug'] ?? '') ?></code>
-                    <?php if ($tenant['domain'] ?? ''): ?> · <?= htmlspecialchars($tenant['domain']) ?><?php endif; ?>
+                    <?php if ($tenant['domain'] ?? ''): ?> Â· <?= htmlspecialchars($tenant['domain']) ?><?php endif; ?>
                 </p>
             </div>
         </div>
         <div>
-            <span class="badge bg-white text-<?= $statusColors[$tenant['status']] ?? 'secondary' ?>" style="font-size:0.9rem;padding:6px 14px;">
+            <span class="badge bg-white text-<?= $statusColors[$tenant['status']] ?? 'secondary' ?>" class="style-23264">
                 <?= ucfirst($tenant['status'] ?? 'unknown') ?>
                 <?php if (($tenant['status'] ?? '') === 'trial' && ($tenant['trial_ends_at'] ?? '')): ?>
-                    · Ends <?= date('d M', strtotime($tenant['trial_ends_at'])) ?>
+                    Â· Ends <?= date('d M', strtotime($tenant['trial_ends_at'])) ?>
                 <?php endif; ?>
             </span>
         </div>
@@ -88,27 +88,27 @@ function tenantUsageBar($used, $max, $color = 'primary') {
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="info-label">Contact Name</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['contact_name'] ?? '—') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['contact_name'] ?? 'â€”') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Email</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['contact_email'] ?? '—') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['contact_email'] ?? 'â€”') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Phone</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['contact_phone'] ?? '—') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['contact_phone'] ?? 'â€”') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">City</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['city'] ?? '—') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['city'] ?? 'â€”') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">State</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['state'] ?? '—') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['state'] ?? 'â€”') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Address</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['address'] ?? '—') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['address'] ?? 'â€”') ?></div>
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
             <div class="card-body text-center">
                 <h5 class="text-muted mb-1">Current Plan</h5>
                 <h3 class="text-primary mb-1"><?= htmlspecialchars($tenant['plan_name'] ?? 'Free') ?></h3>
-                <p class="text-muted mb-3">₹<?= number_format($tenant['price_monthly'] ?? 0) ?>/month</p>
+                <p class="text-muted mb-3">â‚¹<?= number_format($tenant['price_monthly'] ?? 0) ?>/month</p>
                 <hr>
                 <div class="text-start small">
                     <div class="d-flex justify-content-between mb-1"><span>Storage Limit</span><strong><?= $tenant['storage_limit_mb'] ?? 100 ?> MB</strong></div>

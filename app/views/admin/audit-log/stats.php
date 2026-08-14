@@ -40,7 +40,7 @@ ob_start();
                 <h6 class="mb-0 small"><?= htmlspecialchars($topAction['action'] ?? '') ?></h6>
                 <small><?= number_format($topAction['cnt'] ?? 0) ?> events</small>
               <?php else: ?>
-                <h6 class="mb-0 small">—</h6>
+                <h6 class="mb-0 small">â€”</h6>
               <?php endif; ?>
             </div>
             <i class="fas fa-bolt fa-2x opacity-50"></i>
@@ -59,7 +59,7 @@ ob_start();
                 <h6 class="mb-0 small"><?= htmlspecialchars($topRole['user_role'] ?? '') ?></h6>
                 <small><?= number_format($topRole['cnt'] ?? 0) ?> events</small>
               <?php else: ?>
-                <h6 class="mb-0 small">—</h6>
+                <h6 class="mb-0 small">â€”</h6>
               <?php endif; ?>
             </div>
             <i class="fas fa-user-tie fa-2x opacity-50"></i>
@@ -109,8 +109,8 @@ ob_start();
                       <td><code><?= htmlspecialchars($item['action'] ?? '') ?></code></td>
                       <td class="text-end"><?= number_format($item['cnt'] ?? 0) ?></td>
                       <td class="text-end">
-                        <div class="progress" style="height: 6px; width: 100px;">
-                          <div class="progress-bar bg-primary" style="width: <?= min(100, (($item['cnt'] ?? 0) / max(1, $total)) * 100) ?>%"></div>
+                        <div class="progress" class="style-17822">
+                          <div class="progress-bar bg-primary" class="style-88739"></div>
                         </div>
                       </td>
                     </tr>
@@ -147,8 +147,8 @@ ob_start();
                       </td>
                       <td class="text-end"><?= number_format($item['cnt'] ?? 0) ?></td>
                       <td class="text-end">
-                        <div class="progress" style="height: 6px; width: 100px;">
-                          <div class="progress-bar bg-<?= in_array($item['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?>" style="width: <?= min(100, (($item['cnt'] ?? 0) / max(1, $total)) * 100) ?>%"></div>
+                        <div class="progress" class="style-17822">
+                          <div class="progress-bar bg-<?= in_array($item['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?>" class="style-88739"></div>
                         </div>
                       </td>
                     </tr>
@@ -185,8 +185,8 @@ ob_start();
                       </td>
                       <td class="text-end"><?= number_format($s['cnt'] ?? 0) ?></td>
                       <td class="text-end">
-                        <div class="progress" style="height: 6px; width: 100px;">
-                          <div class="progress-bar bg-<?= $s['status'] === 'success' ? 'success' : ($s['status'] === 'failed' ? 'danger' : 'warning') ?>" style="width: <?= min(100, (($s['cnt'] ?? 0) / max(1, $total)) * 100) ?>%"></div>
+                        <div class="progress" class="style-17822">
+                          <div class="progress-bar bg-<?= $s['status'] === 'success' ? 'success' : ($s['status'] === 'failed' ? 'danger' : 'warning') ?>" class="style-8668"></div>
                         </div>
                       </td>
                     </tr>

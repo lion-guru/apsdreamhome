@@ -126,7 +126,7 @@
                                 <td>
                                     <span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst($inq['type'] ?? 'General')); ?></span>
                                 </td>
-                                <td style="max-width: 200px;">
+                                <td class="style-65684">
                                     <small class="text-muted"><?php echo htmlspecialchars(substr($inq['message'], 0, 80)); ?><?php echo strlen($inq['message']) > 80 ? '...' : ''; ?></small>
                                 </td>
                                 <td>

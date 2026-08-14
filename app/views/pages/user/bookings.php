@@ -90,7 +90,7 @@ $statusLabels = [
             <div class="aps-cp-stat aps-cp-stat--green">
                 <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
                 <div class="aps-cp-stat-body">
-                    <div class="aps-cp-stat-value">₹<?= number_format($totalPaid) ?></div>
+                    <div class="aps-cp-stat-value">â‚¹<?= number_format($totalPaid) ?></div>
                     <div class="aps-cp-stat-label"><?= __('user_bookings_stat_total_paid', 'Total Paid') ?></div>
                 </div>
             </div>
@@ -99,7 +99,7 @@ $statusLabels = [
             <div class="aps-cp-stat aps-cp-stat--red">
                 <div class="aps-cp-stat-icon"><i class="fas fa-hourglass-half"></i></div>
                 <div class="aps-cp-stat-body">
-                    <div class="aps-cp-stat-value">₹<?= number_format($totalPending > 0 ? $totalPending : 0) ?></div>
+                    <div class="aps-cp-stat-value">â‚¹<?= number_format($totalPending > 0 ? $totalPending : 0) ?></div>
                     <div class="aps-cp-stat-label"><?= __('user_bookings_stat_pending', 'Pending Amount') ?></div>
                 </div>
             </div>
@@ -135,7 +135,7 @@ $statusLabels = [
                             $paid = (float)($b['total_paid'] ?? 0);
                             $pending = max(0, $totalVal - $paid);
                         ?>
-                        <tr style="cursor:pointer;" onclick="window.location='<?= BASE_URL ?>/user/bookings/<?= (int)$b['id'] ?>'">
+                        <tr class="style-10432" onclick="window.location='<?= BASE_URL ?>/user/bookings/<?= (int)$b['id'] ?>'">
                             <td><strong><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></strong></td>
                             <td>
                                 <?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
@@ -151,16 +151,16 @@ $statusLabels = [
                                 <?php endif; ?>
                             </td>
                             <td><?= date('d M Y', strtotime($b['booking_date'] ?? $b['created_at'] ?? 'now')) ?></td>
-                            <td>₹<?= number_format($totalVal) ?></td>
+                            <td>â‚¹<?= number_format($totalVal) ?></td>
                             <td>
-                                <span class="text-success fw-semibold">₹<?= number_format($paid) ?></span>
+                                <span class="text-success fw-semibold">â‚¹<?= number_format($paid) ?></span>
                                 <?php if ($totalVal > 0): ?>
                                     <br><small class="text-muted"><?= round(($paid / $totalVal) * 100) ?>%</small>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if ($pending > 0): ?>
-                                    <span class="text-danger fw-semibold">₹<?= number_format($pending) ?></span>
+                                    <span class="text-danger fw-semibold">â‚¹<?= number_format($pending) ?></span>
                                 <?php else: ?>
                                     <span class="text-success"><i class="fas fa-check-circle"></i> <?= __('user_bookings_settled', 'Settled') ?></span>
                                 <?php endif; ?>

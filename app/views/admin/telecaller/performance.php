@@ -92,7 +92,7 @@ $ratingBadge = function($rating) {
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Commission</h6>
-                            <h3 class="mb-0">₹<?php echo number_format($overallStats['total_commission'] ?? 0, 2); ?></h3>
+                            <h3 class="mb-0">â‚¹<?php echo number_format($overallStats['total_commission'] ?? 0, 2); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -166,11 +166,11 @@ $ratingBadge = function($rating) {
                                     <td>
                                         <span class="badge bg-success"><?php echo number_format($r['leads_converted'] ?? 0); ?></span>
                                     </td>
-                                    <td>₹<?php echo number_format($r['total_commission'] ?? 0, 2); ?></td>
+                                    <td>â‚¹<?php echo number_format($r['total_commission'] ?? 0, 2); ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                                                <div class="progress-bar bg-<?php echo ($r['target_achieved'] ?? 0) >= 100 ? 'success' : (($r['target_achieved'] ?? 0) >= 50 ? 'warning' : 'danger'); ?>" style="width: <?php echo min($r['target_achieved'] ?? 0, 100); ?>%"></div>
+                                            <div class="progress flex-grow-1 me-2" class="style-29939">
+                                                <div class="progress-bar bg-<?php echo ($r['target_achieved'] ?? 0) >= 100 ? 'success' : (($r['target_achieved'] ?? 0) >= 50 ? 'warning' : 'danger'); ?>" class="style-38395"></div>
                                             </div>
                                             <small><?php echo number_format($r['target_achieved'] ?? 0, 1); ?>%</small>
                                         </div>

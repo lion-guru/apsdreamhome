@@ -46,4 +46,4 @@ echo "Dropped notification_feed\n";
 $pdo->exec("DROP TABLE IF EXISTS payment_notifications_backup_20260603");
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "Tables: $after\n";
+echo "Tables: $after\n";?>

@@ -296,4 +296,4 @@ if ($pdo->query("SELECT COUNT(*) FROM campaigns")->fetchColumn() == 0) {
 
 echo "\n=== Seeding Complete! ===\n";
 
-$pdo = null;
+$pdo = null;?>

@@ -389,4 +389,4 @@ function uploadSecureFile($file_input_name, $type = 'documents', $max_size = 104
 
     $uploader = new SecureFileUpload($config);
     return $uploader->uploadFile($file_input_name);
-}
+}?>

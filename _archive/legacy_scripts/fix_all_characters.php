@@ -8,13 +8,13 @@ $root = dirname(__DIR__);
 $directories = ['app', 'config', 'public', 'routes', 'assets', 'lang'];
 
 $replacements = [
-    'â‚¹' => '₹',
-    'â€™' => "'",
-    'â€œ' => '"',
-    'â€ ' => '"',
-    'â€”' => '—',
-    'â€¢' => '•',
-    'â€“' => '–',
+    'Ã¢â€šÂ¹' => 'â‚¹',
+    'Ã¢â‚¬â„¢' => "'",
+    'Ã¢â‚¬Å“' => '"',
+    'Ã¢â‚¬ ' => '"',
+    'Ã¢â‚¬â€�' => 'â€”',
+    'Ã¢â‚¬Â¢' => 'â€¢',
+    'Ã¢â‚¬â€œ' => 'â€“',
 ];
 
 $fixedCount = 0;
@@ -43,7 +43,7 @@ function processDirectory($dir, $replacements, &$fixedCount, &$scannedCount) {
                 
                 if ($content !== $original) {
                     file_put_contents($path, $content);
-                    echo "✓ Fixed characters in: $path\n";
+                    echo "âœ“ Fixed characters in: $path\n";
                     $fixedCount++;
                 }
             }
@@ -58,4 +58,4 @@ foreach ($directories as $dirName) {
 
 echo "\nScan and repair complete!\n";
 echo "Total files scanned: $scannedCount\n";
-echo "Total files fixed: $fixedCount\n";
+echo "Total files fixed: $fixedCount\n";?>

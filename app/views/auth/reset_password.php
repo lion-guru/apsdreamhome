@@ -90,7 +90,9 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-key me-2"></i>
                                 <?php echo __('auth_reset_password_btn', 'Reset Password'); ?>
                             </button>

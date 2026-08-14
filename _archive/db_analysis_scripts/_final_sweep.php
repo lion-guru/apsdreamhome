@@ -113,4 +113,4 @@ foreach ($candidates as $t) {
 }
 echo "\nTotal: " . count($candidates) . "\n";
 $dropable = count(array_filter($candidates, fn($t) => $t['fk'] == 0 && $t['refs'] <= 5));
-echo "Dropable (0 FK, <=5 refs): $dropable\n";
+echo "Dropable (0 FK, <=5 refs): $dropable\n";?>

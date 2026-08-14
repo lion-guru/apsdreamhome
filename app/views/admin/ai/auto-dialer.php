@@ -70,16 +70,16 @@ $recent_logs = $recent_logs ?? [];
     <?php echo CSRFProtection::csrfField(); ?>
                             <div class="col-auto">
                                 <label class="form-label mb-0 small">Min Score</label>
-                                <input type="number" name="min_score" class="form-control form-control-sm" value="70" min="0" max="100" style="width:90px">
+                                <input type="number" name="min_score" class="form-control form-control-sm" value="70" min="0" max="100" class="style-11044">
                             </div>
                             <div class="col-auto">
                                 <label class="form-label mb-0 small">Date</label>
-                                <input type="date" name="scheduled_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" style="width:150px">
+                                <input type="date" name="scheduled_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" class="style-33863">
                             </div>
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-magic me-1"></i>Run AI</button>
                             </div>
-                            <div class="col-12"><small class="text-muted">AI scores all leads and schedules hot leads (≥ min score) for calling.</small></div>
+                            <div class="col-12"><small class="text-muted">AI scores all leads and schedules hot leads (â‰¥ min score) for calling.</small></div>
                         </form>
                     </div>
                 </div>
@@ -147,7 +147,7 @@ $recent_logs = $recent_logs ?? [];
                                     <small class="text-muted"><?= date('d M H:i', strtotime($log['created_at'])) ?></small>
                                 </div>
                                 <div>
-                                    <span class="badge bg-<?= ($log['outcome'] ?? '') === 'connected' ? 'success' : (($log['outcome'] ?? '') === 'not_answered' ? 'secondary' : 'light') ?>"><?= ucfirst(str_replace('_', ' ', $log['outcome'] ?? '—')) ?></span>
+                                    <span class="badge bg-<?= ($log['outcome'] ?? '') === 'connected' ? 'success' : (($log['outcome'] ?? '') === 'not_answered' ? 'secondary' : 'light') ?>"><?= ucfirst(str_replace('_', ' ', $log['outcome'] ?? 'â€”')) ?></span>
                                     <span class="badge bg-dark"><?= ucfirst($log['method'] ?? 'app') ?></span>
                                     <?php if (!empty($log['duration'])): ?><span class="badge bg-info"><?= $log['duration'] ?>s</span><?php endif; ?>
                                 </div>
@@ -166,7 +166,7 @@ $recent_logs = $recent_logs ?? [];
 
 <script>
 document.getElementById('btn-process')?.addEventListener('click', function() {
-    const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing…';
+    const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processingâ€¦';
     fetch('<?= BASE_URL ?>/admin/ai-calling/auto-dialer/process', {method: 'POST', headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(r => r.json()).then(d => {
             alert((d.message || 'Done') + (d.processed !== undefined ? ' (Processed: ' + d.processed + ', Failed: ' + d.failed + ')' : ''));
@@ -175,7 +175,7 @@ document.getElementById('btn-process')?.addEventListener('click', function() {
 });
 document.getElementById('aiScheduleForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
-    const btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Running…';
+    const btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Runningâ€¦';
     const fd = new FormData(this);
     const params = new URLSearchParams();
     fd.forEach((v,k) => params.append(k, v));

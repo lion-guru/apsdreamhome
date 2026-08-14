@@ -22,7 +22,7 @@
                                 <option value="custom">Custom Phone Numbers</option>
                             </select>
                         </div>
-                        <div class="mb-3" id="customPhones" style="display:none;">
+                        <div class="mb-3" id="customPhones" class="style-2248">
                             <label class="form-label">Phone Numbers (one per line) <span class="text-danger">*</span></label>
                             <textarea name="custom_phones" class="form-control" rows="4" placeholder="+919XXXXXXXXX&#10;+919XXXXXXXXX"></textarea>
                         </div>

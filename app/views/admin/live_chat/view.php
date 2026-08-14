@@ -17,10 +17,10 @@ ob_start();
             <p class="text-muted small mb-0">
                 <?= htmlspecialchars($session['visitor_email']) ?>
                 <?php if ($session['visitor_phone']): ?>
-                    · <?= htmlspecialchars($session['visitor_phone']) ?>
+                    Â· <?= htmlspecialchars($session['visitor_phone']) ?>
                 <?php endif; ?>
-                · <?= htmlspecialchars($session['subject'] ?: 'No subject') ?>
-                · <span class="badge bg-<?= ['open'=>'primary','assigned'=>'info','active'=>'success','on_hold'=>'warning','closed'=>'secondary','missed'=>'danger'][$session['status']] ?? 'secondary' ?>"><?= ucfirst($session['status']) ?></span>
+                Â· <?= htmlspecialchars($session['subject'] ?: 'No subject') ?>
+                Â· <span class="badge bg-<?= ['open'=>'primary','assigned'=>'info','active'=>'success','on_hold'=>'warning','closed'=>'secondary','missed'=>'danger'][$session['status']] ?? 'secondary' ?>"><?= ucfirst($session['status']) ?></span>
             </p>
         </div>
         <div class="d-flex gap-2">
@@ -38,7 +38,7 @@ ob_start();
     <div class="row g-3">
         <div class="col-md-9">
             <div class="card border-0 shadow-sm">
-                <div class="card-body aps-cp-card-body" id="messagesContainer" style="height: 60vh; overflow-y: auto; background: #f8f9fa;">
+                <div class="card-body aps-cp-card-body" id="messagesContainer" class="style-67427">
                     <?php if (empty($messages)): ?>
                         <p class="text-center text-muted py-5">No messages yet</p>
                     <?php else: ?>
@@ -58,12 +58,12 @@ ob_start();
                                 </div>
                             <?php else: ?>
                                 <div class="d-flex mb-2 <?= $isAgent ? 'justify-content-end' : '' ?>">
-                                    <div class="p-2 px-3 rounded shadow-sm" style="max-width: 70%; <?= $isAgent ? 'background:#007bff;color:white;' : 'background:white;border:1px solid #dee2e6;' ?>">
+                                    <div class="p-2 px-3 rounded shadow-sm" class="style-98554">
                                         <?php if ($m['sender_type'] !== 'agent' && $m['sender_name']): ?>
-                                            <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" style="font-size: 0.7rem;"><?= htmlspecialchars($m['sender_name']) ?></small>
+                                            <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-62191"><?= htmlspecialchars($m['sender_name']) ?></small>
                                         <?php endif; ?>
-                                        <div style="white-space: pre-wrap;"><?= htmlspecialchars($m['message']) ?></div>
-                                        <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" style="font-size: 0.7rem; margin-top: 2px;">
+                                        <div class="style-19219"><?= htmlspecialchars($m['message']) ?></div>
+                                        <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-32173">
                                             <?= date('H:i', strtotime($m['created_at'])) ?>
                                         </small>
                                     </div>
@@ -102,10 +102,10 @@ ob_start();
                     <p class="small mb-1"><strong>Created:</strong> <?= date('M j, H:i', strtotime($session['created_at'])) ?></p>
                     <p class="small mb-1"><strong>Source:</strong> <?= htmlspecialchars($session['source']) ?></p>
                     <?php if ($session['page_url']): ?>
-                        <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url']) ?>" target="_blank" class="text-truncate d-block" style="max-width: 200px;"><?= htmlspecialchars($session['page_url']) ?></a></p>
+                        <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url']) ?>" target="_blank" class="text-truncate d-block" class="style-65684"><?= htmlspecialchars($session['page_url']) ?></a></p>
                     <?php endif; ?>
-                    <p class="small mb-1"><strong>IP:</strong> <?= htmlspecialchars($session['ip_address'] ?: '—') ?></p>
-                    <p class="small mb-1"><strong>Country:</strong> <?= htmlspecialchars($session['country'] ?: '—') ?></p>
+                    <p class="small mb-1"><strong>IP:</strong> <?= htmlspecialchars($session['ip_address'] ?: 'â€”') ?></p>
+                    <p class="small mb-1"><strong>Country:</strong> <?= htmlspecialchars($session['country'] ?: 'â€”') ?></p>
                     <p class="small mb-1"><strong>Agent:</strong> <?= htmlspecialchars($session['agent_name'] ?? 'Unassigned') ?></p>
                     <p class="small mb-0"><strong>Messages:</strong> <?= $session['message_count'] ?></p>
                 </div>
@@ -169,7 +169,7 @@ function appendMessage(senderType, senderName, message, isInternal) {
     } else {
         const align = senderType === 'agent' ? 'justify-content-end' : '';
         const bg = senderType === 'agent' ? 'background:#007bff;color:white;' : 'background:white;border:1px solid #dee2e6;';
-        messagesContainer.insertAdjacentHTML('beforeend', `<div class="d-flex mb-2 ${align}"><div class="p-2 px-3 rounded shadow-sm" style="max-width: 70%; ${bg}"><div style="white-space: pre-wrap;">${escapeHtml(message)}</div><small class="d-block text-white-50" style="font-size: 0.7rem; margin-top: 2px;">${new Date().toLocaleTimeString()}</small></div></div>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<div class="d-flex mb-2 ${align}"><div class="p-2 px-3 rounded shadow-sm" class="style-64326"><div class="style-19219">${escapeHtml(message)}</div><small class="d-block text-white-50" class="style-32173">${new Date().toLocaleTimeString()}</small></div></div>`);
     }
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }

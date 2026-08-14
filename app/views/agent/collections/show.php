@@ -44,7 +44,7 @@ $c = $collection;
                         </div>
                         <div class="col-md-6">
                             <strong class="text-muted small">Amount</strong>
-                            <p class="mb-0 h5 text-success">₹<?php echo number_format((float)($c['amount'] ?? 0)); ?></p>
+                            <p class="mb-0 h5 text-success">â‚¹<?php echo number_format((float)($c['amount'] ?? 0)); ?></p>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -94,7 +94,7 @@ $c = $collection;
                     <h5 class="mb-0"><i class="fas fa-image text-info me-2"></i>Receipt Photo</h5>
                 </div>
                 <div class="card-body text-center">
-                    <img src="<?php echo $base . '/' . ltrim($c['receipt_photo'], '/'); ?>" alt="Receipt" class="img-fluid rounded" style="max-height:400px;">
+                    <img src="<?php echo $base . '/' . ltrim($c['receipt_photo'], '/'); ?>" alt="Receipt" class="img-fluid rounded" class="style-52184">
                 </div>
             </div>
             <?php endif; ?>

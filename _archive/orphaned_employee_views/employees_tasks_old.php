@@ -78,13 +78,13 @@ $activeFilter = $_GET['filter'] ?? 'all';
                 <span class="fw-bold text-primary"><?= $stats['total'] > 0 ? round(($stats['completed'] / $stats['total']) * 100) : 0 ?>%</span>
             </div>
             <div class="progress progress-thin">
-                <div class="progress-bar bg-success" style="width: <?= $stats['total'] > 0 ? round(($stats['completed'] / $stats['total']) * 100) : 0 ?>%"></div>
+                <div class="progress-bar bg-success" class="style-33477"></div>
             </div>
             <div class="d-flex gap-3 mt-2">
-                <small class="text-muted"><span class="text-success">●</span> Completed <?= $stats['completed'] ?></small>
-                <small class="text-muted"><span class="text-info">●</span> In Progress <?= $stats['in_progress'] ?></small>
-                <small class="text-muted"><span class="text-warning">●</span> Pending <?= $stats['pending'] ?></small>
-                <small class="text-muted"><span class="text-danger">●</span> Overdue <?= $stats['overdue'] ?></small>
+                <small class="text-muted"><span class="text-success">â—�</span> Completed <?= $stats['completed'] ?></small>
+                <small class="text-muted"><span class="text-info">â—�</span> In Progress <?= $stats['in_progress'] ?></small>
+                <small class="text-muted"><span class="text-warning">â—�</span> Pending <?= $stats['pending'] ?></small>
+                <small class="text-muted"><span class="text-danger">â—�</span> Overdue <?= $stats['overdue'] ?></small>
             </div>
         </div>
     </div>
@@ -137,7 +137,7 @@ $activeFilter = $_GET['filter'] ?? 'all';
                             </div>
                             <h6 class="task-title mb-2"><?= htmlspecialchars($t['title'] ?? 'Untitled Task') ?></h6>
                             <?php if (!empty($t['description'])): ?>
-                                <p class="text-muted small mb-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><?= htmlspecialchars($t['description']) ?></p>
+                                <p class="text-muted small mb-2" class="style-95822"><?= htmlspecialchars($t['description']) ?></p>
                             <?php endif; ?>
                             <div class="task-meta d-flex flex-wrap gap-2">
                                 <?php if (!empty($t['due_date'])): ?>

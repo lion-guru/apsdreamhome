@@ -66,7 +66,7 @@ try {
     $result['clawbacks'] = $clawbacks['processed'] ?? 0;
     $result['clawback_amount'] = $clawbacks['amount'] ?? 0;
     if ($result['clawbacks'] > 0) {
-        fwrite(STDOUT, "  Clawed back {$result['clawbacks']} commissions totaling ₹" . number_format($result['clawback_amount'], 2) . "\n");
+        fwrite(STDOUT, "  Clawed back {$result['clawbacks']} commissions totaling â‚¹" . number_format($result['clawback_amount'], 2) . "\n");
     } else {
         fwrite(STDOUT, "  No clawbacks to process (no 30+ day overdue installments).\n");
     }
@@ -106,7 +106,7 @@ $result['status'] = empty($result['errors']) ? 'success' : 'partial';
 
 fwrite(STDOUT, "\n=== Summary ===\n");
 fwrite(STDOUT, "Rank promotions: {$result['rank_promotions']}\n");
-fwrite(STDOUT, "Clawbacks: {$result['clawbacks']} (₹" . number_format($result['clawback_amount'] ?? 0, 2) . ")\n");
+fwrite(STDOUT, "Clawbacks: {$result['clawbacks']} (â‚¹" . number_format($result['clawback_amount'] ?? 0, 2) . ")\n");
 fwrite(STDOUT, "Payouts processed: {$result['payouts_processed']}\n");
 fwrite(STDOUT, "Duration: {$duration}ms\n");
 fwrite(STDOUT, "Status: {$result['status']}\n");
@@ -129,4 +129,4 @@ if (!empty($result['errors'])) {
     }
 }
 
-exit($result['status'] === 'success' ? 0 : 2);
+exit($result['status'] === 'success' ? 0 : 2);?>

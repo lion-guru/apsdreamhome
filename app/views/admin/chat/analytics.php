@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 /** @var array $data ChatAnalytics dashboard data */
 /** @var array $conversations Conversation stats */
 /** @var array $actionLabels Action label map */
@@ -18,16 +18,16 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1">💬 Chat Action Analytics</h2>
+            <h2 class="mb-1">ðŸ’¬ Chat Action Analytics</h2>
             <p class="text-muted mb-0">Track chatbot action usage, completion rates, and drop-offs</p>
         </div>
         <div class="d-flex gap-2">
-            <select class="form-select form-select-sm" style="width:auto" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
+            <select class="form-select form-select-sm" class="style-30246" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
                 <option value="7" <?=$days==7?'selected':''?>>Last 7 days</option>
                 <option value="30" <?=$days==30?'selected':''?>>Last 30 days</option>
                 <option value="90" <?=$days==90?'selected':''?>>Last 90 days</option>
             </select>
-            <a href="<?=$base?>/admin/chat-history" class="btn btn-outline-secondary btn-sm">📋 History</a>
+            <a href="<?=$base?>/admin/chat-history" class="btn btn-outline-secondary btn-sm">ðŸ“‹ History</a>
         </div>
     </div>
 
@@ -71,7 +71,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
     <div class="row g-3 mb-4">
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">ðŸ“Š Conversation States</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸â€œÅ  Conversation States</h5></div>
                 <div class="card-body">
                     <div class="d-flex gap-4 flex-wrap">
                         <div class="text-center">
@@ -104,7 +104,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
     <div class="row g-4 mb-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">ðŸŽ¯ Action Breakdown</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸Å½Â¯ Action Breakdown</h5></div>
                 <div class="card-body">
                     <?php if (empty($usage)): ?>
                     <p class="text-muted text-center py-4">No data yet. Start using the chatbot to see analytics.</p>
@@ -131,8 +131,8 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
                                     <td class="text-center"><span class="text-warning"><?=$row['cancels']?></span></td>
                                     <td class="text-center"><span class="text-danger"><?=$row['dropoffs']?></span></td>
                                     <td class="text-center">
-                                        <div class="progress" style="height:20px;width:100px;margin:0 auto">
-                                            <div class="progress-bar bg-<?=$rate>=70?'success':($rate>=40?'warning':'danger')?>" style="width="<?=$rate?>%"><?=$rate?>%</div>
+                                        <div class="progress" class="style-64842">
+                                            <div class="progress-bar bg-<?=$rate>=70?'success':($rate>=40?'warning':'danger')?>" class="style-5847"<?=$rate?>%"><?=$rate?>%</div>
                                         </div>
                                     </td>
                                 </tr>
@@ -148,7 +148,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
         <!-- Drop-off Analysis -->
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">ðŸš¨ Drop-off Points</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸Å¡Â¨ Drop-off Points</h5></div>
                 <div class="card-body">
                     <?php if (empty($dropoffs)): ?>
                     <p class="text-muted text-center py-4">No drop-offs recorded yet.</p>
@@ -170,7 +170,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
 
     <!-- Daily Trend -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white"><h5 class="mb-0">ðŸ“ˆ Daily Trend (Last <?=$days?> Days)</h5></div>
+        <div class="card-header bg-white"><h5 class="mb-0">Ã°Å¸â€œË† Daily Trend (Last <?=$days?> Days)</h5></div>
         <div class="card-body">
             <?php if (empty($trend)): ?>
             <p class="text-muted text-center py-4">No daily data yet.</p>

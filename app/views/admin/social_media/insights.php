@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $page_title = $page_title ?? 'Insights';
 $account = $account ?? [];
 $insights = $insights ?? [];
@@ -6,7 +6,7 @@ $period = $period ?? '7d';
 $csrf = $_SESSION['csrf_token'] ?? '';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-chart-line me-2"></i>Insights — <?= htmlspecialchars($account['account_name'] ?? '') ?></h2>
+    <h2><i class="fas fa-chart-line me-2"></i>Insights â€” <?= htmlspecialchars($account['account_name'] ?? '') ?></h2>
     <a href="<?= BASE_URL ?>/admin/social-media" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Accounts</a>
 </div>
 
@@ -70,10 +70,10 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <?php else: ?>
                     <?php foreach ($trend as $t): ?>
                         <div class="d-flex align-items-center mb-2">
-                            <div style="width:90px" class="small text-muted"><?= date('M d', strtotime($t['date'])) ?></div>
+                            <div class="style-11044" class="small text-muted"><?= date('M d', strtotime($t['date'])) ?></div>
                             <div class="flex-grow-1 mx-2">
-                                <div class="progress" style="height:22px;">
-                                    <div class="progress-bar bg-primary" style="width:<?= ($t['count'] / $max) * 100 ?>%"><?= $t['count'] ?></div>
+                                <div class="progress" class="style-43706">
+                                    <div class="progress-bar bg-primary" class="style-11521"><?= $t['count'] ?></div>
                                 </div>
                             </div>
                         </div>

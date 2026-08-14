@@ -64,11 +64,11 @@ function complianceBadgeClass($status) {
 </style>
 
 <div class="compliance-header">
-    <div class="container-fluid px-4" style="position:relative;z-index:1">
+    <div class="container-fluid px-4" class="style-84072">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h2 class="mb-1 fw-bold"><i class="fas fa-shield-alt me-2"></i>Compliance Scorecard</h2>
-                <p class="mb-0 opacity-75" style="font-size:14px">Data security, KYC, payment compliance, and regulatory status</p>
+                <p class="mb-0 opacity-75" class="style-42715">Data security, KYC, payment compliance, and regulatory status</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <a href="<?= $base ?>/admin/compliance-scorecard/recommendations" class="btn btn-light"><i class="fas fa-list-check me-1"></i>All Recommendations</a>
@@ -77,12 +77,12 @@ function complianceBadgeClass($status) {
     </div>
 </div>
 
-<div class="container-fluid px-4" style="margin-top:-12px">
+<div class="container-fluid px-4" class="style-71772">
 
     <!-- Overall Score + Last Checked -->
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="text-center p-4" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
+            <div class="text-center p-4" class="style-32484">
                 <div class="overall-score-ring">
                     <?php $circ = 2 * M_PI * 78; $offset = $circ * (1 - $overall / 100); ?>
                     <svg viewBox="0 0 180 180">
@@ -93,31 +93,31 @@ function complianceBadgeClass($status) {
                             stroke-dashoffset="<?= $offset ?>"/>
                     </svg>
                     <div class="overall-score-value">
-                        <div class="score-num" style="color:<?= complianceColor($overall) ?>"><?= $overall ?></div>
+                        <div class="score-num" class="style-40340"><?= $overall ?></div>
                         <div class="score-label">Overall Score</div>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <span class="badge <?= complianceBadgeClass($areas[array_key_first($areas)]['status'] ?? '') ?>" style="font-size:12px;padding:6px 14px">
+                    <span class="badge <?= complianceBadgeClass($areas[array_key_first($areas)]['status'] ?? '') ?>" class="style-79379">
                         <?= $overall >= 80 ? 'COMPLIANT' : ($overall >= 50 ? 'PARTIAL' : 'NON-COMPLIANT') ?>
                     </span>
                 </div>
             </div>
         </div>
         <div class="col-md-8">
-            <div class="p-4" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5;height:100%">
+            <div class="p-4" class="style-61680">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0" style="font-size:14px"><i class="fas fa-clock me-2 text-muted"></i>Last Checked</h6>
-                    <span class="text-muted" style="font-size:13px"><?= $last_checked ? date('d M Y, h:i A', strtotime($last_checked)) : 'Never' ?></span>
+                    <h6 class="fw-bold mb-0" class="style-42715"><i class="fas fa-clock me-2 text-muted"></i>Last Checked</h6>
+                    <span class="text-muted" class="style-87981"><?= $last_checked ? date('d M Y, h:i A', strtotime($last_checked)) : 'Never' ?></span>
                 </div>
                 <div class="row g-2">
                     <?php foreach ($areas as $key => $area): ?>
                         <div class="col-6 col-md-4">
-                            <div class="d-flex align-items-center gap-2 p-2" style="background:#f8f9fa;border-radius:10px">
-                                <div style="width:10px;height:10px;border-radius:50%;background:<?= complianceColor($area['score']) ?>;flex-shrink:0"></div>
+                            <div class="d-flex align-items-center gap-2 p-2" class="style-97625">
+                                <div class="style-71770"></div>
                                 <div>
-                                    <div style="font-size:11px;color:#888"><?= $area_labels[$key] ?? $key ?></div>
-                                    <div style="font-size:16px;font-weight:700;color:<?= complianceColor($area['score']) ?>"><?= $area['score'] ?></div>
+                                    <div class="style-90847"><?= $area_labels[$key] ?? $key ?></div>
+                                    <div class="style-21199"><?= $area['score'] ?></div>
                                 </div>
                             </div>
                         </div>
@@ -140,23 +140,23 @@ function complianceBadgeClass($status) {
             <div class="col-md-4 col-lg-2">
                 <a href="<?= $base ?>/admin/compliance-scorecard/area/<?= $key ?>" class="area-card">
                     <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="area-icon" style="background:<?= $color ?>15;color:<?= $color ?>">
+                        <div class="area-icon" class="style-29917">
                             <i class="<?= $icon ?>"></i>
                         </div>
-                        <svg width="52" height="52" viewBox="0 0 52 52" style="transform:rotate(-90deg)">
+                        <svg width="52" height="52" viewBox="0 0 52 52" class="style-20748">
                             <circle cx="26" cy="26" r="22" fill="none" stroke="#f0f0f5" stroke-width="4"/>
                             <circle cx="26" cy="26" r="22" fill="none" stroke="<?= $color ?>" stroke-width="4"
                                 stroke-linecap="round" stroke-dasharray="<?= $circ2 ?>" stroke-dashoffset="<?= $offset2 ?>"/>
                         </svg>
                     </div>
-                    <div class="area-score" style="color:<?= $color ?>"><?= $area['score'] ?></div>
+                    <div class="area-score" class="style-10786"><?= $area['score'] ?></div>
                     <div class="area-name"><?= $area_labels[$key] ?? $key ?></div>
                     <div class="area-weight">Weight: <?= round($weight * 100) ?>%</div>
                     <div class="progress-track">
-                        <div class="progress-fill" style="width:<?= $area['score'] ?>%;background:<?= $color ?>"></div>
+                        <div class="progress-fill" class="style-68214"></div>
                     </div>
                     <div class="mt-2">
-                        <span class="badge <?= complianceBadgeClass($area['status']) ?>" style="font-size:10px;padding:3px 8px"><?= complianceLabel($area['status']) ?></span>
+                        <span class="badge <?= complianceBadgeClass($area['status']) ?>" class="style-31514"><?= complianceLabel($area['status']) ?></span>
                     </div>
                 </a>
             </div>
@@ -166,22 +166,22 @@ function complianceBadgeClass($status) {
     <!-- Top 5 Recommendations -->
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="p-4" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
+            <div class="p-4" class="style-32484">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0" style="font-size:15px"><i class="fas fa-lightbulb me-2 text-warning"></i>Top Recommendations</h6>
-                    <a href="<?= $base ?>/admin/compliance-scorecard/recommendations" style="font-size:12px;color:#667eea">View All →</a>
+                    <h6 class="fw-bold mb-0" class="style-88720"><i class="fas fa-lightbulb me-2 text-warning"></i>Top Recommendations</h6>
+                    <a href="<?= $base ?>/admin/compliance-scorecard/recommendations" class="style-31575">View All â†’</a>
                 </div>
                 <?php if (empty($recommendations)): ?>
                     <div class="text-center text-muted py-4">
                         <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
-                        <p class="mb-0">All areas compliant — no critical recommendations</p>
+                        <p class="mb-0">All areas compliant â€” no critical recommendations</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($recommendations as $rec): ?>
                         <div class="rec-item <?= $rec['priority'] ?>">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <div class="rec-area" style="color:<?= complianceColor(100 - $rec['impact']) ?>"><?= $rec['area'] ?></div>
+                                    <div class="rec-area" class="style-16000"><?= $rec['area'] ?></div>
                                     <div class="rec-text"><?= htmlspecialchars($rec['recommendation']) ?></div>
                                 </div>
                                 <span class="rec-priority bg-<?= $rec['priority'] === 'critical' ? 'danger' : ($rec['priority'] === 'high' ? 'warning' : 'success') ?> text-white ms-2"><?= $rec['priority'] ?></span>
@@ -192,12 +192,12 @@ function complianceBadgeClass($status) {
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="p-4" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
-                <h6 class="fw-bold mb-3" style="font-size:15px"><i class="fas fa-chart-line me-2 text-info"></i>Compliance Trend</h6>
+            <div class="p-4" class="style-32484">
+                <h6 class="fw-bold mb-3" class="style-88720"><i class="fas fa-chart-line me-2 text-info"></i>Compliance Trend</h6>
                 <?php if (empty($trend)): ?>
                     <div class="text-center text-muted py-3">
                         <i class="fas fa-chart-area fa-2x mb-2"></i>
-                        <p class="mb-0" style="font-size:12px">Run compliance checks to see trend data</p>
+                        <p class="mb-0" class="style-86354">Run compliance checks to see trend data</p>
                     </div>
                 <?php else: ?>
                     <canvas id="trendChart" height="200"></canvas>
@@ -232,10 +232,10 @@ function complianceBadgeClass($status) {
                     </script>
                 <?php endif; ?>
             </div>
-            <div class="p-3 mt-3" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
-                <h6 class="fw-bold mb-2" style="font-size:13px"><i class="fas fa-info-circle me-1 text-muted"></i>Scoring Weights</h6>
+            <div class="p-3 mt-3" class="style-32484">
+                <h6 class="fw-bold mb-2" class="style-87981"><i class="fas fa-info-circle me-1 text-muted"></i>Scoring Weights</h6>
                 <?php foreach ($weights as $k => $w): ?>
-                    <div class="d-flex justify-content-between align-items-center mb-1" style="font-size:12px">
+                    <div class="d-flex justify-content-between align-items-center mb-1" class="style-86354">
                         <span class="text-muted"><?= $area_labels[$k] ?? $k ?></span>
                         <span class="fw-bold"><?= round($w * 100) ?>%</span>
                     </div>

@@ -55,7 +55,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
             <div class="text-muted small"><?= __('cp_total_plots') ?></div>
           </div>
           <div class="col-md-2">
-            <div class="fw-bold">₹<?= number_format((float)($totalAreaSqft), 0) ?></div>
+            <div class="fw-bold">â‚¹<?= number_format((float)($totalAreaSqft), 0) ?></div>
             <div class="text-muted small"><?= __('cp_total_area_sqft') ?></div>
           </div>
         </div>
@@ -201,7 +201,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
     </div>
   </div>
 
-  <div id="preview-results" class="mt-4" style="display: none;">
+  <div id="preview-results" class="mt-4" class="style-54390">
     <div class="card aps-cp-card">
       <div class="card-header aps-cp-card-header"><strong><i class="fas fa-map me-2"></i><?= __('cp_layout_preview') ?></strong></div>
       <div class="card-body aps-cp-card-body" id="preview-content">
@@ -240,9 +240,9 @@ document.addEventListener('DOMContentLoaded', function() {
               '</div>';
           
           html += '<h6 class="mb-3 fw-bold text-secondary"><i class="fas fa-map-marked-alt me-1"></i><?= __('cp_spatial_layout_map') ?></h6>';
-          html += '<div style="display:flex;flex-wrap:wrap;gap:8px;padding:16px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:24px;">';
-          html += '<div style="flex:1 1 100%;background:#dcfce7;border:1px solid #86efac;color:#166534;padding:12px;border-radius:10px;text-align:center;font-weight:700;font-size:0.85rem;margin-bottom:4px;"><i class="fas fa-tree me-2"></i><?= __('cp_dedicated_park') ?> (' + parkPct + '%)</div>';
-          html += '<div style="flex:1 1 100%;background:#e2e8f0;border:1px solid #cbd5e1;color:#475569;padding:8px;border-radius:10px;text-align:center;font-weight:700;font-size:0.8rem;margin-bottom:8px;"><i class="fas fa-road me-2"></i><?= __('cp_main_road') ?> (' + roadW + ' ft)</div>';
+          html += '<div class="style-9547">';
+          html += '<div class="style-32634"><i class="fas fa-tree me-2"></i><?= __('cp_dedicated_park') ?> (' + parkPct + '%)</div>';
+          html += '<div class="style-89666"><i class="fas fa-road me-2"></i><?= __('cp_main_road') ?> (' + roadW + ' ft)</div>';
 
           data.plots.forEach(function(p, i) {
             var isCorner = p.plot_type && p.plot_type.toLowerCase().indexOf('corner') !== -1;
@@ -253,10 +253,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var icon = '<i class="fas fa-home me-1"></i>';
             if (isCorner) { bg = '#fef3c7'; border = '#fcd34d'; color = '#78350f'; icon = '<i class="fas fa-angle-double-up me-1"></i>'; }
             else if (isPark) { bg = '#dcfce7'; border = '#86efac'; color = '#166534'; icon = '<i class="fas fa-tree me-1"></i>'; }
-            html += '<div style="flex:0 0 calc(12.5% - 8px);background:' + bg + ';border:1px solid ' + border + ';color:' + color + ';padding:10px;border-radius:10px;text-align:center;font-size:0.75rem;min-height:75px;display:flex;flex-direction:column;justify-content:center;transition:all 0.15s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
-                '<div style="font-weight:700;margin-bottom:2px;">' + icon + p.plot_no + '</div>' +
-                '<div class="text-muted" style="font-size:0.62rem;font-weight:500;">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
-                '<div style="font-size:0.55rem;opacity:0.8;margin-top:2px;">' + p.width_ft + 'x' + p.length_ft + ' ft</div>' +
+            html += '<div class="style-38373" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
+                '<div class="style-20987">' + icon + p.plot_no + '</div>' +
+                '<div class="text-muted" class="style-40535">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
+                '<div class="style-71519">' + p.width_ft + 'x' + p.length_ft + ' ft</div>' +
                 '</div>';
           });
           html += '</div>';

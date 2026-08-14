@@ -7,7 +7,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
 
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #14b8a6 100%); color: #fff;">
+        <div class="card border-0 shadow-sm" class="style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= $stats['total_pending'] ?></div>
                 <div class="small opacity-75"><?= __('assoc_emi_pending', [], 'Pending EMIs') ?></div>
@@ -25,7 +25,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
     <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-success">₹<?= number_format($stats['collected']) ?></div>
+                <div class="fs-2 fw-bold text-success">â‚¹<?= number_format($stats['collected']) ?></div>
                 <div class="small text-muted"><?= __('assoc_emi_collected', [], 'Collected') ?></div>
             </div>
         </div>
@@ -33,7 +33,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
     <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-warning">₹<?= number_format($stats['total_amount']) ?></div>
+                <div class="fs-2 fw-bold text-warning">â‚¹<?= number_format($stats['total_amount']) ?></div>
                 <div class="small text-muted"><?= __('assoc_emi_total_pending', [], 'Total Pending') ?></div>
             </div>
         </div>
@@ -84,7 +84,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                                     <?php endif; ?>
                                 </td>
                                 <td>#<?= $emi['installment_number'] ?? $emi['id'] ?></td>
-                                <td><strong>₹<?= number_format($emi['amount'] ?? 0) ?></strong></td>
+                                <td><strong>â‚¹<?= number_format($emi['amount'] ?? 0) ?></strong></td>
                                 <td>
                                     <span class="<?= $isOverdue ? 'text-danger fw-bold' : '' ?>">
                                         <?= date('d M Y', strtotime($emi['due_date'] ?? '')) ?>
@@ -104,7 +104,7 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                                 </td>
                                 <td>
                                     <?php if (!empty($emi['customer_phone'])): ?>
-                                        <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $emi['customer_phone']) ?>?text=<?= urlencode(__('assoc_emi_reminder_text', ['name' => ($emi['customer_name'] ?? ''), 'amount' => number_format($emi['amount'] ?? 0), 'date' => date('d M Y', strtotime($emi['due_date'] ?? ''))], 'Hi %name%, this is a reminder for your EMI payment of ₹%amount% due on %date%. Please pay at the earliest.')) ?>" 
+                                        <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $emi['customer_phone']) ?>?text=<?= urlencode(__('assoc_emi_reminder_text', ['name' => ($emi['customer_name'] ?? ''), 'amount' => number_format($emi['amount'] ?? 0), 'date' => date('d M Y', strtotime($emi['due_date'] ?? ''))], 'Hi %name%, this is a reminder for your EMI payment of â‚¹%amount% due on %date%. Please pay at the earliest.')) ?>" 
                                            class="btn btn-outline-success btn-sm" target="_blank" title="<?= __('assoc_emi_whatsapp_reminder', [], 'Send WhatsApp Reminder') ?>">
                                             <i class="fab fa-whatsapp"></i>
                                         </a>

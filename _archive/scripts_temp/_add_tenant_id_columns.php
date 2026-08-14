@@ -15,17 +15,17 @@ foreach ($tables as $table) {
     try {
         $cols = $db->fetchAll("SHOW COLUMNS FROM `$table` LIKE 'tenant_id'");
         if (count($cols) > 0) {
-            echo "SKIP  $table — tenant_id already exists\n";
+            echo "SKIP  $table â€” tenant_id already exists\n";
             continue;
         }
 
         $db->execute("ALTER TABLE `$table` ADD COLUMN tenant_id INT UNSIGNED NOT NULL DEFAULT 1 AFTER id");
         $db->execute("ALTER TABLE `$table` ADD INDEX idx_tenant_id (tenant_id)");
         $db->execute("UPDATE `$table` SET tenant_id = 1 WHERE tenant_id = 0");
-        echo "DONE  $table — added tenant_id + index, backfilled to 1\n";
+        echo "DONE  $table â€” added tenant_id + index, backfilled to 1\n";
     } catch (\Exception $e) {
-        echo "ERROR $table — " . $e->getMessage() . "\n";
+        echo "ERROR $table â€” " . $e->getMessage() . "\n";
     }
 }
 
-echo "\n=== Complete ===\n";
+echo "\n=== Complete ===\n";?>

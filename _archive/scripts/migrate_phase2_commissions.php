@@ -1,6 +1,6 @@
 <?php
 /**
- * Phase 2 Commission Streams — DB Migration + Test Data
+ * Phase 2 Commission Streams â€” DB Migration + Test Data
  * 
  * 1. Extend mlm_commission_ledger ENUM with new types
  * 2. Create mlm_generation_commissions table
@@ -239,17 +239,17 @@ run($pdo, 'Seed rank bonus amounts',
 // ============================================================
 echo "\n--- 9. Add Network Tree for Deep SM Users ---\n";
 
-// Deep SM chain: 2106(top) ← 2107 ← 2108 ← 2109 ← 2110 ← 2111 ← 2112(seller)
+// Deep SM chain: 2106(top) â†� 2107 â†� 2108 â†� 2109 â†� 2110 â†� 2111 â†� 2112(seller)
 // Associates: 320, 321, 322, 323, 324, 325, 319
 $networkTree = [
     // assoc_id, parent_assoc_id, level (depth from top)
     [320, null, 0],   // SiteManager (top)
-    [321, 320, 1],   // President → under SiteManager
-    [322, 321, 2],   // VP → under President
-    [323, 322, 3],   // SrBDM → under VP
-    [324, 323, 4],   // BDM → under SrBDM
-    [325, 324, 5],   // SrAssociate → under BDM
-    [319, 325, 6],   // Associate → under SrAssociate (bottom/seller)
+    [321, 320, 1],   // President â†’ under SiteManager
+    [322, 321, 2],   // VP â†’ under President
+    [323, 322, 3],   // SrBDM â†’ under VP
+    [324, 323, 4],   // BDM â†’ under SrBDM
+    [325, 324, 5],   // SrAssociate â†’ under BDM
+    [319, 325, 6],   // Associate â†’ under SrAssociate (bottom/seller)
 ];
 
 foreach ($networkTree as [$assocId, $parentId, $level]) {
@@ -282,4 +282,4 @@ foreach ($tables as $tbl) {
 }
 
 $r = $pdo->query("SELECT COUNT(*) as cnt FROM mlm_settings WHERE setting_key LIKE 'generation%' OR setting_key LIKE 'infinity%' OR setting_key LIKE 'matching%' OR setting_key LIKE 'rank_bonus%' OR setting_key LIKE 'min_monthly%' OR setting_key LIKE 'qualification%'");
-echo "  New settings: {$r->fetch()['cnt']}\n";
+echo "  New settings: {$r->fetch()['cnt']}\n";?>

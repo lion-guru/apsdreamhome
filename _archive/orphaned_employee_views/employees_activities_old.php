@@ -34,7 +34,7 @@ $filter = $filter ?? '';
         <div class="col-6 col-md-3">
             <div class="card act-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon bg-primary bg-opacity-10 text-primary" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;"><i class="fas fa-list"></i></div>
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary" class="style-89430"><i class="fas fa-list"></i></div>
                     <div><div class="fw-bold fs-4"><?= $stats['total'] ?></div><div class="text-muted small">Total Activities</div></div>
                 </div>
             </div>
@@ -42,7 +42,7 @@ $filter = $filter ?? '';
         <div class="col-6 col-md-3">
             <div class="card act-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon bg-success bg-opacity-10 text-success" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;"><i class="fas fa-calendar-day"></i></div>
+                    <div class="stat-icon bg-success bg-opacity-10 text-success" class="style-89430"><i class="fas fa-calendar-day"></i></div>
                     <div><div class="fw-bold fs-4 text-success"><?= $stats['today'] ?></div><div class="text-muted small">Today</div></div>
                 </div>
             </div>
@@ -50,7 +50,7 @@ $filter = $filter ?? '';
         <div class="col-6 col-md-3">
             <div class="card act-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon bg-info bg-opacity-10 text-info" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;"><i class="fas fa-calendar-week"></i></div>
+                    <div class="stat-icon bg-info bg-opacity-10 text-info" class="style-89430"><i class="fas fa-calendar-week"></i></div>
                     <div><div class="fw-bold fs-4 text-info"><?= $stats['this_week'] ?></div><div class="text-muted small">This Week</div></div>
                 </div>
             </div>
@@ -58,7 +58,7 @@ $filter = $filter ?? '';
         <div class="col-6 col-md-3">
             <div class="card act-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon bg-warning bg-opacity-10 text-warning" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;"><i class="fas fa-chart-pie"></i></div>
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning" class="style-89430"><i class="fas fa-chart-pie"></i></div>
                     <div><div class="fw-bold fs-4 text-warning"><?= count($stats['types']) ?></div><div class="text-muted small">Activity Types</div></div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ $filter = $filter ?? '';
                 $icon = $typeIcons[$type] ?? 'circle';
                 $color = $typeColors[$type] ?? 'secondary';
             ?>
-                <span class="badge bg-<?= $color ?> bg-opacity-10 text-<?= $color ?> me-2 mb-1" style="font-size:0.8rem;padding:5px 10px;">
+                <span class="badge bg-<?= $color ?> bg-opacity-10 text-<?= $color ?> me-2 mb-1" class="style-79756">
                     <i class="fas fa-<?= $icon ?> me-1"></i><?= ucfirst(htmlspecialchars($type)) ?>: <?= $count ?>
                 </span>
             <?php endforeach; ?>
@@ -140,7 +140,7 @@ $filter = $filter ?? '';
                             </div>
                             <div class="text-end ms-3">
                                 <small class="text-muted"><?= htmlspecialchars($timeAgo) ?></small>
-                                <div><span class="badge bg-<?= $typeColors[$actType] ?? 'secondary' ?> bg-opacity-10 text-<?= $typeColors[$actType] ?? 'secondary' ?>" style="font-size:0.7rem;"><?= ucfirst(htmlspecialchars($actType)) ?></span></div>
+                                <div><span class="badge bg-<?= $typeColors[$actType] ?? 'secondary' ?> bg-opacity-10 text-<?= $typeColors[$actType] ?? 'secondary' ?>" class="style-68658"><?= ucfirst(htmlspecialchars($actType)) ?></span></div>
                             </div>
                         </div>
                     </div>

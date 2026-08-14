@@ -14,7 +14,7 @@
     </button>
     
     <!-- Chat Window -->
-    <div id="chatbot-window" class="chatbot-window" style="display: none;">
+    <div id="chatbot-window" class="chatbot-window" class="style-54390">
         <!-- Header -->
         <div class="chatbot-header">
             <div class="chatbot-title">
@@ -38,13 +38,13 @@
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="message-content">
-                    <p>Namaste! 🙏 I'm your APS Dream Home AI assistant.</p>
+                    <p>Namaste! ðŸ™� I'm your APS Dream Home AI assistant.</p>
                     <p>I can help you with:</p>
                     <ul>
-                        <li>🏠 Buying/Selling properties</li>
-                        <li>🔑 Rental properties</li>
-                        <li>💰 Home loans</li>
-                        <li>🤝 Joining as associate</li>
+                        <li>ðŸ�  Buying/Selling properties</li>
+                        <li>ðŸ”‘ Rental properties</li>
+                        <li>ðŸ’° Home loans</li>
+                        <li>ðŸ¤� Joining as associate</li>
                     </ul>
                     <p>How can I help you today?</p>
                 </div>
@@ -73,7 +73,7 @@
         <div class="chatbot-footer">
             <span class="powered-by">__('component_powered_by_gemini', 'Powered by Gemini AI')</span>
             <button onclick="toggleLanguage()" class="lang-btn" id="lang-toggle">
-                🇬🇧 English
+                ðŸ‡¬ðŸ‡§ English
             </button>
         </div>
     </div>
@@ -388,7 +388,7 @@ function toggleChatbot() {
 function toggleLanguage() {
     currentLanguage = currentLanguage === 'en' ? 'hi' : 'en';
     const btn = document.getElementById('lang-toggle');
-    btn.textContent = currentLanguage === 'en' ? '🇬🇧 English' : '🇮🇳 हिंदी';
+    btn.textContent = currentLanguage === 'en' ? 'ðŸ‡¬ðŸ‡§ English' : 'ðŸ‡®ðŸ‡³ à¤¹à¤¿à¤‚à¤¦à¥€';
 }
 
 function handleChatKeypress(event) {
@@ -515,7 +515,7 @@ function clearChat() {
         <div class="chatbot-message bot">
             <div class="message-avatar"><i class="fas fa-robot"></i></div>
             <div class="message-content">
-                <p>Chat cleared! 🙏 How can I help you today?</p>
+                <p>Chat cleared! ðŸ™� How can I help you today?</p>
             </div>
         </div>
     `;

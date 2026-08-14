@@ -182,7 +182,8 @@ class TrainingController extends AdminController
                 return;
             }
             // Generate HTML certificate for download
-            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Certificate - ' . htmlspecialchars($cert['certificate_number']) . '</title>';
+            $html = '<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8"><title>Certificate - ' . htmlspecialchars($cert['certificate_number']) . '</title>';
             $html .= '<style>body{font-family:Georgia,serif;text-align:center;padding:60px;background:#fff;}';
             $html .= '.border{border:8px double #c9a84c;padding:40px;margin:20px;position:relative;}';
             $html .= 'h1{color:#1e3a5f;font-size:36px;margin-bottom:5px;}h2{color:#333;font-size:20px;font-weight:normal;margin-top:10px;}';

@@ -43,4 +43,4 @@ $stmt->execute(['telecaller']);
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 echo "Telecaller menu items: " . count($items) . "\n";
 
-echo "\nDONE\n";
+echo "\nDONE\n";?>

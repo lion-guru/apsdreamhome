@@ -598,4 +598,4 @@ class UserService
             $this->logger->error("UserService::logActivity - Error: " . $e->getMessage());
         }
     }
-}
+}?>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Traits;
 use App\Core\Middleware\TenantContext;
 
 /**
- * TenantAwareTrait — Reusable tenant scoping for controllers.
+ * TenantAwareTrait â€” Reusable tenant scoping for controllers.
  *
  * Usage:
  *   use TenantAwareTrait;
@@ -74,4 +74,4 @@ trait TenantAwareTrait
 
         return $cache[$table];
     }
-}
+}?>

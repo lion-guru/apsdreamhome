@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $_agent = $agent ?? ['name' => 'Agent', 'color' => '#666', 'icon' => 'fa-robot', 'description' => ''];
 $_type = $agent_type ?? '';
 $_tasks = $tasks ?? [];
@@ -10,7 +10,7 @@ $_escalations = $escalations ?? [];
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas <?= $_agent['icon'] ?>" style="color:<?= $_agent['color'] ?>"></i> <?= htmlspecialchars($_agent['name']) ?></h1>
+                    <h1 class="m-0"><i class="fas <?= $_agent['icon'] ?>" class="style-38863"></i> <?= htmlspecialchars($_agent['name']) ?></h1>
                     <small class="text-muted"><?= htmlspecialchars($_agent['description']) ?></small>
                 </div>
                 <div class="col-sm-6 text-right">
@@ -63,7 +63,7 @@ $_escalations = $escalations ?? [];
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <!-- Insights -->
-                    <div class="card card-outline" style="border-left:4px solid <?= $_agent['color'] ?>">
+                    <div class="card card-outline" class="style-93777">
                         <div class="card-header"><h3 class="card-title"><i class="fas fa-lightbulb"></i> Insights</h3></div>
                         <div class="card-body p-0">
                             <?php if (empty($_insights)): ?>
@@ -84,7 +84,7 @@ $_escalations = $escalations ?? [];
 
                     <!-- Escalations -->
                     <div class="card card-outline card-danger">
-                        <div class="card-header"><h3 class="card-title" style="color:#ef4444"><i class="fas fa-exclamation-triangle"></i> Pending Escalations</h3></div>
+                        <div class="card-header"><h3 class="card-title" class="style-78822"><i class="fas fa-exclamation-triangle"></i> Pending Escalations</h3></div>
                         <div class="card-body p-0">
                             <?php if (empty($_escalations)): ?>
                             <div class="text-center py-3 text-muted small">No pending escalations</div>

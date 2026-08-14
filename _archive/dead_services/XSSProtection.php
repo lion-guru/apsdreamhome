@@ -85,9 +85,9 @@ function csrf_token() {
     return CSRFProtection::generateToken();
 }
 
-// Security headers — CSP handled centrally by BaseController::setSecurityHeaders()
+// Security headers â€” CSP handled centrally by BaseController::setSecurityHeaders()
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-header('Permissions-Policy: geolocation=(self), camera=(), microphone=()');
+header('Permissions-Policy: geolocation=(self), camera=(), microphone=()');?>

@@ -35,16 +35,16 @@
                                     <td><strong><?= htmlspecialchars($p['name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($p['district_name'] ?? '') ?></td>
                                     <td>
-                                        <div class="progress" style="height:20px;">
-                                            <div class="progress-bar bg-<?= ($p['progress_pct'] ?? 0) >= 100 ? 'success' : (($p['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>" style="width:<?= (int)($p['progress_pct'] ?? 0) ?>%">
+                                        <div class="progress" class="style-39312">
+                                            <div class="progress-bar bg-<?= ($p['progress_pct'] ?? 0) >= 100 ? 'success' : (($p['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>" class="style-35683">
                                                 <?= (int)($p['progress_pct'] ?? 0) ?>%
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?= isset($p['progress_last_updated']) ? date('d M Y', strtotime($p['progress_last_updated'])) : '—' ?></td>
-                                    <td><?= htmlspecialchars($p['project_manager'] ?? '—') ?></td>
-                                    <td>₹<?= number_format($budget, 2) ?></td>
-                                    <td class="text-<?= $budget > 0 && $spent > $budget ? 'danger' : 'success' ?>">₹<?= number_format($spent, 2) ?></td>
+                                    <td><?= isset($p['progress_last_updated']) ? date('d M Y', strtotime($p['progress_last_updated'])) : 'â€”' ?></td>
+                                    <td><?= htmlspecialchars($p['project_manager'] ?? 'â€”') ?></td>
+                                    <td>â‚¹<?= number_format($budget, 2) ?></td>
+                                    <td class="text-<?= $budget > 0 && $spent > $budget ? 'danger' : 'success' ?>">â‚¹<?= number_format($spent, 2) ?></td>
                                     <td>
                                         <?php $flags = $p['risk_flags'] ?? ''; ?>
                                         <span class="badge bg-<?= empty($flags) ? 'success' : 'danger' ?>"><?= empty($flags) ? 'None' : htmlspecialchars($flags) ?></span>

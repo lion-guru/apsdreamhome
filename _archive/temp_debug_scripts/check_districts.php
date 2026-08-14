@@ -25,4 +25,4 @@ if ($klState) {
 
 echo "\n=== Check for Kochi/Thiruvananthapuram ===\n";
 $specialDistricts = $db->fetchAll('SELECT id, name, state_id FROM districts WHERE name IN (?, ?)', ['Kochi', 'Thiruvananthapuram']);
-var_dump($specialDistricts);
+var_dump($specialDistricts);?>

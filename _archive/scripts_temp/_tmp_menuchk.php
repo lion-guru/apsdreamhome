@@ -12,4 +12,4 @@ $cols = $db->fetchAll("SHOW COLUMNS FROM calls_log");
 foreach ($cols as $c) { echo $c['Field']." ".$c['Type']."\n"; }
 echo "=== calling-schedule/calls_log counts ===\n";
 echo "schedule: ".(int)$db->fetch("SELECT COUNT(*) c FROM ai_calling_schedule")['c']."\n";
-echo "calls_log: ".(int)$db->fetch("SELECT COUNT(*) c FROM calls_log")['c']."\n";
+echo "calls_log: ".(int)$db->fetch("SELECT COUNT(*) c FROM calls_log")['c']."\n";?>

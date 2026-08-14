@@ -23,7 +23,7 @@ function statusColor($status) {
 
   <div class="row mb-3">
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-<?= statusColor($db['status'] ?? 'ok') ?> text-white">
-      <div class="card-body aps-cp-card-body"><small class="opacity-75">Database</small><h5 class="mb-0"><?= ucfirst($db['status'] ?? 'unknown') ?></h5><small><?= $db['tables'] ?? 0 ?> tables · <?= $db['size_mb'] ?? 0 ?> MB</small></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Database</small><h5 class="mb-0"><?= ucfirst($db['status'] ?? 'unknown') ?></h5><small><?= $db['tables'] ?? 0 ?> tables Â· <?= $db['size_mb'] ?? 0 ?> MB</small></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-<?= statusColor($disk['status'] ?? 'ok') ?> text-white">
       <div class="card-body aps-cp-card-body"><small class="opacity-75">Disk</small><h5 class="mb-0"><?= $disk['used_pct'] ?? 0 ?>% used</h5><small><?= $disk['free_gb'] ?? 0 ?> GB free of <?= $disk['total_gb'] ?? 0 ?> GB</small></div>
@@ -81,8 +81,8 @@ function statusColor($status) {
         <div class="card-body aps-cp-card-body">
           <div class="mb-3">
             <div class="d-flex justify-content-between"><strong>Disk Usage</strong><span><?= $disk['used_gb'] ?? 0 ?> / <?= $disk['total_gb'] ?? 0 ?> GB</span></div>
-            <div class="progress mt-1" style="height: 20px;">
-              <div class="progress-bar bg-<?= ($disk['used_pct'] ?? 0) > 90 ? 'danger' : (($disk['used_pct'] ?? 0) > 70 ? 'warning' : 'success') ?>" style="width: <?= $disk['used_pct'] ?? 0 ?>%"><?= $disk['used_pct'] ?? 0 ?>%</div>
+            <div class="progress mt-1" class="style-51309">
+              <div class="progress-bar bg-<?= ($disk['used_pct'] ?? 0) > 90 ? 'danger' : (($disk['used_pct'] ?? 0) > 70 ? 'warning' : 'success') ?>" class="style-28798"><?= $disk['used_pct'] ?? 0 ?>%</div>
             </div>
           </div>
           <h6>Cache</h6>

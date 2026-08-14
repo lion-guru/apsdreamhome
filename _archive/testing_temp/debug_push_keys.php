@@ -27,4 +27,4 @@ $privProp->setAccessible(true);
 echo "Vapid Public Key Binary Length: " . strlen($pubProp->getValue($sender)) . "\n";
 echo "Vapid Private Key Binary Length: " . strlen($privProp->getValue($sender)) . "\n";
 echo "isConfigured: " . ($sender->isConfigured() ? "TRUE" : "FALSE") . "\n";
-echo "getVapidPublicKey: '" . $sender->getVapidPublicKey() . "' (len: " . strlen($sender->getVapidPublicKey()) . ")\n";
+echo "getVapidPublicKey: '" . $sender->getVapidPublicKey() . "' (len: " . strlen($sender->getVapidPublicKey()) . ")\n";?>

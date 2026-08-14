@@ -26,7 +26,7 @@ if ($encoding !== 'UTF-8') {
     }
     
     file_put_contents($file, $content);
-    echo "✅ $file converted to UTF-8\n";
+    echo "âœ… $file converted to UTF-8\n";
 } else {
-    echo "ℹ️ $file already UTF-8\n";
-}
+    echo "â„¹ï¸� $file already UTF-8\n";
+}?>

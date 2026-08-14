@@ -69,4 +69,4 @@ foreach($tables as $tbl) {
 // 11. Rank benefits
 echo "\n=== RANK BENEFITS ===\n";
 $r = $pdo->query('SELECT rank_name, direct_sale_pct, l1_pct, l2_pct, l3_pct FROM mlm_rank_benefits ORDER BY direct_sale_pct');
-while($row = $r->fetch(PDO::FETCH_ASSOC)) echo "  {$row['rank_name']}: direct={$row['direct_sale_pct']}% L1={$row['l1_pct']}% L2={$row['l2_pct']}% L3={$row['l3_pct']}%\n";
+while($row = $r->fetch(PDO::FETCH_ASSOC)) echo "  {$row['rank_name']}: direct={$row['direct_sale_pct']}% L1={$row['l1_pct']}% L2={$row['l2_pct']}% L3={$row['l3_pct']}%\n";?>

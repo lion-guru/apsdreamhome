@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-chart-bar"></i> MLM Commission Analytics</h4>
         <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
@@ -22,7 +22,7 @@
                     <?php if (empty($analytics ?? [])): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5">
-                            <i class="fas fa-chart-bar fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3" class="style-82835"></i>
                             <h5 class="text-muted">No analytics data yet</h5>
                             <p class="text-muted mb-3">Analytics are generated automatically once associates start earning commissions over multiple periods.</p>
                         </td>

@@ -14,8 +14,8 @@
                         <tr><th>City</th><td><?= htmlspecialchars($property['city'] ?? '-') ?></td></tr>
                         <tr><th>Status</th><td><span class="badge bg-success">VERIFIED</span></td></tr>
                         <tr><th>Verified On</th><td><?= htmlspecialchars($verification['verification_date'] ?? '-') ?></td></tr>
-                        <tr><th>Blockchain Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>
-                        <tr><th>Transaction Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['transaction_hash'] ?? '-') ?></code></td></tr>
+                        <tr><th>Blockchain Hash</th><td class="style-85847"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>
+                        <tr><th>Transaction Hash</th><td class="style-85847"><code><?= htmlspecialchars($verification['transaction_hash'] ?? '-') ?></code></td></tr>
                     </table></div>
                 </div>
             </div>

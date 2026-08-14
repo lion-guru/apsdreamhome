@@ -62,4 +62,4 @@ imagepng($img, $base . '/logo.png');
 imagedestroy($img);
 echo "Created logo.png\n";
 
-echo "All done!\n";
+echo "All done!\n";?>

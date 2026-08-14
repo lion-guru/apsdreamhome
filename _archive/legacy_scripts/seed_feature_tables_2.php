@@ -722,4 +722,4 @@ if (isEmpty($db, 'customers_ledger')) {
 $db->exec("SET FOREIGN_KEY_CHECKS = 1");
 
 echo "\n=== SEEDING COMPLETE ===\n";
-echo "Total tables seeded: {$total}\n";
+echo "Total tables seeded: {$total}\n";?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Bulletproof APK download script for ngrok compatibility.
- * Uses chunked transfer encoding — no Content-Length header.
+ * Uses chunked transfer encoding â€” no Content-Length header.
  * Flushes output aggressively at every level.
  */
 $file = __DIR__ . '/downloads/apsdreamhome.apk';
@@ -25,15 +25,15 @@ while (ob_get_level() > 0) {
 @ini_set('output_buffering', '0');
 @ini_set('max_execution_time', '300');
 
-// Use octet-stream instead of APK MIME — Chrome on Android blocks APK downloads from HTTPS
+// Use octet-stream instead of APK MIME â€” Chrome on Android blocks APK downloads from HTTPS
 header('Content-Type: application/octet-stream');
-// No Content-Disposition: attachment — Chrome treats attachment as "dangerous download"
+// No Content-Disposition: attachment â€” Chrome treats attachment as "dangerous download"
 header('Content-Transfer-Encoding: binary');
 header('Cache-Control: public, max-age=3600');
 header('Pragma: public');
 header('X-Accel-Buffering: no');
 
-$chunkSize = 512 * 1024; // 512KB chunks — safer for ngrok
+$chunkSize = 512 * 1024; // 512KB chunks â€” safer for ngrok
 $handle = fopen($file, 'rb');
 if (!$handle) {
     http_response_code(500);
@@ -57,4 +57,4 @@ while (!feof($handle)) {
     }
 }
 fclose($handle);
-exit;
+exit;?>

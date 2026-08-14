@@ -32,4 +32,4 @@ function findControllerFile($class) {
         if (file_exists($p)) return $p;
     }
     return null;
-}
+}?>

@@ -12,4 +12,4 @@ try {
     echo "count: " . $row['c'] . "\n";
 } catch (\Exception $e) {
     echo "error: " . $e->getMessage() . "\n";
-}
+}?>

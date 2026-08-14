@@ -36,7 +36,7 @@
         </div>
     </div>
 </div>
-<div class="row flex-nowrap overflow-auto pb-3" style="min-height:200px;">
+<div class="row flex-nowrap overflow-auto pb-3" class="style-93303">
     <?php $stages = [
         'new' => ['label' => 'New', 'color' => 'secondary'],
         'contacted' => ['label' => 'Contacted', 'color' => 'info'],
@@ -47,13 +47,13 @@
         'closed' => ['label' => 'Closed', 'color' => 'dark'],
     ]; ?>
     <?php foreach ($stages as $key => $stage): ?>
-        <div class="col-md-3 col-lg-2" style="min-width:260px;">
+        <div class="col-md-3 col-lg-2" class="style-30890">
             <div class="card h-100">
                 <div class="card-header bg-<?= $stage['color'] ?> text-white d-flex justify-content-between align-items-center py-2">
                     <small class="fw-bold"><?= $stage['label'] ?></small>
                     <span class="badge bg-light text-dark"><?= count($pipeline[$key] ?? []) ?></span>
                 </div>
-                <div class="card-body p-2" style="min-height:300px;max-height:500px;overflow-y:auto;">
+                <div class="card-body p-2" class="style-37139">
                     <?php $items = $pipeline[$key] ?? []; ?>
                     <?php if (empty($items)): ?>
                         <p class="text-muted text-center small py-4">No leads</p>

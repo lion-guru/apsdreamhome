@@ -26,4 +26,4 @@ usort($files, function($a, $b) { return strlen($a) <=> strlen($b); });
 foreach ($files as $f) {
     echo basename($f) . " : " . str_replace(__DIR__ . '/../', '', $f) . PHP_EOL;
 }
-echo "\nTotal: " . count($files) . PHP_EOL;
+echo "\nTotal: " . count($files) . PHP_EOL;?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Core Register — Unified registration with role selection cards
+ * Core Register â€” Unified registration with role selection cards
  * @var string $csrf_token
  * @var array $errors
  * @var array $old
@@ -146,7 +146,7 @@ $selectedRole = $selectedRole ?? 'customer';
     <div class="register-container">
         <div class="brand">
             <h1><i class="fas fa-home"></i> APS Dream Home</h1>
-            <p>Create your account — choose your role</p>
+            <p>Create your account â€” choose your role</p>
         </div>
         <div class="card">
             <?php if (!empty($errors)): ?>
@@ -233,7 +233,9 @@ $selectedRole = $selectedRole ?? 'customer';
                     <label for="terms">I agree to the <a href="<?= BASE_URL ?>/terms">Terms of Service</a> and <a href="<?= BASE_URL ?>/privacy">Privacy Policy</a> *</label>
                 </div>
 
-                <button type="submit" class="btn-submit">
+                
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-submit">
                     <i class="fas fa-user-plus"></i> Create Account
                 </button>
             </form>

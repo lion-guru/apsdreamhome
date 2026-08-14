@@ -145,4 +145,4 @@ foreach ($targets as $t) {
 }
 
 echo "\n=== RESULT: Wrapped $wrapped refs, Dropped $dropped tables ===\n";
-echo "Tables: " . count($tables) . " → " . (count($tables) - $dropped) . "\n";
+echo "Tables: " . count($tables) . " â†’ " . (count($tables) - $dropped) . "\n";?>

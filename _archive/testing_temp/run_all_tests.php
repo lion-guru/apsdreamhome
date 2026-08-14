@@ -126,4 +126,4 @@ foreach ($testFiles as $file) {
 
     $results[$file] = ['status' => $status, 'details' => $details];
     echo sprintf("%-45s | %-5s | %s\n", $file, $status, $details);
-}
+}?>

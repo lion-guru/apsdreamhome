@@ -21,4 +21,4 @@ if (copy($source, $destRegister)) {
     file_put_contents($destRegister, $content);
 } else {
     echo "Failed to copy RegisterController.php\n";
-}
+}?>

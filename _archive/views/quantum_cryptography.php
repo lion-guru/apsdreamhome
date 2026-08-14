@@ -75,7 +75,7 @@
                         <?php $val = $impl_status[$key] ?? '0%'; $pct = (int) $val; ?>
                         <div class="mb-3">
                             <div class="d-flex justify-content-between"><small><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></small><small class="text-muted"><?= htmlspecialchars($val) ?></small></div>
-                            <div class="progress" style="height:8px"><div class="progress-bar bg-<?= $pct >= 90 ? 'success' : ($pct >= 50 ? 'warning' : 'danger') ?>" style="width:<?= htmlspecialchars($pct, ENT_QUOTES, 'UTF-8') ?>%"></div></div>
+                            <div class="progress" class="style-32124"><div class="progress-bar bg-<?= $pct >= 90 ? 'success' : ($pct >= 50 ? 'warning' : 'danger') ?>" class="style-35193"></div></div>
                         </div>
                     <?php endforeach; ?>
                     <div class="mt-3 p-3 bg-light rounded">

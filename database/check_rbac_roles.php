@@ -24,4 +24,4 @@ echo "Type: " . $roleInfo['Type'] . "\n";
 echo "Null: " . $roleInfo['Null'] . "\n";
 echo "Default: " . ($roleInfo['Default'] ?? 'NULL') . "\n";
 
-echo "\nDone.\n";
+echo "\nDone.\n";?>

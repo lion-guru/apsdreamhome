@@ -1,13 +1,13 @@
 <?php
 /**
- * Admin Panel — DB Verification Script (CLI Version)
+ * Admin Panel â€” DB Verification Script (CLI Version)
  * Run: php public\admin-db-check-cli.php
  */
 
 $pdo = new PDO("mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-echo "=== APS DREAM HOME — DB VERIFICATION REPORT ===\n\n";
+echo "=== APS DREAM HOME â€” DB VERIFICATION REPORT ===\n\n";
 
 $checks = [
     'leads'                      => ['CRM Leads', 1],
@@ -47,9 +47,9 @@ $tablesToCheck = array_keys($checks);
 $tablesToCheck[] = 'bookings'; // check old wrong table
 
 echo "TABLE STATUS CHECK\n";
-echo str_repeat('─', 70) . "\n";
+echo str_repeat('â”€', 70) . "\n";
 printf("%-35s %-10s %-12s %s\n", 'TABLE', 'EXISTS', 'ROWS', 'STATUS');
-echo str_repeat('─', 70) . "\n";
+echo str_repeat('â”€', 70) . "\n";
 
 $issues = [];
 $passing = [];
@@ -69,13 +69,13 @@ foreach ($tablesToCheck as $table) {
             $passing[] = $table;
         }
     } catch (Exception $e) {
-        printf("%-35s %-10s %-12s %s\n", $table, 'MISSING', '—', 'MISSING');
+        printf("%-35s %-10s %-12s %s\n", $table, 'MISSING', 'â€”', 'MISSING');
         $missing[] = $table;
     }
 }
 
 echo "\nCRITICAL TABLE CHECK\n";
-echo str_repeat('─', 70) . "\n";
+echo str_repeat('â”€', 70) . "\n";
 
 $hasBookings = false;
 $hasPlotBookings = false;
@@ -88,17 +88,17 @@ echo "plot_bookings table (real):  " . ($hasPlotBookings ? "EXISTS" : "MISSING")
 if ($hasBookings && !$hasPlotBookings) {
     echo "\nCRITICAL: Only 'bookings' exists but code uses 'plot_bookings'!\n";
 } elseif (!$hasBookings && $hasPlotBookings) {
-    echo "\nWARNING: 'bookings' table missing — BookingController will fail!\n";
+    echo "\nWARNING: 'bookings' table missing â€” BookingController will fail!\n";
     echo "   FIX: CREATE VIEW bookings AS SELECT * FROM plot_bookings;\n";
 } elseif ($hasBookings && $hasPlotBookings) {
-    echo "\nBoth exist — check if data is consistent\n";
+    echo "\nBoth exist â€” check if data is consistent\n";
     $b = (int)$pdo->query("SELECT COUNT(*) FROM bookings")->fetchColumn();
     $pb = (int)$pdo->query("SELECT COUNT(*) FROM plot_bookings")->fetchColumn();
     echo "   bookings rows: $b | plot_bookings rows: $pb\n";
 }
 
 echo "\nSAMPLE DATA CHECK\n";
-echo str_repeat('─', 70) . "\n";
+echo str_repeat('â”€', 70) . "\n";
 
 $roles = $pdo->query("SELECT role, COUNT(*) as cnt FROM users GROUP BY role ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
 echo "Users by role:\n";
@@ -107,7 +107,7 @@ foreach ($roles as $r) echo "  {$r['role']}: {$r['cnt']}\n";
 try {
     $comm = $pdo->query("SELECT type, COUNT(*) as cnt, SUM(amount) as total FROM mlm_commission_ledger GROUP BY type ORDER BY total DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
     echo "\nTop 5 Commission Types:\n";
-    foreach ($comm as $c) echo "  {$c['type']}: {$c['cnt']} entries = ₹" . number_format($c['total']) . "\n";
+    foreach ($comm as $c) echo "  {$c['type']}: {$c['cnt']} entries = â‚¹" . number_format($c['total']) . "\n";
 } catch(Exception $e) { echo "Commission query failed: " . $e->getMessage() . "\n"; }
 
 try {
@@ -123,10 +123,10 @@ try {
 } catch(Exception $e) {}
 
 echo "\nSUMMARY\n";
-echo str_repeat('─', 70) . "\n";
-echo "✅ Working tables: " . count($passing) . "\n";
-echo "⚠️  Low data tables: " . count($issues) . "\n";
-echo "❌ Missing tables: " . count($missing) . "\n";
+echo str_repeat('â”€', 70) . "\n";
+echo "âœ… Working tables: " . count($passing) . "\n";
+echo "âš ï¸�  Low data tables: " . count($issues) . "\n";
+echo "â�Œ Missing tables: " . count($missing) . "\n";
 
 if (!empty($missing)) {
     echo "\nMISSING TABLES (need to CREATE):\n";
@@ -138,4 +138,4 @@ if (!empty($issues)) {
     foreach ($issues as $i) echo "  $i\n";
 }
 
-echo "\n✅ DB Verification Complete!\n";
+echo "\nâœ… DB Verification Complete!\n";?>

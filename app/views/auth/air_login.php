@@ -1,6 +1,6 @@
 <?php
 /**
- * Air Login — OTP-based login without password
+ * Air Login ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ OTP-based login without password
  * @var string $csrf_token
  * @var string|null $error
  * @var string|null $success
@@ -10,6 +10,9 @@ $base = BASE_URL;
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
@@ -91,8 +94,8 @@ $base = BASE_URL;
     <div class="login-wrapper">
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
-            <div class="benefits-title"><i class="fas fa-wind" style="color:#0d9488"></i> Air Login</div>
-            <div class="benefits-subtitle">Login to your APS Dream Home account without a password — just your email or phone number.</div>
+            <div class="benefits-title"><i class="fas fa-wind" class="style-5793"></i> Air Login</div>
+            <div class="benefits-subtitle">Login to your APS Dream Home account without a password ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ just your email or phone number.</div>
 
             <div class="benefit-item">
                 <div class="benefit-icon"><i class="fas fa-shield-check"></i></div>
@@ -112,7 +115,7 @@ $base = BASE_URL;
                 <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
                 <div class="benefit-text">
                     <h4>Fast Access</h4>
-                    <p>Skip password recall. Just enter your OTP and you're in — in under 30 seconds.</p>
+                    <p>Skip password recall. Just enter your OTP and you're in ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ in under 30 seconds.</p>
                 </div>
             </div>
 
@@ -174,7 +177,9 @@ $base = BASE_URL;
                          </div>
                      </div>
 
-                    <button type="submit" class="btn-submit">
+                    
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-submit">
                         <i class="fas fa-paper-plane"></i> Send OTP
                     </button>
                 </form>
@@ -182,7 +187,7 @@ $base = BASE_URL;
                 <div class="divider"><span>or</span></div>
 
                 <div class="login-link">
-                    <a href="<?= $base ?>/auth/login">← Back to Password Login</a>
+                    <a href="<?= $base ?>/auth/login">ÃƒÂ¢Ã¢â‚¬Â Ã¯Â¿Â½ Back to Password Login</a>
                 </div>
             </div>
         </div>

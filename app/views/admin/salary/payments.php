@@ -74,7 +74,7 @@
                                 <td>#<?= $p['id'] ?></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar bg-info text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px;">
+                                        <div class="avatar bg-info text-white rounded-circle me-2 d-flex align-items-center justify-content-center" class="style-68946">
                                             <?= strtoupper(substr(htmlspecialchars($p['employee_name'] ?? 'E'), 0, 1)) ?>
                                         </div>
                                         <strong><?= htmlspecialchars($p['employee_name'] ?? '') ?></strong>
@@ -86,9 +86,9 @@
                                         echo $monthName . ' ' . ($p['payment_year'] ?? '');
                                     ?>
                                 </td>
-                                <td>₹<?= number_format($p['gross_amount'] ?? 0, 2) ?></td>
-                                <td class="text-danger">₹<?= number_format($p['deduction_amount'] ?? 0, 2) ?></td>
-                                <td class="text-primary fw-bold">₹<?= number_format($p['net_amount'] ?? 0, 2) ?></td>
+                                <td>â‚¹<?= number_format($p['gross_amount'] ?? 0, 2) ?></td>
+                                <td class="text-danger">â‚¹<?= number_format($p['deduction_amount'] ?? 0, 2) ?></td>
+                                <td class="text-primary fw-bold">â‚¹<?= number_format($p['net_amount'] ?? 0, 2) ?></td>
                                 <td><?= date('d M Y', strtotime($p['payment_date'] ?? 'now')) ?></td>
                                 <td>
                                     <span class="badge bg-light text-dark border">

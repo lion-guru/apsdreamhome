@@ -38,7 +38,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <?php $photoVal = $sc["leader_{$i}"]["leader_{$i}_photo"] ?? ''; ?>
                         <?php if (!empty($photoVal)): ?>
-                        <img src="<?= BASE_URL ?>/<?= htmlspecialchars($photoVal) ?>" class="rounded" style="width:40px;height:40px;object-fit:cover;">
+                        <img src="<?= BASE_URL ?>/<?= htmlspecialchars($photoVal) ?>" class="rounded" class="style-25739">
                         <?php endif; ?>
                         <input type="text" class="form-control form-control-sm" name="leader_<?= $i ?>_photo" value="<?= htmlspecialchars($photoVal) ?>" placeholder="assets/images/team/...">
                     </div>

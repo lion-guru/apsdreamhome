@@ -15,4 +15,4 @@ echo "\nnetwork_tree unique index on associate_id: " . (count($idx) > 0 ? "YES" 
 // Verify new columns
 $cols = $pdo->query("SHOW COLUMNS FROM mlm_commission_ledger")->fetchAll(PDO::FETCH_COLUMN);
 echo "\nmlm_commission_ledger columns:\n";
-foreach ($cols as $c) echo "  $c\n";
+foreach ($cols as $c) echo "  $c\n";?>

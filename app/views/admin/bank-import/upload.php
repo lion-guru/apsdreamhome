@@ -27,9 +27,9 @@
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Bank Account <span class="text-muted">(optional)</span></label>
                             <select name="bank_account_id" class="form-select">
-                                <option value="">— Select Bank Account —</option>
+                                <option value="">â€” Select Bank Account â€”</option>
                                 <?php foreach (($banks ?? []) as $b): ?>
-                                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name']) ?></option>
+                                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' â€” ' . $b['bank_name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="form-text">Link this import to a specific bank account for easier reconciliation.</div>
@@ -37,7 +37,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold">CSV File <span class="text-danger">*</span></label>
-                            <div id="dropZone" class="border border-2 border-dashed rounded-3 p-5 text-center" style="border-color: #cbd5e1; cursor: pointer; transition: all 0.2s;">
+                            <div id="dropZone" class="border border-2 border-dashed rounded-3 p-5 text-center" class="style-96836">
                                 <div id="dropContent">
                                     <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
                                     <p class="mb-1 fw-semibold">Drag & drop your CSV file here</p>
@@ -101,19 +101,19 @@
                                 <tr>
                                     <td><strong>Debit</strong></td>
                                     <td>Debit, Dr, Withdrawal, Debit Amount</td>
-                                    <td>Number (₹)</td>
+                                    <td>Number (â‚¹)</td>
                                     <td><span class="badge bg-secondary">No</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Credit</strong></td>
                                     <td>Credit, Cr, Deposit, Credit Amount</td>
-                                    <td>Number (₹)</td>
+                                    <td>Number (â‚¹)</td>
                                     <td><span class="badge bg-secondary">No</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Balance</strong></td>
                                     <td>Balance, Closing Balance, Running Balance</td>
-                                    <td>Number (₹)</td>
+                                    <td>Number (â‚¹)</td>
                                     <td><span class="badge bg-secondary">No</span></td>
                                 </tr>
                                 <tr>

@@ -41,4 +41,4 @@ echo "Found " . count($identical) . " identical en/hi pairs:\n\n";
 foreach ($identical as $k => $v) {
     echo "KEY:    $k\n";
     echo "VALUE:  $v\n\n";
-}
+}?>

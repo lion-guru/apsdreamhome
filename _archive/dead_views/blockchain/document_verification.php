@@ -22,7 +22,7 @@
                                 <?php foreach (($documents ?? []) as $type => $hash): ?>
                                     <tr>
                                         <td class="text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $type)) ?></td>
-                                        <td style="word-break:break-all"><code><?= htmlspecialchars($hash) ?></code></td>
+                                        <td class="style-85847"><code><?= htmlspecialchars($hash) ?></code></td>
                                         <td><span class="badge bg-success">Ready</span></td>
                                     </tr>
                                 <?php endforeach; ?>

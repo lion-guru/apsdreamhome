@@ -7,17 +7,17 @@ $results = [];
 // 1. Notification templates (template_code, channel, subject, body, variables)
 $templates = [
     ['welcome', 'email', 'Welcome to APS Dream Home!', '<h1>Welcome {{name}}!</h1><p>Thank you for joining APS Dream Home. Your account is now active.</p>', ['name']],
-    ['booking_confirmed', 'email', 'Your Booking is Confirmed', '<h1>Booking Confirmed</h1><p>Dear {{customer}}, your booking #{{booking_id}} for {{property}} is confirmed. Total: ₹{{amount}}.</p>', ['customer', 'booking_id', 'property', 'amount']],
-    ['payment_received', 'email', 'Payment Received', '<p>Payment of ₹{{amount}} received for booking {{booking_id}}. Receipt: {{receipt_no}}.</p>', ['amount', 'booking_id', 'receipt_no']],
+    ['booking_confirmed', 'email', 'Your Booking is Confirmed', '<h1>Booking Confirmed</h1><p>Dear {{customer}}, your booking #{{booking_id}} for {{property}} is confirmed. Total: â‚¹{{amount}}.</p>', ['customer', 'booking_id', 'property', 'amount']],
+    ['payment_received', 'email', 'Payment Received', '<p>Payment of â‚¹{{amount}} received for booking {{booking_id}}. Receipt: {{receipt_no}}.</p>', ['amount', 'booking_id', 'receipt_no']],
     ['lead_assigned', 'email', 'New Lead Assigned', '<p>You have been assigned a new lead: {{lead_name}}. Contact: {{phone}}</p>', ['lead_name', 'phone']],
     ['password_reset', 'email', 'Reset Your Password', '<p>Click here to reset: {{link}} (expires in 1 hour)</p>', ['link']],
     ['otp_code', 'sms', 'Verification Code', 'Your verification code is {{code}}. Valid for 10 minutes.', ['code']],
     ['booking_otp', 'sms', 'Site Visit OTP', 'Your site visit OTP is {{otp}}. Show this at the site. Booking: {{booking_id}}', ['otp', 'booking_id']],
     ['welcome_sms', 'sms', 'Welcome', 'Welcome to APS Dream Home, {{name}}! Browse properties at apsdreamhome.com', ['name']],
-    ['payment_due', 'sms', 'Payment Reminder', 'Dear {{name}}, your EMI of ₹{{amount}} is due on {{date}}. Pay now to avoid late fees.', ['name', 'amount', 'date']],
+    ['payment_due', 'sms', 'Payment Reminder', 'Dear {{name}}, your EMI of â‚¹{{amount}} is due on {{date}}. Pay now to avoid late fees.', ['name', 'amount', 'date']],
     ['booking_reminder', 'push', 'Booking Reminder', 'Your site visit is scheduled for {{date}} at {{time}}', ['date', 'time']],
-    ['price_drop', 'push', 'Price Drop Alert', '{{property}} price reduced by {{percent}}%! New: ₹{{new_price}}', ['property', 'percent', 'new_price']],
-    ['new_property', 'push', 'New Property Available', 'New {{type}} in {{location}}: ₹{{price}}', ['type', 'location', 'price']],
+    ['price_drop', 'push', 'Price Drop Alert', '{{property}} price reduced by {{percent}}%! New: â‚¹{{new_price}}', ['property', 'percent', 'new_price']],
+    ['new_property', 'push', 'New Property Available', 'New {{type}} in {{location}}: â‚¹{{price}}', ['type', 'location', 'price']],
 ];
 
 foreach ($templates as $t) {
@@ -307,4 +307,4 @@ $results['ocr_templates'] = count($ocrTemplates);
 
 echo "=== SEED COMPLETE ===\n";
 foreach ($results as $k => $v) echo "  $k: $v\n";
-echo "  TOTAL: " . array_sum($results) . " records\n";
+echo "  TOTAL: " . array_sum($results) . " records\n";?>

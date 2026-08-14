@@ -95,4 +95,4 @@ if ($fails) {
     if (count($fails) > 50) echo "  ... and " . (count($fails) - 50) . " more\n";
 } else {
     echo "\nNo 404s or 500s found. PERFECT!\n";
-}
+}?>

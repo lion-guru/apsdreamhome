@@ -47,4 +47,4 @@ class AIMarketingAgent {
     public function scoreLead($leadData) {
         return $this->aiManager->executeTask($this->agent_id, 'lead_scoring', $leadData);
     }
-}
+}?>

@@ -24,7 +24,7 @@ try {
         return $map;
     };
 
-    // Role → menu item names mapping
+    // Role â†’ menu item names mapping
     $roleMappings = [
         // Finance
         'employee_finance_manager' => ['Dashboard', 'Finance Dashboard', 'Reports', 'TDS & GST', 'My Tasks', 'Attendance', 'Leaves', 'Payroll', 'Performance', 'Documents', 'My Profile', 'Settings', 'Logout'],
@@ -68,7 +68,7 @@ try {
         'employee_cs_manager' => ['Dashboard', 'Customer Success', 'Complaints', 'Reports', 'My Tasks', 'Attendance', 'Leaves', 'Payroll', 'Performance', 'Documents', 'My Profile', 'Settings', 'Logout'],
         'employee_cs_executive' => ['Dashboard', 'Customer Success', 'Complaints', 'My Tasks', 'Attendance', 'Leaves', 'Payroll', 'Performance', 'Documents', 'My Profile', 'Settings', 'Logout'],
 
-        // General (fallback — all items)
+        // General (fallback â€” all items)
         'employee_general' => ['Dashboard', 'My Tasks', 'Attendance', 'Leaves', 'Payroll', 'Performance', 'Documents', 'My Profile', 'Settings', 'Logout'],
     ];
 
@@ -100,4 +100,4 @@ try {
 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";
-}
+}?>

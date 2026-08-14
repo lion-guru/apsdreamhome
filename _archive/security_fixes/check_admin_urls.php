@@ -52,9 +52,9 @@ foreach ($items as $item) {
         $childCount = $children->fetchColumn();
         
         if ($childCount > 0) {
-            echo "⚠️  PARENT MENU (no route needed): ID {$item['id']} | {$item['name']} | URL: {$url} | Section: {$item['section']} | Children: $childCount\n";
+            echo "âš ï¸�  PARENT MENU (no route needed): ID {$item['id']} | {$item['name']} | URL: {$url} | Section: {$item['section']} | Children: $childCount\n";
         } else {
-            echo "❌ BROKEN URL: ID {$item['id']} | {$item['name']} | URL: {$url} | Section: {$item['section']}\n";
+            echo "â�Œ BROKEN URL: ID {$item['id']} | {$item['name']} | URL: {$url} | Section: {$item['section']}\n";
             $broken++;
         }
     } else {
@@ -65,4 +65,4 @@ foreach ($items as $item) {
 echo "\n=== Summary ===\n";
 echo "OK URLs: $ok\n";
 echo "Broken URLs: $broken\n";
-echo "Total: " . count($items) . "\n";
+echo "Total: " . count($items) . "\n";?>

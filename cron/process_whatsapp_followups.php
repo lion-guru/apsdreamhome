@@ -50,7 +50,7 @@ try {
     }
     waLog("WhatsApp connected.");
 
-    // ── 1. Post-call follow-ups ──
+    // â”€â”€ 1. Post-call follow-ups â”€â”€
     // Find completed calls where follow-up is due
     $followups = $db->fetchAll(
         "SELECT acs.id as session_id, acs.phone, acs.ai_summary, acs.customer_response,
@@ -80,24 +80,24 @@ try {
 
         // Build follow-up message based on call outcome
         $message = match ($response) {
-            'site_visit' => "Namaste {$name}! 🏠\n\n" .
+            'site_visit' => "Namaste {$name}! ðŸ� \n\n" .
                 "APS Dream Home se baat hui thi aaj. Aapne site visit ke liye interest dikhaya.\n\n" .
                 "Kya aapko koi specific date aur time chahiye site visit ke liye?\n\n" .
-                "📍 Office: Raghunath Nagri, Gorakhpur\n" .
-                "📞 7007444842\n\n" .
-                "Reply karein ya call karein! 🙏",
-            'interested' => "Namaste {$name}! 🏡\n\n" .
+                "ðŸ“� Office: Raghunath Nagri, Gorakhpur\n" .
+                "ðŸ“ž 7007444842\n\n" .
+                "Reply karein ya call karein! ðŸ™�",
+            'interested' => "Namaste {$name}! ðŸ�¡\n\n" .
                 "APS Dream Home mein aapki baat hui thi property ke baare mein.\n\n" .
                 "Humari available properties:\n" .
-                "• Plots from ₹5 lakh onwards\n" .
-                "• EMI options: 12-60 months\n" .
-                "• Bank loan: 80% tak\n\n" .
-                "Kya aapko pricing details chahiye? Reply karein! 😊",
-            'followup_needed' => "Namaste {$name}! 👋\n\n" .
+                "â€¢ Plots from â‚¹5 lakh onwards\n" .
+                "â€¢ EMI options: 12-60 months\n" .
+                "â€¢ Bank loan: 80% tak\n\n" .
+                "Kya aapko pricing details chahiye? Reply karein! ðŸ˜Š",
+            'followup_needed' => "Namaste {$name}! ðŸ‘‹\n\n" .
                 "APS Dream Home se call hui thi. Hum aapse dobara baat karna chahte hain.\n\n" .
                 "Aapko koi sawaal hai ya property ke baare mein aur jaanna hai?\n\n" .
-                "📞 7007444842 pe call karein ya yahan reply karein! 🙏",
-            default => "Namaste {$name}!\n\nAPS Dream Home - Gorakhpur. Aapki baat hui thi hamari team se.\n\nKoi sawaal? Reply karein! 🙏"
+                "ðŸ“ž 7007444842 pe call karein ya yahan reply karein! ðŸ™�",
+            default => "Namaste {$name}!\n\nAPS Dream Home - Gorakhpur. Aapki baat hui thi hamari team se.\n\nKoi sawaal? Reply karein! ðŸ™�"
         };
 
         // Check if already sent
@@ -122,7 +122,7 @@ try {
         waLog(($sent ? "SENT" : "FAIL") . " post-call follow-up to {$name} ({$phone})");
     }
 
-    // ── 2. EMI reminder WhatsApp messages ──
+    // â”€â”€ 2. EMI reminder WhatsApp messages â”€â”€
     $emiReminders = $db->fetchAll(
         "SELECT bps.id as installment_id, bps.amount, bps.due_date,
                 pb.customer_id,
@@ -149,29 +149,29 @@ try {
         $daysLeft = (int)((strtotime($emi['due_date']) - strtotime(date('Y-m-d'))) / 86400);
 
         if ($daysLeft < 0) {
-            $message = "⚠️ APS Dream Home - EMI Reminder\n\n" .
+            $message = "âš ï¸� APS Dream Home - EMI Reminder\n\n" .
                 "Namaste {$emi['customer_name']}!\n\n" .
-                "Aapki ₹{$amount} ki EMI OVERDUE hai.\n" .
+                "Aapki â‚¹{$amount} ki EMI OVERDUE hai.\n" .
                 "Due date tha: {$dueDate}\n\n" .
                 "Kripya jald se jald payment karein.\n" .
-                "📞 7007444842\n" .
-                "📍 Raghunath Nagri, Gorakhpur\n\n" .
-                "Online payment ke liye reply karein! 🙏";
+                "ðŸ“ž 7007444842\n" .
+                "ðŸ“� Raghunath Nagri, Gorakhpur\n\n" .
+                "Online payment ke liye reply karein! ðŸ™�";
         } elseif ($daysLeft == 0) {
-            $message = "📅 APS Dream Home - EMI Due Today\n\n" .
+            $message = "ðŸ“… APS Dream Home - EMI Due Today\n\n" .
                 "Namaste {$emi['customer_name']}!\n\n" .
-                "Aaj aapki ₹{$amount} ki EMI due hai.\n\n" .
+                "Aaj aapki â‚¹{$amount} ki EMI due hai.\n\n" .
                 "Payment karein:\n" .
-                "• Cash: Raghunath Nagri office\n" .
-                "• Online: UPI/Bank transfer\n\n" .
-                "📞 7007444842 🙏";
+                "â€¢ Cash: Raghunath Nagri office\n" .
+                "â€¢ Online: UPI/Bank transfer\n\n" .
+                "ðŸ“ž 7007444842 ðŸ™�";
         } else {
-            $message = "📋 APS Dream Home - EMI Reminder\n\n" .
+            $message = "ðŸ“‹ APS Dream Home - EMI Reminder\n\n" .
                 "Namaste {$emi['customer_name']}!\n\n" .
-                "Aapki ₹{$amount} ki EMI {$daysLeft} din mein due hai.\n" .
+                "Aapki â‚¹{$amount} ki EMI {$daysLeft} din mein due hai.\n" .
                 "Due date: {$dueDate}\n\n" .
                 "Payment ki taiyari kar lein.\n" .
-                "📞 7007444842 🙏";
+                "ðŸ“ž 7007444842 ðŸ™�";
         }
 
         // Check if already sent today
@@ -191,10 +191,10 @@ try {
             [$emi['installment_id'], $phone, $message, $sent ? 'sent' : 'failed']
         );
 
-        waLog(($sent ? "SENT" : "FAIL") . " EMI reminder to {$emi['customer_name']} (₹{$amount}, {$daysLeft}d)");
+        waLog(($sent ? "SENT" : "FAIL") . " EMI reminder to {$emi['customer_name']} (â‚¹{$amount}, {$daysLeft}d)");
     }
 
-    // ── 3. New registration welcome messages ──
+    // â”€â”€ 3. New registration welcome messages â”€â”€
     $newUsers = $db->fetchAll(
         "SELECT id, name, phone, role, created_at
          FROM users
@@ -221,13 +221,13 @@ try {
         );
         if ($alreadySent) continue;
 
-        $message = "🎉 Welcome to APS Dream Home, {$name}!\n\n" .
+        $message = "ðŸŽ‰ Welcome to APS Dream Home, {$name}!\n\n" .
             "Aapka account successfully ban gaya hai.\n\n" .
             "Humse contact karein:\n" .
-            "📞 7007444842\n" .
-            "📍 Raghunath Nagri, Gorakhpur\n" .
-            "🌐 apsdreamhome.com\n\n" .
-            "Property dekhne ke liye reply karein! 🏠";
+            "ðŸ“ž 7007444842\n" .
+            "ðŸ“� Raghunath Nagri, Gorakhpur\n" .
+            "ðŸŒ� apsdreamhome.com\n\n" .
+            "Property dekhne ke liye reply karein! ðŸ� ";
 
         $result = $wa->sendMessage($phone, $message);
         $sent = !isset($result['error']);
@@ -254,4 +254,4 @@ try {
 }
 
 waLog("=== WhatsApp Follow-up Processor Completed ===\n");
-exit(0);
+exit(0);?>

@@ -18,4 +18,4 @@ if ($user) {
     } else {
         echo "No customers exist\n";
     }
-}
+}?>

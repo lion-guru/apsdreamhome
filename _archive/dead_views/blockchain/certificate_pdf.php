@@ -1,6 +1,6 @@
 <?php $pageTitle = 'Blockchain Certificate PDF'; $cd = $certificate_data ?? []; ?>
 <div class="container-fluid py-4">
-    <div class="card border-0 shadow-sm mx-auto" style="max-width:800px">
+    <div class="card border-0 shadow-sm mx-auto" class="style-16563">
         <div class="card-body p-5">
             <div class="text-center mb-4">
                 <div class="fs-1 text-primary mb-2"><i class="fas fa-certificate"></i></div>

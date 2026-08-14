@@ -96,7 +96,7 @@
                                             onclick="setupReschedule(this)">
                                             <i class="fas fa-calendar"></i>
                                         </button>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/cancel" style="display:inline">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/voice-users/schedule/cancel" class="style-71727">
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="schedule_id" value="<?= $item['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this call?')">
@@ -126,7 +126,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Select Leads</label>
-                            <div style="max-height:200px;overflow-y:auto">
+                            <div class="style-68333">
                                 <?php if (empty($leads_list)): ?>
                                 <p class="text-muted small mb-0">No available leads to schedule</p>
                                 <?php else: ?>

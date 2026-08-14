@@ -71,4 +71,4 @@ $stmt->execute([
 
 echo "Default DigiLocker config inserted\n";
 
-echo "\n=== DigiLocker tables created successfully ===\n";
+echo "\n=== DigiLocker tables created successfully ===\n";?>

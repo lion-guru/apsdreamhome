@@ -37,4 +37,4 @@ foreach($rows as $r) {
         $r['reward_item'] ?? 'N/A'
     );
 }
-echo "\nDone!\n";
+echo "\nDone!\n";?>

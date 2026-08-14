@@ -24,7 +24,7 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
         </div>
         <div class="card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/localization/editor" class="d-flex gap-2 flex-wrap align-items-center">
-                <select name="locale" id="locale-select" class="form-select form-select-sm" style="width: auto;">
+                <select name="locale" id="locale-select" class="form-select form-select-sm" class="style-19078">
                     <?php foreach ($supported_locales as $code => $info): ?>
                         <option value="<?= htmlspecialchars($code) ?>" <?= $code === $locale ? 'selected' : '' ?>>
                             <?= htmlspecialchars($info['name'] ?? $code) ?> (<?= htmlspecialchars($code) ?>)
@@ -41,7 +41,7 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
         <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0">Translation Keys (<?= count($translations) ?> total)</h5>
             <div class="d-flex gap-2">
-                <input type="text" id="search-translations" class="form-control form-control-sm" style="width: 250px;" placeholder="Search keys...">
+                <input type="text" id="search-translations" class="form-control form-control-sm" class="style-73161" placeholder="Search keys...">
                 <button type="button" class="btn btn-success btn-sm" id="save-all-btn"><i class="fas fa-save me-1"></i> Save All Changes</button>
             </div>
         </div>
@@ -56,10 +56,10 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
                     <table class="table table-hover mb-0" id="translations-table">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 35%;">Key</th>
-                                <th style="width: 30%;">English (Reference)</th>
-                                <th style="width: 30%;">Translation (<?= htmlspecialchars($locale) ?>)</th>
-                                <th style="width: 5%;"></th>
+                                <th class="style-14650">Key</th>
+                                <th class="style-5994">English (Reference)</th>
+                                <th class="style-5994">Translation (<?= htmlspecialchars($locale) ?>)</th>
+                                <th class="style-16982"></th>
                             </tr>
                         </thead>
                         <tbody>

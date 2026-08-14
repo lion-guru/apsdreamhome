@@ -178,7 +178,8 @@ class LoanDocumentService
 
         return <<<HTML
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Loan Agreement - {$loan['loan_number']}</title>
+<html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="utf-8"><title>Loan Agreement - {$loan['loan_number']}</title>
 <style>
 body { font-family: 'Georgia', serif; font-size: 14px; line-height: 1.6; margin: 40px; color: #333; }
 h1 { text-align: center; font-size: 22px; text-transform: uppercase; border-bottom: 2px solid #333; padding-bottom: 10px; }
@@ -190,7 +191,7 @@ th { background: #f0f0f0; }
 .footer { margin-top: 40px; font-size: 12px; color: #666; text-align: center; }
 </style></head><body>
 <h1>Loan Agreement</h1>
-<p style="text-align:center;">Date: $date | Agreement No: {$loan['loan_number']}</p>
+<p class="style-58107">Date: $date | Agreement No: {$loan['loan_number']}</p>
 
 <h2>Parties</h2>
 <p>This Loan Agreement is made on <strong>$date</strong> between:</p>
@@ -200,11 +201,11 @@ th { background: #f0f0f0; }
 <h2>Loan Details</h2>
 <table>
 <tr><th>Loan Number</th><td>{$loan['loan_number']}</td></tr>
-<tr><th>Loan Amount</th><td>₹ {$loan['loan_amount']}</td></tr>
+<tr><th>Loan Amount</th><td>â‚¹ {$loan['loan_amount']}</td></tr>
 <tr><th>Interest Rate</th><td>{$loan['interest_rate']}% p.a. ({$loan['interest_type']} balance)</td></tr>
 <tr><th>Tenure</th><td>{$loan['tenure_months']} months</td></tr>
-<tr><th>EMI Amount</th><td>₹ {$loan['emi_amount']}</td></tr>
-<tr><th>Total Payable</th><td>₹ {$loan['total_payable']}</td></tr>
+<tr><th>EMI Amount</th><td>â‚¹ {$loan['emi_amount']}</td></tr>
+<tr><th>Total Payable</th><td>â‚¹ {$loan['total_payable']}</td></tr>
 <tr><th>Start Date</th><td>{$loan['start_date']}</td></tr>
 <tr><th>End Date</th><td>{$loan['end_date']}</td></tr>
 {$interestFreeNote}
@@ -214,7 +215,7 @@ th { background: #f0f0f0; }
 
 <h2>Terms and Conditions</h2>
 <ol>
-<li><strong>Repayment:</strong> The Borrower agrees to repay the loan in {$loan['tenure_months']} monthly installments of ₹{$loan['emi_amount']} each.</li>
+<li><strong>Repayment:</strong> The Borrower agrees to repay the loan in {$loan['tenure_months']} monthly installments of â‚¹{$loan['emi_amount']} each.</li>
 <li><strong>Payment Due:</strong> Each installment is due on the same day of each month. Late payment attracts penal interest at 18% p.a. on the overdue amount after a 5-day grace period.</li>
 <li><strong>Default:</strong> If the Borrower fails to pay 3 consecutive installments, the entire outstanding amount shall become due immediately.</li>
 <li><strong>Foreclosure:</strong> The Borrower may prepay the loan at any time. Early settlement incentives as per Company policy shall apply.</li>
@@ -226,9 +227,9 @@ th { background: #f0f0f0; }
 <h2>Signatures</h2>
 <table>
 <tr><th>For the Company</th><th>Borrower</th></tr>
-<tr><td style="height:80px; vertical-align:bottom;">
+<tr><td class="style-95502">
 <div class="signature-line">Authorized Signatory</div>
-</td><td style="height:80px; vertical-align:bottom;">
+</td><td class="style-95502">
 <div class="signature-line">{$loan['customer_name']}</div>
 </td></tr>
 </table>
@@ -254,12 +255,12 @@ h1 { text-align: center; }
 .stamp { margin-top: 20px; border: 2px dashed #999; padding: 20px; text-align: center; width: 150px; }
 </style></head><body>
 <h1>Promissory Note</h1>
-<p style="text-align:center;">Date: $date</p>
+<p class="style-58107">Date: $date</p>
 
 <div class="content">
-<p><strong>FOR VALUE RECEIVED</strong>, I, <strong>{$loan['customer_name']}</strong>, residing at [...], do hereby promise to pay to <strong>APS Dream Home</strong> (the "Company"), on demand or as per the agreed schedule, the sum of <strong>₹ {$loan['loan_amount']}</strong> (Rupees ... only) together with interest at the rate of <strong>{$loan['interest_rate']}% per annum</strong>.</p>
+<p><strong>FOR VALUE RECEIVED</strong>, I, <strong>{$loan['customer_name']}</strong>, residing at [...], do hereby promise to pay to <strong>APS Dream Home</strong> (the "Company"), on demand or as per the agreed schedule, the sum of <strong>â‚¹ {$loan['loan_amount']}</strong> (Rupees ... only) together with interest at the rate of <strong>{$loan['interest_rate']}% per annum</strong>.</p>
 
-<p>The said sum shall be repaid in <strong>{$loan['tenure_months']}</strong> monthly installments of <strong>₹{$loan['emi_amount']}</strong> each, commencing from {$loan['start_date']}.</p>
+<p>The said sum shall be repaid in <strong>{$loan['tenure_months']}</strong> monthly installments of <strong>â‚¹{$loan['emi_amount']}</strong> each, commencing from {$loan['start_date']}.</p>
 
 <p>In case of default in payment of any installment, I agree to pay penal interest at 18% per annum on the overdue amount.</p>
 
@@ -268,12 +269,12 @@ h1 { text-align: center; }
 
 <div class="content">
 <table><tr>
-<td style="width:50%;"><div class="signature"><p><strong>Witness 1:</strong></p><div style="border-top:1px solid #333; margin-top:50px; padding-top:5px;">Signature</div><p>Name: ....................<br>Address: ................</p></div></td>
-<td style="width:50%;"><div class="signature"><p><strong>Borrower:</strong></p><div style="border-top:1px solid #333; margin-top:50px; padding-top:5px;">{$loan['customer_name']}</div><div class="stamp">Revenue Stamp</div></div></td>
+<td class="style-46378"><div class="signature"><p><strong>Witness 1:</strong></p><div class="style-70162">Signature</div><p>Name: ....................<br>Address: ................</p></div></td>
+<td class="style-46378"><div class="signature"><p><strong>Borrower:</strong></p><div class="style-70162">{$loan['customer_name']}</div><div class="stamp">Revenue Stamp</div></div></td>
 </tr></table>
 </div>
 
-<p style="text-align:center; margin-top:40px; font-size:12px; color:#666;">This is a computer-generated document</p>
+<p class="style-73737">This is a computer-generated document</p>
 </body></html>
 HTML;
     }
@@ -313,11 +314,11 @@ th { background: #f5f5f5; text-align: left; }
 <table>
 <tr><th>Installment No</th><td>{$installment['installment_no']}</td></tr>
 <tr><th>Due Date</th><td>{$installment['due_date']}</td></tr>
-<tr><th>Principal Amount</th><td>₹ {$installment['principal_amount']}</td></tr>
-<tr><th>Interest Amount</th><td>₹ {$installment['interest_amount']}</td></tr>
-<tr><th>Total Due</th><td>₹ {$installment['total_amount']}</td></tr>
-<tr><th>Outstanding</th><td><strong>₹ $outstanding</strong></td></tr>
-<tr><th>Penalty Accrued</th><td>₹ {$installment['accrued_penalty']}</td></tr>
+<tr><th>Principal Amount</th><td>â‚¹ {$installment['principal_amount']}</td></tr>
+<tr><th>Interest Amount</th><td>â‚¹ {$installment['interest_amount']}</td></tr>
+<tr><th>Total Due</th><td>â‚¹ {$installment['total_amount']}</td></tr>
+<tr><th>Outstanding</th><td><strong>â‚¹ $outstanding</strong></td></tr>
+<tr><th>Penalty Accrued</th><td>â‚¹ {$installment['accrued_penalty']}</td></tr>
 </table>
 
 <p>We request you to make the payment at the earliest to avoid further penal charges and adverse action. If the payment is not received within <strong>7 days</strong>, the Company may be constrained to initiate recovery proceedings as per the Loan Agreement.</p>
@@ -327,7 +328,7 @@ th { background: #f5f5f5; text-align: left; }
 <div class="footer">
 <p>Thanking you,<br><br><br>
 <strong>For APS Dream Home</strong></p>
-<div style="border-top:1px solid #333; width:200px; padding-top:5px;">Authorized Signatory</div>
+<div class="style-54976">Authorized Signatory</div>
 </div>
 </body></html>
 HTML;
@@ -342,7 +343,7 @@ HTML;
         $rows = '';
         foreach ($overdueInstallments as $inst) {
             $outstanding = (float)$inst['total_amount'] - (float)$inst['paid_amount'];
-            $rows .= "<tr><td>{$inst['installment_no']}</td><td>{$inst['due_date']}</td><td>₹ {$inst['total_amount']}</td><td>₹ " . round($outstanding, 2) . "</td><td>₹ {$inst['accrued_penalty']}</td></tr>";
+            $rows .= "<tr><td>{$inst['installment_no']}</td><td>{$inst['due_date']}</td><td>â‚¹ {$inst['total_amount']}</td><td>â‚¹ " . round($outstanding, 2) . "</td><td>â‚¹ {$inst['accrued_penalty']}</td></tr>";
         }
 
         return <<<HTML
@@ -357,7 +358,7 @@ th { background: #fee; }
 .notice { border: 2px solid #c00; padding: 15px; background: #fff5f5; margin: 20px 0; }
 </style></head><body>
 <h1>Notice of Default</h1>
-<p style="text-align:center;">Date: $date</p>
+<p class="style-58107">Date: $date</p>
 
 <p><strong>To,</strong><br>{$loan['customer_name']}<br>{$loan['customer_phone']}</p>
 
@@ -372,12 +373,12 @@ th { background: #fee; }
 <table>
 <tr><th>#</th><th>Due Date</th><th>Amount</th><th>Outstanding</th><th>Penalty</th></tr>
 $rows
-<tr><th colspan="2">Total</th><th>—</th><th>₹ $totalOverdue</th><th>₹ $totalPenalty</th></tr>
+<tr><th colspan="2">Total</th><th>â€”</th><th>â‚¹ $totalOverdue</th><th>â‚¹ $totalPenalty</th></tr>
 </table>
 
-<p><strong>Total Outstanding: ₹ </strong> " . round($totalOverdue + $totalPenalty, 2) . "</p>
+<p><strong>Total Outstanding: â‚¹ </strong> " . round($totalOverdue + $totalPenalty, 2) . "</p>
 
-<p>You are hereby called upon to pay the entire outstanding amount of <strong>₹ " . round($totalOverdue + $totalPenalty, 2) . "</strong> within <strong>15 days</strong> from the date of this notice.</p>
+<p>You are hereby called upon to pay the entire outstanding amount of <strong>â‚¹ " . round($totalOverdue + $totalPenalty, 2) . "</strong> within <strong>15 days</strong> from the date of this notice.</p>
 
 <p><strong>FAILURE TO PAY</strong> within the stipulated time will result in:</p>
 <ol>
@@ -389,9 +390,9 @@ $rows
 
 <p>This notice is issued without prejudice to any other rights and remedies available to the Company under law or contract.</p>
 
-<p style="margin-top:40px;">
+<p class="style-39901">
 <strong>For APS Dream Home</strong><br><br><br>
-<div style="border-top:1px solid #333; width:200px; padding-top:5px;">Authorized Signatory</div>
+<div class="style-54976">Authorized Signatory</div>
 </p>
 </body></html>
 HTML;

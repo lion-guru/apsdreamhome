@@ -28,4 +28,4 @@ $pdo->exec("DROP TABLE IF EXISTS ai_call_logs_backup_20260603");
 echo "   Dropped\n\n";
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "Tables after: $after\n";
+echo "Tables after: $after\n";?>

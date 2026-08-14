@@ -60,17 +60,17 @@ foreach ($urls as $url) {
     
     $results[$status][] = ['url' => $url, 'code' => $code, 'final' => $finalUrl];
     
-    $icon = $status === 'ok' ? '✅' : ($status === 'login_redirect' ? '🔒' : ($status === '404' ? '❌' : '⚠️'));
+    $icon = $status === 'ok' ? 'âœ…' : ($status === 'login_redirect' ? 'ðŸ”’' : ($status === '404' ? 'â�Œ' : 'âš ï¸�'));
     echo "$icon $code $url" . ($status !== 'ok' ? " -> $finalUrl" : "") . "\n";
 }
 
 echo "\n=== SUMMARY ===\n";
-echo "✅ OK: " . count($results['ok']) . "\n";
-echo "🔒 Login redirect: " . count($results['login_redirect']) . "\n";
-echo "↗️ Redirect: " . count($results['redirect']) . "\n";
-echo "❌ 404: " . count($results['404']) . "\n";
-echo "⚠️ Error: " . count($results['error']) . "\n";
+echo "âœ… OK: " . count($results['ok']) . "\n";
+echo "ðŸ”’ Login redirect: " . count($results['login_redirect']) . "\n";
+echo "â†—ï¸� Redirect: " . count($results['redirect']) . "\n";
+echo "â�Œ 404: " . count($results['404']) . "\n";
+echo "âš ï¸� Error: " . count($results['error']) . "\n";
 
 // Save results
 file_put_contents(__DIR__ . '/_sidebar_results.json', json_encode($results, JSON_PRETTY_PRINT));
-echo "\nResults saved to _sidebar_results.json\n";
+echo "\nResults saved to _sidebar_results.json\n";?>

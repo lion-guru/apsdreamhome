@@ -63,15 +63,15 @@
                 </div>
                 
                 <!-- Independent Broker fields -->
-                <div class="col-md-4 brokerage-field" style="display:none;">
+                <div class="col-md-4 brokerage-field" class="style-2248">
                     <label class="form-label">Brokerage Model</label>
                     <select name="brokerage_model" id="brokerageModel" class="form-select" onchange="toggleBrokerageRate()">
                         <option value="differential">Differential (MLM Default)</option>
                         <option value="flat_percentage">Flat Percentage (%)</option>
-                        <option value="flat_rate_sqft">Flat Rate per SqFt (₹)</option>
+                        <option value="flat_rate_sqft">Flat Rate per SqFt (â‚¹)</option>
                     </select>
                 </div>
-                <div class="col-md-4 brokerage-field" style="display:none;">
+                <div class="col-md-4 brokerage-field" class="style-2248">
                     <label class="form-label">Brokerage Rate</label>
                     <div class="input-group">
                         <input type="number" name="brokerage_rate" id="brokerageRate" class="form-control" step="0.01" min="0" max="100" value="8.00">
@@ -81,7 +81,7 @@
                 </div>
 
                 <!-- Telecaller/Freelancer fields -->
-                <div class="col-md-4 telecaller-field" style="display:none;">
+                <div class="col-md-4 telecaller-field" class="style-2248">
                     <label class="form-label">Telecaller Team Lead / Parent</label>
                     <select name="telecaller_parent_id" class="form-select">
                         <option value="">No Team Lead (Top level)</option>
@@ -90,16 +90,16 @@
                         <?php endforeach; endif; ?>
                     </select>
                 </div>
-                <div class="col-md-4 telecaller-field" style="display:none;">
-                    <label class="form-label">Monthly Fixed Salary Target (₹)</label>
+                <div class="col-md-4 telecaller-field" class="style-2248">
+                    <label class="form-label">Monthly Fixed Salary Target (â‚¹)</label>
                     <input type="number" name="telecaller_salary" class="form-control" step="0.01" placeholder="e.g. 6000.00" value="0.00">
                 </div>
-                <div class="col-md-4 telecaller-field" style="display:none;">
-                    <label class="form-label">Flat Lead Conversion Incentive (₹)</label>
+                <div class="col-md-4 telecaller-field" class="style-2248">
+                    <label class="form-label">Flat Lead Conversion Incentive (â‚¹)</label>
                     <input type="number" name="telecaller_incentive_rate" class="form-control" step="0.01" placeholder="e.g. 1000.00" value="0.00">
                 </div>
-                <div class="col-md-4 telecaller-field" style="display:none;">
-                    <label class="form-label">Rate per SqFt (₹)</label>
+                <div class="col-md-4 telecaller-field" class="style-2248">
+                    <label class="form-label">Rate per SqFt (â‚¹)</label>
                     <input type="number" name="telecaller_sqft_rate" class="form-control" step="0.01" placeholder="e.g. 10.00" value="0.00">
                 </div>
             </div>
@@ -135,14 +135,14 @@ function toggleBrokerageRate() {
     var unit = document.getElementById('brokerageUnit');
     var hint = document.getElementById('brokerageHint');
     if (model === 'flat_rate_sqft') {
-        unit.textContent = '₹/sqft';
+        unit.textContent = 'â‚¹/sqft';
         hint.textContent = 'Fixed rupees per square foot of plot area';
     } else if (model === 'flat_percentage') {
         unit.textContent = '%';
         hint.textContent = 'Percentage of payment amount (e.g. 8 = 8%)';
     } else {
         unit.textContent = '%';
-        hint.textContent = 'Differential commission — MLM upline hierarchy';
+        hint.textContent = 'Differential commission â€” MLM upline hierarchy';
     }
 }
 </script>

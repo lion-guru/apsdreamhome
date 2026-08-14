@@ -29,4 +29,4 @@ foreach ($iter as $f) {
 }
 
 echo "Found " . count($bugs) . " potential missing \$ prefix bugs\n\n";
-foreach (array_slice($bugs, 0, 30) as $b) echo "  $b\n";
+foreach (array_slice($bugs, 0, 30) as $b) echo "  $b\n";?>

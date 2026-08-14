@@ -2,13 +2,13 @@
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications" style="color:#3b82f6;">Push Notifications</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" style="color:#3b82f6;">Campaigns</a></li>
-                <li class="breadcrumb-item active" style="color:#94a3b8;"><?= $campaign ? 'Edit' : 'Create' ?></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications" class="style-75937">Push Notifications</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="style-75937">Campaigns</a></li>
+                <li class="breadcrumb-item active" class="style-27277"><?= $campaign ? 'Edit' : 'Create' ?></li>
             </ol>
         </nav>
         <h1 class="h3 mb-1 fw-bold"><?= $campaign ? 'Edit Campaign' : 'Create Campaign' ?></h1>
-        <p class="mb-0" style="color:#64748b;">Set up targeting, schedule, and message content</p>
+        <p class="mb-0" class="style-54585">Set up targeting, schedule, and message content</p>
     </div>
 
     <?php if (!empty($_SESSION['error'])): ?>
@@ -26,54 +26,54 @@
 
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm mb-4" style="background:#1e293b;">
-                    <div class="card-header" style="background:#1e293b;border-bottom:1px solid #334155;">
-                        <h6 class="mb-0 fw-bold" style="color:#e2e8f0;">Campaign Details</h6>
+                <div class="card border-0 shadow-sm mb-4" class="style-52634">
+                    <div class="card-header" class="style-52852">
+                        <h6 class="mb-0 fw-bold" class="style-96443">Campaign Details</h6>
                     </div>
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Campaign Name <span style="color:#f87171;">*</span></label>
+                            <label class="form-label fw-semibold" class="style-96443">Campaign Name <span class="style-62247">*</span></label>
                             <input type="text" name="name" class="form-control" required
                                    value="<?= htmlspecialchars($campaign['name'] ?? '') ?>"
                                    placeholder="e.g. Diwali Property Offer, EMI Reminder"
-                                   style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                   class="style-30479">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Description</label>
+                            <label class="form-label fw-semibold" class="style-96443">Description</label>
                             <textarea name="description" class="form-control" rows="2"
                                       placeholder="Internal note about this campaign"
-                                      style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;"><?= htmlspecialchars($campaign['description'] ?? '') ?></textarea>
+                                      class="style-30479"><?= htmlspecialchars($campaign['description'] ?? '') ?></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Notification Title <span style="color:#f87171;">*</span></label>
+                            <label class="form-label fw-semibold" class="style-96443">Notification Title <span class="style-62247">*</span></label>
                             <input type="text" name="title" class="form-control" required maxlength="100"
                                    value="<?= htmlspecialchars($campaign['title'] ?? '') ?>"
                                    placeholder="Push notification title"
-                                   style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                   class="style-30479">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Notification Body <span style="color:#f87171;">*</span></label>
+                            <label class="form-label fw-semibold" class="style-96443">Notification Body <span class="style-62247">*</span></label>
                             <textarea name="body" class="form-control" rows="4" required maxlength="300"
                                       placeholder="Notification message body"
-                                      style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;"><?= htmlspecialchars($campaign['body'] ?? '') ?></textarea>
-                            <small style="color:#64748b;">Max 300 characters for push notifications.</small>
+                                      class="style-30479"><?= htmlspecialchars($campaign['body'] ?? '') ?></textarea>
+                            <small class="style-54585">Max 300 characters for push notifications.</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm" style="background:#1e293b;">
-                    <div class="card-header" style="background:#1e293b;border-bottom:1px solid #334155;">
-                        <h6 class="mb-0 fw-bold" style="color:#e2e8f0;">Targeting</h6>
+                <div class="card border-0 shadow-sm" class="style-52634">
+                    <div class="card-header" class="style-52852">
+                        <h6 class="mb-0 fw-bold" class="style-96443">Targeting</h6>
                     </div>
                     <div class="card-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Channel</label>
+                                <label class="form-label fw-semibold" class="style-96443">Channel</label>
                                 <select name="channel" class="form-select"
-                                        style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                        class="style-30479">
                                     <?php
                                         $channels = ['push' => 'Push Notification', 'email' => 'Email', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp', 'all' => 'All Channels'];
                                         $current = $campaign['channel'] ?? 'push';
@@ -84,9 +84,9 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Target Type</label>
+                                <label class="form-label fw-semibold" class="style-96443">Target Type</label>
                                 <select name="target_type" class="form-select"
-                                        style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                        class="style-30479">
                                     <?php
                                         $targets = ['all_users' => 'All Users', 'role' => 'Role-Based', 'segment' => 'Segment', 'individual' => 'Individual User'];
                                         $current = $campaign['target_type'] ?? 'all_users';
@@ -97,30 +97,30 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Target Value</label>
+                                <label class="form-label fw-semibold" class="style-96443">Target Value</label>
                                 <div id="targetValueWrapper">
                                     <select name="target_value" id="target_value_select" class="form-select"
-                                            style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                            class="style-30479">
                                         <option value="">Not applicable for All Users</option>
                                     </select>
                                     <input type="text" name="target_value" id="target_value_input" class="form-control"
                                            value="<?= htmlspecialchars($campaign['target_value'] ?? '') ?>"
                                            placeholder="User ID or segment name"
-                                           style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;display:none;">
+                                           class="style-14861">
                                 </div>
-                                <small style="color:#64748b;">Leave empty for "All Users". Enter user ID for individual targeting.</small>
+                                <small class="style-54585">Leave empty for "All Users". Enter user ID for individual targeting.</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Schedule</label>
+                                <label class="form-label fw-semibold" class="style-96443">Schedule</label>
                                 <input type="datetime-local" name="scheduled_at" class="form-control"
                                        value="<?= !empty($campaign['scheduled_at']) ? date('Y-m-d\TH:i', strtotime($campaign['scheduled_at'])) : '' ?>"
-                                       style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
-                                <small style="color:#64748b;">Leave empty for draft. Set a future time to schedule.</small>
+                                       class="style-30479">
+                                <small class="style-54585">Leave empty for draft. Set a future time to schedule.</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Template (optional)</label>
+                                <label class="form-label fw-semibold" class="style-96443">Template (optional)</label>
                                 <select name="template_id" class="form-select"
-                                        style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                        class="style-30479">
                                     <option value="">No template</option>
                                     <?php foreach ($templates as $t): ?>
                                         <option value="<?= $t['id'] ?>" <?= ($campaign['template_id'] ?? '') == $t['id'] ? 'selected' : '' ?>
@@ -137,12 +137,12 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm mb-3" style="background:#1e293b;">
+                <div class="card border-0 shadow-sm mb-3" class="style-52634">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3" style="color:#e2e8f0;">
-                            <i class="fas fa-info-circle me-1" style="color:#3b82f6;"></i> How Campaigns Work
+                        <h6 class="fw-bold mb-3" class="style-96443">
+                            <i class="fas fa-info-circle me-1" class="style-75937"></i> How Campaigns Work
                         </h6>
-                        <ul class="small mb-0" style="color:#94a3b8;padding-left:18px;">
+                        <ul class="small mb-0" class="style-78105">
                             <li class="mb-2">Draft campaigns can be edited and launched later</li>
                             <li class="mb-2">Launching creates queue entries for each target user</li>
                             <li class="mb-2">Queue is processed in batches of 50 per run</li>
@@ -152,7 +152,7 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm" style="background:#1e293b;">
+                <div class="card border-0 shadow-sm" class="style-52634">
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary px-4 py-2">

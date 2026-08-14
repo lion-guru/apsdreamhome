@@ -1,4 +1,4 @@
-﻿<!-- Department Management - Index -->
+ï»¿<!-- Department Management - Index -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -36,7 +36,7 @@
             <!-- Stats Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
+                    <div class="small-box" class="style-75630">
                         <div class="inner">
                             <h3><?= $stats['total'] ?? 0 ?></h3>
                             <p>Total Departments</p>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff;">
+                    <div class="small-box" class="style-55192">
                         <div class="inner">
                             <h3><?= $stats['active'] ?? 0 ?></h3>
                             <p>Active</p>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #fff;">
+                    <div class="small-box" class="style-48582">
                         <div class="inner">
                             <h3><?= $stats['total_desig'] ?? 0 ?></h3>
                             <p>Designations</p>
@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff;">
+                    <div class="small-box" class="style-23498">
                         <div class="inner">
                             <h3><?= $stats['total_emp'] ?? 0 ?></h3>
                             <p>Total Employees</p>
@@ -117,8 +117,8 @@
                                         <td><span class="badge badge-primary"><?= htmlspecialchars($dept['code']) ?></span></td>
                                         <td><strong><?= htmlspecialchars($dept['name']) ?></strong></td>
                                         <td><?= htmlspecialchars(mb_strimwidth($dept['description'] ?? '', 0, 60, '...')) ?></td>
-                                        <td><?= htmlspecialchars($dept['head_name'] ?? '—') ?></td>
-                                        <td>₹<?= number_format($dept['dept_budget'] ?? 0) ?></td>
+                                        <td><?= htmlspecialchars($dept['head_name'] ?? 'â€”') ?></td>
+                                        <td>â‚¹<?= number_format($dept['dept_budget'] ?? 0) ?></td>
                                         <td><span class="badge badge-info"><?= $dept['designation_count'] ?? 0 ?></span></td>
                                         <td><span class="badge badge-success"><?= $dept['employee_count'] ?? 0 ?></span></td>
                                         <td>
@@ -132,7 +132,7 @@
                                             <a href="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
     <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

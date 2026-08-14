@@ -58,7 +58,7 @@
                         </div>
 
                         <!-- Employee-specific fields (shown for employee/telecaller/manager) -->
-                        <div id="employeeFields" style="display:none;">
+                        <div id="employeeFields" class="style-2248">
                             <hr class="my-3">
                             <h6 class="text-primary mb-3"><i class="fas fa-building me-2"></i>Employment Details</h6>
                             <div class="row g-3">
@@ -82,7 +82,7 @@
                                     <input type="text" class="form-control" name="designation" placeholder="e.g. Executive, Sr. Executive, Team Lead">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Salary (₹/month)</label>
+                                    <label class="form-label fw-semibold">Salary (â‚¹/month)</label>
                                     <input type="number" class="form-control" name="salary" step="100" min="0">
                                 </div>
                                 <div class="col-md-6">
@@ -93,7 +93,7 @@
                         </div>
 
                         <!-- Associate/Agent-specific fields -->
-                        <div id="mlmFields" style="display:none;">
+                        <div id="mlmFields" class="style-2248">
                             <hr class="my-3">
                             <h6 class="text-success mb-3"><i class="fas fa-handshake me-2"></i>MLM / Agent Details</h6>
                             <div class="row g-3">

@@ -83,11 +83,11 @@
         <div class="card-header py-3 bg-white d-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-list me-2"></i>Attendance Roster</h6>
             <form method="GET" class="d-flex align-items-center">
-                <div class="input-group input-group-sm me-2" style="width: 200px;">
+                <div class="input-group input-group-sm me-2" class="style-869">
                     <span class="input-group-text bg-light"><i class="fas fa-calendar"></i></span>
                     <input type="date" name="date" class="form-control" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>" onchange="this.form.submit()">
                 </div>
-                <select name="status" class="form-select form-select-sm me-2" style="width: 130px;" onchange="this.form.submit()">
+                <select name="status" class="form-select form-select-sm me-2" class="style-72255" onchange="this.form.submit()">
                     <option value="">All Status</option>
                     <option value="present" <?= ($status_filter ?? '') === 'present' ? 'selected' : '' ?>>Present</option>
                     <option value="absent" <?= ($status_filter ?? '') === 'absent' ? 'selected' : '' ?>>Absent</option>
@@ -118,7 +118,7 @@
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 15px;">
+                                            <div class="avatar bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" class="style-60393">
                                                 <?= strtoupper(substr(htmlspecialchars($r['employee_name'] ?? 'E'), 0, 1)) ?>
                                             </div>
                                             <strong><?= htmlspecialchars($r['employee_name'] ?? '') ?></strong>
@@ -158,7 +158,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <span class="text-muted small text-truncate d-inline-block" style="max-width: 150px;" title="<?= htmlspecialchars($r['remarks'] ?? '') ?>">
+                                        <span class="text-muted small text-truncate d-inline-block" class="style-3881" title="<?= htmlspecialchars($r['remarks'] ?? '') ?>">
                                             <?= htmlspecialchars($r['remarks'] ?? '-') ?>
                                         </span>
                                     </td>
@@ -197,7 +197,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select select2-modal" required style="width: 100%;">
+                            <select name="employee_id" class="form-select select2-modal" required class="style-13113">
                                 <option value="">Select Employee...</option>
                                 <?php foreach ($users ?? [] as $emp): ?>
                                     <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>

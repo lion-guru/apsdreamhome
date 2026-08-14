@@ -65,4 +65,4 @@ foreach ($files as $f) {
     $changed = ($orig !== $content) ? 'CHANGED' : 'UNCHANGED';
     echo "$changed: " . basename($f) . "\n";
 }
-echo "Done!\n";
+echo "Done!\n";?>

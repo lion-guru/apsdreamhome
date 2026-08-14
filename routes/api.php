@@ -60,19 +60,19 @@ $router->post('/api/v2/mobile/properties/submit', 'Api\MobileApiController@submi
 $router->get('/api/v2/mobile/properties/my-submissions', 'Api\MobileApiController@getSubmissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
-// MOBILE API V2 — User Favorites
+// MOBILE API V2 â€” User Favorites
 // ============================================================
 $router->get('/api/v2/mobile/user/favorites', 'Api\MobileApiController@getFavorites')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/user/documents', 'Api\MobileApiController@getCustomerDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
-// MOBILE API V2 — User Notifications
+// MOBILE API V2 â€” User Notifications
 // ============================================================
 $router->get('/api/v2/mobile/user/notifications', 'Api\MobileApiController@getCustomerNotifications')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/notifications/read', 'Api\MobileApiController@markNotificationsRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
-// MOBILE API V2 — FCM Token Registration
+// MOBILE API V2 â€” FCM Token Registration
 // ============================================================
 $router->post('/api/v2/mobile/fcm/register', 'Api\MobileApiController@registerFcmToken')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
@@ -82,7 +82,7 @@ $router->get('/api/v2/mobile/user/favorites/check', 'Api\MobileApiController@che
 $router->get('/api/v2/mobile/user/favorites/stats', 'Api\MobileApiController@getFavoritesStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
-// MOBILE API V2 — Colonies & Plots (Public Browsing)
+// MOBILE API V2 â€” Colonies & Plots (Public Browsing)
 // ============================================================
 $router->get('/api/v2/mobile/colonies', 'Api\MobileApiController@getColonies');
 $router->get('/api/v2/mobile/colonies/search', 'Api\MobileApiController@searchColonies');
@@ -97,7 +97,7 @@ $router->post('/api/v2/mobile/plots/{id}/hold', 'Api\MobileApiController@holdPlo
 $router->post('/api/v2/mobile/plots/{id}/release', 'Api\MobileApiController@releasePlot')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
-// MOBILE API V2 — Property Marketplace / Premium Listings
+// MOBILE API V2 â€” Property Marketplace / Premium Listings
 // ============================================================
 $router->get('/api/v2/mobile/marketplace', 'Api\MobileApiController@getMarketplace');
 $router->get('/api/v2/mobile/marketplace/premium', 'Api\MobileApiController@getPremiumProperties');
@@ -173,7 +173,7 @@ $router->get('/api/mobile/dashboard', 'Api\MobileApiController@dashboardV2');
 $router->post('/api/mobile/notifications/register', 'Api\MobileApiController@registerPushTokenV2');
 
 // ============================================================
-// MOBILE API V2 EXTENDED — Properties, Bookings, Inquiries, Profile
+// MOBILE API V2 EXTENDED â€” Properties, Bookings, Inquiries, Profile
 // ============================================================
 $router->get('/api/mobile/v2/properties', 'Api\MobileApiController@browseProperties');
 $router->get('/api/mobile/v2/properties/search', 'Api\MobileApiController@searchProperties');
@@ -235,7 +235,7 @@ $router->post('/api/ai-valuation/calculator', 'App\\Http\\Controllers\\AIValuati
 $router->get('/api/ai-valuation/market-trends', 'App\\Http\\Controllers\\AIValuationController@getMarketTrends');
 $router->post('/api/ai-valuation/investment-analysis', 'App\\Http\\Controllers\\AIValuationController@getInvestmentAnalysis');
 
-// Legacy Mobile API Routes (v1 — Deprecated, use /api/v2/mobile/*)
+// Legacy Mobile API Routes (v1 â€” Deprecated, use /api/v2/mobile/*)
 // These routes are kept for backward compatibility. Added Sunset/Deprecation headers via middleware.
 // v1 routes will be removed in a future release. Please migrate to /api/v2/mobile/* endpoints.
 $router->get('/api/v1/mobile/properties', 'Api\MobileApiController@properties')
@@ -386,12 +386,12 @@ $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gath
 $router->get('/api/v1/search/properties', 'Api\SearchController@searchProperties');
 $router->post('/api/v1/finance/emi-calculate', 'Api\NewFeaturesApiController@calculateEmi');
 
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 // CRM API (Flutter Lead Management + Pipeline + Follow-ups)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $crmPrefix = '/api/v2/mobile/crm';
 
-// Public endpoints (no auth — for lead capture forms)
+// Public endpoints (no auth â€” for lead capture forms)
 $router->post("$crmPrefix/capture", 'Api\CRMController@captureForm');
 
 // Authenticated endpoints
@@ -420,10 +420,10 @@ $router->post("$crmPrefix/rescore-all", 'Api\CRMController@rescoreAll');
 $router->post("$crmPrefix/rescore/{id}", 'Api\CRMController@rescoreLead');
 $router->post("$crmPrefix/auto-assign", 'Api\CRMController@autoAssign');
 
-// ─── CSV Import ──────────────────────────────────────────────────────
+// â”€â”€â”€ CSV Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->post("$crmPrefix/import-csv", 'Api\CRMController@importCsv')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Deal Pipeline ───────────────────────────────────────────────────
+// â”€â”€â”€ Deal Pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get("$crmPrefix/deals", 'Api\CRMController@deals')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post("$crmPrefix/deals", 'Api\CRMController@createDeal')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get("$crmPrefix/deals/pipeline", 'Api\CRMController@dealPipeline')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -432,31 +432,31 @@ $router->put("$crmPrefix/deals/{id}", 'Api\CRMController@updateDeal')->middlewar
 $router->post("$crmPrefix/deals/{id}/move-stage", 'Api\CRMController@moveDealStage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->delete("$crmPrefix/deals/{id}", 'Api\CRMController@deleteDeal')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Score Breakdown ─────────────────────────────────────────────────
+// â”€â”€â”€ Score Breakdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get("$crmPrefix/leads/{id}/score-breakdown", 'Api\CRMController@scoreBreakdown')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Lead Timeline ───────────────────────────────────────────────────
+// â”€â”€â”€ Lead Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get("$crmPrefix/leads/{id}/timeline", 'Api\CRMController@leadTimeline')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Commission Estimate ─────────────────────────────────────────────
+// â”€â”€â”€ Commission Estimate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get("$crmPrefix/leads/{id}/commission-estimate", 'Api\CRMController@commissionEstimate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Follow-up Reminders ─────────────────────────────────────────────
+// â”€â”€â”€ Follow-up Reminders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get("$crmPrefix/reminders", 'Api\CRMController@followUpReminders')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Bulk Operations ─────────────────────────────────────────────────
+// â”€â”€â”€ Bulk Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->post("$crmPrefix/bulk-update", 'Api\CRMController@bulkUpdate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ─── Analytics ───────────────────────────────────────────────────────
+// â”€â”€â”€ Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $router->get("$crmPrefix/analytics/sources", 'Api\CRMController@sourceAnalytics')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get("$crmPrefix/analytics/funnel", 'Api\CRMController@conversionFunnel')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get("$crmPrefix/analytics/agents", 'Api\CRMController@agentPerformance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ══════════════════════════════════════════════════════════════
-// FLUTTER ROUTE ALIASES — Map /api/v2/mobile/* to existing routes
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// FLUTTER ROUTE ALIASES â€” Map /api/v2/mobile/* to existing routes
 // Flutter app sends ALL requests under /api/v2/mobile/ prefix
 // but backend routes for employee, bookings, etc use different prefixes
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 
 // Employee routes (existing at /api/mobile/v2/employee/*)
 $router->get('/api/v2/mobile/employee/dashboard', 'Api\MobileApiController@employeeDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -483,7 +483,7 @@ $router->post('/api/commission/simulate-bulk', 'Api\CommissionSimulationControll
 $router->get('/api/commission/tds', 'Api\CommissionSimulationController@tdsCalc');
 $router->get('/api/commission/summary/{id}', 'Api\CommissionSimulationController@summary');
 
-// Referral routes — point to MobileApiController (Api\ReferralController doesn't exist)
+// Referral routes â€” point to MobileApiController (Api\ReferralController doesn't exist)
 $router->get('/api/v2/mobile/referral/stats', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/referral/dashboard', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/referral/list', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -505,44 +505,44 @@ $router->post('/api/v2/mobile/notifications/register', 'Api\MobileApiController@
 // CRM analytics aliases (Flutter calls /crm/analytics, /crm/team-performance)
 $router->get('/api/v2/mobile/crm/analytics', 'Api\CRMController@adminOverview');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — User Bank Accounts (dedicated)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” User Bank Accounts (dedicated)
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/user/bank-accounts', 'Api\MobileApiController@getUserBankAccounts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/bank-accounts', 'Api\MobileApiController@saveUserBankAccount')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->delete('/api/v2/mobile/user/bank-accounts', 'Api\MobileApiController@deleteUserBankAccount')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — User Addresses (dedicated)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” User Addresses (dedicated)
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/user/addresses', 'Api\MobileApiController@getUserAddresses')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/addresses', 'Api\MobileApiController@saveUserAddress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->delete('/api/v2/mobile/user/addresses', 'Api\MobileApiController@deleteUserAddress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — Payment History (standalone)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” Payment History (standalone)
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/user/payment-history', 'Api\MobileApiController@getPaymentHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — Blog / News (public)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” Blog / News (public)
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/blog', 'Api\MobileApiController@getBlogPosts');
 $router->get('/api/v2/mobile/blog/{slug}', 'Api\MobileApiController@getBlogPostDetail');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — About Us (public)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” About Us (public)
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/about', 'Api\MobileApiController@getAboutInfo');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — Careers / Jobs (public + auth for apply)
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” Careers / Jobs (public + auth for apply)
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $router->get('/api/v2/mobile/careers', 'Api\MobileApiController@getJobListings');
 $router->post('/api/v2/mobile/careers/apply', 'Api\MobileApiController@submitJobApplication')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/careers/{id}', 'Api\MobileApiController@getJobDetail');
 
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 
 // ============================================================
 // MOBILE API V2 -- Missing Flutter Route Aliases
@@ -552,8 +552,8 @@ $router->get('/api/v2/mobile/careers/{id}', 'Api\MobileApiController@getJobDetai
 $router->put('/api/v2/mobile/user/profile', 'Api\MobileApiController@updateProfileV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/profile/avatar', 'Api\MobileApiController@uploadAvatar')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/dashboard', 'Api\MobileApiController@dashboardV3')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-// ADMIN MOBILE API — JSON endpoints for Flutter admin pages
-// ══════════════════════════════════════════════════════════════
+// ADMIN MOBILE API â€” JSON endpoints for Flutter admin pages
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 $adminMobilePrefix = '/api/v2/mobile/admin';
 $router->get("$adminMobilePrefix/bookings", 'Api\AdminMobileController@bookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post("$adminMobilePrefix/bookings/{id}/status", 'Api\AdminMobileController@updateBookingStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -565,10 +565,10 @@ $router->get("$adminMobilePrefix/reports", 'Api\AdminMobileController@reports')-
 $router->get("$adminMobilePrefix/telecaller-dashboard", 'Api\AdminMobileController@telecallerDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/crm/team-performance', 'Api\CRMController@dashboard');
 
-// ══════════════════════════════════════════════════════════════
-// MOBILE API V2 — Flutter Route Alias Expansion Batch
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+// MOBILE API V2 â€” Flutter Route Alias Expansion Batch
 // Maps /api/v2/mobile/* calls from Flutter to existing controllers
-// ══════════════════════════════════════════════════════════════
+// â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
 
 // --- Auth (password mgmt, OTP, phone checks) ---
 $router->post('/api/v2/mobile/auth/forgot-password', 'Api\MobileApiController@forgotPassword');
@@ -580,7 +580,7 @@ $router->post('/api/v2/mobile/auth/refresh', 'Api\MobileApiController@refreshV2'
 $router->get('/api/v2/mobile/auth/check-user', 'Api\MobileApiController@checkUser');
 $router->get('/api/v2/mobile/auth/referrer', 'Api\MobileApiController@getReferrer');
 
-// --- Leads (flat pattern) — alias to CRMController ---
+// --- Leads (flat pattern) â€” alias to CRMController ---
 $router->get('/api/v2/mobile/leads', 'Api\CRMController@leads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/create', 'Api\CRMController@createLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/leads/{id}', 'Api\CRMController@leadDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -757,4 +757,4 @@ $router->get('/api/v2/mobile/document-esign', 'Api\DocumentEsignApiController@ge
 // ============================================================
 require_once __DIR__ . '/container.php';
 require_once __DIR__ . '/performance-cache.php';
-require_once __DIR__ . '/request-middleware.php';
+require_once __DIR__ . '/request-middleware.php';?>

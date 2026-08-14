@@ -59,7 +59,7 @@ $activityIcons = [
 <div class="lead-detail-header">
     <div class="d-flex justify-content-between align-items-start">
         <div>
-            <a href="<?= $base ?>/agent/leads" class="text-white text-decoration-none" style="opacity:0.8;font-size:0.85rem;">
+            <a href="<?= $base ?>/agent/leads" class="text-white text-decoration-none" class="style-4669">
                 <i class="fas fa-arrow-left me-1"></i>Back to Leads
             </a>
             <h4 class="mt-2">
@@ -68,7 +68,7 @@ $activityIcons = [
                 $leadStatus = $lead['status'] ?? 'new';
                 $statusCls = $statusColors[$leadStatus] ?? 'bg-secondary';
                 ?>
-                <span class="badge <?= $statusCls ?> ms-2" style="font-size:0.85rem;"><?= ucfirst(str_replace('_', ' ', $leadStatus)) ?></span>
+                <span class="badge <?= $statusCls ?> ms-2" class="style-47175"><?= ucfirst(str_replace('_', ' ', $leadStatus)) ?></span>
             </h4>
             <div class="lead-meta">
                 <?php if (!empty($lead['phone'])): ?>
@@ -98,7 +98,7 @@ $activityIcons = [
         <!-- Lead Info Card -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0" style="color:#064e3b;"><i class="fas fa-info-circle me-2"></i>Lead Information</h6>
+                <h6 class="mb-0" class="style-23251"><i class="fas fa-info-circle me-2"></i>Lead Information</h6>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -124,7 +124,7 @@ $activityIcons = [
                     </div>
                     <div class="col-md-6">
                         <label class="text-muted small">Budget</label>
-                        <div class="fw-semibold"><?= !empty($lead['budget']) ? '₹' . number_format((float)$lead['budget']) : '-' ?></div>
+                        <div class="fw-semibold"><?= !empty($lead['budget']) ? 'â‚¹' . number_format((float)$lead['budget']) : '-' ?></div>
                     </div>
                     <div class="col-md-6">
                         <label class="text-muted small">Location Preference</label>
@@ -153,7 +153,7 @@ $activityIcons = [
         <!-- Status Update -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0" style="color:#064e3b;"><i class="fas fa-sync-alt me-2"></i>Update Status</h6>
+                <h6 class="mb-0" class="style-23251"><i class="fas fa-sync-alt me-2"></i>Update Status</h6>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/status" class="d-flex gap-2 align-items-end">
@@ -177,7 +177,7 @@ $activityIcons = [
         <!-- Add Note -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0" style="color:#064e3b;"><i class="fas fa-sticky-note me-2"></i>Add Note</h6>
+                <h6 class="mb-0" class="style-23251"><i class="fas fa-sticky-note me-2"></i>Add Note</h6>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/note">
@@ -194,7 +194,7 @@ $activityIcons = [
         <?php if (!empty($notes)): ?>
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0" style="color:#064e3b;"><i class="fas fa-sticky-note me-2"></i>Notes (<?= count($notes) ?>)</h6>
+                <h6 class="mb-0" class="style-23251"><i class="fas fa-sticky-note me-2"></i>Notes (<?= count($notes) ?>)</h6>
             </div>
             <div class="card-body">
                 <?php foreach ($notes as $n): ?>
@@ -215,7 +215,7 @@ $activityIcons = [
         <!-- Quick Actions -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0" style="color:#064e3b;"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                <h6 class="mb-0" class="style-23251"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
@@ -241,7 +241,7 @@ $activityIcons = [
         <!-- Activity Timeline -->
         <div class="card lead-info-card shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0" style="color:#064e3b;"><i class="fas fa-stream me-2"></i>Activity Timeline</h6>
+                <h6 class="mb-0" class="style-23251"><i class="fas fa-stream me-2"></i>Activity Timeline</h6>
             </div>
             <div class="card-body">
                 <?php if (empty($activities)): ?>
@@ -258,10 +258,10 @@ $activityIcons = [
                         <div class="d-flex justify-content-between">
                             <div>
                                 <i class="<?= $iconClass ?> me-1"></i>
-                                <span class="fw-semibold" style="font-size:0.85rem;"><?= ucfirst(str_replace('_', ' ', $actType)) ?></span>
-                                <div class="text-muted mt-1" style="font-size:0.85rem;"><?= htmlspecialchars($act['description'] ?? '') ?></div>
+                                <span class="fw-semibold" class="style-47175"><?= ucfirst(str_replace('_', ' ', $actType)) ?></span>
+                                <div class="text-muted mt-1" class="style-47175"><?= htmlspecialchars($act['description'] ?? '') ?></div>
                             </div>
-                            <small class="text-muted text-nowrap ms-2" style="font-size:0.75rem;">
+                            <small class="text-muted text-nowrap ms-2" class="style-20558">
                                 <?= date('d M', strtotime($act['created_at'] ?? 'now')) ?>
                             </small>
                         </div>

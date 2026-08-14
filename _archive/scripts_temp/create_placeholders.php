@@ -51,4 +51,4 @@ foreach ($placeholders as $file => $config) {
     }
 }
 
-echo "Done!\n";
+echo "Done!\n";?>

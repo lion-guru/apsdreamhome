@@ -1,6 +1,6 @@
 <?php
 /**
- * APS Dream Home — Database Stress Test
+ * APS Dream Home â€” Database Stress Test
  *
  * 1000 SELECTs on hot tables, 100 INSERTs/UPDATEs, EXPLAIN to surface missing indexes.
  * No external deps. Uses PDO directly.
@@ -19,9 +19,9 @@ $dbName = getenv('DB_NAME') ?: 'apsdreamhome';
 $dbUser = getenv('DB_USER') ?: 'root';
 $dbPass = getenv('DB_PASS') ?: '';
 
-echo "╔════════════════════════════════════════════════════════════════╗\n";
-echo "║         APS Dream Home — DB Stress Test                      ║\n";
-echo "╚════════════════════════════════════════════════════════════════╝\n\n";
+echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
+echo "â•‘         APS Dream Home â€” DB Stress Test                      â•‘\n";
+echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
 echo "DB: {$dbUser}@{$dbHost}:{$dbPort}/{$dbName}\n\n";
 
 try {
@@ -32,7 +32,7 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_PERSISTENT => false]
     );
 } catch (PDOException $e) {
-    fwrite(STDERR, "❌ DB connect failed: " . $e->getMessage() . "\n");
+    fwrite(STDERR, "â�Œ DB connect failed: " . $e->getMessage() . "\n");
     exit(1);
 }
 
@@ -175,7 +175,7 @@ foreach (array_slice($tableStats, 0, 8, true) as $table => $st) {
                 if (!empty($r['key']) && $r['key'] !== 'PRIMARY') {
                     $cols[] = $r['key'];
                 } elseif (empty($r['key']) && isset($r['Extra']) && stripos($r['Extra'], 'Using filesort') !== false) {
-                    $indexSuggestions[$table][] = 'filesort detected — consider composite index on ORDER BY columns';
+                    $indexSuggestions[$table][] = 'filesort detected â€” consider composite index on ORDER BY columns';
                 }
             }
             if ($cols) {
@@ -238,12 +238,12 @@ $jsonFile = __DIR__ . '/db_stress_results.json';
 file_put_contents($jsonFile, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 // Human output
-$hr = str_repeat('─', 72);
+$hr = str_repeat('â”€', 72);
 echo $hr . "\n";
-echo "  SELECT STRESS — {$totalSelects} total across " . count($available) . " tables\n";
+echo "  SELECT STRESS â€” {$totalSelects} total across " . count($available) . " tables\n";
 echo $hr . "\n";
 printf("  %-20s %8s %8s %8s %8s %8s\n", 'table', 'count', 'avg_ms', 'p95_ms', 'p99_ms', 'slow');
-echo "  " . str_repeat('·', 60) . "\n";
+echo "  " . str_repeat('Â·', 60) . "\n";
 foreach ($tableStats as $t => $st) {
     printf("  %-20s %8d %8.2f %8.2f %8.2f %8d\n",
         $t, $st['count'], $st['avg_ms'], $st['p95_ms'], $st['p99_ms'], $st['slow_queries']);
@@ -251,14 +251,14 @@ foreach ($tableStats as $t => $st) {
 echo $hr . "\n";
 echo "  OVERALL: avg=" . round($overallAvg, 2) . "ms  p95=" . round($overallP95, 2) . "ms  p99=" . round($overallP99, 2) . "ms  slow(>100ms)=" . $totalSlow . "\n";
 echo $hr . "\n";
-echo "  WRITE STRESS — INSERTs: {$insOk}/{$insertCount} ok, " . round(array_sum($insertTimes) / max(count($insertTimes), 1), 2) . "ms avg\n";
+echo "  WRITE STRESS â€” INSERTs: {$insOk}/{$insertCount} ok, " . round(array_sum($insertTimes) / max(count($insertTimes), 1), 2) . "ms avg\n";
 echo "                UPDATEs: {$updOk}/{$updateCount} ok, " . round(array_sum($updateTimes) / max(count($updateTimes), 1), 2) . "ms avg\n";
 echo $hr . "\n";
 if (!empty($indexSuggestions)) {
     echo "  INDEX SUGGESTIONS (tables with p95>50ms or >10 slow queries):\n";
     foreach ($indexSuggestions as $t => $suggs) {
         foreach ($suggs as $s) {
-            echo "    • {$t} → {$s}\n";
+            echo "    â€¢ {$t} â†’ {$s}\n";
         }
     }
     echo $hr . "\n";
@@ -266,10 +266,10 @@ if (!empty($indexSuggestions)) {
 if ($totalSlow > 0) {
     echo "  Top slow queries (first 10):\n";
     foreach (array_slice($slowQueries, 0, 10) as $sq) {
-        echo "    • {$sq['table']} : " . $sq['ms'] . "ms\n";
+        echo "    â€¢ {$sq['table']} : " . $sq['ms'] . "ms\n";
     }
     echo $hr . "\n";
 }
-echo "📄 JSON → " . realpath($jsonFile) . "\n";
-echo "\n✅ DB stress test complete.\n";
-exit(0);
+echo "ðŸ“„ JSON â†’ " . realpath($jsonFile) . "\n";
+echo "\nâœ… DB stress test complete.\n";
+exit(0);?>

@@ -1,7 +1,7 @@
 <?php
 /**
- * APS Dream Homes — Browser Voice Bot
- * Option A: Customer opens link → speaks in Hindi → AI responds
+ * APS Dream Homes â€” Browser Voice Bot
+ * Option A: Customer opens link â†’ speaks in Hindi â†’ AI responds
  * 100% free: Web Speech API (STT+TTS) + Groq/Llama (LLM)
  */
 $customer_name = $customer_name ?? '';
@@ -13,7 +13,7 @@ $language = $language ?? 'hi';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APS Dream Homes — Voice Assistant</title>
+    <title>APS Dream Homes â€” Voice Assistant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -299,7 +299,7 @@ $language = $language ?? 'hi';
 
         <div class="text-input-row">
             <input type="text" id="textInput" placeholder="Type karein ya bolein..." onkeypress="if(event.key==='Enter')sendFromInput()">
-            <button onclick="sendFromInput()"><i class="fas fa-paper-plane" style="font-size:0.8rem;"></i></button>
+            <button onclick="sendFromInput()"><i class="fas fa-paper-plane" class="style-64777"></i></button>
         </div>
 
         <button class="end-call-btn" onclick="endSession()">End Session</button>
@@ -327,7 +327,7 @@ let isSpeaking = false;
 function initRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        voiceLabel.textContent = 'Speech not supported — type instead';
+        voiceLabel.textContent = 'Speech not supported â€” type instead';
         voiceLabel.className = 'voice-label error';
         return null;
     }
@@ -502,7 +502,7 @@ function removeTyping() {
 }
 
 function endSession() {
-    addBotMsg('Dhanyavaad! Aapka din shubh ho. Phir milenge! 🙏');
+    addBotMsg('Dhanyavaad! Aapka din shubh ho. Phir milenge! ðŸ™�');
     if (window.speechSynthesis) {
         const utter = new SpeechSynthesisUtterance('Dhanyavaad! Aapka din shubh ho.');
         utter.lang = 'hi-IN';

@@ -42,7 +42,7 @@ $offers = $offers ?? [];
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-rupee-sign"></i></span></div>
-                    <div><div class="aps-cp-stat-label">Outstanding</div><div class="aps-cp-stat-value">₹<?= number_format(($stats['total_outstanding'] ?? 0) / 100000, 1) ?>L</div><div class="aps-cp-stat-meta">Collected: ₹<?= number_format(($stats['total_collected'] ?? 0) / 100000, 1) ?>L</div></div>
+                    <div><div class="aps-cp-stat-label">Outstanding</div><div class="aps-cp-stat-value">â‚¹<?= number_format(($stats['total_outstanding'] ?? 0) / 100000, 1) ?>L</div><div class="aps-cp-stat-meta">Collected: â‚¹<?= number_format(($stats['total_collected'] ?? 0) / 100000, 1) ?>L</div></div>
                 </div>
             </div></div>
         </div>
@@ -56,7 +56,7 @@ $offers = $offers ?? [];
                     <span class="fw-bold me-2"><i class="fas fa-bolt me-1"></i>Quick Actions:</span>
                     <a href="<?= BASE_URL ?>/admin/company-loans/offers" class="btn btn-outline-info btn-sm"><i class="fas fa-tags me-1"></i>Manage Offers (<?= count($offers) ?>)</a>
                     <a href="<?= BASE_URL ?>/admin/company-loans/early-incentives" class="btn btn-outline-success btn-sm"><i class="fas fa-gift me-1"></i>Early Incentives</a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/run-penalties" style="display:inline" onsubmit="return confirm('Apply daily penalties to all overdue installments?')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/run-penalties" class="style-71727" onsubmit="return confirm('Apply daily penalties to all overdue installments?')">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <button type="submit" class="btn btn-outline-warning btn-sm"><i class="fas fa-gavel me-1"></i>Run Penalties</button>
                     </form>
@@ -94,11 +94,11 @@ $offers = $offers ?? [];
                             <tr>
                                 <td><a href="<?= BASE_URL ?>/admin/company-loans/<?= $l['id'] ?>" class="fw-bold"><?= htmlspecialchars($l['loan_number']) ?></a></td>
                                 <td><?= htmlspecialchars($l['customer_name'] ?? 'N/A') ?><br><small class="text-muted"><?= htmlspecialchars($l['customer_phone'] ?? '') ?></small></td>
-                                <td>₹<?= number_format($l['loan_amount'] / 100000, 1) ?>L</td>
-                                <td>₹<?= number_format($l['emi_amount']) ?></td>
+                                <td>â‚¹<?= number_format($l['loan_amount'] / 100000, 1) ?>L</td>
+                                <td>â‚¹<?= number_format($l['emi_amount']) ?></td>
                                 <td><?= $l['tenure_months'] ?>m</td>
-                                <td>₹<?= number_format($l['amount_paid'] / 100000, 1) ?>L</td>
-                                <td><strong>₹<?= number_format($l['balance_amount'] / 100000, 1) ?>L</strong></td>
+                                <td>â‚¹<?= number_format($l['amount_paid'] / 100000, 1) ?>L</td>
+                                <td><strong>â‚¹<?= number_format($l['balance_amount'] / 100000, 1) ?>L</strong></td>
                                 <td>
                                     <span class="aps-cp-badge badge bg-<?= match($l['status']) {
                                         'active' => 'success', 'pending' => 'warning', 'completed' => 'info',

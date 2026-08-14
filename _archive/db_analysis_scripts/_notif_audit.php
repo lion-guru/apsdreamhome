@@ -40,4 +40,4 @@ foreach ($tables as $t) {
     $colStr = implode(', ', $cols);
 
     echo sprintf("%-35s %3d rows  %2d refs  %s\n", $t, $rows, $codeRef, $colStr);
-}
+}?>

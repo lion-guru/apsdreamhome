@@ -97,7 +97,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <h5 class="mb-0">Customer Photo</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <img src="<?= $base ?>/<?= htmlspecialchars($t['photo_path'] ?? '') ?>" alt="Customer" class="img-fluid rounded" style="max-height: 300px;">
+                    <img src="<?= $base ?>/<?= htmlspecialchars($t['photo_path'] ?? '') ?>" alt="Customer" class="img-fluid rounded" class="style-39110">
                 </div>
             </div>
             <?php endif; ?>

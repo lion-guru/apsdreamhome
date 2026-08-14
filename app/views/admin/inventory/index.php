@@ -36,8 +36,8 @@
                                 <span>Available</span>
                                 <span class="fw-bold text-success"><?php echo $col['available']; ?> (<?php echo $availPct; ?>%)</span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-success" style="width: <?php echo $availPct; ?>%"></div>
+                            <div class="progress" class="style-31164">
+                                <div class="progress-bar bg-success" class="style-57761"></div>
                             </div>
                         </div>
                         <div class="mb-2">
@@ -45,8 +45,8 @@
                                 <span>Booked</span>
                                 <span class="fw-bold text-warning"><?php echo $col['booked']; ?> (<?php echo $bookedPct; ?>%)</span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-warning" style="width: <?php echo $bookedPct; ?>%"></div>
+                            <div class="progress" class="style-31164">
+                                <div class="progress-bar bg-warning" class="style-31368"></div>
                             </div>
                         </div>
                         <div class="mb-2">
@@ -54,8 +54,8 @@
                                 <span>Sold</span>
                                 <span class="fw-bold text-danger"><?php echo $col['sold']; ?> (<?php echo $soldPct; ?>%)</span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-danger" style="width: <?php echo $soldPct; ?>%"></div>
+                            <div class="progress" class="style-31164">
+                                <div class="progress-bar bg-danger" class="style-93120"></div>
                             </div>
                         </div>
 
@@ -65,8 +65,8 @@
                                 <span>Hold/Reserved</span>
                                 <span class="fw-bold text-secondary"><?php echo $col['other']; ?></span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-secondary" style="width: <?php echo $col['total_plots_actual'] > 0 ? round(($col['other']/$col['total_plots_actual'])*100) : 0; ?>%"></div>
+                            <div class="progress" class="style-31164">
+                                <div class="progress-bar bg-secondary" class="style-43704"></div>
                             </div>
                         </div>
                         <?php endif; ?>

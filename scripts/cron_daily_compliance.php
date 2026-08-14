@@ -19,4 +19,4 @@ $tokenResult = $bookingService->enforceTokenRule();
 echo "   Released plots: {$tokenResult['released_plots']}\n";
 echo "   Warnings: {$tokenResult['warnings']}\n\n";
 
-echo "[" . date('Y-m-d H:i:s') . "] Compliance cron completed.\n";
+echo "[" . date('Y-m-d H:i:s') . "] Compliance cron completed.\n";?>

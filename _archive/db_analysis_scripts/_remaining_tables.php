@@ -4,4 +4,4 @@ $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};dbname={$con
 $count = $pdo->query('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA="apsdreamhome"')->fetchColumn();
 echo "Remaining tables: $count\n";
 $tables = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
-echo implode("\n", $tables) . "\n";
+echo implode("\n", $tables) . "\n";?>

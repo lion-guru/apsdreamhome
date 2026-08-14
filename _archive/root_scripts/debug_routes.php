@@ -51,4 +51,4 @@ if (class_exists('App\Http\Controllers\RequestMiddlewareController')) {
     } else {
         echo "RequestMiddlewareController: No signature conflicts\n";
     }
-}
+}?>

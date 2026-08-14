@@ -6,7 +6,7 @@ $customers = $customers ?? [];
 
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #14b8a6 100%); color: #fff;">
+        <div class="card border-0 shadow-sm" class="style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= count($customers) ?></div>
                 <div class="small opacity-75"><?= __('assoc_cust_total', [], 'Total Customers') ?></div>
@@ -17,7 +17,7 @@ $customers = $customers ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
                 <?php $totalBiz = array_sum(array_column($customers, 'total_business')); ?>
-                <div class="fs-2 fw-bold text-success">₹<?= number_format($totalBiz) ?></div>
+                <div class="fs-2 fw-bold text-success">â‚¹<?= number_format($totalBiz) ?></div>
                 <div class="small text-muted"><?= __('assoc_cust_total_biz', [], 'Total Business') ?></div>
             </div>
         </div>
@@ -46,7 +46,7 @@ $customers = $customers ?? [];
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-address-book me-2 text-primary"></i><?= __('assoc_cust_title', [], 'My Customers') ?></h5>
         <div>
-            <input type="text" id="searchCustomer" class="form-control form-control-sm" placeholder="<?= __('assoc_cust_search', [], 'Search customers...') ?>" style="width: 200px;" oninput="filterCustomers()">
+            <input type="text" id="searchCustomer" class="form-control form-control-sm" placeholder="<?= __('assoc_cust_search', [], 'Search customers...') ?>" class="style-869" oninput="filterCustomers()">
         </div>
     </div>
     <div class="card-body">
@@ -65,12 +65,12 @@ $customers = $customers ?? [];
                     $pendingAmount = ($c['total_business'] ?? 0) - $totalPaid;
                     ?>
                     <div class="col-md-6 col-lg-4 customer-card" data-name="<?= strtolower($c['name'] ?? '') ?>" data-phone="<?= $c['phone'] ?? '' ?>">
-                        <div class="card border h-100 <?= $isAssociate ? 'border-success' : '' ?>" style="<?= $isAssociate ? 'border-left: 4px solid #10b981 !important;' : '' ?>">
+                        <div class="card border h-100 <?= $isAssociate ? 'border-success' : '' ?>" class="style-64392">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div class="d-flex align-items-center">
                                         <div class="rounded-circle d-flex align-items-center justify-content-center me-2" 
-                                             style="width: 45px; height: 45px; background: <?= $isAssociate ? '#dcfce7' : '#f3f4f6' ?>; color: <?= $isAssociate ? '#10b981' : '#6b7280' ?>;">
+                                             class="style-38516">
                                             <i class="fas fa-<?= $isAssociate ? 'user-tie' : 'user' ?>"></i>
                                         </div>
                                         <div>
@@ -86,13 +86,13 @@ $customers = $customers ?? [];
                                 <div class="mb-3">
                                     <?php if (!empty($c['phone'])): ?>
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-phone text-muted me-2" style="width: 16px;"></i>
+                                            <i class="fas fa-phone text-muted me-2" class="style-18746"></i>
                                             <a href="tel:<?= $c['phone'] ?>" class="text-decoration-none"><?= htmlspecialchars($c['phone']) ?></a>
                                         </div>
                                     <?php endif; ?>
                                     <?php if (!empty($c['email'])): ?>
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-envelope text-muted me-2" style="width: 16px;"></i>
+                                            <i class="fas fa-envelope text-muted me-2" class="style-18746"></i>
                                             <a href="mailto:<?= $c['email'] ?>" class="text-decoration-none small"><?= htmlspecialchars($c['email']) ?></a>
                                         </div>
                                     <?php endif; ?>
@@ -100,15 +100,15 @@ $customers = $customers ?? [];
 
                                 <div class="row g-2 mb-3">
                                     <div class="col-6">
-                                        <div class="p-2 rounded text-center" style="background: #f8fafc;">
+                                        <div class="p-2 rounded text-center" class="style-46892">
                                             <div class="small text-muted"><?= __('assoc_cust_bookings_label', [], 'Bookings') ?></div>
                                             <div class="fw-bold text-primary"><?= $c['booking_count'] ?? 0 ?></div>
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="p-2 rounded text-center" style="background: #f8fafc;">
+                                        <div class="p-2 rounded text-center" class="style-46892">
                                             <div class="small text-muted"><?= __('assoc_cust_business_label', [], 'Business') ?></div>
-                                            <div class="fw-bold text-success">₹<?= number_format($c['total_business'] ?? 0) ?></div>
+                                            <div class="fw-bold text-success">â‚¹<?= number_format($c['total_business'] ?? 0) ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@ $customers = $customers ?? [];
 
                                 <?php if ($pendingAmount > 0): ?>
                                     <div class="alert alert-warning py-1 px-2 mb-3">
-                                        <small><i class="fas fa-exclamation-triangle me-1"></i>₹<?= number_format($pendingAmount) ?> <?= __('assoc_cust_pending', [], 'pending') ?></small>
+                                        <small><i class="fas fa-exclamation-triangle me-1"></i>â‚¹<?= number_format($pendingAmount) ?> <?= __('assoc_cust_pending', [], 'pending') ?></small>
                                     </div>
                                 <?php endif; ?>
 

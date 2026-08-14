@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <div class="row">
         <?php foreach ($properties as $property): ?>
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-sm h-100 property-card" style="transition: transform 0.2s, box-shadow 0.2s;">
+            <div class="card border-0 shadow-sm h-100 property-card" class="style-94959">
                 <div class="position-relative">
                     <?php
                         $imgSrc = $base . '/assets/images/properties/' . htmlspecialchars($property['image'] ?? '');
@@ -67,7 +67,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         }
                     ?>
                     <img src="<?= $imgSrc ?>" class="card-img-top" alt="<?= htmlspecialchars($property['name'] ?? '') ?>"
-                         style="height:200px;object-fit:cover;"
+                         class="style-27608"
                          onerror="this.src='<?= $base ?>/assets/images/placeholder/property.svg'">
                     <span class="position-absolute top-0 end-0 badge bg-<?= ($property['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success' ?> m-2">
                         <?= ucfirst($property['listing_type'] ?? __('assoc_browse_sell', [], 'Sell')) ?>
@@ -153,8 +153,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 </div>
 
 <div class="modal fade" id="interestModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-bottom modal-dialog-centered" style="max-width:480px;margin:0 auto;">
-        <div class="modal-content" style="border-radius:16px 16px 0 0;">
+    <div class="modal-dialog modal-dialog-bottom modal-dialog-centered" class="style-99340">
+        <div class="modal-content" class="style-73680">
             <div class="modal-header border-0 pb-0">
                 <div>
                     <h6 class="fw-bold mb-0"><?= __('assoc_browse_im_interested', [], "I'm Interested") ?></h6>
@@ -190,7 +190,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <i class="fas fa-paper-plane me-1"></i><?= __('assoc_browse_submit', [], 'Submit Interest') ?>
                     </button>
                 </form>
-                <div id="interestSuccess" class="text-center py-3" style="display:none;">
+                <div id="interestSuccess" class="text-center py-3" class="style-2248">
                     <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
                     <h6 class="fw-bold"><?= __('assoc_browse_success', [], 'Interest Recorded!') ?></h6>
                     <p class="text-muted small mb-0"><?= __('assoc_browse_success_desc', [], 'Our team will contact you shortly.') ?></p>

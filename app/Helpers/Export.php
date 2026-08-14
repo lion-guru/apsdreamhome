@@ -56,13 +56,14 @@ class Export
         header('Expires: 0');
 
         echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">';
-        echo '<head><meta charset="UTF-8"></head>';
+        echo '<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8"></head>';
         echo '<body><table border="1">';
 
         // Headers
         echo '<tr>';
         foreach (array_keys($data[0]) as $header) {
-            echo '<th style="background-color:#4472C4;color:white;font-weight:bold;">' . htmlspecialchars($header) . '</th>';
+            echo '<th class="style-67848">' . htmlspecialchars($header) . '</th>';
         }
         echo '</tr>';
 

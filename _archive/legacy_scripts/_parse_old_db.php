@@ -66,4 +66,4 @@ foreach ($empty as $name => $t) {
         echo "  ... +" . (count($empty) - 30) . " more\n";
         break;
     }
-}
+}?>

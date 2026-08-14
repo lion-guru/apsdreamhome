@@ -23,8 +23,8 @@ try {
         $stmt->execute([$item['name'], $item['url'], $item['icon'], $item['section'], $item['order_index']]);
         $inserted += $stmt->rowCount();
     }
-    echo "✓ MLM menu items: {$inserted} inserted, " . (count($menuItems) - $inserted) . " already existed.\n";
+    echo "âœ“ MLM menu items: {$inserted} inserted, " . (count($menuItems) - $inserted) . " already existed.\n";
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

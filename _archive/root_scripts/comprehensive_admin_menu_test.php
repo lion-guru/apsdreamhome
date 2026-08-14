@@ -104,20 +104,20 @@ foreach ($menuItems as $index => $item) {
     if (file_exists($routesFile)) {
         $routesContent = file_get_contents($routesFile);
         if (strpos($routesContent, $itemUrl) !== false) {
-            echo "    ✅ Route exists\n";
+            echo "    âœ… Route exists\n";
             $testResult['route_exists'] = true;
         } else {
-            echo "    ❌ Route missing\n";
+            echo "    â�Œ Route missing\n";
         }
     }
     
     // Test 2: Check Controller exists
     $controllerPath = __DIR__ . '/app/Http/Controllers/Admin/' . $controller . '.php';
     if (file_exists($controllerPath)) {
-        echo "    ✅ Controller exists\n";
+        echo "    âœ… Controller exists\n";
         $testResult['controller_exists'] = true;
     } else {
-        echo "    ❌ Controller missing\n";
+        echo "    â�Œ Controller missing\n";
     }
     
     // Test 3: Check View exists (if specified)
@@ -126,19 +126,19 @@ foreach ($menuItems as $index => $item) {
         $viewFile = __DIR__ . '/app/views/' . $viewPath . '.php';
         
         if (file_exists($indexPath) || file_exists($viewFile)) {
-            echo "    ✅ View exists\n";
+            echo "    âœ… View exists\n";
             $testResult['view_exists'] = true;
         } else {
-            echo "    ❌ View missing\n";
+            echo "    â�Œ View missing\n";
         }
     } else {
-        echo "    ℹ️  No view specified (may use direct response)\n";
+        echo "    â„¹ï¸�  No view specified (may use direct response)\n";
         $testResult['view_exists'] = true; // Assume OK if no view specified
     }
     
     // Test 4: Try HTTP request (cURL) - requires server running
     $fullUrl = $baseUrl . $itemUrl;
-    echo "    🌐 Testing URL: $fullUrl\n";
+    echo "    ðŸŒ� Testing URL: $fullUrl\n";
     
     $ch = curl_init($fullUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -152,10 +152,10 @@ foreach ($menuItems as $index => $item) {
     curl_close($ch);
     
     if ($httpCode >= 200 && $httpCode < 400) {
-        echo "    ✅ URL accessible (HTTP $httpCode)\n";
+        echo "    âœ… URL accessible (HTTP $httpCode)\n";
         $testResult['url_accessible'] = true;
     } else {
-        echo "    ❌ URL not accessible (HTTP $httpCode)";
+        echo "    â�Œ URL not accessible (HTTP $httpCode)";
         if ($error) {
             echo " - Error: $error\n";
         } else {
@@ -198,7 +198,7 @@ foreach ($results as $result) {
     
     if ($hasIssue) {
         $issuesFound = true;
-        echo "\n❌ {$result['name']}\n";
+        echo "\nâ�Œ {$result['name']}\n";
         echo "   URL: {$result['url']}\n";
         if (!$result['route_exists']) echo "   - Missing route\n";
         if (!$result['controller_exists']) echo "   - Missing controller\n";
@@ -208,23 +208,23 @@ foreach ($results as $result) {
 }
 
 if (!$issuesFound) {
-    echo "\n✅ NO ISSUES FOUND - All menu items are working!\n";
+    echo "\nâœ… NO ISSUES FOUND - All menu items are working!\n";
 }
 
 echo "\n=== RECOMMENDATIONS ===\n";
 
 if ($passedRoutes < $total) {
-    echo "\n• Add missing routes in routes/web.php\n";
+    echo "\nâ€¢ Add missing routes in routes/web.php\n";
 }
 if ($passedControllers < $total) {
-    echo "• Create missing controllers in app/Http/Controllers/Admin/\n";
+    echo "â€¢ Create missing controllers in app/Http/Controllers/Admin/\n";
 }
 if ($passedViews < $total) {
-    echo "• Create missing views in app/views/admin/\n";
+    echo "â€¢ Create missing views in app/views/admin/\n";
 }
 if ($passedUrls < $total) {
-    echo "• Check server is running (http://localhost)\n";
-    echo "• Check for authentication requirements\n";
+    echo "â€¢ Check server is running (http://localhost)\n";
+    echo "â€¢ Check for authentication requirements\n";
 }
 
-echo "\n=== END OF REPORT ===\n";
+echo "\n=== END OF REPORT ===\n";?>

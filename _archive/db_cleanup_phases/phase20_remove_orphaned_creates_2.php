@@ -61,4 +61,4 @@ foreach ($iter as $f) {
     }
 }
 
-echo "\nRemoved $fixed orphaned CREATE TABLE statements from $filesFixed files\n";
+echo "\nRemoved $fixed orphaned CREATE TABLE statements from $filesFixed files\n";?>

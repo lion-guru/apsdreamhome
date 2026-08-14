@@ -29,4 +29,4 @@ foreach ($docTables as $t) {
     $fkTo = $pdo->query("SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_NAME='$t' AND TABLE_SCHEMA='apsdreamhome'")->fetchColumn();
 
     echo sprintf("%-30s %3d rows  %2d refs  %d FKs\n", $t, $rows, $codeRef, $fkTo);
-}
+}?>

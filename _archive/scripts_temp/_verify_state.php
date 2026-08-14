@@ -15,7 +15,7 @@ echo "Sidebar item: " . ($routeExists ? 'YES' : 'NO') . "\n";
 // 2. Check if any roles have 0 permissions still
 echo "\n=== ROLES WITH 0 PERMISSIONS ===\n";
 $empty = $pdo->query("SELECT DISTINCT role FROM admin_role_menu_permissions WHERE can_view=1 GROUP BY role HAVING COUNT(*) = 0")->fetchAll(PDO::FETCH_ASSOC);
-if (empty($empty)) echo "  None — all roles have permissions\n";
+if (empty($empty)) echo "  None â€” all roles have permissions\n";
 else foreach ($empty as $e) echo "  " . $e['role'] . "\n";
 
 // 3. Check employee_designation_roles
@@ -41,4 +41,4 @@ foreach ($roles_in_map as $r) {
     echo "  $r: " . ($found ? 'OK' : 'MISSING') . "\n";
 }
 
-echo "\nDone.\n";
+echo "\nDone.\n";?>

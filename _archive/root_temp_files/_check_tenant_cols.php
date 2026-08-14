@@ -16,4 +16,4 @@ foreach ($tables as $t) {
     } catch (Exception $e) {
         echo $t . ': TABLE NOT FOUND - ' . $e->getMessage() . "\n";
     }
-}
+}?>

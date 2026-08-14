@@ -32,4 +32,4 @@ $router->get('/api/farmers/{id}/support-requests', 'FarmerController@supportRequ
 $router->post('/api/farmers/{id}/support-requests', 'FarmerController@createSupportRequest');
 
 // Farmer dashboard and analytics
-$router->get('/api/farmers/{id}/dashboard', 'FarmerController@dashboard');
+$router->get('/api/farmers/{id}/dashboard', 'FarmerController@dashboard');?>

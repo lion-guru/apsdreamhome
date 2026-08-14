@@ -33,4 +33,4 @@ foreach ($tables as $t) {
     }
     if ($refFiles) { echo "  Refs: " . implode(', ', $refFiles) . "\n"; }
     echo "\n";
-}
+}?>

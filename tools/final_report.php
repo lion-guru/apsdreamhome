@@ -28,23 +28,23 @@ echo "Views truly missing:         13 (10.4%)\n\n";
 echo "--- TRULY MISSING VIEW FILES (13) ---\n\n";
 
 echo "1. Telecalling (URL uses 'telecalling', views use 'telecaller'):\n";
-echo "   [87] /admin/telecalling/dashboard  →  admin/telecaller/dashboard.php\n";
-echo "   [88] /admin/telecalling/assign     →  no file exists\n";
-echo "   [89] /admin/telecalling/commissions →  no file exists\n";
-echo "   [90] /admin/telecalling/approvals  →  no file exists\n\n";
+echo "   [87] /admin/telecalling/dashboard  â†’  admin/telecaller/dashboard.php\n";
+echo "   [88] /admin/telecalling/assign     â†’  no file exists\n";
+echo "   [89] /admin/telecalling/commissions â†’  no file exists\n";
+echo "   [90] /admin/telecalling/approvals  â†’  no file exists\n\n";
 
 echo "2. MLM (URL points to /admin/mlm/* but views under /admin/mlm-rewards/ or /admin/mlm/dashboard.php):\n";
-echo "   [37] /admin/mlm             →  admin/mlm/dashboard.php (not index.php)\n";
-echo "  [156] /admin/mlm-realestate  →  admin/mlm-realestate/dashboard.php (not index.php)\n";
-echo "  [180] /admin/mlm/rank-criteria → admin/mlm-rewards/rank-criteria.php\n";
-echo "  [181] /admin/mlm/upgrades    →  admin/mlm-rewards/upgrades.php\n";
-echo "  [182] /admin/mlm/withdrawals →  admin/mlm-rewards/withdrawals.php\n";
-echo "  [183] /admin/mlm/rewards     →  admin/mlm-rewards/rewards.php\n\n";
+echo "   [37] /admin/mlm             â†’  admin/mlm/dashboard.php (not index.php)\n";
+echo "  [156] /admin/mlm-realestate  â†’  admin/mlm-realestate/dashboard.php (not index.php)\n";
+echo "  [180] /admin/mlm/rank-criteria â†’ admin/mlm-rewards/rank-criteria.php\n";
+echo "  [181] /admin/mlm/upgrades    â†’  admin/mlm-rewards/upgrades.php\n";
+echo "  [182] /admin/mlm/withdrawals â†’  admin/mlm-rewards/withdrawals.php\n";
+echo "  [183] /admin/mlm/rewards     â†’  admin/mlm-rewards/rewards.php\n\n";
 
 echo "3. Settings (missing view files - controllers may render inline or via fallback):\n";
-echo "  [101] /admin/godmode         →  no view file (GodModeController renders inline)\n";
-echo "   [78] /admin/settings/sms    →  no view file (settings/sms.php missing)\n";
-echo "   [79] /admin/settings/payment →  no view file (settings/payment.php missing)\n\n";
+echo "  [101] /admin/godmode         â†’  no view file (GodModeController renders inline)\n";
+echo "   [78] /admin/settings/sms    â†’  no view file (settings/sms.php missing)\n";
+echo "   [79] /admin/settings/payment â†’  no view file (settings/payment.php missing)\n\n";
 
 echo "--- ROUTES THAT RETURN 500 ---\n";
 echo "Per deep scan (2026-05-31): 0 real 500 errors on any admin menu routes.\n";
@@ -60,4 +60,4 @@ foreach ($menuItems as $r) {
         default => 'OK'
     };
     echo str_pad($r['id'],4)." ".str_pad($r['section'],16)." ".str_pad($r['name'],35)." ".str_pad($r['url'],50)." $health\n";
-}
+}?>

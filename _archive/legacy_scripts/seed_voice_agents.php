@@ -120,4 +120,4 @@ while ($row = $r->fetch_assoc()) {
 }
 
 $db->close();
-echo "\n=== Seed Complete ===\n";
+echo "\n=== Seed Complete ===\n";?>

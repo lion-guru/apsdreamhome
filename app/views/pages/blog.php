@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="premium-hero page-hero position-relative" style="background: url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
+<section class="premium-hero page-hero position-relative" class="style-43150">
     <div class="hero-overlay"></div>
     <div class="container position-relative z-1">
         <div class="row justify-content-center">
@@ -44,12 +44,12 @@
                 <p class="mb-4 text-white-50"><?= __('blog_newsletter_desc') ?></p>
                 <form class="d-flex gap-2" id="blogNewsletterForm">
     <?php echo CSRFProtection::csrfField(); ?>
-                    <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required style="border-radius: 8px;">
-                    <button type="submit" class="btn btn-gold px-4 fw-bold" style="border-radius: 8px;">
+                    <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required class="style-2723">
+                    <button type="submit" class="btn btn-gold px-4 fw-bold" class="style-2723">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>
                 </form>
-                <div id="blogNewsletterMsg" class="mt-2 small" style="display:none;"></div>
+                <div id="blogNewsletterMsg" class="mt-2 small" class="style-2248"></div>
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
                                 ? $featuredImage
                                 : get_asset_url($featuredImage);
                             ?>
-                            <img src="<?= htmlspecialchars($featuredImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title']) ?>" style="height:350px;object-fit:cover;">
+                            <img src="<?= htmlspecialchars($featuredImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title']) ?>" class="style-74755">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'])); ?>
                             </div>
@@ -128,7 +128,7 @@
                             $postImage = !empty($blog_posts[$i]['featured_image']) ? $blog_posts[$i]['featured_image'] : get_asset_url('assets/images/placeholder/property.svg');
                             $postImageUrl = str_starts_with($postImage, 'http') ? $postImage : get_asset_url($postImage);
                             ?>
-                            <img src="<?= htmlspecialchars($postImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title']) ?>" style="height:220px;object-fit:cover;">
+                            <img src="<?= htmlspecialchars($postImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title']) ?>" class="style-62479">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'])); ?>
                             </div>
@@ -252,7 +252,7 @@
                     msg.style.display = 'block';
                     if (d.success) {
                         msg.className = 'mt-2 small text-success';
-                        msg.textContent = '✓ Subscribed successfully!';
+                        msg.textContent = 'âœ“ Subscribed successfully!';
                         btn.innerHTML = '<i class="fas fa-check me-1"></i>Subscribed!';
                         btn.classList.replace('btn-gold', 'btn-success');
                         nlForm.reset();

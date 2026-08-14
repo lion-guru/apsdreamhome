@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 /**
  * IoT Smart Home Controller
@@ -30,7 +30,7 @@ class IoTController extends AdminController
     {
         $this->requireAdmin();
         $this->render('admin/feature-disabled', [
-            'page_title' => 'IoT Smart Home — Coming Soon',
+            'page_title' => 'IoT Smart Home â€” Coming Soon',
             'feature_name' => 'IoT Smart Home',
             'feature_description' => 'IoT device integration requires hardware setup and database configuration. This feature will be available soon.',
             'icon' => 'fas fa-microchip',
@@ -632,7 +632,7 @@ class IoTController extends AdminController
             $energy_data[] = [
                 'timestamp' => $timestamp,
                 'consumption_kwh' => rand(50, 200) / 10, // 5-20 kWh
-                'cost' => rand(50, 200), // ₹50-200
+                'cost' => rand(50, 200), // â‚¹50-200
                 'appliances' => [
                     'lighting' => rand(10, 30),
                     'hvac' => rand(20, 60),
@@ -718,7 +718,7 @@ class IoTController extends AdminController
     private function getEnergySavingsStats()
     {
         return [
-            'total_savings' => 125000, // ₹1.25 lakhs
+            'total_savings' => 125000, // â‚¹1.25 lakhs
             'avg_monthly_savings' => 8500, // per property
             'co2_reduction' => 2.5, // tons per month
             'top_saving_devices' => [
@@ -1059,9 +1059,9 @@ class IoTController extends AdminController
         if (!self::FEATURE_ENABLED) { $this->featureNotAvailable(); return; }
         $insights = [
             'market_growth' => [
-                'global_market_size' => '₹15,000 crores',
+                'global_market_size' => 'â‚¹15,000 crores',
                 'annual_growth_rate' => '25%',
-                'indian_market_potential' => '₹2,500 crores by 2025'
+                'indian_market_potential' => 'â‚¹2,500 crores by 2025'
             ],
             'popular_devices' => [
                 'Smart Security Systems' => 35,
@@ -1286,4 +1286,4 @@ class IoTController extends AdminController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

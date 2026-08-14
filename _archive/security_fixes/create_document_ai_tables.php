@@ -95,9 +95,9 @@ $fieldTemplates = [
     ['sale_deed', 'boundary_south', 'South Boundary', 'text', 0, '', '', 26],
     ['sale_deed', 'boundary_east', 'East Boundary', 'text', 0, '', '', 27],
     ['sale_deed', 'boundary_west', 'West Boundary', 'text', 0, '', '', 28],
-    ['sale_deed', 'sale_consideration', 'Sale Consideration (₹)', 'currency', 1, '', '', 29],
-    ['sale_deed', 'stamp_duty_paid', 'Stamp Duty Paid (₹)', 'currency', 1, '', '', 30],
-    ['sale_deed', 'registration_charges', 'Registration Charges (₹)', 'currency', 0, '', '', 31],
+    ['sale_deed', 'sale_consideration', 'Sale Consideration (â‚¹)', 'currency', 1, '', '', 29],
+    ['sale_deed', 'stamp_duty_paid', 'Stamp Duty Paid (â‚¹)', 'currency', 1, '', '', 30],
+    ['sale_deed', 'registration_charges', 'Registration Charges (â‚¹)', 'currency', 0, '', '', 31],
     ['sale_deed', 'registration_office', 'Registration Office', 'text', 1, '', '', 32],
     ['sale_deed', 'registration_book', 'Book Number', 'text', 0, '', '', 33],
     ['sale_deed', 'registration_volume', 'Volume Number', 'text', 0, '', '', 34],
@@ -109,9 +109,9 @@ $fieldTemplates = [
     ['agreement_to_sell', 'seller_name', 'Seller Name', 'text', 1, '', '', 3],
     ['agreement_to_sell', 'buyer_name', 'Buyer Name', 'text', 1, '', '', 4],
     ['agreement_to_sell', 'property_address', 'Property Address', 'address', 1, '', '', 5],
-    ['agreement_to_sell', 'total_price', 'Total Price (₹)', 'currency', 1, '', '', 6],
-    ['agreement_to_sell', 'advance_paid', 'Advance Paid (₹)', 'currency', 1, '', '', 7],
-    ['agreement_to_sell', 'balance_due', 'Balance Due (₹)', 'currency', 1, '', '', 8],
+    ['agreement_to_sell', 'total_price', 'Total Price (â‚¹)', 'currency', 1, '', '', 6],
+    ['agreement_to_sell', 'advance_paid', 'Advance Paid (â‚¹)', 'currency', 1, '', '', 7],
+    ['agreement_to_sell', 'balance_due', 'Balance Due (â‚¹)', 'currency', 1, '', '', 8],
     ['agreement_to_sell', 'possession_date', 'Possession Date', 'date', 0, '', '', 9],
     ['agreement_to_sell', 'completion_timeline', 'Completion Timeline', 'text', 0, '', '', 10],
     ['agreement_to_sell', 'penalty_clause', 'Penalty Clause', 'text', 0, '', '', 11],
@@ -135,8 +135,8 @@ $fieldTemplates = [
     ['lease_deed', 'lease_term_years', 'Lease Term (Years)', 'number', 1, '', '', 6],
     ['lease_deed', 'lease_start_date', 'Lease Start Date', 'date', 1, '', '', 7],
     ['lease_deed', 'lease_end_date', 'Lease End Date', 'date', 1, '', '', 8],
-    ['lease_deed', 'monthly_rent', 'Monthly Rent (₹)', 'currency', 1, '', '', 9],
-    ['lease_deed', 'security_deposit', 'Security Deposit (₹)', 'currency', 0, '', '', 10],
+    ['lease_deed', 'monthly_rent', 'Monthly Rent (â‚¹)', 'currency', 1, '', '', 9],
+    ['lease_deed', 'security_deposit', 'Security Deposit (â‚¹)', 'currency', 0, '', '', 10],
     ['lease_deed', 'rent_escalation', 'Rent Escalation %', 'percentage', 0, '', '', 11],
     
     // Mortgage Deed fields
@@ -144,7 +144,7 @@ $fieldTemplates = [
     ['mortgage_deed', 'execution_date', 'Execution Date', 'date', 1, '', '', 2],
     ['mortgage_deed', 'mortgagor_name', 'Mortgagor Name', 'text', 1, '', '', 3],
     ['mortgage_deed', 'mortgagee_name', 'Mortgagee Name', 'text', 1, '', '', 4],
-    ['mortgage_deed', 'loan_amount', 'Loan Amount (₹)', 'currency', 1, '', '', 5],
+    ['mortgage_deed', 'loan_amount', 'Loan Amount (â‚¹)', 'currency', 1, '', '', 5],
     ['mortgage_deed', 'interest_rate', 'Interest Rate (%)', 'percentage', 1, '', '', 6],
     ['mortgage_deed', 'property_address', 'Property Address', 'address', 1, '', '', 7],
     ['mortgage_deed', 'repayment_terms', 'Repayment Terms', 'text', 0, '', '', 8],
@@ -165,9 +165,9 @@ $fieldTemplates = [
     ['property_tax_receipt', 'owner_name', 'Owner Name', 'text', 1, '', '', 4],
     ['property_tax_receipt', 'property_address', 'Property Address', 'address', 1, '', '', 5],
     ['property_tax_receipt', 'property_id', 'Property ID/PTR Number', 'text', 1, '', '', 6],
-    ['property_tax_receipt', 'tax_amount', 'Tax Amount (₹)', 'currency', 1, '', '', 7],
-    ['property_tax_receipt', 'penalty_amount', 'Penalty Amount (₹)', 'currency', 0, '', '', 8],
-    ['property_tax_receipt', 'total_paid', 'Total Paid (₹)', 'currency', 1, '', '', 9],
+    ['property_tax_receipt', 'tax_amount', 'Tax Amount (â‚¹)', 'currency', 1, '', '', 7],
+    ['property_tax_receipt', 'penalty_amount', 'Penalty Amount (â‚¹)', 'currency', 0, '', '', 8],
+    ['property_tax_receipt', 'total_paid', 'Total Paid (â‚¹)', 'currency', 1, '', '', 9],
     ['property_tax_receipt', 'payment_mode', 'Payment Mode', 'select', 0, '', '', 10],
     ['property_tax_receipt', 'ward_number', 'Ward Number', 'text', 0, '', '', 11],
     ['property_tax_receipt', 'zone', 'Zone', 'text', 0, '', '', 12],
@@ -232,4 +232,4 @@ foreach ($fieldTemplates as $template) {
 
 echo "Inserted/Updated $inserted document field templates\n";
 
-echo "\n=== Document AI tables and templates created successfully ===\n";
+echo "\n=== Document AI tables and templates created successfully ===\n";?>

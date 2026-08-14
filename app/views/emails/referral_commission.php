@@ -18,30 +18,30 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
 }
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<body class="style-51511">
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f4f6fb">
   <tr>
-    <td align="center" style="padding:30px 15px;">
-      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <td align="center" class="style-56039">
+      <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" class="style-99000">
         <!-- Header -->
         <tr>
-          <td bgcolor="#10b981" align="center" style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:40px 30px;">
-            <div style="width:64px;height:64px;background:rgba(255,255,255,0.2);border-radius:50%;margin:0 auto 16px;line-height:64px;font-size:36px;color:#fff;text-align:center;">&#127873;</div>
-            <h1 class="h1-mobile" style="color:#ffffff;margin:0;font-size:28px;font-weight:700;line-height:34px;">Referral Commission!</h1>
-            <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">You've earned a referral reward</p>
+          <td bgcolor="#10b981" align="center" class="style-87574">
+            <div class="style-90702">&#127873;</div>
+            <h1 class="h1-mobile" class="style-56865">Referral Commission!</h1>
+            <p class="style-9233">You've earned a referral reward</p>
           </td>
         </tr>
         <!-- Body -->
         <tr>
-          <td class="px-mobile" style="padding:40px 40px 20px;">
-            <h2 style="margin:0 0 18px;color:#1a202c;font-size:22px;font-weight:600;">Hi {{user_name}},</h2>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
+          <td class="px-mobile" class="style-68782">
+            <h2 class="style-80102">Hi {{user_name}},</h2>
+            <p class="style-28596">
               Great news! Your referred friend <strong>{{referred_name}}</strong> has made a booking, and you've earned a commission!
             </p>
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;margin:0 0 24px;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-77691">
               <tr>
-                <td style="padding:16px 18px;font-size:14px;color:#166534;line-height:22px;">
-                  <strong style="font-size:16px;">Commission Earned: &#8377;{{commission_amount}}</strong><br><br>
+                <td class="style-65704">
+                  <strong class="style-92359">Commission Earned: &#8377;{{commission_amount}}</strong><br><br>
                   <strong>Referred User:</strong> {{referred_name}}<br>
                   <strong>Booking:</strong> {{booking_number}}<br>
                   <strong>Plot:</strong> {{plot_number}}, {{colony_name}}<br>
@@ -51,29 +51,29 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
                 </td>
               </tr>
             </table>
-            <p style="margin:0 0 16px;font-size:16px;line-height:24px;color:#4a5568;">
+            <p class="style-28596">
               The commission has been credited to your wallet. You can use it towards future payments or request a withdrawal.
             </p>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
-                <td align="center" style="padding:10px 0 30px;">
-                  <a href="{{referral_url}}" class="button-mobile" style="display:inline-block;padding:14px 36px;background:#10b981;color:#ffffff;text-decoration:none;border-radius:6px;font-size:16px;font-weight:600;">View Referral Dashboard</a>
+                <td align="center" class="style-43583">
+                  <a href="{{referral_url}}" class="button-mobile" class="style-59532">View Referral Dashboard</a>
                 </td>
               </tr>
             </table>
-            <p style="margin:0 0 16px;font-size:15px;line-height:22px;color:#4a5568;">
-              Keep referring friends and earn more! Share your referral code: <strong style="color:#10b981;">{{referral_code}}</strong>
+            <p class="style-3736">
+              Keep referring friends and earn more! Share your referral code: <strong class="style-54781">{{referral_code}}</strong>
             </p>
-            <p style="margin:0;font-size:15px;line-height:22px;color:#4a5568;">
+            <p class="style-25661">
               Best regards,<br><strong>The APS Dream Home Team</strong>
             </p>
           </td>
         </tr>
         <!-- Footer -->
         <tr>
-          <td bgcolor="#f7fafc" style="padding:24px 30px;text-align:center;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 6px;font-size:13px;color:#718096;">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
-            <p style="margin:10px 0 0;font-size:11px;color:#cbd5e0;">&copy; {{year}} APS Dream Home. All rights reserved.</p>
+          <td bgcolor="#f7fafc" class="style-89423">
+            <p class="style-40082">APS Dream Home &nbsp;|&nbsp; {{company_phone}} &nbsp;|&nbsp; {{company_email}}</p>
+            <p class="style-75003">&copy; {{year}} APS Dream Home. All rights reserved.</p>
           </td>
         </tr>
       </table>

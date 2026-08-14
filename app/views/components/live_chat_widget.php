@@ -26,6 +26,7 @@ define('LIVE_CHAT_WIDGET_LOADED', true);
     <!-- Chat window -->
     <div id="lcw-window" class="lcw-window" hidden role="dialog" aria-modal="false" aria-labelledby="lcw-title">
         <header class="lcw-header" id="lcw-title">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <div class="lcw-header-info">
                 <div class="lcw-avatar"><i class="fas fa-headset"></i></div>
                 <div>

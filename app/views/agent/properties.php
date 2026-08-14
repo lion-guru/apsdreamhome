@@ -30,7 +30,7 @@ if ($filter && $filter !== 'all') {
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1" style="color:#15803d;font-weight:700;"><i class="fas fa-building me-2"></i>My Properties</h4>
+        <h4 class="mb-1" class="style-613"><i class="fas fa-building me-2"></i>My Properties</h4>
         <p class="text-muted mb-0">Properties assigned to you or listed by you</p>
     </div>
     <div class="d-flex gap-2">
@@ -77,8 +77,8 @@ if ($filter && $filter !== 'all') {
 <?php if (empty($filtered)): ?>
 <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
-        <div style="width:80px;height:80px;border-radius:50%;background:#dbeafe;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
-            <i class="fas fa-home fa-2x" style="color:#2563eb;"></i>
+        <div class="style-33323">
+            <i class="fas fa-home fa-2x" class="style-8693"></i>
         </div>
         <h5 class="text-muted"><?= $filter ? 'No properties with this status' : 'No properties yet' ?></h5>
         <p class="text-muted mb-0">Your assigned properties will appear here</p>
@@ -93,7 +93,7 @@ if ($filter && $filter !== 'all') {
                 <img src="<?= htmlspecialchars($prop['image']) ?>" alt="<?= htmlspecialchars($prop['title'] ?? 'Property') ?>" class="prop-img">
             <?php else: ?>
                 <div class="prop-placeholder">
-                    <i class="fas fa-home fa-3x" style="color:rgba(255,255,255,.3);"></i>
+                    <i class="fas fa-home fa-3x" class="style-22607"></i>
                 </div>
             <?php endif; ?>
             <div class="card-body">
@@ -114,7 +114,7 @@ if ($filter && $filter !== 'all') {
                         <span class="small text-muted"><i class="fas fa-bed me-1"></i><?= $prop['bedrooms'] ?> BHK</span>
                     <?php endif; ?>
                 </div>
-                <h5 style="color:#15803d;font-weight:700;">₹<?= number_format($prop['price'] ?? 0) ?></h5>
+                <h5 class="style-613">â‚¹<?= number_format($prop['price'] ?? 0) ?></h5>
             </div>
             <div class="card-footer bg-transparent border-0 pt-0 d-flex gap-2">
                 <a href="<?= $base ?>/properties/<?= $prop['id'] ?>" class="btn btn-sm btn-outline-success flex-grow-1" target="_blank">

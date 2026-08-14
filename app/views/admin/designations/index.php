@@ -1,4 +1,4 @@
-﻿<!-- Designation Management - Index -->
+ï»¿<!-- Designation Management - Index -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -36,7 +36,7 @@
             <!-- Stats Row -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
+                    <div class="small-box" class="style-75630">
                         <div class="inner">
                             <h3><?= $stats['total'] ?? 0 ?></h3>
                             <p>Total Designations</p>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff;">
+                    <div class="small-box" class="style-55192">
                         <div class="inner">
                             <h3><?= $stats['active'] ?? 0 ?></h3>
                             <p>Active</p>
@@ -73,7 +73,7 @@
                             <option value="">All Departments</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['id'] ?>" <?= ($filter_dept ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name']) ?>
+                                    <?= htmlspecialchars($d['code'] . ' â€” ' . $d['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -120,12 +120,12 @@
                                             $lvl = $desig['level'] ?? 1;
                                             ?>
                                             <span class="badge badge-<?= $levelColors[$lvl] ?? 'secondary' ?>">
-                                                L<?= $lvl ?> · <?= $levelLabels[$lvl] ?? 'Unknown' ?>
+                                                L<?= $lvl ?> Â· <?= $levelLabels[$lvl] ?? 'Unknown' ?>
                                             </span>
                                         </td>
-                                        <td>₹<?= number_format($desig['min_salary'] ?? 0) ?> — ₹<?= number_format($desig['max_salary'] ?? 0) ?></td>
+                                        <td>â‚¹<?= number_format($desig['min_salary'] ?? 0) ?> â€” â‚¹<?= number_format($desig['max_salary'] ?? 0) ?></td>
                                         <td><code><?= htmlspecialchars($desig['sub_role'] ?? '') ?></code></td>
-                                        <td><?= htmlspecialchars($desig['dashboard_view'] ?? '—') ?></td>
+                                        <td><?= htmlspecialchars($desig['dashboard_view'] ?? 'â€”') ?></td>
                                         <td>
                                             <?php if (($desig['status'] ?? '') === 'active'): ?>
                                                 <span class="badge badge-success">Active</span>
@@ -137,7 +137,7 @@
                                             <a href="<?= BASE_URL ?>/admin/designations/<?= $desig['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/designations/<?= $desig['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this designation?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/designations/<?= $desig['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this designation?')">
     <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

@@ -41,10 +41,10 @@
             </div>
         <?php endif; ?>
 
-        <div class="login-header" style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;margin-bottom:1.2rem;">
-            <div class="panel-title" style="font-size:1.45rem;font-weight:700;color:#0d6efd;letter-spacing:1px;">APS Dream Homes</div>
-            <div style="font-size:1.05rem;color:#444;font-weight:500;">Admin Panel Login</div>
-            <div class="panel-desc" style="font-size:0.98rem;color:#666;">Welcome! Only authorized personnel may proceed.</div>
+        <div class="login-header" class="style-65235">
+            <div class="panel-title" class="style-52663">APS Dream Homes</div>
+            <div class="style-90235">Admin Panel Login</div>
+            <div class="panel-desc" class="style-55278">Welcome! Only authorized personnel may proceed.</div>
         </div>
 
         <?php if (!empty($error)): ?>

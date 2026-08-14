@@ -39,4 +39,4 @@ echo PHP_EOL . "Final finance section items:" . PHP_EOL;
 $rows = $db->fetchAll("SELECT id, name, url, order_index FROM admin_menu_items WHERE section = 'finance' ORDER BY order_index");
 foreach ($rows as $r) {
     echo "  #{$r['id']} [{$r['order_index']}] {$r['name']} -> {$r['url']}" . PHP_EOL;
-}
+}?>

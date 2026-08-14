@@ -109,4 +109,4 @@ if ($campaignId2 && (int)$db->query("SELECT COUNT(*) FROM drip_emails WHERE camp
     echo "OK 5 inquiry follow-up emails seeded\n";
 }
 
-echo "DONE\n";
+echo "DONE\n";?>

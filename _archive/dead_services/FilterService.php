@@ -334,4 +334,4 @@ class FilterService
         
         return $sanitized;
     }
-}
+}?>

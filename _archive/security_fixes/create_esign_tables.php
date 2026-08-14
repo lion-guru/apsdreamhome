@@ -43,4 +43,4 @@ CREATE TABLE IF NOT EXISTS esign_transactions (
 
 echo "esign_transactions table created/verified\n";
 
-echo "\n=== eSign tables created successfully ===\n";
+echo "\n=== eSign tables created successfully ===\n";?>

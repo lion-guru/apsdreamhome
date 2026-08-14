@@ -28,5 +28,6 @@ $stmt->execute();
 $tickets = $stmt->get_result();
 ?><!DOCTYPE html>
 <html lang='en'>
-<head><meta charset='UTF-8'><title>Feedback & Support Tickets</title><link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'></head>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset='UTF-8'><title>Feedback & Support Tickets</title><link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'></head>
 <body><div class='container py-4'><h2>Feedback & Support Tickets</h2><form method='post' class='mb-3'><input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>"><textarea name='message' class='form-control' required placeholder='Enter feedback or support request'></textarea><button class='btn btn-primary mt-2'>Submit</button></form><ul class='list-group'><?php while($t = $tickets->fetch_assoc()): ?><li class='list-group-item'><strong><?= htmlspecialchars($t['status']) ?>:</strong> <?= htmlspecialchars($t['message']) ?> <em>(<?= $t['created_at'] ?>)</em></li><?php endwhile; ?></ul></div></body></html>

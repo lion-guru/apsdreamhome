@@ -24,4 +24,4 @@ try {
     echo "ai_chatbot_training table created OK\n";
 } catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

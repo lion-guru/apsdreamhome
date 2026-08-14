@@ -15,7 +15,9 @@
                             <label class="form-label">Confirm Password</label>
                             <input type="password" name="password_confirmation" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Reset Password</button>
+                        
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary w-100">Reset Password</button>
                     </form>
                 </div>
             </div>

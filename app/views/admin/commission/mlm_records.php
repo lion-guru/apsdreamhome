@@ -13,7 +13,7 @@
                     <?php if (empty($records ?? [])): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5">
-                            <i class="fas fa-database fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <i class="fas fa-database fa-3x text-muted mb-3" class="style-82835"></i>
                             <h5 class="text-muted">No commission records found</h5>
                             <p class="text-muted mb-3">Commission records are generated automatically when bookings are confirmed and payments are processed.</p>
                         </td>
@@ -67,7 +67,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="commissionDetailsBody">
-                <pre class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto; white-space: pre-wrap;"></pre>
+                <pre class="bg-light p-3 rounded" class="style-34341"></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

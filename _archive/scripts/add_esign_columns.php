@@ -55,11 +55,11 @@ foreach ($columns as $col => $def) {
         $added++;
     } catch (\Throwable $e) {
         if (strpos($e->getMessage(), 'Duplicate column') !== false) {
-            echo "  - Column {$col} already exists — skipping.\n";
+            echo "  - Column {$col} already exists â€” skipping.\n";
         } else {
             fwrite(STDERR, "  ! Error adding {$col}: " . $e->getMessage() . PHP_EOL);
         }
     }
 }
 
-echo "\nDone. {$added} column(s) added to plot_bookings.\n";
+echo "\nDone. {$added} column(s) added to plot_bookings.\n";?>

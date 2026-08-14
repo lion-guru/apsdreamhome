@@ -68,11 +68,11 @@ if (isEmpty($db, 'blogs')) {
 // ============================================================
 if (isEmpty($db, 'legal_services')) {
     $db->exec("INSERT INTO legal_services (title, description, icon, price_range, duration, features, status, display_order) VALUES
-        ('Property Verification', 'Complete title deed verification and due diligence for property purchases', 'fa-file-contract', '₹5,000 - ₹15,000', '3-5 days', '[\"Title deed verification\",\"Encumbrance check\",\"Property tax clearance\",\"Litigation history\"]', 'active', 1),
-        ('Sale Deed Drafting', 'Expert drafting and review of sale deeds and conveyance deeds', 'fa-file-signature', '₹3,000 - ₹10,000', '2-3 days', '[\"Sale deed drafting\",\"Conveyance deed\",\"Gift deed\",\"Exchange deed\"]', 'active', 2),
-        ('Stamp Duty & Registration', 'Complete assistance with stamp duty payment and property registration', 'fa-stamp', '₹2,000 - ₹8,000', '1-2 days', '[\"Stamp duty calculation\",\"E-stamp procurement\",\"Registration filing\",\"Documentation\"]', 'active', 3),
-        ('RERA Registration', 'Assistance with RERA registration and compliance for builders and buyers', 'fa-building', '₹10,000 - ₹50,000', '7-15 days', '[\"RERA registration\",\"Project registration\",\"Compliance filing\",\"Quarterly returns\"]', 'active', 4),
-        ('Dispute Resolution', 'Legal assistance for property disputes, partition suits, and recovery', 'fa-gavel', '₹15,000 - ₹1,00,000', 'Varies', '[\"Notice drafting\",\"Mediation\",\"Litigation support\",\"Court representation\"]', 'active', 5)
+        ('Property Verification', 'Complete title deed verification and due diligence for property purchases', 'fa-file-contract', 'â‚¹5,000 - â‚¹15,000', '3-5 days', '[\"Title deed verification\",\"Encumbrance check\",\"Property tax clearance\",\"Litigation history\"]', 'active', 1),
+        ('Sale Deed Drafting', 'Expert drafting and review of sale deeds and conveyance deeds', 'fa-file-signature', 'â‚¹3,000 - â‚¹10,000', '2-3 days', '[\"Sale deed drafting\",\"Conveyance deed\",\"Gift deed\",\"Exchange deed\"]', 'active', 2),
+        ('Stamp Duty & Registration', 'Complete assistance with stamp duty payment and property registration', 'fa-stamp', 'â‚¹2,000 - â‚¹8,000', '1-2 days', '[\"Stamp duty calculation\",\"E-stamp procurement\",\"Registration filing\",\"Documentation\"]', 'active', 3),
+        ('RERA Registration', 'Assistance with RERA registration and compliance for builders and buyers', 'fa-building', 'â‚¹10,000 - â‚¹50,000', '7-15 days', '[\"RERA registration\",\"Project registration\",\"Compliance filing\",\"Quarterly returns\"]', 'active', 4),
+        ('Dispute Resolution', 'Legal assistance for property disputes, partition suits, and recovery', 'fa-gavel', 'â‚¹15,000 - â‚¹1,00,000', 'Varies', '[\"Notice drafting\",\"Mediation\",\"Litigation support\",\"Court representation\"]', 'active', 5)
     ");
     echo "  legal_services: 5 rows\n"; $total++;
 }
@@ -197,11 +197,11 @@ if (isEmpty($db, 'installments')) {
 // ============================================================
 if (isEmpty($db, 'jobs')) {
     $db->exec("INSERT INTO jobs (title, slug, description, requirements, location, job_type, salary_range, experience, status, expires_at) VALUES
-        ('Real Estate Sales Executive', 'sales-executive', 'We are looking for experienced sales executives to join our team in Gorakhpur. You will be responsible for lead generation, client meetings, and property sales.', '[\"2+ years in real estate sales\",\"Excellent communication skills\",\"Local area knowledge\",\"Own vehicle preferred\"]', 'Gorakhpur', 'Full-time', '₹25,000 - ₹50,000 + Incentives', '2-5 years', 'active', DATE_ADD(NOW(), INTERVAL 30 DAY)),
-        ('Property Consultant', 'property-consultant', 'Guide clients through the property buying process. Provide expert advice on property selection, documentation, and investment.', '[\"1+ year in real estate\",\"Strong negotiation skills\",\"Knowledge of property laws\",\"Computer proficiency\"]', 'Gorakhpur', 'Full-time', '₹20,000 - ₹40,000 + Commission', '1-3 years', 'active', DATE_ADD(NOW(), INTERVAL 30 DAY)),
-        ('Legal Advisor', 'legal-advisor', 'Provide legal guidance on property transactions, contract drafting, and compliance matters.', '[\"LLB degree\",\"3+ years property law experience\",\"RERA knowledge\",\"Excellent drafting skills\"]', 'Gorakhpur', 'Full-time', '₹40,000 - ₹80,000', '3-7 years', 'active', DATE_ADD(NOW(), INTERVAL 45 DAY)),
-        ('Marketing Manager', 'marketing-manager', 'Lead our marketing efforts including digital campaigns, social media, and offline promotions for our properties.', '[\"MBA Marketing preferred\",\"4+ years marketing experience\",\"Real estate background preferred\",\"Digital marketing expertise\"]', 'Gorakhpur', 'Full-time', '₹50,000 - ₹90,000', '4-8 years', 'active', DATE_ADD(NOW(), INTERVAL 30 DAY)),
-        ('Telecaller', 'telecaller', 'Handle inbound and outbound calls for property inquiries. Convert leads into site visits and sales.', '[\"Fluent in Hindi & English\",\"6+ months telecalling experience\",\"Good communication skills\",\"Basic computer knowledge\"]', 'Gorakhpur', 'Full-time', '₹12,000 - ₹18,000 + Incentives', '0-2 years', 'active', DATE_ADD(NOW(), INTERVAL 20 DAY))
+        ('Real Estate Sales Executive', 'sales-executive', 'We are looking for experienced sales executives to join our team in Gorakhpur. You will be responsible for lead generation, client meetings, and property sales.', '[\"2+ years in real estate sales\",\"Excellent communication skills\",\"Local area knowledge\",\"Own vehicle preferred\"]', 'Gorakhpur', 'Full-time', 'â‚¹25,000 - â‚¹50,000 + Incentives', '2-5 years', 'active', DATE_ADD(NOW(), INTERVAL 30 DAY)),
+        ('Property Consultant', 'property-consultant', 'Guide clients through the property buying process. Provide expert advice on property selection, documentation, and investment.', '[\"1+ year in real estate\",\"Strong negotiation skills\",\"Knowledge of property laws\",\"Computer proficiency\"]', 'Gorakhpur', 'Full-time', 'â‚¹20,000 - â‚¹40,000 + Commission', '1-3 years', 'active', DATE_ADD(NOW(), INTERVAL 30 DAY)),
+        ('Legal Advisor', 'legal-advisor', 'Provide legal guidance on property transactions, contract drafting, and compliance matters.', '[\"LLB degree\",\"3+ years property law experience\",\"RERA knowledge\",\"Excellent drafting skills\"]', 'Gorakhpur', 'Full-time', 'â‚¹40,000 - â‚¹80,000', '3-7 years', 'active', DATE_ADD(NOW(), INTERVAL 45 DAY)),
+        ('Marketing Manager', 'marketing-manager', 'Lead our marketing efforts including digital campaigns, social media, and offline promotions for our properties.', '[\"MBA Marketing preferred\",\"4+ years marketing experience\",\"Real estate background preferred\",\"Digital marketing expertise\"]', 'Gorakhpur', 'Full-time', 'â‚¹50,000 - â‚¹90,000', '4-8 years', 'active', DATE_ADD(NOW(), INTERVAL 30 DAY)),
+        ('Telecaller', 'telecaller', 'Handle inbound and outbound calls for property inquiries. Convert leads into site visits and sales.', '[\"Fluent in Hindi & English\",\"6+ months telecalling experience\",\"Good communication skills\",\"Basic computer knowledge\"]', 'Gorakhpur', 'Full-time', 'â‚¹12,000 - â‚¹18,000 + Incentives', '0-2 years', 'active', DATE_ADD(NOW(), INTERVAL 20 DAY))
     ");
     echo "  jobs: 5 rows\n"; $total++;
 }
@@ -353,4 +353,4 @@ $db->exec("SET FOREIGN_KEY_CHECKS = 1");
 // SUMMARY
 // ============================================================
 echo "\n=== SEEDING COMPLETE ===\n";
-echo "Total rows inserted: {$total}\n";
+echo "Total rows inserted: {$total}\n";?>

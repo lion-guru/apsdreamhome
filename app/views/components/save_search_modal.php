@@ -18,7 +18,7 @@ $currentFilters = $currentFilters ?? [];
 <div class="modal fade" id="saveSearchModal" tabindex="-1" aria-labelledby="saveSearchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+            <div class="modal-header bg-gradient-primary text-white" class="style-68644">
                 <h5 class="modal-title" id="saveSearchModalLabel">
                     <i class="fas fa-bookmark me-2"></i><?= __('component_save_this_search', 'Save this search') ?>
                 </h5>
@@ -108,7 +108,7 @@ $currentFilters = $currentFilters ?? [];
             if (filters.location) parts.push('in ' + filters.location);
             if (filters.bedrooms) parts.push(filters.bedrooms + 'BHK');
             if (filters.min_price || filters.max_price) {
-                const fmt = (n) => '₹' + (n / 100000).toFixed(n % 100000 ? 1 : 0) + 'L';
+                const fmt = (n) => 'â‚¹' + (n / 100000).toFixed(n % 100000 ? 1 : 0) + 'L';
                 if (filters.min_price && filters.max_price) parts.push(fmt(filters.min_price) + ' - ' + fmt(filters.max_price));
                 else if (filters.min_price) parts.push('from ' + fmt(filters.min_price));
                 else parts.push('up to ' + fmt(filters.max_price));

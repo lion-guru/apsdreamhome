@@ -5,7 +5,7 @@
             <?php if (!empty($months ?? [])): ?>
             <div class="dropdown">
                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fas fa-calendar me-1"></i>Jump to Month</button>
-                <ul class="dropdown-menu" style="max-height:300px;overflow-y:auto">
+                <ul class="dropdown-menu" class="style-82023">
                     <?php foreach ($months as $m): ?>
                     <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/salary/records/<?= $m['year'] ?>/<?= $m['month'] ?>"><?= date('F', mktime(0,0,0,$m['month'],1)) ?> <?= $m['year'] ?></a></li>
                     <?php endforeach; ?>
@@ -31,11 +31,11 @@
                                 <td><strong><?= htmlspecialchars($r['employee_name'] ?? '') ?></strong></td>
                                 <td><?= date('F', mktime(0,0,0,$r['month'] ?? 1,1)) ?></td>
                                 <td><?= $r['year'] ?? '' ?></td>
-                                <td>₹<?= number_format($r['basic_pay'] ?? 0, 2) ?></td>
-                                <td>₹<?= number_format($r['allowances'] ?? 0, 2) ?></td>
-                                <td class="text-danger">₹<?= number_format($r['deductions'] ?? 0, 2) ?></td>
-                                <td>₹<?= number_format($r['gross_pay'] ?? 0, 2) ?></td>
-                                <td><strong>₹<?= number_format($r['net_pay'] ?? 0, 2) ?></strong></td>
+                                <td>â‚¹<?= number_format($r['basic_pay'] ?? 0, 2) ?></td>
+                                <td>â‚¹<?= number_format($r['allowances'] ?? 0, 2) ?></td>
+                                <td class="text-danger">â‚¹<?= number_format($r['deductions'] ?? 0, 2) ?></td>
+                                <td>â‚¹<?= number_format($r['gross_pay'] ?? 0, 2) ?></td>
+                                <td><strong>â‚¹<?= number_format($r['net_pay'] ?? 0, 2) ?></strong></td>
                                 <td><?= htmlspecialchars($r['payment_date'] ?? '') ?></td>
                                 <td><span class="badge bg-<?= match($r['status']??'pending') { 'paid'=>'success', 'pending'=>'warning', 'cancelled'=>'danger', default=>'secondary' } ?>"><?= ucfirst($r['status'] ?? 'pending') ?></span></td>
                             </tr>

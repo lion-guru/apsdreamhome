@@ -9,4 +9,4 @@ if (!$stmt->fetch()) {
     echo "NPS Surveys menu added\n";
 } else {
     echo "NPS Surveys already in menu\n";
-}
+}?>

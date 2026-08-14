@@ -117,11 +117,11 @@ PHP;
                 $stmt->execute([$migration['version'], $migration['name']]);
                 
                 $this->pdo->commit();
-                echo "    ✓ Done\n";
+                echo "    âœ“ Done\n";
                 
             } catch (Throwable $e) {
                 $this->pdo->rollBack();
-                echo "    ✗ FAILED: " . $e->getMessage() . "\n";
+                echo "    âœ— FAILED: " . $e->getMessage() . "\n";
                 throw $e;
             }
         }
@@ -167,11 +167,11 @@ PHP;
                 $stmt->execute([$version]);
                 
                 $this->pdo->commit();
-                echo "  ✓ Rolled back\n";
+                echo "  âœ“ Rolled back\n";
                 
             } catch (Throwable $e) {
                 $this->pdo->rollBack();
-                echo "  ✗ FAILED: " . $e->getMessage() . "\n";
+                echo "  âœ— FAILED: " . $e->getMessage() . "\n";
                 throw $e;
             }
         }
@@ -186,7 +186,7 @@ PHP;
         echo str_repeat("-", 80) . "\n";
         
         foreach ($migrations as $m) {
-            $status = in_array($m['version'], $executed) ? '✓ EXECUTED' : '○ PENDING';
+            $status = in_array($m['version'], $executed) ? 'âœ“ EXECUTED' : 'â—‹ PENDING';
             $executedAt = '';
             if (in_array($m['version'], $executed)) {
                 $stmt = $this->pdo->prepare("SELECT executed_at FROM {$this->tableName} WHERE version = ?");
@@ -268,4 +268,4 @@ if (php_sapi_name() === 'cli') {
         echo "  php migrate.php rollback v   # Rollback specific version\n";
         echo "  php migrate.php create name  # Create new migration\n";
     }
-}
+}?>

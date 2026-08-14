@@ -32,16 +32,16 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 style="color: #f8fafc; margin:0;"><i class="fas fa-file-signature me-2"></i>Agent Agreements</h4>
+        <h4 class="style-76816"><i class="fas fa-file-signature me-2"></i>Agent Agreements</h4>
         <a href="<?= $base ?>/admin/agent-agreements/create" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i>Create Agreement
         </a>
     </div>
 
     <?php if (!empty($_SESSION['flash_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" style="background:#10b98120;color:#10b981;border-color:#10b98140;">
+        <div class="alert alert-success alert-dismissible fade show" class="style-99395">
             <?= $_SESSION['flash_success'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter:invert(1);"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" class="style-22908"></button>
         </div>
         <?php unset($_SESSION['flash_success']); ?>
     <?php endif; ?>
@@ -55,19 +55,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat" style="background: linear-gradient(135deg, #64748b, #475569);">
+            <div class="aag-stat" class="style-7873">
                 <div class="num"><?= (int)$stats['draft'] ?></div>
                 <div class="lbl">Draft</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat" style="background: linear-gradient(135deg, #854d0e, #78350f);">
+            <div class="aag-stat" class="style-1293">
                 <div class="num"><?= (int)$stats['pending'] ?></div>
                 <div class="lbl">Pending Signature</div>
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="aag-stat" style="background: linear-gradient(135deg, #065f46, #064e3b);">
+            <div class="aag-stat" class="style-68340">
                 <div class="num"><?= (int)$stats['signed'] ?></div>
                 <div class="lbl">Signed</div>
             </div>
@@ -76,58 +76,58 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
     <!-- Agreements Table -->
     <div class="aag-card">
-        <h5><i class="fas fa-list me-2" style="color:#3b82f6;"></i>All Agreements</h5>
+        <h5><i class="fas fa-list me-2" class="style-75937"></i>All Agreements</h5>
         <?php if (!empty($agreements)): ?>
-        <div style="overflow-x:auto;">
+        <div class="style-10754">
             <table class="aag-table">
                 <thead>
                     <tr>
                         <th>Title</th>
                         <th>Agent</th>
                         <th>Property</th>
-                        <th style="text-align:center;">Commission</th>
+                        <th class="style-58107">Commission</th>
                         <th>Status</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th style="text-align:right;">Actions</th>
+                        <th class="style-64867">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($agreements as $a): ?>
                     <tr>
-                        <td style="font-weight:600;"><?= htmlspecialchars($a['title']) ?></td>
+                        <td class="style-24039"><?= htmlspecialchars($a['title']) ?></td>
                         <td>
-                            <div style="font-weight:500;"><?= htmlspecialchars($a['agent_name'] ?? 'N/A') ?></div>
-                            <div style="color:#64748b;font-size:11px;"><?= htmlspecialchars($a['agent_email'] ?? '') ?></div>
+                            <div class="style-51792"><?= htmlspecialchars($a['agent_name'] ?? 'N/A') ?></div>
+                            <div class="style-63117"><?= htmlspecialchars($a['agent_email'] ?? '') ?></div>
                         </td>
                         <td>
                             <?php if ($a['property_name']): ?>
-                                <div style="font-weight:500;"><?= htmlspecialchars($a['property_name']) ?></div>
-                                <div style="color:#64748b;font-size:11px;"><?= htmlspecialchars($a['property_location'] ?? '') ?></div>
+                                <div class="style-51792"><?= htmlspecialchars($a['property_name']) ?></div>
+                                <div class="style-63117"><?= htmlspecialchars($a['property_location'] ?? '') ?></div>
                             <?php else: ?>
-                                <span style="color:#64748b;font-size:12px;">General</span>
+                                <span class="style-71870">General</span>
                             <?php endif; ?>
                         </td>
-                        <td style="text-align:center;font-weight:600;color:#10b981;"><?= (float)$a['commission_pct'] ?>%</td>
+                        <td class="style-88252"><?= (float)$a['commission_pct'] ?>%</td>
                         <td><span class="aag-badge aag-badge-<?= $a['status'] ?>"><?= ucfirst($a['status']) ?></span></td>
-                        <td style="color:#94a3b8;font-size:12px;"><?= $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : '—' ?></td>
-                        <td style="color:#94a3b8;font-size:12px;"><?= $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : '—' ?></td>
-                        <td style="text-align:right;white-space:nowrap;">
+                        <td class="style-4937"><?= $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : 'â€”' ?></td>
+                        <td class="style-4937"><?= $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : 'â€”' ?></td>
+                        <td class="style-45903">
                             <a href="<?= $base ?>/admin/agent-agreements/detail/<?= (int)$a['id'] ?>" class="aag-btn aag-btn-view"><i class="fas fa-eye"></i></a>
                             <?php if ($a['status'] === 'draft'): ?>
-                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$a['id'] ?>" style="display:inline;">
+                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-send"><i class="fas fa-paper-plane"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if ($a['status'] === 'pending'): ?>
-                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" style="display:inline;">
+                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-sign"><i class="fas fa-check"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if (in_array($a['status'], ['draft', 'pending'])): ?>
-                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" style="display:inline;">
+                                <form method="POST" action="<?= $base ?>/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-cancel" onclick="return confirm('Cancel this agreement?')"><i class="fas fa-times"></i></button>
                                 </form>

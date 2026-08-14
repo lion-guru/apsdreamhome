@@ -1,5 +1,5 @@
 <?php
-// Phase 2: DB Alignment — add missing columns, fix ENUM, normalize rank names
+// Phase 2: DB Alignment â€” add missing columns, fix ENUM, normalize rank names
 $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 echo "=== Phase 2: DB Alignment ===\n\n";
@@ -21,7 +21,7 @@ foreach ($alterCols as $col) {
         if (strpos($e->getMessage(), 'Duplicate column') !== false) {
             echo "  SKIP (already exists): $col\n";
         } else {
-            echo "  ERROR: $col — " . $e->getMessage() . "\n";
+            echo "  ERROR: $col â€” " . $e->getMessage() . "\n";
         }
     }
 }
@@ -84,14 +84,14 @@ $levelMap = [
 ];
 foreach ($levelMap as $old => $new) {
     $rows = $pdo->exec("UPDATE mlm_profiles SET current_level = '$new' WHERE current_level = '$old'");
-    echo "  '$old' → '$new': $rows rows updated\n";
+    echo "  '$old' â†’ '$new': $rows rows updated\n";
 }
 
 // Also check associates.level ENUM
-echo "\n--- 6. associates.level — current values ---\n";
+echo "\n--- 6. associates.level â€” current values ---\n";
 $rows = $pdo->query("SELECT level, COUNT(*) as cnt FROM associates GROUP BY level")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as $r) {
-    echo "  '{$r['level']}' → {$r['cnt']}\n";
+    echo "  '{$r['level']}' â†’ {$r['cnt']}\n";
 }
 
 // Verify
@@ -115,4 +115,4 @@ echo "\n";
 $uniqueCheck = $pdo->query("SHOW INDEX FROM mlm_network_tree WHERE Column_name = 'associate_id' AND Non_unique = 0")->fetchAll();
 echo "  mlm_network_tree unique on associate_id: " . (count($uniqueCheck) > 0 ? 'YES' : 'NO') . "\n";
 
-echo "\n=== DONE ===\n";
+echo "\n=== DONE ===\n";?>

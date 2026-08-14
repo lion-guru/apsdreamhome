@@ -26,4 +26,4 @@ echo "Total rows: " . count($rows) . "\n";
 echo "\n=== service_interests columns ===\n";
 $r2 = $pdo->query("SHOW COLUMNS FROM service_interests");
 $cols = $r2->fetchAll(PDO::FETCH_COLUMN);
-echo implode(', ', $cols) . "\n";
+echo implode(', ', $cols) . "\n";?>

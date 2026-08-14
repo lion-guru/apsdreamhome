@@ -39,8 +39,8 @@ $page_description = 'Manually adjust lead score';
                                     <span class="input-group-text"><i class="fas fa-edit"></i></span>
                                     <input type="number" class="form-control" name="score" min="0" max="100" required value="0">
                                 </div>
-                                <div class="progress mt-2" style="height: 20px;">
-                                    <div class="progress-bar bg-info" id="scoreProgress" style="width: 0%;"></div>
+                                <div class="progress mt-2" class="style-51309">
+                                    <div class="progress-bar bg-info" id="scoreProgress" class="style-16671"></div>
                                 </div>
                                 <small class="text-muted" id="scoreValue">0%</small>
                             </div>

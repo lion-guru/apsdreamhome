@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 /**
  * Custom Error Page for APS Dream Home
  * Handles all HTTP error codes with user-friendly messages
@@ -271,7 +271,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
                         <?php if (isset($error_details['trace'])): ?>
                         <dt class="col-sm-3"><?= __('error_stack_trace') ?>:</dt>
                         <dd class="col-sm-9">
-                            <pre class="bg-light p-3 small" style="max-height: 200px; overflow-y: auto;"><?php echo h($error_details['trace']); ?></pre>
+                            <pre class="bg-light p-3 small" class="style-35010"><?php echo h($error_details['trace']); ?></pre>
                         </dd>
                         <?php endif; ?>
                     </dl>

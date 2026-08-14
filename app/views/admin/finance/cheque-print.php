@@ -45,7 +45,7 @@ $amountFigures = number_format($amount, 2);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cheque Print — <?= htmlspecialchars($cheque['cheque_number'] ?? '') ?></title>
+<title>Cheque Print â€” <?= htmlspecialchars($cheque['cheque_number'] ?? '') ?></title>
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -390,7 +390,7 @@ $amountFigures = number_format($amount, 2);
             <div>
                 <div class="cheque-acct">A/c No: <span><?= htmlspecialchars($acctNo) ?></span></div>
                 <?php if ($purpose): ?>
-                    <div class="cheque-acct" style="margin-top: 2px;">Purpose: <?= htmlspecialchars($purpose) ?></div>
+                    <div class="cheque-acct" class="style-37634">Purpose: <?= htmlspecialchars($purpose) ?></div>
                 <?php endif; ?>
             </div>
 

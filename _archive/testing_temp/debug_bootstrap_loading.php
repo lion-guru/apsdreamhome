@@ -17,4 +17,4 @@ try {
     echo "Interface exists after manual require: " . (interface_exists('Psr\Log\LoggerInterface') ? 'YES' : 'NO') . "\n";
 } catch (\Throwable $e) {
     echo "Exception: " . $e->getMessage() . "\n";
-}
+}?>

@@ -84,7 +84,7 @@ Page Header -->
                                                 Average Budget
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                ₹<?= number_format(floatval(report['avg_budget'] ?? 0) ?? 0) ?>
+                                                â‚¹<?= number_format(floatval(report['avg_budget'] ?? 0) ?? 0) ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -106,7 +106,7 @@ Page Header -->
                                     </h6>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
-                                    <div class="chart-container" style="position: relative; height:300px;">
+                                    <div class="chart-container" class="style-36215">
                                         <canvas id="statusChart"></canvas>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@ Page Header -->
                                     </h6>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
-                                    <div class="chart-container" style="position: relative; height:300px;">
+                                    <div class="chart-container" class="style-36215">
                                         <canvas id="sourceChart"></canvas>
                                     </div>
                                 </div>
@@ -226,12 +226,12 @@ Page Header -->
                                                             <td>
                                                                 <div class="progress">
                                                                     <div class="progress-bar bg-success"
-                                                                        style="width: <?= $source['conversion_rate'] ?>%">
+                                                                        class="style-25686">
                                                                         <?= number_format(floatval(source['conversion_rate'] ?? 0), 1) ?>%
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td>₹<?= number_format(floatval(source['avg_budget'] ?? 0) ?? 0) ?></td>
+                                                            <td>â‚¹<?= number_format(floatval(source['avg_budget'] ?? 0) ?? 0) ?></td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 <?php else: ?>
@@ -344,7 +344,7 @@ Page Header -->
                 data: {
                     labels: <?= json_encode(array_keys($report['source_performance_chart'] ?? [])) ?>,
                     datasets: [{
-                        label: "लीड्स",
+                        label: "à¤²à¥€à¤¡à¥�à¤¸",
                         backgroundColor: "#4e73df",
                         hoverBackgroundColor: "#2e59d9",
                         borderColor: "#4e73df",

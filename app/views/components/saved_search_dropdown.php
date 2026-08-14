@@ -29,7 +29,7 @@ $isLoggedIn = $isLoggedIn ?? false;
                     <button class="btn btn-sm btn-outline-primary dropdown-toggle rounded-pill" type="button" id="savedSearchesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         __('component_choose_saved_search', 'Choose saved search')
                     </button>
-                    <ul class="dropdown-menu shadow" aria-labelledby="savedSearchesDropdown" style="max-height: 350px; overflow-y: auto;">
+                    <ul class="dropdown-menu shadow" aria-labelledby="savedSearchesDropdown" class="style-54622">
                         <?php foreach ($savedSearches as $s):
                             $filters = is_array($s['filters'] ?? null) ? $s['filters'] : (json_decode($s['filters'] ?? '{}', true) ?: []);
                             $queryString = http_build_query($filters);
@@ -60,7 +60,7 @@ $isLoggedIn = $isLoggedIn ?? false;
             <?php endif; ?>
 
             <!-- Save current search button (only shows when filters are applied) -->
-            <button type="button" class="btn btn-sm btn-success rounded-pill ms-auto" id="saveSearchBtnGlobal" onclick="triggerSaveSearch()" style="display: none;">
+            <button type="button" class="btn btn-sm btn-success rounded-pill ms-auto" id="saveSearchBtnGlobal" onclick="triggerSaveSearch()" class="style-54390">
                 <i class="fas fa-bookmark me-1"></i>__('component_save_this_search_btn', 'Save this search')
             </button>
         </div>

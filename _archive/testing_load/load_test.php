@@ -1,6 +1,6 @@
 <?php
 /**
- * APS Dream Home — Load Test
+ * APS Dream Home â€” Load Test
  *
  * Simulates concurrent users hitting random endpoints using curl_multi.
  * Reports: avg/p95/p99 response time, throughput, error rate, status code distribution.
@@ -92,9 +92,9 @@ function quantile_summary(array $vals): array {
 }
 
 // ---------------------- Main Loop ----------------------
-echo "╔════════════════════════════════════════════════════════════════╗\n";
-echo "║         APS Dream Home — Load Test (curl_multi)                ║\n";
-echo "╚════════════════════════════════════════════════════════════════╝\n\n";
+echo "â•”â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•—\n";
+echo "â•‘         APS Dream Home â€” Load Test (curl_multi)                â•‘\n";
+echo "â•šâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�\n\n";
 echo "Base URL        : {$baseUrl}\n";
 echo "Concurrent users: {$users}\n";
 echo "Requests / user : {$reqPerUser}\n";
@@ -236,7 +236,7 @@ do {
         $pct = $totalRequests > 0 ? round(($completed / $totalRequests) * 100, 1) : 0;
         $elapsedTotal = $now - $startTime;
         $rps = $elapsedTotal > 0 ? round($completed / $elapsedTotal, 1) : 0;
-        fwrite(STDERR, sprintf("\r[%6.1fs] %5d / %d (%5.1f%%) — %.1f req/s   ", $elapsedTotal, $completed, $totalRequests, $pct, $rps));
+        fwrite(STDERR, sprintf("\r[%6.1fs] %5d / %d (%5.1f%%) â€” %.1f req/s   ", $elapsedTotal, $completed, $totalRequests, $pct, $rps));
         $lastProgress = $now;
     }
 
@@ -319,19 +319,19 @@ $result = [
     'latency_summary' => $summary,
     'status_distribution' => $statusCounts,
     'per_endpoint'   => $endpointSummary,
-    // We deliberately do NOT include allRequests (could be 1000s of rows) — kept on disk only.
+    // We deliberately do NOT include allRequests (could be 1000s of rows) â€” kept on disk only.
 ];
 
 if ($outputMode === 'json' || $outputMode === 'both') {
     file_put_contents($resultsFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-    echo "\n\n📄 JSON results → " . realpath($resultsFile) . "\n";
+    echo "\n\nðŸ“„ JSON results â†’ " . realpath($resultsFile) . "\n";
 }
 
 if ($outputMode === 'human' || $outputMode === 'both') {
-    $hr = str_repeat('─', 72);
+    $hr = str_repeat('â”€', 72);
     $lines = [];
     $lines[] = $hr;
-    $lines[] = "  APS DREAM HOME — LOAD TEST REPORT";
+    $lines[] = "  APS DREAM HOME â€” LOAD TEST REPORT";
     $lines[] = $hr;
     $lines[] = "  Timestamp        : " . $result['meta']['timestamp'];
     $lines[] = "  Base URL         : {$baseUrl}";
@@ -340,15 +340,15 @@ if ($outputMode === 'human' || $outputMode === 'both') {
     $lines[] = "  Target total     : " . number_format($totalRequests);
     $lines[] = "  Wall time        : " . round($totalElapsed, 2) . "s";
     $lines[] = "";
-    $lines[] = "  ── TOTALS ──";
+    $lines[] = "  â”€â”€ TOTALS â”€â”€";
     $lines[] = "  Completed        : " . number_format($completed);
-    $lines[] = "  Errors (≥500)    : {$errored}";
+    $lines[] = "  Errors (â‰¥500)    : {$errored}";
     $lines[] = "  Error rate       : " . number_format($result['totals']['error_rate'] * 100, 2) . "%";
     $lines[] = "  Throughput       : " . round($throughput, 2) . " req/s";
     $lines[] = "  Total bytes      : " . fmtBytes($totalBytes);
     $lines[] = "  Avg response size: " . fmtBytes($result['totals']['avg_bytes']);
     $lines[] = "";
-    $lines[] = "  ── LATENCY (seconds) ──";
+    $lines[] = "  â”€â”€ LATENCY (seconds) â”€â”€";
     $lines[] = "  Count            : " . $summary['count'];
     $lines[] = "  Min              : " . fmtMs($summary['min']);
     $lines[] = "  Max              : " . fmtMs($summary['max']);
@@ -360,13 +360,13 @@ if ($outputMode === 'human' || $outputMode === 'both') {
     $lines[] = "  P99              : " . fmtMs($summary['p99']);
     $lines[] = "  Stddev           : " . fmtMs($summary['stddev']);
     $lines[] = "";
-    $lines[] = "  ── STATUS DISTRIBUTION ──";
+    $lines[] = "  â”€â”€ STATUS DISTRIBUTION â”€â”€";
     foreach ($statusCounts as $code => $cnt) {
         $pct = $completed > 0 ? round($cnt / $completed * 100, 1) : 0;
         $lines[] = sprintf("  HTTP %-3s : %5d  (%5.1f%%)", $code, $cnt, $pct);
     }
     $lines[] = "";
-    $lines[] = "  ── PER-ENDPOINT ──";
+    $lines[] = "  â”€â”€ PER-ENDPOINT â”€â”€";
     foreach ($endpointSummary as $path => $es) {
         $lines[] = "  {$path}";
         $lines[] = "      count={$es['count']}  avg=" . fmtMs($es['avg']) .
@@ -379,8 +379,8 @@ if ($outputMode === 'human' || $outputMode === 'both') {
     $txt = implode("\n", $lines) . "\n";
     file_put_contents($humanFile, $txt);
     echo "\n" . $txt;
-    echo "📄 Human-readable report → " . realpath($humanFile) . "\n";
+    echo "ðŸ“„ Human-readable report â†’ " . realpath($humanFile) . "\n";
 }
 
-echo "\n✅ Load test complete.\n";
-exit(0);
+echo "\nâœ… Load test complete.\n";
+exit(0);?>

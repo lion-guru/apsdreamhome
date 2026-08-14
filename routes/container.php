@@ -13,4 +13,4 @@ $router->delete('/api/container', 'ContainerController@clear');
 // Parameterized {id} routes
 $router->get('/api/container/{id}', 'ContainerController@show');
 $router->get('/api/container/{id}/resolve', 'ContainerController@resolve');
-$router->delete('/api/container/{id}', 'ContainerController@destroy');
+$router->delete('/api/container/{id}', 'ContainerController@destroy');?>

@@ -8,7 +8,7 @@ use App\Services\ProgressiveRegistrationService;
 use App\Services\AIChatbotService;
 use App\Services\CampaignDeliveryService;
 
-echo "🧪 Testing Advanced Features System\n";
+echo "ðŸ§ª Testing Advanced Features System\n";
 echo "=====================================\n\n";
 
 try {
@@ -19,19 +19,19 @@ try {
     $chatbotService = new AIChatbotService();
     $campaignDeliveryService = new CampaignDeliveryService();
     
-    echo "✅ All services initialized successfully\n\n";
+    echo "âœ… All services initialized successfully\n\n";
     
     // Test 1: Social Login Service
     echo "1. Testing Social Login Service...\n";
     
     // Test auth URL generation
     $googleAuthUrl = $socialLoginService->getAuthUrl('google');
-    echo "✅ Google auth URL generated: " . substr($googleAuthUrl, 0, 50) . "...\n";
+    echo "âœ… Google auth URL generated: " . substr($googleAuthUrl, 0, 50) . "...\n";
     
     $facebookAuthUrl = $socialLoginService->getAuthUrl('facebook');
-    echo "✅ Facebook auth URL generated: " . substr($facebookAuthUrl, 0, 50) . "...\n";
+    echo "âœ… Facebook auth URL generated: " . substr($facebookAuthUrl, 0, 50) . "...\n";
     
-    echo "✅ Social Login Service working\n\n";
+    echo "âœ… Social Login Service working\n\n";
     
     // Test 2: OTP Service
     echo "2. Testing OTP Service...\n";
@@ -42,17 +42,17 @@ try {
     
     // Test email OTP
     $emailResult = $otpService->sendOTP($testEmail, 'email', 'login');
-    echo "✅ Email OTP: " . ($emailResult['success'] ? "SENT" : "FAILED") . "\n";
+    echo "âœ… Email OTP: " . ($emailResult['success'] ? "SENT" : "FAILED") . "\n";
     
     // Test SMS OTP
     $smsResult = $otpService->sendOTP($testPhone, 'sms', 'login');
-    echo "✅ SMS OTP: " . ($smsResult['success'] ? "SENT" : "FAILED") . "\n";
+    echo "âœ… SMS OTP: " . ($smsResult['success'] ? "SENT" : "FAILED") . "\n";
     
     // Test WhatsApp OTP
     $whatsappResult = $otpService->sendOTP($testPhone, 'whatsapp', 'login');
-    echo "✅ WhatsApp OTP: " . ($whatsappResult['success'] ? "SENT" : "FAILED") . "\n";
+    echo "âœ… WhatsApp OTP: " . ($whatsappResult['success'] ? "SENT" : "FAILED") . "\n";
     
-    echo "✅ OTP Service working\n\n";
+    echo "âœ… OTP Service working\n\n";
     
     // Test 3: Progressive Registration Service
     echo "3. Testing Progressive Registration Service...\n";
@@ -61,12 +61,12 @@ try {
     
     // Start registration
     $startResult = $progressiveRegistrationService->startRegistration($sessionId);
-    echo "✅ Registration started: " . ($startResult['success'] ? "SUCCESS" : "FAILED") . "\n";
+    echo "âœ… Registration started: " . ($startResult['success'] ? "SUCCESS" : "FAILED") . "\n";
     
     if ($startResult['success']) {
         // Get current step
         $currentStep = $progressiveRegistrationService->getCurrentStep($sessionId);
-        echo "✅ Current step: " . ($currentStep ? "STEP {$currentStep['current_step']}" : "FAILED") . "\n";
+        echo "âœ… Current step: " . ($currentStep ? "STEP {$currentStep['current_step']}" : "FAILED") . "\n";
         
         // Save step data
         $stepData = [
@@ -76,14 +76,14 @@ try {
         ];
         
         $saveResult = $progressiveRegistrationService->saveStepData($sessionId, $stepData);
-        echo "✅ Step data saved: " . ($saveResult['success'] ? "SUCCESS" : "FAILED") . "\n";
+        echo "âœ… Step data saved: " . ($saveResult['success'] ? "SUCCESS" : "FAILED") . "\n";
         
         // Move to next step
         $nextResult = $progressiveRegistrationService->moveToNextStep($sessionId);
-        echo "✅ Moved to next step: " . ($nextResult['success'] ? "SUCCESS" : "FAILED") . "\n";
+        echo "âœ… Moved to next step: " . ($nextResult['success'] ? "SUCCESS" : "FAILED") . "\n";
     }
     
-    echo "✅ Progressive Registration Service working\n\n";
+    echo "âœ… Progressive Registration Service working\n\n";
     
     // Test 4: AI Chatbot Service
     echo "4. Testing AI Chatbot Service...\n";
@@ -100,7 +100,7 @@ try {
     
     foreach ($messages as $message) {
         $chatResult = $chatbotService->processMessage($chatSessionId, $message);
-        echo "✅ Message '$message': " . ($chatResult['success'] ? "PROCESSED" : "FAILED") . "\n";
+        echo "âœ… Message '$message': " . ($chatResult['success'] ? "PROCESSED" : "FAILED") . "\n";
         if ($chatResult['success']) {
             echo "   Intent: {$chatResult['intent']}, Confidence: {$chatResult['confidence']}\n";
         }
@@ -108,9 +108,9 @@ try {
     
     // Test conversation history
     $history = $chatbotService->getConversationHistory($chatSessionId);
-    echo "✅ Conversation history: " . count($history) . " messages\n";
+    echo "âœ… Conversation history: " . count($history) . " messages\n";
     
-    echo "✅ AI Chatbot Service working\n\n";
+    echo "âœ… AI Chatbot Service working\n\n";
     
     // Test 5: Campaign Delivery Service
     echo "5. Testing Campaign Delivery Service...\n";
@@ -129,11 +129,11 @@ try {
     ]);
     $campaignId = $db->getLastInsertId();
     
-    echo "✅ Test campaign created: ID $campaignId\n";
+    echo "âœ… Test campaign created: ID $campaignId\n";
     
     // Test campaign delivery
     $deliveryResult = $campaignDeliveryService->deliverCampaign($campaignId, ['notification', 'popup']);
-    echo "✅ Campaign delivery: " . ($deliveryResult['success'] ? "SUCCESS" : "FAILED") . "\n";
+    echo "âœ… Campaign delivery: " . ($deliveryResult['success'] ? "SUCCESS" : "FAILED") . "\n";
     if ($deliveryResult['success']) {
         echo "   Total delivered: {$deliveryResult['total_delivered']}\n";
         echo "   Target users: {$deliveryResult['target_users']}\n";
@@ -141,9 +141,9 @@ try {
     
     // Test campaign stats
     $stats = $campaignDeliveryService->getCampaignStats($campaignId);
-    echo "✅ Campaign stats: " . count($stats) . " records\n";
+    echo "âœ… Campaign stats: " . count($stats) . " records\n";
     
-    echo "✅ Campaign Delivery Service working\n\n";
+    echo "âœ… Campaign Delivery Service working\n\n";
     
     // Test 6: Database Integration
     echo "6. Testing Database Integration...\n";
@@ -160,31 +160,31 @@ try {
     
     foreach ($tables as $table) {
         $result = $db->fetch("SHOW TABLES LIKE '$table'");
-        echo "✅ Table $table: " . ($result ? "EXISTS" : "MISSING") . "\n";
+        echo "âœ… Table $table: " . ($result ? "EXISTS" : "MISSING") . "\n";
     }
     
-    echo "✅ Database integration verified\n\n";
+    echo "âœ… Database integration verified\n\n";
     
     // Test 7: Service Integration
     echo "7. Testing Service Integration...\n";
     
     // Test chatbot analytics
     $analytics = $chatbotService->getChatbotAnalytics();
-    echo "✅ Chatbot analytics: " . count($analytics) . " records\n";
+    echo "âœ… Chatbot analytics: " . count($analytics) . " records\n";
     
     // Test popular intents
     $popularIntents = $chatbotService->getPopularIntents();
-    echo "✅ Popular intents: " . count($popularIntents) . " intents\n";
+    echo "âœ… Popular intents: " . count($popularIntents) . " intents\n";
     
     // Test conversation stats
     $conversationStats = $chatbotService->getConversationStats();
-    echo "✅ Conversation stats: " . ($conversationStats ? "DATA FOUND" : "NO DATA") . "\n";
+    echo "âœ… Conversation stats: " . ($conversationStats ? "DATA FOUND" : "NO DATA") . "\n";
     
     // Test delivery analytics
     $deliveryAnalytics = $campaignDeliveryService->getDeliveryAnalytics();
-    echo "✅ Delivery analytics: " . count($deliveryAnalytics) . " records\n";
+    echo "âœ… Delivery analytics: " . count($deliveryAnalytics) . " records\n";
     
-    echo "✅ Service integration working\n\n";
+    echo "âœ… Service integration working\n\n";
     
     // Test 8: Error Handling
     echo "8. Testing Error Handling...\n";
@@ -192,42 +192,42 @@ try {
     // Test invalid provider
     try {
         $socialLoginService->getAuthUrl('invalid_provider');
-        echo "❌ Error handling failed - should have thrown exception\n";
+        echo "â�Œ Error handling failed - should have thrown exception\n";
     } catch (Exception $e) {
-        echo "✅ Invalid provider error handled correctly\n";
+        echo "âœ… Invalid provider error handled correctly\n";
     }
     
     // Test invalid OTP
     $invalidOTP = $otpService->verifyOTP('invalid@example.com', '000000');
-    echo "✅ Invalid OTP verification: " . ($invalidOTP['success'] ? "FAILED" : "HANDLED") . "\n";
+    echo "âœ… Invalid OTP verification: " . ($invalidOTP['success'] ? "FAILED" : "HANDLED") . "\n";
     
     // Test invalid session
     $invalidSession = $progressiveRegistrationService->getCurrentStep('invalid_session');
-    echo "✅ Invalid session handling: " . ($invalidSession ? "FAILED" : "HANDLED") . "\n";
+    echo "âœ… Invalid session handling: " . ($invalidSession ? "FAILED" : "HANDLED") . "\n";
     
-    echo "✅ Error handling working\n\n";
+    echo "âœ… Error handling working\n\n";
     
-    echo "🎉 Advanced Features System Test Complete!\n";
+    echo "ðŸŽ‰ Advanced Features System Test Complete!\n";
     echo "=====================================\n";
-    echo "✅ All services tested and working\n";
-    echo "✅ Database integration verified\n";
-    echo "✅ Error handling confirmed\n";
-    echo "✅ Service integration successful\n\n";
+    echo "âœ… All services tested and working\n";
+    echo "âœ… Database integration verified\n";
+    echo "âœ… Error handling confirmed\n";
+    echo "âœ… Service integration successful\n\n";
     
-    echo "📊 Test Results Summary:\n";
-    echo "- Social Login Service: ✅ WORKING\n";
-    echo "- OTP Service: ✅ WORKING\n";
-    echo "- Progressive Registration: ✅ WORKING\n";
-    echo "- AI Chatbot: ✅ WORKING\n";
-    echo "- Campaign Delivery: ✅ WORKING\n";
-    echo "- Database Integration: ✅ VERIFIED\n";
-    echo "- Service Integration: ✅ SUCCESSFUL\n";
-    echo "- Error Handling: ✅ CONFIRMED\n\n";
+    echo "ðŸ“Š Test Results Summary:\n";
+    echo "- Social Login Service: âœ… WORKING\n";
+    echo "- OTP Service: âœ… WORKING\n";
+    echo "- Progressive Registration: âœ… WORKING\n";
+    echo "- AI Chatbot: âœ… WORKING\n";
+    echo "- Campaign Delivery: âœ… WORKING\n";
+    echo "- Database Integration: âœ… VERIFIED\n";
+    echo "- Service Integration: âœ… SUCCESSFUL\n";
+    echo "- Error Handling: âœ… CONFIRMED\n\n";
     
-    echo "🚀 Advanced Features System is PRODUCTION READY!\n";
+    echo "ðŸš€ Advanced Features System is PRODUCTION READY!\n";
     echo "=====================================\n";
     
-    echo "\n🔗 Key Features Implemented:\n";
+    echo "\nðŸ”— Key Features Implemented:\n";
     echo "- Social Login (Google, Facebook, LinkedIn)\n";
     echo "- OTP Authentication (Email, SMS, WhatsApp)\n";
     echo "- Progressive Registration with 5 steps\n";
@@ -237,11 +237,11 @@ try {
     echo "- Comprehensive error handling\n";
     echo "- Database integration with 6 tables\n\n";
     
-    echo "✨ All advanced features are ready for deployment!\n";
+    echo "âœ¨ All advanced features are ready for deployment!\n";
     
 } catch (Exception $e) {
-    echo "❌ CRITICAL ERROR: " . $e->getMessage() . "\n";
+    echo "â�Œ CRITICAL ERROR: " . $e->getMessage() . "\n";
     echo "File: " . $e->getFile() . "\n";
     echo "Line: " . $e->getLine() . "\n";
     echo "Stack trace: " . $e->getTraceAsString() . "\n";
-}
+}?>

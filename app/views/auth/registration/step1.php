@@ -25,7 +25,7 @@ $old = $old ?? [];
 <div class="container">
     <div class="wizard-card">
         <div class="wizard-header text-center">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-primary mb-2" style="width:56px;height:56px;">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-primary mb-2" class="style-45913">
                 <i class="fas fa-user-plus fa-lg"></i>
             </div>
             <h3 class="fw-bold mb-0">Create Your Account</h3>

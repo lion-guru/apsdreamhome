@@ -12,7 +12,7 @@
                         <?php if (empty($consultants ?? [])): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-user-friends fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-user-friends fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No free consultants found</h5>
                                 <p class="text-muted mb-3">Register consultants who operate outside the standard associate hierarchy.</p>
                             </td>
@@ -24,8 +24,8 @@
                             <td><strong><?= htmlspecialchars($c['name'] ?? '') ?></strong></td>
                             <td><?= htmlspecialchars($c['email'] ?? '') ?></td>
                             <td><?= htmlspecialchars($c['phone'] ?? '') ?></td>
-                            <td>₹<?= number_format((float)($c['wallet_balance'] ?? 0), 2) ?></td>
-                            <td>₹<?= number_format((float)($c['cumulative_sales'] ?? 0), 2) ?></td>
+                            <td>â‚¹<?= number_format((float)($c['wallet_balance'] ?? 0), 2) ?></td>
+                            <td>â‚¹<?= number_format((float)($c['cumulative_sales'] ?? 0), 2) ?></td>
                             <td><span class="badge bg-primary"><?= htmlspecialchars($c['associate_payout_slab'] ?? '5%') ?></span></td>
                             <td><span class="badge bg-<?= $c['is_rera_approved'] ? 'success' : 'secondary' ?>"><?= $c['is_rera_approved'] ? 'Yes' : 'No' ?></span></td>
                             <td><?= htmlspecialchars($c['created_at'] ?? '') ?></td>

@@ -104,7 +104,7 @@ $verified = $_GET['verified'] ?? '';
 
                 <div class="mb-3">
                     <label class="form-label">Captcha * <small class="text-muted">(type: <strong><?= $captcha ?></strong>)</small></label>
-                    <input type="text" name="captcha" class="form-control" required placeholder="Enter the code above" style="text-transform: uppercase;">
+                    <input type="text" name="captcha" class="form-control" required placeholder="Enter the code above" class="style-73536">
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">

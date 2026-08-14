@@ -25,4 +25,4 @@ foreach ($files as $f) {
     } else {
         echo "Unchanged: $f\n";
     }
-}
+}?>

@@ -17,4 +17,4 @@ if ($logPath && file_exists($logPath)) {
     } else {
         echo "No error log file found.";
     }
-}
+}?>

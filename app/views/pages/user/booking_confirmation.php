@@ -62,13 +62,13 @@ $statusColors = [
             $bColor = $statusColors[$bStatus] ?? 'primary';
             ?>
             <?php if (in_array($bStatus, ['token_paid', 'emi_active', 'partially_paid', 'fully_paid'])): ?>
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-<?= $bColor ?> bg-opacity-10 mb-3" style="width:80px;height:80px;">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-<?= $bColor ?> bg-opacity-10 mb-3" class="style-61938">
                 <i class="fas fa-check-circle fa-3x text-<?= $bColor ?>"></i>
             </div>
             <h4 class="fw-bold"><?= __('user_booking_confirm_booking', 'Booking') ?> <?= htmlspecialchars($statusLabels[$bStatus] ?? ucfirst(str_replace('_', ' ', $bStatus))) ?></h4>
             <p class="text-muted"><?= __('user_booking_confirm_your_number', 'Your booking number is') ?> <strong><?= htmlspecialchars($booking['booking_number'] ?? '') ?></strong></p>
             <?php else: ?>
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary bg-opacity-10 mb-3" style="width:80px;height:80px;">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary bg-opacity-10 mb-3" class="style-61938">
                 <i class="fas fa-info-circle fa-3x text-secondary"></i>
             </div>
             <h4 class="fw-bold"><?= __('user_booking_confirm_status_label', 'Booking Status') ?>: <?= htmlspecialchars($statusLabels[$bStatus] ?? ucfirst($bStatus)) ?></h4>
@@ -151,7 +151,7 @@ $statusColors = [
             <div class="aps-cp-card-body">
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
-                        <div class="aps-cp-stat-icon flex-shrink-0" style="background: var(--aps-cp-primary-light); color: var(--aps-cp-primary); width:40px;height:40px;">
+                        <div class="aps-cp-stat-icon flex-shrink-0" class="style-18663">
                             <i class="fas fa-credit-card"></i>
                         </div>
                         <div class="flex-grow-1">
@@ -164,7 +164,7 @@ $statusColors = [
                     </div>
 
                     <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
-                        <div class="aps-cp-stat-icon flex-shrink-0" style="background: var(--aps-cp-success-light); color: var(--aps-cp-success); width:40px;height:40px;">
+                        <div class="aps-cp-stat-icon flex-shrink-0" class="style-18807">
                             <i class="fas fa-file-download"></i>
                         </div>
                         <div class="flex-grow-1">
@@ -177,7 +177,7 @@ $statusColors = [
                     </div>
 
                     <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
-                        <div class="aps-cp-stat-icon flex-shrink-0" style="background: var(--aps-cp-info-light); color: var(--aps-cp-info); width:40px;height:40px;">
+                        <div class="aps-cp-stat-icon flex-shrink-0" class="style-12298">
                             <i class="fas fa-file-signature"></i>
                         </div>
                         <div class="flex-grow-1">

@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Payout List'; ?>
+ï»¿<?php $pageTitle = 'Payout List'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -20,7 +20,7 @@
             <div class="row align-items-center">
                 <div class="col"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Payouts</h5></div>
                 <div class="col-auto">
-                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search..." style="width:200px"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
+                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search..." class="style-47085"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
     <?php echo CSRFProtection::csrfField(); ?>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-money-bill-wave fa-3x d-block mb-3"></i>No payouts found</td></tr>
                         <?php else: ?>
                             <?php foreach ($payouts as $i => $p): ?>
-                            <tr><td class="ps-4"><?= $p['id'] ?? $i+1 ?></td><td><strong><?= $p['user_name'] ?? 'User #'.$p['user_id'] ?></strong></td><td class="fw-bold">₹<?= number_format($p['amount'] ?? 0, 2) ?></td><td><?= $p['type'] ?? 'Commission' ?></td><td><span class="badge bg-<?= ($p['status'] ?? 'pending') === 'paid' ? 'success' : (($p['status'] ?? 'pending') === 'processing' ? 'warning' : 'secondary') ?>-subtle text-<?= ($p['status'] ?? 'pending') === 'paid' ? 'success' : (($p['status'] ?? 'pending') === 'processing' ? 'warning' : 'secondary') ?> rounded-pill px-3"><?= ucfirst($p['status'] ?? 'Pending') ?></span></td><td><?= date('d M Y', strtotime($p['created_at'] ?? 'now')) ?></td><td class="text-end pe-4"><a href="<?= BASE_URL ?>/admin/payouts/show/<?= $p['id'] ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a></td></tr>
+                            <tr><td class="ps-4"><?= $p['id'] ?? $i+1 ?></td><td><strong><?= $p['user_name'] ?? 'User #'.$p['user_id'] ?></strong></td><td class="fw-bold">â‚¹<?= number_format($p['amount'] ?? 0, 2) ?></td><td><?= $p['type'] ?? 'Commission' ?></td><td><span class="badge bg-<?= ($p['status'] ?? 'pending') === 'paid' ? 'success' : (($p['status'] ?? 'pending') === 'processing' ? 'warning' : 'secondary') ?>-subtle text-<?= ($p['status'] ?? 'pending') === 'paid' ? 'success' : (($p['status'] ?? 'pending') === 'processing' ? 'warning' : 'secondary') ?> rounded-pill px-3"><?= ucfirst($p['status'] ?? 'Pending') ?></span></td><td><?= date('d M Y', strtotime($p['created_at'] ?? 'now')) ?></td><td class="text-end pe-4"><a href="<?= BASE_URL ?>/admin/payouts/show/<?= $p['id'] ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>

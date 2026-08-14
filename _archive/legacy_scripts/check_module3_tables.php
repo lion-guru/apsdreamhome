@@ -18,4 +18,4 @@ foreach ($tables as $t) {
     } else {
         echo str_pad($t, 32) . " MISSING" . PHP_EOL;
     }
-}
+}?>

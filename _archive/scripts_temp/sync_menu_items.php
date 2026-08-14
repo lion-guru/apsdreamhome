@@ -283,10 +283,10 @@ foreach ($menuItems as $item) {
         );
         $existingUrls[] = $url;
         $inserted++;
-        echo "Added: $name → $url ($section) PHP_EOL";
+        echo "Added: $name â†’ $url ($section) PHP_EOL";
     } catch (\Throwable $e) {
         echo "ERROR adding $name: " . $e->getMessage() . PHP_EOL;
     }
 }
 
-echo PHP_EOL . "Done! Inserted: $inserted, Skipped (already exist): $skipped" . PHP_EOL;
+echo PHP_EOL . "Done! Inserted: $inserted, Skipped (already exist): $skipped" . PHP_EOL;?>

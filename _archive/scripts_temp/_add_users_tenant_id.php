@@ -18,4 +18,4 @@ try {
 
 // Verify
 $r = $db->query("SHOW COLUMNS FROM users LIKE 'tenant_id'")->fetch();
-echo "Result: " . ($r ? 'SUCCESS' : 'FAILED') . PHP_EOL;
+echo "Result: " . ($r ? 'SUCCESS' : 'FAILED') . PHP_EOL;?>

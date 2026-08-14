@@ -1,4 +1,4 @@
-﻿<!-- Department Form - Create/Edit -->
+ï»¿<!-- Department Form - Create/Edit -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -46,7 +46,7 @@
                                     <input type="text" name="code" class="form-control" required
                                            value="<?= htmlspecialchars($department['code'] ?? '') ?>"
                                            placeholder="e.g. FIN" maxlength="20"
-                                           style="text-transform:uppercase">
+                                           class="style-36130">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <label>Department Head</label>
                                     <select name="head_user_id" class="form-control">
-                                        <option value="">— Select Head —</option>
+                                        <option value="">â€” Select Head â€”</option>
                                         <?php foreach ($users as $u): ?>
                                             <option value="<?= $u['id'] ?>" <?= ($department['head_user_id'] ?? '') == $u['id'] ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($u['name']) ?>
@@ -84,11 +84,11 @@
                                 <div class="form-group">
                                     <label>Parent Department</label>
                                     <select name="parent_dept_id" class="form-control">
-                                        <option value="">— None (Root) —</option>
+                                        <option value="">â€” None (Root) â€”</option>
                                         <?php foreach ($departments as $d): ?>
                                             <?php if (!$department || $d['id'] != $department['id']): ?>
                                                 <option value="<?= $d['id'] ?>" <?= ($department['parent_dept_id'] ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name']) ?>
+                                                    <?= htmlspecialchars($d['code'] . ' â€” ' . $d['name']) ?>
                                                 </option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Annual Budget (₹)</label>
+                                    <label>Annual Budget (â‚¹)</label>
                                     <input type="number" name="dept_budget" class="form-control" min="0" step="100000"
                                            value="<?= $department['dept_budget'] ?? 0 ?>">
                                 </div>

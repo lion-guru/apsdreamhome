@@ -68,9 +68,9 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS team_groups (
 $pdo->exec("DELETE FROM team_groups");
 $gStmt = $pdo->prepare("INSERT INTO team_groups (name, slogan, description, leader_name, member_count, score, badge_color, icon) VALUES (?,?,?,?,?,?,?,?)");
 $groups = [
-    ['APS Warriors', 'Fight for the best!', 'The competitive squad — always pushing boundaries and closing deals with warrior spirit. Leading the sales and marketing charge.', 'Praveen Prabhat & Pramod Sharma', 8, 2500, '#dc2626', 'fas fa-shield-halved'],
+    ['APS Warriors', 'Fight for the best!', 'The competitive squad â€” always pushing boundaries and closing deals with warrior spirit. Leading the sales and marketing charge.', 'Praveen Prabhat & Pramod Sharma', 8, 2500, '#dc2626', 'fas fa-shield-halved'],
     ['Dream Builders', 'Building dreams, one property at a time.', 'Focused on creating value through innovation, teamwork, and customer-first approach. Operations, finance, and legal backbone.', 'Abhay Singh', 6, 2100, '#2563eb', 'fas fa-building'],
-    ['Nari Shakti', 'Women power — unstoppable!', 'Empowered women team driving customer relations, communication, and community growth. Breaking barriers in real estate.', 'Rachna Gupta', 5, 1800, '#d946ef', 'fas fa-fist-raised'],
+    ['Nari Shakti', 'Women power â€” unstoppable!', 'Empowered women team driving customer relations, communication, and community growth. Breaking barriers in real estate.', 'Rachna Gupta', 5, 1800, '#d946ef', 'fas fa-fist-raised'],
     ['Tech Pioneers', 'Innovate. Automate. Elevate.', 'The technology squad building AI tools, software products, and digital solutions. Transforming real estate with code.', 'Vijay Verma', 4, 2200, '#059669', 'fas fa-microchip'],
 ];
 foreach ($groups as $g) {
@@ -87,4 +87,4 @@ echo "\n=== Groups ===\n";
 $q = $pdo->query("SELECT id, name, slogan, score, icon FROM team_groups");
 foreach ($q as $r) {
     echo $r['id'] . ': ' . $r['name'] . ' | ' . $r['slogan'] . ' | score=' . $r['score'] . "\n";
-}
+}?>

@@ -158,4 +158,4 @@ class CommissionAgreementService
         $stmt = $this->conn->prepare("DELETE FROM mlm_commission_agreements WHERE id = ?" . $tidSql);
         return $stmt->execute($params);
     }
-}
+}?>

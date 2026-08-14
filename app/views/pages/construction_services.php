@@ -23,7 +23,7 @@
     <?php unset($_SESSION['flash_error']); ?>
 <?php endif; ?>
 
-<section class="hero-premium pt-5 pb-5" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%) !important;">
+<section class="hero-premium pt-5 pb-5" class="style-32644">
     <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -189,7 +189,7 @@
                                 <?php if (!empty($imgSrc)): ?>
                                     <img src="<?= htmlspecialchars($imgSrc); ?>" class="card-img-top" alt="<?= htmlspecialchars($p['site_name'] ?? 'Project') ?>">
                                 <?php else: ?>
-                                    <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
+                                    <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" class="style-2610"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                                 <?php endif; ?>
                                 <div class="card-body aps-cp-card-body">
                                     <span class="badge <?= $p['status'] === 'completed' ? 'bg-success' : 'bg-warning' ?> mb-2"><?= ucfirst($p['status'] ?? 'In Progress') ?></span>

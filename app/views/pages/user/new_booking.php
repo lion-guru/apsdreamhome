@@ -35,17 +35,17 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
     <div class="col-12">
         <div class="d-flex align-items-center gap-3">
             <div class="d-flex align-items-center gap-2 <?= $selectedColony > 0 ? 'text-success' : 'text-primary' ?>">
-                <span class="badge rounded-pill bg-<?= $selectedColony > 0 ? 'success' : 'primary' ?> d-inline-flex align-items-center justify-content-center" style="width:28px;height:28px;">1</span>
+                <span class="badge rounded-pill bg-<?= $selectedColony > 0 ? 'success' : 'primary' ?> d-inline-flex align-items-center justify-content-center" class="style-6984">1</span>
                 <span class="fw-semibold"><?= __('user_new_booking_step_select_colony', 'Select Colony') ?></span>
             </div>
             <i class="fas fa-chevron-right text-muted"></i>
             <div class="d-flex align-items-center gap-2 <?= !empty($_GET['plot_id']) ? 'text-success' : 'text-muted' ?>">
-                <span class="badge rounded-pill bg-<?= !empty($_GET['plot_id']) ? 'success' : 'secondary' ?> d-inline-flex align-items-center justify-content-center" style="width:28px;height:28px;">2</span>
+                <span class="badge rounded-pill bg-<?= !empty($_GET['plot_id']) ? 'success' : 'secondary' ?> d-inline-flex align-items-center justify-content-center" class="style-6984">2</span>
                 <span class="fw-semibold"><?= __('user_new_booking_step_choose_plot', 'Choose Plot') ?></span>
             </div>
             <i class="fas fa-chevron-right text-muted"></i>
             <div class="d-flex align-items-center gap-2 text-muted">
-                <span class="badge rounded-pill bg-secondary d-inline-flex align-items-center justify-content-center" style="width:28px;height:28px;">3</span>
+                <span class="badge rounded-pill bg-secondary d-inline-flex align-items-center justify-content-center" class="style-6984">3</span>
                 <span class="fw-semibold"><?= __('user_new_booking_step_confirm', 'Confirm') ?></span>
             </div>
         </div>
@@ -76,15 +76,15 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                 <a href="<?= BASE_URL ?>/user/bookings/new?colony_id=<?= (int)$colony['id'] ?>"
                    class="text-decoration-none">
                     <div class="aps-cp-card h-100 <?= (int)$colony['id'] === $selectedColony ? 'border-primary shadow' : '' ?>"
-                         style="<?= (int)$colony['id'] === $selectedColony ? 'border: 2px solid #0d9488;' : 'border: 1px solid var(--aps-cp-border);' ?>">
+                         class="style-73923">
                         <div class="position-relative">
                             <?php if (!empty($colony['image_path'])): ?>
                                 <img src="<?= BASE_URL ?>/<?= htmlspecialchars($colony['image_path']) ?>"
                                      alt="<?= htmlspecialchars($colony['name']) ?>"
-                                     class="w-100" style="height:120px; object-fit:cover; border-radius: 12px 12px 0 0;">
+                                     class="w-100" class="style-46386">
                             <?php else: ?>
                                 <div class="w-100 d-flex align-items-center justify-content-center"
-                                     style="height:120px; background: linear-gradient(135deg, #ede9fe, #dbeafe); border-radius: 12px 12px 0 0;">
+                                     class="style-46646">
                                     <i class="fas fa-building fa-2x text-primary opacity-50"></i>
                                 </div>
                             <?php endif; ?>
@@ -99,7 +99,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                                 <?= htmlspecialchars($colony['district_name'] ?? __('user_new_booking_location', 'Location')) ?>
                             </p>
                             <p class="mb-1 small">
-                                <strong><?= __('user_new_booking_starting_from', 'Starting from') ?> ₹<?= number_format((float)($colony['starting_price'] ?? 0)) ?></strong>
+                                <strong><?= __('user_new_booking_starting_from', 'Starting from') ?> â‚¹<?= number_format((float)($colony['starting_price'] ?? 0)) ?></strong>
                             </p>
                             <p class="text-muted small mb-0">
                                 <?= (int)($colony['total_plots'] ?? 0) ?> <?= __('user_new_booking_total_plots', 'total plots') ?> &middot; <?= (int)($colony['available_plots'] ?? 0) ?> <?= __('user_new_booking_open', 'open') ?>
@@ -159,7 +159,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($plot['facing'] ?? '-') ?></td>
-                            <td><strong>₹<?= number_format((float)$plot['total_price']) ?></strong></td>
+                            <td><strong>â‚¹<?= number_format((float)$plot['total_price']) ?></strong></td>
                             <td class="text-end">
                                 <button class="btn btn-sm btn-primary aps-select-plot"
                                         data-plot-id="<?= (int)$plot['id'] ?>"
@@ -185,8 +185,8 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border: none;">
+        <div class="modal-content" class="style-337">
+            <div class="modal-header" class="style-99001">
                 <h5 class="modal-title" id="bookingModalLabel">
                     <i class="fas fa-file-contract me-2"></i><?= __('user_new_booking_modal_title', 'Confirm Your Booking') ?>
                 </h5>
@@ -207,7 +207,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                     <div class="col-md-6">
                         <div class="bg-light rounded-3 p-3">
                             <h6 class="text-muted small mb-2"><?= __('user_new_booking_modal_booking_summary', 'BOOKING SUMMARY') ?></h6>
-                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>₹25,000</strong></p>
+                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>â‚¹25,000</strong></p>
                             <p class="mb-1"><?= __('user_new_booking_modal_total_price', 'Total Price') ?>: <strong id="modal-price"></strong></p>
                             <p class="mb-0"><?= __('user_new_booking_modal_status', 'Status') ?>: <span class="badge bg-primary"><?= __('user_new_booking_modal_token_paid', 'Token Paid') ?></span></p>
                         </div>
@@ -240,7 +240,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
                     <div class="alert alert-warning mt-3 mb-0 small">
                         <i class="fas fa-info-circle me-1"></i>
-                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>₹25,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
+                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>â‚¹25,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
                         <?= __('user_new_booking_terms_emi', 'The remaining amount can be paid via EMI or lump sum as per your payment plan.') ?>
                     </div>
                 </form>
@@ -257,10 +257,10 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
 <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center border-0 shadow-lg" style="border-radius: 16px;">
+        <div class="modal-content text-center border-0 shadow-lg" class="style-90348">
             <div class="modal-body p-5">
                 <div class="mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10" style="width:80px;height:80px;">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10" class="style-61938">
                         <i class="fas fa-check-circle fa-3x text-success"></i>
                     </div>
                 </div>
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('success-booking-number').textContent = data.booking_number;
                 document.getElementById('success-plot').textContent = data.plot;
                 document.getElementById('success-colony').textContent = data.colony;
-                document.getElementById('success-amount').textContent = '₹' + Number(data.total_amount).toLocaleString('en-IN');
+                document.getElementById('success-amount').textContent = 'â‚¹' + Number(data.total_amount).toLocaleString('en-IN');
                 document.getElementById('success-confirmation-link').href = baseUrl + '/user/bookings/' + data.booking_id + '/confirmation';
 
                 var successModal = new bootstrap.Modal(document.getElementById('successModal'));

@@ -47,7 +47,7 @@ if (count($exists) > 0) {
 echo "\n=== 8. MLMCommissionEngine::RANK_ORDER (code) ===\n";
 echo "  ['associate','bronze','silver','gold','platinum','diamond'] (6 ranks)\n";
 echo "  DB ENUM: Ass., Sr. Ass., BDM, Sr. BDM, V.P., President, Site Manager (7 ranks)\n";
-echo "  NO MATCH → evaluateRankPromotion() ALWAYS FAILS\n";
+echo "  NO MATCH â†’ evaluateRankPromotion() ALWAYS FAILS\n";
 
 echo "\n=== 9. Users with role=associate but no mlm_profile ===\n";
 $rows = $pdo->query("
@@ -64,4 +64,4 @@ foreach ($rows as $r) {
         $missing++;
     }
 }
-if ($missing == 0) echo "  All associates have profiles.\n";
+if ($missing == 0) echo "  All associates have profiles.\n";?>

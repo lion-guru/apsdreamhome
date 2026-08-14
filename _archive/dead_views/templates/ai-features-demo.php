@@ -42,7 +42,7 @@
                 </div>
                 
                 <!-- AI Loader -->
-                <div id="aiLoader" class="ai-loader" style="display: none;">
+                <div id="aiLoader" class="ai-loader" class="style-54390">
                     <div class="spinner"></div>
                     <p class="text-center text-muted mt-2">Finding the best properties for you...</p>
                 </div>
@@ -190,7 +190,7 @@
                 </div>
                 
                 <!-- AI Loader -->
-                <div id="predictionLoader" class="ai-loader" style="display: none;">
+                <div id="predictionLoader" class="ai-loader" class="style-54390">
                     <div class="spinner"></div>
                     <p class="text-center text-muted mt-2">Analyzing property details...</p>
                 </div>

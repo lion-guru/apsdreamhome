@@ -24,4 +24,4 @@ foreach ($files as $f) {
         $fail++;
     }
 }
-echo "\nResult: $ok OK / $fail FAIL\n";
+echo "\nResult: $ok OK / $fail FAIL\n";?>

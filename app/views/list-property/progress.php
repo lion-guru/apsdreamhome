@@ -16,8 +16,8 @@ $steps = [
 <aside class="wizard-sidebar card border-0 shadow-sm mb-3">
     <div class="card-body p-3">
         <h6 class="fw-bold mb-3"><i class="fas fa-list-ul me-1"></i> Listing Progress</h6>
-        <div class="progress mb-3" style="height: 6px;">
-            <div class="progress-bar bg-success" style="width: <?= (int)$progress ?>%"></div>
+        <div class="progress mb-3" class="style-29939">
+            <div class="progress-bar bg-success" class="style-42872"></div>
         </div>
         <ul class="list-unstyled mb-0">
             <?php foreach ($steps as $num => $info): ?>

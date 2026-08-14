@@ -76,4 +76,4 @@ foreach ($missingProfiles as $u) {
 }
 echo "Created $profileCount mlm_profiles\n";
 
-echo "\n=== DONE ===\n";
+echo "\n=== DONE ===\n";?>

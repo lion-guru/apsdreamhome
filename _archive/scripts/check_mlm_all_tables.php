@@ -30,4 +30,4 @@ foreach ($tables as $t) {
         echo "  TABLE NOT FOUND: " . $e->getMessage() . "\n";
     }
     echo "\n";
-}
+}?>

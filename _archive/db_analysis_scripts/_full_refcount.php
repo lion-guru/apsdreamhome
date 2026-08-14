@@ -49,4 +49,4 @@ echo "0 refs (drop candidates): $zeroRef\n";
 echo "1-3 refs (wrap+drop candidates): $lowRef\n";
 echo "4-8 refs (selective drop): $medRef\n";
 echo "9+ refs (keep): $highRef\n";
-echo "Total: " . count($results) . "\n";
+echo "Total: " . count($results) . "\n";?>

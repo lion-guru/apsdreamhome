@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <div class="table-responsive" style="max-height:600px">
+            <div class="table-responsive" class="style-96643">
                 <div class="table-responsive"><table class="table table-hover table-sm mb-0 table-responsive">
                     <thead class="table-light position-sticky top-0">
                         <tr><th>Level</th><th>Message</th><th>File</th><th>Line</th><th>IP</th><th>Time</th></tr>
@@ -37,7 +37,7 @@
                             <?php foreach ($logs as $log): ?>
                                 <tr>
                                     <td><span class="badge bg-<?= ($log['level'] ?? 'info') === 'error' ? 'danger' : (($log['level'] ?? 'info') === 'warning' ? 'warning' : (($log['level'] ?? 'info') === 'debug' ? 'secondary' : 'info')) ?>"><?= htmlspecialchars($log['level'] ?? 'info') ?></span></td>
-                                    <td class="text-truncate" style="max-width:400px"><?= htmlspecialchars($log['message'] ?? '') ?></td>
+                                    <td class="text-truncate" class="style-38938"><?= htmlspecialchars($log['message'] ?? '') ?></td>
                                     <td><code><?= htmlspecialchars(basename($log['file'] ?? '-')) ?></code></td>
                                     <td><?= (int)($log['line'] ?? 0) ?></td>
                                     <td><code><?= htmlspecialchars($log['ip'] ?? '-') ?></code></td>

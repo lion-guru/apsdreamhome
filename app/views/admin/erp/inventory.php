@@ -47,7 +47,7 @@
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <form class="d-flex gap-2" method="GET">
     <?php echo CSRFProtection::csrfField(); ?>
-            <select name="status" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+            <select name="status" class="form-select form-select-sm" class="style-68062" onchange="this.form.submit()">
                 <option value="">All Status</option>
                 <option value="available" <?php echo ($_GET['status']??'')==='available'?'selected':''; ?>>Available</option>
                 <option value="reserved" <?php echo ($_GET['status']??'')==='reserved'?'selected':''; ?>>Reserved</option>
@@ -66,10 +66,10 @@
                     <th>Colony</th>
                     <th>Block</th>
                     <th>Area (sqft)</th>
-                    <th>Price (₹)</th>
+                    <th>Price (â‚¹)</th>
                     <th>Status</th>
                     <th>Customer</th>
-                    <th>Paid (₹)</th>
+                    <th>Paid (â‚¹)</th>
                     <th>Booking</th>
                 </tr>
             </thead>
@@ -83,7 +83,7 @@
                     <td><?php echo htmlspecialchars($p['colony_name'] ?? '-'); ?></td>
                     <td><?php echo htmlspecialchars($p['block'] ?? ($p['sector'] ?? '-')); ?></td>
                     <td><?php echo number_format((float)($p['area_sqft'] ?? 0)); ?></td>
-                    <td>₹<?php echo number_format((float)($p['total_price'] ?? 0), 0); ?></td>
+                    <td>â‚¹<?php echo number_format((float)($p['total_price'] ?? 0), 0); ?></td>
                     <td><span class="status-badge status-<?php echo $p['status'] ?? 'available'; ?>"><?php echo ucfirst(str_replace('_', ' ', $p['status'] ?? 'available')); ?></span></td>
                     <td>
                         <?php if (!empty($p['customer_name'])): ?>
@@ -93,7 +93,7 @@
                         <span class="text-muted">-</span>
                         <?php endif; ?>
                     </td>
-                    <td>₹<?php echo number_format((float)($p['amount_paid'] ?? 0), 0); ?></td>
+                    <td>â‚¹<?php echo number_format((float)($p['amount_paid'] ?? 0), 0); ?></td>
                     <td>
                         <?php if (!empty($p['booking_id'])): ?>
                         <a href="<?php echo BASE_URL; ?>/admin/bookings/<?php echo $p['booking_id']; ?>" class="btn btn-sm btn-outline-info">

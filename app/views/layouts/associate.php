@@ -644,29 +644,29 @@ $GLOBALS['_html_doc_started'] = true;
     </script>
 
     <!-- Floating AI Chat Widget -->
-    <div id="aiChatWidget" style="position:fixed;bottom:24px;right:24px;z-index:9999;">
-        <button id="chatToggle" onclick="toggleAssociateChat()" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border:none;box-shadow:0 4px 20px rgba(13,148,136,0.4);cursor:pointer;font-size:1.4rem;transition:transform 0.3s;">
+    <div id="aiChatWidget" class="style-96938">
+        <button id="chatToggle" onclick="toggleAssociateChat()" class="style-14728">
             <i class="fas fa-robot"></i>
         </button>
-        <div id="chatPanel" style="display:none;position:absolute;bottom:70px;right:0;width:360px;max-height:480px;background:#fff;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.15);overflow:hidden;border:1px solid #e2e8f0;">
-            <div style="background:linear-gradient(135deg,#0d9488,#0f766e);padding:14px 18px;color:#fff;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <i class="fas fa-robot" style="font-size:1.2rem;"></i>
+        <div id="chatPanel" class="style-19303">
+            <div class="style-25493">
+                <div class="style-44602">
+                    <i class="fas fa-robot" class="style-30322"></i>
                     <div>
-                        <div style="font-weight:700;font-size:0.95rem;">APS Assistant</div>
-                        <div style="font-size:0.7rem;opacity:0.8;">Property &amp; MLM Help</div>
+                        <div class="style-35140">APS Assistant</div>
+                        <div class="style-1333">Property &amp; MLM Help</div>
                     </div>
                 </div>
-                <button onclick="toggleAssociateChat()" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;opacity:0.8;"><i class="fas fa-times"></i></button>
+                <button onclick="toggleAssociateChat()" class="style-71807"><i class="fas fa-times"></i></button>
             </div>
-            <div id="assocChatMessages" style="height:320px;overflow-y:auto;padding:14px;background:#f8fafc;">
-                <div style="background:#fff;border-left:3px solid #0d9488;padding:10px 14px;border-radius:12px;font-size:0.85rem;color:#334155;max-width:88%;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div id="assocChatMessages" class="style-47443">
+                <div class="style-88703">
                     Namaste! I'm your APS assistant. Ask about properties, commissions, bookings, or anything else.
                 </div>
             </div>
-            <div style="padding:10px 14px;background:#fff;border-top:1px solid #e2e8f0;display:flex;gap:8px;">
-                <input type="text" id="assocChatInput" placeholder="Type a message..." style="flex:1;border:1px solid #e2e8f0;border-radius:20px;padding:8px 14px;font-size:0.85rem;outline:none;" onkeypress="if(event.key==='Enter')sendAssociateChat()">
-                <button onclick="sendAssociateChat()" style="width:36px;height:36px;border-radius:50%;background:#0d9488;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-paper-plane" style="font-size:0.8rem;"></i></button>
+            <div class="style-22035">
+                <input type="text" id="assocChatInput" placeholder="Type a message..." class="style-69765" onkeypress="if(event.key==='Enter')sendAssociateChat()">
+                <button onclick="sendAssociateChat()" class="style-58231"><i class="fas fa-paper-plane" class="style-64777"></i></button>
             </div>
         </div>
     </div>

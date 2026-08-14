@@ -34,9 +34,9 @@ $current_category = $current_category ?? '';
     <?php foreach ($images as $img): ?>
     <div class="col-md-4 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
-            <div class="position-relative" style="height: 200px; overflow: hidden;">
+            <div class="position-relative" class="style-16984">
                 <?php if (!empty($img['image_path'])): ?>
-                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path']) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path']) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="style-83369" loading="lazy">
                 <?php else: ?>
                 <div class="bg-light d-flex align-items-center justify-content-center h-100"><i class="fas fa-image fa-3x text-muted"></i></div>
                 <?php endif; ?>

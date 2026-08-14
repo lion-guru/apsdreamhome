@@ -85,4 +85,4 @@ if (count($missing) > 0) {
     echo "MISSING (in order of priority):\n";
     foreach ($missing as $m) echo "  - $m\n";
     echo "\nTo apply: php scripts/apply_performance_indexes.php\n";
-}
+}?>

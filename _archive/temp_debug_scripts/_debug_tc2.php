@@ -23,4 +23,4 @@ foreach ($rows as $r) echo "  bid={$r['beneficiary_user_id']} amt={$r['amount']}
 
 echo "\n=== ALL LEDGER for users 1002/1003 ===" . PHP_EOL;
 $rows = $pdo->query("SELECT beneficiary_user_id, amount, commission_type, level, notes FROM mlm_commission_ledger WHERE beneficiary_user_id IN (1002,1003) ORDER BY id DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
-foreach ($rows as $r) echo "  bid={$r['beneficiary_user_id']} amt={$r['amount']} type={$r['commission_type']} lvl={$r['level']} notes={$r['notes']}" . PHP_EOL;
+foreach ($rows as $r) echo "  bid={$r['beneficiary_user_id']} amt={$r['amount']} type={$r['commission_type']} lvl={$r['level']} notes={$r['notes']}" . PHP_EOL;?>

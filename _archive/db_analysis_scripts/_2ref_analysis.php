@@ -65,4 +65,4 @@ foreach ($twoRef as $t) {
 }
 echo "\nTotal: " . count($twoRef) . "\n";
 $allUnprotected = count(array_filter($twoRef, fn($t) => $t['unprotected'] == 2));
-echo "All unprotected (safe to wrap+drop): $allUnprotected\n";
+echo "All unprotected (safe to wrap+drop): $allUnprotected\n";?>

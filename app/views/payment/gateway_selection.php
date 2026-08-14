@@ -13,7 +13,7 @@
     </div>
     <div class="row justify-content-center g-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100 text-center p-4 gateway-card" onclick="selectGateway('razorpay')" style="cursor:pointer">
+            <div class="card border-0 shadow-sm h-100 text-center p-4 gateway-card" onclick="selectGateway('razorpay')" class="style-78508">
                 <div class="display-4 text-primary mb-3"><i class="fas fa-bolt"></i></div>
                 <h5>Razorpay</h5>
                 <p class="text-muted small mb-3">Pay via UPI, Cards, NetBanking & Wallets</p>
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100 text-center p-4 gateway-card" onclick="selectGateway('stripe')" style="cursor:pointer">
+            <div class="card border-0 shadow-sm h-100 text-center p-4 gateway-card" onclick="selectGateway('stripe')" class="style-78508">
                 <div class="display-4 text-info mb-3"><i class="fab fa-stripe-s"></i></div>
                 <h5>Stripe</h5>
                 <p class="text-muted small mb-3">International cards & Apple Pay</p>
@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100 text-center p-4 gateway-card" onclick="selectGateway('upi')" style="cursor:pointer">
+            <div class="card border-0 shadow-sm h-100 text-center p-4 gateway-card" onclick="selectGateway('upi')" class="style-78508">
                 <div class="display-4 text-success mb-3"><i class="fas fa-mobile-alt"></i></div>
                 <h5>UPI</h5>
                 <p class="text-muted small mb-3">Google Pay, PhonePe, Paytm</p>

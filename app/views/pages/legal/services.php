@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/../../../Helpers/TranslationHelper.php'; ?>
 
 <!-- Hero Section -->
-<section class="legal-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
+<section class="legal-hero text-center" class="style-66359">
     <div class="container">
         <h1 class="display-4 fw-bold"><?php echo __('legal_services_heading', [], 'Legal Services'); ?></h1>
         <p class="lead mb-0"><?php echo __('legal_services_subtitle', [], 'Expert legal guidance for all your property transactions'); ?></p>

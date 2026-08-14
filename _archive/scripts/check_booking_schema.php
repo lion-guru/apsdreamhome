@@ -13,4 +13,4 @@ echo "\n=== booking_payment_schedules ===\n";
 $cols = $db->fetchAll("SHOW COLUMNS FROM booking_payment_schedules");
 foreach ($cols as $c) {
     echo "  {$c['Field']}: {$c['Type']}\n";
-}
+}?>

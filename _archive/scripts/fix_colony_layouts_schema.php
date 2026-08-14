@@ -41,13 +41,13 @@ $alterQueries = [
 foreach ($alterQueries as $query) {
     try {
         $db->query($query);
-        echo "✓ Executed: $query\n";
+        echo "âœ“ Executed: $query\n";
     } catch (\Exception $e) {
         // Check if column already exists
         if (strpos($e->getMessage(), 'Duplicate column name') !== false) {
-            echo "⊘ Already exists (skipped): " . substr($query, 0, 80) . "...\n";
+            echo "âŠ˜ Already exists (skipped): " . substr($query, 0, 80) . "...\n";
         } else {
-            echo "✗ Error: " . $e->getMessage() . "\n";
+            echo "âœ— Error: " . $e->getMessage() . "\n";
         }
     }
 }
@@ -58,4 +58,4 @@ while ($row = $result->fetch_assoc()) {
     echo sprintf("%-25s %-20s %-10s %-10s\n", $row['Field'], $row['Type'], $row['Null'], $row['Default']);
 }
 
-echo "\nDone!\n";
+echo "\nDone!\n";?>

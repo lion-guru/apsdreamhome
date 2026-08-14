@@ -26,4 +26,4 @@ $html = curl_exec($ch);
 curl_close($ch);
 
 echo "=== FULL TELECALLER DASHBOARD HTML ===\n";
-echo $html;
+echo $html;?>

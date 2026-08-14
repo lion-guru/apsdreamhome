@@ -18,4 +18,4 @@ echo "=== mlm_commission_ledger columns ===\n";
 $r = $pdo->query('SHOW COLUMNS FROM mlm_commission_ledger');
 while ($c = $r->fetch(PDO::FETCH_ASSOC)) {
     echo $c['Field'] . ' | ' . $c['Type'] . ' | Null=' . $c['Null'] . ' | Default=' . $c['Default'] . "\n";
-}
+}?>

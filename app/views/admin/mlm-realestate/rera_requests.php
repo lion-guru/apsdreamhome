@@ -9,7 +9,7 @@
                         <?php if (empty($requests ?? [])): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-gavel fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-gavel fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No RERA requests found</h5>
                                 <p class="text-muted mb-3">RERA compliance requests from associates will appear here for review.</p>
                             </td>
@@ -20,7 +20,7 @@
                             <td>#<?= $r['id'] ?></td>
                             <td><strong><?= htmlspecialchars($r['user_name'] ?? $r['name'] ?? '') ?></strong></td>
                             <td><?= htmlspecialchars($r['user_email'] ?? $r['email'] ?? '') ?></td>
-                            <td>₹<?= number_format((float)$r['deducted_amount'], 2) ?></td>
+                            <td>â‚¹<?= number_format((float)$r['deducted_amount'], 2) ?></td>
                             <td><span class="badge bg-<?= $r['status'] === 'approved' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : 'warning') ?>"><?= htmlspecialchars($r['status']) ?></span></td>
                             <td><?= htmlspecialchars($r['rera_number'] ?? '-') ?></td>
                             <td><span class="badge bg-<?= ($r['is_rera_approved'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($r['is_rera_approved'] ?? 0) ? 'Yes' : 'No' ?></span></td>

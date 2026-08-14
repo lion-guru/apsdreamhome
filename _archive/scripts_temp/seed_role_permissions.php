@@ -60,7 +60,7 @@ $userManagement = [104, 105, 106]; // Users, Roles, Registrations
 $operationsBasic = [181, 247, 248]; // Backoffice, OCR, OCR Templates
 
 // =====================================================
-// 1. DIRECTORS (5 roles) — Full department access + cross-functional
+// 1. DIRECTORS (5 roles) â€” Full department access + cross-functional
 // =====================================================
 echo "--- DIRECTORS ---\n";
 
@@ -143,11 +143,11 @@ $n = insertPermissions($pdo, 'hr_director', $hrDirector, 1, 1, 1, 0);
 echo "  hr_director: +$n items\n";
 
 // =====================================================
-// 2. MANAGERS (9 roles) — Department-specific, moderate access
+// 2. MANAGERS (9 roles) â€” Department-specific, moderate access
 // =====================================================
 echo "\n--- MANAGERS ---\n";
 
-// Department Manager: General management — overview of all departments
+// Department Manager: General management â€” overview of all departments
 $deptManager = array_merge(
     $erpDashboard,
     [196, 197, 71], // Departments, Designations, Employees
@@ -273,7 +273,7 @@ $n = insertPermissions($pdo, 'operations_manager', $operationsManager, 1, 1, 1, 
 echo "  operations_manager: +$n items\n";
 
 // =====================================================
-// 3. TEAM LEADS (4 roles) — Small team focus
+// 3. TEAM LEADS (4 roles) â€” Small team focus
 // =====================================================
 echo "\n--- TEAM LEADS ---\n";
 
@@ -548,8 +548,8 @@ echo "  franchise_owner: +$n items\n";
 echo "\n=== VERIFICATION ===\n";
 $summary = $pdo->query("SELECT role, COUNT(*) as cnt FROM admin_role_menu_permissions WHERE can_view=1 GROUP BY role ORDER BY role")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($summary as $s) {
-    $bar = str_repeat('█', min($s['cnt'], 50));
+    $bar = str_repeat('â–ˆ', min($s['cnt'], 50));
     echo sprintf("  %-30s %3d %s\n", $s['role'], $s['cnt'], $bar);
 }
 echo "\nTotal: " . count($summary) . " roles with permissions\n";
-echo "Done!\n";
+echo "Done!\n";?>

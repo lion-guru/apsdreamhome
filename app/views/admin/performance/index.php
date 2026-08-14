@@ -69,7 +69,7 @@ $totalQueries = $totalQueries ?? 0;
                 <h6 class="text-muted mb-3"><i class="fas fa-memory me-1"></i>Memory Usage</h6>
                 <?php $memPct = $memoryLimitBytes > 0 ? min(100, ($memoryUsed / $memoryLimitBytes) * 100) : 0; ?>
                 <div class="mb-2"><strong><?= number_format($memoryUsed / 1048576, 1) ?></strong> MB / <?= $memoryLimit === '-1' ? 'Unlimited' : number_format($memoryLimitBytes / 1048576, 0) . ' MB' ?></div>
-                <div class="progress mb-1" style="height:12px"><div class="progress-bar bg-<?= $memPct > 80 ? 'danger' : ($memPct > 50 ? 'warning' : 'success') ?>" style="width:<?= $memPct ?>%"></div></div>
+                <div class="progress mb-1" class="style-44570"><div class="progress-bar bg-<?= $memPct > 80 ? 'danger' : ($memPct > 50 ? 'warning' : 'success') ?>" class="style-22963"></div></div>
                 <small class="text-muted">Peak: <?= number_format($memoryPeak / 1048576, 1) ?> MB</small>
             </div></div>
         </div>
@@ -78,7 +78,7 @@ $totalQueries = $totalQueries ?? 0;
                 <h6 class="text-muted mb-3"><i class="fas fa-hdd me-1"></i>Disk Usage</h6>
                 <?php $diskPct = $diskTotal > 0 ? min(100, ($diskUsed / $diskTotal) * 100) : 0; ?>
                 <div class="mb-2"><strong><?= number_format($diskUsed / 1073741824, 1) ?></strong> GB / <?= number_format($diskTotal / 1073741824, 1) ?> GB</div>
-                <div class="progress mb-1" style="height:12px"><div class="progress-bar bg-<?= $diskPct > 90 ? 'danger' : ($diskPct > 70 ? 'warning' : 'info') ?>" style="width:<?= $diskPct ?>%"></div></div>
+                <div class="progress mb-1" class="style-44570"><div class="progress-bar bg-<?= $diskPct > 90 ? 'danger' : ($diskPct > 70 ? 'warning' : 'info') ?>" class="style-45310"></div></div>
                 <small class="text-muted">Free: <?= number_format($diskFree / 1073741824, 1) ?> GB</small>
             </div></div>
         </div>

@@ -47,7 +47,7 @@
                             <h6 class="mb-0"><?= ($goal['target'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h6>
                             <span class="badge bg-<?= (int)($goal['current_progress'] ?? 0) >= 70 ? 'success' : 'warning' ?>"><?= ($goal['current_progress'] ?? '0%') ?></span>
                         </div>
-                        <div class="progress mb-2" style="height:8px;"><div class="progress-bar bg-success" style="width:<?= ($goal['current_progress'] ?? '0%') ?>"></div></div>
+                        <div class="progress mb-2" class="style-87912"><div class="progress-bar bg-success" class="style-29570"></div></div>
                         <small class="text-muted">Timeline: <?= ($goal['timeline'] ?? '') ?></small>
                     </div>
                     <?php endforeach; ?>

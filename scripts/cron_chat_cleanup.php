@@ -31,7 +31,7 @@ $stmt = $db->query(
      AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY){$cronTenantSql}"
 );
 $deletedOld = $stmt->rowCount();
-echo "✓ Deleted {$deletedOld} old conversations (>7 days, completed/cancelled/expired)\n";
+echo "âœ“ Deleted {$deletedOld} old conversations (>7 days, completed/cancelled/expired)\n";
 
 // 2. Delete orphaned 'active' conversations older than 24h (stuck/abandoned)
 $stmt = $db->query(
@@ -40,7 +40,7 @@ $stmt = $db->query(
      AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR){$cronTenantSql}"
 );
 $deletedStale = $stmt->rowCount();
-echo "✓ Deleted {$deletedStale} stale active conversations (>24h)\n";
+echo "âœ“ Deleted {$deletedStale} stale active conversations (>24h)\n";
 
 // 3. Delete orphaned 'confirm' conversations older than 1 hour
 $stmt = $db->query(
@@ -49,7 +49,7 @@ $stmt = $db->query(
      AND created_at < DATE_SUB(NOW(), INTERVAL 1 HOUR){$cronTenantSql}"
 );
 $deletedConfirm = $stmt->rowCount();
-echo "✓ Deleted {$deletedConfirm} abandoned confirm conversations (>1h)\n";
+echo "âœ“ Deleted {$deletedConfirm} abandoned confirm conversations (>1h)\n";
 
 // 4. Show remaining stats
 $stats = $db->fetchAll("SELECT status, COUNT(*) as cnt FROM ai_chat_conversations GROUP BY status");
@@ -61,4 +61,4 @@ foreach ($stats as $row) {
 $total = $db->fetch("SELECT COUNT(*) as cnt FROM ai_chat_conversations");
 echo "  TOTAL: {$total['cnt']}\n";
 
-echo "\n=== Cleanup Complete ===\n";
+echo "\n=== Cleanup Complete ===\n";?>

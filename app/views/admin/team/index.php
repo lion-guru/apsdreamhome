@@ -27,7 +27,7 @@
                     <?php if (empty($members)): ?>
                     <tr>
                         <td colspan="10" class="text-center py-5">
-                            <i class="fas fa-users fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <i class="fas fa-users fa-3x text-muted mb-3" class="style-82835"></i>
                             <h5 class="text-muted">No team members found</h5>
                             <p class="text-muted mb-3">Add your leadership team, advisors, and key staff to showcase them on the website and build trust with customers.</p>
                             <a href="<?= BASE_URL ?>/admin/team/create" class="btn btn-primary">
@@ -41,9 +41,9 @@
                         <td><?php echo $i + 1; ?></td>
                         <td>
                             <?php if (!empty($m['photo'])): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($m['photo']); ?>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
+                            <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($m['photo']); ?>" alt="" class="style-20773">
                             <?php else: ?>
-                            <div style="width:40px;height:40px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;color:#6c757d;"><i class="fas fa-user"></i></div>
+                            <div class="style-56261"><i class="fas fa-user"></i></div>
                             <?php endif; ?>
                         </td>
                         <td class="fw-semibold"><?php echo htmlspecialchars($m['name'] ?? ''); ?></td>
@@ -61,7 +61,7 @@
                         </td>
                         <td class="text-end">
                             <a href="<?php echo BASE_URL; ?>/admin/team/edit/<?php echo $m['id']; ?>" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
-                            <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/destroy/<?php echo $m['id']; ?>" style="display:inline" onsubmit="return confirm('Delete this team member?')">
+                            <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/destroy/<?php echo $m['id']; ?>" class="style-71727" onsubmit="return confirm('Delete this team member?')">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                             </form>

@@ -38,4 +38,4 @@ $_SESSION['employee_id'] = $emp['id'];
 
 session_write_close();
 header('Location: ' . BASE_URL . '/employee/dashboard');
-exit;
+exit;?>

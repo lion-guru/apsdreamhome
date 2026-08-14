@@ -87,11 +87,11 @@
                                         <td><small><?= date('M j, g:i A', strtotime($req['created_at'])) ?></small></td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/approve" style="display:inline">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/approve" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <button class="btn btn-success btn-sm" title="Approve"><i class="fas fa-check"></i></button>
                                                 </form>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/reject" style="display:inline">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/reject" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="reason" value="Rejected by admin">
                                                     <button class="btn btn-danger btn-sm" title="Reject" onclick="return confirm('Reject this request?')"><i class="fas fa-times"></i></button>
@@ -143,7 +143,7 @@
                                         ?>
                                         <span class="badge bg-<?= $color ?>"><?= ucfirst($h['status']) ?></span>
                                     </td>
-                                    <td><small><?= htmlspecialchars($h['approved_by_name'] ?? '—') ?></small></td>
+                                    <td><small><?= htmlspecialchars($h['approved_by_name'] ?? 'â€”') ?></small></td>
                                     <td><small><?= date('M j, g:i A', strtotime($h['created_at'])) ?></small></td>
                                 </tr>
                             <?php endforeach; ?>

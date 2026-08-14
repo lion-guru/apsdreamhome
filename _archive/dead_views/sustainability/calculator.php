@@ -51,13 +51,13 @@
                             </div>
                         </div>
                     </form>
-                    <div id="scoreResult" class="mt-4" style="display:none;">
+                    <div id="scoreResult" class="mt-4" class="style-2248">
                         <hr>
                         <div class="text-center">
                             <h3>Sustainability Score: <span id="scoreValue" class="text-success">0</span>/100</h3>
                             <h4>Rating: <span id="ratingValue" class="badge bg-success fs-5">Certified</span></h4>
-                            <div class="progress mt-3" style="height:25px;">
-                                <div id="scoreBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width:0%">0%</div>
+                            <div class="progress mt-3" class="style-55329">
+                                <div id="scoreBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" class="style-55795">0%</div>
                             </div>
                             <div id="improvements" class="mt-3 text-start"></div>
                         </div>

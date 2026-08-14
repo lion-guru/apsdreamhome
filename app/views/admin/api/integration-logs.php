@@ -84,7 +84,7 @@ $logs = $logs ?? [];
                                             <span class="badge bg-warning text-dark">Pending</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="text-truncate" style="max-width: 250px;" title="<?php echo htmlspecialchars($log['error_message'] ?? ''); ?>">
+                                    <td class="text-truncate" class="style-14387" title="<?php echo htmlspecialchars($log['error_message'] ?? ''); ?>">
                                         <?php echo htmlspecialchars($log['error_message'] ?? '-'); ?>
                                     </td>
                                     <td><?php echo date('d M Y H:i', strtotime($log['created_at'] ?? 'now')); ?></td>

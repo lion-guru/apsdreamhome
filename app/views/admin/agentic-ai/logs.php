@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $_logs = $logs ?? [];
 $_ag = $agents ?? [];
 $_filter = $filter ?? '';
@@ -9,7 +9,7 @@ $_date = $date ?? date('Y-m-d');
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-list" style="color:#666"></i> Agent Logs</h1>
+                    <h1 class="m-0"><i class="fas fa-list" class="style-27797"></i> Agent Logs</h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="<?= BASE_URL ?>/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
@@ -55,10 +55,10 @@ $_date = $date ?? date('Y-m-d');
                             <tbody>
                             <?php foreach ($_logs as $l): ?>
                             <tr>
-                                <td class="text-muted small" style="white-space:nowrap"><?= date('H:i:s', strtotime($l['created_at'])) ?></td>
+                                <td class="text-muted small" class="style-30672"><?= date('H:i:s', strtotime($l['created_at'])) ?></td>
                                 <td>
                                     <?php $a = $_ag[$l['agent_type']] ?? ['name' => $l['agent_type'], 'color' => '#666', 'icon' => 'fa-robot']; ?>
-                                    <span style="color:<?= $a['color'] ?>"><i class="fas <?= $a['icon'] ?>"></i> <?= htmlspecialchars($a['name']) ?></span>
+                                    <span class="style-37833"><i class="fas <?= $a['icon'] ?>"></i> <?= htmlspecialchars($a['name']) ?></span>
                                 </td>
                                 <td><?= htmlspecialchars($l['task_name']) ?></td>
                                 <td>
@@ -69,7 +69,7 @@ $_date = $date ?? date('Y-m-d');
                                     <span class="badge badge-<?= $badge ?>"><?= $l['status'] ?></span>
                                 </td>
                                 <td><?= round(($l['confidence'] ?? 0) * 100) ?>%</td>
-                                <td class="small text-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                                <td class="small text-muted" class="style-82232">
                                     <?= htmlspecialchars($l['result'] ? mb_substr($l['result'], 0, 100) : '-') ?>
                                 </td>
                             </tr>

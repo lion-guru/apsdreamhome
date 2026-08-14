@@ -37,4 +37,4 @@ foreach ($filesToArchive as $file) {
     }
 }
 echo $output;
-@unlink(__FILE__);
+@unlink(__FILE__);?>

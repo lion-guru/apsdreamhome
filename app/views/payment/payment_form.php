@@ -20,7 +20,7 @@
                     <form method="POST" action="<?= BASE_URL ?>/payment/process">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
-                            <label class="form-label">Amount (₹)</label>
+                            <label class="form-label">Amount (â‚¹)</label>
                             <input type="number" name="amount" class="form-control form-control-lg" required step="0.01" value="<?= htmlspecialchars($_POST['amount'] ?? $amount ?? '') ?>">
                         </div>
                         <div class="mb-3">
@@ -33,7 +33,7 @@
                                 <option value="wallet" <?= ($_POST['method'] ?? '') === 'wallet' ? 'selected' : '' ?>>Wallet</option>
                             </select>
                         </div>
-                        <div id="cardDetails" style="display:none">
+                        <div id="cardDetails" class="style-24280">
                             <div class="mb-3">
                                 <label class="form-label">Card Number</label>
                                 <input type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="upiDetails" style="display:<?= ($method ?? '') === 'upi' ? 'block' : 'none' ?>">
+                        <div id="upiDetails" class="style-61568">
                             <div class="mb-3">
                                 <label class="form-label">UPI ID</label>
                                 <input type="text" name="upi_id" class="form-control" placeholder="example@paytm" value="<?= htmlspecialchars($_POST['upi_id'] ?? '') ?>">
@@ -67,7 +67,7 @@
                             <label class="form-label">Phone</label>
                             <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($_POST['phone'] ?? $phone ?? '') ?>">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-lg"><i class="fas fa-lock me-1"></i>Pay ₹<?= number_format($_POST['amount'] ?? $amount ?? 0, 2) ?></button>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg"><i class="fas fa-lock me-1"></i>Pay â‚¹<?= number_format($_POST['amount'] ?? $amount ?? 0, 2) ?></button>
                     </form>
                 </div>
             </div>

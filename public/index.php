@@ -67,4 +67,4 @@ try {
     if (ini_get('display_errors')) {
         echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     }
-}
+}?>

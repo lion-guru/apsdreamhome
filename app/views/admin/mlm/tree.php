@@ -28,7 +28,7 @@ $rootNodes = $byParent[null] ?? [];
 function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
     $children = $byParent[$parentId] ?? [];
     if (empty($children)) return '';
-    $html = '<div class="tree-children d-flex justify-content-center gap-4 mt-2" style="position:relative;">';
+    $html = '<div class="tree-children d-flex justify-content-center gap-4 mt-2" class="style-92811">';
     foreach ($children as $idx => $child) {
         $level = strtolower($child['current_level'] ?? 'associate');
         $color = $rankColors[$level] ?? '#94a3b8';
@@ -43,26 +43,26 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         $posColor = $pos === 'left' ? '#10b981' : ($pos === 'right' ? '#f59e0b' : '#94a3b8');
         $isActive = (int)($child['is_active'] ?? 1);
 
-        $html .= '<div class="tree-node-wrapper" style="min-width:200px;max-width:220px;">';
+        $html .= '<div class="tree-node-wrapper" class="style-13858">';
         if ($posLabel) {
-            $html .= '<div class="text-center mb-1"><span class="badge" style="background:' . $posColor . ';color:#fff;font-size:0.65rem;">' . $posLabel . ' Leg</span></div>';
+            $html .= '<div class="text-center mb-1"><span class="badge" class="style-42629">' . $posLabel . ' Leg</span></div>';
         }
-        $html .= '<div class="tree-card border rounded p-2 text-center" style="border-left:4px solid ' . $color . ' !important;' . (!$isActive ? 'opacity:0.5;' : '') . '">';
-        $html .= '<span class="badge mb-1" style="background:' . $color . ';color:#fff;"><i class="fas ' . $icon . '"></i></span>';
+        $html .= '<div class="tree-card border rounded p-2 text-center" class="style-73782">';
+        $html .= '<span class="badge mb-1" class="style-29474"><i class="fas ' . $icon . '"></i></span>';
         $html .= '<div class="fw-bold small">' . $name . '</div>';
-        $html .= '<div class="text-muted" style="font-size:0.68rem;">' . $email . '</div>';
-        $html .= '<div class="mt-1" style="font-size:0.7rem;">';
+        $html .= '<div class="text-muted" class="style-60898">' . $email . '</div>';
+        $html .= '<div class="mt-1" class="style-68658">';
         $html .= '<span class="me-2"><i class="fas fa-rupee-sign"></i>' . $commission . '</span>';
         $html .= '<span><i class="fas fa-chart-line"></i>' . $bv . '</span>';
         $html .= '</div>';
         if ($joinDate) {
-            $html .= '<div class="text-muted mt-1" style="font-size:0.65rem;"><i class="fas fa-calendar me-1"></i>' . $joinDate . '</div>';
+            $html .= '<div class="text-muted mt-1" class="style-56522"><i class="fas fa-calendar me-1"></i>' . $joinDate . '</div>';
         }
         $html .= '</div>';
         $childId = $child['id'] ?? null;
         $childHtml = buildTreeHtml($childId, $byParent, $rankColors, $rankIcons);
         if ($childHtml) {
-            $html .= '<div class="tree-connector text-center" style="height:20px;border-left:1px solid #cbd5e1;margin:0 auto;width:1px;"></div>';
+            $html .= '<div class="tree-connector text-center" class="style-41562"></div>';
             $html .= $childHtml;
         }
         $html .= '</div>';
@@ -84,7 +84,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:var(--primary);"><?= $totalDownline ?></div>
+                    <div class="style-71517"><?= $totalDownline ?></div>
                     <div class="text-muted small">Total Downline</div>
                 </div>
             </div>
@@ -92,7 +92,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#10b981;"><?= $leftCount ?></div>
+                    <div class="style-23322"><?= $leftCount ?></div>
                     <div class="text-muted small">Left Leg Count</div>
                 </div>
             </div>
@@ -100,7 +100,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#f59e0b;"><?= $rightCount ?></div>
+                    <div class="style-39581"><?= $rightCount ?></div>
                     <div class="text-muted small">Right Leg Count</div>
                 </div>
             </div>
@@ -108,7 +108,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#0f766e;">&#8377;<?= number_format($pairingBonus) ?></div>
+                    <div class="style-93706">&#8377;<?= number_format($pairingBonus) ?></div>
                     <div class="text-muted small">Pairing Bonus Paid</div>
                 </div>
             </div>
@@ -143,26 +143,26 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
                 <div class="aps-cp-card-header">
                     <h5 class="m-0"><i class="fas fa-project-diagram me-2"></i>Tree View</h5>
                 </div>
-                <div class="aps-cp-card-body" style="overflow-x:auto;padding:20px;">
+                <div class="aps-cp-card-body" class="style-24784">
                     <?php foreach ($rootNodes as $root):
                         $rootLevel = strtolower($root['current_level'] ?? 'associate');
                         $rootColor = $rankColors[$rootLevel] ?? '#94a3b8';
                         $rootIcon = $rankIcons[$rootLevel] ?? 'fa-user';
                     ?>
                     <div class="text-center mb-4 tree-root">
-                        <div class="d-inline-block border rounded p-3 tree-card" style="border-left:4px solid <?= $rootColor ?> !important;background:#f8fafc;min-width:220px;">
-                            <span class="badge mb-1" style="background:<?= $rootColor ?>;color:#fff;font-size:0.8rem;"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars(ucfirst($rootLevel)) ?></span>
+                        <div class="d-inline-block border rounded p-3 tree-card" class="style-75034">
+                            <span class="badge mb-1" class="style-11051"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars(ucfirst($rootLevel)) ?></span>
                             <div class="fw-bold"><?= htmlspecialchars($root['name'] ?? 'Unknown') ?></div>
                             <div class="text-muted small"><?= htmlspecialchars($root['email'] ?? '') ?></div>
-                            <div class="mt-1" style="font-size:0.78rem;">
+                            <div class="mt-1" class="style-436">
                                 <span class="me-2"><i class="fas fa-rupee-sign"></i><?= number_format((float)($root['total_commission'] ?? 0)) ?></span>
                                 <span><i class="fas fa-chart-line"></i>&#8377;<?= number_format((float)($root['personal_bv'] ?? 0)) ?></span>
                             </div>
                             <?php if (!empty($root['joined_at'])): ?>
-                            <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="fas fa-calendar me-1"></i><?= htmlspecialchars(substr($root['joined_at'], 0, 10)) ?></div>
+                            <div class="text-muted mt-1" class="style-68658"><i class="fas fa-calendar me-1"></i><?= htmlspecialchars(substr($root['joined_at'], 0, 10)) ?></div>
                             <?php endif; ?>
                         </div>
-                        <div style="height:24px;border-left:2px solid #cbd5e1;margin:0 auto;width:1px;"></div>
+                        <div class="style-91240"></div>
                         <?= buildTreeHtml($root['id'] ?? null, $byParent, $rankColors, $rankIcons) ?>
                     </div>
                     <?php endforeach; ?>
@@ -171,7 +171,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <?php endif; ?>
     </div>
 
-    <div id="listView" style="display:none;">
+    <div id="listView" class="style-2248">
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
                 <h5 class="m-0"><i class="fas fa-list me-2"></i>List View</h5>
@@ -207,17 +207,17 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <span class="badge me-2" style="background:<?= $color ?>;color:#fff;"><i class="fas <?= $icon ?>"></i></span>
+                                            <span class="badge me-2" class="style-37328"><i class="fas <?= $icon ?>"></i></span>
                                             <div>
                                                 <div class="fw-bold small"><?= htmlspecialchars($n['name'] ?? 'Unknown') ?></div>
-                                                <div class="text-muted" style="font-size:0.7rem;"><?= htmlspecialchars($n['email'] ?? '') ?></div>
+                                                <div class="text-muted" class="style-68658"><?= htmlspecialchars($n['email'] ?? '') ?></div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><span class="badge" style="background:<?= $color ?>;color:#fff;"><?= htmlspecialchars(ucfirst($level)) ?></span></td>
+                                    <td><span class="badge" class="style-37328"><?= htmlspecialchars(ucfirst($level)) ?></span></td>
                                     <td>
                                         <?php if ($pos && $pos !== '-'): ?>
-                                            <span class="badge" style="background:<?= $posColor ?>;color:#fff;"><?= htmlspecialchars(ucfirst($pos)) ?></span>
+                                            <span class="badge" class="style-8985"><?= htmlspecialchars(ucfirst($pos)) ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">-</span>
                                         <?php endif; ?>

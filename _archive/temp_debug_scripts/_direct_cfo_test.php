@@ -29,4 +29,4 @@ try {
     echo "Exception: " . $e->getMessage() . "\n";
     echo "File: " . $e->getFile() . "\n";
     echo "Line: " . $e->getLine() . "\n";
-}
+}?>

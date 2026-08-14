@@ -120,4 +120,4 @@ foreach ($targets as $t) {
 
 echo "\n=== RESULT: Wrapped $wrapped refs, Dropped $dropped tables, Failed $failed ===\n";
 $newCount = count($tables) - $dropped;
-echo "Tables: $newCount\n";
+echo "Tables: $newCount\n";?>

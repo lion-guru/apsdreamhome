@@ -30,4 +30,4 @@ foreach ($tables as $t) {
 }
 
 echo "Found $dupCount duplicate indexes:\n";
-foreach ($dropList as $d) echo "  $d\n";
+foreach ($dropList as $d) echo "  $d\n";?>

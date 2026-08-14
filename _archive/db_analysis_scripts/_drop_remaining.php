@@ -16,4 +16,4 @@ foreach ($tables as $t) {
 }
 
 $count = $pdo->query('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA="apsdreamhome"')->fetchColumn();
-echo "\nDropped: $dropped, Remaining: $count\n";
+echo "\nDropped: $dropped, Remaining: $count\n";?>

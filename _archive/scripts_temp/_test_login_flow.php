@@ -1,7 +1,7 @@
 <?php
 /**
  * Test login flow for all executive roles
- * Verifies: login → redirect → dashboard → sidebar permissions
+ * Verifies: login â†’ redirect â†’ dashboard â†’ sidebar permissions
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -103,4 +103,4 @@ foreach ($testRoles as $role => $info) {
 
 echo "\n=== SUMMARY ===\n";
 echo "Passed: $passed / " . count($testRoles) . "\n";
-echo "Failed: $failed\n";
+echo "Failed: $failed\n";?>

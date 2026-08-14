@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Financial Analytics'; ?>
+ï»¿<?php $pageTitle = 'Financial Analytics'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -11,14 +11,14 @@
                 </ul>
             </div>
             <div class="col-auto">
-                <select class="form-select form-select-sm" style="width:auto"><option>This Year</option><option>This Quarter</option><option>This Month</option></select>
+                <select class="form-select form-select-sm" class="style-30246"><option>This Year</option><option>This Quarter</option><option>This Month</option></select>
             </div>
         </div>
     </div>
     <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-coins fa-2x text-success mb-2"></i><h6>Total Revenue</h6><h4 class="text-success mb-0">₹<?= number_format($totalRevenue ?? 0, 2) ?></h4></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-receipt fa-2x text-danger mb-2"></i><h6>Total Expenses</h6><h4 class="text-danger mb-0">₹<?= number_format($totalExpenses ?? 0, 2) ?></h4></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-chart-line fa-2x text-primary mb-2"></i><h6>Net Profit</h6><h4 class="text-primary mb-0">₹<?= number_format(($totalRevenue ?? 0) - ($totalExpenses ?? 0), 2) ?></h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-coins fa-2x text-success mb-2"></i><h6>Total Revenue</h6><h4 class="text-success mb-0">â‚¹<?= number_format($totalRevenue ?? 0, 2) ?></h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-receipt fa-2x text-danger mb-2"></i><h6>Total Expenses</h6><h4 class="text-danger mb-0">â‚¹<?= number_format($totalExpenses ?? 0, 2) ?></h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-chart-line fa-2x text-primary mb-2"></i><h6>Net Profit</h6><h4 class="text-primary mb-0">â‚¹<?= number_format(($totalRevenue ?? 0) - ($totalExpenses ?? 0), 2) ?></h4></div></div></div>
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-percent fa-2x text-info mb-2"></i><h6>Profit Margin</h6><h4 class="text-info mb-0"><?= ($totalRevenue ?? 0) > 0 ? number_format((($totalRevenue - ($totalExpenses ?? 0)) / $totalRevenue) * 100, 1) : 0 ?>%</h4></div></div></div>
     </div>
     <div class="row">

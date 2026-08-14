@@ -19,50 +19,50 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold" style="color:#e2e8f0;"><?= number_format($stats['total'] ?? 0) ?></div>
-                    <div style="color:#64748b;font-size:0.8rem;">Total</div>
+                    <div class="fs-3 fw-bold" class="style-96443"><?= number_format($stats['total'] ?? 0) ?></div>
+                    <div class="style-9012">Total</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold" style="color:#fbbf24;"><?= number_format($stats['pending'] ?? 0) ?></div>
-                    <div style="color:#64748b;font-size:0.8rem;">Pending</div>
+                    <div class="fs-3 fw-bold" class="style-60246"><?= number_format($stats['pending'] ?? 0) ?></div>
+                    <div class="style-9012">Pending</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold" style="color:#60a5fa;"><?= number_format($stats['processing'] ?? 0) ?></div>
-                    <div style="color:#64748b;font-size:0.8rem;">Processing</div>
+                    <div class="fs-3 fw-bold" class="style-23731"><?= number_format($stats['processing'] ?? 0) ?></div>
+                    <div class="style-9012">Processing</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold" style="color:#22c55e;"><?= number_format($stats['sent'] ?? 0) ?></div>
-                    <div style="color:#64748b;font-size:0.8rem;">Sent</div>
+                    <div class="fs-3 fw-bold" class="style-63663"><?= number_format($stats['sent'] ?? 0) ?></div>
+                    <div class="style-9012">Sent</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold" style="color:#f87171;"><?= number_format($stats['failed'] ?? 0) ?></div>
-                    <div style="color:#64748b;font-size:0.8rem;">Failed</div>
+                    <div class="fs-3 fw-bold" class="style-62247"><?= number_format($stats['failed'] ?? 0) ?></div>
+                    <div class="style-9012">Failed</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body text-center">
-                    <div class="fs-3 fw-bold" style="color:#64748b;"><?= number_format($stats['cancelled'] ?? 0) ?></div>
-                    <div style="color:#64748b;font-size:0.8rem;">Cancelled</div>
+                    <div class="fs-3 fw-bold" class="style-54585"><?= number_format($stats['cancelled'] ?? 0) ?></div>
+                    <div class="style-9012">Cancelled</div>
                 </div>
             </div>
         </div>
@@ -70,21 +70,21 @@
 
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
-                <div class="card-header" style="background:#1e293b;border-bottom:1px solid #334155;">
-                    <h6 class="mb-0 fw-bold" style="color:#e2e8f0;">
-                        <i class="fas fa-calendar-day me-1" style="color:#3b82f6;"></i> Today's Activity
+            <div class="card border-0 shadow-sm" class="style-52634">
+                <div class="card-header" class="style-52852">
+                    <h6 class="mb-0 fw-bold" class="style-96443">
+                        <i class="fas fa-calendar-day me-1" class="style-75937"></i> Today's Activity
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="row g-3 text-center">
                         <div class="col-6">
-                            <div class="fw-bold fs-4" style="color:#22c55e;"><?= number_format($todayStats['sent_today'] ?? 0) ?></div>
-                            <div style="color:#64748b;font-size:0.85rem;">Sent Today</div>
+                            <div class="fw-bold fs-4" class="style-63663"><?= number_format($todayStats['sent_today'] ?? 0) ?></div>
+                            <div class="style-37380">Sent Today</div>
                         </div>
                         <div class="col-6">
-                            <div class="fw-bold fs-4" style="color:#f87171;"><?= number_format($todayStats['failed_today'] ?? 0) ?></div>
-                            <div style="color:#64748b;font-size:0.85rem;">Failed Today</div>
+                            <div class="fw-bold fs-4" class="style-62247"><?= number_format($todayStats['failed_today'] ?? 0) ?></div>
+                            <div class="style-37380">Failed Today</div>
                         </div>
                     </div>
                     <?php
@@ -93,11 +93,11 @@
                     ?>
                     <div class="mt-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <small style="color:#94a3b8;">Success Rate</small>
-                            <small style="color:#94a3b8;"><?= $todayRate ?>%</small>
+                            <small class="style-27277">Success Rate</small>
+                            <small class="style-27277"><?= $todayRate ?>%</small>
                         </div>
-                        <div class="progress" style="height:6px;background:#334155;">
-                            <div class="progress-bar" style="width:<?= $todayRate ?>%;background:#22c55e;"></div>
+                        <div class="progress" class="style-75342">
+                            <div class="progress-bar" class="style-95483"></div>
                         </div>
                     </div>
                 </div>
@@ -105,25 +105,25 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
-                <div class="card-header" style="background:#1e293b;border-bottom:1px solid #334155;">
-                    <h6 class="mb-0 fw-bold" style="color:#e2e8f0;">
-                        <i class="fas fa-bullhorn me-1" style="color:#8b5cf6;"></i> Campaign Status
+            <div class="card border-0 shadow-sm" class="style-52634">
+                <div class="card-header" class="style-52852">
+                    <h6 class="mb-0 fw-bold" class="style-96443">
+                        <i class="fas fa-bullhorn me-1" class="style-22437"></i> Campaign Status
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="row g-3 text-center">
                         <div class="col-6">
-                            <div class="fw-bold fs-4" style="color:#e2e8f0;"><?= number_format($campaignStats['total_campaigns'] ?? 0) ?></div>
-                            <div style="color:#64748b;font-size:0.85rem;">Total Campaigns</div>
+                            <div class="fw-bold fs-4" class="style-96443"><?= number_format($campaignStats['total_campaigns'] ?? 0) ?></div>
+                            <div class="style-37380">Total Campaigns</div>
                         </div>
                         <div class="col-6">
-                            <div class="fw-bold fs-4" style="color:#22c55e;"><?= number_format($campaignStats['active_campaigns'] ?? 0) ?></div>
-                            <div style="color:#64748b;font-size:0.85rem;">Active Campaigns</div>
+                            <div class="fw-bold fs-4" class="style-63663"><?= number_format($campaignStats['active_campaigns'] ?? 0) ?></div>
+                            <div class="style-37380">Active Campaigns</div>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="btn btn-sm w-100" style="background:#334155;color:#e2e8f0;border:none;">
+                        <a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="btn btn-sm w-100" class="style-26367">
                             <i class="fas fa-arrow-right me-1"></i> View Campaigns
                         </a>
                     </div>
@@ -132,7 +132,7 @@
         </div>
     </div>
 
-    <div id="processResult" class="mt-3" style="display:none;"></div>
+    <div id="processResult" class="mt-3" class="style-2248"></div>
 </div>
 
 <script>
@@ -155,16 +155,16 @@ function processQueue() {
     .then(d => {
         result.style.display = 'block';
         if (d.success) {
-            result.innerHTML = '<div class="alert alert-success" style="background:#14532d;color:#4ade80;border:1px solid #166534;"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Queue processed!') + '</div>';
+            result.innerHTML = '<div class="alert alert-success" class="style-54711"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Queue processed!') + '</div>';
         } else {
-            result.innerHTML = '<div class="alert alert-danger" style="background:#7f1d1d;color:#f87171;border:1px solid #991b1b;"><i class="fas fa-exclamation-circle me-1"></i> ' + (d.error || 'Failed to process') + '</div>';
+            result.innerHTML = '<div class="alert alert-danger" class="style-42865"><i class="fas fa-exclamation-circle me-1"></i> ' + (d.error || 'Failed to process') + '</div>';
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-play me-1"></i> Process Batch';
     })
     .catch(err => {
         result.style.display = 'block';
-        result.innerHTML = '<div class="alert alert-danger" style="background:#7f1d1d;color:#f87171;border:1px solid #991b1b;"><i class="fas fa-exclamation-circle me-1"></i> Network error: ' + err.message + '</div>';
+        result.innerHTML = '<div class="alert alert-danger" class="style-42865"><i class="fas fa-exclamation-circle me-1"></i> Network error: ' + err.message + '</div>';
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-play me-1"></i> Process Batch';
     });

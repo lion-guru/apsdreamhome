@@ -21,7 +21,7 @@ if ($project) {
 
 <?php if ($project): ?>
 <!-- Project Hero -->
-<section class="hero-section text-white py-5 position-relative" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?php echo $baseUrl . $heroImg; ?>'); background-size: cover; background-position: center;">
+<section class="hero-section text-white py-5 position-relative" class="style-598">
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
@@ -187,7 +187,7 @@ if ($project) {
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <!-- Contact Card -->
-                <div class="card shadow-lg mb-4 sticky-top" style="top: 100px;">
+                <div class="card shadow-lg mb-4 sticky-top" class="style-36655">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fas fa-headset me-2"></i><?= __('project_get_in_touch') ?></h4>
                     </div>
@@ -334,7 +334,7 @@ if ($project) {
                                 ?>
                                 <div class="col-6 mb-2">
                                     <div class="nearby-item">
-                                        <i class="fas <?= $placeIcon ?>" style="background:<?= $placeColor ?>15;color:<?= $placeColor ?>"></i>
+                                        <i class="fas <?= $placeIcon ?>" class="style-32235"></i>
                                         <div>
                                             <div class="nearby-name"><?php echo htmlspecialchars($placeName); ?></div>
                                             <?php if ($placeDistance): ?>
@@ -358,7 +358,7 @@ if ($project) {
                                 <?php foreach ($fallbackNearby as $item): ?>
                                 <div class="col-6 mb-2">
                                     <div class="nearby-item">
-                                        <i class="fas <?= $item['icon'] ?>" style="background:<?= $item['color'] ?>15;color:<?= $item['color'] ?>"></i>
+                                        <i class="fas <?= $item['icon'] ?>" class="style-63967"></i>
                                         <div>
                                             <div class="nearby-name"><?= $item['label'] ?></div>
                                             <div class="nearby-distance"><?= $item['distance'] ?></div>
@@ -403,7 +403,7 @@ if ($project) {
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14417.5!2d<?= $mapLng ?>!3d<?= $mapLat ?>!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z<?= $mapLat ?>N+<?= $mapLng ?>E!5e0!3m2!1sen!2sin"
                             width="100%" 
                             height="350" 
-                            style="border:0;" 
+                            class="style-49961" 
                             allowfullscreen="" 
                             loading="lazy" 
                             referrerpolicy="no-referrer-when-downgrade">
@@ -441,7 +441,7 @@ if ($project) {
                 ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm project-card">
-                        <img src="<?= $relIsExternal ? $relImg : BASE_URL . $relImg ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?= $baseUrl ?>/assets/images/projects/placeholder/property.svg'">
+                        <img src="<?= $relIsExternal ? $relImg : BASE_URL . $relImg ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" class="style-85571" onerror="this.src='<?= $baseUrl ?>/assets/images/projects/placeholder/property.svg'">
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
@@ -453,7 +453,7 @@ if ($project) {
             <?php else: ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm project-card">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" style="height: 150px; object-fit: cover;" />
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" class="style-85571" />
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Suryoday Colony</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -463,7 +463,7 @@ if ($project) {
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm project-card">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Raghunath Nagri" style="height: 150px; object-fit: cover;" loading="lazy">
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Raghunath Nagri" class="style-85571" loading="lazy">
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Raghunath Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -473,7 +473,7 @@ if ($project) {
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm project-card">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;" />
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Braj Radha Nagri" class="style-85571" />
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Braj Radha Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -492,7 +492,7 @@ if ($project) {
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+<section class="py-5 text-white" class="style-68644">
     <div class="container text-center">
         <h2 class="mb-3">Interested in <?php echo htmlspecialchars($project->site_name); ?>?</h2>
         <p class="lead mb-4"><?= __('project_cta_desc') ?></p>

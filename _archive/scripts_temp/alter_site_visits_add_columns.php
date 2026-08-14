@@ -21,7 +21,7 @@ foreach ($columns as $col) {
         if (str_contains($e->getMessage(), 'Duplicate column')) {
             echo "  SKIP (already exists): $col\n";
         } else {
-            echo "  ERROR: $col — " . $e->getMessage() . "\n";
+            echo "  ERROR: $col â€” " . $e->getMessage() . "\n";
         }
     }
 }
@@ -46,4 +46,4 @@ echo "\nDone! Verifying schema:\n";
 $rows = $db->query('DESCRIBE site_visits')->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as $r) {
     echo "  {$r['Field']} | {$r['Type']}\n";
-}
+}?>

@@ -83,15 +83,15 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             <div class="row text-center">
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_token_amount') ?></small>
-                                    <strong class="text-primary">₹<?= number_format($tokenAmount) ?></strong>
+                                    <strong class="text-primary">â‚¹<?= number_format($tokenAmount) ?></strong>
                                 </div>
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_balance') ?></small>
-                                    <strong>₹<?= number_format($plot['total_price'] - $tokenAmount) ?></strong>
+                                    <strong>â‚¹<?= number_format($plot['total_price'] - $tokenAmount) ?></strong>
                                 </div>
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_total_price') ?></small>
-                                    <strong class="text-primary fs-5">₹<?= number_format($plot['total_price']) ?></strong>
+                                    <strong class="text-primary fs-5">â‚¹<?= number_format($plot['total_price']) ?></strong>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +115,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                     </div>
                     <div class="aps-cp-card-body">
                         <!-- Plot Lock Timer -->
-                        <div id="lockTimer" class="alert alert-warning mb-3" style="display:none;">
+                        <div id="lockTimer" class="alert alert-warning mb-3" class="style-2248">
                             <i class="fas fa-clock me-2"></i>
                             <strong><?= __('book_plot_reserved') ?> <span id="lockCountdown">30:00</span></strong>
                             <br><small><?= __('book_plot_reserved_desc') ?></small>
@@ -161,7 +161,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                         </div>
 
                         <div id="kycStatus" class="d-none">
-                            <div class="d-flex align-items-center gap-2 p-2 rounded" id="kycBadge" style="background:#f0fdf4;">
+                            <div class="d-flex align-items-center gap-2 p-2 rounded" id="kycBadge" class="style-15087">
                                 <i class="fas fa-check-circle text-success"></i>
                                 <span class="text-success fw-semibold"><?= __('book_kyc_verified') ?></span>
                             </div>
@@ -179,14 +179,14 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 
             <!-- Right: Plot Summary -->
             <div class="col-lg-5">
-                <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border: none;">
+                <div class="aps-cp-card mb-4" class="style-99001">
                     <div class="aps-cp-card-body">
                         <h5 class="fw-bold mb-3">
                             <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name']) ?>
                         </h5>
                         <h3 class="fw-bold mb-3"><?= __('plot') ?> <?= htmlspecialchars($plot['plot_number']) ?></h3>
-                        <div class="fs-2 fw-bold mb-3">₹<?= number_format($plot['total_price']) ?></div>
-                        <hr style="border-color: rgba(255,255,255,0.3);">
+                        <div class="fs-2 fw-bold mb-3">â‚¹<?= number_format($plot['total_price']) ?></div>
+                        <hr class="style-94432">
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_area') ?></small><br>
@@ -194,11 +194,11 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             </div>
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_dimensions') ?></small><br>
-                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? '—') ?></strong>
+                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? 'â€”') ?></strong>
                             </div>
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_block') ?></small><br>
-                                <strong><?= htmlspecialchars($plot['block'] ?? '—') ?></strong>
+                                <strong><?= htmlspecialchars($plot['block'] ?? 'â€”') ?></strong>
                             </div>
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_location') ?></small><br>
@@ -253,7 +253,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
     let lockInterval = null;
     let lockExpiresAt = null;
 
-    // ── Plot Lock on page load ──
+    // â”€â”€ Plot Lock on page load â”€â”€
     fetch(BASE + '/plots/' + PLOT_ID + '/lock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
@@ -288,14 +288,14 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
         }, 1000);
     }
 
-    // ── Release lock on page unload ──
+    // â”€â”€ Release lock on page unload â”€â”€
     window.addEventListener('beforeunload', () => {
         navigator.sendBeacon(BASE + '/plots/' + PLOT_ID + '/unlock', new URLSearchParams({
             csrf_token: CSRF
         }));
     });
 
-    // ── KYC verification on form submit ──
+    // â”€â”€ KYC verification on form submit â”€â”€
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
         // Check all checkboxes
         const checks = ['termsCheck', 'cancellationCheck', 'emiTermsCheck', 'kycCheck', 'esignConsent'];

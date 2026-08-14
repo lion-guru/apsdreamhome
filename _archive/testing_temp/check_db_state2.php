@@ -11,4 +11,4 @@ while ($r = $stmt->fetch()) echo "  id={$r['id']} plot={$r['plot_id']} customer=
 
 echo "\n=== LEDGER SUMMARY ===\n";
 $stmt = $pdo->query('SELECT commission_type, COUNT(*) as cnt, SUM(amount) as total FROM mlm_commission_ledger GROUP BY commission_type ORDER BY total DESC');
-while ($r = $stmt->fetch()) echo "  {$r['commission_type']}: {$r['cnt']} entries, total={$r['total']}\n";
+while ($r = $stmt->fetch()) echo "  {$r['commission_type']}: {$r['cnt']} entries, total={$r['total']}\n";?>

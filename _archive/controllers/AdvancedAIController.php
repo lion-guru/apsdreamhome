@@ -178,7 +178,7 @@ class AdvancedAIController extends BaseController
 
             // Generate confidence interval
             $confidence_range = [
-                'lower' => $predicted_price * 0.85, // ±15% confidence
+                'lower' => $predicted_price * 0.85, // Â±15% confidence
                 'upper' => $predicted_price * 1.15
             ];
 
@@ -972,4 +972,4 @@ class AdvancedAIController extends BaseController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

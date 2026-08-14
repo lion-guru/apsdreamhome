@@ -81,22 +81,22 @@ $content = $content ?? '';
                     </form>
 
                     <!-- Valuation Result -->
-                    <div id="valuation-result" class="mt-4" style="display: none;">
+                    <div id="valuation-result" class="mt-4" class="style-54390">
                         <hr>
                         <div class="alert alert-success">
                             <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i><?= __('user_ai_valuation_estimated_price', 'Estimated Price') ?></h5>
                             <div class="row mt-3">
                                 <div class="col-md-6">
-                                    <h2 class="text-primary mb-0" id="estimated-price">₹0</h2>
+                                    <h2 class="text-primary mb-0" id="estimated-price">â‚¹0</h2>
                                     <small class="text-muted"><?= __('user_ai_valuation_market_value', 'Estimated Market Value') ?></small>
                                 </div>
                                 <div class="col-md-6 text-end">
-                                    <h4 class="text-success mb-0" id="price-per-sqft">₹0/sqft</h4>
+                                    <h4 class="text-success mb-0" id="price-per-sqft">â‚¹0/sqft</h4>
                                     <small class="text-muted"><?= __('user_ai_valuation_price_per_sqft', 'Price per sqft') ?></small>
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <p class="mb-1"><strong><?= __('user_ai_valuation_price_range', 'Price Range:') ?></strong> <span id="price-range">₹0 - ₹0</span></p>
+                                <p class="mb-1"><strong><?= __('user_ai_valuation_price_range', 'Price Range:') ?></strong> <span id="price-range">â‚¹0 - â‚¹0</span></p>
                                 <p class="mb-1"><strong><?= __('user_ai_valuation_confidence', 'Confidence:') ?></strong> <span id="confidence-score">0%</span></p>
                                 <p class="mb-0"><strong><?= __('user_ai_valuation_similar_properties', 'Similar Properties:') ?></strong> <span id="similar-count">0</span> <?= __('user_ai_valuation_found', 'found') ?></p>
                             </div>
@@ -114,7 +114,7 @@ $content = $content ?? '';
                     <div class="row" id="properties-grid">
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 mb-3">
-                                <div class="card property-card" style="cursor: pointer;"
+                                <div class="card property-card" class="style-75920"
                                     onclick="selectProperty('<?= htmlspecialchars($property['location']) ?>', 
                                          <?= $property['area_sqft'] ?>, '<?= $property['property_type'] ?>', 
                                          <?= $property['bedrooms'] ?? 0 ?>, <?= $property['bathrooms'] ?? 0 ?>, this)">
@@ -122,7 +122,7 @@ $content = $content ?? '';
                                         <div class="col-4">
                                             <?php if ($property['primary_image']): ?>
                                                 <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
-                                                    class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="" />
+                                                    class="img-fluid rounded-start h-100" class="style-86926" alt="" />
                                             <?php else: ?>
                                                 <div class="bg-light h-100 d-flex align-items-center justify-content-center">
                                                     <i class="fas fa-home text-muted fa-2x"></i>
@@ -163,17 +163,17 @@ $content = $content ?? '';
                             <p><?= __('user_ai_valuation_no_recent', 'No recent valuations') ?></p>
                         </div>
                     <?php else: ?>
-                        <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                        <div class="list-group list-group-flush" class="style-61454">
                             <?php foreach ($recentValuations as $valuation): ?>
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1 text-truncate" style="max-width: 70%;">
+                                        <h6 class="mb-1 text-truncate" class="style-34136">
                                             <?= $valuation['property_title'] ?? $valuation['location'] ?>
                                         </h6>
                                         <small class="text-muted"><?= date('M d', strtotime($valuation['created_at'])) ?></small>
                                     </div>
                                     <p class="mb-1">
-                                        <strong class="text-primary">₹<?= number_format($valuation['estimated_price']) ?></strong>
+                                        <strong class="text-primary">â‚¹<?= number_format($valuation['estimated_price']) ?></strong>
                                         <small class="text-muted">(<?= $valuation['area_sqft'] ?> sqft)</small>
                                     </p>
                                     <small class="text-muted">
@@ -238,9 +238,9 @@ $content = $content ?? '';
     });
 
     function displayValuation(valuation) {
-        document.getElementById('estimated-price').textContent = '₹' + valuation.estimated_price.toLocaleString();
-        document.getElementById('price-per-sqft').textContent = '₹' + valuation.price_per_sqft + '/sqft';
-        document.getElementById('price-range').textContent = '₹' + valuation.price_range.min.toLocaleString() + ' - ₹' + valuation.price_range.max.toLocaleString();
+        document.getElementById('estimated-price').textContent = 'â‚¹' + valuation.estimated_price.toLocaleString();
+        document.getElementById('price-per-sqft').textContent = 'â‚¹' + valuation.price_per_sqft + '/sqft';
+        document.getElementById('price-range').textContent = 'â‚¹' + valuation.price_range.min.toLocaleString() + ' - â‚¹' + valuation.price_range.max.toLocaleString();
         document.getElementById('confidence-score').textContent = valuation.confidence_score + '%';
         document.getElementById('similar-count').textContent = valuation.similar_properties_count;
 

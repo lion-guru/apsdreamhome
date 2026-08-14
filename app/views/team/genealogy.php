@@ -8,7 +8,7 @@ include __DIR__ . '/../layouts/base.php';
         <div class="col-12">
             <div class="glass-card p-4 d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 mb-1 text-white">Team Genealogy Explorer 🌳</h1>
+                    <h1 class="h3 mb-1 text-white">Team Genealogy Explorer ðŸŒ³</h1>
                     <p class="text-white-50 mb-0">Visualize and manage your growing network</p>
                 </div>
                 <div class="d-flex gap-3">
@@ -22,8 +22,8 @@ include __DIR__ . '/../layouts/base.php';
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="glass-card genealogy-container p-0 overflow-hidden" style="height: 700px; position: relative;">
-                <div id="tree-loading" class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25" style="z-index: 10;">
+            <div class="glass-card genealogy-container p-0 overflow-hidden" class="style-20983">
+                <div id="tree-loading" class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25" class="style-82516">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -34,10 +34,10 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="tree-overlay position-absolute bottom-0 end-0 p-3">
                     <div class="glass-card p-2 d-flex flex-column gap-2">
                         <div class="d-flex align-items-center gap-2 small text-white">
-                            <span class="badge bg-primary rounded-circle p-1" style="width: 12px; height: 12px;"></span> Active
+                            <span class="badge bg-primary rounded-circle p-1" class="style-85485"></span> Active
                         </div>
                         <div class="d-flex align-items-center gap-2 small text-white">
-                            <span class="badge bg-danger rounded-circle p-1" style="width: 12px; height: 12px;"></span> Inactive
+                            <span class="badge bg-danger rounded-circle p-1" class="style-85485"></span> Inactive
                         </div>
                     </div>
                 </div>
@@ -156,7 +156,7 @@ include __DIR__ . '/../layouts/base.php';
             .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
             .attr("transform", d => `translate(${d.x},${d.y + 50})`)
             .on("click", (event, d) => {
-                // Node clicked — could navigate to detail
+                // Node clicked â€” could navigate to detail
             });
 
         // Node Circle

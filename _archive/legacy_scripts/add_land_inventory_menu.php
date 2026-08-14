@@ -56,8 +56,8 @@ try {
         $ins->execute([$it['name'], $it['url'], $it['icon'], $it['section'], $it['order_index']]);
         echo "  ADDED : {$it['name']} -> {$it['url']}\n";
     }
-    echo "\n✓ Land inventory menu items synced.\n";
+    echo "\nâœ“ Land inventory menu items synced.\n";
 
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

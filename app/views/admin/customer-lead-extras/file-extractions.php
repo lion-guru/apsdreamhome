@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 // Session started by controller
 $page_title = 'Lead File Extractions';
 $page_description = 'View extracted data from lead documents and files';
@@ -107,12 +107,12 @@ $page_description = 'View extracted data from lead documents and files';
                             <?php foreach ($fileExtractions as $extraction): ?>
                                 <tr>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($extraction['file_name']); ?>">
+                                        <div class="text-truncate" class="style-3881" title="<?php echo htmlspecialchars($extraction['file_name']); ?>">
                                             <?php echo htmlspecialchars($extraction['file_name']); ?>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($extraction['original_name']); ?>">
+                                        <div class="text-truncate" class="style-3881" title="<?php echo htmlspecialchars($extraction['original_name']); ?>">
                                             <?php echo htmlspecialchars($extraction['original_name']); ?>
                                         </div>
                                     </td>
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <?php if (!empty($extraction['extracted_data'])): ?>
                             <div class="mb-4">
                                 <strong>Extracted Data:</strong>
-                                <pre class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">${JSON.stringify(data.extraction.extracted_data, null, 2)}</pre>
+                                <pre class="bg-light p-3 rounded" class="style-52319">${JSON.stringify(data.extraction.extracted_data, null, 2)}</pre>
                             </div>
                             <?php endif; ?>
                         `;

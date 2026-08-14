@@ -96,4 +96,4 @@ foreach ($tables as $name => $sql) {
     }
 }
 
-echo "Phase 55: Property Auction tables created (4 tables)\n";
+echo "Phase 55: Property Auction tables created (4 tables)\n";?>

@@ -104,4 +104,4 @@ echo "Inserted/Updated $inserted pincodes\n";
 
 // Verify
 $count = $pdo->query("SELECT COUNT(*) FROM pincodes")->fetchColumn();
-echo "Total pincodes in table: $count\n";
+echo "Total pincodes in table: $count\n";?>

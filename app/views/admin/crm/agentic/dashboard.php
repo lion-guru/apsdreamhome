@@ -67,7 +67,7 @@ $actionIcons = [
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h2 class="mb-1 fw-bold"><i class="fas fa-robot me-2"></i>Agentic CRM AI</h2>
-                <p class="mb-0 opacity-75" style="font-size:14px">Intelligent automation — follow-ups, scoring, assignment, insights</p>
+                <p class="mb-0 opacity-75" class="style-42715">Intelligent automation â€” follow-ups, scoring, assignment, insights</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <form method="POST" action="<?= BASE_URL ?>/admin/crm/agentic/run-all" class="quick-run-form">
@@ -79,35 +79,35 @@ $actionIcons = [
     </div>
 </div>
 
-<div class="container-fluid px-4" style="margin-top:-12px">
+<div class="container-fluid px-4" class="style-71772">
 
     <!-- Agent Stats -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="agent-stat-card">
-                <div class="stat-icon" style="background:#eef0ff;color:#667eea"><i class="fas fa-redo-alt"></i></div>
-                <div class="stat-value" style="color:#667eea"><?= $autoFollowups ?></div>
+                <div class="stat-icon" class="style-64551"><i class="fas fa-redo-alt"></i></div>
+                <div class="stat-value" class="style-23141"><?= $autoFollowups ?></div>
                 <div class="stat-label">Follow-ups Today</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="agent-stat-card">
-                <div class="stat-icon" style="background:#fff7ed;color:#f6993f"><i class="fas fa-sliders-h"></i></div>
-                <div class="stat-value" style="color:#f6993f"><?= $scoreAdjustments ?></div>
+                <div class="stat-icon" class="style-27495"><i class="fas fa-sliders-h"></i></div>
+                <div class="stat-value" class="style-52774"><?= $scoreAdjustments ?></div>
                 <div class="stat-label">Scores Adjusted</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="agent-stat-card">
-                <div class="stat-icon" style="background:#edfcf2;color:#38c172"><i class="fas fa-user-plus"></i></div>
-                <div class="stat-value" style="color:#38c172"><?= $autoAssignments ?></div>
+                <div class="stat-icon" class="style-54834"><i class="fas fa-user-plus"></i></div>
+                <div class="stat-value" class="style-61533"><?= $autoAssignments ?></div>
                 <div class="stat-label">Auto-Assigned</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="agent-stat-card">
-                <div class="stat-icon" style="background:#f3eefa;color:#886ab5"><i class="fas fa-lightbulb"></i></div>
-                <div class="stat-value" style="color:#886ab5"><?= $insightsGenerated ?></div>
+                <div class="stat-icon" class="style-33961"><i class="fas fa-lightbulb"></i></div>
+                <div class="stat-value" class="style-91868"><?= $insightsGenerated ?></div>
                 <div class="stat-label">Insights Generated</div>
             </div>
         </div>
@@ -118,10 +118,10 @@ $actionIcons = [
         <div class="col-md-3">
             <div class="agentic-card p-3">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#e3342f15;color:#e3342f;width:48px;height:48px;border-radius:12px;font-size:20px"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="stat-icon" class="style-93721"><i class="fas fa-exclamation-circle"></i></div>
                     <div>
-                        <div style="font-size:24px;font-weight:800;color:#e3342f"><?= $overdueTasks ?></div>
-                        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Overdue Tasks</div>
+                        <div class="style-32488"><?= $overdueTasks ?></div>
+                        <div class="style-21552">Overdue Tasks</div>
                     </div>
                 </div>
             </div>
@@ -129,10 +129,10 @@ $actionIcons = [
         <div class="col-md-3">
             <div class="agentic-card p-3">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#f6993f15;color:#f6993f;width:48px;height:48px;border-radius:12px;font-size:20px"><i class="fas fa-fire"></i></div>
+                    <div class="stat-icon" class="style-71368"><i class="fas fa-fire"></i></div>
                     <div>
-                        <div style="font-size:24px;font-weight:800;color:#f6993f"><?= $hotLeads ?></div>
-                        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Hot Leads</div>
+                        <div class="style-58900"><?= $hotLeads ?></div>
+                        <div class="style-21552">Hot Leads</div>
                     </div>
                 </div>
             </div>
@@ -140,10 +140,10 @@ $actionIcons = [
         <div class="col-md-3">
             <div class="agentic-card p-3">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#667eea15;color:#667eea;width:48px;height:48px;border-radius:12px;font-size:20px"><i class="fas fa-snowflake"></i></div>
+                    <div class="stat-icon" class="style-88061"><i class="fas fa-snowflake"></i></div>
                     <div>
-                        <div style="font-size:24px;font-weight:800;color:#667eea"><?= number_format($coldLeads) ?></div>
-                        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Cold Leads</div>
+                        <div class="style-13074"><?= number_format($coldLeads) ?></div>
+                        <div class="style-21552">Cold Leads</div>
                     </div>
                 </div>
             </div>
@@ -151,10 +151,10 @@ $actionIcons = [
         <div class="col-md-3">
             <div class="agentic-card p-3">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#886ab515;color:#886ab5;width:48px;height:48px;border-radius:12px;font-size:20px"><i class="fas fa-bed"></i></div>
+                    <div class="stat-icon" class="style-5679"><i class="fas fa-bed"></i></div>
                     <div>
-                        <div style="font-size:24px;font-weight:800;color:#886ab5"><?= $dormantLeads ?></div>
-                        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Dormant (7d+)</div>
+                        <div class="style-80383"><?= $dormantLeads ?></div>
+                        <div class="style-21552">Dormant (7d+)</div>
                     </div>
                 </div>
             </div>
@@ -171,7 +171,7 @@ $actionIcons = [
                         <form method="POST" action="<?= BASE_URL ?>/admin/crm/agentic/auto-followup" class="quick-run-form">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button type="submit" class="agent-action-btn w-100">
-                                <i class="fas fa-redo-alt" style="color:#667eea"></i>
+                                <i class="fas fa-redo-alt" class="style-23141"></i>
                                 <span>Auto Follow-Up</span>
                                 <small>Create tasks for stale leads</small>
                             </button>
@@ -181,7 +181,7 @@ $actionIcons = [
                         <form method="POST" action="<?= BASE_URL ?>/admin/crm/agentic/score-recalc" class="quick-run-form">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button type="submit" class="agent-action-btn w-100">
-                                <i class="fas fa-sliders-h" style="color:#f6993f"></i>
+                                <i class="fas fa-sliders-h" class="style-52774"></i>
                                 <span>Recalc Scores</span>
                                 <small>Update all lead scores</small>
                             </button>
@@ -191,7 +191,7 @@ $actionIcons = [
                         <form method="POST" action="<?= BASE_URL ?>/admin/crm/agentic/auto-assign" class="quick-run-form">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button type="submit" class="agent-action-btn w-100">
-                                <i class="fas fa-user-plus" style="color:#38c172"></i>
+                                <i class="fas fa-user-plus" class="style-61533"></i>
                                 <span>Auto Assign</span>
                                 <small>Round-robin unassigned leads</small>
                             </button>
@@ -201,7 +201,7 @@ $actionIcons = [
                         <form method="POST" action="<?= BASE_URL ?>/admin/crm/agentic/insights" class="quick-run-form">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button type="submit" class="agent-action-btn w-100">
-                                <i class="fas fa-lightbulb" style="color:#886ab5"></i>
+                                <i class="fas fa-lightbulb" class="style-91868"></i>
                                 <span>Generate Insights</span>
                                 <small>AI pipeline analysis</small>
                             </button>
@@ -215,8 +215,8 @@ $actionIcons = [
                 <div class="section-title"><i class="fas fa-history"></i> Recent AI Actions (Today)</div>
                 <div class="action-timeline">
                     <?php if (empty($recent_actions)): ?>
-                        <div class="text-center py-4" style="color:#aaa">
-                            <i class="fas fa-robot" style="font-size:48px;opacity:.3;margin-bottom:12px;display:block"></i>
+                        <div class="text-center py-4" class="style-1686">
+                            <i class="fas fa-robot" class="style-99737"></i>
                             <p class="mb-0">No AI actions today. Run an agent to get started.</p>
                         </div>
                     <?php else: ?>
@@ -226,14 +226,14 @@ $actionIcons = [
                             $time = date('h:i A', strtotime($action['created_at'] ?? 'now'));
                         ?>
                             <div class="action-item">
-                                <div class="action-dot" style="background:<?= $iconData['bg'] ?>;color:<?= $iconData['color'] ?>">
+                                <div class="action-dot" class="style-18463">
                                     <i class="<?= $iconData['icon'] ?>"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <div style="font-size:13px;font-weight:600;color:#333"><?= htmlspecialchars($action['details'] ?? $type) ?></div>
+                                    <div class="style-59141"><?= htmlspecialchars($action['details'] ?? $type) ?></div>
                                     <div class="action-time"><?= $time ?></div>
                                 </div>
-                                <span class="badge" style="background:<?= $iconData['bg'] ?>;color:<?= $iconData['color'] ?>;font-size:11px"><?= str_replace('_', ' ', ucfirst($type)) ?></span>
+                                <span class="badge" class="style-15978"><?= str_replace('_', ' ', ucfirst($type)) ?></span>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -245,11 +245,11 @@ $actionIcons = [
         <div class="col-lg-4">
             <!-- Hot Leads -->
             <div class="agentic-card p-4 mb-4">
-                <div class="section-title"><i class="fas fa-fire" style="color:#f6993f"></i> Hot Leads (Score ≥70)</div>
+                <div class="section-title"><i class="fas fa-fire" class="style-52774"></i> Hot Leads (Score â‰¥70)</div>
                 <?php if (empty($hotLeadsList)): ?>
-                    <div class="text-center py-3" style="color:#aaa">
-                        <i class="fas fa-check-circle" style="font-size:32px;opacity:.3;margin-bottom:8px;display:block"></i>
-                        <p class="mb-0" style="font-size:13px">No hot leads right now</p>
+                    <div class="text-center py-3" class="style-1686">
+                        <i class="fas fa-check-circle" class="style-37281"></i>
+                        <p class="mb-0" class="style-87981">No hot leads right now</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($hotLeadsList as $hl):
@@ -257,13 +257,13 @@ $actionIcons = [
                         $scoreColor = $score >= 90 ? '#e3342f' : ($score >= 80 ? '#f6993f' : '#38c172');
                         $initials = strtoupper(substr($hl['name'] ?? 'L', 0, 1));
                     ?>
-                        <div class="lead-chip mb-2" style="background:<?= $scoreColor ?>10;border:1px solid <?= $scoreColor ?>30;width:100%">
-                            <div style="width:32px;height:32px;border-radius:50%;background:<?= $scoreColor ?>;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0"><?= $initials ?></div>
-                            <div class="flex-grow-1" style="min-width:0">
-                                <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="<?= BASE_URL ?>/admin/leads/<?= $hl['id'] ?>" style="color:#333;text-decoration:none"><?= htmlspecialchars($hl['name'] ?? 'Unknown') ?></a></div>
-                                <div style="font-size:11px;color:#888"><?= htmlspecialchars($hl['phone'] ?? '') ?></div>
+                        <div class="lead-chip mb-2" class="style-97701">
+                            <div class="style-18252"><?= $initials ?></div>
+                            <div class="flex-grow-1" class="style-62036">
+                                <div class="style-22898"><a href="<?= BASE_URL ?>/admin/leads/<?= $hl['id'] ?>" class="style-2116"><?= htmlspecialchars($hl['name'] ?? 'Unknown') ?></a></div>
+                                <div class="style-90847"><?= htmlspecialchars($hl['phone'] ?? '') ?></div>
                             </div>
-                            <div style="font-size:16px;font-weight:800;color:<?= $scoreColor ?>;flex-shrink:0"><?= $score ?></div>
+                            <div class="style-97024"><?= $score ?></div>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -271,11 +271,11 @@ $actionIcons = [
 
             <!-- Dormant Leads -->
             <div class="agentic-card p-4 mb-4">
-                <div class="section-title"><i class="fas fa-bed" style="color:#886ab5"></i> Dormant Leads (7d+)</div>
+                <div class="section-title"><i class="fas fa-bed" class="style-91868"></i> Dormant Leads (7d+)</div>
                 <?php if (empty($dormantLeadsList)): ?>
-                    <div class="text-center py-3" style="color:#aaa">
-                        <i class="fas fa-check-circle" style="font-size:32px;opacity:.3;margin-bottom:8px;display:block"></i>
-                        <p class="mb-0" style="font-size:13px">No dormant leads</p>
+                    <div class="text-center py-3" class="style-1686">
+                        <i class="fas fa-check-circle" class="style-37281"></i>
+                        <p class="mb-0" class="style-87981">No dormant leads</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($dormantLeadsList as $dl):
@@ -283,13 +283,13 @@ $actionIcons = [
                         $daysColor = $days >= 30 ? '#e3342f' : ($days >= 14 ? '#f6993f' : '#886ab5');
                         $initials = strtoupper(substr($dl['name'] ?? 'L', 0, 1));
                     ?>
-                        <div class="lead-chip mb-2" style="background:<?= $daysColor ?>10;border:1px solid <?= $daysColor ?>30;width:100%">
-                            <div style="width:32px;height:32px;border-radius:50%;background:<?= $daysColor ?>;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0"><?= $initials ?></div>
-                            <div class="flex-grow-1" style="min-width:0">
-                                <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="<?= BASE_URL ?>/admin/leads/<?= $dl['id'] ?>" style="color:#333;text-decoration:none"><?= htmlspecialchars($dl['name'] ?? 'Unknown') ?></a></div>
-                                <div style="font-size:11px;color:#888"><?= htmlspecialchars($dl['phone'] ?? '') ?></div>
+                        <div class="lead-chip mb-2" class="style-97291">
+                            <div class="style-66020"><?= $initials ?></div>
+                            <div class="flex-grow-1" class="style-62036">
+                                <div class="style-22898"><a href="<?= BASE_URL ?>/admin/leads/<?= $dl['id'] ?>" class="style-2116"><?= htmlspecialchars($dl['name'] ?? 'Unknown') ?></a></div>
+                                <div class="style-90847"><?= htmlspecialchars($dl['phone'] ?? '') ?></div>
                             </div>
-                            <div style="font-size:13px;font-weight:700;color:<?= $daysColor ?>;flex-shrink:0"><?= $days ?>d</div>
+                            <div class="style-35746"><?= $days ?>d</div>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -297,28 +297,28 @@ $actionIcons = [
 
             <!-- Agent Status -->
             <div class="agentic-card p-4">
-                <div class="section-title"><i class="fas fa-satellite-dish" style="color:#38c172"></i> Agent Status</div>
+                <div class="section-title"><i class="fas fa-satellite-dish" class="style-61533"></i> Agent Status</div>
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-center justify-content-between">
-                        <span style="font-size:13px"><span class="status-dot active"></span>Auto Follow-Up</span>
-                        <span class="badge bg-success" style="font-size:11px">Active</span>
+                        <span class="style-87981"><span class="status-dot active"></span>Auto Follow-Up</span>
+                        <span class="badge bg-success" class="style-26285">Active</span>
                     </div>
                     <div class="d-flex align-items-center justify-content-between">
-                        <span style="font-size:13px"><span class="status-dot active"></span>Score Calculator</span>
-                        <span class="badge bg-success" style="font-size:11px">Active</span>
+                        <span class="style-87981"><span class="status-dot active"></span>Score Calculator</span>
+                        <span class="badge bg-success" class="style-26285">Active</span>
                     </div>
                     <div class="d-flex align-items-center justify-content-between">
-                        <span style="font-size:13px"><span class="status-dot active"></span>Auto Assignment</span>
-                        <span class="badge bg-success" style="font-size:11px">Active</span>
+                        <span class="style-87981"><span class="status-dot active"></span>Auto Assignment</span>
+                        <span class="badge bg-success" class="style-26285">Active</span>
                     </div>
                     <div class="d-flex align-items-center justify-content-between">
-                        <span style="font-size:13px"><span class="status-dot active"></span>Insight Engine</span>
-                        <span class="badge bg-success" style="font-size:11px">Active</span>
+                        <span class="style-87981"><span class="status-dot active"></span>Insight Engine</span>
+                        <span class="badge bg-success" class="style-26285">Active</span>
                     </div>
                 </div>
-                <hr style="margin:16px 0;border-color:#f0f0f5">
+                <hr class="style-7292">
                 <div class="text-center">
-                    <a href="<?= BASE_URL ?>/admin/crm" style="font-size:13px;color:#667eea;text-decoration:none;font-weight:600"><i class="fas fa-arrow-left me-1"></i>Back to CRM Dashboard</a>
+                    <a href="<?= BASE_URL ?>/admin/crm" class="style-60431"><i class="fas fa-arrow-left me-1"></i>Back to CRM Dashboard</a>
                 </div>
             </div>
         </div>

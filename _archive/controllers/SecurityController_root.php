@@ -414,4 +414,4 @@ class SecurityController extends BaseController
         $component = $data['component'] ?? 'all';
         return $this->jsonResponse(['success' => true, 'component' => $component, 'status' => 'passed', 'tests' => []]);
     }
-}
+}?>

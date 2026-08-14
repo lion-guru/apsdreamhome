@@ -1,4 +1,4 @@
-﻿<?php $page_title = $page_title ?? 'Voice CRM'; $recent = $recent ?? []; $stats = $stats ?? []; ?>
+ï»¿<?php $page_title = $page_title ?? 'Voice CRM'; $recent = $recent ?? []; $stats = $stats ?? []; ?>
 <style>.voice-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-radius:14px;padding:24px}.voice-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:16px;text-align:center}.voice-stat .val{font-size:24px;font-weight:800}.voice-stat .lbl{font-size:11px;color:#888;text-transform:uppercase}</style>
 
 <div class="container-fluid px-4 py-4">
@@ -18,22 +18,22 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" style="border-radius:14px"><div class="card-header" style="border-radius:14px 14px 0 0"><h6 class="mb-0"><i class="fas fa-terminal me-1"></i>Voice Commands (Hindi)</h6></div>
+            <div class="card border-0 shadow-sm" class="style-56956"><div class="card-header" class="style-62632"><h6 class="mb-0"><i class="fas fa-terminal me-1"></i>Voice Commands (Hindi)</h6></div>
                 <div class="card-body">
                     <div class="row g-2">
-                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"अगली बैठक"</small><br><span class="text-muted">Next meeting info</span></div></div>
-                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"हॉट लीड"</small><br><span class="text-muted">Hot lead count</span></div></div>
-                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"नोट जोड़ो"</small><br><span class="text-muted">Dictate a note</span></div></div>
-                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"कॉल करो"</small><br><span class="text-muted">Open call interface</span></div></div>
-                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"अनुसूची बनाओ"</small><br><span class="text-muted">Open scheduler</span></div></div>
-                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"रिपोर्ट दो"</small><br><span class="text-muted">Daily report</span></div></div>
+                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤…à¤—à¤²à¥€ à¤¬à¥ˆà¤ à¤•"</small><br><span class="text-muted">Next meeting info</span></div></div>
+                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤¹à¥‰à¤Ÿ à¤²à¥€à¤¡"</small><br><span class="text-muted">Hot lead count</span></div></div>
+                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤¨à¥‹à¤Ÿ à¤œà¥‹à¤¡à¤¼à¥‹"</small><br><span class="text-muted">Dictate a note</span></div></div>
+                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤•à¥‰à¤² à¤•à¤°à¥‹"</small><br><span class="text-muted">Open call interface</span></div></div>
+                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤…à¤¨à¥�à¤¸à¥‚à¤šà¥€ à¤¬à¤¨à¤¾à¤“"</small><br><span class="text-muted">Open scheduler</span></div></div>
+                        <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">"à¤°à¤¿à¤ªà¥‹à¤°à¥�à¤Ÿ à¤¦à¥‹"</small><br><span class="text-muted">Daily report</span></div></div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm" style="border-radius:14px"><div class="card-header" style="border-radius:14px 14px 0 0"><h6 class="mb-0"><i class="fas fa-history me-1"></i>Recent Voice Activity</h6></div>
-                <div class="card-body" style="max-height:300px;overflow-y:auto">
+            <div class="card border-0 shadow-sm" class="style-56956"><div class="card-header" class="style-62632"><h6 class="mb-0"><i class="fas fa-history me-1"></i>Recent Voice Activity</h6></div>
+                <div class="card-body" class="style-82023">
                 <?php if (empty($recent)): ?><p class="text-muted text-center">No recent activity</p>
                 <?php else: foreach ($recent as $r): ?>
                     <div class="d-flex align-items-center gap-2 mb-2 p-2 bg-light rounded">

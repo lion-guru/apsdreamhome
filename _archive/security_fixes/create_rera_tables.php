@@ -226,4 +226,4 @@ foreach ($milestones as $m) {
 
 echo "Inserted $msInserted sample milestones\n";
 
-echo "\n=== RERA Verification tables and sample data created successfully ===\n";
+echo "\n=== RERA Verification tables and sample data created successfully ===\n";?>

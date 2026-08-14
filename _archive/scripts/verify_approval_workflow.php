@@ -9,13 +9,13 @@ echo "1. Users table columns:\n";
 $cols = $db->fetchAll("SHOW COLUMNS FROM users");
 $regCols = array_filter($cols, fn($c) => in_array($c['Field'], ['registration_status', 'kyc_status', 'rejection_reason', 'approved_by', 'approved_at']));
 foreach ($regCols as $col) {
-    echo "   ✅ {$col['Field']} ({$col['Type']})\n";
+    echo "   âœ… {$col['Field']} ({$col['Type']})\n";
 }
 
 // Check KYC table
 echo "\n2. user_kyc_documents table:\n";
 $kycTable = $db->fetchOne("SHOW TABLES LIKE 'user_kyc_documents'");
-echo $kycTable ? "   ✅ Table exists\n" : "   ❌ Table not found\n";
+echo $kycTable ? "   âœ… Table exists\n" : "   â�Œ Table not found\n";
 
 // Check pending users
 echo "\n3. Pending users count:\n";
@@ -29,4 +29,4 @@ foreach ($statuses as $s) {
     echo "   {$s['registration_status']}: {$s['cnt']}\n";
 }
 
-echo "\n=== Verification Complete! ===\n";
+echo "\n=== Verification Complete! ===\n";?>

@@ -7,7 +7,7 @@ $base = BASE_URL ?? '';
 </style>
 
 <div class="form-header">
-    <a href="<?= $base ?>/agent/leads" class="text-white text-decoration-none" style="opacity:0.8;font-size:0.85rem;">
+    <a href="<?= $base ?>/agent/leads" class="text-white text-decoration-none" class="style-4669">
         <i class="fas fa-arrow-left me-1"></i>Back to Leads
     </a>
     <h4 class="mt-2 mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Lead</h4>
@@ -44,7 +44,7 @@ $base = BASE_URL ?? '';
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Budget (₹)</label>
+                    <label class="form-label fw-semibold">Budget (â‚¹)</label>
                     <input type="number" name="budget" class="form-control" placeholder="e.g. 5000000" min="0">
                 </div>
                 <div class="col-md-6">

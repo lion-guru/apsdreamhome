@@ -12,4 +12,4 @@ foreach ($files as $f) {
         echo "[OK] $f\n";
     }
 }
-echo "Done\n";
+echo "Done\n";?>

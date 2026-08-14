@@ -39,11 +39,11 @@ $redemptions = $redemptions ?? [];
                                 </td>
                                 <td>
                                     <?php if (($r['status'] ?? '') === 'pending'): ?>
-                                    <form method="POST" action="<?= $base ?>/admin/loyalty/redemptions/<?= $r['id'] ?? 0 ?>/approve" style="display:inline">
+                                    <form method="POST" action="<?= $base ?>/admin/loyalty/redemptions/<?= $r['id'] ?? 0 ?>/approve" class="style-71727">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
                                     </form>
-                                    <form method="POST" action="<?= $base ?>/admin/loyalty/redemptions/<?= $r['id'] ?? 0 ?>/reject" style="display:inline" onsubmit="return confirm('Reject this redemption?')">
+                                    <form method="POST" action="<?= $base ?>/admin/loyalty/redemptions/<?= $r['id'] ?? 0 ?>/reject" class="style-71727" onsubmit="return confirm('Reject this redemption?')">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button>
                                     </form>

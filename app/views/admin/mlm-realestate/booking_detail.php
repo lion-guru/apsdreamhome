@@ -28,23 +28,23 @@
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-bordered mb-0">
-                            <tr><th style="width:200px;">Booking ID</th><td>#<?= $b['id'] ?></td></tr>
+                            <tr><th class="style-58160">Booking ID</th><td>#<?= $b['id'] ?></td></tr>
                             <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
                             <tr><th>Customer</th><td>
                                 <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
-                                <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">📞 <?= htmlspecialchars($b['customer_phone']) ?></small><?php endif; ?>
-                                <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">✉ <?= htmlspecialchars($b['customer_email']) ?></small><?php endif; ?>
+                                <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">ðŸ“ž <?= htmlspecialchars($b['customer_phone']) ?></small><?php endif; ?>
+                                <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">âœ‰ <?= htmlspecialchars($b['customer_email']) ?></small><?php endif; ?>
                             </td></tr>
                             <tr><th>Plot</th><td>
                                 Plot #<?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
                                 <?php if ($b['block'] ?? ''): ?> | Block <?= htmlspecialchars($b['block']) ?><?php endif; ?>
                                 <?php if ($b['colony_name'] ?? ''): ?><br><small><?= htmlspecialchars($b['colony_name']) ?></small><?php endif; ?>
                             </td></tr>
-                            <tr><th>Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
-                            <tr><th>Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
+                            <tr><th>Total Amount</th><td><strong>â‚¹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
+                            <tr><th>Paid Amount</th><td>â‚¹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
                             <tr><th>Token Progress</th><td>
-                                <div class="progress" style="height:20px;">
-                                    <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?>" style="width:<?= min(100, $status['token_percentage']) ?>%">
+                                <div class="progress" class="style-39312">
+                                    <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?>" class="style-61073">
                                         <?= $status['token_percentage'] ?>%
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                     <?= $status['token_met'] ? 'Yes (25% paid)' : 'No (pending)' ?>
                                 </span>
                                 <?php if (!$status['token_met'] && $b['status'] === 'pending'): ?>
-                                    <br><small class="text-warning">⏳ Awaiting 25% token payment before approval</small>
+                                    <br><small class="text-warning">â�³ Awaiting 25% token payment before approval</small>
                                 <?php endif; ?>
                             </td></tr>
                             <tr><th>Payment Status</th><td><?= htmlspecialchars($b['payment_status'] ?? 'N/A') ?></td></tr>
@@ -81,8 +81,8 @@
                     <div class="card-body aps-cp-card-body">
                         <p>Total EMIs: <strong><?= $status['emi_count'] ?? 0 ?></strong></p>
                         <p>Paid EMIs: <strong><?= $status['paid_emis'] ?? 0 ?></strong></p>
-                        <div class="progress mb-3" style="height:10px;">
-                            <div class="progress-bar bg-success" style="width:<?= ($status['emi_count'] ?? 0) > 0 ? (($status['paid_emis'] ?? 0) * 100 / $status['emi_count']) : 0 ?>%"></div>
+                        <div class="progress mb-3" class="style-76750">
+                            <div class="progress-bar bg-success" class="style-46071"></div>
                         </div>
                         <?php if (!empty($status['emis'])): ?>
                         <div class="table-responsive"><table class="table table-sm">
@@ -92,7 +92,7 @@
                                 <tr>
                                     <td><?= $emi['installment_no'] ?></td>
                                     <td><small><?= htmlspecialchars($emi['due_date'] ?? '') ?></small></td>
-                                    <td>₹<?= number_format((float)($emi['amount'] ?? 0)) ?></td>
+                                    <td>â‚¹<?= number_format((float)($emi['amount'] ?? 0)) ?></td>
                                     <td><span class="badge bg-<?= ($emi['status'] ?? '') === 'paid' ? 'success' : 'warning' ?>"><?= htmlspecialchars($emi['status'] ?? 'pending') ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -107,7 +107,7 @@
                         <form method="POST" action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/payment">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                            <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (₹)" required></div>
+                            <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (â‚¹)" required></div>
                             <div class="mb-2">
                                 <select name="mode" class="form-select">
                                     <option value="cash">Cash</option>

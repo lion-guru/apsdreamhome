@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-hard-hat me-2"></i><?php echo __('tool_construction_cost_title', [], 'Construction Cost Estimator'); ?></h1>
@@ -16,10 +16,10 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?php echo __('construction_quality', [], 'Construction Quality'); ?></label>
                                 <select class="form-select" id="quality" onchange="calcConstr()">
-                                    <option value="basic"><?php echo __('basic', [], 'Basic (₹1,400/sqft)'); ?></option>
-                                    <option value="standard" selected><?php echo __('standard', [], 'Standard (₹1,800/sqft)'); ?></option>
-                                    <option value="premium"><?php echo __('premium', [], 'Premium (₹2,400/sqft)'); ?></option>
-                                    <option value="luxury"><?php echo __('luxury', [], 'Luxury (₹3,200/sqft)'); ?></option>
+                                    <option value="basic"><?php echo __('basic', [], 'Basic (â‚¹1,400/sqft)'); ?></option>
+                                    <option value="standard" selected><?php echo __('standard', [], 'Standard (â‚¹1,800/sqft)'); ?></option>
+                                    <option value="premium"><?php echo __('premium', [], 'Premium (â‚¹2,400/sqft)'); ?></option>
+                                    <option value="luxury"><?php echo __('luxury', [], 'Luxury (â‚¹3,200/sqft)'); ?></option>
                                 </select>
                             </div>
                         </div>
@@ -54,25 +54,25 @@
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('construction_cost', [], 'Construction Cost'); ?></small>
-                                    <h5 class="text-primary mb-0" id="constrCost">₹48,60,000</h5>
+                                    <h5 class="text-primary mb-0" id="constrCost">â‚¹48,60,000</h5>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('material_cost', [], 'Material Cost'); ?></small>
-                                    <h5 class="text-warning mb-0" id="materialCost">₹24,30,000</h5>
+                                    <h5 class="text-warning mb-0" id="materialCost">â‚¹24,30,000</h5>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('labor_cost', [], 'Labor Cost'); ?></small>
-                                    <h5 class="text-info mb-0" id="laborCost">₹19,44,000</h5>
+                                    <h5 class="text-info mb-0" id="laborCost">â‚¹19,44,000</h5>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_estimated', [], 'Total Estimated'); ?></small>
-                                    <h5 class="mb-0" id="totalConstr">₹92,34,000</h5>
+                                    <h5 class="mb-0" id="totalConstr">â‚¹92,34,000</h5>
                                 </div>
                             </div>
                         </div>

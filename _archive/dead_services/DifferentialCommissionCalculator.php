@@ -56,7 +56,7 @@ class DifferentialCommissionCalculator
         try {
             // 1. Determine the starting agent
             if ($associateId && $associateId > 0) {
-                // Direct associate assigned to this booking — use them as the starting agent
+                // Direct associate assigned to this booking â€” use them as the starting agent
                 $currentAgentId = (int)$associateId;
             } else {
                 // Fallback: look up the buyer's sponsor in mlm_profiles
@@ -122,7 +122,7 @@ class DifferentialCommissionCalculator
 
     protected function getAgentRankData($userId)
     {
-        // Get level from mlm_profiles — current_level stores rank name (e.g. 'associate')
+        // Get level from mlm_profiles â€” current_level stores rank name (e.g. 'associate')
         $stmt = $this->db->prepare("SELECT current_level FROM mlm_profiles WHERE user_id = ?");
         $stmt->execute([$userId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -154,4 +154,4 @@ class DifferentialCommissionCalculator
         // We'll calculate level later or just use 1 as placeholder for now as differential is rank-based
         $stmt2->execute([$beneficiaryId, $sourceId, $type, $amount, 1, $propertyId]);
     }
-}
+}?>

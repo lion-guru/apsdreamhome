@@ -46,8 +46,8 @@ class DashboardWidget
                         <h4>' . htmlspecialchars((string) $current) . '</h4>
                         <span class="text-muted">/ ' . htmlspecialchars((string) $target) . '</span>
                     </div>
-                    <div class="progress mt-2" style="height: 8px;">
-                        <div class="progress-bar bg-' . $color . '" style="width: ' . min(100, $percentage) . '%"></div>
+                    <div class="progress mt-2" class="style-31164">
+                        <div class="progress-bar bg-' . $color . '" class="style-48784"></div>
                     </div>
                     <small class="text-muted">' . $percentage . '% complete</small>
                 </div>

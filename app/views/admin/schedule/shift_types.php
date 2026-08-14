@@ -19,7 +19,7 @@ $shift_types = $shift_types ?? [];
                         <tbody>
                         <?php foreach ($shift_types as $st): ?>
                             <tr>
-                                <td><span class="badge" style="background:<?= htmlspecialchars($st['color'] ?? '#007bff') ?>"><?= htmlspecialchars($st['name'] ?? '') ?></span></td>
+                                <td><span class="badge" class="style-29995"><?= htmlspecialchars($st['name'] ?? '') ?></span></td>
                                 <td><?= htmlspecialchars($st['code'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($st['start_time'] ?? '') ?>-<?= htmlspecialchars($st['end_time'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($st['duration_hours'] ?? '') ?>h</td>

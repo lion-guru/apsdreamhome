@@ -15,4 +15,4 @@ foreach ($tables as $t) {
     } catch (\Throwable $e) {
         echo "  ERROR: " . $e->getMessage() . "\n";
     }
-}
+}?>

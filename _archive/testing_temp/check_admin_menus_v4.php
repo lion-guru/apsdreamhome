@@ -28,4 +28,4 @@ foreach ($items as $item) {
     
     $results[] = str_pad($httpCode, 5) . " | " . str_pad($isError, 10) . " | " . str_pad($item['name'], 30) . " | " . $item['url'];
 }
-echo implode("\n", $results);
+echo implode("\n", $results);?>

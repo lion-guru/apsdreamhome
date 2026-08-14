@@ -43,4 +43,4 @@ foreach ($tables as $t) {
 }
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "\nDropped: $dropped\nTables: $after\n";
+echo "\nDropped: $dropped\nTables: $after\n";?>

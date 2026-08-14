@@ -38,7 +38,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 
     <!-- CRITICAL: Sidebar Toggle Functions in HEAD - Load first before anything -->
     <script>
-        // APS Sidebar — single namespace for all sidebar ops
+        // APS Sidebar â€” single namespace for all sidebar ops
         var APS = APS || {};
         APS._sidebar = null;
         APS._overlay = null;
@@ -155,7 +155,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     <i class="fas fa-bars"></i>
                 </button>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" style="font-size:.85rem">
+                    <ol class="breadcrumb mb-0" class="style-93188">
                         <li class="breadcrumb-item"><a href="<?php echo $base; ?>/admin/dashboard">Admin</a></li>
                         <li class="breadcrumb-item active"><?php echo htmlspecialchars($active_page ?? 'Dashboard'); ?></li>
                     </ol>
@@ -165,9 +165,9 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 <div class="dropdown d-inline-block">
                     <button class="nav-icon position-relative" title="Notifications" data-bs-toggle="dropdown">
                         <i class="fas fa-bell"></i>
-                        <span class="badge notification-badge" style="display:none">0</span>
+                        <span class="badge notification-badge" class="style-24280">0</span>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow" style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow" class="style-7931">
                         <h6 class="dropdown-header">Notifications</h6>
                         <div class="notification-list">
                             <div class="text-center text-muted p-3">Loading...</div>
@@ -184,10 +184,10 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($admin_name, 0, 1)); ?></div>
                         <div>
-                            <div style="font-size:.85rem;font-weight:600;color:#1e293b"><?php echo htmlspecialchars($admin_name); ?></div>
-                            <div style="font-size:.7rem;color:#64748b"><?php echo ucfirst(str_replace('_', ' ', $admin_role)); ?></div>
+                            <div class="style-46756"><?php echo htmlspecialchars($admin_name); ?></div>
+                            <div class="style-46475"><?php echo ucfirst(str_replace('_', ' ', $admin_role)); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down ms-2" style="font-size:.7rem;color:#64748b"></i>
+                        <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo $base; ?>/admin/profile"><i class="fas fa-user me-2"></i>Profile</a></li>

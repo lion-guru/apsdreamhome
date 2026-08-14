@@ -36,4 +36,4 @@ while ($row = $result->fetch_assoc()) {
     echo "Verified: {$row['email']} => {$row['pw']}...\n";
 }
 
-$mysqli->close();
+$mysqli->close();?>

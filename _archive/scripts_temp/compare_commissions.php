@@ -70,4 +70,4 @@ echo "\n=== mlm_commission_ledger columns ===\n";
 $cols = $db->fetchAll("SHOW COLUMNS FROM mlm_commission_ledger");
 foreach ($cols as $c) {
     echo "  {$c['Field']}: {$c['Type']}\n";
-}
+}?>

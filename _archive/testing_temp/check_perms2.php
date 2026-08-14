@@ -11,4 +11,4 @@ if (empty($results)) {
     foreach ($results as $row) {
         echo "Role: {$row['role']}, Count: {$row['c']}\n";
     }
-}
+}?>

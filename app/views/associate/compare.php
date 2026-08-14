@@ -27,7 +27,7 @@ if (!empty($selected) && !empty($properties)) {
                         <?php foreach ($properties as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= in_array($p['id'], $selected) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['title'] ?? __('assoc_cmp_property', ['id' => $p['id']], 'Property #%id%')) ?>
-                                (<?= htmlspecialchars($p['city'] ?? '') ?> - ₹<?= number_format($p['price'] ?? 0) ?>)
+                                (<?= htmlspecialchars($p['city'] ?? '') ?> - â‚¹<?= number_format($p['price'] ?? 0) ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -46,7 +46,7 @@ if (!empty($selected) && !empty($properties)) {
                 <table class="table table-bordered">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 200px;"><?= __('assoc_cmp_feature', [], 'Feature') ?></th>
+                            <th class="style-869"><?= __('assoc_cmp_feature', [], 'Feature') ?></th>
                             <?php foreach ($selectedProperties as $sp): ?>
                                 <th class="text-center">
                                     <strong><?= htmlspecialchars($sp['title'] ?? __('assoc_cmp_prop', [], 'Property')) ?></strong>
@@ -59,7 +59,7 @@ if (!empty($selected) && !empty($properties)) {
                         <tr>
                             <td><strong><?= __('assoc_cmp_price', [], 'Price') ?></strong></td>
                             <?php foreach ($selectedProperties as $sp): ?>
-                                <td class="text-center fw-bold text-success">₹<?= number_format($sp['price'] ?? 0) ?></td>
+                                <td class="text-center fw-bold text-success">â‚¹<?= number_format($sp['price'] ?? 0) ?></td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
@@ -72,7 +72,7 @@ if (!empty($selected) && !empty($properties)) {
                             <td><strong><?= __('assoc_cmp_price_sqft', [], 'Price/sq ft') ?></strong></td>
                             <?php foreach ($selectedProperties as $sp): ?>
                                 <td class="text-center">
-                                    ₹<?= ($sp['area_sqft'] ?? 0) > 0 ? number_format(($sp['price'] ?? 0) / ($sp['area_sqft'] ?? 1)) : __('assoc_cmp_na', [], 'N/A') ?>
+                                    â‚¹<?= ($sp['area_sqft'] ?? 0) > 0 ? number_format(($sp['price'] ?? 0) / ($sp['area_sqft'] ?? 1)) : __('assoc_cmp_na', [], 'N/A') ?>
                                 </td>
                             <?php endforeach; ?>
                         </tr>

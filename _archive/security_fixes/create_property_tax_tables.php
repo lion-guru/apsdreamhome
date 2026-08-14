@@ -153,4 +153,4 @@ foreach ($taxRates as $rate) {
 
 echo "Inserted/Updated $inserted property tax rates\n";
 
-echo "\n=== Property Tax Calculator tables and data created successfully ===\n";
+echo "\n=== Property Tax Calculator tables and data created successfully ===\n";?>

@@ -16,4 +16,4 @@ foreach ($files as $file) {
         echo "Archived: " . basename($file) . "\n";
     }
 }
-echo "Done.";
+echo "Done.";?>

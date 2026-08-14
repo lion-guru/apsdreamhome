@@ -297,7 +297,7 @@ class ApiDocumentation
                 $html .= '<br><em>None required</em>';
             } else {
                 foreach ($endpoint['parameters'] as $param) {
-                    $required = $param['required'] ? '<span class="tag">REQUIRED</span>' : '<span class="tag" style="background: #ffc107; color: black;">OPTIONAL</span>';
+                    $required = $param['required'] ? '<span class="tag">REQUIRED</span>' : '<span class="tag" class="style-17836">OPTIONAL</span>';
                     $html .= '
             <div class="param">
                 <strong>' . $param['name'] . '</strong> (' . $param['type'] . ') ' . $required . '<br>

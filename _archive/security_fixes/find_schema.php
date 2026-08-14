@@ -15,4 +15,4 @@ foreach ($tables as $table) {
         echo "  {$row['Field']} ({$row['Type']})" . ($row['Key'] ? " [{$row['Key']}]" : "") . "\n";
     }
     echo "\n";
-}
+}?>

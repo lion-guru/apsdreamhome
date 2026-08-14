@@ -31,4 +31,4 @@ foreach ($refs as $table => $files) {
     echo "$table (" . count($files) . " refs):\n";
     foreach ($files as $f) echo "  $f\n";
     echo "\n";
-}
+}?>

@@ -43,7 +43,7 @@
             <?php if (!empty($conversion_data)): ?>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
-                        <thead><tr><th>Month</th><th>Leads</th><th>Proposals</th><th>Deals</th><th>Lead→Deal %</th><th>Proposal→Deal %</th></tr></thead>
+                        <thead><tr><th>Month</th><th>Leads</th><th>Proposals</th><th>Deals</th><th>Leadâ†’Deal %</th><th>Proposalâ†’Deal %</th></tr></thead>
                         <tbody>
                             <?php foreach ($conversion_data as $row): ?>
                             <tr>
@@ -52,14 +52,14 @@
                                 <td><?= (int)($row['proposals'] ?? 0) ?></td>
                                 <td><span class="badge bg-success"><?= (int)($row['deals'] ?? 0) ?></span></td>
                                 <td>
-                                    <div class="progress" style="height:8px;">
-                                        <div class="progress-bar bg-success" style="width:<?= min(100, (float)($row['lead_to_deal_pct'] ?? 0)) ?>%"></div>
+                                    <div class="progress" class="style-87912">
+                                        <div class="progress-bar bg-success" class="style-83710"></div>
                                     </div>
                                     <small><?= ($row['lead_to_deal_pct'] ?? 0) ?>%</small>
                                 </td>
                                 <td>
-                                    <div class="progress" style="height:8px;">
-                                        <div class="progress-bar bg-info" style="width:<?= min(100, (float)($row['proposal_to_deal_pct'] ?? 0)) ?>%"></div>
+                                    <div class="progress" class="style-87912">
+                                        <div class="progress-bar bg-info" class="style-12894"></div>
                                     </div>
                                     <small><?= ($row['proposal_to_deal_pct'] ?? 0) ?>%</small>
                                 </td>

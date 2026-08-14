@@ -4,7 +4,7 @@
  * Each table gets:
  *   - tenant_id INT UNSIGNED NOT NULL DEFAULT 1
  *   - INDEX on tenant_id
- *   - FK to tenants(id) — but only if tenants table exists
+ *   - FK to tenants(id) â€” but only if tenants table exists
  * 
  * Safe to run multiple times (IF NOT EXISTS pattern via SHOW COLUMNS check).
  */
@@ -56,7 +56,7 @@ foreach ($tables as $table) {
     // Check table exists
     $stmt = $db->query("SHOW TABLES LIKE '$table'");
     if ($stmt->rowCount() === 0) {
-        echo "[SKIP] $table — table does not exist\n";
+        echo "[SKIP] $table â€” table does not exist\n";
         $skipped++;
         continue;
     }
@@ -64,7 +64,7 @@ foreach ($tables as $table) {
     // Check if tenant_id column already exists
     $col = $db->query("SHOW COLUMNS FROM `$table` LIKE 'tenant_id'");
     if ($col->rowCount() > 0) {
-        echo "[SKIP] $table — tenant_id already exists\n";
+        echo "[SKIP] $table â€” tenant_id already exists\n";
         $skipped++;
         continue;
     }
@@ -72,18 +72,18 @@ foreach ($tables as $table) {
     try {
         $db->exec("ALTER TABLE `$table` ADD COLUMN `tenant_id` INT UNSIGNED NOT NULL DEFAULT 1 AFTER `id`");
         $db->exec("ALTER TABLE `$table` ADD INDEX `idx_{$table}_tenant_id` (`tenant_id`)");
-        echo "[ADDED] $table — tenant_id column + index\n";
+        echo "[ADDED] $table â€” tenant_id column + index\n";
         $added++;
     } catch (\PDOException $e) {
         // If "after id" fails (no id column or column order), try without position
         try {
             $db->exec("ALTER TABLE `$table` ADD COLUMN `tenant_id` INT UNSIGNED NOT NULL DEFAULT 1");
             $db->exec("ALTER TABLE `$table` ADD INDEX `idx_{$table}_tenant_id` (`tenant_id`)");
-            echo "[ADDED] $table — tenant_id column + index (no position)\n";
+            echo "[ADDED] $table â€” tenant_id column + index (no position)\n";
             $added++;
         } catch (\PDOException $e2) {
             $errors[] = "$table: " . $e2->getMessage();
-            echo "[ERROR] $table — " . $e2->getMessage() . "\n";
+            echo "[ERROR] $table â€” " . $e2->getMessage() . "\n";
         }
     }
 }
@@ -95,4 +95,4 @@ echo "Errors: " . count($errors) . "\n";
 if (!empty($errors)) {
     echo "Error details:\n";
     foreach ($errors as $e) echo "  - $e\n";
-}
+}?>

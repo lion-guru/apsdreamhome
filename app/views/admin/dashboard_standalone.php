@@ -102,22 +102,22 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="row g-3">
             <div class="col-md-3">
                 <a href="<?php echo $base; ?>/admin/leads/create" class="btn btn-outline-primary w-100 py-3">
-                    <i class="fas fa-user-plus mb-2" style="font-size:1.5rem;display:block"></i>Add New Lead
+                    <i class="fas fa-user-plus mb-2" class="style-66594"></i>Add New Lead
                 </a>
             </div>
             <div class="col-md-3">
                 <a href="<?php echo $base; ?>/admin/properties/create" class="btn btn-outline-success w-100 py-3">
-                    <i class="fas fa-plus mb-2" style="font-size:1.5rem;display:block"></i>Add Property
+                    <i class="fas fa-plus mb-2" class="style-66594"></i>Add Property
                 </a>
             </div>
             <div class="col-md-3">
                 <a href="<?php echo $base; ?>/admin/bookings/create" class="btn btn-outline-warning w-100 py-3">
-                    <i class="fas fa-file-contract mb-2" style="font-size:1.5rem;display:block"></i>New Booking
+                    <i class="fas fa-file-contract mb-2" class="style-66594"></i>New Booking
                 </a>
             </div>
             <div class="col-md-3">
                 <a href="<?php echo $base; ?>/admin/gallery/create" class="btn btn-outline-info w-100 py-3">
-                    <i class="fas fa-image mb-2" style="font-size:1.5rem;display:block"></i>Upload Photo
+                    <i class="fas fa-image mb-2" class="style-66594"></i>Upload Photo
                 </a>
             </div>
         </div>
@@ -159,15 +159,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <h6 class="mb-3"><i class="fas fa-server me-2"></i>System Overview</h6>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Database</span><span class="fw-semibold text-success">Connected</span></div>
-                    <div class="progress" style="height:6px"><div class="progress-bar bg-success" style="width:100%"></div></div>
+                    <div class="progress" class="style-51910"><div class="progress-bar bg-success" class="style-90537"></div></div>
                 </div>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Active Users</span><span class="fw-semibold"><?php echo number_format($stats['total_users'] ?? 0); ?></span></div>
-                    <div class="progress" style="height:6px"><div class="progress-bar bg-primary" style="width:<?php echo min(100,$stats['total_users'] ?? 0); ?>%"></div></div>
+                    <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-53199"></div></div>
                 </div>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Properties Listed</span><span class="fw-semibold"><?php echo number_format($stats['total_properties'] ?? 0); ?></span></div>
-                    <div class="progress" style="height:6px"><div class="progress-bar bg-info" style="width:<?php echo min(100,($stats['total_properties'] ?? 0)*10); ?>%"></div></div>
+                    <div class="progress" class="style-51910"><div class="progress-bar bg-info" class="style-36696"></div></div>
                 </div>
                 <hr>
                 <div class="row text-center">

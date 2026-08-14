@@ -25,11 +25,11 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
         <div class="row g-4">
             <!-- Field Palette -->
             <div class="col-lg-3">
-                <div class="card border-0 shadow-sm sticky-top" style="top: 20px">
+                <div class="card border-0 shadow-sm sticky-top" class="style-47885">
                     <div class="card-header bg-primary text-white">
                         <h6 class="mb-0"><i class="fas fa-palette me-2"></i>Field Palette</h6>
                     </div>
-                    <div class="card-body p-3" style="max-height: 600px; overflow-y: auto">
+                    <div class="card-body p-3" class="style-82773">
                         <div class="mb-3">
                             <small class="text-muted d-block mb-2">Basic Fields</small>
                             <div class="palette-item p-2 mb-1 bg-light rounded border" draggable="true" data-type="text" ondragstart="dragStart(event)">
@@ -74,7 +74,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                         <h6 class="mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Form Canvas</h6>
                         <span class="badge bg-primary" id="fieldCount"><?= count($fields) ?> fields</span>
                     </div>
-                    <div class="card-body p-3" style="min-height: 500px">
+                    <div class="card-body p-3" class="style-95098">
                         <div id="formCanvas" class="drop-zone p-4 border-2 border-dashed rounded" ondragover="dragOver(event)" ondrop="dropField(event)" ondragleave="dragLeave(event)">
                             <?php if (empty($fields)): ?>
                                 <div class="text-center text-muted py-5" id="emptyState">
@@ -113,7 +113,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
 
             <!-- Field Settings -->
             <div class="col-lg-3">
-                <div class="card border-0 shadow-sm sticky-top" style="top: 20px">
+                <div class="card border-0 shadow-sm sticky-top" class="style-47885">
                     <div class="card-header bg-secondary text-white">
                         <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Field Settings</h6>
                     </div>
@@ -122,7 +122,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                             <i class="fas fa-hand-pointer fa-2x mb-2"></i>
                             <p class="mb-0">Click a field to edit its properties</p>
                         </div>
-                        <div id="fieldSettingsForm" style="display:none">
+                        <div id="fieldSettingsForm" class="style-24280">
                             <input type="hidden" id="editingFieldIndex">
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Label *</label>
@@ -144,7 +144,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                     <option value="hidden">Hidden</option>
                                 </select>
                             </div>
-                            <div class="mb-3" id="selectOptionsContainer" style="display:none">
+                            <div class="mb-3" id="selectOptionsContainer" class="style-24280">
                                 <label class="form-label fw-bold">Options (one per line)</label>
                                 <textarea class="form-control" id="fieldOptions" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
                             </div>
@@ -186,7 +186,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                             <input type="checkbox" class="form-check-input" name="auto_assign" id="auto_assign" <?= !empty($settings['auto_assign']) ? 'checked' : '' ?>>
                             <label class="form-check-label fw-bold" for="auto_assign">Auto-assign to Agent</label>
                         </div>
-                        <div class="mb-3" id="assignToContainer" style="<?= empty($settings['auto_assign']) ? 'display:none' : '' ?>">
+                        <div class="mb-3" id="assignToContainer" class="style-74599">
                             <label class="form-label fw-bold">Assign To</label>
                             <select class="form-select" name="assign_to">
                                 <option value="">-- Select --</option>

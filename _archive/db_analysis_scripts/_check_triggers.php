@@ -6,4 +6,4 @@ echo "Triggers: " . count($triggers) . "\n";
 foreach ($triggers as $t) echo "  $t\n";
 $events = $pdo->query('SHOW EVENTS')->fetchAll(PDO::FETCH_COLUMN);
 echo "Events: " . count($events) . "\n";
-foreach ($events as $e) echo "  $e\n";
+foreach ($events as $e) echo "  $e\n";?>

@@ -25,4 +25,4 @@ echo "\n=== users onboarding_track column ===\n";
 $r = $pdo->query("SHOW COLUMNS FROM users WHERE Field = 'onboarding_track'");
 $row = $r->fetch(PDO::FETCH_ASSOC);
 if ($row) echo $row['Field'] . ' | ' . $row['Type'] . "\n";
-else echo "Column does NOT exist\n";
+else echo "Column does NOT exist\n";?>

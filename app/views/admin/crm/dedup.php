@@ -34,7 +34,7 @@
                                             <td><?= htmlspecialchars($d['name2'] ?? $d['lead2_name'] ?? '') ?></td>
                                             <td><span class="badge bg-warning"><?= htmlspecialchars($d['match_type'] ?? $d['match_field'] ?? '') ?></span></td>
                                             <td>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/dedup/merge" style="display:inline">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/dedup/merge" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="keep_id" value="<?= $d['id1'] ?? $d['lead1_id'] ?? '' ?>">
                                                     <input type="hidden" name="remove_id" value="<?= $d['id2'] ?? $d['lead2_id'] ?? '' ?>">

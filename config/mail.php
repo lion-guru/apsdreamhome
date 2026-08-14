@@ -36,4 +36,4 @@ return [
             dirname(__DIR__) . '/app/views/emails',
         ],
     ],
-];
+];?>

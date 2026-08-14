@@ -26,4 +26,4 @@ $stmt = $pdo->query("SELECT * FROM pincodes LIMIT 5");
 echo "\nSample pincodes:\n";
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo "  " . json_encode($row) . "\n";
-}
+}?>

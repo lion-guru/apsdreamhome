@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="page-banner mb-5" style="background: linear-gradient(rgba(30,60,114,0.7), rgba(30,60,114,0.7)), url('<?= ASSETS_URL ?>images/banner/project-banner.jpg') center/cover; padding: 100px 0; color: #fff; border-radius: 0 0 50px 50px;">
+        <div class="page-banner mb-5" class="style-23579">
             <div class="container text-center">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Ganga Nagri Varanasi' ?></h1>
                 <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : 'Divine Living Near the Holy Ganges' ?></p>
@@ -46,7 +46,7 @@
                         <div class="col-6 col-md-4 col-lg-3 text-center">
                             <div class="card h-100 border-0 shadow-sm p-4">
                                 <div class="mb-3">
-                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['alt_text']) ?>" class="img-fluid" style="height: 50px;">
+                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['alt_text']) ?>" class="img-fluid" class="style-90188">
                                 </div>
                                 <h6 class="fw-bold"><?= $item['title'] ?></h6>
                             </div>

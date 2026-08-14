@@ -62,4 +62,4 @@ $stmt->execute(['APS Dream Home', 'apsdreamhome@upi', 'APS001']);
 
 echo "Default UPI config inserted\n";
 
-echo "\n=== All UPI tables created successfully ===\n";
+echo "\n=== All UPI tables created successfully ===\n";?>

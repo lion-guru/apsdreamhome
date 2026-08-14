@@ -10,4 +10,4 @@ foreach ($tables as $t) {
     } catch (Exception $e) {
         echo $t . ': NOT FOUND' . PHP_EOL;
     }
-}
+}?>

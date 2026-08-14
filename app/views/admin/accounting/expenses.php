@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Expenses'; ?>
+ï»¿<?php $pageTitle = 'Expenses'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -20,7 +20,7 @@
             <div class="row align-items-center">
                 <div class="col"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Expense Records</h5></div>
                 <div class="col-auto">
-                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search expenses..." style="width:200px"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
+                    <form class="d-flex" method="GET"><input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search expenses..." class="style-47085"><button class="btn btn-sm btn-outline-primary" type="submit"><i class="fas fa-search"></i></button></form>
     <?php echo CSRFProtection::csrfField(); ?>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                             <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-receipt fa-3x d-block mb-3"></i>No expenses recorded yet</td></tr>
                         <?php else: ?>
                             <?php $i=1; foreach ($expenseList as $exp): ?>
-                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($exp['date'])) ?></td><td><span class="badge bg-warning-subtle text-warning rounded-pill px-3"><?= $exp['category'] ?? 'General' ?></span></td><td><?= $exp['description'] ?></td><td><?= $exp['payee'] ?? '-' ?></td><td class="text-end pe-4 fw-bold text-danger">-₹<?= number_format($exp['amount'] ?? 0, 2) ?></td></tr>
+                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($exp['date'])) ?></td><td><span class="badge bg-warning-subtle text-warning rounded-pill px-3"><?= $exp['category'] ?? 'General' ?></span></td><td><?= $exp['description'] ?></td><td><?= $exp['payee'] ?? '-' ?></td><td class="text-end pe-4 fw-bold text-danger">-â‚¹<?= number_format($exp['amount'] ?? 0, 2) ?></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>

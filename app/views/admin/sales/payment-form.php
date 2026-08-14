@@ -44,19 +44,19 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-4" id="chequeFields" style="display:none">
+                <div class="col-md-4" id="chequeFields" class="style-24280">
                     <label class="form-label"><?= __('sale_cheque_dd_num') ?></label>
                     <input type="text" name="cheque_number" class="form-control">
                 </div>
-                <div class="col-md-4" id="chequeDateField" style="display:none">
+                <div class="col-md-4" id="chequeDateField" class="style-24280">
                     <label class="form-label"><?= __('sale_cheque_date') ?></label>
                     <input type="date" name="cheque_date" class="form-control">
                 </div>
-                <div class="col-md-4" id="bankField" style="display:none">
+                <div class="col-md-4" id="bankField" class="style-24280">
                     <label class="form-label"><?= __('sale_bank_name') ?></label>
                     <input type="text" name="bank_name" class="form-control">
                 </div>
-                <div class="col-md-4" id="refField" style="display:none">
+                <div class="col-md-4" id="refField" class="style-24280">
                     <label class="form-label"><?= __('sale_transaction_ref') ?></label>
                     <input type="text" name="transaction_ref" class="form-control">
                 </div>

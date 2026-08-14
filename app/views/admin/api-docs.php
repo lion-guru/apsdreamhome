@@ -1,6 +1,6 @@
 <?php
 /**
- * API Documentation — Swagger UI with admin layout
+ * API Documentation Ã¢â‚¬â€� Swagger UI with admin layout
  *
  * @var array $groups   Grouped endpoint data from ApiDocService::getEndpoints()
  * @var int   $total    Total route count
@@ -149,31 +149,31 @@ $groupCount = count($groups);
             }}
             ?>
             <div class="doc-stats-card">
-                <div class="stat-value" style="color:#60a5fa"><?= $getCount ?></div>
+                <div class="stat-value" class="style-45299"><?= $getCount ?></div>
                 <div class="stat-label">GET</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value" style="color:#4ade80"><?= $postCount ?></div>
+                <div class="stat-value" class="style-61414"><?= $postCount ?></div>
                 <div class="stat-label">POST</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value" style="color:#fbbf24"><?= $putCount ?></div>
+                <div class="stat-value" class="style-81434"><?= $putCount ?></div>
                 <div class="stat-label">PUT</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value" style="color:#f87171"><?= $delCount ?></div>
+                <div class="stat-value" class="style-37569"><?= $delCount ?></div>
                 <div class="stat-label">DELETE</div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value" style="color:#5eead4"><?= $groupCount ?></div>
+                <div class="stat-value" class="style-31491"><?= $groupCount ?></div>
                 <div class="stat-label">Groups</div>
             </div>
         </div>
@@ -182,8 +182,8 @@ $groupCount = count($groups);
     <!-- Endpoint groups sidebar + Swagger UI -->
     <div class="row">
         <!-- Left: endpoint index -->
-        <div class="col-md-3" style="max-height: 70vh; overflow-y: auto;">
-            <h6 class="text-muted mb-3 fw-bold text-uppercase" style="font-size:0.7rem; letter-spacing:0.1em;">
+        <div class="col-md-3" class="style-18847">
+            <h6 class="text-muted mb-3 fw-bold text-uppercase" class="style-62352">
                 <i class="fas fa-list me-1"></i>Endpoint Groups
             </h6>
             <?php foreach ($groups as $groupName => $endpoints): ?>
@@ -192,17 +192,17 @@ $groupCount = count($groups);
                         <span class="group-name"><?= htmlspecialchars($groupName) ?></span>
                         <span class="group-count"><?= count($endpoints) ?></span>
                     </div>
-                    <div class="mt-1" style="max-height: 100px; overflow-y: auto;">
+                    <div class="mt-1" class="style-182">
                         <?php foreach (array_slice($endpoints, 0, 8) as $ep): ?>
                             <div class="endpoint-row d-flex align-items-center gap-2">
                                 <span class="method-badge method-<?= $ep['method'] ?>"><?= $ep['method'] ?></span>
-                                <span class="endpoint-path text-truncate" style="color:#94a3b8;">
+                                <span class="endpoint-path text-truncate" class="style-27277">
                                     <?= htmlspecialchars(preg_replace('#^/api(/v\d+)?#', '', $ep['path'])) ?>
                                 </span>
                             </div>
                         <?php endforeach; ?>
                         <?php if (count($endpoints) > 8): ?>
-                            <div class="endpoint-row text-muted" style="font-size:0.7rem;">
+                            <div class="endpoint-row text-muted" class="style-68658">
                                 +<?= count($endpoints) - 8 ?> more
                             </div>
                         <?php endif; ?>
@@ -225,7 +225,7 @@ $groupCount = count($groups);
 </div>
 
 <!-- Swagger UI from CDN -->
-<link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+<link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.min.css">
 <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
 
 <script>

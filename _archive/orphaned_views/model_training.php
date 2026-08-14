@@ -91,9 +91,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="progress" style="height: 20px;">
+                                                    <div class="progress" class="style-51309">
                                                         <div class="progress-bar bg-<?php echo ($model['accuracy'] ?? 0) > 80 ? 'success' : (($model['accuracy'] ?? 0) > 60 ? 'warning' : 'danger'); ?>" 
-                                                             style="width: <?php echo $model['accuracy'] ?? 0; ?>%">
+                                                             class="style-57413">
                                                             <?php echo $model['accuracy'] ?? 0; ?>%
                                                         </div>
                                                     </div>

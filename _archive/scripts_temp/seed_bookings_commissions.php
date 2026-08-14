@@ -28,7 +28,7 @@ foreach ($plots as $i => $plot) {
     $stmt = $db->prepare("INSERT INTO plot_bookings (plot_id, colony_id, customer_id, customer_name, customer_email, booking_number, booking_date, total_plot_value, booking_amount, status, approval_status, channel, associate_id, created_at) VALUES (?, ?, ?, 'Test Customer', 'customer@apsdreamhome.com', ?, CURDATE(), ?, ?, ?, 'approved', 'associate', ?, NOW())");
     $stmt->execute([$plot['id'], $plot['colony_id'], $customerId, $bookingNum, $plot['total_price'], $bookingAmt, $status, $assocId]);
     $bookingId = $db->lastInsertId();
-    echo "Booking #$bookingId: Plot {$plot['plot_number']} (₹" . number_format($plot['total_price']) . ") status=$status\n";
+    echo "Booking #$bookingId: Plot {$plot['plot_number']} (â‚¹" . number_format($plot['total_price']) . ") status=$status\n";
     
     // Update plot
     $db->prepare("UPDATE plots SET status='booked', customer_id=?, booking_date=CURDATE() WHERE id=?")->execute([$customerId, $plot['id']]);
@@ -66,13 +66,13 @@ foreach ($plots as $i => $plot) {
         $directComm = $plot['total_price'] * 0.05;
         $db->prepare("INSERT INTO mlm_commission_ledger (source_user_id, beneficiary_user_id, booking_id, commission_type, amount, sale_amount, commission_percentage, status, notes, created_at) VALUES (?, ?, ?, 'direct_sale', ?, ?, 5.00, 'approved', ?, NOW())")
            ->execute([$assocId, $assocId, $bookingId, $directComm, $plot['total_price'], "Direct commission for booking $bookingNum"]);
-        echo "  Commission: ₹" . number_format($directComm) . " direct sale\n";
+        echo "  Commission: â‚¹" . number_format($directComm) . " direct sale\n";
         
         // Override for admin (2.5%)
         $overrideComm = $plot['total_price'] * 0.025;
         $db->prepare("INSERT INTO mlm_commission_ledger (source_user_id, beneficiary_user_id, booking_id, commission_type, amount, sale_amount, commission_percentage, status, notes, created_at) VALUES (?, ?, ?, 'override', ?, ?, 2.50, 'approved', ?, NOW())")
            ->execute([$assocId, 1, $bookingId, $overrideComm, $plot['total_price'], "Override from $bookingNum"]);
-        echo "  Commission: ₹" . number_format($overrideComm) . " override to admin\n";
+        echo "  Commission: â‚¹" . number_format($overrideComm) . " override to admin\n";
         
         // Update associate earnings
         $db->prepare("UPDATE associates SET total_sales=total_sales+?, commission_earned=commission_earned+? WHERE user_id=?")
@@ -87,8 +87,8 @@ echo "Total bookings: {$r['c']}\n";
 $r = $db->query("SELECT COUNT(*) as c FROM booking_payment_schedules")->fetch();
 echo "EMI schedules: {$r['c']}\n";
 $r = $db->query("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as t FROM mlm_commission_ledger")->fetch();
-echo "Commission: {$r['c']} entries, ₹" . number_format($r['t']) . "\n";
+echo "Commission: {$r['c']} entries, â‚¹" . number_format($r['t']) . "\n";
 $r = $db->query("SELECT total_sales, commission_earned FROM associates WHERE user_id=$assocId")->fetch();
-if ($r) echo "Rajesh Leader: Sales=₹" . number_format($r['total_sales']) . " Commission=₹" . number_format($r['commission_earned']) . "\n";
+if ($r) echo "Rajesh Leader: Sales=â‚¹" . number_format($r['total_sales']) . " Commission=â‚¹" . number_format($r['commission_earned']) . "\n";
 
-echo "\nDone!\n";
+echo "\nDone!\n";?>

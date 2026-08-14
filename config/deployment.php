@@ -134,4 +134,4 @@ return [
         'documentation_url' => 'https://docs.apsdreamhome.com',
         'status_page_url' => 'https://status.apsdreamhome.com',
     ],
-];
+];?>

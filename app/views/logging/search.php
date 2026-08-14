@@ -41,7 +41,7 @@
             <h5 class="mb-0">Results (<?= (int)($total ?? 0) ?>)</h5>
         </div>
         <div class="card-body p-0">
-            <div class="table-responsive" style="max-height:500px">
+            <div class="table-responsive" class="style-99097">
                 <div class="table-responsive"><table class="table table-hover table-sm mb-0 table-responsive">
                     <thead class="table-light position-sticky top-0">
                         <tr><th>Level</th><th>Message</th><th>File</th><th>Line</th><th>Time</th></tr>

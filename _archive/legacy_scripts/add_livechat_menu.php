@@ -9,4 +9,4 @@ if (!$stmt->fetch()) {
     echo "Live Chat menu added\n";
 } else {
     echo "Live Chat already in menu\n";
-}
+}?>

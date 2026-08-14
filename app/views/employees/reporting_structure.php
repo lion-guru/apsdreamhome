@@ -41,7 +41,7 @@ $department_members = $department_members ?? [];
                     <div class="card org-card shadow-sm">
                         <div class="card-body px-4 py-3">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="org-avatar" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                                <div class="org-avatar" class="style-69457">
                                     <?= strtoupper(substr($manager['name'] ?? 'M', 0, 1)) ?>
                                 </div>
                                 <div class="text-start">
@@ -55,7 +55,7 @@ $department_members = $department_members ?? [];
                         </div>
                     </div>
                 </div>
-                <div class="org-line my-3" style="height:30px;"></div>
+                <div class="org-line my-3" class="style-20185"></div>
             <?php else: ?>
                 <p class="text-muted small mb-3"><i class="fas fa-info-circle me-1"></i>No manager assigned</p>
             <?php endif; ?>
@@ -67,7 +67,7 @@ $department_members = $department_members ?? [];
                 <div class="card org-card shadow-sm border-primary border-2">
                     <div class="card-body px-4 py-3">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="org-avatar" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);">
+                            <div class="org-avatar" class="style-53966">
                                 <?= strtoupper(substr($employee['name'] ?? 'E', 0, 1)) ?>
                             </div>
                             <div class="text-start">
@@ -85,7 +85,7 @@ $department_members = $department_members ?? [];
 
         <!-- Subordinates -->
         <?php if (!empty($subordinates)): ?>
-            <div class="org-line mb-4" style="height:30px;"></div>
+            <div class="org-line mb-4" class="style-20185"></div>
             <p class="text-muted small fw-semibold text-uppercase text-center mb-3"><i class="fas fa-arrow-down me-1"></i>Team Members (<?= count($subordinates) ?>)</p>
             <div class="row g-3 mb-4 justify-content-center">
                 <?php foreach ($subordinates as $sub):
@@ -97,7 +97,7 @@ $department_members = $department_members ?? [];
                         <div class="card member-card shadow-sm h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-start gap-3">
-                                    <div class="org-avatar" style="background: linear-gradient(135deg, #10b981, #059669); width:44px; height:44px; font-size:1rem; border-radius:10px;">
+                                    <div class="org-avatar" class="style-24231">
                                         <?= strtoupper(substr($sub['name'] ?? 'T', 0, 1)) ?>
                                     </div>
                                     <div class="flex-grow-1">
@@ -115,18 +115,18 @@ $department_members = $department_members ?? [];
                                             </div>
                                             <div class="small">
                                                 <span class="text-muted">Score:</span>
-                                                <strong style="color: <?= $scoreColor ?>"><?= $score ?>%</strong>
+                                                <strong class="style-90257"><?= $score ?>%</strong>
                                             </div>
                                         </div>
-                                        <div class="progress mt-1" style="height:4px;">
-                                            <div class="progress-bar" style="width:<?= $score ?>%; background: <?= $scoreColor ?>;"></div>
+                                        <div class="progress mt-1" class="style-70208">
+                                            <div class="progress-bar" class="style-99082"></div>
                                         </div>
                                         <div class="d-flex gap-2 mt-2">
                                             <?php if (!empty($sub['email'])): ?>
-                                                <a href="mailto:<?= htmlspecialchars($sub['email']) ?>" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:0.75rem;"><i class="fas fa-envelope"></i></a>
+                                                <a href="mailto:<?= htmlspecialchars($sub['email']) ?>" class="btn btn-sm btn-outline-primary py-0 px-2" class="style-20558"><i class="fas fa-envelope"></i></a>
                                             <?php endif; ?>
                                             <?php if (!empty($sub['phone'])): ?>
-                                                <a href="tel:<?= htmlspecialchars($sub['phone']) ?>" class="btn btn-sm btn-outline-success py-0 px-2" style="font-size:0.75rem;"><i class="fas fa-phone"></i></a>
+                                                <a href="tel:<?= htmlspecialchars($sub['phone']) ?>" class="btn btn-sm btn-outline-success py-0 px-2" class="style-20558"><i class="fas fa-phone"></i></a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -160,7 +160,7 @@ $department_members = $department_members ?? [];
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="org-avatar" style="background: linear-gradient(135deg, #6366f1, #4f46e5); width:36px; height:36px; font-size:0.85rem; border-radius:8px; min-width:36px;">
+                                                <div class="org-avatar" class="style-48194">
                                                     <?= strtoupper(substr($m['name'] ?? 'M', 0, 1)) ?>
                                                 </div>
                                                 <strong class="small"><?= htmlspecialchars($m['name'] ?? '') ?></strong>
@@ -171,7 +171,7 @@ $department_members = $department_members ?? [];
                                             <?php if (!empty($m['email'])): ?>
                                                 <a href="mailto:<?= htmlspecialchars($m['email']) ?>" class="small text-decoration-none"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($m['email']) ?></a>
                                             <?php else: ?>
-                                                <span class="text-muted small">—</span>
+                                                <span class="text-muted small">â€”</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>

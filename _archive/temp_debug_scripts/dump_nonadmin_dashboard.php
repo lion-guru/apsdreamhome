@@ -53,4 +53,4 @@ if (preg_match('/<title>(.*?)<\/title>/', $html4, $t)) {
     echo "Title: {$t[1]}\n";
 }
 preg_match_all('/sidebar-link/', $html4, $m4);
-echo "sidebar-link count: " . count($m4[0]) . "\n";
+echo "sidebar-link count: " . count($m4[0]) . "\n";?>

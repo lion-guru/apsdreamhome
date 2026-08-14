@@ -10,4 +10,4 @@ foreach ($statements as $stmt) {
     }
 }
 $count = $db->query('SELECT COUNT(*) c FROM whatsapp_templates')->fetch(\PDO::FETCH_ASSOC)['c'];
-echo 'Templates created: ' . $count . PHP_EOL;
+echo 'Templates created: ' . $count . PHP_EOL;?>

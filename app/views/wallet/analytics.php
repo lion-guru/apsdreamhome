@@ -133,7 +133,7 @@
                 <div class="stat-icon balance">
                     <i class="fas fa-wallet"></i>
                 </div>
-                <div class="stat-value">₹<?php echo number_format($wallet['points_balance'], 2); ?></div>
+                <div class="stat-value">â‚¹<?php echo number_format($wallet['points_balance'], 2); ?></div>
                 <div class="stat-label">Current Balance</div>
             </div>
         </div>
@@ -142,7 +142,7 @@
                 <div class="stat-icon earned">
                     <i class="fas fa-arrow-up"></i>
                 </div>
-                <div class="stat-value">₹<?php echo number_format($wallet['total_earned'], 2); ?></div>
+                <div class="stat-value">â‚¹<?php echo number_format($wallet['total_earned'], 2); ?></div>
                 <div class="stat-label">Total Earned</div>
             </div>
         </div>
@@ -151,7 +151,7 @@
                 <div class="stat-icon used">
                     <i class="fas fa-arrow-down"></i>
                 </div>
-                <div class="stat-value">₹<?php echo number_format($wallet['total_used'], 2); ?></div>
+                <div class="stat-value">â‚¹<?php echo number_format($wallet['total_used'], 2); ?></div>
                 <div class="stat-label">Total Used</div>
             </div>
         </div>
@@ -160,7 +160,7 @@
                 <div class="stat-icon transferred">
                     <i class="fas fa-exchange-alt"></i>
                 </div>
-                <div class="stat-value">₹<?php echo number_format($wallet['total_transferred_to_emi'], 2); ?></div>
+                <div class="stat-value">â‚¹<?php echo number_format($wallet['total_transferred_to_emi'], 2); ?></div>
                 <div class="stat-label">Transferred to EMI</div>
             </div>
         </div>
@@ -173,16 +173,16 @@
                 <h4 class="mb-4"><i class="fas fa-chart-bar me-2 text-primary"></i>Monthly Earnings (Last 6 Months)</h4>
                 
                 <?php if (!empty($monthlyEarnings)): ?>
-                    <div class="d-flex align-items-end justify-content-between" style="height: 250px;">
+                    <div class="d-flex align-items-end justify-content-between" class="style-44237">
                         <?php 
                         $maxCredit = max(array_column($monthlyEarnings, 'credits'));
                         foreach ($monthlyEarnings as $earning): 
                             $height = $maxCredit > 0 ? ($earning['credits'] / $maxCredit) * 100 : 0;
                             $monthName = date('M', strtotime($earning['month'] . '-01'));
                         ?>
-                            <div class="text-center" style="flex: 1;">
-                                <div class="fw-bold mb-2">₹<?php echo number_format($earning['credits'], 0); ?></div>
-                                <div class="chart-bar" style="height: <?php echo $height; ?>%; min-height: 20px;"></div>
+                            <div class="text-center" class="style-81546">
+                                <div class="fw-bold mb-2">â‚¹<?php echo number_format($earning['credits'], 0); ?></div>
+                                <div class="chart-bar" class="style-39990"></div>
                                 <div class="mt-2 small text-muted"><?php echo $monthName; ?></div>
                             </div>
                         <?php endforeach; ?>
@@ -191,15 +191,15 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between">
                             <span class="text-muted">Total Credits:</span>
-                            <span class="fw-bold text-success">₹<?php echo number_format(array_sum(array_column($monthlyEarnings, 'credits')), 2); ?></span>
+                            <span class="fw-bold text-success">â‚¹<?php echo number_format(array_sum(array_column($monthlyEarnings, 'credits')), 2); ?></span>
                         </div>
                         <div class="d-flex justify-content-between">
                             <span class="text-muted">Total Debits:</span>
-                            <span class="fw-bold text-danger">₹<?php echo number_format(array_sum(array_column($monthlyEarnings, 'debits')), 2); ?></span>
+                            <span class="fw-bold text-danger">â‚¹<?php echo number_format(array_sum(array_column($monthlyEarnings, 'debits')), 2); ?></span>
                         </div>
                         <div class="d-flex justify-content-between">
                             <span class="text-muted">Net Earnings:</span>
-                            <span class="fw-bold text-primary">₹<?php echo number_format(array_sum(array_column($monthlyEarnings, 'credits')) - array_sum(array_column($monthlyEarnings, 'debits')), 2); ?></span>
+                            <span class="fw-bold text-primary">â‚¹<?php echo number_format(array_sum(array_column($monthlyEarnings, 'credits')) - array_sum(array_column($monthlyEarnings, 'debits')), 2); ?></span>
                         </div>
                     </div>
                 <?php else: ?>
@@ -226,9 +226,9 @@
                         <div class="category-bar">
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="fw-bold"><?php echo ucfirst($category['transaction_category']); ?></span>
-                                <span>₹<?php echo number_format($category['total'], 2); ?></span>
+                                <span>â‚¹<?php echo number_format($category['total'], 2); ?></span>
                             </div>
-                            <div class="category-progress <?php echo $categoryClass; ?>" style="width: <?php echo $percentage; ?>%;">
+                            <div class="category-progress <?php echo $categoryClass; ?>" class="style-37094">
                                 <?php echo number_format($percentage, 1); ?>%
                             </div>
                         </div>
@@ -237,7 +237,7 @@
                     <hr>
                     <div class="d-flex justify-content-between fw-bold">
                         <span>Total Earnings:</span>
-                        <span class="text-success">₹<?php echo number_format($totalEarnings, 2); ?></span>
+                        <span class="text-success">â‚¹<?php echo number_format($totalEarnings, 2); ?></span>
                     </div>
                 <?php else: ?>
                     <div class="text-center py-5">
@@ -255,7 +255,7 @@
             <div class="analytics-card">
                 <h4 class="mb-4"><i class="fas fa-coins me-2 text-primary"></i>Referral Earnings</h4>
                 <div class="text-center">
-                    <div class="fs-2 fw-bold text-success">₹<?php echo number_format($wallet['referral_earnings'], 2); ?></div>
+                    <div class="fs-2 fw-bold text-success">â‚¹<?php echo number_format($wallet['referral_earnings'], 2); ?></div>
                     <p class="text-muted mb-0">From <?php echo number_format($wallet['referral_earnings'] / 100); ?> referrals</p>
                 </div>
             </div>
@@ -265,7 +265,7 @@
             <div class="analytics-card">
                 <h4 class="mb-4"><i class="fas fa-percentage me-2 text-primary"></i>Commission Earnings</h4>
                 <div class="text-center">
-                    <div class="fs-2 fw-bold text-primary">₹<?php echo number_format($wallet['commission_earnings'], 2); ?></div>
+                    <div class="fs-2 fw-bold text-primary">â‚¹<?php echo number_format($wallet['commission_earnings'], 2); ?></div>
                     <p class="text-muted mb-0">From sales and services</p>
                 </div>
             </div>
@@ -275,7 +275,7 @@
             <div class="analytics-card">
                 <h4 class="mb-4"><i class="fas fa-gift me-2 text-primary"></i>Bonus Earnings</h4>
                 <div class="text-center">
-                    <div class="fs-2 fw-bold text-warning">₹<?php echo number_format($wallet['bonus_earnings'], 2); ?></div>
+                    <div class="fs-2 fw-bold text-warning">â‚¹<?php echo number_format($wallet['bonus_earnings'], 2); ?></div>
                     <p class="text-muted mb-0">From promotions and rewards</p>
                 </div>
             </div>
@@ -304,7 +304,7 @@
                     </div>
                     <div>
                         <h6 class="fw-bold">Refer More Users</h6>
-                        <p class="text-muted mb-0">Earn up to ₹250 per referral depending on user type</p>
+                        <p class="text-muted mb-0">Earn up to â‚¹250 per referral depending on user type</p>
                     </div>
                 </div>
             </div>
@@ -326,7 +326,7 @@
                     </div>
                     <div>
                         <h6 class="fw-bold">Withdraw Wisely</h6>
-                        <p class="text-muted mb-0">Minimum withdrawal is ₹500 with 10% tax</p>
+                        <p class="text-muted mb-0">Minimum withdrawal is â‚¹500 with 10% tax</p>
                     </div>
                 </div>
             </div>

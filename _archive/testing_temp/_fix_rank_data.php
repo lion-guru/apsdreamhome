@@ -40,7 +40,7 @@ foreach ($newRanks as $order => $name) {
     $stmt = $pdo->prepare("UPDATE mlm_rank_benefits SET rank_name = ? WHERE rank_order = ?");
     $stmt->execute([$name, $order]);
     $affected = $stmt->rowCount();
-    echo "  order=$order → '$name' ($affected rows)\n";
+    echo "  order=$order â†’ '$name' ($affected rows)\n";
 }
 
 // Handle any rows with rank_order outside 1-7
@@ -60,7 +60,7 @@ echo "  Added\n";
 echo "\nSTEP 5: Verify final state\n";
 $rows = $pdo->query("SELECT id, rank_name, rank_order, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_pct, l2_pct, l3_pct FROM mlm_rank_benefits ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($rows as $r) {
-    echo "  #{$r['id']} {$r['rank_name']} | order={$r['rank_order']} legs>={$r['min_leg_count']} vol>=₹{$r['min_qualifying_volume']} | direct={$r['direct_sale_pct']}% l1={$r['l1_pct']}% l2={$r['l2_pct']}% l3={$r['l3_pct']}%\n";
+    echo "  #{$r['id']} {$r['rank_name']} | order={$r['rank_order']} legs>={$r['min_leg_count']} vol>=â‚¹{$r['min_qualifying_volume']} | direct={$r['direct_sale_pct']}% l1={$r['l1_pct']}% l2={$r['l2_pct']}% l3={$r['l3_pct']}%\n";
 }
 
 // Verify ENUM
@@ -74,10 +74,10 @@ foreach ($newRanks as $name) {
     $stmt->execute([$name]);
     $r = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($r) {
-        echo "  ✓ '$name' → #{$r['id']} L1={$r['l1_pct']}% L2={$r['l2_pct']}% L3={$r['l3_pct']}%\n";
+        echo "  âœ“ '$name' â†’ #{$r['id']} L1={$r['l1_pct']}% L2={$r['l2_pct']}% L3={$r['l3_pct']}%\n";
     } else {
-        echo "  ✗ '$name' → NOT FOUND\n";
+        echo "  âœ— '$name' â†’ NOT FOUND\n";
     }
 }
 
-echo "\n=== DB Rank Names Fixed ===\n";
+echo "\n=== DB Rank Names Fixed ===\n";?>

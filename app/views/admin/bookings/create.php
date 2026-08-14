@@ -44,7 +44,7 @@ $active_page = 'bookings';
                             <?php foreach ($plots ?? $properties ?? [] as $plot): ?>
                                 <option value="<?= $plot['id'] ?>" data-price="<?= $plot['total_price'] ?? $plot['price'] ?? 0 ?>">
                                     <?= htmlspecialchars($plot['colony_name'] ?? '') ?> - Plot <?= htmlspecialchars($plot['plot_number'] ?? $plot['title'] ?? '') ?> 
-                                    (₹<?= number_format(floatval($plot['total_price'] ?? $plot['price'] ?? 0), 2) ?>)
+                                    (â‚¹<?= number_format(floatval($plot['total_price'] ?? $plot['price'] ?? 0), 2) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -74,7 +74,7 @@ $active_page = 'bookings';
                             <?php endforeach; ?>
                         </select>
                         <label for="associate_id">Assign Associate / Agent</label>
-                        <div id="associate_resolution" class="form-text mt-1 text-primary fw-bold" style="display: none;">
+                        <div id="associate_resolution" class="form-text mt-1 text-primary fw-bold" class="style-54390">
                             <i class="fas fa-check-circle"></i> <span id="associate_name_display"></span>
                         </div>
                         <div class="form-text text-muted small mt-1" id="associate_help_text">
@@ -125,7 +125,7 @@ $active_page = 'bookings';
                 </div>
 
                 <!-- New Customer Section -->
-                <div id="new_customer_section" class="col-md-12" style="display: none;">
+                <div id="new_customer_section" class="col-md-12" class="style-54390">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="form-floating">
@@ -163,14 +163,14 @@ $active_page = 'bookings';
                 <div class="col-md-4">
                     <div class="form-floating">
                         <input type="number" class="form-control" id="total_plot_value" name="total_plot_value" step="0.01" min="0" required placeholder="0.00" readonly>
-                        <label for="total_plot_value">Total Plot Value (₹) <span class="text-danger">*</span></label>
+                        <label for="total_plot_value">Total Plot Value (â‚¹) <span class="text-danger">*</span></label>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-floating">
                         <input type="number" class="form-control" id="booking_amount" name="booking_amount" step="0.01" min="0" required placeholder="0.00">
-                        <label for="booking_amount">Booking/Token Amount Paid (₹) <span class="text-danger">*</span></label>
+                        <label for="booking_amount">Booking/Token Amount Paid (â‚¹) <span class="text-danger">*</span></label>
                     </div>
                 </div>
 
@@ -185,7 +185,7 @@ $active_page = 'bookings';
                 <!-- Notes -->
                 <div class="col-md-12">
                     <div class="form-floating">
-                        <textarea class="form-control" id="notes" name="notes" style="height: 100px" placeholder="Any special remarks or terms..."></textarea>
+                        <textarea class="form-control" id="notes" name="notes" class="style-48147" placeholder="Any special remarks or terms..."></textarea>
                         <label for="notes">Booking Notes / Remarks (Optional)</label>
                     </div>
                 </div>
@@ -276,7 +276,7 @@ $active_page = 'bookings';
                     <div class="row align-items-center">
                         <div class="col-md-4">
                             <span class="text-muted d-block">Plot Value</span>
-                            <strong>₹${amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
+                            <strong>â‚¹${amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
                         </div>
                         <div class="col-md-4">
                             <span class="text-muted d-block">Est. Base Rate</span>
@@ -284,10 +284,10 @@ $active_page = 'bookings';
                         </div>
                         <div class="col-md-4">
                             <span class="text-muted d-block">Est. Commission</span>
-                            <strong class="text-success">₹${commissionAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
+                            <strong class="text-success">â‚¹${commissionAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong>
                         </div>
                     </div>
-                    <div class="mt-2 text-muted" style="font-size: 0.75rem;">
+                    <div class="mt-2 text-muted" class="style-11723">
                         * Note: Actual commission will be calculated automatically by the MLM Engine based on the Associate's rank and current plan.
                     </div>
                 `;

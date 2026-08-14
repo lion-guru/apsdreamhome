@@ -74,7 +74,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   .quickview-panel::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
 </style>
 
-<div class="container-fluid py-3" style="height:100vh; display:flex; flex-direction:column; overflow:hidden;">
+<div class="container-fluid py-3" class="style-21816">
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
     <div>
@@ -101,11 +101,11 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         </div>
         <div class="stat-pill">
           <span class="stat-label">Pipeline Value</span>
-          <span class="stat-value text-success" id="stat-value">₹<?= number_format($totalValue / 100000, 1) ?>L</span>
+          <span class="stat-value text-success" id="stat-value">â‚¹<?= number_format($totalValue / 100000, 1) ?>L</span>
         </div>
         <div class="stat-pill">
           <span class="stat-label">Won</span>
-          <span class="stat-value text-warning" id="stat-won">₹<?= number_format($wonValue / 100000, 1) ?>L</span>
+          <span class="stat-value text-warning" id="stat-won">â‚¹<?= number_format($wonValue / 100000, 1) ?>L</span>
         </div>
         <div class="stat-pill">
           <span class="stat-label">Win Rate</span>
@@ -114,7 +114,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
         <div class="ms-auto d-flex gap-2 align-items-center">
           <!-- Filter: Assigned To -->
-          <select id="filterAssignee" class="form-select form-select-sm" style="width:auto; background:#22253a; color:#e2e8f0; border-color:rgba(255,255,255,0.1); font-size:12px;">
+          <select id="filterAssignee" class="form-select form-select-sm" class="style-90031">
             <option value="">All Assignees</option>
             <?php foreach ($users as $u): ?>
               <option value="<?= (int)$u['id'] ?>" <?= ($currentFilters['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['name']) ?></option>
@@ -122,7 +122,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
           </select>
 
           <!-- Filter: Source -->
-          <select id="filterSource" class="form-select form-select-sm" style="width:auto; background:#22253a; color:#e2e8f0; border-color:rgba(255,255,255,0.1); font-size:12px;">
+          <select id="filterSource" class="form-select form-select-sm" class="style-90031">
             <option value="">All Sources</option>
             <?php foreach ($sources as $src): ?>
               <option value="<?= htmlspecialchars($src) ?>" <?= ($currentFilters['source'] ?? '') === $src ? 'selected' : '' ?>><?= ucfirst(htmlspecialchars($src)) ?></option>
@@ -147,14 +147,14 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
       $stageVal  = $col['total_value'];
     ?>
       <div class="pipeline-col" data-stage="<?= htmlspecialchars($slug) ?>">
-        <div class="col-header" style="border-top:3px solid <?= $color ?>">
+        <div class="col-header" class="style-71574">
           <div class="d-flex align-items-center">
-            <span class="stage-dot" style="background:<?= $color ?>"></span>
+            <span class="stage-dot" class="style-96004"></span>
             <span class="col-header-text col-title"><?= htmlspecialchars($label) ?></span>
             <span class="col-count col-count-badge"><?= $count ?></span>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <span class="col-value">₹<?= $stageVal > 99999 ? number_format($stageVal / 100000, 1) . 'L' : number_format($stageVal) ?></span>
+            <span class="col-value">â‚¹<?= $stageVal > 99999 ? number_format($stageVal / 100000, 1) . 'L' : number_format($stageVal) ?></span>
             <i class="fas fa-chevron-left collapse-icon" title="Collapse"></i>
           </div>
         </div>
@@ -193,9 +193,9 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
               // Budget formatting
               $budgetStr = '';
-              if ($budget >= 10000000) $budgetStr = '₹' . number_format($budget / 10000000, 1) . 'Cr';
-              elseif ($budget >= 100000) $budgetStr = '₹' . number_format($budget / 100000, 1) . 'L';
-              elseif ($budget > 0) $budgetStr = '₹' . number_format($budget);
+              if ($budget >= 10000000) $budgetStr = 'â‚¹' . number_format($budget / 10000000, 1) . 'Cr';
+              elseif ($budget >= 100000) $budgetStr = 'â‚¹' . number_format($budget / 100000, 1) . 'L';
+              elseif ($budget > 0) $budgetStr = 'â‚¹' . number_format($budget);
 
               // Time ago
               $timeAgo = '';
@@ -240,7 +240,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
                 <?php if ($assigned): ?>
                   <div class="card-assignee mt-1">
                     <div class="avatar"><?= strtoupper(substr($assigned, 0, 2)) ?></div>
-                    <span style="font-size:10px; color:#94a3b8;"><?= $assigned ?></span>
+                    <span class="style-21010"><?= $assigned ?></span>
                   </div>
                 <?php endif; ?>
               </div>
@@ -268,7 +268,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   const CSRF = '<?= $csrfToken ?>';
   let allCollapsed = false;
 
-  // ── Drag and Drop ──────────────────────────────────────────
+  // â”€â”€ Drag and Drop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let draggedCard = null;
 
   document.addEventListener('dragstart', function(e) {
@@ -333,7 +333,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     });
   });
 
-  // ── Column Counts After Move ────────────────────────────────
+  // â”€â”€ Column Counts After Move â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function updateColumnCounts() {
     document.querySelectorAll('.pipeline-col').forEach(col => {
       const cards = col.querySelectorAll('.lead-card');
@@ -342,12 +342,12 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     });
   }
 
-  // ── Format Stage Name ───────────────────────────────────────
+  // â”€â”€ Format Stage Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function formatStage(slug) {
     return slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  // ── Live Stats Refresh ──────────────────────────────────────
+  // â”€â”€ Live Stats Refresh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function refreshStats() {
     const params = new URLSearchParams();
     const assignee = document.getElementById('filterAssignee').value;
@@ -360,13 +360,13 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
       .then(s => {
         document.getElementById('stat-total').textContent = s.total.toLocaleString();
         document.getElementById('stat-active').textContent = s.active.toLocaleString();
-        document.getElementById('stat-value').textContent = '₹' + (s.value / 100000).toFixed(1) + 'L';
-        document.getElementById('stat-won').textContent = '₹' + (s.won_value / 100000).toFixed(1) + 'L';
+        document.getElementById('stat-value').textContent = 'â‚¹' + (s.value / 100000).toFixed(1) + 'L';
+        document.getElementById('stat-won').textContent = 'â‚¹' + (s.won_value / 100000).toFixed(1) + 'L';
         document.getElementById('stat-conv').textContent = s.conversion + '%';
       }).catch(() => {});
   }
 
-  // ── Filter Change ───────────────────────────────────────────
+  // â”€â”€ Filter Change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   document.getElementById('filterAssignee').addEventListener('change', applyFilters);
   document.getElementById('filterSource').addEventListener('change', applyFilters);
 
@@ -379,7 +379,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     window.location.href = BASE + '/admin/lead-kanban' + (params.toString() ? '?' + params.toString() : '');
   }
 
-  // ── Collapse/Expand ─────────────────────────────────────────
+  // â”€â”€ Collapse/Expand â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   document.getElementById('collapseAllBtn').addEventListener('click', function() {
     allCollapsed = !allCollapsed;
     document.querySelectorAll('.pipeline-col').forEach(col => {
@@ -395,7 +395,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     });
   });
 
-  // ── Quick View ──────────────────────────────────────────────
+  // â”€â”€ Quick View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   window.quickViewLead = function(id) {
     const modal = document.getElementById('quickviewModal');
     const content = document.getElementById('quickviewContent');
@@ -408,12 +408,12 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         if (d.error) { content.innerHTML = '<p class="text-danger p-4">' + d.error + '</p>'; return; }
         const lead = d.data || d;
         const name = lead.name || 'Unknown';
-        const phone = lead.phone || '—';
-        const email = lead.email || '—';
-        const budget = lead.budget ? '₹' + Number(lead.budget).toLocaleString() : '—';
+        const phone = lead.phone || 'â€”';
+        const email = lead.email || 'â€”';
+        const budget = lead.budget ? 'â‚¹' + Number(lead.budget).toLocaleString() : 'â€”';
         const score = lead.lead_score || lead.score || 0;
         const status = (lead.status || 'new').replace(/_/g, ' ');
-        const source = lead.source || '—';
+        const source = lead.source || 'â€”';
         const assigned = lead.assigned_to_name || 'Unassigned';
         const priority = lead.priority || 'medium';
         const notes = lead.notes || '';
@@ -424,7 +424,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         let interactions = '';
         if (lead.interactions && lead.interactions.length > 0) {
           interactions = lead.interactions.slice(0, 5).map(i =>
-            '<div class="d-flex gap-2 mb-2" style="font-size:12px;">' +
+            '<div class="d-flex gap-2 mb-2" class="style-20427">' +
             '<span class="badge bg-secondary">' + (i.interaction_type || 'note') + '</span>' +
             '<span class="text-muted">' + (i.subject || i.body || '') + '</span>' +
             '</div>'
@@ -434,23 +434,23 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         content.innerHTML = `
           <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <h5 class="mb-1" style="color:#e2e8f0;"><?= $base ?>` + name + `</h5>
-              <small class="text-muted">${company ? company + ' · ' : ''}${city || ''}</small>
+              <h5 class="mb-1" class="style-96443"><?= $base ?>` + name + `</h5>
+              <small class="text-muted">${company ? company + ' Â· ' : ''}${city || ''}</small>
             </div>
             <button class="btn btn-sm btn-outline-secondary" onclick="closeQuickView()"><i class="fas fa-times"></i></button>
           </div>
           <div class="row g-3 mb-3">
             <div class="col-6">
               <small class="text-muted d-block">Phone</small>
-              <span style="color:#e2e8f0;">${phone}</span>
+              <span class="style-96443">${phone}</span>
             </div>
             <div class="col-6">
               <small class="text-muted d-block">Email</small>
-              <span style="color:#e2e8f0;">${email}</span>
+              <span class="style-96443">${email}</span>
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Budget</small>
-              <span style="color:#10b981; font-weight:600;">${budget}</span>
+              <span class="style-49662">${budget}</span>
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Score</small>
@@ -462,18 +462,18 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Stage</small>
-              <span class="badge" style="background:rgba(99,102,241,0.15); color:#818cf8;">${status}</span>
+              <span class="badge" class="style-98566">${status}</span>
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Source</small>
-              <span style="color:#e2e8f0;">${source}</span>
+              <span class="style-96443">${source}</span>
             </div>
             <div class="col-4">
               <small class="text-muted d-block">Assigned</small>
-              <span style="color:#e2e8f0;">${assigned}</span>
+              <span class="style-96443">${assigned}</span>
             </div>
           </div>
-          ${notes ? '<div class="mb-3"><small class="text-muted d-block mb-1">Notes</small><p style="color:#94a3b8; font-size:13px;">' + notes + '</p></div>' : ''}
+          ${notes ? '<div class="mb-3"><small class="text-muted d-block mb-1">Notes</small><p class="style-65804">' + notes + '</p></div>' : ''}
           ${interactions ? '<div class="mb-3"><small class="text-muted d-block mb-2">Recent Activity</small>' + interactions + '</div>' : ''}
           <div class="d-flex gap-2 mt-3">
             <a href="${BASE}/admin/leads/${lead.id}" class="btn btn-sm btn-primary"><i class="fas fa-external-link-alt me-1"></i>Full Detail</a>
@@ -495,7 +495,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     if (e.key === 'Escape') closeQuickView();
   });
 
-  // ── Toast ───────────────────────────────────────────────────
+  // â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function showToast(msg, type) {
     const toast = document.createElement('div');
     toast.className = 'toast-move ' + type;
@@ -505,7 +505,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     setTimeout(() => toast.remove(), 2800);
   }
 
-  // ── Keyboard shortcut: 'n' for new lead ─────────────────────
+  // â”€â”€ Keyboard shortcut: 'n' for new lead â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   document.addEventListener('keydown', function(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
     if (e.key === 'n' || e.key === 'N') window.location.href = BASE + '/admin/leads/create';

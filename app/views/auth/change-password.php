@@ -20,7 +20,9 @@
                             <label class="form-label">Confirm New Password</label>
                             <input type="password" name="confirm_password" class="form-control" required minlength="8">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Change Password</button>
+                        
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Change Password</button>
                     </form>
                 </div>
             </div>

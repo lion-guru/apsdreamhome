@@ -20,11 +20,11 @@ $current_period = $current_period ?? 'all';
     <?php if (count($leaderboard) >= 3): ?>
     <div class="row mb-4">
         <div class="col-md-4 offset-md-4">
-            <div class="card border-0 shadow-sm text-center py-4" style="background: linear-gradient(135deg, #f59e0b22, #f59e0b11);">
-                <div style="font-size:2.5rem;">👑</div>
+            <div class="card border-0 shadow-sm text-center py-4" class="style-32232">
+                <div class="style-20922">ðŸ‘‘</div>
                 <h5 class="mb-1"><?= htmlspecialchars($leaderboard[0]['name'] ?? '') ?></h5>
                 <div class="text-muted small mb-2"><?= $leaderboard[0]['referral_count'] ?? 0 ?> referrals</div>
-                <span class="badge" style="background:<?= $leaderboard[0]['tier_color'] ?? '#CD7F32' ?>;color:#fff;font-size:0.8rem;">
+                <span class="badge" class="style-95202">
                     <i class="<?= $leaderboard[0]['tier_icon'] ?? 'fas fa-medal' ?> me-1"></i><?= ucfirst($leaderboard[0]['tier'] ?? 'bronze') ?>
                 </span>
             </div>
@@ -32,19 +32,19 @@ $current_period = $current_period ?? 'all';
     </div>
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm text-center py-3" style="background: linear-gradient(135deg, #94a3b822, #94a3b811);">
-                <div style="font-size:2rem;">🥈</div>
+            <div class="card border-0 shadow-sm text-center py-3" class="style-52654">
+                <div class="style-46757">ðŸ¥ˆ</div>
                 <h6 class="mb-1"><?= htmlspecialchars($leaderboard[1]['name'] ?? '') ?></h6>
                 <div class="text-muted small"><?= $leaderboard[1]['referral_count'] ?? 0 ?> referrals</div>
-                <span class="badge mt-1" style="background:<?= $leaderboard[1]['tier_color'] ?? '#94a3b8' ?>;color:#fff;font-size:0.75rem;"><?= ucfirst($leaderboard[1]['tier'] ?? 'silver') ?></span>
+                <span class="badge mt-1" class="style-70306"><?= ucfirst($leaderboard[1]['tier'] ?? 'silver') ?></span>
             </div>
         </div>
         <div class="col-md-4 offset-md-4">
-            <div class="card border-0 shadow-sm text-center py-3" style="background: linear-gradient(135deg, #CD7F3222, #CD7F3211);">
-                <div style="font-size:2rem;">🥉</div>
+            <div class="card border-0 shadow-sm text-center py-3" class="style-43816">
+                <div class="style-46757">ðŸ¥‰</div>
                 <h6 class="mb-1"><?= htmlspecialchars($leaderboard[2]['name'] ?? '') ?></h6>
                 <div class="text-muted small"><?= $leaderboard[2]['referral_count'] ?? 0 ?> referrals</div>
-                <span class="badge mt-1" style="background:<?= $leaderboard[2]['tier_color'] ?? '#CD7F32' ?>;color:#fff;font-size:0.75rem;"><?= ucfirst($leaderboard[2]['tier'] ?? 'bronze') ?></span>
+                <span class="badge mt-1" class="style-60503"><?= ucfirst($leaderboard[2]['tier'] ?? 'bronze') ?></span>
             </div>
         </div>
     </div>
@@ -74,8 +74,8 @@ $current_period = $current_period ?? 'all';
                         <tr>
                             <td class="text-center">
                                 <?php if (($entry['rank'] ?? 0) <= 3): ?>
-                                <span style="font-size:1.2rem;">
-                                    <?= $entry['rank'] == 1 ? '🥇' : ($entry['rank'] == 2 ? '🥈' : '🥉') ?>
+                                <span class="style-30322">
+                                    <?= $entry['rank'] == 1 ? 'ðŸ¥‡' : ($entry['rank'] == 2 ? 'ðŸ¥ˆ' : 'ðŸ¥‰') ?>
                                 </span>
                                 <?php else: ?>
                                 <strong>#<?= $entry['rank'] ?></strong>
@@ -88,7 +88,7 @@ $current_period = $current_period ?? 'all';
                                 <?php endif; ?>
                             </td>
                             <td class="text-center">
-                                <span class="badge" style="background:<?= $entry['tier_color'] ?? '#CD7F32' ?>;color:#fff;">
+                                <span class="badge" class="style-8334">
                                     <i class="<?= $entry['tier_icon'] ?? 'fas fa-medal' ?> me-1"></i><?= ucfirst($entry['tier'] ?? 'bronze') ?>
                                 </span>
                             </td>

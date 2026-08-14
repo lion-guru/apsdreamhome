@@ -32,4 +32,4 @@ if ($exists) {
         KEY idx_status (status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     echo "service_interests table CREATED successfully\n";
-}
+}?>

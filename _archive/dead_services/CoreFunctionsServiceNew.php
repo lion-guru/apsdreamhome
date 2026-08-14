@@ -271,7 +271,7 @@ class CoreFunctionsServiceNew
     /**
      * Format currency
      */
-    public static function formatCurrency(float $amount, string $currency = '₹'): string
+    public static function formatCurrency(float $amount, string $currency = 'â‚¹'): string
     {
         return $currency . number_format($amount, 2);
     }
@@ -647,4 +647,4 @@ class CoreFunctionsServiceNew
         
         return true;
     }
-}
+}?>

@@ -52,4 +52,4 @@ foreach ($leads as $lead) {
 echo "\n=== Results ===\n";
 echo "Scored: $scored\n";
 echo "Failed: $failed\n";
-echo "Completed: " . date('Y-m-d H:i:s') . "\n";
+echo "Completed: " . date('Y-m-d H:i:s') . "\n";?>

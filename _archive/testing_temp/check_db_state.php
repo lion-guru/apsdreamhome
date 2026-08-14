@@ -19,4 +19,4 @@ while ($r = $stmt->fetch()) echo "  {$r['rank_name']}: direct={$r['direct_sale_p
 
 echo "\n=== MLM SETTINGS ===\n";
 $stmt = $pdo->query('SELECT setting_key, setting_value FROM mlm_settings');
-while ($r = $stmt->fetch()) echo "  {$r['setting_key']}={$r['setting_value']}\n";
+while ($r = $stmt->fetch()) echo "  {$r['setting_key']}={$r['setting_value']}\n";?>

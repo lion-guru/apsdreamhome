@@ -23,11 +23,11 @@ foreach ($broken as $v) echo "  - $v\n";
 foreach ($broken as $v) {
     try {
         $pdo->exec("DROP VIEW IF EXISTS `$v`");
-        echo "✓ DROPPED $v\n";
+        echo "âœ“ DROPPED $v\n";
     } catch (Exception $e) {
-        echo "✗ $v: {$e->getMessage()}\n";
+        echo "âœ— $v: {$e->getMessage()}\n";
     }
 }
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "\nTables: $before → $after\n";
+echo "\nTables: $before â†’ $after\n";?>

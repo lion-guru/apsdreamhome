@@ -304,4 +304,4 @@ if (!function_exists('get_page_title')) {
         global $page_title;
         return $page_title ?? $default;
     }
-}
+}?>

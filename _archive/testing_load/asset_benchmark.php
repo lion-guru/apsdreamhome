@@ -1,8 +1,8 @@
 <?php
 /**
- * APS Dream Home — Static Asset Benchmark
+ * APS Dream Home Ã¢â‚¬â€� Static Asset Benchmark
  *
- * Fetch the homepage, extract all <link>/<script>/<img> URLs, download each,
+ * Fetch the homepage, extract all <link>/<script>/<img alt="image"> URLs, download each,
  * report: total size, gzipped size, cache headers, optimization recos.
  *
  * Usage:
@@ -16,9 +16,9 @@ declare(strict_types=1);
 $baseUrl = rtrim($argv[1] ?? getenv('BASE_URL') ?: 'http://localhost/apsdreamhome', '/');
 $pagePath = '/';
 
-echo "╔════════════════════════════════════════════════════════════════╗\n";
-echo "║         APS Dream Home — Static Asset Benchmark               ║\n";
-echo "╚════════════════════════════════════════════════════════════════╝\n\n";
+echo "Ã¢â€¢â€�Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢â€”\n";
+echo "Ã¢â€¢â€˜         APS Dream Home Ã¢â‚¬â€� Static Asset Benchmark               Ã¢â€¢â€˜\n";
+echo "Ã¢â€¢Å¡Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½Ã¢â€¢ï¿½\n\n";
 echo "Origin : {$baseUrl}\n";
 echo "Page   : {$pagePath}\n\n";
 
@@ -45,7 +45,7 @@ $err = curl_error($ch);
 curl_close($ch);
 
 if ($err || $httpCode >= 400 || !$homeBody) {
-    fwrite(STDERR, "❌ Failed to fetch homepage: HTTP {$httpCode}, err={$err}\n");
+    fwrite(STDERR, "Ã¢ï¿½Å’ Failed to fetch homepage: HTTP {$httpCode}, err={$err}\n");
     exit(1);
 }
 echo "Homepage fetched: " . number_format(strlen($homeBody)) . "B (HTTP {$httpCode})\n\n";
@@ -55,7 +55,7 @@ $assetUrls = [];
 $patterns = [
     'css'  => '/<link[^>]+rel=["\']stylesheet["\'][^>]+href=["\']([^"\']+)["\']/i',
     'js'   => '/<script[^>]+src=["\']([^"\']+)["\']/i',
-    'img'  => '/<img[^>]+src=["\']([^"\']+)["\']/i',
+    'img'  => '/<img[^ alt="image">]+src=["\']([^"\']+)["\']/i',
 ];
 foreach ($patterns as $type => $re) {
     if (preg_match_all($re, $homeBody, $m)) {
@@ -151,17 +151,17 @@ foreach ($allAssets as $a) {
 $recos = [];
 foreach ($totals as $t => $v) {
     if ($v['raw'] > 0 && ($v['raw'] - $v['gzip']) / $v['raw'] > 0.3) {
-        $recos[] = strtoupper($t) . ": gzip saves " . round((1 - $v['gzip'] / $v['raw']) * 100, 1) . "% ({$v['raw']}B → {$v['gzip']}B). Ensure mod_deflate is enabled.";
+        $recos[] = strtoupper($t) . ": gzip saves " . round((1 - $v['gzip'] / $v['raw']) * 100, 1) . "% ({$v['raw']}B Ã¢â€ â€™ {$v['gzip']}B). Ensure mod_deflate is enabled.";
     }
     if ($t === 'img' && $v['raw'] > 500 * 1024) {
-        $recos[] = "IMAGES total {$v['raw']}B — consider WebP/AVIF, srcset, lazy loading.";
+        $recos[] = "IMAGES total {$v['raw']}B Ã¢â‚¬â€� consider WebP/AVIF, srcset, lazy loading.";
     }
     if (count(array_filter($results, fn($r) => $r['type'] === $t)) > 12) {
-        $recos[] = strtoupper($t) . ": " . $v['count'] . " files — consider bundling/concatenation to reduce HTTP/2 streams.";
+        $recos[] = strtoupper($t) . ": " . $v['count'] . " files Ã¢â‚¬â€� consider bundling/concatenation to reduce HTTP/2 streams.";
     }
 }
 if (!empty($noCacheList)) {
-    $recos[] = "Cache-Control missing on " . count($noCacheList) . " CSS/JS assets — set long max-age with versioning.";
+    $recos[] = "Cache-Control missing on " . count($noCacheList) . " CSS/JS assets Ã¢â‚¬â€� set long max-age with versioning.";
 }
 
 // ---------------- Output ----------------
@@ -190,12 +190,12 @@ $report['grand_total']['savings_pct'] = $report['grand_total']['raw'] > 0
 $jsonFile = __DIR__ . '/asset_benchmark_results.json';
 file_put_contents($jsonFile, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-$hr = str_repeat('─', 72);
+$hr = str_repeat('Ã¢â€�â‚¬', 72);
 echo $hr . "\n";
 echo "  TOTALS BY TYPE\n";
 echo $hr . "\n";
 printf("  %-8s %6s %12s %12s %8s\n", 'type', 'count', 'raw', 'gzip', 'savings');
-echo "  " . str_repeat('·', 50) . "\n";
+echo "  " . str_repeat('Ã‚Â·', 50) . "\n";
 foreach ($totals as $t => $v) {
     $sav = $v['raw'] > 0 ? round((1 - $v['gzip'] / $v['raw']) * 100, 1) : 0;
     printf("  %-8s %6d %12s %12s %7.1f%%\n",
@@ -204,7 +204,7 @@ foreach ($totals as $t => $v) {
         number_format($v['gzip']) . 'B',
         $sav);
 }
-echo "  " . str_repeat('·', 50) . "\n";
+echo "  " . str_repeat('Ã‚Â·', 50) . "\n";
 printf("  %-8s %6d %12s %12s %7.1f%%\n",
     'TOTAL',
     $report['grand_total']['count'],
@@ -216,15 +216,15 @@ echo $hr . "\n";
 if (!empty($recos)) {
     echo "  RECOMMENDATIONS\n";
     echo $hr . "\n";
-    foreach ($recos as $r) echo "  • {$r}\n";
+    foreach ($recos as $r) echo "  Ã¢â‚¬Â¢ {$r}\n";
     echo $hr . "\n";
 }
 if (!empty($noCacheList)) {
     echo "  ASSETS MISSING Cache-Control (first 5):\n";
-    foreach (array_slice($noCacheList, 0, 5) as $u) echo "    • {$u}\n";
+    foreach (array_slice($noCacheList, 0, 5) as $u) echo "    Ã¢â‚¬Â¢ {$u}\n";
     echo $hr . "\n";
 }
 
-echo "📄 JSON → " . realpath($jsonFile) . "\n";
-echo "\n✅ Asset benchmark complete.\n";
-exit(0);
+echo "Ã°Å¸â€œâ€ž JSON Ã¢â€ â€™ " . realpath($jsonFile) . "\n";
+echo "\nÃ¢Å“â€¦ Asset benchmark complete.\n";
+exit(0);?>

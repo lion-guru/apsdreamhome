@@ -14,4 +14,4 @@ echo "Include result: " . ($res ? 'SUCCESS' : 'FAILED') . "\n";
 echo "LoggerInterface exists after manual include: " . (interface_exists('Psr\Log\LoggerInterface') ? 'YES' : 'NO') . "\n";
 
 echo "spl_autoload_functions:\n";
-print_r(spl_autoload_functions());
+print_r(spl_autoload_functions());?>

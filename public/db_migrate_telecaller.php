@@ -44,4 +44,4 @@ try {
     } else {
         echo "Error: " . $e->getMessage() . "<br>";
     }
-}
+}?>

@@ -31,4 +31,4 @@ foreach ($cols as $c) echo $c['Field'] . " (" . $c['Type'] . ")\n";
 
 echo "\n=== Sample land_deals columns ===\n";
 $cols = $db->fetchAll("SHOW COLUMNS FROM land_deals");
-foreach ($cols as $c) echo $c['Field'] . " (" . $c['Type'] . ")\n";
+foreach ($cols as $c) echo $c['Field'] . " (" . $c['Type'] . ")\n";?>

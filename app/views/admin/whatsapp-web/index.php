@@ -12,7 +12,7 @@
         <div class="col-md-8">
             <div class="card aps-cp-card">
                 <div class="card-body text-center py-5">
-                    <iframe src="<?= WHATSAPP_SERVICE_URL ?>" width="100%" height="600" style="border:none;border-radius:8px" title="WhatsApp Web QR"></iframe>
+                    <iframe src="<?= WHATSAPP_SERVICE_URL ?>" width="100%" height="600" class="style-3619" title="WhatsApp Web QR"></iframe>
                 </div>
             </div>
         </div>
@@ -65,27 +65,27 @@ async function checkStatus() {
         const r = await fetch(WA_SERVICE_URL + '/api/status');
         const d = await r.json();
         if (d.connected) {
-            el.innerHTML = `<div class="alert alert-success mb-0">✅ Connected to ${d.number}<br><small>${d.pushname || ''}</small></div>`;
+            el.innerHTML = `<div class="alert alert-success mb-0">âœ… Connected to ${d.number}<br><small>${d.pushname || ''}</small></div>`;
         } else if (d.qr_generated) {
-            el.innerHTML = `<div class="alert alert-warning mb-0">📱 QR ready - Scan with WhatsApp</div>`;
+            el.innerHTML = `<div class="alert alert-warning mb-0">ðŸ“± QR ready - Scan with WhatsApp</div>`;
         } else {
-            el.innerHTML = `<div class="alert alert-secondary mb-0">⏳ Initializing... Refresh in 10s</div>`;
+            el.innerHTML = `<div class="alert alert-secondary mb-0">â�³ Initializing... Refresh in 10s</div>`;
         }
     } catch(e) {
-        el.innerHTML = `<div class="alert alert-danger mb-0">❌ Service not running<br><small>Start: node whatsapp-service/server.js</small></div>`;
+        el.innerHTML = `<div class="alert alert-danger mb-0">â�Œ Service not running<br><small>Start: node whatsapp-service/server.js</small></div>`;
     }
 }
 
 async function reconnectWA() {
     await fetch(WA_SERVICE_URL + '/api/reconnect', { method: 'POST' });
-    document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">🔄 Reconnecting... QR will appear soon</p>';
+    document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">ðŸ”„ Reconnecting... QR will appear soon</p>';
     setTimeout(checkStatus, 5000);
 }
 
 async function logoutWA() {
     if (confirm('Logout from WhatsApp Web?')) {
         await fetch(WA_SERVICE_URL + '/api/logout', { method: 'POST' });
-        document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">🚪 Logged out</p>';
+        document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">ðŸšª Logged out</p>';
     }
 }
 

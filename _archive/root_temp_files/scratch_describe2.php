@@ -7,4 +7,4 @@ if ($stmt->rowCount() > 0) {
     print_r($cols->fetchAll(PDO::FETCH_ASSOC));
 } else {
     echo "Does not exist.";
-}
+}?>

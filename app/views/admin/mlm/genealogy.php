@@ -27,8 +27,8 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
     $children = $sponsorTree[$userId] ?? [];
     if (empty($children) && $depth > 0) return '';
     $html = '';
-    if ($depth > 0) $html .= '<ul class="genealogy-tree" style="list-style:none;padding-left:24px;margin:0;">';
-    if ($depth === 0) $html .= '<ul class="genealogy-tree" style="list-style:none;padding-left:0;margin:0;">';
+    if ($depth > 0) $html .= '<ul class="genealogy-tree" class="style-99305">';
+    if ($depth === 0) $html .= '<ul class="genealogy-tree" class="style-15773">';
     foreach ($children as $m) {
         $level = strtolower($m['current_level'] ?? 'associate');
         $color = $rankColors[$level] ?? '#94a3b8';
@@ -38,13 +38,13 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
         $refCode = htmlspecialchars($m['referral_code'] ?? '');
         $commission = number_format((float)$m['total_commission'] ?? 0);
         $sales = number_format((float)$m['lifetime_sales'] ?? 0);
-        $html .= '<li style="margin:4px 0;">';
-        $html .= '<div class="d-inline-flex align-items-center border rounded px-3 py-2 genealogy-node" style="border-left:4px solid ' . $color . ' !important;background:#fff;">';
-        $html .= '<span class="badge me-2" style="background:' . $color . ';color:#fff;"><i class="fas ' . $icon . '"></i></span>';
+        $html .= '<li class="style-32162">';
+        $html .= '<div class="d-inline-flex align-items-center border rounded px-3 py-2 genealogy-node" class="style-28828">';
+        $html .= '<span class="badge me-2" class="style-29474"><i class="fas ' . $icon . '"></i></span>';
         $html .= '<span class="fw-bold small me-2">' . $name . '</span>';
-        $html .= '<span class="text-muted" style="font-size:0.72rem;">' . $email . '</span>';
+        $html .= '<span class="text-muted" class="style-36196">' . $email . '</span>';
         $html .= '</span></div>';
-        $html .= '<div class="ms-4 mt-1" style="font-size:0.72rem;color:#6b7280;">';
+        $html .= '<div class="ms-4 mt-1" class="style-83243">';
         $html .= '<span class="me-3"><i class="fas fa-tag me-1"></i>' . $refCode . '</span>';
         $html .= '<span class="me-3"><i class="fas fa-rupee-sign me-1"></i>' . $commission . ' earned</span>';
         $html .= '<span class="me-3"><i class="fas fa-chart-line me-1"></i>' . $sales . ' volume</span>';
@@ -70,7 +70,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:var(--primary);"><?= $totalMembers ?></div>
+                    <div class="style-71517"><?= $totalMembers ?></div>
                     <div class="text-muted small">Total Members</div>
                 </div>
             </div>
@@ -78,7 +78,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#10b981;"><?= $activeMembers ?></div>
+                    <div class="style-23322"><?= $activeMembers ?></div>
                     <div class="text-muted small">Active Members</div>
                 </div>
             </div>
@@ -86,7 +86,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#f59e0b;">&#8377;<?= number_format($totalVolume / 1000, 1) ?>K</div>
+                    <div class="style-39581">&#8377;<?= number_format($totalVolume / 1000, 1) ?>K</div>
                     <div class="text-muted small">Total Team Volume</div>
                 </div>
             </div>
@@ -94,7 +94,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#0f766e;"><?= $maxDepth ?></div>
+                    <div class="style-93706"><?= $maxDepth ?></div>
                     <div class="text-muted small">Generation Depth</div>
                 </div>
             </div>
@@ -117,7 +117,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                 <div class="aps-cp-card-header">
                     <h5 class="m-0"><i class="fas fa-sitemap me-2"></i>Genealogy Tree</h5>
                 </div>
-                <div class="aps-cp-card-body" style="overflow-x:auto;">
+                <div class="aps-cp-card-body" class="style-10754">
                     <?php
                     $rootMembers = [];
                     foreach ($members as $m) {
@@ -135,13 +135,13 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                             $icon = $rankIcons[$level] ?? 'fa-user';
                         ?>
                         <div class="mb-4 genealogy-root">
-                            <div class="d-inline-flex align-items-center border rounded px-3 py-2 mb-2 genealogy-node" style="border-left:4px solid <?= $color ?> !important;background:#f8fafc;font-size:0.95rem;">
-                                <span class="badge me-2" style="background:<?= $color ?>;color:#fff;"><i class="fas <?= $icon ?>"></i></span>
+                            <div class="d-inline-flex align-items-center border rounded px-3 py-2 mb-2 genealogy-node" class="style-84507">
+                                <span class="badge me-2" class="style-37328"><i class="fas <?= $icon ?>"></i></span>
                                 <strong class="me-2"><?= htmlspecialchars($rm['name'] ?? 'Unknown') ?></strong>
                                 <span class="text-muted small"><?= htmlspecialchars($rm['email'] ?? '') ?></span>
                                 <span class="ms-3 badge bg-light text-dark"><i class="fas fa-tag me-1"></i><?= htmlspecialchars($rm['referral_code'] ?? '') ?></span>
                             </div>
-                            <div class="ms-3" style="font-size:0.72rem;color:#6b7280;">
+                            <div class="ms-3" class="style-83243">
                                 <span class="me-3"><i class="fas fa-users me-1"></i><?= (int)($rm['direct_referrals'] ?? 0) ?> direct</span>
                                 <span class="me-3"><i class="fas fa-sitemap me-1"></i><?= (int)($rm['total_team_size'] ?? 0) ?> team</span>
                                 <span class="me-3"><i class="fas fa-rupee-sign me-1"></i><?= number_format((float)$rm['total_commission'] ?? 0) ?> earned</span>
@@ -160,7 +160,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                 <div class="aps-cp-card-header">
                     <h5 class="m-0"><i class="fas fa-list me-2"></i>All Members</h5>
                 </div>
-                <div class="aps-cp-card-body p-0" style="max-height:500px;overflow-y:auto;">
+                <div class="aps-cp-card-body p-0" class="style-67944">
                     <?php if (empty($members)): ?>
                         <p class="text-muted text-center py-3">No members found.</p>
                     <?php else: ?>
@@ -170,14 +170,14 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                             $icon = $rankIcons[$level] ?? 'fa-user';
                         ?>
                         <div class="d-flex align-items-center border-bottom px-3 py-2 genealogy-member-item">
-                            <span class="badge me-2" style="background:<?= $color ?>;color:#fff;min-width:28px;"><i class="fas <?= $icon ?>"></i></span>
+                            <span class="badge me-2" class="style-43316"><i class="fas <?= $icon ?>"></i></span>
                             <div class="flex-grow-1">
                                 <div class="small fw-bold"><?= htmlspecialchars($m['name'] ?? 'Unknown') ?></div>
-                                <div class="text-muted" style="font-size:0.7rem;"><?= htmlspecialchars($m['email'] ?? '') ?></div>
+                                <div class="text-muted" class="style-68658"><?= htmlspecialchars($m['email'] ?? '') ?></div>
                             </div>
                             <div class="text-end">
-                                <div class="small" style="color:<?= $color ?>;font-weight:600;"><?= htmlspecialchars(ucfirst($level)) ?></div>
-                                <div class="text-muted" style="font-size:0.7rem;">&#8377;<?= number_format((float)$m['total_commission'] ?? 0) ?></div>
+                                <div class="small" class="style-19189"><?= htmlspecialchars(ucfirst($level)) ?></div>
+                                <div class="text-muted" class="style-68658">&#8377;<?= number_format((float)$m['total_commission'] ?? 0) ?></div>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -201,7 +201,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                     ?>
                     <div class="d-flex align-items-center justify-content-between border-bottom px-3 py-2">
                         <div class="d-flex align-items-center">
-                            <span class="badge me-2" style="background:<?= $rv['color'] ?>;color:#fff;"><i class="fas <?= $rankIcons[strtolower($rk)] ?? 'fa-user' ?>"></i></span>
+                            <span class="badge me-2" class="style-38303"><i class="fas <?= $rankIcons[strtolower($rk)] ?? 'fa-user' ?>"></i></span>
                             <span class="small fw-bold"><?= htmlspecialchars($rk) ?></span>
                         </div>
                         <span class="badge bg-light text-dark"><?= $rv['count'] ?></span>

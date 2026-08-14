@@ -34,4 +34,4 @@ foreach ($rows as $r) {
     echo sprintf("  %-20s direct=%s%%  l1=%s%%  l2=%s%%  l3=%s%%\n", $r['rank_name'], $r['direct_sale_pct'], $r['l1_pct'], $r['l2_pct'], $r['l3_pct']);
 }
 
-echo "\nDone. Rates updated to 5%-20% differential model.\n";
+echo "\nDone. Rates updated to 5%-20% differential model.\n";?>

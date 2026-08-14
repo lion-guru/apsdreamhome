@@ -48,9 +48,9 @@ $properties = $properties ?? [];
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm h-100">
                     <?php if (!empty($p['image'])): ?>
-                        <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($p['image']) ?>" class="card-img-top" alt="" style="height:180px;object-fit:cover;">
+                        <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($p['image']) ?>" class="card-img-top" alt="" class="style-6390">
                     <?php else: ?>
-                        <div class="card-img-top d-flex align-items-center justify-content-center" style="height:180px;background:#f1f5f9;">
+                        <div class="card-img-top d-flex align-items-center justify-content-center" class="style-8293">
                             <i class="fas fa-image fa-3x text-muted"></i>
                         </div>
                     <?php endif; ?>
@@ -63,7 +63,7 @@ $properties = $properties ?? [];
                             <span class="badge bg-light text-dark"><i class="fas fa-home me-1"></i><?= ucfirst(str_replace('_', ' ', $p['property_type'] ?? __('assoc_prop_type', [], 'Property'))) ?></span>
                             <span class="badge bg-light text-dark"><i class="fas fa-tag me-1"></i><?= ucfirst($p['listing_type'] ?? __('assoc_prop_listing', [], 'Listing')) ?></span>
                         </div>
-                        <div class="fw-bold text-primary mb-1" style="font-size:1.1rem;">₹<?= number_format($p['price'] ?? 0) ?></div>
+                        <div class="fw-bold text-primary mb-1" class="style-88102">â‚¹<?= number_format($p['price'] ?? 0) ?></div>
                         <?php if (!empty($p['area_sqft'])): ?>
                             <small class="text-muted"><i class="fas fa-ruler-combined me-1"></i><?= number_format($p['area_sqft']) ?> sq ft</small>
                         <?php endif; ?>

@@ -21,4 +21,4 @@ foreach ($routes as $r) {
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     echo str_pad($r, 50) . ' -> ' . $code . PHP_EOL;
     curl_close($ch);
-}
+}?>

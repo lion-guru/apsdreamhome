@@ -554,4 +554,4 @@ class AIFraudDetectionService
             return [];
         }
     }
-}
+}?>

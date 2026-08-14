@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_rental_yield_title', [], 'Rental Yield Calculator'); ?></h1>
@@ -9,11 +9,11 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (â‚¹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (â‚¹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="rentAmt" value="15000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">

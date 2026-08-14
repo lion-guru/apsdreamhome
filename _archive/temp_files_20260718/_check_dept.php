@@ -32,4 +32,4 @@ if ($found > 0) {
     
     $r3 = $db->query("SELECT COUNT(*) as cnt FROM designations");
     echo "Row count: " . $r3->fetch()['cnt'] . PHP_EOL;
-}
+}?>

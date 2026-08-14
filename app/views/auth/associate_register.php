@@ -161,31 +161,31 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
             </div>
 
             <div class="earnings-display">
-                <h4><i class="fas fa-calculator me-2"></i>Example: ₹1 Lakh Sale</h4>
+                <h4><i class="fas fa-calculator me-2"></i>Example: Ã¢â€šÂ¹1 Lakh Sale</h4>
                 <div class="earnings-row">
                     <span class="label">Track A (Direct Sale)</span>
-                    <span class="value">₹15,000</span>
+                    <span class="value">Ã¢â€šÂ¹15,000</span>
                 </div>
                 <div class="earnings-row">
                     <span class="label">Track B (Performance)</span>
-                    <span class="value">₹3,000</span>
+                    <span class="value">Ã¢â€šÂ¹3,000</span>
                 </div>
                 <div class="earnings-row">
                     <span class="label">Track C (Milestone)</span>
-                    <span class="value">₹2,000</span>
+                    <span class="value">Ã¢â€šÂ¹2,000</span>
                 </div>
-                <div class="earnings-row" style="border-top:2px solid #ea580c;padding-top:.5rem;margin-top:.3rem">
-                    <span class="label" style="font-weight:700">Total Earning</span>
-                    <span class="value" style="font-size:1rem">₹20,000</span>
+                <div class="earnings-row" class="style-24496">
+                    <span class="label" class="style-14635">Total Earning</span>
+                    <span class="value" class="style-36688">Ã¢â€šÂ¹20,000</span>
                 </div>
             </div>
 
             <?php
                 $s = $stats ?? ['total_paid' => 10560320, 'commission_count' => 311, 'rank_count' => 7, 'max_rate' => 20];
                 $formatAmount = function($amt) {
-                    if ($amt >= 10000000) return '₹' . round($amt / 10000000, 2) . 'Cr';
-                    if ($amt >= 100000) return '₹' . round($amt / 100000, 2) . 'L';
-                    return '₹' . number_format($amt);
+                    if ($amt >= 10000000) return 'Ã¢â€šÂ¹' . round($amt / 10000000, 2) . 'Cr';
+                    if ($amt >= 100000) return 'Ã¢â€šÂ¹' . round($amt / 100000, 2) . 'L';
+                    return 'Ã¢â€šÂ¹' . number_format($amt);
                 };
             ?>
             <div class="stats-bar">
@@ -289,7 +289,9 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
                         By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
                     </div>
 
-                    <button type="submit" class="btn-register" id="submitBtn">
+                    
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn-register" id="submitBtn">
                         <i class="fa-solid fa-user-plus me-2"></i>Join as Associate
                     </button>
                 </form>

@@ -146,4 +146,4 @@ class CommissionCalculator
             "You have earned a commission of " . number_format($amount, 2) . " from a level $level sale."
         );
     }
-}
+}?>

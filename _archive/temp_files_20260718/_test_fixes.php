@@ -32,6 +32,6 @@ foreach ($urls as $url) {
     $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
     curl_close($ch);
     
-    $icon = $code === 200 ? '✅' : ($code === 302 ? '↗️' : '❌');
+    $icon = $code === 200 ? 'âœ…' : ($code === 302 ? 'â†—ï¸�' : 'â�Œ');
     echo "$icon $code $url" . ($code !== 200 ? " -> $finalUrl" : "") . "\n";
-}
+}?>

@@ -69,7 +69,7 @@
                             <?php foreach (array_slice($log, 0, 15) as $entry): ?>
                                 <tr>
                                     <td class="fw-semibold"><?= htmlspecialchars($entry['title'] ?? '') ?></td>
-                                    <td class="text-muted" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                    <td class="text-muted" class="style-20300">
                                         <?= htmlspecialchars($entry['body'] ?? '') ?>
                                     </td>
                                     <td>

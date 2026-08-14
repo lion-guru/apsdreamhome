@@ -7,7 +7,7 @@
 ?>
 <div class="col-md-6 col-lg-4">
     <a href="<?php echo $tool['url']; ?>" class="text-decoration-none">
-        <div class="card border-0 shadow h-100" style="border-radius: 16px; background: <?php echo $tool['gradient']; ?>;">
+        <div class="card border-0 shadow h-100" class="style-67912">
             <div class="card-body text-white text-center p-4 d-flex flex-column justify-content-center">
                 <i class="fas <?php echo $tool['icon']; ?> fa-3x mb-3"></i>
                 <h5 class="fw-bold"><?php echo __($tool['title_key'], [], $tool['title_default']); ?></h5>

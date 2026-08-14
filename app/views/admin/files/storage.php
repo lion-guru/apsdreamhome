@@ -59,8 +59,8 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
                     <div class="position-relative d-inline-block">
                         <canvas id="storageChart" width="200" height="200"></canvas>
                         <div class="mt-3">
-                            <div class="progress" style="height:30px">
-                                <div class="progress-bar bg-<?= $pct > 90 ? 'danger' : ($pct > 70 ? 'warning' : 'success') ?>" role="progressbar" style="width:<?= $pct ?>%" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100"><?= number_format($pct, 1) ?>%</div>
+                            <div class="progress" class="style-55605">
+                                <div class="progress-bar bg-<?= $pct > 90 ? 'danger' : ($pct > 70 ? 'warning' : 'success') ?>" role="progressbar" class="style-21859" aria-valuenow="<?= $pct ?>" aria-valuemin="0" aria-valuemax="100"><?= number_format($pct, 1) ?>%</div>
                             </div>
                             <small class="text-muted">of available storage used</small>
                         </div>

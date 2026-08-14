@@ -25,7 +25,7 @@
     
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
-            <div class="table-responsive" style="max-height:600px;">
+            <div class="table-responsive" class="style-13405">
                 <table class="table table-hover table-sm mb-0">
                     <thead class="table-light sticky-top"><tr><th>Block</th><th>Plot No</th><th>Size</th><th>Dimension</th><th>Basic Price</th><th>PLC</th><th>Total</th><th>Status</th></tr></thead>
                     <tbody>
@@ -35,9 +35,9 @@
                             <td><?= htmlspecialchars($p['plot_no']) ?></td>
                             <td><?= number_format((float)$p['size_sqft']) ?> sqft</td>
                             <td><?= htmlspecialchars($p['dimension'] ?? '-') ?></td>
-                            <td>₹<?= number_format((float)$p['basic_price'], 2) ?></td>
-                            <td>₹<?= number_format((float)$p['plc_charges'], 2) ?></td>
-                            <td>₹<?= number_format((float)$p['basic_price'] + (float)$p['plc_charges'], 2) ?></td>
+                            <td>â‚¹<?= number_format((float)$p['basic_price'], 2) ?></td>
+                            <td>â‚¹<?= number_format((float)$p['plc_charges'], 2) ?></td>
+                            <td>â‚¹<?= number_format((float)$p['basic_price'] + (float)$p['plc_charges'], 2) ?></td>
                             <td><span class="badge bg-<?= $statusColors[$p['status']] ?? 'secondary' ?>"><?= htmlspecialchars($p['status']) ?></span></td>
                         </tr>
                         <?php endforeach; ?>

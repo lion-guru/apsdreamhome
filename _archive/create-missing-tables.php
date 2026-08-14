@@ -169,13 +169,13 @@ $failed = 0;
 foreach ($tables as $name => $sql) {
     try {
         $pdo->exec($sql);
-        echo "✅ Created: $name\n";
+        echo "âœ… Created: $name\n";
         $created++;
     } catch (Exception $e) {
         if (strpos($e->getMessage(), 'already exists') !== false) {
-            echo "⚠️  Already exists: $name\n";
+            echo "âš ï¸�  Already exists: $name\n";
         } else {
-            echo "❌ Failed: $name - " . $e->getMessage() . "\n";
+            echo "â�Œ Failed: $name - " . $e->getMessage() . "\n";
             $failed++;
         }
     }
@@ -184,4 +184,4 @@ foreach ($tables as $name => $sql) {
 echo "\n=== Summary ===\n";
 echo "Created: $created\n";
 echo "Failed: $failed\n";
-echo "Total tables processed: " . count($tables) . "\n";
+echo "Total tables processed: " . count($tables) . "\n";?>

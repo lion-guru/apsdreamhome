@@ -1,4 +1,4 @@
-﻿<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
+ï»¿<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -25,7 +25,7 @@
                         <div class="card-body text-center">
                             <i class="fas <?= $_conn ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> fa-3x mb-2"></i>
                             <h4><?= $_conn ? 'Connected' : 'Disconnected' ?></h4>
-                            <p class="text-muted">Asterisk AMI — <?= $_conn ? 'Online' : 'Offline' ?></p>
+                            <p class="text-muted">Asterisk AMI â€” <?= $_conn ? 'Online' : 'Offline' ?></p>
                             <a href="<?= BASE_URL ?>/admin/sim-calling/settings" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-cog"></i> Settings
                             </a>
@@ -90,7 +90,7 @@
                                     <input type="text" id="callerId" class="form-control form-control-sm" placeholder="SIM number" value="<?= htmlspecialchars($config['caller_id'] ?? '') ?>">
                                 </div>
                             </div>
-                            <div id="callStatus" class="mt-3" style="display:none;"></div>
+                            <div id="callStatus" class="mt-3" class="style-2248"></div>
                         </div>
                     </div>
                 </div>
@@ -315,7 +315,7 @@ async function refreshStatus() {
             location.reload();
         }
     } catch (e) {
-        // Asterisk not reachable — silent fail, no alert
+        // Asterisk not reachable â€” silent fail, no alert
     }
 }
 

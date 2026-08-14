@@ -7,4 +7,4 @@ foreach (['expenses', 'commissions', 'booking_payments', 'activity_logs_unified'
     } catch (Exception $e) {
         echo "$t: MISSING - " . $e->getMessage() . "\n";
     }
-}
+}?>

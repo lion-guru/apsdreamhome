@@ -14,4 +14,4 @@ foreach ($tables as $t) {
         if ($c['Field'] === 'tenant_id') $hasTid = true;
     }
     echo "  has tenant_id: " . ($hasTid ? 'YES' : 'NO') . "\n";
-}
+}?>

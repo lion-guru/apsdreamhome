@@ -3,7 +3,7 @@ $page_title = $page_title ?? __('alert_success_page_title', [], 'Subscription Co
 $page_heading = $page_heading ?? __('alert_success_page_heading', [], 'Subscription Confirmed');
 $content = $content ?? '';
 ?>
-<section class="py-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
+<section class="py-5" class="style-64693">
     <div class="container text-center py-5">
         <div class="display-1 mb-3"><i class="fas fa-check-circle"></i></div>
         <h1 class="display-5 fw-bold mb-3"><?= __('alert_success_heading', [], "You're All Set!") ?></h1>

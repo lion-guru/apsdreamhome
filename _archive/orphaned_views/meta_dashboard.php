@@ -208,7 +208,7 @@ $roleDashboards = [
                                     </span>
                                 <?php endif; ?>
                             </button>
-                            <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                            <div class="dropdown-menu dropdown-menu-end p-3" class="style-28269">
                                 <h6 class="dropdown-header">Notifications</h6>
                                 <?php
                                 $notifications = array_reverse($_SESSION['notifications'] ?? []);
@@ -279,7 +279,7 @@ $roleDashboards = [
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #11998e, #38ef7d); color: white;">
+                        <div class="card super-card" class="style-57396">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -292,12 +292,12 @@ $roleDashboards = [
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #fc4a1a, #f7b733); color: white;">
+                        <div class="card super-card" class="style-13578">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <h6 class="text-white-50">Total Revenue</h6>
-                                        <h3>₹<?php echo number_format($totalRevenue, 2); ?></h3>
+                                        <h3>â‚¹<?php echo number_format($totalRevenue, 2); ?></h3>
                                     </div>
                                     <i class="fas fa-rupee-sign fa-3x text-white-50"></i>
                                 </div>
@@ -305,7 +305,7 @@ $roleDashboards = [
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white;">
+                        <div class="card super-card" class="style-65319">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -323,13 +323,13 @@ $roleDashboards = [
                 <!-- AI Chatbot Analytics -->
                 <div class="row g-4 mb-4">
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                        <div class="card super-card" class="style-85629">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <h6 class="text-white-50">Today's Chats</h6>
                                         <h3><?php echo number_format($todayChats); ?></h3>
-                                        <small><a href="<?php echo $base; ?>/admin/ai-training" class="text-white">View Analytics →</a></small>
+                                        <small><a href="<?php echo $base; ?>/admin/ai-training" class="text-white">View Analytics â†’</a></small>
                                     </div>
                                     <i class="fas fa-comments fa-3x text-white-50"></i>
                                 </div>
@@ -337,7 +337,7 @@ $roleDashboards = [
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+                        <div class="card super-card" class="style-85148">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -351,13 +351,13 @@ $roleDashboards = [
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white;">
+                        <div class="card super-card" class="style-65319">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <h6 class="text-white-50">Q&A Patterns</h6>
                                         <h3><?php echo number_format($totalQA); ?></h3>
-                                        <small><a href="<?php echo $base; ?>/admin/ai-training" class="text-white">Manage →</a></small>
+                                        <small><a href="<?php echo $base; ?>/admin/ai-training" class="text-white">Manage â†’</a></small>
                                     </div>
                                     <i class="fas fa-brain fa-3x text-white-50"></i>
                                 </div>
@@ -365,7 +365,7 @@ $roleDashboards = [
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card super-card" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white;">
+                        <div class="card super-card" class="style-77917">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>

@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Monitoring - Errors & Alerts'; ?>
+ï»¿<?php $pageTitle = 'Monitoring - Errors & Alerts'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
@@ -141,14 +141,14 @@
                                 <tr>
                                     <td class="ps-4"><span class="badge bg-<?= $cls ?>"><?= htmlspecialchars((string)$lvl) ?></span></td>
                                     <td>
-                                        <div class="text-truncate" style="max-width:340px" title="<?= htmlspecialchars((string)($e['message'] ?? '')) ?>">
+                                        <div class="text-truncate" class="style-54533" title="<?= htmlspecialchars((string)($e['message'] ?? '')) ?>">
                                             <?= htmlspecialchars((string)($e['message'] ?? '')) ?>
                                         </div>
                                     </td>
                                     <td class="small text-muted">
                                         <?= htmlspecialchars((string)($e['source'] ?? '')) ?>
                                         <?php if (!empty($e['file'])): ?>
-                                            <div class="text-truncate" style="max-width:240px"><?= htmlspecialchars((string)$e['file']) ?>:<?= (int)($e['line'] ?? 0) ?></div>
+                                            <div class="text-truncate" class="style-9449"><?= htmlspecialchars((string)$e['file']) ?>:<?= (int)($e['line'] ?? 0) ?></div>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end pe-4 small text-muted"><?= htmlspecialchars((string)($e['created_at'] ?? '')) ?></td>
@@ -189,7 +189,7 @@
                                 <tr>
                                     <td class="ps-4">
                                         <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars((string)$sev) ?></span>
-                                        <div class="small text-muted mt-1 text-truncate" style="max-width:220px" title="<?= htmlspecialchars((string)($a['message'] ?? '')) ?>">
+                                        <div class="small text-muted mt-1 text-truncate" class="style-96320" title="<?= htmlspecialchars((string)($a['message'] ?? '')) ?>">
                                             <?= htmlspecialchars((string)($a['message'] ?? '')) ?>
                                         </div>
                                     </td>

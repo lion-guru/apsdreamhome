@@ -24,4 +24,4 @@ try {
 
 } catch (Throwable $e) {
     echo "Exception: " . $e->getMessage() . "\n";
-}
+}?>

@@ -35,4 +35,4 @@ foreach ($rows as $r) {
     $engineRate = $slabs[$r['rank_name']]['rate'] ?? '?';
     $diff = $r['direct_sale_pct'] != $engineRate ? '*** MISMATCH ***' : 'OK';
     printf("%-20s DB=%s%%  Engine=%s%%  %s\n", $r['rank_name'], $r['direct_sale_pct'], $engineRate, $diff);
-}
+}?>

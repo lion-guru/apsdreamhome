@@ -73,4 +73,4 @@ foreach ($allUsers as $u) {
     echo "  Created network_tree for {$u['name']} (id={$u['id']})\n";
 }
 
-echo "\nAll fixes applied!\n";
+echo "\nAll fixes applied!\n";?>

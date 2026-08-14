@@ -1,6 +1,6 @@
 <?php
 /**
- * Centralize Employee Menu — Add employee items to admin_menu_items + RBAC permissions
+ * Centralize Employee Menu â€” Add employee items to admin_menu_items + RBAC permissions
  * 
  * This script:
  * 1. Adds employee-specific menu items to admin_menu_items (section='employee')
@@ -36,7 +36,7 @@ $pdo->exec("DELETE FROM admin_role_menu_permissions WHERE menu_item_id IN (SELEC
 $pdo->exec("DELETE FROM admin_menu_items WHERE section = 'employee'");
 echo "  Cleaned existing employee items.\n";
 
-// Employee menu items — these replace the hardcoded PortalMenuService::employeeItems()
+// Employee menu items â€” these replace the hardcoded PortalMenuService::employeeItems()
 $employeeItems = [
     // Main section
     ['name' => 'Dashboard',       'url' => '/employee/dashboard',          'icon' => 'fas fa-tachometer-alt',  'section' => 'employee', 'order_index' => 10,  'parent_id' => null],
@@ -64,7 +64,7 @@ foreach ($employeeItems as $item) {
     ]);
     $id = $pdo->lastInsertId();
     $insertedIds[$item['name']] = $id;
-    echo "  Added: {$item['name']} (ID: $id) → {$item['url']}\n";
+    echo "  Added: {$item['name']} (ID: $id) â†’ {$item['url']}\n";
 }
 
 echo "\n  Total employee items added: " . count($insertedIds) . "\n\n";
@@ -201,4 +201,4 @@ echo "  Stale admin dashboard perms for employees: $staleDashPerms (should be 0)
 
 echo "\n=== DONE ===\n";
 echo "Employee sidebar is now database-driven via admin_menu_items + RBAC.\n";
-echo "PortalMenuService::employeeItems() will read from DB instead of hardcoded arrays.\n";
+echo "PortalMenuService::employeeItems() will read from DB instead of hardcoded arrays.\n";?>

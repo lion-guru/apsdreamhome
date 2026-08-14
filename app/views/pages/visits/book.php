@@ -48,8 +48,8 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                         <h5 class="mb-1"><?= htmlspecialchars($property['title'] ?? $property['address'] ?? 'Property') ?></h5>
                         <p class="mb-0 text-muted">
                             <i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($property['address'] ?? $property['city'] ?? 'N/A') ?>
-                            <span class="mx-2">·</span>
-                            <strong class="text-success">₹<?= number_format($property['price'] ?? 0) ?></strong>
+                            <span class="mx-2">Â·</span>
+                            <strong class="text-success">â‚¹<?= number_format($property['price'] ?? 0) ?></strong>
                         </p>
                     </div>
                 </div>
@@ -125,9 +125,9 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('visit_type_label', [], 'Visit Type') ?></label>
                                 <select class="form-select" name="visit_type">
-                                    <option value="site_visit">🏠 <?= __('visit_type_site', [], 'Site Visit (in-person)') ?></option>
-                                    <option value="virtual_tour">💻 <?= __('visit_type_virtual', [], 'Virtual Tour (video)') ?></option>
-                                    <option value="office_meeting">🏢 <?= __('visit_type_office', [], 'Office Meeting') ?></option>
+                                    <option value="site_visit">ðŸ�  <?= __('visit_type_site', [], 'Site Visit (in-person)') ?></option>
+                                    <option value="virtual_tour">ðŸ’» <?= __('visit_type_virtual', [], 'Virtual Tour (video)') ?></option>
+                                    <option value="office_meeting">ðŸ�¢ <?= __('visit_type_office', [], 'Office Meeting') ?></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -157,7 +157,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
             </div>
 
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm mb-3" style="position: sticky; top: 100px;">
+                <div class="card border-0 shadow-sm mb-3" class="style-86581">
                     <div class="card-header bg-primary text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i><?= __('visit_summary_title', [], 'Booking Summary') ?></h5>
                     </div>
@@ -178,7 +178,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                         <button type="submit" class="btn btn-primary btn-lg w-100" id="submitBtn" disabled>
                             <i class="fas fa-check-circle me-2"></i> <?= __('visit_summary_submit', [], 'Confirm Booking') ?>
                         </button>
-                        <p class="small text-muted mt-2 mb-0 text-center"><?= __('visit_summary_note', [], 'Free visit · No obligations') ?></p>
+                        <p class="small text-muted mt-2 mb-0 text-center"><?= __('visit_summary_note', [], 'Free visit Â· No obligations') ?></p>
                     </div>
                 </div>
             </div>
@@ -225,7 +225,7 @@ function validateForm() {
     document.getElementById('submitBtn').disabled = !(hasDate && hasTime);
 }
 document.querySelector('select[name="visit_type"]').addEventListener('change', function() {
-    const labels = { site_visit: '🏠 Site Visit', virtual_tour: '💻 Virtual Tour', office_meeting: '🏢 Office Meeting' };
+    const labels = { site_visit: 'ðŸ�  Site Visit', virtual_tour: 'ðŸ’» Virtual Tour', office_meeting: 'ðŸ�¢ Office Meeting' };
     document.getElementById('summaryType').textContent = labels[this.value] || this.value;
 });
 </script>

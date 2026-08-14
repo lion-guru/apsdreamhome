@@ -14,4 +14,4 @@ echo "user_properties count: " . ($count['c'] ?? 0) . "\n";
 
 $cols = $db->fetchAll("DESCRIBE user_properties");
 echo "user_properties columns:\n";
-foreach ($cols as $col) echo "  " . $col['Field'] . " (" . $col['Type'] . ")\n";
+foreach ($cols as $col) echo "  " . $col['Field'] . " (" . $col['Type'] . ")\n";?>

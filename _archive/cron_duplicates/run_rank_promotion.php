@@ -1,16 +1,16 @@
 <?php
 /**
  * Daily Rank Auto-Promotion
- * ─────────────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * Evaluates all active associates and promotes those who meet
  * rank thresholds (legs + GBV volume). Updates associates.level,
  * mlm_profiles.current_level, and inserts mlm_rank_history.
  *
  * Thresholds:
- *   Silver:  3 legs, ₹2,00,000 GBV
- *   Gold:    4 legs, ₹5,00,000 GBV
- *   Platinum: 5 legs, ₹10,00,000 GBV
- *   Diamond: 6 legs, ₹25,00,000 GBV
+ *   Silver:  3 legs, â‚¹2,00,000 GBV
+ *   Gold:    4 legs, â‚¹5,00,000 GBV
+ *   Platinum: 5 legs, â‚¹10,00,000 GBV
+ *   Diamond: 6 legs, â‚¹25,00,000 GBV
  *
  * Schedule: Daily at 01:10 AM IST
  *   0 1 * * * php C:\xampp\htdocs\apsdreamhome\scripts\run_rank_promotion.php
@@ -56,7 +56,7 @@ try {
 
         if ($newRank !== null && $newRank !== $oldRank) {
             $engine->applyRankPromotion((int)$assoc['id']);
-            echo "✅ {$assoc['name']} (user_id={$assoc['user_id']}): {$oldRank} → {$newRank}" . PHP_EOL;
+            echo "âœ… {$assoc['name']} (user_id={$assoc['user_id']}): {$oldRank} â†’ {$newRank}" . PHP_EOL;
             $promoted++;
         } else {
             echo "   {$assoc['name']} (user_id={$assoc['user_id']}): {$oldRank} (no change)" . PHP_EOL;
@@ -64,7 +64,7 @@ try {
         }
     }
 
-    echo PHP_EOL . "── Summary ──" . PHP_EOL;
+    echo PHP_EOL . "â”€â”€ Summary â”€â”€" . PHP_EOL;
     echo "   Total associates: " . count($associates) . PHP_EOL;
     echo "   Promoted: {$promoted}" . PHP_EOL;
     echo "   Unchanged: {$unchanged}" . PHP_EOL;
@@ -72,7 +72,7 @@ try {
     echo PHP_EOL . "[" . date('Y-m-d H:i:s') . "] Rank promotion run complete" . PHP_EOL;
 
 } catch (\Throwable $e) {
-    echo "❌ FATAL: " . $e->getMessage() . PHP_EOL;
+    echo "â�Œ FATAL: " . $e->getMessage() . PHP_EOL;
     echo "   File: " . $e->getFile() . ":" . $e->getLine() . PHP_EOL;
     exit(1);
-}
+}?>

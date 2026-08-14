@@ -103,7 +103,7 @@ ob_start();
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-code me-2"></i>Portal Response</h6></div>
     <div class="card-body aps-cp-card-body">
-        <pre class="bg-light p-3 rounded small mb-0" style="max-height:300px;overflow:auto"><?= htmlspecialchars($submission['portal_response_json']) ?></pre>
+        <pre class="bg-light p-3 rounded small mb-0" class="style-64151"><?= htmlspecialchars($submission['portal_response_json']) ?></pre>
     </div>
 </div>
 <?php endif; ?>

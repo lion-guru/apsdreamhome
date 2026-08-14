@@ -11,7 +11,7 @@ $ai_tools = [
     ['icon' => 'fas fa-home', 'title' => 'Property Matchmaker', 'desc' => 'AI finds properties matching your budget, location, and lifestyle preferences', 'url' => '/properties', 'color' => '#f59e0b', 'bg' => '#fffbeb'],
     ['icon' => 'fas fa-chart-line', 'title' => 'Market Intelligence', 'desc' => 'Real-time market trends, price movements, and investment opportunity analysis', 'url' => '/ai-dashboard', 'color' => '#ef4444', 'bg' => '#fef2f2'],
     ['icon' => 'fas fa-file-alt', 'title' => 'Document AI', 'desc' => 'Auto-verify property documents, detect discrepancies, and flag legal issues', 'url' => '/legal-documents', 'color' => '#8b5cf6', 'bg' => '#f5f3ff'],
-    ['icon' => 'fas fa-search', 'title' => 'Smart Search', 'desc' => 'Natural language search — describe what you want, AI finds matching properties', 'url' => '/properties', 'color' => '#06b6d4', 'bg' => '#ecfeff'],
+    ['icon' => 'fas fa-search', 'title' => 'Smart Search', 'desc' => 'Natural language search â€” describe what you want, AI finds matching properties', 'url' => '/properties', 'color' => '#06b6d4', 'bg' => '#ecfeff'],
 ];
 
 $health_status = $ai_stats['system_health'] ?? 'healthy';
@@ -58,41 +58,41 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
 </style>
 
 <!-- Hero -->
-<section class="ai-dash-hero py-5 text-white position-relative" style="margin-bottom:0">
-    <div class="container text-center py-4 position-relative" style="z-index:2">
+<section class="ai-dash-hero py-5 text-white position-relative" class="style-45611">
+    <div class="container text-center py-4 position-relative" class="style-9174">
         <div class="d-flex justify-content-center mb-3">
             <div class="ai-dash-health">
-                <span class="dot" style="background:<?= $health_color ?>"></span>
+                <span class="dot" class="style-27070"></span>
                 <?= $health_label ?>
             </div>
         </div>
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-brain me-3" style="color:#818cf8"></i>AI Dashboard</h1>
-        <p class="lead mb-4" style="color:rgba(255,255,255,0.75)">Your personal AI-powered real estate assistant — smarter searches, accurate valuations, and market insights</p>
-        <div class="row g-3 justify-content-center" style="max-width:900px;margin:0 auto">
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-brain me-3" class="style-30266"></i>AI Dashboard</h1>
+        <p class="lead mb-4" class="style-92305">Your personal AI-powered real estate assistant â€” smarter searches, accurate valuations, and market insights</p>
+        <div class="row g-3 justify-content-center" class="style-84285">
             <div class="col-6 col-md-3">
                 <div class="ai-dash-stat">
-                    <div class="stat-icon" style="background:rgba(99,102,241,0.2);color:#818cf8"><i class="fas fa-bolt"></i></div>
+                    <div class="stat-icon" class="style-38486"><i class="fas fa-bolt"></i></div>
                     <div class="stat-value"><?= number_format($ai_stats['daily_requests'] ?? 850) ?></div>
                     <div class="stat-label">AI Queries Today</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="ai-dash-stat">
-                    <div class="stat-icon" style="background:rgba(16,185,129,0.2);color:#34d399"><i class="fas fa-bullseye"></i></div>
+                    <div class="stat-icon" class="style-66988"><i class="fas fa-bullseye"></i></div>
                     <div class="stat-value"><?= $ai_stats['accuracy_rate'] ?? '94.2' ?>%</div>
                     <div class="stat-label">Accuracy Rate</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="ai-dash-stat">
-                    <div class="stat-icon" style="background:rgba(245,158,11,0.2);color:#fbbf24"><i class="fas fa-cogs"></i></div>
+                    <div class="stat-icon" class="style-3380"><i class="fas fa-cogs"></i></div>
                     <div class="stat-value"><?= $ai_stats['active_models'] ?? 8 ?></div>
                     <div class="stat-label">Active Models</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="ai-dash-stat">
-                    <div class="stat-icon" style="background:rgba(139,92,246,0.2);color:#a78bfa"><i class="fas fa-chart-bar"></i></div>
+                    <div class="stat-icon" class="style-67972"><i class="fas fa-chart-bar"></i></div>
                     <div class="stat-value"><?= number_format($ai_stats['total_predictions'] ?? 12500) ?></div>
                     <div class="stat-label">Total Predictions</div>
                 </div>
@@ -102,23 +102,23 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
 </section>
 
 <!-- AI Tools Grid -->
-<div class="container" style="margin-top:-20px;position:relative;z-index:5">
+<div class="container" class="style-7015">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0" style="color:#1e293b"><i class="fas fa-wand-magic-sparkles me-2" style="color:#6366f1"></i>AI-Powered Tools</h4>
-        <span class="text-muted" style="font-size:0.82rem"><?= count($ai_tools) ?> tools available</span>
+        <h4 class="fw-bold mb-0" class="style-8420"><i class="fas fa-wand-magic-sparkles me-2" class="style-58842"></i>AI-Powered Tools</h4>
+        <span class="text-muted" class="style-3268"><?= count($ai_tools) ?> tools available</span>
     </div>
 
     <div class="row g-4 mb-5">
         <?php foreach ($ai_tools as $tool): ?>
             <div class="col-md-6 col-lg-4">
-                <a href="<?= BASE_URL . $tool['url'] ?>" class="ai-tool-card position-relative" style="--tool-color:<?= $tool['color'] ?>">
-                    <div class="tool-icon" style="background:<?= $tool['bg'] ?>;color:<?= $tool['color'] ?>">
+                <a href="<?= BASE_URL . $tool['url'] ?>" class="ai-tool-card position-relative" class="style-3606">
+                    <div class="tool-icon" class="style-39368">
                         <i class="<?= $tool['icon'] ?>"></i>
                     </div>
                     <div class="tool-title"><?= $tool['title'] ?></div>
                     <div class="tool-desc"><?= $tool['desc'] ?></div>
                     <div class="tool-arrow">
-                        <i class="fas fa-arrow-right" style="font-size:0.75rem"></i>
+                        <i class="fas fa-arrow-right" class="style-5315"></i>
                     </div>
                 </a>
             </div>
@@ -129,35 +129,35 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
     <div class="row g-4 mb-5">
         <!-- Training Progress -->
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm" style="border-radius:16px">
+            <div class="card border-0 shadow-sm" class="style-26085">
                 <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3" style="color:#1e293b"><i class="fas fa-graduation-cap me-2" style="color:#6366f1"></i>AI Training Progress</h6>
+                    <h6 class="fw-bold mb-3" class="style-8420"><i class="fas fa-graduation-cap me-2" class="style-58842"></i>AI Training Progress</h6>
                     <?php if (!empty($training_progress)): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span style="font-size:0.85rem;color:#475569"><?= htmlspecialchars($training_progress['current_model'] ?? 'Model') ?></span>
-                            <span class="fw-bold" style="color:#6366f1"><?= (int)($training_progress['progress_percentage'] ?? 0) ?>%</span>
+                            <span class="style-34829"><?= htmlspecialchars($training_progress['current_model'] ?? 'Model') ?></span>
+                            <span class="fw-bold" class="style-58842"><?= (int)($training_progress['progress_percentage'] ?? 0) ?>%</span>
                         </div>
                         <div class="ai-progress-bar mb-3">
-                            <div class="ai-progress-fill" style="width:<?= (int)($training_progress['progress_percentage'] ?? 0) ?>%;background:linear-gradient(90deg,#6366f1,#8b5cf6)"></div>
+                            <div class="ai-progress-fill" class="style-95956"></div>
                         </div>
                         <div class="row g-3">
                             <div class="col-4">
-                                <div style="font-size:0.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px">Dataset</div>
-                                <div style="font-size:0.9rem;font-weight:600;color:#1e293b"><?= $training_progress['dataset_size'] ?? 'N/A' ?></div>
+                                <div class="style-91082">Dataset</div>
+                                <div class="style-39295"><?= $training_progress['dataset_size'] ?? 'N/A' ?></div>
                             </div>
                             <div class="col-4">
-                                <div style="font-size:0.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px">Epochs</div>
-                                <div style="font-size:0.9rem;font-weight:600;color:#1e293b"><?= (int)($training_progress['epochs_completed'] ?? 0) ?>/<?= (int)($training_progress['total_epochs'] ?? 0) ?></div>
+                                <div class="style-91082">Epochs</div>
+                                <div class="style-39295"><?= (int)($training_progress['epochs_completed'] ?? 0) ?>/<?= (int)($training_progress['total_epochs'] ?? 0) ?></div>
                             </div>
                             <div class="col-4">
-                                <div style="font-size:0.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px">Accuracy</div>
-                                <div style="font-size:0.9rem;font-weight:600;color:#10b981"><?= $training_progress['current_accuracy'] ?? 0 ?>%</div>
+                                <div class="style-91082">Accuracy</div>
+                                <div class="style-79934"><?= $training_progress['current_accuracy'] ?? 0 ?>%</div>
                             </div>
                         </div>
                     <?php else: ?>
                         <div class="text-center py-4 text-muted">
                             <i class="fas fa-clock fa-2x mb-2 opacity-50"></i>
-                            <p style="font-size:0.85rem">No active training session</p>
+                            <p class="style-49273">No active training session</p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -166,9 +166,9 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
 
         <!-- Recent Activity -->
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm" style="border-radius:16px">
+            <div class="card border-0 shadow-sm" class="style-26085">
                 <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3" style="color:#1e293b"><i class="fas fa-stream me-2" style="color:#6366f1"></i>Recent AI Activity</h6>
+                    <h6 class="fw-bold mb-3" class="style-8420"><i class="fas fa-stream me-2" class="style-58842"></i>Recent AI Activity</h6>
                     <?php if (!empty($recent_activity)): ?>
                         <?php foreach (array_slice($recent_activity, 0, 5) as $activity): ?>
                             <?php
@@ -180,18 +180,18 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
                             };
                             ?>
                             <div class="ai-activity-item">
-                                <div class="ai-activity-dot" style="background:<?= $status_color ?>"></div>
+                                <div class="ai-activity-dot" class="style-12909"></div>
                                 <div>
-                                    <div style="font-size:0.85rem;font-weight:600;color:#1e293b"><?= htmlspecialchars($activity['activity'] ?? '') ?></div>
-                                    <div style="font-size:0.75rem;color:#94a3b8"><?= htmlspecialchars($activity['details'] ?? '') ?></div>
-                                    <div style="font-size:0.7rem;color:#cbd5e1;margin-top:2px"><?= $activity['timestamp'] ?? '' ?></div>
+                                    <div class="style-31155"><?= htmlspecialchars($activity['activity'] ?? '') ?></div>
+                                    <div class="style-91789"><?= htmlspecialchars($activity['details'] ?? '') ?></div>
+                                    <div class="style-71452"><?= $activity['timestamp'] ?? '' ?></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div class="text-center py-4 text-muted">
                             <i class="fas fa-inbox fa-2x mb-2 opacity-50"></i>
-                            <p style="font-size:0.85rem">No recent activity</p>
+                            <p class="style-49273">No recent activity</p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -201,27 +201,27 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
 
     <!-- How AI Helps You -->
     <div class="text-center mb-5">
-        <h4 class="fw-bold mb-4" style="color:#1e293b"><i class="fas fa-lightbulb me-2" style="color:#f59e0b"></i>How AI Helps You</h4>
+        <h4 class="fw-bold mb-4" class="style-8420"><i class="fas fa-lightbulb me-2" class="style-62735"></i>How AI Helps You</h4>
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="p-4" style="background:linear-gradient(135deg,#eef2ff,#f0f0ff);border-radius:16px">
-                    <i class="fas fa-clock fa-2x mb-3" style="color:#6366f1"></i>
+                <div class="p-4" class="style-99674">
+                    <i class="fas fa-clock fa-2x mb-3" class="style-58842"></i>
                     <h6 class="fw-bold">Save Time</h6>
-                    <p style="font-size:0.82rem;color:#64748b;margin:0">AI instantly finds properties matching your exact needs — no more scrolling through irrelevant listings</p>
+                    <p class="style-91292">AI instantly finds properties matching your exact needs â€” no more scrolling through irrelevant listings</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="p-4" style="background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border-radius:16px">
-                    <i class="fas fa-shield-halved fa-2x mb-3" style="color:#10b981"></i>
+                <div class="p-4" class="style-10955">
+                    <i class="fas fa-shield-halved fa-2x mb-3" class="style-2154"></i>
                     <h6 class="fw-bold">Make Smart Decisions</h6>
-                    <p style="font-size:0.82rem;color:#64748b;margin:0">Data-driven price predictions and market analysis help you buy at the right price</p>
+                    <p class="style-91292">Data-driven price predictions and market analysis help you buy at the right price</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="p-4" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:16px">
-                    <i class="fas fa-handshake fa-2x mb-3" style="color:#f59e0b"></i>
+                <div class="p-4" class="style-11858">
+                    <i class="fas fa-handshake fa-2x mb-3" class="style-62735"></i>
                     <h6 class="fw-bold">Stay Informed</h6>
-                    <p style="font-size:0.82rem;color:#64748b;margin:0">Real-time market trends and AI-generated insights keep you ahead of the curve</p>
+                    <p class="style-91292">Real-time market trends and AI-generated insights keep you ahead of the curve</p>
                 </div>
             </div>
         </div>

@@ -5,7 +5,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-5">
-                    <div class="mb-4"><i class="fas fa-times-circle text-danger" style="font-size:5rem"></i></div>
+                    <div class="mb-4"><i class="fas fa-times-circle text-danger" class="style-69098"></i></div>
                     <h3 class="text-danger mb-3">Payment Failed!</h3>
                     <p class="text-muted mb-1"><?= htmlspecialchars($errorMessage) ?></p>
                     <?php if ($transactionId): ?>

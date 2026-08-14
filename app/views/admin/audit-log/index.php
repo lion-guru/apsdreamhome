@@ -175,8 +175,8 @@ ob_start();
               <span><code><?= htmlspecialchars($item['action']) ?></code></span>
               <strong><?= number_format($item['cnt']) ?></strong>
             </div>
-            <div class="progress" style="height: 6px;">
-              <div class="progress-bar bg-primary" style="width: <?= min(100, ($item['cnt'] / max(1, $stats['total'] ?? 1)) * 100) ?>%"></div>
+            <div class="progress" class="style-29939">
+              <div class="progress-bar bg-primary" class="style-31886"></div>
             </div>
           </div>
         <?php endforeach; ?>
@@ -195,14 +195,14 @@ ob_start();
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th style="width: 160px;">Time</th>
-              <th style="width: 200px;">User</th>
-              <th style="width: 150px;">Action</th>
-              <th style="width: 100px;">Type</th>
+              <th class="style-35962">Time</th>
+              <th class="style-869">User</th>
+              <th class="style-10944">Action</th>
+              <th class="style-70827">Type</th>
               <th>Entity</th>
-              <th style="width: 250px;">Description</th>
-              <th style="width: 100px;">IP</th>
-              <th style="width: 90px;">Status</th>
+              <th class="style-73161">Description</th>
+              <th class="style-70827">IP</th>
+              <th class="style-80799">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -254,7 +254,7 @@ ob_start();
                       <?php endif; ?>
                     </span>
                   <?php else: ?>
-                    <span class="text-muted">—</span>
+                    <span class="text-muted">â€”</span>
                   <?php endif; ?>
                 </td>
                 <td><small><?= htmlspecialchars($l['description'] ?? '') ?></small></td>

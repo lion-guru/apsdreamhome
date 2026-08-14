@@ -9,7 +9,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Name</th><td><?= htmlspecialchars($ci['name'] ?? '-') ?></td></tr>
-                        <tr><th>Address</th><td style="word-break:break-all"><code><?= htmlspecialchars($ci['address'] ?? '-') ?></code></td></tr>
+                        <tr><th>Address</th><td class="style-85847"><code><?= htmlspecialchars($ci['address'] ?? '-') ?></code></td></tr>
                         <tr><th>Network</th><td><span class="badge bg-info"><?= htmlspecialchars($ci['network'] ?? '-') ?></span></td></tr>
                     </table></div>
                 </div>

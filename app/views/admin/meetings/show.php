@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="card-body">
                         <table class="table table-borderless">
                             <tr>
-                                <td class="text-muted" style="width:160px">Type</td>
+                                <td class="text-muted" class="style-17160">Type</td>
                                 <td><span class="badge bg-primary"><?php echo ucfirst(htmlspecialchars($meeting['meeting_type'] ?? 'meeting')); ?></span></td>
                             </tr>
                             <tr>
@@ -35,7 +35,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <i class="fas fa-clock me-1"></i>
                                         <?php echo date('D, M d, Y \a\t h:i A', strtotime($meeting['start_time'])); ?>
                                         <?php if (!empty($meeting['end_time'])): ?>
-                                            — <?php echo date('h:i A', strtotime($meeting['end_time'])); ?>
+                                            â€” <?php echo date('h:i A', strtotime($meeting['end_time'])); ?>
                                         <?php endif; ?>
                                     <?php else: ?>
                                         Not scheduled

@@ -24,4 +24,4 @@ $rows2 = $pdo->query("SELECT level, COUNT(*) as cnt FROM associates GROUP BY lev
 echo "\n=== AFTER FIX ===\n";
 foreach ($rows2 as $r) {
     echo "  '{$r['level']}' => {$r['cnt']}\n";
-}
+}?>

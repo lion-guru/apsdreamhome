@@ -125,4 +125,4 @@ echo "Inserted/Updated $inserted circle rates\n";
 
 // Verify
 $count = $pdo->query("SELECT COUNT(*) FROM circle_rates WHERE is_active = 1")->fetchColumn();
-echo "Total active circle rates: $count\n";
+echo "Total active circle rates: $count\n";?>

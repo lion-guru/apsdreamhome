@@ -15,4 +15,4 @@ print_r($assoc);
 // Check user 2's associate record
 echo "\n=== User 2 associate record ===\n";
 $u2 = $db->fetch("SELECT * FROM associates WHERE user_id = 2");
-print_r($u2);
+print_r($u2);?>

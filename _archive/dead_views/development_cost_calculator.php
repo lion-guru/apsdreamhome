@@ -20,7 +20,7 @@ try {
 
 // Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
 // Controller must perform auth check via $this->requireAdmin() / requireLogin()
-// NOTE: This file is a legacy/dead view — not referenced by any controller.
+// NOTE: This file is a legacy/dead view â€” not referenced by any controller.
 
 // Initialize hybrid commission system - commented out due to missing file
 // $hybrid_system = new HybridRealEstateCommission($conn);
@@ -403,12 +403,12 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                         <!-- Land Cost -->
                                         <div class="mb-4">
                                             <label class="form-label">
-                                                <i class="fas fa-mountain me-1"></i>Land Cost (₹)
+                                                <i class="fas fa-mountain me-1"></i>Land Cost (â‚¹)
                                             </label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" name="land_cost"
                                                     value="2000000" min="0" step="1000" required>
-                                                <span class="input-group-text">₹</span>
+                                                <span class="input-group-text">â‚¹</span>
                                             </div>
                                             <small class="text-muted">Cost of acquiring the land</small>
                                         </div>
@@ -461,7 +461,8 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                         </div>
 
                                         <div class="text-center">
-                                            <button type="submit" name="calculate_plot_rate" class="btn btn-calculate">
+                                            <?php echo \App\Helpers\SimpleCaptcha::renderField(); ?>
+<button type="submit" name="calculate_plot_rate" class="btn btn-calculate">
                                                 <i class="fas fa-calculator me-2"></i>Calculate Plot Rate
                                             </button>
                                         </div>
@@ -479,7 +480,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                                         <!-- Summary Card -->
                                         <div class="summary-card">
-                                            <h3><?php echo htmlspecialchars($calculation_result['calculation']['final_rate_per_sqft']); ?> ₹/sq ft</h3>
+                                            <h3><?php echo htmlspecialchars($calculation_result['calculation']['final_rate_per_sqft']); ?> â‚¹/sq ft</h3>
                                             <p class="mb-0">Final Plot Rate</p>
                                         </div>
 
@@ -490,34 +491,34 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             <div class="cost-breakdown">
                                                 <div class="breakdown-row">
                                                     <span>Land Cost:</span>
-                                                    <span>₹<?php echo number_format($calculation_result['land_cost']); ?></span>
+                                                    <span>â‚¹<?php echo number_format($calculation_result['land_cost']); ?></span>
                                                 </div>
 
                                                 <div class="breakdown-row">
                                                     <span>Development Cost:</span>
-                                                    <span>₹<?php echo number_format($calculation_result['total_development_cost']); ?></span>
+                                                    <span>â‚¹<?php echo number_format($calculation_result['total_development_cost']); ?></span>
                                                 </div>
 
                                                 <div class="breakdown-row">
                                                     <span>Commission Cost:</span>
-                                                    <span>₹<?php echo number_format($calculation_result['calculation']['commission_cost']); ?></span>
+                                                    <span>â‚¹<?php echo number_format($calculation_result['calculation']['commission_cost']); ?></span>
                                                 </div>
 
                                                 <div class="breakdown-row total">
                                                     <span>Total Cost:</span>
-                                                    <span>₹<?php echo number_format($calculation_result['calculation']['total_cost_with_commission']); ?></span>
+                                                    <span>â‚¹<?php echo number_format($calculation_result['calculation']['total_cost_with_commission']); ?></span>
                                                 </div>
                                             </div>
 
                                             <div class="cost-breakdown">
                                                 <div class="breakdown-row">
                                                     <span>Profit (<?php echo $calculation_result['profit_margin']; ?>%):</span>
-                                                    <span>₹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></span>
+                                                    <span>â‚¹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></span>
                                                 </div>
 
                                                 <div class="breakdown-row total">
                                                     <span>Total Value:</span>
-                                                    <span>₹<?php echo number_format($calculation_result['calculation']['total_value']); ?></span>
+                                                    <span>â‚¹<?php echo number_format($calculation_result['calculation']['total_value']); ?></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -530,7 +531,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 <div class="cost-breakdown">
                                                     <div class="breakdown-row">
                                                         <span><?php echo ucfirst($cost['type']); ?>:</span>
-                                                        <span>₹<?php echo number_format($cost['amount']); ?></span>
+                                                        <span>â‚¹<?php echo number_format($cost['amount']); ?></span>
                                                     </div>
                                                     <?php if ($cost['description']): ?>
                                                         <small class="text-muted"><?php echo htmlspecialchars($cost['description']); ?></small>
@@ -551,11 +552,11 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                     <small>Margin Rating</small>
                                                 </div>
                                                 <div class="col-4">
-                                                    <h4 class="text-success">₹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></h4>
+                                                    <h4 class="text-success">â‚¹<?php echo number_format($calculation_result['calculation']['profit_amount']); ?></h4>
                                                     <small>Total Profit</small>
                                                 </div>
                                                 <div class="col-4">
-                                                    <h4 class="text-info">₹<?php echo number_format($calculation_result['calculation']['total_value']); ?></h4>
+                                                    <h4 class="text-info">â‚¹<?php echo number_format($calculation_result['calculation']['total_value']); ?></h4>
                                                     <small>Project Value</small>
                                                 </div>
                                             </div>
@@ -660,7 +661,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
             // Update total development cost display if exists
             const totalDisplay = document.getElementById('totalDevelopmentCost');
             if (totalDisplay) {
-                totalDisplay.textContent = '₹' + total.toLocaleString('en-IN');
+                totalDisplay.textContent = 'â‚¹' + total.toLocaleString('en-IN');
             }
         }
 

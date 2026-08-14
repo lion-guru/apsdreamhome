@@ -45,4 +45,4 @@ $db->exec("
         INDEX idx_entity (entity_type)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
-echo "OK search_history table created\n";
+echo "OK search_history table created\n";?>

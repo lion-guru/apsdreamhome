@@ -96,6 +96,21 @@ body.mobile-drawer-open {
   .mobile-bottom-nav {
     display: none !important;
   }
+  /* Desktop: allow nav items to wrap when there are too many for one line */
+  .premium-header .navbar-nav {
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 2px 4px;
+    overflow: visible;
+  }
+  .premium-header .navbar-nav .nav-item {
+    flex-shrink: 0;
+  }
+  /* Ensure dropdown menus don't get clipped */
+  .premium-header .navbar .container {
+    width: 100%;
+    overflow: visible;
+  }
 }
 
 .mobile-drawer.active {

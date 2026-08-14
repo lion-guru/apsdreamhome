@@ -7,4 +7,4 @@ foreach (['expenses', 'commissions', 'booking_payments', 'activity_logs_unified'
         echo "  {$c['Field']} ({$c['Type']})\n";
     }
     echo "\n";
-}
+}?>

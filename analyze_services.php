@@ -98,4 +98,4 @@ foreach ($files as $file) {
         echo "    $tbl: I{$counts['INSERT']} U{$counts['UPDATE']} D{$counts['DELETE']} S{$counts['SELECT']} (total=$total)\n";
     }
     echo "---\n";
-}
+}?>

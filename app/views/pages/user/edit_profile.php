@@ -127,7 +127,7 @@ $user_data['uphone'] = $user_data['phone'];
 
     <div class="row g-4">
         <!-- Basic Info Form -->
-        <div class="col-lg-7 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="col-lg-7 animate-fade-up" class="style-44791">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-header bg-primary text-white p-4">
                     <h5 class="mb-0 fw-bold"><i class="fas fa-user-circle me-2"></i><?= __('user_edit_basic_info', null, 'Basic Information') ?></h5>
@@ -156,7 +156,7 @@ $user_data['uphone'] = $user_data['phone'];
         </div>
 
         <!-- Security Section -->
-        <div class="col-lg-5 animate-fade-up" style="animation-delay: 0.2s;">
+        <div class="col-lg-5 animate-fade-up" class="style-75842">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" id="password-section">
                 <div class="card-header bg-dark text-white p-4">
                     <h5 class="mb-0 fw-bold"><i class="fas fa-lock me-2"></i><?= __('user_edit_change_password', null, 'Change Password') ?></h5>

@@ -14,6 +14,9 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo __('auth_admin_login_title', 'Admin Login'); ?></title>
@@ -385,11 +388,11 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
             </form>
 
             <!-- Google Login Button -->
-            <div style="margin-top: 1.5rem; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 1rem; position: relative;">
-                <span style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); padding: 0 1rem; position: relative; z-index: 1;"><?php echo __('auth_or_continue_with', 'or continue with'); ?></span>
-                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.2); z-index: 0;"></div>
+            <div class="style-4898">
+                <span class="style-60791"><?php echo __('auth_or_continue_with', 'or continue with'); ?></span>
+                <div class="style-68205"></div>
             </div>
-            <a href="<?php echo BASE_URL; ?>/auth/google" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; height: 50px; border: 2px solid rgba(255,255,255,0.3); border-radius: 12px; background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; margin-bottom: 1.5rem;">
+            <a href="<?php echo BASE_URL; ?>/auth/google" class="style-9512">
                 <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />

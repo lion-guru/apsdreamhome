@@ -51,20 +51,20 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <tr>
                         <td><?= (int)($a['id'] ?? 0) ?></td>
                         <td><?= htmlspecialchars((string)($a['name'] ?? '#'.($a['user_id'] ?? ''))) ?></td>
-                        <td><?= htmlspecialchars((string)($a['email'] ?? '—')) ?></td>
+                        <td><?= htmlspecialchars((string)($a['email'] ?? 'â€”')) ?></td>
                         <td>
-                            <span class="badge" style="background:<?= htmlspecialchars($color) ?>;color:#fff;">
+                            <span class="badge" class="style-1810">
                                 <i class="fas <?= htmlspecialchars($icon) ?> me-1"></i>
                                 <?= htmlspecialchars(ucfirst($curRank)) ?>
                             </span>
                         </td>
-                        <td><?= htmlspecialchars(ucfirst((string)($a['next_rank'] ?? '—'))) ?></td>
+                        <td><?= htmlspecialchars(ucfirst((string)($a['next_rank'] ?? 'â€”'))) ?></td>
                         <td><?= (int)($a['leg_count'] ?? 0) ?></td>
                         <td>&#8377;<?= number_format((float)($a['lifetime_sales'] ?? 0)) ?></td>
-                        <td style="min-width:120px;">
+                        <td class="style-286">
                             <?php $pct = (float)($a['progress_pct'] ?? 0); ?>
-                            <div class="progress" style="height:8px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width:<?= $pct ?>%"></div>
+                            <div class="progress" class="style-87912">
+                                <div class="progress-bar bg-success" role="progressbar" class="style-21859"></div>
                             </div>
                             <small class="text-muted"><?= number_format($pct, 1) ?>%</small>
                         </td>

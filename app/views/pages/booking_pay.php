@@ -26,8 +26,8 @@
                                 <tr><th><?= __('booking_already_paid') ?></th><td>&#8377;<?= number_format((float)$booking['amount'], 2) ?></td></tr>
                                 <tr><th><?= __('booking_token_due') ?></th><td><span class="text-danger">&#8377;<?= number_format($tokenDue, 2) ?></span></td></tr>
                             </table>
-                            <div class="progress mb-3" style="height:10px;">
-                                <div class="progress-bar bg-success" style="width:<?= $tokenPercent ?>%"><?= $tokenPercent ?>%</div>
+                            <div class="progress mb-3" class="style-76750">
+                                <div class="progress-bar bg-success" class="style-28108"><?= $tokenPercent ?>%</div>
                             </div>
                         </div>
                         <div class="col-md-6">

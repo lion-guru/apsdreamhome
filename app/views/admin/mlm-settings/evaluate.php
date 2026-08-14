@@ -55,7 +55,7 @@ $total_count = $total_count ?? 0;
                 <?php if (empty($results)): ?>
                 <tr>
                     <td colspan="7" class="text-center py-5">
-                        <i class="fas fa-sync fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                        <i class="fas fa-sync fa-3x text-muted mb-3" class="style-82835"></i>
                         <h5 class="text-muted">No evaluation results</h5>
                         <p class="text-muted mb-3">Run a rank evaluation to see promotion results here.</p>
                     </td>
@@ -68,7 +68,7 @@ $total_count = $total_count ?? 0;
                     <td><?php echo htmlspecialchars($r['eligible_level'] ?? 'N/A'); ?></td>
                     <td><?php echo $r['team_size'] ?? 0; ?></td>
                     <td><?php echo $r['direct_referrals'] ?? 0; ?></td>
-                    <td>₹<?php echo number_format($r['monthly_sales'] ?? 0); ?></td>
+                    <td>â‚¹<?php echo number_format($r['monthly_sales'] ?? 0); ?></td>
                     <td>
                         <?php if ($r['promoted'] ?? false): ?>
                             <span class="badge bg-success">Promoted!</span>

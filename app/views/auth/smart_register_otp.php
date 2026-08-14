@@ -117,7 +117,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
             <h2 class="card-title">Verify Your Phone</h2>
             <p class="card-subtitle">Enter the 6-digit code sent to your phone</p>
 
-            <div style="text-align:center">
+            <div class="style-88083">
                 <?php if ($channel === 'whatsapp'): ?>
                     <span class="channel-badge"><i class="fab fa-whatsapp"></i> Sent via WhatsApp to <?php echo $maskedPhone; ?></span>
                 <?php elseif ($channel === 'sms'): ?>
@@ -167,7 +167,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
                         Resend OTP
                     </button>
                 </p>
-                <p class="resend-timer" id="resendTimer" style="display:none">
+                <p class="resend-timer" id="resendTimer" class="style-24280">
                     Resend OTP in <span id="countdown">60</span>s
                 </p>
             </div>

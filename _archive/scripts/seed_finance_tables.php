@@ -19,7 +19,7 @@ $seeded = 0;
 $tableCounts = [];
 
 try {
-    // ─── 1. bank_reconciliation ───
+    // â”€â”€â”€ 1. bank_reconciliation â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO bank_reconciliation (bank_account_id, statement_date, statement_balance, book_balance, reconciled_by, reconciled_at, status, notes, reconciliation_date, opening_balance, closing_balance) VALUES
         (1, '2026-05-31', 2450000.00, 2445000.00, 2, '2026-06-01 10:30:00', 'completed', 'May 2026 month-end reconciliation for HDFC main account', '2026-05-31', 2200000.00, 2450000.00),
         (2, '2026-05-31', 890000.00, 888500.00, 2, '2026-06-01 11:00:00', 'completed', 'May 2026 axis bank current account reconciliation', '2026-05-31', 750000.00, 890000.00),
@@ -28,7 +28,7 @@ try {
     ");
     $tableCounts['bank_reconciliation'] = 4;
 
-    // ─── 2. bank_reconciliation_items ───
+    // â”€â”€â”€ 2. bank_reconciliation_items â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO bank_reconciliation_items (reconciliation_id, transaction_type, transaction_date, amount, description, status) VALUES
         (1, 'cheque_issued_not_cleared', '2026-05-28', 75000.00, 'Cheque #4521 issued to Raj Constructions - not yet cleared', 'pending'),
         (1, 'bank_charges', '2026-05-31', 1250.00, 'HDFC monthly account maintenance charges', 'cleared'),
@@ -39,7 +39,7 @@ try {
     ");
     $tableCounts['bank_reconciliation_items'] = 6;
 
-    // ─── 3. bank_statement_imports ───
+    // â”€â”€â”€ 3. bank_statement_imports â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO bank_statement_imports (bank_account_id, filename, original_filename, import_date, total_rows, matched_rows, unmatched_rows, status, imported_by) VALUES
         (1, 'hdfc_may2026_1717200000.csv', 'HDFC_Statement_May2026.csv', '2026-06-01', 145, 138, 7, 'completed', 2),
         (2, 'axis_may2026_1717286400.csv', 'Axis_Current_May2026.csv', '2026-06-01', 89, 85, 4, 'completed', 2),
@@ -48,7 +48,7 @@ try {
     ");
     $tableCounts['bank_statement_imports'] = 4;
 
-    // ─── 4. bank_transactions ───
+    // â”€â”€â”€ 4. bank_transactions â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO bank_transactions (import_id, bank_account_id, transaction_date, value_date, description, debit, credit, balance, cheque_number, reference_number, matched) VALUES
         (1, 1, '2026-05-02', '2026-05-02', 'NEFT INR - Rahul Sharma - Plot A-001 Token', 0.00, 250000.00, 1950000.00, NULL, 'NEFT20260502001', 1),
         (1, 1, '2026-05-05', '2026-05-05', 'UPI INR - Amit Patel - Plot B-003 Booking Advance', 0.00, 100000.00, 2050000.00, NULL, 'UPI20260505001', 1),
@@ -62,7 +62,7 @@ try {
     ");
     $tableCounts['bank_transactions'] = 9;
 
-    // ─── 5. booking_commissions ───
+    // â”€â”€â”€ 5. booking_commissions â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_commissions (booking_id, beneficiary_user_id, source_user_id, commission_type, amount, percent, level, status, approved_by, paid_at, notes) VALUES
         (9001, 8, 3, 'direct_sale', 75000.00, 2.00, 1, 'paid', 2, '2026-05-15 14:00:00', 'Direct sale commission for Booking #9001 - Plot A-001 (Suryoday Heights)'),
         (9001, 9, 8, 'mlm_level_1', 112500.00, 3.00, 1, 'paid', 2, '2026-05-15 14:00:00', 'L1 upline commission - Associate referral'),
@@ -74,7 +74,7 @@ try {
     ");
     $tableCounts['booking_commissions'] = 7;
 
-    // ─── 6. booking_demand_letters ───
+    // â”€â”€â”€ 6. booking_demand_letters â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_demand_letters (booking_id, installment_id, letter_number, generated_date, due_date, amount, status, sent_via, sent_to_email, sent_at, pdf_path) VALUES
         (9001, 2, 'DL-2026-0001', '2026-04-25', '2026-05-05', 83333.00, 'overdue', 'email', 'rahul.sharma@gmail.com', '2026-04-25 09:00:00', 'uploads/demand-letters/DL-2026-0001.pdf'),
         (9001, 3, 'DL-2026-0002', '2026-05-25', '2026-06-05', 83333.00, 'sent', 'email', 'rahul.sharma@gmail.com', '2026-05-25 09:00:00', 'uploads/demand-letters/DL-2026-0002.pdf'),
@@ -83,7 +83,7 @@ try {
     ");
     $tableCounts['booking_demand_letters'] = 4;
 
-    // ─── 7. booking_documents ───
+    // â”€â”€â”€ 7. booking_documents â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_documents (booking_id, document_type, document_name, file_path, file_size, mime_type, uploaded_by, verified_by, verified_at, status, notes) VALUES
         (9001, 'sale_agreement', 'Sale Agreement - Rahul Sharma - Plot A-001', 'uploads/bookings/9001/sale_agreement.pdf', 245000, 'application/pdf', 3, 2, '2026-05-10 11:00:00', 'verified', 'Original signed copy received'),
         (9001, 'token_receipt', 'Token Receipt - Booking #9001', 'uploads/bookings/9001/token_receipt.pdf', 45000, 'application/pdf', 3, 2, '2026-05-02 09:30:00', 'verified', 'Token amount Rs 2,50,000'),
@@ -94,7 +94,7 @@ try {
     ");
     $tableCounts['booking_documents'] = 6;
 
-    // ─── 8. booking_payment_receipts ───
+    // â”€â”€â”€ 8. booking_payment_receipts â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_payment_receipts (booking_id, installment_id, receipt_number, receipt_date, amount, payment_mode, cheque_number, cheque_date, bank_name, transaction_ref, collected_by, status, notes) VALUES
         (9001, 2, 'APS-RCP-20260501-0001', '2026-05-01', 250000.00, 'neft', NULL, NULL, 'HDFC Bank', 'NEFT20260501001', 3, 'cleared', 'Token payment for Plot A-001'),
         (9001, 3, 'APS-RCP-20260515-0002', '2026-05-15', 83333.00, 'upi', NULL, NULL, NULL, 'UPI20260515002', 3, 'cleared', '1st EMI installment'),
@@ -104,14 +104,14 @@ try {
     ");
     $tableCounts['booking_payment_receipts'] = 5;
 
-    // ─── 9. booking_refunds ───
+    // â”€â”€â”€ 9. booking_refunds â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_refunds (booking_id, refund_amount, cancellation_charge, deduction_reason, refund_mode, refund_date, bank_account, transaction_ref, status, approved_by, processed_by) VALUES
         (9001, 166667.00, 83333.00, '10% cancellation charge on token amount as per agreement clause 7.2', 'neft', NULL, NULL, NULL, 'pending', NULL, NULL),
         (9002, 25000.00, 25000.00, 'Administrative processing charge for partial refund request', 'bank_transfer', '2026-05-20', 'HDFC-50100012345678', 'NEFT20260520R01', 'processed', 2, 2)
     ");
     $tableCounts['booking_refunds'] = 2;
 
-    // ─── 10. booking_status_history ───
+    // â”€â”€â”€ 10. booking_status_history â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, ip_address, user_agent) VALUES
         (9001, NULL, 'token_paid', 3, 'Initial token payment received for Plot A-001', '192.168.1.100', 'Mozilla/5.0 Windows NT 10.0'),
         (9001, 'token_paid', 'agreement_signed', 2, 'Sale agreement signed at Suryoday Heights office', '192.168.1.100', 'Mozilla/5.0 Windows NT 10.0'),
@@ -122,14 +122,14 @@ try {
     ");
     $tableCounts['booking_status_history'] = 6;
 
-    // ─── 11. booking_transfers ───
+    // â”€â”€â”€ 11. booking_transfers â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO booking_transfers (original_booking_id, new_customer_id, transfer_reason, transfer_date, transfer_charge, legal_charges, status, approved_by) VALUES
         (9001, 6, 'Customer relocating to Delhi - requests ownership transfer to brother Vikram Singh', '2026-06-15', 25000.00, 5000.00, 'initiated', NULL),
         (9002, 22, 'Inheritance transfer - original buyer Priya Verma transferring to son Arjun Verma', '2026-06-20', 15000.00, 8000.00, 'docs_verified', 2)
     ");
     $tableCounts['booking_transfers'] = 2;
 
-    // ─── 12. budgets ───
+    // â”€â”€â”€ 12. budgets â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO budgets (budget_name, department_id, category, fiscal_year, period_start, period_end, allocated_amount, spent_amount, committed_amount, status, approved_by) VALUES
         ('Marketing Budget FY2026-27', 3, 'marketing', '2026-27', '2026-04-01', '2027-03-31', 5000000.00, 1200000.00, 350000.00, 'active', 2),
         ('Construction - Suryoday Phase 2', 1, 'construction', '2026-27', '2026-04-01', '2027-03-31', 25000000.00, 8500000.00, 3000000.00, 'active', 2),
@@ -139,7 +139,7 @@ try {
     ");
     $tableCounts['budgets'] = 5;
 
-    // ─── 13. budget_expenses ───
+    // â”€â”€â”€ 13. budget_expenses â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO budget_expenses (budget_id, expense_date, vendor, description, amount, bill_number, status, approved_by) VALUES
         (1, '2026-04-10', 'Google Ads India', 'Google Ads campaign for Suryoday Heights listings', 150000.00, 'GADS-2026-0410', 'paid', 2),
         (1, '2026-04-20', 'Hindustan Times Media', 'Full-page ad in HT Gorakhpur edition', 200000.00, 'HT-2026-0420', 'paid', 2),
@@ -151,7 +151,7 @@ try {
     ");
     $tableCounts['budget_expenses'] = 7;
 
-    // ─── 14. budget_planning ───
+    // â”€â”€â”€ 14. budget_planning â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO budget_planning (fiscal_year, department_id, line_item, category, q1_amount, q2_amount, q3_amount, q4_amount, justification, status) VALUES
         ('2027-28', 3, 'Digital Marketing Campaigns', 'marketing', 400000.00, 350000.00, 500000.00, 450000.00, 'Increased digital presence for new project launches', 'submitted'),
         ('2027-28', 1, 'Suryoday Phase 3 Construction', 'construction', 5000000.00, 7000000.00, 6000000.00, 4000000.00, 'Phase 3 construction covering 80 plots', 'submitted'),
@@ -161,7 +161,7 @@ try {
     ");
     $tableCounts['budget_planning'] = 5;
 
-    // ─── 15. cash_flow_forecast ───
+    // â”€â”€â”€ 15. cash_flow_forecast â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO cash_flow_forecast (projection_date, type, category, expected_amount, probability_pct, expected_date, notes, created_by, forecast_date, opening_balance, expected_receipts, expected_payments, closing_balance) VALUES
         ('2026-06-15', 'inflow', 'customer_payment', 3500000.00, 85.00, '2026-06-15', 'Expected customer installments from Suryoday and Braj Radha', 2, '2026-06-01', 5200000.00, 3500000.00, 2100000.00, 6600000.00),
         ('2026-06-15', 'outflow', 'land_acquisition', 1500000.00, 70.00, '2026-06-15', 'Land payment to Gram Panchayat - Kushinagar parcel', 2, '2026-06-01', 5200000.00, 3500000.00, 2100000.00, 6600000.00),
@@ -172,7 +172,7 @@ try {
     ");
     $tableCounts['cash_flow_forecast'] = 6;
 
-    // ─── 16. cash_flow_projections ───
+    // â”€â”€â”€ 16. cash_flow_projections â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO cash_flow_projections (projection_date, scenario, opening_balance, projected_inflow, projected_outflow, notes, created_by) VALUES
         ('2026-06-30', 'optimistic', 5200000.00, 8000000.00, 4500000.00, 'Best case: all 12 expected payments received + loan disbursement', 2),
         ('2026-06-30', 'realistic', 5200000.00, 6200000.00, 5100000.00, 'Base case: 80% collection rate + regular expenses', 2),
@@ -184,14 +184,14 @@ try {
     ");
     $tableCounts['cash_flow_projections'] = 7;
 
-    // ─── 17. cheque_bounce_log ───
+    // â”€â”€â”€ 17. cheque_bounce_log â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO cheque_bounce_log (cheque_id, bounce_date, bank_name, bounce_reason, charges, recovery_status, legal_action) VALUES
         (1, '2026-05-25', 'HDFC Bank', 'Insufficient funds in drawer account - customer cheque returned', 500.00, 'recovered', NULL),
         (1, '2026-06-05', 'SBI', 'Cheque presented beyond validity period (3 months old)', 350.00, 'pending', 'Legal notice sent to customer on 2026-06-08 under Section 138 NI Act');
     ");
     $tableCounts['cheque_bounce_log'] = 2;
 
-    // ─── 18. expense_approvals ───
+    // â”€â”€â”€ 18. expense_approvals â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO expense_approvals (expense_id, expense_table, requested_by, current_approver, approver_role, approval_level, status, approved_at, remarks, next_approver) VALUES
         (1, 'expenses', 3, 2, 'admin', 1, 'approved', '2026-04-12 10:00:00', 'Marketing expense approved - Google Ads is within budget', NULL),
         (2, 'expenses', 5, 2, 'admin', 1, 'approved', '2026-04-22 11:30:00', 'Print ad approved for Gorakhpur edition', NULL),
@@ -199,7 +199,7 @@ try {
     ");
     $tableCounts['expense_approvals'] = 3;
 
-    // ─── 19. payment_plans ───
+    // â”€â”€â”€ 19. payment_plans â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO payment_plans (property_id, plan_name, plan_type, total_amount, down_payment_percent, number_of_installments, installment_frequency, interest_applicable, interest_rate, description, is_active) VALUES
         (1, 'Suryoday Heights - Standard 12 Month EMI', 'construction', 2500000.00, 10.00, 12, 'monthly', 0, 0.00, 'Standard construction-linked payment plan for Plot A-001 at Suryoday Heights', 1),
         (2, 'Braj Radha - Quarterly Construction Plan', 'construction', 3750000.00, 15.00, 8, 'quarterly', 1, 8.50, 'Construction-linked plan for Plot A-002 at Braj Radha Nagri with 8.5% interest', 1),
@@ -208,7 +208,7 @@ try {
     ");
     $tableCounts['payment_plans'] = 4;
 
-    // ─── 20. payment_plan_milestones ───
+    // â”€â”€â”€ 20. payment_plan_milestones â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO payment_plan_milestones (plan_id, milestone_order, milestone_name, percentage, amount, due_date, description) VALUES
         (1, 1, 'Booking Token', 10.00, 250000.00, '2026-05-01', 'Initial token to block the plot'),
         (1, 2, 'Agreement Signing', 15.00, 375000.00, '2026-05-15', 'On execution of sale agreement'),
@@ -224,7 +224,7 @@ try {
     ");
     $tableCounts['payment_plan_milestones'] = 11;
 
-    // ─── 21. payment_schedules ───
+    // â”€â”€â”€ 21. payment_schedules â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO payment_schedules (user_id, entity_type, entity_id, total_amount, paid_amount, next_due_date, next_due_amount, installment_count, installments_paid, late_fee_amount, status, auto_debit) VALUES
         (3, 'booking', 9001, 2500000.00, 333333.00, '2026-07-05', 83333.00, 12, 2, 0.00, 'active', 1),
         (5, 'booking', 9002, 3750000.00, 275000.00, '2026-07-05', 125000.00, 8, 1, 0.00, 'active', 0),
@@ -234,7 +234,7 @@ try {
     ");
     $tableCounts['payment_schedules'] = 5;
 
-    // ─── 22. payment_webhook_logs ───
+    // â”€â”€â”€ 22. payment_webhook_logs â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO payment_webhook_logs (gateway, event_type, event_id, payload, signature, signature_verified, processed, processing_error, ip_address) VALUES
         ('razorpay', 'payment.captured', 'evt_20260515001', '{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"id\":\"pay_20260515001\",\"amount\":25000000,\"currency\":\"INR\",\"status\":\"captured\",\"method\":\"upi\",\"order_id\":\"order_20260515001\"}}}}', 'hmac_sha256_sig_abc123', 1, 1, NULL, '54.239.28.85'),
         ('razorpay', 'payment.captured', 'evt_20260503001', '{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"id\":\"pay_20260503001\",\"amount\":15000000,\"currency\":\"INR\",\"status\":\"captured\",\"method\":\"netbanking\",\"order_id\":\"order_20260503001\"}}}}', 'hmac_sha256_sig_def456', 1, 1, NULL, '54.239.28.85'),
@@ -243,7 +243,7 @@ try {
     ");
     $tableCounts['payment_webhook_logs'] = 4;
 
-    // ─── 23. payroll_entries ───
+    // â”€â”€â”€ 23. payroll_entries â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO payroll_entries (payroll_run_id, employee_id, basic_salary, hra, transport_allowance, medical_allowance, special_allowance, bonus, overtime, gross_salary, pf_deduction, esi_deduction, tds_deduction, advance_deduction, loan_deduction, other_deductions, total_deductions, net_salary, working_days, present_days, leave_days, status) VALUES
         (1, 1, 35000.00, 14000.00, 3000.00, 2000.00, 5000.00, 0.00, 0.00, 59000.00, 4200.00, 0.00, 2100.00, 0.00, 0.00, 0.00, 6300.00, 52700.00, 31, 28, 3, 'paid'),
         (1, 2, 50000.00, 20000.00, 5000.00, 3000.00, 8000.00, 0.00, 0.00, 86000.00, 6000.00, 0.00, 6500.00, 0.00, 0.00, 0.00, 12500.00, 73500.00, 31, 30, 1, 'paid'),
@@ -255,7 +255,7 @@ try {
     ");
     $tableCounts['payroll_entries'] = 7;
 
-    // ─── 24. salary_contracts ───
+    // â”€â”€â”€ 24. salary_contracts â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO salary_contracts (employee_id, contract_number, start_date, end_date, ctc, basic_salary, terms, status, signed_date) VALUES
         (1, 'APS-SC-2026-001', '2026-04-01', '2027-03-31', 708000.00, 420000.00, 'Annual CTC Rs 7,08,000 including HRA 40%, PF employer contribution, medical insurance. 18 working days leave per year. 3 month notice period.', 'active', '2026-03-28'),
         (2, 'APS-SC-2026-002', '2026-04-01', '2027-03-31', 1032000.00, 600000.00, 'Annual CTC Rs 10,32,000 including HRA 40%, PF, ESIC, performance bonus 10%. 24 days leave. 3 month notice period.', 'active', '2026-03-25'),
@@ -265,7 +265,7 @@ try {
     ");
     $tableCounts['salary_contracts'] = 5;
 
-    // ─── 25. salary_history ───
+    // â”€â”€â”€ 25. salary_history â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO salary_history (employee_id, change_type, old_salary, new_salary, effective_date, reason, approved_by) VALUES
         (1, 'increment', 30000.00, 35000.00, '2026-04-01', 'Annual increment - 16.7% hike based on performance rating Exceeds Expectations', 2),
         (2, 'promotion', 40000.00, 50000.00, '2026-04-01', 'Promoted from Senior Executive to Manager - 25% hike on promotion', 2),
@@ -276,7 +276,7 @@ try {
     ");
     $tableCounts['salary_history'] = 6;
 
-    // ─── 26. tds_challans ───
+    // â”€â”€â”€ 26. tds_challans â”€â”€â”€
     $pdo->exec("INSERT IGNORE INTO tds_challans (challan_number, bsr_code, tan, assessment_year, financial_year, quarter, deposit_date, tds_section, total_amount, interest_amount, penalty_amount, surcharge_amount, cess_amount, total_with_charges, challan_status, govt_challan_id, receipt_number, deposited_via, bank_name, remarks) VALUES
         ('CHL-2026-Q4-001', '7501234', 'APSD00001A', '2026-27', '2025-26', 'Q4', '2026-04-15', '194IA', 150000.00, 0.00, 0.00, 0.00, 0.00, 150000.00, 'deposited', 'GOVT-2026-0415001', 'REC-2026-0415001', 'net_banking', 'HDFC Bank', 'TDS on immovable property - Plot registry Q4 FY2025-26'),
         ('CHL-2026-Q4-002', '7501234', 'APSD00001A', '2026-27', '2025-26', 'Q4', '2026-04-15', '194C', 45000.00, 0.00, 0.00, 0.00, 0.00, 45000.00, 'deposited', 'GOVT-2026-0415002', 'REC-2026-0415002', 'net_banking', 'HDFC Bank', 'TDS on contractor payments - Q4 FY2025-26'),
@@ -308,4 +308,4 @@ foreach ($verifyTables as $t) {
     $expected = $tableCounts[$t];
     $status = ($count >= $expected) ? 'OK' : 'MISMATCH (expected ' . $expected . ', got ' . $count . ')';
     echo str_pad($t, 35) . ": $count rows - $status\n";
-}
+}?>

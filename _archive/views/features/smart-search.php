@@ -51,7 +51,7 @@
                                     <td><strong><?= htmlspecialchars($r['title'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($r['location'] ?? '-') ?></td>
                                     <td>
-                                        <div class="progress" style="height:6px;width:100px"><div class="progress-bar bg-success" style="width:<?= (int)($r['score'] ?? 0) ?>%"></div></div>
+                                        <div class="progress" class="style-3060"><div class="progress-bar bg-success" class="style-36820"></div></div>
                                         <small class="text-muted"><?= (int)($r['score'] ?? 0) ?>%</small>
                                     </td>
                                     <td>

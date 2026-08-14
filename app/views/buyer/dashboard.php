@@ -18,7 +18,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     .match-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
 </style>
 
-<div class="container-fluid px-3 py-3" style="max-width: 700px; margin: 0 auto;">
+<div class="container-fluid px-3 py-3" class="style-63221">
     <h5 class="fw-bold mb-3"><i class="fas fa-home me-2 text-primary"></i>Buyer Dashboard</h5>
 
     <?php if ($success): ?>
@@ -32,13 +32,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <div class="row g-2 mb-3">
         <div class="col-6">
             <div class="buyer-card text-center">
-                <div style="font-size:1.8rem;font-weight:700;color:#6366f1;"><?= $total_interests ?></div>
+                <div class="style-38176"><?= $total_interests ?></div>
                 <div class="text-muted small">My Requirements</div>
             </div>
         </div>
         <div class="col-6">
             <div class="buyer-card text-center">
-                <div style="font-size:1.8rem;font-weight:700;color:#10b981;"><?= $total_matched ?></div>
+                <div class="style-23322"><?= $total_matched ?></div>
                 <div class="text-muted small">Matched Properties</div>
             </div>
         </div>
@@ -70,11 +70,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     </select>
                 </div>
                 <div class="col-6">
-                    <label class="form-label fw-bold small">Budget Min (₹)</label>
+                    <label class="form-label fw-bold small">Budget Min (â‚¹)</label>
                     <input type="number" name="budget_min" class="form-control form-control-sm" placeholder="e.g. 1000000">
                 </div>
                 <div class="col-6">
-                    <label class="form-label fw-bold small">Budget Max (₹)</label>
+                    <label class="form-label fw-bold small">Budget Max (â‚¹)</label>
                     <input type="number" name="budget_max" class="form-control form-control-sm" placeholder="e.g. 5000000">
                 </div>
                 <div class="col-6">
@@ -90,7 +90,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <textarea name="requirements" class="form-control form-control-sm" rows="2" placeholder="Specific requirements..."></textarea>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2" style="font-weight:700;">
+            <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2" class="style-48741">
                 <i class="fas fa-paper-plane me-2"></i>Submit Requirement
             </button>
         </form>
@@ -105,13 +105,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <?php if ($m['image']): ?>
                         <img src="<?= $base ?>/assets/images/<?= htmlspecialchars($m['image']) ?>" alt="Property">
                     <?php else: ?>
-                        <div style="width:80px;height:80px;background:#f3f4f6;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-home fa-2x text-muted"></i></div>
+                        <div class="style-68235"><i class="fas fa-home fa-2x text-muted"></i></div>
                     <?php endif; ?>
                     <div class="flex-grow-1">
                         <div class="fw-bold small"><?= htmlspecialchars($m['title'] ?? $m['property_type']) ?></div>
-                        <div class="text-muted" style="font-size:0.75rem;"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
-                        <div class="fw-bold text-primary mt-1">₹<?= number_format((float)$m['price']) ?></div>
-                        <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1" style="font-size:0.75rem;">View Details</a>
+                        <div class="text-muted" class="style-20558"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
+                        <div class="fw-bold text-primary mt-1">â‚¹<?= number_format((float)$m['price']) ?></div>
+                        <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1" class="style-20558">View Details</a>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -129,7 +129,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <?php foreach ($interests as $i): ?>
                             <tr>
                                 <td class="small fw-bold"><?= ucfirst($i['property_type']) ?></td>
-                                <td class="small">₹<?= number_format((float)$i['budget_min']) ?> - ₹<?= number_format((float)$i['budget_max']) ?></td>
+                                <td class="small">â‚¹<?= number_format((float)$i['budget_min']) ?> - â‚¹<?= number_format((float)$i['budget_max']) ?></td>
                                 <td class="small"><?= htmlspecialchars($i['preferred_location'] ?: '-') ?></td>
                                 <td><span class="badge bg-<?= $i['status'] === 'matched' ? 'success' : ($i['status'] === 'active' ? 'primary' : 'secondary') ?>"><?= ucfirst($i['status']) ?></span></td>
                             </tr>

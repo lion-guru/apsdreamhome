@@ -248,17 +248,17 @@ foreach ($tables as $name => $sql) {
     try {
         $pdo->exec($sql);
         $created++;
-        echo "  ✓ Created $name" . PHP_EOL;
+        echo "  âœ“ Created $name" . PHP_EOL;
     } catch (Exception $e) {
         if (strpos($e->getMessage(), 'already exists') !== false) {
             $exists++;
             echo "  - Exists $name" . PHP_EOL;
         } else {
-            echo "  ✗ Failed $name: " . $e->getMessage() . PHP_EOL;
+            echo "  âœ— Failed $name: " . $e->getMessage() . PHP_EOL;
         }
     }
 }
 
 echo PHP_EOL . "=== PHASE 23 STEP 1 COMPLETE ===" . PHP_EOL;
 echo "Created: $created, Already exists: $exists" . PHP_EOL;
-echo "Total AI tables: " . count($tables) . PHP_EOL;
+echo "Total AI tables: " . count($tables) . PHP_EOL;?>

@@ -14,7 +14,7 @@
                         <p class="text-muted small mb-1"><i class="fas fa-clock me-1"></i><?= htmlspecialchars($p['duration'] ?? '-') ?></p>
                         <div class="mt-3">
                             <div class="d-flex justify-content-between"><small>Completion</small><small class="fw-bold"><?= htmlspecialchars($p['completion_rate'] ?? '0%') ?></small></div>
-                            <div class="progress" style="height:6px"><div class="progress-bar bg-success" style="width:<?= (int)($p['completion_rate'] ?? 0) ?>%"></div></div>
+                            <div class="progress" class="style-51910"><div class="progress-bar bg-success" class="style-73230"></div></div>
                         </div>
                         <div class="mt-2"><small class="text-muted">Score: <strong><?= htmlspecialchars($p['assessment_score'] ?? '-') ?></strong></small></div>
                     </div>

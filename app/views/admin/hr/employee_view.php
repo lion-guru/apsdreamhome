@@ -14,7 +14,7 @@ $e = $employee ?? [];
     <div class="col-md-4">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-4">
-                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;font-size:2rem;">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-93790">
                     <?= strtoupper(substr($e['name'] ?? '?', 0, 1)) ?>
                 </div>
                 <h5 class="mb-1"><?= htmlspecialchars($e['name'] ?? '') ?></h5>
@@ -35,7 +35,7 @@ $e = $employee ?? [];
                     <tr><td class="text-muted">Email</td><td><?= htmlspecialchars($e['email'] ?? '-') ?></td></tr>
                     <tr><td class="text-muted">Phone</td><td><?= htmlspecialchars($e['phone'] ?? '-') ?></td></tr>
                     <tr><td class="text-muted">Department</td><td><?= htmlspecialchars($e['department'] ?? '-') ?></td></tr>
-                    <tr><td class="text-muted">Salary</td><td><?= ($e['salary'] ?? 0) ? '₹' . number_format($e['salary'], 2) : '-' ?></td></tr>
+                    <tr><td class="text-muted">Salary</td><td><?= ($e['salary'] ?? 0) ? 'â‚¹' . number_format($e['salary'], 2) : '-' ?></td></tr>
                     <tr><td class="text-muted">Joined</td><td><?= htmlspecialchars($e['join_date'] ?? '-') ?></td></tr>
                     <tr><td class="text-muted">User Since</td><td><?= htmlspecialchars($e['user_since'] ?? '-') ?></td></tr>
                 </table>

@@ -76,7 +76,7 @@ $day_of_week = $day_of_week ?? date('w');
                                 <?php foreach ($today_shifts as $shift): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($shift['employee_name'] ?? '') ?></td>
-                                        <td><span class="badge" style="background:<?= htmlspecialchars($shift['color'] ?? '#007bff') ?>"><?= htmlspecialchars($shift['shift_type_name'] ?? '') ?></span></td>
+                                        <td><span class="badge" class="style-22927"><?= htmlspecialchars($shift['shift_type_name'] ?? '') ?></span></td>
                                         <td><?= htmlspecialchars($shift['shift_start_time'] ?? '') ?>-<?= htmlspecialchars($shift['shift_end_time'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($shift['status'] ?? '') ?></td>
                                     </tr>

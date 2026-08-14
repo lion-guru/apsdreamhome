@@ -32,9 +32,9 @@ try {
             INDEX `idx_menu_item_id` (`menu_item_id`),
             FOREIGN KEY (`menu_item_id`) REFERENCES `admin_menu_items`(`id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo "✓ Successfully created 'admin_user_menu_permissions' table!\n";
+        echo "âœ“ Successfully created 'admin_user_menu_permissions' table!\n";
     } else {
-        echo "✓ 'admin_user_menu_permissions' table already exists.\n";
+        echo "âœ“ 'admin_user_menu_permissions' table already exists.\n";
     }
 
     // 2. Ensure gateway_logs table columns exist
@@ -65,7 +65,7 @@ try {
             INDEX idx_status (status),
             INDEX idx_created (created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo "✓ Successfully created 'gateway_logs' table!\n";
+        echo "âœ“ Successfully created 'gateway_logs' table!\n";
     } else {
         // Verify columns
         $existing = [];
@@ -88,11 +88,11 @@ try {
                 $added++;
             }
         }
-        echo "✓ 'gateway_logs' columns verification complete ($added added).\n";
+        echo "âœ“ 'gateway_logs' columns verification complete ($added added).\n";
     }
 
     echo "\n=== ALL DB GAPS FIXED SUCCESSFULLY ===\n";
 
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

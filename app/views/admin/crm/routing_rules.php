@@ -91,11 +91,11 @@
                                                 $min = (float)($rule['min_budget'] ?? 0);
                                                 $max = (float)($rule['max_budget'] ?? 0);
                                                 if ($min > 0 && $max > 0) {
-                                                    echo '₹' . number_format($min) . ' – ₹' . number_format($max);
+                                                    echo 'â‚¹' . number_format($min) . ' â€“ â‚¹' . number_format($max);
                                                 } elseif ($min > 0) {
-                                                    echo '₹' . number_format($min) . '+';
+                                                    echo 'â‚¹' . number_format($min) . '+';
                                                 } elseif ($max > 0) {
-                                                    echo 'Up to ₹' . number_format($max);
+                                                    echo 'Up to â‚¹' . number_format($max);
                                                 } else {
                                                     echo '<span class="text-muted">Any</span>';
                                                 }
@@ -103,7 +103,7 @@
                                             </td>
                                             <td><span class="badge bg-secondary"><?= $rule['priority'] ?? 100 ?></span></td>
                                             <td>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/toggle" style="display:inline">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/toggle" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-<?= ($rule['is_active'] ?? 0) ? 'success' : 'secondary' ?>">
                                                         <?= ($rule['is_active'] ?? 0) ? '<i class="fas fa-check-circle"></i> Active' : '<i class="fas fa-times-circle"></i> Inactive' ?>
@@ -113,7 +113,7 @@
                                             <td>
                                                 <div class="btn-group btn-group-sm">
                                                     <a href="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/edit" class="btn btn-outline-info"><i class="fas fa-edit"></i></a>
-                                                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/delete" style="display:inline">
+                                                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/routing/<?= $rule['id'] ?>/delete" class="style-71727">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                         <button class="btn btn-outline-danger" onclick="return confirm('Delete this rule?')"><i class="fas fa-trash"></i></button>
                                                     </form>

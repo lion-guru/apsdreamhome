@@ -2,13 +2,13 @@
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications" style="color:#3b82f6;">Push Notifications</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications/templates" style="color:#3b82f6;">Templates</a></li>
-                <li class="breadcrumb-item active" style="color:#94a3b8;"><?= $template ? 'Edit' : 'Create' ?></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications" class="style-75937">Push Notifications</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications/templates" class="style-75937">Templates</a></li>
+                <li class="breadcrumb-item active" class="style-27277"><?= $template ? 'Edit' : 'Create' ?></li>
             </ol>
         </nav>
         <h1 class="h3 mb-1 fw-bold"><?= $template ? 'Edit Template' : 'Create Template' ?></h1>
-        <p class="mb-0" style="color:#64748b;"><?= $template ? 'Update template content and variables' : 'Design a reusable notification template' ?></p>
+        <p class="mb-0" class="style-54585"><?= $template ? 'Update template content and variables' : 'Design a reusable notification template' ?></p>
     </div>
 
     <?php if (!empty($_SESSION['error'])): ?>
@@ -26,21 +26,21 @@
                     <input type="hidden" name="id" value="<?= $template['id'] ?>">
                 <?php endif; ?>
 
-                <div class="card border-0 shadow-sm" style="background:#1e293b;">
+                <div class="card border-0 shadow-sm" class="style-52634">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Template Name <span style="color:#f87171;">*</span></label>
+                            <label class="form-label fw-semibold" class="style-96443">Template Name <span class="style-62247">*</span></label>
                             <input type="text" name="name" class="form-control" required
                                    value="<?= htmlspecialchars($template['name'] ?? '') ?>"
                                    placeholder="e.g. Property Alert, Payment Reminder"
-                                   style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                   class="style-30479">
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Channel</label>
+                                <label class="form-label fw-semibold" class="style-96443">Channel</label>
                                 <select name="channel" class="form-select"
-                                        style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                        class="style-30479">
                                     <?php
                                         $channels = ['push' => 'Push Notification', 'email' => 'Email', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp'];
                                         $current = $template['channel'] ?? 'push';
@@ -51,36 +51,36 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold" style="color:#e2e8f0;">Subject (Email/SMS)</label>
+                                <label class="form-label fw-semibold" class="style-96443">Subject (Email/SMS)</label>
                                 <input type="text" name="subject" class="form-control"
                                        value="<?= htmlspecialchars($template['subject'] ?? '') ?>"
                                        placeholder="Email subject line"
-                                       style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                       class="style-30479">
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Title</label>
+                            <label class="form-label fw-semibold" class="style-96443">Title</label>
                             <input type="text" name="title" class="form-control"
                                    value="<?= htmlspecialchars($template['title'] ?? '') ?>"
                                    placeholder="Notification title (shown in header)"
-                                   style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
+                                   class="style-30479">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Body <span style="color:#f87171;">*</span></label>
+                            <label class="form-label fw-semibold" class="style-96443">Body <span class="style-62247">*</span></label>
                             <textarea name="body" class="form-control" rows="5" required
                                       placeholder="Notification body text. Use {{variable}} for dynamic content."
-                                      style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;"><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
+                                      class="style-30479"><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold" style="color:#e2e8f0;">Variables (comma-separated)</label>
+                            <label class="form-label fw-semibold" class="style-96443">Variables (comma-separated)</label>
                             <input type="text" name="variables" class="form-control"
                                    value="<?= htmlspecialchars($template['variables'] ?? '') ?>"
                                    placeholder="e.g. user_name, property_name, amount"
-                                   style="background:#0f172a;border:1px solid #334155;color:#e2e8f0;">
-                            <small style="color:#64748b;">Use <code style="color:#3b82f6;">{{variable_name}}</code> in body to insert dynamic values at send time.</small>
+                                   class="style-30479">
+                            <small class="style-54585">Use <code class="style-75937">{{variable_name}}</code> in body to insert dynamic values at send time.</small>
                         </div>
                     </div>
                 </div>
@@ -95,14 +95,14 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm" style="background:#1e293b;">
+            <div class="card border-0 shadow-sm" class="style-52634">
                 <div class="card-body">
-                    <h6 class="fw-bold mb-3" style="color:#e2e8f0;">
-                        <i class="fas fa-info-circle me-1" style="color:#3b82f6;"></i> Template Tips
+                    <h6 class="fw-bold mb-3" class="style-96443">
+                        <i class="fas fa-info-circle me-1" class="style-75937"></i> Template Tips
                     </h6>
-                    <ul class="small mb-0" style="color:#94a3b8;padding-left:18px;">
+                    <ul class="small mb-0" class="style-78105">
                         <li class="mb-2">Templates save time when sending repeated notification types</li>
-                        <li class="mb-2">Use <code style="color:#3b82f6;">{{user_name}}</code> to personalize with recipient's name</li>
+                        <li class="mb-2">Use <code class="style-75937">{{user_name}}</code> to personalize with recipient's name</li>
                         <li class="mb-2">Variables are replaced at send time from user data</li>
                         <li class="mb-2">Push titles should be under 50 characters</li>
                         <li class="mb-0">Body supports up to 300 characters for push, unlimited for email</li>
@@ -111,19 +111,19 @@
             </div>
 
             <?php if ($template): ?>
-                <div class="card border-0 shadow-sm mt-3" style="background:#1e293b;">
+                <div class="card border-0 shadow-sm mt-3" class="style-52634">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-2" style="color:#e2e8f0;">Preview</h6>
-                        <div class="p-3 rounded" style="background:#0f172a;border:1px solid #334155;">
-                            <div class="fw-semibold mb-1" style="color:#e2e8f0;font-size:0.9rem;">
+                        <h6 class="fw-bold mb-2" class="style-96443">Preview</h6>
+                        <div class="p-3 rounded" class="style-1278">
+                            <div class="fw-semibold mb-1" class="style-72530">
                                 <?= htmlspecialchars($template['title'] ?? 'No title') ?>
                             </div>
-                            <div style="color:#94a3b8;font-size:0.82rem;">
+                            <div class="style-37628">
                                 <?= nl2br(htmlspecialchars($template['body'] ?? '')) ?>
                             </div>
                         </div>
-                        <small style="color:#475569;">
-                            Used <?= (int)($template['usage_count'] ?? 0) ?> times · Created <?= date('d M Y', strtotime($template['created_at'] ?? 'now')) ?>
+                        <small class="style-42047">
+                            Used <?= (int)($template['usage_count'] ?? 0) ?> times Â· Created <?= date('d M Y', strtotime($template['created_at'] ?? 'now')) ?>
                         </small>
                     </div>
                 </div>

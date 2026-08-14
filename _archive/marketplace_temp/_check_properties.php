@@ -19,4 +19,4 @@ foreach ($pdo->query('SELECT DISTINCT role FROM users ORDER BY role') as $r) ech
 echo "\n=== Listing types in user_properties ===\n";
 foreach ($pdo->query('SELECT DISTINCT listing_type FROM user_properties') as $r) echo $r['listing_type'] . "\n";
 echo "\n=== Property types in user_properties ===\n";
-foreach ($pdo->query('SELECT DISTINCT property_type FROM user_properties') as $r) echo $r['property_type'] . "\n";
+foreach ($pdo->query('SELECT DISTINCT property_type FROM user_properties') as $r) echo $r['property_type'] . "\n";?>

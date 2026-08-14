@@ -78,7 +78,17 @@ class NavigationHelper
      */
     public function getSetting(string $key, string $default = ''): string
     {
-        return $this->sc($key, $default);
+        $value = $this->sc($key, $default);
+        if ($value === '' && $default !== '') {
+            return $default;
+        }
+        if ($value !== $default) {
+            $fullPath = __DIR__ . '/../../public/' . ltrim($value, '/');
+            if (preg_match('/\.(png|jpg|jpeg|gif|svg|ico)$/i', $value) && !file_exists($fullPath)) {
+                return $default;
+            }
+        }
+        return $value;
     }
 
     public function contactPhone(): string
@@ -485,6 +495,7 @@ class NavigationHelper
                     ['label' => __('service_construction'),   'url' => '/construction-services',         'icon' => 'fas fa-hard-hat'],
                     ['label' => __('nav_resell_property'),    'url' => '/resell',                      'icon' => 'fas fa-handshake'],
                     ['label' => __('nav_documents'),           'url' => '/documents',                     'icon' => 'fas fa-folder-open'],
+                    ['label' => 'Tools Hub',                  'url' => '/tools-hub',                     'icon' => 'fas fa-flask'],
                 ],
             ],
             [
@@ -503,7 +514,6 @@ class NavigationHelper
                 ],
             ],
             ['label' => __('contact_us'),  'url' => '/contact',   'icon' => 'fas fa-phone'],
-            ['label' => 'Tools Hub',       'url' => '/tools-hub', 'icon' => 'fas fa-flask'],
             ['label' => __('nav_post_property'), 'url' => '/list-property', 'icon' => 'fas fa-plus-circle', 'highlight' => true],
         ];
     }
@@ -544,9 +554,8 @@ class NavigationHelper
             }
         }
 
-        // Contact + Tools Hub
+        // Contact
         $items[] = ['label' => __('contact_us'), 'url' => '/contact', 'icon' => 'fas fa-phone'];
-        $items[] = ['label' => 'Tools Hub', 'url' => '/tools-hub', 'icon' => 'fas fa-flask'];
 
         return $items;
     }

@@ -15,8 +15,8 @@
                             <?= ucfirst($wf['status'] ?? 'pending') ?>
                         </span>
                     </div>
-                    <div class="progress" style="height:8px">
-                        <div class="progress-bar" role="progressbar" style="width:<?= ($wf['progress'] ?? 0) ?>%" aria-valuenow="<?= ($wf['progress'] ?? 0) ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress" class="style-32124">
+                        <div class="progress-bar" role="progressbar" class="style-62679" aria-valuenow="<?= ($wf['progress'] ?? 0) ?>" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <small class="text-muted mt-2 d-block"><?= ($wf['progress'] ?? 0) ?>% complete</small>
                 </div>

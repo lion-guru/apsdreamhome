@@ -30,4 +30,4 @@ foreach ($zeroRef as $t) {
 }
 echo "\nTotal: " . count($zeroRef) . "\n";
 $droppable = count(array_filter($zeroRef, fn($t) => $t['fk'] == 0));
-echo "Droppable (0 FK): $droppable\n";
+echo "Droppable (0 FK): $droppable\n";?>

@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-08-14T21:47:48.456736",
+  "files": {
+    "php": 9409,
+    "css": 374,
+    "js": 18583,
+    "images": 1124
+  },
+  "issues_found": 2,
+  "fixes_applied": 420
+}

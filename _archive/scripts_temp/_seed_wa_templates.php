@@ -16,4 +16,4 @@ foreach ($templates as $t) {
     echo "OK: {$t[0]}\n";
 }
 
-echo "Total WhatsApp templates: " . $db->query("SELECT COUNT(*) FROM whatsapp_templates")->fetchColumn() . "\n";
+echo "Total WhatsApp templates: " . $db->query("SELECT COUNT(*) FROM whatsapp_templates")->fetchColumn() . "\n";?>

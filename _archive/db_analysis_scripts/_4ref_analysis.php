@@ -41,4 +41,4 @@ foreach ($tables as $t) {
 
     $rows = (int)$pdo->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
     echo sprintf("%-40s %5d refs %5d rows  %s\n", $t, $codeRef, $rows, implode(', ', array_slice($refFiles, 0, 5)));
-}
+}?>

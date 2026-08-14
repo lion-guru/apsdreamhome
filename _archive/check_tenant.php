@@ -12,4 +12,4 @@ foreach (['backups', 'email_queue'] as $t) {
     } catch (\Exception $e) {
         echo $t . ': TABLE NOT FOUND' . PHP_EOL;
     }
-}
+}?>

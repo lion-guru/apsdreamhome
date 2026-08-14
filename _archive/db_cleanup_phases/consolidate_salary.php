@@ -35,4 +35,4 @@ $pdo->exec("DROP TABLE salary_structures");
 echo "Dropped salary_structures\n";
 
 $after = $pdo->query('SHOW TABLES')->rowCount();
-echo "Tables: $after\n";
+echo "Tables: $after\n";?>

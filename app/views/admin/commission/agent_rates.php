@@ -1,4 +1,4 @@
-﻿<div class="container-fluid">
+ï»¿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-dollar-sign"></i> Agent Commission Rates</h4>
         <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
@@ -33,7 +33,7 @@
                             <?php if (empty($rates ?? [])): ?>
                             <tr>
                                 <td colspan="6" class="text-center py-5">
-                                    <i class="fas fa-ruler fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <i class="fas fa-ruler fa-3x text-muted mb-3" class="style-82835"></i>
                                     <h5 class="text-muted">No agent rates configured</h5>
                                     <p class="text-muted mb-3">Define rate cards based on plot size to automate agent commission calculations.</p>
                                 </td>
@@ -46,7 +46,7 @@
                                 <td>&#8377;<?= number_format((float)$r['commission_per_sqft'],2) ?></td>
                                 <td><?= (float)$r['commission_percentage'] ?>%</td>
                                 <td><span class="badge bg-<?= $r['status']=='active'?'success':'secondary' ?>"><?= $r['status'] ?></span></td>
-                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/agent-rates/delete/<?= $r['id'] ?>" style="display:inline" onsubmit="return confirm('Delete?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td>
+                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/agent-rates/delete/<?= $r['id'] ?>" class="style-71727" onsubmit="return confirm('Delete?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td>
                             </tr>
                             <?php endforeach; ?>
                             <?php endif; ?>

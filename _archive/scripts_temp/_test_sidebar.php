@@ -8,4 +8,4 @@ $technology = array_filter($items, fn($i) => ($i['section'] ?? '') === 'technolo
 echo "Technology section: " . count($technology) . " items" . PHP_EOL;
 foreach ($technology as $t) {
     echo "  - {$t['name']} -> {$t['url']}" . PHP_EOL;
-}
+}?>

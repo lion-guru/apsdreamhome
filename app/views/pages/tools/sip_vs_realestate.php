@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_sip_vs_re_title', [], 'SIP vs Real Estate Returns'); ?></h1>
@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_sip_rs', [], 'Monthly SIP (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('monthly_sip_rs', [], 'Monthly SIP (â‚¹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="sipAmt" value="10000" oninput="calcSIP()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_investment_rs', [], 'Property Investment (₹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('property_investment_rs', [], 'Property Investment (â‚¹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="propInv" value="5000000" oninput="calcSIP()">
                             </div>
                         </div>
@@ -36,13 +36,13 @@
                             <div class="col-md-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('sip_future_value', [], 'SIP Future Value'); ?></small>
-                                    <h4 class="text-success mb-0" id="sipFV">₹23,00,000</h4>
+                                    <h4 class="text-success mb-0" id="sipFV">â‚¹23,00,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('property_future_value', [], 'Property Future Value'); ?></small>
-                                    <h4 class="text-primary mb-0" id="propFV">₹10,80,000</h4>
+                                    <h4 class="text-primary mb-0" id="propFV">â‚¹10,80,000</h4>
                                 </div>
                             </div>
                         </div>

@@ -17,4 +17,4 @@ foreach ($results as $r) {
 $output .= "Done\n";
 
 file_put_contents('menu_output.txt', $output);
-echo "Written to file\n";
+echo "Written to file\n";?>

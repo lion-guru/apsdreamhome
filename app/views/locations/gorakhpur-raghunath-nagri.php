@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="page-banner mb-5" style="background: linear-gradient(rgba(30,60,114,0.7), rgba(30,60,114,0.7)), url('<?= ASSETS_URL ?>images/banner/project-banner.jpg') center/cover; padding: 100px 0; color: #fff; border-radius: 0 0 50px 50px;">
+        <div class="page-banner mb-5" class="style-23579">
             <div class="container text-center">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Raghunath Nagri' ?></h1>
                 <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : 'Premium Township at Motiram to Jhangha Road, Gorakhpur' ?></p>
@@ -72,7 +72,7 @@
             <div class="row mb-5">
                 <div class="col-12 text-center mb-5">
                     <h2 class="fw-bold text-primary">Modern Amenities</h2>
-                    <div class="divider mx-auto" style="width: 100px; height: 4px; background: #1e3c72; border-radius: 2px;"></div>
+                    <div class="divider mx-auto" class="style-18740"></div>
                 </div>
                 <div class="col-12">
                     <div class="row g-4 justify-content-center">
@@ -80,7 +80,7 @@
                         <div class="col-6 col-md-4 col-lg-3">
                             <div class="card h-100 border-0 shadow-sm text-center p-4 hover-up">
                                 <div class="mb-3">
-                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['alt_text']) ?>" class="img-fluid" style="height: 60px; object-fit: contain;">
+                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['alt_text']) ?>" class="img-fluid" class="style-46452">
                                 </div>
                                 <h6 class="fw-bold mb-0"><?= $item['title'] ?></h6>
                             </div>

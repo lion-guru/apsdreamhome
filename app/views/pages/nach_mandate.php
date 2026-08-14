@@ -26,28 +26,28 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                         <h4 class="fw-bold mb-4 text-primary">How to Set Up</h4>
                         <div class="row g-4">
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">
+                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
                                     <span class="fs-4 fw-bold">1</span>
                                 </div>
                                 <h6 class="fw-bold">Fill Mandate Form</h6>
                                 <p class="text-muted small mb-0">Provide your bank details and authorization for auto-debit</p>
                             </div>
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">
+                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
                                     <span class="fs-4 fw-bold">2</span>
                                 </div>
                                 <h6 class="fw-bold">Bank Verification</h6>
                                 <p class="text-muted small mb-0">Your bank verifies the mandate (1-2 business days)</p>
                             </div>
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">
+                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
                                     <span class="fs-4 fw-bold">3</span>
                                 </div>
                                 <h6 class="fw-bold">Mandate Active</h6>
                                 <p class="text-muted small mb-0">Auto-debit starts from the next EMI due date</p>
                             </div>
                             <div class="col-md-3 text-center">
-                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" class="style-9543">
                                     <i class="fas fa-check"></i>
                                 </div>
                                 <h6 class="fw-bold">Auto-Pay Active</h6>

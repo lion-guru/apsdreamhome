@@ -9,7 +9,7 @@ function lvStatusBadge($status) {
     $cls = $map[strtolower($status)] ?? 'secondary';
     return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status)) . '</span>';
 }
-function lvDate($d) { return $d ? date('d M Y', strtotime($d)) : '—'; }
+function lvDate($d) { return $d ? date('d M Y', strtotime($d)) : 'â€”'; }
 function lvDays($d) { return (int)$d; }
 ?>
 
@@ -96,19 +96,19 @@ function lvDays($d) { return (int)$d; }
         <div class="col-12"><h6 class="fw-bold text-muted mb-2"><i class="fas fa-balance-scale me-1"></i>Leave Balance <?= date('Y') ?></h6></div>
         <?php foreach ($leaveBalance as $b): ?>
         <div class="col-6 col-md-4 col-lg-3">
-            <div class="card lv-balance-card shadow-sm" style="border-left-color: <?= htmlspecialchars($b['color'] ?? '#6c757d') ?>">
+            <div class="card lv-balance-card shadow-sm" class="style-73501">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <small class="text-muted fw-semibold"><?= htmlspecialchars($b['type_name'] ?? '') ?></small>
-                        <span class="lv-badge" style="background: <?= htmlspecialchars($b['color'] ?? '#6c757d') ?>"></span>
+                        <span class="lv-badge" class="style-1980"></span>
                     </div>
                     <h4 class="mb-1 fw-bold"><?= number_format($b['remaining_days'] ?? 0, 1) ?> <small class="text-muted fs-6">/ <?= number_format($b['allocated_days'] ?? 0, 1) ?></small></h4>
                     <small class="text-muted">remaining</small>
-                    <div class="progress mt-2" style="height: 6px; border-radius: 3px;">
+                    <div class="progress mt-2" class="style-72552">
                         <?php $pct = ($b['allocated_days'] ?? 0) > 0 ? (($b['used_days'] ?? 0) / ($b['allocated_days'] ?? 1)) * 100 : 0; ?>
-                        <div class="progress-bar" style="width: <?= min(100, $pct) ?>%; background: <?= htmlspecialchars($b['color'] ?? '#6c757d') ?>; border-radius: 3px;"></div>
+                        <div class="progress-bar" class="style-62772"></div>
                     </div>
-                    <small class="text-muted mt-1 d-block"><?= number_format($b['used_days'] ?? 0, 1) ?> used<?= ($b['carried_forward'] ?? 0) > 0 ? ' · ' . number_format($b['carried_forward'], 1) . ' carried forward' : '' ?></small>
+                    <small class="text-muted mt-1 d-block"><?= number_format($b['used_days'] ?? 0, 1) ?> used<?= ($b['carried_forward'] ?? 0) > 0 ? ' Â· ' . number_format($b['carried_forward'], 1) . ' carried forward' : '' ?></small>
                 </div>
             </div>
         </div>
@@ -147,16 +147,16 @@ function lvDays($d) { return (int)$d; }
                             <?php foreach ($leaves as $l): ?>
                                 <tr class="lv-row">
                                     <td class="ps-3">
-                                        <span class="lv-badge" style="background: <?= htmlspecialchars($l['type_color'] ?? '#6c757d') ?>"></span>
+                                        <span class="lv-badge" class="style-83476"></span>
                                         <?= htmlspecialchars($l['type_name'] ?? ucfirst($l['leave_type'] ?? '')) ?>
                                     </td>
                                     <td>
                                         <small><?= lvDate($l['start_date']) ?></small>
-                                        <i class="fas fa-arrow-right mx-1 text-muted" style="font-size: 0.7rem;"></i>
+                                        <i class="fas fa-arrow-right mx-1 text-muted" class="style-62191"></i>
                                         <small><?= lvDate($l['end_date']) ?></small>
                                     </td>
                                     <td class="text-center fw-semibold"><?= lvDays($l['total_days']) ?></td>
-                                    <td><small class="text-muted"><?= htmlspecialchars(mb_strimwidth($l['reason'] ?? '—', 0, 60, '...')) ?></small></td>
+                                    <td><small class="text-muted"><?= htmlspecialchars(mb_strimwidth($l['reason'] ?? 'â€”', 0, 60, '...')) ?></small></td>
                                     <td><?= lvStatusBadge($l['status'] ?? 'pending') ?></td>
                                     <td class="text-end pe-3">
                                         <a href="/employee/leaves/<?= (int)$l['id'] ?>" class="btn btn-sm btn-outline-primary" title="View Details">
@@ -198,7 +198,7 @@ function lvDays($d) { return (int)$d; }
                             <select name="leave_type_id" class="form-select" required>
                                 <option value="">Select leave type...</option>
                                 <?php foreach ($leaveTypes as $lt): ?>
-                                    <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name']) ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' · Paid' : ' · Unpaid' ?>)</option>
+                                    <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name']) ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' Â· Paid' : ' Â· Unpaid' ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

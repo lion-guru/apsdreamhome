@@ -97,10 +97,10 @@ $content = ob_start();
         <div class="col-md-6">
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-comments"></i> Recent Chat Messages</div>
-                <div class="card-body aps-cp-card-body" style="max-height: 400px; overflow-y: auto;">
+                <div class="card-body aps-cp-card-body" class="style-61454">
                     <?php foreach ($recentMessages as $m): ?>
-                        <div class="mb-2 p-2 <?= $m['sender'] === 'user' ? 'bg-light' : 'bg-info text-white' ?>" style="border-radius: 8px;">
-                            <div><strong><?= $m['sender'] === 'user' ? '👤 User' : '🤖 Bot' ?>:</strong> <?= htmlspecialchars(substr($m['message'], 0, 100)) ?></div>
+                        <div class="mb-2 p-2 <?= $m['sender'] === 'user' ? 'bg-light' : 'bg-info text-white' ?>" class="style-2723">
+                            <div><strong><?= $m['sender'] === 'user' ? 'ðŸ‘¤ User' : 'ðŸ¤– Bot' ?>:</strong> <?= htmlspecialchars(substr($m['message'], 0, 100)) ?></div>
                             <?php if ($m['detected_intent']): ?>
                                 <small>Intent: <code><?= $m['detected_intent'] ?></code> (conf: <?= round($m['confidence'] * 100) ?>%)</small>
                             <?php endif; ?>
@@ -174,7 +174,7 @@ $content = ob_start();
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table">
                         <thead>
-                            <tr><th>Type</th><th>District</th><th>R²</th><th>Samples</th><th>Trained At</th></tr>
+                            <tr><th>Type</th><th>District</th><th>RÂ²</th><th>Samples</th><th>Trained At</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($priceModels as $m): ?>
@@ -201,7 +201,7 @@ function retrainAI() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                alert('✓ AI models retrained successfully!');
+                alert('âœ“ AI models retrained successfully!');
                 location.reload();
             } else {
                 alert('Error: ' + (data.error || 'unknown'));

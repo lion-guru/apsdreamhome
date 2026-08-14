@@ -6,4 +6,4 @@ try {
     foreach ($pdo->query('SHOW TABLES LIKE "saved%"') as $r) echo "saved: " . $r[0] . "\n";
     $cols = $pdo->query('DESCRIBE ab_experiments')->fetchAll(PDO::FETCH_COLUMN);
     echo "ab_experiments cols: " . implode(', ', $cols) . "\n";
-} catch (Exception $e) { echo 'ERR: ' . $e->getMessage(); }
+} catch (Exception $e) { echo 'ERR: ' . $e->getMessage(); }?>

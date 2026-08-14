@@ -626,4 +626,4 @@ class UserManager
             ];
         }
     }
-}
+}?>

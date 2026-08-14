@@ -50,4 +50,4 @@ echo "Inserted/Updated $inserted stamp duty rates\n";
 
 // Verify
 $count = $pdo->query("SELECT COUNT(*) FROM stamp_duty_config WHERE is_active = 1")->fetchColumn();
-echo "Total active states: $count\n";
+echo "Total active states: $count\n";?>

@@ -32,7 +32,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width:32px;height:32px;font-size:14px;">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" class="style-43341">
                                                 <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
                                             </div>
                                             <strong><?= htmlspecialchars($user['name'] ?? '') ?></strong>
@@ -40,7 +40,7 @@
                                     </td>
                                     <td><?= htmlspecialchars($user['email'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($user['phone'] ?? '') ?></td>
-                                    <td><?= htmlspecialchars($user['sponsor_name'] ?? '—') ?></td>
+                                    <td><?= htmlspecialchars($user['sponsor_name'] ?? 'â€”') ?></td>
                                     <td>
                                         <span class="badge bg-<?= match($user['level'] ?? '') { 'platinum' => 'dark', 'gold' => 'warning text-dark', 'silver' => 'secondary', default => 'info' } ?>">
                                             <?= ucfirst($user['level'] ?? 'bronze') ?>

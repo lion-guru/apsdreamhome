@@ -47,13 +47,13 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Monthly EMI</small><strong class="fs-4">₹<?= number_format((int)($result['emi'] ?? 0)) ?></strong></div>
+                            <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Monthly EMI</small><strong class="fs-4">â‚¹<?= number_format((int)($result['emi'] ?? 0)) ?></strong></div>
                         </div>
                         <div class="col-md-6">
-                            <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Total Interest</small><strong class="fs-4">₹<?= number_format((int)($result['total_interest'] ?? 0)) ?></strong></div>
+                            <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Total Interest</small><strong class="fs-4">â‚¹<?= number_format((int)($result['total_interest'] ?? 0)) ?></strong></div>
                         </div>
                         <div class="col-md-6">
-                            <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Total Payment</small><strong class="fs-4">₹<?= number_format((int)($result['total_payment'] ?? 0)) ?></strong></div>
+                            <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Total Payment</small><strong class="fs-4">â‚¹<?= number_format((int)($result['total_payment'] ?? 0)) ?></strong></div>
                         </div>
                         <div class="col-md-6">
                             <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">ROI (10 yr)</small><strong class="fs-4"><?= round((float)($result['roi'] ?? 0), 1) ?>%</strong></div>
@@ -64,13 +64,13 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Amortization Schedule</h5></div>
                 <div class="card-body p-0">
-                    <div class="table-responsive" style="max-height:300px">
+                    <div class="table-responsive" class="style-23653">
                         <div class="table-responsive"><table class="table table-hover table-sm mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Year</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($result['schedule'])): ?>
                                     <?php foreach ($result['schedule'] as $s): ?>
-                                        <tr><td><?= (int)($s['year'] ?? 0) ?></td><td>₹<?= number_format((int)($s['principal'] ?? 0)) ?></td><td>₹<?= number_format((int)($s['interest'] ?? 0)) ?></td><td>₹<?= number_format((int)($s['balance'] ?? 0)) ?></td></tr>
+                                        <tr><td><?= (int)($s['year'] ?? 0) ?></td><td>â‚¹<?= number_format((int)($s['principal'] ?? 0)) ?></td><td>â‚¹<?= number_format((int)($s['interest'] ?? 0)) ?></td><td>â‚¹<?= number_format((int)($s['balance'] ?? 0)) ?></td></tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr><td colspan="4" class="text-center text-muted py-3">No data.</td></tr>

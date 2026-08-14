@@ -32,4 +32,4 @@ foreach ($tables as $t => $cols) {
         echo implode(', ', array_slice($parts, 0, 3));
     }
     echo PHP_EOL;
-}
+}?>

@@ -11,4 +11,4 @@ foreach ($tables as $t) {
     } catch (Exception $e) {
         echo "$t: TABLE MISSING" . PHP_EOL;
     }
-}
+}?>

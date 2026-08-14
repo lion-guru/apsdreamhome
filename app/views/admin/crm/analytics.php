@@ -82,7 +82,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
         </div>
         <div class="col-6 col-lg-3">
             <div class="analytics-kpi kpi-info">
-                <div class="kpi-val">₹<?= number_format($pipelineTotal / 100000, 1) ?>L</div>
+                <div class="kpi-val">â‚¹<?= number_format($pipelineTotal / 100000, 1) ?>L</div>
                 <div class="kpi-label">Pipeline Value</div>
                 <div class="kpi-change"><i class="fas fa-rupee-sign"></i> Weighted</div>
             </div>
@@ -114,7 +114,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                         $width = max(5, ($count / $maxFunnel) * 100);
                         $pct = $totalLeads > 0 ? round(($count / $totalLeads) * 100, 1) : 0;
                     ?>
-                        <div class="funnel-bar" style="width:<?= $width ?>%;background:<?= $color ?>;min-width:120px">
+                        <div class="funnel-bar" class="style-60037">
                             <span><?= $label ?></span>
                             <span class="funnel-pct"><?= $pct ?>%</span>
                             <span class="funnel-count"><?= number_format($count) ?></span>
@@ -122,7 +122,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                     <?php endforeach; ?>
                     <div class="mt-3 p-3 bg-light rounded text-center">
                         <small class="text-muted">Overall Conversion</small>
-                        <div style="font-size:24px;font-weight:800;color:#10b981"><?= $convRate ?>%</div>
+                        <div class="style-33656"><?= $convRate ?>%</div>
                         <small class="text-muted"><?= number_format($wonLeads) ?> won from <?= number_format($totalLeads) ?> leads</small>
                     </div>
                 </div>
@@ -146,7 +146,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                                 <div class="pipeline-stage">
                                     <div class="stage-val text-<?= $color ?>"><?= $stage['count'] ?></div>
                                     <div class="stage-label"><?= ucfirst(str_replace('_',' ',$stage['stage'])) ?></div>
-                                    <div class="stage-value">₹<?= number_format($stage['value'] / 100000, 1) ?>L</div>
+                                    <div class="stage-value">â‚¹<?= number_format($stage['value'] / 100000, 1) ?>L</div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -169,7 +169,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                     <h6 class="mb-0 fw-bold"><i class="fas fa-bullseye me-2"></i>Source Performance</h6>
                     <span class="badge bg-primary"><?= count($source_analytics) ?> sources</span>
                 </div>
-                <div class="card-body" style="max-height:400px;overflow-y:auto">
+                <div class="card-body" class="style-23214">
                     <?php if (!empty($source_analytics)): ?>
                         <?php
                         $srcLeadCnts = array_map(function($s) { return (int)($s['total_leads'] ?? 0); }, $source_analytics);
@@ -186,17 +186,17 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                             $ci++;
                         ?>
                             <div class="source-row">
-                                <div style="width:120px;flex-shrink:0">
-                                    <strong style="font-size:13px"><?= htmlspecialchars(ucfirst(str_replace('_',' ',$src['source'] ?? ''))) ?></strong>
+                                <div class="style-34092">
+                                    <strong class="style-87981"><?= htmlspecialchars(ucfirst(str_replace('_',' ',$src['source'] ?? ''))) ?></strong>
                                 </div>
                                 <div class="source-bar-bg">
-                                    <div class="source-bar-fill" style="width:<?= $width ?>%;background:<?= $color ?>"></div>
+                                    <div class="source-bar-fill" class="style-4558"></div>
                                 </div>
-                                <div style="width:60px;text-align:right;flex-shrink:0">
+                                <div class="style-70567">
                                     <span class="fw-bold"><?= $total ?></span>
                                     <small class="text-muted d-block">leads</small>
                                 </div>
-                                <div style="width:60px;text-align:right;flex-shrink:0">
+                                <div class="style-70567">
                                     <span class="badge bg-<?= $rate >= 50 ? 'success' : ($rate >= 20 ? 'warning' : 'danger') ?>"><?= $rate ?>%</span>
                                     <small class="text-muted d-block">won</small>
                                 </div>
@@ -215,7 +215,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                 <div class="card-header bg-light py-3">
                     <h6 class="mb-0 fw-bold"><i class="fas fa-users-cog me-2"></i>Agent Performance</h6>
                 </div>
-                <div class="card-body" style="max-height:400px;overflow-y:auto">
+                <div class="card-body" class="style-23214">
                     <?php if (!empty($agent_performance)): ?>
                         <?php
                         $agentColors = ['#667eea','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4'];
@@ -224,10 +224,10 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                             $color = $agentColors[$ai % count($agentColors)];
                             $ai++;
                         ?>
-                            <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid #f5f5f5">
-                                <div class="agent-avatar" style="background:<?= $color ?>"><?= strtoupper(substr($agent['name'] ?? 'A', 0, 1)) ?></div>
+                            <div class="d-flex align-items-center gap-3 py-2" class="style-95886">
+                                <div class="agent-avatar" class="style-96004"><?= strtoupper(substr($agent['name'] ?? 'A', 0, 1)) ?></div>
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold" style="font-size:14px"><?= htmlspecialchars($agent['name'] ?? 'Unknown') ?></div>
+                                    <div class="fw-bold" class="style-42715"><?= htmlspecialchars($agent['name'] ?? 'Unknown') ?></div>
                                     <small class="text-muted"><?= (int)($agent['total_leads'] ?? 0) ?> leads &middot; <?= (int)($agent['won_leads'] ?? 0) ?> won</small>
                                 </div>
                                 <div class="text-end">
@@ -267,7 +267,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                 <div class="col-md-4">
                     <div class="p-3 bg-primary-subtle rounded">
                         <h6 class="text-primary fw-bold mb-1"><i class="fas fa-user-tie me-1"></i> Top Agent</h6>
-                        <p class="mb-0"><strong><?= htmlspecialchars($bestAgent['name'] ?? '') ?></strong> — <?= (int)($bestAgent['conversion_rate'] ?? 0) ?>% conversion</p>
+                        <p class="mb-0"><strong><?= htmlspecialchars($bestAgent['name'] ?? '') ?></strong> â€” <?= (int)($bestAgent['conversion_rate'] ?? 0) ?>% conversion</p>
                     </div>
                 </div>
                 <?php endif; ?>

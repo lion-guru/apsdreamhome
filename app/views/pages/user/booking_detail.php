@@ -167,7 +167,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_booking_detail_label_total_value', 'Total Plot Value') ?></small>
-                        <strong class="fs-6 text-primary">₹<?= number_format($totalVal) ?></strong>
+                        <strong class="fs-6 text-primary">â‚¹<?= number_format($totalVal) ?></strong>
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_booking_detail_label_channel', 'Channel') ?></small>
@@ -179,13 +179,13 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                         <span class="fw-semibold"><?= __('user_booking_detail_payment_progress', 'Payment Progress') ?></span>
                         <span class="fw-bold text-<?= $payPct >= 100 ? 'success' : 'primary' ?>"><?= $payPct ?>%</span>
                     </div>
-                    <div class="aps-cp-progress" style="height:12px;">
-                        <div class="aps-cp-progress-bar" style="width:<?= min(100, $payPct) ?>%; background: <?= $payPct >= 100 ? 'var(--aps-cp-success, #10b981)' : 'var(--aps-cp-primary, #0d9488)' ?>;"></div>
+                    <div class="aps-cp-progress" class="style-51045">
+                        <div class="aps-cp-progress-bar" class="style-13409"></div>
                     </div>
                     <div class="d-flex justify-content-between mt-1">
-                        <small class="text-success"><?= __('user_booking_detail_paid', 'Paid') ?>: ₹<?= number_format($total_paid) ?></small>
+                        <small class="text-success"><?= __('user_booking_detail_paid', 'Paid') ?>: â‚¹<?= number_format($total_paid) ?></small>
                         <?php if ($pendingAmt > 0): ?>
-                            <small class="text-danger"><?= __('user_booking_detail_pending', 'Pending') ?>: ₹<?= number_format($pendingAmt) ?></small>
+                            <small class="text-danger"><?= __('user_booking_detail_pending', 'Pending') ?>: â‚¹<?= number_format($pendingAmt) ?></small>
                         <?php else: ?>
                             <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('user_booking_detail_fully_paid', 'Fully Paid') ?></small>
                         <?php endif; ?>
@@ -200,13 +200,13 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                 <h5><i class="fas fa-history text-info"></i> <?= __('user_booking_detail_status_timeline', 'Status Timeline') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="position-relative" style="padding-left:24px;">
-                    <div class="position-absolute" style="left:7px; top:0; bottom:0; width:2px; background: var(--aps-cp-border, #e5e7eb);"></div>
+                <div class="position-relative" class="style-11366">
+                    <div class="position-absolute" class="style-1238"></div>
                     <?php foreach ($history as $i => $h):
                         $hColor = $statusColors[$h['to_status']] ?? 'secondary';
                     ?>
                     <div class="position-relative mb-3">
-                        <div class="position-absolute" style="left:-24px; top:2px; width:16px; height:16px; border-radius:50%; background: var(--aps-cp-<?= $hColor ?>, #0d9488); border:2px solid #fff; z-index:1;"></div>
+                        <div class="position-absolute" class="style-41260"></div>
                         <div>
                             <strong class="text-<?= $hColor ?>"><?= $statusLabels[$h['to_status']] ?? ucfirst($h['to_status']) ?></strong>
                             <small class="text-muted ms-2"><?= date('d M Y, h:i A', strtotime($h['created_at'] ?? 'now')) ?></small>
@@ -261,14 +261,14 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                                 <br><small class="text-danger"><i class="fas fa-exclamation-triangle"></i> <?= round((strtotime('now') - strtotime($p['due_date'])) / 86400) ?> <?= __('user_booking_detail_days_overdue', 'days overdue') ?></small>
                             <?php endif; ?>
                         </td>
-                        <td class="text-end">₹<?= number_format((float)$p['amount']) ?></td>
-                        <td class="text-end">₹<?= number_format((float)($p['principal'] ?? 0)) ?></td>
-                        <td class="text-end">₹<?= number_format((float)($p['interest'] ?? 0)) ?></td>
+                        <td class="text-end">â‚¹<?= number_format((float)$p['amount']) ?></td>
+                        <td class="text-end">â‚¹<?= number_format((float)($p['principal'] ?? 0)) ?></td>
+                        <td class="text-end">â‚¹<?= number_format((float)($p['interest'] ?? 0)) ?></td>
                         <td><span class="badge bg-<?= $pColor ?>"><?= ucfirst($pStatus) ?></span></td>
                         <td><?= $p['paid_date'] ? date('d M Y', strtotime($p['paid_date'])) : '-' ?></td>
                         <td class="text-end">
                             <?php if ((float)($p['paid_amount'] ?? 0) > 0): ?>
-                                ₹<?= number_format((float)$p['paid_amount']) ?>
+                                â‚¹<?= number_format((float)$p['paid_amount']) ?>
                             <?php else: ?>
                                 -
                             <?php endif; ?>
@@ -315,7 +315,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                     <tr>
                         <td><strong><?= htmlspecialchars($r['receipt_number'] ?? 'N/A') ?></strong></td>
                         <td><?= date('d M Y', strtotime($r['receipt_date'] ?? 'now')) ?></td>
-                        <td class="text-success fw-bold">₹<?= number_format((float)($r['amount'] ?? 0)) ?></td>
+                        <td class="text-success fw-bold">â‚¹<?= number_format((float)($r['amount'] ?? 0)) ?></td>
                         <td><?= ucfirst(str_replace('_', ' ', $r['payment_mode'] ?? 'cash')) ?></td>
                         <td><?= htmlspecialchars($r['transaction_ref'] ?? $r['cheque_number'] ?? '-') ?></td>
                         <td>
@@ -371,7 +371,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 <div class="row g-3 mb-4">
     <?php if ($bStatus === 'token_paid'): ?>
     <div class="col-md-4">
-        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/pay-token" class="btn btn-success w-100 py-3" style="font-size:1.05rem;">
+        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/pay-token" class="btn btn-success w-100 py-3" class="style-12699">
             <i class="fas fa-credit-card me-2"></i><?= __('user_booking_detail_pay_token', 'Pay Token Amount') ?>
         </a>
     </div>
@@ -387,7 +387,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
     </div>
     <?php elseif ($bStatus === 'agreement_signed'): ?>
     <div class="col-md-4">
-        <span class="btn btn-success w-100 py-3 disabled" style="font-size:1.05rem; opacity:0.85;">
+        <span class="btn btn-success w-100 py-3 disabled" class="style-69721">
             <i class="fas fa-check-circle me-2"></i><?= __('user_booking_detail_payment_complete', 'Payment Complete') ?>
         </span>
     </div>

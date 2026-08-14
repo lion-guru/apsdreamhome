@@ -102,7 +102,7 @@ $stageIcons = [
                             <span class="badge bg-white text-<?= $stage['color'] ?>"><?= count($stageDeals) ?></span>
                         </div>
                     </div>
-                    <div class="card-body kanban-dropzone p-2" style="min-height: 400px; background: #f8f9fa;">
+                    <div class="card-body kanban-dropzone p-2" class="style-41906">
                         <?php foreach ($stageDeals as $deal): ?>
                             <div class="card kanban-card mb-2" data-deal-id="<?= $deal['id'] ?>" draggable="true">
                                 <div class="card-body p-2">
@@ -111,7 +111,7 @@ $stageIcons = [
                                         <i class="fas fa-home me-1"></i><?= htmlspecialchars($deal['property_title'] ?? 'No property') ?>
                                     </p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary">₹<?= number_format(floatval($deal['deal_value'] ?? 0), 0) ?>L</span>
+                                        <span class="badge bg-primary">â‚¹<?= number_format(floatval($deal['deal_value'] ?? 0), 0) ?>L</span>
                                         <small class="text-muted"><?= date('M d', strtotime($deal['expected_close_date'] ?? 'now')) ?></small>
                                     </div>
                                     <div class="mt-1">

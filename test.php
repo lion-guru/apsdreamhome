@@ -1,2 +1,2 @@
 <?php
-echo "Hello from root";
+echo "Hello from root";?>

@@ -11,4 +11,4 @@ foreach (['/admin/visits' => 'Site Visits'] as $url => $name) {
     } else {
         echo "$name already exists\n";
     }
-}
+}?>

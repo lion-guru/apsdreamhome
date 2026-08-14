@@ -116,7 +116,7 @@ foreach ($directChildren as $childUserId) {
         $volume = (float)$stmt->fetchColumn();
         echo "  leg volume = $volume\n";
     } else {
-        echo "  no assocIds → leg volume = 0\n";
+        echo "  no assocIds â†’ leg volume = 0\n";
     }
 }
 
@@ -182,4 +182,4 @@ $pdo->exec("DELETE FROM leads WHERE email IN ('test_cust1@example.com', 'test_cu
 $pdo->exec("DELETE FROM mlm_network_tree WHERE associate_id IN (SELECT id FROM associates WHERE user_id IN (1001,1002,1003,1004,1005,1006))");
 $pdo->exec("DELETE FROM mlm_profiles WHERE user_id IN (1001,1002,1003,1004,1005,1006)");
 $pdo->exec("DELETE FROM associates WHERE user_id IN (1001,1002,1003,1004,1005,1006)");
-$pdo->exec("DELETE FROM users WHERE id IN (1001,1002,1003,1004,1005,1006,2001,2002,2003)");
+$pdo->exec("DELETE FROM users WHERE id IN (1001,1002,1003,1004,1005,1006,2001,2002,2003)");?>

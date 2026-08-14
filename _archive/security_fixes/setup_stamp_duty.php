@@ -288,4 +288,4 @@ CREATE TABLE IF NOT EXISTS stamp_duty_calculations (
 
 echo "stamp_duty_calculations table created/verified\n";
 
-echo "\n=== All Stamp Duty tables and data created successfully ===\n";
+echo "\n=== All Stamp Duty tables and data created successfully ===\n";?>

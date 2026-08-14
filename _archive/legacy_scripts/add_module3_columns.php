@@ -56,4 +56,4 @@ foreach ($alterations as $table => $cols) {
         }
     }
 }
-echo PHP_EOL . "Added: $added, Skipped: $skipped, Errored: $errored" . PHP_EOL;
+echo PHP_EOL . "Added: $added, Skipped: $skipped, Errored: $errored" . PHP_EOL;?>

@@ -24,7 +24,7 @@ ob_start();
             <div class="card border-0 shadow-sm">
                 <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Collected</p>
-                    <h3 class="text-success">₹<?= number_format($stats['total_amount'] ?? 0) ?></h3>
+                    <h3 class="text-success">â‚¹<?= number_format($stats['total_amount'] ?? 0) ?></h3>
                     <small class="text-muted"><?= number_format($stats['total_submitted'] ?? 0) ?> receipts</small>
                 </div>
             </div>
@@ -33,7 +33,7 @@ ob_start();
             <div class="card border-0 shadow-sm">
                 <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Today's Collection</p>
-                    <h3 class="text-info">₹<?= number_format($stats['today_amount'] ?? 0) ?></h3>
+                    <h3 class="text-info">â‚¹<?= number_format($stats['today_amount'] ?? 0) ?></h3>
                     <small class="text-muted"><?= number_format($stats['today_count'] ?? 0) ?> receipts today</small>
                 </div>
             </div>
@@ -43,7 +43,7 @@ ob_start();
                 <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Pending Verification</p>
                     <h3 class="text-warning"><?= number_format($stats['pending_count'] ?? 0) ?></h3>
-                    <small class="text-muted">₹<?= number_format($stats['pending_amount'] ?? 0) ?> awaiting</small>
+                    <small class="text-muted">â‚¹<?= number_format($stats['pending_amount'] ?? 0) ?> awaiting</small>
                 </div>
             </div>
         </div>
@@ -135,7 +135,7 @@ ob_start();
                                     <?php endif; ?>
                                 </td>
                                 <td><?= htmlspecialchars($c['customer_name'] ?? '') ?></td>
-                                <td><strong class="text-success">₹<?= number_format($c['amount'] ?? 0) ?></strong></td>
+                                <td><strong class="text-success">â‚¹<?= number_format($c['amount'] ?? 0) ?></strong></td>
                                 <td><?= date('d M Y', strtotime($c['collection_date'])) ?></td>
                                 <td><span class="badge bg-light text-dark"><?= ucfirst($c['payment_method'] ?? 'cash') ?></span></td>
                                 <td>
@@ -147,7 +147,7 @@ ob_start();
                                 <td>
                                     <a href="<?= BASE_URL ?>/admin/cash-collections/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                     <?php if (($c['status'] ?? '') === 'submitted'): ?>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/verify" style="display:inline">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/cash-collections/verify" class="style-71727">
                                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                                             <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                             <button type="submit" class="btn btn-sm btn-success" title="Verify"><i class="fas fa-check"></i></button>
@@ -175,7 +175,7 @@ ob_start();
     </div>
 </div>
 
-<form id="bulkVerifyForm" method="POST" action="<?= BASE_URL ?>/admin/cash-collections/bulk-verify" style="display:none">
+<form id="bulkVerifyForm" method="POST" action="<?= BASE_URL ?>/admin/cash-collections/bulk-verify" class="style-24280">
     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
     <input type="hidden" name="ids[]" id="bulkIdsInput" value="">
 </form>

@@ -95,7 +95,8 @@ class SecurityTestSuite
         $overall = $this->getOverallScore($results);
         $recommendations = $this->getRecommendations($results);
         $scoreColor = $overall >= 80 ? '#22c55e' : ($overall >= 50 ? '#eab308' : '#ef4444');
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Security Test Report</title>';
+        $html = '<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8"><title>Security Test Report</title>';
         $html .= '<style>body{font-family:Inter,sans-serif;margin:40px;background:#f8fafc;color:#1e293b}';
         $html .= '.score{text-align:center;margin:30px 0}.score-num{font-size:72px;font-weight:800;color:' . $scoreColor . '}';
         $html .= '.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin:20px 0}';
@@ -115,7 +116,7 @@ class SecurityTestSuite
             $html .= '<div class="card ' . $cls . '">';
             $html .= '<div class="d-flex justify-content-between align-items-center mb-2"><strong>' . htmlspecialchars($r['test_name'] ?? '') . '</strong>';
             $html .= '<span class="badge ' . $cls . '">' . strtoupper($cls) . ' ' . ($r['score'] ?? 0) . '/100</span></div>';
-            $html .= '<p style="color:#64748b;font-size:14px">' . htmlspecialchars($r['details'] ?? '') . '</p></div>';
+            $html .= '<p class="style-2264">' . htmlspecialchars($r['details'] ?? '') . '</p></div>';
         }
         $html .= '</div>';
         if (!empty($recommendations)) {

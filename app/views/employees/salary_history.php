@@ -27,12 +27,12 @@
     <!-- Salary Overview -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+            <div class="stats-card card text-white" class="style-88128">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                ₹<?= number_format($salary_history[0]['current_salary'] ?? 0, 0) ?>
+                                â‚¹<?= number_format($salary_history[0]['current_salary'] ?? 0, 0) ?>
                             </h4>
                             <small>Current Salary</small>
                         </div>
@@ -44,12 +44,12 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
+            <div class="stats-card card text-white" class="style-37722">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                ₹<?= number_format(array_sum(array_column($salary_history, 'net_salary')), 0) ?>
+                                â‚¹<?= number_format(array_sum(array_column($salary_history, 'net_salary')), 0) ?>
                             </h4>
                             <small>Total Paid (YTD)</small>
                         </div>
@@ -61,12 +61,12 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+            <div class="stats-card card text-white" class="style-22627">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                ₹<?= number_format(array_sum(array_column($salary_history, 'bonus')), 0) ?>
+                                â‚¹<?= number_format(array_sum(array_column($salary_history, 'bonus')), 0) ?>
                             </h4>
                             <small>Total Bonus (YTD)</small>
                         </div>
@@ -78,12 +78,12 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
+            <div class="stats-card card text-white" class="style-72670">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                ₹<?= number_format(array_sum(array_column($salary_history, 'deductions')), 0) ?>
+                                â‚¹<?= number_format(array_sum(array_column($salary_history, 'deductions')), 0) ?>
                             </h4>
                             <small>Total Deductions (YTD)</small>
                         </div>
@@ -133,20 +133,20 @@
                                                 </strong>
                                             </td>
                                             <td>
-                                                ₹<?= number_format($record['basic_salary'] ?? 0, 2) ?>
+                                                â‚¹<?= number_format($record['basic_salary'] ?? 0, 2) ?>
                                             </td>
                                             <td>
-                                                ₹<?= number_format($record['allowances'] ?? 0, 2) ?>
+                                                â‚¹<?= number_format($record['allowances'] ?? 0, 2) ?>
                                             </td>
                                             <td>
-                                                ₹<?= number_format($record['bonus'] ?? 0, 2) ?>
+                                                â‚¹<?= number_format($record['bonus'] ?? 0, 2) ?>
                                             </td>
                                             <td>
-                                                ₹<?= number_format($record['deductions'] ?? 0, 2) ?>
+                                                â‚¹<?= number_format($record['deductions'] ?? 0, 2) ?>
                                             </td>
                                             <td>
                                                 <strong class="text-success">
-                                                    ₹<?= number_format($record['net_salary'] ?? 0, 2) ?>
+                                                    â‚¹<?= number_format($record['net_salary'] ?? 0, 2) ?>
                                                 </strong>
                                             </td>
                                             <td>
@@ -237,22 +237,22 @@
                         <div class="salary-info">
                             <div class="info-item mb-3">
                                 <strong>Current Basic Salary:</strong>
-                                ₹<?= number_format($latestSalary['basic_salary'] ?? 0, 2) ?>
+                                â‚¹<?= number_format($latestSalary['basic_salary'] ?? 0, 2) ?>
                             </div>
                             <div class="info-item mb-3">
                                 <strong>Allowances:</strong>
-                                ₹<?= number_format($latestSalary['allowances'] ?? 0, 2) ?>
+                                â‚¹<?= number_format($latestSalary['allowances'] ?? 0, 2) ?>
                                 <small class="text-muted d-block">
                                     (HRA, Medical, Transport, etc.)
                                 </small>
                             </div>
                             <div class="info-item mb-3">
                                 <strong>Tax Deductions:</strong>
-                                ₹<?= number_format($latestSalary['tax_deductions'] ?? 0, 2) ?>
+                                â‚¹<?= number_format($latestSalary['tax_deductions'] ?? 0, 2) ?>
                             </div>
                             <div class="info-item mb-3">
                                 <strong>PF Contribution:</strong>
-                                ₹<?= number_format($latestSalary['pf_deduction'] ?? 0, 2) ?>
+                                â‚¹<?= number_format($latestSalary['pf_deduction'] ?? 0, 2) ?>
                                 <small class="text-muted d-block">
                                     (12% of Basic Salary)
                                 </small>
@@ -261,7 +261,7 @@
                             <div class="info-item">
                                 <strong>Annual CTC:</strong>
                                 <span class="text-primary">
-                                    ₹<?= number_format(($latestSalary['basic_salary'] ?? 0) * 12 + ($latestSalary['allowances'] ?? 0) * 12, 2) ?>
+                                    â‚¹<?= number_format(($latestSalary['basic_salary'] ?? 0) * 12 + ($latestSalary['allowances'] ?? 0) * 12, 2) ?>
                                 </span>
                             </div>
                         </div>
@@ -334,7 +334,7 @@ if (trendCtx) {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return '₹' + value.toLocaleString();
+                            return 'â‚¹' + value.toLocaleString();
                         }
                     }
                 }

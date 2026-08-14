@@ -104,14 +104,14 @@ class AutoPayoutService
         if ($this->tenantId() > 1) $mpbUpParams[] = $this->tenantId();
         $this->db->query($mpbUpdateSql, $mpbUpParams);
 
-        $this->logger->info("Auto payout processed: Batch #$batchId — $totalAgents users, ₹$totalAmount");
+        $this->logger->info("Auto payout processed: Batch #$batchId â€” $totalAgents users, â‚¹$totalAmount");
 
         return [
             'success' => true,
             'batch_id' => $batchId,
             'total_agents' => $totalAgents,
             'total_amount' => $totalAmount,
-            'message' => "Payout processed successfully for $totalAgents users totalling ₹$totalAmount"
+            'message' => "Payout processed successfully for $totalAgents users totalling â‚¹$totalAmount"
         ];
     }
 
@@ -127,4 +127,4 @@ class AutoPayoutService
                 LIMIT 20";
         return $this->db->fetchAll($sql) ?? [];
     }
-}
+}?>

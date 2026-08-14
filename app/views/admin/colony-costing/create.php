@@ -10,7 +10,7 @@ $val = function(string $key, $default = 0) use ($e) {
     return $e[$key] ?? $default;
 };
 ?>
-<div class="container-fluid py-4" style="max-width:1000px;">
+<div class="container-fluid py-4" class="style-12596">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0">
             <i class="fas fa-drafting-compass me-2"></i>
@@ -24,14 +24,14 @@ $val = function(string $key, $default = 0) use ($e) {
     <?php if ($existing): ?>
         <div class="alert alert-info py-2 mb-3">
             <i class="fas fa-info-circle me-2"></i>
-            Existing costing v<?= (int)$existing['version'] ?> found (<?= $existing['is_approved'] ? '✅ Approved' : '⏳ Pending' ?>).
+            Existing costing v<?= (int)$existing['version'] ?> found (<?= $existing['is_approved'] ? 'âœ… Approved' : 'â�³ Pending' ?>).
             Saving will create version <?= (int)$existing['version'] + 1 ?>.
         </div>
     <?php endif; ?>
 
     <div class="row g-4">
 
-        <!-- ── LEFT: Input Form ─────────────────────────────────── -->
+        <!-- â”€â”€ LEFT: Input Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
         <div class="col-lg-7">
             <form id="costingForm" method="POST" action="<?= $base ?>/admin/colony-costing/store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
@@ -46,14 +46,14 @@ $val = function(string $key, $default = 0) use ($e) {
                         <label class="form-label" for="costing_label">Label / Description</label>
                         <input type="text" id="costing_label" name="costing_label" class="form-control"
                                value="<?= htmlspecialchars($val('costing_label', 'Initial Costing')) ?>"
-                               placeholder="e.g. Phase 1 — July 2026 Estimate">
+                               placeholder="e.g. Phase 1 â€” July 2026 Estimate">
                     </div>
                 </div>
 
                 <!-- Section 1: Land Acquisition -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-primary text-white py-2">
-                        <i class="fas fa-map me-2"></i>Section 1 — Land Acquisition
+                        <i class="fas fa-map me-2"></i>Section 1 â€” Land Acquisition
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
@@ -65,13 +65,13 @@ $val = function(string $key, $default = 0) use ($e) {
                                 <small class="text-muted">1 Acre = 43,560 SqFt</small>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="land_purchase_rate">Purchase Rate (₹/SqFt) <span class="text-danger">*</span></label>
+                                <label class="form-label" for="land_purchase_rate">Purchase Rate (â‚¹/SqFt) <span class="text-danger">*</span></label>
                                 <input type="number" id="land_purchase_rate" name="land_purchase_rate"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('land_purchase_rate', 0) ?>" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="land_registry_cost">Registry / Stamp Duty (₹ Total)</label>
+                                <label class="form-label" for="land_registry_cost">Registry / Stamp Duty (â‚¹ Total)</label>
                                 <input type="number" id="land_registry_cost" name="land_registry_cost"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('land_registry_cost', 0) ?>">
@@ -83,7 +83,7 @@ $val = function(string $key, $default = 0) use ($e) {
                 <!-- Section 2: Wastage Deductions -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-warning text-dark py-2">
-                        <i class="fas fa-slash me-2"></i>Section 2 — Wastage Deductions (% of Total Land)
+                        <i class="fas fa-slash me-2"></i>Section 2 â€” Wastage Deductions (% of Total Land)
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
@@ -116,15 +116,15 @@ $val = function(string $key, $default = 0) use ($e) {
                             <div class="row text-center">
                                 <div class="col-4">
                                     <div class="small text-muted">Total Wastage</div>
-                                    <div class="fw-bold text-danger" id="r_total_waste_pct">—%</div>
+                                    <div class="fw-bold text-danger" id="r_total_waste_pct">â€”%</div>
                                 </div>
                                 <div class="col-4">
                                     <div class="small text-muted">Wasted SqFt</div>
-                                    <div class="fw-bold text-danger" id="r_wasted_sqft">—</div>
+                                    <div class="fw-bold text-danger" id="r_wasted_sqft">â€”</div>
                                 </div>
                                 <div class="col-4">
                                     <div class="small text-muted">Net Sellable SqFt</div>
-                                    <div class="fw-bold text-success" id="r_net_sellable">—</div>
+                                    <div class="fw-bold text-success" id="r_net_sellable">â€”</div>
                                 </div>
                             </div>
                         </div>
@@ -134,42 +134,42 @@ $val = function(string $key, $default = 0) use ($e) {
                 <!-- Section 3: Development Costs -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-success text-white py-2">
-                        <i class="fas fa-hard-hat me-2"></i>Section 3 — Development Costs (₹/SqFt of Sellable Area)
+                        <i class="fas fa-hard-hat me-2"></i>Section 3 â€” Development Costs (â‚¹/SqFt of Sellable Area)
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label" for="road_dev_cost_sqft">Road Construction (₹/SqFt)</label>
+                                <label class="form-label" for="road_dev_cost_sqft">Road Construction (â‚¹/SqFt)</label>
                                 <input type="number" id="road_dev_cost_sqft" name="road_dev_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('road_dev_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="drainage_dev_cost_sqft">Drainage / Nali (₹/SqFt)</label>
+                                <label class="form-label" for="drainage_dev_cost_sqft">Drainage / Nali (â‚¹/SqFt)</label>
                                 <input type="number" id="drainage_dev_cost_sqft" name="drainage_dev_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('drainage_dev_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="electricity_cost_sqft">Electricity (₹/SqFt)</label>
+                                <label class="form-label" for="electricity_cost_sqft">Electricity (â‚¹/SqFt)</label>
                                 <input type="number" id="electricity_cost_sqft" name="electricity_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('electricity_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="water_pipeline_cost_sqft">Water Pipeline (₹/SqFt)</label>
+                                <label class="form-label" for="water_pipeline_cost_sqft">Water Pipeline (â‚¹/SqFt)</label>
                                 <input type="number" id="water_pipeline_cost_sqft" name="water_pipeline_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('water_pipeline_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="boundary_wall_cost_sqft">Boundary Wall (₹/SqFt)</label>
+                                <label class="form-label" for="boundary_wall_cost_sqft">Boundary Wall (â‚¹/SqFt)</label>
                                 <input type="number" id="boundary_wall_cost_sqft" name="boundary_wall_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('boundary_wall_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="other_dev_cost_sqft">Other Dev. (₹/SqFt)</label>
+                                <label class="form-label" for="other_dev_cost_sqft">Other Dev. (â‚¹/SqFt)</label>
                                 <input type="number" id="other_dev_cost_sqft" name="other_dev_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('other_dev_cost_sqft', 0) ?>">
@@ -181,12 +181,12 @@ $val = function(string $key, $default = 0) use ($e) {
                 <!-- Section 4: Overheads & Pricing -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-info text-white py-2">
-                        <i class="fas fa-percent me-2"></i>Section 4 — Overheads, Commission & Profit
+                        <i class="fas fa-percent me-2"></i>Section 4 â€” Overheads, Commission & Profit
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label" for="legal_approval_cost">Legal / RERA / NOC Cost (₹ Total)</label>
+                                <label class="form-label" for="legal_approval_cost">Legal / RERA / NOC Cost (â‚¹ Total)</label>
                                 <input type="number" id="legal_approval_cost" name="legal_approval_cost"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('legal_approval_cost', 0) ?>">
@@ -224,7 +224,7 @@ $val = function(string $key, $default = 0) use ($e) {
                     <div class="card-body">
                         <div class="row g-3 align-items-end">
                             <div class="col-md-6">
-                                <label class="form-label" for="final_price_sqft">Final Price (₹/SqFt)</label>
+                                <label class="form-label" for="final_price_sqft">Final Price (â‚¹/SqFt)</label>
                                 <input type="number" id="final_price_sqft" name="final_price_sqft"
                                        class="form-control form-control-lg" min="0" step="0.01"
                                        value="<?= $val('final_price_sqft', 0) ?>"
@@ -234,8 +234,8 @@ $val = function(string $key, $default = 0) use ($e) {
                             <div class="col-md-6">
                                 <div class="p-3 bg-light rounded">
                                     <div class="small text-muted">Suggested Price</div>
-                                    <div class="h4 text-primary" id="r_suggested_price">— ₹/SqFt</div>
-                                    <div class="small text-muted">Landing Cost: <span id="r_landing_cost">—</span></div>
+                                    <div class="h4 text-primary" id="r_suggested_price">â€” â‚¹/SqFt</div>
+                                    <div class="small text-muted">Landing Cost: <span id="r_landing_cost">â€”</span></div>
                                 </div>
                             </div>
                         </div>
@@ -248,9 +248,9 @@ $val = function(string $key, $default = 0) use ($e) {
             </form>
         </div>
 
-        <!-- ── RIGHT: Live Result Panel ─────────────────────────── -->
+        <!-- â”€â”€ RIGHT: Live Result Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
         <div class="col-lg-5">
-            <div class="card shadow-sm sticky-top" style="top:80px;">
+            <div class="card shadow-sm sticky-top" class="style-54247">
                 <div class="card-header bg-dark text-white py-2">
                     <i class="fas fa-chart-pie me-2"></i>Live Cost Breakdown
                 </div>
@@ -279,7 +279,7 @@ $val = function(string $key, $default = 0) use ($e) {
     }
 
     function fmt(n) {
-        return '₹' + parseFloat(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return 'â‚¹' + parseFloat(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     function fmtNum(n) {
@@ -310,7 +310,7 @@ $val = function(string $key, $default = 0) use ($e) {
             '<tr class="table-light"><th colspan="2">Land</th></tr>',
             '<tr><td>Total Land</td><td class="text-end">' + fmtNum(data.total_land_sqft) + ' SqFt</td></tr>',
             '<tr><td>Purchase Rate</td><td class="text-end">' + fmt(data.land_purchase_rate) + '/SqFt</td></tr>',
-            '<tr class="text-danger"><td>Total Wastage</td><td class="text-end">−' + fmtNum(data.wastage.total_sqft) + ' SqFt (' + data.wastage.total_pct + '%)</td></tr>',
+            '<tr class="text-danger"><td>Total Wastage</td><td class="text-end">âˆ’' + fmtNum(data.wastage.total_sqft) + ' SqFt (' + data.wastage.total_pct + '%)</td></tr>',
             '<tr class="fw-bold text-success"><td>Net Sellable</td><td class="text-end">' + fmtNum(data.net_sellable_sqft) + ' SqFt</td></tr>',
             '<tr class="table-light"><th colspan="2">Cost Per Sellable SqFt</th></tr>',
             '<tr><td>Land Cost/SqFt</td><td class="text-end">' + fmt(data.land_cost_per_sqft) + '</td></tr>',

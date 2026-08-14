@@ -148,7 +148,7 @@
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/documents/show/<?= (int)$doc['id'] ?>" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                         <a href="<?= BASE_URL ?>/admin/documents/download/<?= (int)$doc['id'] ?>" class="btn btn-sm btn-outline-success" title="Download"><i class="fas fa-download"></i></a>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/documents/delete/<?= (int)$doc['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this document?');">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/documents/delete/<?= (int)$doc['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this document?');">
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                         </form>

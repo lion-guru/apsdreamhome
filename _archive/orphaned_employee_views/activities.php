@@ -44,7 +44,7 @@
     <!-- Activity Summary -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
+            <div class="stats-card card text-white" class="style-37722">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+            <div class="stats-card card text-white" class="style-88128">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -86,7 +86,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+            <div class="stats-card card text-white" class="style-22627">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -111,7 +111,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
+            <div class="stats-card card text-white" class="style-72670">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -251,7 +251,7 @@
                                     </div>
                                     <div class="progress mt-2">
                                         <div class="progress-bar bg-<?= $this->getActivityColor($type) ?>"
-                                             style="width: <?= ($count / max($activityTypes)) * 100 ?>%">
+                                             class="style-40283">
                                         </div>
                                     </div>
                                 </div>

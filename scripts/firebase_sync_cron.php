@@ -1,6 +1,6 @@
 <?php
 /**
- * Firebase ↔ MySQL Sync Cron Script
+ * Firebase â†” MySQL Sync Cron Script
  * 
  * Run via: php C:\xampp\htdocs\apsdreamhome\scripts\firebase_sync_cron.php
  * Or schedule in Windows Task Scheduler every 5-10 minutes.
@@ -8,7 +8,7 @@
  * Reads Firebase RTDB for new Block C bookings and syncs to MySQL.
  */
 
-// Minimal bootstrap — just DB connection, no full framework
+// Minimal bootstrap â€” just DB connection, no full framework
 $configPath = __DIR__ . '/../app/Config/database.php';
 $firebaseConfigPath = __DIR__ . '/../app/Config/firebase.php';
 
@@ -155,7 +155,7 @@ foreach ($allBookings as $key => $booking) {
         $db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = ? WHERE id = ?{$cronTenantSql}")
             ->execute([$customerId, date('Y-m-d', strtotime($timestamp)), $plot['id']]);
 
-        echo "OK [$key]: Synced plot '$plotId' → booking '$bookingNumber'\n";
+        echo "OK [$key]: Synced plot '$plotId' â†’ booking '$bookingNumber'\n";
         $synced++;
 
     } catch (Exception $e) {
@@ -165,4 +165,4 @@ foreach ($allBookings as $key => $booking) {
 }
 
 echo "\n--- Sync Complete ---\n";
-echo "Synced: $synced | Skipped: $skipped | Errors: $errors\n";
+echo "Synced: $synced | Skipped: $skipped | Errors: $errors\n";?>

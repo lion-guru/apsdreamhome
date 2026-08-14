@@ -6,7 +6,7 @@
                 <div class="timeline">
                     <?php foreach ($timeline as $t): ?>
                         <div class="d-flex mb-3">
-                            <div class="me-3 text-center" style="width:40px">
+                            <div class="me-3 text-center" class="style-89354">
                                 <i class="fas fa-<?= $t['type'] === 'note' ? 'sticky-note' : ($t['type'] === 'status' ? 'exchange-alt' : 'phone') ?> text-<?= $t['type'] === 'note' ? 'warning' : 'primary' ?>"></i>
                             </div>
                             <div class="flex-grow-1">

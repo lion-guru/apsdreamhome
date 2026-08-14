@@ -4,7 +4,7 @@
  * Tests all newly created admin features end-to-end
  */
 
-echo "🧪 COMPREHENSIVE ADMIN PANEL TEST\n";
+echo "ðŸ§ª COMPREHENSIVE ADMIN PANEL TEST\n";
 echo str_repeat("=", 50) . "\n\n";
 
 // Test 1: Database Connection
@@ -19,9 +19,9 @@ try {
     $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
     $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "✅ Database connection successful\n\n";
+    echo "âœ… Database connection successful\n\n";
 } catch (PDOException $e) {
-    echo "❌ Database connection failed: " . $e->getMessage() . "\n\n";
+    echo "â�Œ Database connection failed: " . $e->getMessage() . "\n\n";
     exit(1);
 }
 
@@ -45,12 +45,12 @@ foreach ($tables as $table => $requiredColumns) {
         
         $missing = array_diff($requiredColumns, $columns);
         if (empty($missing)) {
-            echo "✅ $table structure correct\n";
+            echo "âœ… $table structure correct\n";
         } else {
-            echo "⚠️ $table missing columns: " . implode(', ', $missing) . "\n";
+            echo "âš ï¸� $table missing columns: " . implode(', ', $missing) . "\n";
         }
     } catch (PDOException $e) {
-        echo "❌ $table structure check failed: " . $e->getMessage() . "\n";
+        echo "â�Œ $table structure check failed: " . $e->getMessage() . "\n";
     }
 }
 
@@ -61,20 +61,20 @@ try {
     // Insert sample testimonial
     $stmt = $conn->prepare("INSERT INTO testimonials (customer_name, customer_email, rating, content, status) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute(['John Doe', 'john@example.com', 5, 'Excellent service! Very professional team.', 'approved']);
-    echo "✅ Sample testimonial inserted\n";
+    echo "âœ… Sample testimonial inserted\n";
     
     // Insert sample FAQ
     $stmt = $conn->prepare("INSERT INTO faqs (question, answer, category, status) VALUES (?, ?, ?, ?)");
     $stmt->execute(['What payment methods do you accept?', 'We accept cash, check, bank transfer, and online payments.', 'Payment', 'active']);
-    echo "✅ Sample FAQ inserted\n";
+    echo "âœ… Sample FAQ inserted\n";
     
     // Insert sample knowledge base article
     $stmt = $conn->prepare("INSERT INTO knowledge_base (title, content, category, status) VALUES (?, ?, ?, ?)");
     $stmt->execute(['Getting Started with APS Dream Home', 'Welcome to our platform! This guide will help you get started.', 'Getting Started', 'published']);
-    echo "✅ Sample knowledge base article inserted\n";
+    echo "âœ… Sample knowledge base article inserted\n";
     
 } catch (PDOException $e) {
-    echo "❌ Data insertion failed: " . $e->getMessage() . "\n";
+    echo "â�Œ Data insertion failed: " . $e->getMessage() . "\n";
 }
 
 // Test 4: Verify Menu Items
@@ -85,15 +85,15 @@ try {
     $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     if (count($menuItems) > 0) {
-        echo "✅ Found " . count($menuItems) . " new menu items:\n";
+        echo "âœ… Found " . count($menuItems) . " new menu items:\n";
         foreach ($menuItems as $item) {
             echo "   - {$item['name']} ({$item['section']})\n";
         }
     } else {
-        echo "⚠️ No new menu items found\n";
+        echo "âš ï¸� No new menu items found\n";
     }
 } catch (PDOException $e) {
-    echo "❌ Menu items verification failed: " . $e->getMessage() . "\n";
+    echo "â�Œ Menu items verification failed: " . $e->getMessage() . "\n";
 }
 
 // Test 5: Check Route Definitions
@@ -110,13 +110,13 @@ if (file_exists($routesFile)) {
     
     foreach ($newRoutes as $route) {
         if (strpos($content, $route) !== false) {
-            echo "✅ Route '$route' defined in web.php\n";
+            echo "âœ… Route '$route' defined in web.php\n";
         } else {
-            echo "❌ Route '$route' not found in web.php\n";
+            echo "â�Œ Route '$route' not found in web.php\n";
         }
     }
 } else {
-    echo "❌ web.php file not found\n";
+    echo "â�Œ web.php file not found\n";
 }
 
 // Test 6: Check Controller Syntax
@@ -133,12 +133,12 @@ foreach ($controllers as $controller) {
     if (file_exists($file)) {
         $syntax = shell_exec("php -l " . escapeshellarg($file));
         if (strpos($syntax, 'No syntax errors') !== false) {
-            echo "✅ $controller syntax valid\n";
+            echo "âœ… $controller syntax valid\n";
         } else {
-            echo "❌ $controller has syntax errors\n";
+            echo "â�Œ $controller has syntax errors\n";
         }
     } else {
-        echo "❌ $controller not found\n";
+        echo "â�Œ $controller not found\n";
     }
 }
 
@@ -154,28 +154,28 @@ $views = [
 foreach ($views as $view) {
     $file = __DIR__ . '/app/views/' . $view;
     if (file_exists($file)) {
-        echo "✅ $view exists\n";
+        echo "âœ… $view exists\n";
     } else {
-        echo "❌ $view not found\n";
+        echo "â�Œ $view not found\n";
     }
 }
 
 // Summary
 echo "\n" . str_repeat("=", 50) . "\n";
-echo "🎯 TEST SUMMARY\n";
+echo "ðŸŽ¯ TEST SUMMARY\n";
 echo str_repeat("=", 50) . "\n";
-echo "✅ Database Connection: Working\n";
-echo "✅ Table Structures: Verified\n";
-echo "✅ Data Insertion: Working\n";
-echo "✅ Menu Items: Configured\n";
-echo "✅ Routes: Defined\n";
-echo "✅ Controllers: Valid syntax\n";
-echo "✅ Views: All present\n";
-echo "\n🚀 Admin panel is ready for testing!\n";
-echo "\n📝 Access the admin panel:\n";
+echo "âœ… Database Connection: Working\n";
+echo "âœ… Table Structures: Verified\n";
+echo "âœ… Data Insertion: Working\n";
+echo "âœ… Menu Items: Configured\n";
+echo "âœ… Routes: Defined\n";
+echo "âœ… Controllers: Valid syntax\n";
+echo "âœ… Views: All present\n";
+echo "\nðŸš€ Admin panel is ready for testing!\n";
+echo "\nðŸ“� Access the admin panel:\n";
 echo "http://localhost/apsdreamhome/admin/login\n";
-echo "\n📝 Test the new features:\n";
+echo "\nðŸ“� Test the new features:\n";
 echo "- /admin/reports-new\n";
 echo "- /admin/testimonials-new\n";
 echo "- /admin/faqs-new\n";
-echo "- /admin/knowledge-base-new\n";
+echo "- /admin/knowledge-base-new\n";?>

@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 $pageTitle = 'Document AI Review Queue';
 $jobs = $jobs ?? [];
 $stats = $stats ?? [];
@@ -195,14 +195,14 @@ $total_pages = $total_pages ?? 1;
                                 <td>
                                     <?php if (($job['confidence_score'] ?? 0) > 0): ?>
                                         <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                            <div class="progress flex-grow-1 me-2" class="style-29939">
                                                 <div class="progress-bar bg-<?= ($job['confidence_score'] >= 90) ? 'success' : (($job['confidence_score'] >= 70) ? 'warning' : 'danger') ?>" 
-                                                     style="width: <?= $job['confidence_score'] ?>%"></div>
+                                                     class="style-59464"></div>
                                             </div>
                                             <small><?= $job['confidence_score'] ?>%</small>
                                         </div>
                                     <?php else: ?>
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted">â€”</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -357,7 +357,7 @@ function renderReviewForm(job) {
                     html += `<input type="number" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
                     break;
                 case 'currency':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="₹">`;
+                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="â‚¹">`;
                     break;
                 case 'percentage':
                     html += `<input type="number" step="0.01" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="%">`;
@@ -372,7 +372,7 @@ function renderReviewForm(job) {
                     html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="XXXX-XXXX-1234" maxlength="14">`;
                     break;
                 case 'pan':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase">`;
+                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="ABCDE1234F" maxlength="10" class="style-36130">`;
                     break;
                 case 'phone':
                     html += `<input type="tel" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="+91">`;

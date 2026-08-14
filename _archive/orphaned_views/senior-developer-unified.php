@@ -82,7 +82,7 @@
                 <div class="text-right">
                     <div class="text-sm text-purple-200">System Status</div>
                     <div class="text-2xl font-bold">
-                        <span class="pulse-dot text-green-400">●</span> ONLINE
+                        <span class="pulse-dot text-green-400">â—�</span> ONLINE
                     </div>
                 </div>
             </div>
@@ -123,13 +123,13 @@
                         <div class="bg-blue-100 p-3 rounded-full">
                             <i class="fas fa-database text-blue-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm">● Active</span>
+                        <span class="text-green-500 text-sm">â—� Active</span>
                     </div>
                     <div class="text-2xl font-bold text-blue-600">633</div>
                     <div class="text-gray-500 text-sm">Database Tables</div>
                     <div class="mt-2">
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-blue-600 h-2 rounded-full" style="width: 95%"></div>
+                            <div class="bg-blue-600 h-2 rounded-full" class="style-63594"></div>
                         </div>
                     </div>
                 </div>
@@ -139,13 +139,13 @@
                         <div class="bg-green-100 p-3 rounded-full">
                             <i class="fas fa-brain text-green-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm">● Active</span>
+                        <span class="text-green-500 text-sm">â—� Active</span>
                     </div>
                     <div class="text-2xl font-bold text-green-600">7</div>
                     <div class="text-gray-500 text-sm">AI Roles</div>
                     <div class="mt-2">
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: 88%"></div>
+                            <div class="bg-green-600 h-2 rounded-full" class="style-68022"></div>
                         </div>
                     </div>
                 </div>
@@ -155,13 +155,13 @@
                         <div class="bg-purple-100 p-3 rounded-full">
                             <i class="fas fa-shield-alt text-purple-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm">● Active</span>
+                        <span class="text-green-500 text-sm">â—� Active</span>
                     </div>
                     <div class="text-2xl font-bold text-purple-600">92%</div>
                     <div class="text-gray-500 text-sm">Security Score</div>
                     <div class="mt-2">
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-purple-600 h-2 rounded-full" style="width: 92%"></div>
+                            <div class="bg-purple-600 h-2 rounded-full" class="style-28172"></div>
                         </div>
                     </div>
                 </div>
@@ -171,13 +171,13 @@
                         <div class="bg-orange-100 p-3 rounded-full">
                             <i class="fas fa-tachometer-alt text-orange-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm">● Active</span>
+                        <span class="text-green-500 text-sm">â—� Active</span>
                     </div>
                     <div class="text-2xl font-bold text-orange-600">150ms</div>
                     <div class="text-gray-500 text-sm">Response Time</div>
                     <div class="mt-2">
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-orange-600 h-2 rounded-full" style="width: 95%"></div>
+                            <div class="bg-orange-600 h-2 rounded-full" class="style-63594"></div>
                         </div>
                     </div>
                 </div>
@@ -220,14 +220,14 @@
                                     <i class="fas fa-robot text-purple-600 text-sm"></i>
                                 </div>
                                 <div class="bg-gray-100 rounded-lg p-3 max-w-md">
-                                    <p class="text-gray-800">👋 Hello! I'm your Senior Developer AI Assistant. I can help you with:</p>
+                                    <p class="text-gray-800">ðŸ‘‹ Hello! I'm your Senior Developer AI Assistant. I can help you with:</p>
                                     <ul class="mt-2 text-sm text-gray-600">
-                                        <li>• Project planning and architecture</li>
-                                        <li>• Code review and optimization</li>
-                                        <li>• Debugging and problem solving</li>
-                                        <li>• Technology recommendations</li>
-                                        <li>• Team coordination</li>
-                                        <li>• Performance analysis</li>
+                                        <li>â€¢ Project planning and architecture</li>
+                                        <li>â€¢ Code review and optimization</li>
+                                        <li>â€¢ Debugging and problem solving</li>
+                                        <li>â€¢ Technology recommendations</li>
+                                        <li>â€¢ Team coordination</li>
+                                        <li>â€¢ Performance analysis</li>
                                     </ul>
                                     <p class="mt-2 text-sm text-gray-600">What would you like to work on today?</p>
                                 </div>
@@ -287,7 +287,7 @@
                                                                                                                 // Senior Developer Code Editor
                                                                                                                 // Write your code here and click "Run" to execute
 
-                                                                                                                echo "🚀 Senior Developer Code Editor Ready!";
+                                                                                                                echo "ðŸš€ Senior Developer Code Editor Ready!";
                                                                                                                 echo "Current Project: APS Dream Home Real Estate Platform";
                                                                                                                 echo "Database: 633 tables, 138 leads";
                                                                                                                 echo "AI System: 7 roles configured";
@@ -432,7 +432,7 @@
                             <span class="text-gray-600">CPU Usage</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div class="bg-green-400 h-2 rounded-full" style="width: 45%"></div>
+                                    <div class="bg-green-400 h-2 rounded-full" class="style-86013"></div>
                                 </div>
                                 <span class="text-sm text-green-600">45%</span>
                             </div>
@@ -441,7 +441,7 @@
                             <span class="text-gray-600">Memory Usage</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div class="bg-blue-400 h-2 rounded-full" style="width: 62%"></div>
+                                    <div class="bg-blue-400 h-2 rounded-full" class="style-91851"></div>
                                 </div>
                                 <span class="text-sm text-blue-600">62%</span>
                             </div>
@@ -450,7 +450,7 @@
                             <span class="text-gray-600">Disk Usage</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div class="bg-orange-400 h-2 rounded-full" style="width: 78%"></div>
+                                    <div class="bg-orange-400 h-2 rounded-full" class="style-56581"></div>
                                 </div>
                                 <span class="text-sm text-orange-600">78%</span>
                             </div>
@@ -564,13 +564,13 @@
             const lowerMessage = message.toLowerCase();
 
             if (lowerMessage.includes('code') || lowerMessage.includes('write') || lowerMessage.includes('create')) {
-                return "मैं आपके लिए code लिख सकता हूं! Switch to the Code Editor tab above. I can help you with PHP, JavaScript, CSS, SQL, and HTML.";
+                return "à¤®à¥ˆà¤‚ à¤†à¤ªà¤•à¥‡ à¤²à¤¿à¤� code à¤²à¤¿à¤– à¤¸à¤•à¤¤à¤¾ à¤¹à¥‚à¤‚! Switch to the Code Editor tab above. I can help you with PHP, JavaScript, CSS, SQL, and HTML.";
             } else if (lowerMessage.includes('status') || lowerMessage.includes('analyze')) {
-                return "📊 **Project Analysis Complete**\n\n• **Database**: 633 tables, 138 leads\n• **Code Quality**: 95% score\n• **Security**: Hardened with audit\n• **Performance**: Optimized (150ms response)\n• **AI System**: 7 roles active";
+                return "ðŸ“Š **Project Analysis Complete**\n\nâ€¢ **Database**: 633 tables, 138 leads\nâ€¢ **Code Quality**: 95% score\nâ€¢ **Security**: Hardened with audit\nâ€¢ **Performance**: Optimized (150ms response)\nâ€¢ **AI System**: 7 roles active";
             } else if (lowerMessage.includes('help') || lowerMessage.includes('assist')) {
-                return "मैं आपके सभी development needs में help कर सकता हूं:\n\n• **Code Writing**: Code Editor tab में जाएं\n• **Commands**: Dashboard में quick actions use करें\n• **Terminal**: Direct commands execute करें\n• **Monitoring**: Real-time performance track करें";
+                return "à¤®à¥ˆà¤‚ à¤†à¤ªà¤•à¥‡ à¤¸à¤­à¥€ development needs à¤®à¥‡à¤‚ help à¤•à¤° à¤¸à¤•à¤¤à¤¾ à¤¹à¥‚à¤‚:\n\nâ€¢ **Code Writing**: Code Editor tab à¤®à¥‡à¤‚ à¤œà¤¾à¤�à¤‚\nâ€¢ **Commands**: Dashboard à¤®à¥‡à¤‚ quick actions use à¤•à¤°à¥‡à¤‚\nâ€¢ **Terminal**: Direct commands execute à¤•à¤°à¥‡à¤‚\nâ€¢ **Monitoring**: Real-time performance track à¤•à¤°à¥‡à¤‚";
             } else {
-                return "मैं आपके APS Dream Home project को analyze कर रहा हूं। Current status: 633 tables, 95% code quality, optimized performance। क्या specifically help चाहिए?";
+                return "à¤®à¥ˆà¤‚ à¤†à¤ªà¤•à¥‡ APS Dream Home project à¤•à¥‹ analyze à¤•à¤° à¤°à¤¹à¤¾ à¤¹à¥‚à¤‚à¥¤ Current status: 633 tables, 95% code quality, optimized performanceà¥¤ à¤•à¥�à¤¯à¤¾ specifically help à¤šà¤¾à¤¹à¤¿à¤�?";
             }
         }
 
@@ -590,20 +590,20 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        addCodeOutput(`✅ File saved: ${fileName}`, 'success');
+                        addCodeOutput(`âœ… File saved: ${fileName}`, 'success');
                     } else {
-                        addCodeOutput(`❌ Save failed: ${data.message}`, 'error');
+                        addCodeOutput(`â�Œ Save failed: ${data.message}`, 'error');
                     }
                 })
                 .catch(error => {
-                    addCodeOutput(`❌ Network error: ${error.message}`, 'error');
+                    addCodeOutput(`â�Œ Network error: ${error.message}`, 'error');
                 });
         }
 
         function runCode() {
             const code = document.getElementById('codeEditor').value;
 
-            addCodeOutput('🚀 Executing code...', 'info');
+            addCodeOutput('ðŸš€ Executing code...', 'info');
 
             const formData = new FormData();
             formData.append('code', code);
@@ -616,16 +616,16 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        addCodeOutput('✅ Code executed successfully!', 'success');
+                        addCodeOutput('âœ… Code executed successfully!', 'success');
                         if (data.output) {
                             addCodeOutput(data.output, 'output');
                         }
                     } else {
-                        addCodeOutput(`❌ Execution failed: ${data.message}`, 'error');
+                        addCodeOutput(`â�Œ Execution failed: ${data.message}`, 'error');
                     }
                 })
                 .catch(error => {
-                    addCodeOutput(`❌ Network error: ${error.message}`, 'error');
+                    addCodeOutput(`â�Œ Network error: ${error.message}`, 'error');
                 });
         }
 
@@ -668,15 +668,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        terminal.innerHTML += `<div class="text-green-400">[${timestamp}] $ ✓ Command executed successfully</div>`;
+                        terminal.innerHTML += `<div class="text-green-400">[${timestamp}] $ âœ“ Command executed successfully</div>`;
                         terminal.innerHTML += `<div class="text-gray-400">[${timestamp}] $ Result: ${JSON.stringify(data.result, null, 2)}</div>`;
                     } else {
-                        terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ ✗ Command execution failed</div>`;
+                        terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ âœ— Command execution failed</div>`;
                     }
                     terminal.scrollTop = terminal.scrollHeight;
                 })
                 .catch(error => {
-                    terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ ✗ Network error occurred</div>`;
+                    terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ âœ— Network error occurred</div>`;
                     terminal.scrollTop = terminal.scrollHeight;
                 });
 
@@ -835,7 +835,7 @@
                                     $weather = json_decode($response, true);
 
                                     echo "Weather in " . $city . ":\n";
-                                    echo "Temperature: " . $weather['main']['temp'] . "°C\\n";
+                                    echo "Temperature: " . $weather['main']['temp'] . "Â°C\\n";
                                     echo "Humidity: " . $weather['main']['humidity'] . "%\\n";
                                     echo "Description: " . $weather['weather'][0]['description'] . "\\n";
                                     echo "Wind Speed: " . $weather['wind']['speed'] . " m/s\\n";

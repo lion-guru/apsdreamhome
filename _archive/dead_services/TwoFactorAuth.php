@@ -69,4 +69,4 @@ class TwoFactorAuth
         $sql = "";
         $this->db->execute($sql);
     }
-}
+}?>

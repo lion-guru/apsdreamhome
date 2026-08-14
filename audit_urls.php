@@ -16,4 +16,4 @@ sort($urls);
 
 $out = implode("\n", $urls) . "\n";
 file_put_contents('C:\\Users\\abhay\\AppData\\Local\\Temp\\admin_urls.txt', $out);
-echo "Total unique URLs: " . count($urls) . "\n";
+echo "Total unique URLs: " . count($urls) . "\n";?>

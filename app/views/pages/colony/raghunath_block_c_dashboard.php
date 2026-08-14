@@ -1,6 +1,6 @@
 <?php
 /**
- * Raghunath Nagri Block C — Interactive Booking Dashboard
+ * Raghunath Nagri Block C â€” Interactive Booking Dashboard
  * Embeds the standalone real-time suite via iframe.
  * Firebase config + MySQL plot data passed from controller.
  */
@@ -85,12 +85,12 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
     @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 
-<div class="container-fluid px-4 py-3" style="max-width:1400px;">
+<div class="container-fluid px-4 py-3" class="style-8602">
     <div class="dash-wrapper position-relative">
         <div class="dash-header">
             <div>
-                <h2><i class="fas fa-map-marked-alt me-2"></i>Raghunath Nagri — Block C Live Dashboard</h2>
-                <small style="color:#64748b;">Real-time Firebase booking sync for field team &amp; admin</small>
+                <h2><i class="fas fa-map-marked-alt me-2"></i>Raghunath Nagri â€” Block C Live Dashboard</h2>
+                <small class="style-54585">Real-time Firebase booking sync for field team &amp; admin</small>
             </div>
             <div class="stats-row">
                 <span>Total: <span class="stat-pill"><?= $stats['total'] ?></span></span>
@@ -103,7 +103,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
         <div class="loading-overlay" id="dashLoader">
             <div class="text-center">
                 <div class="loader-ring mx-auto mb-3"></div>
-                <p style="color:#64748b;font-size:0.85rem;">Loading interactive dashboard...</p>
+                <p class="style-37380">Loading interactive dashboard...</p>
             </div>
         </div>
 
@@ -115,7 +115,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
         ></iframe>
     </div>
 
-    <div class="text-center mt-3" style="color:#475569;font-size:0.75rem;">
+    <div class="text-center mt-3" class="style-66445">
         <p class="mb-1">
             <i class="fas fa-building me-1"></i>
             <?= h($colony['name'] ?? 'Raghunath Nagri') ?> &middot;

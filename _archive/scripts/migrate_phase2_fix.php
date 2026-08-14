@@ -1,6 +1,6 @@
 <?php
 /**
- * Phase 2 Fix — Insert settings, network tree, extend ENUM
+ * Phase 2 Fix â€” Insert settings, network tree, extend ENUM
  */
 $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome', 'root', '', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -106,4 +106,4 @@ foreach ($tables as $tbl) {
     echo "  {$tbl}: " . ($r->fetch() ? 'OK' : 'MISSING') . "\n";
 }
 
-echo "\nDONE: {$ok} ok, {$skip} skipped\n";
+echo "\nDONE: {$ok} ok, {$skip} skipped\n";?>

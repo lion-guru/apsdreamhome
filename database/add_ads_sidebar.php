@@ -19,4 +19,4 @@ if (!$hasAds) {
     echo "Added Ad Manager + AdSense Settings menu items.\n";
 } else {
     echo "Ad menu items already exist.\n";
-}
+}?>

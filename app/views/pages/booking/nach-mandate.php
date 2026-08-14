@@ -77,7 +77,7 @@ $statusColors = [
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small"><?= __('nach_label_mandate_amount', [], 'Mandate Amount Cap') ?></label>
-                            <p class="fw-semibold mb-0">₹<?= number_format((float)($m['mandate_amount'] ?? 0)) ?></p>
+                            <p class="fw-semibold mb-0">â‚¹<?= number_format((float)($m['mandate_amount'] ?? 0)) ?></p>
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small"><?= __('nach_label_frequency', [], 'Frequency') ?></label>
@@ -133,7 +133,7 @@ $statusColors = [
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_ifsc', [], 'IFSC Code') ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="ifsc_code" class="form-control" placeholder="<?= __('nach_placeholder_ifsc', [], 'e.g. SBIN0001234') ?>" required pattern="[A-Z]{4}0[A-Z0-9]{6}" maxlength="11" style="text-transform:uppercase;">
+                                <input type="text" name="ifsc_code" class="form-control" placeholder="<?= __('nach_placeholder_ifsc', [], 'e.g. SBIN0001234') ?>" required pattern="[A-Z]{4}0[A-Z0-9]{6}" maxlength="11" class="style-99357">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_mandate_type', [], 'Mandate Type') ?></label>
@@ -144,7 +144,7 @@ $statusColors = [
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label"><?= __('nach_form_max_amount', [], 'Maximum Monthly Amount (₹)') ?> <span class="text-danger">*</span></label>
+                                <label class="form-label"><?= __('nach_form_max_amount', [], 'Maximum Monthly Amount (â‚¹)') ?> <span class="text-danger">*</span></label>
                                 <input type="number" name="mandate_amount" class="form-control" min="100" step="0.01"
                                        value="<?= number_format(($booking['total_plot_value'] ?? 0) / 24, 0, '.', '') ?>" required>
                                 <small class="text-muted"><?= __('nach_max_amount_help', [], 'Maximum amount that can be auto-debited per month.') ?></small>

@@ -52,17 +52,17 @@ CREATE TABLE IF NOT EXISTS whatsapp_template_usage (
 
 INSERT IGNORE INTO whatsapp_templates (template_name, template_code, category, template_content, description, variables, status, language) VALUES
 ('Welcome Message', 'welcome', 'customer-service', 'Hello {{customer_name}}! Welcome to APS Dream Home. How can we help you find your dream property today?', 'Sent to new users who register', '[\"customer_name\"]', 'active', 'hi-IN'),
-('Property Inquiry Response', 'inquiry_response', 'customer-service', 'Thank you for your interest in {{property_title}}. This {{property_type}} is located in {{location}} and priced at ₹{{price}}. Would you like to schedule a visit?', 'Automatic response to property inquiries', '[\"property_title\",\"property_type\",\"location\",\"price\"]', 'active', 'hi-IN'),
-('New Property Listing', 'new_listing', 'property', '🏠 New Listing Alert! {{property_type}} in {{location}} - {{bedrooms}}BHK, {{area}}sqft at ₹{{price}}. Contact us for details!', 'Notify users about new property listings', '[\"property_type\",\"location\",\"bedrooms\",\"area\",\"price\"]', 'active', 'hi-IN'),
-('Price Drop Notification', 'price_drop', 'property', '🎉 Price Drop Alert! {{property_title}} is now available at ₹{{new_price}} (was ₹{{old_price}}). Limited time offer!', 'Notify users about price reductions', '[\"property_title\",\"new_price\",\"old_price\"]', 'active', 'hi-IN'),
-('Booking Confirmation', 'booking_confirmation', 'booking', '✅ Booking Confirmed! Property visit scheduled on {{date}} at {{time}}. Address: {{property_address}}. See you there!', 'Confirm property visit bookings', '[\"date\",\"time\",\"property_address\"]', 'active', 'hi-IN'),
-('Payment Confirmation', 'payment_confirmation', 'payment', '💳 Payment Received! ₹{{amount}} for {{property_title}} (Booking ID: {{booking_id}}). Thank you for choosing APS Dream Home!', 'Confirm successful payments', '[\"amount\",\"property_title\",\"booking_id\"]', 'active', 'hi-IN'),
-('EMI Reminder', 'emi_reminder', 'payment', '📅 EMI Reminder: Your payment of ₹{{amount}} is due on {{due_date}} for {{property_title}}. Pay now to avoid late fees.', 'Remind customers about upcoming EMI payments', '[\"amount\",\"due_date\",\"property_title\"]', 'active', 'hi-IN'),
-('Commission Earned', 'commission_earned', 'commission', '💰 Commission Earned! You have earned ₹{{amount}} from {{source}}. Check your wallet for details.', 'Notify associates about commission earnings', '[\"amount\",\"source\"]', 'active', 'hi-IN');
+('Property Inquiry Response', 'inquiry_response', 'customer-service', 'Thank you for your interest in {{property_title}}. This {{property_type}} is located in {{location}} and priced at â‚¹{{price}}. Would you like to schedule a visit?', 'Automatic response to property inquiries', '[\"property_title\",\"property_type\",\"location\",\"price\"]', 'active', 'hi-IN'),
+('New Property Listing', 'new_listing', 'property', 'ðŸ�  New Listing Alert! {{property_type}} in {{location}} - {{bedrooms}}BHK, {{area}}sqft at â‚¹{{price}}. Contact us for details!', 'Notify users about new property listings', '[\"property_type\",\"location\",\"bedrooms\",\"area\",\"price\"]', 'active', 'hi-IN'),
+('Price Drop Notification', 'price_drop', 'property', 'ðŸŽ‰ Price Drop Alert! {{property_title}} is now available at â‚¹{{new_price}} (was â‚¹{{old_price}}). Limited time offer!', 'Notify users about price reductions', '[\"property_title\",\"new_price\",\"old_price\"]', 'active', 'hi-IN'),
+('Booking Confirmation', 'booking_confirmation', 'booking', 'âœ… Booking Confirmed! Property visit scheduled on {{date}} at {{time}}. Address: {{property_address}}. See you there!', 'Confirm property visit bookings', '[\"date\",\"time\",\"property_address\"]', 'active', 'hi-IN'),
+('Payment Confirmation', 'payment_confirmation', 'payment', 'ðŸ’³ Payment Received! â‚¹{{amount}} for {{property_title}} (Booking ID: {{booking_id}}). Thank you for choosing APS Dream Home!', 'Confirm successful payments', '[\"amount\",\"property_title\",\"booking_id\"]', 'active', 'hi-IN'),
+('EMI Reminder', 'emi_reminder', 'payment', 'ðŸ“… EMI Reminder: Your payment of â‚¹{{amount}} is due on {{due_date}} for {{property_title}}. Pay now to avoid late fees.', 'Remind customers about upcoming EMI payments', '[\"amount\",\"due_date\",\"property_title\"]', 'active', 'hi-IN'),
+('Commission Earned', 'commission_earned', 'commission', 'ðŸ’° Commission Earned! You have earned â‚¹{{amount}} from {{source}}. Check your wallet for details.', 'Notify associates about commission earnings', '[\"amount\",\"source\"]', 'active', 'hi-IN');
 
 SELECT COUNT(*) as count FROM whatsapp_templates;
 ";
 
 $pdo->exec($sql);
 $count = $pdo->query("SELECT COUNT(*) c FROM whatsapp_templates")->fetchColumn();
-echo "Tables created. Template count: $count\n";
+echo "Tables created. Template count: $count\n";?>

@@ -35,4 +35,4 @@ if ($pos !== false) {
 } else {
     echo "\nNo sidebar-link found. Checking body start:\n";
     echo substr($html, 0, 500) . "\n";
-}
+}?>

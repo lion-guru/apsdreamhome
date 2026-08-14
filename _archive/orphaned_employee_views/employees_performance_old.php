@@ -97,22 +97,22 @@ $recent_tasks = $recent_tasks ?? [];
                             <circle cx="80" cy="80" r="70" fill="none" stroke="#e2e8f0" stroke-width="12"/>
                             <circle cx="80" cy="80" r="70" fill="none" stroke="<?= $scoreColor ?>" stroke-width="12" stroke-linecap="round"
                                 stroke-dasharray="<?= 2 * M_PI * 70 ?>" stroke-dashoffset="<?= 2 * M_PI * 70 * (1 - $overallScore / 100) ?>"
-                                transform="rotate(-90 80 80)" style="transition: stroke-dashoffset 1s ease;"/>
+                                transform="rotate(-90 80 80)" class="style-7325"/>
                         </svg>
                         <div class="position-absolute top-50 start-50 translate-middle text-center">
-                            <div class="fw-bold fs-2" style="color: <?= $scoreColor ?>"><?= $overallScore ?>%</div>
+                            <div class="fw-bold fs-2" class="style-90257"><?= $overallScore ?>%</div>
                             <small class="text-muted">Overall</small>
                         </div>
                     </div>
                     <div class="mt-3">
                         <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Task Completion</span><span class="fw-semibold"><?= $taskScore ?>%</span></div>
-                        <div class="progress mb-2" style="height:6px;"><div class="progress-bar bg-primary" style="width:<?= $taskScore ?>%"></div></div>
+                        <div class="progress mb-2" class="style-12222"><div class="progress-bar bg-primary" class="style-10229"></div></div>
                         <div class="d-flex justify-content-between small mb-1"><span class="text-muted">On-Time Delivery</span><span class="fw-semibold"><?= (int)($overall['on_time_rate'] ?? 0) ?>%</span></div>
-                        <div class="progress mb-2" style="height:6px;"><div class="progress-bar bg-success" style="width:<?= (int)($overall['on_time_rate'] ?? 0) ?>%"></div></div>
+                        <div class="progress mb-2" class="style-12222"><div class="progress-bar bg-success" class="style-46113"></div></div>
                         <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Rating</span><span class="fw-semibold"><?= number_format((float)($overall['rating'] ?? 0) / 5 * 100, 0) ?>%</span></div>
-                        <div class="progress mb-2" style="height:6px;"><div class="progress-bar bg-warning" style="width:<?= number_format((float)($overall['rating'] ?? 0) / 5 * 100, 0) ?>%"></div></div>
+                        <div class="progress mb-2" class="style-12222"><div class="progress-bar bg-warning" class="style-17414"></div></div>
                         <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Attendance</span><span class="fw-semibold"><?= (int)($overall['attendance_percent'] ?? 0) ?>%</span></div>
-                        <div class="progress" style="height:6px;"><div class="progress-bar bg-info" style="width:<?= (int)($overall['attendance_percent'] ?? 0) ?>%"></div></div>
+                        <div class="progress" class="style-12222"><div class="progress-bar bg-info" class="style-30348"></div></div>
                     </div>
                 </div>
             </div>
@@ -137,13 +137,13 @@ $recent_tasks = $recent_tasks ?? [];
                         ?>
                             <div class="d-flex align-items-start gap-2 mb-3 pb-3 border-bottom task-row <?= $prioClass ?> ps-2">
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1 fw-semibold" style="font-size:0.9rem;"><?= htmlspecialchars($rt['title'] ?? '') ?></h6>
+                                    <h6 class="mb-1 fw-semibold" class="style-51894"><?= htmlspecialchars($rt['title'] ?? '') ?></h6>
                                     <div class="d-flex gap-2 align-items-center">
                                         <?php
                                         $sColor = match(strtolower($rt['status'] ?? '')) { 'completed' => 'success', 'in progress' => 'info', default => 'warning' };
                                         ?>
-                                        <span class="badge bg-<?= $sColor ?> bg-opacity-10 text-<?= $sColor ?>" style="font-size:0.7rem;"><?= ucfirst(htmlspecialchars($rt['status'] ?? 'pending')) ?></span>
-                                        <span class="badge bg-<?= match($prio) { 'high' => 'danger', 'low' => 'success', default => 'warning' } ?> bg-opacity-10 text-<?= match($prio) { 'high' => 'danger', 'low' => 'success', default => 'warning' } ?>" style="font-size:0.7rem;"><?= ucfirst(htmlspecialchars($prio)) ?></span>
+                                        <span class="badge bg-<?= $sColor ?> bg-opacity-10 text-<?= $sColor ?>" class="style-68658"><?= ucfirst(htmlspecialchars($rt['status'] ?? 'pending')) ?></span>
+                                        <span class="badge bg-<?= match($prio) { 'high' => 'danger', 'low' => 'success', default => 'warning' } ?> bg-opacity-10 text-<?= match($prio) { 'high' => 'danger', 'low' => 'success', default => 'warning' } ?>" class="style-68658"><?= ucfirst(htmlspecialchars($prio)) ?></span>
                                     </div>
                                     <?php if (!empty($rt['due_date'])): ?>
                                         <small class="text-muted"><i class="fas fa-calendar me-1"></i><?= date('d M', strtotime($rt['due_date'])) ?></small>
@@ -176,7 +176,7 @@ $recent_tasks = $recent_tasks ?? [];
                                     <div>
                                         <div class="rating-stars mb-1">
                                             <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                <i class="fas fa-star<?= $i <= (int)($r['overall_rating'] ?? 0) ? '' : '-o' ?>" style="font-size:0.75rem;"></i>
+                                                <i class="fas fa-star<?= $i <= (int)($r['overall_rating'] ?? 0) ? '' : '-o' ?>" class="style-20558"></i>
                                             <?php endfor; ?>
                                         </div>
                                         <?php if (!empty($r['reviewer_name'])): ?>
@@ -186,7 +186,7 @@ $recent_tasks = $recent_tasks ?? [];
                                     <small class="text-muted"><?= !empty($r['review_date']) ? date('d M Y', strtotime($r['review_date'])) : '' ?></small>
                                 </div>
                                 <?php if (!empty($r['comments'])): ?>
-                                    <p class="small mb-0 mt-1" style="color:#475569;"><?= htmlspecialchars(mb_substr($r['comments'], 0, 100)) ?><?= strlen($r['comments']) > 100 ? '...' : '' ?></p>
+                                    <p class="small mb-0 mt-1" class="style-42047"><?= htmlspecialchars(mb_substr($r['comments'], 0, 100)) ?><?= strlen($r['comments']) > 100 ? '...' : '' ?></p>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>

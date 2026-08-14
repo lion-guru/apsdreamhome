@@ -61,7 +61,7 @@ $data = $data ?? [];
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Revenue</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">₹<?= number_format($data['total_revenue'] ?? 0) ?>Cr</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">â‚¹<?= number_format($data['total_revenue'] ?? 0) ?>Cr</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -273,7 +273,7 @@ $data = $data ?? [];
                                                     <p class="card-text small"><?= $initiative['description'] ?? '' ?></p>
                                                     <div class="progress mb-2">
                                                         <div class="progress-bar bg-<?= $initiative['progress_color'] ?? 'primary' ?>" 
-                                                             style="width: <?= $initiative['progress'] ?? 0 ?>%"></div>
+                                                             class="style-97612"></div>
                                                     </div>
                                                     <small class="text-muted"><?= $initiative['progress'] ?? 0 ?>% Complete</small>
                                                 </div>
@@ -303,7 +303,7 @@ const revenueChart = new Chart(revenueCtx, {
     data: {
         labels: <?= json_encode($data['revenue_labels'] ?? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']) ?>,
         datasets: [{
-            label: 'Revenue (₹ Cr)',
+            label: 'Revenue (â‚¹ Cr)',
             data: <?= json_encode($data['revenue_data'] ?? [0, 0, 0, 0, 0, 0]) ?>,
             borderColor: 'rgb(75, 192, 192)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',

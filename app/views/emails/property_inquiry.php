@@ -19,7 +19,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>📧 New Property Inquiry</h2>
+            <h2>ðŸ“§ New Property Inquiry</h2>
             <p>Action required for property: <?= htmlspecialchars($property_name ?? 'Unknown Property') ?></p>
         </div>
 
@@ -30,7 +30,7 @@
             </div>
 
             <div class="inquiry-details">
-                <h4>👤 Customer Details:</h4>
+                <h4>ðŸ‘¤ Customer Details:</h4>
                 <p><strong>Name:</strong> <?= htmlspecialchars($customer_name ?? 'Unknown') ?></p>
                 <p><strong>Email:</strong> <?= htmlspecialchars($customer_email ?? 'unknown@example.com') ?></p>
                 <p><strong>Phone:</strong> <?= htmlspecialchars($customer_phone ?? 'N/A') ?></p>
@@ -46,9 +46,9 @@
                 <li>Follow up after property visit</li>
             </ol>
 
-            <div style="text-align: center; margin: 30px 0;">
+            <div class="style-69368">
                 <a href="<?= $baseUrl ?>/admin" class="button">View in Admin Panel</a>
-                <a href="mailto:<?= htmlspecialchars($customer_email ?? '') ?>" class="button" style="background: #28a745;">Reply to Customer</a>
+                <a href="mailto:<?= htmlspecialchars($customer_email ?? '') ?>" class="button" class="style-4360">Reply to Customer</a>
             </div>
         </div>
 

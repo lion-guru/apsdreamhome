@@ -33,4 +33,4 @@ if ($row) {
     echo "\nCreated new settings row" . PHP_EOL;
 }
 
-echo "\nDone!" . PHP_EOL;
+echo "\nDone!" . PHP_EOL;?>

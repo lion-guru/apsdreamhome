@@ -39,17 +39,17 @@ $colDistId = $db->fetch("SHOW COLUMNS FROM colonies LIKE 'district_id'");
 echo "colonies.district_id: " . $colDistId['Type'] . "\n";
 
 // 4. Rename land_documents.land_acquisition_id to land_deal_id
-run($db, "ALTER TABLE land_documents CHANGE land_acquisition_id land_deal_id INT(11) UNSIGNED NULL", "Rename land_documents.land_acquisition_id → land_deal_id", $results);
+run($db, "ALTER TABLE land_documents CHANGE land_acquisition_id land_deal_id INT(11) UNSIGNED NULL", "Rename land_documents.land_acquisition_id â†’ land_deal_id", $results);
 
 // 5. Now add the FKs that failed
-run($db, "ALTER TABLE land_deals ADD CONSTRAINT fk_land_deals_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE SET NULL", "FK: land_deals.colony_id → colonies.id", $results);
-run($db, "ALTER TABLE land_leads ADD CONSTRAINT fk_land_leads_assigned FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL", "FK: land_leads.assigned_to → users.id", $results);
-run($db, "ALTER TABLE colony_development_costs ADD CONSTRAINT fk_cdc_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_development_costs.colony_id → colonies.id", $results);
-run($db, "ALTER TABLE colony_layouts ADD CONSTRAINT fk_layouts_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_layouts.colony_id → colonies.id", $results);
-run($db, "ALTER TABLE land_documents ADD CONSTRAINT fk_ld_deal FOREIGN KEY (land_deal_id) REFERENCES land_deals(id) ON DELETE SET NULL", "FK: land_documents.land_deal_id → land_deals.id", $results);
+run($db, "ALTER TABLE land_deals ADD CONSTRAINT fk_land_deals_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE SET NULL", "FK: land_deals.colony_id â†’ colonies.id", $results);
+run($db, "ALTER TABLE land_leads ADD CONSTRAINT fk_land_leads_assigned FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL", "FK: land_leads.assigned_to â†’ users.id", $results);
+run($db, "ALTER TABLE colony_development_costs ADD CONSTRAINT fk_cdc_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_development_costs.colony_id â†’ colonies.id", $results);
+run($db, "ALTER TABLE colony_layouts ADD CONSTRAINT fk_layouts_colony FOREIGN KEY (colony_id) REFERENCES colonies(id) ON DELETE CASCADE", "FK: colony_layouts.colony_id â†’ colonies.id", $results);
+run($db, "ALTER TABLE land_documents ADD CONSTRAINT fk_ld_deal FOREIGN KEY (land_deal_id) REFERENCES land_deals(id) ON DELETE SET NULL", "FK: land_documents.land_deal_id â†’ land_deals.id", $results);
 
 // 6. Add broker FK
-run($db, "ALTER TABLE land_leads ADD CONSTRAINT fk_land_leads_broker FOREIGN KEY (broker_id) REFERENCES land_brokers(id) ON DELETE SET NULL", "FK: land_leads.broker_id → land_brokers.id", $results);
+run($db, "ALTER TABLE land_leads ADD CONSTRAINT fk_land_leads_broker FOREIGN KEY (broker_id) REFERENCES land_brokers(id) ON DELETE SET NULL", "FK: land_leads.broker_id â†’ land_brokers.id", $results);
 
 echo "\n========================================\n";
 echo " SUMMARY\n";
@@ -57,4 +57,4 @@ echo "========================================\n";
 echo "Done: " . count($results['done']) . "\n";
 foreach ($results['done'] as $d) echo "  - $d\n";
 echo "Failed: " . count($results['failed']) . "\n";
-foreach ($results['failed'] as $f) echo "  - $f\n";
+foreach ($results['failed'] as $f) echo "  - $f\n";?>

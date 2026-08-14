@@ -102,12 +102,12 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     </div>
 
     <!-- Real-time Notifications Panel -->
-    <div id="notificationPanel" class="card shadow-lg d-none position-fixed" style="top: 150px; right: 20px; width: 300px; z-index: 1050;">
+    <div id="notificationPanel" class="card shadow-lg d-none position-fixed" class="style-87917">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
             <h6 class="mb-0"><?= h($mlSupport->translate('Live AI Monitoring')) ?></h6>
             <button class="btn-close btn-close-white" onclick="toggleNotifications()"></button>
         </div>
-        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+        <div class="card-body p-0" class="style-61454">
             <div class="list-group list-group-flush" id="notifList">
                 <div class="list-group-item small text-muted text-center py-4"><?= h($mlSupport->translate('No live activities...')) ?></div>
             </div>
@@ -235,7 +235,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                             <h5 class="card-title h6 fw-bold mb-0"><?= h($mlSupport->translate('Performance Analytics')) ?></h5>
                         </div>
                         <div class="card-body aps-cp-card-body">
-                            <div style="height: 200px;">
+                            <div class="style-17333">
                                 <canvas id="aiPerformanceChart"></canvas>
                             </div>
                         </div>
@@ -274,7 +274,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <div class="card shadow-sm border-0" style="height: 600px;">
+                    <div class="card shadow-sm border-0" class="style-29486">
                         <div class="card-body p-0 position-relative">
                             <div id="workflowCanvas" class="w-100 h-100"></div>
                             <div class="position-absolute top-0 end-0 p-3">
@@ -359,22 +359,22 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Active Channels</h6><h3 id="tc-channels" class="mb-0">—</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Active Channels</h6><h3 id="tc-channels" class="mb-0">â€”</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Pending Calls</h6><h3 id="tc-pending" class="mb-0">—</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Pending Calls</h6><h3 id="tc-pending" class="mb-0">â€”</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Today's Calls</h6><h3 id="tc-today" class="mb-0">—</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Today's Calls</h6><h3 id="tc-today" class="mb-0">â€”</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Success Rate</h6><h3 id="tc-rate" class="mb-0">—</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Success Rate</h6><h3 id="tc-rate" class="mb-0">â€”</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
             </div>
@@ -444,17 +444,17 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Conversations Today</h6><h3 id="bot-convos" class="mb-0">—</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Conversations Today</h6><h3 id="bot-convos" class="mb-0">â€”</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Satisfaction</h6><h3 id="bot-satisfaction" class="mb-0">—</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Satisfaction</h6><h3 id="bot-satisfaction" class="mb-0">â€”</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Training Items</h6><h3 id="bot-training" class="mb-0">—</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Training Items</h6><h3 id="bot-training" class="mb-0">â€”</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
             </div>
@@ -502,12 +502,12 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-system/health" class="btn btn-outline-primary w-100 py-3"><i class="fas fa-heartbeat mb-2 d-block" style="font-size: 1.5rem;"></i>System Health Check</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-logs" class="btn btn-outline-success w-100 py-3"><i class="fas fa-list mb-2 d-block" style="font-size: 1.5rem;"></i>Call Logs</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-analytics" class="btn btn-outline-info w-100 py-3"><i class="fas fa-chart-pie mb-2 d-block" style="font-size: 1.5rem;"></i>Call Analytics</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/dedup" class="btn btn-outline-warning w-100 py-3"><i class="fas fa-clone mb-2 d-block" style="font-size: 1.5rem;"></i>Lead Deduplication</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/role-dashboard" class="btn btn-outline-secondary w-100 py-3"><i class="fas fa-users-cog mb-2 d-block" style="font-size: 1.5rem;"></i>CRM Role Dashboard</a></div>
-                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai/market_report" class="btn btn-outline-danger w-100 py-3"><i class="fas fa-chart-area mb-2 d-block" style="font-size: 1.5rem;"></i>Market Report</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-system/health" class="btn btn-outline-primary w-100 py-3"><i class="fas fa-heartbeat mb-2 d-block" class="style-41417"></i>System Health Check</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-logs" class="btn btn-outline-success w-100 py-3"><i class="fas fa-list mb-2 d-block" class="style-41417"></i>Call Logs</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-analytics" class="btn btn-outline-info w-100 py-3"><i class="fas fa-chart-pie mb-2 d-block" class="style-41417"></i>Call Analytics</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/dedup" class="btn btn-outline-warning w-100 py-3"><i class="fas fa-clone mb-2 d-block" class="style-41417"></i>Lead Deduplication</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/role-dashboard" class="btn btn-outline-secondary w-100 py-3"><i class="fas fa-users-cog mb-2 d-block" class="style-41417"></i>CRM Role Dashboard</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai/market_report" class="btn btn-outline-danger w-100 py-3"><i class="fas fa-chart-area mb-2 d-block" class="style-41417"></i>Market Report</a></div>
                     </div>
                 </div>
             </div>
@@ -652,7 +652,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     tryInit();
 
     function toggleAIMode() {
-        showToast('AI mode toggle — use Settings tab', 'info');
+        showToast('AI mode toggle â€” use Settings tab', 'info');
     }
 
     function toggleNotifications() {

@@ -44,25 +44,25 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
 <!-- ROW 2: 4 New Commission Streams (This Month) -->
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#6366f1,#14b8a6);color:#fff;">
+        <div class="aps-cp-stat" class="style-87972">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['generation_bonus_this_month'] ?? 0) / 1000, 1) ?>K</div>
             <div class="aps-cp-stat-label">Generation Bonus (Month)</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#0891b2,#06b6d4);color:#fff;">
+        <div class="aps-cp-stat" class="style-85050">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['infinity_override_this_month'] ?? 0) / 1000, 1) ?>K</div>
             <div class="aps-cp-stat-label">Infinity Override (Month)</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;">
+        <div class="aps-cp-stat" class="style-18399">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['matching_bonus_this_month'] ?? 0) / 1000, 1) ?>K</div>
             <div class="aps-cp-stat-label">Matching Bonus (Month)</div>
         </div>
     </div>
     <div class="col-md-3 col-6">
-        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;">
+        <div class="aps-cp-stat" class="style-46200">
             <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['commission_this_month'] ?? 0) / 10000000, 2) ?>Cr</div>
             <div class="aps-cp-stat-label">Total Commission (Month)</div>
         </div>
@@ -96,7 +96,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                             ?>
                             <tr>
                                 <td>
-                                    <span class="badge" style="background:<?= htmlspecialchars((string)($rb['color_code'] ?? '#94a3b8')) ?>;color:#fff;">
+                                    <span class="badge" class="style-59711">
                                         <i class="fas <?= htmlspecialchars((string)($rb['badge_icon'] ?? 'fa-user')) ?> me-1"></i>
                                         <?= htmlspecialchars(ucfirst(str_replace('_', ' ', (string)($rb['rank_name'] ?? '')))) ?>
                                     </span>
@@ -116,7 +116,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
         <!-- Commission by Type Breakdown -->
         <div class="aps-cp-card mt-4">
             <div class="aps-cp-card-header">
-                <h5 class="m-0"><i class="fas fa-layer-group me-2"></i>Commission Streams — All Time</h5>
+                <h5 class="m-0"><i class="fas fa-layer-group me-2"></i>Commission Streams â€” All Time</h5>
             </div>
             <div class="aps-cp-card-body p-0">
                 <div class="table-responsive">
@@ -165,8 +165,8 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                                 <td class="text-end fw-bold">&#8377;<?= number_format($data['total'], 0) ?></td>
                                 <td class="text-end">&#8377;<?= number_format($monthTotal, 0) ?></td>
                                 <td class="text-end">
-                                    <div class="progress" style="height:6px;width:60px;display:inline-block;">
-                                        <div class="progress-bar bg-<?= $label[2] === 'text-danger' ? 'danger' : ($label[2] === 'text-primary' ? 'primary' : ($label[2] === 'text-success' ? 'success' : 'secondary')) ?>" style="width:<?= $pctTotal ?>%"></div>
+                                    <div class="progress" class="style-81279">
+                                        <div class="progress-bar bg-<?= $label[2] === 'text-danger' ? 'danger' : ($label[2] === 'text-primary' ? 'primary' : ($label[2] === 'text-success' ? 'success' : 'secondary')) ?>" class="style-75676"></div>
                                     </div>
                                     <?= $pctTotal ?>%
                                 </td>
@@ -234,14 +234,14 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                 <div class="mb-2"><strong>Model:</strong> Differential (upline earns gap between their rate & downline's)</div>
                 <div class="mb-2"><strong>Global Cap:</strong> 20% per sale</div>
                 <div class="mb-2"><strong>Depth:</strong> 7-level upline walk</div>
-                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> 2% Gen1 → 1% Gen2 → 0% Gen3+</div>
+                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> 2% Gen1 â†’ 1% Gen2 â†’ 0% Gen3+</div>
                 <hr>
                 <div class="mb-1"><strong>Monthly Streams:</strong></div>
                 <ul class="list-unstyled ps-3">
-                    <li>💎 <strong>Generation Bonus</strong> — 5% of gen volume (President/SM only)</li>
-                    <li>♾️ <strong>Infinity Override</strong> — 1% of deep downline (VP+ only)</li>
-                    <li>🤝 <strong>Matching Bonus</strong> — 100%/50%/25% match (President+ only)</li>
-                    <li>👑 <strong>Royalty Pool</strong> — 2% of sales (Site Manager only)</li>
+                    <li>ðŸ’Ž <strong>Generation Bonus</strong> â€” 5% of gen volume (President/SM only)</li>
+                    <li>â™¾ï¸� <strong>Infinity Override</strong> â€” 1% of deep downline (VP+ only)</li>
+                    <li>ðŸ¤� <strong>Matching Bonus</strong> â€” 100%/50%/25% match (President+ only)</li>
+                    <li>ðŸ‘‘ <strong>Royalty Pool</strong> â€” 2% of sales (Site Manager only)</li>
                 </ul>
             </div>
         </div>

@@ -1,2 +1,2 @@
 <?php
-echo shell_exec('opencode --help 2>&1');
+echo shell_exec('opencode --help 2>&1');?>

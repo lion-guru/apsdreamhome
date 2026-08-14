@@ -78,7 +78,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
+                    <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i> Update Password
                     </button>
                 </form>

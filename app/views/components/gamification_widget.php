@@ -1,6 +1,6 @@
 <?php
 /**
- * Gamification Widget — Reusable badge + progress bar block
+ * Gamification Widget â€” Reusable badge + progress bar block
  *
  * Required variables:
  *   $gamify['title']       string  Widget title (e.g. "MLM Rank")
@@ -10,7 +10,7 @@
  *   $gamify['metric']      string  Primary metric (e.g. "Total Team Sales: 12")
  *   $gamify['progress_pct'] float  0-100
  *   $gamify['next_label']  string  Next level name
- *   $gamify['next_target'] string  Next-level target value (e.g. "₹5,00,000")
+ *   $gamify['next_target'] string  Next-level target value (e.g. "â‚¹5,00,000")
  *   $gamify['cta_url']     string  Upgrade CTA link
  *   $gamify['cta_text']    string  CTA button text
  *   $gamify['gradient']    string  (optional) CSS gradient for bg
@@ -28,17 +28,17 @@ $gCta = $gamify['cta_url'] ?? '#';
 $gCtaText = $gamify['cta_text'] ?? __('component_upgrade', 'Upgrade');
 $gGradient = $gamify['gradient'] ?? 'linear-gradient(135deg, #fff 0%, #ede9fe 100%)';
 ?>
-<div class="aps-cp-card mb-4" style="background: <?= htmlspecialchars($gGradient) ?>;">
-    <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
-        <h5 class="mb-0"><i class="fas <?= htmlspecialchars($gIcon) ?>" style="color: var(--aps-cp-<?= htmlspecialchars($gColor) ?>)"></i> <?= htmlspecialchars($gTitle) ?></h5>
+<div class="aps-cp-card mb-4" class="style-3203">
+    <div class="aps-cp-card-header" class="style-58119">
+        <h5 class="mb-0"><i class="fas <?= htmlspecialchars($gIcon) ?>" class="style-96303"></i> <?= htmlspecialchars($gTitle) ?></h5>
     </div>
     <div class="aps-cp-card-body text-center">
-        <div class="display-5 fw-bold mb-1" style="color: var(--aps-cp-<?= htmlspecialchars($gColor) ?>)"><?= htmlspecialchars($gLevel) ?></div>
+        <div class="display-5 fw-bold mb-1" class="style-96303"><?= htmlspecialchars($gLevel) ?></div>
         <?php if ($gMetric !== ''): ?>
         <small class="text-muted d-block mb-3"><?= htmlspecialchars($gMetric) ?></small>
         <?php endif; ?>
-        <div class="aps-cp-progress" style="height:12px;">
-            <div class="aps-cp-progress-bar" style="width:<?= number_format($gPct, 1) ?>%; background: linear-gradient(90deg, var(--aps-cp-<?= htmlspecialchars($gColor) ?>), var(--aps-cp-purple, #14b8a6));"></div>
+        <div class="aps-cp-progress" class="style-51045">
+            <div class="aps-cp-progress-bar" class="style-5100"></div>
         </div>
         <p class="text-muted small mt-2 mb-0">
             <?php if ($gNextTarget !== ''): ?>

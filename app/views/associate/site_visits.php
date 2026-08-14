@@ -88,7 +88,7 @@ $statusMap = [
 
     <?php if (empty($visits)): ?>
         <div class="text-center py-5">
-            <i class="fas fa-map-marker-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+            <i class="fas fa-map-marker-alt fa-3x text-muted mb-3" class="style-82835"></i>
             <h5 class="text-muted"><?= __('assoc_sv_empty', [], 'No site visits found') ?></h5>
             <p class="text-muted"><?= __('assoc_sv_empty_desc', [], 'Schedule your first site visit to get started.') ?></p>
             <a href="<?= BASE_URL ?>/associate/site-visits/schedule" class="btn btn-primary"><i class="fas fa-plus me-1"></i> <?= __('assoc_sv_schedule_visit', [], 'Schedule Visit') ?></a>
@@ -108,7 +108,7 @@ $statusMap = [
         <div class="visit-card <?= $cardClass ?>">
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                 <div class="d-flex align-items-start gap-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:48px;height:48px;background:rgba(var(--bs-<?= $sv['color'] ?>-rgb),0.1);flex-shrink:0;">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" class="style-58004">
                         <i class="fas <?= $sv['icon'] ?> text-<?= $sv['color'] ?>"></i>
                     </div>
                     <div>
@@ -127,7 +127,7 @@ $statusMap = [
                             <?php endif; ?>
                         </div>
                         <?php if (!empty($v['notes'])): ?>
-                            <div class="mt-1" style="font-size:0.82rem;color:#475569;"><?= htmlspecialchars(mb_substr($v['notes'], 0, 120)) ?></div>
+                            <div class="mt-1" class="style-69622"><?= htmlspecialchars(mb_substr($v['notes'], 0, 120)) ?></div>
                         <?php endif; ?>
                         <?php if ($isCompleted && !empty($v['rating'])): ?>
                             <div class="rating-stars mt-1">
@@ -162,7 +162,7 @@ $statusMap = [
                     <?php endif; ?>
                     <?php if (!empty($v['visitor_phone'])): ?>
                         <a href="tel:<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-outline-primary btn-sm" title="<?= __('assoc_sv_call', [], 'Call') ?>"><i class="fas fa-phone"></i></a>
-                        <a href="https://wa.me/91<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-outline-success btn-sm" target="_blank" title="<?= __('assoc_sv_whatsapp', [], 'WhatsApp') ?>" style="border-color:#25d366;color:#25d366;"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://wa.me/91<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-outline-success btn-sm" target="_blank" title="<?= __('assoc_sv_whatsapp', [], 'WhatsApp') ?>" class="style-2555"><i class="fab fa-whatsapp"></i></a>
                     <?php endif; ?>
                 </div>
             </div>

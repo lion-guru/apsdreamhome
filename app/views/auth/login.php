@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic login view — redirects to role-specific login pages.
+ * Generic login view ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ redirects to role-specific login pages.
  * Used by AuthenticationController as a unified entry point.
  */
 $role = $_GET['role'] ?? '';
@@ -69,7 +69,9 @@ $context = $contextMessages[$redirectTo] ?? '';
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                        
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
                     <div class="text-center mt-3">
                         <a href="<?= BASE_URL ?>/forgot-password" class="text-decoration-none">Forgot Password?</a>

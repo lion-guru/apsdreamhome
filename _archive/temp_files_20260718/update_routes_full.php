@@ -158,4 +158,4 @@ foreach ($replacements as $from => $to) {
 echo "Total replacements: $replaced\n";
 
 file_put_contents($file, $content);
-echo "Routes file updated successfully!\n";
+echo "Routes file updated successfully!\n";?>

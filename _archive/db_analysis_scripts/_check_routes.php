@@ -23,4 +23,4 @@ foreach ($unique as $r) {
         $missing++;
     }
 }
-echo "Missing controllers: $missing\n";
+echo "Missing controllers: $missing\n";?>

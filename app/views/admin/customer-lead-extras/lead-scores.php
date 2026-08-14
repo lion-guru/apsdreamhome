@@ -89,14 +89,14 @@ $page_description = 'Monitor and manage AI-powered lead scores';
             <h5 class="mb-0">Score Distribution</h5>
         </div>
         <div class="card-body aps-cp-card-body">
-            <div class="progress" style="height: 25px;">
-                <div class="progress-bar bg-success" style="width: <?php echo $stats['low_score_count'] > 0 ? round(($stats['low_score_count'] ?? 0) / (($stats['total_analyzed'] ?? 1) ?: 1) * 100) : 0; ?>%">
+            <div class="progress" class="style-4902">
+                <div class="progress-bar bg-success" class="style-53568">
                     Low (0-59): <?php echo $stats['low_score_count'] ?? 0; ?>
                 </div>
-                <div class="progress-bar bg-warning" style="width: <?php echo $stats['medium_score_count'] > 0 ? round(($stats['medium_score_count'] ?? 0) / (($stats['total_analyzed'] ?? 1) ?: 1) * 100) : 0; ?>%">
+                <div class="progress-bar bg-warning" class="style-56235">
                     Medium (60-79): <?php echo $stats['medium_score_count'] ?? 0; ?>
                 </div>
-                <div class="progress-bar bg-danger" style="width: <?php echo $stats['high_risk_count'] > 0 ? round(($stats['high_risk_count'] ?? 0) / (($stats['total_analyzed'] ?? 1) ?: 1) * 100) : 0; ?>%">
+                <div class="progress-bar bg-danger" class="style-66378">
                     High (80-100): <?php echo $stats['high_risk_count'] ?? 0; ?>
                 </div>
             </div>
@@ -144,13 +144,13 @@ $page_description = 'Monitor and manage AI-powered lead scores';
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="progress" style="height: 20px; width: 100px;">
-                                            <div class="progress-bar <?php echo $scoreClass; ?>" style="width: <?php echo $scoreValue; ?>%"></div>
+                                        <div class="progress" class="style-48235">
+                                            <div class="progress-bar <?php echo $scoreClass; ?>" class="style-58620"></div>
                                         </div>
                                         <span class="ms-2"><?php echo $scoreValue; ?>%</span>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 200px;" title="<?php echo htmlspecialchars($score['criteria'] ?? ''); ?>">
+                                        <div class="text-truncate" class="style-65684" title="<?php echo htmlspecialchars($score['criteria'] ?? ''); ?>">
                                             <?php echo htmlspecialchars($score['criteria'] ?? 'No criteria'); ?>
                                         </div>
                                     </td>

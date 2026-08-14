@@ -50,4 +50,4 @@ foreach ($associates as $u) {
 echo "=== Summary ===\n";
 echo "Passed: {$passed}/" . ($passed + $failed) . "\n";
 echo "Failed: {$failed}/" . ($passed + $failed) . "\n";
-echo ($failed === 0 ? "\nAll checks passed!" : "\nSome checks failed - run scripts/fix_mlm_extensions.php to repair.") . "\n";
+echo ($failed === 0 ? "\nAll checks passed!" : "\nSome checks failed - run scripts/fix_mlm_extensions.php to repair.") . "\n";?>

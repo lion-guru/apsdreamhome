@@ -19,7 +19,7 @@ class SocialMediaController extends BaseController
     {
         $this->requireAdmin();
         $this->render('admin/feature-disabled', [
-            'page_title' => 'Social Media Integration — Coming Soon',
+            'page_title' => 'Social Media Integration â€” Coming Soon',
             'feature_name' => 'Social Media Integration',
             'feature_description' => 'Social media sharing, OAuth login, and viral marketing features require third-party API configuration. This feature will be available soon.',
             'icon' => 'fas fa-share-alt',
@@ -46,7 +46,7 @@ class SocialMediaController extends BaseController
             'description' => $this->generatePropertyDescription($property),
             'url' => BASE_URL . 'property/' . $property_id,
             'image' => $this->getPropertyImage($property_id),
-            'price' => '₹' . number_format($property['price']),
+            'price' => 'â‚¹' . number_format($property['price']),
             'location' => $property['city'] . ', ' . $property['state']
         ];
 
@@ -112,7 +112,7 @@ class SocialMediaController extends BaseController
      */
     public function socialCallback($provider)
     {
-        // Social login OAuth is not yet implemented — this is a stub controller.
+        // Social login OAuth is not yet implemented â€” this is a stub controller.
         // Real social login is handled by GoogleAuthController.
         // Return a clear error instead of creating users with fake data.
         $this->setFlash('error', ucfirst($provider) . ' social login is not yet configured. Please use email/password login or Google login.');
@@ -184,7 +184,7 @@ class SocialMediaController extends BaseController
 
         $description[] = 'in ' . $property['city'];
 
-        return implode(' • ', $description);
+        return implode(' â€¢ ', $description);
     }
 
     /**
@@ -248,19 +248,19 @@ class SocialMediaController extends BaseController
     {
         $templates = [
             'property_sale' => [
-                'facebook' => "🏠 Amazing {property_type} for sale!\n\n{description}\n💰 {price}\n📍 {location}\n\nView details: {url}",
-                'twitter' => "🏠 {property_type} for sale! {price} - {location}\n{description}\n{url} #RealEstate #Property",
-                'instagram' => "🏠 New Listing Alert!\n\n{description}\n💰 {price}\n📍 {location}\n\nDM for details! 🏡"
+                'facebook' => "ðŸ�  Amazing {property_type} for sale!\n\n{description}\nðŸ’° {price}\nðŸ“� {location}\n\nView details: {url}",
+                'twitter' => "ðŸ�  {property_type} for sale! {price} - {location}\n{description}\n{url} #RealEstate #Property",
+                'instagram' => "ðŸ�  New Listing Alert!\n\n{description}\nðŸ’° {price}\nðŸ“� {location}\n\nDM for details! ðŸ�¡"
             ],
             'mlm_achievement' => [
-                'facebook' => "🎉 MLM Achievement Unlocked!\n\n{achievement}\n\nJoin our network and achieve your dreams! {url}",
-                'twitter' => "🎉 MLM Success! {achievement} #MLM #NetworkMarketing {url}",
-                'linkedin' => "🏆 Professional Achievement in Network Marketing\n\n{achievement}\n\nBuilding successful teams through APS Dream Home"
+                'facebook' => "ðŸŽ‰ MLM Achievement Unlocked!\n\n{achievement}\n\nJoin our network and achieve your dreams! {url}",
+                'twitter' => "ðŸŽ‰ MLM Success! {achievement} #MLM #NetworkMarketing {url}",
+                'linkedin' => "ðŸ�† Professional Achievement in Network Marketing\n\n{achievement}\n\nBuilding successful teams through APS Dream Home"
             ],
             'company_update' => [
-                'facebook' => "📢 Company Update from APS Dream Home\n\n{update}\n\n{url}",
-                'twitter' => "📢 {update} #APSDreamHome #RealEstate {url}",
-                'linkedin' => "🏢 Company Update\n\n{update}\n\nLeading the real estate industry with innovative MLM solutions"
+                'facebook' => "ðŸ“¢ Company Update from APS Dream Home\n\n{update}\n\n{url}",
+                'twitter' => "ðŸ“¢ {update} #APSDreamHome #RealEstate {url}",
+                'linkedin' => "ðŸ�¢ Company Update\n\n{update}\n\nLeading the real estate industry with innovative MLM solutions"
             ]
         ];
 
@@ -770,4 +770,4 @@ class SocialMediaController extends BaseController
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+//?>

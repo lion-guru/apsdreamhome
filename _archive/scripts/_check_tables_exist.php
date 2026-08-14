@@ -26,4 +26,4 @@ foreach ($tables as $t) {
         $count = $r->fetch()['c'];
     }
     echo ($exists ? 'EXISTS' : 'MISSING') . " ($count rows): $t" . PHP_EOL;
-}
+}?>

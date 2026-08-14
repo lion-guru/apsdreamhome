@@ -66,4 +66,4 @@ return [
         'whatsapp_per_minute' => 80,
         'push_per_minute'     => 1000,
     ],
-];
+];?>

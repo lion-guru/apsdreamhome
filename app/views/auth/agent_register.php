@@ -487,14 +487,16 @@ $base = BASE_URL;
                     <?php echo __('auth_terms_prefix', 'By registering, you agree to our'); ?> <a href="#"><?php echo __('auth_terms', 'Terms of Service'); ?></a> and <a href="#"><?php echo __('auth_privacy_policy', 'Privacy Policy'); ?></a>.
                 </div>
 
-                <button type="submit" class="btn btn-register" id="submitBtn">
+                
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-register" id="submitBtn">
                     <i class="fa-solid fa-user-plus me-2"></i><?php echo __('auth_create_account', 'Create Account'); ?>
                 </button>
             </form>
 
             <div class="divider-line"></div>
 
-            <p class="text-center mb-0" style="font-size: 0.9rem; color: #64748b;">
+            <p class="text-center mb-0" class="style-4671">
                 <?php echo __('auth_already_have_account', 'Already have an account?'); ?> <a href="<?php echo $base; ?>/agent/login" class="login-link"><?php echo __('auth_login_here', 'Login here'); ?></a>
             </p>
         </div>
@@ -525,7 +527,7 @@ $base = BASE_URL;
                 });
             }
 
-            // Phone validation — strip non-digits
+            // Phone validation Ã¢â‚¬â€� strip non-digits
             const phoneInput = form.querySelector('input[name="phone"]');
             if (phoneInput) {
                 phoneInput.addEventListener('input', function() {

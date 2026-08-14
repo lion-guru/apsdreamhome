@@ -8,4 +8,4 @@ return [
     'url' => 'http://localhost/apsdreamhome',
     'timezone' => 'Asia/Kolkata',
     'locale' => 'en',
-];
+];?>

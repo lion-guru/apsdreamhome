@@ -3,7 +3,7 @@
 namespace App\Services;
 
 /**
- * Envelope — standardized return-format helper for services + API endpoints.
+ * Envelope â€” standardized return-format helper for services + API endpoints.
  *
  * Convention used across the codebase:
  *   {
@@ -92,4 +92,4 @@ final class Envelope
     {
         return new self($this->success, $this->data, $this->error, array_merge($this->meta, $extra));
     }
-}
+}?>

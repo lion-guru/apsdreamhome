@@ -10,4 +10,4 @@ echo "hi.php keys: " . count($hiKeys) . "\n\n";
 
 $missingInHi = array_diff(array_keys($en), array_keys($hi));
 echo "Missing in hi.php: " . count($missingInHi) . "\n";
-foreach ($missingInHi as $k) echo "  $k\n";
+foreach ($missingInHi as $k) echo "  $k\n";?>

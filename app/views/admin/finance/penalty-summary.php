@@ -88,7 +88,7 @@
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
                     <div class="aps-cp-stat-label"><?= __('pen_total_overdue_amount') ?></div>
-                    <div class="aps-cp-stat-value text-danger">₹<?= number_format((float)($summary['total_overdue_amount'] ?? 0), 0) ?></div>
+                    <div class="aps-cp-stat-value text-danger">â‚¹<?= number_format((float)($summary['total_overdue_amount'] ?? 0), 0) ?></div>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
                     <div class="aps-cp-stat-label"><?= __('pen_accrued_penalties') ?></div>
-                    <div class="aps-cp-stat-value text-warning">₹<?= number_format((float)($summary['total_accrued_penalties'] ?? 0), 2) ?></div>
+                    <div class="aps-cp-stat-value text-warning">â‚¹<?= number_format((float)($summary['total_accrued_penalties'] ?? 0), 2) ?></div>
                 </div>
             </div>
         </div>
@@ -122,7 +122,7 @@
             <button id="applyPenaltiesBtn" class="btn btn-warning" onclick="applyPenalties()">
                 <i class="fas fa-calculator me-1"></i><?= __('pen_apply_now') ?>
             </button>
-            <div id="penaltyResult" class="mt-3" style="display:none;"></div>
+            <div id="penaltyResult" class="mt-3" class="style-2248"></div>
         </div>
     </div>
 
@@ -164,8 +164,8 @@
                             ?>
                             <span class="<?= $cls ?>"><?= $days ?> <?= __('pen_days') ?></span>
                         </td>
-                        <td class="text-end">₹<?= number_format((float)$item['amount'], 2) ?></td>
-                        <td class="text-end fw-bold text-warning">₹<?= number_format((float)$item['accrued_penalty'], 2) ?></td>
+                        <td class="text-end">â‚¹<?= number_format((float)$item['amount'], 2) ?></td>
+                        <td class="text-end fw-bold text-warning">â‚¹<?= number_format((float)$item['accrued_penalty'], 2) ?></td>
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
@@ -202,7 +202,7 @@ function applyPenalties() {
         resultDiv.style.display = 'block';
         if (data.success) {
             resultDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-1"></i>' +
-                '<?= __('pen_applied') ?> <strong>' + data.penalties_applied + '</strong> <?= __('pen_penalties_totaling') ?> <strong>₹' +
+                '<?= __('pen_applied') ?> <strong>' + data.penalties_applied + '</strong> <?= __('pen_penalties_totaling') ?> <strong>â‚¹' +
                 Number(data.total_penalty).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</strong>. ' +
                 '<?= __('pen_will_reload') ?></div>';
             setTimeout(function() { location.reload(); }, 2000);

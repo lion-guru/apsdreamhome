@@ -176,4 +176,4 @@ function createLeadsTable($pdo)
     $create_logs_sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
     $pdo->exec($create_logs_sql);
-}
+}?>

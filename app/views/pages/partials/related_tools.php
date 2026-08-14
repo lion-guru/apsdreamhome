@@ -1,4 +1,4 @@
-<div class="py-4" style="background:#1a1a2e;border-top:1px solid rgba(255,255,255,0.1);">
+<div class="py-4" class="style-91914">
     <div class="container">
         <div class="text-center mb-3">
             <h5 class="text-white-50"><i class="fas fa-tools me-2"></i>Explore More Tools</h5>

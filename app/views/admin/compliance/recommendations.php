@@ -41,12 +41,12 @@ function recBadgeClass($priority) {
 </style>
 
 <div class="recs-header">
-    <div class="container-fluid px-4" style="position:relative;z-index:1">
+    <div class="container-fluid px-4" class="style-84072">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <a href="<?= $base ?>/admin/compliance-scorecard" class="text-white-50 text-decoration-none" style="font-size:13px"><i class="fas fa-arrow-left me-1"></i>Back to Scorecard</a>
+                <a href="<?= $base ?>/admin/compliance-scorecard" class="text-white-50 text-decoration-none" class="style-87981"><i class="fas fa-arrow-left me-1"></i>Back to Scorecard</a>
                 <h2 class="mb-1 fw-bold mt-1"><i class="fas fa-list-check me-2"></i>All Recommendations</h2>
-                <p class="mb-0 opacity-75" style="font-size:14px">Sorted by impact — highest impact first</p>
+                <p class="mb-0 opacity-75" class="style-42715">Sorted by impact â€” highest impact first</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <?php
@@ -57,22 +57,22 @@ function recBadgeClass($priority) {
                         else $medCount++;
                     }
                 ?>
-                <span class="stat-pill" style="background:rgba(220,53,69,.15);color:#dc3545"><i class="fas fa-circle" style="font-size:6px"></i> <?= $critCount ?> Critical</span>
-                <span class="stat-pill" style="background:rgba(255,193,7,.15);color:#d4a017"><i class="fas fa-circle" style="font-size:6px"></i> <?= $highCount ?> High</span>
-                <span class="stat-pill" style="background:rgba(40,167,69,.15);color:#28a745"><i class="fas fa-circle" style="font-size:6px"></i> <?= $medCount ?> Medium</span>
+                <span class="stat-pill" class="style-49201"><i class="fas fa-circle" class="style-54982"></i> <?= $critCount ?> Critical</span>
+                <span class="stat-pill" class="style-5844"><i class="fas fa-circle" class="style-54982"></i> <?= $highCount ?> High</span>
+                <span class="stat-pill" class="style-93193"><i class="fas fa-circle" class="style-54982"></i> <?= $medCount ?> Medium</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid px-4" style="margin-top:-12px">
+<div class="container-fluid px-4" class="style-71772">
     <div class="row g-4">
         <div class="col-lg-9">
             <?php if (empty($recommendations)): ?>
-                <div class="text-center py-5" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
+                <div class="text-center py-5" class="style-32484">
                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
                     <h5 class="fw-bold">All Clear!</h5>
-                    <p class="text-muted mb-0">No compliance recommendations — all areas are fully compliant.</p>
+                    <p class="text-muted mb-0">No compliance recommendations â€” all areas are fully compliant.</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($grouped as $areaKey => $recs): ?>
@@ -87,18 +87,18 @@ function recBadgeClass($priority) {
                     ?>
                     <div class="group-section">
                         <div class="group-title">
-                            <i style="background:<?= $color ?>15;color:<?= $color ?>"><i class="<?= $icon ?>"></i></i>
+                            <i class="style-29917"><i class="<?= $icon ?>"></i></i>
                             <?= $area_labels[$areaKey] ?? $areaKey ?>
-                            <span class="badge bg-secondary" style="font-size:10px"><?= count($recs) ?> items</span>
+                            <span class="badge bg-secondary" class="style-76616"><?= count($recs) ?> items</span>
                         </div>
                         <?php foreach ($recs as $rec): ?>
                             <div class="rec-card">
-                                <div class="rec-indicator" style="background:<?= recColor($rec['priority']) ?>"></div>
+                                <div class="rec-indicator" class="style-59620"></div>
                                 <div class="rec-body">
                                     <div class="rec-text"><?= htmlspecialchars($rec['recommendation']) ?></div>
                                     <div class="rec-meta">
                                         <span>Impact: <strong><?= $rec['impact'] ?></strong></span>
-                                        <span class="badge <?= recBadgeClass($rec['priority']) ?>" style="font-size:9px;padding:2px 8px"><?= strtoupper($rec['priority']) ?></span>
+                                        <span class="badge <?= recBadgeClass($rec['priority']) ?>" class="style-88259"><?= strtoupper($rec['priority']) ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -110,30 +110,30 @@ function recBadgeClass($priority) {
 
         <!-- Sidebar Summary -->
         <div class="col-lg-3">
-            <div class="p-4 mb-3" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
-                <h6 class="fw-bold mb-3" style="font-size:14px"><i class="fas fa-chart-pie me-2 text-muted"></i>Summary</h6>
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px">
+            <div class="p-4 mb-3" class="style-32484">
+                <h6 class="fw-bold mb-3" class="style-42715"><i class="fas fa-chart-pie me-2 text-muted"></i>Summary</h6>
+                <div class="d-flex justify-content-between mb-2" class="style-87981">
                     <span class="text-muted">Total Recommendations</span>
                     <span class="fw-bold"><?= count($recommendations) ?></span>
                 </div>
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px">
+                <div class="d-flex justify-content-between mb-2" class="style-87981">
                     <span class="text-muted">Areas Affected</span>
                     <span class="fw-bold"><?= count($grouped) ?></span>
                 </div>
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px">
+                <div class="d-flex justify-content-between mb-2" class="style-87981">
                     <span class="text-muted">Avg Impact</span>
                     <span class="fw-bold"><?= count($recommendations) > 0 ? round(array_sum(array_column($recommendations, 'impact')) / count($recommendations), 1) : 0 ?></span>
                 </div>
                 <hr>
                 <div class="text-center">
-                    <a href="<?= $base ?>/admin/compliance-scorecard" class="btn btn-sm btn-primary" style="font-size:12px"><i class="fas fa-shield-alt me-1"></i>Re-check Now</a>
+                    <a href="<?= $base ?>/admin/compliance-scorecard" class="btn btn-sm btn-primary" class="style-86354"><i class="fas fa-shield-alt me-1"></i>Re-check Now</a>
                 </div>
             </div>
 
-            <div class="p-4" style="background:#fff;border-radius:16px;border:1px solid #f0f0f5">
-                <h6 class="fw-bold mb-3" style="font-size:14px"><i class="fas fa-sort-amount-down me-2 text-muted"></i>By Area</h6>
+            <div class="p-4" class="style-32484">
+                <h6 class="fw-bold mb-3" class="style-42715"><i class="fas fa-sort-amount-down me-2 text-muted"></i>By Area</h6>
                 <?php foreach ($grouped as $areaKey => $recs): ?>
-                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size:12px">
+                    <div class="d-flex justify-content-between align-items-center mb-2" class="style-86354">
                         <span class="text-muted"><?= $area_labels[$areaKey] ?? $areaKey ?></span>
                         <span class="fw-bold"><?= count($recs) ?></span>
                     </div>

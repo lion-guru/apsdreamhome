@@ -59,7 +59,9 @@
                                 <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('auth_repeat_new_password') ?>">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i><?= __('auth_update_profile') ?></button>
+                        
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i><?= __('auth_update_profile') ?></button>
                     </form>
                 </div>
             </div>

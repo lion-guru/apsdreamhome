@@ -570,4 +570,4 @@ class AdvancedSearchService
             'success_rate' => $total > 0 ? round((($total - $noResults) / $total) * 100, 2) : 100
         ];
     }
-}
+}?>

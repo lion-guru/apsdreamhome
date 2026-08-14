@@ -7,4 +7,4 @@ foreach($rows as $r) {
 
 echo PHP_EOL . "=== mlm_settings ===" . PHP_EOL;
 $rows2 = $pdo->query('SELECT * FROM mlm_settings')->fetchAll(PDO::FETCH_ASSOC);
-foreach($rows2 as $r) { echo $r['setting_key'] . ' = ' . $r['setting_value'] . PHP_EOL; }
+foreach($rows2 as $r) { echo $r['setting_key'] . ' = ' . $r['setting_value'] . PHP_EOL; }?>

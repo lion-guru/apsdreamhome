@@ -13,4 +13,4 @@ if (file_exists($cacheFile)) {
     echo "Content snippet: " . substr(file_get_contents($cacheFile), 0, 100) . "\n";
 } else {
     echo "Cache file does not exist.\n";
-}
+}?>

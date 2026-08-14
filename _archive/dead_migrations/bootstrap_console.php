@@ -8,4 +8,4 @@ $kernel = $app->make(Kernel::class);
 
 $kernel->bootstrap();
 
-return $kernel;
+return $kernel;?>

@@ -10,4 +10,4 @@ foreach ($unique as $r) {
     [$class, $method] = explode('@', $r);
     echo "  Class: $class (len=" . strlen($class) . ")\n";
     echo "  Class hex: " . bin2hex($class) . "\n";
-}
+}?>

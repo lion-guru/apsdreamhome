@@ -51,7 +51,7 @@ $extraHead = '<style>
                             </div>
 
                             <?php if (!empty($p['image'])): ?>
-                                <img src="<?= BASE_URL ?>/<?php echo htmlspecialchars($p['image']); ?>" class="img-fluid rounded mb-3" style="max-height: 180px; width: 100%; object-fit: cover;" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
+                                <img src="<?= BASE_URL ?>/<?php echo htmlspecialchars($p['image']); ?>" class="img-fluid rounded mb-3" class="style-9014" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
                             <?php endif; ?>
 
                             <div class="row mb-3">

@@ -27,13 +27,13 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <small class="text-muted d-block">Amount</small>
-                        <strong class="text-success">₹<?= number_format($deal['amount'] ?? $deal['deal_value'] ?? 0, 2) ?></strong>
+                        <strong class="text-success">â‚¹<?= number_format($deal['amount'] ?? $deal['deal_value'] ?? 0, 2) ?></strong>
                     </div>
                     <div class="col-md-4">
                         <small class="text-muted d-block">Probability</small>
                         <strong><?= ($deal['probability'] ?? $deal['probability_pct'] ?? 0) ?>%</strong>
-                        <div class="progress mt-1" style="height:6px">
-                            <div class="progress-bar bg-<?= ($deal['probability'] ?? 0) >= 80 ? 'success' : (($deal['probability'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" style="width:<?= $deal['probability'] ?? $deal['probability_pct'] ?? 0 ?>%"></div>
+                        <div class="progress mt-1" class="style-51910">
+                            <div class="progress-bar bg-<?= ($deal['probability'] ?? 0) >= 80 ? 'success' : (($deal['probability'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" class="style-4321"></div>
                         </div>
                     </div>
                     <div class="col-md-4">

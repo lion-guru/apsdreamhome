@@ -62,11 +62,11 @@ $doc_type_labels = $doc_type_labels ?? [];
 
 <div class="ocr-page">
     <div class="ocr-header">
-        <div class="container-fluid px-4" style="position:relative;z-index:1">
+        <div class="container-fluid px-4" class="style-84072">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
                     <h4 class="mb-1 fw-bold text-white"><i class="fas fa-eye me-2"></i>OCR Document Pipeline</h4>
-                    <p class="mb-0" style="color:#94a3b8;font-size:13px">Upload, extract, and verify document fields automatically</p>
+                    <p class="mb-0" class="style-29848">Upload, extract, and verify document fields automatically</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="<?= BASE_URL ?>/admin/ocr/upload" class="ocr-btn ocr-btn-primary"><i class="fas fa-cloud-upload-alt"></i>Upload Document</a>
@@ -76,54 +76,54 @@ $doc_type_labels = $doc_type_labels ?? [];
         </div>
     </div>
 
-    <div class="container-fluid px-4" style="margin-top:-12px">
+    <div class="container-fluid px-4" class="style-71772">
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-2">
                 <div class="ocr-stat-card">
-                    <div class="ocr-stat-icon" style="background:rgba(99,102,241,.15);color:#a78bfa"><i class="fas fa-file-alt"></i></div>
-                    <div class="ocr-stat-value" style="color:#a78bfa"><?= $stats['total'] ?></div>
+                    <div class="ocr-stat-icon" class="style-78178"><i class="fas fa-file-alt"></i></div>
+                    <div class="ocr-stat-value" class="style-61987"><?= $stats['total'] ?></div>
                     <div class="ocr-stat-label">Total</div>
                 </div>
             </div>
             <div class="col-6 col-md-2">
                 <div class="ocr-stat-card">
-                    <div class="ocr-stat-icon" style="background:rgba(251,191,36,.15);color:#fbbf24"><i class="fas fa-clock"></i></div>
-                    <div class="ocr-stat-value" style="color:#fbbf24"><?= $stats['pending'] ?></div>
+                    <div class="ocr-stat-icon" class="style-83626"><i class="fas fa-clock"></i></div>
+                    <div class="ocr-stat-value" class="style-81434"><?= $stats['pending'] ?></div>
                     <div class="ocr-stat-label">Pending</div>
                 </div>
             </div>
             <div class="col-6 col-md-2">
                 <div class="ocr-stat-card">
-                    <div class="ocr-stat-icon" style="background:rgba(59,130,246,.15);color:#60a5fa"><i class="fas fa-cog fa-spin"></i></div>
-                    <div class="ocr-stat-value" style="color:#60a5fa"><?= $stats['processing'] ?></div>
+                    <div class="ocr-stat-icon" class="style-51774"><i class="fas fa-cog fa-spin"></i></div>
+                    <div class="ocr-stat-value" class="style-45299"><?= $stats['processing'] ?></div>
                     <div class="ocr-stat-label">Processing</div>
                 </div>
             </div>
             <div class="col-6 col-md-2">
                 <div class="ocr-stat-card">
-                    <div class="ocr-stat-icon" style="background:rgba(16,185,129,.15);color:#34d399"><i class="fas fa-check-circle"></i></div>
-                    <div class="ocr-stat-value" style="color:#34d399"><?= $stats['completed'] ?></div>
+                    <div class="ocr-stat-icon" class="style-97604"><i class="fas fa-check-circle"></i></div>
+                    <div class="ocr-stat-value" class="style-49307"><?= $stats['completed'] ?></div>
                     <div class="ocr-stat-label">Completed</div>
                 </div>
             </div>
             <div class="col-6 col-md-2">
                 <div class="ocr-stat-card">
-                    <div class="ocr-stat-icon" style="background:rgba(16,185,129,.15);color:#34d399"><i class="fas fa-shield-alt"></i></div>
-                    <div class="ocr-stat-value" style="color:#34d399"><?= $stats['valid'] ?></div>
+                    <div class="ocr-stat-icon" class="style-97604"><i class="fas fa-shield-alt"></i></div>
+                    <div class="ocr-stat-value" class="style-49307"><?= $stats['valid'] ?></div>
                     <div class="ocr-stat-label">Verified</div>
                 </div>
             </div>
             <div class="col-6 col-md-2">
                 <div class="ocr-stat-card">
-                    <div class="ocr-stat-icon" style="background:rgba(239,68,68,.15);color:#f87171"><i class="fas fa-times-circle"></i></div>
-                    <div class="ocr-stat-value" style="color:#f87171"><?= $stats['failed'] + $stats['invalid'] ?></div>
+                    <div class="ocr-stat-icon" class="style-19876"><i class="fas fa-times-circle"></i></div>
+                    <div class="ocr-stat-value" class="style-37569"><?= $stats['failed'] + $stats['invalid'] ?></div>
                     <div class="ocr-stat-label">Failed / Invalid</div>
                 </div>
             </div>
         </div>
 
         <form class="ocr-filter-bar" method="GET" action="<?= BASE_URL ?>/admin/ocr">
-            <input type="text" name="q" placeholder="Search filename..." value="<?= htmlspecialchars($search) ?>" style="min-width:180px">
+            <input type="text" name="q" placeholder="Search filename..." value="<?= htmlspecialchars($search) ?>" class="style-55638">
             <select name="status">
                 <option value="">All Status</option>
                 <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -137,9 +137,9 @@ $doc_type_labels = $doc_type_labels ?? [];
                     <option value="<?= $dt ?>" <?= $doctype === $dt ? 'selected' : '' ?>><?= $doc_type_labels[$dt] ?? $dt ?></option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="ocr-btn ocr-btn-outline" style="padding:7px 14px"><i class="fas fa-search"></i>Filter</button>
+            <button type="submit" class="ocr-btn ocr-btn-outline" class="style-81125"><i class="fas fa-search"></i>Filter</button>
             <?php if ($search || $status || $doctype): ?>
-                <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline" style="padding:7px 14px"><i class="fas fa-times"></i>Clear</a>
+                <a href="<?= BASE_URL ?>/admin/ocr" class="ocr-btn ocr-btn-outline" class="style-81125"><i class="fas fa-times"></i>Clear</a>
             <?php endif; ?>
         </form>
 
@@ -151,7 +151,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                 <div class="ocr-empty">
                     <i class="fas fa-file-upload d-block"></i>
                     <h6 class="mb-2">No documents found</h6>
-                    <p class="mb-3" style="font-size:13px">Upload your first document to start OCR extraction</p>
+                    <p class="mb-3" class="style-87981">Upload your first document to start OCR extraction</p>
                     <a href="<?= BASE_URL ?>/admin/ocr/upload" class="ocr-btn ocr-btn-primary"><i class="fas fa-cloud-upload-alt me-1"></i>Upload Document</a>
                 </div>
             <?php else: ?>
@@ -172,10 +172,10 @@ $doc_type_labels = $doc_type_labels ?? [];
                         <tbody>
                             <?php foreach ($documents as $doc): ?>
                                 <tr>
-                                    <td style="color:#64748b;font-size:12px">#<?= $doc['id'] ?></td>
+                                    <td class="style-17256">#<?= $doc['id'] ?></td>
                                     <td>
                                         <span class="ocr-filename" title="<?= htmlspecialchars($doc['original_name'] ?? '') ?>">
-                                            <i class="fas fa-file me-1" style="color:#64748b"></i><?= htmlspecialchars($doc['original_name'] ?? $doc['file_name'] ?? 'Unknown') ?>
+                                            <i class="fas fa-file me-1" class="style-74529"></i><?= htmlspecialchars($doc['original_name'] ?? $doc['file_name'] ?? 'Unknown') ?>
                                         </span>
                                     </td>
                                     <td><span class="ocr-badge ocr-badge-identity"><?= $doc_type_labels[$doc['document_type']] ?? $doc['document_type'] ?? '?' ?></span></td>
@@ -187,7 +187,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                                     </td>
                                     <td>
                                         <?php $conf = (float)($doc['confidence_score'] ?? 0); ?>
-                                        <span style="color:<?= $conf >= 0.7 ? '#34d399' : ($conf >= 0.4 ? '#fbbf24' : '#f87171') ?>;font-weight:600;font-size:12px">
+                                        <span class="style-30876">
                                             <?= number_format($conf * 100, 0) ?>%
                                         </span>
                                     </td>
@@ -195,19 +195,19 @@ $doc_type_labels = $doc_type_labels ?? [];
                                         <?php $vClass = 'ocr-badge-' . ($doc['validation_status'] ?? 'pending'); ?>
                                         <span class="ocr-badge <?= $vClass ?>"><?= ucfirst($doc['validation_status'] ?? 'pending') ?></span>
                                     </td>
-                                    <td style="color:#64748b;font-size:12px"><?= date('d M Y, h:i A', strtotime($doc['created_at'] ?? 'now')) ?></td>
+                                    <td class="style-17256"><?= date('d M Y, h:i A', strtotime($doc['created_at'] ?? 'now')) ?></td>
                                     <td>
                                         <div class="d-flex gap-1">
-                                            <a href="<?= BASE_URL ?>/admin/ocr/detail/<?= $doc['id'] ?>" class="ocr-btn ocr-btn-outline" style="padding:4px 10px;font-size:11px"><i class="fas fa-eye"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/ocr/detail/<?= $doc['id'] ?>" class="ocr-btn ocr-btn-outline" class="style-18377"><i class="fas fa-eye"></i></a>
                                             <?php if (($doc['ocr_status'] ?? '') === 'pending'): ?>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/ocr/process/<?= $doc['id'] ?>" style="display:inline">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/ocr/process/<?= $doc['id'] ?>" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                                    <button type="submit" class="ocr-btn ocr-btn-success" style="padding:4px 10px;font-size:11px"><i class="fas fa-play"></i></button>
+                                                    <button type="submit" class="ocr-btn ocr-btn-success" class="style-18377"><i class="fas fa-play"></i></button>
                                                 </form>
                                             <?php endif; ?>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" style="display:inline" onsubmit="return confirm('Delete this document permanently?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this document permanently?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                                                <button type="submit" class="ocr-btn ocr-btn-danger" style="padding:4px 10px;font-size:11px"><i class="fas fa-trash"></i></button>
+                                                <button type="submit" class="ocr-btn ocr-btn-danger" class="style-18377"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>

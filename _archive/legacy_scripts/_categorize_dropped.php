@@ -76,4 +76,4 @@ foreach ($out as $cat => $items) {
         }
     }
 }
-echo PHP_EOL . "=== TOTAL CATEGORIZED: $sum of " . count($dropped) . " dropped tables ===" . PHP_EOL;
+echo PHP_EOL . "=== TOTAL CATEGORIZED: $sum of " . count($dropped) . " dropped tables ===" . PHP_EOL;?>

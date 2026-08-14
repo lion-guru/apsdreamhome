@@ -88,7 +88,9 @@ $active_page = 'profile';
                                 <textarea name="address" class="form-control" rows="3"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary">
+                                
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i> Save Changes
                                 </button>
                             </div>

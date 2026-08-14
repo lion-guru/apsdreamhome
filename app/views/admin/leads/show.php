@@ -23,7 +23,7 @@ $scoreColor = $leadScore >= 80 ? 'success' : ($leadScore >= 50 ? 'warning' : ($l
 $priorityBadge = ['high'=>'danger','medium'=>'warning','low'=>'info'];
 $pBadge = $priorityBadge[$lead['priority'] ?? 'medium'] ?? 'secondary';
 $phone = preg_replace('/[^0-9]/', '', $lead['phone'] ?? '');
-$budgetFormatted = isset($lead['budget']) ? '₹' . number_format((float)$lead['budget'], 0) : 'N/A';
+$budgetFormatted = isset($lead['budget']) ? 'â‚¹' . number_format((float)$lead['budget'], 0) : 'N/A';
 
 function timeAgo($dt) {
     if (!$dt) return '';
@@ -99,8 +99,8 @@ function timeAgo($dt) {
                 <div>
                     <div class="d-flex align-items-center gap-3">
                         <h1 class="lead-name"><?= htmlspecialchars($lead['name'] ?? 'N/A') ?></h1>
-                        <span class="badge bg-<?= $statusColor ?> text-uppercase" style="font-size:12px;padding:6px 14px"><?= ucfirst(str_replace('_',' ',$lead['status'] ?? 'new')) ?></span>
-                        <span class="badge bg-<?= $pBadge ?>" style="font-size:11px;padding:4px 10px"><?= ucfirst($lead['priority'] ?? 'Medium') ?></span>
+                        <span class="badge bg-<?= $statusColor ?> text-uppercase" class="style-79379"><?= ucfirst(str_replace('_',' ',$lead['status'] ?? 'new')) ?></span>
+                        <span class="badge bg-<?= $pBadge ?>" class="style-37495"><?= ucfirst($lead['priority'] ?? 'Medium') ?></span>
                     </div>
                     <div class="lead-meta">
                         <?php if (!empty($lead['lead_number'])): ?><span><i class="fas fa-hashtag"></i> <?= $lead['lead_number'] ?></span> &middot;<?php endif; ?>
@@ -113,8 +113,8 @@ function timeAgo($dt) {
             <div class="d-flex align-items-center gap-3">
                 <div class="lead-score-ring <?= $leadScore >= 80 ? 'score-high' : ($leadScore >= 50 ? 'score-med' : 'score-low') ?>">
                     <div>
-                        <div style="font-size:24px;font-weight:700"><?= $leadScore ?></div>
-                        <div style="font-size:10px;opacity:.8;text-transform:uppercase">Score</div>
+                        <div class="style-93877"><?= $leadScore ?></div>
+                        <div class="style-32890">Score</div>
                     </div>
                 </div>
                 <div class="no-print">
@@ -127,7 +127,7 @@ function timeAgo($dt) {
     </div>
 </div>
 
-<div class="container-fluid px-4" style="margin-top:20px">
+<div class="container-fluid px-4" class="style-28820">
 
     <!-- Pipeline Visual -->
     <?php
@@ -138,7 +138,7 @@ function timeAgo($dt) {
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <small class="text-muted fw-bold text-uppercase" style="letter-spacing:1px">Pipeline Progress</small>
+                <small class="text-muted fw-bold text-uppercase" class="style-34238">Pipeline Progress</small>
                 <small class="text-muted"><?= ($currentIdx + 1) . ' / ' . count($pipelineStages) ?> stages</small>
             </div>
             <div class="pipeline-visual">
@@ -146,7 +146,7 @@ function timeAgo($dt) {
                     <div class="pipe-step <?= $i < $currentIdx ? 'done' : ($i === $currentIdx ? 'active' : '') ?>" title="<?= ucfirst(str_replace('_',' ',$stage)) ?>"></div>
                 <?php endforeach; ?>
             </div>
-            <div class="d-flex justify-content-between" style="font-size:10px;color:#888;margin-top:-4px">
+            <div class="d-flex justify-content-between" class="style-93284">
                 <?php foreach ($pipelineStages as $s): ?><span><?= ucfirst(str_replace('_',' ',$s)) ?></span><?php endforeach; ?>
             </div>
         </div>
@@ -165,57 +165,57 @@ function timeAgo($dt) {
     <div class="row g-2 mb-3">
         <?php if ($daysSinceActivity === null): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">
+                <div class="card border-0 shadow-sm" class="style-67216">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-exclamation-triangle text-warning"></i>
-                        <div><small class="fw-bold text-warning">No Activity</small><br><small class="text-muted" style="font-size:11px">Never contacted</small></div>
+                        <div><small class="fw-bold text-warning">No Activity</small><br><small class="text-muted" class="style-26285">Never contacted</small></div>
                     </div>
                 </div>
             </div>
         <?php elseif ($daysSinceActivity >= 7): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">
+                <div class="card border-0 shadow-sm" class="style-21976">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-clock text-danger"></i>
-                        <div><small class="fw-bold text-danger">Stale Lead</small><br><small class="text-muted" style="font-size:11px">No activity for <?= $daysSinceActivity ?>d</small></div>
+                        <div><small class="fw-bold text-danger">Stale Lead</small><br><small class="text-muted" class="style-26285">No activity for <?= $daysSinceActivity ?>d</small></div>
                     </div>
                 </div>
             </div>
         <?php else: ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">
+                <div class="card border-0 shadow-sm" class="style-86513">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-check-circle text-success"></i>
-                        <div><small class="fw-bold text-success">Active</small><br><small class="text-muted" style="font-size:11px">Last: <?= $daysSinceActivity ?>d ago</small></div>
+                        <div><small class="fw-bold text-success">Active</small><br><small class="text-muted" class="style-26285">Last: <?= $daysSinceActivity ?>d ago</small></div>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
 
         <div class="col-md-3 col-6">
-            <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#ede9fe,#ddd6fe)">
+            <div class="card border-0 shadow-sm" class="style-54821">
                 <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                     <i class="fas fa-comments text-primary"></i>
-                    <div><small class="fw-bold text-primary"><?= $interactionCount ?> Interactions</small><br><small class="text-muted" style="font-size:11px"><?= $daysSinceCreated ?>d since creation</small></div>
+                    <div><small class="fw-bold text-primary"><?= $interactionCount ?> Interactions</small><br><small class="text-muted" class="style-26285"><?= $daysSinceCreated ?>d since creation</small></div>
                 </div>
             </div>
         </div>
 
         <?php if ($overdueTasks > 0): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">
+                <div class="card border-0 shadow-sm" class="style-21976">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-exclamation-circle text-danger"></i>
-                        <div><small class="fw-bold text-danger"><?= $overdueTasks ?> Overdue</small><br><small class="text-muted" style="font-size:11px"><?= $pendingTasks ?> tasks pending</small></div>
+                        <div><small class="fw-bold text-danger"><?= $overdueTasks ?> Overdue</small><br><small class="text-muted" class="style-26285"><?= $pendingTasks ?> tasks pending</small></div>
                     </div>
                 </div>
             </div>
         <?php elseif ($pendingTasks > 0): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fef9c3,#fde68a)">
+                <div class="card border-0 shadow-sm" class="style-24469">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-tasks text-warning"></i>
-                        <div><small class="fw-bold text-warning"><?= $pendingTasks ?> Tasks Due</small><br><small class="text-muted" style="font-size:11px">Pending follow-ups</small></div>
+                        <div><small class="fw-bold text-warning"><?= $pendingTasks ?> Tasks Due</small><br><small class="text-muted" class="style-26285">Pending follow-ups</small></div>
                     </div>
                 </div>
             </div>
@@ -223,19 +223,19 @@ function timeAgo($dt) {
 
         <?php if ($leadScore >= 80): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">
+                <div class="card border-0 shadow-sm" class="style-86513">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-fire text-success"></i>
-                        <div><small class="fw-bold text-success">Hot Lead</small><br><small class="text-muted" style="font-size:11px">Score <?= $leadScore ?>/100</small></div>
+                        <div><small class="fw-bold text-success">Hot Lead</small><br><small class="text-muted" class="style-26285">Score <?= $leadScore ?>/100</small></div>
                     </div>
                 </div>
             </div>
         <?php elseif ($leadScore <= 20 && $daysSinceCreated > 30): ?>
             <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe)">
+                <div class="card border-0 shadow-sm" class="style-58405">
                     <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
                         <i class="fas fa-snowflake text-info"></i>
-                        <div><small class="fw-bold text-info">Cold Lead</small><br><small class="text-muted" style="font-size:11px">Consider nurture</small></div>
+                        <div><small class="fw-bold text-info">Cold Lead</small><br><small class="text-muted" class="style-26285">Consider nurture</small></div>
                     </div>
                 </div>
             </div>
@@ -303,7 +303,7 @@ function timeAgo($dt) {
                     <div class="card border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;flex-shrink:0">
+                                <div class="style-24984">
                                     <?= strtoupper(substr($lead['name'] ?? 'N', 0, 1)) ?>
                                 </div>
                                 <div class="ms-3">
@@ -357,11 +357,11 @@ function timeAgo($dt) {
                     <?php if (!empty($assignments)): ?>
                     <div class="card border-0 shadow-sm mt-3">
                         <div class="card-header bg-light py-2"><h6 class="mb-0 fw-bold"><i class="fas fa-user-tag me-2"></i>Assignment History</h6></div>
-                        <div class="card-body" style="max-height:200px;overflow-y:auto">
+                        <div class="card-body" class="style-68333">
                             <?php foreach ($assignments as $a): ?>
-                                <div class="d-flex justify-content-between align-items-center py-1" style="border-bottom:1px solid #f5f5f5">
+                                <div class="d-flex justify-content-between align-items-center py-1" class="style-95886">
                                     <div>
-                                        <span class="fw-semibold" style="font-size:13px"><?= htmlspecialchars($a['assigned_to_name'] ?? 'Unknown') ?></span>
+                                        <span class="fw-semibold" class="style-87981"><?= htmlspecialchars($a['assigned_to_name'] ?? 'Unknown') ?></span>
                                         <br><small class="text-muted"><?= htmlspecialchars($a['assigned_by_name'] ?? 'System') ?></small>
                                     </div>
                                     <small class="text-muted"><?= timeAgo($a['assigned_at'] ?? $a['created_at'] ?? '') ?></small>
@@ -400,7 +400,7 @@ function timeAgo($dt) {
                             <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Recent Activity</h6>
                             <a href="#tab-timeline" class="text-decoration-none" onclick="$('#tab-timeline-tab').tab('show')">View All <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
-                        <div class="card-body" style="max-height:400px;overflow-y:auto">
+                        <div class="card-body" class="style-23214">
                             <?php if (!empty($timeline)): ?>
                                 <?php foreach (array_slice($timeline, 0, 8) as $t): ?>
                                     <?php
@@ -415,9 +415,9 @@ function timeAgo($dt) {
                                                     <i class="fas fa-<?= $tIcon ?>"></i>
                                                     <?= ucfirst(str_replace('_',' ',$tType)) ?>
                                                 </span>
-                                                <span class="ms-2 fw-semibold" style="font-size:14px"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></span>
+                                                <span class="ms-2 fw-semibold" class="style-42715"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></span>
                                                 <?php if (!empty($t['body']) && ($t['body'] ?? '') !== ($t['subject'] ?? '')): ?>
-                                                    <p class="mb-0 mt-1 text-muted" style="font-size:13px"><?= htmlspecialchars(mb_strimwidth($t['body'], 0, 120, '...')) ?></p>
+                                                    <p class="mb-0 mt-1 text-muted" class="style-87981"><?= htmlspecialchars(mb_strimwidth($t['body'], 0, 120, '...')) ?></p>
                                                 <?php endif; ?>
                                             </div>
                                             <small class="text-muted text-nowrap ms-2"><?= timeAgo($t['created_at'] ?? $t['activity_date'] ?? '') ?></small>
@@ -440,7 +440,7 @@ function timeAgo($dt) {
                     <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Full Activity Timeline</h6>
                     <span class="badge bg-primary"><?= count($timeline) ?> activities</span>
                 </div>
-                <div class="card-body" style="max-height:600px;overflow-y:auto">
+                <div class="card-body" class="style-28677">
                     <?php if (!empty($timeline)): ?>
                         <?php foreach ($timeline as $t): ?>
                             <?php
@@ -454,10 +454,10 @@ function timeAgo($dt) {
                                             <span class="interaction-badge bg-<?= $tColor2 ?>-subtle text-<?= $tColor2 ?>-emphasis">
                                                 <?= ucfirst(str_replace('_',' ',$tType2)) ?>
                                             </span>
-                                            <strong style="font-size:14px"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></strong>
+                                            <strong class="style-42715"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></strong>
                                         </div>
                                         <?php if (!empty($t['body'])): ?>
-                                            <p class="mb-1 text-muted" style="font-size:13px"><?= nl2br(htmlspecialchars($t['body'])) ?></p>
+                                            <p class="mb-1 text-muted" class="style-87981"><?= nl2br(htmlspecialchars($t['body'])) ?></p>
                                         <?php endif; ?>
                                         <?php if (!empty($t['outcome'])): ?>
                                             <span class="badge bg-light text-dark"><i class="fas fa-flag me-1"></i><?= htmlspecialchars($t['outcome']) ?></span>
@@ -496,7 +496,7 @@ function timeAgo($dt) {
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width:40px"><i class="fas fa-hashtag"></i></th>
+                                        <th class="style-89354"><i class="fas fa-hashtag"></i></th>
                                         <th>Type</th>
                                         <th>Direction</th>
                                         <th>Subject</th>
@@ -512,9 +512,9 @@ function timeAgo($dt) {
                                             <td class="text-muted"><?= $i + 1 ?></td>
                                             <td><span class="interaction-badge bg-<?= ($int['interaction_type'] ?? '') === 'call' ? 'primary' : (($int['interaction_type'] ?? '') === 'email' ? 'info' : (($int['interaction_type'] ?? '') === 'whatsapp' ? 'success' : 'secondary')) ?>-subtle text-<?= ($int['interaction_type'] ?? '') === 'call' ? 'primary' : (($int['interaction_type'] ?? '') === 'email' ? 'info' : (($int['interaction_type'] ?? '') === 'whatsapp' ? 'success' : 'secondary')) ?>-emphasis"><?= ucfirst($int['interaction_type'] ?? '') ?></span></td>
                                             <td><span class="badge bg-<?= ($int['direction'] ?? '') === 'inbound' ? 'success' : 'primary' ?>-subtle text-<?= ($int['direction'] ?? '') === 'inbound' ? 'success' : 'primary' ?>-emphasis"><?= ucfirst($int['direction'] ?? '') ?></span></td>
-                                            <td class="fw-semibold" style="max-width:200px"><?= htmlspecialchars(mb_strimwidth($int['subject'] ?? '', 0, 50, '...')) ?></td>
-                                            <td><?= htmlspecialchars($int['outcome'] ?? '—') ?></td>
-                                            <td><?= !empty($int['duration_seconds']) ? gmdate('i:s', $int['duration_seconds']) : '—' ?></td>
+                                            <td class="fw-semibold" class="style-86200"><?= htmlspecialchars(mb_strimwidth($int['subject'] ?? '', 0, 50, '...')) ?></td>
+                                            <td><?= htmlspecialchars($int['outcome'] ?? 'â€”') ?></td>
+                                            <td><?= !empty($int['duration_seconds']) ? gmdate('i:s', $int['duration_seconds']) : 'â€”' ?></td>
                                             <td><small class="text-muted"><?= timeAgo($int['created_at'] ?? '') ?></small></td>
                                             <td><small><?= htmlspecialchars($int['user_name'] ?? 'System') ?></small></td>
                                         </tr>
@@ -550,11 +550,11 @@ function timeAgo($dt) {
                                     <div class="row g-2">
                                         <div class="col-6">
                                             <small class="text-muted d-block">Value</small>
-                                            <strong class="text-success fs-5">₹<?= number_format((float)($deal['deal_value'] ?? 0)) ?></strong>
+                                            <strong class="text-success fs-5">â‚¹<?= number_format((float)($deal['deal_value'] ?? 0)) ?></strong>
                                         </div>
                                         <div class="col-6">
                                             <small class="text-muted d-block">Weighted</small>
-                                            <strong class="text-primary">₹<?= number_format((float)($deal['deal_value'] ?? 0) * ((float)($deal['probability'] ?? 50) / 100)) ?></strong>
+                                            <strong class="text-primary">â‚¹<?= number_format((float)($deal['deal_value'] ?? 0) * ((float)($deal['probability'] ?? 50) / 100)) ?></strong>
                                         </div>
                                         <div class="col-6">
                                             <small class="text-muted d-block">Probability</small>
@@ -572,7 +572,7 @@ function timeAgo($dt) {
                                         <?php endif; ?>
                                     </div>
                                     <?php if (!empty($deal['notes'])): ?>
-                                        <p class="mt-2 mb-0 text-muted" style="font-size:13px"><?= htmlspecialchars(mb_strimwidth($deal['notes'], 0, 100, '...')) ?></p>
+                                        <p class="mt-2 mb-0 text-muted" class="style-87981"><?= htmlspecialchars(mb_strimwidth($deal['notes'], 0, 100, '...')) ?></p>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -608,9 +608,9 @@ function timeAgo($dt) {
                                     <div class="d-flex align-items-start gap-2">
                                         <input type="checkbox" class="form-check-input mt-1" <?= ($task['status'] ?? '') === 'completed' ? 'checked' : '' ?> onchange="toggleTask(<?= $task['id'] ?>, this.checked)">
                                         <div>
-                                            <strong style="font-size:14px;<?= ($task['status'] ?? '') === 'completed' ? 'text-decoration:line-through;opacity:.6' : '' ?>"><?= htmlspecialchars($task['title'] ?? '') ?></strong>
+                                            <strong class="style-20444"><?= htmlspecialchars($task['title'] ?? '') ?></strong>
                                             <?php if (!empty($task['description'])): ?>
-                                                <p class="mb-0 text-muted" style="font-size:12px"><?= htmlspecialchars(mb_strimwidth($task['description'], 0, 80, '...')) ?></p>
+                                                <p class="mb-0 text-muted" class="style-86354"><?= htmlspecialchars(mb_strimwidth($task['description'], 0, 80, '...')) ?></p>
                                             <?php endif; ?>
                                             <div class="d-flex gap-2 mt-1">
                                                 <span class="badge bg-<?= ($task['task_type'] ?? '') === 'call' ? 'primary' : (($task['task_type'] ?? '') === 'email' ? 'info' : 'secondary') ?>-subtle text-<?= ($task['task_type'] ?? '') === 'call' ? 'primary' : (($task['task_type'] ?? '') === 'email' ? 'info' : 'secondary') ?>-emphasis"><?= ucfirst(str_replace('_',' ',$task['task_type'] ?? 'task')) ?></span>
@@ -679,7 +679,7 @@ function timeAgo($dt) {
                                             <span class="fw-bold"><?= $val ?>/<?= $max ?></span>
                                         </div>
                                         <div class="score-bar">
-                                            <div class="score-fill bg-<?= $barColor ?>" style="width:<?= $pct ?>%"></div>
+                                            <div class="score-fill bg-<?= $barColor ?>" class="style-21859"></div>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -687,7 +687,7 @@ function timeAgo($dt) {
                                 <p class="text-muted mb-3">No score data available. Score is calculated automatically based on lead activity and engagement.</p>
                             <?php endif; ?>
                             <div class="text-center mt-3 p-3 bg-light rounded">
-                                <div style="font-size:48px;font-weight:800;color:<?= $leadScore >= 80 ? '#10b981' : ($leadScore >= 50 ? '#f59e0b' : '#ef4444') ?>"><?= $leadScore ?></div>
+                                <div class="style-29315"><?= $leadScore ?></div>
                                 <small class="text-muted text-uppercase fw-bold">Overall Score</small>
                             </div>
                         </div>
@@ -699,19 +699,19 @@ function timeAgo($dt) {
                         <div class="card-body">
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-primary"><i class="fas fa-clock me-1"></i> Recency</h6>
-                                <p class="mb-0 text-muted" style="font-size:13px">How recently was the lead contacted or active. Leads contacted in the last 7 days score highest.</p>
+                                <p class="mb-0 text-muted" class="style-87981">How recently was the lead contacted or active. Leads contacted in the last 7 days score highest.</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-success"><i class="fas fa-comments me-1"></i> Engagement</h6>
-                                <p class="mb-0 text-muted" style="font-size:13px">Number of interactions, emails opened, calls answered. More engagement = higher score.</p>
+                                <p class="mb-0 text-muted" class="style-87981">Number of interactions, emails opened, calls answered. More engagement = higher score.</p>
                             </div>
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-warning"><i class="fas fa-rupee-sign me-1"></i> Budget Fit</h6>
-                                <p class="mb-0 text-muted" style="font-size:13px">How well the lead's budget matches available inventory. Higher match = higher conversion probability.</p>
+                                <p class="mb-0 text-muted" class="style-87981">How well the lead's budget matches available inventory. Higher match = higher conversion probability.</p>
                             </div>
                             <div class="p-3 bg-light rounded">
                                 <h6 class="fw-bold text-info"><i class="fas fa-user-check me-1"></i> Lead Quality</h6>
-                                <p class="mb-0 text-muted" style="font-size:13px">Verified contact info, complete profile, and valid requirements improve the score.</p>
+                                <p class="mb-0 text-muted" class="style-87981">Verified contact info, complete profile, and valid requirements improve the score.</p>
                             </div>
                         </div>
                     </div>
@@ -730,29 +730,29 @@ function timeAgo($dt) {
                         <div class="row g-3">
                             <?php if (!empty($commission['track_a'])): ?>
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Track A — Direct Sale</small>
-                                <div class="amount">₹<?= number_format($commission['track_a']['amount'] ?? 0) ?></div>
+                                <small class="text-muted d-block">Track A â€” Direct Sale</small>
+                                <div class="amount">â‚¹<?= number_format($commission['track_a']['amount'] ?? 0) ?></div>
                                 <small class="text-muted"><?= $commission['track_a']['rate'] ?? 0 ?>% slab rate</small>
                             </div>
                             <?php endif; ?>
                             <?php if (!empty($commission['track_b'])): ?>
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Track B — Override</small>
-                                <div class="amount">₹<?= number_format($commission['track_b']['amount'] ?? 0) ?></div>
+                                <small class="text-muted d-block">Track B â€” Override</small>
+                                <div class="amount">â‚¹<?= number_format($commission['track_b']['amount'] ?? 0) ?></div>
                                 <small class="text-muted"><?= $commission['track_b']['rate'] ?? 0 ?>% differential</small>
                             </div>
                             <?php endif; ?>
                             <?php if (!empty($commission['track_c'])): ?>
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Track C — Performance</small>
-                                <div class="amount">₹<?= number_format($commission['track_c']['amount'] ?? 0) ?></div>
+                                <small class="text-muted d-block">Track C â€” Performance</small>
+                                <div class="amount">â‚¹<?= number_format($commission['track_c']['amount'] ?? 0) ?></div>
                                 <small class="text-muted"><?= $commission['track_c']['rate'] ?? 0 ?>% rollup</small>
                             </div>
                             <?php endif; ?>
                             <?php if (!empty($commission['total'])): ?>
                             <div class="col-12 text-center mt-3 p-3 bg-white rounded">
                                 <small class="text-muted text-uppercase fw-bold">Total Estimated</small>
-                                <div style="font-size:36px;font-weight:800;color:#15803d">₹<?= number_format($commission['total']) ?></div>
+                                <div class="style-43168">â‚¹<?= number_format($commission['total']) ?></div>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -763,10 +763,10 @@ function timeAgo($dt) {
                         <div class="card-body">
                             <h6 class="fw-bold text-muted mb-3"><i class="fas fa-info-circle me-1"></i>How Commission Works</h6>
                             <ul class="list-unstyled">
-                                <li class="mb-2"><span class="badge bg-primary me-2">A</span> <strong>Direct Sale:</strong> Your rank-based rate on the deal value (5%–20%)</li>
+                                <li class="mb-2"><span class="badge bg-primary me-2">A</span> <strong>Direct Sale:</strong> Your rank-based rate on the deal value (5%â€“20%)</li>
                                 <li class="mb-2"><span class="badge bg-success me-2">B</span> <strong>Override:</strong> Differential between your rank and downline's rank</li>
                                 <li class="mb-2"><span class="badge bg-warning me-2">C</span> <strong>Performance:</strong> Team rollup bonus on qualifying deals</li>
-                                <li class="mb-2"><span class="badge bg-info me-2">★</span> <strong>Milestone:</strong> Bonus on achieving rank thresholds</li>
+                                <li class="mb-2"><span class="badge bg-info me-2">â˜…</span> <strong>Milestone:</strong> Bonus on achieving rank thresholds</li>
                                 <li class="mb-2"><span class="badge bg-danger me-2">!</span> <strong>20% Cap:</strong> Per-transaction commission capped at 20% of deal value</li>
                             </ul>
                         </div>
@@ -864,7 +864,7 @@ function timeAgo($dt) {
             <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/note">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="modal-body">
-                    <textarea class="form-control" name="note" rows="5" placeholder="Type your note here..." required style="border-radius:10px"></textarea>
+                    <textarea class="form-control" name="note" rows="5" placeholder="Type your note here..." required class="style-46740"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -941,7 +941,7 @@ function timeAgo($dt) {
 <div class="modal fade" id="interactionModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff">
+            <div class="modal-header" class="style-17604">
                 <h5 class="modal-title"><i class="fas fa-comments me-2"></i>Log Interaction</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -952,11 +952,11 @@ function timeAgo($dt) {
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Type *</label>
                             <select class="form-select" name="type" required>
-                                <option value="call">📞 Phone Call</option>
-                                <option value="email">📧 Email</option>
-                                <option value="whatsapp">💬 WhatsApp</option>
-                                <option value="meeting">🤝 Meeting</option>
-                                <option value="note">📝 Note</option>
+                                <option value="call">ðŸ“ž Phone Call</option>
+                                <option value="email">ðŸ“§ Email</option>
+                                <option value="whatsapp">ðŸ’¬ WhatsApp</option>
+                                <option value="meeting">ðŸ¤� Meeting</option>
+                                <option value="note">ðŸ“� Note</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -1016,7 +1016,7 @@ function timeAgo($dt) {
 <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff">
+            <div class="modal-header" class="style-57022">
                 <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Create Task</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -1043,9 +1043,9 @@ function timeAgo($dt) {
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Priority</label>
                             <select class="form-select" name="priority">
-                                <option value="low">🟢 Low</option>
-                                <option value="medium" selected>🟡 Medium</option>
-                                <option value="high">🔴 High</option>
+                                <option value="low">ðŸŸ¢ Low</option>
+                                <option value="medium" selected>ðŸŸ¡ Medium</option>
+                                <option value="high">ðŸ”´ High</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -1072,9 +1072,9 @@ function timeAgo($dt) {
 </div>
 
 <!-- Sticky Quick-Log Activity Bar -->
-<div id="quickLogBar" style="position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1a1a2e,#16213e);border-top:2px solid #667eea;padding:10px 20px;z-index:1050;display:flex;align-items:center;gap:10px;transition:transform .3s">
+<div id="quickLogBar" class="style-49227">
     <div class="d-flex align-items-center gap-2 flex-grow-1 flex-wrap">
-        <span class="text-white fw-bold" style="font-size:13px;white-space:nowrap"><i class="fas fa-bolt me-1"></i>Quick Log:</span>
+        <span class="text-white fw-bold" class="style-69987"><i class="fas fa-bolt me-1"></i>Quick Log:</span>
         <div class="btn-group btn-group-sm" role="group">
             <button type="button" class="btn btn-outline-light quick-type active" data-type="call" onclick="setQuickType(this)"><i class="fas fa-phone me-1"></i>Call</button>
             <button type="button" class="btn btn-outline-light quick-type" data-type="email" onclick="setQuickType(this)"><i class="fas fa-envelope me-1"></i>Email</button>
@@ -1082,12 +1082,12 @@ function timeAgo($dt) {
             <button type="button" class="btn btn-outline-light quick-type" data-type="meeting" onclick="setQuickType(this)"><i class="fas fa-handshake me-1"></i>Meeting</button>
             <button type="button" class="btn btn-outline-light quick-type" data-type="note" onclick="setQuickType(this)"><i class="fas fa-sticky-note me-1"></i>Note</button>
         </div>
-        <input type="text" id="quickSubject" class="form-control form-control-sm" placeholder="Quick subject..." style="max-width:300px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff">
-        <input type="text" id="quickBody" class="form-control form-control-sm" placeholder="Details (optional)..." style="max-width:250px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff">
-        <button type="button" class="btn btn-sm btn-primary" id="quickLogBtn" onclick="submitQuickLog()" style="white-space:nowrap">
+        <input type="text" id="quickSubject" class="form-control form-control-sm" placeholder="Quick subject..." class="style-89227">
+        <input type="text" id="quickBody" class="form-control form-control-sm" placeholder="Details (optional)..." class="style-85073">
+        <button type="button" class="btn btn-sm btn-primary" id="quickLogBtn" onclick="submitQuickLog()" class="style-30672">
             <i class="fas fa-paper-plane me-1"></i> Log
         </button>
-        <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleQuickLog()" title="Minimize" style="padding:4px 8px">
+        <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleQuickLog()" title="Minimize" class="style-26799">
             <i class="fas fa-chevron-down"></i>
         </button>
     </div>
@@ -1116,7 +1116,7 @@ function toggleQuickLog() {
     document.getElementById('quickLogBar').classList.toggle('minimized');
 }
 
-// ── Quick Log (Sticky Bar) ─────────────────────────────
+// â”€â”€ Quick Log (Sticky Bar) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function submitQuickLog() {
     const subject = document.getElementById('quickSubject').value.trim();
     const body = document.getElementById('quickBody').value.trim();
@@ -1138,7 +1138,7 @@ function submitQuickLog() {
         btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Log';
         btn.disabled = false;
         if (data.success) {
-            showToast('✓ ' + quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' logged!', 'success');
+            showToast('âœ“ ' + quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' logged!', 'success');
             document.getElementById('quickSubject').value = '';
             document.getElementById('quickBody').value = '';
             setTimeout(() => location.reload(), 800);
@@ -1152,7 +1152,7 @@ function submitQuickLog() {
     });
 }
 
-// ── Full Interaction Modal Submit ──────────────────────
+// â”€â”€ Full Interaction Modal Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function submitInteraction(e) {
     e.preventDefault();
     const form = document.getElementById('interactionForm');
@@ -1169,7 +1169,7 @@ function submitInteraction(e) {
         btn.disabled = false;
         if (data.success) {
             bootstrap.Modal.getInstance(document.getElementById('interactionModal')).hide();
-            showToast('✓ Interaction logged!', 'success');
+            showToast('âœ“ Interaction logged!', 'success');
             setTimeout(() => location.reload(), 800);
         } else {
             showToast('Error: ' + (data.error || 'Failed'), 'danger');
@@ -1182,7 +1182,7 @@ function submitInteraction(e) {
     return false;
 }
 
-// ── Task Modal Submit ──────────────────────────────────
+// â”€â”€ Task Modal Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function submitTask(e) {
     e.preventDefault();
     const form = document.getElementById('taskForm');
@@ -1201,7 +1201,7 @@ function submitTask(e) {
         btn.disabled = false;
         if (data.success) {
             bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
-            showToast('✓ Task created!', 'success');
+            showToast('âœ“ Task created!', 'success');
             setTimeout(() => location.reload(), 800);
         } else {
             showToast('Error: ' + (data.error || 'Failed'), 'danger');
@@ -1214,18 +1214,18 @@ function submitTask(e) {
     return false;
 }
 
-// ── Task Toggle (existing) ─────────────────────────────
+// â”€â”€ Task Toggle (existing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toggleTask(taskId, completed) {
     fetch(BASE + '/admin/leads/' + LEAD_ID + '/complete-task', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': CSRF_TOKEN},
         body: 'task_id=' + taskId + '&csrf_token=' + CSRF_TOKEN
     }).then(r => r.json()).then(data => {
-        if (data.success) showToast(completed ? '✓ Task completed!' : 'Task reopened', 'success');
+        if (data.success) showToast(completed ? 'âœ“ Task completed!' : 'Task reopened', 'success');
     });
 }
 
-// ── Toast Helper ───────────────────────────────────────
+// â”€â”€ Toast Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(msg, type) {
     const toast = document.createElement('div');
     toast.className = 'alert alert-' + type + ' position-fixed shadow-lg';
@@ -1235,16 +1235,16 @@ function showToast(msg, type) {
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
-// ── Existing Modal Openers ─────────────────────────────
+// â”€â”€ Existing Modal Openers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function addNote() { new bootstrap.Modal(document.getElementById('noteModal')).show(); }
 function changeStatus() { new bootstrap.Modal(document.getElementById('statusModal')).show(); }
 function assignAgent() { new bootstrap.Modal(document.getElementById('assignModal')).show(); }
 
-// ── Quick Log Enter Key ────────────────────────────────
+// â”€â”€ Quick Log Enter Key â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.getElementById('quickSubject').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickLog(); } });
 document.getElementById('quickBody').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickLog(); } });
 
-// ── Minimized bar click to expand ──────────────────────
+// â”€â”€ Minimized bar click to expand â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.getElementById('quickLogBar').addEventListener('click', function(e) {
     if (this.classList.contains('minimized') && !e.target.closest('button')) { this.classList.remove('minimized'); }
 });

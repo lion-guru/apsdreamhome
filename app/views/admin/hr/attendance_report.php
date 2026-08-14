@@ -61,7 +61,7 @@
                             <th class="text-center text-info"><i class="fas fa-plane-departure me-1"></i> Leave</th>
                             <th class="text-center text-secondary"><i class="fas fa-calendar-day me-1"></i> Holiday</th>
                             <th class="text-center">Total Days</th>
-                            <th style="width: 150px;">Attendance Rate</th>
+                            <th class="style-10944">Attendance Rate</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +77,7 @@
                                 <tr>
                                     <td class="ps-4 fw-bold text-gray-800">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar bg-light text-primary rounded-circle me-3 d-flex align-items-center justify-content-center border" style="width: 32px; height: 32px; font-size: 14px;">
+                                            <div class="avatar bg-light text-primary rounded-circle me-3 d-flex align-items-center justify-content-center border" class="style-68946">
                                                 <?= strtoupper(substr(htmlspecialchars($r['name'] ?? 'E'), 0, 1)) ?>
                                             </div>
                                             <?= htmlspecialchars($r['name'] ?? '') ?>
@@ -93,8 +93,8 @@
                                         <div class="d-flex align-items-center justify-content-between mb-1">
                                             <span class="small font-weight-bold text-<?= $rateClass ?>"><?= $rate ?>%</span>
                                         </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar bg-<?= $rateClass ?>" role="progressbar" style="width: <?= $rate ?>%" aria-valuenow="<?= $rate ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress" class="style-29939">
+                                            <div class="progress-bar bg-<?= $rateClass ?>" role="progressbar" class="style-19807" aria-valuenow="<?= $rate ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </td>
                                 </tr>

@@ -719,4 +719,4 @@ sort($unknown);
 foreach ($unknown as $t) {
     $info = $old[$t] ?? ['rows' => 0, 'col_count' => 0];
     echo sprintf("  %-45s %3d cols  %4d rows\n", $t, $info['col_count'], $info['rows']);
-}
+}?>

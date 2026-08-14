@@ -259,4 +259,4 @@ function project_path($relativePath = '')
 function is_internal_url($url)
 {
     return PathManager::isInternalUrl($url);
-}
+}?>

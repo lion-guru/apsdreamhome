@@ -122,7 +122,8 @@ ob_start();
   if (printBtn) {
     printBtn.addEventListener('click', () => {
       const w = window.open('', '_blank');
-      const html = '<!DOCTYPE html><html><head><title>2FA Backup Codes</title>' +
+      const html = '<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>2FA Backup Codes</title>' +
         '<style>body{font-family:system-ui;padding:30px;max-width:600px;margin:0 auto}' +
         'h1{color:#b45309}code{display:inline-block;padding:8px 12px;background:#f3f4f6;border-radius:6px;margin:4px;font-weight:bold}' +
         '.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}' +

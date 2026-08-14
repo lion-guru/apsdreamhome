@@ -10,4 +10,4 @@ $pdo = $db->getConnection();
 $stmt = $pdo->query("SHOW TABLES LIKE 'property_%'");
 while ($r = $stmt->fetch()) {
     echo $r[0] . PHP_EOL;
-}
+}?>

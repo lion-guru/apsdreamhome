@@ -42,4 +42,4 @@ foreach ($patterns as $name => $tables) {
     if (count($tables) <= 1) continue;
     echo "\n$name (" . count($tables) . " tables):\n";
     foreach ($tables as $t) echo "  $t\n";
-}
+}?>

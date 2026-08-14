@@ -23,7 +23,7 @@ $engine_status = $engine_status ?? [];
 <div class="settings-header">
     <div class="container-fluid px-4">
         <h2 class="mb-1 fw-bold"><i class="fas fa-key me-2"></i>AI API Settings</h2>
-        <p class="mb-0 opacity-75" style="font-size:14px">Configure free AI engines. Cost: ₹0 — all free tier.</p>
+        <p class="mb-0 opacity-75" class="style-42715">Configure free AI engines. Cost: â‚¹0 â€” all free tier.</p>
     </div>
 </div>
 
@@ -34,11 +34,11 @@ $engine_status = $engine_status ?? [];
             <div class="col-md-3">
                 <div class="engine-card">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span style="font-size:14px;font-weight:700;text-transform:capitalize"><?= $name ?></span>
+                        <span class="style-57106"><?= $name ?></span>
                         <span class="engine-status <?= $info['available'] ? 'active' : 'inactive' ?>"></span>
                     </div>
-                    <div style="font-size:12px;color:#888;margin-bottom:4px"><?= $info['model'] ?? 'N/A' ?></div>
-                    <div class="d-flex justify-content-between" style="font-size:11px">
+                    <div class="style-60726"><?= $info['model'] ?? 'N/A' ?></div>
+                    <div class="d-flex justify-content-between" class="style-26285">
                         <span class="text-muted"><?= $info['cost'] ?? '' ?></span>
                         <span class="text-muted"><?= $info['speed'] ?? '' ?></span>
                     </div>
@@ -51,7 +51,7 @@ $engine_status = $engine_status ?? [];
     </div>
 
     <!-- API Key Form -->
-    <div class="card" style="border-radius:16px;border:1px solid #f0f0f5">
+    <div class="card" class="style-61451">
         <div class="card-body p-4">
             <form method="POST">
     <?php echo CSRFProtection::csrfField(); ?>
@@ -59,69 +59,69 @@ $engine_status = $engine_status ?? [];
                     <!-- Groq -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['groq']['available']) ? 'active' : 'inactive' ?>" style="width:10px;height:10px"></span>
+                            <span class="engine-status <?= !empty($engine_status['groq']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
                             <label class="api-label mb-0">Groq API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="groq_api_key" class="api-input" value="<?= htmlspecialchars($settings['groq_api_key'] ?? '') ?>" placeholder="gsk_...">
-                        <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank" style="color:#6366f1">Get key →</a> Fastest inference (~500 tok/s)</div>
+                        <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank" class="style-58842">Get key â†’</a> Fastest inference (~500 tok/s)</div>
                     </div>
 
                     <!-- OpenRouter -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['openrouter']['available']) ? 'active' : 'inactive' ?>" style="width:10px;height:10px"></span>
+                            <span class="engine-status <?= !empty($engine_status['openrouter']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
                             <label class="api-label mb-0">OpenRouter API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="openrouter_api_key" class="api-input" value="<?= htmlspecialchars($settings['openrouter_api_key'] ?? '') ?>" placeholder="sk-or-...">
-                        <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank" style="color:#6366f1">Get key →</a></div>
+                        <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank" class="style-58842">Get key â†’</a></div>
                     </div>
 
                     <!-- Gemini -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['gemini']['available']) ? 'active' : 'inactive' ?>" style="width:10px;height:10px"></span>
+                            <span class="engine-status <?= !empty($engine_status['gemini']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
                             <label class="api-label mb-0">Google Gemini API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input type="password" name="gemini_api_key" class="api-input" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>" placeholder="AIza...">
-                        <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#6366f1">Get key →</a></div>
+                        <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" class="style-58842">Get key â†’</a></div>
                     </div>
 
                     <!-- Ollama -->
                     <div class="col-md-6">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="engine-status <?= !empty($engine_status['ollama']['available']) ? 'active' : 'inactive' ?>" style="width:10px;height:10px"></span>
+                            <span class="engine-status <?= !empty($engine_status['ollama']['available']) ? 'active' : 'inactive' ?>" class="style-47443"></span>
                             <label class="api-label mb-0">Ollama (Local) <span class="free-badge">UNLIMITED</span></label>
                         </div>
                         <input type="text" name="ollama_url" class="api-input" value="<?= htmlspecialchars($settings['ollama_url'] ?? 'http://localhost:11434') ?>" placeholder="http://localhost:11434">
-                        <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank" style="color:#6366f1">Install →</a> Run: <code>ollama pull llama3.1:8b</code></div>
+                        <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank" class="style-58842">Install â†’</a> Run: <code>ollama pull llama3.1:8b</code></div>
                         <input type="text" name="ollama_model" class="api-input mt-2" value="<?= htmlspecialchars($settings['ollama_model'] ?? 'llama3.1:8b') ?>" placeholder="llama3.1:8b">
                     </div>
                 </div>
 
                 <div class="mt-4 d-flex gap-3">
                     <button type="submit" class="save-btn"><i class="fas fa-save me-2"></i>Save Settings</button>
-                    <a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-outline-secondary" style="border-radius:10px">Cancel</a>
+                    <a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-outline-secondary" class="style-46740">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Info -->
-    <div class="card mt-4" style="border-radius:16px;border:1px solid #f0f0f5;background:linear-gradient(135deg,#f0f9ff 0%,#eff6ff 100%)">
+    <div class="card mt-4" class="style-60010">
         <div class="card-body p-4">
-            <h5 style="font-weight:700;color:#1e40af"><i class="fas fa-info-circle me-2"></i>How It Works</h5>
+            <h5 class="style-53819"><i class="fas fa-info-circle me-2"></i>How It Works</h5>
             <div class="row mt-3">
                 <div class="col-md-4">
-                    <h6 style="font-weight:700;color:#333">Smart Routing</h6>
-                    <p style="font-size:13px;color:#666">AI Gateway tries engines in order: Ollama → Groq → OpenRouter → Gemini. First successful response wins.</p>
+                    <h6 class="style-81974">Smart Routing</h6>
+                    <p class="style-64818">AI Gateway tries engines in order: Ollama â†’ Groq â†’ OpenRouter â†’ Gemini. First successful response wins.</p>
                 </div>
                 <div class="col-md-4">
-                    <h6 style="font-weight:700;color:#333">All Free Forever</h6>
-                    <p style="font-size:13px;color:#666">Ollama: unlimited. Groq: 30 RPM. OpenRouter: free models. Gemini: 15 RPM. Total cost: ₹0.</p>
+                    <h6 class="style-81974">All Free Forever</h6>
+                    <p class="style-64818">Ollama: unlimited. Groq: 30 RPM. OpenRouter: free models. Gemini: 15 RPM. Total cost: â‚¹0.</p>
                 </div>
                 <div class="col-md-4">
-                    <h6 style="font-weight:700;color:#333">Zero Config Works</h6>
-                    <p style="font-size:13px;color:#666">Without any API keys, the system uses rule engine + SelfLearningAI + IntentDetector (all local). API keys make it smarter.</p>
+                    <h6 class="style-81974">Zero Config Works</h6>
+                    <p class="style-64818">Without any API keys, the system uses rule engine + SelfLearningAI + IntentDetector (all local). API keys make it smarter.</p>
                 </div>
             </div>
         </div>

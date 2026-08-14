@@ -103,4 +103,4 @@ foreach($menuItems as $r) { $sections[$r['section']][] = $r; }
 foreach($sections as $sec => $rows) {
     echo str_pad($sec,25).": ".count($rows)." items\n";
 }
-echo "\nTotal: " . count($menuItems) . " menu items\n";
+echo "\nTotal: " . count($menuItems) . " menu items\n";?>

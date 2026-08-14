@@ -35,7 +35,7 @@
                             <?php foreach ($log as $entry): ?>
                                 <tr>
                                     <td class="fw-semibold"><?= htmlspecialchars($entry['title'] ?? '') ?></td>
-                                    <td class="text-muted" style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                    <td class="text-muted" class="style-62358">
                                         <?= htmlspecialchars($entry['body'] ?? '') ?>
                                     </td>
                                     <td>
@@ -61,7 +61,7 @@
                                                 <i class="fas fa-exclamation-triangle"></i> Error
                                             </span>
                                         <?php else: ?>
-                                            —
+                                            â€”
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-muted small"><?= htmlspecialchars($entry['created_at'] ?? '') ?></td>

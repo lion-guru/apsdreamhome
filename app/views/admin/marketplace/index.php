@@ -26,7 +26,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Active Listings</div><div class="aps-cp-stat-value text-success"><?= $activeListings ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Pending Approvals</div><div class="aps-cp-stat-value text-warning"><?= $pendingApprovals ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Sold</div><div class="aps-cp-stat-value text-info"><?= $soldCount ?></div></div></div></div>
-        <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Avg Price</div><div class="aps-cp-stat-value">₹<?= $avgPrice > 100000 ? number_format($avgPrice/100000,1).'L' : number_format($avgPrice) ?></div></div></div></div>
+        <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Avg Price</div><div class="aps-cp-stat-value">â‚¹<?= $avgPrice > 100000 ? number_format($avgPrice/100000,1).'L' : number_format($avgPrice) ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Views</div><div class="aps-cp-stat-value"><?= number_format($totalViews) ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Listings</div><div class="aps-cp-stat-value"><?= $activeListings + $pendingApprovals + $soldCount ?></div></div></div></div>
     </div>
@@ -42,7 +42,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php foreach ($topLocations as $loc): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div><strong class="small"><?= htmlspecialchars($loc['loc']) ?></strong></div>
-                                <div class="text-end"><span class="badge bg-primary"><?= $loc['cnt'] ?></span><br><small class="text-muted">Avg ₹<?= $loc['avg_price'] > 100000 ? number_format($loc['avg_price']/100000,1).'L' : number_format($loc['avg_price']) ?></small></div>
+                                <div class="text-end"><span class="badge bg-primary"><?= $loc['cnt'] ?></span><br><small class="text-muted">Avg â‚¹<?= $loc['avg_price'] > 100000 ? number_format($loc['avg_price']/100000,1).'L' : number_format($loc['avg_price']) ?></small></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php $pct = $activeListings > 0 ? round($td['cnt']/$activeListings*100) : 0; ?>
                         <div class="mb-2">
                             <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($td['property_type']) ?></small><small><?= $td['cnt'] ?> (<?= $pct ?>%)</small></div>
-                            <div class="progress" style="height:6px"><div class="progress-bar bg-primary" style="width:<?= $pct ?>%"></div></div>
+                            <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-21859"></div></div>
                         </div>
                     <?php endforeach; ?>
                     <?php if (empty($typeDistribution)): ?><div class="text-center text-muted py-3">No listings</div><?php endif; ?>
@@ -72,7 +72,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-bolt text-danger me-1"></i>Urgent</small><span class="badge bg-danger"><?= $premiumStats['urgent'] ?></span></div>
                     <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-gem text-primary me-1"></i>Premium</small><span class="badge bg-primary"><?= $premiumStats['premium'] ?></span></div>
                     <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-box me-1"></i>Active Packages</small><span class="badge bg-success"><?= $premiumStats['packages_active'] ?></span></div>
-                    <div class="d-flex justify-content-between"><small><i class="fas fa-money-bill me-1"></i>Package Revenue</small><span class="badge bg-info">₹<?= number_format($premiumStats['package_revenue']) ?></span></div>
+                    <div class="d-flex justify-content-between"><small><i class="fas fa-money-bill me-1"></i>Package Revenue</small><span class="badge bg-info">â‚¹<?= number_format($premiumStats['package_revenue']) ?></span></div>
                 </div>
             </div>
             <?php if (!empty($featuredListings)): ?>
@@ -127,7 +127,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                 <td>#<?= $p['id'] ?></td>
                                 <td><strong><?= htmlspecialchars(mb_substr($p['name'], 0, 40)) ?></strong></td>
                                 <td><span class="text-capitalize"><?= htmlspecialchars($p['property_type']) ?></span></td>
-                                <td>₹<?= $p['price'] > 100000 ? number_format($p['price']/100000,1).'L' : number_format($p['price']) ?></td>
+                                <td>â‚¹<?= $p['price'] > 100000 ? number_format($p['price']/100000,1).'L' : number_format($p['price']) ?></td>
                                 <td class="small"><?= htmlspecialchars($p['location'] ?? $p['city_name'] ?? 'N/A') ?></td>
                                 <td class="small"><?= htmlspecialchars($p['seller_name'] ?? 'N/A') ?></td>
                                 <td>
@@ -135,7 +135,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                     <?php if (!empty($p['is_featured'])): ?><span class="badge bg-warning text-dark" title="Featured"><i class="fas fa-star"></i></span><?php endif; ?>
                                     <?php if (!empty($p['is_urgent'])): ?><span class="badge bg-danger" title="Urgent"><i class="fas fa-bolt"></i></span><?php endif; ?>
                                     <?php if (empty($p['is_premium']) && empty($p['is_featured']) && empty($p['is_urgent'])): ?>
-                                        <span class="text-muted small">—</span>
+                                        <span class="text-muted small">â€”</span>
                                     <?php endif; ?>
                                 </td>
                                 <td><span class="aps-cp-badge badge bg-<?= $p['status'] === 'approved' ? 'success' : ($p['status'] === 'pending' ? 'warning' : ($p['status'] === 'sold' ? 'info' : 'danger')) ?>"><?= ucfirst(htmlspecialchars($p['status'])) ?></span></td>

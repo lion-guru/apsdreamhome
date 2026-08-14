@@ -3,7 +3,7 @@
  * Migration: Create mlm_joining_packages and mlm_associate_registrations tables
  *
  * Supports the joining package commission system where:
- *  - Associates purchase a package (e.g. ₹1,000)
+ *  - Associates purchase a package (e.g. â‚¹1,000)
  *  - Direct sponsor bonus + multi-level bonuses are distributed up the chain
  *
  * Run: php scripts/migrate_joining_packages.php
@@ -22,7 +22,7 @@ try {
 
     echo "=== Migration: Joining Packages ===\n\n";
 
-    // 1. mlm_joining_packages — package definitions
+    // 1. mlm_joining_packages â€” package definitions
     echo "[1/2] Creating mlm_joining_packages... ";
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS mlm_joining_packages (
@@ -40,7 +40,7 @@ try {
     ");
     echo "OK\n";
 
-    // 2. mlm_associate_registrations — registration records
+    // 2. mlm_associate_registrations â€” registration records
     echo "[2/2] Creating mlm_associate_registrations... ";
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS mlm_associate_registrations (
@@ -84,4 +84,4 @@ try {
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

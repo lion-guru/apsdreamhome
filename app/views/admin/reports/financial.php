@@ -33,7 +33,7 @@ $netIncome = $netIncome ?? $totalReceipts;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-arrow-up"></i></span></div>
-                    <div><div class="aps-cp-stat-label">Total Income</div><div class="aps-cp-stat-value text-success">₹<?= number_format($totalReceipts/100000,1) ?>L</div><div class="aps-cp-stat-meta">Bookings: ₹<?= number_format($totalBookings/100000,1) ?>L</div></div>
+                    <div><div class="aps-cp-stat-label">Total Income</div><div class="aps-cp-stat-value text-success">â‚¹<?= number_format($totalReceipts/100000,1) ?>L</div><div class="aps-cp-stat-meta">Bookings: â‚¹<?= number_format($totalBookings/100000,1) ?>L</div></div>
                 </div>
             </div></div>
         </div>
@@ -41,7 +41,7 @@ $netIncome = $netIncome ?? $totalReceipts;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-info rounded-pill p-2"><i class="fas fa-receipt"></i></span></div>
-                    <div><div class="aps-cp-stat-label">GST Payable</div><div class="aps-cp-stat-value">₹<?= number_format($gstPayable) ?></div><div class="aps-cp-stat-meta">Output: ₹<?= number_format($gstOutput) ?> | ITC: ₹<?= number_format($gstInput) ?></div></div>
+                    <div><div class="aps-cp-stat-label">GST Payable</div><div class="aps-cp-stat-value">â‚¹<?= number_format($gstPayable) ?></div><div class="aps-cp-stat-meta">Output: â‚¹<?= number_format($gstOutput) ?> | ITC: â‚¹<?= number_format($gstInput) ?></div></div>
                 </div>
             </div></div>
         </div>
@@ -49,7 +49,7 @@ $netIncome = $netIncome ?? $totalReceipts;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-percentage"></i></span></div>
-                    <div><div class="aps-cp-stat-label">TDS Deducted</div><div class="aps-cp-stat-value">₹<?= number_format($totalTds) ?></div><div class="aps-cp-stat-meta">Deposited: ₹<?= number_format($depositedTds) ?> | Pending: ₹<?= number_format($pendingTds) ?></div></div>
+                    <div><div class="aps-cp-stat-label">TDS Deducted</div><div class="aps-cp-stat-value">â‚¹<?= number_format($totalTds) ?></div><div class="aps-cp-stat-meta">Deposited: â‚¹<?= number_format($depositedTds) ?> | Pending: â‚¹<?= number_format($pendingTds) ?></div></div>
                 </div>
             </div></div>
         </div>
@@ -57,7 +57,7 @@ $netIncome = $netIncome ?? $totalReceipts;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fas fa-university"></i></span></div>
-                    <div><div class="aps-cp-stat-label">Bank Balance</div><div class="aps-cp-stat-value">₹<?= number_format($totalBankBalance/100000,1) ?>L</div><div class="aps-cp-stat-meta">Escrow: ₹<?= number_format($escrowBalance/100000,1) ?>L</div></div>
+                    <div><div class="aps-cp-stat-label">Bank Balance</div><div class="aps-cp-stat-value">â‚¹<?= number_format($totalBankBalance/100000,1) ?>L</div><div class="aps-cp-stat-meta">Escrow: â‚¹<?= number_format($escrowBalance/100000,1) ?>L</div></div>
                 </div>
             </div></div>
         </div>
@@ -74,7 +74,7 @@ $netIncome = $netIncome ?? $totalReceipts;
                         <?php foreach ($bankAccounts as $ba): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
                                 <div><strong class="small"><?= htmlspecialchars($ba['account_name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($ba['bank_name']) ?></small></div>
-                                <div class="text-end"><strong class="text-success">₹<?= number_format($ba['current_balance']) ?></strong><br><small class="text-muted"><?= $ba['is_escrow'] ? 'Escrow' : ucfirst($ba['account_type']) ?></small></div>
+                                <div class="text-end"><strong class="text-success">â‚¹<?= number_format($ba['current_balance']) ?></strong><br><small class="text-muted"><?= $ba['is_escrow'] ? 'Escrow' : ucfirst($ba['account_type']) ?></small></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -91,7 +91,7 @@ $netIncome = $netIncome ?? $totalReceipts;
                         <?php foreach ($methodBreakdown as $m): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-capitalize"><i class="fas fa-credit-card me-1"></i><?= htmlspecialchars($m['payment_method']) ?></span>
-                                <div class="text-end"><strong>₹<?= number_format($m['total']) ?></strong><br><small class="text-muted"><?= $m['cnt'] ?> txns</small></div>
+                                <div class="text-end"><strong>â‚¹<?= number_format($m['total']) ?></strong><br><small class="text-muted"><?= $m['cnt'] ?> txns</small></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -104,11 +104,11 @@ $netIncome = $netIncome ?? $totalReceipts;
                 <div class="aps-cp-card-body">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between"><small>Completed</small><small class="text-success"><?= $reconciliations ?></small></div>
-                        <div class="progress" style="height:8px"><div class="progress-bar bg-success" style="width:<?= ($reconciliations + $pendingRecon) > 0 ? round($reconciliations/($reconciliations+$pendingRecon)*100) : 0 ?>%"></div></div>
+                        <div class="progress" class="style-32124"><div class="progress-bar bg-success" class="style-78654"></div></div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between"><small>Pending</small><small class="text-warning"><?= $pendingRecon ?></small></div>
-                        <div class="progress" style="height:8px"><div class="progress-bar bg-warning" style="width:<?= ($reconciliations + $pendingRecon) > 0 ? round($pendingRecon/($reconciliations+$pendingRecon)*100) : 0 ?>%"></div></div>
+                        <div class="progress" class="style-32124"><div class="progress-bar bg-warning" class="style-6772"></div></div>
                     </div>
                     <div class="text-center mt-3">
                         <a href="<?= BASE_URL ?>/admin/finance/reconciliation" class="btn btn-outline-primary btn-sm">View Reconciliation</a>
@@ -132,7 +132,7 @@ $netIncome = $netIncome ?? $totalReceipts;
                             <tr>
                                 <td>#<?= $p['id'] ?></td>
                                 <td><?= htmlspecialchars($p['name'] ?? 'N/A') ?></td>
-                                <td><strong>₹<?= number_format($p['amount']) ?></strong></td>
+                                <td><strong>â‚¹<?= number_format($p['amount']) ?></strong></td>
                                 <td><span class="text-capitalize"><?= htmlspecialchars($p['payment_method']) ?></span></td>
                                 <td><span class="aps-cp-badge badge bg-<?= $p['payment_status'] === 'completed' ? 'success' : ($p['payment_status'] === 'pending' ? 'warning' : 'danger') ?>"><?= ucfirst(htmlspecialchars($p['payment_status'])) ?></span></td>
                                 <td class="text-muted small"><?= htmlspecialchars($p['created_at']) ?></td>

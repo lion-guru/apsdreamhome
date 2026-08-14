@@ -4,6 +4,9 @@ $GLOBALS['_html_doc_started'] = true;
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farmer Login - APS Dream Home</title>
@@ -29,7 +32,7 @@ $GLOBALS['_html_doc_started'] = true;
             <div class="col-md-5">
                 <div class="card login-card">
                     <div class="login-header">
-                        <i class="fas fa-seedling icon-leaf mb-2" style="color: #fff; font-size: 2.5rem;"></i>
+                        <i class="fas fa-seedling icon-leaf mb-2" class="style-98792"></i>
                         <h3>Farmer Portal</h3>
                         <p class="mb-0">APS Dream Home - Land Acquisition</p>
                     </div>
@@ -46,10 +49,10 @@ $GLOBALS['_html_doc_started'] = true;
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Registered Phone Number</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light border-2" style="border-radius:12px 0 0 12px;">
+                                    <span class="input-group-text bg-light border-2" class="style-2337">
                                         <i class="fas fa-phone text-success"></i>
                                     </span>
-                                    <input type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required style="border-radius:0 12px 12px 0;">
+                                    <input type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required class="style-47601">
                                 </div>
                                 <small class="text-muted">Enter the phone number registered with us</small>
                             </div>

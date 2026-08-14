@@ -1,6 +1,6 @@
 <?php
 /**
- * CRM System Migration — Lead Follow-up + Pipeline + Interaction Tracking
+ * CRM System Migration â€” Lead Follow-up + Pipeline + Interaction Tracking
  * Creates interaction tracking, assignment history, pipeline stages, lead forms
  */
 
@@ -23,7 +23,7 @@ $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
 
 $tables = [
 
-    // 1. crm_interactions — every touchpoint with a lead (call, sms, email, visit, whatsapp, meeting, note)
+    // 1. crm_interactions â€” every touchpoint with a lead (call, sms, email, visit, whatsapp, meeting, note)
     "CREATE TABLE IF NOT EXISTS `crm_interactions` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `lead_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -46,7 +46,7 @@ $tables = [
         KEY `idx_crm_interactions_created` (`created_at`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 2. crm_assignments — lead assignment history (who → whom → when)
+    // 2. crm_assignments â€” lead assignment history (who â†’ whom â†’ when)
     "CREATE TABLE IF NOT EXISTS `crm_assignments` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `lead_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -63,7 +63,7 @@ $tables = [
         KEY `idx_crm_assignments_active` (`is_active`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 3. crm_pipeline_stages — configurable pipeline stages per role
+    // 3. crm_pipeline_stages â€” configurable pipeline stages per role
     "CREATE TABLE IF NOT EXISTS `crm_pipeline_stages` (
         `id` INT(11) NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(100) NOT NULL,
@@ -82,7 +82,7 @@ $tables = [
         KEY `idx_crm_stages_role` (`role`, `order_index`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 4. crm_lead_forms — web/app capture forms (embeddable)
+    // 4. crm_lead_forms â€” web/app capture forms (embeddable)
     "CREATE TABLE IF NOT EXISTS `crm_lead_forms` (
         `id` INT(11) NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(100) NOT NULL,
@@ -104,7 +104,7 @@ $tables = [
         UNIQUE KEY `uniq_form_code` (`form_code`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 5. crm_form_submissions — every form fill
+    // 5. crm_form_submissions â€” every form fill
     "CREATE TABLE IF NOT EXISTS `crm_form_submissions` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `form_id` INT(11) NOT NULL,
@@ -128,7 +128,7 @@ $tables = [
         KEY `idx_crm_form_sub_created` (`created_at`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 6. crm_campaigns — ad/marketing campaigns with lead tracking
+    // 6. crm_campaigns â€” ad/marketing campaigns with lead tracking
     "CREATE TABLE IF NOT EXISTS `crm_campaigns` (
         `id` INT(11) NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(200) NOT NULL,
@@ -156,7 +156,7 @@ $tables = [
         KEY `idx_crm_campaigns_status` (`status`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 7. crm_tasks — follow-up tasks for each user
+    // 7. crm_tasks â€” follow-up tasks for each user
     "CREATE TABLE IF NOT EXISTS `crm_tasks` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `lead_id` BIGINT(20) UNSIGNED DEFAULT NULL,
@@ -182,7 +182,7 @@ $tables = [
         KEY `idx_crm_tasks_overdue` (`status`, `due_date`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 8. crm_lead_scores_history — scoring history trail
+    // 8. crm_lead_scores_history â€” scoring history trail
     "CREATE TABLE IF NOT EXISTS `crm_lead_scores_history` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `lead_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -196,7 +196,7 @@ $tables = [
         KEY `idx_crm_score_history_lead` (`lead_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 9. crm_whatsapp_messages — WhatsApp message tracking
+    // 9. crm_whatsapp_messages â€” WhatsApp message tracking
     "CREATE TABLE IF NOT EXISTS `crm_whatsapp_messages` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `lead_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -214,7 +214,7 @@ $tables = [
         KEY `idx_crm_wa_status` (`status`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-    // 10. crm_lead_sources_extended — detailed source tracking per lead
+    // 10. crm_lead_sources_extended â€” detailed source tracking per lead
     "CREATE TABLE IF NOT EXISTS `crm_lead_sources_extended` (
         `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         `lead_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -253,10 +253,10 @@ foreach ($tables as $sql) {
     try {
         $pdo->exec($sql);
         preg_match('/`(\w+)`/', $sql, $m);
-        echo "  ✓ {$m[1]}\n";
+        echo "  âœ“ {$m[1]}\n";
         $created++;
     } catch (PDOException $e) {
-        echo "  ✗ Error: " . $e->getMessage() . "\n";
+        echo "  âœ— Error: " . $e->getMessage() . "\n";
     }
 }
 echo "Created: {$created}/" . count($tables) . " tables\n";
@@ -282,7 +282,7 @@ foreach ($stages as $s) {
     $stmt->execute($s);
     if ($stmt->rowCount() > 0) $seeded++;
 }
-echo "  ✓ {$seeded} pipeline stages seeded\n";
+echo "  âœ“ {$seeded} pipeline stages seeded\n";
 
 // Seed default lead capture form
 echo "\n=== Seeding Lead Capture Form ===\n";
@@ -290,7 +290,7 @@ $formFields = json_encode([
     ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'required' => true],
     ['name' => 'phone', 'label' => 'Phone Number', 'type' => 'tel', 'required' => true],
     ['name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => false],
-    ['name' => 'budget', 'label' => 'Budget (₹)', 'type' => 'number', 'required' => false],
+    ['name' => 'budget', 'label' => 'Budget (â‚¹)', 'type' => 'number', 'required' => false],
     ['name' => 'location', 'label' => 'Preferred Location', 'type' => 'text', 'required' => false],
     ['name' => 'property_type', 'label' => 'Property Type', 'type' => 'select', 'options' => ['Plot', 'House', 'Flat', 'Shop'], 'required' => false],
     ['name' => 'message', 'label' => 'Message', 'type' => 'textarea', 'required' => false],
@@ -301,7 +301,7 @@ $stmt->execute(['Website Enquiry', 'WEB_ENQ', 'Main website enquiry form', $form
 $stmt->execute(['WhatsApp Bot', 'WA_BOT', 'WhatsApp chatbot capture', $formFields, 'whatsapp']);
 $stmt->execute(['Walk-in', 'WALKIN', 'Office walk-in capture', $formFields, 'walk_in']);
 $stmt->execute(['Facebook Lead', 'FB_LEAD', 'Facebook ad campaign form', $formFields, 'facebook_ads']);
-echo "  ✓ 4 lead capture forms seeded\n";
+echo "  âœ“ 4 lead capture forms seeded\n";
 
 // Seed campaigns
 echo "\n=== Seeding Campaigns ===\n";
@@ -316,7 +316,7 @@ $stmt = $pdo->prepare("INSERT IGNORE INTO crm_campaigns (name, campaign_type, pl
 foreach ($campaigns as $c) {
     $stmt->execute($c);
 }
-echo "  ✓ 5 campaigns seeded\n";
+echo "  âœ“ 5 campaigns seeded\n";
 
 $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
-echo "\n✅ CRM Migration Complete! {$created} tables created.\n";
+echo "\nâœ… CRM Migration Complete! {$created} tables created.\n";?>

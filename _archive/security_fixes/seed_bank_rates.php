@@ -65,4 +65,4 @@ echo "Inserted/Updated $inserted bank interest rates\n";
 
 // Verify
 $count = $pdo->query("SELECT COUNT(*) FROM bank_interest_rates WHERE is_active = 1")->fetchColumn();
-echo "Total active banks: $count\n";
+echo "Total active banks: $count\n";?>

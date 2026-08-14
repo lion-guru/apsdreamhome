@@ -13,7 +13,7 @@
                 $detailImage = $post['featured_image'];
                 $detailImageUrl = str_starts_with($detailImage, 'http') ? $detailImage : get_asset_url($detailImage);
                 ?>
-                <img src="<?= htmlspecialchars($detailImageUrl) ?>" class="img-fluid rounded mb-4 w-100" alt="<?= htmlspecialchars($post['title'] ?? '') ?>" style="max-height: 400px; object-fit: cover;">
+                <img src="<?= htmlspecialchars($detailImageUrl) ?>" class="img-fluid rounded mb-4 w-100" alt="<?= htmlspecialchars($post['title'] ?? '') ?>" class="style-44644">
             <?php endif; ?>
             <h1 class="display-5 fw-bold mb-3"><?php echo htmlspecialchars($post['title'] ?? ''); ?></h1>
             <p class="text-muted mb-4">

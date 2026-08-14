@@ -72,4 +72,4 @@ $all = $pdo->query("SELECT email, role FROM users WHERE email LIKE '%@apsdreamho
 foreach ($all as $u) {
     $status = empty($u['role']) ? 'EMPTY!' : 'OK';
     echo "  [$status] {$u['role']}: {$u['email']}\n";
-}
+}?>

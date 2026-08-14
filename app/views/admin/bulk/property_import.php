@@ -50,7 +50,7 @@ $csrf = $csrf ?? '';
                             <input type="file" name="csv" id="csv-input" accept=".csv,text/csv" class="d-none" required>
                             <button type="button" class="btn btn-primary" id="browse-btn"><i class="fas fa-folder-open me-1"></i> Browse</button>
                         </div>
-                        <div id="file-info" class="alert alert-info mt-3" style="display:none"></div>
+                        <div id="file-info" class="alert alert-info mt-3" class="style-24280"></div>
                         <div class="d-grid mt-3">
                             <button type="submit" class="btn btn-primary" id="preview-btn" disabled>
                                 <i class="fas fa-search me-1"></i> Preview &amp; Validate

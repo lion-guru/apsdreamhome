@@ -144,4 +144,4 @@ try {
     logMsg('Result: ' . json_encode($jsonOut));
     echo PHP_EOL . json_encode($jsonOut, JSON_PRETTY_PRINT) . PHP_EOL;
     exit(1);
-}
+}?>

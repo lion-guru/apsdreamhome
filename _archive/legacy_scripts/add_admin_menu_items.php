@@ -15,7 +15,7 @@ try {
     $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    echo "🔍 Checking admin_menu_items table structure...\n";
+    echo "ðŸ”� Checking admin_menu_items table structure...\n";
     
     // Check if table exists
     $result = $conn->query("SHOW TABLES LIKE 'admin_menu_items'");
@@ -35,16 +35,16 @@ try {
             INDEX idx_parent (parent_id),
             INDEX idx_active (is_active)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        echo "✅ Created admin_menu_items table\n";
+        echo "âœ… Created admin_menu_items table\n";
     } else {
-        echo "✅ admin_menu_items table exists\n";
+        echo "âœ… admin_menu_items table exists\n";
     }
     
-    echo "\n📝 Adding new menu items...\n";
+    echo "\nðŸ“� Adding new menu items...\n";
     
     // Clear existing menu items (optional - comment out if you want to keep existing)
     // $conn->query("TRUNCATE TABLE admin_menu_items");
-    // echo "🗑️ Cleared existing menu items\n";
+    // echo "ðŸ—‘ï¸� Cleared existing menu items\n";
     
     // Check if we already have menu items
     $result = $conn->query("SELECT COUNT(*) as count FROM admin_menu_items");
@@ -52,7 +52,7 @@ try {
     $hasExisting = $row['count'] > 0;
     
     if ($hasExisting) {
-        echo "ℹ️ Menu items already exist. Checking if new ones need to be added...\n";
+        echo "â„¹ï¸� Menu items already exist. Checking if new ones need to be added...\n";
     }
     
     // Define new menu items
@@ -147,28 +147,28 @@ try {
                 $item['parent_id'],
                 $item['order_index']
             ]);
-            echo "✅ Added: {$item['name']} ({$item['url']})\n";
+            echo "âœ… Added: {$item['name']} ({$item['url']})\n";
             $addedCount++;
         } else {
-            echo "⏭️ Skipped (already exists): {$item['name']}\n";
+            echo "â�­ï¸� Skipped (already exists): {$item['name']}\n";
             $skippedCount++;
         }
     }
     
-    echo "\n📊 Summary:\n";
-    echo "✅ Added: $addedCount menu items\n";
-    echo "⏭️ Skipped: $skippedCount existing items\n";
+    echo "\nðŸ“Š Summary:\n";
+    echo "âœ… Added: $addedCount menu items\n";
+    echo "â�­ï¸� Skipped: $skippedCount existing items\n";
     
     // Show total count
     $result = $conn->query("SELECT COUNT(*) as total FROM admin_menu_items");
     $total = $result->fetch(PDO::FETCH_ASSOC)['total'];
-    echo "📈 Total menu items in database: $total\n";
+    echo "ðŸ“ˆ Total menu items in database: $total\n";
     
-    echo "\n🎉 Menu items update complete!\n";
-    echo "\n📝 Next: Clear admin menu cache and reload admin panel to see new menu items\n";
+    echo "\nðŸŽ‰ Menu items update complete!\n";
+    echo "\nðŸ“� Next: Clear admin menu cache and reload admin panel to see new menu items\n";
     
 } catch (PDOException $e) {
-    echo "❌ Database Error: " . $e->getMessage() . "\n";
+    echo "â�Œ Database Error: " . $e->getMessage() . "\n";
 } catch (Exception $e) {
-    echo "❌ Error: " . $e->getMessage() . "\n";
-}
+    echo "â�Œ Error: " . $e->getMessage() . "\n";
+}?>

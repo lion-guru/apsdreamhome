@@ -61,9 +61,9 @@ $e = $enrollment ?? [];
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Progress: <?php echo (int)($e['progress_percentage'] ?? 0); ?>%</label>
-                        <div class="progress" style="height: 20px;">
+                        <div class="progress" class="style-51309">
                             <div class="progress-bar <?php echo ($e['progress_percentage'] ?? 0) >= 100 ? 'bg-success' : 'bg-primary'; ?> progress-bar-striped progress-bar-animated"
-                                 style="width: <?php echo min(100, $e['progress_percentage'] ?? 0); ?>%">
+                                 class="style-72116">
                                 <?php echo (int)($e['progress_percentage'] ?? 0); ?>%
                             </div>
                         </div>

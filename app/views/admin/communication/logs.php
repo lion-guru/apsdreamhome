@@ -66,7 +66,7 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
         <div class="card-body p-0">
             <?php if (empty($logs)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-comments fa-3x mb-3" style="opacity:0.15"></i>
+                    <i class="fas fa-comments fa-3x mb-3" class="style-39608"></i>
                     <h5 class="text-muted">No logs found</h5>
                     <p class="text-muted mb-0">Try adjusting your filters or wait for messages to arrive.</p>
                 </div>
@@ -112,7 +112,7 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 300px;">
+                                        <div class="text-truncate" class="style-33818">
                                             <small class="text-muted"><?= htmlspecialchars(mb_strimwidth($log['message_text'], 0, 100, '...')) ?></small>
                                         </div>
                                     </td>

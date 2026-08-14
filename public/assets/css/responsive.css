@@ -1,0 +1,81 @@
+/* Responsive CSS for APSDreamHome */
+@media (max-width: 768px) {
+    /* Tables responsive */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    /* Forms responsive */
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    
+    /* Images responsive */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Navigation mobile */
+    .navbar-collapse {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
+    
+    .col-md-6, .col-md-4, .col-md-3 {
+        width: 100%;
+        padding: 0 10px;
+        margin-bottom: 15px;
+    }
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 0 10px;
+    }
+    
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    h3 { font-size: 18px; }
+    
+    button, .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+    .container { max-width: 1200px; }
+}

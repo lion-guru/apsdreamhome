@@ -102,4 +102,4 @@ if (!$dryRun && $cronId !== null) {
 
 echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
 
-exit($result['status'] === 'success' ? 0 : 2);
+exit($result['status'] === 'success' ? 0 : 2);?>

@@ -22,7 +22,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_customer') ?></div>
-                <div class="fw-bold"><?= htmlspecialchars((string)($booking['customer_name'] ?? '—')) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars((string)($booking['customer_name'] ?? 'â€”')) ?></div>
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_installment_num') ?></div>
@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <h6 class="m-0"><?= __('sale_letter_num') ?><?= htmlspecialchars((string)($letter['letter_number'] ?? '')) ?> (<?= htmlspecialchars((string)($letter['letter_type'] ?? '')) ?>)</h6>
                 </div>
                 <div class="aps-cp-card-body">
-                    <pre class="m-0" style="white-space: pre-wrap; font-family: inherit;"><?= htmlspecialchars((string)($letter['letter_content'] ?? '')) ?></pre>
+                    <pre class="m-0" class="style-92067"><?= htmlspecialchars((string)($letter['letter_content'] ?? '')) ?></pre>
                     <hr>
                     <small class="text-muted">
                         <?= __('sale_generated') ?>: <?= htmlspecialchars((string)($letter['generated_date'] ?? '')) ?>

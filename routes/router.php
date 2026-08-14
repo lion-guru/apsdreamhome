@@ -303,7 +303,8 @@ class Router
         if (file_exists($errorView)) {
             include $errorView;
         } else {
-            echo '<html><head><title>404</title></head><body style="font-family:sans-serif;text-align:center;padding:4rem">';
+            echo '<html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>404</title></head><body class="style-2958">';
             echo '<h1>404</h1><p>' . htmlspecialchars($method . ' ' . $uri) . '</p></body></html>';
         }
     }
@@ -319,7 +320,7 @@ class Router
         if (file_exists($errorView)) {
             include $errorView;
         } else {
-            echo '<html><head><title>500</title></head><body style="font-family:sans-serif;text-align:center;padding:4rem">';
+            echo '<html><head><title>500</title></head><body class="style-2958">';
             echo '<h1>500 - Server Error</h1>';
             if (ini_get('display_errors')) {
                 echo '<pre>' . htmlspecialchars($error) . '</pre>';
@@ -352,4 +353,4 @@ class Router
 
         return null;
     }
-}
+}?>

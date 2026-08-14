@@ -9,4 +9,4 @@ foreach($tables as $t){
     } catch(\Throwable $e){
         echo "$t: MISSING (".$e->getMessage().")\n";
     }
-}
+}?>

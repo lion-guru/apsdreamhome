@@ -17,7 +17,7 @@ try {
 ?>
 
 <!-- Hero Section -->
-<section class="hero-premium pt-5 pb-5" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%) !important;">
+<section class="hero-premium pt-5 pb-5" class="style-32644">
     <div class="container premium-reveal fade-up position-relative z-2">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
@@ -68,7 +68,7 @@ try {
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
                         <div class="service-card h-100 bg-white rounded-4 shadow-sm hover-lift p-4 border border-light">
                             <div class="service-icon mb-4">
-                                <div class="icon-wrap bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 60px; height: 60px; font-size: 24px;">
+                                <div class="icon-wrap bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center rounded-circle" class="style-84316">
                                     <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-coins'); ?>"></i>
                                 </div>
                             </div>
@@ -97,7 +97,7 @@ try {
                                 <?php endif; ?>
                                 <?php if (!empty($service['max_amount']) && $service['max_amount'] > 0): ?>
                                     <span class="capsule-badge bg-success bg-opacity-10 text-success border border-success border-opacity-10 me-2 mb-2">
-                                        <i class="fas fa-rupee-sign me-1"></i>Up to ₹<?= number_format($service['max_amount'] / 10000000, 1) ?> Cr
+                                        <i class="fas fa-rupee-sign me-1"></i>Up to â‚¹<?= number_format($service['max_amount'] / 10000000, 1) ?> Cr
                                     </span>
                                 <?php endif; ?>
                                 <?php if (!empty($service['tenure_months']) && $service['tenure_months'] > 0): ?>

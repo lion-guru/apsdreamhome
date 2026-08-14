@@ -25,11 +25,11 @@ if (empty($grouped_projects) && !empty($projects)) {
 ?>
 
 <!-- Company Projects Hero -->
-<section class="hero-section text-white py-5 position-relative" style="background: linear-gradient(135deg, #0a192f 0%, #0d9488 100%); min-height: 300px; display: flex; align-items: center;">
+<section class="hero-section text-white py-5 position-relative" class="style-30433">
     <div class="container position-relative">
         <div class="row align-items-center justify-content-center">
             <div class="col-lg-8 text-center">
-                <span class="badge px-3 py-2 mb-3" style="background:rgba(212,175,55,0.2);color:#d4af37;border-radius:50px;font-size:0.8rem;backdrop-filter:blur(10px);">
+                <span class="badge px-3 py-2 mb-3" class="style-72717">
                     <i class="fas fa-building me-1"></i> Portfolio
                 </span>
                 <h1 class="display-4 fw-bold mb-3"><i class="fas fa-building me-3"></i><?= __('cproj_heading', [], 'Our Projects') ?></h1>
@@ -40,17 +40,17 @@ if (empty($grouped_projects) && !empty($projects)) {
 </section>
 
     <!-- Cross-link Section: Also Explore -->
-    <section class="py-3" style="background:#f8fafc;">
+    <section class="py-3" class="style-53819">
         <div class="container">
-            <div class="d-flex flex-wrap gap-2 align-items-center" style="background:rgba(13,148,136,0.04);border:1px solid rgba(13,148,136,0.12);border-radius:12px;padding:14px 18px;">
+            <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
-                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3" style="background:rgba(13,148,136,0.1);color:#0d9488;border-radius:8px;border:1px solid rgba(13,148,136,0.2);">
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3" class="style-6722">
                     <i class="fas fa-building me-1"></i><?= __('user_properties') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" style="background:rgba(10,25,47,0.1);color:#0a192f;border-radius:8px;border:1px solid rgba(10,25,47,0.2);">
+                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" class="style-97522">
                     <i class="fas fa-vector-square me-1"></i><?= __('available_plots') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" style="background:rgba(16,185,129,0.1);color:#10b981;border-radius:8px;border:1px solid rgba(16,185,129,0.2);">
+                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" class="style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -102,7 +102,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card property-card h-100 shadow-sm border-0 overflow-hidden">
                                         <div class="card-img-wrapper position-relative">
-                                            <img src="<?= $isExternal ? $imgPath : BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 250px; object-fit: cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
+                                            <img src="<?= $isExternal ? $imgPath : BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" class="style-10068" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
                                             <div class="position-absolute top-0 start-0 m-3">
                                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : ($project->status === 'completed' ? 'primary' : 'warning'); ?> shadow-sm">
                                                     <?php echo ucfirst(str_replace('_', ' ', $project->status ?? 'Active')); ?>

@@ -19,18 +19,18 @@ try {
     echo "Step 1: Renaming columns in associates table...\n";
     $pdo->exec("ALTER TABLE associates CHANGE COLUMN diwali_bonus_eligible target_bonus_eligible TINYINT(1) DEFAULT 0");
     $pdo->exec("ALTER TABLE associates CHANGE COLUMN diwali_bonus_amount target_bonus_amount DECIMAL(10,2) DEFAULT 0");
-    echo "✓ Columns renamed\n\n";
+    echo "âœ“ Columns renamed\n\n";
 
     // Verify changes
     echo "Step 2: Verifying changes...\n";
     $stmt = $pdo->query("SHOW COLUMNS FROM associates LIKE 'target_bonus%'");
     while ($col = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        echo "  ✓ {$col['Field']}: {$col['Type']}\n";
+        echo "  âœ“ {$col['Field']}: {$col['Type']}\n";
     }
 
-    echo "\n✓ Migration completed successfully!\n";
+    echo "\nâœ“ Migration completed successfully!\n";
 
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

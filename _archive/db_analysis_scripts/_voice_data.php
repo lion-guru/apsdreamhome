@@ -9,4 +9,4 @@ foreach ($pdo->query("SELECT id, lead_id, agent_id, call_sid, sentiment FROM ai_
 echo "\nai_call_sessions:\n";
 foreach ($pdo->query("SELECT id, lead_id, ai_agent_id, call_sid, sentiment FROM ai_call_sessions")->fetchAll(PDO::FETCH_ASSOC) as $r) {
     print_r($r);
-}
+}?>

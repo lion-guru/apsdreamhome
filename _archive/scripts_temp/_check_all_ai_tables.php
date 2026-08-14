@@ -9,4 +9,4 @@ foreach ($tables as $t) {
     } catch (Exception $e) {
         echo "$t: MISSING\n";
     }
-}
+}?>

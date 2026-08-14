@@ -93,7 +93,7 @@
                             <?php if (($task['status'] ?? 'pending') === 'in_progress' && !empty($task['progress'])): ?>
                                 <div class="progress mb-3">
                                     <div class="progress-bar" role="progressbar"
-                                         style="width: <?= htmlspecialchars($task['progress']) ?>%">
+                                         class="style-55839">
                                         <?= htmlspecialchars($task['progress']) ?>%
                                     </div>
                                 </div>

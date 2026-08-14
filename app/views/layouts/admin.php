@@ -256,7 +256,7 @@ $GLOBALS['_html_doc_started'] = true;
                     <i class="fas fa-moon" id="darkModeIcon"></i>
                 </button>
 
-                <!-- Notifications (Leads) — replaced by notification-system.js -->
+                <!-- Notifications (Leads) â€” replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo $newLeadsCount; ?></span>
@@ -269,14 +269,14 @@ $GLOBALS['_html_doc_started'] = true;
                 </button>
 
                 <!-- Profile Dropdown (Bootstrap native) -->
-                <div class="dropdown" style="position: relative;">
-                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
+                <div class="dropdown" class="style-98881">
+                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" class="style-10432">
                         <div class="user-avatar"><?php echo strtoupper(substr($adminName, 0, 1)); ?></div>
                         <div class="user-info">
                             <div class="user-name"><?php echo htmlspecialchars($adminName); ?></div>
                             <div class="user-role"><?php echo ucfirst(str_replace('_', ' ', $adminRole)); ?></div>
                         </div>
-                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #64748b;"></i>
+                        <i class="fas fa-chevron-down" class="style-40544"></i>
                     </div>
 
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -316,7 +316,7 @@ $GLOBALS['_html_doc_started'] = true;
             <?php endif; ?>
 
             <?php
-            // Tenant status banner — read-only mode for suspended/cancelled tenants
+            // Tenant status banner â€” read-only mode for suspended/cancelled tenants
             $tenantBanner = null;
             if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
                 try {
@@ -331,27 +331,27 @@ $GLOBALS['_html_doc_started'] = true;
             }
             ?>
             <?php if ($tenantBanner === 'suspended'): ?>
-                <div style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
-                    <i class="fas fa-ban" style="font-size:1.4rem;"></i>
+                <div class="style-65947">
+                    <i class="fas fa-ban" class="style-16439"></i>
                     <div>
                         <strong>Account Suspended</strong>
-                        <div style="font-size:0.85rem;opacity:0.9;">Your account has been suspended. All create/edit/delete operations are disabled. Contact support to restore access.</div>
+                        <div class="style-97548">Your account has been suspended. All create/edit/delete operations are disabled. Contact support to restore access.</div>
                     </div>
                 </div>
             <?php elseif ($tenantBanner === 'cancelled'): ?>
-                <div style="background:linear-gradient(135deg,#6b21a8,#9333ea);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
-                    <i class="fas fa-times-circle" style="font-size:1.4rem;"></i>
+                <div class="style-10618">
+                    <i class="fas fa-times-circle" class="style-16439"></i>
                     <div>
                         <strong>Account Cancelled</strong>
-                        <div style="font-size:0.85rem;opacity:0.9;">Your subscription has been cancelled. Your data is in read-only mode. Contact support to reactivate.</div>
+                        <div class="style-97548">Your subscription has been cancelled. Your data is in read-only mode. Contact support to reactivate.</div>
                     </div>
                 </div>
             <?php elseif ($tenantBanner === 'trial_expired'): ?>
-                <div style="background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
-                    <i class="fas fa-clock" style="font-size:1.4rem;"></i>
+                <div class="style-28179">
+                    <i class="fas fa-clock" class="style-16439"></i>
                     <div>
                         <strong>Trial Expired</strong>
-                        <div style="font-size:0.85rem;opacity:0.9;">Your free trial has expired. Upgrade your plan to continue creating and editing data. <a href="<?= $base ?>/admin/billing" style="color:#fff;text-decoration:underline;">View Plans</a></div>
+                        <div class="style-97548">Your free trial has expired. Upgrade your plan to continue creating and editing data. <a href="<?= $base ?>/admin/billing" class="style-25944">View Plans</a></div>
                     </div>
                 </div>
             <?php endif; ?>

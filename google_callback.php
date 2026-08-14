@@ -24,4 +24,4 @@ if (session_status() === PHP_SESSION_NONE) {
 $controller = new \App\Http\Controllers\Auth\GoogleAuthController();
 
 // Handle the callback
-$controller->callback();
+$controller->callback();?>

@@ -43,7 +43,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <?php if (!empty($health['success'])): ?>
         <div class="mb-2">
           <a href="/admin/legal-colony-pipeline/health" class="text-decoration-none">
-            <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $health['grade']['color'] ?> text-white fw-bold" style="width:52px;height:52px;font-size:1.1rem;" title="Health: <?= $health['grade']['label'] ?> (<?= $health['overall_score'] ?>%)">
+            <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $health['grade']['color'] ?> text-white fw-bold" class="style-43996" title="Health: <?= $health['grade']['label'] ?> (<?= $health['overall_score'] ?>%)">
               <?= $health['grade']['letter'] ?>
             </span>
           </a>
@@ -76,8 +76,8 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
           $isCurrent = ($i === $currentIdx);
           $isActive  = ($i <= $currentIdx);
         ?>
-          <div class="text-center flex-fill position-relative" style="z-index:2;">
-            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 <?= $isDone ? "bg-{$stageColors[$i]}" : ($isCurrent ? "bg-{$stageColors[$i]} border border-3 border-white" : 'bg-secondary') ?>" style="width:50px;height:50px;<?= $isCurrent ? 'box-shadow:0 0 0 3px rgba(255,255,255,0.3);' : '' ?>">
+          <div class="text-center flex-fill position-relative" class="style-67772">
+            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 <?= $isDone ? "bg-{$stageColors[$i]}" : ($isCurrent ? "bg-{$stageColors[$i]} border border-3 border-white" : 'bg-secondary') ?>" class="style-62485">
               <i class="fas <?= $isDone ? 'fa-check' : $stageIcons[$i] ?> <?= $isActive ? 'text-white' : 'text-muted' ?> <?= $isCurrent ? 'text-white fa-bounce' : '' ?>"></i>
             </div>
             <div class="small fw-bold <?= $isActive ? "text-{$stageColors[$i]}" : 'text-muted' ?>"><?= $stageLabels[$i] ?></div>
@@ -90,9 +90,9 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <?php endif; ?>
           </div>
           <?php if ($i < count($stageKeys) - 1): ?>
-            <div class="flex-fill position-relative" style="margin-top:25px;z-index:1;">
-              <div class="progress" style="height:4px;">
-                <div class="progress-bar bg-<?= $isDone ? $stageColors[$i] : 'secondary' ?>" style="width:100%"></div>
+            <div class="flex-fill position-relative" class="style-46866">
+              <div class="progress" class="style-70208">
+                <div class="progress-bar bg-<?= $isDone ? $stageColors[$i] : 'secondary' ?>" class="style-90537"></div>
               </div>
             </div>
           <?php endif; ?>
@@ -130,7 +130,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
     <div class="col-md-3">
       <div class="card border-0 shadow-sm bg-dark text-white">
         <div class="card-body text-center py-3">
-          <div class="fs-2 fw-bold text-warning">₹<?= number_format(floatval($dev_costs['total'] ?? 0)) ?></div>
+          <div class="fs-2 fw-bold text-warning">â‚¹<?= number_format(floatval($dev_costs['total'] ?? 0)) ?></div>
           <small>Development Cost</small>
         </div>
       </div>
@@ -159,15 +159,15 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
               </div>
               <div class="col-md-4">
                 <small class="text-muted d-block">Cost</small>
-                <strong>₹<?= number_format(floatval($acquisition['total_consideration'] ?? 0)) ?></strong>
+                <strong>â‚¹<?= number_format(floatval($acquisition['total_consideration'] ?? 0)) ?></strong>
               </div>
               <div class="col-md-4">
                 <small class="text-muted d-block">Advance Paid</small>
-                <strong class="text-success">₹<?= number_format(floatval($acquisition['advance_paid'] ?? 0)) ?></strong>
+                <strong class="text-success">â‚¹<?= number_format(floatval($acquisition['advance_paid'] ?? 0)) ?></strong>
               </div>
               <div class="col-md-4">
                 <small class="text-muted d-block">Balance</small>
-                <strong class="text-danger">₹<?= number_format(floatval($acquisition['balance_amount'] ?? 0)) ?></strong>
+                <strong class="text-danger">â‚¹<?= number_format(floatval($acquisition['balance_amount'] ?? 0)) ?></strong>
               </div>
               <div class="col-md-4">
                 <small class="text-muted d-block">Registration #</small>
@@ -196,7 +196,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
                       <td><?= htmlspecialchars($lead['land_owner_name'] ?? '-') ?></td>
                       <td><?= htmlspecialchars($lead['village'] ?? '-') ?></td>
                       <td><?= number_format(floatval($lead['area_acres'] ?? 0)) ?> acres</td>
-                      <td>₹<?= number_format(floatval($lead['expected_price'] ?? 0)) ?></td>
+                      <td>â‚¹<?= number_format(floatval($lead['expected_price'] ?? 0)) ?></td>
                       <td><span class="badge bg-<?= ($lead['status'] ?? '') === 'registered' ? 'success' : 'warning' ?>"><?= ucfirst($lead['status'] ?? 'new') ?></span></td>
                     </tr>
                   <?php endforeach; ?>
@@ -240,7 +240,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <div class="col-md-3"><small class="text-muted d-block">Total Plots</small><strong class="text-info fs-4"><?= (int)($plotStats['total'] ?? 0) ?></strong></div>
             <div class="col-md-3"><small class="text-muted d-block">Available</small><strong class="text-success fs-4"><?= (int)($plotStats['available'] ?? 0) ?></strong></div>
             <div class="col-md-3"><small class="text-muted d-block">Sold</small><strong class="text-danger fs-4"><?= (int)($plotStats['sold'] ?? 0) ?></strong></div>
-            <div class="col-md-3"><small class="text-muted d-block">Total Value</small><strong class="text-warning fs-4">₹<?= number_format(floatval($plotStats['total_value'] ?? 0) / 100000, 1) ?>L</strong></div>
+            <div class="col-md-3"><small class="text-muted d-block">Total Value</small><strong class="text-warning fs-4">â‚¹<?= number_format(floatval($plotStats['total_value'] ?? 0) / 100000, 1) ?>L</strong></div>
           </div>
         </div>
       </div>
@@ -295,9 +295,9 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         <div class="card-body">
           <div class="row g-3">
             <div class="col-md-3"><small class="text-muted d-block">Total Costs</small><strong><?= (int)($dev_costs['count'] ?? 0) ?> entries</strong></div>
-            <div class="col-md-3"><small class="text-muted d-block">Gross Amount</small><strong>₹<?= number_format(floatval($dev_costs['total'] ?? 0)) ?></strong></div>
-            <div class="col-md-3"><small class="text-muted d-block">GST</small><strong>₹<?= number_format(floatval($dev_costs['total_gst'] ?? 0)) ?></strong></div>
-            <div class="col-md-3"><small class="text-muted d-block">Paid</small><strong class="text-success">₹<?= number_format(floatval($dev_costs['total_paid'] ?? 0)) ?></strong></div>
+            <div class="col-md-3"><small class="text-muted d-block">Gross Amount</small><strong>â‚¹<?= number_format(floatval($dev_costs['total'] ?? 0)) ?></strong></div>
+            <div class="col-md-3"><small class="text-muted d-block">GST</small><strong>â‚¹<?= number_format(floatval($dev_costs['total_gst'] ?? 0)) ?></strong></div>
+            <div class="col-md-3"><small class="text-muted d-block">Paid</small><strong class="text-success">â‚¹<?= number_format(floatval($dev_costs['total_paid'] ?? 0)) ?></strong></div>
           </div>
         </div>
       </div>
@@ -313,9 +313,9 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         </div>
         <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-4"><small class="text-muted d-block">Starting Price</small><strong class="text-success fs-4">₹<?= number_format(floatval($colony['starting_price'] ?? 0)) ?></strong></div>
-            <div class="col-md-4"><small class="text-muted d-block">Min Price/sqft</small><strong>₹<?= number_format(floatval($colony['min_price_per_sqft'] ?? 0)) ?></strong></div>
-            <div class="col-md-4"><small class="text-muted d-block">Total Land Cost</small><strong>₹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></strong></div>
+            <div class="col-md-4"><small class="text-muted d-block">Starting Price</small><strong class="text-success fs-4">â‚¹<?= number_format(floatval($colony['starting_price'] ?? 0)) ?></strong></div>
+            <div class="col-md-4"><small class="text-muted d-block">Min Price/sqft</small><strong>â‚¹<?= number_format(floatval($colony['min_price_per_sqft'] ?? 0)) ?></strong></div>
+            <div class="col-md-4"><small class="text-muted d-block">Total Land Cost</small><strong>â‚¹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></strong></div>
           </div>
           <?php if (!empty($feasibility['success'])): ?>
             <hr class="border-secondary">
@@ -325,7 +325,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
                 <div class="card bg-dark border-secondary">
                   <div class="card-body text-center py-2">
                     <small class="text-muted">Cost Basis/sqft</small>
-                    <div class="fs-5 fw-bold text-info">₹<?= number_format($feasibility['raw_cost_per_sqft'] ?? 0) ?></div>
+                    <div class="fs-5 fw-bold text-info">â‚¹<?= number_format($feasibility['raw_cost_per_sqft'] ?? 0) ?></div>
                   </div>
                 </div>
               </div>
@@ -341,7 +341,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
                 <div class="card bg-dark border-secondary">
                   <div class="card-body text-center py-2">
                     <small class="text-muted">Revenue Projection</small>
-                    <div class="fs-5 fw-bold text-success">₹<?= number_format($feasibility['total_revenue'] ?? 0) ?></div>
+                    <div class="fs-5 fw-bold text-success">â‚¹<?= number_format($feasibility['total_revenue'] ?? 0) ?></div>
                   </div>
                 </div>
               </div>
@@ -349,7 +349,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
                 <div class="card bg-dark border-secondary">
                   <div class="card-body text-center py-2">
                     <small class="text-muted">Total Costs</small>
-                    <div class="fs-5 fw-bold text-danger">₹<?= number_format($feasibility['total_cost_basis'] ?? 0) ?></div>
+                    <div class="fs-5 fw-bold text-danger">â‚¹<?= number_format($feasibility['total_cost_basis'] ?? 0) ?></div>
                   </div>
                 </div>
               </div>
@@ -357,11 +357,11 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <?php if (!empty($feasibility['breakdown'])): ?>
               <div class="mt-2">
                 <small class="text-muted">
-                  Land: ₹<?= number_format($feasibility['breakdown']['land'] ?? 0) ?> |
-                  Registry: ₹<?= number_format($feasibility['breakdown']['registry'] ?? 0) ?> |
-                  Dev: ₹<?= number_format($feasibility['breakdown']['dev'] ?? 0) ?> |
-                  Approvals: ₹<?= number_format($feasibility['breakdown']['approvals'] ?? 0) ?> |
-                  G&A: ₹<?= number_format($feasibility['breakdown']['ga_rupees'] ?? 0) ?>
+                  Land: â‚¹<?= number_format($feasibility['breakdown']['land'] ?? 0) ?> |
+                  Registry: â‚¹<?= number_format($feasibility['breakdown']['registry'] ?? 0) ?> |
+                  Dev: â‚¹<?= number_format($feasibility['breakdown']['dev'] ?? 0) ?> |
+                  Approvals: â‚¹<?= number_format($feasibility['breakdown']['approvals'] ?? 0) ?> |
+                  G&A: â‚¹<?= number_format($feasibility['breakdown']['ga_rupees'] ?? 0) ?>
                 </small>
               </div>
             <?php endif; ?>
@@ -385,8 +385,8 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
               <span class="small">Readiness</span>
               <span class="small fw-bold <?= $readiness['is_ready'] ?? false ? 'text-success' : 'text-warning' ?>"><?= (int)($readiness['readiness_pct'] ?? 0) ?>%</span>
             </div>
-            <div class="progress" style="height:12px;">
-              <div class="progress-bar <?= ($readiness['is_ready'] ?? false) ? 'bg-success' : 'bg-warning' ?>" style="width:<?= (int)($readiness['readiness_pct'] ?? 0) ?>%"></div>
+            <div class="progress" class="style-51045">
+              <div class="progress-bar <?= ($readiness['is_ready'] ?? false) ? 'bg-success' : 'bg-warning' ?>" class="style-91943"></div>
             </div>
           </div>
           <?php foreach (($readiness['checks'] ?? []) as $chk): ?>
@@ -413,7 +413,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <tr><td class="text-muted">Owner</td><td><?= htmlspecialchars($colony['land_owner_name'] ?? '') ?></td></tr>
             <tr><td class="text-muted">Total Area</td><td><?= number_format(floatval($colony['total_area_acres'] ?? 0)) ?> acres</td></tr>
             <tr><td class="text-muted">Total Area (sqft)</td><td><?= number_format(floatval($colony['total_area_sqft'] ?? 0)) ?></td></tr>
-            <tr><td class="text-muted">Estimated Cost</td><td>₹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></td></tr>
+            <tr><td class="text-muted">Estimated Cost</td><td>â‚¹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></td></tr>
             <tr><td class="text-muted">Phase</td><td><?= htmlspecialchars($colony['phase'] ?? '') ?></td></tr>
             <tr><td class="text-muted">Block Count</td><td><?= (int)($colony['block_count'] ?? 0) ?></td></tr>
           </table>

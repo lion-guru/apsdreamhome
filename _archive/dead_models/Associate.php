@@ -352,4 +352,4 @@ class Associate
             'platinum' => 'Platinum'
         ];
     }
-}
+}?>

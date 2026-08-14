@@ -11,7 +11,7 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
 <!-- Stats Row -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #14b8a6 100%); color: #fff;">
+        <div class="card border-0 shadow-sm" class="style-19672">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= $stats['total'] ?></div>
                 <div class="small opacity-75"><?= __('assoc_book_total', [], 'Total Bookings') ?></div>
@@ -37,7 +37,7 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
     <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
-                <div class="fs-2 fw-bold text-primary">₹<?= number_format($stats['total_value']) ?></div>
+                <div class="fs-2 fw-bold text-primary">â‚¹<?= number_format($stats['total_value']) ?></div>
                 <div class="small text-muted"><?= __('assoc_book_total_value', [], 'Total Value') ?></div>
             </div>
         </div>
@@ -87,10 +87,10 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
                                         <br><small class="text-muted"><?= htmlspecialchars($b['customer_phone']) ?></small>
                                     <?php endif; ?>
                                 </td>
-                                <td>₹<?= number_format($b['property_price'] ?? $b['total_amount'] ?? 0) ?></td>
+                                <td>â‚¹<?= number_format($b['property_price'] ?? $b['total_amount'] ?? 0) ?></td>
                                 <td>
                                     <?php $paid = $b['total_paid'] ?? 0; ?>
-                                    <span class="<?= $paid > 0 ? 'text-success' : 'text-danger' ?>">₹<?= number_format($paid) ?></span>
+                                    <span class="<?= $paid > 0 ? 'text-success' : 'text-danger' ?>">â‚¹<?= number_format($paid) ?></span>
                                 </td>
                                 <td>
                                     <?php

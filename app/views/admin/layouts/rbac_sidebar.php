@@ -3,7 +3,7 @@
 /**
  * Admin Sidebar - 100% DB-Driven
  * All menu items come from admin_menu_items table.
- * NO hardcoded fallback — if DB is empty, sidebar shows a helpful error.
+ * NO hardcoded fallback â€” if DB is empty, sidebar shows a helpful error.
  */
 
 use App\Services\AdminMenuService;
@@ -33,32 +33,32 @@ foreach ($menuItems as $item) {
 
 // Section display names with icons
 $sectionNames = [
-    'dashboards'  => '📊 Dashboards',
-    'crm'         => '👥 CRM & Leads',
-    'properties'  => '🏠 Properties & Land',
-    'mlm'         => '🔗 MLM Network',
-    'finance'     => '💰 Finance & Accounting',
-    'commission'  => '💸 Commission Engine',
-    'cms'         => '📝 Content (CMS)',
-    'marketing'   => '📢 Marketing & Referrals',
-    'reports'     => '📈 Reports & Analytics',
-    'operations'  => '⚙️ Operations',
-    'users'       => '👤 Users & Roles',
-    'locations'   => '📍 Locations',
-    'settings'    => '🔧 Settings',
-    'hrm'         => '👔 HR & Payroll',
-    'legal'       => '⚖️ Legal & Compliance',
-    'sales'       => '🏷️ Sales & Bookings',
-    'services'    => '🛎️ Services',
-    'system'      => '🖥️ System Admin',
-    'ai_tech'     => '🤖 AI & Technology',
-    'security'    => '🔒 Security',
-    'employee'    => '👩‍💼 Employee Portal',
-    'saas'        => '☁️ SaaS / Multi-Tenant',
-    'communication' => '📡 Communication',
+    'dashboards'  => 'ðŸ“Š Dashboards',
+    'crm'         => 'ðŸ‘¥ CRM & Leads',
+    'properties'  => 'ðŸ�  Properties & Land',
+    'mlm'         => 'ðŸ”— MLM Network',
+    'finance'     => 'ðŸ’° Finance & Accounting',
+    'commission'  => 'ðŸ’¸ Commission Engine',
+    'cms'         => 'ðŸ“� Content (CMS)',
+    'marketing'   => 'ðŸ“¢ Marketing & Referrals',
+    'reports'     => 'ðŸ“ˆ Reports & Analytics',
+    'operations'  => 'âš™ï¸� Operations',
+    'users'       => 'ðŸ‘¤ Users & Roles',
+    'locations'   => 'ðŸ“� Locations',
+    'settings'    => 'ðŸ”§ Settings',
+    'hrm'         => 'ðŸ‘” HR & Payroll',
+    'legal'       => 'âš–ï¸� Legal & Compliance',
+    'sales'       => 'ðŸ�·ï¸� Sales & Bookings',
+    'services'    => 'ðŸ›Žï¸� Services',
+    'system'      => 'ðŸ–¥ï¸� System Admin',
+    'ai_tech'     => 'ðŸ¤– AI & Technology',
+    'security'    => 'ðŸ”’ Security',
+    'employee'    => 'ðŸ‘©â€�ðŸ’¼ Employee Portal',
+    'saas'        => 'â˜�ï¸� SaaS / Multi-Tenant',
+    'communication' => 'ðŸ“¡ Communication',
 ];
 
-// Section sort order — matches DB section_order
+// Section sort order â€” matches DB section_order
 $sectionOrder = [
     'dashboards', 'crm', 'properties', 'sales', 'finance',
     'commission', 'mlm', 'hrm', 'legal', 'marketing',
@@ -91,7 +91,7 @@ $groupedItems = $sortedGrouped;
             $tenantColors = TenantContext::getColors();
             ?>
             <?php if ($tenantLogo): ?>
-                <img src="<?php echo htmlspecialchars($tenantLogo); ?>" alt="Logo" style="max-height:28px; max-width:120px;">
+                <img src="<?php echo htmlspecialchars($tenantLogo); ?>" alt="Logo" class="style-94888">
             <?php else: ?>
                 <i class="fas fa-home"></i>
             <?php endif; ?>
@@ -101,19 +101,19 @@ $groupedItems = $sortedGrouped;
     </div>
 
     <?php
-    // Tenant Switch Banner — show when SuperAdmin is impersonating a tenant
+    // Tenant Switch Banner â€” show when SuperAdmin is impersonating a tenant
     $switchActive = !empty($_SESSION['tenant_switch_active']);
     $switchName = $_SESSION['tenant_switch_name'] ?? '';
     ?>
     <?php if ($switchActive): ?>
-    <div style="background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;padding:10px 14px;margin:0 8px;border-radius:8px;font-size:0.82rem;">
+    <div class="style-84038">
         <div class="d-flex align-items-center gap-2 mb-1">
             <i class="fas fa-exchange-alt"></i>
             <strong>Viewing: <?= htmlspecialchars($switchName) ?></strong>
         </div>
-        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" style="margin:0;">
+        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" class="style-21648">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-            <button type="submit" class="btn btn-sm btn-light w-100" style="font-size:0.78rem;padding:3px 8px;">
+            <button type="submit" class="btn btn-sm btn-light w-100" class="style-90628">
                 <i class="fas fa-undo me-1"></i>Back to My Tenant
             </button>
         </form>
@@ -152,7 +152,7 @@ $groupedItems = $sortedGrouped;
     </div>
 
     <?php if (!empty($menuError)): ?>
-        <div style="padding:15px; color:#f87171; font-size:0.8rem;">
+        <div class="style-85283">
             <i class="fas fa-exclamation-triangle"></i> Sidebar error:<br>
             <code><?php echo htmlspecialchars($menuError); ?></code>
         </div>
@@ -168,7 +168,7 @@ $groupedItems = $sortedGrouped;
                     <span><?php echo $sectionNames[$section] ?? ucfirst($section); ?></span>
                     <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $hasActive ? '' : 'collapsed'; ?>" id="arrow-<?php echo $secId; ?>"></i>
                 </div>
-                <ul class="sidebar-menu" id="<?php echo $secId; ?>" style="<?php echo $hasActive ? '' : 'display:none'; ?>">
+                <ul class="sidebar-menu" id="<?php echo $secId; ?>" class="style-57286">
                     <?php foreach ($items as $item): ?>
                         <?php
                         $itemFullUrl = rtrim($base . $item['url'], '/');
@@ -186,10 +186,10 @@ $groupedItems = $sortedGrouped;
             <?php endif; ?>
         <?php endforeach; ?>
     <?php else: ?>
-        <div style="padding:20px; color:#94a3b8; text-align:center;">
-            <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:10px;"></i>
+        <div class="style-78189">
+            <i class="fas fa-exclamation-circle" class="style-88454"></i>
             <strong>No menu items found</strong><br>
-            <span style="font-size:0.8rem;">
+            <span class="style-64777">
                 Check that admin_menu_items table has data<br>
                 and AdminMenuService is working.
             </span>

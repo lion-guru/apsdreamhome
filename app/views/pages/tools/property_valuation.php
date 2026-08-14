@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
+<section class="py-5" class="style-30941">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-home me-2"></i><?php echo __('tool_property_valuation_title', [], 'Property Valuation Tool'); ?></h1>
@@ -74,19 +74,19 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('estimated_value', [], 'Estimated Value'); ?></small>
-                                    <h4 class="text-primary mb-0" id="estVal">₹75,00,000</h4>
+                                    <h4 class="text-primary mb-0" id="estVal">â‚¹75,00,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('price_per_sqft', [], 'Price per sq ft'); ?></small>
-                                    <h4 class="text-success mb-0" id="ppsf">₹5,000</h4>
+                                    <h4 class="text-success mb-0" id="ppsf">â‚¹5,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('range', [], 'Range'); ?></small>
-                                    <h5 class="mb-0" id="valRange">₹67L — ₹83L</h5>
+                                    <h5 class="mb-0" id="valRange">â‚¹67L â€” â‚¹83L</h5>
                                 </div>
                             </div>
                         </div>

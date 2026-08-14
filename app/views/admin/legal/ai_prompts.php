@@ -20,7 +20,7 @@ $prompts = $prompts ?? [];
                                 <span class="badge bg-light text-dark"><?= htmlspecialchars($p['document_category'] ?? 'general') ?></span>
                             </div>
                             <p class="small text-muted mb-2"><?= htmlspecialchars(substr($p['description'] ?? '', 0, 150)) ?></p>
-                            <div class="small bg-light p-2 rounded mb-2 font-monospace" style="max-height:80px;overflow-y:auto;font-size:11px;"><?= htmlspecialchars(substr($p['prompt_template'] ?? '', 0, 200)) ?>...</div>
+                            <div class="small bg-light p-2 rounded mb-2 font-monospace" class="style-90176"><?= htmlspecialchars(substr($p['prompt_template'] ?? '', 0, 200)) ?>...</div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Model: <?= htmlspecialchars($p['model'] ?? 'gemini') ?> | Temp: <?= $p['temperature'] ?? 0.30 ?> | Max: <?= (int)($p['max_tokens'] ?? 2048) ?></small>
                                 <div class="d-flex gap-1">

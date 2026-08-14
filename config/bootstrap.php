@@ -191,6 +191,4 @@ if (class_exists('App\Core\ConfigService')) {
     } catch (\Throwable $e) {
         error_log("Config validation error: " . $e->getMessage());
     }
-}
-
-
+}?>

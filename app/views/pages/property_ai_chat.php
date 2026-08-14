@@ -8,7 +8,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #0f4c75 0%, #3282b8 50%, #00b4d8 100%);"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" class="style-51906"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -90,9 +90,9 @@ $base = $base ?? BASE_URL;
                         <span class="badge bg-info"><?= __('user_property_ai_chat_context_badge', 'Context: Property Chat') ?></span>
                     </div>
                     <div class="card-body p-0">
-                        <div id="property-chat-messages" class="p-4" style="height: 450px; overflow-y: auto; background: #f8f9fa;">
+                        <div id="property-chat-messages" class="p-4" class="style-89163">
                             <div class="text-center py-5">
-                                <div class="mb-3"><span class="display-1">🏠</span></div>
+                                <div class="mb-3"><span class="display-1">ðŸ� </span></div>
                                 <h5><?= __('user_property_ai_chat_welcome', 'Ask about this property!') ?></h5>
                                 <p class="text-muted"><?= __('user_property_ai_chat_welcome_desc', 'Get instant answers about pricing, location, amenities, and more.') ?></p>
                             </div>
@@ -153,7 +153,7 @@ function addPropertyMessage(type, text) {
     const isUser = type === 'user';
     div.className = 'd-flex mb-3 ' + (isUser ? 'justify-content-end' : 'justify-content-start');
     div.innerHTML = `
-        <div class="${isUser ? 'bg-primary text-white' : 'bg-white border'} rounded-3 p-3 shadow-sm" style="max-width: 80%;">
+        <div class="${isUser ? 'bg-primary text-white' : 'bg-white border'} rounded-3 p-3 shadow-sm" class="style-6955">
             <div class="small">${text}</div>
             <small class="${isUser ? 'text-white-50' : 'text-muted'} d-block mt-1">${new Date().toLocaleTimeString()}</small>
         </div>`;

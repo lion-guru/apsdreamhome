@@ -1,5 +1,5 @@
 <?php
-// MLM Deep Audit Script — compares MLM_PLAN.md claims vs actual DB state
+// MLM Deep Audit Script â€” compares MLM_PLAN.md claims vs actual DB state
 $pdo = new PDO('mysql:host=127.0.0.1;port=3307;dbname=apsdreamhome;charset=utf8mb4', 'root', '', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 echo "=== 1. mlm_network_tree SCHEMA ===\n";
@@ -126,4 +126,4 @@ try {
     echo "royalty_pool_distributions: " . $e->getMessage() . "\n";
 }
 
-echo "\n=== DONE ===\n";
+echo "\n=== DONE ===\n";?>

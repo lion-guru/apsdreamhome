@@ -40,4 +40,4 @@ try {
     echo "audit_logs table created successfully\n";
 } catch (Exception $e) {
     echo "Error creating audit_logs table: " . $e->getMessage() . "\n";
-}
+}?>

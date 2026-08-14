@@ -19,13 +19,13 @@ try {
     
     // 1. Remove duplicate dashboards (keep first set, remove second set)
     $dashboardRemovals = [
-        246,  // CEO Dashboard (/admin/ceo-dashboard) — duplicate of id=5
-        247,  // CFO Dashboard (/admin/cfo-dashboard) — duplicate of id=6
-        248,  // Builder Dashboard (/admin/builder-dashboard) — duplicate of id=4
-        249,  // Agent Dashboard (/admin/agent-dashboard) — duplicate of id=3
-        205,  // CM Dashboard (/admin/cm-dashboard) — duplicate of id=7
-        269,  // Sales Dashboard (/admin/sales-dashboard) — duplicate of id=16
-        304,  // Cash Collections in dashboards — belongs in finance (id=308)
+        246,  // CEO Dashboard (/admin/ceo-dashboard) â€” duplicate of id=5
+        247,  // CFO Dashboard (/admin/cfo-dashboard) â€” duplicate of id=6
+        248,  // Builder Dashboard (/admin/builder-dashboard) â€” duplicate of id=4
+        249,  // Agent Dashboard (/admin/agent-dashboard) â€” duplicate of id=3
+        205,  // CM Dashboard (/admin/cm-dashboard) â€” duplicate of id=7
+        269,  // Sales Dashboard (/admin/sales-dashboard) â€” duplicate of id=16
+        304,  // Cash Collections in dashboards â€” belongs in finance (id=308)
     ];
     
     echo "1. Removing duplicate dashboard items...\n";
@@ -79,16 +79,16 @@ try {
     $pdo->exec("DELETE FROM admin_menu_items WHERE id = 89");
     echo "   Removed id=89 (/admin/telecalling/commissions)\n";
     
-    // 10. Consolidate Reports section — remove redundant duplicates
+    // 10. Consolidate Reports section â€” remove redundant duplicates
     echo "\n10. Removing redundant Reports duplicates...\n";
     // Reports Dashboard (197) is duplicate of Reports (40) and Reports Engine (206)
     $pdo->exec("DELETE FROM admin_menu_items WHERE id = 197");
     echo "    Removed id=197 (/admin/reports-new)\n";
-    // Daily/Weekly/Monthly Reports — merge into one
+    // Daily/Weekly/Monthly Reports â€” merge into one
     $pdo->exec("DELETE FROM admin_menu_items WHERE id = 198");
     $pdo->exec("DELETE FROM admin_menu_items WHERE id = 199");
     $pdo->exec("DELETE FROM admin_menu_items WHERE id = 200");
-    echo "    Removed ids=198,199,200 (Daily/Weekly/Monthly Reports — consolidated)\n";
+    echo "    Removed ids=198,199,200 (Daily/Weekly/Monthly Reports â€” consolidated)\n";
     
     // Final count
     $result = $pdo->query("SELECT COUNT(*) as cnt FROM admin_menu_items WHERE is_active=1");
@@ -107,4 +107,4 @@ try {
     
 } catch (Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
-}
+}?>

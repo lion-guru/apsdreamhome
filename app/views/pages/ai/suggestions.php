@@ -20,7 +20,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="budget" class="form-label"><?= __('aisug_label_budget', [], 'Budget (₹)') ?></label>
+                                <label for="budget" class="form-label"><?= __('aisug_label_budget', [], 'Budget (â‚¹)') ?></label>
                                 <input type="number" id="budget" name="budget" class="form-control" placeholder="<?= __('aisug_placeholder_budget', [], 'e.g. 5000000') ?>" required>
                             </div>
 
@@ -51,7 +51,7 @@
                         <div class="card bg-light border-0">
                             <div class="card-body aps-cp-card-body">
                                 <h4 class="card-title mb-3"><i class="fas fa-lightbulb text-warning me-2"></i><?= __('aisug_recommendations', [], 'Our Recommendations') ?></h4>
-                                <div id="suggestions-content" class="text-break" style="white-space: pre-wrap;"></div>
+                                <div id="suggestions-content" class="text-break" class="style-19219"></div>
                             </div>
                         </div>
                     </div>

@@ -91,7 +91,7 @@
                     <?php foreach ($agents as $a): ?>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>
-                            <span class="badge bg-<?= ($a['status'] ?? 'offline') === 'active' ? 'success' : 'secondary' ?> me-1" style="width:8px;height:8px;border-radius:50%;display:inline-block;padding:0">&nbsp;</span>
+                            <span class="badge bg-<?= ($a['status'] ?? 'offline') === 'active' ? 'success' : 'secondary' ?> me-1" class="style-91572">&nbsp;</span>
                             <?= htmlspecialchars($a['agent_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?>
                         </span>
                         <small class="text-muted"><?= (int)($a['total_calls_made'] ?? 0) ?> calls</small>

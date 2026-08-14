@@ -42,4 +42,4 @@ echo "\n=== Check 'mlm' URL ===\n";
 $stmt = $pdo->query("SELECT id, url, name FROM admin_menu_items WHERE url = '/admin/mlm'");
 $r = $stmt->fetch(PDO::FETCH_ASSOC);
 echo $r ? "  FOUND: id={$r['id']} url={$r['url']}" : "  NOT FOUND";
-echo "\n";
+echo "\n";?>

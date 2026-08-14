@@ -243,4 +243,4 @@ class MicrositeAssembler
 
         return $baseUrl . $normalized;
     }
-}
+}?>

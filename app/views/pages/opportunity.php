@@ -123,13 +123,13 @@
 
 <!-- Hero Section -->
 <section class="hero-section py-5 text-white text-center">
-    <div class="hero-circle" style="width: 400px; height: 400px; top: -100px; left: -100px;"></div>
-    <div class="hero-circle" style="width: 500px; height: 500px; bottom: -150px; right: -150px;"></div>
+    <div class="hero-circle" class="style-5588"></div>
+    <div class="hero-circle" class="style-36385"></div>
     <div class="container py-4 position-relative">
         <span class="badge bg-indigo-500 bg-opacity-20 text-indigo-300 px-3 py-2 rounded-pill mb-3 fw-bold text-uppercase tracking-wider"><?= __('opp_badge', [], 'Career Opportunities') ?></span>
         <h1 class="display-4 fw-extrabold mb-3"><?= __('opp_heading', [], 'Why Join APS Dream Home?') ?></h1>
-        <p class="lead text-indigo-200 mx-auto mb-4" style="max-width: 750px;">
-            <?= __('opp_hero_desc', [], "A new beginning in Real Estate — with Salary + Commission + Health Insurance! Join Uttar Pradesh's leading real estate network and build your lifetime career.") ?>
+        <p class="lead text-indigo-200 mx-auto mb-4" class="style-13384">
+            <?= __('opp_hero_desc', [], "A new beginning in Real Estate â€” with Salary + Commission + Health Insurance! Join Uttar Pradesh's leading real estate network and build your lifetime career.") ?>
         </p>
     </div>
 </section>
@@ -190,10 +190,10 @@
                         </p>
                         <div class="bg-light p-3 rounded-3 mb-2 small">
                             <strong><?= __('opp_example_label', [], 'Example:') ?></strong><br>
-                            You are a <strong>Site Manager (20%)</strong> and an <strong>Associate (5%)</strong> in your team sold a plot worth ₹10 lakh:
+                            You are a <strong>Site Manager (20%)</strong> and an <strong>Associate (5%)</strong> in your team sold a plot worth â‚¹10 lakh:
                             <ul class="mt-2 mb-0">
-                                <li>They receive direct commission of **5% (₹50,000)**.</li>
-                                <li>You receive slab difference: **15% (20% - 5%) = ₹1,50,000**.</li>
+                                <li>They receive direct commission of **5% (â‚¹50,000)**.</li>
+                                <li>You receive slab difference: **15% (20% - 5%) = â‚¹1,50,000**.</li>
                             </ul>
                         </div>
                     </div>
@@ -206,21 +206,21 @@
                                 <div class="bg-rose-50 p-3 rounded border border-rose-100">
                                     <div class="text-rose-600 mb-2"><i class="fas fa-notes-medical fa-2x"></i></div>
                                     <h6 class="fw-bold mb-1"><?= __('opp_health_cover', [], 'Health Cover') ?></h6>
-                                    <span class="badge bg-rose-500 text-white">₹5 Lakhs</span>
+                                    <span class="badge bg-rose-500 text-white">â‚¹5 Lakhs</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-indigo-50 p-3 rounded border border-indigo-100">
                                     <div class="text-indigo-600 mb-2"><i class="fas fa-file-medical-alt fa-2x"></i></div>
                                     <h6 class="fw-bold mb-1"><?= __('opp_life_cover', [], 'Life Cover') ?></h6>
-                                    <span class="badge bg-indigo-500 text-white">₹10 Lakhs</span>
+                                    <span class="badge bg-indigo-500 text-white">â‚¹10 Lakhs</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-amber-50 p-3 rounded border border-amber-100">
                                     <div class="text-amber-600 mb-2"><i class="fas fa-car-crash fa-2x"></i></div>
                                     <h6 class="fw-bold mb-1"><?= __('opp_accidental_cover', [], 'Accidental') ?></h6>
-                                    <span class="badge bg-amber-500 text-white">₹5 Lakhs</span>
+                                    <span class="badge bg-amber-500 text-white">â‚¹5 Lakhs</span>
                                 </div>
                             </div>
                         </div>
@@ -256,7 +256,7 @@
                                 <strong>1. <?= __('opp_rank_associate', [], 'Associate') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">5.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_associate_detail', [], 'GBV: ₹0 - ₹10 Lakh') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_associate_detail', [], 'GBV: â‚¹0 - â‚¹10 Lakh') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
@@ -264,7 +264,7 @@
                                 <strong>2. <?= __('opp_rank_sr_associate', [], 'Sr. Associate') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">7.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_sr_associate_detail', [], 'GBV: ₹10 Lakh - ₹35 Lakh') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_sr_associate_detail', [], 'GBV: â‚¹10 Lakh - â‚¹35 Lakh') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
@@ -272,7 +272,7 @@
                                 <strong>3. <?= __('opp_rank_bdm', [], 'BDM') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">10.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_bdm_detail', [], 'GBV: ₹35 Lakh - ₹70 Lakh') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_bdm_detail', [], 'GBV: â‚¹35 Lakh - â‚¹70 Lakh') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
@@ -280,7 +280,7 @@
                                 <strong>4. <?= __('opp_rank_sr_bdm', [], 'Sr. BDM') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">12.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_sr_bdm_detail', [], 'GBV: ₹70 Lakh - ₹1.5 Crore') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_sr_bdm_detail', [], 'GBV: â‚¹70 Lakh - â‚¹1.5 Crore') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
@@ -288,7 +288,7 @@
                                 <strong>5. <?= __('opp_rank_vice_president', [], 'Vice President') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">15.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_vice_president_detail', [], 'GBV: ₹1.5 Crore - ₹3 Crore') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_vice_president_detail', [], 'GBV: â‚¹1.5 Crore - â‚¹3 Crore') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
@@ -296,7 +296,7 @@
                                 <strong>6. <?= __('opp_rank_president', [], 'President') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">18.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_president_detail', [], 'GBV: ₹3 Crore - ₹5 Crore') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_president_detail', [], 'GBV: â‚¹3 Crore - â‚¹5 Crore') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 rounded glass-card">
@@ -304,7 +304,7 @@
                                 <strong>7. <?= __('opp_rank_site_manager', [], 'Site Manager') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">20.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_site_manager_detail', [], 'GBV: ₹5 Crore+') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_site_manager_detail', [], 'GBV: â‚¹5 Crore+') ?></span>
                         </div>
                     </div>
                 </div>
@@ -331,7 +331,7 @@
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
                                 <i class="fas fa-check-circle text-success mt-1"></i>
                                 <div>
-                                    <strong><?= __('opp_flat_rate_title', [], 'Flat Rate Per SqFt') ?></strong>: <?= __('opp_flat_rate_desc', [], 'Get paid at a fixed rate per square foot (e.g. ₹150/sqft) based on plot size.') ?>
+                                    <strong><?= __('opp_flat_rate_title', [], 'Flat Rate Per SqFt') ?></strong>: <?= __('opp_flat_rate_desc', [], 'Get paid at a fixed rate per square foot (e.g. â‚¹150/sqft) based on plot size.') ?>
                                 </div>
                             </li>
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
@@ -372,7 +372,7 @@
 <section class="py-5 text-center bg-indigo-900 text-white">
     <div class="container py-3">
         <h2 class="fw-bold mb-3"><?= __('opp_cta_heading', [], 'Join Our Associate Network Today!') ?></h2>
-        <p class="text-indigo-200 mb-4 mx-auto" style="max-width: 600px;">
+        <p class="text-indigo-200 mb-4 mx-auto" class="style-96233">
             <?= __('opp_cta_desc', [], 'Grow your network, build a career, and earn commissions. Register as a partner today.') ?>
         </p>
         <div class="d-flex justify-content-center gap-3">

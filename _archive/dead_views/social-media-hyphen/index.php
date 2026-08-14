@@ -105,7 +105,7 @@ $posts = $posts ?? [];
                         <?php foreach ($posts as $post): ?>
                         <tr>
                             <td>
-                                <div class="fw-medium text-truncate" style="max-width: 300px;"><?= htmlspecialchars($post['content'] ?? '') ?></div>
+                                <div class="fw-medium text-truncate" class="style-33818"><?= htmlspecialchars($post['content'] ?? '') ?></div>
                                 <small class="text-muted">ID: <?= $post['id'] ?? '' ?></small>
                             </td>
                             <td>
@@ -123,8 +123,8 @@ $posts = $posts ?? [];
                                     <?= ucfirst($post['status'] ?? 'draft') ?>
                                 </span>
                             </td>
-                            <td><?= $post['scheduled_at'] ? date('d M Y H:i', strtotime($post['scheduled_at'])) : '—' ?></td>
-                            <td><?= $post['published_at'] ? date('d M Y H:i', strtotime($post['published_at'])) : '—' ?></td>
+                            <td><?= $post['scheduled_at'] ? date('d M Y H:i', strtotime($post['scheduled_at'])) : 'â€”' ?></td>
+                            <td><?= $post['published_at'] ? date('d M Y H:i', strtotime($post['published_at'])) : 'â€”' ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm">
                                     <a href="<?= BASE_URL ?>/admin/social-media/edit/<?= $post['id'] ?>" class="btn btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>

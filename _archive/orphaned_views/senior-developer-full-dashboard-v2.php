@@ -118,7 +118,7 @@
                 <div class="text-right">
                     <div class="text-sm text-purple-200">System Status</div>
                     <div class="text-2xl font-bold">
-                        <span class="pulse-dot text-green-400">●</span> ONLINE
+                        <span class="pulse-dot text-green-400">â—�</span> ONLINE
                     </div>
                     <div class="text-sm text-purple-200 mt-1">
                         <span id="currentTime"></span>
@@ -146,7 +146,7 @@
                 <div class="text-gray-400 text-sm">Database Tables</div>
                 <div class="mt-2">
                     <div class="w-full bg-gray-700 rounded-full h-2">
-                        <div class="bg-blue-400 h-2 rounded-full" style="width: 95%"></div>
+                        <div class="bg-blue-400 h-2 rounded-full" class="style-63594"></div>
                     </div>
                     <div class="text-xs text-gray-500 mt-1">95% Optimized</div>
                 </div>
@@ -166,7 +166,7 @@
                 <div class="text-gray-400 text-sm">AI Roles</div>
                 <div class="mt-2">
                     <div class="w-full bg-gray-700 rounded-full h-2">
-                        <div class="bg-green-400 h-2 rounded-full" style="width: 88%"></div>
+                        <div class="bg-green-400 h-2 rounded-full" class="style-68022"></div>
                     </div>
                     <div class="text-xs text-gray-500 mt-1">88% Efficient</div>
                 </div>
@@ -186,7 +186,7 @@
                 <div class="text-gray-400 text-sm">Security Score</div>
                 <div class="mt-2">
                     <div class="w-full bg-gray-700 rounded-full h-2">
-                        <div class="bg-purple-400 h-2 rounded-full" style="width: 92%"></div>
+                        <div class="bg-purple-400 h-2 rounded-full" class="style-28172"></div>
                     </div>
                     <div class="text-xs text-gray-500 mt-1">Hardened</div>
                 </div>
@@ -206,7 +206,7 @@
                 <div class="text-gray-400 text-sm">Response Time</div>
                 <div class="mt-2">
                     <div class="w-full bg-gray-700 rounded-full h-2">
-                        <div class="bg-orange-400 h-2 rounded-full" style="width: 95%"></div>
+                        <div class="bg-orange-400 h-2 rounded-full" class="style-63594"></div>
                     </div>
                     <div class="text-xs text-gray-500 mt-1">99.9% Uptime</div>
                 </div>
@@ -347,10 +347,10 @@
                                 <div class="text-sm">
                                     <p class="text-gray-300">Hello! I'm your AI development assistant. I can help you with:</p>
                                     <ul class="mt-1 text-xs text-gray-400">
-                                        <li>• Code analysis & optimization</li>
-                                        <li>• Architecture planning</li>
-                                        <li>• Debugging assistance</li>
-                                        <li>• Performance recommendations</li>
+                                        <li>â€¢ Code analysis & optimization</li>
+                                        <li>â€¢ Architecture planning</li>
+                                        <li>â€¢ Debugging assistance</li>
+                                        <li>â€¢ Performance recommendations</li>
                                     </ul>
                                 </div>
                             </div>
@@ -380,7 +380,7 @@
                             <span class="text-gray-400">CPU Usage</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-700 rounded-full h-2 mr-2">
-                                    <div class="bg-green-400 h-2 rounded-full" style="width: 45%"></div>
+                                    <div class="bg-green-400 h-2 rounded-full" class="style-86013"></div>
                                 </div>
                                 <span class="text-sm text-green-400">45%</span>
                             </div>
@@ -389,7 +389,7 @@
                             <span class="text-gray-400">Memory Usage</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-700 rounded-full h-2 mr-2">
-                                    <div class="bg-blue-400 h-2 rounded-full" style="width: 62%"></div>
+                                    <div class="bg-blue-400 h-2 rounded-full" class="style-91851"></div>
                                 </div>
                                 <span class="text-sm text-blue-400">62%</span>
                             </div>
@@ -398,7 +398,7 @@
                             <span class="text-gray-400">Disk Usage</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-700 rounded-full h-2 mr-2">
-                                    <div class="bg-orange-400 h-2 rounded-full" style="width: 78%"></div>
+                                    <div class="bg-orange-400 h-2 rounded-full" class="style-56581"></div>
                                 </div>
                                 <span class="text-sm text-orange-400">78%</span>
                             </div>
@@ -407,7 +407,7 @@
                             <span class="text-gray-400">Network I/O</span>
                             <div class="flex items-center">
                                 <div class="w-24 bg-gray-700 rounded-full h-2 mr-2">
-                                    <div class="bg-purple-400 h-2 rounded-full" style="width: 23%"></div>
+                                    <div class="bg-purple-400 h-2 rounded-full" class="style-77697"></div>
                                 </div>
                                 <span class="text-sm text-purple-400">23%</span>
                             </div>
@@ -583,7 +583,7 @@
                     terminal.innerHTML = terminal.innerHTML.replace('<div class="text-yellow-400">[$timestamp] $ Processing...</div>', '');
 
                     if (data.success) {
-                        terminal.innerHTML += `<div class="text-green-400">[$timestamp] $ ✓ Command executed successfully</div>`;
+                        terminal.innerHTML += `<div class="text-green-400">[$timestamp] $ âœ“ Command executed successfully</div>`;
                         terminal.innerHTML += `<div class="text-gray-400">[$timestamp] $ Result: ${JSON.stringify(data.result, null, 2)}</div>`;
 
                         // Update activity log
@@ -592,7 +592,7 @@
                         // Update charts
                         updateCharts();
                     } else {
-                        terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ ✗ Command execution failed</div>`;
+                        terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ âœ— Command execution failed</div>`;
                         addActivityLog(command, 'failed');
                     }
 
@@ -600,7 +600,7 @@
                 })
                 .catch(error => {
                     terminal.innerHTML = terminal.innerHTML.replace('<div class="text-yellow-400">[$timestamp] $ Processing...</div>', '');
-                    terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ ✗ Network error occurred</div>`;
+                    terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ âœ— Network error occurred</div>`;
                     terminal.scrollTop = terminal.scrollHeight;
                 });
         }

@@ -60,4 +60,4 @@ $i = 0;
 foreach ($dropped as $t) {
     echo sprintf("  %-45s %4d rows  Code:%d\n", $t, $before[$t]['rows'], $before[$t]['code']);
     if (++$i >= 30) break;
-}
+}?>

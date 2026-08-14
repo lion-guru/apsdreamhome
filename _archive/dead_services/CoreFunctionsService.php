@@ -190,9 +190,9 @@ class CoreFunctionsService
     {
         $symbols = [
             'USD' => '$',
-            'EUR' => '€',
-            'GBP' => '£',
-            'INR' => '₹'
+            'EUR' => 'â‚¬',
+            'GBP' => 'Â£',
+            'INR' => 'â‚¹'
         ];
 
         $symbol = $symbols[$currency] ?? $currency;
@@ -380,4 +380,4 @@ class CoreFunctionsService
         header("Location: {$url}");
         exit;
     }
-}
+}?>

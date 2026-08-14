@@ -95,7 +95,7 @@ $today = date('Y-m-d');
                     $score = (int)($lead['lead_score'] ?? 0);
                     $scoreColor = $score >= 70 ? '#10b981' : ($score >= 40 ? '#f59e0b' : '#94a3b8');
                     ?>
-                    &nbsp;&bull;&nbsp;<span style="color:<?= $scoreColor ?>;font-weight:700;"><?= __('assoc_lead_score', [], 'Score') ?>: <?= $score ?>/100</span>
+                    &nbsp;&bull;&nbsp;<span class="style-98839"><?= __('assoc_lead_score', [], 'Score') ?>: <?= $score ?>/100</span>
                 </div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
@@ -103,7 +103,7 @@ $today = date('Y-m-d');
                 <?php if (!empty($lead['email'])): ?>
                     <a href="mailto:<?= htmlspecialchars($lead['email']) ?>" class="btn btn-light btn-sm"><i class="fas fa-envelope me-1"></i><?= __('assoc_lead_email', [], 'Email') ?></a>
                 <?php endif; ?>
-                <a href="https://wa.me/91<?= $phone ?>" class="btn btn-light btn-sm" target="_blank" style="color:#25d366;"><i class="fab fa-whatsapp me-1"></i><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?></a>
+                <a href="https://wa.me/91<?= $phone ?>" class="btn btn-light btn-sm" target="_blank" class="style-43764"><i class="fab fa-whatsapp me-1"></i><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?></a>
                 <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><i class="fas fa-map-marker-alt me-1"></i><?= __('assoc_lead_schedule_visit', [], 'Schedule Visit') ?></button>
             </div>
         </div>
@@ -131,9 +131,9 @@ $today = date('Y-m-d');
                 <h6><i class="fas fa-info-circle text-primary me-2"></i><?= __('assoc_lead_details', [], 'Lead Details') ?></h6>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_property_interest', [], 'Property Interest') ?></span><span class="detail-value"><?= htmlspecialchars($lead['property_interest'] ?: '—') ?></span></div>
-                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_budget_range', [], 'Budget Range') ?></span><span class="detail-value"><?= htmlspecialchars($lead['budget_range'] ?: '—') ?></span></div>
-                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_preferred_location', [], 'Preferred Location') ?></span><span class="detail-value"><?= htmlspecialchars($lead['location_preference'] ?: '—') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_property_interest', [], 'Property Interest') ?></span><span class="detail-value"><?= htmlspecialchars($lead['property_interest'] ?: 'â€”') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_budget_range', [], 'Budget Range') ?></span><span class="detail-value"><?= htmlspecialchars($lead['budget_range'] ?: 'â€”') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_preferred_location', [], 'Preferred Location') ?></span><span class="detail-value"><?= htmlspecialchars($lead['location_preference'] ?: 'â€”') ?></span></div>
                     </div>
                     <div class="col-md-6">
                         <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_source', [], 'Source') ?></span><span class="detail-value"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $lead['source'] ?? ''))) ?></span></div>
@@ -141,9 +141,9 @@ $today = date('Y-m-d');
                         <div class="detail-row">
                             <span class="detail-label"><?= __('assoc_lead_lead_score', [], 'Lead Score') ?></span>
                             <span class="detail-value">
-                                <span style="font-weight:700;color:<?= $scoreColor ?>"><?= $score ?></span>/100
-                                <div class="score-bar mt-1" style="width:120px;">
-                                    <div class="score-fill" style="width:<?= $score ?>%;background:<?= $scoreColor ?>;"></div>
+                                <span class="style-11981"><?= $score ?></span>/100
+                                <div class="score-bar mt-1" class="style-3228">
+                                    <div class="score-fill" class="style-24129"></div>
                                 </div>
                             </span>
                         </div>
@@ -152,7 +152,7 @@ $today = date('Y-m-d');
                 <?php if (!empty($lead['notes'])): ?>
                     <hr>
                     <div class="detail-label mb-1"><?= __('assoc_lead_notes', [], 'Notes') ?></div>
-                    <p class="mb-0" style="white-space: pre-line; font-size: 0.9rem; color: #334155;"><?= htmlspecialchars($lead['notes']) ?></p>
+                    <p class="mb-0" class="style-53532"><?= htmlspecialchars($lead['notes']) ?></p>
                 <?php endif; ?>
             </div>
 
@@ -179,16 +179,16 @@ $today = date('Y-m-d');
                     <div class="sv-mini <?= $isTodayVisit ? 'border-primary bg-light' : '' ?>">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="sv-date" style="color:<?= $isTodayVisit ? '#0d9488' : '#1e293b' ?>">
+                                <div class="sv-date" class="style-48805">
                                     <i class="fas fa-calendar me-1"></i><?= $svDate ?> at <?= $svTime ?>
                                     <?php if ($isTodayVisit): ?><span class="badge bg-primary ms-1"><?= __('assoc_lead_today', [], 'Today') ?></span><?php endif; ?>
                                 </div>
                                 <small class="text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($sv['visitor_name']) ?></small>
                                 <?php if (!empty($sv['notes'])): ?>
-                                    <div style="font-size:0.8rem;color:#475569;"><?= htmlspecialchars(mb_substr($sv['notes'], 0, 80)) ?></div>
+                                    <div class="style-67721"><?= htmlspecialchars(mb_substr($sv['notes'], 0, 80)) ?></div>
                                 <?php endif; ?>
                                 <?php if (!empty($sv['rating'])): ?>
-                                    <div style="color:#f59e0b;font-size:0.8rem;"><?php for($i=1;$i<=5;$i++): ?><i class="fas fa-star<?= $i <= $sv['rating'] ? '' : '-o' ?>"></i><?php endfor; ?></div>
+                                    <div class="style-60585"><?php for($i=1;$i<=5;$i++): ?><i class="fas fa-star<?= $i <= $sv['rating'] ? '' : '-o' ?>"></i><?php endfor; ?></div>
                                 <?php endif; ?>
                             </div>
                             <span class="badge bg-<?= $svStatus['color'] ?>"><?= $svStatus['label'] ?></span>
@@ -217,12 +217,12 @@ $today = date('Y-m-d');
                         ?>
                         <div class="activity-item <?= $actClass ?>">
                             <div class="d-flex justify-content-between">
-                                <strong style="font-size: 0.85rem;"><i class="fas <?= $actIcon ?> me-1"></i> <?= $actLabel ?></strong>
+                                <strong class="style-16752"><i class="fas <?= $actIcon ?> me-1"></i> <?= $actLabel ?></strong>
                                 <small class="text-muted"><?= date('M d, Y g:i A', strtotime($act['created_at'])) ?></small>
                             </div>
-                            <p class="mb-0 mt-1" style="font-size: 0.85rem; color: #475569;"><?= htmlspecialchars($act['description']) ?></p>
+                            <p class="mb-0 mt-1" class="style-18526"><?= htmlspecialchars($act['description']) ?></p>
                             <?php if (!empty($act['old_value']) && !empty($act['new_value'])): ?>
-                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value']) ?> → <?= htmlspecialchars($act['new_value']) ?></small>
+                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value']) ?> â†’ <?= htmlspecialchars($act['new_value']) ?></small>
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>
@@ -240,17 +240,17 @@ $today = date('Y-m-d');
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;"><i class="fas fa-calendar me-1"></i><?= __('assoc_lead_followup_date', [], 'Follow-up Date') ?></label>
+                            <label class="form-label" class="style-62847"><i class="fas fa-calendar me-1"></i><?= __('assoc_lead_followup_date', [], 'Follow-up Date') ?></label>
                             <input type="date" class="form-control form-control-sm" name="followup_date" min="<?= $today ?>">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;"><i class="fas fa-clock me-1"></i><?= __('assoc_lead_time', [], 'Time') ?></label>
+                            <label class="form-label" class="style-62847"><i class="fas fa-clock me-1"></i><?= __('assoc_lead_time', [], 'Time') ?></label>
                             <input type="time" class="form-control form-control-sm" name="followup_time">
                         </div>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;"><?= __('assoc_lead_task_type', [], 'Task Type') ?></label>
+                            <label class="form-label" class="style-62847"><?= __('assoc_lead_task_type', [], 'Task Type') ?></label>
                             <select class="form-select form-select-sm" name="task_type">
                                 <option value="follow_up"><?= __('assoc_lead_call', [], 'Call') ?></option>
                                 <option value="visit"><?= __('assoc_status_site_visit', [], 'Site Visit') ?></option>
@@ -260,7 +260,7 @@ $today = date('Y-m-d');
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;"><?= __('assoc_lead_priority_label', [], 'Priority') ?></label>
+                            <label class="form-label" class="style-62847"><?= __('assoc_lead_priority_label', [], 'Priority') ?></label>
                             <select class="form-select form-select-sm" name="task_priority">
                                 <option value="medium"><?= __('assoc_priority_medium', [], 'Medium') ?></option>
                                 <option value="high"><?= __('assoc_priority_high', [], 'High') ?></option>
@@ -305,10 +305,10 @@ $today = date('Y-m-d');
                         <i class="fas fa-envelope me-2"></i><?= __('assoc_lead_send_email', [], 'Send Email') ?>
                     </a>
                     <?php endif; ?>
-                    <a href="https://wa.me/91<?= $phone ?>" class="btn btn-outline-success" target="_blank" style="border-color: #25d366; color: #25d366;">
+                    <a href="https://wa.me/91<?= $phone ?>" class="btn btn-outline-success" target="_blank" class="style-62041">
                         <i class="fab fa-whatsapp me-2"></i><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?>
                     </a>
-                    <button class="btn btn-outline-purple" style="border-color:#14b8a6;color:#14b8a6;" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal">
+                    <button class="btn btn-outline-purple" class="style-44944" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal">
                         <i class="fas fa-map-marker-alt me-2"></i><?= __('assoc_lead_schedule_site_visit', [], 'Schedule Site Visit') ?>
                     </button>
                     <hr>
@@ -323,7 +323,7 @@ $today = date('Y-m-d');
 
             <!-- WhatsApp Templates -->
             <div class="detail-card">
-                <h6><i class="fab fa-whatsapp me-2" style="color:#25d366;"></i><?= __('assoc_lead_quick_messages', [], 'Quick Messages') ?></h6>
+                <h6><i class="fab fa-whatsapp me-2" class="style-43764"></i><?= __('assoc_lead_quick_messages', [], 'Quick Messages') ?></h6>
                 <?php
                 $waTemplates = [
                     ['label'=>'Follow-up', 'msg'=>"Hi {$leadName}, just checking in regarding your property inquiry at APS Dream Home. Do you have any questions?"],
@@ -348,26 +348,26 @@ $today = date('Y-m-d');
         <h6><i class="fas fa-rupee-sign text-success me-2"></i><?= __('assoc_lead_potential_earnings', [], 'Potential Earnings') ?></h6>
         <?php if (isset($commission_estimate) && $commission_estimate['budget_mid'] > 0): ?>
             <div class="mb-3 text-center">
-                <div style="font-size:2rem;font-weight:800;color:#059669;">₹<?= number_format($commission_estimate['estimated_commission'], 0) ?></div>
-                <small class="text-muted"><?= __('assoc_lead_est_commission_at', [], 'Est. commission at') ?> ₹<?= number_format($commission_estimate['budget_mid'], 0) ?></small>
+                <div class="style-68864">â‚¹<?= number_format($commission_estimate['estimated_commission'], 0) ?></div>
+                <small class="text-muted"><?= __('assoc_lead_est_commission_at', [], 'Est. commission at') ?> â‚¹<?= number_format($commission_estimate['budget_mid'], 0) ?></small>
                 <div><span class="badge bg-success mt-1"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $commission_estimate['rank']))) ?> (<?= $commission_estimate['rate'] ?>%)</span></div>
             </div>
             <?php if (!empty($commission_estimate['breakdown'])): ?>
-                <div style="font-size:0.8rem;">
+                <div class="style-64777">
                     <?php foreach ($commission_estimate['breakdown'] as $b): ?>
                         <div class="d-flex justify-content-between py-1 border-bottom">
-                            <span style="color:#475569;"><?= htmlspecialchars($b['label']) ?></span>
-                            <span style="font-weight:600;">₹<?= number_format($b['amount'], 0) ?></span>
+                            <span class="style-42047"><?= htmlspecialchars($b['label']) ?></span>
+                            <span class="style-24039">â‚¹<?= number_format($b['amount'], 0) ?></span>
                         </div>
                     <?php endforeach; ?>
-                    <div class="d-flex justify-content-between py-1 fw-bold" style="color:#059669;">
+                    <div class="d-flex justify-content-between py-1 fw-bold" class="style-7250">
                         <span><?= __('assoc_lead_total_commission', [], 'Total Est. Commission') ?></span>
-                        <span>₹<?= number_format(array_sum(array_column($commission_estimate['breakdown'], 'amount')), 0) ?></span>
+                        <span>â‚¹<?= number_format(array_sum(array_column($commission_estimate['breakdown'], 'amount')), 0) ?></span>
                     </div>
                 </div>
             <?php endif; ?>
             <hr>
-            <div style="font-size:0.75rem;color:#94a3b8;">
+            <div class="style-50608">
                 <i class="fas fa-info-circle me-1"></i><?= __('assoc_lead_commission_note', [], 'Based on current rank & budget. Actual may vary.') ?>
             </div>
         <?php else: ?>
@@ -391,53 +391,53 @@ $today = date('Y-m-d');
         <?php if ($scoreBreakdown): ?>
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span style="font-size:0.85rem;font-weight:600;color:#1e293b;"><?= __('assoc_lead_total_score', [], 'Total Score') ?></span>
-                    <span style="font-size:1.2rem;font-weight:700;color:<?= $scoreBreakdown['total'] >= 70 ? '#10b981' : ($scoreBreakdown['total'] >= 40 ? '#f59e0b' : '#94a3b8') ?>"><?= $scoreBreakdown['total'] ?>/100</span>
+                    <span class="style-41145"><?= __('assoc_lead_total_score', [], 'Total Score') ?></span>
+                    <span class="style-63433"><?= $scoreBreakdown['total'] ?>/100</span>
                 </div>
-                <div class="score-bar mb-3" style="height:10px;">
-                    <div class="score-fill" style="width:<?= $scoreBreakdown['total'] ?>%;background:<?= $scoreBreakdown['total'] >= 70 ? '#10b981' : ($scoreBreakdown['total'] >= 40 ? '#f59e0b' : '#94a3b8') ?>;"></div>
+                <div class="score-bar mb-3" class="style-76750">
+                    <div class="score-fill" class="style-57243"></div>
                 </div>
             </div>
             <div class="row g-2 mb-3">
                 <div class="col-6">
-                    <div style="padding:8px 12px;border-radius:8px;background:#f0f9ff;border:1px solid #bae6fd;">
-                        <div style="font-size:0.75rem;color:#0369a1;font-weight:500;"><?= __('assoc_lead_demographics', [], 'Demographics') ?></div>
-                        <div style="font-size:1.1rem;font-weight:700;color:#0c4a6e;"><?= $scoreBreakdown['demographics'] ?>/40</div>
+                    <div class="style-21104">
+                        <div class="style-21586"><?= __('assoc_lead_demographics', [], 'Demographics') ?></div>
+                        <div class="style-77112"><?= $scoreBreakdown['demographics'] ?>/40</div>
                     </div>
                 </div>
                 <div class="col-6">
-                    <div style="padding:8px 12px;border-radius:8px;background:#fef3c7;border:1px solid #fde68a;">
-                        <div style="font-size:0.75rem;color:#92400e;font-weight:500;"><?= __('assoc_lead_engagement', [], 'Engagement') ?></div>
-                        <div style="font-size:1.1rem;font-weight:700;color:#78350f;"><?= $scoreBreakdown['engagement'] ?>/40</div>
+                    <div class="style-83909">
+                        <div class="style-82309"><?= __('assoc_lead_engagement', [], 'Engagement') ?></div>
+                        <div class="style-78486"><?= $scoreBreakdown['engagement'] ?>/40</div>
                     </div>
                 </div>
                 <div class="col-6">
-                    <div style="padding:8px 12px;border-radius:8px;background:#ede9fe;border:1px solid #99f6e4;">
-                        <div style="font-size:0.75rem;color:#134e4a;font-weight:500;"><?= __('assoc_lead_behavior', [], 'Behavior') ?></div>
-                        <div style="font-size:1.1rem;font-weight:700;color:#5b21b6;"><?= $scoreBreakdown['behavior'] ?>/40</div>
+                    <div class="style-70401">
+                        <div class="style-35970"><?= __('assoc_lead_behavior', [], 'Behavior') ?></div>
+                        <div class="style-9425"><?= $scoreBreakdown['behavior'] ?>/40</div>
                     </div>
                 </div>
                 <div class="col-6">
-                    <div style="padding:8px 12px;border-radius:8px;background:#fce7f3;border:1px solid #f9a8d4;">
-                        <div style="font-size:0.75rem;color:#be185d;font-weight:500;"><?= __('assoc_lead_ai_analysis', [], 'AI Analysis') ?></div>
-                        <div style="font-size:1.1rem;font-weight:700;color:#9d174d;"><?= $scoreBreakdown['ai_analysis'] ?>/40</div>
+                    <div class="style-25076">
+                        <div class="style-44492"><?= __('assoc_lead_ai_analysis', [], 'AI Analysis') ?></div>
+                        <div class="style-38593"><?= $scoreBreakdown['ai_analysis'] ?>/40</div>
                     </div>
                 </div>
             </div>
             <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="badge bg-<?= $scoreBreakdown['rank'] === 'hot' || $scoreBreakdown['rank'] === 'hot_plus' ? 'danger' : ($scoreBreakdown['rank'] === 'warm' ? 'warning' : 'secondary') ?>" style="font-size:0.75rem;">
+                <span class="badge bg-<?= $scoreBreakdown['rank'] === 'hot' || $scoreBreakdown['rank'] === 'hot_plus' ? 'danger' : ($scoreBreakdown['rank'] === 'warm' ? 'warning' : 'secondary') ?>" class="style-20558">
                     <?= ucfirst(str_replace('_', ' ', $scoreBreakdown['rank'])) ?>
                 </span>
                 <?php if ($scoreBreakdown['is_hot']): ?>
-                    <span class="badge bg-danger" style="font-size:0.7rem;"><i class="fas fa-fire me-1"></i><?= __('assoc_lead_hot_lead', [], 'Hot Lead') ?></span>
+                    <span class="badge bg-danger" class="style-68658"><i class="fas fa-fire me-1"></i><?= __('assoc_lead_hot_lead', [], 'Hot Lead') ?></span>
                 <?php endif; ?>
             </div>
         <?php else: ?>
-            <p class="text-muted mb-2" style="font-size:0.85rem;"><?= __('assoc_lead_score_not_calc', [], 'Score not yet calculated for this lead.') ?></p>
+            <p class="text-muted mb-2" class="style-47175"><?= __('assoc_lead_score_not_calc', [], 'Score not yet calculated for this lead.') ?></p>
         <?php endif; ?>
         <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/recalculate-score" class="mt-2">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-            <button type="submit" class="btn btn-outline-purple btn-sm w-100" style="border-color:#14b8a6;color:#14b8a6;">
+            <button type="submit" class="btn btn-outline-purple btn-sm w-100" class="style-44944">
                 <i class="fas fa-sync me-1"></i> <?= __('assoc_lead_recalculate_score', [], 'Recalculate Score') ?>
             </button>
         </form>
@@ -450,7 +450,7 @@ $today = date('Y-m-d');
         <?php
         $budget = (float)($lead['budget'] ?? 0);
         $budgetRange = $lead['budget_range'] ?? '';
-        if ($budget === 0 && preg_match('/(\d[\d,]*)/', str_replace(['₹', ' '], '', $budgetRange), $m)) {
+        if ($budget === 0 && preg_match('/(\d[\d,]*)/', str_replace(['â‚¹', ' '], '', $budgetRange), $m)) {
             $budget = (float)str_replace(',', '', $m[1]);
         }
         $commissionRates = [
@@ -463,19 +463,19 @@ $today = date('Y-m-d');
         ?>
         <div class="row g-2 mb-2">
             <div class="col-6">
-                <div style="padding:8px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;">
-                    <div style="font-size:0.75rem;color:#166534;font-weight:500;"><?= __('assoc_lead_est_budget', [], 'Estimated Budget') ?></div>
-                    <div style="font-size:1rem;font-weight:700;color:#14532d;">₹<?= number_format($budget) ?></div>
+                <div class="style-31504">
+                    <div class="style-41625"><?= __('assoc_lead_est_budget', [], 'Estimated Budget') ?></div>
+                    <div class="style-17546">â‚¹<?= number_format($budget) ?></div>
                 </div>
             </div>
             <div class="col-6">
-                <div style="padding:8px 12px;border-radius:8px;background:#fef3c7;border:1px solid #fde68a;">
-                    <div style="font-size:0.75rem;color:#92400e;font-weight:500;"><?= __('assoc_lead_your_commission', [], 'Your Commission') ?> (<?= number_format($myRate * 100, 0) ?>%)</div>
-                    <div style="font-size:1rem;font-weight:700;color:#78350f;">₹<?= number_format($estCommission) ?></div>
+                <div class="style-83909">
+                    <div class="style-82309"><?= __('assoc_lead_your_commission', [], 'Your Commission') ?> (<?= number_format($myRate * 100, 0) ?>%)</div>
+                    <div class="style-62370">â‚¹<?= number_format($estCommission) ?></div>
                 </div>
             </div>
         </div>
-        <div style="font-size:0.78rem;color:#64748b;">
+        <div class="style-76464">
             <i class="fas fa-info-circle me-1"></i><?= __('assoc_lead_commission_note', [], 'Commission based on your current rank. Actual commission depends on booking value and payment status.') ?>
         </div>
     </div>
@@ -516,7 +516,7 @@ $today = date('Y-m-d');
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="input-group">
                         <select class="form-select form-select-sm" name="assign_to">
-                            <option value=""><?= __('assoc_lead_select_member', [], '— Select member —') ?></option>
+                            <option value=""><?= __('assoc_lead_select_member', [], 'â€” Select member â€”') ?></option>
                             <?php foreach ($teamMembers as $tm): ?>
                                 <option value="<?= $tm['id'] ?>"><?= htmlspecialchars($tm['name']) ?></option>
                             <?php endforeach; ?>
@@ -525,7 +525,7 @@ $today = date('Y-m-d');
                     </div>
                 </form>
                 <?php else: ?>
-                    <p class="text-muted mb-0" style="font-size:0.85rem;"><?= __('assoc_lead_no_team', [], 'No other team members to assign to.') ?></p>
+                    <p class="text-muted mb-0" class="style-47175"><?= __('assoc_lead_no_team', [], 'No other team members to assign to.') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -567,7 +567,7 @@ $today = date('Y-m-d');
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_colony', [], 'Colony') ?></label>
                             <select class="form-select" name="colony_id">
-                                <option value=""><?= __('assoc_lead_modal_select', [], '— Select —') ?></option>
+                                <option value=""><?= __('assoc_lead_modal_select', [], 'â€” Select â€”') ?></option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
                                 <?php endforeach; ?>

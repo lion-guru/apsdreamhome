@@ -19,7 +19,7 @@ try {
     echo "Step 1: Adding associate_id to salary_payments...\n";
     $pdo->exec("ALTER TABLE salary_payments ADD COLUMN associate_id INT(11) NULL AFTER employee_id");
     $pdo->exec("ALTER TABLE salary_payments ADD INDEX idx_associate_id (associate_id)");
-    echo "✓ associate_id column added to salary_payments\n\n";
+    echo "âœ“ associate_id column added to salary_payments\n\n";
 
     // 2. Add registration tracking to associates table
     echo "Step 2: Adding registration tracking to associates...\n";
@@ -29,7 +29,7 @@ try {
     $pdo->exec("ALTER TABLE associates ADD COLUMN salary_amount DECIMAL(10,2) DEFAULT 0 AFTER salary_eligible");
     $pdo->exec("ALTER TABLE associates ADD COLUMN diwali_bonus_eligible TINYINT(1) DEFAULT 0 AFTER salary_amount");
     $pdo->exec("ALTER TABLE associates ADD COLUMN diwali_bonus_amount DECIMAL(10,2) DEFAULT 0 AFTER diwali_bonus_eligible");
-    echo "✓ Registration tracking columns added to associates\n\n";
+    echo "âœ“ Registration tracking columns added to associates\n\n";
 
     // 3. Verify changes
     echo "Step 3: Verifying changes...\n";
@@ -37,7 +37,7 @@ try {
     $stmt = $pdo->query("SHOW COLUMNS FROM salary_payments LIKE 'associate_id'");
     $col = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($col) {
-        echo "  ✓ associate_id: {$col['Type']}\n";
+        echo "  âœ“ associate_id: {$col['Type']}\n";
     }
 
     echo "\nassociates new columns:\n";
@@ -46,13 +46,13 @@ try {
         $stmt = $pdo->query("SHOW COLUMNS FROM associates LIKE '$colName'");
         $col = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($col) {
-            echo "  ✓ {$colName}: {$col['Type']}\n";
+            echo "  âœ“ {$colName}: {$col['Type']}\n";
         }
     }
 
-    echo "\n✓ Migration completed successfully!\n";
+    echo "\nâœ“ Migration completed successfully!\n";
 
 } catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
+    echo "âœ— Error: " . $e->getMessage() . "\n";
     exit(1);
-}
+}?>

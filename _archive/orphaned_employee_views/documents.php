@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -20,7 +20,7 @@
     <!-- Document Stats -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+            <div class="stats-card card text-white" class="style-88128">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+            <div class="stats-card card text-white" class="style-22627">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);">
+            <div class="stats-card card text-white" class="style-86665">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -86,7 +86,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
+            <div class="stats-card card text-white" class="style-32731">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>

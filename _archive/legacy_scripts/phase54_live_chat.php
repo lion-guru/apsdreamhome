@@ -140,7 +140,7 @@ foreach ($tables as $name => $sql) {
 }
 
 $replies = [
-    ['Greeting', '/hello', 'Hi there! 👋 How can I help you today?', 'general', 1],
+    ['Greeting', '/hello', 'Hi there! ðŸ‘‹ How can I help you today?', 'general', 1],
     ['Property Inquiry', '/prop', 'Thanks for your interest! Which property are you inquiring about?', 'sales', 2],
     ['Pricing Info', '/price', 'Pricing depends on the specific property. Could you share which one you are interested in?', 'sales', 3],
     ['Site Visit', '/visit', 'I can help schedule a site visit. Which date works best for you?', 'sales', 4],
@@ -166,7 +166,7 @@ $settings = [
     'business_hours_start' => '09:00',
     'business_hours_end' => '19:00',
     'auto_assign' => '1',
-    'welcome_message' => '👋 Welcome to APS Dream Home! How can we help you with your property journey today?',
+    'welcome_message' => 'ðŸ‘‹ Welcome to APS Dream Home! How can we help you with your property journey today?',
     'offline_message' => 'We are currently offline. Please leave a message and we will get back to you soon.'
 ];
 foreach ($settings as $k => $v) {
@@ -176,4 +176,4 @@ foreach ($settings as $k => $v) {
     } catch (Exception $e) { /* skip */ }
 }
 
-echo "Phase 54: Live Chat tables created with " . count($replies) . " quick replies and " . count($settings) . " settings seeded\n";
+echo "Phase 54: Live Chat tables created with " . count($replies) . " quick replies and " . count($settings) . " settings seeded\n";?>

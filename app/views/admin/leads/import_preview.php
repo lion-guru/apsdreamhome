@@ -13,7 +13,7 @@ $success_rows = $total_rows - $error_rows;
         <div>
             <a href="<?= $base ?>/admin/leads/import" class="btn btn-outline-secondary btn-sm me-2"><i class="fas fa-arrow-left me-1"></i>Back</a>
             <?php if ($success_rows > 0): ?>
-                <form action="<?= $base ?>/admin/leads/import/commit" method="POST" style="display:inline;">
+                <form action="<?= $base ?>/admin/leads/import/commit" method="POST" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
                     <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Import <?= $success_rows ?> leads?')">
                         <i class="fas fa-check me-1"></i>Import <?= $success_rows ?> Leads
@@ -51,7 +51,7 @@ $success_rows = $total_rows - $error_rows;
                         <?php if (empty($rows)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5">
-                                <i class="fas fa-file-import fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <i class="fas fa-file-import fa-3x text-muted mb-3" class="style-82835"></i>
                                 <h5 class="text-muted">No rows to preview</h5>
                                 <p class="text-muted mb-3">The CSV file appears to be empty or has no valid data rows. Check your file format and try again.</p>
                                 <a href="<?= BASE_URL ?>/admin/leads/import" class="btn btn-primary">
@@ -67,7 +67,7 @@ $success_rows = $total_rows - $error_rows;
                                 <td class="small"><?= htmlspecialchars($row['email'] ?? '') ?></td>
                                 <td class="small"><?= htmlspecialchars($row['phone'] ?? '') ?></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($row['source'] ?? 'csv_import') ?></span></td>
-                                <td class="small">₹<?= number_format((float)($row['budget'] ?? 0)) ?></td>
+                                <td class="small">â‚¹<?= number_format((float)($row['budget'] ?? 0)) ?></td>
                                 <td>
                                     <?php
                                     $pri = $row['priority'] ?? 'medium';

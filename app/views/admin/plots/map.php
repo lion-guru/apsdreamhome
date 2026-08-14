@@ -29,7 +29,7 @@
                 </div>
                 <?php endforeach; ?>
             </div>
-            <div id="plotContainer" style="overflow:auto; max-height:75vh;">
+            <div id="plotContainer" class="style-80745">
                 <?php foreach ($colonies as $ci => $colony):
                     $cplots = array_filter($all_plots, fn($p) => $p['colony_id'] == $colony['id']);
                     if (!$cplots) continue;
@@ -44,8 +44,8 @@
                 ?>
                 <div class="colony-section mb-4" data-colony="<?= $colony['id'] ?>">
                     <h5 class="text-primary mb-2"><?= htmlspecialchars($colony['name']) ?></h5>
-                    <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light" style="max-width:100%; height:auto;">
-                        <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name']) ?> — <?= count($cplots) ?> plots</text>
+                    <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light" class="style-50142">
+                        <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name']) ?> â€” <?= count($cplots) ?> plots</text>
                         <?php foreach ($cplots as $i => $p):
                             $col = $i % $cols;
                             $row = intdiv($i, $cols);
@@ -59,7 +59,7 @@
                                 'blocked' => '#64748b',
                                 default => '#94a3b8'
                             };
-                            $tooltip = htmlspecialchars("Plot: {$p['plot_number']}\nArea: {$p['area_sqft']} sqft\nDimensions: {$p['width_ft']}x{$p['length_ft']} ft\nFacing: {$p['facing']}\nPrice: ₹".number_format((float)$p['total_price'])."\nStatus: {$p['status']}");
+                            $tooltip = htmlspecialchars("Plot: {$p['plot_number']}\nArea: {$p['area_sqft']} sqft\nDimensions: {$p['width_ft']}x{$p['length_ft']} ft\nFacing: {$p['facing']}\nPrice: â‚¹".number_format((float)$p['total_price'])."\nStatus: {$p['status']}");
                         ?>
                         <rect x="<?= $x ?>" y="<?= $y ?>" width="<?= $cw ?>" height="<?= $rh ?>"
                               fill="<?= $statusColor ?>" rx="3" class="plot-cell"
@@ -69,7 +69,7 @@
                         </rect>
                         <text x="<?= $x + $cw/2 ?>" y="<?= $y + $rh/2 + 4 ?>"
                               text-anchor="middle" font-size="8" fill="#fff" pointer-events="none"
-                              style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);"><?= htmlspecialchars($p['plot_number']) ?></text>
+                              class="style-30355"><?= htmlspecialchars($p['plot_number']) ?></text>
                         <?php endforeach; ?>
                     </svg>
                 </div>
@@ -82,11 +82,11 @@
 <div class="aps-cp-card">
     <div class="aps-cp-card-body">
         <div class="d-flex flex-wrap gap-3 justify-content-center">
-            <span><span class="badge" style="background:#10b981; width:16px; height:16px; display:inline-block;"></span> Available</span>
-            <span><span class="badge" style="background:#ef4444; width:16px; height:16px; display:inline-block;"></span> Booked</span>
-            <span><span class="badge" style="background:#f59e0b; width:16px; height:16px; display:inline-block;"></span> On EMI</span>
-            <span><span class="badge" style="background:#14b8a6; width:16px; height:16px; display:inline-block;"></span> Registered</span>
-            <span><span class="badge" style="background:#64748b; width:16px; height:16px; display:inline-block;"></span> Blocked</span>
+            <span><span class="badge" class="style-85551"></span> Available</span>
+            <span><span class="badge" class="style-81819"></span> Booked</span>
+            <span><span class="badge" class="style-15902"></span> On EMI</span>
+            <span><span class="badge" class="style-5389"></span> Registered</span>
+            <span><span class="badge" class="style-23124"></span> Blocked</span>
         </div>
     </div>
 </div>

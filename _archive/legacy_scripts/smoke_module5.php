@@ -50,4 +50,4 @@ foreach ($routes as $route) {
 }
 echo "\nSmoke: $pass PASS, $fail FAIL out of " . count($routes) . " routes\n";
 
-@unlink($cookieFile);
+@unlink($cookieFile);?>

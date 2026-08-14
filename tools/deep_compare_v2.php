@@ -99,7 +99,7 @@ echo "=== FOUND WITH DIFFERENT PATHS ($underscore/hyphen mismatches or shared da
 foreach ($foundViews as $fv) {
     $r = $fv['item'];
     echo "  [{$r['id']}] {$r['section']} / {$r['name']}\n";
-    echo "    URL: {$r['url']}  →  View: {$fv['view']}\n";
+    echo "    URL: {$r['url']}  â†’  View: {$fv['view']}\n";
 }
 echo "\n";
 
@@ -115,4 +115,4 @@ foreach($menuItems as $r) { $sections[$r['section']][] = $r; }
 foreach($sections as $sec => $rows) {
     echo str_pad($sec,25).": ".count($rows)." items\n";
 }
-echo "\nTotal: " . count($menuItems) . " menu items\n";
+echo "\nTotal: " . count($menuItems) . " menu items\n";?>

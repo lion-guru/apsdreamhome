@@ -88,4 +88,4 @@ try {
 }
 
 echo "[abandoned-cron] Done.\n";
-exit(0);
+exit(0);?>

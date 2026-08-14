@@ -18,7 +18,7 @@ echo "Checking Wallet System Tables...\n\n";
 
 foreach ($tables as $table) {
     $exists = $pdo->query("SHOW TABLES LIKE '$table'")->rowCount() > 0;
-    echo $exists ? "✅ $table exists\n" : "❌ $table missing\n";
+    echo $exists ? "âœ… $table exists\n" : "â�Œ $table missing\n";
 }
 
-echo "\nDone.\n";
+echo "\nDone.\n";?>

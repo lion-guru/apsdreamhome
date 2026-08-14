@@ -33,4 +33,4 @@ if (preg_match('/<title>(.*?)<\/title>/', $html, $t)) {
 }
 
 // Show first 300 chars
-echo "\nFirst 300 chars:\n" . substr($html, 0, 300) . "\n";
+echo "\nFirst 300 chars:\n" . substr($html, 0, 300) . "\n";?>

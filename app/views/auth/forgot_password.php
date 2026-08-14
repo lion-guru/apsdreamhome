@@ -81,7 +81,9 @@ $page_description = __('forgot_password_page_description');
                                 </div>
 
                                 <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+                                    
+<?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
+<button type="submit" class="btn btn-primary btn-lg">
                                         <i class="fas fa-paper-plane me-2"></i><?= __('forgot_password_button_send_link') ?>
                                     </button>
                                     <button type="button" class="btn btn-outline-secondary" onclick="switchToResetTab('mobile-reset-tab')">

@@ -1,7 +1,7 @@
 <?php
 /**
  * Daily Commission Clawback Runner
- * ──────────────────────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * Finds EMI defaulters (30+ days overdue), debits proportional commission
  * from the agent/MLM upline chain via writeLedger with type='clawback'.
  *
@@ -31,12 +31,12 @@ try {
     $engine = new \App\Services\MLM\MLMCommissionEngine($pdo);
     $result = $engine->processClawbacks();
 
-    echo "✅ Clawback run complete" . PHP_EOL;
+    echo "âœ… Clawback run complete" . PHP_EOL;
     echo "   Entries debited: {$result['processed']}" . PHP_EOL;
-    echo "   Total clawback amount: ₹" . number_format($result['amount'], 2) . PHP_EOL;
+    echo "   Total clawback amount: â‚¹" . number_format($result['amount'], 2) . PHP_EOL;
 
     if (!empty($result['errors'])) {
-        echo PHP_EOL . "   ⚠️  Errors:" . PHP_EOL;
+        echo PHP_EOL . "   âš ï¸�  Errors:" . PHP_EOL;
         foreach ($result['errors'] as $err) {
             echo "   - {$err}" . PHP_EOL;
         }
@@ -45,7 +45,7 @@ try {
     echo PHP_EOL . "[" . date('Y-m-d H:i:s') . "] Clawback run complete" . PHP_EOL;
 
 } catch (\Throwable $e) {
-    echo "❌ FATAL: " . $e->getMessage() . PHP_EOL;
+    echo "â�Œ FATAL: " . $e->getMessage() . PHP_EOL;
     echo "   File: " . $e->getFile() . ":" . $e->getLine() . PHP_EOL;
     exit(1);
-}
+}?>

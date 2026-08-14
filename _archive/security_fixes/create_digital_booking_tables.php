@@ -73,4 +73,4 @@ CREATE TABLE IF NOT EXISTS booking_digital_agreements (
 
 echo "booking_digital_agreements table created/verified\n";
 
-echo "All tables created successfully!\n";
+echo "All tables created successfully!\n";?>

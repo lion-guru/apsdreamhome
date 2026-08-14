@@ -24,4 +24,4 @@ $urls = array_unique(array_map(function($r){ return $r['url']; }, $items));
 sort($urls);
 foreach($urls as $u) {
     echo $u . "\n";
-}
+}?>

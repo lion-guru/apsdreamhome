@@ -64,7 +64,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                 <div class="row g-3">
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_total_plots') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_available') ?></div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num">₹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num">Ã¢â€šÂ¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl"><?= __('colony_amenities') ?></div></div></div>
                 </div>
             </div>
@@ -142,7 +142,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                         <span class="badge bg-success"><?= __('colony_available') ?></span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo $p['area_sqft'] ?? 0; ?> sqft</p>
-                    <div class="price">₹<?php echo number_format($p['total_price'] ?? 0); ?></div>
+                    <div class="price">Ã¢â€šÂ¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -156,7 +156,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 
 <!-- Interactive Plot Map -->
 <?php if (!empty($mapData['features'])): ?>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.min.css" />
 <section class="py-5 bg-white">
     <div class="container">
         <h2 class="text-center mb-4"><i class="fas fa-map-marked-alt text-primary me-2"></i><?= __('colony_plot_map_heading') ?? 'Plot Map' ?></h2>
@@ -167,14 +167,14 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
             <button class="btn btn-sm btn-outline-danger" data-filter="sold">Sold</button>
             <button class="btn btn-sm btn-outline-secondary" data-filter="hold">On Hold</button>
         </div>
-        <div style="position:relative; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-            <div id="customerPlotMap" style="height:500px; width:100%;"></div>
+        <div class="style-29289">
+            <div id="customerPlotMap" class="style-51783"></div>
         </div>
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-3 small text-muted">
-            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#22c55e;margin-right:4px;vertical-align:middle"></span> Available</span>
-            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#eab308;margin-right:4px;vertical-align:middle"></span> Booked</span>
-            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#ef4444;margin-right:4px;vertical-align:middle"></span> Sold</span>
-            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#6b7280;margin-right:4px;vertical-align:middle"></span> On Hold</span>
+            <span><span class="style-42091"></span> Available</span>
+            <span><span class="style-80089"></span> Booked</span>
+            <span><span class="style-1950"></span> Sold</span>
+            <span><span class="style-34008"></span> On Hold</span>
         </div>
     </div>
 </section>
@@ -194,15 +194,15 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
         onEachFeature: function(f, layer) {
             var p = f.properties;
             var statusBadge = { available: 'success', booked: 'warning text-dark', sold: 'danger', hold: 'secondary', reserved: 'warning' };
-            var html = '<div style="min-width:200px;font-family:sans-serif">' +
-                '<h6 style="margin-bottom:6px;font-weight:600">Plot #' + p.plot_number +
+            var html = '<div class="style-92728">' +
+                '<h6 class="style-83369">Plot #' + p.plot_number +
                 ' <span class="badge bg-' + (statusBadge[p.status] || 'secondary') + '">' + p.status + '</span></h6>' +
-                '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Block</span><span style="font-weight:500">' + (p.block || '-') + '</span></div>' +
-                '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Area</span><span style="font-weight:500">' + (p.area_sqft || 0) + ' sqft</span></div>' +
-                '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Size</span><span style="font-weight:500">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
-                (p.corner_plot ? '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Corner Plot</span><span style="color:#16a34a;font-weight:500">&#10003;</span></div>' : '') +
-                (p.park_facing ? '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Park Facing</span><span style="color:#16a34a;font-weight:500">&#10003;</span></div>' : '') +
-                '<hr style="margin:6px 0"><div style="display:flex;justify-content:space-between;padding:2px 0;font-size:14px"><span style="color:#64748b">Price</span><span style="font-weight:700;color:#0d9488">&#8377;' + Number(p.total_price || 0).toLocaleString() + '</span></div></div>';
+                '<div class="style-24913"><span class="style-74529">Block</span><span class="style-44823">' + (p.block || '-') + '</span></div>' +
+                '<div class="style-24913"><span class="style-74529">Area</span><span class="style-44823">' + (p.area_sqft || 0) + ' sqft</span></div>' +
+                '<div class="style-24913"><span class="style-74529">Size</span><span class="style-44823">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
+                (p.corner_plot ? '<div class="style-24913"><span class="style-74529">Corner Plot</span><span class="style-83728">&#10003;</span></div>' : '') +
+                (p.park_facing ? '<div class="style-24913"><span class="style-74529">Park Facing</span><span class="style-83728">&#10003;</span></div>' : '') +
+                '<hr class="style-25998"><div class="style-85512"><span class="style-74529">Price</span><span class="style-12533">&#8377;' + Number(p.total_price || 0).toLocaleString() + '</span></div></div>';
             layer.bindPopup(html, { maxWidth: 300 });
             layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });
             layer.on('mouseout', function() { geojsonLayer.resetStyle(this); });
@@ -273,7 +273,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
             <?php foreach ($nearbyPlaces as $np): ?>
             <div class="col-md-4 col-sm-6">
                 <div class="d-flex align-items-center gap-3 p-3 border rounded-3 bg-light">
-                    <div class="icon-circle bg-primary bg-opacity-10 text-primary" style="width:45px;height:45px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <div class="icon-circle bg-primary bg-opacity-10 text-primary" class="style-36633">
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div>
@@ -294,7 +294,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i><?= __('colony_location_map_heading') ?></h2>
         <div class="rounded-4 overflow-hidden shadow">
-            <iframe src="<?php echo htmlspecialchars($colony['map_link']); ?>" width="100%" height="400" style="border:0" allowfullscreen loading="lazy"></iframe>
+            <iframe src="<?php echo htmlspecialchars($colony['map_link']); ?>" width="100%" height="400" class="style-69986" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
 </section>

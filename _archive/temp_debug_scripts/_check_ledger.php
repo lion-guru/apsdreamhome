@@ -15,4 +15,4 @@ echo "\n=== mlm_network_tree ===\n";
 $r = $pdo->query('SHOW COLUMNS FROM mlm_network_tree');
 while ($row = $r->fetch(PDO::FETCH_ASSOC)) {
     echo $row['Field'] . ' | ' . $row['Type'] . ' | ' . ($row['Key'] ?: '') . "\n";
-}
+}?>

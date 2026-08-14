@@ -20,7 +20,7 @@
 
         <!-- Drawer Header -->
         <div class="mobile-drawer-header d-flex align-items-center justify-content-between p-3"
-             style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+             class="style-15495">
 
             <a class="navbar-brand d-flex align-items-center m-0 text-white"
                href="<?php echo BASE_URL; ?>">
@@ -29,9 +29,9 @@
                 <img src="<?php echo BASE_URL . htmlspecialchars($logo); ?>"
                      alt="<?php echo htmlspecialchars($nav->companyName()); ?>"
                      class="logo"
-                     style="height: 26px; width: auto; max-width: 80px;"
+                     class="style-39414"
                      loading="eager">
-                <span class="brand-text ms-2 fw-bold" style="color: #ffffff; font-size: 1rem;">
+                <span class="brand-text ms-2 fw-bold" class="style-6037">
                     <?php echo htmlspecialchars($nav->companyName()); ?>
                 </span>
             </a>
@@ -45,14 +45,14 @@
         </div>
 
         <!-- Drawer Body -->
-        <div class="mobile-drawer-body" style="overflow-y: auto; max-height: calc(100vh - 62px);">
+        <div class="mobile-drawer-body" class="style-93279">
 
             <!-- User Section -->
             <?php if ($nav->isLoggedIn()): ?>
                 <div class="p-3 border-bottom">
                     <div class="d-flex align-items-center">
                         <div class="avatar avatar-sm flex-shrink-0">
-                            <span class="avatar-title bg-primary bg-gradient rounded-circle" style="width:48px;height:48px;font-size:20px;">
+                            <span class="avatar-title bg-primary bg-gradient rounded-circle" class="style-24506">
                                 <?php
                                 $name = $nav->userName();
                                 echo strtoupper(substr($name, 0, 1));
@@ -81,7 +81,7 @@
             <?php endif; ?>
 
             <!-- Navigation Tree -->
-            <nav class="mobile-drawer-nav" style="padding: 0;">
+            <nav class="mobile-drawer-nav" class="style-94963">
                 <?php
                 /**
                  * Build a recursive accordion menu from a navigation array.
