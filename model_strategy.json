@@ -1,0 +1,71 @@
+{
+  "strategy": "dynamic_ram_based",
+  "description": "Selects model based on RAM availability for optimal performance",
+  "models": {
+    "high_ram": "qwen2.5:3b",
+    "medium_ram": "qwen2.5:3b",
+    "low_ram": "qwen2.5-coder:1.5b",
+    "critical_ram": "gemma3:1b"
+  },
+  "thresholds": {
+    "high_ram_max": 55,
+    "medium_ram_max": 75,
+    "low_ram_max": 85,
+    "auto_swap_to_cloud": 90
+  },
+  "task_type_mapping": {
+    "code_fix": [
+      "qwen2.5-coder:1.5b",
+      "qwen2.5:3b",
+      "gemma3:1b"
+    ],
+    "ui_fix": [
+      "qwen2.5:3b",
+      "gemma3:4b",
+      "gemma3:1b"
+    ],
+    "security_scan": [
+      "qwen2.5:3b",
+      "gemma3:4b",
+      "gemma3:1b"
+    ],
+    "php_lint": [
+      "gemma3:1b",
+      "qwen2.5-coder:1.5b"
+    ],
+    "css_audit": [
+      "qwen2.5:3b",
+      "gemma3:4b"
+    ],
+    "general": [
+      "qwen2.5:3b",
+      "gemma3:1b",
+      "gemma3:4b"
+    ]
+  },
+  "auto_swap": {
+    "enabled": true,
+    "ram_threshold": 90,
+    "cloud_fallback_order": [
+      "groq",
+      "gemini",
+      "openrouter",
+      "zenmux"
+    ]
+  },
+  "current_available_models": [
+    "gemma3:1b",
+    "gemma3:4b",
+    "llama3.2:1b",
+    "qwen2.5:3b",
+    "qwen2.5-coder:1.5b",
+    "phi3:mini",
+    "nomic-embed-text:latest"
+  ],
+  "notes": [
+    "qwen2.5-coding:7b pull failed (503 from upstream)",
+    "Using qwen2.5:3b as best alternative for code tasks",
+    "qwen2.5-coder:1.5b for tight memory situations",
+    "gemma3:1b for fastest/lowest resource scenarios"
+  ]
+}

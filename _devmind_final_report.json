@@ -1,0 +1,273 @@
+{
+  "timestamp": "2026-08-14T04:33:27.885858",
+  "devmind_infrastructure": {
+    "server_running": true,
+    "server_port": 7860,
+    "ollama_connected": true,
+    "ollama_port": 11434,
+    "total_routes": 287,
+    "active_models": [
+      "gemma3:1b",
+      "gemma3:4b",
+      "qwen2.5-coder:1.5b",
+      "qwen2.5:3b",
+      "llama3.2:1b",
+      "phi3:mini"
+    ],
+    "rate_limiting": "Active (20/min chat, 120/min default)",
+    "error_handling": "Active (structured with error IDs)",
+    "async_db": "Active (execute_db_async/write_async)",
+    "cors": "Restricted to localhost",
+    "api_versioning": "Active (/api/v2)"
+  },
+  "aps_project_scan": {
+    "timestamp": "2026-08-14T04:22:40.455112",
+    "project_path": "c:\\xampp\\htdocs\\apsdreamhome",
+    "summary": {
+      "php_files": 4373,
+      "css_files": 156,
+      "js_files": 251,
+      "html_files": 57,
+      "total_files": 4837
+    },
+    "issues": {
+      "critical": [],
+      "high": [
+        {
+          "issue": "CSS consolidation needed",
+          "count": 5,
+          "description": "184 CSS files need consolidation into design system"
+        }
+      ],
+      "medium": [],
+      "low": []
+    },
+    "ui_ux": {
+      "files_with_inline_styles": 4,
+      "files_with_inline_js": 5,
+      "files_with_hardcoded_colors": 5,
+      "files_missing_alt_tags": 0,
+      "files_with_unresponsive_tables": 0,
+      "files_missing_viewport": 0
+    },
+    "security": [
+      {
+        "file": "app\\helpers.php",
+        "pattern": "token"
+      },
+      {
+        "file": "config\\bootstrap.php",
+        "pattern": "password"
+      },
+      {
+        "file": "config\\cache.php",
+        "pattern": "password"
+      },
+      {
+        "file": "config\\check-config.php",
+        "pattern": "password"
+      },
+      {
+        "file": "config\\database.php",
+        "pattern": "password"
+      },
+      {
+        "file": "config\\deployment.php",
+        "pattern": "secret"
+      },
+      {
+        "file": "config\\gemini_config.php",
+        "pattern": "api_key"
+      },
+      {
+        "file": "config\\google_oauth_config.php",
+        "pattern": "secret"
+      },
+      {
+        "file": "config\\KeyManager.php",
+        "pattern": "password"
+      },
+      {
+        "file": "config\\logging.php",
+        "pattern": "password"
+      },
+      {
+        "file": "config\\MCPConfigLoader.php",
+        "pattern": "password"
+      },
+      {
+        "file": "lang\\en.php",
+        "pattern": "password"
+      },
+      {
+        "file": "lang\\hi.php",
+        "pattern": "password"
+      },
+      {
+        "file": "routes\\api.php",
+        "pattern": "password"
+      },
+      {
+        "file": "routes\\router.php",
+        "pattern": "password"
+      },
+      {
+        "file": "routes\\web.php",
+        "pattern": "password"
+      },
+      {
+        "file": "scripts\\audit_roles.php",
+        "pattern": "password"
+      },
+      {
+        "file": "scripts\\cron_daily_compliance.php",
+        "pattern": "token"
+      },
+      {
+        "file": "scripts\\cron_followup_reminders.php",
+        "pattern": "password"
+      },
+      {
+        "file": "scripts\\cron_lead_assignment.php",
+        "pattern": "password"
+      }
+    ],
+    "performance": [],
+    "maintenance": {
+      "_archive\\dead_views\\development_cost_calculator.php": [
+        {
+          "type": "inline_js_event",
+          "attr": "onclick=",
+          "count": 4
+        },
+        {
+          "type": "hardcoded_colors",
+          "count": 15
+        }
+      ],
+      "_archive\\dead_views\\employee_unified.php": [
+        {
+          "type": "inline_style",
+          "count": 4
+        },
+        {
+          "type": "inline_js_event",
+          "attr": "onclick=",
+          "count": 1
+        },
+        {
+          "type": "hardcoded_colors",
+          "count": 24
+        }
+      ],
+      "_archive\\dead_views\\feature-disabled.php": [
+        {
+          "type": "hardcoded_colors",
+          "count": 12
+        }
+      ],
+      "_archive\\dead_views\\network_dashboard.php": [
+        {
+          "type": "inline_style",
+          "count": 6
+        },
+        {
+          "type": "inline_js_event",
+          "attr": "onclick=",
+          "count": 2
+        },
+        {
+          "type": "hardcoded_colors",
+          "count": 20
+        }
+      ],
+      "_archive\\legacy_views\\manage_colonies.php": [
+        {
+          "type": "inline_style",
+          "count": 1
+        },
+        {
+          "type": "inline_js_event",
+          "attr": "onclick=",
+          "count": 4
+        },
+        {
+          "type": "hardcoded_colors",
+          "count": 12
+        }
+      ],
+      "_archive\\old_admin_layout\\admin.php": [
+        {
+          "type": "inline_style",
+          "count": 6
+        },
+        {
+          "type": "inline_js_event",
+          "attr": "onclick=",
+          "count": 2
+        }
+      ]
+    }
+  },
+  "tasks_completed": {
+    "total_tasks": 23,
+    "completed": 12,
+    "pending": 10,
+    "failed": 0
+  },
+  "running_services": {
+    "devmind_server": true,
+    "ollama": true,
+    "ram_usage_percent": 75.1,
+    "cpu_usage_percent": 42.4,
+    "disk_usage_percent": 23.4
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "task": "Consolidate 156 CSS files into design system",
+      "description": "Create a single design-system.css with consistent button, form, table, and card styles",
+      "output_file": "public/assets/css/design-system.css"
+    },
+    {
+      "priority": "HIGH",
+      "task": "Remove inline styles from PHP views",
+      "description": "23 files found with inline style= attributes. Move all styles to CSS classes."
+    },
+    {
+      "priority": "MEDIUM",
+      "task": "Create responsive table wrappers",
+      "description": "35 files with <table> tags without .table-responsive wrapper"
+    },
+    {
+      "priority": "MEDIUM",
+      "task": "Move inline JS to event listeners",
+      "description": "8 files with onclick/onchange inline handlers. Create separate JS files."
+    },
+    {
+      "priority": "HIGH",
+      "task": "Create color palette",
+      "description": "27 files with hardcoded #hex colors. Define CSS variables in design system."
+    },
+    {
+      "priority": "HIGH",
+      "task": "Remove deprecated PHP functions",
+      "description": "2 files use deprecated mysql_* functions. Replace with PDO/mysqli."
+    },
+    {
+      "priority": "HIGH",
+      "task": "Add accessibility attributes",
+      "description": "Images missing alt tags. Add ARIA labels to interactive elements."
+    },
+    {
+      "priority": "MEDIUM",
+      "task": "Mobile responsiveness audit",
+      "description": "Test all key pages on mobile viewport. Add missing viewport meta tags."
+    },
+    {
+      "priority": "LOW",
+      "task": "Performance optimization",
+      "description": "Optimize images, minify CSS/JS, add lazy loading for non-critical resources."
+    }
+  ]
+}

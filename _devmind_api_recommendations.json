@@ -1,0 +1,183 @@
+{
+  "recommended_for_apsdreamhome": {
+    "maps_geolocation": [
+      {
+        "name": "Geocoding - IPstack",
+        "url": "https://ipstack.com/",
+        "notes": "Geolocation by IP"
+      },
+      {
+        "name": "Geocoding - ipapi.com",
+        "url": "https://ipapi.com/",
+        "notes": "Free IP geolocation API"
+      },
+      {
+        "name": "Positionstack (APILayer)",
+        "url": "https://apilayer.com/products/positionstack",
+        "notes": "Forward + reverse geocoding, free tier"
+      }
+    ],
+    "sms_notifications": [
+      {
+        "name": "Twilio (check)",
+        "url": "https://www.twilio.com/",
+        "notes": "Already in use"
+      },
+      {
+        "name": "MessageBird",
+        "url": "https://www.messagebird.com/",
+        "notes": "Alternative to Twilio"
+      },
+      {
+        "name": "Plivo",
+        "url": "https://www.plivo.com/",
+        "notes": "SMS/API alternative"
+      },
+      {
+        "name": "Telnyx",
+        "url": "https://telnyx.com/",
+        "notes": "SMS + voice"
+      }
+    ],
+    "payments": [
+      {
+        "name": "Razorpay (check)",
+        "url": "https://razorpay.com/",
+        "notes": "Already integrated"
+      },
+      {
+        "name": "Stripe",
+        "url": "https://stripe.com/",
+        "notes": "Global payment processor"
+      },
+      {
+        "name": "PayPal",
+        "url": "https://developer.paypal.com/",
+        "notes": "PayPal API"
+      },
+      {
+        "name": "Flutterwave",
+        "url": "https://flutterwave.com/",
+        "notes": "African payments"
+      },
+      {
+        "name": "RazorpayX API",
+        "url": "https://razorpay.com/docs/x/",
+        "notes": "Business banking API"
+      }
+    ],
+    "currency_exchange": [
+      {
+        "name": "Exchangerate.host",
+        "url": "https://exchangerate.host/",
+        "notes": "Free, no key needed"
+      },
+      {
+        "name": "Currencylayer (APILayer)",
+        "url": "https://currencylayer.com/",
+        "notes": "643 exchange rates"
+      }
+    ],
+    "document_processing": [
+      {
+        "name": "Cloudmersive Convert",
+        "url": "https://cloudmersive.com/convert-api",
+        "notes": "PDF, DOC to HTML/PNG"
+      },
+      {
+        "name": "pdflayer (APILayer)",
+        "url": "https://pdflayer.com/",
+        "notes": "PDF generation"
+      },
+      {
+        "name": "Api2Convert",
+        "url": "https://www.api2convert.com/",
+        "notes": "File conversion"
+      }
+    ],
+    "ocr": [
+      {
+        "name": "OCR.Space",
+        "url": "https://ocr.space/",
+        "notes": "Free OCR API, 5000 req/day"
+      },
+      {
+        "name": "Cloudmersive OCR",
+        "url": "https://cloudmersive.com/ocr-api",
+        "notes": "Image + PDF OCR"
+      }
+    ],
+    "weather": [
+      {
+        "name": "Weatherstack",
+        "url": "https://weatherstack.com/",
+        "notes": "Free tier 1000 req/mo"
+      },
+      {
+        "name": "Open-Meteo",
+        "url": "https://open-meteo.com/",
+        "notes": "Free, no API key required"
+      }
+    ],
+    "property_real_estate": [
+      {
+        "name": "Realtor by RapidAPI",
+        "url": "https://rapidapi.com/realtordotcom-RapidAPI",
+        "notes": "Property data"
+      },
+      {
+        "name": "ATTOM Property",
+        "url": "https://developer.attomdata.com/",
+        "notes": "Property data API"
+      }
+    ],
+    "verification": [
+      {
+        "name": "Abstract API - Email Validation",
+        "url": "https://www.abstractapi.com/",
+        "notes": "Email verify free 500 req/day"
+      },
+      {
+        "name": "Numverify",
+        "url": "https://numverify.com/",
+        "notes": "Phone number validation"
+      }
+    ],
+    "indian_services": [
+      {
+        "name": "RazorpayX",
+        "url": "https://razorpay.com/docs/x/",
+        "notes": "Indian payments + banking"
+      },
+      {
+        "name": "Cashfree",
+        "url": "https://cashfree.com/",
+        "notes": "Indian payment gateway"
+      },
+      {
+        "name": "SMSAPI",
+        "url": "https://www.smsapi.com/",
+        "notes": "Indian SMS provider"
+      },
+      {
+        "name": "MSG91",
+        "url": "https://msg91.com/",
+        "notes": "Indian SMS + OTP"
+      },
+      {
+        "name": "India Post",
+        "url": "https://www.indiapost.gov.in/",
+        "notes": "Postal services API"
+      }
+    ]
+  },
+  "integration_opportunities": [
+    "Integrate Open-Meteo weather API for property location weather data",
+    "Use OCR.Space for document scanning (sale deeds, agreements)",
+    "Add Exchangerate.host for INR conversion in international listings",
+    "Integrate Abstract API for email validation on registration",
+    "Use Numverify for phone validation during lead capture",
+    "Cloudmersive for document conversion (PDF to HTML for property listings)",
+    "Positionstack geocoding for property location coordinates"
+  ]
+}

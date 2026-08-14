@@ -1,14 +1,11 @@
 <?php
-/**
- * Desktop Navbar Component
- *
- * Rendered by: header.php
- * Provides: Desktop navigation bar (lg+ screens) with mega-menu dropdowns.
- *
- * Variables available (from header.php scope):
- *   @var NavigationHelper $nav
- *   @var Closure $sc
- */
+if (!function_exists('navUrl')) {
+    function navUrl($url) {
+        $url = $url ?? '#';
+        if ($url === '#' || $url === '' || $url === null) return '#';
+        return BASE_URL . rtrim('/' . ltrim($url, '/'), '');
+    }
+}
 ?>
 
 <nav class="navbar navbar-expand-xl align-items-center" style="padding: 0.5rem 0;">
@@ -19,7 +16,7 @@
             <?php $brand = $nav->companyName(); ?>
             <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                    if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
-            <img src="<?php echo BASE_URL . rtrim('/' . ltrim(htmlspecialchars($logo), '/'), ''); ?>"
+            <img src="<?php echo navUrl($logo); ?>"
                  alt="<?php echo htmlspecialchars($brand); ?>"
                  class="logo"
                  style="height: 32px; width: auto; max-width: 110px;"
@@ -64,7 +61,7 @@
 
                         <?php if ($hasChildren): ?>
                             <a class="nav-link dropdown-toggle <?php echo $isActive ? 'active' : ''; ?>"
-                            href="<?php echo BASE_URL . $item['url']; ?>"
+                             href="#"
                                 id="navDrop<?php echo $index; ?>"
                                role="button"
                                data-bs-toggle="dropdown"
@@ -94,7 +91,7 @@
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
+                                                    <a class="mega-item" href="<?php echo navUrl($sub['url']); ?>">
                                                         <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                     </a>
@@ -154,7 +151,7 @@
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
+                                                    <a class="mega-item" href="<?php echo navUrl($sub['url']); ?>">
                                                         <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                         <?php if ($badge): ?>
@@ -224,7 +221,7 @@
                                         <?php if (isset($sub['disabled'])): ?>
                                             <li><span class="dropdown-item-text text-muted"><?php echo __($sub['label']); ?></span></li>
                                         <?php else: ?>
-                                            <a class="dropdown-item" href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
+                                            <a class="dropdown-item" href="<?php echo navUrl($sub['url']); ?>">
                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
                                                 <?php echo __($sub['label']); ?>
                                                 <?php if (isset($sub['badge'])): ?>
@@ -238,7 +235,7 @@
                             </ul>
                         <?php else: ?>
                             <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-primary fw-bold' : ''; ?>"
-href="<?php echo BASE_URL . rtrim('/' . ltrim($item['url'] ?? '#', '/'), ''); ?>"
+                                href="<?php echo navUrl($item['url'] ?? '#'); ?>"
                                <?php echo ($item['highlight'] ?? false) ? 'style="color:#dc3545 !important;"' : ''; ?>>
                                 <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
                                 <?php echo __($item['label']); ?>
@@ -282,7 +279,7 @@ href="<?php echo BASE_URL . rtrim('/' . ltrim($item['url'] ?? '#', '/'), ''); ?>
                             <?php foreach ($nav->getUserMenuItems() as $link): ?>
                                 <li>
                                     <a class="dropdown-item d-flex justify-content-between align-items-center"
-                                       href="<?php echo BASE_URL . rtrim('/' . ltrim($link['url'] ?? '#', '/'), ''); ?>">
+                                       href="<?php echo navUrl($link['url'] ?? '#'); ?>">
                                         <span>
                                             <i class="<?php echo $link['icon']; ?> me-2"></i><?php echo __($link['label']); ?>
                                         </span>
