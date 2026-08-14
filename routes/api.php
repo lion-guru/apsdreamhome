@@ -747,10 +747,10 @@ $router->get('/api/esign/booking/{bookingId}', 'Api\ESignController@getByBooking
 $router->post('/api/esign/callback', 'Api\ESignController@callback');
 
 // --- Document E-Sign API (New - Property Transaction Documents) ---
-$router->post('/api/v2/mobile/document-esign/store', 'Api\DocumentEsignApiController@store');
-$router->post('/api/v2/mobile/document-esign/sign/{id}', 'Api\DocumentEsignApiController@sign');
-$router->get('/api/v2/mobile/document-esign/{id}', 'Api\DocumentEsignApiController@getDocument');
-$router->get('/api/v2/mobile/document-esign', 'Api\DocumentEsignApiController@getDocuments');
+$router->post('/api/v2/mobile/document-esign/store', 'Api\DocumentEsignApiController@store')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/document-esign/sign/{id}', 'Api\DocumentEsignApiController@sign')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/document-esign/{id}', 'Api\DocumentEsignApiController@getDocument')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/document-esign', 'Api\DocumentEsignApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // INFRASTRUCTURE & DEBUGGING API (Admin Tools)

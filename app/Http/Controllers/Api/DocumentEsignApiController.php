@@ -28,7 +28,7 @@ class DocumentEsignApiController extends BaseApiController
             'document_type' => $input['document_type'] ?? 'transaction',
             'title' => $input['title'] ?? '',
             'content' => $input['content'] ?? '',
-            'created_by' => $this->getUserId(),
+            'created_by' => (int)($GLOBALS['api_user_id'] ?? 0),
             'tenant_id' => TenantContext::getId(),
         ];
 
@@ -51,7 +51,7 @@ class DocumentEsignApiController extends BaseApiController
         $input = $this->getJsonInput();
         $data = [
             'signature_data' => $input['signature_data'] ?? null,
-            'signed_by' => $this->getUserId(),
+            'signed_by' => (int)($GLOBALS['api_user_id'] ?? 0),
             'signed_at' => date('Y-m-d H:i:s'),
             'verification_code' => $input['verification_code'] ?? bin2hex(random_bytes(16)),
         ];
