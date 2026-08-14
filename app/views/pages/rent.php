@@ -104,6 +104,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 <div class="container" style="position:relative;z-index:5">
     <div class="rent-filter-glass mb-4">
         <form method="GET" action="<?= BASE_URL ?>/rent" class="row g-3 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label"><i class="fas fa-search me-1"></i>Search</label>
                 <input type="text" class="form-control" name="q" placeholder="Name, address..." value="<?= htmlspecialchars($filters['q'] ?? '') ?>">

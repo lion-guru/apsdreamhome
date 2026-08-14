@@ -99,6 +99,7 @@ ob_start();
     </div>
     <div class="card-body">
       <form method="get" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
         <div class="col-md-3">
           <label class="form-label small">User Role</label>
           <select name="user_role" class="form-select form-select-sm">

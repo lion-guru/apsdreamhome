@@ -90,7 +90,7 @@
         <!-- Colonies Grid -->
         <div class="row" id="colonies-container">
             <?php foreach ($colonies as $index => $colony): ?>
-                <div class="col-lg-4 col-md-6 colony-item" data-location="<?php echo strtolower(explode(',', $colony['location'])[0]); ?>" data-aos="fade-up" data-aos-delay="<?php echo ($index * 100); ?>">
+                <div class="col-lg-4 col-md-6 colony-item" data-location="<?php echo strtolower(explode(',', $colony['location'])[0]); ?>">
                     <div class="colony-card">
                         <div class="colony-image">
                             <?php
@@ -201,6 +201,7 @@
             </div>
             <div class="modal-body">
                 <form id="interestForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" id="colony_id" name="colony_id">
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_name') ?></label>

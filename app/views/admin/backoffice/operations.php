@@ -5,6 +5,7 @@
     <a href="<?= BASE_URL ?>/admin/backoffice/operations/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('admin_new_entry') ?></a>
   </div>
   <form class="row g-2 mb-4" method="get">
+    <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto"><input type="date" name="date" class="form-control" value="<?= $filter_date ?>"></div>
     <div class="col-auto"><select name="log_type" class="form-select">
       <option value=""><?= __('admin_all_types') ?></option>

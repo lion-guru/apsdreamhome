@@ -16,6 +16,7 @@
                 <div class="col"><h5 class="mb-0"><i class="fas fa-list me-2"></i>All Favorites</h5></div>
                 <div class="col-auto">
                     <form method="GET" class="d-flex">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search property or user..." value="<?= htmlspecialchars($search ?? '') ?>" style="width:250px">
                         <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-search"></i></button>
                         <?php if (!empty($search)): ?>

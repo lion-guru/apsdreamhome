@@ -30,6 +30,7 @@ $filterTo = $_GET['to'] ?? '';
         <div class="aps-cp-card-header"><i class="fas fa-filter me-2"></i>Filters</div>
         <div class="aps-cp-card-body">
             <form method="GET" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-2">
                     <label class="form-label small">Status</label>
                     <select name="status" class="form-select form-select-sm">

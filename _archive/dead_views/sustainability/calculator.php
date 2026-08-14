@@ -18,6 +18,7 @@
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-sliders-h me-2 text-success"></i>Calculate Your Property's Sustainability Score</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <form id="sustainabilityForm" onsubmit="event.preventDefault(); calculateScore();">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Energy Rating (1-5)</label>

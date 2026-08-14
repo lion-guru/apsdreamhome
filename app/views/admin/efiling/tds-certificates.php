@@ -14,6 +14,7 @@ ob_start();
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-auto">
                 <select name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>

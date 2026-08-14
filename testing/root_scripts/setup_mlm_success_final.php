@@ -427,6 +427,7 @@ function generateMLMView($view) {
     if ($viewName == 'create') {
         $baseContent .= '
                     <form method="POST" action="/admin/mlm/associates/create">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">

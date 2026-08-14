@@ -6,6 +6,7 @@
 <div class="card mb-3">
     <div class="card-body aps-cp-card-body">
         <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label"><?= __('hr_designation') ?></label>
                 <select name="role" class="form-select">

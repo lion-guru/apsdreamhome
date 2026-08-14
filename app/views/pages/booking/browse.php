@@ -30,6 +30,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="aps-cp-card-body">
             <form method="GET" action="<?= $baseUrl ?>/plots/browse" id="plotFilters">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold"><?= __('browse_colony') ?></label>

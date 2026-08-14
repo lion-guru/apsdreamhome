@@ -15,6 +15,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="get" action="<?= BASE_URL ?>payments/history" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label small">Status</label>
                     <select class="form-select form-select-sm" name="status">

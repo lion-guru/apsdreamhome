@@ -5,6 +5,7 @@
 <div class="card mb-3">
     <div class="card-body aps-cp-card-body">
         <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label">Date From</label>
                 <input type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>">

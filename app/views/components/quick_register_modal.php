@@ -12,6 +12,7 @@
                 <p class="text-muted mb-4"><?= __('component_join_aps_seconds', 'Join APS Dream Home in seconds! No password needed.') ?></p>
                 
                 <form id="quickRegisterForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
                         <input type="text" class="form-control" id="qrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
@@ -78,6 +79,7 @@
                 <p class="text-muted mb-4"><?= __('component_get_company_referral', 'Get your company referral code to join as Associate/Agent!') ?></p>
                 
                 <form id="referralRequestForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
                         <input type="text" class="form-control" id="rrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">

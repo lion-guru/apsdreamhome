@@ -25,6 +25,7 @@ $currentFilters = $currentFilters ?? [];
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="saveSearchForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="modal-body">
                     <p class="text-muted small"><?= __('component_save_filters_description', 'Save your current filters to access this search later and (optionally) receive email alerts when new properties match.') ?></p>
 

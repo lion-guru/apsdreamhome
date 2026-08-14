@@ -48,6 +48,7 @@ $registryLabels = [
     </div>
     <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/registry">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="row">
                 <div class="col-md-4">
                     <label class="form-label">Search</label>

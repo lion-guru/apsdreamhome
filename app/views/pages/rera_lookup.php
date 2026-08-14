@@ -14,6 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
                     <form method="get" action="<?= $base ?>/rera-lookup">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="input-group input-group-lg">
                             <input type="text" name="rera_number" class="form-control" placeholder="<?= __('rera_placeholder', [], 'Enter RERA Number (e.g., UP/RERA/2026/XXXXX)') ?>" value="<?= htmlspecialchars($_GET['rera_number'] ?? '') ?>" required>
                             <button type="submit" class="btn btn-primary"><i class="fas fa-search me-2"></i><?= __('rera_lookup_button', [], 'Lookup') ?></button>

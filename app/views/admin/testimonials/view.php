@@ -110,6 +110,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <form id="testimonialActionForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Update Status</label>
                             <select name="status" class="form-select" id="statusSelect">

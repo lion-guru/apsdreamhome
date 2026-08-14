@@ -173,6 +173,7 @@ include __DIR__ . '/../layouts/base.php';
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <hr class="border-secondary opacity-25">
                         <form id="lead-form">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <h6 class="text-white-50 small mb-2">Or request a callback:</h6>
                             <div class="mb-2">
                                 <input type="text" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Your Name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">

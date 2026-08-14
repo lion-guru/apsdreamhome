@@ -48,6 +48,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/voice-users/extracted-leads">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label small">Interest Level</label>

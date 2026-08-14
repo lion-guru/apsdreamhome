@@ -76,6 +76,7 @@ $defectLabels = [
     </div>
     <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/possession">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="row">
                 <div class="col-md-4">
                     <label class="form-label">Search</label>

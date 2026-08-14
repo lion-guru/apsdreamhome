@@ -125,6 +125,7 @@ $statusBadgeClass = [
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <?php if ($agreement['status'] === 'draft'): ?>
                 <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$agreement['id'] ?>">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <button type="submit" class="btn btn-warning btn-sm">
                         <i class="fas fa-paper-plane me-1"></i>Send for Signature
                     </button>
@@ -132,12 +133,14 @@ $statusBadgeClass = [
             <?php endif; ?>
             <?php if ($agreement['status'] === 'pending'): ?>
                 <form method="POST" action="<?= $base ?>/admin/agent-agreements/sign/<?= (int)$agreement['id'] ?>">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <button type="submit" class="btn btn-success btn-sm">
                         <i class="fas fa-check me-1"></i>Sign Agreement
                     </button>
                 </form>
             <?php endif; ?>
             <form method="POST" action="<?= $base ?>/admin/agent-agreements/cancel/<?= (int)$agreement['id'] ?>">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this agreement?')">
                     <i class="fas fa-times me-1"></i>Cancel Agreement
                 </button>

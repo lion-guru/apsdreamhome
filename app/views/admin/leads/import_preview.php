@@ -14,6 +14,7 @@ $success_rows = $total_rows - $error_rows;
             <a href="<?= $base ?>/admin/leads/import" class="btn btn-outline-secondary btn-sm me-2"><i class="fas fa-arrow-left me-1"></i>Back</a>
             <?php if ($success_rows > 0): ?>
                 <form action="<?= $base ?>/admin/leads/import/commit" method="POST" style="display:inline;">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Import <?= $success_rows ?> leads?')">
                         <i class="fas fa-check me-1"></i>Import <?= $success_rows ?> Leads
                     </button>

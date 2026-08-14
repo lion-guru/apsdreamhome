@@ -14,6 +14,7 @@ $offers = $offers ?? [];
                 <div class="aps-cp-card-header"><i class="fas fa-sliders-h me-2"></i>Calculate Loan</div>
                 <div class="aps-cp-card-body">
                     <form method="GET" id="calcForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Loan Amount (₹)</label>
                             <input type="number" name="amount" class="form-control" value="<?= htmlspecialchars($_GET['amount'] ?? '1000000') ?>" min="10000" step="10000">

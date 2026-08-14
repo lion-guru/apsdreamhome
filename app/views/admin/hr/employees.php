@@ -9,6 +9,7 @@ $page_title = $page_title ?? 'users';
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
                 <label class="form-label small">Search</label>
                 <input type="text" name="search" class="form-control" placeholder="Name, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">

@@ -5,6 +5,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <select name="employee_id" class="form-select">
                         <option value="">All users</option>

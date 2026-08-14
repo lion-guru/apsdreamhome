@@ -7,6 +7,7 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Calculate ROI</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <form id="edgeRoiForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Initial Investment (₹)</label>
                             <input type="number" name="initial_investment" class="form-control" placeholder="e.g. 1000000" value="1000000">

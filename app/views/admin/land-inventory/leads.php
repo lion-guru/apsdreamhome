@@ -43,6 +43,7 @@ $statusColors = [
         </div>
         <div class="aps-cp-card-body">
             <form method="get" class="row g-3 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label small">Status</label>
                     <select name="status" class="form-select form-select-sm">

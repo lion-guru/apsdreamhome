@@ -15,6 +15,7 @@
                     <div class="card-body p-4">
                         <h4 class="mb-4 text-center"><?= __('buy_search_title') ?></h4>
                         <form action="<?php echo BASE_URL; ?>/properties" method="GET">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <select name="type" class="form-select">

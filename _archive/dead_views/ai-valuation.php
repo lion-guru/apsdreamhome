@@ -20,6 +20,7 @@ include __DIR__ . '/../layouts/base.php';
                     <div class="valuation-form-card">
                         <h3><i class="fas fa-home me-2"></i>Property Details</h3>
                         <form id="valuationForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Location</label>

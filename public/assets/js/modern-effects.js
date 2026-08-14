@@ -320,7 +320,9 @@
     initCounters();
     init3DTilt();
     initNavbarScroll();
-    initSectionTransitions();
+    // initSectionTransitions() REMOVED — conflicts with premium-animations.js
+    // That function adds .reveal to ALL <section> tags, setting opacity: 0,
+    // which hides all homepage content. premium-animations.js handles reveals.
 
     // Particles on hero (if canvas exists)
     initParticles('particles-canvas');

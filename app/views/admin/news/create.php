@@ -10,6 +10,7 @@
 <div class="card aps-cp-card">
     <div class="card-body aps-cp-card-body">
         <form id="newsForm">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="row">
                 <div class="col-md-8">
                     <div class="mb-3">

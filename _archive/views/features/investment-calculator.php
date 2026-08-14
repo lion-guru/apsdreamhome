@@ -9,6 +9,7 @@
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Input Parameters</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <form id="calcForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Property Price (INR)</label>
                             <input type="number" name="price" class="form-control" value="<?= (int)($input['price'] ?? 5000000) ?>" required>

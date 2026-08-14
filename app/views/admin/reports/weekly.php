@@ -5,6 +5,7 @@
                 <h4 class="mb-0">Weekly Report</h4>
                 <div>
                     <form method="GET" class="d-inline-flex align-items-center gap-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <label class="form-label mb-0 me-1">From:</label>
                         <input type="date" name="week_start" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['week_start'] ?? date('Y-m-d')); ?>">
                         <label class="form-label mb-0 me-1">To:</label>

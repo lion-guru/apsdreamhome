@@ -30,6 +30,7 @@ $statusColors = [
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="get" action="<?=$base?>/admin/chat-history" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <label class="form-label small">Status</label>
                     <select name="status" class="form-select form-select-sm">

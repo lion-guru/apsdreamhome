@@ -6,6 +6,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= $base ?? BASE_URL ?>/logging/search" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Keyword</label>
                     <input type="text" name="q" class="form-control" placeholder="Search message, file, IP..." value="<?= htmlspecialchars($query ?? '') ?>">

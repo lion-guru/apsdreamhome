@@ -10,6 +10,7 @@
 <div class="card shadow-sm mb-3">
     <div class="card-body py-2">
         <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-auto">
                 <select name="status" class="form-select form-select-sm">
                     <option value="">All Status</option>

@@ -12,6 +12,7 @@ include __DIR__ . '/../layouts/base.php';
                 <p class="lead text-white-50 mb-4">Explore exclusive residential and commercial opportunities in Uttar Pradesh's prime locations.</p>
                 
                 <form class="row g-3 justify-content-center">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-5">
                         <div class="input-group input-group-lg">
                             <span class="input-group-text bg-transparent border-end-0 text-white-50"><i class="bi bi-search"></i></span>

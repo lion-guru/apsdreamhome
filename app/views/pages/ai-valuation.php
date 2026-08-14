@@ -27,6 +27,7 @@ $content = $content ?? '';
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <form id="valuation-form">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?= __('user_ai_valuation_label_location', 'Location') ?></label>

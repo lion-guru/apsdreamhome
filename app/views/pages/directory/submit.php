@@ -14,6 +14,7 @@
                     <p class="text-muted mb-4">Get discovered by thousands of people looking for real estate services in your area. Free listing!</p>
 
                     <form method="POST">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Business/Service Name *</label>

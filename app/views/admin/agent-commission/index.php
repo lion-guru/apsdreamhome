@@ -180,6 +180,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="ac-card">
                 <h5><i class="fas fa-user-plus me-2" style="color:#8b5cf6;"></i>Assign Agent to Property</h5>
                 <form method="POST" action="<?= $base ?>/admin/agent-commission/assign" class="ac-form">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label>Select Agent</label>
                         <select name="agent_user_id" required>

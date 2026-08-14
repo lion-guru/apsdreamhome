@@ -27,6 +27,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
     <div class="aag-card">
         <form method="POST" action="<?= $base ?>/admin/agent-agreements/store" class="aag-form">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="row">
                 <div class="col-md-6">
                     <label>Agent *</label>

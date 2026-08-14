@@ -348,6 +348,7 @@ if (!function_exists('navUrl')) {
                 <!-- Quick Search Typeahead (Desktop) -->
                 <li class="nav-item ms-2 d-none d-xl-inline-block">
                     <form id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off" class="d-flex align-items-center position-relative">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="search" class="form-control border-start-0" id="quickSearchInput"
                                placeholder="<?= __('search_properties') ?>..."
                                aria-label="<?= __('search_properties') ?>"

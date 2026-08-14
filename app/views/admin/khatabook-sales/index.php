@@ -37,6 +37,7 @@
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
                     <form method="GET" class="row g-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="col-md-4">
                             <input type="text" name="search" class="form-control form-control-sm" placeholder="Search name/phone/ref..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                         </div>

@@ -108,6 +108,7 @@ $stats = [
         <div class="ai-chatbot mb-4">
             <strong><i class="fa-solid fa-robot"></i> Ask AI (Chatbot):</strong>
             <form id="aiChatForm" class="d-flex mt-2" onsubmit="return false;">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <input type="text" class="form-control me-2" id="aiChatInput" placeholder="Ask about your projects, budgets, or deadlines...">
                 <button class="btn btn-primary" onclick="sendAIQuery()"><i class="fa-solid fa-paper-plane"></i></button>
             </form>

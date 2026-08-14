@@ -24,6 +24,7 @@ $_date = $date ?? date('Y-m-d');
             <div class="card card-outline mb-3">
                 <div class="card-body">
                     <form method="GET" class="form-inline">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <label class="mr-2">Agent:</label>
                         <select name="agent" class="form-control form-control-sm mr-3">
                             <option value="">All Agents</option>

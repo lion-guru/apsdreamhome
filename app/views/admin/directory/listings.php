@@ -7,6 +7,7 @@
     <div class="card shadow-sm">
         <div class="card-header aps-cp-card-header">
             <form method="GET" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
                         <option value="">All Status</option>

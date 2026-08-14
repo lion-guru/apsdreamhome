@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-08-14T16:16:19.816708",
+  "helpers_created": [
+    "CSRFProtection.php",
+    "input_validator.php",
+    "ErrorHandler.php",
+    "AuditLogger.php"
+  ],
+  "csrf_fixes": [
+    {
+      "file": "vendor\\tecnickcom\\tcpdf\\tcpdf.php",
+      "forms": 1,
+      "size_kb": 890,
+      "status": "manual_review_needed",
+      "reason": "File too large for automatic modification"
+    },
+    {
+      "file": "testing\\root_scripts\\adminer.php",
+      "forms": 27,
+      "size_kb": 465,
+      "status": "manual_review_needed",
+      "reason": "File too large for automatic modification"
+    },
+    {
+      "file": "testing\\root_scripts\\deep_interactive_test.php",
+      "forms": 1,
+      "status": "csrf_field_missing"
+    },
+    {
+      "file": "testing\\root_scripts\\ui_test.php",
+      "forms": 1,
+      "status": "csrf_field_missing"
+    },
+    {
+      "file": ".history\\app\\views\\layouts\\header_20260626011112.php",
+      "forms": 1,
+      "status": "csrf_field_missing"
+    }
+  ],
+  "form_files_found": 5,
+  "csrf_patches_applied": 0,
+  "needs_manual_review": 6
+}

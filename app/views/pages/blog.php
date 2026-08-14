@@ -43,6 +43,7 @@
                 <h3 class="mb-3 text-gold"><?= __('blog_newsletter_title') ?></h3>
                 <p class="mb-4 text-white-50"><?= __('blog_newsletter_desc') ?></p>
                 <form class="d-flex gap-2" id="blogNewsletterForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required style="border-radius: 8px;">
                     <button type="submit" class="btn btn-gold px-4 fw-bold" style="border-radius: 8px;">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>

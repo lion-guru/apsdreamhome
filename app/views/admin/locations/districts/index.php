@@ -22,6 +22,7 @@
             <div class="card mb-4">
                 <div class="card-body aps-cp-card-body">
                     <form method="GET" action="<?= BASE_URL ?>/admin/locations/districts">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="state_id" class="form-label">Filter by State</label>

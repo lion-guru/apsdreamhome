@@ -74,11 +74,13 @@ ob_start();
                 </div>
                 <div class="card-footer bg-white">
                     <form id="chatForm" class="d-flex gap-2 mb-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="hidden" id="sessionId" value="<?= $session['id'] ?>">
                         <input type="text" id="messageInput" class="form-control" placeholder="Type your reply..." autocomplete="off" required>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
                     </form>
                     <form id="internalForm" class="d-flex gap-2 mb-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="hidden" name="is_internal" value="1">
                         <input type="text" name="message" class="form-control form-control-sm" placeholder="Internal note (not visible to visitor)...">
                         <button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-sticky-note"></i></button>

@@ -95,6 +95,7 @@ ob_start();
                                 <?php if (!$auction['deposit_amount'] || $has_deposit): ?>
                                     <h6 class="mb-2"><?= __('auction_place_bid', [], 'Place Your Bid') ?></h6>
                                     <form id="bidForm" class="d-flex gap-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                                         <input type="hidden" name="auction_id" value="<?= $auction['id'] ?>">
                                         <input type="number" name="amount" id="bidAmount" class="form-control" step="0.01" min="<?= ($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment'] ?>" placeholder="Enter bid amount" required>
                                          <button type="submit" class="btn btn-primary"><i class="fas fa-gavel me-1"></i> <?= __('auction_bid_btn', [], 'Bid') ?></button>

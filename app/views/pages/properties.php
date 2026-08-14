@@ -161,6 +161,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         <div class="collapse" id="advancedFilters">
             <div class="filter-body">
                 <form method="GET" action="<?php echo BASE_URL; ?>/properties" id="propertyFilterForm" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-4">
                         <label for="q" class="form-label"><i class="fas fa-search me-1"></i><?= __('keyword') ?></label>
                         <input type="text" class="form-control" id="q" name="q" placeholder="Search by name, address..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
@@ -572,6 +573,7 @@ function submitPropertyInterest(e) {
             </div>
             <div class="modal-body">
                 <form id="propInterestForm" onsubmit="submitPropertyInterest(event)">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="property_id" id="propInterestId">
                     <input type="hidden" name="source" value="property_listing">
                     <div class="mb-3">

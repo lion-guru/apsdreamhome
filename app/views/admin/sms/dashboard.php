@@ -149,6 +149,7 @@ $page_title = "SMS Dashboard";
                 </div>
                 <div class="modal-body">
                     <form id="sendSMSForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Mobile Number</label>
                             <input type="tel" class="form-control" name="mobile" placeholder="9876543210" required>

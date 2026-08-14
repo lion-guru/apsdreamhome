@@ -422,6 +422,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="bookingForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="modal-body">
                     <input type="hidden" name="project_code" value="<?= htmlspecialchars($project['project_code']) ?>">
 

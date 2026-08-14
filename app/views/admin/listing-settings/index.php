@@ -40,6 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="listing-card">
                 <h5><i class="fas fa-sliders-h me-2"></i>General Settings</h5>
                 <form method="POST" action="<?= $base ?>/admin/listing-settings/update">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <?php foreach ($settings as $s): ?>
                     <div class="setting-row">
                         <label><?= htmlspecialchars($s['description'] ?? $s['setting_key']) ?></label>
@@ -60,6 +61,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <h5><i class="fas fa-box me-2"></i>Listing Packages</h5>
                 <?php foreach ($packages as $pkg): ?>
                 <form method="POST" action="<?= $base ?>/admin/listing-settings/package/update" style="margin-bottom: 12px; padding: 12px; background: #0f172a; border-radius: 8px;">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="id" value="<?= $pkg['id'] ?>">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <strong style="color: #f8fafc;"><?= htmlspecialchars($pkg['name']) ?></strong>

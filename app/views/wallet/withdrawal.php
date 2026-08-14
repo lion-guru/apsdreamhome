@@ -158,6 +158,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body aps-cp-card-body">
                     <form id="withdrawalForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <!-- Select Bank Account -->
                         <div class="mb-4">
                             <label class="form-label fw-bold">Select Bank Account</label>

@@ -17,6 +17,7 @@ $content = $content ?? '';
   <div class="card shadow-sm mb-4">
     <div class="card-body aps-cp-card-body">
       <form method="GET" class="row g-2">
+    <?php echo CSRFProtection::csrfField(); ?>
         <div class="col-md-3">
           <label class="small text-muted"><?= __('user_resell_public_property_type', 'Property Type') ?></label>
           <select name="property_type" class="form-select">

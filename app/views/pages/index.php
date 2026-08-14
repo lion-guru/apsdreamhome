@@ -78,6 +78,7 @@
                     <div class="search-card shadow-lg">
                         <h3 class="text-center mb-4">Quick Property Search</h3>
                         <form id="quickSearchForm" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <div class="col-md-3">
                                 <label class="form-label">Property Type</label>
                                 <select class="form-select" name="property_type">
@@ -495,6 +496,7 @@
                     <div class="contact-form-card shadow-lg">
                         <div class="card-body p-5">
                             <form id="contactForm" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                                 <div class="col-md-6">
                                     <label class="form-label">Your Name *</label>
                                     <input type="text" class="form-control" name="name" required>

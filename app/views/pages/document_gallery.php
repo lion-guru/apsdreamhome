@@ -24,6 +24,7 @@ $searchQuery = $search_query ?? '';
     <div class="card mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/documents" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-6">
                     <label for="q" class="form-label"><?= __('common_search') ?></label>
                     <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('document_search_placeholder') ?>" value="<?= htmlspecialchars($searchQuery) ?>">

@@ -67,6 +67,7 @@ $recent_logs = $recent_logs ?? [];
                 <div class="collapse" id="aiForm">
                     <div class="card-body border-bottom bg-light">
                         <form id="aiScheduleForm" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <div class="col-auto">
                                 <label class="form-label mb-0 small">Min Score</label>
                                 <input type="number" name="min_score" class="form-control form-control-sm" value="70" min="0" max="100" style="width:90px">

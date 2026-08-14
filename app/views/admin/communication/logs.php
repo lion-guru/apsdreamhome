@@ -24,6 +24,7 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Channel</label>
                     <select name="channel" class="form-select">

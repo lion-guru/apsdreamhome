@@ -59,6 +59,7 @@ $flash = $flash ?? [];
         </div>
         <div class="card-body aps-cp-card-body">
             <form id="pdfGenerateForm" class="row g-3 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Type</label>
                     <select name="type" class="form-select" required>

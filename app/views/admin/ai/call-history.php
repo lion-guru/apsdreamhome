@@ -53,6 +53,7 @@ $base = BASE_URL . '/admin/ai-calling/history';
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <form method="get" action="<?= $base ?>">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Search</label>

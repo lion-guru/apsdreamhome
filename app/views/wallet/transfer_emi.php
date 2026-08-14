@@ -149,6 +149,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body aps-cp-card-body">
                     <form id="transferForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Selected EMI</label>
                             <input type="text" class="form-control" id="selectedEmi" readonly placeholder="Select an EMI">

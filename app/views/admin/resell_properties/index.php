@@ -53,6 +53,7 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h6 class="mb-0">All Listings (<?= $total ?>)</h6>
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/admin/resell-properties">
+    <?php echo CSRFProtection::csrfField(); ?>
             <input type="text" class="form-control form-control-sm" name="search" placeholder="Search..." value="<?= htmlspecialchars($search) ?>">
             <select class="form-select form-select-sm" name="status" style="width:auto">
                 <option value="">All Status</option>

@@ -96,6 +96,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="addKeyForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label for="keyName" class="form-label">Key Name</label>
                             <input type="text" class="form-control" id="keyName" required>

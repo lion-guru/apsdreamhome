@@ -107,6 +107,7 @@
             <h3><?= __('news_subscribe_title') ?></h3>
             <p class="text-muted mb-4"><?= __('news_subscribe_desc') ?></p>
             <form class="newsletter-form" id="newsletterForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <div class="input-group">

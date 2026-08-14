@@ -8,6 +8,7 @@
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-sliders me-2"></i>Investment Parameters</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <form id="roiForm" onsubmit="event.preventDefault(); calculateROI();">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Security Investment Amount (₹)</label>
                             <input type="number" class="form-control" id="security_investment" value="5000000" min="100000" step="100000">

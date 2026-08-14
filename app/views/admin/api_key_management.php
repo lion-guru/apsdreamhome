@@ -179,6 +179,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="addMcpKeyForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label for="mcpKeyName" class="form-label">Key Name</label>
                             <input type="text" class="form-control" id="mcpKeyName" required>
@@ -224,6 +225,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="addUserKeyForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label for="userName" class="form-label">Key Name</label>
                             <input type="text" class="form-control" id="userName" required>

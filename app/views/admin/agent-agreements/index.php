@@ -116,16 +116,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <a href="<?= $base ?>/admin/agent-agreements/detail/<?= (int)$a['id'] ?>" class="aag-btn aag-btn-view"><i class="fas fa-eye"></i></a>
                             <?php if ($a['status'] === 'draft'): ?>
                                 <form method="POST" action="<?= $base ?>/admin/agent-agreements/send/<?= (int)$a['id'] ?>" style="display:inline;">
+    <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-send"><i class="fas fa-paper-plane"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if ($a['status'] === 'pending'): ?>
                                 <form method="POST" action="<?= $base ?>/admin/agent-agreements/sign/<?= (int)$a['id'] ?>" style="display:inline;">
+    <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-sign"><i class="fas fa-check"></i></button>
                                 </form>
                             <?php endif; ?>
                             <?php if (in_array($a['status'], ['draft', 'pending'])): ?>
                                 <form method="POST" action="<?= $base ?>/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" style="display:inline;">
+    <?php echo CSRFProtection::csrfField(); ?>
                                     <button type="submit" class="aag-btn aag-btn-cancel" onclick="return confirm('Cancel this agreement?')"><i class="fas fa-times"></i></button>
                                 </form>
                             <?php endif; ?>

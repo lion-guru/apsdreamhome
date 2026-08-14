@@ -19,6 +19,7 @@ if (!empty($selected) && !empty($properties)) {
     </div>
     <div class="card-body">
         <form method="GET" action="<?= BASE_URL ?>/associate/compare" class="mb-4">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="row g-2 align-items-end">
                 <div class="col-md-10">
                     <label class="form-label fw-bold"><?= __('assoc_cmp_select_hint', [], 'Select properties to compare (max 4)') ?></label>

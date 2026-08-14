@@ -312,6 +312,7 @@ $page_title = "Property Purchase - " . h($property['title']);
         <?php endif; ?>
 
         <form method="POST" action="">
+    <?php echo CSRFProtection::csrfField(); ?>
             <input type="hidden" name="property_id" value="<?php echo $property_id; ?>">
 
             <div class="form-group">

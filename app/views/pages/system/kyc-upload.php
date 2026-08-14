@@ -115,6 +115,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
                 </div>
 
                 <form id="kycUploadForm" enctype="multipart/form-data" novalidate>
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="row g-4">
                         <div class="col-md-4">
                             <div class="upload-box p-3 border-2 border-dashed rounded-3 text-center bg-light">

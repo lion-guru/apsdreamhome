@@ -12,6 +12,7 @@
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter</h6></div>
                 <div class="card-body aps-cp-card-body">
                     <form method="get" action="<?= BASE_URL ?>careers">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label small">Department</label>
                             <select class="form-select form-select-sm" name="category">

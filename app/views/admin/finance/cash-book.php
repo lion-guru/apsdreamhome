@@ -8,6 +8,7 @@
     <div class="aps-cp-card mb-4">
         <div class="aps-cp-card-body">
             <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="url" value="/admin/finance/cash-book">
                 <div class="col-md-3"><label class="form-label small"><?php echo __('finance_from'); ?></label><input type="date" name="from" value="<?= htmlspecialchars($from) ?>" class="form-control form-control-sm"></div>
                 <div class="col-md-3"><label class="form-label small"><?php echo __('finance_to'); ?></label><input type="date" name="to" value="<?= htmlspecialchars($to) ?>" class="form-control form-control-sm"></div>

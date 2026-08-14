@@ -40,6 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <!-- Tool Form (collapsible) -->
                     <div class="tool-form" style="display: none;">
                         <form id="tool-form-<?= $tool['id'] ?>" class="tool-calc-form">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <?php foreach ($tool['fields'] as $field): ?>
                             <div class="mb-2">
                                 <label class="form-label small fw-bold"><?= htmlspecialchars($field['label']) ?>

@@ -10,6 +10,7 @@
 <div class="card mb-4">
     <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
                 <input type="text" name="search" class="form-control" placeholder="Search articles..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
             </div>

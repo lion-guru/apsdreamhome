@@ -6,6 +6,7 @@
     <div class="aps-cp-card mb-4">
         <div class="aps-cp-card-body">
             <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="url" value="/admin/finance/tds-certificates">
                 <div class="col-md-3"><label class="form-label small"><?php echo __('finance_fy'); ?></label>
                     <select name="fy" class="form-select form-select-sm">

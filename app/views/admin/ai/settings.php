@@ -54,6 +54,7 @@ $engine_status = $engine_status ?? [];
     <div class="card" style="border-radius:16px;border:1px solid #f0f0f5">
         <div class="card-body p-4">
             <form method="POST">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row g-4">
                     <!-- Groq -->
                     <div class="col-md-6">

@@ -133,6 +133,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
+    <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

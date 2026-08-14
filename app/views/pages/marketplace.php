@@ -95,6 +95,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
   <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-body">
       <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
         <div class="col-md-2">
           <label class="form-label small">Property Type</label>
           <select name="type" class="form-select form-select-sm">

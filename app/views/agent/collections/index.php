@@ -58,6 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <form method="GET" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <label class="form-label small mb-1">Status</label>
                     <select name="status" class="form-select form-select-sm">

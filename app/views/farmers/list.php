@@ -16,6 +16,7 @@
                 <div class="d-flex">
                     <!-- Search Form -->
                     <form class="form-inline mr-3" method="GET" action="<?php echo BASE_URL; ?>/farmers/search">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="input-group">
                             <input type="text"
                                    name="q"

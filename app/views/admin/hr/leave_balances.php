@@ -9,6 +9,7 @@ $page_title = $page_title ?? 'Leave Balances';
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label small">Year</label>
                 <select name="year" class="form-select" onchange="this.form.submit()">

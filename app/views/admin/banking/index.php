@@ -101,6 +101,7 @@ $page_title = 'Banking & Reconciliation';
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/banking" class="row g-3 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Financial Year</label>
                     <select class="form-select" name="financial_year">

@@ -25,6 +25,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <form method="POST">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="card card-outline card-teal">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-cog"></i> Configuration</h3>

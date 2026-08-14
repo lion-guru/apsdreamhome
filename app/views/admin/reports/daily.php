@@ -5,6 +5,7 @@
                 <h4 class="mb-0">Daily Report</h4>
                 <div>
                     <form method="GET" class="d-inline-flex align-items-center gap-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="date" name="date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['date'] ?? date('Y-m-d')); ?>">
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> View</button>
                     </form>

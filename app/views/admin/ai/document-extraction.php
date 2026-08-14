@@ -28,6 +28,7 @@ $total_pages = $total_pages ?? 1;
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">
@@ -333,6 +334,7 @@ function renderReviewForm(job) {
         </div>
         <hr>
         <form id="reviewForm">
+    <?php echo CSRFProtection::csrfField(); ?>
             <input type="hidden" name="job_id" value="${job.id}">
             <input type="hidden" name="action" id="reviewAction" value="${currentAction}">
     `;

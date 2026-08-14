@@ -509,6 +509,7 @@ $total_revenue = array_sum(array_map(function ($colony) {
                 </div>
                 <div class="modal-body">
                     <form id="addColonyForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">

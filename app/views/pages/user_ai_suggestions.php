@@ -12,6 +12,7 @@ $extraHead = '<link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawes
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <form id="aiSuggestionForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('user_ai_suggestions_label_property_type', 'Property Type') ?></label>
                             <select class="form-select" name="property_type" required>

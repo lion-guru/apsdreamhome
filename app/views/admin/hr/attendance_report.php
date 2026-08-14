@@ -13,6 +13,7 @@
         </div>
         <div class="card-body">
             <form method="GET" class="row g-3 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-bold text-uppercase">Month</label>
                     <select name="month" class="form-select">

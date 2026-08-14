@@ -31,6 +31,7 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                             <h3 class="card-title"><i class="fas fa-server"></i> Asterisk AMI Configuration</h3>
                         </div>
                         <form method="POST">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-8">

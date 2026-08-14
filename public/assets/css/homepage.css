@@ -1364,6 +1364,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
   position: relative;
+  height: auto;
 }
 
 .colony-item .colony-card:hover {

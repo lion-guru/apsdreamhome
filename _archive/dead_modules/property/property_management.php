@@ -539,6 +539,7 @@ $users = $customers_result->fetch_all(MYSQLI_ASSOC);
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="post" action="">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -655,6 +656,7 @@ $users = $customers_result->fetch_all(MYSQLI_ASSOC);
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="post" action="">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="property_id" id="edit_property_id">
                     <div class="modal-body">
                         <div class="row">
@@ -754,6 +756,7 @@ $users = $customers_result->fetch_all(MYSQLI_ASSOC);
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="post" action="">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="property_id" id="sale_property_id">
                     <div class="modal-body">
                         <div class="mb-3">

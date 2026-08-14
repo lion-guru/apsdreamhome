@@ -168,6 +168,7 @@
             </div>
             <div class="modal-body">
                 <form id="detailInterestForm" onsubmit="submitDetailInterest(event)">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
                     <input type="hidden" name="source" value="property_detail">
                     <div class="mb-3">

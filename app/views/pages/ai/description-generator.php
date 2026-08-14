@@ -9,6 +9,7 @@
                 
                 <div class="card-body p-4 p-lg-5">
                     <form id="propertyForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <label for="propertyType" class="form-label fw-bold"><?= __('aigen_label_type', [], 'Property Type') ?></label>

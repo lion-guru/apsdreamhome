@@ -67,6 +67,7 @@
                 </div>
                 <div class="col-md-4 text-right">
                     <form method="GET" action="<?= BASE_URL ?>/admin/designations" class="form-inline justify-content-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <label class="mr-2">Filter by Dept:</label>
                         <select name="department_id" class="form-control form-control-sm" onchange="this.form.submit()">
                             <option value="">All Departments</option>
@@ -137,6 +138,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/designations/<?= $desig['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this designation?')">
+    <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

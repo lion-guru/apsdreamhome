@@ -19,6 +19,7 @@
   <?php endif; ?>
 
   <form class="row g-2 mb-3" method="get">
+    <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto"><select name="status" class="form-select form-select-sm"><option value=""><?= __('admin_all_status') ?></option>
       <?php foreach(['new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold'] as $s): ?>
         <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>

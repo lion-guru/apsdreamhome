@@ -11,6 +11,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Start Date</label>
                     <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>">

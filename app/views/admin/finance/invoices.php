@@ -13,6 +13,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/finance/invoices" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <input type="text" name="search" class="form-control" placeholder="Search by number or client..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>

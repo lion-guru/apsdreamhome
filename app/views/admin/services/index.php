@@ -93,6 +93,7 @@ if (!is_dir(__DIR__)) {
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
                 <input type="text" name="search" class="form-control" placeholder="Search by name, phone..." value="<?php echo htmlspecialchars($search); ?>">
             </div>

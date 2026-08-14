@@ -15,6 +15,7 @@
                     <p class="text-muted mb-4">Are you looking for work? Or do you need workers for your project? Post it here.</p>
 
                     <form method="POST">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Title *</label>
                             <input type="text" name="title" class="form-control" required placeholder="e.g. Experienced Mason Needed or Looking for Plumbing Work">

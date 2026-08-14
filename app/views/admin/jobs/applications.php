@@ -33,6 +33,7 @@ $error = $error ?? null;
     <div class="card shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/jobs/applications" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Filter by Job</label>
                     <select name="job_id" class="form-select" onchange="this.form.submit()">

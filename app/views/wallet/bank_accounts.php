@@ -265,6 +265,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
         </div>
         
         <form id="addBankForm">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="mb-3">
                 <label class="form-label fw-bold">Bank Name *</label>
                 <input type="text" class="form-control" id="bankName" name="bank_name" required placeholder="e.g., State Bank of India">
@@ -334,6 +335,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
         </div>
         
         <form id="editBankForm">
+    <?php echo CSRFProtection::csrfField(); ?>
             <input type="hidden" id="editBankId" name="bank_id">
             
             <div class="mb-3">

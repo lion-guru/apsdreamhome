@@ -108,6 +108,7 @@
             
             <!-- Filters -->
             <form id="filterForm" class="d-flex align-items-center gap-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <input type="date" class="form-control form-control-sm" name="start_date" placeholder="Start Date">
                 <input type="date" class="form-control form-control-sm" name="end_date" placeholder="End Date">
                 <button type="submit" class="btn btn-primary btn-sm">

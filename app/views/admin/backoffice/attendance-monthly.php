@@ -6,6 +6,7 @@ $month = $month ?? date('Y-m');
 <div class="container-fluid py-4">
   <h1 class="h3 mb-4"><?= __('bko_monthly_attendance') ?> - <?= $month ?></h1>
   <form class="row g-2 mb-4" method="get">
+    <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto">
       <input type="month" name="month" class="form-control" value="<?= $month ?>">
     </div>

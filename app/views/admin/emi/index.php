@@ -27,6 +27,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body aps-cp-card-body">
                 <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-4">
                         <input type="text" name="search" class="form-control" placeholder="Search by booking or customer..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
                     </div>

@@ -178,6 +178,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 </div>
                 <div class="modal-body">
                     <form id="paymentForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="hidden" id="scheduleId">
                         <div class="mb-3">
                             <label class="form-label">Amount</label>

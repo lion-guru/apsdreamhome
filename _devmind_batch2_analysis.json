@@ -1,0 +1,190 @@
+{
+  "timestamp": "2026-08-14T14:33:26.535620",
+  "project": "APSDreamHome",
+  "workspace": "c:\\xampp\\htdocs\\apsdreamhome",
+  "system": {
+    "ram_pct": 55.5,
+    "ram_available_gb": 5.28,
+    "cpu_pct": 10.9
+  },
+  "controllers": {
+    "count": 543,
+    "files": [
+      "config\\path_manager.php",
+      "public\\copy_controllers.php",
+      "tests\\deep_system_validator.php",
+      "_archive\\PageController_before.php",
+      "_archive\\TestimonialController.php",
+      "_archive\\archived_services\\ProjectProgressService.php",
+      "_archive\\controllers\\AdvancedAIController.php",
+      "_archive\\controllers\\AdvancedSecurityController.php",
+      "_archive\\controllers\\CustomerDashboardController.php",
+      "_archive\\controllers\\DatabaseSeederController.php",
+      "_archive\\controllers\\EmployeeAuthController.php",
+      "_archive\\controllers\\ErrorTestController.php",
+      "_archive\\controllers\\HomeController.php",
+      "_archive\\controllers\\LandController_root.php",
+      "_archive\\controllers\\RequestController.php",
+      "_archive\\controllers\\ResellController.php",
+      "_archive\\controllers\\SecurityController_root.php",
+      "_archive\\controllers\\TestApiController.php",
+      "_archive\\controllers\\UnifiedAuthController.php",
+      "_archive\\db_analysis_scripts\\_check_routes2.php"
+    ],
+    "time_ms": 4392
+  },
+  "csrf": {
+    "csrf_found": true,
+    "csrf_matches": 20,
+    "form_count": 20,
+    "files_with_forms": 20,
+    "time_ms": 356
+  },
+  "injection": {
+    "sql_injection_points": "config/import_mcp_config_handler.php:16: if (!empty($_POST['config_path'])) {\nconfig/import_mcp_config_handler.php:17: $configPath = $_POST['config_path'];\nconfig/import_mcp_config_handler.php:46: if (!empty($_POST['manual_config'])) {\nconfig/import_mcp_config_handler.php:48: $configData = json_decode($_POST['manual_config'], true);\ncron/health_check_telephony.php:173: if (isset($_GET['format']) && $_GET['format'] === 'json') {\nroutes/router.php:153: $token = $_POST['csrf_token'] ?? $_SERVER['HT",
+    "xss_points": "config/import_mcp_config_handler.php:16: if (!empty($_POST['config_path'])) {\nconfig/import_mcp_config_handler.php:17: $configPath = $_POST['config_path'];\nconfig/import_mcp_config_handler.php:46: if (!empty($_POST['manual_config'])) {\nconfig/import_mcp_config_handler.php:48: $configData = json_decode($_POST['manual_config'], true);\ncron/health_check_telephony.php:173: if (isset($_GET['format']) && $_GET['format'] === 'json') {\nroutes/router.php:153: $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';\nroutes/web.php:156: $value = floatval($_GET['value'] ?? 0);\nroutes/web.php:157: $from  = $_GET['from'] ?? 'sqft';\nroutes/web.php:158: $to    = $_GET['to'] ?? 'sqm';\nroutes/web.php:453: $name = $_POST['service_name'] ?? '';\nroutes/web.php:454: $keyName = $_POST['key_name'] ?? '';\nroutes/web.php:455: $keyType = $_POST['key_type'] ?? 'api_key';\nroutes/web.php:456: $description = $_POST['description'] ?? '';\nroutes/web.php:469: $name = $_POST['name'] ?? '';\nroutes/web.php:470: $userId = $_POST['user_id'] ?? 0;\nroutes/web.php:471: $permissions = $_POST['permissions'] ?? '[]';\nroutes/web.php:472: $rateLimit = $_POST['rate_limit'] ?? 1000;\nroutes/web.php:1917: $type = $_GET['type'] ?? '';\nroutes/web.php:1918: $status = $_GET['status'] ?? '';\nroutes/web.php:4847: $mode = $_GET['hub_mode'] ?? '';",
+    "time_ms": 251
+  },
+  "sessions": {
+    "session_starts": 21,
+    "session_usage_files": 20,
+    "cookie_usage": "config/bootstrap.php:39: ini_set('session.cookie_httponly', 1);\nconfig/bootstrap.php:41: ini_set('session.cookie_samesite', 'Lax');\nconfig/session.php:16: 'cookie' => env('SESSION_COOKIE_NAME', 'aps_session'),\nconfig/session.php:19: 'secure' => env('SESSION_SECURE_COOKIE', false),\nconfig/session.php:22: 'partitioned_cookies' => env('SESSION_PARTITIONED_COOKIE', false),\ntools/audit_all.php:49: preg_match_all('/Set-Cookie: ([^;]+)/', $r, $cks);\ntools/audit_all.php:50: $cookie = '';\ntools/audit_all.php:52: if (strpos($ck, 'PHPSESSID') !== false) $cookie = $ck;\ntools/audit_all.php:60: CURLOPT_HTTPHEADER => ['Cookie: ' . $cookie],\n_archive/dead_services/ApiDocService.php:89: \"All /api/* routes are included. Authentication: session cookie (admin) or Bearer token (mobile).\",\n_archive/dead_services/ApiDocService.php:135: 'sessionCookie' => [\n_archive/dead_services/ApiDocService.php:137: 'in'          => 'cookie',\n_archive/dead_services/ApiDocService.php:139: 'description' => 'PHP session cookie (admin panel login).',\n_archive/dead_services/ApiDocService.php:256: $op['security'] = [['bearerAuth' => []], ['sessionCookie' => []]];\n_archive/dead_services/CoreFunctionsServiceNew.php:163: ini_set('session.cookie_httponly', 1);\n_archive/dead_services/CoreFunctionsServiceNew.php:164: ini_set('session.cookie_secure', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 1 : 0);\n_archive/dead_services/SecurityServiceNew.php:160: $sessionSecure = (bool) ini_get('session.cookie_secure');\n_archive/dead_services/SecurityServiceNew.php:161: $sessionHttpOnly = (bool) ini_get('session.cookie_httponly');\n_archive/dead_services/SecurityServiceNew.php:162: $sessionSameSite = ini_get('session.cookie_samesite') ?: 'lax';\n_archive/legacy_scripts/smoke_module5.php:2: $cookieFile = tempnam(sys_get_temp_dir(), 'aps_smoke_');",
+    "time_ms": 547
+  },
+  "errors": {
+    "error_config": ".devin/parallel_task_manager.php:68: try {\n.devin/parallel_task_manager.php:83: } catch (Exception $e) {\nbuild/check_users.php:2: try {\nbuild/check_users.php:16: } catch (Throwable $e) {\nbuild/download-apk.php:24: @ini_set('zlib.output_compression', '0');\nbuild/download-apk.php:25: @ini_set('output_buffering', '0');\nbuild/download-apk.php:26: @ini_set('max_execution_time', '300');\nbuild/index.php:26: error_reporting(E_ALL);\nbuild/index.php:27: ini_set('display_errors', 1);\nbuild/index.php:28: ini_set('log_errors', 1);\nbuild/index.php:29: ini_set('error_log', APS_LOGS . '/php_error.log');\nbuild/index.php:39: if (ini_get('display_errors')) {\nbuild/index.php:50: try {\nbuild/index.php:52: } catch (\\Exception $e) {\nbuild/index.php:59: try {\nbuild/index.php:61: } catch (\\Exception $e) {\nbuild/index.php:66: if (ini_get('display_errors')) {\nconfig/bootstrap.php:1: <?php header('Content-Type: text/html; charset=UTF-8'); error_reporting(E_ALL);\nconfig/bootstrap.php:4: ini_set('display_errors', 1);\nconfig/bootstrap.php:6: ini_set('display_errors', 0);",
+    "silent_fails": "index.php:23: exit();\n.devin/parallel_task_manager.php:117: echo \"  - {$failed['task']}: {$failed['error']}\\n\";\nbuild/check_users.php:17: echo \"Error: \" . $e->getMessage();\nbuild/download-apk.php:11: echo json_encode(['success' => false, 'error' => 'APK not found']);\nbuild/download-apk.php:24: @ini_set('zlib.output_compression', '0');\nbuild/download-apk.php:25: @ini_set('output_buffering', '0');\nbuild/download-apk.php:26: @ini_set('max_execution_time', '300');\nbuild/download-apk.php:40: echo 'Error reading file';\nbuild/index.php:37: echo \"<h1>500 - Internal Server Error</h1>\";\nbuild/index.php:38: echo \"<p>Check logs/php_error.log for details.</p>\";\nbuild/index.php:40: echo \"<pre>\" . htmlspecialchars($error['message']) . \"\\nFile: \" . $error['file'] . \"\\nLine: \" . $err\nbuild/index.php:54: echo \"<h1>Error loading routes: \" . htmlspecialchars($e->getMessage()) . \"</h1>\";\nbuild/index.php:64: echo \"<h1>500 - Server Error</h1>\";\nconfig/import_mcp_config_handler.php:38: echo \"<h3>\u274c Error Reading File</h3>\";\nconfig/import_mcp_config_handler.php:63: echo \"<h3>\u274c Error Parsing Manual Input</h3>\";\nconfig/restore_backup_backend.php:12: echo json_encode(['error' => 'Method not allowed']);\nconfig/restore_backup_backend.php:22: echo json_encode(['error' => 'Invalid JSON data']);\ncron/auto_dialer.php:49: exit(0);\ncron/auto_dialer.php:56: exit(0);\ncron/auto_dialer.php:70: exit(0);",
+    "time_ms": 36
+  },
+  "forms_need_csrf": [
+    "_archive/dead_views/foreclosure_report.php",
+    "_archive/dead_views/development_cost_calculator.php",
+    "_archive/dead_views/metaverse/customize_property.php",
+    "_archive/views/features/edit.php",
+    "_archive/views/features/investment-calculator.php",
+    "_archive/orphaned_views/voice-agents/schedule.php",
+    "_archive/orphaned_views/site_settings/index.php",
+    "_archive/orphaned_employee_views/documents.php",
+    "_archive/dead_views/pages_error/error.php",
+    "_archive/dead_views/edge/roi_calculator.php",
+    "_archive/dead_views/properties_listings/property-listings.php",
+    "_archive/orphaned_views/blog/edit.php",
+    "_archive/views/features/comparison.php",
+    "_archive/dead_views/associate_admin_views/edit.php",
+    "_archive/dead_views/blockchain/digital_signature.php",
+    "_archive/dead_views/blockchain/transfer_ownership.php",
+    "_archive/dead_views/two_factor_recovery.php",
+    "_archive/root_temp_files/aaaaa/website testing image/index.php",
+    "_archive/orphaned_employee_views/employees_documents_old.php",
+    "_archive/dead_views/metaverse/create_space.php"
+  ],
+  "forms_need_csrf_time_ms": 398,
+  "database": {
+    "query_samples": "analyze_services.php:72: preg_match_all(\"/(INSERT INTO|UPDATE|DELETE FROM|SELECT .+ FROM)\\s+(\\w+)/is\", $content, $matches, PR\nanalyze_services.php:80: $tables[$tbl] = ['INSERT' => 0, 'UPDATE' => 0, 'DELETE' => 0, 'SELECT' => 0];\nanalyze_services.php:83: if ($opType == 'INSERT') $tables[$tbl]['INSERT']++;\nanalyze_services.php:84: elseif ($opType == 'UPDATE') $tables[$tbl]['UPDATE']++;\nanalyze_services.php:86: elseif (substr($op, 0, 6) == 'SELECT') $tables[$tbl]['SELECT']++;\nanalyze_services.php:98: echo \"    $tbl: I{$counts['INSERT']} U{$counts['UPDATE']} D{$counts['DELETE']} S{$counts['SELECT']} \naudit_urls.php:5: $stmt = $pdo->query(\"SELECT url FROM admin_menu_items WHERE url IS NOT NULL AND url != '#' ORDER BY \n.devin/parallel_operations.php:71: // Update cache\n.history/check_ranks_20260626012030.php:7: $rows = $pdo->query(\"SELECT id, rank_name, min_leg_count, min_qualifying_volume, direct_sale_percent\n.history/check_ranks_20260626012030.php:22: $assoc = $pdo->query(\"SELECT u.name, a",
+    "joins_found": 15,
+    "time_ms": 43
+  },
+  "images": {
+    "total_images": 1116,
+    "total_size_mb": 255.92,
+    "large_images": 123,
+    "time_ms": 5910
+  },
+  "batch_results": [
+    {
+      "task": "Implement CSRF token protection",
+      "type": "analysis",
+      "csrf_found": true,
+      "forms_needing_protection": [
+        "_archive/dead_views/foreclosure_report.php",
+        "_archive/dead_views/development_cost_calculator.php",
+        "_archive/dead_views/metaverse/customize_property.php",
+        "_archive/views/features/edit.php",
+        "_archive/views/features/investment-calculator.php",
+        "_archive/orphaned_views/voice-agents/schedule.php",
+        "_archive/orphaned_views/site_settings/index.php",
+        "_archive/orphaned_employee_views/documents.php",
+        "_archive/dead_views/pages_error/error.php",
+        "_archive/dead_views/edge/roi_calculator.php",
+        "_archive/dead_views/properties_listings/property-listings.php",
+        "_archive/orphaned_views/blog/edit.php",
+        "_archive/views/features/comparison.php",
+        "_archive/dead_views/associate_admin_views/edit.php",
+        "_archive/dead_views/blockchain/digital_signature.php",
+        "_archive/dead_views/blockchain/transfer_ownership.php",
+        "_archive/dead_views/two_factor_recovery.php",
+        "_archive/root_temp_files/aaaaa/website testing image/index.php",
+        "_archive/orphaned_employee_views/employees_documents_old.php",
+        "_archive/dead_views/metaverse/create_space.php"
+      ],
+      "form_count": 20,
+      "recommendation": "Add CSRF token to all 20 forms"
+    },
+    {
+      "task": "Add error handling middleware",
+      "type": "analysis",
+      "silent_fails": "index.php:23: exit();\n.devin/parallel_task_manager.php:117: echo \"  - {$failed['task']}: {$failed['error']}\\n\";\nbuild/check_users.php:17: echo \"Error: \" . $e->getMessage();\nbuild/download-apk.php:11: echo json_encode(['success' => false, 'error' => 'APK not found']);\nbuild/download-apk.php:24: @ini_set('zlib.output_compression', '0');\nbuild/download-apk.php:25: @ini_set('output_buffering', '0');\nbuild/download-apk.php:26: @ini_set('max_execution_time', '300');\nbuild/download-apk.php:40: echo 'Er",
+      "error_config": ".devin/parallel_task_manager.php:68: try {\n.devin/parallel_task_manager.php:83: } catch (Exception $e) {\nbuild/check_users.php:2: try {\nbuild/check_users.php:16: } catch (Throwable $e) {\nbuild/download-apk.php:24: @ini_set('zlib.output_compression', '0');\nbuild/download-apk.php:25: @ini_set('output_buffering', '0');\nbuild/download-apk.php:26: @ini_set('max_execution_time', '300');\nbuild/index.php:26: error_reporting(E_ALL);\nbuild/index.php:27: ini_set('display_errors', 1);\nbuild/index.php:28: in",
+      "recommendation": "Replace silent fails with try-catch + logging"
+    },
+    {
+      "task": "Validate and sanitize user inputs",
+      "type": "analysis",
+      "sql_injection_risks": "config/import_mcp_config_handler.php:16: if (!empty($_POST['config_path'])) {\nconfig/import_mcp_config_handler.php:17: $configPath = $_POST['config_path'];\nconfig/import_mcp_config_handler.php:46: if (!empty($_POST['manual_config'])) {\nconfig/import_mcp_config_handler.php:48: $configData = json_decode($_POST['manual_config'], true);\ncron/health_check_telephony.php:173: if (isset($_GET['format']) && $_GET['format'] === 'json') {\nroutes/router.php:153: $token = $_POST['csrf_token'] ?? $_SERVER['HT",
+      "xss_risks": "config/import_mcp_config_handler.php:16: if (!empty($_POST['config_path'])) {\nconfig/import_mcp_config_handler.php:17: $configPath = $_POST['config_path'];\nconfig/import_mcp_config_handler.php:46: if (!empty($_POST['manual_config'])) {\nconfig/import_mcp_config_handler.php:48: $configData = json_decode($_POST['manual_config'], true);\ncron/health_check_telephony.php:173: if (isset($_GET['format']) && $_GET['format'] === 'json') {\nroutes/router.php:153: $token = $_POST['csrf_token'] ?? $_SERVER['HT",
+      "recommendation": "Use prepared statements + htmlspecialchars for all user inputs"
+    },
+    {
+      "task": "Fix session security",
+      "type": "analysis",
+      "session_starts": 21,
+      "recommendation": "Use secure cookies, regenerate session IDs, set proper timeouts"
+    },
+    {
+      "task": "Add CAPTCHA to login form",
+      "type": "analysis",
+      "login_patterns": "config/bootstrap.php:171: 'JWT_SECRET' => 'JWT signing secret',\nconfig/bootstrap.php:173: 'DB_PASS' => 'Database password',\nconfig/bootstrap.php:174: 'SMTP_PASS' => 'SMTP password',\nconfig/cache.php:14: *   REDIS_PASSWORD  = (null)\nconfig/cache.php:35: 'password' => getenv('REDIS_PASSWORD') ?: null,",
+      "recommendation": "Add Google reCAPTCHA v3 or hCaptcha to login forms"
+    },
+    {
+      "task": "Create unit tests",
+      "type": "analysis",
+      "test_files_found": 1,
+      "recommendation": "Create PHPUnit tests for UserController, Database, Auth, Payment classes"
+    },
+    {
+      "task": "Fix memory leaks",
+      "type": "analysis",
+      "session_usage": "app/helpers.php:125: return $_SESSION;\napp/helpers.php:130: $_SESSION[$k] = $v;\napp/helpers.php:135: return $_SESSION[$key] ?? $default;\napp/helpers.php:214: if (!isset($_SESSION['csrf_token'])) {\napp/helpers.php:215: $_SESSION['csrf_token'] = bin2hex(random_bytes(32));\napp/helpers.php:217: return $_SESSION['csrf_token'];\napp/helpers.php:287: if (isset($_SESSION['flash'][$key])) {\napp/helpers.php:288: $msg = $_SESSION['flash'][$key];\napp/helpers.php:289: unset($_SESSION['flash'][$key]);\nroutes/a",
+      "recommendation": "Add session unset(), use session_gc, implement proper session cleanup"
+    },
+    {
+      "task": "Optimize database queries",
+      "type": "analysis",
+      "joins_found": 15,
+      "query_samples": "analyze_services.php:72: preg_match_all(\"/(INSERT INTO|UPDATE|DELETE FROM|SELECT .+ FROM)\\s+(\\w+)/is\", $content, $matches, PR\nanalyze_services.php:80: $tables[$tbl] = ['INSERT' => 0, 'UPDATE' => 0, 'DELETE' => 0, 'SELECT' => 0];\nanalyze_services.php:83: if ($opType == 'INSERT') $tables[$tbl]['INSERT']++;\nanalyze_services.php:84: elseif ($opType == 'UPDATE') $tables[$tbl]['UPDATE']++;\nanalyze_services.php:86: elseif (substr($op, 0, 6) == 'SELECT') $tables[$tbl]['SELECT']++;\nanalyze_services.php:9",
+      "recommendation": "Add indexes on JOIN columns, use EXPLAIN ANALYZE for slow queries"
+    },
+    {
+      "task": "Add audit logging",
+      "type": "analysis",
+      "existing_logging": "analyze_services.php:4: \"app/Services/ActivityLogService.php\",\nanalyze_services.php:11: \"app/Services/AuditTrailService.php\",\nanalyze_services.php:24: \"app/Services/SystemLogger.php\",\ntail_log.php:2: $file = 'C:\\\\xampp\\\\htdocs\\\\apsdreamhome\\\\logs\\\\php_error.log';\n.devin/parallel_task_manager.php:127",
+      "recommendation": "Create audit_log table, log admin actions with IP + timestamp"
+    },
+    {
+      "task": "Optimize image assets",
+      "type": "analysis",
+      "total_images": 1116,
+      "total_size_mb": 255.92,
+      "large_images": 123,
+      "recommendation": "Compress with TinyPNG, convert to WebP, add lazy loading attribute"
+    },
+    {
+      "task": "Responsive design check",
+      "type": "analysis",
+      "css_files": 50,
+      "media_queries": "_archive/dead_css/admin.css:17: @import '../admin/css/responsive-fixes.css';\n_archive/dead_css/advanced-features.css:598: /* Responsive Design */\n_archive/dead_css/advanced-features.css:599: @media (max-width: 768px) {\n_archive/dead_css/advanced-features.css:636: @media (max-width: 480px) {\n_archive",
+      "recommendation": "Add viewport meta tag, use flexible grids, test on mobile"
+    }
+  ]
+}

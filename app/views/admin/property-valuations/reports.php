@@ -114,6 +114,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="GET">
+    <?php echo CSRFProtection::csrfField(); ?>
         <div class="modal-header">
           <h5 class="modal-title">Filter Reports</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

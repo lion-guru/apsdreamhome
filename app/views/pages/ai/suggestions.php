@@ -7,6 +7,7 @@
                     <p class="text-muted text-center mb-4"><?= __('aisug_subtitle', [], 'Let our AI help you find the perfect property based on your preferences.') ?></p>
                     
                     <form id="ai-suggestion-form" class="mb-4">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="property_type" class="form-label"><?= __('aisug_label_type', [], 'Property Type') ?></label>

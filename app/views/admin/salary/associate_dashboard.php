@@ -154,6 +154,7 @@
             </div>
             <div class="modal-body">
                 <form id="editSalaryForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" id="editAssociateId" name="associate_id">
                     <div class="form-group">
                         <label for="editSalaryAmount">Salary Amount (₹)</label>
@@ -199,6 +200,7 @@
             </div>
             <div class="modal-body">
                 <form id="processSalaryForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" id="processAssociateId" name="associate_id">
                     <div class="form-group">
                         <label for="paymentMonth">Payment Month</label>

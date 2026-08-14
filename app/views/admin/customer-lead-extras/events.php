@@ -90,6 +90,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
         </div>
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/customer-lead/events">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Lead Name</label>

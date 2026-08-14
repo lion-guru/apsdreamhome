@@ -218,7 +218,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 
 <!-- Floating WhatsApp Button for Mobile -->
 <style>
-.contact-bottom{padding:80px 0;background:#f8fafc}
+.contact-bottom{padding:50px 0;background:#f8fafc}
 .contact-bottom .section-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
 .contact-bottom .section-title{font-size:1.8rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px}
 

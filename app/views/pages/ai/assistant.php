@@ -57,6 +57,7 @@
 
                     <div class="chat-input p-3 bg-white border-top">
                         <form id="chatForm" class="input-group">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <input type="text" id="userInput" class="form-control rounded-start-pill border-end-0 py-2"
                                    placeholder="<?= __('aiast_placeholder', [], 'Type your message...') ?>" autocomplete="off" required />
                             <button class="btn btn-primary rounded-end-pill px-4" type="submit" id="sendBtn">

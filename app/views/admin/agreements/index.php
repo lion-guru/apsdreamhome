@@ -80,6 +80,7 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
 
 <!-- Filters -->
 <form method="GET" class="row g-3 mb-4">
+    <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-md-2">
         <select class="form-select" name="type">
             <option value="">All Types</option>

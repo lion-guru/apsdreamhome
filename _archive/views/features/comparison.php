@@ -6,6 +6,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= $base ?? BASE_URL ?>/features/comparison" class="row g-3 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-5">
                     <label class="form-label">Property A</label>
                     <select name="a" class="form-select">

@@ -18,6 +18,7 @@
                 <!-- AI Search Box -->
                 <div class="ai-search-container">
                     <form id="aiSearchForm" class="ai-search-box">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <input type="text" 
                                id="aiSearchInput" 
                                class="ai-search-input" 
@@ -87,6 +88,7 @@
             </div>
             <div class="modal-body">
                 <form id="pricePredictionForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="propertyType" class="form-label">Property Type</label>

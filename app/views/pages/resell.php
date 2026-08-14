@@ -49,6 +49,7 @@
 <section class="container mt-n5 position-relative z-index-2">
     <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3" style="margin-top: -50px;">
         <form action="<?= BASE_URL ?>/resell" method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
                 <label class="form-label fw-bold"><?= __('resell_search') ?></label>
                 <div class="input-group">

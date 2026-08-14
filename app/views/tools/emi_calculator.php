@@ -13,6 +13,7 @@
         </div>
         <div class="card-body">
           <form id="emiForm">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="mb-3">
               <label class="form-label">Loan Amount (₹)</label>
               <input type="number" name="principal" class="form-control" value="5000000" required>

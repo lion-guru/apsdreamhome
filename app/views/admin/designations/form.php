@@ -30,6 +30,7 @@
             <div class="card">
                 <div class="card-body">
                     <form method="POST" action="<?= $designation ? '/admin/designations/' . $designation['id'] . '/update' : '/admin/designations/store' ?>">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="form-group">

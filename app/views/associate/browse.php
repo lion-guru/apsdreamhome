@@ -18,6 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <form method="GET" action="<?= $base ?>/associate/browse" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <input type="text" class="form-control form-control-sm" name="q" placeholder="<?= __('assoc_browse_search', [], 'Search properties...') ?>" value="<?= htmlspecialchars($current_filters['q'] ?? '') ?>">
                 </div>
@@ -163,6 +164,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             </div>
             <div class="modal-body">
                 <form id="interestForm" onsubmit="submitInterest(event)">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="property_id" id="interestPropertyId">
                     <input type="hidden" name="source" value="associate_browse">
                     <div class="mb-3">

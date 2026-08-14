@@ -25,6 +25,7 @@ $booking_id = $booking_id ?? 0;
     </div>
     <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-8">
                 <select name="booking_id" class="form-select" required>
                     <option value="">— Select a Booking —</option>

@@ -170,6 +170,7 @@ $base = $base ?? BASE_URL;
             </div>
             <div class="modal-body">
                 <form id="addMemberForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label class="form-label"><?= __('team_label_name', [], 'Full Name') ?></label>
                         <input type="text" name="name" class="form-control" required>

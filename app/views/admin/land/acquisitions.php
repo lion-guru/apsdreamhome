@@ -72,6 +72,7 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/land/acquisitions" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <label class="form-label small mb-1">Status</label>
                     <select name="status" class="form-select form-select-sm">

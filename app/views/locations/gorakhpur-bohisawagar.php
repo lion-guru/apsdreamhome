@@ -211,6 +211,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                 </div>
                 <div class="modal-body">
                     <form id="enquiryForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label for="name" class="form-label">Your Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>

@@ -42,6 +42,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body aps-cp-card-body">
                 <form method="GET" class="row g-3">
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-4">
                         <label class="form-label">Associate ID</label>
                         <input type="number" name="associate_id" class="form-control" value="<?php echo $selected_associate; ?>" placeholder="Enter associate ID">

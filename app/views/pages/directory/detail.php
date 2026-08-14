@@ -60,6 +60,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="collapse mb-3" id="reviewForm">
                         <form method="POST" action="<?= BASE_URL ?>/services/add-review">
+    <?php echo CSRFProtection::csrfField(); ?>
                             <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                             <div class="mb-2">
                                 <label class="form-label">Your Name</label>

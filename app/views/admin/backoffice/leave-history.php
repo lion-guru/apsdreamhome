@@ -2,6 +2,7 @@
 <div class="container-fluid py-4">
   <h1 class="h3 mb-4"><?= __('bko_leave_history') ?></h1>
   <form class="row g-2 mb-4" method="get">
+    <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto">
       <select name="status" class="form-select">
         <option value=""><?= __('bko_all_status') ?></option>

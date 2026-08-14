@@ -8,6 +8,7 @@
     <div class="aps-cp-card mb-4">
         <div class="aps-cp-card-body">
             <form method="get" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label small"><?= __('cf_forecast_period') ?></label>
                     <select name="days" class="form-select form-select-sm">

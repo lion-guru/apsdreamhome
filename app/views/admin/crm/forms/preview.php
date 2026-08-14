@@ -39,6 +39,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="form-body">
             <form id="previewForm" method="POST" action="<?= $baseUrl ?>/api/leads">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="form_id" value="<?= $form['id'] ?? '' ?>">
                 <?php foreach ($fields as $field): ?>
                     <?php if ($field['type'] === 'section'): ?>

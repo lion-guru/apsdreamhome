@@ -49,6 +49,7 @@ define('LIVE_CHAT_WIDGET_LOADED', true);
                     <p class="text-muted small mb-0"><?= __('component_share_details', 'Please share your details and we\'ll get back to you right away.') ?></p>
                 </div>
                 <form id="lcw-prechat-form" class="lcw-prechat-form" novalidate>
+    <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-2">
                         <input type="text" class="form-control form-control-sm" id="lcw-name" name="name"
                                placeholder="<?= htmlspecialchars(__('component_your_name', 'Your name *')) ?>" maxlength="80" required>

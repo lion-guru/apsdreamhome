@@ -20,6 +20,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-2">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>

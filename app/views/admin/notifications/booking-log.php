@@ -77,6 +77,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/notifications/booking-log" class="row g-2 align-items-end">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Type</label>
                     <select name="type" class="form-select form-select-sm">

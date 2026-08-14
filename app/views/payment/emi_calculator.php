@@ -24,6 +24,7 @@ $content = $content ?? '';
                                 <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">EMI Calculator</h5>
                                     <form id="emiCalculatorForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3">

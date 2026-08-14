@@ -34,6 +34,7 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
             <p class="text-muted mb-0 small">Month of <?= date('F Y', strtotime($month . '-01')) ?></p>
         </div>
         <form method="get" class="d-flex gap-2">
+    <?php echo CSRFProtection::csrfField(); ?>
             <input type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month) ?>" style="max-width:170px;">
             <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Filter</button>
         </form>

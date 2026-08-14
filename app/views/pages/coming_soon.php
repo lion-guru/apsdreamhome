@@ -345,6 +345,7 @@ require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
             <p class="mb-4"><?php echo __('coming_soon_notify_desc', [], 'Be the first to know when our new features go live!'); ?></p>
 
             <form class="notification-form" id="notificationForm">
+    <?php echo CSRFProtection::csrfField(); ?>
                 <div class="mb-3">
                     <input type="text" class="form-control" id="notifyName" placeholder="<?php echo __('coming_soon_name_ph', [], 'Your Name'); ?>" required>
                 </div>
