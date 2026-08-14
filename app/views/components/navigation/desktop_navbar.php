@@ -19,7 +19,7 @@
             <?php $brand = $nav->companyName(); ?>
             <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                    if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
-            <img src="<?php echo BASE_URL . htmlspecialchars($logo); ?>"
+            <img src="<?php echo BASE_URL . rtrim('/' . ltrim(htmlspecialchars($logo), '/'), ''); ?>"
                  alt="<?php echo htmlspecialchars($brand); ?>"
                  class="logo"
                  style="height: 32px; width: auto; max-width: 110px;"
@@ -94,7 +94,7 @@
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo BASE_URL . $sub['url']; ?>">
+                                                    <a class="mega-item" href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
                                                         <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                     </a>
@@ -154,7 +154,7 @@
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo BASE_URL . $sub['url']; ?>">
+                                                    <a class="mega-item" href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
                                                         <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                         <?php if ($badge): ?>
@@ -224,7 +224,7 @@
                                         <?php if (isset($sub['disabled'])): ?>
                                             <li><span class="dropdown-item-text text-muted"><?php echo __($sub['label']); ?></span></li>
                                         <?php else: ?>
-                                            <a class="dropdown-item" href="<?php echo BASE_URL . $sub['url']; ?>">
+                                            <a class="dropdown-item" href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
                                                 <?php echo __($sub['label']); ?>
                                                 <?php if (isset($sub['badge'])): ?>
@@ -238,7 +238,7 @@
                             </ul>
                         <?php else: ?>
                             <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-primary fw-bold' : ''; ?>"
-                               href="<?php echo BASE_URL . $item['url']; ?>"
+href="<?php echo BASE_URL . rtrim('/' . ltrim($item['url'] ?? '#', '/'), ''); ?>"
                                <?php echo ($item['highlight'] ?? false) ? 'style="color:#dc3545 !important;"' : ''; ?>>
                                 <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
                                 <?php echo __($item['label']); ?>
@@ -282,7 +282,7 @@
                             <?php foreach ($nav->getUserMenuItems() as $link): ?>
                                 <li>
                                     <a class="dropdown-item d-flex justify-content-between align-items-center"
-                                       href="<?php echo BASE_URL . $link['url']; ?>">
+                                       href="<?php echo BASE_URL . rtrim('/' . ltrim($link['url'] ?? '#', '/'), ''); ?>">
                                         <span>
                                             <i class="<?php echo $link['icon']; ?> me-2"></i><?php echo __($link['label']); ?>
                                         </span>

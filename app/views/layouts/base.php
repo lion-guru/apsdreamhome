@@ -337,9 +337,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <?php if (isset($_SESSION['user_id'])): ?>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
     <?php endif; ?>
-    <!-- Live Chat Widget (Removed to prevent overlap with chat_widget.php) -->
-    <!-- <?php // include __DIR__ . '/../components/live_chat_widget.php'; ?> -->
-    <!-- <script defer src="<?php // echo BASE_URL; ?>/assets/js/live-chat-widget.js"></script> -->
     <!-- Toast Notifications -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
     <!-- Image Gallery Lightbox -->
