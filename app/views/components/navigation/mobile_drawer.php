@@ -117,14 +117,14 @@
                                         <?php echo $renderAccordion($item['submenu'], $itemKey . '_'); ?>
                                     </div>
                                 <?php else: ?>
-                                    <a href="<?php echo $item['url'] ?? '#'; ?>"
-                                       class="mobile-nav-link d-flex align-items-center p-3 border-bottom text-muted">
+                                    <a href="<?php echo BASE_URL . $item['url']; ?>"
+                                   class="mobile-nav-link d-flex align-items-center text-muted">
                                         <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-2"></i><?php endif; ?>
                                         <?php echo __($item['label']); ?>
                                     </a>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <a href="<?php echo $item['url'] ?? '#'; ?>"
+                                <a href="<?php echo BASE_URL . $item['url']; ?>"
                                    class="mobile-nav-link d-flex align-items-center p-3 border-bottom <?php echo $isActive ? 'active' : ''; ?> <?php echo isset($item['highlight']) && $item['highlight'] ? 'text-warning fw-bold' : ''; ?>">
                                     <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-2"></i><?php endif; ?>
                                     <?php echo __($item['label']); ?>

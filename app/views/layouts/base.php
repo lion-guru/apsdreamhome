@@ -298,27 +298,27 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Mobile Sticky Bottom Navigation -->
     <?php if (!$isAdminPage): ?>
     <nav class="mobile-bottom-sticky-nav" aria-label="Mobile bottom navigation">
-      <a href="/" class="mobile-nav-item" data-label="Home">
+      <a href="<?php echo BASE_URL; ?>/" class="mobile-nav-item" data-label="Home">
         <i class="fas fa-home"></i>
       </a>
-      <a href="/properties" class="mobile-nav-item" data-label="Properties">
+      <a href="<?php echo BASE_URL; ?>/properties" class="mobile-nav-item" data-label="Properties">
         <i class="fas fa-building"></i>
       </a>
-      <a href="/search" class="mobile-nav-item" data-label="Search">
+      <a href="<?php echo BASE_URL; ?>/search" class="mobile-nav-item" data-label="Search">
         <i class="fas fa-search"></i>
       </a>
       <?php if (isset($_SESSION['user_id'])): ?>
-      <a href="/user/dashboard" class="mobile-nav-item" data-label="Dashboard">
+      <a href="<?php echo BASE_URL; ?>/user/dashboard" class="mobile-nav-item" data-label="Dashboard">
         <i class="fas fa-tachometer-alt"></i>
       </a>
-      <a href="/user/profile" class="mobile-nav-item" data-label="Profile">
+      <a href="<?php echo BASE_URL; ?>/user/profile" class="mobile-nav-item" data-label="Profile">
         <i class="fas fa-user"></i>
       </a>
       <?php else: ?>
-      <a href="/login" class="mobile-nav-item" data-label="Login">
+      <a href="<?php echo BASE_URL; ?>/login" class="mobile-nav-item" data-label="Login">
         <i class="fas fa-sign-in-alt"></i>
       </a>
-      <a href="/about" class="mobile-nav-item" data-label="About">
+      <a href="<?php echo BASE_URL; ?>/about" class="mobile-nav-item" data-label="About">
         <i class="fas fa-info-circle"></i>
       </a>
       <?php endif; ?>
@@ -406,13 +406,19 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     (function() {
         var bottomNav = document.querySelector('.mobile-bottom-sticky-nav');
         if (!bottomNav) return;
+    (function() {
+        var bottomNav = document.querySelector('.mobile-bottom-sticky-nav');
+        if (!bottomNav) return;
         var path = window.location.pathname;
+        var a = document.createElement('a');
         var items = bottomNav.querySelectorAll('.mobile-nav-item');
         items.forEach(function(item) {
             var href = item.getAttribute('href') || '';
-            if (href === '/') {
+            a.href = href;
+            var hrefPath = a.pathname;
+            if (hrefPath === '/') {
                 if (path === '/') item.classList.add('active');
-            } else if (path.startsWith(href)) {
+            } else if (path.startsWith(hrefPath)) {
                 item.classList.add('active');
             }
         });

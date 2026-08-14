@@ -64,8 +64,8 @@
 
                         <?php if ($hasChildren): ?>
                             <a class="nav-link dropdown-toggle <?php echo $isActive ? 'active' : ''; ?>"
-                               href="<?php echo $item['url'] ?? '#'; ?>"
-                               id="navDrop<?php echo $index; ?>"
+                            href="<?php echo BASE_URL . $item['url']; ?>"
+                                id="navDrop<?php echo $index; ?>"
                                role="button"
                                data-bs-toggle="dropdown"
                                aria-expanded="false"
@@ -94,40 +94,40 @@
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo $sub['url']; ?>">
+                                                    <a class="mega-item" href="<?php echo BASE_URL . $sub['url']; ?>">
                                                         <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                     </a>
-                                                <?php endforeach; ?>
-                                            </div>
-                                            <div class="mega-col flex-grow-1">
-                                                <h6><?php echo __('Featured'); ?></h6>
-                                                <a class="mega-item" href="/featured-properties">
-                                                    <i class="fas fa-star mega-icon-amber"></i>
-                                                    <span><?php echo __('Featured'); ?></span>
-                                                </a>
-                                                <a class="mega-item" href="/properties?status=new">
-                                                    <i class="fas fa-sparkles mega-icon-teal"></i>
-                                                    <span><?php echo __('New Launch'); ?></span>
-                                                </a>
-                                                <a class="mega-item" href="/properties?status=verified">
-                                                    <i class="fas fa-shield-check mega-icon-blue"></i>
-                                                    <span><?php echo __('Verified'); ?></span>
-                                                </a>
+                                                 <?php endforeach; ?>
+                                             </div>
+                                             <div class="mega-col flex-grow-1">
+                                                 <h6><?php echo __('Featured'); ?></h6>
+                                                 <a class="mega-item" href="<?php echo BASE_URL; ?>/featured-properties">
+                                                     <i class="fas fa-star mega-icon-amber"></i>
+                                                     <span><?php echo __('Featured'); ?></span>
+                                                 </a>
+                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?status=new">
+                                                        <i class="fas fa-sparkles mega-icon-teal"></i>
+                                                        <span><?php echo __('New Launch'); ?></span>
+                                                    </a>
+                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?status=verified">
+                                                        <i class="fas fa-shield-check mega-icon-blue"></i>
+                                                        <span><?php echo __('Verified'); ?></span>
+                                                    </a>
 
-                                                <h6 class="mt-2"><?php echo __('Price Range'); ?></h6>
-                                                <a class="mega-item" href="/properties?price=0-50">
-                                                    <i class="fas fa-indian-rupee-sign mega-icon-teal"></i>
-                                                    <span>0 - 50L</span>
-                                                </a>
-                                                <a class="mega-item" href="/properties?price=50-100">
-                                                    <i class="fas fa-indian-rupee-sign mega-icon-blue"></i>
-                                                    <span>50L - 1Cr</span>
-                                                </a>
-                                                <a class="mega-item" href="/properties?price=100+">
-                                                    <i class="fas fa-indian-rupee-sign mega-icon-purple"></i>
-                                                    <span>1Cr+</span>
-                                                </a>
+                                                    <h6 class="mt-2"><?php echo __('Price Range'); ?></h6>
+                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?price=0-50">
+                                                        <i class="fas fa-indian-rupee-sign mega-icon-teal"></i>
+                                                        <span>0 - 50L</span>
+                                                    </a>
+                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?price=50-100">
+                                                        <i class="fas fa-indian-rupee-sign mega-icon-blue"></i>
+                                                        <span>50L - 1Cr</span>
+                                                    </a>
+                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?price=100+">
+                                                        <i class="fas fa-indian-rupee-sign mega-icon-purple"></i>
+                                                        <span>1Cr+</span>
+                                                    </a>
                                             </div>
                                         </div>
                                         <div class="mega-featured">
@@ -154,7 +154,7 @@
                                                         default => 'mega-icon-teal'
                                                     };
                                                 ?>
-                                                    <a class="mega-item" href="<?php echo $sub['url']; ?>">
+                                                    <a class="mega-item" href="<?php echo BASE_URL . $sub['url']; ?>">
                                                         <i class="<?php echo $sub['icon']; ?> <?php echo $iconColor; ?>"></i>
                                                         <span><?php echo __($sub['label']); ?></span>
                                                         <?php if ($badge): ?>
@@ -172,7 +172,7 @@
                                                     $slug = $proj['slug'] ?: preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($proj['name']));
                                                     $iconClass = $projIcons[$idx % count($projIcons)];
                                                 ?>
-                                                    <a class="mega-item" href="/colony/<?php echo $slug; ?>/plots">
+                                                    <a class="mega-item" href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>/plots">
                                                         <i class="fas fa-vector-square <?php echo $iconClass; ?>"></i>
                                                         <span><?php echo htmlspecialchars($proj['name']); ?></span>
                                                     </a>
@@ -193,7 +193,7 @@
                                                     $iconClass = $locIcons[(int)$idx % count($locIcons)];
                                                 ?>
                                                     <a class="mega-item"
-                                                       href="/projects?location=<?php echo urlencode(strtolower($loc['name'])); ?>">
+                                                       href="<?php echo BASE_URL; ?>/projects?location=<?php echo urlencode(strtolower($loc['name'])); ?>">
                                                         <i class="fas fa-map-pin <?php echo $iconClass; ?>"></i>
                                                         <span><?php echo htmlspecialchars($loc['name']); ?></span>
                                                         <span class="mega-badge"><?php echo $loc['count']; ?></span>
@@ -202,15 +202,15 @@
                                             </div>
                                             <div class="mega-col flex-grow-1">
                                                 <h6><?php echo __('Quick Links'); ?></h6>
-                                                <a class="mega-item" href="/projects">
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>/projects">
                                                     <i class="fas fa-th-large mega-icon-teal"></i>
                                                     <span><?php echo __('All Projects'); ?></span>
                                                 </a>
-                                                <a class="mega-item" href="/colony-pipeline">
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>/colony-pipeline">
                                                     <i class="fas fa-diagram-project mega-icon-blue"></i>
                                                     <span><?php echo __('Upcoming'); ?></span>
                                                 </a>
-                                                <a class="mega-item" href="/properties?status=new">
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?status=new">
                                                     <i class="fas fa-rocket mega-icon-amber"></i>
                                                     <span><?php echo __('New Launch'); ?></span>
                                                 </a>
@@ -224,7 +224,7 @@
                                         <?php if (isset($sub['disabled'])): ?>
                                             <li><span class="dropdown-item-text text-muted"><?php echo __($sub['label']); ?></span></li>
                                         <?php else: ?>
-                                            <a class="dropdown-item" href="<?php echo $sub['url']; ?>">
+                                            <a class="dropdown-item" href="<?php echo BASE_URL . $sub['url']; ?>">
                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
                                                 <?php echo __($sub['label']); ?>
                                                 <?php if (isset($sub['badge'])): ?>
@@ -238,7 +238,7 @@
                             </ul>
                         <?php else: ?>
                             <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-primary fw-bold' : ''; ?>"
-                               href="<?php echo $item['url'] ?? '#'; ?>"
+                               href="<?php echo BASE_URL . $item['url']; ?>"
                                <?php echo ($item['highlight'] ?? false) ? 'style="color:#dc3545 !important;"' : ''; ?>>
                                 <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
                                 <?php echo __($item['label']); ?>
@@ -282,7 +282,7 @@
                             <?php foreach ($nav->getUserMenuItems() as $link): ?>
                                 <li>
                                     <a class="dropdown-item d-flex justify-content-between align-items-center"
-                                       href="<?php echo $link['url']; ?>">
+                                       href="<?php echo BASE_URL . $link['url']; ?>">
                                         <span>
                                             <i class="<?php echo $link['icon']; ?> me-2"></i><?php echo __($link['label']); ?>
                                         </span>
