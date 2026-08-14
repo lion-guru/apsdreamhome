@@ -145,6 +145,7 @@ class Autoloader
         $possiblePaths = [
             \APP_ROOT . '/app/Http/Controllers/' . $className . '.php',
             \APP_ROOT . '/app/Models/' . $className . '.php',
+            \APP_ROOT . '/app/Helpers/' . $className . '.php',
             \APP_ROOT . '/app/core/' . $className . '.php',
             \APP_ROOT . '/includes/' . $className . '.php',
             \APP_ROOT . '/' . strtolower($className) . '.php',

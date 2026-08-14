@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-08-14T16:35:45.864463",
+  "batch": "batch_3",
+  "system": {
+    "ram_pct": 86.3,
+    "ram_available_gb": 1.63,
+    "cpu_pct": 39.8
+  },
+  "visual_tests": [
+    {
+      "page": "Homepage",
+      "url": "/",
+      "status": "accessible",
+      "screenshot": false
+    },
+    {
+      "page": "Login",
+      "url": "/login",
+      "status": "accessible",
+      "screenshot": false
+    },
+    {
+      "page": "Main Page",
+      "url": "/index.php",
+      "status": "accessible",
+      "screenshot": false
+    },
+    {
+      "page": "Admin Dashboard",
+      "url": "/admin",
+      "status": "accessible",
+      "screenshot": false
+    },
+    {
+      "page": "Products",
+      "url": "/products",
+      "status": "accessible",
+      "screenshot": false
+    },
+    {
+      "page": "Cart",
+      "url": "/cart",
+      "status": "accessible",
+      "screenshot": false
+    },
+    {
+      "page": "Contact",
+      "url": "/contact",
+      "status": "accessible",
+      "screenshot": false
+    }
+  ],
+  "performance_analysis": {
+    "timestamp": "2026-08-14T16:33:47.664174",
+    "optimizations": {
+      "images": {
+        "large_files": 227,
+        "total_size_mb": 180.07,
+        "top_files": [
+          {
+            "file": "_archive\\testing_screenshots\\audit\\homepage-check.png",
+            "size_kb": 6154.3,
+            "size_mb": 6.01,
+            "extension": ".png"
+          },
+          {
+            "file": "testing\\visual_tests\\mobile_full.png",
+            "size_kb": 4615.1,
+            "size_mb": 4.51,
+            "extension": ".png"
+          },
+          {
+            "file": "_archive\\testing_screenshots\\audit\\css-fix-after.png",
+            "size_kb": 3054.2,
+            "size_mb": 2.98,
+            "extension": ".png"
+          },
+          {
+            "file": "_archive\\testing_screenshots\\audit\\css-fix-before.png",
+            "size_kb": 3034.2,
+            "size_mb": 2.96,
+            "extension": ".png"
+          },
+          {
+            "file": "_archive\\testing_screenshots\\audit\\full-home-1920.png",
+            "size_kb": 2908.5,
+            "size_mb": 2.84,
+            "extension": ".png"
+          },
+          {
+            "file": "_tmp_verify_blog.png",
+            "size_kb": 2891.0,
+            "size_mb": 2.82,
+            "extension": ".png"
+          },
+          {
+            "file": "public\\assets\\images\\banner\\ban5.jpg",
+            "size_kb": 2566.5,
+            "size_mb": 2.51,
+            "extension": ".jpg"
+          },
+          {
+            "file": "public\\assets\\images\\banner\\ban6.jpg",
+            "size_kb": 2566.5,
+            "size_mb": 2.51,
+            "extension": ".jpg"
+          },
+          {
+            "file": "build\\assets\\images\\banner\\ban5.jpg",
+            "size_kb": 2566.5,
+            "size_mb": 2.51,
+            "extension": ".jpg"
+          },
+          {
+            "file": "build\\assets\\images\\banner\\ban6.jpg",
+            "size_kb": 2566.5,
+            "size_mb": 2.51,
+            "extension": ".jpg"
+          }
+        ],
+        "recommendation": "Compress 227 images with TinyPNG/WebP. Total size: 180.1MB"
+      },
+      "css": {
+        "css_files": 275,
+        "total_size_mb": 6.14,
+        "inline_styles": 7371,
+        "recommendation": "Consolidate CSS files, convert inline styles to classes, add minification"
+      },
+      "js": {
+        "js_files": 18501,
+        "total_size_mb": 164.94,
+        "inline_js": 839,
+        "recommendation": "Move inline JS to external files, add defer loading"
+      },
+      "lazy_loading": {
+        "total_images": 0,
+        "lazy_loaded": 0,
+        "missing": 0,
+        "recommendation": "Add loading=\"lazy\" to 0 images"
+      },
+      "database": {
+        "nested_queries": 252,
+        "nplus1_patterns": 0,
+        "recommendation": "Add database indexes, use JOINs instead of nested queries"
+      }
+    },
+    "time_ms": 26768
+  },
+  "ai_insights": "### Optimization Plan for APSDreamHome Project\n\n#### 1. Top 5 Improvements to Make Right Now (Quick Wins)\n\n**Improvement 1: Minify CSS Files**\n- **Files:** All 275 CSS files\n- **Impact:** Reduces file size by up to 30%.\n- **Estimated Savings:** Bandwidth savings of approximately 6.14MB, reducing server load and improving response times.\n\n**One-line Command:** `find . -type f -name \"*.css\" -exec uglifyjs {} \\;`\n\n**Improvement 2: Minify JS Files**\n- **Files:** All 18501 JS files\n- **Impact:** Reduces file size by up to 30%.\n- **Estimated Savings:** Bandwidth savings of approximately 164.94MB, reducing server load and improving response times.\n\n**One-line Command:** `find . -type f -name \"*.js\" -exec uglifyjs {} \\;`\n\n**Improvement 3: Optimize Large Image Files**\n- **Files:** 10 large image files over 300KB\n- **Impact:** Reduces file size by up to 50%.\n- **Estimated Savings:** Bandwidth savings of approximately 300KB, reducing server load and improving response times.\n\n**One-line Command:** `find . -type f -name \"*.jpg\" -o -name \"*.jpeg\" -exec jpegoptim --strip-all {} \\;`\n\n**Improvement 4: Lazy Load Images**\n- **Files:** All images missing lazy loading\n- **Impact:** Improves user experience by reducing initial page load size and improving performance.\n- **Estimated Savings:** No direct bandwidth savings, but improves overall site speed.\n\n**One-line Command:** `find . -type f -name \"*.jpg\" -o -name \"*.jpeg\" -exec add-lazy-loading {} \\;`\n\n**Improvement 5: Optimize Inline Styles**\n- **Instances:** 7371 instances\n- **Impact:** Reduces file size by up to 20%.\n- **Estimated Savings:** Bandwidth savings of approximately 6.8MB, reducing server load and improving response times.\n\n**One-line Command:** `find . -type f -name \"*.css\" -exec cssnano {} \\;`\n\n#### 2. Estimated Savings\n\n- **Bandwidth:** Approximately 170.94MB (CSS + JS) + 300KB (Images) = 174.94MB\n- **RAM:** Reduces server load, improving efficiency.\n- **Time:** Improves page loading times.\n\n#### 3. Specific Files to Modify\n\n**Minify CSS & JS:**\n- All `.css` and `.js` files in the project directory.\n\n**Optimize Large Images:**\n- All images with file sizes over 300KB (`.jpg`, `.jpeg`) in the project directory.\n\n**Lazy Load Images:**\n- All images missing lazy loading (`.jpg`, `.jpeg`) in the project directory.\n\n**Optimize Inline Styles:**\n- All `.css` files containing inline styles.\n\n#### 4. One-line Commands to Run\n\n1. **Minify CSS Files:** `find . -type f -name \"*.css\" -exec uglifyjs {} \\;`\n2. **Minify JS Files:** `find . -type f -name \"*.js\" -exec uglifyjs {} \\;`\n3. **Optimize Large Images:** `find . -type f -name \"*.jpg\" -o -name \"*.jpeg\" -exec jpegoptim --strip-all {} \\;`\n4. **Lazy Load Images:** `find . -type f -name \"*.jpg\" -o -name \"*.jpeg\" -exec add-lazy-loading {} \\;`\n5. **Optimize Inline Styles:** `find . -type f -name \"*.css\" -exec cssnano {} \\;`",
+  "optimizations_applied": [
+    {
+      "action": "create_image_optimizer",
+      "success": true
+    }
+  ]
+}
