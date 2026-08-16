@@ -84,7 +84,7 @@ $current_period = $current_period ?? 'all';
                             <td>
                                 <strong><?= htmlspecialchars($entry['name'] ?? '') ?></strong>
                                 <?php if (!empty($entry['referral_code'])): ?>
-                                <br><small class="text-muted">Code: <?= htmlspecialchars($entry['referral_code']) ?></small>
+                                <br><small class="text-muted">Code: <?= htmlspecialchars($entry['referral_code'] ?? '') ?></small>
                                 <?php endif; ?>
                             </td>
                             <td class="text-center">

@@ -215,7 +215,7 @@
                     </div>
                     <div class="transaction-details">
                         <div class="transaction-title">
-                            <?php echo htmlspecialchars($transaction['description']); ?>
+                            <?php echo htmlspecialchars($transaction['description'] ?? ''); ?>
                         </div>
                         <div class="transaction-meta">
                             <i class="fas fa-calendar me-1"></i>

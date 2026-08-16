@@ -1,7 +1,7 @@
 <?php $pageTitle = $page_title ?? 'Energy Monitoring'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-chart-line me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-chart-line me-2"></i><?= htmlspecialchars($pageTitle ?? '') ?></h4>
     </div>
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>

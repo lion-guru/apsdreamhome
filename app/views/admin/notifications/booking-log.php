@@ -195,7 +195,7 @@
                                                 </div>
                                                 <?php if (!empty($log['error_message'])): ?>
                                                     <div class="alert alert-danger mt-2 mb-0 small">
-                                                        <strong>Error:</strong> <?= htmlspecialchars($log['error_message']) ?>
+                                                        <strong>Error:</strong> <?= htmlspecialchars($log['error_message'] ?? '') ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </div>

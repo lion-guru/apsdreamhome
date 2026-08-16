@@ -6,7 +6,7 @@ $bookings = $bookings ?? [];
 ?>
 <div class="aps-cp-container">
     <div class="aps-cp-page-header">
-        <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading) ?></h1>
+        <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading ?? '') ?></h1>
         <a href="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">
             <i class="fas fa-arrow-left"></i> Back to Collections
         </a>
@@ -31,7 +31,7 @@ $bookings = $bookings ?? [];
                         <select name="collector_id" class="aps-cp-form-select" required>
                             <option value="">-- Select --</option>
                             <?php foreach ($collectors as $c): ?>
-                                <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                                <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -67,7 +67,7 @@ $bookings = $bookings ?? [];
                         <select name="booking_id" class="aps-cp-form-select">
                             <option value="">-- None --</option>
                             <?php foreach ($bookings as $b): ?>
-                                <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['booking_number']) ?></option>
+                                <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['booking_number'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

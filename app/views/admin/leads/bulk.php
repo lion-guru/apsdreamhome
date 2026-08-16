@@ -54,7 +54,7 @@
                             <tr>
                                 <td><input type="checkbox" class="form-check-input bulk-check" value="<?= $l['id'] ?>"></td>
                                 <td><?= $l['id'] ?></td>
-                                <td><?= htmlspecialchars($l['name']) ?></td>
+                                <td><?= htmlspecialchars($l['name'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>
                                 <td><span class="badge bg-light text-dark"><?= htmlspecialchars($l['source'] ?? 'N/A') ?></span></td>
                                 <td><span class="badge bg-<?= $l['status']==='new'?'primary':'secondary' ?>"><?= ucfirst($l['status']) ?></span></td>

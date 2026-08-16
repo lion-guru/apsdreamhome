@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                                     <tr>
                                                         <td>#<?= $req['id'] ?></td>
                                                         <td>₹<?= number_format((float)$req['deducted_amount'], 2) ?></td>
-                                                        <td><span class="badge bg-<?= $req['status'] === 'approved' ? 'success' : ($req['status'] === 'rejected' ? 'danger' : 'warning') ?>"><?= htmlspecialchars($req['status']) ?></span></td>
+                                                        <td><span class="badge bg-<?= $req['status'] === 'approved' ? 'success' : ($req['status'] === 'rejected' ? 'danger' : 'warning') ?>"><?= htmlspecialchars($req['status'] ?? '') ?></span></td>
                                                         <td><?= htmlspecialchars($req['rera_number'] ?? '-') ?></td>
                                                         <td><?= htmlspecialchars($req['created_at'] ?? '') ?></td>
                                                     </tr>

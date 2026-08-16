@@ -26,7 +26,7 @@ $visits = $visits ?? [];
                             <p class="mb-1"><i class="fas fa-calendar me-2 text-primary"></i> <?= date('D, M j Y', strtotime($v['visit_date'])) ?> at <?= date('h:i A', strtotime($v['visit_time'])) ?></p>
                             <p class="mb-1"><i class="fas fa-tag me-2 text-info"></i> <?= ucfirst(str_replace('_', ' ', $v['visit_type'])) ?></p>
                             <?php if (!empty($v['notes'])): ?>
-                                <p class="mb-1"><i class="fas fa-comment me-2 text-muted"></i> <?= htmlspecialchars($v['notes']) ?></p>
+                                <p class="mb-1"><i class="fas fa-comment me-2 text-muted"></i> <?= htmlspecialchars($v['notes'] ?? '') ?></p>
                             <?php endif; ?>
                             <?php if (in_array($v['status'], ['scheduled', 'confirmed'])): ?>
                                 <form method="POST" action="<?= BASE_URL ?>/visit/cancel" class="mt-2" onsubmit="return confirm('Cancel this visit?')">

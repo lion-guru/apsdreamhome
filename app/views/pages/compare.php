@@ -121,9 +121,9 @@ $count = count($plots);
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-row-even">
                     <?php if (!empty($plot['dimension_label'])): ?>
-                        <span class="dimension-tag"><?= htmlspecialchars($plot['dimension_label']) ?></span>
+                        <span class="dimension-tag"><?= htmlspecialchars($plot['dimension_label'] ?? '') ?></span>
                     <?php elseif (!empty($plot['width_ft']) && !empty($plot['length_ft'])): ?>
-                        <span class="dimension-tag"><?= htmlspecialchars($plot['width_ft']) ?> x <?= htmlspecialchars($plot['length_ft']) ?> ft</span>
+                        <span class="dimension-tag"><?= htmlspecialchars($plot['width_ft'] ?? '') ?> x <?= htmlspecialchars($plot['length_ft'] ?? '') ?> ft</span>
                     <?php else: ?>
                         -
                     <?php endif; ?>
@@ -203,7 +203,7 @@ $count = count($plots);
             <div class="compare-label-col"><div class="compare-label"><?= __('compare_road_width') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell">
-                    <?= !empty($plot['road_width_ft']) ? htmlspecialchars($plot['road_width_ft']) . ' ft' : '-' ?>
+                    <?= !empty($plot['road_width_ft']) ? htmlspecialchars($plot['road_width_ft'] ?? '') . ' ft' : '-' ?>
                 </div>
             <?php endforeach; ?>
 

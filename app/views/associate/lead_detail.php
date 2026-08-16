@@ -74,10 +74,10 @@ $today = date('Y-m-d');
     </a>
 
     <?php if ($success): ?>
-        <div class="alert alert-success alert-dismissible fade show border-0 rounded-3"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show border-0 rounded-3"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <!-- CRM Header -->
@@ -88,7 +88,7 @@ $today = date('Y-m-d');
                 <div class="lead-meta mt-1">
                     <i class="fas fa-phone me-1"></i><?= $leadPhone ?>
                     <?php if (!empty($lead['email'])): ?>
-                        &nbsp;&bull;&nbsp;<i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email']) ?>
+                        &nbsp;&bull;&nbsp;<i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email'] ?? '') ?>
                     <?php endif; ?>
                     &nbsp;&bull;&nbsp;<i class="fas fa-calendar me-1"></i><?= __('assoc_lead_added', [], 'Added') ?> <?= date('M d, Y', strtotime($lead['created_at'])) ?>
                     <?php
@@ -101,7 +101,7 @@ $today = date('Y-m-d');
             <div class="d-flex gap-2 flex-wrap">
                 <a href="tel:<?= $leadPhone ?>" class="btn btn-light btn-sm"><i class="fas fa-phone me-1"></i><?= __('assoc_lead_call', [], 'Call') ?></a>
                 <?php if (!empty($lead['email'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($lead['email']) ?>" class="btn btn-light btn-sm"><i class="fas fa-envelope me-1"></i><?= __('assoc_lead_email', [], 'Email') ?></a>
+                    <a href="mailto:<?= htmlspecialchars($lead['email'] ?? '') ?>" class="btn btn-light btn-sm"><i class="fas fa-envelope me-1"></i><?= __('assoc_lead_email', [], 'Email') ?></a>
                 <?php endif; ?>
                 <a href="https://wa.me/91<?= $phone ?>" class="btn btn-light btn-sm" target="_blank" class="style-43764"><i class="fab fa-whatsapp me-1"></i><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?></a>
                 <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><i class="fas fa-map-marker-alt me-1"></i><?= __('assoc_lead_schedule_visit', [], 'Schedule Visit') ?></button>
@@ -152,7 +152,7 @@ $today = date('Y-m-d');
                 <?php if (!empty($lead['notes'])): ?>
                     <hr>
                     <div class="detail-label mb-1"><?= __('assoc_lead_notes', [], 'Notes') ?></div>
-                    <p class="mb-0" class="style-53532"><?= htmlspecialchars($lead['notes']) ?></p>
+                    <p class="mb-0" class="style-53532"><?= htmlspecialchars($lead['notes'] ?? '') ?></p>
                 <?php endif; ?>
             </div>
 
@@ -183,9 +183,9 @@ $today = date('Y-m-d');
                                     <i class="fas fa-calendar me-1"></i><?= $svDate ?> at <?= $svTime ?>
                                     <?php if ($isTodayVisit): ?><span class="badge bg-primary ms-1"><?= __('assoc_lead_today', [], 'Today') ?></span><?php endif; ?>
                                 </div>
-                                <small class="text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($sv['visitor_name']) ?></small>
+                                <small class="text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($sv['visitor_name'] ?? '') ?></small>
                                 <?php if (!empty($sv['notes'])): ?>
-                                    <div class="style-67721"><?= htmlspecialchars(mb_substr($sv['notes'], 0, 80)) ?></div>
+                                    <div class="style-67721"><?= htmlspecialchars(mb_substr($sv['notes'] ?? '', 0, 80)) ?></div>
                                 <?php endif; ?>
                                 <?php if (!empty($sv['rating'])): ?>
                                     <div class="style-60585"><?php for($i=1;$i<=5;$i++): ?><i class="fas fa-star<?= $i <= $sv['rating'] ? '' : '-o' ?>"></i><?php endfor; ?></div>
@@ -220,9 +220,9 @@ $today = date('Y-m-d');
                                 <strong class="style-16752"><i class="fas <?= $actIcon ?> me-1"></i> <?= $actLabel ?></strong>
                                 <small class="text-muted"><?= date('M d, Y g:i A', strtotime($act['created_at'])) ?></small>
                             </div>
-                            <p class="mb-0 mt-1" class="style-18526"><?= htmlspecialchars($act['description']) ?></p>
+                            <p class="mb-0 mt-1" class="style-18526"><?= htmlspecialchars($act['description'] ?? '') ?></p>
                             <?php if (!empty($act['old_value']) && !empty($act['new_value'])): ?>
-                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value']) ?> â†' <?= htmlspecialchars($act['new_value']) ?></small>
+                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value'] ?? '') ?> â†' <?= htmlspecialchars($act['new_value'] ?? '') ?></small>
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>
@@ -301,7 +301,7 @@ $today = date('Y-m-d');
                         <i class="fas fa-phone me-2"></i><?= __('assoc_lead_call_client', [], 'Call Client') ?>
                     </a>
                     <?php if (!empty($lead['email'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($lead['email']) ?>?subject=APS Dream Home - Property Inquiry" class="btn btn-outline-info">
+                    <a href="mailto:<?= htmlspecialchars($lead['email'] ?? '') ?>?subject=APS Dream Home - Property Inquiry" class="btn btn-outline-info">
                         <i class="fas fa-envelope me-2"></i><?= __('assoc_lead_send_email', [], 'Send Email') ?>
                     </a>
                     <?php endif; ?>
@@ -356,7 +356,7 @@ $today = date('Y-m-d');
                 <div class="style-64777">
                     <?php foreach ($commission_estimate['breakdown'] as $b): ?>
                         <div class="d-flex justify-content-between py-1 border-bottom">
-                            <span class="style-42047"><?= htmlspecialchars($b['label']) ?></span>
+                            <span class="style-42047"><?= htmlspecialchars($b['label'] ?? '') ?></span>
                             <span class="style-24039">₹<?= number_format($b['amount'], 0) ?></span>
                         </div>
                     <?php endforeach; ?>
@@ -518,7 +518,7 @@ $today = date('Y-m-d');
                         <select class="form-select form-select-sm" name="assign_to">
                             <option value=""><?= __('assoc_lead_select_member', [], '— Select member —') ?></option>
                             <?php foreach ($teamMembers as $tm): ?>
-                                <option value="<?= $tm['id'] ?>"><?= htmlspecialchars($tm['name']) ?></option>
+                                <option value="<?= $tm['id'] ?>"><?= htmlspecialchars($tm['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-share me-1"></i><?= __('assoc_lead_assign_btn', [], 'Assign') ?></button>
@@ -569,7 +569,7 @@ $today = date('Y-m-d');
                             <select class="form-select" name="colony_id">
                                 <option value=""><?= __('assoc_lead_modal_select', [], '— Select —') ?></option>
                                 <?php foreach ($colonies as $c): ?>
-                                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

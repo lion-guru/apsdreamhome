@@ -72,7 +72,7 @@ $bookingData = $bookingData ?? [];
                     <?php foreach ($leadStatus as $ls): ?>
                         <?php $pct = $totalLeads > 0 ? round($ls['cnt']/$totalLeads*100) : 0; ?>
                         <div class="mb-2">
-                            <div class="d-flex justify-content-between"><small><?= htmlspecialchars($ls['status']) ?></small><small><?= $ls['cnt'] ?> (<?= $pct ?>%)</small></div>
+                            <div class="d-flex justify-content-between"><small><?= htmlspecialchars($ls['status'] ?? '') ?></small><small><?= $ls['cnt'] ?> (<?= $pct ?>%)</small></div>
                             <div class="progress" class="style-32124"><div class="progress-bar bg-primary" class="style-21859"></div></div>
                         </div>
                     <?php endforeach; ?>

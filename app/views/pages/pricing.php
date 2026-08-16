@@ -286,7 +286,7 @@ foreach ($plans as $plan):
             <div class="popular-badge">MOST POPULAR</div>
         <?php endif; ?>
 
-        <div class="plan-name"><?= htmlspecialchars($plan['name']) ?></div>
+        <div class="plan-name"><?= htmlspecialchars($plan['name'] ?? '') ?></div>
         <div class="plan-desc"><?= htmlspecialchars($plan['description'] ?? '') ?></div>
 
         <div class="plan-price" data-monthly="<?= (int)($plan['price_monthly'] ?? 0) ?>" data-yearly="<?= (int)($plan['price_yearly'] ?? 0) ?>">
@@ -336,7 +336,7 @@ foreach ($plans as $plan):
             <tr>
                 <th class="style-19004">Feature</th>
                 <?php foreach ($plans as $p): ?>
-                    <th><?= htmlspecialchars($p['name']) ?></th>
+                    <th><?= htmlspecialchars($p['name'] ?? '') ?></th>
                 <?php endforeach; ?>
             </tr>
         </thead>

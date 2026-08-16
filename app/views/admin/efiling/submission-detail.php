@@ -4,7 +4,7 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted">Submission #<?= $submission['id'] ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling/submissions" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Submissions</a>
@@ -25,7 +25,7 @@ ob_start();
             </div>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Financial Year</label>
-                <div class="fw-bold"><?= htmlspecialchars($submission['financial_year']) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars($submission['financial_year'] ?? '') ?></div>
             </div>
             <div class="col-md-3">
                 <label class="form-label small text-muted">Quarter</label>
@@ -64,25 +64,25 @@ ob_start();
             <?php if ($submission['portal_reference']): ?>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Portal Reference</label>
-                    <div class="fw-bold"><?= htmlspecialchars($submission['portal_reference']) ?></div>
+                    <div class="fw-bold"><?= htmlspecialchars($submission['portal_reference'] ?? '') ?></div>
                 </div>
             <?php endif; ?>
             <?php if ($submission['arn_number']): ?>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">ARN Number</label>
-                    <div class="fw-bold"><?= htmlspecialchars($submission['arn_number']) ?></div>
+                    <div class="fw-bold"><?= htmlspecialchars($submission['arn_number'] ?? '') ?></div>
                 </div>
             <?php endif; ?>
             <?php if ($submission['acknowledgment_number']): ?>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Acknowledgment Number</label>
-                    <div class="fw-bold"><?= htmlspecialchars($submission['acknowledgment_number']) ?></div>
+                    <div class="fw-bold"><?= htmlspecialchars($submission['acknowledgment_number'] ?? '') ?></div>
                 </div>
             <?php endif; ?>
             <?php if ($submission['filing_mode']): ?>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Filing Mode</label>
-                    <div class="fw-bold"><?= htmlspecialchars($submission['filing_mode']) ?></div>
+                    <div class="fw-bold"><?= htmlspecialchars($submission['filing_mode'] ?? '') ?></div>
                 </div>
             <?php endif; ?>
         </div>
@@ -94,7 +94,7 @@ ob_start();
 <?php if ($submission['status'] === 'rejected' && $submission['error_message']): ?>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Error Details</h6></div>
-    <div class="card-body aps-cp-card-body"><p class="mb-0 text-danger"><?= nl2br(htmlspecialchars($submission['error_message'])) ?></p></div>
+    <div class="card-body aps-cp-card-body"><p class="mb-0 text-danger"><?= nl2br(htmlspecialchars($submission['error_message'] ?? '')) ?></p></div>
 </div>
 <?php endif; ?>
 
@@ -103,7 +103,7 @@ ob_start();
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-code me-2"></i>Portal Response</h6></div>
     <div class="card-body aps-cp-card-body">
-        <pre class="bg-light p-3 rounded small mb-0" class="style-64151"><?= htmlspecialchars($submission['portal_response_json']) ?></pre>
+        <pre class="bg-light p-3 rounded small mb-0" class="style-64151"><?= htmlspecialchars($submission['portal_response_json'] ?? '') ?></pre>
     </div>
 </div>
 <?php endif; ?>

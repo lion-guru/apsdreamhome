@@ -15,12 +15,12 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <?php if (!empty($news['image'])): ?>
-                <img src="<?= $base ?>/<?= htmlspecialchars($news['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" class="style-85061">
+                <img src="<?= $base ?>/<?= htmlspecialchars($news['image'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" class="style-85061">
                 <?php endif; ?>
                 <div class="card-body aps-cp-card-body">
                     <h2 class="card-title"><?= htmlspecialchars($news['title'] ?? '') ?></h2>
                     <div class="mb-3">
-                        <?php if (!empty($news['category'])): ?><span class="badge bg-info me-2"><?= htmlspecialchars($news['category']) ?></span><?php endif; ?>
+                        <?php if (!empty($news['category'])): ?><span class="badge bg-info me-2"><?= htmlspecialchars($news['category'] ?? '') ?></span><?php endif; ?>
                         <span class="badge bg-<?= ($news['status'] ?? 'draft') === 'published' ? 'success' : 'secondary' ?>"><?= ucfirst($news['status'] ?? 'draft') ?></span>
                     </div>
                     <p class="text-muted small">
@@ -43,7 +43,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
                         <tr><th>Published</th><td><?= htmlspecialchars($news['publish_date'] ?? 'Not published') ?></td></tr>
                         <tr><th>Status</th><td><span class="badge bg-<?= ($news['status'] ?? 'draft') === 'published' ? 'success' : 'secondary' ?>"><?= ucfirst($news['status'] ?? 'draft') ?></span></td></tr>
                         <?php if (!empty($news['updated_at'])): ?>
-                        <tr><th>Last Updated</th><td><?= htmlspecialchars($news['updated_at']) ?></td></tr>
+                        <tr><th>Last Updated</th><td><?= htmlspecialchars($news['updated_at'] ?? '') ?></td></tr>
                         <?php endif; ?>
                     </table></div>
                 </div>

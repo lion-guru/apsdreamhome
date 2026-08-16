@@ -2,13 +2,13 @@
 <div class="container-fluid py-4">
   <?php if (isset($_GET['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <?= htmlspecialchars($_GET['success']) ?>
+      <?= htmlspecialchars($_GET['success'] ?? '') ?>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <?php endif; ?>
   <?php if (isset($_GET['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <?= htmlspecialchars($_GET['error']) ?>
+      <?= htmlspecialchars($_GET['error'] ?? '') ?>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <?php endif; ?>
@@ -80,7 +80,7 @@
               <select name="bank_account_id" id="bank_account_id" class="form-select">
                 <option value=""><?= __('bko_select_bank_account') ?></option>
                 <?php foreach ($bank_accounts ?? [] as $bank): ?>
-                  <option value="<?= $bank['id'] ?>"><?= htmlspecialchars($bank['bank_name']) ?> (Acc: ...<?= substr($bank['account_number'], -4) ?>) - Balance: &#8377;<?= number_format($bank['current_balance'], 2) ?></option>
+                  <option value="<?= $bank['id'] ?>"><?= htmlspecialchars($bank['bank_name'] ?? '') ?> (Acc: ...<?= substr($bank['account_number'], -4) ?>) - Balance: &#8377;<?= number_format($bank['current_balance'], 2) ?></option>
                 <?php endforeach; ?>
               </select>
             </div>

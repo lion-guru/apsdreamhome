@@ -36,7 +36,7 @@ $isLoggedIn = $isLoggedIn ?? false;
                             $alertsOn = (int)($s['email_alerts'] ?? 0) === 1;
                         ?>
                             <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2" href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString) ?>">
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString ?? '') ?>">
                                     <i class="fas fa-search text-muted"></i>
                                     <span class="flex-grow-1"><?= htmlspecialchars($s['name'] ?? 'Untitled') ?></span>
                                     <?php if ($alertsOn): ?>

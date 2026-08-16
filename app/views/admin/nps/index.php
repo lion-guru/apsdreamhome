@@ -81,8 +81,8 @@ ob_start();
                             <?php foreach ($surveys as $s): ?>
                                 <tr>
                                     <td>#<?= $s['id'] ?></td>
-                                    <td><strong><?= htmlspecialchars($s['title']) ?></strong></td>
-                                    <td><?= htmlspecialchars($s['question_text']) ?></td>
+                                    <td><strong><?= htmlspecialchars($s['title'] ?? '') ?></strong></td>
+                                    <td><?= htmlspecialchars($s['question_text'] ?? '') ?></td>
                                     <td>
                                         <span class="badge bg-<?= $s['is_active'] ? 'success' : 'secondary' ?>">
                                             <?= $s['is_active'] ? 'Active' : 'Inactive' ?>

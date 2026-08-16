@@ -79,9 +79,9 @@ $today = date('Y-m-d');
                                     <i class="fas fa-<?= $isVisit ? 'map-marker-alt' : 'tasks' ?> <?= $isToday ? 'text-primary' : ($isVisit ? 'text-warning' : 'text-muted') ?>"></i>
                                 </div>
                                 <div>
-                                    <strong class="<?= $isPast ? 'text-muted' : '' ?>"><?= htmlspecialchars($event['title']) ?></strong>
+                                    <strong class="<?= $isPast ? 'text-muted' : '' ?>"><?= htmlspecialchars($event['title'] ?? '') ?></strong>
                                     <?php if (!empty($event['lead_name'])): ?>
-                                        <br><small class="text-muted"><?= __('assoc_sched_lead', [], 'Lead') ?>: <?= htmlspecialchars($event['lead_name']) ?></small>
+                                        <br><small class="text-muted"><?= __('assoc_sched_lead', [], 'Lead') ?>: <?= htmlspecialchars($event['lead_name'] ?? '') ?></small>
                                     <?php endif; ?>
                                     <?php if ($isVisit && !empty($event['event_time'])): ?>
                                         <br><small class="text-warning"><i class="fas fa-clock me-1"></i><?= date('h:i A', strtotime($event['event_time'])) ?></small>
@@ -150,7 +150,7 @@ $today = date('Y-m-d');
                         $cls = $isVisit ? 'site_visit' : 'task';
                         $isOverdue = strtotime($dateStr) < strtotime($today) && ($ev['status'] ?? '') !== 'completed';
                         if ($isOverdue) $cls = 'overdue';
-                        echo "<div class='cal-event $cls' title='" . htmlspecialchars($ev['title']) . "'>" . htmlspecialchars(mb_substr($ev['title'], 0, 20)) . "</div>";
+                        echo "<div class='cal-event $cls' title='" . htmlspecialchars($ev['title'] ?? '') . "'>" . htmlspecialchars(mb_substr($ev['title'] ?? '', 0, 20)) . "</div>";
                     }
                     if (count($dayEvents) > 3) {
                         echo "<div class='text-muted' style='font-size:0.65rem;'>+" . (count($dayEvents) - 3) . " <?= __('assoc_sched_more', [], 'more') ?></div>";

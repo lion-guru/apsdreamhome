@@ -15,7 +15,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="cf-card h-100">
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div><h6 class="fw-bold mb-0"><?= htmlspecialchars($f['field_label']) ?></h6><small class="text-muted"><?= htmlspecialchars($f['field_name']) ?></small></div>
+                    <div><h6 class="fw-bold mb-0"><?= htmlspecialchars($f['field_label'] ?? '') ?></h6><small class="text-muted"><?= htmlspecialchars($f['field_name'] ?? '') ?></small></div>
                     <span class="cf-badge" class="style-77342"><?= $f['is_active'] ? 'Active' : 'Inactive' ?></span>
                 </div>
                 <div class="mt-2">
@@ -24,7 +24,7 @@
                     <?php if ($f['is_required']): ?><span class="badge bg-danger">Required</span><?php endif; ?>
                 </div>
                 <?php if (!empty($f['options_json'])): ?>
-                <div class="mt-2"><small class="text-muted">Options:</small><br><?php foreach (json_decode($f['options_json'], true) ?: [] as $opt): ?><span class="badge bg-secondary me-1 mb-1"><?= htmlspecialchars($opt) ?></span><?php endforeach; ?></div>
+                <div class="mt-2"><small class="text-muted">Options:</small><br><?php foreach (json_decode($f['options_json'], true) ?: [] as $opt): ?><span class="badge bg-secondary me-1 mb-1"><?= htmlspecialchars($opt ?? '') ?></span><?php endforeach; ?></div>
                 <?php endif; ?>
                 <div class="mt-3 d-flex gap-2">
                     <a href="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $f['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>

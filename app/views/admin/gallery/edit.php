@@ -15,7 +15,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Current Image</label>
                         <div class="border rounded p-2">
-                            <img src="<?= BASE_URL ?>/<?= htmlspecialchars($image['image_path']) ?>" class="img-thumbnail" class="style-73275" alt="Current">
+                            <img src="<?= BASE_URL ?>/<?= htmlspecialchars($image['image_path'] ?? '') ?>" class="img-thumbnail" class="style-73275" alt="Current">
                         </div>
                     </div>
                     <?php endif; ?>

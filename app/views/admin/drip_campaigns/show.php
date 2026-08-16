@@ -10,7 +10,7 @@ ob_start();
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1"><?= htmlspecialchars($campaign['name']) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($campaign['name'] ?? '') ?></h2>
             <p class="text-muted mb-0">
                 <span class="badge bg-<?= ['active' => 'success', 'paused' => 'warning', 'draft' => 'secondary'][$campaign['status']] ?? 'secondary' ?>">
                     <?= ucfirst($campaign['status']) ?>
@@ -76,7 +76,7 @@ ob_start();
                                 <strong><?= $e['sequence_order'] ?></strong>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-1"><?= htmlspecialchars($e['subject']) ?></h6>
+                                <h6 class="mb-1"><?= htmlspecialchars($e['subject'] ?? '') ?></h6>
                                 <p class="text-muted small mb-1">
                                     <i class="fas fa-clock"></i> Send after
                                     <?= $e['delay_days'] > 0 ? $e['delay_days'] . ' day(s)' : '' ?>
@@ -84,7 +84,7 @@ ob_start();
                                     <?= ($e['delay_days'] == 0 && $e['delay_hours'] == 0) ? 'enrollment' : '' ?>
                                     Â· <span class="badge bg-light text-dark"><?= ucfirst($e['channel']) ?></span>
                                 </p>
-                                <pre class="bg-light p-2 small rounded mb-0" class="style-12331"><?= htmlspecialchars($e['body']) ?></pre>
+                                <pre class="bg-light p-2 small rounded mb-0" class="style-12331"><?= htmlspecialchars($e['body'] ?? '') ?></pre>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -121,7 +121,7 @@ ob_start();
                                     <td>#<?= $e['id'] ?></td>
                                     <td>
                                         <strong><?= htmlspecialchars($e['name'] ?? 'Anonymous') ?></strong>
-                                        <br><small class="text-muted"><?= htmlspecialchars($e['email']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($e['email'] ?? '') ?></small>
                                     </td>
                                     <td>Step <?= $e['current_step'] ?> / <?= count($emails) ?></td>
                                     <td><?= $e['total_sent'] ?></td>

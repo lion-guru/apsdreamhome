@@ -70,7 +70,7 @@ foreach ($rank_benefits as $rb) {
         <div class="card border-0 shadow-sm text-center h-100">
             <div class="card-body py-3">
                 <div class="text-muted small mb-1"><?= __('assoc_mlm_your_rank', [], 'Your Rank') ?></div>
-                <h4 class="text-primary mb-0"><?= htmlspecialchars($current_rank) ?></h4>
+                <h4 class="text-primary mb-0"><?= htmlspecialchars($current_rank ?? '') ?></h4>
             </div>
         </div>
     </div>
@@ -112,7 +112,7 @@ foreach ($rank_benefits as $rb) {
             <div class="progress-fill" class="style-50517"></div>
         </div>
         <div class="d-flex justify-content-between mt-1">
-            <small class="text-muted"><?= htmlspecialchars($current_rank) ?></small>
+            <small class="text-muted"><?= htmlspecialchars($current_rank ?? '') ?></small>
             <small class="text-muted"><?= htmlspecialchars($next_rank['level_name'] ?? $next_rank['rank_name'] ?? '') ?></small>
         </div>
     </div>
@@ -275,7 +275,7 @@ foreach ($rank_benefits as $rb) {
                                         <i class="fas <?= $rankIcons[$i] ?? 'fa-user' ?>"></i>
                                     </span>
                                     <div>
-                                        <?= htmlspecialchars($displayName) ?>
+                                        <?= htmlspecialchars($displayName ?? '') ?>
                                         <?php if ($isCurrent): ?>
                                             <span class="badge bg-primary ms-1"><?= __('assoc_mlm_you', [], 'You') ?></span>
                                         <?php endif; ?>
@@ -286,7 +286,7 @@ foreach ($rank_benefits as $rb) {
                             <td>₹<?= number_format((float)($rb['min_qualifying_volume'] ?? 0)) ?></td>
                             <td><strong><?= number_format((float)($rb['direct_sale_pct'] ?? 0), 1) ?>%</strong></td>
                             <td><?= number_format((float)($rb['l1_pct'] ?? 0), 1) ?>%</td>
-                            <td><small class="text-muted"><?= htmlspecialchars($perkText) ?></small></td>
+                            <td><small class="text-muted"><?= htmlspecialchars($perkText ?? '') ?></small></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -408,7 +408,7 @@ foreach ($rank_benefits as $rb) {
     <div class="card-body">
         <p class="text-muted"><?= __('assoc_mlm_share_desc', [], 'Share this link with potential associates to grow your team:') ?></p>
         <div class="input-group">
-            <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($base) ?>/associate/register?ref=<?= urlencode($_SESSION['referral_code'] ?? '') ?>" readonly>
+            <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($base ?? '') ?>/associate/register?ref=<?= urlencode($_SESSION['referral_code'] ?? '') ?>" readonly>
             <button class="btn btn-primary" onclick="copyRefLink()"><i class="fas fa-copy me-1"></i> <?= __('assoc_mlm_copy', [], 'Copy') ?></button>
         </div>
         <small class="text-muted mt-2 d-block"><i class="fas fa-info-circle"></i> <?= __('assoc_mlm_share_note', [], 'When someone registers using this link, they join your network as a direct referral.') ?></small>

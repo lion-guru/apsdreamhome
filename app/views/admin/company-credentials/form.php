@@ -33,7 +33,7 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
                                     <option value="">Select Type</option>
                                     <?php foreach ($typeLabels as $val => $lbl): ?>
                                     <option value="<?= $val ?>" <?= ($credential['credential_type'] ?? '') === $val ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($lbl) ?>
+                                        <?= htmlspecialchars($lbl ?? '') ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>

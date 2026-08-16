@@ -38,7 +38,7 @@ $_ag = $agents ?? [];
                             <div class="d-flex mb-3 <?= $m['sender_type'] === 'customer' ? '' : 'flex-row-reverse' ?>">
                                 <div class="style-70085">
                                     <div class="p-2 rounded <?= $m['sender_type'] === 'customer' ? 'bg-light' : 'bg-primary text-white' ?>">
-                                        <?= nl2br(htmlspecialchars($m['message'])) ?>
+                                        <?= nl2br(htmlspecialchars($m['message'] ?? '')) ?>
                                     </div>
                                     <small class="text-muted"><?= $m['sender_type'] === 'customer' ? 'Customer' : 'Agent' ?> Â· <?= date('H:i', strtotime($m['created_at'])) ?></small>
                                 </div>

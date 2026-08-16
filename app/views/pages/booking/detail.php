@@ -9,7 +9,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= $baseUrl ?>"><?= __('home') ?></a></li>
             <li class="breadcrumb-item"><a href="<?= $baseUrl ?>/plots/browse"><?= __('browse_browse_plots') ?></a></li>
-            <li class="breadcrumb-item active"><?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number']) ?></li>
+            <li class="breadcrumb-item active"><?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?></li>
         </ol>
     </nav>
 
@@ -23,11 +23,11 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 <div class="aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h3 class="fw-bold mb-1"><?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number']) ?></h3>
+                            <h3 class="fw-bold mb-1"><?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h3>
                             <p class="text-muted mb-0">
-                                <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name']) ?>
+                                <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name'] ?? '') ?>
                                 <?php if (!empty($plot['block'])): ?>
-                                    &middot; <?= __('browse_block') ?> <?= htmlspecialchars($plot['block']) ?>
+                                    &middot; <?= __('browse_block') ?> <?= htmlspecialchars($plot['block'] ?? '') ?>
                                 <?php endif; ?>
                                 &middot; <?= htmlspecialchars($plot['district_name'] ?? '') ?>, <?= htmlspecialchars($plot['state_name'] ?? '') ?>
                             </p>
@@ -87,7 +87,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                             <i class="fas fa-map fa-3x mb-2 opacity-25"></i>
                             <p class="mb-0"><?= __('detail_plot_location_map') ?></p>
                             <?php if (!empty($plot['map_link'])): ?>
-                            <a href="<?= htmlspecialchars($plot['map_link']) ?>" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                            <a href="<?= htmlspecialchars($plot['map_link'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
                                 <i class="fas fa-external-link-alt me-1"></i><?= __('detail_open_google_maps') ?>
                             </a>
                             <?php endif; ?>
@@ -108,7 +108,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                         <div class="col-sm-6 col-lg-3">
                             <a href="<?= $baseUrl ?>/plots/<?= $np['id'] ?>/detail" class="text-decoration-none">
                                 <div class="bg-light rounded p-3 text-center h-100">
-                                    <strong class="d-block"><?= __('browse_plot') ?> <?= htmlspecialchars($np['plot_number']) ?></strong>
+                                    <strong class="d-block"><?= __('browse_plot') ?> <?= htmlspecialchars($np['plot_number'] ?? '') ?></strong>
                                     <small class="text-muted"><?= number_format($np['area_sqft']) ?> <?= __('sqft') ?></small>
                                     <div class="text-primary fw-bold mt-1">₹<?= number_format($np['total_price']) ?></div>
                                 </div>
@@ -167,14 +167,14 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             <!-- Colony Info -->
             <div class="aps-cp-card">
                 <div class="aps-cp-card-header">
-                    <span><i class="fas fa-info-circle me-2"></i><?= sprintf(__('detail_about_colony'), htmlspecialchars($plot['colony_name'])) ?></span>
+                    <span><i class="fas fa-info-circle me-2"></i><?= sprintf(__('detail_about_colony'), htmlspecialchars($plot['colony_name'] ?? '')) ?></span>
                 </div>
                 <div class="aps-cp-card-body">
                     <p class="small text-muted mb-2"><?= htmlspecialchars($plot['colony_description'] ?? __('detail_colony_default_desc')) ?></p>
                     <?php if (!empty($plot['district_name'])): ?>
                     <div class="small">
                         <i class="fas fa-map-marker-alt text-primary me-1"></i>
-                        <?= htmlspecialchars($plot['district_name']) ?>, <?= htmlspecialchars($plot['state_name'] ?? '') ?>
+                        <?= htmlspecialchars($plot['district_name'] ?? '') ?>, <?= htmlspecialchars($plot['state_name'] ?? '') ?>
                     </div>
                     <?php endif; ?>
                 </div>

@@ -154,8 +154,8 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
                         <div>
-                            <div class="style-46756"><?php echo htmlspecialchars($agent_name); ?></div>
-                            <div class="style-46475"><?php echo htmlspecialchars($agent_email); ?></div>
+                            <div class="style-46756"><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
+                            <div class="style-46475"><?php echo htmlspecialchars($agent_email ?? ''); ?></div>
                         </div>
                         <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
                     </div>

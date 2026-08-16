@@ -140,7 +140,7 @@ $statusLabels = [
                             <td>
                                 <?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
                                 <?php if (!empty($b['block'])): ?>
-                                    <br><small class="text-muted"><?= __('user_bookings_block_prefix', 'Block') ?> <?= htmlspecialchars($b['block']) ?></small>
+                                    <br><small class="text-muted"><?= __('user_bookings_block_prefix', 'Block') ?> <?= htmlspecialchars($b['block'] ?? '') ?></small>
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($b['colony_name'] ?? 'N/A') ?></td>

@@ -8,7 +8,7 @@ $filters = $filters ?? [];
 ?>
 <div class="aps-cp-container">
     <div class="aps-cp-page-header">
-        <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading) ?></h1>
+        <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading ?? '') ?></h1>
         <a href="<?= BASE_URL ?>/admin/finance/collection-form" class="aps-cp-btn aps-cp-btn-primary">
             <i class="fas fa-plus"></i> Record Collection
         </a>
@@ -76,7 +76,7 @@ $filters = $filters ?? [];
                     <select name="collector_id" class="aps-cp-form-select">
                         <option value="">All Collectors</option>
                         <?php foreach ($collectors as $c): ?>
-                            <option value="<?= $c['id'] ?>" <?= (int)($filters['collector_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                            <option value="<?= $c['id'] ?>" <?= (int)($filters['collector_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -122,8 +122,8 @@ $filters = $filters ?? [];
                         <tbody>
                             <?php foreach ($collections as $c): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($c['collection_date']) ?></td>
-                                    <td><?= htmlspecialchars($c['customer_name']) ?></td>
+                                    <td><?= htmlspecialchars($c['collection_date'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($c['customer_name'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($c['collector_name'] ?? 'N/A') ?></td>
                                     <td class="style-24039">₹<?= number_format($c['amount'], 2) ?></td>
                                     <td><span class="aps-cp-badge aps-cp-badge-info"><?= ucfirst($c['payment_method']) ?></span></td>

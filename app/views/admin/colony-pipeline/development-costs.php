@@ -21,7 +21,7 @@ $costStatuses = [
       <h1 class="h3 mb-1"><?= __('cp_dev_costs') ?></h1>
       <span class="text-muted">
         <?= htmlspecialchars($colony['name'] ?? '') ?>
-        <?= !empty($colony['district_name']) ? ' &middot; ' . htmlspecialchars($colony['district_name']) : '' ?>
+        <?= !empty($colony['district_name']) ? ' &middot; ' . htmlspecialchars($colony['district_name'] ?? '') : '' ?>
       </span>
     </div>
     <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-outline-secondary btn-sm">
@@ -158,7 +158,7 @@ $costStatuses = [
                 <select name="cost_type" class="form-select" required>
                   <option value=""><?= __('cp_select_type') ?></option>
                   <?php foreach ($costTypes as $key => $label): ?>
-                    <option value="<?= $key ?>"><?= htmlspecialchars($label) ?></option>
+                    <option value="<?= $key ?>"><?= htmlspecialchars($label ?? '') ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>

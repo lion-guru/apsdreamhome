@@ -1,6 +1,6 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><i class="fas fa-receipt me-2"></i>Sale Record #<?= htmlspecialchars($sale['id']) ?></h1>
+        <h1 class="h3 mb-0"><i class="fas fa-receipt me-2"></i>Sale Record #<?= htmlspecialchars($sale['id'] ?? '') ?></h1>
         <a href="<?= BASE_URL ?>/admin/khatabook-sales" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to List</a>
     </div>
 
@@ -10,8 +10,8 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Transaction Details</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
-                        <tr><th class="style-47085">Transaction Date</th><td><?= htmlspecialchars($sale['transaction_date']) ?></td></tr>
-                        <tr><th>Customer Name</th><td><strong><?= htmlspecialchars($sale['customer_name']) ?></strong></td></tr>
+                        <tr><th class="style-47085">Transaction Date</th><td><?= htmlspecialchars($sale['transaction_date'] ?? '') ?></td></tr>
+                        <tr><th>Customer Name</th><td><strong><?= htmlspecialchars($sale['customer_name'] ?? '') ?></strong></td></tr>
                         <tr><th>Phone</th><td><?= htmlspecialchars($sale['customer_phone'] ?? '-') ?></td></tr>
                         <tr><th>Address</th><td><?= nl2br(htmlspecialchars($sale['customer_address'] ?? '-')) ?></td></tr>
                         <tr><th>Item Description</th><td><?= nl2br(htmlspecialchars($sale['item_description'] ?? '-')) ?></td></tr>

@@ -40,9 +40,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Location:</strong>
-                                <?php if (!empty($project['colony_name'])): ?><?php echo htmlspecialchars($project['colony_name']); ?>,<?php endif; ?>
-                                <?php if (!empty($project['district_name'])): ?><?php echo htmlspecialchars($project['district_name']); ?>,<?php endif; ?>
-                                <?php if (!empty($project['state_name'])): ?><?php echo htmlspecialchars($project['state_name']); ?><?php endif; ?>
+                                <?php if (!empty($project['colony_name'])): ?><?php echo htmlspecialchars($project['colony_name'] ?? ''); ?>,<?php endif; ?>
+                                <?php if (!empty($project['district_name'])): ?><?php echo htmlspecialchars($project['district_name'] ?? ''); ?>,<?php endif; ?>
+                                <?php if (!empty($project['state_name'])): ?><?php echo htmlspecialchars($project['state_name'] ?? ''); ?><?php endif; ?>
                             </p>
                             <p><strong>Address:</strong> <?php echo htmlspecialchars($project['address'] ?? ''); ?></p>
                         </div>
@@ -101,7 +101,7 @@
                 <div class="card-body aps-cp-card-body">
                     <ul>
                         <?php foreach ($amenities as $amenity): ?>
-                            <li><?php echo htmlspecialchars($amenity); ?></li>
+                            <li><?php echo htmlspecialchars($amenity ?? ''); ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>

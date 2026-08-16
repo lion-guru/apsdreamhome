@@ -46,26 +46,26 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
         </div>
         <div>
             <span class="badge bg-<?= $available ? 'success' : 'secondary' ?> fs-6">
-                <i class="fas fa-circle me-1"></i><?= htmlspecialchars(ucfirst($driver)) ?>
+                <i class="fas fa-circle me-1"></i><?= htmlspecialchars(ucfirst($driver ?? '')) ?>
             </span>
         </div>
     </div>
 
     <?php if ($flashSuccess): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flashSuccess) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flashSuccess ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flashWarning): ?>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($flashWarning) ?>
+            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($flashWarning ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flashError): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-times-circle me-2"></i><?= htmlspecialchars($flashError) ?>
+            <i class="fas fa-times-circle me-2"></i><?= htmlspecialchars($flashError ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -83,10 +83,10 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                         <i class="fas fa-server fa-2x text-primary opacity-50"></i>
                     </div>
                     <p class="text-muted small mb-1 mt-3">
-                        Host: <code><?= htmlspecialchars($host) ?>:<?= htmlspecialchars((string)$port) ?></code>
+                        Host: <code><?= htmlspecialchars($host ?? '') ?>:<?= htmlspecialchars((string)$port) ?></code>
                     </p>
                     <p class="text-muted small mb-0">
-                        Prefix: <code><?= htmlspecialchars($prefix) ?></code>
+                        Prefix: <code><?= htmlspecialchars($prefix ?? '') ?></code>
                     </p>
                 </div>
             </div>
@@ -229,10 +229,10 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div>
                                 <h6 class="mb-1 small text-uppercase text-muted">
-                                    <i class="fas <?= htmlspecialchars($meta['icon']) ?> me-1"></i>
-                                    <?= htmlspecialchars($meta['label']) ?>
+                                    <i class="fas <?= htmlspecialchars($meta['icon'] ?? '') ?> me-1"></i>
+                                    <?= htmlspecialchars($meta['label'] ?? '') ?>
                                 </h6>
-                                <code class="small text-muted"><?= htmlspecialchars($pathKey) ?></code>
+                                <code class="small text-muted"><?= htmlspecialchars($pathKey ?? '') ?></code>
                             </div>
                             <span class="badge bg-info">TTL <?= (int)$meta['ttl'] ?>s</span>
                         </div>

@@ -19,13 +19,13 @@ $groupLabels = [
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <a href="<?= BASE_URL ?>/admin/site-content" class="text-decoration-none me-3"><i class="fas fa-arrow-left"></i> Back</a>
-            <h1 class="d-inline h3 mb-0"><i class="fas fa-edit me-2"></i><?= htmlspecialchars($page_title) ?></h1>
+            <h1 class="d-inline h3 mb-0"><i class="fas fa-edit me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h1>
         </div>
     </div>
 
 
 
-    <form action="<?= BASE_URL ?>/admin/site-content/update/<?= htmlspecialchars($section) ?>" method="POST" enctype="multipart/form-data">
+    <form action="<?= BASE_URL ?>/admin/site-content/update/<?= htmlspecialchars($section ?? '') ?>" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
         <?php foreach ($grouped as $groupName => $groupItems): ?>
@@ -46,28 +46,28 @@ $groupLabels = [
                     $label = ucfirst(str_replace('_', ' ', $key));
                     ?>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold"><?= htmlspecialchars($label) ?></label>
+                        <label class="form-label fw-semibold"><?= htmlspecialchars($label ?? '') ?></label>
 
                         <?php if ($type === 'textarea'): ?>
-                            <textarea name="content[<?= htmlspecialchars($key) ?>]" class="form-control" rows="3"><?= htmlspecialchars($val ?? '') ?></textarea>
+                            <textarea name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" rows="3"><?= htmlspecialchars($val ?? '') ?></textarea>
 
                         <?php elseif ($type === 'image'): ?>
                             <?php if (!empty($val) && file_exists(dirname(__DIR__, 3) . '/' . $val)): ?>
                                 <div class="mb-2">
-                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val ?? '') ?>" class="img-thumbnail" class="style-2652" alt="<?= htmlspecialchars($label) ?>">
+                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val ?? '') ?>" class="img-thumbnail" class="style-2652" alt="<?= htmlspecialchars($label ?? '') ?>">
                                 </div>
                             <?php endif; ?>
-                            <input type="file" name="content_image[<?= htmlspecialchars($key) ?>]" class="form-control" accept="image/*">
-                            <input type="hidden" name="content[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars($val ?? '') ?>">
+                            <input type="file" name="content_image[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" accept="image/*">
+                            <input type="hidden" name="content[<?= htmlspecialchars($key ?? '') ?>]" value="<?= htmlspecialchars($val ?? '') ?>">
 
                         <?php elseif ($type === 'number'): ?>
-                            <input type="number" name="content[<?= htmlspecialchars($key) ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
+                            <input type="number" name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
 
                         <?php else: ?>
-                            <input type="text" name="content[<?= htmlspecialchars($key) ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
+                            <input type="text" name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
                         <?php endif; ?>
 
-                        <small class="text-muted">Key: <?= htmlspecialchars($key) ?></small>
+                        <small class="text-muted">Key: <?= htmlspecialchars($key ?? '') ?></small>
                     </div>
                 <?php endforeach; ?>
                 </div>
@@ -89,7 +89,7 @@ $groupLabels = [
         <div class="card-body aps-cp-card-body">
             <form action="<?= BASE_URL ?>/admin/site-content/create" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <input type="hidden" name="section" value="<?= htmlspecialchars($section) ?>">
+                <input type="hidden" name="section" value="<?= htmlspecialchars($section ?? '') ?>">
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Key</label>

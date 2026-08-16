@@ -28,7 +28,7 @@ $base = $base ?? BASE_URL;
 <?php if ($error): ?>
 <div class="container mt-3">
     <div class="alert alert-danger alert-dismissible fade show">
-        <i class="fas fa-exclamation-triangle me-2"></i> <?= htmlspecialchars($error) ?>
+        <i class="fas fa-exclamation-triangle me-2"></i> <?= htmlspecialchars($error ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 </div>

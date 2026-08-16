@@ -20,7 +20,7 @@ $error = $error ?? null;
     <!-- Error Messages -->
     <?php if (isset($error) && $error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($error) ?>
+            <i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

@@ -26,7 +26,7 @@
                         <?php foreach ($report['demand'] as $key => $value): ?>
                             <div class="d-flex justify-content-between mb-2">
                                 <span><?= ucfirst(str_replace('_', ' ', $key)) ?></span>
-                                <strong><?= htmlspecialchars($value) ?></strong>
+                                <strong><?= htmlspecialchars($value ?? '') ?></strong>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -42,7 +42,7 @@
             <?php if (!empty($report['recommendations'])): ?>
                 <ul class="mb-0">
                     <?php foreach ($report['recommendations'] as $rec): ?>
-                        <li class="mb-1"><?= htmlspecialchars($rec) ?></li>
+                        <li class="mb-1"><?= htmlspecialchars($rec ?? '') ?></li>
                     <?php endforeach; ?>
                 </ul>
             <?php else: ?>

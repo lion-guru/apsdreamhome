@@ -33,7 +33,7 @@
                                 <option value="">-- None --</option>
                                 <?php if (!empty($categories)): ?>
                                     <?php foreach ($categories as $cat): ?>
-                                        <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                        <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
@@ -82,7 +82,7 @@
                                                         <select name="category_id" class="form-select form-select-sm">
                                                             <option value="">None</option>
                                                             <?php foreach ($categories as $cat): ?>
-                                                                <option value="<?= (int)$cat['id'] ?>" <?= ((int)($t['category_id'] ?? 0) === (int)$cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
+                                                                <option value="<?= (int)$cat['id'] ?>" <?= ((int)($t['category_id'] ?? 0) === (int)$cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name'] ?? '') ?></option>
                                                             <?php endforeach; ?>
                                                         </select>
                                                     </div>

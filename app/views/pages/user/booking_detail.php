@@ -113,7 +113,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                 <?php if (!empty($booking['block'])): ?>
                 <div class="mb-2">
                     <small class="text-muted d-block"><?= __('user_booking_detail_label_block', 'Block') ?></small>
-                    <strong><?= htmlspecialchars($booking['block']) ?></strong>
+                    <strong><?= htmlspecialchars($booking['block'] ?? '') ?></strong>
                 </div>
                 <?php endif; ?>
                 <div class="mb-2">
@@ -123,16 +123,16 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                 <?php if (!empty($booking['width_ft']) && !empty($booking['length_ft'])): ?>
                 <div class="mb-2">
                     <small class="text-muted d-block"><?= __('user_booking_detail_label_dimensions', 'Dimensions') ?></small>
-                    <strong><?= htmlspecialchars($booking['width_ft']) ?> x <?= htmlspecialchars($booking['length_ft']) ?> ft</strong>
+                    <strong><?= htmlspecialchars($booking['width_ft'] ?? '') ?> x <?= htmlspecialchars($booking['length_ft'] ?? '') ?> ft</strong>
                     <?php if (!empty($booking['dimension_label'])): ?>
-                        <br><small class="text-muted">(<?= htmlspecialchars($booking['dimension_label']) ?>)</small>
+                        <br><small class="text-muted">(<?= htmlspecialchars($booking['dimension_label'] ?? '') ?>)</small>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($booking['facing'])): ?>
                 <div class="mb-2">
                     <small class="text-muted d-block"><?= __('user_booking_detail_label_facing', 'Facing') ?></small>
-                    <strong><?= htmlspecialchars($booking['facing']) ?></strong>
+                    <strong><?= htmlspecialchars($booking['facing'] ?? '') ?></strong>
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($booking['corner_plot'])): ?>
@@ -143,7 +143,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                 <?php if (!empty($booking['road_width_ft']) && $booking['road_width_ft'] > 0): ?>
                 <div class="mb-2">
                     <small class="text-muted d-block"><?= __('user_booking_detail_label_road_width', 'Road Width') ?></small>
-                    <strong><?= htmlspecialchars($booking['road_width_ft']) ?> ft</strong>
+                    <strong><?= htmlspecialchars($booking['road_width_ft'] ?? '') ?> ft</strong>
                 </div>
                 <?php endif; ?>
             </div>
@@ -211,10 +211,10 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                             <strong class="text-<?= $hColor ?>"><?= $statusLabels[$h['to_status']] ?? ucfirst($h['to_status']) ?></strong>
                             <small class="text-muted ms-2"><?= date('d M Y, h:i A', strtotime($h['created_at'] ?? 'now')) ?></small>
                             <?php if (!empty($h['changed_by_name'])): ?>
-                                <small class="text-muted ms-2"><?= __('user_booking_detail_by', 'by') ?> <?= htmlspecialchars($h['changed_by_name']) ?></small>
+                                <small class="text-muted ms-2"><?= __('user_booking_detail_by', 'by') ?> <?= htmlspecialchars($h['changed_by_name'] ?? '') ?></small>
                             <?php endif; ?>
                             <?php if (!empty($h['reason'])): ?>
-                                <br><small class="text-muted"><?= htmlspecialchars($h['reason']) ?></small>
+                                <br><small class="text-muted"><?= htmlspecialchars($h['reason'] ?? '') ?></small>
                             <?php endif; ?>
                         </div>
                     </div>

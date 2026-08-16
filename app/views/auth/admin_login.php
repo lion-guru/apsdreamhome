@@ -317,13 +317,13 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
             <?php if (!empty($displayError)): ?>
                 <div class="error-alert">
                     <i class="fa-solid fa-circle-exclamation"></i>
-                    <span><?php echo htmlspecialchars($displayError); ?></span>
+                    <span><?php echo htmlspecialchars($displayError ?? ''); ?></span>
                 </div>
             <?php endif; ?>
 
             <!-- Login Form -->
             <form action="<?php echo BASE_URL; ?>/admin/login" method="POST" novalidate>
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                 <!-- Email / Username -->
                 <div class="mb-3">
@@ -370,7 +370,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                         <i class="fa-solid fa-shield-halved"></i> <?php echo __('auth_security_check', 'Security Check'); ?>
                     </label>
                     <div class="captcha-box">
-                        <span class="captcha-question"><?php echo htmlspecialchars($captcha_question); ?></span>
+                        <span class="captcha-question"><?php echo htmlspecialchars($captcha_question ?? ''); ?></span>
                         <input
                             type="text"
                             class="form-control"

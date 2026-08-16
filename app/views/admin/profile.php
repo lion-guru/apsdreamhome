@@ -58,7 +58,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <?php if (!empty($user['phone'])): ?>
                                 <p class="mb-0">
                                     <i class="fas fa-phone me-2 text-muted"></i>
-                                    <strong><?php echo htmlspecialchars($user['phone']); ?></strong>
+                                    <strong><?php echo htmlspecialchars($user['phone'] ?? ''); ?></strong>
                                 </p>
                             <?php endif; ?>
                         </div>

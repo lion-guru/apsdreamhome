@@ -13,7 +13,7 @@ $errors = $errors ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i><?= htmlspecialchars($page_heading) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h2>
         <a href="<?= BASE_URL ?>/async/tasks" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Tasks</a>
     </div>
 
@@ -21,7 +21,7 @@ $errors = $errors ?? [];
     <div class="alert alert-danger">
         <ul class="mb-0">
             <?php foreach ($errors as $error): ?>
-                <li><?= htmlspecialchars($error) ?></li>
+                <li><?= htmlspecialchars($error ?? '') ?></li>
             <?php endforeach; ?>
         </ul>
     </div>

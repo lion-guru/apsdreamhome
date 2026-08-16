@@ -1,13 +1,13 @@
 <div class="content-area p-4">
     <?php if (!empty($flash_success)): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($flash_success); ?>
+            <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($flash_success ?? ''); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (!empty($flash_error)): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($flash_error); ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($flash_error ?? ''); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -48,8 +48,8 @@
                             ?>
                             <tr>
                                 <td>
-                                    <strong><?php echo htmlspecialchars($label[0]); ?></strong>
-                                    <br><small class="text-muted"><?php echo htmlspecialchars($label[1]); ?></small>
+                                    <strong><?php echo htmlspecialchars($label[0] ?? ''); ?></strong>
+                                    <br><small class="text-muted"><?php echo htmlspecialchars($label[1] ?? ''); ?></small>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
@@ -106,7 +106,7 @@
                             $currentFreq = $prefs['booking']['frequency'] ?? 'immediate';
                             foreach ($freqs as $val => $lab):
                             ?>
-                            <option value="<?php echo $val; ?>" <?php echo $currentFreq === $val ? 'selected' : ''; ?>><?php echo htmlspecialchars($lab); ?></option>
+                            <option value="<?php echo $val; ?>" <?php echo $currentFreq === $val ? 'selected' : ''; ?>><?php echo htmlspecialchars($lab ?? ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                         <small class="text-muted d-block mt-1"><?php echo __('notif_pref_frequency_desc', [], 'How often you receive non-urgent notifications.'); ?></small>

@@ -61,7 +61,7 @@ $page_description = 'Manually adjust lead score';
                                     <p><strong>Phone:</strong> <?php echo htmlspecialchars($leadScore['lead_phone'] ?? ''); ?></p>
                                     <?php if (!empty($leadScore['criteria'])): ?>
                                         <p><strong>Current Criteria:</strong></p>
-                                        <small class="text-muted"><?php echo nl2br(htmlspecialchars($leadScore['criteria'])); ?></small>
+                                        <small class="text-muted"><?php echo nl2br(htmlspecialchars($leadScore['criteria'] ?? '')); ?></small>
                                     <?php endif; ?>
                                 </div>
                             </div>

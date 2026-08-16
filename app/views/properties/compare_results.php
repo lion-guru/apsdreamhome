@@ -64,7 +64,7 @@
                             <?php if ($comparison['best_value']): ?>
                                 <?php foreach ($properties as $prop): ?>
                                     <?php if ($prop['id'] == $comparison['best_value']): ?>
-                                    <p class="h5 text-info mb-1"><?= htmlspecialchars($prop['title']) ?></p>
+                                    <p class="h5 text-info mb-1"><?= htmlspecialchars($prop['title'] ?? '') ?></p>
                                     <small class="text-muted">
                                         ₹<?= number_format($comparison['price_per_sqft'][$prop['id']], 2) ?>/sqft
                                     </small>
@@ -85,7 +85,7 @@
                             <?php if ($comparison['largest_area']): ?>
                                 <?php foreach ($properties as $prop): ?>
                                     <?php if ($prop['id'] == $comparison['largest_area']): ?>
-                                    <p class="h5 text-warning mb-1"><?= htmlspecialchars($prop['title']) ?></p>
+                                    <p class="h5 text-warning mb-1"><?= htmlspecialchars($prop['title'] ?? '') ?></p>
                                     <small class="text-muted"><?= number_format($prop['area_sqft']) ?> sqft</small>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
@@ -110,7 +110,7 @@
                 <div class="position-relative">
                     <?php if ($property['primary_image']): ?>
                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
-                         class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
+                         class="card-img-top" alt="<?= htmlspecialchars($property['title'] ?? '') ?>"
                          class="style-12213">
                     <?php else: ?>
                     <div class="bg-light d-flex align-items-center justify-content-center" class="style-17333">
@@ -141,9 +141,9 @@
                 </div>
 
                 <div class="card-body aps-cp-card-body">
-                    <h5 class="card-title"><?= htmlspecialchars($property['title']) ?></h5>
+                    <h5 class="card-title"><?= htmlspecialchars($property['title'] ?? '') ?></h5>
                     <p class="text-muted small">
-                        <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location']) ?>
+                        <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location'] ?? '') ?>
                     </p>
                     
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -180,7 +180,7 @@
                     <?php if ($property['agent_name']): ?>
                     <li class="list-group-item">
                         <small class="text-muted">
-                            <i class="fas fa-user me-2"></i>Agent: <?= htmlspecialchars($property['agent_name']) ?>
+                            <i class="fas fa-user me-2"></i>Agent: <?= htmlspecialchars($property['agent_name'] ?? '') ?>
                         </small>
                     </li>
                     <?php endif; ?>
@@ -211,7 +211,7 @@
                                     <th class="style-26295">Feature</th>
                                     <?php foreach ($properties as $property): ?>
                                     <th class="style-37463">
-                                        <?= htmlspecialchars($property['title']) ?>
+                                        <?= htmlspecialchars($property['title'] ?? '') ?>
                                     </th>
                                     <?php endforeach; ?>
                                 </tr>
@@ -250,7 +250,7 @@
                                 <tr>
                                     <td class="fw-bold"><i class="fas fa-map-marker-alt me-2"></i>Location</td>
                                     <?php foreach ($properties as $property): ?>
-                                    <td><?= htmlspecialchars($property['location']) ?></td>
+                                    <td><?= htmlspecialchars($property['location'] ?? '') ?></td>
                                     <?php endforeach; ?>
                                 </tr>
                                 <tr>
@@ -277,9 +277,9 @@
                                     <td class="fw-bold"><i class="fas fa-user me-2"></i>Agent</td>
                                     <?php foreach ($properties as $property): ?>
                                     <td>
-                                        <?= $property['agent_name'] ? htmlspecialchars($property['agent_name']) : '-' ?>
+                                        <?= $property['agent_name'] ? htmlspecialchars($property['agent_name'] ?? '') : '-' ?>
                                         <?php if ($property['agent_phone']): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($property['agent_phone']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($property['agent_phone'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <?php endforeach; ?>

@@ -84,7 +84,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($fields as $i => $field): ?>
-                                    <div class="form-field-card mb-3 p-3 border rounded bg-white position-relative" data-index="<?= $i ?>" data-type="<?= htmlspecialchars($field['type']) ?>">
+                                    <div class="form-field-card mb-3 p-3 border rounded bg-white position-relative" data-index="<?= $i ?>" data-type="<?= htmlspecialchars($field['type'] ?? '') ?>">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                             <span class="badge bg-<?= match($field['type']) { 'text'=>'primary', 'email'=>'success', 'phone'=>'info', 'textarea'=>'warning', 'select'=>'info', 'checkbox'=>'secondary', 'hidden'=>'dark', default=>'dark' } ?>">
                                                 <?= ucfirst($field['type']) ?>
@@ -97,7 +97,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                         <div class="field-preview">
                                             <label class="form-label fw-bold"><?= htmlspecialchars($field['label'] ?? '') ?> <?= !empty($field['required']) ? '<span class="text-danger">*</span>' : '' ?></label>
                                             <?php if (!empty($field['placeholder'])): ?>
-                                                <small class="text-muted">Placeholder: <?= htmlspecialchars($field['placeholder']) ?></small>
+                                                <small class="text-muted">Placeholder: <?= htmlspecialchars($field['placeholder'] ?? '') ?></small>
                                             <?php endif; ?>
                                             <?php if ($field['type'] === 'select' && !empty($field['options'])): ?>
                                                 <small class="text-muted">Options: <?= htmlspecialchars(implode(', ', $field['options'])) ?></small>
@@ -195,7 +195,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                     $db = \App\Core\Database\Database::getInstance()->getConnection();
                                     $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
                                     foreach ($agents as $a): ?>
-                                        <option value="<?= $a['id'] ?>" <?= ($settings['assign_to'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['name']) ?></option>
+                                        <option value="<?= $a['id'] ?>" <?= ($settings['assign_to'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['name'] ?? '') ?></option>
                                     <?php endforeach;
                                 } catch (\Throwable $e) {}
                                 ?>
@@ -210,7 +210,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                     $db = \App\Core\Database\Database::getInstance()->getConnection();
                                     $campaigns = $db->query("SELECT id, name FROM campaigns WHERE status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
                                     foreach ($campaigns as $c): ?>
-                                        <option value="<?= $c['id'] ?>" <?= ($settings['drip_campaign'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                                        <option value="<?= $c['id'] ?>" <?= ($settings['drip_campaign'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
                                     <?php endforeach;
                                 } catch (\Throwable $e) {}
                                 ?>

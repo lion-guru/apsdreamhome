@@ -10,7 +10,7 @@
             <?php $categories = array_unique(array_column($faqs ?? [], 'category')); ?>
             <?php foreach ($categories as $cat): ?>
             <div class="mb-4">
-                <h6 class="text-primary mb-3"><i class="fas fa-tag me-2"></i><?= htmlspecialchars($cat) ?></h6>
+                <h6 class="text-primary mb-3"><i class="fas fa-tag me-2"></i><?= htmlspecialchars($cat ?? '') ?></h6>
                 <div class="accordion" id="faqAccordion-<?= md5($cat) ?>">
                     <?php $idx = 0; foreach (($faqs ?? []) as $faq): if (($faq['category'] ?? '') !== $cat) continue; $idx++; ?>
                     <div class="accordion-item border-0 mb-2 shadow-sm rounded">

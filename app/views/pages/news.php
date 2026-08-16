@@ -18,9 +18,9 @@
                 <?php if (isset($breadcrumbs)): ?>
                     <?php foreach ($breadcrumbs as $crumb): ?>
                         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
                         <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -71,12 +71,12 @@
                                     ? $imagePath
                                     : get_asset_url($imagePath);
                                 ?>
-                                <img src="<?= htmlspecialchars($imageUrl) ?>"
+                                <img src="<?= htmlspecialchars($imageUrl ?? '') ?>"
                                     alt="<?= htmlspecialchars($news['title'] ?? '') ?>"
                                     class="img-fluid w-100" class="style-27608" loading="lazy">
                                 <?php if (!empty($news['category'])): ?>
                                 <div class="news-category position-absolute top-0 start-0 m-3">
-                                    <span class="badge bg-primary"><?= htmlspecialchars($news['category']) ?></span>
+                                    <span class="badge bg-primary"><?= htmlspecialchars($news['category'] ?? '') ?></span>
                                 </div>
                                 <?php endif; ?>
                             </div>

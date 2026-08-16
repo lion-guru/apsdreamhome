@@ -77,10 +77,10 @@ $colonyId = (int)($colony['id'] ?? 0);
       <strong><i class="fas fa-map me-2"></i><?= __('cp_plot_inventory') ?></strong>
       <div class="d-flex gap-2">
         <?php if (!empty($filters['status'])): ?>
-          <span class="badge bg-primary"><?= __('cp_status') ?>: <?= htmlspecialchars($filters['status']) ?></span>
+          <span class="badge bg-primary"><?= __('cp_status') ?>: <?= htmlspecialchars($filters['status'] ?? '') ?></span>
         <?php endif; ?>
         <?php if (!empty($filters['search'])): ?>
-          <span class="badge bg-info"><?= __('cp_search') ?>: <?= htmlspecialchars($filters['search']) ?></span>
+          <span class="badge bg-info"><?= __('cp_search') ?>: <?= htmlspecialchars($filters['search'] ?? '') ?></span>
         <?php endif; ?>
       </div>
     </div>
@@ -130,7 +130,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                   <?php if (!empty($plot['width_ft']) && !empty($plot['length_ft'])): ?>
                     <?= number_format($plot['width_ft'], 0) ?> x <?= number_format($plot['length_ft'], 0) ?> ft
                   <?php elseif (!empty($plot['dimension_label'])): ?>
-                    <?= htmlspecialchars($plot['dimension_label']) ?>
+                    <?= htmlspecialchars($plot['dimension_label'] ?? '') ?>
                   <?php else: ?>
                     —
                   <?php endif; ?>
@@ -211,7 +211,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                 }
                 sort($blockList);
                 foreach ($blockList as $b): ?>
-                  <option value="<?= htmlspecialchars($b) ?>" <?= ($filters['block'] ?? '') === $b ? 'selected' : '' ?>><?= htmlspecialchars($b) ?></option>
+                  <option value="<?= htmlspecialchars($b ?? '') ?>" <?= ($filters['block'] ?? '') === $b ? 'selected' : '' ?>><?= htmlspecialchars($b ?? '') ?></option>
                 <?php endforeach;
               ?>
             </select>

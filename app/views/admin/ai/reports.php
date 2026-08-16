@@ -61,7 +61,7 @@ $leadQualified = $leadQualified ?? [];
                     <?php else: ?>
                         <?php foreach (array_slice($conversionBySource, 0, 8) as $src): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small"><?= htmlspecialchars($src['source']) ?></span>
+                            <span class="small"><?= htmlspecialchars($src['source'] ?? '') ?></span>
                             <div>
                                 <span class="badge bg-primary"><?= $src['total'] ?></span>
                                 <small class="text-muted"><?= $src['total'] > 0 ? round($src['won']/$src['total']*100,1) : 0 ?>% won</small>
@@ -89,7 +89,7 @@ $leadQualified = $leadQualified ?? [];
                     <tbody>
                         <?php foreach ($callsByScript as $s): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($s['script_name']) ?></strong></td>
+                            <td><strong><?= htmlspecialchars($s['script_name'] ?? '') ?></strong></td>
                             <td><?= number_format($s['total']) ?></td>
                             <td><?= number_format($s['completed']) ?></td>
                             <td><?= number_format($s['interested']) ?></td>

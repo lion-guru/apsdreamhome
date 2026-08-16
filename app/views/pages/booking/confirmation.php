@@ -129,7 +129,7 @@ foreach ($statusSteps as $i => $step) {
                             <?php foreach ($schedule as $inst): ?>
                             <tr>
                                 <td><?= (int)$inst['installment_no'] ?></td>
-                                <td><?= htmlspecialchars($inst['due_date']) ?></td>
+                                <td><?= htmlspecialchars($inst['due_date'] ?? '') ?></td>
                                 <td class="text-end">₹<?= number_format((float)$inst['amount']) ?></td>
                                 <td class="text-center">
                                     <?php

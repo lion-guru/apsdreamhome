@@ -12,10 +12,10 @@ $department_id = $department_id ?? '';
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-table me-2"></i><?= htmlspecialchars($page_heading) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-table me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h4>
         <div class="btn-group">
             <a href="?week=<?= $week_offset - 1 ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-chevron-left"></i> Prev</a>
-            <span class="btn btn-outline-secondary btn-sm disabled"><?= htmlspecialchars($week_start) ?> - <?= htmlspecialchars($week_end) ?></span>
+            <span class="btn btn-outline-secondary btn-sm disabled"><?= htmlspecialchars($week_start ?? '') ?> - <?= htmlspecialchars($week_end ?? '') ?></span>
             <a href="?week=<?= $week_offset + 1 ?>" class="btn btn-outline-primary btn-sm">Next <i class="fas fa-chevron-right"></i></a>
         </div>
     </div>
@@ -26,7 +26,7 @@ $department_id = $department_id ?? '';
                     <th class="style-82720">Employee</th>
                     <?php foreach ($week_dates as $wd): ?>
                         <th class="text-center <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
-                            <?= htmlspecialchars($wd['day']) ?><br><small><?= htmlspecialchars($wd['date']) ?></small>
+                            <?= htmlspecialchars($wd['day'] ?? '') ?><br><small><?= htmlspecialchars($wd['date'] ?? '') ?></small>
                         </th>
                     <?php endforeach; ?>
                 </tr>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $item = $item ?? null;
 $isEdit = !empty($item);
 $csrf = $_SESSION['csrf_token'] ?? '';
@@ -15,7 +15,7 @@ $protos = ['wifi'=>'WiFi','zigbee'=>'Zigbee','zwave'=>'Z-Wave','ble'=>'Bluetooth
         <form method="POST" action="<?= BASE_URL ?>/admin/iot/catalog/save">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $item['id'] ?>"><?php endif; ?>
-            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['name']) : '' ?>" required></div>
+            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['name'] ?? '') : '' ?>" required></div>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Category</label>

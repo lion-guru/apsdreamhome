@@ -25,10 +25,10 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 </div>
 
 <?php if ($success): ?>
-    <div class="alert alert-success alert-dismissible fade show border-0 rounded-3"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-success alert-dismissible fade show border-0 rounded-3"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 <?php endif; ?>
 <?php if ($error): ?>
-    <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 <?php endif; ?>
 
 <!-- Stats -->
@@ -100,14 +100,14 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                             <?php if ($isOverdue): ?><span class="badge bg-danger ms-2">Missed</span><?php endif; ?>
                             <div class="text-muted" class="style-47175">
                                 <?php if (!empty($v['colony_name'])): ?>
-                                    <i class="fas fa-building me-1"></i><?= htmlspecialchars($v['colony_name']) ?>
+                                    <i class="fas fa-building me-1"></i><?= htmlspecialchars($v['colony_name'] ?? '') ?>
                                 <?php endif; ?>
                                 <?php if (!empty($v['plot_number'])): ?>
-                                    | Plot #<?= htmlspecialchars($v['plot_number']) ?>
+                                    | Plot #<?= htmlspecialchars($v['plot_number'] ?? '') ?>
                                 <?php endif; ?>
                             </div>
                             <?php if (!empty($v['notes'])): ?>
-                                <div class="style-69622"><?= htmlspecialchars($v['notes']) ?></div>
+                                <div class="style-69622"><?= htmlspecialchars($v['notes'] ?? '') ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <select class="form-select" name="colony_id">
                             <option value="">— Select —</option>
                             <?php foreach ($colonies as $c): ?>
-                                <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                                <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -171,10 +171,10 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                                 <i class="fas fa-university"></i>
                                             </div>
                                             <div class="flex-grow-1">
-                                                <div class="fw-bold"><?php echo htmlspecialchars($account['bank_name']); ?></div>
+                                                <div class="fw-bold"><?php echo htmlspecialchars($account['bank_name'] ?? ''); ?></div>
                                                 <small class="text-muted">
                                                     A/C: XXXXXX<?php echo substr($account['account_number'], -4); ?> 
-                                                    • IFSC: <?php echo htmlspecialchars($account['ifsc_code']); ?>
+                                                    • IFSC: <?php echo htmlspecialchars($account['ifsc_code'] ?? ''); ?>
                                                 </small>
                                             </div>
                                             <?php if ($account['is_primary']): ?>
@@ -262,7 +262,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php if ($withdrawal['status'] == 'rejected' && $withdrawal['rejection_reason']): ?>
                             <small class="text-danger">
                                 <i class="fas fa-exclamation-circle me-1"></i>
-                                <?php echo htmlspecialchars($withdrawal['rejection_reason']); ?>
+                                <?php echo htmlspecialchars($withdrawal['rejection_reason'] ?? ''); ?>
                             </small>
                         <?php endif; ?>
                     </div>

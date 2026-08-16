@@ -30,7 +30,7 @@
                                     <option value="">All States</option>
                                     <?php foreach ($states as $state): ?>
                                         <option value="<?php echo $state['id']; ?>" <?php echo (isset($_GET['state_id']) && $_GET['state_id'] == $state['id']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($state['name']); ?>
+                                            <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -73,10 +73,10 @@
                                 <tr>
                                     <td><?php echo $district['id']; ?></td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($district['name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($district['name'] ?? ''); ?></strong>
                                     </td>
                                     <td>
-                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($district['code']); ?></span>
+                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($district['code'] ?? ''); ?></span>
                                     </td>
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $district['state_id']; ?>" class="btn btn-sm btn-outline-info">

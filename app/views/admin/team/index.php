@@ -41,7 +41,7 @@
                         <td><?php echo $i + 1; ?></td>
                         <td>
                             <?php if (!empty($m['photo'])): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($m['photo']); ?>" alt="" class="style-20773">
+                            <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($m['photo'] ?? ''); ?>" alt="" class="style-20773">
                             <?php else: ?>
                             <div class="style-56261"><i class="fas fa-user"></i></div>
                             <?php endif; ?>

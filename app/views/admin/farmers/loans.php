@@ -69,7 +69,7 @@ $closedCount = $closed_count ?? 0;
                                 <?php elseif ($s === 'closed'): ?><span class="badge bg-info">Closed</span>
                                 <?php elseif ($s === 'defaulted'): ?><span class="badge bg-danger">Defaulted</span>
                                 <?php elseif ($s === 'applied'): ?><span class="badge bg-secondary">Applied</span>
-                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s); ?></span>
+                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s ?? ''); ?></span>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo htmlspecialchars($l['sanction_date'] ?? ''); ?></td>

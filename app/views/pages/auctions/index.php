@@ -27,7 +27,7 @@ ob_start();
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <?php if ($a['image_url']): ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title']) ?>" class="style-24482">
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($a['title'] ?? '') ?>" class="style-24482">
                         <?php else: ?>
                             <div class="bg-secondary text-white d-flex align-items-center justify-content-center" class="style-32569">
                                 <i class="fas fa-gavel fa-3x"></i>
@@ -35,7 +35,7 @@ ob_start();
                         <?php endif; ?>
                         <div class="card-body aps-cp-card-body">
                             <span class="badge bg-danger mb-2"><?= __('auction_badge_live', [], 'LIVE') ?></span>
-                            <h5 class="card-title"><?= htmlspecialchars($a['title']) ?></h5>
+                            <h5 class="card-title"><?= htmlspecialchars($a['title'] ?? '') ?></h5>
                             <?php if ($a['property_title']): ?>
                                 <p class="text-muted small mb-1"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($a['property_address'] ?? $a['property_city']) ?></p>
                             <?php endif; ?>
@@ -73,7 +73,7 @@ ob_start();
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body aps-cp-card-body">
                             <span class="badge bg-info mb-2"><?= __('auction_badge_scheduled', [], 'SCHEDULED') ?></span>
-                            <h6><?= htmlspecialchars($a['title']) ?></h6>
+                            <h6><?= htmlspecialchars($a['title'] ?? '') ?></h6>
                             <p class="text-muted small"><?= __('auction_starts', [], 'Starts:') ?> <?= date('M j, Y H:i', strtotime($a['starts_at'])) ?></p>
                             <p class="mb-2"><strong><?= __('auction_start_price', [], 'Start:') ?> ₹<?= number_format($a['start_price']) ?></strong></p>
                             <a href="<?= BASE_URL ?>/auctions/<?= $a['id'] ?>" class="btn btn-outline-primary btn-sm w-100"><?= __('auction_view_details', [], 'View Details') ?></a>
@@ -94,7 +94,7 @@ ob_start();
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body aps-cp-card-body">
                             <span class="badge bg-success mb-2"><?= __('auction_badge_sold', [], 'SOLD') ?></span>
-                            <h6><?= htmlspecialchars($a['title']) ?></h6>
+                            <h6><?= htmlspecialchars($a['title'] ?? '') ?></h6>
                             <p class="text-success mb-0"><strong><?= __('auction_final_price', [], 'Final:') ?> ₹<?= number_format($a['winning_bid'] ?? 0) ?></strong></p>
                         </div>
                     </div>

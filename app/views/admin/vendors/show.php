@@ -114,7 +114,7 @@ $contracts = $contracts ?? [];
                 <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <?php if (!empty($vendor['phone'])): ?>
-                            <a href="tel:<?= htmlspecialchars($vendor['phone']) ?>" class="btn btn-outline-primary">
+                            <a href="tel:<?= htmlspecialchars($vendor['phone'] ?? '') ?>" class="btn btn-outline-primary">
                                 <i class="fas fa-phone me-2"></i>Call
                             </a>
                             <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $vendor['phone']) ?>" target="_blank" class="btn btn-success">
@@ -122,7 +122,7 @@ $contracts = $contracts ?? [];
                             </a>
                         <?php endif; ?>
                         <?php if (!empty($vendor['email'])): ?>
-                            <a href="mailto:<?= htmlspecialchars($vendor['email']) ?>" class="btn btn-info">
+                            <a href="mailto:<?= htmlspecialchars($vendor['email'] ?? '') ?>" class="btn btn-info">
                                 <i class="fas fa-envelope me-2"></i>Send Email
                             </a>
                         <?php endif; ?>
@@ -207,7 +207,7 @@ $contracts = $contracts ?? [];
                     <h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <p class="mb-0"><?= nl2br(htmlspecialchars($vendor['notes'])) ?></p>
+                    <p class="mb-0"><?= nl2br(htmlspecialchars($vendor['notes'] ?? '')) ?></p>
                 </div>
             </div>
             <?php endif; ?>

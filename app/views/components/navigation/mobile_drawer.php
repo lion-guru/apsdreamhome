@@ -26,7 +26,7 @@
                href="<?php echo BASE_URL; ?>">
                 <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                        if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
-                <img src="<?php echo BASE_URL . htmlspecialchars($logo); ?>"
+                <img src="<?php echo BASE_URL . htmlspecialchars($logo ?? ''); ?>"
                      alt="<?php echo htmlspecialchars($nav->companyName()); ?>"
                      class="logo"
                      class="style-39414"

@@ -15,7 +15,7 @@
                             <select name="associate_id" class="form-select" required>
                                 <option value="">Select</option>
                                 <?php foreach ($users ?? [] as $a): ?>
-                                <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name']) ?> (<?= htmlspecialchars($a['email']) ?>)</option>
+                                <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?> (<?= htmlspecialchars($a['email'] ?? '') ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

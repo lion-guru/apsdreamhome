@@ -56,7 +56,7 @@
                                 <select name="listing_id" class="form-control">
                                     <option value="">None</option>
                                     <?php foreach ($listings as $l): ?>
-                                        <option value="<?= $l['id'] ?>"><?= htmlspecialchars($l['business_name']) ?></option>
+                                        <option value="<?= $l['id'] ?>"><?= htmlspecialchars($l['business_name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

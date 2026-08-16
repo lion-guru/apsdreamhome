@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * AI Chatbot Training Interface
@@ -6,7 +6,7 @@
  */
 
 // Auth handled by controller (AdminAIController@training calls requireAdmin())
-// Data passed from AdminAIController::training() — knowledgeBase, analytics, categories
+// Data passed from AdminAIController::training() � knowledgeBase, analytics, categories
 
 $db = \App\Core\Database\Database::getInstance();
 
@@ -110,10 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Fetch all Q&A — passed from controller
+// Fetch all Q&A � passed from controller
 $knowledgeBase = $knowledgeBase ?? [];
 
-// Fetch analytics — passed from controller
+// Fetch analytics � passed from controller
 $analytics = $analytics ?? [
     'total_qa' => 0,
     'categories' => [],
@@ -346,7 +346,7 @@ $categories = [
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-1">🤖 AI Chatbot Training Center</h2>
+                <h2 class="mb-1">?? AI Chatbot Training Center</h2>
                 <p class="text-muted mb-0">Train your AI assistant with new knowledge</p>
             </div>
             <div class="text-end">
@@ -412,7 +412,7 @@ $categories = [
 
         <!-- Training Tips -->
         <div class="training-tips">
-            <h5><i class="fas fa-lightbulb me-2"></i>💡 Training Tips</h5>
+            <h5><i class="fas fa-lightbulb me-2"></i>?? Training Tips</h5>
             <div class="row">
                 <div class="col-md-6">
                     <ul class="mb-0">
@@ -425,7 +425,7 @@ $categories = [
                 <div class="col-md-6">
                     <ul class="mb-0">
                         <li>Keep answers concise but informative</li>
-                        <li>Add emojis for better engagement 🏠 💰</li>
+                        <li>Add emojis for better engagement ?? ??</li>
                         <li>Include contact numbers in relevant answers</li>
                         <li>Update prices when they change</li>
                     </ul>
@@ -467,7 +467,7 @@ $categories = [
                 <div class="mt-3">
                     <label class="form-label">Answer</label>
                     <textarea name="answer" class="form-control" rows="4" required
-                        placeholder="🏠 Suryoday Heights me plots ₹5.5 Lakh se shuru hote hain!&#10;&#10;📍 Location: Gorakhpur&#10;📐 Sizes: 1000-5000 sq ft&#10;&#10;📞 Call karein: +91 92771 21112"></textarea>
+                        placeholder="?? Suryoday Heights me plots ?5.5 Lakh se shuru hote hain!&#10;&#10;?? Location: Gorakhpur&#10;?? Sizes: 1000-5000 sq ft&#10;&#10;?? Call karein: +91 92771 21112"></textarea>
                 </div>
                 <div class="mt-3">
                     <button type="submit" class="btn btn-gradient">
@@ -517,7 +517,7 @@ $categories = [
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Question Pattern</label>
                                 <input type="text" name="question_pattern" class="form-control form-control-sm"
-                                    value="<?php echo htmlspecialchars($qa['question_pattern']); ?>">
+                                    value="<?php echo htmlspecialchars($qa['question_pattern'] ?? ''); ?>">
                             </div>
 
                             <div class="col-md-3 mb-2">
@@ -539,7 +539,7 @@ $categories = [
 
                             <div class="col-md-12 mb-2">
                                 <label class="small text-muted">Answer</label>
-                                <textarea name="answer" class="form-control" rows="2"><?php echo htmlspecialchars($qa['answer']); ?></textarea>
+                                <textarea name="answer" class="form-control" rows="2"><?php echo htmlspecialchars($qa['answer'] ?? ''); ?></textarea>
                             </div>
 
                             <div class="col-md-12 text-end">
@@ -566,7 +566,7 @@ $categories = [
                 <div class="mb-3">
                     <label class="form-label">Format: Question | Answer | Keywords (optional)</label>
                     <textarea name="bulk_data" class="form-control bulk-import-area" rows="10"
-                        placeholder="suryoday ka price kya hai | Suryoday me plots ₹5.5 Lakh se shuru | suryoday, price, plot&#10;raghunath city center kaha hai | Raghunath City Center Gorakhpur me hai | raghunath, location&#10;emi calculator | EMI calculator ke liye yeh link use karein... | emi, loan, calculator"></textarea>
+                        placeholder="suryoday ka price kya hai | Suryoday me plots ?5.5 Lakh se shuru | suryoday, price, plot&#10;raghunath city center kaha hai | Raghunath City Center Gorakhpur me hai | raghunath, location&#10;emi calculator | EMI calculator ke liye yeh link use karein... | emi, loan, calculator"></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Default Category</label>
@@ -590,7 +590,7 @@ $categories = [
                     <div class="test-chat-box" id="testChatBox">
                         <div class="chat-message chat-bot">
                             <i class="fas fa-robot me-2"></i>
-                            Namaste! Main APS Property Assistant hoon. Kaise madad kar sakta hoon? 🙏
+                            Namaste! Main APS Property Assistant hoon. Kaise madad kar sakta hoon? ??
                         </div>
                     </div>
                     <div class="input-group mt-3">

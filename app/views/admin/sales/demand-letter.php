@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <div class="aps-cp-card">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-envelope-open-text me-2"></i><?= __('sale_demand_letter') ?></h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link">
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link">
             <i class="fas fa-arrow-left me-1"></i><?= __('sale_back_to_booking') ?>
         </a>
     </div>

@@ -72,10 +72,10 @@ $id = (int)($acq['id'] ?? 0);
                 <div class="aps-cp-card-header"><i class="fas fa-calendar-check text-info me-2"></i>Compliance</div>
                 <div class="aps-cp-card-body">
                     <table class="table table-sm mb-0">
-                        <tr><th class="text-muted">Mutation Filed</th><td><?= !empty($acq['mutation_filed_date']) ? '✓ '.htmlspecialchars($acq['mutation_filed_date']) : '<span class="text-muted">Pending</span>' ?></td></tr>
+                        <tr><th class="text-muted">Mutation Filed</th><td><?= !empty($acq['mutation_filed_date']) ? '✓ '.htmlspecialchars($acq['mutation_filed_date'] ?? '') : '<span class="text-muted">Pending</span>' ?></td></tr>
                         <tr><th class="text-muted">Mutation #</th><td><?= htmlspecialchars($acq['mutation_number'] ?? '—') ?></td></tr>
                         <tr><th class="text-muted">Tax Up-to-date</th><td><?= !empty($acq['property_tax_upto_date']) ? '✓' : '✗' ?></td></tr>
-                        <tr><th class="text-muted">RERA Reg</th><td><?= !empty($acq['rera_registration']) ? '✓ '.htmlspecialchars($acq['rera_registration']) : 'N/A' ?></td></tr>
+                        <tr><th class="text-muted">RERA Reg</th><td><?= !empty($acq['rera_registration']) ? '✓ '.htmlspecialchars($acq['rera_registration'] ?? '') : 'N/A' ?></td></tr>
                         <tr><th class="text-muted">DD Date</th><td><?= htmlspecialchars($acq['dd_filed_date'] ?? '—') ?></td></tr>
                         <tr><th class="text-muted">DD Ref</th><td><?= htmlspecialchars($acq['dd_reference'] ?? '—') ?></td></tr>
                     </table>

@@ -143,7 +143,7 @@ $incomeByCategory = $income_by_category ?? [];
                         <tbody>
                         <?php foreach ($expenseByCategory as $exp): ?>
                             <tr>
-                                <td class="fw-semibold"><?= htmlspecialchars($exp['category']) ?></td>
+                                <td class="fw-semibold"><?= htmlspecialchars($exp['category'] ?? '') ?></td>
                                 <td class="text-end text-danger fw-bold">₹<?= number_format((float)$exp['total'], 0) ?></td>
                                 <td class="text-end"><?= (int)$exp['cnt'] ?></td>
                             </tr>

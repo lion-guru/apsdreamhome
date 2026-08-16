@@ -59,7 +59,7 @@ $page_title = $page_title ?? 'Sales Management';
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/sales" class="row g-3">
                 <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search']) ?>">
+                    <input type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <select name="status" class="form-select">
@@ -117,7 +117,7 @@ $page_title = $page_title ?? 'Sales Management';
                                     <td class="ps-4">
                                         <span class="fw-semibold"><?= htmlspecialchars($sale['sale_number'] ?? 'N/A') ?></span>
                                         <?php if (!empty($sale['booking_number'])): ?>
-                                            <br><small class="text-muted">Booking: <?= htmlspecialchars($sale['booking_number']) ?></small>
+                                            <br><small class="text-muted">Booking: <?= htmlspecialchars($sale['booking_number'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td>

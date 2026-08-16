@@ -1,6 +1,6 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><i class="fas fa-file-invoice me-2"></i>Invoice #<?= htmlspecialchars($invoice['invoice_number']) ?></h1>
+        <h1 class="h3 mb-0"><i class="fas fa-file-invoice me-2"></i>Invoice #<?= htmlspecialchars($invoice['invoice_number'] ?? '') ?></h1>
         <div>
             <span class="badge bg-<?= match($invoice['status']) { 'paid' => 'success', 'overdue' => 'danger', 'sent' => 'info', 'viewed' => 'warning', 'draft' => 'secondary', 'cancelled' => 'dark', default => 'secondary' } ?> fs-6 me-2"><?= strtoupper($invoice['status']) ?></span>
             <a href="<?= BASE_URL ?>/admin/invoices/download/<?= $invoice['id'] ?>" class="btn btn-success"><i class="fas fa-download me-1"></i>Download</a>
@@ -17,7 +17,7 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between">
                     <h5 class="mb-0">Invoice Details</h5>
-                    <small class="text-muted">Created: <?= htmlspecialchars($invoice['created_at']) ?></small>
+                    <small class="text-muted">Created: <?= htmlspecialchars($invoice['created_at'] ?? '') ?></small>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row mb-4">
@@ -30,15 +30,15 @@
                         </div>
                         <div class="col-sm-6">
                             <h6 class="text-muted">To:</h6>
-                            <div><strong><?= htmlspecialchars($invoice['client_name']) ?></strong></div>
-                            <?php if ($invoice['client_email']): ?><div class="text-muted"><?= htmlspecialchars($invoice['client_email']) ?></div><?php endif; ?>
-                            <?php if ($invoice['client_phone']): ?><div class="text-muted"><?= htmlspecialchars($invoice['client_phone']) ?></div><?php endif; ?>
-                            <?php if ($invoice['client_address']): ?><div class="text-muted"><?= nl2br(htmlspecialchars($invoice['client_address'])) ?></div><?php endif; ?>
+                            <div><strong><?= htmlspecialchars($invoice['client_name'] ?? '') ?></strong></div>
+                            <?php if ($invoice['client_email']): ?><div class="text-muted"><?= htmlspecialchars($invoice['client_email'] ?? '') ?></div><?php endif; ?>
+                            <?php if ($invoice['client_phone']): ?><div class="text-muted"><?= htmlspecialchars($invoice['client_phone'] ?? '') ?></div><?php endif; ?>
+                            <?php if ($invoice['client_address']): ?><div class="text-muted"><?= nl2br(htmlspecialchars($invoice['client_address'] ?? '')) ?></div><?php endif; ?>
                         </div>
                     </div>
                     <div class="row mb-4">
-                        <div class="col-sm-4"><strong>Invoice Date:</strong> <?= htmlspecialchars($invoice['invoice_date']) ?></div>
-                        <div class="col-sm-4"><strong>Due Date:</strong> <?= htmlspecialchars($invoice['due_date']) ?></div>
+                        <div class="col-sm-4"><strong>Invoice Date:</strong> <?= htmlspecialchars($invoice['invoice_date'] ?? '') ?></div>
+                        <div class="col-sm-4"><strong>Due Date:</strong> <?= htmlspecialchars($invoice['due_date'] ?? '') ?></div>
                         <div class="col-sm-4"><strong>Currency:</strong> <?= htmlspecialchars($invoice['currency'] ?? 'INR') ?></div>
                     </div>
 
@@ -50,7 +50,7 @@
                             <?php $i = 0; foreach (($invoice['items'] ?? []) as $item): $i++; ?>
                                 <tr>
                                     <td><?= $i ?></td>
-                                    <td><?= htmlspecialchars($item['item_name']) ?><?= !empty($item['item_description']) ? '<br><small class="text-muted">' . htmlspecialchars($item['item_description']) . '</small>' : '' ?></td>
+                                    <td><?= htmlspecialchars($item['item_name'] ?? '') ?><?= !empty($item['item_description']) ? '<br><small class="text-muted">' . htmlspecialchars($item['item_description'] ?? '') . '</small>' : '' ?></td>
                                     <td><?= (int)$item['quantity'] ?></td>
                                     <td>₹<?= number_format($item['unit_price'], 2) ?></td>
                                     <td><?= $item['discount_percent'] > 0 ? $item['discount_percent'] . '%' : '-' ?></td>
@@ -71,7 +71,7 @@
                     </table></div>
 
                     <?php if (!empty($invoice['notes'])): ?>
-                        <div class="mt-3"><h6>Notes:</h6><p class="text-muted"><?= nl2br(htmlspecialchars($invoice['notes'])) ?></p></div>
+                        <div class="mt-3"><h6>Notes:</h6><p class="text-muted"><?= nl2br(htmlspecialchars($invoice['notes'] ?? '')) ?></p></div>
                     <?php endif; ?>
                 </div>
             </div>

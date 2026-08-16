@@ -29,15 +29,15 @@ $documents = $documents ?? [];
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-6">
                     <label for="q" class="form-label"><?= __('common_search') ?></label>
-                    <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('document_search_placeholder') ?>" value="<?= htmlspecialchars($searchQuery) ?>">
+                    <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('document_search_placeholder') ?>" value="<?= htmlspecialchars($searchQuery ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label for="category" class="form-label"><?= __('common_category') ?></label>
                     <select class="form-select" id="category" name="category">
                         <option value=""><?= __('documents_all_categories') ?></option>
                         <?php foreach ($categories as $cat): ?>
-                            <option value="<?= htmlspecialchars($cat['category']) ?>" <?= $selectedCategory === $cat['category'] ? 'selected' : '' ?>>
-                                <?= ucfirst(htmlspecialchars($cat['category'])) ?>
+                            <option value="<?= htmlspecialchars($cat['category'] ?? '') ?>" <?= $selectedCategory === $cat['category'] ? 'selected' : '' ?>>
+                                <?= ucfirst(htmlspecialchars($cat['category'] ?? '')) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -72,7 +72,7 @@ $documents = $documents ?? [];
                                     <i class="fas <?= $icon ?> fa-3x"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="card-title mb-1"><?= htmlspecialchars($doc['title']) ?></h6>
+                                    <h6 class="card-title mb-1"><?= htmlspecialchars($doc['title'] ?? '') ?></h6>
                                     <small class="text-muted">
                                         <i class="fas fa-tag me-1"></i><?= ucfirst(htmlspecialchars($doc['category'] ?? 'general')) ?>
                                         <?php if ($doc['file_size'] > 0): ?>
@@ -82,7 +82,7 @@ $documents = $documents ?? [];
                                 </div>
                             </div>
                             <?php if (!empty($doc['description'])): ?>
-                                <p class="card-text small text-muted mb-3"><?= htmlspecialchars($doc['description']) ?></p>
+                                <p class="card-text small text-muted mb-3"><?= htmlspecialchars($doc['description'] ?? '') ?></p>
                             <?php endif; ?>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">

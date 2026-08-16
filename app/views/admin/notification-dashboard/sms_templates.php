@@ -58,9 +58,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <tbody>
                         <?php foreach ($templates as $t): ?>
                             <tr>
-                                <td><code class="style-68887"><?= htmlspecialchars($t['template_code']) ?></code></td>
-                                <td><?= htmlspecialchars($t['template_name']) ?></td>
-                                <td class="template-body"><?= htmlspecialchars($t['body']) ?></td>
+                                <td><code class="style-68887"><?= htmlspecialchars($t['template_code'] ?? '') ?></code></td>
+                                <td><?= htmlspecialchars($t['template_name'] ?? '') ?></td>
+                                <td class="template-body"><?= htmlspecialchars($t['body'] ?? '') ?></td>
                                 <td><span class="badge-<?= ($t['is_active'] ?? 0) ? 'active' : 'inactive' ?>"><?= ($t['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span></td>
                                 <td class="style-64704"><?= date('d M Y', strtotime($t['created_at'] ?? '')) ?></td>
                             </tr>

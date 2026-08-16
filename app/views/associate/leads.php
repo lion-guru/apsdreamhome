@@ -86,10 +86,10 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <form class="d-flex gap-2" method="GET" action="<?= BASE_URL ?>/associate/leads">
             <div class="input-group search-box">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0" name="q" placeholder="<?= __('assoc_leads_search_placeholder', [], 'Search name, phone, email...') ?>" value="<?= htmlspecialchars($search) ?>">
+                <input type="text" class="form-control border-start-0" name="q" placeholder="<?= __('assoc_leads_search_placeholder', [], 'Search name, phone, email...') ?>" value="<?= htmlspecialchars($search ?? '') ?>">
             </div>
             <?php if ($status_filter): ?>
-                <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
+                <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter ?? '') ?>">
             <?php endif; ?>
             <button type="submit" class="btn btn-outline-primary btn-sm"><?= __('assoc_leads_search_btn', [], 'Search') ?></button>
             <?php if ($search || $status_filter): ?>
@@ -106,7 +106,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                     <i class="fas fa-funnel-dollar text-muted d-block"></i>
                     <h5 class="text-muted"><?= __('assoc_leads_empty', [], 'No leads found') ?></h5>
                     <p class="text-muted mb-3">
-                        <?= $search ? __('assoc_leads_empty_search', [], 'No results for') . ' "' . htmlspecialchars($search) . '"' : __('assoc_leads_empty_add', [], 'Start building your pipeline by adding leads') ?>
+                        <?= $search ? __('assoc_leads_empty_search', [], 'No results for') . ' "' . htmlspecialchars($search ?? '') . '"' : __('assoc_leads_empty_add', [], 'Start building your pipeline by adding leads') ?>
                     </p>
                     <a href="<?= BASE_URL ?>/associate/leads/add" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> <?= __('assoc_leads_add_first', [], 'Add Your First Lead') ?>
@@ -132,26 +132,26 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                             <tr class="lead-row">
                                 <td>
                                     <a href="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>" class="text-decoration-none fw-bold text-dark">
-                                        <?= htmlspecialchars($lead['name']) ?>
+                                        <?= htmlspecialchars($lead['name'] ?? '') ?>
                                     </a>
                                     <?php if ($lead['source']): ?>
-                                        <br><small class="text-muted"><i class="fas fa-link me-1"></i><?= htmlspecialchars($lead['source']) ?></small>
+                                        <br><small class="text-muted"><i class="fas fa-link me-1"></i><?= htmlspecialchars($lead['source'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <div><i class="fas fa-phone text-muted me-1"></i><?= htmlspecialchars($lead['phone'] ?: '—') ?></div>
                                     <?php if ($lead['email']): ?>
-                                        <div><small class="text-muted"><?= htmlspecialchars($lead['email']) ?></small></div>
+                                        <div><small class="text-muted"><?= htmlspecialchars($lead['email'] ?? '') ?></small></div>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if ($lead['property_interest']): ?>
-                                        <span class="badge bg-light text-dark"><?= htmlspecialchars($lead['property_interest']) ?></span>
+                                        <span class="badge bg-light text-dark"><?= htmlspecialchars($lead['property_interest'] ?? '') ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
                                     <?php endif; ?>
                                     <?php if ($lead['budget_range']): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($lead['budget_range']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($lead['budget_range'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -190,7 +190,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                         <a href="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-primary" title="View / Update">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-sm btn-outline-success" title="Call">
+                                        <a href="tel:<?= htmlspecialchars($lead['phone'] ?? '') ?>" class="btn btn-sm btn-outline-success" title="Call">
                                             <i class="fas fa-phone"></i>
                                         </a>
                                         <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= (int)$lead['id'] ?>/delete" class="style-35851" onsubmit="return confirm('Move this lead to trash?')">

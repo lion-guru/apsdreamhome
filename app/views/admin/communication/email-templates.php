@@ -55,7 +55,7 @@ $templates = $templates ?? [];
                         <tbody>
                             <?php foreach ($templates as $t): ?>
                                 <tr>
-                                    <td class="fw-semibold"><?= htmlspecialchars($t['name']) ?></td>
+                                    <td class="fw-semibold"><?= htmlspecialchars($t['name'] ?? '') ?></td>
                                     <td><?= htmlspecialchars(mb_strimwidth($t['subject'], 0, 50, '...')) ?></td>
                                     <td>
                                         <span class="badge bg-secondary"><?= htmlspecialchars($t['category'] ?? 'general') ?></span>

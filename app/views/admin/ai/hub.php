@@ -336,7 +336,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                                 <tbody>
                                     <?php foreach (array_slice($campaigns_list ?? [], 0, 10) as $c): ?>
                                     <tr>
-                                        <td class="fw-semibold small"><?= htmlspecialchars($c['name']) ?></td>
+                                        <td class="fw-semibold small"><?= htmlspecialchars($c['name'] ?? '') ?></td>
                                         <td><span class="badge bg-<?= $c['type'] === 'email' ? 'primary' : ($c['type'] === 'sms' ? 'success' : ($c['type'] === 'whatsapp' ? 'success' : 'info')) ?>"><?= ucfirst($c['type']) ?></span></td>
                                         <td class="small"><?= htmlspecialchars($c['target_audience'] ?? '-') ?></td>
                                         <td><span class="badge bg-<?= $c['status'] === 'sent' || $c['status'] === 'completed' ? 'success' : ($c['status'] === 'draft' ? 'secondary' : ($c['status'] === 'sending' ? 'warning' : 'info')) ?>"><?= ucfirst($c['status']) ?></span></td>

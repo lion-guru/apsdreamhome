@@ -17,7 +17,7 @@ foreach ($schedule as $s) {
             <i class="fas fa-calendar-alt me-2"></i><?= __('sale_payment_schedule') ?> — <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
         </h5>
         <div>
-            <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link"><i class="fas fa-arrow-left me-1"></i><?= __('sale_back') ?></a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link"><i class="fas fa-arrow-left me-1"></i><?= __('sale_back') ?></a>
         </div>
     </div>
     <div class="aps-cp-card-body">
@@ -40,7 +40,7 @@ foreach ($schedule as $s) {
             </div>
         </div>
 
-        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule/regenerate" class="row g-2 mb-3 align-items-end">
+        <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule/regenerate" class="row g-2 mb-3 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="col-md-3">
                 <label class="form-label small"><?= __('sale_tenure_months') ?></label>
@@ -92,11 +92,11 @@ foreach ($schedule as $s) {
                                 $st = $s['status'] ?? 'pending';
                                 $cls = ['paid'=>'success', 'overdue'=>'danger', 'partial'=>'warning', 'cleared'=>'success'][$st] ?? 'secondary';
                                 ?>
-                                <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st) ?></span>
+                                <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st ?? '') ?></span>
                             </td>
                             <td>
                                 <?php if ($st !== 'paid'): ?>
-                                    <a class="btn btn-sm btn-success" href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay"><?= __('sale_pay') ?></a>
+                                    <a class="btn btn-sm btn-success" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay"><?= __('sale_pay') ?></a>
                                 <?php endif; ?>
                             </td>
                         </tr>

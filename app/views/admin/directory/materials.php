@@ -18,7 +18,7 @@
                             <?php foreach ($materials as $m): ?>
                                 <tr>
                                     <td><?= $m['id'] ?></td>
-                                    <td><strong><?= htmlspecialchars($m['material_name']) ?></strong></td>
+                                    <td><strong><?= htmlspecialchars($m['material_name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($m['category'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($m['brand'] ?? '') ?></td>
                                     <td><strong>₹<?= number_format($m['price'], 2) ?></strong></td>

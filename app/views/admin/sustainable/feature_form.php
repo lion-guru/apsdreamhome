@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $feature = $feature ?? null;
 $isEdit = !empty($feature);
 $csrf = $_SESSION['csrf_token'] ?? '';
@@ -14,7 +14,7 @@ $cats = ['energy' => 'Energy', 'water' => 'Water', 'waste' => 'Waste', 'material
         <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/feature/save">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $feature['id'] ?>"><?php endif; ?>
-            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($feature['name']) : '' ?>" required></div>
+            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($feature['name'] ?? '') : '' ?>" required></div>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Category</label>
@@ -27,8 +27,8 @@ $cats = ['energy' => 'Energy', 'water' => 'Water', 'waste' => 'Waste', 'material
                 <div class="col-md-6 mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon" class="form-control" value="<?= $isEdit ? htmlspecialchars($feature['icon'] ?? 'fa-leaf') : 'fa-leaf' ?>"></div>
             </div>
             <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">CO₂ Saved (kg/yr)</label><input type="number" step="0.01" name="co2_saved_kg_yr" class="form-control" value="<?= $isEdit ? ($feature['co2_saved_kg_yr'] ?? '') : '' ?>"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Cost Estimate (₹)</label><input type="number" step="0.01" name="cost_estimate" class="form-control" value="<?= $isEdit ? ($feature['cost_estimate'] ?? '') : '' ?>"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">CO2 Saved (kg/yr)</label><input type="number" step="0.01" name="co2_saved_kg_yr" class="form-control" value="<?= $isEdit ? ($feature['co2_saved_kg_yr'] ?? '') : '' ?>"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Cost Estimate (?)</label><input type="number" step="0.01" name="cost_estimate" class="form-control" value="<?= $isEdit ? ($feature['cost_estimate'] ?? '') : '' ?>"></div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>

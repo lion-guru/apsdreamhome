@@ -44,7 +44,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <?php foreach ($settings as $s): ?>
                     <div class="setting-row">
                         <label><?= htmlspecialchars($s['description'] ?? $s['setting_key']) ?></label>
-                        <input type="text" name="settings[<?= htmlspecialchars($s['setting_key']) ?>]" value="<?= htmlspecialchars($s['setting_value']) ?>">
+                        <input type="text" name="settings[<?= htmlspecialchars($s['setting_key'] ?? '') ?>]" value="<?= htmlspecialchars($s['setting_value'] ?? '') ?>">
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($settings)): ?>
@@ -64,7 +64,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" name="id" value="<?= $pkg['id'] ?>">
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <strong class="style-43890"><?= htmlspecialchars($pkg['name']) ?></strong>
+                        <strong class="style-43890"><?= htmlspecialchars($pkg['name'] ?? '') ?></strong>
                         <?php if ($pkg['is_featured']): ?><span class="badge-featured">Featured</span><?php endif; ?>
                         <?php if ($pkg['is_premium']): ?><span class="badge-premium">Premium</span><?php endif; ?>
                         <?php if ($pkg['is_urgent']): ?><span class="badge-urgent">Urgent</span><?php endif; ?>

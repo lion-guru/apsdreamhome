@@ -11,7 +11,7 @@ ob_start();
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1"><?= htmlspecialchars($campaign['name']) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($campaign['name'] ?? '') ?></h2>
             <p class="text-muted mb-0">
                 <span class="badge bg-<?= ['draft' => 'secondary', 'sent' => 'success', 'scheduled' => 'info', 'sending' => 'warning'][$campaign['status']] ?? 'secondary' ?>">
                     <?= ucfirst($campaign['status']) ?>
@@ -80,9 +80,9 @@ ob_start();
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($campaign['subject'])): ?>
-                        <p class="fw-bold"><?= htmlspecialchars($campaign['subject']) ?></p>
+                        <p class="fw-bold"><?= htmlspecialchars($campaign['subject'] ?? '') ?></p>
                     <?php endif; ?>
-                    <pre class="bg-light p-3 rounded mb-0" class="style-92067"><?= htmlspecialchars($campaign['content']) ?></pre>
+                    <pre class="bg-light p-3 rounded mb-0" class="style-92067"><?= htmlspecialchars($campaign['content'] ?? '') ?></pre>
                 </div>
             </div>
         </div>
@@ -135,7 +135,7 @@ ob_start();
                                 <tr>
                                     <td><?= htmlspecialchars($r['name'] ?? 'Anonymous') ?></td>
                                     <td><small><?= htmlspecialchars($r['email'] ?? $r['phone'] ?? 'N/A') ?></small></td>
-                                    <td><span class="badge bg-light text-dark"><?= htmlspecialchars($r['channel']) ?></span></td>
+                                    <td><span class="badge bg-light text-dark"><?= htmlspecialchars($r['channel'] ?? '') ?></span></td>
                                     <td>
                                         <span class="badge bg-<?= ['delivered' => 'success', 'sent' => 'info', 'opened' => 'info', 'clicked' => 'warning', 'failed' => 'danger', 'bounced' => 'danger', 'unsubscribed' => 'secondary', 'pending' => 'secondary'][$r['status']] ?? 'secondary' ?>">
                                             <?= ucfirst($r['status']) ?>

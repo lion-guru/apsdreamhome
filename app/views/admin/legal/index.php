@@ -62,7 +62,7 @@ $categories = $categories ?? [];
                                 <?php foreach ($recent as $d): ?>
                                     <tr>
                                         <td><a href="<?= BASE_URL ?>/admin/legal/documents/<?= $d['id'] ?>"><?= htmlspecialchars($d['document_number'] ?? '-') ?></a></td>
-                                        <td><?= htmlspecialchars($d['title']) ?></td>
+                                        <td><?= htmlspecialchars($d['title'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($d['customer_name'] ?? '-') ?></td>
                                         <td><span class="badge bg-<?= match($d['status']) { 'signed' => 'success', 'final' => 'info', 'draft' => 'secondary', 'expired' => 'warning', 'cancelled' => 'danger', default => 'secondary' } ?>"><?= $d['status'] ?></span></td>
                                         <td class="small"><?= date('d M Y', strtotime($d['created_at'])) ?></td>
@@ -85,7 +85,7 @@ $categories = $categories ?? [];
                     <?php else: ?>
                         <?php foreach ($byCat as $c): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span><i class="<?= htmlspecialchars($c['icon'] ?? 'fas fa-folder') ?> me-2 text-muted"></i><?= htmlspecialchars($c['name']) ?></span>
+                                <span><i class="<?= htmlspecialchars($c['icon'] ?? 'fas fa-folder') ?> me-2 text-muted"></i><?= htmlspecialchars($c['name'] ?? '') ?></span>
                                 <span class="badge bg-primary rounded-pill"><?= (int)$c['count'] ?></span>
                             </div>
                         <?php endforeach; ?>

@@ -193,7 +193,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
                 <h5 class="m-0"><i class="fas fa-clock me-2"></i>Recent Cron Runs</h5>
-                <a href="<?= htmlspecialchars($base) ?>/admin/mlm/cron-log" class="btn btn-link btn-sm">View all</a>
+                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/cron-log" class="btn btn-link btn-sm">View all</a>
             </div>
             <div class="aps-cp-card-body p-0">
                 <table class="table table-sm m-0">
@@ -215,7 +215,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                                 <td>
                                     <?php $st = (string)($r['status'] ?? ''); ?>
                                     <span class="badge bg-<?= $st === 'completed' ? 'success' : ($st === 'failed' ? 'danger' : 'warning') ?>">
-                                        <?= htmlspecialchars($st) ?>
+                                        <?= htmlspecialchars($st ?? '') ?>
                                     </span>
                                 </td>
                                 <td class="text-end"><?= (int)($r['items_processed'] ?? 0) ?></td>
@@ -252,16 +252,16 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-grid gap-2">
-                    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/commissions" class="btn btn-outline-primary">
+                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/commissions" class="btn btn-outline-primary">
                         <i class="fas fa-list me-1"></i>View Commissions Ledger
                     </a>
-                    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches" class="btn btn-outline-primary">
+                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches" class="btn btn-outline-primary">
                         <i class="fas fa-money-check-alt me-1"></i>Payout Batches
                     </a>
-                    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/clawbacks" class="btn btn-outline-warning">
+                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/clawbacks" class="btn btn-outline-warning">
                         <i class="fas fa-undo me-1"></i>Clawback Log
                     </a>
-                    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/rank-benefits" class="btn btn-outline-secondary">
+                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/rank-benefits" class="btn btn-outline-secondary">
                         <i class="fas fa-cogs me-1"></i>Rank Benefits
                     </a>
                 </div>

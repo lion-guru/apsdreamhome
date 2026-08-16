@@ -59,7 +59,7 @@ $merge_fields = $merge_fields ?? [];
                                     <?php foreach ($merge_fields as $group => $fields): ?>
                                         <h6 class="dropdown-header"><?= ucfirst($group) ?></h6>
                                         <?php foreach ($fields as $key => $label): ?>
-                                            <button type="button" class="dropdown-item small" onclick="insertAtCursor('content', '<?= $key ?>')"><?= htmlspecialchars($key) ?></button>
+                                            <button type="button" class="dropdown-item small" onclick="insertAtCursor('content', '<?= $key ?>')"><?= htmlspecialchars($key ?? '') ?></button>
                                         <?php endforeach; ?>
                                     <?php endforeach; ?>
                                 </div>

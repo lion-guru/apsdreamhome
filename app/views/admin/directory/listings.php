@@ -20,7 +20,7 @@
                     <select name="category_id" class="form-control form-control-sm" onchange="this.form.submit()">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $c): ?>
-                            <option value="<?= $c['id'] ?>" <?= $filterCat == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                            <option value="<?= $c['id'] ?>" <?= $filterCat == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -39,7 +39,7 @@
                             <?php foreach ($listings as $l): ?>
                                 <tr>
                                     <td><?= $l['id'] ?></td>
-                                    <td><strong><?= htmlspecialchars($l['business_name']) ?></strong></td>
+                                    <td><strong><?= htmlspecialchars($l['business_name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($l['category_name'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($l['city'] ?? '') ?></td>

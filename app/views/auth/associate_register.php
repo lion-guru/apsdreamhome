@@ -220,14 +220,14 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
                         <div class="error-title"><i class="fa-solid fa-circle-exclamation me-1"></i>Please fix the following errors:</div>
                         <ul>
                             <?php foreach ($errors as $error): ?>
-                                <li><?php echo htmlspecialchars($error); ?></li>
+                                <li><?php echo htmlspecialchars($error ?? ''); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 <?php endif; ?>
 
                 <form method="POST" action="<?php echo $base; ?>/associate/register" id="associateRegisterForm" novalidate>
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                     <div class="form-section-title"><i class="fa-solid fa-user"></i> Personal Details</div>
 
@@ -278,7 +278,7 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
                     <div class="input-group-custom">
                         <i class="fa-solid fa-ticket"></i>
                         <label class="form-label-custom">Sponsor Code <span class="required-badge">*</span></label>
-                        <input type="text" class="form-control" name="sponsor_code" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref); ?>">
+                        <input type="text" class="form-control" name="sponsor_code" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>">
                     </div>
                     <div class="sponsor-note">
                         <i class="fa-solid fa-circle-info"></i>

@@ -60,7 +60,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                                 <tbody>
                                 <?php foreach ($uploads as $u): ?>
                                     <tr>
-                                        <td><a href="<?= BASE_URL ?>/<?= htmlspecialchars($u['file_path']) ?>" target="_blank"><?= htmlspecialchars($u['file_name']) ?></a></td>
+                                        <td><a href="<?= BASE_URL ?>/<?= htmlspecialchars($u['file_path'] ?? '') ?>" target="_blank"><?= htmlspecialchars($u['file_name'] ?? '') ?></a></td>
                                         <td><span class="badge bg-light text-dark"><?= htmlspecialchars($u['upload_type'] ?? 'other') ?></span></td>
                                         <td><span class="badge bg-<?= $u['status'] === 'verified' ? 'success' : ($u['status'] === 'rejected' ? 'danger' : 'warning') ?>"><?= $u['status'] ?></span></td>
                                         <td class="small"><?= date('d M Y', strtotime($u['created_at'])) ?></td>

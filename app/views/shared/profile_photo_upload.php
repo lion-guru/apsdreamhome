@@ -25,9 +25,9 @@ $base = BASE_URL;
 <div class="profile-photo-upload" data-user-id="<?= (int)$userId ?>">
     <div class="photo-preview" id="profilePhotoPreview" class="style-60299">
         <?php if ($photoUrl): ?>
-            <img src="<?= htmlspecialchars($photoUrl) ?>" alt="Profile Photo" id="profilePhotoImg">
+            <img src="<?= htmlspecialchars($photoUrl ?? '') ?>" alt="Profile Photo" id="profilePhotoImg">
         <?php else: ?>
-            <div class="photo-initials" id="profilePhotoInitials" class="style-38370"><?= htmlspecialchars($initials) ?></div>
+            <div class="photo-initials" id="profilePhotoInitials" class="style-38370"><?= htmlspecialchars($initials ?? '') ?></div>
         <?php endif; ?>
     </div>
     <div class="photo-actions">

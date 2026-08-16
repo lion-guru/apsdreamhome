@@ -10,7 +10,7 @@ $page_title = $page_title ?? "Create Page";
         <div class="col-12">
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-plus-circle me-2"></i><?= htmlspecialchars($page_title) ?></h5>
+                    <h5><i class="fas fa-plus-circle me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/pages/store">

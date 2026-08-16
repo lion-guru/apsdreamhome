@@ -48,7 +48,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <?php else: ?>
                     <table class="table mb-0"><tbody>
                     <?php foreach ($readings as $r): ?>
-                        <tr><td><strong><?= htmlspecialchars($r['metric']) ?></strong></td><td class="text-end"><span class="badge bg-primary"><?= $r['value'] ?> <?= htmlspecialchars($r['unit'] ?? '') ?></span></td><td class="text-end"><small class="text-muted"><?= date('M d H:i', strtotime($r['recorded_at'])) ?></small></td></tr>
+                        <tr><td><strong><?= htmlspecialchars($r['metric'] ?? '') ?></strong></td><td class="text-end"><span class="badge bg-primary"><?= $r['value'] ?> <?= htmlspecialchars($r['unit'] ?? '') ?></span></td><td class="text-end"><small class="text-muted"><?= date('M d H:i', strtotime($r['recorded_at'])) ?></small></td></tr>
                     <?php endforeach; ?>
                     </tbody></table>
                 <?php endif; ?>
@@ -64,7 +64,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="table-responsive" class="style-63664">
                         <table class="table table-sm mb-0"><tbody>
                         <?php foreach ($history as $h): ?>
-                            <tr><td><?= htmlspecialchars($h['metric']) ?></td><td class="text-end"><?= $h['value'] ?> <?= htmlspecialchars($h['unit'] ?? '') ?></td><td class="text-end"><small class="text-muted"><?= date('M d H:i', strtotime($h['recorded_at'])) ?></small></td></tr>
+                            <tr><td><?= htmlspecialchars($h['metric'] ?? '') ?></td><td class="text-end"><?= $h['value'] ?> <?= htmlspecialchars($h['unit'] ?? '') ?></td><td class="text-end"><small class="text-muted"><?= date('M d H:i', strtotime($h['recorded_at'])) ?></small></td></tr>
                         <?php endforeach; ?>
                         </tbody></table>
                     </div>

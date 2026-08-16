@@ -76,7 +76,7 @@ $nextStatuses = [
                         <p class="fw-bold mb-0">
                             <?= htmlspecialchars($a['plot_number'] ?? '—') ?>
                             <?php if (!empty($a['block'])): ?>
-                                <span class="text-muted"> / <?= htmlspecialchars($a['block']) ?></span>
+                                <span class="text-muted"> / <?= htmlspecialchars($a['block'] ?? '') ?></span>
                             <?php endif; ?>
                         </p>
                     </div>
@@ -185,7 +185,7 @@ $nextStatuses = [
                     <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <p class="mb-0"><?= nl2br(htmlspecialchars($a['notes'])) ?></p>
+                    <p class="mb-0"><?= nl2br(htmlspecialchars($a['notes'] ?? '')) ?></p>
                 </div>
             </div>
         <?php endif; ?>

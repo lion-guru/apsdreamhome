@@ -36,7 +36,7 @@ $statusColors = [
 
 <?php if (!empty($_SESSION['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['success']) ?>
+        <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['success'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['success']); ?>
@@ -44,7 +44,7 @@ $statusColors = [
 
 <?php if (!empty($_SESSION['error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['error']) ?>
+        <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['error'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['error']); ?>
@@ -116,7 +116,7 @@ $statusColors = [
                     </div>
 
                     <form method="POST" action="<?= BASE_URL ?>/user/bookings/<?= (int)($booking['id'] ?? 0) ?>/nach/register">
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
                         <div class="row g-3">
                             <div class="col-md-6">

@@ -47,7 +47,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <td class="fw-bold text-success">₹<?= number_format((float)($c['amount'] ?? 0)) ?></td>
                     <td>
                         <?php if (!empty($c['source_name'])): ?>
-                            <a href="<?= $base ?>/admin/users/<?= $c['source_user_id'] ?? '' ?>"><?= htmlspecialchars($c['source_name']) ?></a>
+                            <a href="<?= $base ?>/admin/users/<?= $c['source_user_id'] ?? '' ?>"><?= htmlspecialchars($c['source_name'] ?? '') ?></a>
                         <?php else: ?>
                             <?= $c['source_user_id'] ?? '-' ?>
                         <?php endif; ?>

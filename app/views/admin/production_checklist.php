@@ -18,7 +18,7 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-rocket me-2"></i><?= htmlspecialchars($page_heading) ?>
+            <i class="fas fa-rocket me-2"></i><?= htmlspecialchars($page_heading ?? '') ?>
         </h1>
         <div>
             <a href="<?= $baseUrl ?>/admin/dashboard" class="btn btn-sm btn-outline-secondary">
@@ -100,10 +100,10 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h6 class="mb-0 font-weight-bold text-gray-800">
                                 <i class="fas fa-<?= $done ? 'check-circle text-success' : 'circle-notch text-muted' ?> me-2"></i>
-                                <?= htmlspecialchars($check['label']) ?>
+                                <?= htmlspecialchars($check['label'] ?? '') ?>
                             </h6>
                             <div class="d-flex gap-2 align-items-center">
-                                <span class="badge <?= $badgeCls ?>"><?= htmlspecialchars($badgeTxt) ?></span>
+                                <span class="badge <?= $badgeCls ?>"><?= htmlspecialchars($badgeTxt ?? '') ?></span>
                                 <form method="post" action="<?= $baseUrl ?>/admin/production-checklist/mark/<?= urlencode($check['key']) ?>" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>"/>
                                     <button type="submit" class="btn btn-sm <?= $done ? 'btn-success' : 'btn-outline-secondary' ?>">
@@ -114,16 +114,16 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
                             </div>
                         </div>
 
-                        <p class="small text-muted mb-2"><?= htmlspecialchars($check['detail']) ?></p>
+                        <p class="small text-muted mb-2"><?= htmlspecialchars($check['detail'] ?? '') ?></p>
 
                         <?php if (!empty($check['command'])): ?>
                             <p class="small text-muted mb-1">Run on the server:</p>
-                            <pre class="bg-dark text-light p-2 small mb-2 rounded"><code><?= htmlspecialchars($check['command']) ?></code></pre>
+                            <pre class="bg-dark text-light p-2 small mb-2 rounded"><code><?= htmlspecialchars($check['command'] ?? '') ?></code></pre>
                         <?php endif; ?>
 
                         <?php if (!empty($check['howto'])): ?>
                             <p class="small text-muted mb-0">
-                                <i class="fas fa-wrench me-1"></i><strong>How to fix:</strong> <?= htmlspecialchars($check['howto']) ?>
+                                <i class="fas fa-wrench me-1"></i><strong>How to fix:</strong> <?= htmlspecialchars($check['howto'] ?? '') ?>
                             </p>
                         <?php endif; ?>
                     </div>

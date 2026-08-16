@@ -1,7 +1,7 @@
 <?php $pageTitle = $page_title ?? 'Security Monitoring'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-shield-alt me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-shield-alt me-2"></i><?= htmlspecialchars($pageTitle ?? '') ?></h4>
         <span class="badge bg-<?= ($security_data['system_status'] ?? 'disarmed') === 'armed' ? 'danger' : 'warning' ?> fs-6"><?= strtoupper($security_data['system_status'] ?? 'UNKNOWN') ?></span>
     </div>
     <div class="card border-0 shadow-sm mb-3">

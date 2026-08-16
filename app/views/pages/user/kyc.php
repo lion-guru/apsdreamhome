@@ -30,19 +30,19 @@ ob_start();
 <div class="aps-cp-card">
     <div class="aps-cp-card-header">
         <h3><?= __('user_kyc_current_status', null, 'Current Status') ?></h3>
-        <span class="aps-cp-badge aps-cp-badge-<?= $statusColor ?>"><?= htmlspecialchars($statusLabel) ?></span>
+        <span class="aps-cp-badge aps-cp-badge-<?= $statusColor ?>"><?= htmlspecialchars($statusLabel ?? '') ?></span>
     </div>
     <div class="aps-cp-card-body">
         <?php if ($existing): ?>
         <div class="aps-cp-info-grid">
             <div><strong><?= __('user_kyc_legal_name', null, 'Legal Name:') ?></strong> <?= htmlspecialchars($existing['legal_name'] ?? '—') ?></div>
-            <div><strong><?= __('user_kyc_pan_label', null, 'PAN:') ?></strong> <?= htmlspecialchars($aadhaarMasked ?? '—') === '—' ? '—' : htmlspecialchars($panMasked) ?></div>
-            <div><strong><?= __('user_kyc_aadhaar_label', null, 'Aadhaar:') ?></strong> <?= htmlspecialchars($aadhaarMasked) ?></div>
+            <div><strong><?= __('user_kyc_pan_label', null, 'PAN:') ?></strong> <?= htmlspecialchars($aadhaarMasked ?? '—') === '—' ? '—' : htmlspecialchars($panMasked ?? '') ?></div>
+            <div><strong><?= __('user_kyc_aadhaar_label', null, 'Aadhaar:') ?></strong> <?= htmlspecialchars($aadhaarMasked ?? '') ?></div>
             <div><strong><?= __('user_kyc_submitted', null, 'Submitted:') ?></strong> <?= htmlspecialchars(date('M j, Y', strtotime($existing['created_at'] ?? 'now'))) ?></div>
         </div>
         <?php if (!empty($existing['reason'])): ?>
         <div class="aps-cp-alert aps-cp-alert-danger mt-3">
-            <i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($existing['reason']) ?>
+            <i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($existing['reason'] ?? '') ?>
         </div>
         <?php endif; ?>
         <?php if ($status === 'approved'): ?>

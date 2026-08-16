@@ -62,17 +62,17 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
                         <?php if (!empty($meeting['description'])): ?>
                             <h6 class="text-muted mt-3">Description</h6>
-                            <p><?php echo nl2br(htmlspecialchars($meeting['description'])); ?></p>
+                            <p><?php echo nl2br(htmlspecialchars($meeting['description'] ?? '')); ?></p>
                         <?php endif; ?>
 
                         <?php if (!empty($meeting['notes'])): ?>
                             <h6 class="text-muted mt-3">Notes</h6>
-                            <p><?php echo nl2br(htmlspecialchars($meeting['notes'])); ?></p>
+                            <p><?php echo nl2br(htmlspecialchars($meeting['notes'] ?? '')); ?></p>
                         <?php endif; ?>
 
                         <?php if (!empty($meeting['outcome'])): ?>
                             <h6 class="text-muted mt-3">Outcome</h6>
-                            <p><?php echo nl2br(htmlspecialchars($meeting['outcome'])); ?></p>
+                            <p><?php echo nl2br(htmlspecialchars($meeting['outcome'] ?? '')); ?></p>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -40,7 +40,7 @@ $readiness = $readiness ?? ['checks' => [], 'passed_count' => 0, 'total_checks' 
                 </span>
                 <strong><?= htmlspecialchars($chk['label'] ?? '') ?></strong>
                 <?php if (!empty($chk['detail'])): ?>
-                  <span class="badge bg-secondary ms-2"><?= htmlspecialchars($chk['detail']) ?></span>
+                  <span class="badge bg-secondary ms-2"><?= htmlspecialchars($chk['detail'] ?? '') ?></span>
                 <?php endif; ?>
               </div>
               <div>

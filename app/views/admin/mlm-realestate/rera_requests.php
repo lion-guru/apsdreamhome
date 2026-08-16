@@ -21,7 +21,7 @@
                             <td><strong><?= htmlspecialchars($r['user_name'] ?? $r['name'] ?? '') ?></strong></td>
                             <td><?= htmlspecialchars($r['user_email'] ?? $r['email'] ?? '') ?></td>
                             <td>₹<?= number_format((float)$r['deducted_amount'], 2) ?></td>
-                            <td><span class="badge bg-<?= $r['status'] === 'approved' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : 'warning') ?>"><?= htmlspecialchars($r['status']) ?></span></td>
+                            <td><span class="badge bg-<?= $r['status'] === 'approved' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : 'warning') ?>"><?= htmlspecialchars($r['status'] ?? '') ?></span></td>
                             <td><?= htmlspecialchars($r['rera_number'] ?? '-') ?></td>
                             <td><span class="badge bg-<?= ($r['is_rera_approved'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($r['is_rera_approved'] ?? 0) ? 'Yes' : 'No' ?></span></td>
                             <td><?= htmlspecialchars($r['created_at'] ?? '') ?></td>

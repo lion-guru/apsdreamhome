@@ -48,13 +48,13 @@ $localCount = (int) ($info['local_count'] ?? 0);
         <p class="style-55261">Active storage driver + S3 configuration status.</p>
 
         <?php if (!empty($flash['success'])): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($flash['success']) ?></div>
+            <div class="alert alert-success"><?= htmlspecialchars($flash['success'] ?? '') ?></div>
         <?php endif; ?>
         <?php if (!empty($flash['error'])): ?>
-            <div class="alert alert-error"><?= htmlspecialchars($flash['error']) ?></div>
+            <div class="alert alert-error"><?= htmlspecialchars($flash['error'] ?? '') ?></div>
         <?php endif; ?>
         <?php if (!empty($flash['warning'])): ?>
-            <div class="alert alert-warning"><?= htmlspecialchars($flash['warning']) ?></div>
+            <div class="alert alert-warning"><?= htmlspecialchars($flash['warning'] ?? '') ?></div>
         <?php endif; ?>
 
         <div class="storage-card">
@@ -68,8 +68,8 @@ $localCount = (int) ($info['local_count'] ?? 0);
                 <?php endif; ?>
             </h3>
             <div class="kv">
-                <div class="k">Configured driver (env)</div><div class="v"><?= htmlspecialchars($info['configured_driver']) ?></div>
-                <div class="k">Resolved driver</div><div class="v"><?= htmlspecialchars($driver) ?></div>
+                <div class="k">Configured driver (env)</div><div class="v"><?= htmlspecialchars($info['configured_driver'] ?? '') ?></div>
+                <div class="k">Resolved driver</div><div class="v"><?= htmlspecialchars($driver ?? '') ?></div>
                 <div class="k">Driver switch</div>
                 <div class="v">
                     <form method="post" action="<?= $base ?>/admin/storage/switch" class="style-35851">
@@ -96,8 +96,8 @@ $localCount = (int) ($info['local_count'] ?? 0);
             </h3>
             <?php if ($s3Configured): ?>
                 <div class="kv">
-                    <div class="k">Bucket</div><div class="v"><?= htmlspecialchars($info['s3_bucket']) ?></div>
-                    <div class="k">Region</div><div class="v"><?= htmlspecialchars($info['s3_region']) ?></div>
+                    <div class="k">Bucket</div><div class="v"><?= htmlspecialchars($info['s3_bucket'] ?? '') ?></div>
+                    <div class="k">Region</div><div class="v"><?= htmlspecialchars($info['s3_region'] ?? '') ?></div>
                     <div class="k">Endpoint</div><div class="v"><?= htmlspecialchars($info['s3_endpoint'] ?: '(AWS default)') ?></div>
                     <div class="k">Path-style</div><div class="v"><?= !empty($info['s3_path_style']) ? 'yes' : 'no' ?></div>
                     <div class="k">URL expiry (min)</div><div class="v"><?= (int) $info['s3_url_expiry'] ?></div>
@@ -124,8 +124,8 @@ AWS_BUCKET=apsdreamhome-uploads</pre>
                 <span class="badge badge-gray">Always available</span>
             </h3>
             <div class="kv">
-                <div class="k">Path</div><div class="v"><?= htmlspecialchars($localPath) ?></div>
-                <div class="k">URL prefix</div><div class="v"><?= htmlspecialchars($info['local_url']) ?></div>
+                <div class="k">Path</div><div class="v"><?= htmlspecialchars($localPath ?? '') ?></div>
+                <div class="k">URL prefix</div><div class="v"><?= htmlspecialchars($info['local_url'] ?? '') ?></div>
                 <div class="k">Files in root</div><div class="v"><?= number_format($localCount) ?></div>
                 <div class="k">Total size</div><div class="v"><?= number_format($localSize / (1024*1024), 2) ?> MB</div>
             </div>

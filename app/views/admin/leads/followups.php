@@ -11,7 +11,7 @@
                         <tbody>
                         <?php foreach ($pending as $p): ?>
                             <tr>
-                                <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?></a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?></a></td>
                                 <td><?= htmlspecialchars($p['phone'] ?? '') ?></td>
                                 <td><strong class="text-danger"><?= $p['next_activity_date'] ?></strong></td>
                                 <td><?= htmlspecialchars($p['assignee_name'] ?? 'Unassigned') ?></td>

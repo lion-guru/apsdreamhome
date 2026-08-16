@@ -37,7 +37,7 @@ $_ag = $agents ?? [];
                                 <td>#<?= $c['id'] ?></td>
                                 <td>
                                     <?php if ($c['lead_name']): ?>
-                                    <strong><?= htmlspecialchars($c['lead_name']) ?></strong><br>
+                                    <strong><?= htmlspecialchars($c['lead_name'] ?? '') ?></strong><br>
                                     <small class="text-muted"><?= htmlspecialchars($c['lead_phone'] ?? '') ?></small>
                                     <?php else: ?>
                                     <span class="text-muted">Unknown</span>

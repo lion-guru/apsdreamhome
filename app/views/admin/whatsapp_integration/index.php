@@ -7,7 +7,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fab fa-whatsapp me-2 text-success"></i><?= htmlspecialchars($page_title) ?></h2>
+        <h2 class="mb-0"><i class="fab fa-whatsapp me-2 text-success"></i><?= htmlspecialchars($page_title ?? '') ?></h2>
     </div>
 
     <div class="alert alert-info">

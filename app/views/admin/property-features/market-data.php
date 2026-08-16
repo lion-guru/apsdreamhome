@@ -7,8 +7,8 @@
         </div>
     </div>
 
-    <?php if ($msg = $_SESSION['flash_success'] ?? null): ?><div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($msg) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_success']); endif; ?>
-    <?php if ($msg = $_SESSION['flash_error'] ?? null): ?><div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($msg) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_error']); endif; ?>
+    <?php if ($msg = $_SESSION['flash_success'] ?? null): ?><div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($msg ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_success']); endif; ?>
+    <?php if ($msg = $_SESSION['flash_error'] ?? null): ?><div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($msg ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_error']); endif; ?>
 
     <div class="row">
         <!-- Filter -->
@@ -22,7 +22,7 @@
                             <select name="location" class="form-select">
                                 <option value="">All Locations</option>
                                 <?php foreach ($locations as $l): ?>
-                                    <option value="<?= htmlspecialchars($l['location']) ?>" <?= ($filter_location ?? '') === $l['location'] ? 'selected' : '' ?>><?= htmlspecialchars($l['location']) ?></option>
+                                    <option value="<?= htmlspecialchars($l['location'] ?? '') ?>" <?= ($filter_location ?? '') === $l['location'] ? 'selected' : '' ?>><?= htmlspecialchars($l['location'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -31,7 +31,7 @@
                             <select name="type" class="form-select">
                                 <option value="">All Types</option>
                                 <?php foreach ($types as $t): ?>
-                                    <option value="<?= htmlspecialchars($t['property_type']) ?>" <?= ($filter_type ?? '') === $t['property_type'] ? 'selected' : '' ?>><?= htmlspecialchars(ucfirst($t['property_type'])) ?></option>
+                                    <option value="<?= htmlspecialchars($t['property_type'] ?? '') ?>" <?= ($filter_type ?? '') === $t['property_type'] ? 'selected' : '' ?>><?= htmlspecialchars(ucfirst($t['property_type'])) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

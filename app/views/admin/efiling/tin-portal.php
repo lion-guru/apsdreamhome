@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-server me-2 text-danger"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">TIN-NSDL API Integration | FY <?= htmlspecialchars($fy) ?> | Q<?= htmlspecialchars($quarter) ?></span>
+        <h4 class="mb-1"><i class="fas fa-server me-2 text-danger"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">TIN-NSDL API Integration | FY <?= htmlspecialchars($fy ?? '') ?> | Q<?= htmlspecialchars($quarter ?? '') ?></span>
     </div>
     <div class="d-flex gap-2">
         <a href="<?= BASE_URL ?>/admin/efiling/tds" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>TDS Filing</a>
@@ -36,7 +36,7 @@ ob_start();
                     <div>
                         <div class="text-muted small">TIN Connection</div>
                         <div class="fw-bold"><?= $tin_status['connected'] ? 'Connected' : 'Disconnected' ?></div>
-                        <div class="small text-muted"><?= htmlspecialchars($tin_status['message']) ?></div>
+                        <div class="small text-muted"><?= htmlspecialchars($tin_status['message'] ?? '') ?></div>
                     </div>
                 </div>
             </div>

@@ -41,7 +41,7 @@
                         <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger mt-3">
                             <?php foreach ($errors as $err): ?>
-                            <div><?= htmlspecialchars($err) ?></div>
+                            <div><?= htmlspecialchars($err ?? '') ?></div>
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>

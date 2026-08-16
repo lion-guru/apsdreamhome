@@ -29,7 +29,7 @@
                 <select name="agent_id" class="form-select">
                     <option value="">All Agents</option>
                     <?php foreach ($agents as $a): ?>
-                        <option value="<?= $a['id'] ?>" <?= (($_GET['agent_id'] ?? '') == $a['id']) ? 'selected' : '' ?>><?= htmlspecialchars($a['name']) ?></option>
+                        <option value="<?= $a['id'] ?>" <?= (($_GET['agent_id'] ?? '') == $a['id']) ? 'selected' : '' ?>><?= htmlspecialchars($a['name'] ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

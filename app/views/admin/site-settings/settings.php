@@ -57,13 +57,13 @@ $tabs = [
 
     <?php if (!empty($success)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -82,7 +82,7 @@ $tabs = [
     <!-- Tab Content -->
     <form action="<?= BASE_URL ?>/admin/site-settings/update" method="POST" enctype="multipart/form-data" id="settingsForm">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-        <input type="hidden" name="active_tab" value="<?= htmlspecialchars($active_tab) ?>">
+        <input type="hidden" name="active_tab" value="<?= htmlspecialchars($active_tab ?? '') ?>">
 
         <?php if ($active_tab === 'general'): ?>
         <!-- •�•�•� GENERAL TAB •�•�•� -->

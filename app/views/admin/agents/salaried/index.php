@@ -6,7 +6,7 @@ $base   = defined('BASE_URL') ? BASE_URL : '';
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-user-tie me-2"></i>Salaried Agents — Salary Structures</h4>
-        <a href="<?= htmlspecialchars($base) ?>/admin/agents/salaried/create"
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/agents/salaried/create"
            class="btn btn-primary btn-sm">
             <i class="fas fa-plus me-1"></i>Set Salary Structure
         </a>
@@ -59,18 +59,18 @@ $base   = defined('BASE_URL') ? BASE_URL : '';
                                     <td class="text-end">₹<?= number_format((float)($a['ta_da'] ?? 0), 0) ?></td>
                                     <td class="text-end">₹<?= number_format((float)($a['other_allowance'] ?? 0), 0) ?></td>
                                     <td class="text-center">
-                                        <span class="badge bg-warning text-dark"><?= htmlspecialchars($incLabel) ?></span>
+                                        <span class="badge bg-warning text-dark"><?= htmlspecialchars($incLabel ?? '') ?></span>
                                     </td>
                                     <td class="text-center">
                                         <?= isset($a['effective_from']) ? date('d M Y', strtotime($a['effective_from'])) : '—' ?>
                                     </td>
                                     <td class="text-center">
-                                        <a href="<?= htmlspecialchars($base) ?>/admin/agents/salaried/<?= (int)$a['user_id'] ?>"
+                                        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/agents/salaried/<?= (int)$a['user_id'] ?>"
                                            class="btn btn-sm btn-outline-primary me-1"
                                            title="View Payroll">
                                             <i class="fas fa-calculator"></i>
                                         </a>
-                                        <a href="<?= htmlspecialchars($base) ?>/admin/agents/salaried/create?user_id=<?= (int)$a['user_id'] ?>"
+                                        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/agents/salaried/create?user_id=<?= (int)$a['user_id'] ?>"
                                            class="btn btn-sm btn-outline-secondary"
                                            title="Revise Salary">
                                             <i class="fas fa-edit"></i>

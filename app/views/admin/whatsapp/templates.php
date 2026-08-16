@@ -15,7 +15,7 @@ $error = $error ?? null;
     </div>
 
     <?php if ($error): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error ?? ''); ?></div>
     <?php endif; ?>
 
     <div class="card shadow-sm">

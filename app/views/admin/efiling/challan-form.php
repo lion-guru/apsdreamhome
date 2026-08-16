@@ -4,7 +4,7 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Challans</a>
 </div>

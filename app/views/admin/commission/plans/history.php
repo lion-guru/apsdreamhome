@@ -46,7 +46,7 @@ $actionIcon = fn($a) => match($a) {
                         <option value="0">All Plans</option>
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planId == $p['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($p['plan_name']) ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
+                                <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -67,7 +67,7 @@ $actionIcon = fn($a) => match($a) {
                     </div>
                     <div class="timeline-content">
                         <div>
-                            <strong><?= htmlspecialchars($entry['plan_name']) ?></strong>
+                            <strong><?= htmlspecialchars($entry['plan_name'] ?? '') ?></strong>
                             <span class="cp-version" class="style-44520">v<?= $entry['version'] ?></span>
                             <span class="style-92023">
                                 <?= ucfirst($entry['action']) ?> by
@@ -77,11 +77,11 @@ $actionIcon = fn($a) => match($a) {
                         </div>
                         <?php if ($entry['changed_fields']): ?>
                             <div class="detail">
-                                Changes: <?= htmlspecialchars($entry['changed_fields']) ?>
+                                Changes: <?= htmlspecialchars($entry['changed_fields'] ?? '') ?>
                             </div>
                         <?php endif; ?>
                         <?php if ($entry['ip_address']): ?>
-                            <div class="detail">IP: <?= htmlspecialchars($entry['ip_address']) ?></div>
+                            <div class="detail">IP: <?= htmlspecialchars($entry['ip_address'] ?? '') ?></div>
                         <?php endif; ?>
                     </div>
                 </div>

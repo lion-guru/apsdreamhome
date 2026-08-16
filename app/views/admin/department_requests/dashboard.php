@@ -20,8 +20,8 @@
                 <div class="avatar avatar-lg mx-auto mb-2" class="style-24697">
                     <i class="fas fa-building fa-2x" class="style-60251"></i>
                 </div>
-                <h5 class="card-title"><?= htmlspecialchars($dept['name']) ?></h5>
-                <p class="text-muted small mb-2"><?= htmlspecialchars($dept['code']) ?></p>
+                <h5 class="card-title"><?= htmlspecialchars($dept['name'] ?? '') ?></h5>
+                <p class="text-muted small mb-2"><?= htmlspecialchars($dept['code'] ?? '') ?></p>
                 <div class="d-flex justify-content-center gap-2">
                     <span class="badge bg-warning"><?= $dept['pending_count'] ?> Pending</span>
                     <a href="<?= BASE_URL ?>/admin/department-requests/list?department=<?= $dept['code'] ?>" class="btn btn-sm btn-outline-primary">View</a>
@@ -64,7 +64,7 @@
                                 <td><a href="<?= BASE_URL ?>/admin/department-requests/<?= $req['id'] ?>">#<?= $req['id'] ?></a></td>
                                 <td><span class="badge bg-info"><?= ucfirst($req['request_type']) ?></span></td>
                                 <td><?= htmlspecialchars($req['department_name'] ?? $req['department_code']) ?></td>
-                                <td><?= htmlspecialchars($req['title']) ?></td>
+                                <td><?= htmlspecialchars($req['title'] ?? '') ?></td>
                                 <td>
                                     <span class="badge bg-<?= $req['priority'] === 'urgent' ? 'danger' : ($req['priority'] === 'high' ? 'warning' : ($req['priority'] === 'medium' ? 'info' : 'secondary')) ?>">
                                         <?= ucfirst($req['priority']) ?>

@@ -131,7 +131,7 @@ ob_start();
                                 <td>
                                     <strong><?= htmlspecialchars($c['collector_name'] ?? 'N/A') ?></strong>
                                     <?php if (!empty($c['booking_number'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($c['booking_number']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($c['booking_number'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= htmlspecialchars($c['customer_name'] ?? '') ?></td>

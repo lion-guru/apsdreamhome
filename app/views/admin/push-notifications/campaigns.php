@@ -16,13 +16,13 @@
 
     <?php if (!empty($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+            <?= htmlspecialchars($_SESSION['success'] ?? ''); unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (!empty($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -94,7 +94,7 @@
                                 <tr class="style-81804">
                                     <td class="style-5549">
                                         <a href="<?= BASE_URL ?>/admin/push-notifications/campaigns/<?= $c['id'] ?>" class="style-13796">
-                                            <?= htmlspecialchars($c['name']) ?>
+                                            <?= htmlspecialchars($c['name'] ?? '') ?>
                                         </a>
                                         <?php if (!empty($c['description'])): ?>
                                             <br><small class="style-54585"><?= htmlspecialchars(mb_strimwidth($c['description'], 0, 60, '...')) ?></small>
@@ -112,7 +112,7 @@
                                     <td class="style-63758">
                                         <?= htmlspecialchars(ucwords(str_replace('_', ' ', $c['target_type'] ?? ''))) ?>
                                         <?php if (!empty($c['target_value'])): ?>
-                                            <br><small class="style-54585"><?= htmlspecialchars($c['target_value']) ?></small>
+                                            <br><small class="style-54585"><?= htmlspecialchars($c['target_value'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td class="style-17404">
@@ -137,7 +137,7 @@
                                             $st = $statusStyles[$c['status']] ?? ['bg' => '#334155', 'text' => '#94a3b8'];
                                         ?>
                                         <span class="badge" class="style-33324">
-                                            <?= ucfirst(htmlspecialchars($c['status'])) ?>
+                                            <?= ucfirst(htmlspecialchars($c['status'] ?? '')) ?>
                                         </span>
                                     </td>
                                     <td class="style-5549">

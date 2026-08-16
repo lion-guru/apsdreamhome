@@ -5,7 +5,7 @@
     </div>
 
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div>
     <?php endif; ?>
 
     <div class="row mb-4">

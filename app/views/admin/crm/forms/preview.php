@@ -35,7 +35,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
     <div class="form-card card border-0">
         <div class="form-header">
             <h2><i class="fas fa-clipboard-list me-2"></i><?= htmlspecialchars($form['name'] ?? 'Lead Form') ?></h2>
-            <?php if (!empty($form['description'])): ?><p><?= htmlspecialchars($form['description']) ?></p><?php endif; ?>
+            <?php if (!empty($form['description'])): ?><p><?= htmlspecialchars($form['description'] ?? '') ?></p><?php endif; ?>
         </div>
         <div class="form-body">
             <form id="previewForm" method="POST" action="<?= $baseUrl ?>/api/leads">
@@ -64,13 +64,13 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                                 <select class="form-select" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" <?= !empty($field['required']) ? 'required' : '' ?>>
                                     <option value="">Select...</option>
                                     <?php foreach ($field['options'] ?? [] as $opt): ?>
-                                        <option value="<?= htmlspecialchars($opt) ?>"><?= htmlspecialchars($opt) ?></option>
+                                        <option value="<?= htmlspecialchars($opt ?? '') ?>"><?= htmlspecialchars($opt ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             <?php elseif ($field['type'] === 'checkbox'): ?>
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" id="field_<?= md5($field['label']) ?>">
-                                    <label class="form-check-label" for="field_<?= md5($field['label']) ?>"><?= htmlspecialchars($field['label']) ?></label>
+                                    <label class="form-check-label" for="field_<?= md5($field['label']) ?>"><?= htmlspecialchars($field['label'] ?? '') ?></label>
                                 </div>
                             <?php elseif ($field['type'] === 'email'): ?>
                                 <input type="email" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 

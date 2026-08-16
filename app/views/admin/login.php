@@ -48,7 +48,7 @@
         </div>
 
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error ?? ''); ?></div>
         <?php endif; ?>
 
         <form action="<?php echo BASE_URL; ?>/admin/login" method="post" id="adminLoginForm" class="admin-login-form" autocomplete="off" novalidate>
@@ -63,13 +63,13 @@
 
             <?php if (isset($captcha_question)): ?>
                 <div class="mb-3">
-                    <label for="captcha_answer" class="form-label">Security Question: <?php echo htmlspecialchars($captcha_question); ?></label>
+                    <label for="captcha_answer" class="form-label">Security Question: <?php echo htmlspecialchars($captcha_question ?? ''); ?></label>
                     <input type="number" class="form-control" id="captcha_answer" name="captcha_answer" required>
                 </div>
             <?php endif; ?>
 
             <?php if (isset($csrf_token)): ?>
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
             <?php endif; ?>
 
             <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>

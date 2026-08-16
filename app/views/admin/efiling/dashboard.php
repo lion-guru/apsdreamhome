@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-upload me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">FY <?= htmlspecialchars($fy) ?> | Quarter <?= htmlspecialchars($quarter) ?></span>
+        <h4 class="mb-1"><i class="fas fa-file-upload me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">FY <?= htmlspecialchars($fy ?? '') ?> | Quarter <?= htmlspecialchars($quarter ?? '') ?></span>
     </div>
     <div class="d-flex gap-2">
         <a href="<?= BASE_URL ?>/admin/efiling/tds" class="btn btn-outline-danger btn-sm"><i class="fas fa-file-invoice-dollar me-1"></i>TDS Filing</a>
@@ -162,7 +162,7 @@ ob_start();
                     <?php foreach ($recent_submissions as $s): ?>
                         <tr>
                             <td><span class="badge bg-secondary"><?= strtoupper($s['submission_type']) ?></span></td>
-                            <td class="small"><?= htmlspecialchars($s['financial_year']) ?></td>
+                            <td class="small"><?= htmlspecialchars($s['financial_year'] ?? '') ?></td>
                             <td class="small"><?= $s['quarter'] ? "Q{$s['quarter']}" : ($s['period_month'] ? date('M Y', mktime(0,0,0,$s['period_month'],1,$s['period_year'])) : '-') ?></td>
                             <td><?= $s['total_records'] ?></td>
                             <td class="small">?<?= number_format($s['total_amount'], 0) ?></td>

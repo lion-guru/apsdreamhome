@@ -8,7 +8,7 @@ $booking_id = $booking_id ?? 0;
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-check-double me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-check-double me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted"><?= __('admin_eligibility_subtitle') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_dashboard') ?></a>
@@ -31,10 +31,10 @@ $booking_id = $booking_id ?? 0;
                     <option value="">— Select a Booking —</option>
                     <?php foreach ($eligible_bookings as $b): ?>
                         <option value="<?= $b['id'] ?>" <?= $booking_id == $b['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($b['booking_number']) ?> — <?= htmlspecialchars($b['customer_name']) ?>
-                            (<?= htmlspecialchars($b['plot_no']) ?>, <?= htmlspecialchars($b['colony_name']) ?>)
+                            <?= htmlspecialchars($b['booking_number'] ?? '') ?> — <?= htmlspecialchars($b['customer_name'] ?? '') ?>
+                            (<?= htmlspecialchars($b['plot_no'] ?? '') ?>, <?= htmlspecialchars($b['colony_name'] ?? '') ?>)
                             — ₹<?= number_format($b['total_price'] ?? 0, 0) ?>
-                            [<?= htmlspecialchars($b['status']) ?>]
+                            [<?= htmlspecialchars($b['status'] ?? '') ?>]
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -97,8 +97,8 @@ $booking_id = $booking_id ?? 0;
                                         <i class="fas fa-<?= $check['passed'] ? 'check-circle text-success fa-lg' : 'times-circle text-danger fa-lg' ?>"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold small"><?= htmlspecialchars($check['label']) ?></div>
-                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message']) ?></div>
+                                        <div class="fw-semibold small"><?= htmlspecialchars($check['label'] ?? '') ?></div>
+                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message'] ?? '') ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -140,8 +140,8 @@ $booking_id = $booking_id ?? 0;
                                         <i class="fas fa-<?= $check['passed'] ? 'check-circle text-success fa-lg' : 'times-circle text-danger fa-lg' ?>"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold small"><?= htmlspecialchars($check['label']) ?></div>
-                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message']) ?></div>
+                                        <div class="fw-semibold small"><?= htmlspecialchars($check['label'] ?? '') ?></div>
+                                        <div class="text-muted" class="style-10117"><?= htmlspecialchars($check['message'] ?? '') ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

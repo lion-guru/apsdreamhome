@@ -28,7 +28,7 @@
                             <td>
                                 <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
                                 <?php if ($b['customer_phone'] ?? ''): ?>
-                                    <br><small class="text-muted"><?= htmlspecialchars($b['customer_phone']) ?></small>
+                                    <br><small class="text-muted"><?= htmlspecialchars($b['customer_phone'] ?? '') ?></small>
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($b['agent_name'] ?? 'N/A') ?></td>
@@ -36,7 +36,7 @@
                                 <small>
                                     <?= htmlspecialchars($b['plot_ref'] ?? 'N/A') ?>
                                     <?php if ($b['plot_area'] ?? ''): ?>
-                                        <br><?= htmlspecialchars($b['plot_area']) ?> sqft
+                                        <br><?= htmlspecialchars($b['plot_area'] ?? '') ?> sqft
                                     <?php endif; ?>
                                 </small>
                             </td>

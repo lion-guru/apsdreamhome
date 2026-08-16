@@ -12,8 +12,8 @@
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
         <?php foreach ($params as $key => $label): ?>
           <div class="col-md-3">
-            <label class="form-label"><?= htmlspecialchars($label) ?></label>
-            <input type="text" name="<?= htmlspecialchars($key) ?>" class="form-control" required>
+            <label class="form-label"><?= htmlspecialchars($label ?? '') ?></label>
+            <input type="text" name="<?= htmlspecialchars($key ?? '') ?>" class="form-control" required>
           </div>
         <?php endforeach; ?>
         <div class="col-auto"><button class="btn btn-primary"><i class="fas fa-play me-1"></i><?= __('bko_execute') ?></button></div>
@@ -30,7 +30,7 @@
         <div class="table-responsive">
           <?php if (!empty($result['rows'])): ?>
             <table class="table table-hover mb-0">
-              <thead><tr><?php foreach (array_keys($result['rows'][0] ?? []) as $col): ?><th><?= htmlspecialchars($col) ?></th><?php endforeach; ?></tr></thead>
+              <thead><tr><?php foreach (array_keys($result['rows'][0] ?? []) as $col): ?><th><?= htmlspecialchars($col ?? '') ?></th><?php endforeach; ?></tr></thead>
               <tbody>
                 <?php foreach ($result['rows'] as $row): ?>
                   <tr><?php foreach ($row as $val): ?><td><?= htmlspecialchars($val ?? '') ?></td><?php endforeach; ?></tr>

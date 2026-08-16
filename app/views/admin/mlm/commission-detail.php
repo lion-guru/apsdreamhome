@@ -11,7 +11,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <span class="badge bg-secondary ms-2">#<?= (int)($commission['id'] ?? 0) ?></span>
             <?php endif; ?>
         </h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/commissions" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/commissions" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="aps-cp-card-body">
         <?php if (!$commission): ?>

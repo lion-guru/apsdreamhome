@@ -12,7 +12,7 @@
                             <select name="referrer_id" class="form-select" required>
                                 <option value="">Select User</option>
                                 <?php foreach ($users as $u): ?>
-                                    <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['email']) ?>)</option>
+                                    <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

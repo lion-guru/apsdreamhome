@@ -2,7 +2,7 @@
     <h1 class="h3 mb-4"><i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp Broadcast</h1>
 
     <?php if (!empty($message)): ?>
-        <div class="alert alert-<?= $message_type ?? 'info' ?>"><?= htmlspecialchars($message) ?></div>
+        <div class="alert alert-<?= $message_type ?? 'info' ?>"><?= htmlspecialchars($message ?? '') ?></div>
     <?php endif; ?>
 
     <div class="row">
@@ -31,7 +31,7 @@
                             <select name="template_name" class="form-select">
                                 <option value="">-- Plain Message --</option>
                                 <?php if (!empty($templates)): foreach ($templates as $t): ?>
-                                    <option value="<?= htmlspecialchars($t['template_name']) ?>"><?= htmlspecialchars($t['template_name']) ?> (<?= htmlspecialchars($t['language'] ?? 'en') ?>)</option>
+                                    <option value="<?= htmlspecialchars($t['template_name'] ?? '') ?>"><?= htmlspecialchars($t['template_name'] ?? '') ?> (<?= htmlspecialchars($t['language'] ?? 'en') ?>)</option>
                                 <?php endforeach; endif; ?>
                             </select>
                         </div>

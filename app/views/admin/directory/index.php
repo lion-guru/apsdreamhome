@@ -36,7 +36,7 @@
                                 <tr>
                                     <td><?= $l['id'] ?></td>
                                     <td>
-                                        <strong><?= htmlspecialchars($l['business_name']) ?></strong>
+                                        <strong><?= htmlspecialchars($l['business_name'] ?? '') ?></strong>
                                         <?php if ($l['is_featured']): ?><span class="badge bg-warning text-dark ms-1"><i class="fas fa-crown"></i></span><?php endif; ?>
                                         <?php if ($l['is_verified']): ?><span class="badge bg-info ms-1"><i class="fas fa-check-circle"></i></span><?php endif; ?>
                                     </td>

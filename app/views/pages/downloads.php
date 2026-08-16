@@ -19,9 +19,9 @@
                 <?php if (isset($breadcrumbs)): ?>
                     <?php foreach ($breadcrumbs as $crumb): ?>
                         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
                         <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -43,7 +43,7 @@
                         <a href="<?= BASE_URL ?>downloads" class="btn btn-outline-primary <?= (!isset($_GET['category']) || Security::sanitize($_GET['category']) == 'all') ? 'active' : '' ?>"><?= __('filter_all') ?></a>
                         <?php foreach ($categories as $cat): ?>
                             <a href="<?= BASE_URL ?>downloads?category=<?= urlencode($cat) ?>" class="btn btn-outline-primary <?= (isset($_GET['category']) && Security::sanitize($_GET['category']) == $cat) ? 'active' : '' ?>">
-                                <?= htmlspecialchars(ucfirst($cat)) ?>
+                                <?= htmlspecialchars(ucfirst($cat ?? '')) ?>
                             </a>
                         <?php endforeach; ?>
                     </div>
@@ -58,7 +58,7 @@
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="card h-100 download-card p-4 text-center position-relative shadow-sm border-0">
                             <?php if (!empty($download['category'])): ?>
-                                <span class="download-category-badge"><?= htmlspecialchars($download['category']) ?></span>
+                                <span class="download-category-badge"><?= htmlspecialchars($download['category'] ?? '') ?></span>
                             <?php endif; ?>
 
                             <div class="download-icon text-primary mb-3">

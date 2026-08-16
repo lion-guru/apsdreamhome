@@ -28,7 +28,7 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
 <!-- Dashboard Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="h3 mb-1 fw-bold"><?php echo htmlspecialchars($title); ?></h1>
+        <h1 class="h3 mb-1 fw-bold"><?php echo htmlspecialchars($title ?? ''); ?></h1>
         <p class="text-muted mb-0">Welcome back! Here's your system overview.</p>
     </div>
     <button class="btn btn-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>

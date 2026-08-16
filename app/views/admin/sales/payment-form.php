@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="fw-bold"><?= htmlspecialchars((string)($installment['due_date'] ?? '')) ?></div>
             </div>
         </div>
-        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($installment['id'] ?? 0) ?>/pay">
+        <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/installments/<?= (int)($installment['id'] ?? 0) ?>/pay">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="row g-3">
                 <div class="col-md-4">
@@ -75,7 +75,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="mt-3 d-flex gap-2">
                 <button class="btn btn-primary" type="submit"><i class="fas fa-save me-1"></i><?= __('sale_save_receipt') ?></button>
-                <a class="btn btn-link" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>/schedule"><?= __('sale_cancel') ?></a>
+                <a class="btn btn-link" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>/schedule"><?= __('sale_cancel') ?></a>
             </div>
         </form>
     </div>

@@ -91,7 +91,7 @@ $early_incentives = $early_incentives ?? [];
                                         <option value="">No Offer (Standard Interest)</option>
                                         <?php foreach ($offers as $o): ?>
                                             <option value="<?= $o['id'] ?>" data-months="<?= $o['interest_free_months'] ?>" data-type="<?= $o['offer_type'] ?>">
-                                                <?= htmlspecialchars($o['name']) ?> (<?= $o['interest_free_months'] ?> months interest-free)
+                                                <?= htmlspecialchars($o['name'] ?? '') ?> (<?= $o['interest_free_months'] ?> months interest-free)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>

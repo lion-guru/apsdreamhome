@@ -6,7 +6,7 @@ $eligible_bookings = $eligible_bookings ?? [];
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-signature me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-file-signature me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted"><?= __('admin_noc_create_subtitle') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_nocs') ?></a>
@@ -37,8 +37,8 @@ $eligible_bookings = $eligible_bookings ?? [];
                             <option value="">— Select Booking —</option>
                             <?php foreach ($eligible_bookings as $b): ?>
                                 <option value="<?= $b['id'] ?>">
-                                    <?= htmlspecialchars($b['booking_number']) ?> — <?= htmlspecialchars($b['customer_name']) ?>
-                                    (<?= htmlspecialchars($b['plot_no']) ?>, <?= htmlspecialchars($b['colony_name']) ?>)
+                                    <?= htmlspecialchars($b['booking_number'] ?? '') ?> — <?= htmlspecialchars($b['customer_name'] ?? '') ?>
+                                    (<?= htmlspecialchars($b['plot_no'] ?? '') ?>, <?= htmlspecialchars($b['colony_name'] ?? '') ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>

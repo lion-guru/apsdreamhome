@@ -13,7 +13,7 @@
 
     <?php if (!empty($_GET['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_GET['error']) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_GET['error'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -44,8 +44,8 @@
                                     <option value="">-- Select from users (optional) --</option>
                                     <?php if (!empty($users)): ?>
                                         <?php foreach ($users as $u): ?>
-                                            <option value="<?= $u['id'] ?>" data-name="<?= htmlspecialchars($u['name']) ?>" data-email="<?= htmlspecialchars($u['email'] ?? '') ?>" data-phone="<?= htmlspecialchars($u['phone'] ?? '') ?>">
-                                                <?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)
+                                            <option value="<?= $u['id'] ?>" data-name="<?= htmlspecialchars($u['name'] ?? '') ?>" data-email="<?= htmlspecialchars($u['email'] ?? '') ?>" data-phone="<?= htmlspecialchars($u['phone'] ?? '') ?>">
+                                                <?= htmlspecialchars($u['name'] ?? '') ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     <?php endif; ?>

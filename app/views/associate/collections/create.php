@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Collection Date</label>
-                                <input type="date" name="collection_date" class="form-control" value="<?php echo htmlspecialchars($today); ?>">
+                                <input type="date" name="collection_date" class="form-control" value="<?php echo htmlspecialchars($today ?? ''); ?>">
                             </div>
                         </div>
 

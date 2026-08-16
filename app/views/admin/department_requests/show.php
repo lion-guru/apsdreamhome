@@ -6,7 +6,7 @@
 
 <div class="row mb-4">
     <div class="col-12 d-flex justify-content-between align-items-center">
-        <h1 class="h3 mb-0">Request #<?= $request['id'] ?> — <?= htmlspecialchars($request['title']) ?></h1>
+        <h1 class="h3 mb-0">Request #<?= $request['id'] ?> — <?= htmlspecialchars($request['title'] ?? '') ?></h1>
         <div>
             <a href="<?= BASE_URL ?>/admin/department-requests" class="btn btn-outline-secondary btn-sm">Back to List</a>
         </div>
@@ -57,7 +57,7 @@
                     <?php endif; ?>
                     <div class="col-12">
                         <strong>Description:</strong>
-                        <p class="mt-2"><?= nl2br(htmlspecialchars($request['description'])) ?></p>
+                        <p class="mt-2"><?= nl2br(htmlspecialchars($request['description'] ?? '')) ?></p>
                     </div>
                 </div>
             </div>
@@ -140,10 +140,10 @@
                     <?php foreach ($comments as $comment): ?>
                     <div class="list-group-item">
                         <div class="d-flex justify-content-between">
-                            <strong><?= htmlspecialchars($comment['commenter_name']) ?></strong>
+                            <strong><?= htmlspecialchars($comment['commenter_name'] ?? '') ?></strong>
                             <small class="text-muted"><?= date('M j, Y g:i a', strtotime($comment['created_at'])) ?></small>
                         </div>
-                        <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($comment['comment'])) ?></p>
+                        <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($comment['comment'] ?? '')) ?></p>
                         <?php if ($comment['is_internal']): ?>
                         <span class="badge bg-warning mt-1">Internal</span>
                         <?php endif; ?>

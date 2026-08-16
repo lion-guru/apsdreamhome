@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="d-flex gap-2 mt-1">
                                     <?php if (!empty($n['action_url'])): ?>
-                                        <a href="<?= BASE_URL ?><?= htmlspecialchars($n['action_url']) ?>" class="btn btn-sm btn-outline-primary px-2 py-0">
+                                        <a href="<?= BASE_URL ?><?= htmlspecialchars($n['action_url'] ?? '') ?>" class="btn btn-sm btn-outline-primary px-2 py-0">
                                             <i class="fas fa-eye fa-fw"></i> View
                                         </a>
                                     <?php endif; ?>

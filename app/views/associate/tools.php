@@ -34,8 +34,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                 </div>
                 <div class="card-body px-4 pb-2">
-                    <h5 class="card-title mb-1"><?= htmlspecialchars($tool['name']) ?></h5>
-                    <p class="text-muted small mb-3"><?= htmlspecialchars($tool['description']) ?></p>
+                    <h5 class="card-title mb-1"><?= htmlspecialchars($tool['name'] ?? '') ?></h5>
+                    <p class="text-muted small mb-3"><?= htmlspecialchars($tool['description'] ?? '') ?></p>
                     
                     <!-- Tool Form (collapsible) -->
                     <div class="tool-form" class="style-54390">
@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <?php echo CSRFProtection::csrfField(); ?>
                             <?php foreach ($tool['fields'] as $field): ?>
                             <div class="mb-2">
-                                <label class="form-label small fw-bold"><?= htmlspecialchars($field['label']) ?>
+                                <label class="form-label small fw-bold"><?= htmlspecialchars($field['label'] ?? '') ?>
                                     <?php if (isset($field['required']) && $field['required']): ?>
                                         <span class="text-danger">*</span>
                                     <?php endif; ?>
@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <?php echo isset($field['required']) && $field['required'] ? 'required' : ''; ?>>
                                     <option value="">Select...</option>
                                     <?php foreach (($field['options'] ?? []) as $val => $label): ?>
-                                        <option value="<?= $val ?>"><?= htmlspecialchars($label) ?></option>
+                                        <option value="<?= $val ?>"><?= htmlspecialchars($label ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <?php else: ?>

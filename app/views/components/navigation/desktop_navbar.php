@@ -163,7 +163,7 @@ if (!function_exists('navUrl')) {
                                                 ?>
                                                     <a class="mega-item" href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>/plots">
                                                         <i class="fas fa-vector-square <?php echo $iconClass; ?>"></i>
-                                                        <span><?php echo htmlspecialchars($proj['name']); ?></span>
+                                                        <span><?php echo htmlspecialchars($proj['name'] ?? ''); ?></span>
                                                     </a>
                                                 <?php endforeach; ?>
                                             </div>
@@ -184,7 +184,7 @@ if (!function_exists('navUrl')) {
                                                     <a class="mega-item"
                                                        href="<?php echo BASE_URL; ?>/projects?location=<?php echo urlencode(strtolower($loc['name'])); ?>">
                                                         <i class="fas fa-map-pin <?php echo $iconClass; ?>"></i>
-                                                        <span><?php echo htmlspecialchars($loc['name']); ?></span>
+                                                        <span><?php echo htmlspecialchars($loc['name'] ?? ''); ?></span>
                                                         <span class="mega-badge"><?php echo $loc['count']; ?></span>
                                                     </a>
                                                 <?php endforeach; ?>

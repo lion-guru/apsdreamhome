@@ -112,16 +112,16 @@ $today = date('Y-m-d');
                                 <td>
                                     <strong><?= htmlspecialchars($task['title'] ?? __('assoc_fu_untitled', [], 'Untitled')) ?></strong>
                                     <?php if (!empty($task['description'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars(mb_substr($task['description'], 0, 60)) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars(mb_substr($task['description'] ?? '', 0, 60)) ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if (!empty($task['lead_name'])): ?>
                                         <a href="<?= BASE_URL ?>/associate/leads/<?= $task['lead_id'] ?>" class="text-decoration-none">
-                                            <?= htmlspecialchars($task['lead_name']) ?>
+                                            <?= htmlspecialchars($task['lead_name'] ?? '') ?>
                                         </a>
                                         <?php if (!empty($task['lead_phone'])): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($task['lead_phone']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($task['lead_phone'] ?? '') ?></small>
                                         <?php endif; ?>
                                     <?php else: ?>
                                         <span class="text-muted">-</span>
@@ -166,7 +166,7 @@ $today = date('Y-m-d');
                                     <a href="<?= BASE_URL ?>/associate/leads/<?= $task['lead_id'] ?>" class="btn btn-outline-primary btn-sm" title="<?= __('assoc_fu_view_lead', [], 'View Lead') ?>"><i class="fas fa-eye"></i></a>
                                     <?php endif; ?>
                                     <?php if (!empty($task['lead_phone'])): ?>
-                                    <a href="tel:<?= htmlspecialchars($task['lead_phone']) ?>" class="btn btn-outline-success btn-sm" title="<?= __('assoc_fu_call', [], 'Call') ?>"><i class="fas fa-phone"></i></a>
+                                    <a href="tel:<?= htmlspecialchars($task['lead_phone'] ?? '') ?>" class="btn btn-outline-success btn-sm" title="<?= __('assoc_fu_call', [], 'Call') ?>"><i class="fas fa-phone"></i></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

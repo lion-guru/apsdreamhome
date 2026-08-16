@@ -38,7 +38,7 @@
                                 <select name="state" class="form-select" required>
                                     <option value="">Select State</option>
                                     <?php foreach (($indianStates ?? []) as $st): ?>
-                                    <option value="<?= htmlspecialchars($st) ?>"><?= htmlspecialchars($st) ?></option>
+                                    <option value="<?= htmlspecialchars($st ?? '') ?>"><?= htmlspecialchars($st ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

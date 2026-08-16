@@ -46,13 +46,13 @@ ob_start();
         <div class="aps-cp-flex-between">
             <div>
                 <span class="aps-cp-muted"><?= __('user_investment_plans_investor_level', null, 'Investor Level') ?></span>
-                <h3 class="mt-0"><i class="fas fa-trophy" class="style-93447"></i> <span class="aps-cp-badge aps-cp-badge-<?= $levelColor ?> aps-cp-badge-lg"><?= htmlspecialchars($stats['level']) ?></span></h3>
+                <h3 class="mt-0"><i class="fas fa-trophy" class="style-93447"></i> <span class="aps-cp-badge aps-cp-badge-<?= $levelColor ?> aps-cp-badge-lg"><?= htmlspecialchars($stats['level'] ?? '') ?></span></h3>
             </div>
             <div class="style-12859">
                 <div class="aps-cp-progress">
                     <div class="aps-cp-progress-bar" class="style-61755"></div>
                 </div>
-                <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest ₹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level']) ?></strong></p>
+                <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest ₹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level'] ?? '') ?></strong></p>
             </div>
         </div>
     </div>
@@ -72,8 +72,8 @@ ob_start();
                     $statusColor = match($inv['status'] ?? 'active') { 'active' => 'success', 'matured' => 'info', 'cancelled' => 'danger', 'paused' => 'warning', default => 'secondary' };
                 ?>
                 <tr>
-                    <td><code><?= htmlspecialchars($inv['investment_ref']) ?></code></td>
-                    <td><i class="fas <?= $categoryIcons[$cat] ?? 'fa-chart-line' ?>"></i> <?= htmlspecialchars($inv['plan_name']) ?></td>
+                    <td><code><?= htmlspecialchars($inv['investment_ref'] ?? '') ?></code></td>
+                    <td><i class="fas <?= $categoryIcons[$cat] ?? 'fa-chart-line' ?>"></i> <?= htmlspecialchars($inv['plan_name'] ?? '') ?></td>
                     <td>₹<?= number_format((float)$inv['principal_amount']) ?></td>
                     <td>₹<?= number_format((float)$inv['current_value']) ?></td>
                     <td class="aps-cp-<?= $ret >= 0 ? 'text-success' : 'text-danger' ?>"><?= $ret >= 0 ? '+' : '' ?>₹<?= number_format($ret) ?></td>
@@ -102,13 +102,13 @@ ob_start();
             ?>
             <div class="aps-cp-info-card" data-plan-id="<?= (int)$plan['id'] ?>">
                 <div class="aps-cp-info-card-head">
-                    <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($plan['plan_name']) ?></h4>
+                    <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($plan['plan_name'] ?? '') ?></h4>
                     <?php if (!empty($plan['is_featured'])): ?><span class="aps-cp-badge aps-cp-badge-primary"><?= __('user_investment_plans_featured', null, 'Featured') ?></span><?php endif; ?>
                 </div>
-                <p class="aps-cp-info-card-meta"><?= __('user_investment_plans_min_amount', null, 'Min') ?>: ₹<?= number_format((float)$plan['min_amount']) ?> | <?= __('user_investment_plans_tenure', null, 'Tenure') ?>: <?= (int)($plan['tenure_months'] ?? 0) ?> <?= __('user_investment_plans_months', null, 'mo') ?> | <?= __('user_investment_plans_risk', null, 'Risk') ?>: <span class="aps-cp-badge aps-cp-badge-<?= $riskColors[$risk] ?? 'warning' ?>"><?= htmlspecialchars(ucfirst($risk)) ?></span></p>
+                <p class="aps-cp-info-card-meta"><?= __('user_investment_plans_min_amount', null, 'Min') ?>: ₹<?= number_format((float)$plan['min_amount']) ?> | <?= __('user_investment_plans_tenure', null, 'Tenure') ?>: <?= (int)($plan['tenure_months'] ?? 0) ?> <?= __('user_investment_plans_months', null, 'mo') ?> | <?= __('user_investment_plans_risk', null, 'Risk') ?>: <span class="aps-cp-badge aps-cp-badge-<?= $riskColors[$risk] ?? 'warning' ?>"><?= htmlspecialchars(ucfirst($risk ?? '')) ?></span></p>
                 <?php if (!empty($plan['features'])): ?>
                 <ul class="aps-cp-list">
-                    <?php foreach ($plan['features'] as $f): ?><li><?= htmlspecialchars($f) ?></li><?php endforeach; ?>
+                    <?php foreach ($plan['features'] as $f): ?><li><?= htmlspecialchars($f ?? '') ?></li><?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
                 <div class="aps-cp-info-card-foot">

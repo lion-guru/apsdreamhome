@@ -160,7 +160,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                     <h6><?= htmlspecialchars($ticket['customer_name'] ?? 'Unknown') ?></h6>
                     <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($ticket['customer_email'] ?? '') ?></p>
                     <?php if (!empty($ticket['customer_phone'])): ?>
-                        <p class="text-muted small mb-0"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($ticket['customer_phone']) ?></p>
+                        <p class="text-muted small mb-0"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($ticket['customer_phone'] ?? '') ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -202,7 +202,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                                 <option value="">-- Unassigned --</option>
                                 <?php foreach ($staffMembers as $staff): ?>
                                     <option value="<?= (int)$staff['id'] ?>" <?= (int)($ticket['assigned_to'] ?? 0) === (int)$staff['id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($staff['name']) ?> (<?= htmlspecialchars($staff['email']) ?>)
+                                        <?= htmlspecialchars($staff['name'] ?? '') ?> (<?= htmlspecialchars($staff['email'] ?? '') ?>)
                                     </option>
                                 <?php endforeach; ?>
                             </select>

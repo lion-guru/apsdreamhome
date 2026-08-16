@@ -20,7 +20,7 @@
                     <?php foreach ($packages as $p): ?>
                     <tr>
                         <td><?= $p['id'] ?></td>
-                        <td><strong><?= htmlspecialchars($p['name']) ?></strong></td>
+                        <td><strong><?= htmlspecialchars($p['name'] ?? '') ?></strong></td>
                         <td>₹<?= number_format((float)$p['price'], 2) ?></td>
                         <td>₹<?= number_format((float)$p['direct_reward'], 2) ?></td>
                         <td>₹<?= number_format((float)$p['level_reward'], 2) ?></td>

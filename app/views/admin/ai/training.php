@@ -102,9 +102,9 @@ $recentLearning = $recentLearning ?? [];
                                 <tbody>
                                 <?php foreach ($topIntents as $ti): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($ti['intent_name']) ?></strong></td>
-                                        <td><span class="aps-cp-badge badge bg-secondary"><?= htmlspecialchars($ti['pattern_type']) ?></span></td>
-                                        <td><span class="aps-cp-badge badge bg-info"><?= strtoupper(htmlspecialchars($ti['language'])) ?></span></td>
+                                        <td><strong><?= htmlspecialchars($ti['intent_name'] ?? '') ?></strong></td>
+                                        <td><span class="aps-cp-badge badge bg-secondary"><?= htmlspecialchars($ti['pattern_type'] ?? '') ?></span></td>
+                                        <td><span class="aps-cp-badge badge bg-info"><?= strtoupper(htmlspecialchars($ti['language'] ?? '')) ?></span></td>
                                         <td><?= number_format($ti['hit_count']) ?></td>
                                         <td><?= number_format($ti['success_count']) ?></td>
                                         <td><?php $acc = $ti['hit_count'] > 0 ? round($ti['success_count']/$ti['hit_count']*100) : 0; ?><span class="text-<?= $acc > 70 ? 'success' : ($acc > 40 ? 'warning' : 'danger') ?>"><?= $acc ?>%</span></td>
@@ -126,7 +126,7 @@ $recentLearning = $recentLearning ?? [];
                     <?php else: ?>
                         <?php foreach ($recentLearning as $rl): ?>
                             <div class="mb-2">
-                                <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($rl['action_type']) ?></small><small><?= $rl['cnt'] ?> records</small></div>
+                                <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($rl['action_type'] ?? '') ?></small><small><?= $rl['cnt'] ?> records</small></div>
                                 <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-74689"></div></div>
                             </div>
                         <?php endforeach; ?>
@@ -141,7 +141,7 @@ $recentLearning = $recentLearning ?? [];
                     <?php else: ?>
                         <?php foreach (array_slice($models, 0, 5) as $m): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div><strong class="small"><?= htmlspecialchars($m['property_type']) ?></strong><br><small class="text-muted">Samples: <?= $m['sample_size'] ?></small></div>
+                                <div><strong class="small"><?= htmlspecialchars($m['property_type'] ?? '') ?></strong><br><small class="text-muted">Samples: <?= $m['sample_size'] ?></small></div>
                                 <span class="aps-cp-badge badge bg-<?= $m['r_squared'] > 0.7 ? 'success' : ($m['r_squared'] > 0.4 ? 'warning' : 'danger') ?>">RÂ² <?= round($m['r_squared'], 3) ?></span>
                             </div>
                         <?php endforeach; ?>

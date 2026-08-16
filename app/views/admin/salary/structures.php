@@ -209,7 +209,7 @@
                             <select name="employee_id" class="form-select select2-modal" required class="style-13113">
                                 <option value="">Search and select an employee...</option>
                                 <?php foreach ($users ?? [] as $e): ?>
-                                <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name']) ?></option>
+                                <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

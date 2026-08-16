@@ -7,7 +7,7 @@ $status_filter = $status_filter ?? null;
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted"><?= __('admin_registry_subtitle') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/registries/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_registry') ?></a>
@@ -57,9 +57,9 @@ $status_filter = $status_filter ?? null;
                     <?php foreach ($registries as $r): ?>
                         <tr>
                             <td><?= $r['id'] ?></td>
-                            <td class="small fw-semibold"><?= htmlspecialchars($r['booking_number']) ?></td>
+                            <td class="small fw-semibold"><?= htmlspecialchars($r['booking_number'] ?? '') ?></td>
                             <td class="small"><?= htmlspecialchars($r['customer_name'] ?? '—') ?></td>
-                            <td class="small"><?= htmlspecialchars($r['plot_no']) ?>, <?= htmlspecialchars($r['colony_name']) ?></td>
+                            <td class="small"><?= htmlspecialchars($r['plot_no'] ?? '') ?>, <?= htmlspecialchars($r['colony_name'] ?? '') ?></td>
                             <td class="small">₹<?= number_format($r['stamp_duty_amount'], 0) ?></td>
                             <td class="small">₹<?= number_format($r['registration_fee'], 0) ?></td>
                             <td class="small fw-bold">₹<?= number_format($r['total_registry_cost'], 0) ?></td>

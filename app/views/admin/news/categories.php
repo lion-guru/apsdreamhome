@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <tbody>
                             <?php foreach ($categories as $cat): ?>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars($cat['category']); ?></strong></td>
+                                    <td><strong><?php echo htmlspecialchars($cat['category'] ?? ''); ?></strong></td>
                                     <td><span class="badge bg-primary"><?php echo $cat['article_count']; ?></span></td>
                                     <td><a href="<?php echo $base; ?>/admin/news?category=<?php echo urlencode($cat['category']); ?>" class="btn btn-sm btn-outline-primary">View Articles</a></td>
                                 </tr>

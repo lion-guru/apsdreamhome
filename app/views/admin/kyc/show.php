@@ -28,7 +28,7 @@ unset($_SESSION['kyc_verify_results']);
                         </tr>
                         <tr><th>Submitted</th><td><?= date('M j, Y H:i', strtotime($r['created_at'] ?? 'now')) ?></td></tr>
                         <?php if (!empty($r['rejection_reason'])): ?>
-                        <tr><th>Rejection Reason</th><td class="text-danger"><?= htmlspecialchars($r['rejection_reason']) ?></td></tr>
+                        <tr><th>Rejection Reason</th><td class="text-danger"><?= htmlspecialchars($r['rejection_reason'] ?? '') ?></td></tr>
                         <?php endif; ?>
                         <?php if (!empty($r['verified_at'])): ?>
                         <tr><th>Verified At</th><td><?= date('M j, Y H:i', strtotime($r['verified_at'])) ?></td></tr>

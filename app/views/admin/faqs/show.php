@@ -21,11 +21,11 @@
                         </tr>
                         <tr>
                             <th>Question</th>
-                            <td><?php echo htmlspecialchars($faq['question']); ?></td>
+                            <td><?php echo htmlspecialchars($faq['question'] ?? ''); ?></td>
                         </tr>
                         <tr>
                             <th>Answer</th>
-                            <td><?php echo nl2br(htmlspecialchars($faq['answer'])); ?></td>
+                            <td><?php echo nl2br(htmlspecialchars($faq['answer'] ?? '')); ?></td>
                         </tr>
                         <tr>
                             <th>Category</th>

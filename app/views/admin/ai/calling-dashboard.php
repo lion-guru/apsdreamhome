@@ -92,11 +92,11 @@ $recentCalls = $recentCalls ?? [];
                             <tr>
                                 <td>#<?= $c['id'] ?></td>
                                 <td><?= htmlspecialchars($c['lead_name'] ?? 'N/A') ?></td>
-                                <td><code><?= htmlspecialchars($c['phone']) ?></code></td>
+                                <td><code><?= htmlspecialchars($c['phone'] ?? '') ?></code></td>
                                 <td><?= $c['duration_seconds'] > 0 ? round($c['duration_seconds']/60,1).'m' : '-' ?></td>
                                 <td><span class="aps-cp-badge badge bg-<?= $c['customer_response'] === 'interested' ? 'success' : ($c['customer_response'] === 'dnd' ? 'danger' : ($c['customer_response'] === 'callback' ? 'warning' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($c['customer_response'] ?? 'N/A')) ?></span></td>
                                 <td><span class="text-<?= $c['sentiment'] === 'positive' ? 'success' : ($c['sentiment'] === 'negative' ? 'danger' : 'muted') ?>"><?= ucfirst(htmlspecialchars($c['sentiment'] ?? '-')) ?></span></td>
-                                <td><span class="aps-cp-badge badge bg-<?= $c['status'] === 'completed' ? 'success' : ($c['status'] === 'failed' ? 'danger' : ($c['status'] === 'in_progress' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($c['status'])) ?></span></td>
+                                <td><span class="aps-cp-badge badge bg-<?= $c['status'] === 'completed' ? 'success' : ($c['status'] === 'failed' ? 'danger' : ($c['status'] === 'in_progress' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($c['status'] ?? '')) ?></span></td>
                                 <td class="text-muted small"><?= htmlspecialchars(date('d M H:i', strtotime($c['created_at']))) ?></td>
                             </tr>
                         <?php endforeach; ?>

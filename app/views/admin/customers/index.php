@@ -66,7 +66,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
             <form method="GET" action="<?= BASE_URL ?>/admin/users" class="row g-3">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
-                    <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?= htmlspecialchars($filters['search']) ?>">
+                    <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <select name="status" class="form-select">

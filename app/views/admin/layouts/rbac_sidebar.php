@@ -91,11 +91,11 @@ $groupedItems = $sortedGrouped;
             $tenantColors = TenantContext::getColors();
             ?>
             <?php if ($tenantLogo): ?>
-                <img src="<?php echo htmlspecialchars($tenantLogo); ?>" alt="Logo" class="style-94888">
+                <img src="<?php echo htmlspecialchars($tenantLogo ?? ''); ?>" alt="Logo" class="style-94888">
             <?php else: ?>
                 <i class="fas fa-home"></i>
             <?php endif; ?>
-            <span><?php echo htmlspecialchars($tenantName); ?></span>
+            <span><?php echo htmlspecialchars($tenantName ?? ''); ?></span>
         </a>
         <div class="sidebar-sub">Admin Panel v2.0</div>
     </div>
@@ -109,7 +109,7 @@ $groupedItems = $sortedGrouped;
     <div class="style-84038">
         <div class="d-flex align-items-center gap-2 mb-1">
             <i class="fas fa-exchange-alt"></i>
-            <strong>Viewing: <?= htmlspecialchars($switchName) ?></strong>
+            <strong>Viewing: <?= htmlspecialchars($switchName ?? '') ?></strong>
         </div>
         <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" class="style-21648">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
@@ -123,8 +123,8 @@ $groupedItems = $sortedGrouped;
     <!-- Tenant CSS Variables for white-labeling -->
     <style>
         :root {
-            --tenant-primary: <?php echo htmlspecialchars($tenantColors['primary']); ?>;
-            --tenant-secondary: <?php echo htmlspecialchars($tenantColors['secondary']); ?>;
+            --tenant-primary: <?php echo htmlspecialchars($tenantColors['primary'] ?? ''); ?>;
+            --tenant-secondary: <?php echo htmlspecialchars($tenantColors['secondary'] ?? ''); ?>;
         }
     </style>
 
@@ -155,7 +155,7 @@ $groupedItems = $sortedGrouped;
     <?php if (!empty($menuError)): ?>
         <div class="style-85283">
             <i class="fas fa-exclamation-triangle"></i> Sidebar error:<br>
-            <code><?php echo htmlspecialchars($menuError); ?></code>
+            <code><?php echo htmlspecialchars($menuError ?? ''); ?></code>
         </div>
     <?php endif; ?>
 
@@ -176,10 +176,10 @@ $groupedItems = $sortedGrouped;
                         $isActive = ($reqPath === $itemFullUrl) || ($itemFullUrl !== $base && strpos($reqPath, $itemFullUrl . '/') === 0);
                         ?>
                         <li class="sidebar-item">
-                            <a href="<?php echo $base . htmlspecialchars($item['url']); ?>"
+                            <a href="<?php echo $base . htmlspecialchars($item['url'] ?? ''); ?>"
                                 class="sidebar-link <?php echo $isActive ? 'active' : ''; ?>">
                                 <i class="<?php echo htmlspecialchars($item['icon'] ?? 'fas fa-circle'); ?>"></i>
-                                <?php echo htmlspecialchars($item['name']); ?>
+                                <?php echo htmlspecialchars($item['name'] ?? ''); ?>
                             </a>
                         </li>
                     <?php endforeach; ?>

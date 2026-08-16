@@ -61,8 +61,8 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-sitemap me-2"></i>MLM Genealogy</h4>
         <div>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm/tree" class="btn btn-outline-primary btn-sm me-2"><i class="fas fa-project-diagram me-1"></i>Network Tree</a>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to MLM</a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/tree" class="btn btn-outline-primary btn-sm me-2"><i class="fas fa-project-diagram me-1"></i>Network Tree</a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to MLM</a>
         </div>
     </div>
 
@@ -176,7 +176,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                                 <div class="text-muted" class="style-68658"><?= htmlspecialchars($m['email'] ?? '') ?></div>
                             </div>
                             <div class="text-end">
-                                <div class="small" class="style-19189"><?= htmlspecialchars(ucfirst($level)) ?></div>
+                                <div class="small" class="style-19189"><?= htmlspecialchars(ucfirst($level ?? '')) ?></div>
                                 <div class="text-muted" class="style-68658">&#8377;<?= number_format((float)$m['total_commission'] ?? 0) ?></div>
                             </div>
                         </div>
@@ -202,7 +202,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
                     <div class="d-flex align-items-center justify-content-between border-bottom px-3 py-2">
                         <div class="d-flex align-items-center">
                             <span class="badge me-2" class="style-38303"><i class="fas <?= $rankIcons[strtolower($rk)] ?? 'fa-user' ?>"></i></span>
-                            <span class="small fw-bold"><?= htmlspecialchars($rk) ?></span>
+                            <span class="small fw-bold"><?= htmlspecialchars($rk ?? '') ?></span>
                         </div>
                         <span class="badge bg-light text-dark"><?= $rv['count'] ?></span>
                     </div>

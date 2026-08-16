@@ -52,7 +52,7 @@
                             <?php else: ?>
                             <?php foreach ($rules as $r): ?>
                             <tr>
-                                <td><?= htmlspecialchars($r['rule_name']) ?></td>
+                                <td><?= htmlspecialchars($r['rule_name'] ?? '') ?></td>
                                 <td><span class="badge bg-info"><?= $r['commission_type'] ?></span></td>
                                 <td>&#8377;<?= number_format((float)$r['amount'],2) ?></td>
                                 <td><?= $r['percentage'] ? (float)$r['percentage'].'%' : '-' ?></td>

@@ -93,7 +93,7 @@ $brokers = $brokers ?? [];
                                     <td>
                                         <strong><?= htmlspecialchars($b['broker_name'] ?? '—') ?></strong>
                                         <?php if (!empty($b['email'])): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($b['email']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($b['email'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td><span class="badge bg-secondary"><?= htmlspecialchars(ucfirst($b['broker_type'] ?? '—')) ?></span></td>

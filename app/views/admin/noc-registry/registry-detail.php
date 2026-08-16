@@ -7,7 +7,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted">Registry #<?= $registry['id'] ?? 0 ?> — <?= htmlspecialchars($registry['booking_number'] ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_registries') ?></a>
@@ -41,19 +41,19 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_booking_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($registry['booking_number']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($registry['booking_number'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_customer_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($registry['customer_name']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($registry['customer_name'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_plot_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($registry['plot_no']) ?>, <?= htmlspecialchars($registry['colony_name']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($registry['plot_no'] ?? '') ?>, <?= htmlspecialchars($registry['colony_name'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_sub_registrar_office') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($registry['sub_registrar_office']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($registry['sub_registrar_office'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_registration_no') ?></div>
@@ -70,7 +70,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                         <?php if ($registry['notes']): ?>
                         <div class="col-12">
                             <div class="text-muted small"><?= __('admin_notes_label') ?></div>
-                            <div><?= nl2br(htmlspecialchars($registry['notes'])) ?></div>
+                            <div><?= nl2br(htmlspecialchars($registry['notes'] ?? '')) ?></div>
                         </div>
                         <?php endif; ?>
                     </div>

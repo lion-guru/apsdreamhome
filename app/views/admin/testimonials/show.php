@@ -23,7 +23,7 @@
                                 </tr>
                                 <tr>
                                     <th>Customer Name</th>
-                                    <td><?php echo htmlspecialchars($testimonial['customer_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($testimonial['customer_name'] ?? ''); ?></td>
                                 </tr>
                                 <tr>
                                     <th>Email</th>
@@ -76,7 +76,7 @@
                                     <h6 class="mb-0">Testimonial Content</h6>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
-                                    <p class="mb-0"><?php echo nl2br(htmlspecialchars($testimonial['content'])); ?></p>
+                                    <p class="mb-0"><?php echo nl2br(htmlspecialchars($testimonial['content'] ?? '')); ?></p>
                                 </div>
                             </div>
                         </div>

@@ -77,7 +77,7 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-primary">
-                                                    <?= htmlspecialchars($leave['total_days']) ?> day<?= $leave['total_days'] > 1 ? 's' : '' ?>
+                                                    <?= htmlspecialchars($leave['total_days'] ?? '') ?> day<?= $leave['total_days'] > 1 ? 's' : '' ?>
                                                 </span>
                                             </td>
                                             <td>
@@ -112,7 +112,7 @@
                                             </td>
                                             <td>
                                                 <?php if (!empty($leave['reason'])): ?>
-                                                    <span title="<?= htmlspecialchars($leave['reason']) ?>">
+                                                    <span title="<?= htmlspecialchars($leave['reason'] ?? '') ?>">
                                                         <?= htmlspecialchars(substr($leave['reason'], 0, 50)) ?>
                                                         <?php if (strlen($leave['reason']) > 50): ?>...<?php endif; ?>
                                                     </span>
@@ -166,7 +166,7 @@
                                     <option value="">Select Leave Type</option>
                                     <?php foreach ($leave_types ?? [] as $type): ?>
                                         <option value="<?= $type['leave_type_id'] ?>">
-                                            <?= htmlspecialchars($type['leave_type_name']) ?>
+                                            <?= htmlspecialchars($type['leave_type_name'] ?? '') ?>
                                             (<?= $type['max_days'] ?> days max)
                                         </option>
                                     <?php endforeach; ?>

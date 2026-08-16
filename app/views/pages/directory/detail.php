@@ -3,7 +3,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services">Services Directory</a></li>
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services/<?= htmlspecialchars($listing['category_slug'] ?? '') ?>"><?= htmlspecialchars($listing['category_name'] ?? '') ?></a></li>
-            <li class="breadcrumb-item active"><?= htmlspecialchars($listing['business_name']) ?></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($listing['business_name'] ?? '') ?></li>
         </ol>
     </nav>
 
@@ -17,7 +17,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h1 class="h3 mb-1"><?= htmlspecialchars($listing['business_name']) ?>
+                            <h1 class="h3 mb-1"><?= htmlspecialchars($listing['business_name'] ?? '') ?>
                                 <?php if ($listing['is_verified']): ?><i class="fas fa-check-circle text-info" title="Verified"></i><?php endif; ?>
                                 <?php if ($listing['is_featured']): ?><span class="badge bg-warning text-dark ms-2"><i class="fas fa-crown"></i> Featured</span><?php endif; ?>
                             </h1>
@@ -33,12 +33,12 @@
                     </div>
 
                     <?php if ($listing['photo']): ?>
-                        <img src="<?= htmlspecialchars($listing['photo']) ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name']) ?>" class="img-fluid rounded mb-3" class="style-22862">
+                        <img src="<?= htmlspecialchars($listing['photo'] ?? '') ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name'] ?? '') ?>" class="img-fluid rounded mb-3" class="style-22862">
                     <?php endif; ?>
 
                     <?php if ($listing['description']): ?>
                         <h5 class="mt-3">About</h5>
-                        <p><?= nl2br(htmlspecialchars($listing['description'])) ?></p>
+                        <p><?= nl2br(htmlspecialchars($listing['description'] ?? '')) ?></p>
                     <?php endif; ?>
 
                     <?php if ($listing['experience_years'] > 0): ?>
@@ -92,7 +92,7 @@
                                     <span class="text-warning"><?= str_repeat('â˜…', (int)$r['rating']) ?></span>
                                 </div>
                                 <?php if ($r['review']): ?>
-                                    <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($r['review'])) ?></p>
+                                    <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($r['review'] ?? '')) ?></p>
                                 <?php endif; ?>
                                 <small class="text-muted"><?= date('d M Y', strtotime($r['created_at'])) ?></small>
                             </div>
@@ -108,19 +108,19 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Contact Information</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if ($listing['phone']): ?>
-                        <p class="mb-2"><i class="fas fa-phone me-2 text-primary"></i><a href="tel:<?= htmlspecialchars($listing['phone']) ?>"><?= htmlspecialchars($listing['phone']) ?></a></p>
+                        <p class="mb-2"><i class="fas fa-phone me-2 text-primary"></i><a href="tel:<?= htmlspecialchars($listing['phone'] ?? '') ?>"><?= htmlspecialchars($listing['phone'] ?? '') ?></a></p>
                     <?php endif; ?>
                     <?php if ($listing['whatsapp']): ?>
-                        <p class="mb-2"><i class="fab fa-whatsapp me-2 text-success"></i><a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $listing['whatsapp']) ?>" target="_blank"><?= htmlspecialchars($listing['whatsapp']) ?></a></p>
+                        <p class="mb-2"><i class="fab fa-whatsapp me-2 text-success"></i><a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $listing['whatsapp']) ?>" target="_blank"><?= htmlspecialchars($listing['whatsapp'] ?? '') ?></a></p>
                     <?php endif; ?>
                     <?php if ($listing['email']): ?>
-                        <p class="mb-2"><i class="fas fa-envelope me-2 text-danger"></i><a href="mailto:<?= htmlspecialchars($listing['email']) ?>"><?= htmlspecialchars($listing['email']) ?></a></p>
+                        <p class="mb-2"><i class="fas fa-envelope me-2 text-danger"></i><a href="mailto:<?= htmlspecialchars($listing['email'] ?? '') ?>"><?= htmlspecialchars($listing['email'] ?? '') ?></a></p>
                     <?php endif; ?>
                     <?php if ($listing['website']): ?>
-                        <p class="mb-2"><i class="fas fa-globe me-2 text-info"></i><a href="<?= htmlspecialchars($listing['website']) ?>" target="_blank">Visit Website</a></p>
+                        <p class="mb-2"><i class="fas fa-globe me-2 text-info"></i><a href="<?= htmlspecialchars($listing['website'] ?? '') ?>" target="_blank">Visit Website</a></p>
                     <?php endif; ?>
                     <?php if ($listing['address']): ?>
-                        <p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-secondary"></i><?= nl2br(htmlspecialchars($listing['address'])) ?><?= $listing['city'] ? ', ' . htmlspecialchars($listing['city']) : '' ?></p>
+                        <p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-secondary"></i><?= nl2br(htmlspecialchars($listing['address'] ?? '')) ?><?= $listing['city'] ? ', ' . htmlspecialchars($listing['city'] ?? '') : '' ?></p>
                     <?php endif; ?>
                 </div>
             </div>

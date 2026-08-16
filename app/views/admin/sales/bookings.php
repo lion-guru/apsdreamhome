@@ -36,7 +36,7 @@ $statusBadge = function ($s) {
                 <select name="status" class="form-select form-select-sm">
                     <option value=""><?= __('sale_all_statuses') ?></option>
                     <?php foreach ($statuses as $st): ?>
-                        <option value="<?= htmlspecialchars($st) ?>" <?= (($filters['status'] ?? '') === $st) ? 'selected' : '' ?>><?= htmlspecialchars($st) ?></option>
+                        <option value="<?= htmlspecialchars($st ?? '') ?>" <?= (($filters['status'] ?? '') === $st) ? 'selected' : '' ?>><?= htmlspecialchars($st ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -48,8 +48,8 @@ $statusBadge = function ($s) {
             </div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-search me-1"></i><?= __('sale_filter') ?></button>
-                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings" class="btn btn-sm btn-link"><?= __('sale_reset') ?></a>
-                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/new" class="btn btn-sm btn-success float-end"><i class="fas fa-plus me-1"></i><?= __('sale_new') ?></a>
+                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings" class="btn btn-sm btn-link"><?= __('sale_reset') ?></a>
+                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/new" class="btn btn-sm btn-success float-end"><i class="fas fa-plus me-1"></i><?= __('sale_new') ?></a>
             </div>
         </form>
 
@@ -75,7 +75,7 @@ $statusBadge = function ($s) {
                                 <i class="fas fa-bookmark fa-3x text-muted mb-3"></i>
                                 <p class="text-muted mb-2"><?= __('sale_no_bookings') ?></p>
                                 <p class="text-muted small mb-3">Bookings appear here once customers reserve plots.</p>
-                                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/new" class="btn btn-primary btn-sm">
+                                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/new" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus me-1"></i>Create First Booking
                                 </a>
                             </td>
@@ -83,7 +83,7 @@ $statusBadge = function ($s) {
                     <?php else: foreach ($bookings as $b): ?>
                         <tr>
                             <td>
-                                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($b['id'] ?? 0) ?>" class="fw-bold">
+                                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($b['id'] ?? 0) ?>" class="fw-bold">
                                     <?= htmlspecialchars((string)($b['booking_number'] ?? '')) ?>
                                 </a>
                             </td>

@@ -24,14 +24,14 @@ $csrf = $csrf ?? '';
 
     <?php if (!empty($flash_success)): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flash_success) ?>
+            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flash_success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
     <?php if (!empty($flash_error)): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars($flash_error) ?>
+            <i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars($flash_error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -42,7 +42,7 @@ $csrf = $csrf ?? '';
                 <div class="card-header bg-white"><h5 class="mb-0">1. Upload CSV</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/bulk/property-import/upload" enctype="multipart/form-data" id="upload-form">
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
                         <div class="upload-dropzone border-2 border-dashed rounded p-5 text-center bg-light" id="dropzone">
                             <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
                             <p class="mb-1"><strong>Drag &amp; drop CSV here</strong></p>
@@ -93,7 +93,7 @@ $csrf = $csrf ?? '';
                 <?php if (!empty($preview['errors'])): ?>
                     <div class="alert alert-warning">
                         <strong><i class="fas fa-exclamation-triangle me-1"></i> <?= count($preview['errors']) ?> validation error(s):</strong>
-                        <ul class="mb-0 mt-2 small"><?php foreach (array_slice($preview['errors'], 0, 10) as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul>
+                        <ul class="mb-0 mt-2 small"><?php foreach (array_slice($preview['errors'], 0, 10) as $e): ?><li><?= htmlspecialchars($e ?? '') ?></li><?php endforeach; ?></ul>
                     </div>
                 <?php endif; ?>
 
@@ -135,7 +135,7 @@ $csrf = $csrf ?? '';
                 </div>
 
                 <form method="POST" action="<?= BASE_URL ?>/admin/bulk/property-import/execute" class="mt-3">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
                     <input type="hidden" name="preview_data" value="<?= htmlspecialchars(json_encode($preview)) ?>">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -191,7 +191,7 @@ $csrf = $csrf ?? '';
                             <thead><tr><th>#</th><th>Error</th></tr></thead>
                             <tbody>
                                 <?php foreach ($result['errors'] as $i => $e): ?>
-                                    <tr><td><?= $i + 1 ?></td><td><code class="small"><?= htmlspecialchars($e) ?></code></td></tr>
+                                    <tr><td><?= $i + 1 ?></td><td><code class="small"><?= htmlspecialchars($e ?? '') ?></code></td></tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>

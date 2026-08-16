@@ -116,7 +116,7 @@ $base = BASE_URL ?? '';
                                 <select name="plan_id" class="form-select mb-3" id="planSelect">
                                     <?php foreach ($plans as $plan): ?>
                                         <option value="<?= $plan['id'] ?>" data-max-users="<?= $plan['max_users'] ?>" data-max-leads="<?= $plan['max_leads'] ?>" data-max-props="<?= $plan['max_properties'] ?>" data-storage="<?= $plan['storage_limit_mb'] ?>" <?= (int)($tenant['plan_id'] ?? 1) === (int)$plan['id'] ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($plan['name']) ?> — ₹<?= number_format($plan['price_monthly']) ?>/mo
+                                            <?= htmlspecialchars($plan['name'] ?? '') ?> — ₹<?= number_format($plan['price_monthly']) ?>/mo
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

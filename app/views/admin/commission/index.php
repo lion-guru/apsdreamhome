@@ -138,7 +138,7 @@
                             <?php foreach (array_slice($stats['structure_levels'] ?? [], 0, 5) as $l): ?>
                             <tr>
                                 <td><?= (int)$l['level_number'] ?></td>
-                                <td><?= htmlspecialchars($l['level_name']) ?></td>
+                                <td><?= htmlspecialchars($l['level_name'] ?? '') ?></td>
                                 <td><?= (float)$l['commission_percentage'] ?>%</td>
                             </tr>
                             <?php endforeach; ?>

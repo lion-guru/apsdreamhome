@@ -48,7 +48,7 @@ $statusMap = [
                     <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
                     <input type="text" class="form-control" name="q" placeholder="Search name, phone, lead..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
-                <input type="hidden" name="tab" value="<?= htmlspecialchars($active_tab) ?>">
+                <input type="hidden" name="tab" value="<?= htmlspecialchars($active_tab ?? '') ?>">
                 <button type="submit" class="btn btn-primary btn-sm">Search</button>
                 <?php if ($search): ?>
                     <a href="?tab=<?= $active_tab ?>" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times"></i></a>
@@ -87,10 +87,10 @@ $statusMap = [
                             ?>
                             <tr class="<?= $isToday ? 'table-light' : '' ?>">
                                 <td>
-                                    <strong><?= htmlspecialchars($v['visitor_name']) ?></strong>
-                                    <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($v['visitor_phone']) ?></small>
+                                    <strong><?= htmlspecialchars($v['visitor_name'] ?? '') ?></strong>
+                                    <br><small class="text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($v['visitor_phone'] ?? '') ?></small>
                                     <?php if (!empty($v['notes'])): ?>
-                                        <br><small class="text-muted" title="<?= htmlspecialchars($v['notes']) ?>"><?= htmlspecialchars(mb_substr($v['notes'], 0, 50)) ?>...</small>
+                                        <br><small class="text-muted" title="<?= htmlspecialchars($v['notes'] ?? '') ?>"><?= htmlspecialchars(mb_substr($v['notes'] ?? '', 0, 50)) ?>...</small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -100,14 +100,14 @@ $statusMap = [
                                 </td>
                                 <td>
                                     <?php if (!empty($v['lead_name'])): ?>
-                                        <span class="badge bg-light text-dark"><?= htmlspecialchars($v['lead_name']) ?></span>
+                                        <span class="badge bg-light text-dark"><?= htmlspecialchars($v['lead_name'] ?? '') ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if (!empty($v['associate_name'])): ?>
-                                        <?= htmlspecialchars($v['associate_name']) ?>
+                                        <?= htmlspecialchars($v['associate_name'] ?? '') ?>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
                                     <?php endif; ?>
@@ -128,7 +128,7 @@ $statusMap = [
                                 </td>
                                 <td>
                                     <?php if (!empty($v['visitor_phone'])): ?>
-                                        <a href="tel:<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-sm btn-outline-success" title="Call"><i class="fas fa-phone"></i></a>
+                                        <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-sm btn-outline-success" title="Call"><i class="fas fa-phone"></i></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

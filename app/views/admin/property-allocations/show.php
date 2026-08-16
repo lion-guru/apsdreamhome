@@ -5,7 +5,7 @@
     </div>
 
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div>
     <?php endif; ?>
 
     <div class="row">
@@ -39,7 +39,7 @@
                     <?php if (!empty($allocation['notes'])): ?>
                     <div class="mt-3">
                         <strong>Notes:</strong>
-                        <p><?= nl2br(htmlspecialchars($allocation['notes'])) ?></p>
+                        <p><?= nl2br(htmlspecialchars($allocation['notes'] ?? '')) ?></p>
                     </div>
                     <?php endif; ?>
                     <div class="mt-3">

@@ -87,7 +87,7 @@ $activeLoans = $activeLoans ?? 0;
                                 <?php elseif ($s === 'completed'): ?><span class="badge bg-info">Completed</span>
                                 <?php elseif ($s === 'terminated'): ?><span class="badge bg-danger">Terminated</span>
                                 <?php elseif ($s === 'draft'): ?><span class="badge bg-secondary">Draft</span>
-                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s); ?></span>
+                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s ?? ''); ?></span>
                                 <?php endif; ?>
                             </td>
                             <td class="text-nowrap">

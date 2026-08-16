@@ -160,14 +160,14 @@
                                             </td>
                                             <td>
                                                 <?php if (!empty($record['location'])): ?>
-                                                    <small><?= htmlspecialchars($record['location']) ?></small>
+                                                    <small><?= htmlspecialchars($record['location'] ?? '') ?></small>
                                                 <?php else: ?>
                                                     <span class="text-muted">-</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
                                                 <?php if (!empty($record['notes'])): ?>
-                                                    <small><?= htmlspecialchars($record['notes']) ?></small>
+                                                    <small><?= htmlspecialchars($record['notes'] ?? '') ?></small>
                                                 <?php else: ?>
                                                     <span class="text-muted">-</span>
                                                 <?php endif; ?>

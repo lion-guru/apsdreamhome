@@ -112,7 +112,7 @@ $merge_fields = $merge_fields ?? [];
                         <?php foreach ($merge_fields as $group => $fields): ?>
                             <div class="col-12"><small class="text-muted fw-bold"><?= ucfirst($group) ?></small></div>
                             <?php foreach ($fields as $key => $label): ?>
-                                <div class="col-6"><button class="btn btn-sm btn-outline-secondary w-100 mb-1 small" onclick="insertPrompt('<?= $key ?>')" title="<?= htmlspecialchars($label) ?>"><?= htmlspecialchars($key) ?></button></div>
+                                <div class="col-6"><button class="btn btn-sm btn-outline-secondary w-100 mb-1 small" onclick="insertPrompt('<?= $key ?>')" title="<?= htmlspecialchars($label ?? '') ?>"><?= htmlspecialchars($key ?? '') ?></button></div>
                             <?php endforeach; ?>
                         <?php endforeach; ?>
                     </div>

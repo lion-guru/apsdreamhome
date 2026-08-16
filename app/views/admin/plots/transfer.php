@@ -28,8 +28,8 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                             <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th class="style-97126">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
-                                <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
-                                <tr><th>Dimensions</th><td><?= !empty($plot['dimension_label']) ? htmlspecialchars($plot['dimension_label']) : number_format($plot['width_ft'] ?? 0) . 'x' . number_format($plot['length_ft'] ?? 0) . ' ft' ?></td></tr>
+                                <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
+                                <tr><th>Dimensions</th><td><?= !empty($plot['dimension_label']) ? htmlspecialchars($plot['dimension_label'] ?? '') : number_format($plot['width_ft'] ?? 0) . 'x' . number_format($plot['length_ft'] ?? 0) . ' ft' ?></td></tr>
                                 <tr><th>Area</th><td><?= number_format($plot['area_sqft'] ?? 0) ?> sqft</td></tr>
                                 <tr><th>Total Price</th><td><strong class="text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
                                 <tr><th>Current Status</th><td><span class="badge bg-<?= $plot['status'] === 'available' ? 'success' : ($plot['status'] === 'booked' ? 'warning' : ($plot['status'] === 'sold' ? 'danger' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?></span></td></tr>
@@ -95,7 +95,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                         <label class="form-label fw-bold">Transfer Reason <span class="text-danger">*</span></label>
                                         <select name="transfer_reason" class="form-select" required>
                                             <?php foreach ($transferReasons as $tr): ?>
-                                                <option value="<?= htmlspecialchars($tr) ?>"><?= htmlspecialchars($tr) ?></option>
+                                                <option value="<?= htmlspecialchars($tr ?? '') ?>"><?= htmlspecialchars($tr ?? '') ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>

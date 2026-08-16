@@ -107,10 +107,10 @@ $isDelayed = $currentStatus === 'delayed';
                         <tr><th>Possession Date</th><td><?= date('d M Y', strtotime($booking['possession_date'])) ?></td></tr>
                     <?php endif; ?>
                     <?php if (!empty($booking['possession_letter_number'])): ?>
-                        <tr><th>Letter #</th><td><?= htmlspecialchars($booking['possession_letter_number']) ?></td></tr>
+                        <tr><th>Letter #</th><td><?= htmlspecialchars($booking['possession_letter_number'] ?? '') ?></td></tr>
                     <?php endif; ?>
                     <?php if (!empty($booking['handover_by_name'])): ?>
-                        <tr><th>Handover By</th><td><?= htmlspecialchars($booking['handover_by_name']) ?></td></tr>
+                        <tr><th>Handover By</th><td><?= htmlspecialchars($booking['handover_by_name'] ?? '') ?></td></tr>
                     <?php endif; ?>
                     <?php if (!empty($booking['defect_liability_end_date'])): ?>
                         <tr><th>Defect Liability Until</th><td><?= date('d M Y', strtotime($booking['defect_liability_end_date'])) ?> <small class="text-muted">(<?= intval($booking['defect_liability_period'] ?? 0) ?> days)</small></td></tr>
@@ -167,7 +167,7 @@ $isDelayed = $currentStatus === 'delayed';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-sticky-note"></i> Handover Notes</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['handover_notes'])): ?>
-                    <pre class="style-86263"><?= htmlspecialchars($booking['handover_notes']) ?></pre>
+                    <pre class="style-86263"><?= htmlspecialchars($booking['handover_notes'] ?? '') ?></pre>
                 <?php else: ?>
                     <p class="text-muted">No handover notes yet.</p>
                 <?php endif; ?>
@@ -200,7 +200,7 @@ $isDelayed = $currentStatus === 'delayed';
                                 <span class="badge bg-<?= $item['is_completed'] ? 'success' : 'secondary' ?>">
                                     <i class="fas <?= $item['is_completed'] ? 'fa-check-circle' : 'fa-circle' ?>"></i>
                                 </span>
-                                <span class="item-name"><?= htmlspecialchars($item['item_name']) ?></span>
+                                <span class="item-name"><?= htmlspecialchars($item['item_name'] ?? '') ?></span>
                                 <?php if ($item['is_completed']): ?>
                                     <small class="text-muted">by <?= htmlspecialchars($item['completed_by'] ?? '') ?> on <?= !empty($item['completed_at']) ? date('d M', strtotime($item['completed_at'])) : '' ?></small>
                                 <?php endif; ?>
@@ -273,12 +273,12 @@ $isDelayed = $currentStatus === 'delayed';
                                     </div>
                                     <small class="text-muted"><?= date('d M Y', strtotime($d['created_at'])) ?></small>
                                 </div>
-                                <p class="mb-1 mt-1"><?= htmlspecialchars($d['description']) ?></p>
+                                <p class="mb-1 mt-1"><?= htmlspecialchars($d['description'] ?? '') ?></p>
                                 <small class="text-muted">Reported by: <?= htmlspecialchars($d['reported_by_name'] ?? 'Admin') ?></small>
                                 <?php if (!empty($d['resolution_notes'])): ?>
                                     <div class="mt-1 p-2 bg-success bg-opacity-10 rounded">
-                                        <small><strong>Resolution:</strong> <?= htmlspecialchars($d['resolution_notes']) ?></small>
-                                        <?php if (!empty($d['resolved_by_name'])): ?><br><small class="text-muted">Resolved by: <?= htmlspecialchars($d['resolved_by_name']) ?> on <?= !empty($d['resolved_at']) ? date('d M Y', strtotime($d['resolved_at'])) : '' ?></small><?php endif; ?>
+                                        <small><strong>Resolution:</strong> <?= htmlspecialchars($d['resolution_notes'] ?? '') ?></small>
+                                        <?php if (!empty($d['resolved_by_name'])): ?><br><small class="text-muted">Resolved by: <?= htmlspecialchars($d['resolved_by_name'] ?? '') ?> on <?= !empty($d['resolved_at']) ? date('d M Y', strtotime($d['resolved_at'])) : '' ?></small><?php endif; ?>
                                     </div>
                                 <?php endif; ?>
                                 <?php if ($d['status'] === 'open' || $d['status'] === 'in_progress'): ?>

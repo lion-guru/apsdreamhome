@@ -19,7 +19,7 @@
                         <?php endif; ?>
                         <div class="card-body d-flex flex-column">
                             <?php if (!empty($post['category'])): ?>
-                                <span class="badge bg-primary mb-2 align-self-start"><?php echo htmlspecialchars($post['category']); ?></span>
+                                <span class="badge bg-primary mb-2 align-self-start"><?php echo htmlspecialchars($post['category'] ?? ''); ?></span>
                             <?php endif; ?>
                             <h5 class="card-title"><?php echo htmlspecialchars($post['title'] ?? ''); ?></h5>
                             <p class="card-text text-muted small">

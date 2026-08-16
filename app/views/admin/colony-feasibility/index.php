@@ -39,7 +39,7 @@
               ?>
               <tr>
                 <td>
-                  <strong><?= htmlspecialchars($c['name']) ?></strong>
+                  <strong><?= htmlspecialchars($c['name'] ?? '') ?></strong>
                 </td>
                 <td class="text-center">
                   <span class="badge bg-secondary"><?= (int) $c['total_plots'] ?></span>

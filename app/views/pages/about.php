@@ -402,15 +402,15 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                          <?php $imgRaw = $photo ?? '';
                                $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
                          <img loading="lazy" 
-                              src="<?= htmlspecialchars($imgSrc) ?>" 
-                              alt="<?= htmlspecialchars($name) ?>">
+                              src="<?= htmlspecialchars($imgSrc ?? '') ?>" 
+                              alt="<?= htmlspecialchars($name ?? '') ?>">
                         <div class="leader-badge"><i class="fas fa-crown"></i> <?= $i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director') ?></div>
                     </div>
                     <div class="leader-body">
-                        <h5 class="leader-name"><?= htmlspecialchars($name) ?></h5>
-                        <div class="leader-role"><?= htmlspecialchars($role) ?></div>
-                        <div class="leader-exp"><i class="fas fa-briefcase"></i> <?= htmlspecialchars($exp) ?></div>
-                        <p class="leader-bio"><?= htmlspecialchars($bio) ?></p>
+                        <h5 class="leader-name"><?= htmlspecialchars($name ?? '') ?></h5>
+                        <div class="leader-role"><?= htmlspecialchars($role ?? '') ?></div>
+                        <div class="leader-exp"><i class="fas fa-briefcase"></i> <?= htmlspecialchars($exp ?? '') ?></div>
+                        <p class="leader-bio"><?= htmlspecialchars($bio ?? '') ?></p>
                     </div>
                 </div>
             </div>
@@ -450,13 +450,13 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <div class="dept-card scroll-reveal">
                     <div class="dept-avatar">
                         <img loading="lazy" 
-                             src="<?= BASE_URL ?>/<?= htmlspecialchars($dPhoto) ?>" 
-                             alt="<?= htmlspecialchars($dName) ?>">
+                             src="<?= BASE_URL ?>/<?= htmlspecialchars($dPhoto ?? '') ?>" 
+                             alt="<?= htmlspecialchars($dName ?? '') ?>">
                     </div>
-                    <h5><?= htmlspecialchars($dName) ?></h5>
-                    <div class="dept-role"><?= htmlspecialchars($dRole) ?></div>
-                    <div class="dept-exp"><i class="fas fa-briefcase me-1" class="style-62735"></i> <?= htmlspecialchars($dExp) ?></div>
-                    <p><?= htmlspecialchars($dBio) ?></p>
+                    <h5><?= htmlspecialchars($dName ?? '') ?></h5>
+                    <div class="dept-role"><?= htmlspecialchars($dRole ?? '') ?></div>
+                    <div class="dept-exp"><i class="fas fa-briefcase me-1" class="style-62735"></i> <?= htmlspecialchars($dExp ?? '') ?></div>
+                    <p><?= htmlspecialchars($dBio ?? '') ?></p>
                 </div>
             </div>
             <?php endfor; ?>

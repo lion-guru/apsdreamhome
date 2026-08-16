@@ -9,7 +9,7 @@ ob_start();
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1"><?= htmlspecialchars($auction['title']) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($auction['title'] ?? '') ?></h2>
             <p class="text-muted mb-0">
                 <span class="badge bg-<?= ['live'=>'danger','scheduled'=>'info','ended'=>'secondary','sold'=>'success','cancelled'=>'dark'][$auction['status']] ?? 'secondary' ?>">
                     <?= strtoupper($auction['status']) ?>
@@ -64,7 +64,7 @@ ob_start();
                     <?php if ($auction['description']): ?>
                         <hr>
                         <h6>Description</h6>
-                        <p class="text-muted"><?= nl2br(htmlspecialchars($auction['description'])) ?></p>
+                        <p class="text-muted"><?= nl2br(htmlspecialchars($auction['description'] ?? '')) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -83,7 +83,7 @@ ob_start();
                             <div class="border-bottom py-2">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <strong><?= htmlspecialchars($b['bidder_name']) ?></strong>
+                                        <strong><?= htmlspecialchars($b['bidder_name'] ?? '') ?></strong>
                                         <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
                                     </div>
                                     <div class="text-end">

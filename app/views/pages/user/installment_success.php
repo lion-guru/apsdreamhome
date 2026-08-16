@@ -70,7 +70,7 @@ $instStatusColors = [
                     <?php if (!empty($receipt['transaction_ref'])): ?>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_installment_success_transaction_id', 'Transaction ID') ?></small>
-                        <strong class="text-break"><?= htmlspecialchars($receipt['transaction_ref']) ?></strong>
+                        <strong class="text-break"><?= htmlspecialchars($receipt['transaction_ref'] ?? '') ?></strong>
                     </div>
                     <?php endif; ?>
                     <div class="col-sm-6">

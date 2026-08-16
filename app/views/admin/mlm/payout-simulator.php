@@ -15,7 +15,7 @@ $csrf_token = $csrf_token ?? '';
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-calculator me-2"></i>Commission Payout Simulator</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
         </a>
     </div>
@@ -26,7 +26,7 @@ $csrf_token = $csrf_token ?? '';
         </p>
 
         <form id="simForm" class="row g-3 align-items-end mb-4">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
             <div class="col-md-5">
                 <label class="form-label fw-semibold">Sale Amount (&#8377;)</label>
                 <input type="number" id="saleAmount" name="sale_amount" class="form-control form-control-lg"
@@ -36,7 +36,7 @@ $csrf_token = $csrf_token ?? '';
                 <label class="form-label fw-semibold">Seller Rank</label>
                 <select id="rankSlug" name="rank_slug" class="form-select form-select-lg">
                     <?php foreach ($rank_slabs as $slug => $slab): ?>
-                        <option value="<?= htmlspecialchars($slug) ?>">
+                        <option value="<?= htmlspecialchars($slug ?? '') ?>">
                             <?= htmlspecialchars($slab['rank_name'] ?? ucfirst($slug)) ?>
                             (<?= (float)($slab['commission_rate'] ?? 0) ?>%)
                         </option>
@@ -135,7 +135,7 @@ document.getElementById('simForm').addEventListener('submit', function(e) {
     fd.append('sale_amount', amount);
     fd.append('rank_slug', rank);
 
-    fetch('<?= htmlspecialchars($base) ?>/admin/mlm/payout-simulator/simulate', {
+    fetch('<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payout-simulator/simulate', {
         method: 'POST',
         body: fd
     })

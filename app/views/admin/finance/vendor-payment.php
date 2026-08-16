@@ -94,7 +94,7 @@
                         <select name="bank_account_id" class="form-select">
                             <option value=""><?= __('vpay_select') ?></option>
                             <?php foreach (($banks ?? []) as $b): ?>
-                                <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name']) ?></option>
+                                <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

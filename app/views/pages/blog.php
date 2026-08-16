@@ -21,9 +21,9 @@
                 <?php if (isset($breadcrumbs)): ?>
                     <?php foreach ($breadcrumbs as $crumb): ?>
                         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
                         <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -64,8 +64,8 @@
                 <div class="text-center">
                     <button class="filter-btn active" data-category="all"><?= __('blog_filter_all') ?></button>
                     <?php foreach (($categories ?? []) as $category): ?>
-                        <button class="filter-btn" data-category="<?php echo htmlspecialchars($category['category']); ?>">
-                            <?php echo ucfirst(htmlspecialchars($category['category'])); ?>
+                        <button class="filter-btn" data-category="<?php echo htmlspecialchars($category['category'] ?? ''); ?>">
+                            <?php echo ucfirst(htmlspecialchars($category['category'] ?? '')); ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
@@ -87,9 +87,9 @@
                                 ? $featuredImage
                                 : get_asset_url($featuredImage);
                             ?>
-                            <img src="<?= htmlspecialchars($featuredImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title']) ?>" class="style-74755">
+                            <img src="<?= htmlspecialchars($featuredImageUrl ?? '') ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title'] ?? '') ?>" class="style-74755">
                             <div class="category-badge">
-                                <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'])); ?>
+                                <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'] ?? '')); ?>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -103,9 +103,9 @@
                                     <?php echo htmlspecialchars($blog_posts[0]['read_time'] ?? '5'); ?> min read
                                 </small>
                             </div>
-                            <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title']); ?></h3>
+                            <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title'] ?? ''); ?></h3>
                             <p class="card-text mb-3"><?php echo htmlspecialchars(substr($blog_posts[0]['excerpt'] ?? '', 0, 200)) . '...'; ?></p>
-                            <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[0]['slug']) ?>" class="read-more-btn">
+                            <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[0]['slug'] ?? '') ?>" class="read-more-btn">
                                 <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
                         </div>
@@ -121,16 +121,16 @@
             </div>
 
             <?php for ($i = 1; $i < count($blog_posts); $i++): ?>
-                <div class="col-lg-4 col-md-6" data-category="<?php echo htmlspecialchars($blog_posts[$i]['category']); ?>">
+                <div class="col-lg-4 col-md-6" data-category="<?php echo htmlspecialchars($blog_posts[$i]['category'] ?? ''); ?>">
                     <div class="card blog-card shadow-sm h-100">
                         <div class="position-relative">
                             <?php
                             $postImage = !empty($blog_posts[$i]['featured_image']) ? $blog_posts[$i]['featured_image'] : get_asset_url('assets/images/placeholder/property.svg');
                             $postImageUrl = str_starts_with($postImage, 'http') ? $postImage : get_asset_url($postImage);
                             ?>
-                            <img src="<?= htmlspecialchars($postImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title']) ?>" class="style-62479">
+                            <img src="<?= htmlspecialchars($postImageUrl ?? '') ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title'] ?? '') ?>" class="style-62479">
                             <div class="category-badge">
-                                <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'])); ?>
+                                <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'] ?? '')); ?>
                             </div>
                         </div>
                         <div class="card-body p-3">
@@ -144,11 +144,11 @@
                                     <?php echo htmlspecialchars($blog_posts[$i]['read_time'] ?? '5'); ?> min
                                 </small>
                             </div>
-                            <h6 class="card-title mb-2"><?php echo htmlspecialchars($blog_posts[$i]['title']); ?></h6>
+                            <h6 class="card-title mb-2"><?php echo htmlspecialchars($blog_posts[$i]['title'] ?? ''); ?></h6>
                             <p class="card-text small text-muted mb-3">
                                 <?php echo htmlspecialchars(substr($blog_posts[$i]['excerpt'] ?? '', 0, 100)) . '...'; ?>
                             </p>
-                            <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[$i]['slug']) ?>" class="read-more-btn btn-sm">
+                            <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[$i]['slug'] ?? '') ?>" class="read-more-btn btn-sm">
                                 <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
                         </div>

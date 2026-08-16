@@ -13,7 +13,7 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="page-title"><?= $page_title ?></h1>
-            <p class="text-muted">Manage translations for locale: <strong><?= htmlspecialchars($locale) ?></strong></p>
+            <p class="text-muted">Manage translations for locale: <strong><?= htmlspecialchars($locale ?? '') ?></strong></p>
         </div>
     </div>
 
@@ -26,8 +26,8 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
             <form method="GET" action="<?= BASE_URL ?>/admin/localization/editor" class="d-flex gap-2 flex-wrap align-items-center">
                 <select name="locale" id="locale-select" class="form-select form-select-sm" class="style-19078">
                     <?php foreach ($supported_locales as $code => $info): ?>
-                        <option value="<?= htmlspecialchars($code) ?>" <?= $code === $locale ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($info['name'] ?? $code) ?> (<?= htmlspecialchars($code) ?>)
+                        <option value="<?= htmlspecialchars($code ?? '') ?>" <?= $code === $locale ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($info['name'] ?? $code) ?> (<?= htmlspecialchars($code ?? '') ?>)
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -58,15 +58,15 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
                             <tr>
                                 <th class="style-14650">Key</th>
                                 <th class="style-5994">English (Reference)</th>
-                                <th class="style-5994">Translation (<?= htmlspecialchars($locale) ?>)</th>
+                                <th class="style-5994">Translation (<?= htmlspecialchars($locale ?? '') ?>)</th>
                                 <th class="style-16982"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($translations as $key => $value): ?>
-                                <tr data-key="<?= htmlspecialchars($key) ?>">
+                                <tr data-key="<?= htmlspecialchars($key ?? '') ?>">
                                     <td>
-                                        <code class="small"><?= htmlspecialchars($key) ?></code>
+                                        <code class="small"><?= htmlspecialchars($key ?? '') ?></code>
                                     </td>
                                     <td>
                                         <span class="text-muted small" id="en-<?= md5($key) ?>">
@@ -76,15 +76,15 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
                                     <td>
                                         <input type="text" 
                                                class="form-control form-control-sm translation-input" 
-                                               name="translations[<?= htmlspecialchars($key) ?>]" 
+                                               name="translations[<?= htmlspecialchars($key ?? '') ?>]" 
                                                value="<?= htmlspecialchars($value[$locale] ?? $value ?? '') ?>"
-                                               data-key="<?= htmlspecialchars($key) ?>"
-                                               data-locale="<?= htmlspecialchars($locale) ?>">
+                                               data-key="<?= htmlspecialchars($key ?? '') ?>"
+                                               data-locale="<?= htmlspecialchars($locale ?? '') ?>">
                                     </td>
                                     <td>
                                         <button type="button" 
                                                 class="btn btn-sm btn-outline-primary save-single-btn" 
-                                                data-key="<?= htmlspecialchars($key) ?>">
+                                                data-key="<?= htmlspecialchars($key ?? '') ?>">
                                             <i class="fas fa-save"></i>
                                         </button>
                                     </td>

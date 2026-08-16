@@ -22,7 +22,7 @@
                             <select name="agent_id" class="form-select" required>
                                 <option value="">Select</option>
                                 <?php foreach ($users ?? [] as $a): ?>
-                                <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name']) ?></option>
+                                <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

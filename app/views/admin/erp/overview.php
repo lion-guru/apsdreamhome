@@ -79,7 +79,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <div class="hdr-content">
         <div>
             <h1><i class="fas fa-cogs me-2"></i>ERP Overview</h1>
-            <p>Last updated: <?= htmlspecialchars($updated) ?></p>
+            <p>Last updated: <?= htmlspecialchars($updated ?? '') ?></p>
         </div>
         <div class="hdr-actions">
             <a href="<?= BASE_URL ?>/admin/sales/dashboard"><i class="fas fa-chart-line me-1"></i> Sales</a>

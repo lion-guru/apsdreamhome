@@ -23,8 +23,8 @@ include __DIR__ . '/../layouts/header.php'; ?>
                     <div class="row mb-4">
                         <div class="col-12">
                             <h4>Property Details</h4>
-                            <p class="mb-1"><strong>Title:</strong> <?php echo htmlspecialchars($property['title']); ?></p>
-                            <p class="mb-1"><strong>Location:</strong> <?php echo htmlspecialchars($property['location']); ?></p>
+                            <p class="mb-1"><strong>Title:</strong> <?php echo htmlspecialchars($property['title'] ?? ''); ?></p>
+                            <p class="mb-1"><strong>Location:</strong> <?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
                             <p class="mb-1"><strong>Price:</strong> ₹<?php echo number_format($property['price']); ?></p>
                         </div>
                     </div>

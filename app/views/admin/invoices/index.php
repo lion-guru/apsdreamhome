@@ -13,13 +13,13 @@
 
     <?php if (!empty($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_GET['success']) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_GET['success'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (!empty($_GET['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_GET['error']) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_GET['error'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -154,13 +154,13 @@
                                 <tr>
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/invoices/manage/<?= $inv['id'] ?>" class="fw-bold text-decoration-none">
-                                            <?= htmlspecialchars($inv['invoice_number']) ?>
+                                            <?= htmlspecialchars($inv['invoice_number'] ?? '') ?>
                                         </a>
                                     </td>
                                     <td>
-                                        <div class="fw-medium"><?= htmlspecialchars($inv['client_name']) ?></div>
+                                        <div class="fw-medium"><?= htmlspecialchars($inv['client_name'] ?? '') ?></div>
                                         <?php if (!empty($inv['client_email'])): ?>
-                                            <small class="text-muted"><?= htmlspecialchars($inv['client_email']) ?></small>
+                                            <small class="text-muted"><?= htmlspecialchars($inv['client_email'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end">₹<?= number_format($inv['subtotal'] ?? 0, 2) ?></td>

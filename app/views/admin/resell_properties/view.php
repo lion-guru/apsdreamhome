@@ -60,19 +60,19 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                 <?php if (!empty($p['address'])): ?>
                 <div class="mb-3">
                     <div class="small text-muted mb-1">Address</div>
-                    <div><?= nl2br(htmlspecialchars($p['address'])) ?></div>
+                    <div><?= nl2br(htmlspecialchars($p['address'] ?? '')) ?></div>
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($p['location'])): ?>
                 <div class="mb-3">
                     <div class="small text-muted mb-1">Location</div>
-                    <div><?= htmlspecialchars($p['location']) ?></div>
+                    <div><?= htmlspecialchars($p['location'] ?? '') ?></div>
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($p['description'])): ?>
                 <div class="mb-3">
                     <div class="small text-muted mb-1">Description</div>
-                    <div><?= nl2br(htmlspecialchars($p['description'])) ?></div>
+                    <div><?= nl2br(htmlspecialchars($p['description'] ?? '')) ?></div>
                 </div>
                 <?php endif; ?>
             </div>
@@ -84,10 +84,10 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
             <div class="card-body aps-cp-card-body">
                 <div class="mb-2"><strong><?= htmlspecialchars($p['seller_name'] ?? 'N/A') ?></strong></div>
                 <?php if (!empty($p['seller_phone'])): ?>
-                    <div class="small"><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($p['seller_phone']) ?></div>
+                    <div class="small"><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($p['seller_phone'] ?? '') ?></div>
                 <?php endif; ?>
                 <?php if (!empty($p['seller_email'])): ?>
-                    <div class="small"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($p['seller_email']) ?></div>
+                    <div class="small"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($p['seller_email'] ?? '') ?></div>
                 <?php endif; ?>
                 <div class="small text-muted mt-2">Posted by: <?= htmlspecialchars($p['seller_name'] ?? 'Admin') ?></div>
             </div>

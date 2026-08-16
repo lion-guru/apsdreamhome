@@ -142,7 +142,7 @@ $insights = $insights ?? [];
                     <tbody>
                         <?php foreach ($topPerformingScripts as $s): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($s['script_name']) ?></strong></td>
+                            <td><strong><?= htmlspecialchars($s['script_name'] ?? '') ?></strong></td>
                             <td><?= number_format($s['total_calls_made']) ?></td>
                             <td><?= number_format($s['total_interested']) ?></td>
                             <td><span class="badge bg-success"><?= round($s['conversion_rate'], 1) ?>%</span></td>
@@ -161,7 +161,7 @@ $insights = $insights ?? [];
         <div class="card-body">
             <?php foreach ($sourcePerformance as $src): ?>
             <div class="d-flex align-items-center mb-3">
-                <div class="flex-shrink-0 me-3" class="style-72730"><span class="small fw-semibold"><?= htmlspecialchars($src['source']) ?></span></div>
+                <div class="flex-shrink-0 me-3" class="style-72730"><span class="small fw-semibold"><?= htmlspecialchars($src['source'] ?? '') ?></span></div>
                 <div class="flex-grow-1">
                     <div class="progress" class="style-40280">
                         <div class="progress-bar bg-<?= $src['win_rate'] > 10 ? 'success' : ($src['win_rate'] > 5 ? 'warning' : 'secondary') ?>" class="style-46654">

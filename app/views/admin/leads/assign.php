@@ -42,7 +42,7 @@ $recent_assignments = $recent_assignments ?? [];
                                 <select class="form-select" name="assigned_to" required id="assigneeSelect">
                                     <option value="">— Select Agent —</option>
                                     <?php foreach ($assignees as $a): ?>
-                                        <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name']) ?> (<?= ucfirst($a['role']) ?>)</option>
+                                        <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?> (<?= ucfirst($a['role']) ?>)</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -67,12 +67,12 @@ $recent_assignments = $recent_assignments ?? [];
                                             <tr>
                                                 <td><input type="checkbox" name="lead_ids[]" value="<?= $l['id'] ?>" class="lead-check"></td>
                                                 <td>
-                                                    <strong><?= htmlspecialchars($l['name']) ?></strong>
+                                                    <strong><?= htmlspecialchars($l['name'] ?? '') ?></strong>
                                                     <br><small class="text-muted"><?= htmlspecialchars($l['source'] ?? '') ?></small>
                                                 </td>
                                                 <td>
                                                     <small><?= htmlspecialchars($l['phone'] ?? '') ?></small>
-                                                    <?php if ($l['email']): ?><br><small class="text-muted"><?= htmlspecialchars($l['email']) ?></small><?php endif; ?>
+                                                    <?php if ($l['email']): ?><br><small class="text-muted"><?= htmlspecialchars($l['email'] ?? '') ?></small><?php endif; ?>
                                                 </td>
                                                 <td><span class="badge bg-<?= ($l['lead_score'] ?? 0) >= 70 ? 'success' : (($l['lead_score'] ?? 0) >= 40 ? 'warning' : 'secondary') ?>"><?= $l['lead_score'] ?? 0 ?></span></td>
                                                 <td><small><?= date('M d', strtotime($l['created_at'])) ?></small></td>
@@ -111,14 +111,14 @@ $recent_assignments = $recent_assignments ?? [];
                             <div class="fw-bold" class="style-16752"><?= htmlspecialchars($ra['lead_name'] ?? 'Unknown') ?></div>
                             <small class="text-muted">
                                 <?php if ($ra['from_name']): ?>
-                                    <?= htmlspecialchars($ra['from_name']) ?> â†’
+                                    <?= htmlspecialchars($ra['from_name'] ?? '') ?> â†’
                                 <?php endif; ?>
                                 <strong><?= htmlspecialchars($ra['to_name'] ?? 'Unknown') ?></strong>
                                 by <?= htmlspecialchars($ra['by_name'] ?? 'System') ?>
                             </small>
                             <br><small class="text-muted"><?= date('M d, g:i A', strtotime($ra['created_at'])) ?></small>
                             <?php if (!empty($ra['reason'])): ?>
-                                <br><small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= htmlspecialchars($ra['reason']) ?></small>
+                                <br><small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= htmlspecialchars($ra['reason'] ?? '') ?></small>
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>

@@ -308,7 +308,7 @@ function timeAgo($dt) {
                                 </div>
                                 <div class="ms-3">
                                     <h5 class="mb-0 fw-bold"><?= htmlspecialchars($lead['name'] ?? '') ?></h5>
-                                    <?php if (!empty($lead['company'])): ?><small class="text-muted"><?= htmlspecialchars($lead['company']) ?></small><?php endif; ?>
+                                    <?php if (!empty($lead['company'])): ?><small class="text-muted"><?= htmlspecialchars($lead['company'] ?? '') ?></small><?php endif; ?>
                                 </div>
                             </div>
                             <hr>
@@ -457,13 +457,13 @@ function timeAgo($dt) {
                                             <strong class="style-42715"><?= htmlspecialchars($t['subject'] ?? $t['title'] ?? $t['description'] ?? '') ?></strong>
                                         </div>
                                         <?php if (!empty($t['body'])): ?>
-                                            <p class="mb-1 text-muted" class="style-87981"><?= nl2br(htmlspecialchars($t['body'])) ?></p>
+                                            <p class="mb-1 text-muted" class="style-87981"><?= nl2br(htmlspecialchars($t['body'] ?? '')) ?></p>
                                         <?php endif; ?>
                                         <?php if (!empty($t['outcome'])): ?>
-                                            <span class="badge bg-light text-dark"><i class="fas fa-flag me-1"></i><?= htmlspecialchars($t['outcome']) ?></span>
+                                            <span class="badge bg-light text-dark"><i class="fas fa-flag me-1"></i><?= htmlspecialchars($t['outcome'] ?? '') ?></span>
                                         <?php endif; ?>
                                         <?php if (!empty($t['next_action'])): ?>
-                                            <span class="badge bg-info-subtle text-info-emphasis ms-1"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($t['next_action']) ?></span>
+                                            <span class="badge bg-info-subtle text-info-emphasis ms-1"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($t['next_action'] ?? '') ?></span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="text-end">
@@ -567,7 +567,7 @@ function timeAgo($dt) {
                                         <?php if (!empty($deal['property_type'])): ?>
                                         <div class="col-12">
                                             <small class="text-muted d-block">Property</small>
-                                            <span class="badge bg-light text-dark"><?= htmlspecialchars($deal['property_type']) ?></span>
+                                            <span class="badge bg-light text-dark"><?= htmlspecialchars($deal['property_type'] ?? '') ?></span>
                                         </div>
                                         <?php endif; ?>
                                     </div>
@@ -922,7 +922,7 @@ function timeAgo($dt) {
                     <select class="form-select" name="assigned_to" required>
                         <option value="">-- Select Agent --</option>
                         <?php foreach ($agents as $agent): ?>
-                            <option value="<?= $agent['id'] ?>" <?= ($lead['assigned_to'] ?? '') == $agent['id'] ? 'selected' : '' ?>><?= htmlspecialchars($agent['name']) ?></option>
+                            <option value="<?= $agent['id'] ?>" <?= ($lead['assigned_to'] ?? '') == $agent['id'] ? 'selected' : '' ?>><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                     <label class="form-label fw-bold mt-3">Note (optional)</label>

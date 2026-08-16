@@ -81,7 +81,7 @@ $employeeUsers = $employeeUsers ?? [];
                         <select name="user_id" class="form-select" required>
                             <option value="">Select User</option>
                             <?php foreach ($employeeUsers as $u): ?>
-                            <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['email']) ?>)</option>
+                            <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -9,7 +9,7 @@ function docIcon($type) {
 function docStatusBadge($status) {
     $map = ['verified' => 'success', 'approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger', 'expired' => 'danger'];
     $cls = $map[$status] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . '">' . ucfirst(htmlspecialchars($status)) . '</span>';
+    return '<span class="badge bg-' . $cls . '">' . ucfirst(htmlspecialchars($status ?? '')) . '</span>';
 }
 function docSizeHuman($bytes) {
     if (!$bytes) return '—';
@@ -120,7 +120,7 @@ function docTypeLabel($type) {
                                         <span class="emp-doc-type-badge"><?= docTypeLabel($d['document_type'] ?? $d['type'] ?? 'other') ?></span>
                                     </div>
                                     <?php if (!empty($d['issued_by'])): ?>
-                                        <div class="doc-meta"><i class="fas fa-building me-1"></i> <?= htmlspecialchars($d['issued_by']) ?></div>
+                                        <div class="doc-meta"><i class="fas fa-building me-1"></i> <?= htmlspecialchars($d['issued_by'] ?? '') ?></div>
                                     <?php endif; ?>
                                     <div class="d-flex gap-3 mt-2 doc-meta">
                                         <?php if (!empty($d['issue_date'])): ?>
@@ -137,7 +137,7 @@ function docTypeLabel($type) {
                         </div>
                         <div class="card-footer bg-transparent border-top-0 d-flex gap-2">
                             <?php if (!empty($d['url'])): ?>
-                                <a href="<?= htmlspecialchars($d['url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <a href="<?= htmlspecialchars($d['url'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary flex-grow-1">
                                     <i class="fas fa-eye me-1"></i> View
                                 </a>
                             <?php endif; ?>

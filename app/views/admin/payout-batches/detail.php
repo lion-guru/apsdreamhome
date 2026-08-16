@@ -2,7 +2,7 @@
     <div class="row mb-4">
         <div class="col-8">
             <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
-            <h2 class="style-48283"><i class="fas fa-money-check-alt me-2" class="style-56943"></i> <?= htmlspecialchars($batch['batch_name']) ?></h2>
+            <h2 class="style-48283"><i class="fas fa-money-check-alt me-2" class="style-56943"></i> <?= htmlspecialchars($batch['batch_name'] ?? '') ?></h2>
             <small class="style-77712">Created <?= date('d M Y H:i', strtotime($batch['created_at'])) ?> by <?= htmlspecialchars($batch['created_by_name'] ?? 'Admin') ?></small>
         </div>
         <div class="col-4 text-end">
@@ -48,7 +48,7 @@
         <i class="fas fa-info-circle me-2"></i>
         Status: <strong><?= str_replace('_', ' ', ucfirst($batch['status'])) ?></strong>
         <?php if ($batch['approved_by_name']): ?>
-            — Approved by <?= htmlspecialchars($batch['approved_by_name']) ?> on <?= date('d M Y H:i', strtotime($batch['approved_at'])) ?>
+            — Approved by <?= htmlspecialchars($batch['approved_by_name'] ?? '') ?> on <?= date('d M Y H:i', strtotime($batch['approved_at'])) ?>
         <?php endif; ?>
     </div>
 

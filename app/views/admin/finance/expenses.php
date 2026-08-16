@@ -42,7 +42,7 @@
                         <td class="text-end fw-bold">₹<?= number_format((float)($e['amount'] ?? 0), 2) ?></td>
                         <td>
                             <?php $st = $e['status'] ?? 'pending'; $bg = ['pending'=>'warning','approved'=>'success','rejected'=>'danger'][$st] ?? 'secondary'; ?>
-                            <span class="badge bg-<?= $bg ?>"><?= htmlspecialchars($st) ?></span>
+                            <span class="badge bg-<?= $bg ?>"><?= htmlspecialchars($st ?? '') ?></span>
                         </td>
                         <td>
                             <?php if (($e['status'] ?? '') === 'pending'): ?>

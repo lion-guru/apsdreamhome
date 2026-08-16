@@ -61,8 +61,8 @@
                                 <tr>
                                     <td><?= $c['id'] ?></td>
                                     <td><i class="<?= htmlspecialchars($c['icon'] ?? 'fas fa-building') ?>"></i></td>
-                                    <td><?= htmlspecialchars($c['name']) ?></td>
-                                    <td><code><?= htmlspecialchars($c['slug']) ?></code></td>
+                                    <td><?= htmlspecialchars($c['name'] ?? '') ?></td>
+                                    <td><code><?= htmlspecialchars($c['slug'] ?? '') ?></code></td>
                                     <td><?= $c['listing_count'] ?? 0 ?></td>
                                     <td><span class="badge bg-<?= $c['is_active'] ? 'success' : 'danger' ?>"><?= $c['is_active'] ? 'Yes' : 'No' ?></span></td>
                                     <td><?= $c['sort_order'] ?></td>

@@ -12,7 +12,7 @@ ob_start();
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/auctions"><?= __('auction_breadcrumb', [], 'Auctions') ?></a></li>
-            <li class="breadcrumb-item active"><?= htmlspecialchars($auction['title']) ?></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($auction['title'] ?? '') ?></li>
         </ol>
     </nav>
 
@@ -20,7 +20,7 @@ ob_start();
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
                 <?php if ($auction['image_url']): ?>
-                    <img alt="" loading="lazy" src="<?= htmlspecialchars($auction['image_url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title']) ?>" class="style-44644">
+                    <img alt="" loading="lazy" src="<?= htmlspecialchars($auction['image_url'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title'] ?? '') ?>" class="style-44644">
                 <?php endif; ?>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -28,7 +28,7 @@ ob_start();
                             <span class="badge bg-<?= ['live'=>'danger','scheduled'=>'info','ended'=>'secondary','sold'=>'success','cancelled'=>'dark'][$auction['status']] ?? 'secondary' ?>">
                                 <?= strtoupper($auction['status']) ?>
                             </span>
-                            <h2 class="mt-2"><?= htmlspecialchars($auction['title']) ?></h2>
+                            <h2 class="mt-2"><?= htmlspecialchars($auction['title'] ?? '') ?></h2>
                         </div>
                         <div class="text-end">
                             <small class="text-muted d-block"><?= __('auction_time_left', [], 'Time Left') ?></small>
@@ -43,7 +43,7 @@ ob_start();
                     <?php if ($auction['property_title']): ?>
                         <div class="bg-light p-3 rounded mb-3">
                             <h6 class="mb-2"><?= __('auction_property_details', [], 'Property Details') ?></h6>
-                            <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($auction['property_address']) ?>, <?= htmlspecialchars($auction['property_city']) ?></p>
+                            <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($auction['property_address'] ?? '') ?>, <?= htmlspecialchars($auction['property_city'] ?? '') ?></p>
                             <?php if ($auction['area_sqft']): ?>
                                 <p class="mb-0"><i class="fas fa-ruler-combined me-1"></i> <?= number_format($auction['area_sqft']) ?> sq ft</p>
                             <?php endif; ?>
@@ -126,7 +126,7 @@ ob_start();
                         <?php foreach ($bids as $b): ?>
                             <div class="d-flex justify-content-between border-bottom py-2">
                                 <div>
-                                    <strong><?= htmlspecialchars($b['bidder_name']) ?></strong>
+                                    <strong><?= htmlspecialchars($b['bidder_name'] ?? '') ?></strong>
                                     <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
                                 </div>
                                 <div class="text-end">

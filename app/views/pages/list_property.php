@@ -49,14 +49,14 @@ try {
 
 <?php if ($success): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success); ?>
+        <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success ?? ''); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <?php endif; ?>
 
 <?php if ($error): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
+        <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error ?? ''); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <?php endif; ?>
@@ -148,7 +148,7 @@ try {
                                 <select id="state_id" name="state_id" class="form-select" required aria-label="<?= __('list_property_label_state') ?>">
                                     <option value=""><?= __('list_property_select_state') ?></option>
                                     <?php foreach ($states as $state): ?>
-                                        <option value="<?= (int)$state['id'] ?>"><?= htmlspecialchars($state['name']) ?></option>
+                                        <option value="<?= (int)$state['id'] ?>"><?= htmlspecialchars($state['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -222,16 +222,16 @@ try {
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label fw-bold"><?= __('list_property_label_name') ?> *</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="<?= __('list_property_ph_name') ?>" required value="<?= htmlspecialchars($userName) ?>" aria-label="<?= __('list_property_label_name') ?>">
+                                <input type="text" name="name" id="name" class="form-control" placeholder="<?= __('list_property_ph_name') ?>" required value="<?= htmlspecialchars($userName ?? '') ?>" aria-label="<?= __('list_property_label_name') ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label fw-bold"><?= __('list_property_label_phone') ?> *</label>
-                                <input type="tel" name="phone" id="phone" class="form-control" placeholder="<?= __('list_property_ph_phone') ?>" required inputmode="tel" value="<?= htmlspecialchars($userPhone) ?>" aria-label="<?= __('list_property_label_phone') ?>">
+                                <input type="tel" name="phone" id="phone" class="form-control" placeholder="<?= __('list_property_ph_phone') ?>" required inputmode="tel" value="<?= htmlspecialchars($userPhone ?? '') ?>" aria-label="<?= __('list_property_label_phone') ?>">
                             </div>
                         </div>
                         <div class="mb-2">
                             <label for="email" class="form-label fw-bold"><?= __('list_property_label_email') ?></label>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="<?= __('list_property_ph_email') ?>" value="<?= htmlspecialchars($userEmail) ?>" aria-label="<?= __('list_property_label_email') ?>">
+                            <input type="email" name="email" id="email" class="form-control" placeholder="<?= __('list_property_ph_email') ?>" value="<?= htmlspecialchars($userEmail ?? '') ?>" aria-label="<?= __('list_property_label_email') ?>">
                         </div>
 
                         <?php if (!$isLoggedIn): ?>

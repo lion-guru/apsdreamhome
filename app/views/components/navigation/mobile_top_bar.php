@@ -19,15 +19,15 @@
             <?php $brand = $nav->companyName(); ?>
             <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                    if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
-            <img src="<?php echo BASE_URL . htmlspecialchars($logo); ?>"
-                 alt="<?php echo htmlspecialchars($brand); ?>"
+            <img src="<?php echo BASE_URL . htmlspecialchars($logo ?? ''); ?>"
+                 alt="<?php echo htmlspecialchars($brand ?? ''); ?>"
                  class="logo"
                  class="style-55486"
                  loading="eager"
                  fetchpriority="high">
             <span class="brand-text d-inline ms-1 fw-bold"
                   class="style-49690">
-                <?php echo htmlspecialchars($brand); ?>
+                <?php echo htmlspecialchars($brand ?? ''); ?>
             </span>
         </a>
 

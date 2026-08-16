@@ -32,16 +32,16 @@ ob_start();
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="mb-0"><?= htmlspecialchars($t['name']) ?></h5>
+                                <h5 class="mb-0"><?= htmlspecialchars($t['name'] ?? '') ?></h5>
                                 <span class="badge bg-<?= $color ?>"><?= ucfirst($t['type']) ?></span>
                             </div>
                             <span class="text-muted small">Used <?= $t['usage_count'] ?? 0 ?> times</span>
                         </div>
                         <div class="card-body aps-cp-card-body">
                             <?php if (!empty($t['subject'])): ?>
-                                <p class="fw-bold mb-2"><?= htmlspecialchars($t['subject']) ?></p>
+                                <p class="fw-bold mb-2"><?= htmlspecialchars($t['subject'] ?? '') ?></p>
                             <?php endif; ?>
-                            <pre class="bg-light p-3 rounded small" class="style-65441"><?= htmlspecialchars($t['body']) ?></pre>
+                            <pre class="bg-light p-3 rounded small" class="style-65441"><?= htmlspecialchars($t['body'] ?? '') ?></pre>
                             <?php if (!empty($vars)): ?>
                                 <div class="mt-2">
                                     <small class="text-muted">Variables:</small>

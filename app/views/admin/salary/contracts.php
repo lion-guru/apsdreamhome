@@ -54,7 +54,7 @@
                         <select name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($users ?? [] as $e): ?>
-                            <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name']) ?></option>
+                            <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -71,7 +71,7 @@ $commColors = ['5' => 'secondary', '7' => 'info', '10' => 'primary', '12' => 'pr
                                 <td>
                                     <?php if (!empty($rank['reward_name'])): ?>
                                         <span class="badge bg-light text-dark border">
-                                            🎁 <?= htmlspecialchars($rank['reward_name']) ?>
+                                            🎁 <?= htmlspecialchars($rank['reward_name'] ?? '') ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="text-muted small">—</span>

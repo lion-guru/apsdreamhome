@@ -46,10 +46,10 @@ $statusColors = [
                 <div class="card-body aps-cp-card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Label</dt>
-                        <dd class="col-sm-8"><?= htmlspecialchars($credential['credential_label']) ?></dd>
+                        <dd class="col-sm-8"><?= htmlspecialchars($credential['credential_label'] ?? '') ?></dd>
 
                         <dt class="col-sm-4">Value</dt>
-                        <dd class="col-sm-8"><code class="fs-6"><?= htmlspecialchars($credential['credential_value']) ?></code></dd>
+                        <dd class="col-sm-8"><code class="fs-6"><?= htmlspecialchars($credential['credential_value'] ?? '') ?></code></dd>
 
                         <dt class="col-sm-4">Issuer</dt>
                         <dd class="col-sm-8"><?= htmlspecialchars($credential['issuer'] ?? '—') ?></dd>
@@ -66,7 +66,7 @@ $statusColors = [
                                 $isSoon = !$isPast && $exp < strtotime('+30 days');
                                 ?>
                                 <span class="<?= $isPast ? 'text-danger fw-bold' : ($isSoon ? 'text-warning fw-bold' : '') ?>">
-                                    <?= htmlspecialchars($credential['expiry_date']) ?>
+                                    <?= htmlspecialchars($credential['expiry_date'] ?? '') ?>
                                     <?php if ($isPast): ?>
                                         <small>(Expired)</small>
                                     <?php elseif ($isSoon): ?>
@@ -88,7 +88,7 @@ $statusColors = [
                         <?php if ($credential['document_path']): ?>
                         <dt class="col-sm-4">Document</dt>
                         <dd class="col-sm-8">
-                            <a href="<?= BASE_URL . '/' . htmlspecialchars($credential['document_path']) ?>" target="_blank" class="text-decoration-none">
+                            <a href="<?= BASE_URL . '/' . htmlspecialchars($credential['document_path'] ?? '') ?>" target="_blank" class="text-decoration-none">
                                 <i class="fas fa-file-pdf me-1"></i>View Document
                             </a>
                         </dd>
@@ -96,7 +96,7 @@ $statusColors = [
 
                         <?php if ($credential['notes']): ?>
                         <dt class="col-sm-4">Notes</dt>
-                        <dd class="col-sm-8"><?= nl2br(htmlspecialchars($credential['notes'])) ?></dd>
+                        <dd class="col-sm-8"><?= nl2br(htmlspecialchars($credential['notes'] ?? '')) ?></dd>
                         <?php endif; ?>
 
                         <dt class="col-sm-4">Created</dt>

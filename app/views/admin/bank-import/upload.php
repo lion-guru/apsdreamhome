@@ -29,7 +29,7 @@
                             <select name="bank_account_id" class="form-select">
                                 <option value="">— Select Bank Account —</option>
                                 <?php foreach (($banks ?? []) as $b): ?>
-                                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name']) ?></option>
+                                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="form-text">Link this import to a specific bank account for easier reconciliation.</div>

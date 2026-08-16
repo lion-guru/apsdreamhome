@@ -22,9 +22,9 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <small class="text-muted ms-2">UID <?= (int)($associate['user_id'] ?? 0) ?></small>
         </h5>
         <div>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm/associate-ranks" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
-            <form method="post" action="<?= htmlspecialchars($base) ?>/admin/mlm/associate-ranks/<?= (int)($associate['id'] ?? 0) ?>/promote" class="d-inline">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+            <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks/<?= (int)($associate['id'] ?? 0) ?>/promote" class="d-inline">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-arrow-up me-1"></i>Manual Promote</button>
             </form>
         </div>

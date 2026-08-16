@@ -108,13 +108,13 @@ $acquisition = $acquisition ?? [];
                     <?php if (!empty($acquisition['documents'])): ?>
                     <div class="mb-3">
                         <h6>Documents</h6>
-                        <p class="mb-0"><?php echo nl2br(htmlspecialchars($acquisition['documents'])); ?></p>
+                        <p class="mb-0"><?php echo nl2br(htmlspecialchars($acquisition['documents'] ?? '')); ?></p>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($acquisition['remarks'])): ?>
                     <div>
                         <h6>Remarks</h6>
-                        <p class="mb-0"><?php echo nl2br(htmlspecialchars($acquisition['remarks'])); ?></p>
+                        <p class="mb-0"><?php echo nl2br(htmlspecialchars($acquisition['remarks'] ?? '')); ?></p>
                     </div>
                     <?php endif; ?>
                 </div>

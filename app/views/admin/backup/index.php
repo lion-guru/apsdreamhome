@@ -18,14 +18,14 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-0"><?= htmlspecialchars($pageTitle) ?></h1>
+            <h1 class="h3 mb-0"><?= htmlspecialchars($pageTitle ?? '') ?></h1>
             <p class="text-muted mb-0">Create, restore, upload and monitor database backups.</p>
         </div>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-outline-secondary" id="btn-refresh-health" title="Refresh health status">
                 <i class="fas fa-sync"></i>
             </button>
-            <a href="<?= htmlspecialchars($baseUrl) ?>/admin/backup/health" target="_blank" class="btn btn-outline-info" title="Open JSON health endpoint">
+            <a href="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/health" target="_blank" class="btn btn-outline-info" title="Open JSON health endpoint">
                 <i class="fas fa-code"></i> Health JSON
             </a>
         </div>
@@ -33,13 +33,13 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
 
     <?php if ($flashSuccess): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess) ?>
+            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flashError): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError) ?>
+            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -55,10 +55,10 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                     </div>
                     <div>
                         <h6 class="text-muted mb-1">Backup Health</h6>
-                        <h4 class="mb-0 text-<?= $hBadge ?>"><?= htmlspecialchars($hText) ?></h4>
+                        <h4 class="mb-0 text-<?= $hBadge ?>"><?= htmlspecialchars($hText ?? '') ?></h4>
                         <small class="text-muted">
                             <?php if (!empty($health['last_backup_at'])): ?>
-                                Last: <?= htmlspecialchars($health['last_backup_at']) ?>
+                                Last: <?= htmlspecialchars($health['last_backup_at'] ?? '') ?>
                                 (<?= $health['age_hours'] !== null ? htmlspecialchars((string) $health['age_hours']) : '?' ?> h ago)
                             <?php else: ?>
                                 No successful backup yet
@@ -128,7 +128,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                     <h5 class="mb-0"><i class="fas fa-bolt me-1 text-warning"></i> Quick Actions</h5>
                 </div>
                 <div class="card-body d-flex flex-column gap-2">
-                    <form method="POST" action="<?= htmlspecialchars($baseUrl) ?>/admin/backup/create" onsubmit="return confirm('Create a full database backup now? This may take a few minutes.');">
+                    <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/create" onsubmit="return confirm('Create a full database backup now? This may take a few minutes.');">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-plus-circle me-1"></i> Create Full Backup Now
@@ -138,7 +138,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                         <i class="fas fa-upload me-1"></i> Upload Existing Backup
                     </button>
                     <div class="collapse mt-2" id="upload-panel">
-                        <form method="POST" action="<?= htmlspecialchars($baseUrl) ?>/admin/backup/upload" enctype="multipart/form-data" class="border rounded p-3 bg-light">
+                        <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/upload" enctype="multipart/form-data" class="border rounded p-3 bg-light">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                             <div class="mb-2">
                                 <label class="form-label small mb-1">Backup file (.sql or .sql.gz, max 500 MB)</label>
@@ -214,24 +214,24 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                                 <tr>
                                     <td><?= $bid ?></td>
                                     <td>
-                                        <code class="small"><?= htmlspecialchars($fname) ?></code>
+                                        <code class="small"><?= htmlspecialchars($fname ?? '') ?></code>
                                         <?php if (!$exists && $bStatus === 'completed'): ?>
                                             <i class="fas fa-exclamation-triangle text-warning ms-1" title="File missing on disk"></i>
                                         <?php endif; ?>
                                     </td>
-                                    <td><span class="badge bg-info bg-opacity-25 text-dark"><?= htmlspecialchars($bType) ?></span></td>
+                                    <td><span class="badge bg-info bg-opacity-25 text-dark"><?= htmlspecialchars($bType ?? '') ?></span></td>
                                     <td><?= htmlspecialchars(format_bytes($fsize)) ?></td>
-                                    <td><span class="badge bg-<?= $badgeClass ?>"><?= htmlspecialchars($bStatus) ?></span></td>
+                                    <td><span class="badge bg-<?= $badgeClass ?>"><?= htmlspecialchars($bStatus ?? '') ?></span></td>
                                     <td class="small text-nowrap"><?= htmlspecialchars($b['started_at'] ?? '-') ?></td>
                                     <td class="small text-nowrap"><?= htmlspecialchars($b['completed_at'] ?? '-') ?></td>
                                     <td class="text-end text-nowrap">
                                         <?php if ($exists): ?>
-                                            <a href="<?= htmlspecialchars($baseUrl) ?>/admin/backup/download/<?= $bid ?>" class="btn btn-sm btn-outline-primary" title="Download">
+                                            <a href="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/download/<?= $bid ?>" class="btn btn-sm btn-outline-primary" title="Download">
                                                 <i class="fas fa-download"></i>
                                             </a>
                                         <?php endif; ?>
                                         <?php if ($bStatus === 'completed' && $exists): ?>
-                                            <form method="POST" action="<?= htmlspecialchars($baseUrl) ?>/admin/backup/restore/<?= $bid ?>" class="d-inline" onsubmit="return confirm('RESTORE backup #<?= $bid ?> ?\n\nThis will REPLACE current database content. Make sure you have a fresh backup first.');">
+                                            <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/restore/<?= $bid ?>" class="d-inline" onsubmit="return confirm('RESTORE backup #<?= $bid ?> ?\n\nThis will REPLACE current database content. Make sure you have a fresh backup first.');">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-warning" title="Restore">
                                                     <i class="fas fa-undo"></i>
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener('click', function () {
         btn.disabled = true;
         btn.querySelector('i').classList.add('fa-spin');
-        fetch('<?= htmlspecialchars($baseUrl) ?>/admin/backup/health', { credentials: 'same-origin' })
+        fetch('<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/health', { credentials: 'same-origin' })
             .then(function (r) { return r.ok ? r.json() : { status: 'unknown' }; })
             .then(function (j) {
                 var msg = 'Status: ' + (j.status || '?') +

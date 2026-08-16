@@ -40,7 +40,7 @@ $page_title = $page_title ?? 'Employee Documents';
                                 <td><?= htmlspecialchars($d['document_name'] ?? '') ?></td>
                                 <td>
                                     <?php if ($d['file_path'] ?? ''): ?>
-                                        <a href="<?= BASE_URL ?>/<?= htmlspecialchars($d['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></a>
+                                        <a href="<?= BASE_URL ?>/<?= htmlspecialchars($d['file_path'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></a>
                                     <?php else: ?>
                                         <span class="text-muted">No file</span>
                                     <?php endif; ?>

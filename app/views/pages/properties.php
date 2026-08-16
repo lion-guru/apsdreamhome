@@ -188,7 +188,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         <select class="form-select" id="location" name="location">
                             <option value=""><?= __('all') ?></option>
                             <?php foreach (($locations ?? []) as $loc): ?>
-                                <option value="<?= htmlspecialchars($loc) ?>" <?= ($_GET['location'] ?? '') === $loc ? 'selected' : ''; ?>><?= htmlspecialchars($loc) ?></option>
+                                <option value="<?= htmlspecialchars($loc ?? '') ?>" <?= ($_GET['location'] ?? '') === $loc ? 'selected' : ''; ?>><?= htmlspecialchars($loc ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -310,7 +310,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         ?>
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $idx => $property): ?>
-                <div class="<?= htmlspecialchars($cardColClass) ?> mb-4 scroll-reveal" class="style-86452">
+                <div class="<?= htmlspecialchars($cardColClass ?? '') ?> mb-4 scroll-reveal" class="style-86452">
                     <div class="card props-grid-card glass-card h-100" data-property-id="<?= (int)($property['id'] ?? 0) ?>">
                         <div class="card-img-wrap">
                             <?php
@@ -322,7 +322,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                 $propListingType = $property['listing_type'] ?? 'sell';
                             ?>
                             <img loading="lazy" src="<?= $imgSrc ?>"
-                                 alt="<?= htmlspecialchars($propTitle) ?>"
+                                 alt="<?= htmlspecialchars($propTitle ?? '') ?>"
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
 
                             <div class="img-badges">
@@ -344,15 +344,15 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         </div>
 
                         <div class="card-body">
-                            <h5 class="prop-name"><?= htmlspecialchars($propTitle) ?></h5>
+                            <h5 class="prop-name"><?= htmlspecialchars($propTitle ?? '') ?></h5>
                             <div class="prop-location">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <?= htmlspecialchars($propLocation) ?>
+                                <?= htmlspecialchars($propLocation ?? '') ?>
                             </div>
 
                             <?php if (!empty($property['description'])): ?>
                                 <p class="style-88890">
-                                    <?= htmlspecialchars($property['description']) ?>
+                                    <?= htmlspecialchars($property['description'] ?? '') ?>
                                 </p>
                             <?php endif; ?>
 
@@ -396,7 +396,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                 <div class="prop-actions">
                                     <button class="btn btn-interest"
                                             data-id="<?= $property['id'] ?? '' ?>"
-                                            data-name="<?= htmlspecialchars($propTitle) ?>"
+                                            data-name="<?= htmlspecialchars($propTitle ?? '') ?>"
                                             onclick="showPropertyInterestModal(this)">
                                         <i class="fas fa-hand-pointer me-1"></i>Interested
                                     </button>

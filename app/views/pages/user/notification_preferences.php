@@ -28,14 +28,14 @@ $frequencyOptions = [
 
 <?php if ($flash_success): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success) ?>
+        <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <?php endif; ?>
 
 <?php if ($flash_error): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flash_error) ?>
+        <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flash_error ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <?php endif; ?>
@@ -54,7 +54,7 @@ $frequencyOptions = [
     </div>
 
     <form method="POST" action="<?= BASE_URL ?>/user/notification-preferences" id="notif-prefs-form">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
         <div class="card-body aps-cp-card-body">
             <!-- Communication Channels summary -->
@@ -79,7 +79,7 @@ $frequencyOptions = [
                                 <div class="mb-2">
                                     <i class="<?= $meta['icon'] ?> fa-2x text-<?= $meta['color'] ?>"></i>
                                 </div>
-                                <h6 class="mb-0"><?= htmlspecialchars($meta['label']) ?></h6>
+                                <h6 class="mb-0"><?= htmlspecialchars($meta['label'] ?? '') ?></h6>
                             </div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ $frequencyOptions = [
                                 ?>
                                 <th class="text-center" class="style-94101">
                                     <i class="<?= $meta['icon'] ?>"></i><br>
-                                    <small><?= htmlspecialchars($meta['label']) ?></small>
+                                    <small><?= htmlspecialchars($meta['label'] ?? '') ?></small>
                                 </th>
                                 <?php endforeach; ?>
                             </tr>
@@ -115,9 +115,9 @@ $frequencyOptions = [
                             ?>
                             <tr>
                                 <td>
-                                    <strong><?= htmlspecialchars($meta[0]) ?></strong>
+                                    <strong><?= htmlspecialchars($meta[0] ?? '') ?></strong>
                                     <br>
-                                    <small class="text-muted"><?= htmlspecialchars($meta[1]) ?></small>
+                                    <small class="text-muted"><?= htmlspecialchars($meta[1] ?? '') ?></small>
                                 </td>
                                 <?php foreach ($channels as $ch): ?>
                                 <td class="text-center">
@@ -125,11 +125,11 @@ $frequencyOptions = [
                                         <input
                                             class="form-check-input notif-toggle"
                                             type="checkbox"
-                                            name="channels[<?= htmlspecialchars($type) ?>][]"
-                                            value="<?= htmlspecialchars($ch) ?>"
-                                            id="toggle_<?= htmlspecialchars($type) ?>_<?= htmlspecialchars($ch) ?>"
+                                            name="channels[<?= htmlspecialchars($type ?? '') ?>][]"
+                                            value="<?= htmlspecialchars($ch ?? '') ?>"
+                                            id="toggle_<?= htmlspecialchars($type ?? '') ?>_<?= htmlspecialchars($ch ?? '') ?>"
                                             <?= !empty($p[$ch]) ? 'checked' : '' ?>
-                                            aria-label="<?= htmlspecialchars($meta[0]) ?> via <?= htmlspecialchars($ch) ?>"
+                                            aria-label="<?= htmlspecialchars($meta[0] ?? '') ?> via <?= htmlspecialchars($ch ?? '') ?>"
                                         >
                                     </div>
                                 </td>
@@ -150,8 +150,8 @@ $frequencyOptions = [
                     <p class="text-muted small mb-2"><?= __('notif_freq_desc', null, 'How often would you like non-urgent notifications grouped together?') ?></p>
                     <select name="frequency" class="form-select" id="frequency-select">
                         <?php foreach ($frequencyOptions as $val => $label): ?>
-                            <option value="<?= htmlspecialchars($val) ?>" <?= $frequency === $val ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($label) ?>
+                            <option value="<?= htmlspecialchars($val ?? '') ?>" <?= $frequency === $val ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($label ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

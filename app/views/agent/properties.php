@@ -90,7 +90,7 @@ if ($filter && $filter !== 'all') {
     <div class="col-md-6 col-lg-4">
         <div class="card agent-prop-card h-100">
             <?php if (!empty($prop['image'])): ?>
-                <img src="<?= htmlspecialchars($prop['image']) ?>" alt="<?= htmlspecialchars($prop['title'] ?? 'Property') ?>" class="prop-img">
+                <img src="<?= htmlspecialchars($prop['image'] ?? '') ?>" alt="<?= htmlspecialchars($prop['title'] ?? 'Property') ?>" class="prop-img">
             <?php else: ?>
                 <div class="prop-placeholder">
                     <i class="fas fa-home fa-3x" class="style-22607"></i>

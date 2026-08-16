@@ -32,7 +32,7 @@ $extraHead = '<style>
                         <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
-                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name']); ?></h5>
+                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name'] ?? ''); ?></h5>
                                     <p class="text-muted mb-0 small">
                                         <i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($p['address'] ?? __('user_properties_location_unspecified')); ?>
                                     </p>
@@ -53,7 +53,7 @@ $extraHead = '<style>
                             <?php if (!empty($p['image'])): ?>
                                 <?php $imgRaw = $p['image'] ?? '';
                                       $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                                <img src="<?= htmlspecialchars($imgSrc) ?>" class="img-fluid rounded mb-3" class="style-9014" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
+                                <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" class="img-fluid rounded mb-3" class="style-9014" alt="<?php echo htmlspecialchars($p['name'] ?? ''); ?>" loading="lazy">
                             <?php endif; ?>
 
                             <div class="row mb-3">
@@ -117,7 +117,7 @@ $extraHead = '<style>
                             <?php if (!empty($p['admin_notes'])): ?>
                             <div class="mt-3 p-3 bg-light rounded">
                                 <small class="text-muted d-block mb-1"><i class="fas fa-sticky-note me-1"></i><?= __('user_properties_admin_note') ?>:</small>
-                                <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($p['admin_notes'])); ?></p>
+                                <p class="mb-0 small"><?php echo nl2br(htmlspecialchars($p['admin_notes'] ?? '')); ?></p>
                             </div>
                             <?php endif; ?>
                         </div>

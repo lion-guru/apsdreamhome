@@ -15,9 +15,9 @@ ob_start();
                 <?= htmlspecialchars($session['visitor_name'] ?: $session['user_name'] ?: 'Visitor') ?>
             </h4>
             <p class="text-muted small mb-0">
-                <?= htmlspecialchars($session['visitor_email']) ?>
+                <?= htmlspecialchars($session['visitor_email'] ?? '') ?>
                 <?php if ($session['visitor_phone']): ?>
-                    Â· <?= htmlspecialchars($session['visitor_phone']) ?>
+                    Â· <?= htmlspecialchars($session['visitor_phone'] ?? '') ?>
                 <?php endif; ?>
                 Â· <?= htmlspecialchars($session['subject'] ?: 'No subject') ?>
                 Â· <span class="badge bg-<?= ['open'=>'primary','assigned'=>'info','active'=>'success','on_hold'=>'warning','closed'=>'secondary','missed'=>'danger'][$session['status']] ?? 'secondary' ?>"><?= ucfirst($session['status']) ?></span>
@@ -49,20 +49,20 @@ ob_start();
                         ?>
                             <?php if ($isSystem && !$isInternal): ?>
                                 <div class="text-center my-2">
-                                    <small class="badge bg-light text-muted"><?= htmlspecialchars($m['message']) ?></small>
+                                    <small class="badge bg-light text-muted"><?= htmlspecialchars($m['message'] ?? '') ?></small>
                                 </div>
                             <?php elseif ($isInternal): ?>
                                 <div class="alert alert-warning py-1 px-2 my-1 small">
                                     <i class="fas fa-sticky-note me-1"></i>
-                                    <strong>Internal:</strong> <?= htmlspecialchars($m['message']) ?>
+                                    <strong>Internal:</strong> <?= htmlspecialchars($m['message'] ?? '') ?>
                                 </div>
                             <?php else: ?>
                                 <div class="d-flex mb-2 <?= $isAgent ? 'justify-content-end' : '' ?>">
                                     <div class="p-2 px-3 rounded shadow-sm" class="style-98554">
                                         <?php if ($m['sender_type'] !== 'agent' && $m['sender_name']): ?>
-                                            <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-62191"><?= htmlspecialchars($m['sender_name']) ?></small>
+                                            <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-62191"><?= htmlspecialchars($m['sender_name'] ?? '') ?></small>
                                         <?php endif; ?>
-                                        <div class="style-19219"><?= htmlspecialchars($m['message']) ?></div>
+                                        <div class="style-19219"><?= htmlspecialchars($m['message'] ?? '') ?></div>
                                         <small class="d-block <?= $isAgent ? 'text-white-50' : 'text-muted' ?>" class="style-32173">
                                             <?= date('H:i', strtotime($m['created_at'])) ?>
                                         </small>
@@ -87,8 +87,8 @@ ob_start();
                     </form>
                     <div class="d-flex gap-1 flex-wrap">
                         <?php foreach ($quick_replies as $qr): ?>
-                            <button class="btn btn-sm btn-outline-secondary quick-reply-btn" data-msg="<?= htmlspecialchars($qr['message']) ?>">
-                                <?= htmlspecialchars($qr['title']) ?>
+                            <button class="btn btn-sm btn-outline-secondary quick-reply-btn" data-msg="<?= htmlspecialchars($qr['message'] ?? '') ?>">
+                                <?= htmlspecialchars($qr['title'] ?? '') ?>
                             </button>
                         <?php endforeach; ?>
                     </div>
@@ -100,9 +100,9 @@ ob_start();
                 <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Session Info</h6>
                     <p class="small mb-1"><strong>Created:</strong> <?= date('M j, H:i', strtotime($session['created_at'])) ?></p>
-                    <p class="small mb-1"><strong>Source:</strong> <?= htmlspecialchars($session['source']) ?></p>
+                    <p class="small mb-1"><strong>Source:</strong> <?= htmlspecialchars($session['source'] ?? '') ?></p>
                     <?php if ($session['page_url']): ?>
-                        <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url']) ?>" target="_blank" class="text-truncate d-block" class="style-65684"><?= htmlspecialchars($session['page_url']) ?></a></p>
+                        <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url'] ?? '') ?>" target="_blank" class="text-truncate d-block" class="style-65684"><?= htmlspecialchars($session['page_url'] ?? '') ?></a></p>
                     <?php endif; ?>
                     <p class="small mb-1"><strong>IP:</strong> <?= htmlspecialchars($session['ip_address'] ?: '—') ?></p>
                     <p class="small mb-1"><strong>Country:</strong> <?= htmlspecialchars($session['country'] ?: '—') ?></p>

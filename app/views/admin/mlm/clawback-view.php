@@ -6,7 +6,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-undo-alt me-2"></i>Clawback Detail</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/clawbacks" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/clawbacks" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="aps-cp-card-body">
         <?php if (!$clawback): ?>

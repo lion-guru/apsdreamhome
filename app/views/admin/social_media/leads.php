@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $page_title = $page_title ?? 'Social Media Leads';
 $leads = $leads ?? [];
 $pagination = $pagination ?? ['page' => 1, 'pages' => 1];
@@ -19,7 +19,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <select name="account_id" class="form-select">
                     <option value="">All Accounts</option>
                     <?php foreach ($accounts as $a): ?>
-                        <option value="<?= $a['id'] ?>" <?= ($filters['account_id'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['account_name']) ?></option>
+                        <option value="<?= $a['id'] ?>" <?= ($filters['account_id'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['account_name'] ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -69,23 +69,23 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <tbody>
                         <?php foreach ($leads as $l): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($l['full_name'] ?? 'â€”') ?></strong></td>
+                            <td><strong><?= htmlspecialchars($l['full_name'] ?? '—') ?></strong></td>
                             <td>
-                                <small><?= htmlspecialchars($l['email'] ?? 'â€”') ?></small><br>
-                                <small class="text-muted"><?= htmlspecialchars($l['phone'] ?? 'â€”') ?></small>
+                                <small><?= htmlspecialchars($l['email'] ?? '—') ?></small><br>
+                                <small class="text-muted"><?= htmlspecialchars($l['phone'] ?? '—') ?></small>
                             </td>
-                            <td><?= htmlspecialchars(($l['city'] ?? '') . ($l['state'] ? ', ' . $l['state'] : '')) ?: 'â€”' ?></td>
+                            <td><?= htmlspecialchars(($l['city'] ?? '') . ($l['state'] ? ', ' . $l['state'] : '')) ?: '—' ?></td>
                             <td>
                                 <?php if (!empty($l['budget_min'])): ?>
-                                    â‚¹<?= number_format($l['budget_min']) ?><?= !empty($l['budget_max']) ? ' â€“ ' . number_format($l['budget_max']) : '' ?>
-                                <?php else: ?>â€”<?php endif; ?>
+                                    ?<?= number_format($l['budget_min']) ?><?= !empty($l['budget_max']) ? ' – ' . number_format($l['budget_max']) : '' ?>
+                                <?php else: ?>—<?php endif; ?>
                             </td>
                             <td>
                                 <span class="badge bg-<?= match($l['platform']) { 'facebook' => 'primary', 'instagram' => 'danger', 'linkedin' => 'info', 'whatsapp_business' => 'success', default => 'secondary' } ?>">
                                     <?= ucfirst(str_replace('_', ' ', $l['platform'])) ?>
                                 </span>
                             </td>
-                            <td><small><?= htmlspecialchars($l['form_name'] ?? 'â€”') ?></small></td>
+                            <td><small><?= htmlspecialchars($l['form_name'] ?? '—') ?></small></td>
                             <td>
                                 <select class="form-select form-select-sm lead-status" data-lead="<?= $l['id'] ?>">
                                     <?php foreach (['new','contacted','qualified','converted','junk','duplicate'] as $s): ?>

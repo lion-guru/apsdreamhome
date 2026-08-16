@@ -60,7 +60,7 @@
                         <?php foreach ($leads as $l): ?>
                             <tr>
                                 <td><?= $l['id'] ?></td>
-                                <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $l['id'] ?>"><?= htmlspecialchars($l['name']) ?></a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $l['id'] ?>"><?= htmlspecialchars($l['name'] ?? '') ?></a></td>
                                 <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>
                                 <td><span class="badge bg-light text-dark"><?= htmlspecialchars($l['source'] ?? 'N/A') ?></span></td>
                                 <td><span class="badge bg-<?= $l['status']==='new'?'primary':($l['status']==='converted'?'success':'warning') ?>"><?= ucfirst($l['status']) ?></span></td>

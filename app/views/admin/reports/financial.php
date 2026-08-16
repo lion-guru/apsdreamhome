@@ -73,7 +73,7 @@ $netIncome = $netIncome ?? $totalReceipts;
                     <?php else: ?>
                         <?php foreach ($bankAccounts as $ba): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                                <div><strong class="small"><?= htmlspecialchars($ba['account_name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($ba['bank_name']) ?></small></div>
+                                <div><strong class="small"><?= htmlspecialchars($ba['account_name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($ba['bank_name'] ?? '') ?></small></div>
                                 <div class="text-end"><strong class="text-success">₹<?= number_format($ba['current_balance']) ?></strong><br><small class="text-muted"><?= $ba['is_escrow'] ? 'Escrow' : ucfirst($ba['account_type']) ?></small></div>
                             </div>
                         <?php endforeach; ?>
@@ -90,7 +90,7 @@ $netIncome = $netIncome ?? $totalReceipts;
                     <?php else: ?>
                         <?php foreach ($methodBreakdown as $m): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-capitalize"><i class="fas fa-credit-card me-1"></i><?= htmlspecialchars($m['payment_method']) ?></span>
+                                <span class="text-capitalize"><i class="fas fa-credit-card me-1"></i><?= htmlspecialchars($m['payment_method'] ?? '') ?></span>
                                 <div class="text-end"><strong>₹<?= number_format($m['total']) ?></strong><br><small class="text-muted"><?= $m['cnt'] ?> txns</small></div>
                             </div>
                         <?php endforeach; ?>
@@ -133,9 +133,9 @@ $netIncome = $netIncome ?? $totalReceipts;
                                 <td>#<?= $p['id'] ?></td>
                                 <td><?= htmlspecialchars($p['name'] ?? 'N/A') ?></td>
                                 <td><strong>₹<?= number_format($p['amount']) ?></strong></td>
-                                <td><span class="text-capitalize"><?= htmlspecialchars($p['payment_method']) ?></span></td>
-                                <td><span class="aps-cp-badge badge bg-<?= $p['payment_status'] === 'completed' ? 'success' : ($p['payment_status'] === 'pending' ? 'warning' : 'danger') ?>"><?= ucfirst(htmlspecialchars($p['payment_status'])) ?></span></td>
-                                <td class="text-muted small"><?= htmlspecialchars($p['created_at']) ?></td>
+                                <td><span class="text-capitalize"><?= htmlspecialchars($p['payment_method'] ?? '') ?></span></td>
+                                <td><span class="aps-cp-badge badge bg-<?= $p['payment_status'] === 'completed' ? 'success' : ($p['payment_status'] === 'pending' ? 'warning' : 'danger') ?>"><?= ucfirst(htmlspecialchars($p['payment_status'] ?? '')) ?></span></td>
+                                <td class="text-muted small"><?= htmlspecialchars($p['created_at'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

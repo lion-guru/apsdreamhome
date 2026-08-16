@@ -60,8 +60,8 @@ ob_start();
                     $statusColor = match($p['status'] ?? 'pending') { 'active' => 'success', 'expired' => 'secondary', 'cancelled' => 'danger', default => 'warning' };
                 ?>
                     <tr>
-                        <td><code><?= htmlspecialchars($p['policy_number']) ?></code></td>
-                        <td><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($p['plan_name']) ?></td>
+                        <td><code><?= htmlspecialchars($p['policy_number'] ?? '') ?></code></td>
+                        <td><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($p['plan_name'] ?? '') ?></td>
                         <td><span class="aps-cp-badge aps-cp-badge-<?= $categoryColors[$cat] ?? 'primary' ?>"><?= htmlspecialchars($categoryNames[$cat] ?? ucfirst($cat)) ?></span></td>
                         <td>₹<?= number_format((float)$p['sum_insured']) ?></td>
                         <td>₹<?= number_format((float)$p['premium_amount']) ?></td>
@@ -92,13 +92,13 @@ ob_start();
             ?>
             <div class="aps-cp-info-card" data-plan-id="<?= (int)$plan['id'] ?>">
                 <div class="aps-cp-info-card-head">
-                    <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($plan['plan_name']) ?></h4>
+                    <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($plan['plan_name'] ?? '') ?></h4>
                     <?php if (!empty($plan['is_featured'])): ?><span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= __('user_insurance_featured', null, 'Featured') ?></span><?php endif; ?>
                 </div>
                 <p class="aps-cp-info-card-meta"><?= htmlspecialchars($plan['insurer_name'] ?? '') ?> | <?= __('user_insurance_coverage', null, 'Coverage') ?>: ₹<?= number_format((float)$plan['coverage_amount']) ?></p>
                 <?php if (!empty($plan['features'])): ?>
                 <ul class="aps-cp-list">
-                    <?php foreach ($plan['features'] as $f): ?><li><?= htmlspecialchars($f) ?></li><?php endforeach; ?>
+                    <?php foreach ($plan['features'] as $f): ?><li><?= htmlspecialchars($f ?? '') ?></li><?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
                 <div class="aps-cp-info-card-foot">

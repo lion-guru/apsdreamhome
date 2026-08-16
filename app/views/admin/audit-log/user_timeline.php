@@ -70,20 +70,20 @@ ob_start();
                 </div>
                 <?php if (!empty($log['entity_type'])): ?>
                   <div class="mb-1">
-                    <span class="badge bg-info me-1"><?= htmlspecialchars($log['entity_type']) ?></span>
+                    <span class="badge bg-info me-1"><?= htmlspecialchars($log['entity_type'] ?? '') ?></span>
                     <?php if (!empty($log['entity_id'])): ?>
-                      <code class="small">#<?= htmlspecialchars($log['entity_id']) ?></code>
+                      <code class="small">#<?= htmlspecialchars($log['entity_id'] ?? '') ?></code>
                     <?php endif; ?>
                   </div>
                 <?php endif; ?>
                 <?php if (!empty($log['description'])): ?>
-                  <p class="text-muted small mb-1"><?= htmlspecialchars($log['description']) ?></p>
+                  <p class="text-muted small mb-1"><?= htmlspecialchars($log['description'] ?? '') ?></p>
                 <?php endif; ?>
                 <?php if (!empty($log['ip_address'])): ?>
                   <div class="d-flex gap-3 small text-muted">
-                    <span><i class="fas fa-network-wired me-1"></i><?= htmlspecialchars($log['ip_address']) ?></span>
+                    <span><i class="fas fa-network-wired me-1"></i><?= htmlspecialchars($log['ip_address'] ?? '') ?></span>
                     <?php if (!empty($log['request_url'])): ?>
-                      <span><i class="fas fa-link me-1"></i><?= htmlspecialchars($log['request_url']) ?></span>
+                      <span><i class="fas fa-link me-1"></i><?= htmlspecialchars($log['request_url'] ?? '') ?></span>
                     <?php endif; ?>
                   </div>
                 <?php endif; ?>

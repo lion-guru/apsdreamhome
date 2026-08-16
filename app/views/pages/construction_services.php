@@ -187,7 +187,7 @@
                                 }
                                 ?>
                                 <?php if (!empty($imgSrc)): ?>
-                                    <img src="<?= htmlspecialchars($imgSrc); ?>" class="card-img-top" alt="<?= htmlspecialchars($p['site_name'] ?? 'Project') ?>">
+                                    <img src="<?= htmlspecialchars($imgSrc ?? ''); ?>" class="card-img-top" alt="<?= htmlspecialchars($p['site_name'] ?? 'Project') ?>">
                                 <?php else: ?>
                                     <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" class="style-2610"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                                 <?php endif; ?>

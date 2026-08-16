@@ -12,7 +12,7 @@ $blocks = $blocks ?? [];
       <span class="text-muted">
         <?= htmlspecialchars($colony['colony_code'] ?? '') ?>
         &middot; <?= htmlspecialchars($colony['district_name'] ?? '') ?>
-        <?= !empty($colony['state_name']) ? ', ' . htmlspecialchars($colony['state_name']) : '' ?>
+        <?= !empty($colony['state_name']) ? ', ' . htmlspecialchars($colony['state_name'] ?? '') : '' ?>
         &middot; <?= number_format((float)($colony['total_area_acres'] ?? 0), 2) ?> <?= __('cp_acres') ?>
       </span>
     </div>

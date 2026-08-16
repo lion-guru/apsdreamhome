@@ -144,19 +144,19 @@ $base = BASE_URL;
             <?php if (!empty($error)): ?>
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo htmlspecialchars($error); ?>
+                    <?php echo htmlspecialchars($error ?? ''); ?>
                 </div>
             <?php endif; ?>
 
             <?php if (!empty($success)): ?>
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
-                    <?php echo htmlspecialchars($success); ?>
+                    <?php echo htmlspecialchars($success ?? ''); ?>
                 </div>
             <?php endif; ?>
 
             <form method="POST" action="<?php echo $base; ?>/register/smart/send-otp" id="phoneForm">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                 <div class="phone-input-group">
                     <div class="country-code">+91</div>

@@ -114,8 +114,8 @@
                             <?php else: ?>
                                 <?php foreach ($departments as $dept): ?>
                                     <tr>
-                                        <td><span class="badge badge-primary"><?= htmlspecialchars($dept['code']) ?></span></td>
-                                        <td><strong><?= htmlspecialchars($dept['name']) ?></strong></td>
+                                        <td><span class="badge badge-primary"><?= htmlspecialchars($dept['code'] ?? '') ?></span></td>
+                                        <td><strong><?= htmlspecialchars($dept['name'] ?? '') ?></strong></td>
                                         <td><?= htmlspecialchars(mb_strimwidth($dept['description'] ?? '', 0, 60, '...')) ?></td>
                                         <td><?= htmlspecialchars($dept['head_name'] ?? '—') ?></td>
                                         <td>₹<?= number_format($dept['dept_budget'] ?? 0) ?></td>

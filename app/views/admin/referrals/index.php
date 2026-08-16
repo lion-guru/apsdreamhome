@@ -30,7 +30,7 @@
                             <tr>
                                 <td><?= $r['id'] ?></td>
                                 <td><?= htmlspecialchars($r['referrer_name'] ?? 'Unknown') ?></td>
-                                <td><?= htmlspecialchars($r['referred_email']) ?></td>
+                                <td><?= htmlspecialchars($r['referred_email'] ?? '') ?></td>
                                 <td><code><?= htmlspecialchars($r['referral_code'] ?? '') ?></code></td>
                                 <td><span class="badge bg-<?= ($r['status'] ?? 'pending')==='converted'?'success':(($r['status'] ?? 'pending')==='rejected'?'danger':'warning') ?>"><?= ucfirst($r['status'] ?? 'pending') ?></span></td>
                                 <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>

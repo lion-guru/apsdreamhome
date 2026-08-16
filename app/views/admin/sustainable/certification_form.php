@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $cert = $cert ?? null;
 $isEdit = !empty($cert);
 $csrf = $_SESSION['csrf_token'] ?? '';
@@ -15,7 +15,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $cert['id'] ?>"><?php endif; ?>
             <div class="mb-3">
                 <label class="form-label">Name</label>
-                <input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['name']) : '' ?>" required>
+                <input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['name'] ?? '') : '' ?>" required>
             </div>
             <div class="row">
                 <div class="col-md-4 mb-3"><label class="form-label">Code</label><input type="text" name="code" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['code'] ?? '') : '' ?>"></div>

@@ -95,8 +95,8 @@
                                 <?php foreach ($emails as $e): ?>
                                 <tr>
                                     <td><?= $e['id'] ?></td>
-                                    <td><?= htmlspecialchars($e['to_email']) ?></td>
-                                    <td><?= htmlspecialchars(mb_substr($e['subject'], 0, 50)) ?></td>
+                                    <td><?= htmlspecialchars($e['to_email'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars(mb_substr($e['subject'] ?? '', 0, 50)) ?></td>
                                     <td>
                                         <span class="badge bg-<?= $e['status'] === 'sent' ? 'success' : ($e['status'] === 'failed' ? 'danger' : ($e['status'] === 'processing' ? 'warning' : 'secondary')) ?>">
                                             <?= $e['status'] ?>
@@ -149,8 +149,8 @@
                                 <?php foreach ($sms_items as $s): ?>
                                 <tr>
                                     <td><?= $s['id'] ?></td>
-                                    <td><?= htmlspecialchars($s['recipient']) ?></td>
-                                    <td><?= htmlspecialchars(mb_substr($s['message'], 0, 60)) ?></td>
+                                    <td><?= htmlspecialchars($s['recipient'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars(mb_substr($s['message'] ?? '', 0, 60)) ?></td>
                                     <td>
                                         <span class="badge bg-<?= $s['status'] === 'sent' ? 'success' : ($s['status'] === 'failed' ? 'danger' : 'secondary') ?>">
                                             <?= $s['status'] ?>

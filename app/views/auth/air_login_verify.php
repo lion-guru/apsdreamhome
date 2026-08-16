@@ -17,7 +17,7 @@ $base = BASE_URL;
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
+    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token ?? '') ?>">
     <title>Verify OTP - APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -85,21 +85,21 @@ $base = BASE_URL;
             </div>
             <div class="card-body-custom">
                 <?php if ($error): ?>
-                    <div class="alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?></div>
+                    <div class="alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error ?? '') ?></div>
                 <?php endif; ?>
                 <?php if ($success): ?>
-                    <div class="alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?></div>
+                    <div class="alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($success ?? '') ?></div>
                 <?php endif; ?>
 
                 <div class="otp-info">
                     <i class="fas fa-info-circle"></i>
-                    <div class="otp-info-text">OTP sent to <strong><?= htmlspecialchars($masked) ?></strong></div>
+                    <div class="otp-info-text">OTP sent to <strong><?= htmlspecialchars($masked ?? '') ?></strong></div>
                 </div>
 
                 <div class="countdown" id="countdown">Resend code in <span id="timer">5:00</span></div>
 
                 <form id="otpForm" method="POST" action="<?= $base ?>/auth/air-login/verify">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
                     <div class="otp-form">
                         <input type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="•" required autocomplete="one-time-password" autofocus>

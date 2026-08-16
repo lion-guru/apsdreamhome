@@ -83,7 +83,7 @@ $base = BASE_URL ?? '';
                         <?php foreach ($stats['by_plan'] as $plan): ?>
                             <div class="text-center flex-fill" class="style-3848">
                                 <h4><?= $plan['count'] ?></h4>
-                                <small class="text-muted"><?= htmlspecialchars($plan['name']) ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($plan['name'] ?? '') ?></small>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -118,8 +118,8 @@ $base = BASE_URL ?? '';
                     <?php if (!empty($stats['recent_tenants'])): ?>
                         <?php foreach ($stats['recent_tenants'] as $t): ?>
                             <tr>
-                                <td class="fw-semibold"><?= htmlspecialchars($t['name']) ?></td>
-                                <td><code><?= htmlspecialchars($t['slug']) ?></code></td>
+                                <td class="fw-semibold"><?= htmlspecialchars($t['name'] ?? '') ?></td>
+                                <td><code><?= htmlspecialchars($t['slug'] ?? '') ?></code></td>
                                 <td><span class="plan-badge bg-info text-white"><?= htmlspecialchars($t['plan_name'] ?? 'Free') ?></span></td>
                                 <td>
                                     <?php
@@ -150,7 +150,7 @@ $base = BASE_URL ?? '';
                 <div class="col-lg-3 col-md-6 mb-3">
                     <div class="card border h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title"><?= htmlspecialchars($plan['name']) ?></h5>
+                            <h5 class="card-title"><?= htmlspecialchars($plan['name'] ?? '') ?></h5>
                             <h3 class="text-primary">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h3>
                             <hr>
                             <ul class="list-unstyled small text-start">

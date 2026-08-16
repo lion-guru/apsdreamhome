@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $calculations = $calculations ?? [];
 $properties = $properties ?? [];
 ?>
@@ -17,19 +17,19 @@ $properties = $properties ?? [];
                     <form method="POST" action="<?= BASE_URL ?>/admin/reports/roi-calculator">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
-                            <label class="form-label">Property Price (₹)</label>
+                            <label class="form-label">Property Price (?)</label>
                             <input type="number" name="property_price" class="form-control" 
                                    value="<?= htmlspecialchars($_POST['property_price'] ?? '5000000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Down Payment (₹)</label>
+                            <label class="form-label">Down Payment (?)</label>
                             <input type="number" name="down_payment" class="form-control" 
                                    value="<?= htmlspecialchars($_POST['down_payment'] ?? '1000000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Loan Amount (₹)</label>
+                            <label class="form-label">Loan Amount (?)</label>
                             <input type="number" name="loan_amount" class="form-control" 
                                    value="<?= htmlspecialchars($_POST['loan_amount'] ?? '4000000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
@@ -48,7 +48,7 @@ $properties = $properties ?? [];
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Expected Monthly Rent (₹)</label>
+                            <label class="form-label">Expected Monthly Rent (?)</label>
                             <input type="number" name="expected_rent" class="form-control" 
                                    value="<?= htmlspecialchars($_POST['expected_rent'] ?? '25000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
@@ -60,7 +60,7 @@ $properties = $properties ?? [];
                                        value="<?= htmlspecialchars($_POST['annual_appreciation'] ?? '5', ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Annual Expenses (₹)</label>
+                                <label class="form-label">Annual Expenses (?)</label>
                                 <input type="number" name="annual_expenses" class="form-control" 
                                        value="<?= htmlspecialchars($_POST['annual_expenses'] ?? '50000', ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
@@ -82,7 +82,7 @@ $properties = $properties ?? [];
                     <select id="quickProperty" class="form-select" onchange="fillPropertyDetails()">
                         <option value="">-- Select a Property --</option>
                         <?php foreach ($properties as $property): ?>
-                        <option value="<?= $property['price'] ?>"><?= htmlspecialchars($property['title']) ?> - ₹<?= number_format($property['price']) ?></option>
+                        <option value="<?= $property['price'] ?>"><?= htmlspecialchars($property['title'] ?? '') ?> - ?<?= number_format($property['price']) ?></option>
                         <?php endforeach; ?>
                     </select>
                     <small class="text-muted">Auto-fills property price</small>
@@ -105,7 +105,7 @@ $properties = $properties ?? [];
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Monthly EMI</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹<?= number_format($calculations['emi'], 2) ?></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">?<?= number_format($calculations['emi'], 2) ?></div>
                         </div>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ $properties = $properties ?? [];
                     <div class="card border-left-danger shadow h-100 py-2">
                         <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Future Value</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹<?= number_format($calculations['future_property_value'], 0) ?></div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">?<?= number_format($calculations['future_property_value'], 0) ?></div>
                         </div>
                     </div>
                 </div>
@@ -165,7 +165,7 @@ $properties = $properties ?? [];
                             <tbody>
                                 <tr>
                                     <td width="50%"><strong>Annual EMI Payment</strong></td>
-                                    <td>₹<?= number_format($calculations['annual_emi'], 2) ?></td>
+                                    <td>?<?= number_format($calculations['annual_emi'], 2) ?></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Gross Rental Yield</strong></td>
@@ -173,15 +173,15 @@ $properties = $properties ?? [];
                                 </tr>
                                 <tr>
                                     <td><strong>Capital Appreciation</strong></td>
-                                    <td>₹<?= number_format($calculations['capital_appreciation'], 2) ?></td>
+                                    <td>?<?= number_format($calculations['capital_appreciation'], 2) ?></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Total Return</strong></td>
-                                    <td>₹<?= number_format($calculations['total_return'], 2) ?></td>
+                                    <td>?<?= number_format($calculations['total_return'], 2) ?></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Total Investment</strong></td>
-                                    <td>₹<?= number_format($calculations['inputs']['down_payment'] + ($calculations['annual_emi'] * $calculations['inputs']['loan_tenure']), 2) ?></td>
+                                    <td>?<?= number_format($calculations['inputs']['down_payment'] + ($calculations['annual_emi'] * $calculations['inputs']['loan_tenure']), 2) ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -212,14 +212,14 @@ $properties = $properties ?? [];
                                 <?php foreach ($calculations['cash_flow'] as $year): ?>
                                 <tr>
                                     <td><?= $year['year'] ?></td>
-                                    <td>₹<?= number_format($year['rental_income'], 0) ?></td>
-                                    <td>₹<?= number_format($year['emi_paid'], 0) ?></td>
-                                    <td>₹<?= number_format($year['expenses'], 0) ?></td>
+                                    <td>?<?= number_format($year['rental_income'], 0) ?></td>
+                                    <td>?<?= number_format($year['emi_paid'], 0) ?></td>
+                                    <td>?<?= number_format($year['expenses'], 0) ?></td>
                                     <td class="<?= $year['net_cash_flow'] >= 0 ? 'text-success' : 'text-danger' ?>">
-                                        ₹<?= number_format($year['net_cash_flow'], 0) ?>
+                                        ?<?= number_format($year['net_cash_flow'], 0) ?>
                                     </td>
-                                    <td>₹<?= number_format($year['property_value'], 0) ?></td>
-                                    <td>₹<?= number_format($year['equity'], 0) ?></td>
+                                    <td>?<?= number_format($year['property_value'], 0) ?></td>
+                                    <td>?<?= number_format($year['equity'], 0) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>

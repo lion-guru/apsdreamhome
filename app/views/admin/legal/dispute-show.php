@@ -57,13 +57,13 @@ $dispute = $dispute ?? [];
                     <?php if (!empty($dispute['description'])): ?>
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Description</div>
-                        <div class="col-sm-8"><?php echo nl2br(htmlspecialchars($dispute['description'])); ?></div>
+                        <div class="col-sm-8"><?php echo nl2br(htmlspecialchars($dispute['description'] ?? '')); ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($dispute['notes'])): ?>
                     <div class="row">
                         <div class="col-sm-4 text-muted">Notes</div>
-                        <div class="col-sm-8"><?php echo nl2br(htmlspecialchars($dispute['notes'])); ?></div>
+                        <div class="col-sm-8"><?php echo nl2br(htmlspecialchars($dispute['notes'] ?? '')); ?></div>
                     </div>
                     <?php endif; ?>
                 </div>

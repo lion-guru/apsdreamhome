@@ -34,7 +34,7 @@ $testLabels = [
                 <i class="fas fa-file-pdf me-1"></i>Export Report
             </a>
             <form method="POST" action="<?= $base ?>/admin/security-test/run" class="d-inline">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
                 <button type="submit" class="btn btn-primary btn-sm">
                     <i class="fas fa-play me-1"></i>Run Tests Again
                 </button>
@@ -93,7 +93,7 @@ $testLabels = [
                 <div class="card-body py-5">
                     <h6 class="text-muted text-uppercase small mb-3">Last Run</h6>
                     <?php if ($lastRun): ?>
-                        <p class="fw-semibold mb-1"><i class="fas fa-clock me-1"></i><?= htmlspecialchars($lastRun) ?></p>
+                        <p class="fw-semibold mb-1"><i class="fas fa-clock me-1"></i><?= htmlspecialchars($lastRun ?? '') ?></p>
                     <?php else: ?>
                         <p class="text-muted mb-1">No tests run yet</p>
                     <?php endif; ?>
@@ -123,16 +123,16 @@ $testLabels = [
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div class="d-flex align-items-center">
                             <i class="<?= $meta['icon'] ?> text-<?= $statusCls ?> me-2 fs-5"></i>
-                            <h6 class="fw-bold mb-0"><?= htmlspecialchars($meta['label']) ?></h6>
+                            <h6 class="fw-bold mb-0"><?= htmlspecialchars($meta['label'] ?? '') ?></h6>
                         </div>
                         <span class="badge bg-<?= $statusCls ?>"><?= strtoupper($result['status']) ?></span>
                     </div>
                     <div class="progress mb-2" class="style-51910">
                         <div class="progress-bar bg-<?= $statusCls ?>" class="style-52052"></div>
                     </div>
-                    <small class="text-muted d-block mb-1"><?= htmlspecialchars($result['details']) ?></small>
+                    <small class="text-muted d-block mb-1"><?= htmlspecialchars($result['details'] ?? '') ?></small>
                     <?php if (!empty($result['recommendation'])): ?>
-                        <small class="text-<?= $statusCls ?> d-block"><i class="fas fa-lightbulb me-1"></i><?= htmlspecialchars($result['recommendation']) ?></small>
+                        <small class="text-<?= $statusCls ?> d-block"><i class="fas fa-lightbulb me-1"></i><?= htmlspecialchars($result['recommendation'] ?? '') ?></small>
                     <?php endif; ?>
                 </div>
             </div>
@@ -146,7 +146,7 @@ $testLabels = [
             <h5>No Test Results Yet</h5>
             <p class="text-muted mb-3">Run the security test suite to validate your application's security posture.</p>
             <form method="POST" action="<?= $base ?>/admin/security-test/run">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-play me-1"></i>Run Security Tests
                 </button>
@@ -167,8 +167,8 @@ $testLabels = [
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <span class="badge bg-<?= $priorityCls ?> mb-1"><?= strtoupper($rec['priority']) ?></span>
-                            <h6 class="fw-bold mb-1"><?= htmlspecialchars($rec['test']) ?></h6>
-                            <p class="text-muted small mb-0"><?= htmlspecialchars($rec['recommendation']) ?></p>
+                            <h6 class="fw-bold mb-1"><?= htmlspecialchars($rec['test'] ?? '') ?></h6>
+                            <p class="text-muted small mb-0"><?= htmlspecialchars($rec['recommendation'] ?? '') ?></p>
                         </div>
                         <span class="badge bg-secondary"><?= $rec['score'] ?>/100</span>
                     </div>

@@ -62,7 +62,7 @@ $active_page = 'possession';
                                     <button type="submit" class="btn btn-sm <?= $item['is_completed'] ? 'btn-success' : 'btn-outline-secondary' ?>" class="style-46378">
                                         <i class="fas <?= $item['is_completed'] ? 'fa-check' : 'fa-times' ?>"></i>
                                     </button>
-                                    <span class="item-name <?= $item['is_completed'] ? 'completed-text' : '' ?>"><?= htmlspecialchars($item['item_name']) ?></span>
+                                    <span class="item-name <?= $item['is_completed'] ? 'completed-text' : '' ?>"><?= htmlspecialchars($item['item_name'] ?? '') ?></span>
                                     <?php if ($item['is_completed'] && !empty($item['completed_at'])): ?>
                                         <small class="text-muted"><?= date('d M Y h:i A', strtotime($item['completed_at'])) ?></small>
                                     <?php endif; ?>
@@ -119,9 +119,9 @@ $active_page = 'possession';
                             <li class="mb-1">
                                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add" class="style-35851">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                    <input type="hidden" name="item_name" value="<?= htmlspecialchars($s) ?>">
+                                    <input type="hidden" name="item_name" value="<?= htmlspecialchars($s ?? '') ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-plus"></i></button>
-                                    <small><?= htmlspecialchars($s) ?></small>
+                                    <small><?= htmlspecialchars($s ?? '') ?></small>
                                 </form>
                             </li>
                         <?php endif; ?>

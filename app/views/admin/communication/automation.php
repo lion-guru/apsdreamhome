@@ -237,7 +237,7 @@ $recent_logs = $recent_logs ?? [];
                                                     <?= ucfirst($log['direction']) ?>
                                                 </span>
                                             </td>
-                                            <td><?= htmlspecialchars($log['contact_identifier']) ?></td>
+                                            <td><?= htmlspecialchars($log['contact_identifier'] ?? '') ?></td>
                                             <td>
                                                 <small class="text-muted"><?= htmlspecialchars(mb_strimwidth($log['message_text'], 0, 60, '...')) ?></small>
                                             </td>

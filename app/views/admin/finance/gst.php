@@ -32,7 +32,7 @@
                 </thead>
                 <tbody>
                 <?php if (empty($entries)): ?>
-                    <tr><td colspan="9" class="text-center text-muted py-4"><?= __('gst_no_entries') ?> <?= htmlspecialchars($fy) ?></td></tr>
+                    <tr><td colspan="9" class="text-center text-muted py-4"><?= __('gst_no_entries') ?> <?= htmlspecialchars($fy ?? '') ?></td></tr>
                 <?php else: foreach ($entries as $g): ?>
                     <tr>
                         <td><?= htmlspecialchars($g['transaction_date'] ?? '-') ?></td>
@@ -55,7 +55,7 @@
 <div class="modal fade" id="newGstModal" tabindex="-1"><div class="modal-dialog modal-lg">
 <form method="post" action="<?= BASE_URL ?>/admin/finance/gst-store" class="modal-content">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-    <input type="hidden" name="financial_year" value="<?= htmlspecialchars($fy) ?>">
+    <input type="hidden" name="financial_year" value="<?= htmlspecialchars($fy ?? '') ?>">
     <div class="modal-header"><h5 class="modal-title"><?= __('gst_record_transaction') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
         <div class="row g-3">

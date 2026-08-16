@@ -42,15 +42,15 @@ $verified = $_GET['verified'] ?? '';
 
             <?php if (!empty($errors)): ?>
                 <div class="alert alert-danger">
-                    <ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul>
+                    <ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e ?? '') ?></li><?php endforeach; ?></ul>
                 </div>
             <?php endif; ?>
 
             <?php if ($resent): ?>
-                <div class="alert alert-info"><i class="fas fa-paper-plane me-1"></i> OTP resent to your <?= htmlspecialchars($resent) ?>.</div>
+                <div class="alert alert-info"><i class="fas fa-paper-plane me-1"></i> OTP resent to your <?= htmlspecialchars($resent ?? '') ?>.</div>
             <?php endif; ?>
             <?php if ($verified): ?>
-                <div class="alert alert-success"><i class="fas fa-check-circle me-1"></i> <?= ucfirst(htmlspecialchars($verified)) ?> verified successfully!</div>
+                <div class="alert alert-success"><i class="fas fa-check-circle me-1"></i> <?= ucfirst(htmlspecialchars($verified ?? '')) ?> verified successfully!</div>
             <?php endif; ?>
 
             <form method="POST" action="<?= BASE_URL ?>/register/step4" id="final-form">

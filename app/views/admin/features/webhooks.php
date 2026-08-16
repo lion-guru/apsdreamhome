@@ -82,11 +82,11 @@ ob_start();
               <tr><td colspan="6" class="text-center py-4 text-muted">No webhook endpoints registered</td></tr>
             <?php else: foreach ($endpoints as $ep): ?>
               <tr>
-                <td><strong><?= htmlspecialchars($ep['name']) ?></strong></td>
+                <td><strong><?= htmlspecialchars($ep['name'] ?? '') ?></strong></td>
                 <td><code class="small"><?= htmlspecialchars(substr($ep['url'], 0, 60)) ?><?= strlen($ep['url']) > 60 ? '...' : '' ?></code></td>
                 <td>
                   <?php foreach (array_slice(explode(',', $ep['events'] ?? ''), 0, 3) as $ev): ?>
-                    <span class="badge bg-secondary me-1"><?= htmlspecialchars($ev) ?></span>
+                    <span class="badge bg-secondary me-1"><?= htmlspecialchars($ev ?? '') ?></span>
                   <?php endforeach; ?>
                 </td>
                 <td>
@@ -94,7 +94,7 @@ ob_start();
                     <?= ($ep['is_active'] ?? 0) ? 'Active' : 'Inactive' ?>
                   </span>
                 </td>
-                <td><small><?= htmlspecialchars($ep['created_at']) ?></small></td>
+                <td><small><?= htmlspecialchars($ep['created_at'] ?? '') ?></small></td>
                 <td>
                   <form method="post" action="<?= BASE_URL ?>/admin/webhooks/toggle/<?= $ep['id'] ?>" class="d-inline">
                                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -142,11 +142,11 @@ ob_start();
               <tr>
                 <td><code>#<?= $d['id'] ?></code></td>
                 <td><?= htmlspecialchars($d['endpoint_name'] ?? '') ?></td>
-                <td><code><?= htmlspecialchars($d['event_type']) ?></code></td>
+                <td><code><?= htmlspecialchars($d['event_type'] ?? '') ?></code></td>
                 <td><?= $d['attempt'] ?? 1 ?></td>
                 <td>
                   <span class="badge bg-<?= $d['status'] === 'success' ? 'success' : ($d['status'] === 'pending' ? 'secondary' : ($d['status'] === 'retrying' ? 'warning' : 'danger')) ?>">
-                    <?= htmlspecialchars($d['status']) ?>
+                    <?= htmlspecialchars($d['status'] ?? '') ?>
                   </span>
                 </td>
                 <td>
@@ -157,7 +157,7 @@ ob_start();
                     <small class="text-danger d-block"><?= htmlspecialchars(substr($d['error_message'], 0, 60)) ?></small>
                   <?php endif; ?>
                 </td>
-                <td><small><?= htmlspecialchars($d['created_at']) ?></small></td>
+                <td><small><?= htmlspecialchars($d['created_at'] ?? '') ?></small></td>
               </tr>
             <?php endforeach; endif; ?>
           </tbody>

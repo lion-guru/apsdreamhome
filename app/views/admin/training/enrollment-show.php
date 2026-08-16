@@ -102,7 +102,7 @@ $e = $enrollment ?? [];
                         <tr><th>Certificate URL</th>
                             <td>
                                 <?php if (!empty($e['certificate_url'])): ?>
-                                <a href="<?php echo htmlspecialchars($e['certificate_url']); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <a href="<?php echo htmlspecialchars($e['certificate_url'] ?? ''); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-external-link-alt me-1"></i>View Certificate
                                 </a>
                                 <?php else: ?>

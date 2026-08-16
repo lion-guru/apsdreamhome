@@ -20,13 +20,13 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">State Name *</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($state['name']); ?>" required>
+                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($state['name'] ?? ''); ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="code" class="form-label">State Code *</label>
-                                    <input type="text" class="form-control" id="code" name="code" value="<?php echo htmlspecialchars($state['code']); ?>" maxlength="10" required class="style-73536">
+                                    <input type="text" class="form-control" id="code" name="code" value="<?php echo htmlspecialchars($state['code'] ?? ''); ?>" maxlength="10" required class="style-73536">
                                     <small class="form-text text-muted">e.g., UP, MP, RJ</small>
                                 </div>
                             </div>

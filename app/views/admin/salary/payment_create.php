@@ -22,7 +22,7 @@
                                 <select name="employee_id" id="empSelect" class="form-select select2-init" required>
                                     <option value="">Search and select employee...</option>
                                     <?php foreach ($users ?? [] as $e): ?>
-                                    <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name']) ?></option>
+                                    <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

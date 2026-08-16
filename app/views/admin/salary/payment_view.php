@@ -34,7 +34,7 @@
                         <div class="col-md-4"><strong>Paid By:</strong> Admin #<?= $payment['paid_by'] ?? 0 ?></div>
                     </div>
                     <?php if ($payment['notes'] ?? ''): ?>
-                    <div class="mt-3"><strong>Notes:</strong><br><?= nl2br(htmlspecialchars($payment['notes'])) ?></div>
+                    <div class="mt-3"><strong>Notes:</strong><br><?= nl2br(htmlspecialchars($payment['notes'] ?? '')) ?></div>
                     <?php endif; ?>
                 </div>
             </div>

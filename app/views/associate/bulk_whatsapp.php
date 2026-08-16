@@ -35,7 +35,7 @@ $message = $message ?? '';
                             <strong><?= __('assoc_bw_selected', ['count' => count($leads)], '%count% lead(s) selected') ?></strong>
                             <div class="d-flex flex-wrap gap-1 mt-1">
                                 <?php foreach ($leads as $l): ?>
-                                    <span class="badge bg-light text-dark"><?= htmlspecialchars($l['name']) ?></span>
+                                    <span class="badge bg-light text-dark"><?= htmlspecialchars($l['name'] ?? '') ?></span>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -86,7 +86,7 @@ $message = $message ?? '';
                     <div class="d-grid gap-2">
                         <?php foreach ($whatsappLinks as $link): ?>
                         <a href="<?= $link['url'] ?>" target="_blank" class="btn btn-outline-success d-flex justify-content-between align-items-center">
-                            <span><i class="fab fa-whatsapp me-2"></i><?= htmlspecialchars($link['name']) ?></span>
+                            <span><i class="fab fa-whatsapp me-2"></i><?= htmlspecialchars($link['name'] ?? '') ?></span>
                             <span class="badge bg-success"><i class="fas fa-external-link-alt"></i></span>
                         </a>
                         <?php endforeach; ?>

@@ -162,7 +162,7 @@
                         <tr>
                             <td>
                                 <i class="fas fa-file-<?= $file['file_type'] === 'image' ? 'image text-success' : ($file['file_type'] === 'document' ? 'text text-primary' : 'alt text-secondary') ?> mr-2"></i>
-                                <strong><?= htmlspecialchars($file['original_name']) ?></strong>
+                                <strong><?= htmlspecialchars($file['original_name'] ?? '') ?></strong>
                                 <?php if ($file['is_versioned']): ?>
                                     <span class="badge bg-info">v<?= $file['version_number'] ?></span>
                                 <?php endif; ?>

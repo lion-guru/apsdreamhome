@@ -23,7 +23,7 @@
                     <p><?= nl2br(htmlspecialchars($job['requirements'] ?? 'N/A')) ?></p>
                     <?php if (!empty($job['responsibilities'])): ?>
                     <h6>Responsibilities</h6>
-                    <p><?= nl2br(htmlspecialchars($job['responsibilities'])) ?></p>
+                    <p><?= nl2br(htmlspecialchars($job['responsibilities'] ?? '')) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Apply Now</h6></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($job['application_url'])): ?>
-                    <a href="<?= htmlspecialchars($job['application_url']) ?>" target="_blank" class="btn btn-primary w-100"><i class="fas fa-external-link-alt me-1"></i>Apply Externally</a>
+                    <a href="<?= htmlspecialchars($job['application_url'] ?? '') ?>" target="_blank" class="btn btn-primary w-100"><i class="fas fa-external-link-alt me-1"></i>Apply Externally</a>
                     <?php else: ?>
                     <form method="post" action="<?= BASE_URL ?>careers/apply/<?= $job['id'] ?? 0 ?>" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

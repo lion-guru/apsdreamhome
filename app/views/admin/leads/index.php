@@ -172,15 +172,15 @@ $base = BASE_URL ?? '';
                                         <?= htmlspecialchars($lead['name'] ?? 'N/A') ?>
                                     </a>
                                     <?php if (!empty($lead['company'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($lead['company']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($lead['company'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if (!empty($lead['phone'])): ?>
-                                        <i class="fas fa-phone fa-sm text-muted"></i> <?= htmlspecialchars($lead['phone']) ?><br>
+                                        <i class="fas fa-phone fa-sm text-muted"></i> <?= htmlspecialchars($lead['phone'] ?? '') ?><br>
                                     <?php endif; ?>
                                     <?php if (!empty($lead['email'])): ?>
-                                        <i class="fas fa-envelope fa-sm text-muted"></i> <?= htmlspecialchars($lead['email']) ?>
+                                        <i class="fas fa-envelope fa-sm text-muted"></i> <?= htmlspecialchars($lead['email'] ?? '') ?>
                                     <?php endif; ?>
                                 </td>
                                 <td><span class="badge bg-light text-dark"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $lead['source'] ?? 'Direct'))) ?></span></td>
@@ -205,7 +205,7 @@ $base = BASE_URL ?? '';
                                 </td>
                                 <td>
                                     <?php if (!empty($lead['assigned_name'])): ?>
-                                        <small><?= htmlspecialchars($lead['assigned_name']) ?></small>
+                                        <small><?= htmlspecialchars($lead['assigned_name'] ?? '') ?></small>
                                     <?php else: ?>
                                         <small class="text-muted">Unassigned</small>
                                     <?php endif; ?>

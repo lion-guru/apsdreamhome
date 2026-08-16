@@ -13,7 +13,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-medal me-2"></i>MLM Ranks & Tiers</h4>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to MLM</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to MLM</a>
     </div>
 
     <div class="row g-3 mb-4">
@@ -51,7 +51,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
                     <?php $highestRank = '-'; $maxOrder = 0; foreach ($benefits as $b) { if (($rankCounts[strtolower($b['rank_name'])] ?? 0) > 0 && $b['rank_order'] > $maxOrder) { $maxOrder = $b['rank_order']; $highestRank = ucfirst($b['rank_name']); } } ?>
-                    <div class="style-95131"><i class="fas fa-crown me-1"></i><?= htmlspecialchars($highestRank) ?></div>
+                    <div class="style-95131"><i class="fas fa-crown me-1"></i><?= htmlspecialchars($highestRank ?? '') ?></div>
                     <div class="text-muted small">Highest Rank Achieved</div>
                 </div>
             </div>
@@ -93,7 +93,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                                     <tr>
                                         <td>
                                             <span class="badge" class="style-22655">
-                                                <i class="fas <?= htmlspecialchars($icon) ?> me-1"></i><?= htmlspecialchars(ucfirst($name)) ?>
+                                                <i class="fas <?= htmlspecialchars($icon ?? '') ?> me-1"></i><?= htmlspecialchars(ucfirst($name ?? '')) ?>
                                             </span>
                                         </td>
                                         <td class="text-center">
@@ -154,7 +154,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div>
                                 <span class="badge" class="style-32165">
-                                    <i class="fas <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?> me-1"></i><?= htmlspecialchars(ucfirst($name)) ?>
+                                    <i class="fas <?= htmlspecialchars($b['badge_icon'] ?? 'fa-user') ?> me-1"></i><?= htmlspecialchars(ucfirst($name ?? '')) ?>
                                 </span>
                             </div>
                             <div class="d-flex align-items-center" class="style-12456">
@@ -181,10 +181,10 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                         $perks = json_decode($b['perks'] ?? '{}', true) ?: [];
                     ?>
                     <div class="border-bottom px-3 py-2" class="style-80688">
-                        <div class="fw-bold small"><?= htmlspecialchars(ucfirst($name)) ?></div>
+                        <div class="fw-bold small"><?= htmlspecialchars(ucfirst($name ?? '')) ?></div>
                         <?php if (!empty($perks)): ?>
                             <?php foreach ($perks as $k => $v): ?>
-                                <div class="text-muted" class="style-436"><i class="fas fa-check text-success me-1"></i><?= htmlspecialchars($v) ?></div>
+                                <div class="text-muted" class="style-436"><i class="fas fa-check text-success me-1"></i><?= htmlspecialchars($v ?? '') ?></div>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="text-muted small">No perks defined</div>

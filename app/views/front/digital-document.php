@@ -8,7 +8,7 @@ $base = BASE_URL ?? '/apsdreamhome';
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>">Booking <?= htmlspecialchars($booking['booking_number']) ?></a></li>
+                    <li class="breadcrumb-item"><a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>">Booking <?= htmlspecialchars($booking['booking_number'] ?? '') ?></a></li>
                     <li class="breadcrumb-item active">Document</li>
                 </ol>
             </nav>

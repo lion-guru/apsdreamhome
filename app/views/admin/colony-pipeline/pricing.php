@@ -152,7 +152,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                     (<?= round(((float)($pa['current_price_per_sqft'] ?? 0) - (float)($pa['requested_price_per_sqft'] ?? 0)) / max((float)($pa['current_price_per_sqft'] ?? 1), 1) * 100, 1) ?>% <?= __('cp_discount') ?>)
                   </span>
                   <?php if (!empty($pa['reason'])): ?>
-                    <br><em class="small text-muted">"<?= htmlspecialchars($pa['reason']) ?>"</em>
+                    <br><em class="small text-muted">"<?= htmlspecialchars($pa['reason'] ?? '') ?>"</em>
                   <?php endif; ?>
                   <br><span class="small text-muted"><?= __('cp_by') ?>: <?= htmlspecialchars($pa['requested_by_name'] ?? '') ?> — <?= htmlspecialchars($pa['requested_at'] ?? '') ?></span>
                 </div>

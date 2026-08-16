@@ -57,10 +57,10 @@
                         <tbody>
                             <?php foreach ($invoices as $inv): ?>
                                 <tr>
-                                    <td><strong><?= htmlspecialchars($inv['invoice_number']) ?></strong></td>
-                                    <td><?= htmlspecialchars($inv['invoice_date']) ?></td>
-                                    <td><?= htmlspecialchars($inv['due_date']) ?></td>
-                                    <td><?= htmlspecialchars($inv['client_name']) ?></td>
+                                    <td><strong><?= htmlspecialchars($inv['invoice_number'] ?? '') ?></strong></td>
+                                    <td><?= htmlspecialchars($inv['invoice_date'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($inv['due_date'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($inv['client_name'] ?? '') ?></td>
                                     <td class="text-end">₹<?= number_format($inv['total_amount'] ?? 0, 2) ?></td>
                                     <td>
                                         <?php

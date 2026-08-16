@@ -25,7 +25,7 @@
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th class="style-17160">Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
-                                <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
+                                <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
                                 <tr><th>Status</th><td>
                                     <span class="badge bg-<?= ($plot['status'] ?? '') === 'available' ? 'success' : (($plot['status'] ?? '') === 'booked' ? 'warning' : (($plot['status'] ?? '') === 'sold' ? 'danger' : 'secondary')) ?> fs-6">
@@ -48,7 +48,7 @@
                                 <tr><th class="style-17160">Dimensions</th>
                                     <td>
                                         <?php if (!empty($plot['dimension_label'])): ?>
-                                            <span class="badge bg-primary fs-6 px-3 py-2"><?= htmlspecialchars($plot['dimension_label']) ?></span>
+                                            <span class="badge bg-primary fs-6 px-3 py-2"><?= htmlspecialchars($plot['dimension_label'] ?? '') ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">Not set</span>
                                         <?php endif; ?>
@@ -96,7 +96,7 @@
                                 <?= !empty($plot['negotiated_price']) ? '₹' . number_format(intval($plot['negotiated_price'])) : '—' ?>
                             </div>
                             <?php if (!empty($plot['price_override_reason'])): ?>
-                                <div class="text-muted small mt-1"><em><?= htmlspecialchars($plot['price_override_reason']) ?></em></div>
+                                <div class="text-muted small mt-1"><em><?= htmlspecialchars($plot['price_override_reason'] ?? '') ?></em></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                         <?php endif; ?>
                     </div>
                     <?php if (!empty($plot['description'])): ?>
-                        <p><?= nl2br(htmlspecialchars($plot['description'])) ?></p>
+                        <p><?= nl2br(htmlspecialchars($plot['description'] ?? '')) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -181,8 +181,8 @@
                             <?php foreach ($history as $h): ?>
                             <tr>
                                 <td><?= date('d M Y H:i', strtotime($h['created_at'])) ?></td>
-                                <td><?= htmlspecialchars($h['old_status']) ?></td>
-                                <td><?= htmlspecialchars($h['new_status']) ?></td>
+                                <td><?= htmlspecialchars($h['old_status'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($h['new_status'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($h['changed_by_name'] ?? 'N/A') ?></td>
                                 <td><?= htmlspecialchars($h['change_reason'] ?? '') ?></td>
                             </tr>

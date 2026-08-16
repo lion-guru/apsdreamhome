@@ -90,7 +90,7 @@ $page_description = 'Manage course modules';
                             <option value="">Select Course</option>
                             <?php if (!empty($courses)): ?>
                             <?php foreach ($courses as $c): ?>
-                            <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['course_title']); ?></option>
+                            <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['course_title'] ?? ''); ?></option>
                             <?php endforeach; ?>
                             <?php endif; ?>
                         </select>

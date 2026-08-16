@@ -38,7 +38,7 @@ if (!isset($GLOBALS['_html_doc_started'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?></title>
+    <title><?= htmlspecialchars($page_title ?? '') ?></title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -54,7 +54,7 @@ if (!isset($GLOBALS['_html_doc_started'])) {
 
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->
-    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id ?? '') ?>"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.dataLayer = window.dataLayer || [];
 
@@ -62,7 +62,7 @@ if (!isset($GLOBALS['_html_doc_started'])) {
         dataLayer.push(arguments);
     }
     gtag('js', new Date());
-    gtag('config', '<?= htmlspecialchars($ga4_id) ?>', {
+    gtag('config', '<?= htmlspecialchars($ga4_id ?? '') ?>', {
         'anonymize_ip': true
     });
     </script>
@@ -103,7 +103,7 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     $GLOBALS['_ga4_loader_emitted_secondary'] = true;
     ?>
     <!-- Google Analytics 4 -->
-    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id ?? '') ?>"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.dataLayer = window.dataLayer || [];
 
@@ -111,7 +111,7 @@ if (!isset($GLOBALS['_html_doc_started'])) {
         dataLayer.push(arguments);
     }
     gtag('js', new Date());
-    gtag('config', '<?= htmlspecialchars($ga4_id) ?>', {
+    gtag('config', '<?= htmlspecialchars($ga4_id ?? '') ?>', {
         'anonymize_ip': true
     });
     </script>

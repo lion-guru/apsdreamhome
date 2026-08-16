@@ -9,7 +9,7 @@ $total = $total ?? 0;
 function propStatusBadge($status) {
     $map = ['approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger', 'sold' => 'info', 'active' => 'success', 'inactive' => 'secondary', 'verified' => 'success'];
     $cls = $map[strtolower($status)] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status)) . '</span>';
+    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status ?? '')) . '</span>';
 }
 function propTypeIcon($type) {
     $map = ['sell' => 'tag', 'rent' => 'key', 'resale' => 'exchange-alt', 'buy' => 'shopping-cart'];
@@ -83,7 +83,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Search properties..." value="<?= htmlspecialchars($search) ?>">
+                        <input type="text" name="search" class="form-control" placeholder="Search properties..." value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -137,7 +137,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                                 <span class="badge bg-light text-dark"><i class="fas fa-<?= propTypeIcon($p['listing_type'] ?? '') ?> me-1"></i><?= ucfirst(htmlspecialchars($p['listing_type'] ?? $p['type'] ?? '')) ?></span>
                             </div>
                             <?php if (!empty($p['phone'])): ?>
-                                <div class="text-muted small mt-2"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($p['phone']) ?></div>
+                                <div class="text-muted small mt-2"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($p['phone'] ?? '') ?></div>
                             <?php endif; ?>
                             <?php if (!empty($p['created_at'])): ?>
                                 <div class="text-muted small mt-1"><i class="fas fa-clock me-1"></i><?= date('d M Y', strtotime($p['created_at'])) ?></div>

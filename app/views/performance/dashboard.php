@@ -8,7 +8,7 @@ $metrics = $metrics ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-tachometer-alt me-2 text-primary"></i><?= htmlspecialchars($pageTitle) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-tachometer-alt me-2 text-primary"></i><?= htmlspecialchars($pageTitle ?? '') ?></h2>
         <button onclick="location.reload()" class="btn btn-outline-primary"><i class="fas fa-sync me-1"></i> Refresh</button>
     </div>
 

@@ -1,7 +1,7 @@
 <?php $pageTitle = $page_title ?? 'Smart Home Dashboard'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-home me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-home me-2"></i><?= htmlspecialchars($pageTitle ?? '') ?></h4>
         <a href="<?= ($base ?? BASE_URL) ?>iot/devices" class="btn btn-outline-primary btn-sm"><i class="fas fa-cog me-1"></i>Manage Devices</a>
     </div>
     <div class="row g-3 mb-4">

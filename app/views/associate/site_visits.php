@@ -112,11 +112,11 @@ $statusMap = [
                         <i class="fas <?= $sv['icon'] ?> text-<?= $sv['color'] ?>"></i>
                     </div>
                     <div>
-                        <div class="visitor-name"><?= htmlspecialchars($v['visitor_name']) ?></div>
+                        <div class="visitor-name"><?= htmlspecialchars($v['visitor_name'] ?? '') ?></div>
                         <div class="visit-meta">
-                            <i class="fas fa-phone me-1"></i><?= htmlspecialchars($v['visitor_phone']) ?>
+                            <i class="fas fa-phone me-1"></i><?= htmlspecialchars($v['visitor_phone'] ?? '') ?>
                             <?php if (!empty($v['lead_name'])): ?>
-                                &nbsp;&bull;&nbsp;<a href="<?= BASE_URL ?>/associate/leads/<?= $v['lead_id'] ?>" class="text-decoration-none"><i class="fas fa-user me-1"></i><?= htmlspecialchars($v['lead_name']) ?></a>
+                                &nbsp;&bull;&nbsp;<a href="<?= BASE_URL ?>/associate/leads/<?= $v['lead_id'] ?>" class="text-decoration-none"><i class="fas fa-user me-1"></i><?= htmlspecialchars($v['lead_name'] ?? '') ?></a>
                             <?php endif; ?>
                         </div>
                         <div class="visit-meta mt-1">
@@ -127,7 +127,7 @@ $statusMap = [
                             <?php endif; ?>
                         </div>
                         <?php if (!empty($v['notes'])): ?>
-                            <div class="mt-1" class="style-69622"><?= htmlspecialchars(mb_substr($v['notes'], 0, 120)) ?></div>
+                            <div class="mt-1" class="style-69622"><?= htmlspecialchars(mb_substr($v['notes'] ?? '', 0, 120)) ?></div>
                         <?php endif; ?>
                         <?php if ($isCompleted && !empty($v['rating'])): ?>
                             <div class="rating-stars mt-1">
@@ -161,8 +161,8 @@ $statusMap = [
                         </form>
                     <?php endif; ?>
                     <?php if (!empty($v['visitor_phone'])): ?>
-                        <a href="tel:<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-outline-primary btn-sm" title="<?= __('assoc_sv_call', [], 'Call') ?>"><i class="fas fa-phone"></i></a>
-                        <a href="https://wa.me/91<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-outline-success btn-sm" target="_blank" title="<?= __('assoc_sv_whatsapp', [], 'WhatsApp') ?>" class="style-2555"><i class="fab fa-whatsapp"></i></a>
+                        <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-outline-primary btn-sm" title="<?= __('assoc_sv_call', [], 'Call') ?>"><i class="fas fa-phone"></i></a>
+                        <a href="https://wa.me/91<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-outline-success btn-sm" target="_blank" title="<?= __('assoc_sv_whatsapp', [], 'WhatsApp') ?>" class="style-2555"><i class="fab fa-whatsapp"></i></a>
                     <?php endif; ?>
                 </div>
             </div>

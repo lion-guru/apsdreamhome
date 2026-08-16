@@ -8,7 +8,7 @@ $categories = $categories ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_title) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
             <i class="fas fa-plus me-1"></i> Add Category
         </button>

@@ -161,7 +161,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                                             <span><i class="fas fa-clock me-1"></i><?= date('h:i A', strtotime($a['created_at'] ?? '')) ?></span>
                                             <span><i class="fas fa-history me-1"></i><?= timeAgo($a['created_at'] ?? '') ?></span>
                                             <?php if (!empty($a['ip_address'])): ?>
-                                                <span><i class="fas fa-globe me-1"></i><?= htmlspecialchars($a['ip_address']) ?></span>
+                                                <span><i class="fas fa-globe me-1"></i><?= htmlspecialchars($a['ip_address'] ?? '') ?></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -190,7 +190,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                                         <i class="fas fa-<?= actIcon($type) ?> text-<?= actColor($type) ?>" class="style-64777"></i>
                                     </div>
                                     <div>
-                                        <div class="fw-semibold small text-dark"><?= ucfirst(htmlspecialchars($type)) ?></div>
+                                        <div class="fw-semibold small text-dark"><?= ucfirst(htmlspecialchars($type ?? '')) ?></div>
                                         <div class="text-muted" class="style-68658"><?= $count ?> activities</div>
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                 <div class="card-body d-flex flex-wrap gap-2">
                     <a href="/employee/activities" class="emp-act-type-btn <?= !$filter ? 'active' : '' ?>">All</a>
                     <?php foreach ($stats['types'] as $type => $count): ?>
-                        <a href="/employee/activities?type=<?= urlencode($type) ?>" class="emp-act-type-btn <?= $filter === $type ? 'active' : '' ?>"><?= ucfirst(htmlspecialchars($type)) ?></a>
+                        <a href="/employee/activities?type=<?= urlencode($type) ?>" class="emp-act-type-btn <?= $filter === $type ? 'active' : '' ?>"><?= ucfirst(htmlspecialchars($type ?? '')) ?></a>
                     <?php endforeach; ?>
                 </div>
             </div>

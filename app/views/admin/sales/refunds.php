@@ -51,7 +51,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     ?>
                         <tr>
                             <td>
-                                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($r['booking_id'] ?? 0) ?>">
+                                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($r['booking_id'] ?? 0) ?>">
                                     <?= htmlspecialchars((string)($r['booking_number'] ?? '')) ?>
                                 </a>
                             </td>
@@ -60,7 +60,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <td class="text-end">&#8377;<?= number_format((float)($r['total_paid'] ?? 0)) ?></td>
                             <td class="text-end">&#8377;<?= number_format((float)($r['cancellation_charge'] ?? 0)) ?></td>
                             <td class="text-end text-danger">&#8377;<?= number_format((float)($r['refund_amount'] ?? 0)) ?></td>
-                            <td><span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st) ?></span></td>
+                            <td><span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st ?? '') ?></span></td>
                             <td><?= htmlspecialchars((string)($r['created_at'] ?? '')) ?></td>
                         </tr>
                     <?php endforeach; endif; ?>

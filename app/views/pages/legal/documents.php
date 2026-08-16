@@ -36,8 +36,8 @@ $documents = [
                         <div class="mb-3">
                             <i class="fas fa-file-alt fa-3x text-primary"></i>
                         </div>
-                        <h5 class="fw-bold"><?= htmlspecialchars($doc['title']) ?></h5>
-                        <p class="text-muted small"><?= htmlspecialchars($doc['description']) ?></p>
+                        <h5 class="fw-bold"><?= htmlspecialchars($doc['title'] ?? '') ?></h5>
+                        <p class="text-muted small"><?= htmlspecialchars($doc['description'] ?? '') ?></p>
                         <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i><?php echo __('verified', [], 'Verified'); ?></span>
                     </div>
                 </div>

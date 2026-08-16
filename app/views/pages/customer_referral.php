@@ -18,7 +18,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         </div>
         <div class="col-md-4 text-md-end mt-3 mt-md-0">
             <div class="display-5 fw-bold text-white" class="style-96215">
-                <?= htmlspecialchars($referralCode) ?>
+                <?= htmlspecialchars($referralCode ?? '') ?>
             </div>
             <small class="text-white-50"><?= __('referral_your_code') ?></small>
         </div>
@@ -114,9 +114,9 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                 <div class="text-center p-4 mb-3" class="style-5014">
                     <small class="text-muted d-block mb-1"><?= __('referral_your_referral_code') ?></small>
                     <div class="display-6 fw-bold text-primary" class="style-32630" id="refCode">
-                        <?= htmlspecialchars($referralCode) ?>
+                        <?= htmlspecialchars($referralCode ?? '') ?>
                     </div>
-                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyToClipboard('<?= htmlspecialchars($referralCode) ?>', this)">
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyToClipboard('<?= htmlspecialchars($referralCode ?? '') ?>', this)">
                         <i class="fas fa-copy me-1"></i><?= __('referral_copy_code') ?>
                     </button>
                 </div>
@@ -241,7 +241,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                                     <td>
                                         <small class="text-muted">
                                             <?php if (!empty($r['phone'])): ?>
-                                                <i class="fas fa-phone me-1"></i><?= htmlspecialchars($r['phone']) ?>
+                                                <i class="fas fa-phone me-1"></i><?= htmlspecialchars($r['phone'] ?? '') ?>
                                             <?php else: ?>
                                                 <i class="fas fa-envelope me-1"></i><?= htmlspecialchars($r['email'] ?? '') ?>
                                             <?php endif; ?>
@@ -300,7 +300,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
 $shareStats = $share_stats ?? ['total' => 0, 'by_platform' => [], 'recent' => []];
 $leaderboard = $leaderboard ?? [];
 ?>
-                                        <span class="badge bg-<?= $badge ?>"><?= ucfirst(htmlspecialchars($st)) ?></span>
+                                        <span class="badge bg-<?= $badge ?>"><?= ucfirst(htmlspecialchars($st ?? '')) ?></span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -340,9 +340,9 @@ $leaderboard = $leaderboard ?? [];
                 <div class="d-flex justify-content-between align-items-center py-1" class="style-34922">
                     <div>
                         <i class="<?= $platformIcons[$rs['share_method']] ?? 'fas fa-share' ?> me-2 text-muted"></i>
-                        <span class="style-47175"><?= ucfirst(htmlspecialchars($rs['share_method'])) ?></span>
+                        <span class="style-47175"><?= ucfirst(htmlspecialchars($rs['share_method'] ?? '')) ?></span>
                         <?php if (!empty($rs['lead_name'])): ?>
-                            <small class="text-muted"> — <?= htmlspecialchars($rs['lead_name']) ?></small>
+                            <small class="text-muted"> — <?= htmlspecialchars($rs['lead_name'] ?? '') ?></small>
                         <?php endif; ?>
                     </div>
                     <small class="text-muted"><?= date('M d, g:i A', strtotime($rs['created_at'])) ?></small>
@@ -413,7 +413,7 @@ function copyToClipboard(text, btn) {
 }
 
 function trackShare(platform) {
-    var code = '<?= htmlspecialchars($referralCode) ?>';
+    var code = '<?= htmlspecialchars($referralCode ?? '') ?>';
     if (!code) return;
     try {
         var fd = new FormData();

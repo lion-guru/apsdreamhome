@@ -54,7 +54,7 @@
                         <select name="deposited_in_bank" class="form-select">
                             <option value="">— Pending —</option>
                             <?php foreach (($banks ?? []) as $b): ?>
-                                <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name']) ?></option>
+                                <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

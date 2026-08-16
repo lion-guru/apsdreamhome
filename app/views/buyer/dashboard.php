@@ -22,10 +22,10 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <h5 class="fw-bold mb-3"><i class="fas fa-home me-2 text-primary"></i>Buyer Dashboard</h5>
 
     <?php if ($success): ?>
-        <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <!-- Stats -->
@@ -103,7 +103,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <?php foreach ($matched as $m): ?>
                 <div class="d-flex gap-3 p-2 mb-2 border rounded match-card">
                     <?php if ($m['image']): ?>
-                        <img src="<?= $base ?>/assets/images/<?= htmlspecialchars($m['image']) ?>" alt="Property">
+                        <img src="<?= $base ?>/assets/images/<?= htmlspecialchars($m['image'] ?? '') ?>" alt="Property">
                     <?php else: ?>
                         <div class="style-68235"><i class="fas fa-home fa-2x text-muted"></i></div>
                     <?php endif; ?>

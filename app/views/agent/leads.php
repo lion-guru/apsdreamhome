@@ -134,7 +134,7 @@ $statusColors = [
                                 <div>
                                     <strong><?= htmlspecialchars($lead['name'] ?? 'Unknown') ?></strong>
                                     <?php if (!empty($lead['city'])): ?>
-                                        <div><small class="text-muted"><?= htmlspecialchars($lead['city']) ?></small></div>
+                                        <div><small class="text-muted"><?= htmlspecialchars($lead['city'] ?? '') ?></small></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@ $statusColors = [
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <?php if (!empty($lead['phone'])): ?>
-                                    <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-sm btn-outline-primary" title="Call">
+                                    <a href="tel:<?= htmlspecialchars($lead['phone'] ?? '') ?>" class="btn btn-sm btn-outline-primary" title="Call">
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 <?php endif; ?>

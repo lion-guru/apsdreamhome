@@ -33,7 +33,7 @@
                                 <select class="form-select" name="segment_id" id="bulkSegment">
                                     <option value="">All Active Leads</option>
                                     <?php foreach ($segments as $s): ?>
-                                        <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
+                                        <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -42,10 +42,10 @@
                                 <select class="form-select" id="bulkTemplate">
                                     <option value="">-- Custom --</option>
                                     <?php foreach ($email_templates as $t): ?>
-                                        <option value="<?= $t['id'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '') ?>" data-type="email">ðŸ“§ <?= htmlspecialchars($t['name']) ?></option>
+                                        <option value="<?= $t['id'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '') ?>" data-type="email">ðŸ“§ <?= htmlspecialchars($t['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                     <?php foreach ($sms_templates as $t): ?>
-                                        <option value="<?= $t['id'] ?>" data-type="sms">📱 <?= htmlspecialchars($t['name']) ?></option>
+                                        <option value="<?= $t['id'] ?>" data-type="sms">📱 <?= htmlspecialchars($t['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

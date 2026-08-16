@@ -63,14 +63,14 @@
                     <div class="card h-100 shadow-sm border-0">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title mb-0"><?= htmlspecialchars($j['title']) ?></h5>
+                                <h5 class="card-title mb-0"><?= htmlspecialchars($j['title'] ?? '') ?></h5>
                                 <span class="badge bg-<?= $j['is_seeking'] ? 'info' : 'success' ?>"><?= $j['is_seeking'] ? 'Seeking' : 'Hiring' ?></span>
                             </div>
-                            <?php if ($j['category']): ?><p class="text-muted small mb-1"><i class="fas fa-tag me-1"></i><?= htmlspecialchars($j['category']) ?></p><?php endif; ?>
-                            <?php if ($j['business_name']): ?><p class="text-muted small mb-1"><i class="fas fa-building me-1"></i><?= htmlspecialchars($j['business_name']) ?></p><?php endif; ?>
-                            <?php if ($j['location']): ?><p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($j['location']) ?></p><?php endif; ?>
-                            <?php if ($j['salary_range']): ?><p class="mb-2"><strong>💰 <?= htmlspecialchars($j['salary_range']) ?></strong></p><?php endif; ?>
-                            <?php if ($j['description']): ?><p class="small"><?= nl2br(htmlspecialchars(mb_substr($j['description'], 0, 200))) ?></p><?php endif; ?>
+                            <?php if ($j['category']): ?><p class="text-muted small mb-1"><i class="fas fa-tag me-1"></i><?= htmlspecialchars($j['category'] ?? '') ?></p><?php endif; ?>
+                            <?php if ($j['business_name']): ?><p class="text-muted small mb-1"><i class="fas fa-building me-1"></i><?= htmlspecialchars($j['business_name'] ?? '') ?></p><?php endif; ?>
+                            <?php if ($j['location']): ?><p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($j['location'] ?? '') ?></p><?php endif; ?>
+                            <?php if ($j['salary_range']): ?><p class="mb-2"><strong>💰 <?= htmlspecialchars($j['salary_range'] ?? '') ?></strong></p><?php endif; ?>
+                            <?php if ($j['description']): ?><p class="small"><?= nl2br(htmlspecialchars(mb_substr($j['description'] ?? '', 0, 200))) ?></p><?php endif; ?>
                             <p class="small text-muted mb-0"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($j['contact_phone'] ?? $j['listing_phone'] ?? '') ?></p>
                             <small class="text-muted">Posted <?= date('d M Y', strtotime($j['created_at'])) ?></small>
                         </div>

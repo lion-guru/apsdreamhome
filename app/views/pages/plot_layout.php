@@ -116,7 +116,7 @@
             </button>
             <?php foreach ($colonies as $col): ?>
                 <button class="colony-tab" data-colony="<?= $col['id'] ?>" onclick="switchColony('<?= $col['id'] ?>')">
-                    <div><?= htmlspecialchars($col['name']) ?></div>
+                    <div><?= htmlspecialchars($col['name'] ?? '') ?></div>
                     <div class="tab-stats"><?= $col['stats']['total'] ?> plots &bull; <?= $col['stats']['available'] ?> available</div>
                 </button>
             <?php endforeach; ?>

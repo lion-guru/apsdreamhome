@@ -107,13 +107,13 @@ $page_description = 'View extracted data from lead documents and files';
                             <?php foreach ($fileExtractions as $extraction): ?>
                                 <tr>
                                     <td>
-                                        <div class="text-truncate" class="style-3881" title="<?php echo htmlspecialchars($extraction['file_name']); ?>">
-                                            <?php echo htmlspecialchars($extraction['file_name']); ?>
+                                        <div class="text-truncate" class="style-3881" title="<?php echo htmlspecialchars($extraction['file_name'] ?? ''); ?>">
+                                            <?php echo htmlspecialchars($extraction['file_name'] ?? ''); ?>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" class="style-3881" title="<?php echo htmlspecialchars($extraction['original_name']); ?>">
-                                            <?php echo htmlspecialchars($extraction['original_name']); ?>
+                                        <div class="text-truncate" class="style-3881" title="<?php echo htmlspecialchars($extraction['original_name'] ?? ''); ?>">
+                                            <?php echo htmlspecialchars($extraction['original_name'] ?? ''); ?>
                                         </div>
                                     </td>
                                     <td>

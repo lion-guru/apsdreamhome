@@ -78,13 +78,13 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
                                 <td>
                                     <?= htmlspecialchars($b['property_title'] ?? 'N/A') ?>
                                     <?php if (!empty($b['city'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($b['city']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($b['city'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
                                     <?php if (!empty($b['customer_phone'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($b['customer_phone']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($b['customer_phone'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>₹<?= number_format($b['property_price'] ?? $b['total_amount'] ?? 0) ?></td>

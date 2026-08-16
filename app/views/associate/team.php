@@ -254,7 +254,7 @@ body {
                                 </td>
                                 <td>
                                     <span class="rank-pill" class="style-19790">
-                                        <?= htmlspecialchars($label) ?>
+                                        <?= htmlspecialchars($label ?? '') ?>
                                     </span>
                                 </td>
                                 <td class="text-end fw-bold text-dark"><?= (int)($m['team_size'] ?? 0) ?></td>

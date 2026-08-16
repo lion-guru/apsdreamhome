@@ -30,7 +30,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
             </p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString) ?>" class="btn btn-outline-primary rounded-pill">
+            <a href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString ?? '') ?>" class="btn btn-outline-primary rounded-pill">
                 <i class="fas fa-external-link-alt me-1"></i><?= __('saved_res_open_props', null, 'Open in Properties Page') ?>
             </a>
             <button type="button" class="btn <?= $alertsOn ? 'btn-success' : 'btn-outline-success' ?> rounded-pill js-toggle-alert"
@@ -55,7 +55,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                     <div class="card property-card h-100">
                         <div class="position-relative">
                             <?php
-                            $imgSrc = !empty($p['image']) ? BASE_URL . '/assets/images/properties/' . htmlspecialchars($p['image']) : BASE_URL . '/assets/images/placeholder/property.svg';
+                            $imgSrc = !empty($p['image']) ? BASE_URL . '/assets/images/properties/' . htmlspecialchars($p['image'] ?? '') : BASE_URL . '/assets/images/placeholder/property.svg';
                             ?>
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top"
                                  class="style-12213"

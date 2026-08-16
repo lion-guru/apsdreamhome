@@ -523,19 +523,19 @@ $base = BASE_URL;
             <?php if (!empty($error)): ?>
                 <div class="alert-danger" role="alert">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo htmlspecialchars($error); ?>
+                    <?php echo htmlspecialchars($error ?? ''); ?>
                 </div>
             <?php endif; ?>
 
             <?php if (!empty($success)): ?>
                 <div class="alert-success" role="alert">
                     <i class="fas fa-check-circle"></i>
-                    <?php echo htmlspecialchars($success); ?>
+                    <?php echo htmlspecialchars($success ?? ''); ?>
                 </div>
             <?php endif; ?>
 
             <form action="<?php echo $base; ?>/agent/login" method="POST" id="agentLoginForm" novalidate>
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                 <div class="input-icon-wrapper">
                     <input type="text" class="form-control" id="email" name="email"

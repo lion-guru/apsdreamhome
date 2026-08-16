@@ -448,7 +448,7 @@ $dashBookingCount = count($dashBookings);
                 <h5><i class="fas fa-trophy" class="style-92996"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
-                <div class="display-5 fw-bold mb-1" class="style-12445"><?= htmlspecialchars($lvl) ?></div>
+                <div class="display-5 fw-bold mb-1" class="style-12445"><?= htmlspecialchars($lvl ?? '') ?></div>
                 <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
                 <div class="aps-cp-progress" class="style-51045">
                     <div class="aps-cp-progress-bar" class="style-9161"></div>
@@ -467,7 +467,7 @@ $dashBookingCount = count($dashBookings);
             <div class="aps-cp-card-body">
                 <div class="text-center mb-3">
                     <div class="display-6 fw-bold text-warning mb-1" class="style-28340" id="dashRefCode">
-                        <?= htmlspecialchars($referral_code) ?>
+                        <?= htmlspecialchars($referral_code ?? '') ?>
                     </div>
                     <small class="text-muted"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
                 </div>
@@ -487,7 +487,7 @@ $dashBookingCount = count($dashBookings);
                 </div>
                 <?php if (!empty($referral_link)): ?>
                 <div class="input-group input-group-sm mb-2">
-                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link) ?>" readonly>
+                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link ?? '') ?>" readonly>
                     <button class="btn btn-outline-warning" type="button" onclick="dashCopyRef()" aria-label="<?= __('dash_copy_referral_link', null, 'Copy referral link') ?>">
                         <i class="fas fa-copy"></i>
                     </button>

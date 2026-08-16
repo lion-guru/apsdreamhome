@@ -23,7 +23,7 @@
                                 </tr>
                                 <tr>
                                     <th>Title</th>
-                                    <td><?php echo htmlspecialchars($article['title']); ?></td>
+                                    <td><?php echo htmlspecialchars($article['title'] ?? ''); ?></td>
                                 </tr>
                                 <tr>
                                     <th>Category</th>
@@ -57,7 +57,7 @@
                                     <h6 class="mb-0">Content</h6>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
-                                    <?php echo nl2br(htmlspecialchars($article['content'])); ?>
+                                    <?php echo nl2br(htmlspecialchars($article['content'] ?? '')); ?>
                                 </div>
                             </div>
                         </div>

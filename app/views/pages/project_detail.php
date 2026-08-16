@@ -126,7 +126,7 @@ if ($project) {
                         <div class="d-flex align-items-center p-3 bg-light rounded">
                             <i class="fas <?= $hlIcon ?> fa-2x text-<?= $hlColor ?> me-3"></i>
                             <div>
-                                <h6 class="mb-0"><?php echo htmlspecialchars($highlight); ?></h6>
+                                <h6 class="mb-0"><?php echo htmlspecialchars($highlight ?? ''); ?></h6>
                             </div>
                         </div>
                     </div>
@@ -151,7 +151,7 @@ if ($project) {
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-check-circle text-success me-3"></i>
-                                    <span><?php echo htmlspecialchars($amenity); ?></span>
+                                    <span><?php echo htmlspecialchars($amenity ?? ''); ?></span>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -166,7 +166,7 @@ if ($project) {
                         ?>
                         <?php if (!empty($amenitiesList)): ?>
                             <?php foreach ($amenitiesList as $amenity): ?>
-                                <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i><?= htmlspecialchars($amenity) ?></div>
+                                <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i><?= htmlspecialchars($amenity ?? '') ?></div>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Wide Roads (30-40 ft)</div>
@@ -336,9 +336,9 @@ if ($project) {
                                     <div class="nearby-item">
                                         <i class="fas <?= $placeIcon ?>" class="style-32235"></i>
                                         <div>
-                                            <div class="nearby-name"><?php echo htmlspecialchars($placeName); ?></div>
+                                            <div class="nearby-name"><?php echo htmlspecialchars($placeName ?? ''); ?></div>
                                             <?php if ($placeDistance): ?>
-                                            <div class="nearby-distance"><?php echo htmlspecialchars($placeDistance); ?></div>
+                                            <div class="nearby-distance"><?php echo htmlspecialchars($placeDistance ?? ''); ?></div>
                                             <?php endif; ?>
                                         </div>
                                     </div>

@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // Admin Layout Management Interface
 // Auth handled by LayoutController constructor (calls requireAdmin())
-// Data passed from LayoutController::layoutManager() — settings already loaded
+// Data passed from LayoutController::layoutManager() � settings already loaded
 $settings = $settings ?? [
     'premium_layout' => false,
     'header_type' => 'dynamic',
@@ -83,9 +83,9 @@ $settings = $settings ?? [
                                                 </div>
                                                 <div class="col-8">
                                                     <input type="text" class="form-control" name="nav_label_<?php echo $index; ?>"
-                                                        value="<?php echo htmlspecialchars($item['label']); ?>" placeholder="Label">
+                                                        value="<?php echo htmlspecialchars($item['label'] ?? ''); ?>" placeholder="Label">
                                                     <input type="text" class="form-control mt-1" name="nav_url_<?php echo $index; ?>"
-                                                        value="<?php echo htmlspecialchars($item['url']); ?>" placeholder="URL">
+                                                        value="<?php echo htmlspecialchars($item['url'] ?? ''); ?>" placeholder="URL">
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="form-check">
@@ -110,7 +110,7 @@ $settings = $settings ?? [
                         <div class="col-md-6">
                             <div class="layout-section p-4">
                                 <h4><i class="fas fa-footer me-2"></i>Footer Content</h4>
-                                <textarea class="form-control code-editor" name="footer_content" rows="6" placeholder="HTML content for footer"><?php echo htmlspecialchars($settings['footer_content']); ?></textarea>
+                                <textarea class="form-control code-editor" name="footer_content" rows="6" placeholder="HTML content for footer"><?php echo htmlspecialchars($settings['footer_content'] ?? ''); ?></textarea>
                                 <small class="text-muted">
                                     <i class="fas fa-code me-1"></i>
                                     HTML content for premium footer. Leave empty for default.
@@ -122,7 +122,7 @@ $settings = $settings ?? [
                         <div class="col-md-6">
                             <div class="layout-section p-4">
                                 <h4><i class="fas fa-paint-brush me-2"></i>Custom CSS</h4>
-                                <textarea class="form-control code-editor" name="custom_css" rows="6" placeholder="Custom CSS..."><?php echo htmlspecialchars($settings['custom_css']); ?></textarea>
+                                <textarea class="form-control code-editor" name="custom_css" rows="6" placeholder="Custom CSS..."><?php echo htmlspecialchars($settings['custom_css'] ?? ''); ?></textarea>
                                 <small class="text-muted">
                                     <i class="fas fa-palette me-1"></i>
                                     Additional CSS to include in all pages
@@ -158,7 +158,7 @@ $settings = $settings ?? [
                                     <ul class="mt-2">
                                         <?php foreach ($settings['navigation_items'] as $item): ?>
                                             <?php if ($item['active'] ?? false): ?>
-                                                <li><i class="fas fa-check text-success me-2"></i><?php echo htmlspecialchars($item['label']); ?> → <?php echo htmlspecialchars($item['url']); ?></li>
+                                                <li><i class="fas fa-check text-success me-2"></i><?php echo htmlspecialchars($item['label'] ?? ''); ?> ? <?php echo htmlspecialchars($item['url'] ?? ''); ?></li>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </ul>

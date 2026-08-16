@@ -11,7 +11,7 @@ $active_page = 'registry';
 </div>
 
 <?php if (!empty($error)): ?>
-    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+    <div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div>
 <?php endif; ?>
 
 <?php if ($booking): ?>
@@ -37,10 +37,10 @@ $active_page = 'registry';
                         <br>
                         <strong><?= ucfirst(str_replace('_', ' ', $a['action'])) ?></strong>
                         <?php if (!empty($a['details'])): ?>
-                            <p class="mb-0 mt-1"><?= htmlspecialchars($a['details']) ?></p>
+                            <p class="mb-0 mt-1"><?= htmlspecialchars($a['details'] ?? '') ?></p>
                         <?php endif; ?>
                         <?php if (!empty($a['performed_by'])): ?>
-                            <small class="text-muted">- Admin #<?= htmlspecialchars($a['performed_by']) ?></small>
+                            <small class="text-muted">- Admin #<?= htmlspecialchars($a['performed_by'] ?? '') ?></small>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>

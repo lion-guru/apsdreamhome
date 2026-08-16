@@ -4,8 +4,8 @@
             <div class="card shadow-sm">
                 <div class="card-body p-4">
                     <h4 class="mb-4"><i class="fas fa-key me-2 text-primary"></i>Change Password</h4>
-                    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-                    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
+                    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div><?php endif; ?>
+                    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success ?? '') ?></div><?php endif; ?>
                     <form method="POST" action="<?= BASE_URL ?>/auth/change-password">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3">

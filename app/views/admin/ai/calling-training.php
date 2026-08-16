@@ -3,7 +3,7 @@ $page_title = $page_title ?? 'AI Calling Training';
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-robot me-2"></i><?= htmlspecialchars($page_title) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-robot me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h2>
         <a href="<?= BASE_URL ?>/admin/ai/hub" class="btn btn-outline-primary"><i class="fas fa-home me-1"></i> AI Hub</a>
     </div>
 
@@ -89,8 +89,8 @@ $page_title = $page_title ?? 'AI Calling Training';
                             <tbody>
                             <?php foreach ($voiceModels as $vm): ?>
                                 <tr>
-                                    <td class="fw-semibold"><?= htmlspecialchars($vm['model_name']) ?></td>
-                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($vm['language']) ?></span></td>
+                                    <td class="fw-semibold"><?= htmlspecialchars($vm['model_name'] ?? '') ?></td>
+                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($vm['language'] ?? '') ?></span></td>
                                     <td><?= ucfirst($vm['voice_gender']) ?></td>
                                     <td><?= ucfirst($vm['model_provider']) ?></td>
                                     <td><?php $st = $vm['status']; ?><span class="badge bg-<?= $st === 'active' ? 'success' : ($st === 'training' ? 'warning' : 'secondary') ?>"><?= ucfirst($st) ?></span></td>
@@ -121,8 +121,8 @@ $page_title = $page_title ?? 'AI Calling Training';
                             <tbody>
                             <?php foreach ($scripts as $s): ?>
                                 <tr>
-                                    <td class="fw-semibold"><?= htmlspecialchars($s['script_name']) ?></td>
-                                    <td><code class="small"><?= htmlspecialchars($s['script_code']) ?></code></td>
+                                    <td class="fw-semibold"><?= htmlspecialchars($s['script_name'] ?? '') ?></td>
+                                    <td><code class="small"><?= htmlspecialchars($s['script_code'] ?? '') ?></code></td>
                                     <td><span class="badge bg-info"><?= ucfirst($s['category']) ?></span></td>
                                     <td><?= $s['estimated_duration_seconds'] ?>s</td>
                                     <td><?= (int)$s['total_calls_made'] ?></td>
@@ -154,8 +154,8 @@ $page_title = $page_title ?? 'AI Calling Training';
                             <tbody>
                             <?php foreach ($intents as $i): ?>
                                 <tr>
-                                    <td class="fw-semibold"><?= htmlspecialchars($i['intent_name']) ?></td>
-                                    <td><code class="small"><?= htmlspecialchars($i['intent_code']) ?></code></td>
+                                    <td class="fw-semibold"><?= htmlspecialchars($i['intent_name'] ?? '') ?></td>
+                                    <td><code class="small"><?= htmlspecialchars($i['intent_code'] ?? '') ?></code></td>
                                     <td><span class="badge bg-<?= $i['category'] === 'interest' ? 'success' : ($i['category'] === 'objection' ? 'warning' : ($i['category'] === 'dnd' ? 'danger' : 'primary') ) ?>"><?= ucfirst(str_replace('_', ' ', $i['category'])) ?></span></td>
                                     <td><span class="badge bg-dark"><?= (int)$i['priority'] ?></span></td>
                                     <td><?= (int)$i['total_triggers'] ?></td>
@@ -190,7 +190,7 @@ $page_title = $page_title ?? 'AI Calling Training';
                             <tbody>
                             <?php foreach ($scriptPerformance as $sp): ?>
                                 <tr>
-                                    <td class="fw-semibold"><?= htmlspecialchars($sp['script_name']) ?></td>
+                                    <td class="fw-semibold"><?= htmlspecialchars($sp['script_name'] ?? '') ?></td>
                                     <td><?= (int)$sp['total_calls_made'] ?></td>
                                     <td><?= (int)$sp['total_calls_connected'] ?></td>
                                     <td><?= (int)$sp['total_interested'] ?></td>

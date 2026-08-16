@@ -10,8 +10,8 @@ $_escalations = $escalations ?? [];
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas <?= $_agent['icon'] ?>" class="style-38863"></i> <?= htmlspecialchars($_agent['name']) ?></h1>
-                    <small class="text-muted"><?= htmlspecialchars($_agent['description']) ?></small>
+                    <h1 class="m-0"><i class="fas <?= $_agent['icon'] ?>" class="style-38863"></i> <?= htmlspecialchars($_agent['name'] ?? '') ?></h1>
+                    <small class="text-muted"><?= htmlspecialchars($_agent['description'] ?? '') ?></small>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="<?= BASE_URL ?>/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
@@ -43,7 +43,7 @@ $_escalations = $escalations ?? [];
                                     <?php foreach ($_tasks as $t): ?>
                                     <tr>
                                         <td class="text-muted small"><?= date('M d, H:i', strtotime($t['created_at'])) ?></td>
-                                        <td><?= htmlspecialchars($t['task_name']) ?></td>
+                                        <td><?= htmlspecialchars($t['task_name'] ?? '') ?></td>
                                         <?php
                                         $sc = ['completed' => 'success', 'running' => 'info', 'failed' => 'danger', 'escalated' => 'warning', 'pending' => 'secondary'];
                                         $badge = $sc[$t['status']] ?? 'secondary';
@@ -72,7 +72,7 @@ $_escalations = $escalations ?? [];
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($_insights as $ins): ?>
                                 <li class="list-group-item">
-                                    <strong><?= htmlspecialchars($ins['title']) ?></strong>
+                                    <strong><?= htmlspecialchars($ins['title'] ?? '') ?></strong>
                                     <p class="small text-muted mb-0"><?= htmlspecialchars($ins['summary'] ?? '') ?></p>
                                     <small class="text-muted"><?= date('M d, H:i', strtotime($ins['created_at'])) ?></small>
                                 </li>
@@ -92,7 +92,7 @@ $_escalations = $escalations ?? [];
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($_escalations as $esc): ?>
                                 <li class="list-group-item">
-                                    <strong><?= htmlspecialchars($esc['title']) ?></strong>
+                                    <strong><?= htmlspecialchars($esc['title'] ?? '') ?></strong>
                                     <p class="small text-muted mb-0"><?= htmlspecialchars($esc['description'] ?? '') ?></p>
                                     <small class="text-muted"><?= date('M d, H:i', strtotime($esc['created_at'])) ?></small>
                                 </li>

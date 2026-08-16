@@ -78,8 +78,8 @@
                 <div class="price">₹<?= number_format(intval($plot['negotiated_price'] ?? $plot['total_price'])) ?></div>
                 <p class="detail mb-3">
                     <?= number_format(floatval($plot['area_sqft'] ?? 0)) ?> <?= __('plot_book_sqft', [], 'sqft') ?>
-                    <?= !empty($plot['dimension_label']) ? '| ' . htmlspecialchars($plot['dimension_label']) : '' ?>
-                    <?= !empty($plot['block']) ? '| ' . __('plot_book_block', [], 'Block') . ' ' . htmlspecialchars($plot['block']) : '' ?>
+                    <?= !empty($plot['dimension_label']) ? '| ' . htmlspecialchars($plot['dimension_label'] ?? '') : '' ?>
+                    <?= !empty($plot['block']) ? '| ' . __('plot_book_block', [], 'Block') . ' ' . htmlspecialchars($plot['block'] ?? '') : '' ?>
                 </p>
                 <hr class="border-light">
                 <div class="row detail">

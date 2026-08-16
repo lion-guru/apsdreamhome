@@ -184,7 +184,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                     <?php foreach ($images as $i => $img): ?>
                         <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
                             <?php $src = !empty($img['image_path']) ? $img['image_path'] : BASE_URL . '/assets/images/placeholder/property.svg'; ?>
-                            <img src="<?= htmlspecialchars($src) ?>" class="d-block w-100 gallery-trigger" class="style-18064" alt="Property image <?= $i+1 ?>" onclick="openLightbox(<?= $i ?>)">
+                            <img src="<?= htmlspecialchars($src ?? '') ?>" class="d-block w-100 gallery-trigger" class="style-18064" alt="Property image <?= $i+1 ?>" onclick="openLightbox(<?= $i ?>)">
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -201,7 +201,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             <div class="thumb-strip">
                 <?php foreach ($images as $i => $img): ?>
                     <?php $src = !empty($img['image_path']) ? $img['image_path'] : BASE_URL . '/assets/images/placeholder/property.svg'; ?>
-                    <img src="<?= htmlspecialchars($src) ?>" class="<?= $i === 0 ? 'active' : '' ?>" onclick="goToSlide(<?= $i ?>)" alt="Thumb <?= $i+1 ?>">
+                    <img src="<?= htmlspecialchars($src ?? '') ?>" class="<?= $i === 0 ? 'active' : '' ?>" onclick="goToSlide(<?= $i ?>)" alt="Thumb <?= $i+1 ?>">
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
@@ -275,7 +275,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             <?php if (!empty($property['description'])): ?>
             <div class="pd-section">
                 <h5><i class="fas fa-align-left"></i> Description</h5>
-                <div class="pd-desc"><?= nl2br(htmlspecialchars($property['description'])) ?></div>
+                <div class="pd-desc"><?= nl2br(htmlspecialchars($property['description'] ?? '')) ?></div>
             </div>
             <?php endif; ?>
 
@@ -344,7 +344,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 <h5><i class="fas fa-star"></i> Amenities</h5>
                 <div class="pd-amenities">
                     <?php foreach ($amenities as $amenity): ?>
-                        <div class="pd-amenity"><i class="fas fa-check"></i> <?= htmlspecialchars($amenity) ?></div>
+                        <div class="pd-amenity"><i class="fas fa-check"></i> <?= htmlspecialchars($amenity ?? '') ?></div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -355,7 +355,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 <i class="fas fa-shield-alt"></i>
                 <div class="rera-text">
                     <strong>RERA Registered</strong>
-                    <?= htmlspecialchars($property['rera_number']) ?>
+                    <?= htmlspecialchars($property['rera_number'] ?? '') ?>
                 </div>
             </div>
             <?php endif; ?>
@@ -451,7 +451,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                             <i class="fa<?= $i <= $review['rating'] ? 's' : 'r' ?> fa-star"></i>
                         <?php endfor; ?>
                     </div>
-                    <p class="review-text"><?= nl2br(htmlspecialchars($review['review_text'])) ?></p>
+                    <p class="review-text"><?= nl2br(htmlspecialchars($review['review_text'] ?? '')) ?></p>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>

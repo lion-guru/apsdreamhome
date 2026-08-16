@@ -72,7 +72,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                                 <strong><?php echo htmlspecialchars($p['name'] ?? 'N/A'); ?></strong>
                                 <br><small class="text-muted"><?php echo htmlspecialchars($p['phone'] ?? ''); ?></small>
                                 <?php if (!empty($p['email'])): ?>
-                                <br><small class="text-muted"><?php echo htmlspecialchars($p['email']); ?></small>
+                                <br><small class="text-muted"><?php echo htmlspecialchars($p['email'] ?? ''); ?></small>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -86,7 +86,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                             </td>
                             <td>
                                 <?php echo htmlspecialchars($p['address'] ?? ''); ?>
-                                <?php if (!empty($p['district_name'])): ?><br><small class="text-muted"><?php echo htmlspecialchars($p['district_name']); ?><?php echo !empty($p['state_name']) ? ', ' . htmlspecialchars($p['state_name']) : ''; ?></small><?php endif; ?>
+                                <?php if (!empty($p['district_name'])): ?><br><small class="text-muted"><?php echo htmlspecialchars($p['district_name'] ?? ''); ?><?php echo !empty($p['state_name']) ? ', ' . htmlspecialchars($p['state_name'] ?? '') : ''; ?></small><?php endif; ?>
                             </td>
                             <td>
                                 <?php
@@ -94,7 +94,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                                 ?>
                                 <span class="badge bg-<?php echo $sc; ?> status-badge"><?php echo ucfirst($p['status'] ?? 'pending'); ?></span>
                                 <?php if (!empty($p['admin_notes'])): ?>
-                                <br><small class="text-muted" title="<?php echo htmlspecialchars($p['admin_notes']); ?>"><i class="fas fa-sticky-note"></i> Notes</small>
+                                <br><small class="text-muted" title="<?php echo htmlspecialchars($p['admin_notes'] ?? ''); ?>"><i class="fas fa-sticky-note"></i> Notes</small>
                                 <?php endif; ?>
                             </td>
                             <td><small class="text-nowrap"><?php echo date('d M Y', strtotime($p['created_at'])); ?></small></td>

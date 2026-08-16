@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-alt me-2 text-primary"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">FY <?= htmlspecialchars($fy) ?></span>
+        <h4 class="mb-1"><i class="fas fa-file-alt me-2 text-primary"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">FY <?= htmlspecialchars($fy ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
@@ -33,7 +33,7 @@ ob_start();
                     $totalNet += $m['net_payable'];
                 ?>
                     <tr>
-                        <td class="small"><?= htmlspecialchars($m['period']) ?></td>
+                        <td class="small"><?= htmlspecialchars($m['period'] ?? '') ?></td>
                         <td class="text-end">?<?= number_format($m['out_tax'], 0) ?></td>
                         <td class="text-end text-success">?<?= number_format($m['in_tax'], 0) ?></td>
                         <td class="text-end fw-bold <?= $m['net_payable'] > 0 ? 'text-danger' : 'text-success' ?>">?<?= number_format($m['net_payable'], 0) ?></td>
@@ -75,7 +75,7 @@ ob_start();
                             <label class="form-label small">FY</label>
                             <select name="fy" class="form-select form-select-sm">
                                 <?php foreach ($fy_list as $k => $v): ?>
-                                    <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                                    <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -109,7 +109,7 @@ ob_start();
                             <label class="form-label small">FY</label>
                             <select name="fy" class="form-select form-select-sm">
                                 <?php foreach ($fy_list as $k => $v): ?>
-                                    <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                                    <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

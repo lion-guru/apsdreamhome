@@ -156,7 +156,7 @@
                                 <div class="mt-2">
                                     <span class="badge bg-<?= $kycColor ?> fs-6"><?= ucfirst($vendor['kyc_status'] ?? 'pending') ?></span>
                                     <?php if (!empty($vendor['kyc_verified_at'])): ?>
-                                        <br><small class="text-muted">Verified: <?= htmlspecialchars($vendor['kyc_verified_at']) ?></small>
+                                        <br><small class="text-muted">Verified: <?= htmlspecialchars($vendor['kyc_verified_at'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </div>
                             </div>

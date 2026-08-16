@@ -35,10 +35,10 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     </div>
 
     <?php if ($success): ?>
-        <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <form action="<?= $base ?>/associate/add-property" method="POST" enctype="multipart/form-data" class="prop-form">
@@ -96,7 +96,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <select name="state_id" class="form-select">
                         <option value=""><?= __('assoc_ap_select', [], 'Select') ?></option>
                         <?php foreach ($states as $s): ?>
-                            <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
+                            <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -32,9 +32,9 @@
                             <?php foreach ($slots as $s): ?>
                                 <tr>
                                     <td><?= $s['id'] ?></td>
-                                    <td><code><?= htmlspecialchars($s['slot_key']) ?></code></td>
-                                    <td><?= htmlspecialchars($s['title']) ?></td>
-                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($s['slot_type']) ?></span></td>
+                                    <td><code><?= htmlspecialchars($s['slot_key'] ?? '') ?></code></td>
+                                    <td><?= htmlspecialchars($s['title'] ?? '') ?></td>
+                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($s['slot_type'] ?? '') ?></span></td>
                                     <td><span class="badge bg-<?= $s['status'] === 'active' ? 'success' : 'danger' ?>"><?= $s['status'] ?></span></td>
                                     <td><?= number_format($s['views'] ?? 0) ?></td>
                                     <td><?= number_format($s['clicks'] ?? 0) ?></td>

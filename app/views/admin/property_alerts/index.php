@@ -155,9 +155,9 @@ ob_start();
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <i class="fas fa-envelope text-muted"></i> <?= htmlspecialchars($sub['email']) ?>
+                                        <i class="fas fa-envelope text-muted"></i> <?= htmlspecialchars($sub['email'] ?? '') ?>
                                         <?php if ($sub['phone']): ?>
-                                            <br><i class="fas fa-phone text-muted"></i> <?= htmlspecialchars($sub['phone']) ?>
+                                            <br><i class="fas fa-phone text-muted"></i> <?= htmlspecialchars($sub['phone'] ?? '') ?>
                                         <?php endif; ?>
                                     </td>
                                     <td><span class="badge bg-secondary"><?= htmlspecialchars($sub['property_type'] ?? 'any') ?></span></td>
@@ -165,7 +165,7 @@ ob_start();
                                     <td>
                                         <?= htmlspecialchars($sub['city'] ?? 'any city') ?>
                                         <?php if ($sub['state']): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($sub['state']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($sub['state'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -243,7 +243,7 @@ ob_start();
                                     <td><small><?= date('M j, H:i', strtotime($n['created_at'])) ?></small></td>
                                     <td><?= htmlspecialchars($n['sub_name'] ?? 'Unknown') ?></td>
                                     <td><?= $n['property_id'] ?></td>
-                                    <td><span class="badge bg-light text-dark"><?= htmlspecialchars($n['channel']) ?></span></td>
+                                    <td><span class="badge bg-light text-dark"><?= htmlspecialchars($n['channel'] ?? '') ?></span></td>
                                     <td>
                                         <span class="badge bg-<?= $n['status'] === 'sent' ? 'success' : ($n['status'] === 'failed' ? 'danger' : 'warning') ?>">
                                             <?= ucfirst($n['status']) ?>

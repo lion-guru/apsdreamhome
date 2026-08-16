@@ -163,7 +163,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
                         <div class="position-relative">
                             <?php $imgRaw = $colony['image_path'] ?? 'assets/images/default-banner.jpg';
                                   $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($colony['name']) ?>" class="card-img-top" class="style-58348">
+                            <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($colony['name'] ?? '') ?>" class="card-img-top" class="style-58348">
                             <span class="badge bg-info text-dark position-absolute top-0 end-0 m-2">Astrology OK</span>
                         </div>
                         <div class="card-body">

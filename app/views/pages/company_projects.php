@@ -67,7 +67,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                     <div class="d-flex align-items-center mb-4">
                         <div class="me-3">
                             <span class="badge bg-primary rounded-pill px-3 py-2">
-                                <i class="fas fa-map me-1"></i><?php echo htmlspecialchars($state); ?>
+                                <i class="fas fa-map me-1"></i><?php echo htmlspecialchars($state ?? ''); ?>
                             </span>
                         </div>
                         <div class="flex-grow-1">
@@ -78,7 +78,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                     <?php foreach ($districts as $district => $districtProjects): ?>
                         <!-- District Header -->
                         <h4 class="text-secondary mb-3 ms-4">
-                            <i class="fas fa-building me-2"></i><?php echo htmlspecialchars($district); ?>
+                            <i class="fas fa-building me-2"></i><?php echo htmlspecialchars($district ?? ''); ?>
                             <span class="badge bg-secondary ms-2"><?php echo count($districtProjects); ?> <?= __('cproj_projects', [], 'Projects') ?></span>
                         </h4>
                         

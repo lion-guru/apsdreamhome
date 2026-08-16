@@ -67,12 +67,12 @@ $totalPending = $totalPending ?? 0;
                                 <tbody>
                                 <?php foreach ($todayScheduled as $s): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($s['scheduled_time']) ?></strong></td>
+                                        <td><strong><?= htmlspecialchars($s['scheduled_time'] ?? '') ?></strong></td>
                                         <td><?= htmlspecialchars($s['lead_name'] ?? 'N/A') ?></td>
-                                        <td><code class="small"><?= htmlspecialchars($s['phone']) ?></code></td>
-                                        <td><span class="aps-cp-badge badge bg-<?= $s['priority'] === 'urgent' ? 'danger' : ($s['priority'] === 'high' ? 'warning' : ($s['priority'] === 'medium' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($s['priority'])) ?></span></td>
+                                        <td><code class="small"><?= htmlspecialchars($s['phone'] ?? '') ?></code></td>
+                                        <td><span class="aps-cp-badge badge bg-<?= $s['priority'] === 'urgent' ? 'danger' : ($s['priority'] === 'high' ? 'warning' : ($s['priority'] === 'medium' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($s['priority'] ?? '')) ?></span></td>
                                         <td><?= $s['attempt_count'] ?> / <?= $s['max_attempts'] ?></td>
-                                        <td><span class="aps-cp-badge badge bg-<?= $s['status'] === 'completed' ? 'success' : ($s['status'] === 'failed' ? 'danger' : ($s['status'] === 'processing' ? 'info' : 'warning')) ?>"><?= ucfirst(htmlspecialchars($s['status'])) ?></span></td>
+                                        <td><span class="aps-cp-badge badge bg-<?= $s['status'] === 'completed' ? 'success' : ($s['status'] === 'failed' ? 'danger' : ($s['status'] === 'processing' ? 'info' : 'warning')) ?>"><?= ucfirst(htmlspecialchars($s['status'] ?? '')) ?></span></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>
@@ -91,8 +91,8 @@ $totalPending = $totalPending ?? 0;
                     <?php else: ?>
                         <?php foreach ($upcoming as $u): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                                <div><strong class="small"><?= htmlspecialchars($u['lead_name'] ?? 'N/A') ?></strong><br><small class="text-muted"><?= htmlspecialchars($u['scheduled_date']) ?> at <?= htmlspecialchars($u['scheduled_time']) ?></small></div>
-                                <span class="aps-cp-badge badge bg-<?= $u['priority'] === 'urgent' ? 'danger' : 'info' ?>"><?= ucfirst(htmlspecialchars($u['priority'])) ?></span>
+                                <div><strong class="small"><?= htmlspecialchars($u['lead_name'] ?? 'N/A') ?></strong><br><small class="text-muted"><?= htmlspecialchars($u['scheduled_date'] ?? '') ?> at <?= htmlspecialchars($u['scheduled_time'] ?? '') ?></small></div>
+                                <span class="aps-cp-badge badge bg-<?= $u['priority'] === 'urgent' ? 'danger' : 'info' ?>"><?= ucfirst(htmlspecialchars($u['priority'] ?? '')) ?></span>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

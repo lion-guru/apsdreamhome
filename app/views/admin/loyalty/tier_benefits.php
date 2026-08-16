@@ -28,7 +28,7 @@ $tiers = $tiers ?? [];
                     <div class="card-body aps-cp-card-body">
                         <div class="text-center mb-3">
                             <i class="fas fa-crown fa-3x text-<?= $badgeClass === 'warning' ? 'warning' : ($badgeClass === 'light' ? 'muted' : $badgeClass) ?>"></i>
-                            <h4 class="mt-2 text-uppercase"><?= htmlspecialchars(ucfirst($tierName)) ?></h4>
+                            <h4 class="mt-2 text-uppercase"><?= htmlspecialchars(ucfirst($tierName ?? '')) ?></h4>
                             <span class="badge bg-<?= $badgeClass ?> <?= $textDark ? 'text-dark' : '' ?> p-2">Min: <?= number_format(intval($tier['min_points'] ?? $tier['points_required'] ?? 0)) ?> pts</span>
                         </div>
                         <hr>

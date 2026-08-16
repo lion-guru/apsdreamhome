@@ -77,7 +77,7 @@ $assignees = $assignees ?? [];
                             <?php foreach ($sources as $source): ?>
                                 <option value="<?= $source['id'] ?>" 
                                     <?= ($lead['source_id'] == $source['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($source['name']) ?>
+                                    <?= htmlspecialchars($source['name'] ?? '') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -90,7 +90,7 @@ $assignees = $assignees ?? [];
                             <?php foreach ($assignees as $assignee): ?>
                                 <option value="<?= $assignee['id'] ?>" 
                                     <?= ($lead['assigned_to'] == $assignee['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($assignee['name']) ?>
+                                    <?= htmlspecialchars($assignee['name'] ?? '') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

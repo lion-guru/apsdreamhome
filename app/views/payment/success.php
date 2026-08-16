@@ -238,7 +238,7 @@
             <h3>Payment Details</h3>
             <div class="payment-info">
                 <span class="payment-label">Payment ID:</span>
-                <span class="payment-value"><?= htmlspecialchars($payment_id) ?></span>
+                <span class="payment-value"><?= htmlspecialchars($payment_id ?? '') ?></span>
             </div>
             <div class="payment-info">
                 <span class="payment-label">Status:</span>

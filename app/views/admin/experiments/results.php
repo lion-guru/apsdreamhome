@@ -30,7 +30,7 @@ foreach ($results as $variant => $r) {
         <div>
             <h1 class="h3 mb-0">
                 <i class="fas fa-chart-line me-2 text-success"></i>
-                Results: <?= htmlspecialchars($experiment['name']) ?>
+                Results: <?= htmlspecialchars($experiment['name'] ?? '') ?>
             </h1>
             <p class="text-muted mb-0"><?= htmlspecialchars($experiment['description'] ?? '') ?></p>
         </div>
@@ -46,13 +46,13 @@ foreach ($results as $variant => $r) {
 
     <?php if ($flashSuccess): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess) ?>
+            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flashError): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError) ?>
+            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -111,7 +111,7 @@ foreach ($results as $variant => $r) {
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($chi['note'])): ?>
-                        <p class="text-muted small"><?= htmlspecialchars($chi['note']) ?></p>
+                        <p class="text-muted small"><?= htmlspecialchars($chi['note'] ?? '') ?></p>
                     <?php else: ?>
                         <div class="mb-2">
                             <span class="text-muted small">Ï‡Â² statistic:</span>
@@ -166,7 +166,7 @@ foreach ($results as $variant => $r) {
                         $width = $maxRate > 0 ? max(5, round(($r_pct / $maxRate) * 100)) : 0;
                     ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($variant) ?></strong></td>
+                            <td><strong><?= htmlspecialchars($variant ?? '') ?></strong></td>
                             <td class="text-end"><?= number_format($u) ?></td>
                             <td class="text-end"><?= number_format($c) ?></td>
                             <td class="text-end"><strong><?= number_format($r_pct, 2) ?>%</strong></td>
@@ -196,8 +196,8 @@ foreach ($results as $variant => $r) {
                             <select name="winner" class="form-select">
                                 <option value="">— pick variant —</option>
                                 <?php foreach ($results as $variant => $r): ?>
-                                    <option value="<?= htmlspecialchars($variant) ?>" <?= ($experiment['winner'] ?? '') === $variant ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($variant) ?>
+                                    <option value="<?= htmlspecialchars($variant ?? '') ?>" <?= ($experiment['winner'] ?? '') === $variant ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($variant ?? '') ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

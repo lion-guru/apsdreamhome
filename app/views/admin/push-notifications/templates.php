@@ -16,13 +16,13 @@
 
     <?php if (!empty($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+            <?= htmlspecialchars($_SESSION['success'] ?? ''); unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (!empty($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -46,7 +46,7 @@
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h6 class="fw-bold mb-0" class="style-96443">
-                                    <?= htmlspecialchars($t['name']) ?>
+                                    <?= htmlspecialchars($t['name'] ?? '') ?>
                                 </h6>
                                 <?php
                                     $channelColors = ['push' => '#3b82f6', 'email' => '#8b5cf6', 'sms' => '#10b981', 'whatsapp' => '#25d366'];
@@ -58,11 +58,11 @@
                             </div>
                             <?php if (!empty($t['title'])): ?>
                                 <p class="mb-1 fw-semibold" class="style-11026">
-                                    <?= htmlspecialchars($t['title']) ?>
+                                    <?= htmlspecialchars($t['title'] ?? '') ?>
                                 </p>
                             <?php endif; ?>
                             <p class="mb-3 flex-grow-1" class="style-13932">
-                                <?= htmlspecialchars($t['body']) ?>
+                                <?= htmlspecialchars($t['body'] ?? '') ?>
                             </p>
                             <?php if (!empty($t['variables'])): ?>
                                 <div class="mb-2">
@@ -71,7 +71,7 @@
                                         foreach ($vars as $v):
                                     ?>
                                         <span class="badge me-1" class="style-71019">
-                                            <?= htmlspecialchars($v) ?>
+                                            <?= htmlspecialchars($v ?? '') ?>
                                         </span>
                                     <?php endforeach; ?>
                                 </div>

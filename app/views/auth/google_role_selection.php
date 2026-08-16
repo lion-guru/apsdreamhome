@@ -180,8 +180,8 @@
             <div class="google-avatar">
                 <i class="fab fa-google"></i>
             </div>
-            <h4>Welcome, <?php echo htmlspecialchars($googleUserData['name']); ?>!</h4>
-            <p class="text-muted mb-0"><?php echo htmlspecialchars($googleUserData['email']); ?></p>
+            <h4>Welcome, <?php echo htmlspecialchars($googleUserData['name'] ?? ''); ?>!</h4>
+            <p class="text-muted mb-0"><?php echo htmlspecialchars($googleUserData['email'] ?? ''); ?></p>
         </div>
 
         <h5 class="mb-3"><?php echo __('auth_join_as', 'I want to join as:'); ?></h5>

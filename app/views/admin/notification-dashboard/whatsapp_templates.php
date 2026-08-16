@@ -63,7 +63,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <tbody>
                         <?php foreach ($templates as $t): ?>
                             <tr>
-                                <td class="style-50091"><?= htmlspecialchars($t['name']) ?></td>
+                                <td class="style-50091"><?= htmlspecialchars($t['name'] ?? '') ?></td>
                                 <td><span class="badge-category"><?= htmlspecialchars($t['category'] ?? 'utility') ?></span></td>
                                 <td>
                                     <?php

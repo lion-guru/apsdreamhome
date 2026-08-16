@@ -37,7 +37,7 @@ $uploaded = $d['images'] ?? [];
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                         <div id="uploaded-images-container" class="d-none">
                             <?php foreach ($uploaded as $i => $url): ?>
-                                <input type="hidden" name="uploaded_images[]" value="<?= htmlspecialchars($url) ?>" data-index="<?= $i ?>">
+                                <input type="hidden" name="uploaded_images[]" value="<?= htmlspecialchars($url ?? '') ?>" data-index="<?= $i ?>">
                             <?php endforeach; ?>
                         </div>
 

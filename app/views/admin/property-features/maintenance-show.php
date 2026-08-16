@@ -12,8 +12,8 @@
         </div>
     </div>
 
-    <?php if ($msg = $_SESSION['flash_success'] ?? null): ?><div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($msg) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_success']); endif; ?>
-    <?php if ($msg = $_SESSION['flash_error'] ?? null): ?><div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($msg) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_error']); endif; ?>
+    <?php if ($msg = $_SESSION['flash_success'] ?? null): ?><div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($msg ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_success']); endif; ?>
+    <?php if ($msg = $_SESSION['flash_error'] ?? null): ?><div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($msg ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php unset($_SESSION['flash_error']); endif; ?>
 
     <div class="row">
         <!-- Details -->
@@ -32,7 +32,7 @@
                     <?php if ($r['plot_id'] ?? null): ?>
                     <div class="row mb-3">
                         <div class="col-md-3 text-muted">Plot #</div>
-                        <div class="col-md-9"><?= htmlspecialchars($r['plot_id']) ?></div>
+                        <div class="col-md-9"><?= htmlspecialchars($r['plot_id'] ?? '') ?></div>
                     </div>
                     <?php endif; ?>
                     <div class="row mb-3">
@@ -95,7 +95,7 @@
                         <select name="assigned_to" class="form-select mb-3">
                             <option value="">-- Select Staff --</option>
                             <?php foreach ($staff as $s): ?>
-                                <option value="<?= $s['id'] ?>" <?= (($r['assigned_to'] ?? 0) == $s['id']) ? 'selected' : '' ?>><?= htmlspecialchars($s['name']) ?></option>
+                                <option value="<?= $s['id'] ?>" <?= (($r['assigned_to'] ?? 0) == $s['id']) ? 'selected' : '' ?>><?= htmlspecialchars($s['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                         <button type="submit" class="btn btn-warning w-100"><i class="fas fa-user-check me-1"></i>Assign</button>

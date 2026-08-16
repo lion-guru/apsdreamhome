@@ -104,7 +104,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
                         <select name="agent" class="form-select form-select-sm">
                             <option value="">All Agents</option>
                             <?php foreach ($agents as $a): ?>
-                                <option value="<?= htmlspecialchars($a) ?>" <?= ($filters['agent'] ?? '') === $a ? 'selected' : '' ?>><?= htmlspecialchars($a) ?></option>
+                                <option value="<?= htmlspecialchars($a ?? '') ?>" <?= ($filters['agent'] ?? '') === $a ? 'selected' : '' ?>><?= htmlspecialchars($a ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -159,7 +159,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
                             <td>
 <?php if ($c['sentiment']): ?>
                                 <span class="text-<?= $c['sentiment'] === 'positive' ? 'success' : ($c['sentiment'] === 'negative' ? 'danger' : 'muted') ?> fw-semibold">
-                                    <?= ucfirst(htmlspecialchars($c['sentiment'])) ?>
+                                    <?= ucfirst(htmlspecialchars($c['sentiment'] ?? '')) ?>
                                 </span>
 <?php else: ?>
                                 <span class="text-muted">-</span>

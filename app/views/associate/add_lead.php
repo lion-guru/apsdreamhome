@@ -28,14 +28,14 @@ $properties = $properties ?? [];
 
     <?php if ($success): ?>
         <div class="alert alert-success alert-dismissible fade show border-0 rounded-3" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
     <?php if ($error): ?>
         <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

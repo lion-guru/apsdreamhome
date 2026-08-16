@@ -25,7 +25,7 @@
                                 <option value="">-- Select --</option>
                                 <?php if (!empty($documents)): ?>
                                     <?php foreach ($documents as $d): ?>
-                                        <option value="<?= (int)$d['id'] ?>"><?= htmlspecialchars($d['title']) ?></option>
+                                        <option value="<?= (int)$d['id'] ?>"><?= htmlspecialchars($d['title'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>

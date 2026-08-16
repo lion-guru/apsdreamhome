@@ -43,8 +43,8 @@ $active_page = 'profile';
                     $size = 'lg';
                     include __DIR__ . '/../shared/profile_photo_upload.php';
                     ?>
-                    <h5 class="mb-1 mt-3"><?php echo htmlspecialchars($userName); ?></h5>
-                    <p class="text-muted mb-2"><?php echo htmlspecialchars($userEmail); ?></p>
+                    <h5 class="mb-1 mt-3"><?php echo htmlspecialchars($userName ?? ''); ?></h5>
+                    <p class="text-muted mb-2"><?php echo htmlspecialchars($userEmail ?? ''); ?></p>
                     <span class="badge bg-primary mb-3"><?php echo $roleDisplayName; ?></span>
 
                     <hr class="my-3">
@@ -52,10 +52,10 @@ $active_page = 'profile';
                     <div class="text-start">
                         <p class="mb-2"><i class="fas fa-calendar me-2 text-muted"></i><small class="text-muted">Member since</small><br><strong><?php echo date('F Y', strtotime($memberSince)); ?></strong></p>
                         <?php if (!empty($userPhone)): ?>
-                            <p class="mb-0"><i class="fas fa-phone me-2 text-muted"></i><strong><?php echo htmlspecialchars($userPhone); ?></strong></p>
+                            <p class="mb-0"><i class="fas fa-phone me-2 text-muted"></i><strong><?php echo htmlspecialchars($userPhone ?? ''); ?></strong></p>
                         <?php endif; ?>
                         <?php if (!empty($user['customer_id'])): ?>
-                            <p class="mb-0 mt-2"><i class="fas fa-id-card me-2 text-muted"></i><small class="text-muted">Agent ID</small><br><strong><?php echo htmlspecialchars($user['customer_id']); ?></strong></p>
+                            <p class="mb-0 mt-2"><i class="fas fa-id-card me-2 text-muted"></i><small class="text-muted">Agent ID</small><br><strong><?php echo htmlspecialchars($user['customer_id'] ?? ''); ?></strong></p>
                         <?php endif; ?>
                     </div>
                 </div>

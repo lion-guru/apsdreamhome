@@ -17,10 +17,10 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <?php if ($success): ?>
-                <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
             <?php if ($error): ?>
-                <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
             <?php endif; ?>
 
             <div class="card border-0 shadow-sm">
@@ -66,7 +66,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <h6 class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> <?= __('assoc_il_errors', ['count' => count($errors)], 'Import Errors (%count%)') ?></h6>
                         <div class="bg-light p-3 rounded" class="style-46280">
                             <?php foreach (array_slice($errors, 0, 20) as $err): ?>
-                                <div class="style-43637"><?= htmlspecialchars($err) ?></div>
+                                <div class="style-43637"><?= htmlspecialchars($err ?? '') ?></div>
                             <?php endforeach; ?>
                             <?php if (count($errors) > 20): ?>
                                 <div class="text-muted mt-1">... <?= __('assoc_il_more', ['count' => count($errors) - 20], 'and %count% more') ?></div>

@@ -79,7 +79,7 @@ $esignStatus = $esign['status'] ?? 'pending';
                             <h5><?= __('esign_request_sent') ?></h5>
                             <p class="text-muted"><?= __('esign_request_sent_desc') ?></p>
                             <?php if (!empty($esign['signing_url'])): ?>
-                                <a href="<?= htmlspecialchars($esign['signing_url']) ?>" target="_blank" class="btn btn-outline-primary mt-2">
+                                <a href="<?= htmlspecialchars($esign['signing_url'] ?? '') ?>" target="_blank" class="btn btn-outline-primary mt-2">
                                     <i class="fas fa-external-link-alt me-1"></i><?= __('esign_open_signing_link') ?>
                                 </a>
                             <?php endif; ?>

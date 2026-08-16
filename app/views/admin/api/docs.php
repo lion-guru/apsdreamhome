@@ -36,7 +36,7 @@ $endpoints = $endpoints ?? [
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
                             <span class="badge bg-<?= $ep['method'] === 'GET' ? 'success' : ($ep['method'] === 'POST' ? 'primary' : ($ep['method'] === 'PUT' ? 'warning' : 'danger')) ?> me-2 p-2"><?= $ep['method'] ?></span>
-                            <code class="fs-6"><?= htmlspecialchars($ep['path']) ?></code>
+                            <code class="fs-6"><?= htmlspecialchars($ep['path'] ?? '') ?></code>
                         </div>
                         <a class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" href="#epDetails<?= $i ?>"><i class="fas fa-chevron-down"></i></a>
                     </div>
@@ -45,11 +45,11 @@ $endpoints = $endpoints ?? [
                         <hr>
                         <?php if (!empty($ep['params'])): ?>
                         <h6 class="fw-bold">Parameters</h6>
-                        <p><code><?= htmlspecialchars($ep['params']) ?></code></p>
+                        <p><code><?= htmlspecialchars($ep['params'] ?? '') ?></code></p>
                         <?php endif; ?>
                         <?php if (!empty($ep['response'])): ?>
                         <h6 class="fw-bold">Sample Response</h6>
-                        <pre class="bg-dark text-light p-3 rounded"><code><?= htmlspecialchars($ep['response']) ?></code></pre>
+                        <pre class="bg-dark text-light p-3 rounded"><code><?= htmlspecialchars($ep['response'] ?? '') ?></code></pre>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -106,9 +106,9 @@ ob_start();
                                 <tr>
                                     <td>#<?= $a['id'] ?></td>
                                     <td>
-                                        <strong><?= htmlspecialchars($a['title']) ?></strong>
+                                        <strong><?= htmlspecialchars($a['title'] ?? '') ?></strong>
                                         <?php if ($a['property_title']): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($a['property_title']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($a['property_title'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td><span class="badge bg-light text-dark"><?= ucfirst($a['auction_type']) ?></span></td>

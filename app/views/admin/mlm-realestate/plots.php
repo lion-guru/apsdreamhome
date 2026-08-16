@@ -4,7 +4,7 @@
         <div>
             <a href="<?= BASE_URL ?>/admin/mlm-realestate/plots?block=" class="btn btn-sm <?= empty($_GET['block']) ? 'btn-dark' : 'btn-outline-secondary' ?>">All</a>
             <?php foreach ($blocks as $b): ?>
-            <a href="<?= BASE_URL ?>/admin/mlm-realestate/plots?block=<?= urlencode($b) ?>" class="btn btn-sm <?= ($_GET['block'] ?? '') === $b ? 'btn-dark' : 'btn-outline-secondary' ?>">Block <?= htmlspecialchars($b) ?></a>
+            <a href="<?= BASE_URL ?>/admin/mlm-realestate/plots?block=<?= urlencode($b) ?>" class="btn btn-sm <?= ($_GET['block'] ?? '') === $b ? 'btn-dark' : 'btn-outline-secondary' ?>">Block <?= htmlspecialchars($b ?? '') ?></a>
             <?php endforeach; ?>
         </div>
     </div>
@@ -15,7 +15,7 @@
         <div class="col-md-3 mb-2">
             <div class="card bg-<?= $statusColors[$s['status']] ?? 'secondary' ?> text-white shadow-sm">
                 <div class="card-body text-center py-2">
-                    <h6><?= htmlspecialchars($s['status']) ?></h6>
+                    <h6><?= htmlspecialchars($s['status'] ?? '') ?></h6>
                     <h3 class="mb-0 fw-bold"><?= $s['cnt'] ?></h3>
                 </div>
             </div>
@@ -31,14 +31,14 @@
                     <tbody>
                         <?php foreach ($plots as $p): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($p['block_name']) ?></strong></td>
-                            <td><?= htmlspecialchars($p['plot_no']) ?></td>
+                            <td><strong><?= htmlspecialchars($p['block_name'] ?? '') ?></strong></td>
+                            <td><?= htmlspecialchars($p['plot_no'] ?? '') ?></td>
                             <td><?= number_format((float)$p['size_sqft']) ?> sqft</td>
                             <td><?= htmlspecialchars($p['dimension'] ?? '-') ?></td>
                             <td>₹<?= number_format((float)$p['basic_price'], 2) ?></td>
                             <td>₹<?= number_format((float)$p['plc_charges'], 2) ?></td>
                             <td>₹<?= number_format((float)$p['basic_price'] + (float)$p['plc_charges'], 2) ?></td>
-                            <td><span class="badge bg-<?= $statusColors[$p['status']] ?? 'secondary' ?>"><?= htmlspecialchars($p['status']) ?></span></td>
+                            <td><span class="badge bg-<?= $statusColors[$p['status']] ?? 'secondary' ?>"><?= htmlspecialchars($p['status'] ?? '') ?></span></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

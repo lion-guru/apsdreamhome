@@ -10,11 +10,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-trophy me-2"></i>Associate Ranks</h5>
         <div>
-            <form method="POST" action="<?= htmlspecialchars($base) ?>/admin/mlm/associate-ranks/promote-all" class="d-inline" onsubmit="return confirm('Run automatic rank promotions for all associates?')">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            <form method="POST" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks/promote-all" class="d-inline" onsubmit="return confirm('Run automatic rank promotions for all associates?')">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-success me-2"><i class="fas fa-play me-1"></i>Run Promotions</button>
             </form>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm/rank-benefits" class="btn btn-link btn-sm">View Rank Benefits</a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/rank-benefits" class="btn btn-link btn-sm">View Rank Benefits</a>
         </div>
     </div>
     <div class="aps-cp-card-body p-0">
@@ -54,8 +54,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <td><?= htmlspecialchars((string)($a['email'] ?? '—')) ?></td>
                         <td>
                             <span class="badge" class="style-1810">
-                                <i class="fas <?= htmlspecialchars($icon) ?> me-1"></i>
-                                <?= htmlspecialchars(ucfirst($curRank)) ?>
+                                <i class="fas <?= htmlspecialchars($icon ?? '') ?> me-1"></i>
+                                <?= htmlspecialchars(ucfirst($curRank ?? '')) ?>
                             </span>
                         </td>
                         <td><?= htmlspecialchars(ucfirst((string)($a['next_rank'] ?? '—'))) ?></td>
@@ -74,7 +74,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             </span>
                         </td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($base) ?>/admin/mlm/associate-ranks/<?= (int)($a['id'] ?? 0) ?>">
+                            <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks/<?= (int)($a['id'] ?? 0) ?>">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>

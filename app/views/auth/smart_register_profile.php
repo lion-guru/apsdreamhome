@@ -152,7 +152,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
 
             <div class="card-body">
                 <form id="profileForm">
-                    <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+                    <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
 
                     <div class="form-section-title"><i class="fa-solid fa-user"></i> Basic Info</div>
 
@@ -262,7 +262,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    token: '<?php echo htmlspecialchars($token); ?>',
+                    token: '<?php echo htmlspecialchars($token ?? ''); ?>',
                     ...data
                 })
             })
@@ -293,7 +293,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
             const tokenInput = document.createElement('input');
             tokenInput.type = 'hidden';
             tokenInput.name = 'token';
-            tokenInput.value = '<?php echo htmlspecialchars($token); ?>';
+            tokenInput.value = '<?php echo htmlspecialchars($token ?? ''); ?>';
             form.appendChild(tokenInput);
             
             document.body.appendChild(form);

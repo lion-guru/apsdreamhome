@@ -136,7 +136,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                                     <td>
                                         <strong><?= htmlspecialchars($c['description'] ?? '—') ?></strong>
                                         <?php if (!empty($c['category'])): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($c['category']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($c['category'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td><small><?= htmlspecialchars($c['vendor_name'] ?? '—') ?></small></td>

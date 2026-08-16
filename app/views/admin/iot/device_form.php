@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 $device = $device ?? null;
 $isEdit = !empty($device);
 $catalog = $catalog ?? [];
@@ -16,13 +16,13 @@ $statuses = ['offline'=>'Offline','online'=>'Online','configuring'=>'Configuring
         <form method="POST" action="<?= BASE_URL ?>/admin/iot/device/save">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $device['id'] ?>"><?php endif; ?>
-            <div class="mb-3"><label class="form-label">Device Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($device['name']) : '' ?>" required></div>
+            <div class="mb-3"><label class="form-label">Device Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($device['name'] ?? '') : '' ?>" required></div>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Catalog Template</label>
                     <select name="catalog_id" class="form-select" id="catalogSel">
-                        <option value="">â€” None / Custom â€”</option>
-                        <?php foreach ($catalog as $c): ?><option value="<?= $c['id'] ?>" <?= $isEdit && ($device['catalog_id'] ?? '')==$c['id']?'selected':'' ?> data-cat="<?= $c['category'] ?>"><?= htmlspecialchars($c['name']) ?></option><?php endforeach; ?>
+                        <option value="">— None / Custom —</option>
+                        <?php foreach ($catalog as $c): ?><option value="<?= $c['id'] ?>" <?= $isEdit && ($device['catalog_id'] ?? '')==$c['id']?'selected':'' ?> data-cat="<?= $c['category'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3"><label class="form-label">Device UID / Serial</label><input type="text" name="device_uid" class="form-control" value="<?= $isEdit ? htmlspecialchars($device['device_uid'] ?? '') : '' ?>" placeholder="MAC / serial number"></div>

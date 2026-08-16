@@ -29,15 +29,15 @@ $isLegacy = $is_legacy ?? false;
                         <tr><td class="text-muted">Name</td><td><strong><?php echo htmlspecialchars($farmer['farmer_name'] ?? ''); ?></strong></td></tr>
                         <tr><td class="text-muted">Mobile</td><td><?php echo htmlspecialchars($farmer['farmer_mobile'] ?? ''); ?></td></tr>
                         <?php if ($farmer['email'] ?? ''): ?>
-                        <tr><td class="text-muted">Email</td><td><?php echo htmlspecialchars($farmer['email']); ?></td></tr>
+                        <tr><td class="text-muted">Email</td><td><?php echo htmlspecialchars($farmer['email'] ?? ''); ?></td></tr>
                         <?php endif; ?>
                         <tr><td class="text-muted">Land Area</td><td><?php echo htmlspecialchars($farmer['land_area'] ?? '0'); ?> sq.ft</td></tr>
                         <tr><td class="text-muted">Location</td><td><?php echo htmlspecialchars($farmer['district'] ?? ($farmer['location'] ?? '')); ?></td></tr>
-                        <?php if ($farmer['city'] ?? ''): ?><tr><td class="text-muted">City</td><td><?php echo htmlspecialchars($farmer['city']); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['tehsil'] ?? ''): ?><tr><td class="text-muted">Tehsil</td><td><?php echo htmlspecialchars($farmer['tehsil']); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['gram'] ?? ''): ?><tr><td class="text-muted">Gram</td><td><?php echo htmlspecialchars($farmer['gram']); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['site_name'] ?? ''): ?><tr><td class="text-muted">Site</td><td><?php echo htmlspecialchars($farmer['site_name']); ?></td></tr><?php endif; ?>
-                        <?php if ($farmer['gata_number'] ?? ''): ?><tr><td class="text-muted">Gata #</td><td><?php echo htmlspecialchars($farmer['gata_number']); ?></td></tr><?php endif; ?>
+                        <?php if ($farmer['city'] ?? ''): ?><tr><td class="text-muted">City</td><td><?php echo htmlspecialchars($farmer['city'] ?? ''); ?></td></tr><?php endif; ?>
+                        <?php if ($farmer['tehsil'] ?? ''): ?><tr><td class="text-muted">Tehsil</td><td><?php echo htmlspecialchars($farmer['tehsil'] ?? ''); ?></td></tr><?php endif; ?>
+                        <?php if ($farmer['gram'] ?? ''): ?><tr><td class="text-muted">Gram</td><td><?php echo htmlspecialchars($farmer['gram'] ?? ''); ?></td></tr><?php endif; ?>
+                        <?php if ($farmer['site_name'] ?? ''): ?><tr><td class="text-muted">Site</td><td><?php echo htmlspecialchars($farmer['site_name'] ?? ''); ?></td></tr><?php endif; ?>
+                        <?php if ($farmer['gata_number'] ?? ''): ?><tr><td class="text-muted">Gata #</td><td><?php echo htmlspecialchars($farmer['gata_number'] ?? ''); ?></td></tr><?php endif; ?>
                     </table>
                 </div>
             </div>
@@ -67,7 +67,7 @@ $isLegacy = $is_legacy ?? false;
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <?php if ($farmer['land_manager_name'] ?? ''): ?>
-                        <tr><td class="text-muted">Land Manager</td><td><?php echo htmlspecialchars($farmer['land_manager_name']); ?></td></tr>
+                        <tr><td class="text-muted">Land Manager</td><td><?php echo htmlspecialchars($farmer['land_manager_name'] ?? ''); ?></td></tr>
                         <tr><td class="text-muted">Mgr Mobile</td><td><?php echo htmlspecialchars($farmer['land_manager_mobile'] ?? ''); ?></td></tr>
                         <?php endif; ?>
                         <tr><td class="text-muted">Agreement Status</td>
@@ -75,7 +75,7 @@ $isLegacy = $is_legacy ?? false;
                                 <?php if ($s === 'active'): ?><span class="badge bg-success">Active</span>
                                 <?php elseif ($s === 'completed'): ?><span class="badge bg-info">Completed</span>
                                 <?php elseif ($s === 'terminated'): ?><span class="badge bg-danger">Terminated</span>
-                                <?php else: ?><span class="badge bg-secondary"><?php echo htmlspecialchars($s); ?></span>
+                                <?php else: ?><span class="badge bg-secondary"><?php echo htmlspecialchars($s ?? ''); ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -128,7 +128,7 @@ $isLegacy = $is_legacy ?? false;
                                         <?php elseif ($as === 'completed'): ?><span class="badge bg-info">Completed</span>
                                         <?php elseif ($as === 'terminated'): ?><span class="badge bg-danger">Terminated</span>
                                         <?php elseif ($as === 'draft'): ?><span class="badge bg-secondary">Draft</span>
-                                        <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($as); ?></span>
+                                        <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($as ?? ''); ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td><?php echo htmlspecialchars($a['start_date'] ?? ''); ?></td>
@@ -163,7 +163,7 @@ $isLegacy = $is_legacy ?? false;
                                         <?php elseif ($ls === 'closed'): ?><span class="badge bg-info">Closed</span>
                                         <?php elseif ($ls === 'defaulted'): ?><span class="badge bg-danger">Defaulted</span>
                                         <?php elseif ($ls === 'applied'): ?><span class="badge bg-secondary">Applied</span>
-                                        <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($ls); ?></span>
+                                        <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($ls ?? ''); ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

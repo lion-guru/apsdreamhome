@@ -92,7 +92,7 @@
             if (is_array($analysis)):
               echo '<pre class="bg-light p-3 rounded">' . print_r($analysis, true) . '</pre>';
             else:
-              echo '<p>' . htmlspecialchars($analysis) . '</p>';
+              echo '<p>' . htmlspecialchars($analysis ?? '') . '</p>';
             endif;
             ?>
           </div>
@@ -110,10 +110,10 @@
             $recs = json_decode($report['recommendations'], true) ?: [];
             if (is_array($recs) && !empty($recs)):
               foreach ($recs as $rec):
-                echo '<p class="mb-2">• ' . htmlspecialchars($rec) . '</p>';
+                echo '<p class="mb-2">• ' . htmlspecialchars($rec ?? '') . '</p>';
               endforeach;
             else:
-              echo '<p>' . htmlspecialchars($report['recommendations']) . '</p>';
+              echo '<p>' . htmlspecialchars($report['recommendations'] ?? '') . '</p>';
             endif;
             ?>
           </div>
@@ -158,7 +158,7 @@
             if (is_array($market)):
               echo '<pre class="bg-light p-3 rounded">' . print_r($market, true) . '</pre>';
             else:
-              echo '<p>' . htmlspecialchars($market) . '</p>';
+              echo '<p>' . htmlspecialchars($market ?? '') . '</p>';
             endif;
             ?>
           </div>

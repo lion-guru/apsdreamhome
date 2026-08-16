@@ -8,10 +8,10 @@
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Register New Farmer</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if ($success): ?>
-                    <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                    <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                     <?php endif; ?>
                     <?php if ($error): ?>
-                    <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                    <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                     <?php endif; ?>
                     <form method="post" action="<?= BASE_URL ?>farmers">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

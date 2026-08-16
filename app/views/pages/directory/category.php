@@ -2,13 +2,13 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services">Services Directory</a></li>
-            <li class="breadcrumb-item active"><?= htmlspecialchars($category['name']) ?></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($category['name'] ?? '') ?></li>
         </ol>
     </nav>
 
     <div class="row mb-4">
         <div class="col-lg-8">
-            <h1 class="mb-2"><i class="<?= htmlspecialchars($category['icon'] ?? 'fas fa-building') ?> me-2 text-primary"></i><?= htmlspecialchars($category['name']) ?></h1>
+            <h1 class="mb-2"><i class="<?= htmlspecialchars($category['icon'] ?? 'fas fa-building') ?> me-2 text-primary"></i><?= htmlspecialchars($category['name'] ?? '') ?></h1>
             <p class="text-muted"><?= htmlspecialchars($category['description'] ?? '') ?></p>
         </div>
         <div class="col-lg-4 text-lg-end">
@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="city" class="form-control" placeholder="City..." value="<?= htmlspecialchars($city) ?>">
+                    <input type="text" name="city" class="form-control" placeholder="City..." value="<?= htmlspecialchars($city ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <select name="sort" class="form-control">
@@ -61,7 +61,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
-                                    <h5 class="card-title mb-1"><?= htmlspecialchars($l['business_name']) ?>
+                                    <h5 class="card-title mb-1"><?= htmlspecialchars($l['business_name'] ?? '') ?>
                                         <?php if ($l['is_verified']): ?><i class="fas fa-check-circle text-info ms-1" title="Verified"></i><?php endif; ?>
                                         <?php if ($l['is_featured']): ?><i class="fas fa-crown text-warning ms-1" title="Featured"></i><?php endif; ?>
                                     </h5>
@@ -73,9 +73,9 @@
                                 <p class="mb-2"><span class="text-warning"><?= str_repeat('★', (int)$l['rating']) ?></span><span class="text-muted"> (<?= $l['review_count'] ?> reviews)</span></p>
                             <?php endif; ?>
 
-                            <?php if ($l['owner_name']): ?><p class="mb-1 small"><i class="fas fa-user me-1 text-muted"></i><?= htmlspecialchars($l['owner_name']) ?></p><?php endif; ?>
-                            <?php if ($l['city']): ?><p class="mb-1 small"><i class="fas fa-map-marker-alt me-1 text-muted"></i><?= htmlspecialchars($l['city']) ?></p><?php endif; ?>
-                            <?php if ($l['phone']): ?><p class="mb-1 small"><i class="fas fa-phone me-1 text-muted"></i><a href="tel:<?= htmlspecialchars($l['phone']) ?>"><?= htmlspecialchars($l['phone']) ?></a></p><?php endif; ?>
+                            <?php if ($l['owner_name']): ?><p class="mb-1 small"><i class="fas fa-user me-1 text-muted"></i><?= htmlspecialchars($l['owner_name'] ?? '') ?></p><?php endif; ?>
+                            <?php if ($l['city']): ?><p class="mb-1 small"><i class="fas fa-map-marker-alt me-1 text-muted"></i><?= htmlspecialchars($l['city'] ?? '') ?></p><?php endif; ?>
+                            <?php if ($l['phone']): ?><p class="mb-1 small"><i class="fas fa-phone me-1 text-muted"></i><a href="tel:<?= htmlspecialchars($l['phone'] ?? '') ?>"><?= htmlspecialchars($l['phone'] ?? '') ?></a></p><?php endif; ?>
                             <?php if ($l['experience_years'] > 0): ?><p class="mb-1 small"><i class="fas fa-clock me-1 text-muted"></i><?= $l['experience_years'] ?> years experience</p><?php endif; ?>
 
                             <div class="mt-3">

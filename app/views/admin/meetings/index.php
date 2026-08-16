@@ -211,7 +211,7 @@ $completedCount = count($completedMeetings);
                                         };
                                         ?>
                                         <span class="badge <?= $statusClass ?> badge-soft">
-                                            <?= htmlspecialchars($statusLabel) ?>
+                                            <?= htmlspecialchars($statusLabel ?? '') ?>
                                         </span>
                                     </td>
                                     <td>
@@ -231,7 +231,7 @@ $completedCount = count($completedMeetings);
                                         };
                                         ?>
                                         <span class="badge <?= $typeClass ?> badge-soft">
-                                            <?= htmlspecialchars($typeLabel) ?>
+                                            <?= htmlspecialchars($typeLabel ?? '') ?>
                                         </span>
                                     </td>
                                     <td class="text-center">

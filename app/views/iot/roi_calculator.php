@@ -1,6 +1,6 @@
 <?php $pageTitle = $page_title ?? 'Smart Home ROI Calculator'; ?>
 <div class="container-fluid py-4">
-    <h4 class="mb-4"><i class="fas fa-calculator me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
+    <h4 class="mb-4"><i class="fas fa-calculator me-2"></i><?= htmlspecialchars($pageTitle ?? '') ?></h4>
     <div class="row g-3">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">

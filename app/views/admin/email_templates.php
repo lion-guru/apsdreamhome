@@ -14,24 +14,24 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1"><i class="fas fa-envelope-open-text me-2"></i><?= htmlspecialchars($page_heading) ?></h1>
+            <h1 class="h3 mb-1"><i class="fas fa-envelope-open-text me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h1>
             <p class="text-muted mb-0">Brand-styled, responsive HTML emails sent from APS Dream Home.</p>
         </div>
-        <a href="<?= htmlspecialchars($base_url) ?>/admin/dashboard" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= htmlspecialchars($base_url ?? '') ?>/admin/dashboard" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i><?= __('admin_btn_back', null, 'Back') ?>
         </a>
     </div>
 
     <?php if (!empty($flash_success)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
     <?php if (!empty($flash_error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($flash_error) ?>
+            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($flash_error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -41,7 +41,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
             <i class="fas fa-info-circle me-2"></i>
             <div>
                 No admin email configured. Set <code>MAIL_FROM_ADDRESS</code> in your <code>.env</code> or
-                configure SMTP in <a href="<?= htmlspecialchars($base_url) ?>/admin/settings/email" class="alert-link">Email Settings</a> before sending test emails.
+                configure SMTP in <a href="<?= htmlspecialchars($base_url ?? '') ?>/admin/settings/email" class="alert-link">Email Settings</a> before sending test emails.
             </div>
         </div>
     <?php endif; ?>
@@ -74,38 +74,38 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                         <?php foreach ($templates as $tpl): ?>
                             <tr>
                                 <td>
-                                    <code class="text-primary fw-bold"><?= htmlspecialchars($tpl['code']) ?></code>
+                                    <code class="text-primary fw-bold"><?= htmlspecialchars($tpl['code'] ?? '') ?></code>
                                 </td>
                                 <td>
-                                    <div class="text-truncate" class="style-48743" title="<?= htmlspecialchars($tpl['subject']) ?>">
-                                        <?= htmlspecialchars($tpl['subject']) ?>
+                                    <div class="text-truncate" class="style-48743" title="<?= htmlspecialchars($tpl['subject'] ?? '') ?>">
+                                        <?= htmlspecialchars($tpl['subject'] ?? '') ?>
                                     </div>
                                 </td>
                                 <td>
                                     <?php if (!empty($tpl['exists'])): ?>
                                         <span class="text-success" title="File exists">
-                                            <i class="fas fa-check-circle me-1"></i><?= htmlspecialchars($tpl['file']) ?>
+                                            <i class="fas fa-check-circle me-1"></i><?= htmlspecialchars($tpl['file'] ?? '') ?>
                                             <small class="text-muted">(<?= (int)$tpl['size'] ?> B)</small>
                                         </span>
                                     <?php else: ?>
                                         <span class="text-danger" title="File missing">
-                                            <i class="fas fa-times-circle me-1"></i><?= htmlspecialchars($tpl['file']) ?>
+                                            <i class="fas fa-times-circle me-1"></i><?= htmlspecialchars($tpl['file'] ?? '') ?>
                                         </span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php foreach ($tpl['vars'] as $v): ?>
-                                        <span class="badge bg-light text-dark border me-1 mb-1" title="Placeholder">{{<?= htmlspecialchars($v) ?>}}</span>
+                                        <span class="badge bg-light text-dark border me-1 mb-1" title="Placeholder">{{<?= htmlspecialchars($v ?? '') ?>}}</span>
                                     <?php endforeach; ?>
                                 </td>
                                 <td class="text-end">
-                                    <a href="<?= htmlspecialchars($base_url) ?>/admin/email-templates/preview/<?= urlencode($tpl['code']) ?>"
+                                    <a href="<?= htmlspecialchars($base_url ?? '') ?>/admin/email-templates/preview/<?= urlencode($tpl['code']) ?>"
                                        target="_blank"
                                        class="btn btn-sm btn-outline-info me-1"
                                        title="Preview rendered HTML in a new tab">
                                         <i class="fas fa-eye me-1"></i><?= __('admin_btn_preview', null, 'Preview') ?>
                                     </a>
-                                    <a href="<?= htmlspecialchars($base_url) ?>/admin/email-templates/test/<?= urlencode($tpl['code']) ?>"
+                                    <a href="<?= htmlspecialchars($base_url ?? '') ?>/admin/email-templates/test/<?= urlencode($tpl['code']) ?>"
                                        class="btn btn-sm btn-primary"
                                        title="Send a test email using default placeholder values"
                                        onclick="return confirm('Send a test email to <?= htmlspecialchars($admin_email ?: 'admin') ?>?');">

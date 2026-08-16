@@ -57,7 +57,7 @@
                                     <option value="">— None —</option>
                                     <?php foreach ($departments as $dept): ?>
                                         <option value="<?= $dept['id'] ?>" <?= ($rule['target_department_id'] ?? '') == $dept['id'] ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($dept['name']) ?>
+                                            <?= htmlspecialchars($dept['name'] ?? '') ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -69,7 +69,7 @@
                                     <option value="">— None —</option>
                                     <?php foreach ($users as $u): ?>
                                         <option value="<?= $u['id'] ?>" <?= ($rule['target_user_id'] ?? '') == $u['id'] ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['email']) ?>)
+                                            <?= htmlspecialchars($u['name'] ?? '') ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

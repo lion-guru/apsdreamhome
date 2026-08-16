@@ -95,14 +95,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <tbody>
                     <?php foreach ($agreements as $a): ?>
                     <tr>
-                        <td class="style-24039"><?= htmlspecialchars($a['title']) ?></td>
+                        <td class="style-24039"><?= htmlspecialchars($a['title'] ?? '') ?></td>
                         <td>
                             <div class="style-51792"><?= htmlspecialchars($a['agent_name'] ?? 'N/A') ?></div>
                             <div class="style-63117"><?= htmlspecialchars($a['agent_email'] ?? '') ?></div>
                         </td>
                         <td>
                             <?php if ($a['property_name']): ?>
-                                <div class="style-51792"><?= htmlspecialchars($a['property_name']) ?></div>
+                                <div class="style-51792"><?= htmlspecialchars($a['property_name'] ?? '') ?></div>
                                 <div class="style-63117"><?= htmlspecialchars($a['property_location'] ?? '') ?></div>
                             <?php else: ?>
                                 <span class="style-71870">General</span>

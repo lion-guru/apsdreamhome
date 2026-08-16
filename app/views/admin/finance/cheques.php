@@ -23,7 +23,7 @@
                     <select name="bank_account_id" class="form-select form-select-sm">
                         <option value=""><?php echo __('finance_all'); ?></option>
                         <?php foreach (($banks ?? []) as $b): ?>
-                            <option value="<?= (int)$b['id'] ?>" <?= $bank_id == $b['id'] ? 'selected' : '' ?>><?= htmlspecialchars($b['account_name']) ?></option>
+                            <option value="<?= (int)$b['id'] ?>" <?= $bank_id == $b['id'] ? 'selected' : '' ?>><?= htmlspecialchars($b['account_name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -52,7 +52,7 @@
                         <td class="text-end fw-bold">₹<?= number_format((float)($c['amount'] ?? 0), 2) ?></td>
                         <td>
                             <?php $st = $c['status'] ?? 'issued'; $bg = ['issued'=>'primary','pending'=>'warning','cleared'=>'success','bounced'=>'danger','cancelled'=>'secondary'][$st] ?? 'secondary'; ?>
-                            <span class="badge bg-<?= $bg ?>"><?= htmlspecialchars($st) ?></span>
+                            <span class="badge bg-<?= $bg ?>"><?= htmlspecialchars($st ?? '') ?></span>
                         </td>
                         <td>
                             <?php if (in_array($st, ['issued','pending'])): ?>

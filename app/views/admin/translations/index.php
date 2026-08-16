@@ -10,7 +10,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-language me-2"></i><?= htmlspecialchars($page_title) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-language me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h2>
         <div class="d-flex gap-2">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTranslationModal">
                 <i class="fas fa-plus me-1"></i> Add Translation
@@ -31,7 +31,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                             <span class="badge bg-primary rounded-pill p-2 fs-5"><?= $info['flag'] ?? 'ðŸŒ�' ?></span>
                         </div>
                         <div>
-                            <div class="aps-cp-stat-label"><?= htmlspecialchars($info['name']) ?> (<?= $code ?>)</div>
+                            <div class="aps-cp-stat-label"><?= htmlspecialchars($info['name'] ?? '') ?> (<?= $code ?>)</div>
                             <div class="aps-cp-stat-value">
                                 <?= $stats['completed'] ?? 0 ?> / <?= $stats['total'] ?? 0 ?>
                                 <small class="text-muted ms-2">(<?= $stats['percentage'] ?? 0 ?>%)</small>
@@ -62,7 +62,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                         <tr>
                             <th>Key</th>
                             <?php foreach ($supported_languages as $code => $info): ?>
-                                <th><?= htmlspecialchars($info['name']) ?> (<?= $code ?>)</th>
+                                <th><?= htmlspecialchars($info['name'] ?? '') ?> (<?= $code ?>)</th>
                             <?php endforeach; ?>
                             <th class="text-center">Actions</th>
                         </tr>
@@ -78,7 +78,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                         </tr>
                         <?php else: foreach ($languages as $key => $translations): ?>
                         <tr>
-                            <td><code class="small"><?= htmlspecialchars($key) ?></code></td>
+                            <td><code class="small"><?= htmlspecialchars($key ?? '') ?></code></td>
                             <?php foreach ($supported_languages as $code => $info): ?>
                                 <td>
                                     <span class="text-<?= isset($translations[$code]) && !empty($translations[$code]) ? 'success' : 'muted' ?>">
@@ -87,7 +87,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                                 </td>
                             <?php endforeach; ?>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-primary edit-translation" data-key="<?= htmlspecialchars($key) ?>" data-translations="<?= htmlspecialchars(json_encode($translations)) ?>"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-outline-primary edit-translation" data-key="<?= htmlspecialchars($key ?? '') ?>" data-translations="<?= htmlspecialchars(json_encode($translations)) ?>"><i class="fas fa-edit"></i></button>
                             </td>
                         </tr>
                         <?php endforeach; endif; ?>
@@ -120,7 +120,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                     <h6>Translations</h6>
                     <?php foreach ($supported_languages as $code => $info): ?>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold"><?= htmlspecialchars($info['name']) ?> (<?= $code ?>) <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold"><?= htmlspecialchars($info['name'] ?? '') ?> (<?= $code ?>) <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="translations[<?= $code ?>]" placeholder="Translation in <?= $info['name'] ?>" required>
                     </div>
                     <?php endforeach; ?>

@@ -79,7 +79,7 @@ $role = $role ?? '';
                                                     ?>"><?= ucfirst($role) ?></span>
                                                     <?= htmlspecialchars($user['email'] ?? '') ?>
                                                     <?php if (!empty($user['phone'])): ?>
-                                                        &middot; <?= htmlspecialchars($user['phone']) ?>
+                                                        &middot; <?= htmlspecialchars($user['phone'] ?? '') ?>
                                                     <?php endif; ?>
                                                 </small>
                                             </div>

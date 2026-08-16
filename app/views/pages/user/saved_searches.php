@@ -30,13 +30,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
     <?php if ($flash_success): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
     <?php if ($flash_error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flash_error) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flash_error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -137,7 +137,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                             <?php if (!empty($filterBadges)): ?>
                                 <div class="mb-2">
                                     <?php foreach ($filterBadges as $b): ?>
-                                        <span class="badge bg-light text-dark border me-1 mb-1"><?= htmlspecialchars($b[0]) ?>: <strong><?= htmlspecialchars($b[1]) ?></strong></span>
+                                        <span class="badge bg-light text-dark border me-1 mb-1"><?= htmlspecialchars($b[0] ?? '') ?>: <strong><?= htmlspecialchars($b[1] ?? '') ?></strong></span>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
@@ -156,7 +156,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                 <a href="<?= BASE_URL ?>/user/saved-searches/<?= (int)$search['id'] ?>/execute?to=properties" class="btn btn-sm btn-primary rounded-pill px-3" title="Run this search and view matches">
                                     <i class="fas fa-play me-1"></i><?= __('saved_btn_run', null, 'Run') ?>
                                 </a>
-                                <a href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Open in properties page">
+                                <a href="<?= BASE_URL ?>/properties?<?= htmlspecialchars($queryString ?? '') ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Open in properties page">
                                     <i class="fas fa-external-link-alt me-1"></i><?= __('saved_btn_open', null, 'Open') ?>
                                 </a>
                                 <button type="button" class="btn btn-sm <?= $alertsOn ? 'btn-success' : 'btn-outline-success' ?> rounded-pill px-3 js-toggle-alerts" data-search-id="<?= (int)$search['id'] ?>" data-enabled="<?= $alertsOn ? '1' : '0' ?>">

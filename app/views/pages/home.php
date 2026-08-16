@@ -57,7 +57,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             data-color-experiment="cta_button_color"
                             data-color-variant="<?php echo htmlspecialchars((string) $ctaColorVariant, ENT_QUOTES); ?>"
                             id="hero-cta">
-                            <i class="fas fa-building me-2"></i><?= htmlspecialchars($heroCtaText) ?>
+                            <i class="fas fa-building me-2"></i><?= htmlspecialchars($heroCtaText ?? '') ?>
                         </a>
                         <a href="<?php echo BASE_URL; ?>/list-property"
                             class="btn btn-outline-premium hover-lift">
@@ -545,7 +545,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                         <div class="ps-card-img">
                             <img loading="lazy"
                                 src="<?= BASE_URL ?>/assets/images/<?= $p['img'] ?>"
-                                alt="<?= htmlspecialchars($p['title']) ?>"
+                                alt="<?= htmlspecialchars($p['title'] ?? '') ?>"
                                 onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="ps-card-img-grad"></div>
                             <span class="ps-badge ps-badge-status"><?= $p['status'] ?></span>
@@ -594,7 +594,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <div class="ps-card">
                         <div class="ps-card-img">
                             <img loading="lazy" src="<?= BASE_URL . $imgPath ?>"
-                                alt="<?= htmlspecialchars($projectTitle) ?>"
+                                alt="<?= htmlspecialchars($projectTitle ?? '') ?>"
                                 onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="ps-card-img-grad"></div>
                             <span class="ps-badge ps-badge-status"><?= $project['status'] ?? 'Available' ?></span>
@@ -602,7 +602,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             <div class="ps-card-location-chip"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($project['city'] ?? '') ?></div>
                         </div>
                         <div class="ps-card-body">
-                            <h5 class="ps-card-title"><?= htmlspecialchars($projectTitle) ?></h5>
+                            <h5 class="ps-card-title"><?= htmlspecialchars($projectTitle ?? '') ?></h5>
                             <div class="ps-card-stats">
                                 <?php if (!empty($project['plots'])): ?>
                                 <span><i class="fas fa-vector-square"></i> <?= $project['plots'] ?> <?= __('plots') ?></span>
@@ -1016,7 +1016,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 ctaAction: "openToolModal('emi')",
                 ctaColor: 'success',
                 phone: <?= json_encode($phoneDisplay) ?>,
-                whatsapp: 'https://wa.me/<?= htmlspecialchars($phoneRaw) ?>'
+                whatsapp: 'https://wa.me/<?= htmlspecialchars($phoneRaw ?? '') ?>'
             },
             legal: {
                 color: 'linear-gradient(135deg, #6366f1, #0d9488)',
@@ -1237,7 +1237,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                             <a href="tel:<?= $phoneRaw ?>" class="btn btn-lg btn-glow btn-shine" class="style-48100">
                                 <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
                             </a>
-                             <a href="https://wa.me/<?= htmlspecialchars($phoneRaw) ?>" target="_blank"
+                             <a href="https://wa.me/<?= htmlspecialchars($phoneRaw ?? '') ?>" target="_blank"
                                 class="btn btn-outline-dark btn-lg btn-glow" class="style-42273">
                                 <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
                             </a>
@@ -2152,7 +2152,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                     <a href="tel:<?= $phoneRaw ?>" class="btn btn-premium btn-lg px-4 btn-glow btn-shine">
                         <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
                     </a>
-                    <a href="https://wa.me/<?= htmlspecialchars($phoneRaw) ?>" target="_blank" class="btn btn-light btn-lg text-success px-4 btn-glow" class="style-10870">
+                    <a href="https://wa.me/<?= htmlspecialchars($phoneRaw ?? '') ?>" target="_blank" class="btn btn-light btn-lg text-success px-4 btn-glow" class="style-10870">
                         <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
                     </a>
                 </div>

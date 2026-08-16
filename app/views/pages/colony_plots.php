@@ -101,8 +101,8 @@
                     <?php foreach ($dimensions as $d): ?>
                         <?php $dim = $d['dimension_label'] ?? ''; ?>
                         <?php if ($dim): ?>
-                        <button type="button" class="dimension-btn <?= $current_dimension === $dim ? 'active' : '' ?>" onclick="setFilter('dimension', '<?= htmlspecialchars($dim) ?>')">
-                            <?= htmlspecialchars($dim) ?> sqft
+                        <button type="button" class="dimension-btn <?= $current_dimension === $dim ? 'active' : '' ?>" onclick="setFilter('dimension', '<?= htmlspecialchars($dim ?? '') ?>')">
+                            <?= htmlspecialchars($dim ?? '') ?> sqft
                         </button>
                         <?php endif; ?>
                     <?php endforeach; ?>
@@ -116,8 +116,8 @@
                     <option value=""><?= __('colony_all_blocks') ?></option>
                     <?php foreach ($blocks as $b): ?>
                         <?php $blk = $b['block'] ?? ''; ?>
-                        <option value="<?= htmlspecialchars($blk) ?>" <?= $current_block === $blk ? 'selected' : '' ?>>
-                            <?= sprintf(__('colony_block_prefix'), htmlspecialchars($blk)) ?>
+                        <option value="<?= htmlspecialchars($blk ?? '') ?>" <?= $current_block === $blk ? 'selected' : '' ?>>
+                            <?= sprintf(__('colony_block_prefix'), htmlspecialchars($blk ?? '')) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -197,7 +197,7 @@
                                 <div>
                                     <span class="plot-number"><?= htmlspecialchars($plot['plot_number'] ?? '') ?></span>
                                     <?php if (!empty($plot['block'])): ?>
-                                        <span class="badge bg-light text-dark ms-1"><?= sprintf(__('colony_block_prefix'), htmlspecialchars($plot['block'])) ?></span>
+                                        <span class="badge bg-light text-dark ms-1"><?= sprintf(__('colony_block_prefix'), htmlspecialchars($plot['block'] ?? '')) ?></span>
                                     <?php endif; ?>
                                 </div>
                                 <span class="plot-price">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>

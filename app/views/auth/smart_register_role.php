@@ -12,7 +12,7 @@ $base = BASE_URL;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
+    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token ?? '') ?>">
     <title>Choose Your Role - APS Dream Home</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -58,7 +58,7 @@ $base = BASE_URL;
             <p class="subtitle">You can change this later from your profile settings.</p>
 
             <form method="POST" action="<?= $base ?>/auth/smart/role" id="roleForm">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? '') ?>">
                 <input type="hidden" name="role" id="selectedRole" value="customer">
 

@@ -18,7 +18,7 @@
     <div class="card border-0 shadow-sm" class="style-56956"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>Title</th><th>Lead</th><th>Agent</th><th>Type</th><th>Date/Time</th><th>Status</th><th>Actions</th></tr></thead><tbody>
     <?php if (empty($meetings)): ?><tr><td colspan="7" class="text-center py-4 text-muted">No meetings scheduled</td></tr>
     <?php else: foreach ($meetings as $m): ?><tr>
-        <td class="fw-bold"><?= htmlspecialchars($m['title']) ?></td>
+        <td class="fw-bold"><?= htmlspecialchars($m['title'] ?? '') ?></td>
         <td><?= htmlspecialchars($m['lead_name'] ?? '-') ?></td>
         <td><?= htmlspecialchars($m['agent_name'] ?? '-') ?></td>
         <td><span class="badge bg-light text-dark"><?= str_replace('_',' ',ucfirst($m['meeting_type'])) ?></span></td>

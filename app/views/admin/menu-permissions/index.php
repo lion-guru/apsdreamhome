@@ -47,10 +47,10 @@ $active_page = 'menu-permissions';
                                         <?php if (empty($item['children'])): ?>
                                             <tr data-menu-id="<?php echo $item['id']; ?>">
                                                 <td>
-                                                    <i class="fas <?php echo htmlspecialchars($item['icon']); ?> me-2"></i>
-                                                    <?php echo htmlspecialchars($item['name']); ?>
+                                                    <i class="fas <?php echo htmlspecialchars($item['icon'] ?? ''); ?> me-2"></i>
+                                                    <?php echo htmlspecialchars($item['name'] ?? ''); ?>
                                                 </td>
-                                                <td><code><?php echo htmlspecialchars($item['url']); ?></code></td>
+                                                <td><code><?php echo htmlspecialchars($item['url'] ?? ''); ?></code></td>
                                                 <?php
                                                 $roles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'user'];
                                                 foreach ($roles as $role): ?>
@@ -70,17 +70,17 @@ $active_page = 'menu-permissions';
                                             <!-- Parent menu item with children -->
                                             <tr class="table-primary font-weight-bold" data-menu-id="<?php echo $item['id']; ?>">
                                                 <td colspan="8">
-                                                    <i class="fas <?php echo htmlspecialchars($item['icon']); ?> me-2"></i>
-                                                    <?php echo htmlspecialchars($item['name']); ?> (Parent)
+                                                    <i class="fas <?php echo htmlspecialchars($item['icon'] ?? ''); ?> me-2"></i>
+                                                    <?php echo htmlspecialchars($item['name'] ?? ''); ?> (Parent)
                                                 </td>
                                             </tr>
                                             <?php foreach ($item['children'] as $child): ?>
                                                 <tr class="ms-4" data-menu-id="<?php echo $child['id']; ?>">
                                                     <td>
-                                                        <i class="fas <?php echo htmlspecialchars($child['icon']); ?> me-2"></i>
-                                                        <?php echo htmlspecialchars($child['name']); ?>
+                                                        <i class="fas <?php echo htmlspecialchars($child['icon'] ?? ''); ?> me-2"></i>
+                                                        <?php echo htmlspecialchars($child['name'] ?? ''); ?>
                                                     </td>
-                                                    <td><code><?php echo htmlspecialchars($child['url']); ?></code></td>
+                                                    <td><code><?php echo htmlspecialchars($child['url'] ?? ''); ?></code></td>
                                                     <?php
                                                     foreach ($roles as $role): ?>
                                                         <td>

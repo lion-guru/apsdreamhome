@@ -86,7 +86,7 @@
             <h1><?= htmlspecialchars($company['company_name'] ?? 'APS Dream Home') ?></h1>
             <div class="subtitle"><?= htmlspecialchars($company['address'] ?? '') ?></div>
             <?php if (!empty($company['gstin'])): ?>
-                <div class="subtitle">GSTIN: <?= htmlspecialchars($company['gstin']) ?></div>
+                <div class="subtitle">GSTIN: <?= htmlspecialchars($company['gstin'] ?? '') ?></div>
             <?php endif; ?>
             <div class="subtitle">PAN: <?= htmlspecialchars($company['pan'] ?? '') ?></div>
             <div class="subtitle"><?= htmlspecialchars($company['phone'] ?? '') ?> | <?= htmlspecialchars($company['email'] ?? '') ?></div>
@@ -102,15 +102,15 @@
         <div class="party-box">
             <h3>Bill To</h3>
             <div class="name"><?= htmlspecialchars($invoice['client_name'] ?? '') ?></div>
-            <?php if (!empty($invoice['client_email'])): ?><p><?= htmlspecialchars($invoice['client_email']) ?></p><?php endif; ?>
-            <?php if (!empty($invoice['client_phone'])): ?><p><?= htmlspecialchars($invoice['client_phone']) ?></p><?php endif; ?>
-            <?php if (!empty($invoice['client_address'])): ?><p><?= nl2br(htmlspecialchars($invoice['client_address'])) ?></p><?php endif; ?>
-            <?php if (!empty($invoice['gstin'])): ?><p><strong>GSTIN:</strong> <?= htmlspecialchars($invoice['gstin']) ?></p><?php endif; ?>
+            <?php if (!empty($invoice['client_email'])): ?><p><?= htmlspecialchars($invoice['client_email'] ?? '') ?></p><?php endif; ?>
+            <?php if (!empty($invoice['client_phone'])): ?><p><?= htmlspecialchars($invoice['client_phone'] ?? '') ?></p><?php endif; ?>
+            <?php if (!empty($invoice['client_address'])): ?><p><?= nl2br(htmlspecialchars($invoice['client_address'] ?? '')) ?></p><?php endif; ?>
+            <?php if (!empty($invoice['gstin'])): ?><p><strong>GSTIN:</strong> <?= htmlspecialchars($invoice['gstin'] ?? '') ?></p><?php endif; ?>
         </div>
         <div class="party-box" class="style-64867">
             <h3>Ship To</h3>
             <?php if (!empty($invoice['shipping_address'])): ?>
-                <p><?= nl2br(htmlspecialchars($invoice['shipping_address'])) ?></p>
+                <p><?= nl2br(htmlspecialchars($invoice['shipping_address'] ?? '')) ?></p>
             <?php else: ?>
                 <p class="text-muted">Same as billing address</p>
             <?php endif; ?>
@@ -143,7 +143,7 @@
                     <td>
                         <strong><?= htmlspecialchars($item['item_name'] ?? '') ?></strong>
                         <?php if (!empty($item['item_description'])): ?>
-                            <br><span class="style-88139"><?= htmlspecialchars($item['item_description']) ?></span>
+                            <br><span class="style-88139"><?= htmlspecialchars($item['item_description'] ?? '') ?></span>
                         <?php endif; ?>
                     </td>
                     <td class="text-center"><?= (int)($item['quantity'] ?? 1) ?></td>
@@ -189,10 +189,10 @@
         <div class="bank-details">
             <h4>Bank Details</h4>
             <div class="grid">
-                <span>Bank: <strong><?= htmlspecialchars($company['bank_name']) ?></strong></span>
-                <span>Account: <strong><?= htmlspecialchars($company['bank_account']) ?></strong></span>
-                <span>IFSC: <strong><?= htmlspecialchars($company['bank_ifsc']) ?></strong></span>
-                <span>Branch: <strong><?= htmlspecialchars($company['bank_branch']) ?></strong></span>
+                <span>Bank: <strong><?= htmlspecialchars($company['bank_name'] ?? '') ?></strong></span>
+                <span>Account: <strong><?= htmlspecialchars($company['bank_account'] ?? '') ?></strong></span>
+                <span>IFSC: <strong><?= htmlspecialchars($company['bank_ifsc'] ?? '') ?></strong></span>
+                <span>Branch: <strong><?= htmlspecialchars($company['bank_branch'] ?? '') ?></strong></span>
             </div>
         </div>
     <?php endif; ?>
@@ -204,14 +204,14 @@
         <p>3. Subject to Gorakhpur (Uttar Pradesh) jurisdiction for any disputes.</p>
         <p>4. This is a computer-generated invoice and does not require a physical signature.</p>
         <?php if (!empty($invoice['payment_terms'])): ?>
-            <p><strong>Additional:</strong> <?= htmlspecialchars($invoice['payment_terms']) ?></p>
+            <p><strong>Additional:</strong> <?= htmlspecialchars($invoice['payment_terms'] ?? '') ?></p>
         <?php endif; ?>
     </div>
 
     <?php if (!empty($invoice['notes'])): ?>
         <div class="terms">
             <h4>Notes</h4>
-            <p><?= htmlspecialchars($invoice['notes']) ?></p>
+            <p><?= htmlspecialchars($invoice['notes'] ?? '') ?></p>
         </div>
     <?php endif; ?>
 

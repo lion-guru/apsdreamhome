@@ -16,7 +16,7 @@
               <?php foreach ($topEarners as $i => $e): ?>
               <tr>
                 <td><?= $i + 1 ?></td>
-                <td><?= htmlspecialchars($e['name']) ?></td>
+                <td><?= htmlspecialchars($e['name'] ?? '') ?></td>
                 <td>₹<?= number_format($e['total_earned']) ?></td>
                 <td><?= $e['transactions'] ?></td>
               </tr>

@@ -6,8 +6,8 @@
             <a href="<?= BASE_URL ?>/admin/business/associates/edit/<?= $associate['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
         </div>
     </div>
-    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
-    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success ?? '') ?></div><?php endif; ?>
+    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div><?php endif; ?>
     <div class="row">
         <div class="col-md-4">
             <div class="aps-cp-card">

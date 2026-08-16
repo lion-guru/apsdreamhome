@@ -205,7 +205,7 @@
                             <div class="benefit-icon">
                                 <i class="fas <?= htmlspecialchars($benefit['icon'] ?? 'fa-star') ?>"></i>
                             </div>
-                            <h5><?= htmlspecialchars($benefit['title']) ?></h5>
+                            <h5><?= htmlspecialchars($benefit['title'] ?? '') ?></h5>
                             <p class="text-muted mb-0"><?= htmlspecialchars($benefit['description'] ?? '') ?></p>
                         </div>
                     </div>

@@ -36,7 +36,7 @@
                         <option value="">All Positions</option>
                         <?php if (!empty($careers)): ?>
                             <?php foreach ($careers as $c): ?>
-                                <option value="<?php echo $c['id']; ?>" <?php echo ($filters['career_id'] ?? '') == $c['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['title']); ?></option>
+                                <option value="<?php echo $c['id']; ?>" <?php echo ($filters['career_id'] ?? '') == $c['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['title'] ?? ''); ?></option>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>

@@ -166,7 +166,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
     <div class="signup-card">
         <?php if (!empty($error)): ?>
-            <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error ?? '') ?></div>
         <?php endif; ?>
 
         <form method="POST" action="<?= $base ?>/tenant-signup">
@@ -210,9 +210,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         $isSelected = ($selectedPlan === ($plan['slug'] ?? '')) || ($plan['slug'] ?? '') === 'free';
                         $isFree = ($plan['price_monthly'] ?? 0) == 0;
                     ?>
-                    <div class="plan-option <?= $isSelected ? 'selected' : '' ?>" onclick="selectPlan(this, '<?= htmlspecialchars($plan['slug']) ?>')">
-                        <input type="radio" name="plan_slug" value="<?= htmlspecialchars($plan['slug']) ?>" <?= $isSelected ? 'checked' : '' ?> class="style-24280">
-                        <div class="name"><?= htmlspecialchars($plan['name']) ?></div>
+                    <div class="plan-option <?= $isSelected ? 'selected' : '' ?>" onclick="selectPlan(this, '<?= htmlspecialchars($plan['slug'] ?? '') ?>')">
+                        <input type="radio" name="plan_slug" value="<?= htmlspecialchars($plan['slug'] ?? '') ?>" <?= $isSelected ? 'checked' : '' ?> class="style-24280">
+                        <div class="name"><?= htmlspecialchars($plan['name'] ?? '') ?></div>
                         <div class="price"><?= $isFree ? 'Free' : '₹' . number_format($plan['price_monthly'] ?? 0) . '/mo' ?></div>
                     </div>
                     <?php endforeach; ?>

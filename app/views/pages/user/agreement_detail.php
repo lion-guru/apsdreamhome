@@ -92,7 +92,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                 </div>
                 <div class="flex-grow-1">
                     <h5 class="mb-1" class="style-58689"><?= __('user_agreement_detail_signed_success', null, 'Agreement Signed Successfully') ?></h5>
-                    <p class="mb-0" class="style-58689"><?= __('user_agreement_detail_signed_on', null, 'Signed on') ?> <?= $signedAt ?><?= !empty($agreement['signed_ip']) ? ' ' . __('user_agreement_detail_signed_from_ip', null, 'from IP:') . ' ' . htmlspecialchars($agreement['signed_ip']) : '' ?></p>
+                    <p class="mb-0" class="style-58689"><?= __('user_agreement_detail_signed_on', null, 'Signed on') ?> <?= $signedAt ?><?= !empty($agreement['signed_ip']) ? ' ' . __('user_agreement_detail_signed_from_ip', null, 'from IP:') . ' ' . htmlspecialchars($agreement['signed_ip'] ?? '') : '' ?></p>
                 </div>
                 <a href="<?= BASE_URL ?>/user/agreements/<?= $agreement['id'] ?>/preview" class="btn btn-outline-success" target="_blank">
                     <i class="fas fa-print me-2"></i><?= __('user_agreement_detail_print_download', null, 'Print / Download') ?>
@@ -245,7 +245,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                 <h5 class="mb-0"><i class="fas fa-file-pdf me-2"></i><?= __('user_agreement_detail_attached_doc', null, 'Attached Document') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <a href="<?= BASE_URL ?>/<?= htmlspecialchars($agreement['document_url']) ?>" class="btn btn-outline-danger w-100" target="_blank">
+                <a href="<?= BASE_URL ?>/<?= htmlspecialchars($agreement['document_url'] ?? '') ?>" class="btn btn-outline-danger w-100" target="_blank">
                     <i class="fas fa-download me-2"></i><?= __('user_agreement_detail_download_pdf', null, 'Download Agreement PDF') ?>
                 </a>
             </div>
@@ -259,7 +259,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
             <div class="aps-cp-card-body">
                 <p class="small text-muted mb-3"><?= __('user_agreement_detail_help_desc', null, 'Have questions about this agreement? Contact our legal team.') ?></p>
                 <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary w-100 mb-2">
-                    <i class="fas fa-phone me-2"></i><?= htmlspecialchars($phoneDisplay) ?>
+                    <i class="fas fa-phone me-2"></i><?= htmlspecialchars($phoneDisplay ?? '') ?>
                 </a>
                 <a href="mailto:legal@apsdreamhome.com" class="btn btn-outline-secondary w-100">
                     <i class="fas fa-envelope me-2"></i>legal@apsdreamhome.com

@@ -54,7 +54,7 @@ ob_start();
         <div class="card-body aps-cp-card-body">
           <div class="table-responsive"><table class="table table-sm mb-0">
             <tr><td class="text-muted">Key Preview</td><td><code><?= htmlspecialchars($test_result['key_preview'] ?? '') ?></code></td></tr>
-            <tr><td class="text-muted">Scopes</td><td><?php foreach (($test_result['scopes'] ?? []) as $s): ?><span class="badge bg-light text-dark me-1"><?= htmlspecialchars($s) ?></span> <?php endforeach; ?></td></tr>
+            <tr><td class="text-muted">Scopes</td><td><?php foreach (($test_result['scopes'] ?? []) as $s): ?><span class="badge bg-light text-dark me-1"><?= htmlspecialchars($s ?? '') ?></span> <?php endforeach; ?></td></tr>
             <tr><td class="text-muted">Expires</td><td><?= $test_result['expires_at'] ?? 'Never' ?></td></tr>
             <tr><td class="text-muted">Last Used</td><td><?= $test_result['last_used'] ?? 'Never' ?></td></tr>
           </table></div>

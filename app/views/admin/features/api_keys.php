@@ -20,14 +20,14 @@ ob_start();
     <div class="alert alert-success">
       <h5><i class="fas fa-check-circle"></i> API Key Created</h5>
       <?php if (!empty($new_key['warning'])): ?>
-        <p class="mb-2"><strong><?= htmlspecialchars($new_key['warning']) ?></strong></p>
+        <p class="mb-2"><strong><?= htmlspecialchars($new_key['warning'] ?? '') ?></strong></p>
       <?php endif; ?>
       <div class="bg-light p-2 rounded mb-2">
-        <div><strong>Name:</strong> <?= htmlspecialchars($new_key['key_name']) ?></div>
-        <div><strong>Key:</strong> <code class="user-select-all"><?= htmlspecialchars($new_key['key_value']) ?></code></div>
-        <div><strong>Type:</strong> <?= htmlspecialchars($new_key['key_type']) ?></div>
+        <div><strong>Name:</strong> <?= htmlspecialchars($new_key['key_name'] ?? '') ?></div>
+        <div><strong>Key:</strong> <code class="user-select-all"><?= htmlspecialchars($new_key['key_value'] ?? '') ?></code></div>
+        <div><strong>Type:</strong> <?= htmlspecialchars($new_key['key_type'] ?? '') ?></div>
         <?php if (!empty($new_key['service_name'])): ?>
-          <div><strong>Service:</strong> <?= htmlspecialchars($new_key['service_name']) ?></div>
+          <div><strong>Service:</strong> <?= htmlspecialchars($new_key['service_name'] ?? '') ?></div>
         <?php endif; ?>
       </div>
     </div>
@@ -94,9 +94,9 @@ ob_start();
               <tr><td colspan="9" class="text-center py-4 text-muted">No API keys yet</td></tr>
             <?php else: foreach ($keys as $k): ?>
               <tr>
-                <td><strong><?= htmlspecialchars($k['key_name']) ?></strong></td>
+                <td><strong><?= htmlspecialchars($k['key_name'] ?? '') ?></strong></td>
                 <td><code class="small user-select-all"><?= htmlspecialchars($k['key_value_masked'] ?? '****') ?></code></td>
-                <td><span class="badge bg-secondary"><?= htmlspecialchars($k['key_type']) ?></span></td>
+                <td><span class="badge bg-secondary"><?= htmlspecialchars($k['key_type'] ?? '') ?></span></td>
                 <td><?= htmlspecialchars($k['service_name'] ?? '-') ?></td>
                 <td>
                   <span class="badge bg-<?= $k['is_active'] ? 'success' : 'secondary' ?>">
@@ -104,8 +104,8 @@ ob_start();
                   </span>
                 </td>
                 <td><span class="badge bg-light text-dark"><?= $k['usage_count'] ?? 0 ?></span></td>
-                <td><small><?= !empty($k['last_used_at']) ? htmlspecialchars($k['last_used_at']) : '<span class="text-muted">Never</span>' ?></small></td>
-                <td><small><?= htmlspecialchars($k['created_at']) ?></small></td>
+                <td><small><?= !empty($k['last_used_at']) ? htmlspecialchars($k['last_used_at'] ?? '') : '<span class="text-muted">Never</span>' ?></small></td>
+                <td><small><?= htmlspecialchars($k['created_at'] ?? '') ?></small></td>
                 <td>
                   <?php if ($k['is_active']): ?>
                     <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/revoke/<?= $k['id'] ?>" class="d-inline">

@@ -410,14 +410,14 @@ $base = BASE_URL;
                     <div class="error-title"><i class="fa-solid fa-circle-exclamation me-1"></i><?php echo __('auth_fix_errors', 'Please fix the following errors:'); ?></div>
                     <ul>
                         <?php foreach ($errors as $error): ?>
-                            <li><?php echo htmlspecialchars($error); ?></li>
+                            <li><?php echo htmlspecialchars($error ?? ''); ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
             <?php endif; ?>
 
             <form method="POST" action="<?php echo $base; ?>/agent/register" id="agentRegisterForm" novalidate>
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                 <div class="section-label"><i class="fa-solid fa-user"></i> <?php echo __('auth_personal_details', 'Personal Details'); ?></div>
 

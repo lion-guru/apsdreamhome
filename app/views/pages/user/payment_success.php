@@ -57,13 +57,13 @@ $token_amount = $token_amount ?? 25000;
                     <?php if (!empty($payment['transaction_id'])): ?>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_transaction_id', 'Transaction ID') ?></small>
-                        <strong class="text-break"><?= htmlspecialchars($payment['transaction_id']) ?></strong>
+                        <strong class="text-break"><?= htmlspecialchars($payment['transaction_id'] ?? '') ?></strong>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($payment['gateway_transaction_id'])): ?>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_gateway_reference', 'Gateway Reference') ?></small>
-                        <strong class="text-break"><?= htmlspecialchars($payment['gateway_transaction_id']) ?></strong>
+                        <strong class="text-break"><?= htmlspecialchars($payment['gateway_transaction_id'] ?? '') ?></strong>
                     </div>
                     <?php endif; ?>
                     <div class="col-sm-6">

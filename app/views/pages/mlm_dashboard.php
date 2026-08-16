@@ -25,9 +25,9 @@ $payout_history = $payout_history ?? [];
                                     <i class="fas fa-user-tie fa-2x text-white"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-white mb-1 fw-bold"><?= __('mlm_dash_welcome', ['name' => htmlspecialchars($associate_name)], 'Welcome back, ' . htmlspecialchars($associate_name) . '!') ?></h2>
+                                    <h2 class="text-white mb-1 fw-bold"><?= __('mlm_dash_welcome', ['name' => htmlspecialchars($associate_name ?? '')], 'Welcome back, ' . htmlspecialchars($associate_name ?? '') . '!') ?></h2>
                                     <span class="badge bg-light text-success fw-semibold px-3 py-2">
-                                        <i class="fas fa-id-badge me-1"></i> <?= __('mlm_dash_assoc_id', [], 'Associate ID:') ?> <?= htmlspecialchars($associate_id) ?>
+                                        <i class="fas fa-id-badge me-1"></i> <?= __('mlm_dash_assoc_id', [], 'Associate ID:') ?> <?= htmlspecialchars($associate_id ?? '') ?>
                                     </span>
                                 </div>
                             </div>
@@ -37,7 +37,7 @@ $payout_history = $payout_history ?? [];
                             <div class="d-inline-block bg-white bg-opacity-10 rounded-3 p-3">
                                 <small class="text-white-50 d-block mb-1"><?= __('mlm_dash_your_referral', [], 'Your Referral Code') ?></small>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="text-white fw-bold fs-4 font-monospace" id="referralCodeDisplay"><?= htmlspecialchars($referral_code) ?></span>
+                                    <span class="text-white fw-bold fs-4 font-monospace" id="referralCodeDisplay"><?= htmlspecialchars($referral_code ?? '') ?></span>
                                     <button class="btn btn-light btn-sm" onclick="copyReferralCode()" title="<?= __('mlm_dash_copy_code', [], 'Copy Code') ?>">
                                         <i class="fas fa-copy" id="copyIcon"></i>
                                     </button>
@@ -153,7 +153,7 @@ $payout_history = $payout_history ?? [];
                         </div>
                         <div>
                             <div class="badge px-3 py-2 mb-1 fw-bold fs-6" class="style-2595">
-                                <?= htmlspecialchars($currentRankLabel) ?>
+                                <?= htmlspecialchars($currentRankLabel ?? '') ?>
                             </div>
                             <div class="small text-muted">Commission Rate: <strong class="text-dark"><?= $currentRankRate ?>%</strong> on your plot sales</div>
                         </div>
@@ -163,7 +163,7 @@ $payout_history = $payout_history ?? [];
                     <?php if ($amountToNext > 0): ?>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="fw-semibold text-dark">Progress to <span class="style-75371"><?= htmlspecialchars($nextRankLabel) ?></span></small>
+                            <small class="fw-semibold text-dark">Progress to <span class="style-75371"><?= htmlspecialchars($nextRankLabel ?? '') ?></span></small>
                             <span class="badge rounded-pill" class="style-37741"><?= $rankProgressPct ?>%</span>
                         </div>
                         <div class="progress" class="style-78839">
@@ -183,7 +183,7 @@ $payout_history = $payout_history ?? [];
                         <div class="d-flex align-items-center">
                             <i class="fas fa-lock me-2" class="style-75371"></i>
                             <div>
-                                <div class="fw-semibold small" class="style-75371">Unlock <?= htmlspecialchars($nextRankLabel) ?></div>
+                                <div class="fw-semibold small" class="style-75371">Unlock <?= htmlspecialchars($nextRankLabel ?? '') ?></div>
                                 <small class="text-muted">Earn <strong><?= $nextRankRate ?>%</strong> on plot sales (+<?= round($nextRankRate - $currentRankRate, 1) ?>% uplift)</small>
                             </div>
                         </div>
@@ -253,7 +253,7 @@ $payout_history = $payout_history ?? [];
                             </div>
                             <div class="flex-grow-1 min-w-0">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <small class="fw-semibold text-dark text-truncate"><?= htmlspecialchars($typeMeta['label']) ?></small>
+                                    <small class="fw-semibold text-dark text-truncate"><?= htmlspecialchars($typeMeta['label'] ?? '') ?></small>
                                     <small class="fw-bold ms-2 flex-shrink-0" class="style-44543">₹<?= number_format($ct['total']) ?></small>
                                 </div>
                                 <div class="progress" class="style-94565">
@@ -344,10 +344,10 @@ $payout_history = $payout_history ?? [];
                 <div class="card-body p-4">
                     <div class="text-center p-4 rounded-3 mb-3" class="style-29574">
                         <small class="text-white-50 d-block mb-2"><?= __('mlm_dash_unique_code', [], 'Your Unique Code') ?></small>
-                        <h2 class="text-white fw-bold font-monospace mb-0"><?= htmlspecialchars($referral_code) ?></h2>
+                        <h2 class="text-white fw-bold font-monospace mb-0"><?= htmlspecialchars($referral_code ?? '') ?></h2>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control font-monospace bg-light border-end-0" id="referralLinkInput" value="https://apsrealty.com/join/<?= htmlspecialchars($referral_code) ?>" readonly>
+                        <input type="text" class="form-control font-monospace bg-light border-end-0" id="referralLinkInput" value="https://apsrealty.com/join/<?= htmlspecialchars($referral_code ?? '') ?>" readonly>
                         <button class="btn btn-success" type="button" onclick="copyReferralLink()" id="copyLinkBtn">
                             <i class="fas fa-copy me-1"></i> <?= __('mlm_dash_copy_link', [], 'Copy Link') ?>
                         </button>
@@ -385,9 +385,9 @@ $payout_history = $payout_history ?? [];
                                         <i class="fas fa-crown text-success"></i>
                                     </div>
                                     <div>
-                                        <span class="text-white fw-bold"><?= htmlspecialchars($associate_name) ?></span>
+                                        <span class="text-white fw-bold"><?= htmlspecialchars($associate_name ?? '') ?></span>
                                         <span class="badge bg-light text-success ms-2"><?= __('mlm_dash_you', [], 'You') ?></span>
-                                        <small class="d-block text-white-50"><?= htmlspecialchars($associate_id) ?></small>
+                                        <small class="d-block text-white-50"><?= htmlspecialchars($associate_id ?? '') ?></small>
                                     </div>
                                 </div>
                                 <?php
@@ -502,7 +502,7 @@ $payout_history = $payout_history ?? [];
                                         <?php elseif ($status === 'inactive'): ?>
                                             <span class="badge bg-secondary"><i class="fas fa-pause-circle me-1"></i><?= __('mlm_dash_inactive', [], 'Inactive') ?></span>
                                         <?php else: ?>
-                                            <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i><?= ucfirst(htmlspecialchars($status)) ?></span>
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i><?= ucfirst(htmlspecialchars($status ?? '')) ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="fw-semibold text-dark">&#8377;<?= number_format($member['sales'] ?? 0, 2) ?></td>
@@ -571,7 +571,7 @@ $payout_history = $payout_history ?? [];
                                         <?php elseif ($cStatus === 'processing'): ?>
                                             <span class="badge bg-info"><i class="fas fa-spinner me-1"></i><?= __('mlm_dash_processing', [], 'Processing') ?></span>
                                         <?php else: ?>
-                                            <span class="badge bg-secondary"><?= ucfirst(htmlspecialchars($cStatus)) ?></span>
+                                            <span class="badge bg-secondary"><?= ucfirst(htmlspecialchars($cStatus ?? '')) ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -623,7 +623,7 @@ $payout_history = $payout_history ?? [];
                                         <?php elseif ($pStatus === 'rejected'): ?>
                                             <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i><?= __('mlm_dash_rejected', [], 'Rejected') ?></span>
                                         <?php else: ?>
-                                            <span class="badge bg-secondary"><?= ucfirst(htmlspecialchars($pStatus)) ?></span>
+                                            <span class="badge bg-secondary"><?= ucfirst(htmlspecialchars($pStatus ?? '')) ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -653,7 +653,7 @@ $payout_history = $payout_history ?? [];
 
 <script>
     function copyReferralCode() {
-        const code = '<?= htmlspecialchars($referral_code) ?>';
+        const code = '<?= htmlspecialchars($referral_code ?? '') ?>';
         navigator.clipboard.writeText(code).then(() => {
             const icon = document.getElementById('copyIcon');
             icon.classList.replace('fa-copy', 'fa-check');

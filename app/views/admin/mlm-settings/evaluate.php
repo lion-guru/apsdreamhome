@@ -73,7 +73,7 @@ $total_count = $total_count ?? 0;
                         <?php if ($r['promoted'] ?? false): ?>
                             <span class="badge bg-success">Promoted!</span>
                         <?php elseif (isset($r['error'])): ?>
-                            <span class="badge bg-danger"><?php echo htmlspecialchars($r['error']); ?></span>
+                            <span class="badge bg-danger"><?php echo htmlspecialchars($r['error'] ?? ''); ?></span>
                         <?php else: ?>
                             <span class="badge bg-secondary">No change</span>
                         <?php endif; ?>

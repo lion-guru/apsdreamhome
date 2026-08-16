@@ -93,7 +93,7 @@
         <?php if (isset($error) && !empty($error)): ?>
         <div class="error-details">
             <h6><i class="fas fa-info-circle"></i> Error Details:</h6>
-            <p><?= htmlspecialchars($error) ?></p>
+            <p><?= htmlspecialchars($error ?? '') ?></p>
         </div>
         <?php endif; ?>
 

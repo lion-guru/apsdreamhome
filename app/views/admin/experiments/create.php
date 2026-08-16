@@ -6,7 +6,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-0"><i class="fas fa-plus-circle me-2 text-primary"></i><?= htmlspecialchars($pageTitle) ?></h1>
+            <h1 class="h3 mb-0"><i class="fas fa-plus-circle me-2 text-primary"></i><?= htmlspecialchars($pageTitle ?? '') ?></h1>
             <p class="text-muted mb-0">Define variants and traffic allocation. Experiment starts running immediately.</p>
         </div>
         <a href="<?= $baseUrl ?>/admin/experiments" class="btn btn-outline-secondary">
@@ -15,7 +15,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
     </div>
 
     <form method="POST" action="<?= $baseUrl ?>/admin/experiments/store" id="experiment-form">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
 
         <div class="row">
             <div class="col-lg-8">

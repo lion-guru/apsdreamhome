@@ -16,9 +16,9 @@
                 <?php if (isset($breadcrumbs)): ?>
                     <?php foreach ($breadcrumbs as $crumb): ?>
                         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
                         <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -65,8 +65,8 @@
                                 <div class="icon-box mb-3 text-primary">
                                     <i class="<?= htmlspecialchars($service['icon_class'] ?? 'fas fa-gavel') ?> fa-3x"></i>
                                 </div>
-                                <h4 class="card-title mb-3"><?= htmlspecialchars($service['title']) ?></h4>
-                                <p class="card-text text-muted"><?= htmlspecialchars($service['description']) ?></p>
+                                <h4 class="card-title mb-3"><?= htmlspecialchars($service['title'] ?? '') ?></h4>
+                                <p class="card-text text-muted"><?= htmlspecialchars($service['description'] ?? '') ?></p>
                             </div>
                         </div>
                     </div>
@@ -92,12 +92,12 @@
                 <?php foreach ($lawyers as $lawyer): ?>
                     <div class="col-md-6 col-lg-3 mb-4">
                         <div class="card h-100 border-0 shadow-sm team-card">
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>"
+                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name'] ?? '') ?>"
                                 onerror="this.src='https://via.placeholder.com/300x300/667eea/ffffff?text=<?= substr($lawyer['name'], 0, 2) ?>'">
                             <div class="card-body text-center">
-                                <h5 class="card-title mb-1"><?= htmlspecialchars($lawyer['name']) ?></h5>
-                                <p class="text-primary mb-2"><?= htmlspecialchars($lawyer['designation']) ?></p>
-                                <p class="card-text small text-muted"><?= htmlspecialchars($lawyer['specialization']) ?></p>
+                                <h5 class="card-title mb-1"><?= htmlspecialchars($lawyer['name'] ?? '') ?></h5>
+                                <p class="text-primary mb-2"><?= htmlspecialchars($lawyer['designation'] ?? '') ?></p>
+                                <p class="card-text small text-muted"><?= htmlspecialchars($lawyer['specialization'] ?? '') ?></p>
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                                     <h5 class="mb-0">
                                         <button class="btn btn-link btn-block text-start text-dark fw-bold collapsed w-100 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $index ?>" aria-expanded="false" aria-controls="collapse<?= $index ?>">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <span><?= htmlspecialchars($faq['question']) ?></span>
+                                                <span><?= htmlspecialchars($faq['question'] ?? '') ?></span>
                                                 <i class="fas fa-chevron-down small"></i>
                                             </div>
                                         </button>
@@ -132,7 +132,7 @@
                                 </div>
                                 <div id="collapse<?= $index ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $index ?>" data-bs-parent="#legalFaq">
                                     <div class="card-body text-muted">
-                                        <?= nl2br(htmlspecialchars($faq['answer'])) ?>
+                                        <?= nl2br(htmlspecialchars($faq['answer'] ?? '')) ?>
                                     </div>
                                 </div>
                             </div>

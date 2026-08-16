@@ -15,7 +15,7 @@
     </div>
 
     <?php if (isset($status['error'])): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($status['error']) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($status['error'] ?? '') ?></div>
     <?php elseif (!empty($status['booking'])): $b = $status['booking']; ?>
         <div class="row">
             <div class="col-md-8">
@@ -23,7 +23,7 @@
                     <div class="card-header bg-white d-flex justify-content-between">
                         <h5 class="mb-0">Booking Information</h5>
                         <span class="badge bg-<?= $b['status'] === 'confirmed' ? 'primary' : ($b['status'] === 'cancelled' ? 'danger' : ($b['status'] === 'completed' ? 'success' : 'warning')) ?> fs-6">
-                            <?= htmlspecialchars($b['status']) ?>
+                            <?= htmlspecialchars($b['status'] ?? '') ?>
                         </span>
                     </div>
                     <div class="card-body aps-cp-card-body">
@@ -32,13 +32,13 @@
                             <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
                             <tr><th>Customer</th><td>
                                 <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
-                                <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">ðŸ“ž <?= htmlspecialchars($b['customer_phone']) ?></small><?php endif; ?>
-                                <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">âœ‰ <?= htmlspecialchars($b['customer_email']) ?></small><?php endif; ?>
+                                <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">ðŸ“ž <?= htmlspecialchars($b['customer_phone'] ?? '') ?></small><?php endif; ?>
+                                <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">âœ‰ <?= htmlspecialchars($b['customer_email'] ?? '') ?></small><?php endif; ?>
                             </td></tr>
                             <tr><th>Plot</th><td>
                                 Plot #<?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
-                                <?php if ($b['block'] ?? ''): ?> | Block <?= htmlspecialchars($b['block']) ?><?php endif; ?>
-                                <?php if ($b['colony_name'] ?? ''): ?><br><small><?= htmlspecialchars($b['colony_name']) ?></small><?php endif; ?>
+                                <?php if ($b['block'] ?? ''): ?> | Block <?= htmlspecialchars($b['block'] ?? '') ?><?php endif; ?>
+                                <?php if ($b['colony_name'] ?? ''): ?><br><small><?= htmlspecialchars($b['colony_name'] ?? '') ?></small><?php endif; ?>
                             </td></tr>
                             <tr><th>Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
                             <tr><th>Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
@@ -63,13 +63,13 @@
                             <tr><th>Booking Date</th><td><?= htmlspecialchars($b['booking_date'] ?? 'N/A') ?></td></tr>
                             <tr><th>Created</th><td><?= htmlspecialchars($b['created_at'] ?? 'N/A') ?></td></tr>
                             <?php if ($b['confirmed_at'] ?? ''): ?>
-                            <tr><th>Confirmed At</th><td><?= htmlspecialchars($b['confirmed_at']) ?></td></tr>
+                            <tr><th>Confirmed At</th><td><?= htmlspecialchars($b['confirmed_at'] ?? '') ?></td></tr>
                             <?php endif; ?>
                             <?php if ($b['cancellation_reason'] ?? ''): ?>
-                            <tr><th>Cancellation Reason</th><td class="text-danger"><?= htmlspecialchars($b['cancellation_reason']) ?></td></tr>
+                            <tr><th>Cancellation Reason</th><td class="text-danger"><?= htmlspecialchars($b['cancellation_reason'] ?? '') ?></td></tr>
                             <?php endif; ?>
                             <?php if ($b['notes'] ?? ''): ?>
-                            <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($b['notes'])) ?></td></tr>
+                            <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($b['notes'] ?? '')) ?></td></tr>
                             <?php endif; ?>
                         </table></div>
                     </div>

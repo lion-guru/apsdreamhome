@@ -105,7 +105,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                         <tbody>
                             <?php foreach ($templates as $t): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($t['name']) ?></strong></td>
+                                <td><strong><?= htmlspecialchars($t['name'] ?? '') ?></strong></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($t['category'] ?? 'general') ?></span></td>
                                 <td><small><?= strtoupper(htmlspecialchars($t['language'] ?? 'en')) ?></small></td>
                                 <td>

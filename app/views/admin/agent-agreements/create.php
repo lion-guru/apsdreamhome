@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <select name="agent_id" required>
                         <option value="">-- Select Agent --</option>
                         <?php foreach ($agents as $ag): ?>
-                        <option value="<?= (int)$ag['id'] ?>"><?= htmlspecialchars($ag['name']) ?> (<?= htmlspecialchars($ag['email']) ?>)</option>
+                        <option value="<?= (int)$ag['id'] ?>"><?= htmlspecialchars($ag['name'] ?? '') ?> (<?= htmlspecialchars($ag['email'] ?? '') ?>)</option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <select name="property_id">
                         <option value="">-- General Agreement --</option>
                         <?php foreach ($properties as $p): ?>
-                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>
+                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

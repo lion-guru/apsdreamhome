@@ -96,7 +96,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <!-- Property Image -->
                         <div class="property-image-container">
                             <?php if ($property['featured_image']): ?>
-                                <img src="<?= htmlspecialchars($property['featured_image']) ?>" class="card-img-top property-image" alt="<?= htmlspecialchars($property['title']) ?>" loading="lazy">
+                                <img src="<?= htmlspecialchars($property['featured_image'] ?? '') ?>" class="card-img-top property-image" alt="<?= htmlspecialchars($property['title'] ?? '') ?>" loading="lazy">
                             <?php else: ?>
                                 <div class="property-image-placeholder">
                                     <i class="fas fa-home fa-3x text-muted"></i>
@@ -122,14 +122,14 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                             <!-- Property Title -->
                             <h5 class="card-title property-title">
                                 <a href="/properties/<?= $property['id'] ?>" class="text-decoration-none">
-                                    <?= htmlspecialchars($property['title']) ?>
+                                    <?= htmlspecialchars($property['title'] ?? '') ?>
                                 </a>
                             </h5>
 
                             <!-- Property Location -->
                             <p class="card-text property-location">
                                 <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
-                                <?= htmlspecialchars($property['location']) ?>
+                                <?= htmlspecialchars($property['location'] ?? '') ?>
                             </p>
 
                             <!-- Property Price -->
@@ -139,7 +139,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                                 </span>
                                 <?php if ($property['type']): ?>
                                     <span class="badge badge-info ml-2">
-                                        <?= htmlspecialchars($property['type']) ?>
+                                        <?= htmlspecialchars($property['type'] ?? '') ?>
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -181,7 +181,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                                 <div class="property-owner mb-3">
                                     <small class="text-muted">
                                         <i class="fas fa-user mr-1"></i>
-                                        Listed By: <?= htmlspecialchars($property['owner_name']) ?>
+                                        Listed By: <?= htmlspecialchars($property['owner_name'] ?? '') ?>
                                     </small>
                                 </div>
                             <?php endif; ?>

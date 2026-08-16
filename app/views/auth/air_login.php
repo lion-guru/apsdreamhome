@@ -15,7 +15,7 @@ $base = BASE_URL;
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
+    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token ?? '') ?>">
     <title>Air Login - APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -144,14 +144,14 @@ $base = BASE_URL;
             </div>
             <div class="card-body-custom">
                 <?php if ($error): ?>
-                    <div class="alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?></div>
+                    <div class="alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error ?? '') ?></div>
                 <?php endif; ?>
                 <?php if ($success): ?>
-                    <div class="alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?></div>
+                    <div class="alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($success ?? '') ?></div>
                 <?php endif; ?>
 
                 <form method="POST" action="<?= $base ?>/auth/air-login">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
                  <?php $method = $_GET['method'] ?? ''; ?>
                  <div class="form-group">

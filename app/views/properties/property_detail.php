@@ -1,4 +1,4 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay ?? '') ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay ?? '') ?>'); ?>
 <?php
 $page_title = $property['title'] . ' - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
@@ -10,7 +10,7 @@ include __DIR__ . '/../layouts/base.php';
         <ol class="breadcrumb glass-breadcrumb p-2 px-3">
             <li class="breadcrumb-item"><a href="/" class="text-white-50">Home</a></li>
             <li class="breadcrumb-item"><a href="/properties" class="text-white-50">Properties</a></li>
-            <li class="breadcrumb-item active text-white" aria-current="page"><?php echo htmlspecialchars($property['title']); ?></li>
+            <li class="breadcrumb-item active text-white" aria-current="page"><?php echo htmlspecialchars($property['title'] ?? ''); ?></li>
         </ol>
     </nav>
 
@@ -20,7 +20,7 @@ include __DIR__ . '/../layouts/base.php';
             <!-- Hero Image Section -->
             <div class="glass-card p-2 mb-4 overflow-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>">
                 <div class="position-relative">
-                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" data-caption="<?php echo htmlspecialchars($property['title']); ?>" class="w-100 rounded-lg shadow-2xl property-image" id="main-gallery-image" class="style-91752" loading="lazy">
+                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" data-caption="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100 rounded-lg shadow-2xl property-image" id="main-gallery-image" class="style-91752" loading="lazy">
 
                     <div class="position-absolute top-0 end-0 p-3">
                         <span class="badge bg-primary glass-blur px-3 py-2 fs-6">
@@ -33,7 +33,7 @@ include __DIR__ . '/../layouts/base.php';
                 <?php if (!empty($property_images) && count($property_images) > 1): ?>
                     <div class="d-flex gap-2 mt-2 px-1 overflow-auto pb-2 scrollbar-hidden" data-gallery="property-<?= (int)($property['id'] ?? 0) ?>-thumbs">
                         <?php foreach ($property_images as $img): ?>
-                            <img src="<?= htmlspecialchars(is_array($img) ? ($img['src'] ?? $img['image_path'] ?? '') : $img) ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" data-caption="<?php echo htmlspecialchars($property['title']); ?>" class="rounded cursor-pointer thumbnail-hover" class="style-62460" loading="lazy">
+                            <img src="<?= htmlspecialchars(is_array($img) ? ($img['src'] ?? $img['image_path'] ?? '') : $img) ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" data-caption="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded cursor-pointer thumbnail-hover" class="style-62460" loading="lazy">
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
@@ -82,7 +82,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="tab-content p-4 text-white-50" id="propertyTabContent">
                     <div class="tab-pane fade show active" id="desc">
                         <h4 class="text-white h5 mb-3">About this Property</h4>
-                        <p class="lh-lg"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
+                        <p class="lh-lg"><?php echo nl2br(htmlspecialchars($property['description'] ?? '')); ?></p>
                     </div>
                     <div class="tab-pane fade" id="amenities">
                         <div class="row g-3">
@@ -150,7 +150,7 @@ include __DIR__ . '/../layouts/base.php';
                                 <!-- Logged In View: Show Contact & Track Lead -->
                                 <div class="mt-2" id="revealed-contact" class="style-2248">
                                     <h5 class="text-success fw-bold mb-0" class="style-37384">
-                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact']) : '<?= htmlspecialchars($phoneDisplay) ?>'; ?>
+                                        <?php echo !empty($property['owner_contact']) ? htmlspecialchars($property['owner_contact'] ?? '') : '<?= htmlspecialchars($phoneDisplay ?? '') ?>'; ?>
                                     </h5>
                                     <small class="text-white-50">Verified Number <i class="bi bi-check-circle-fill text-success ms-1"></i></small>
                                 </div>
@@ -244,7 +244,7 @@ include __DIR__ . '/../layouts/base.php';
     function shareProperty() {
         if (navigator.share) {
             navigator.share({
-                title: '<?php echo htmlspecialchars($property['title']); ?>',
+                title: '<?php echo htmlspecialchars($property['title'] ?? ''); ?>',
                 url: window.location.href
             });
         } else {

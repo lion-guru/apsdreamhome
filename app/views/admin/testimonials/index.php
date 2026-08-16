@@ -25,7 +25,7 @@
                                 <?php foreach ($testimonials ?? [] as $testimonial): ?>
                                     <tr>
                                         <td><?php echo $testimonial['id']; ?></td>
-                                        <td><?php echo htmlspecialchars($testimonial['customer_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($testimonial['customer_name'] ?? ''); ?></td>
                                         <td>
                                             <?php for ($i = 1; $i <= 5; $i++): ?>
                                                 <i class="fas fa-star <?php echo $i <= $testimonial['rating'] ? 'text-warning' : 'text-muted'; ?>"></i>

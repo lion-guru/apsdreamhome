@@ -19,7 +19,7 @@
                             <tbody>
                             <?php foreach ($top_actions as $a): ?>
                                 <tr>
-                                    <td><span class="badge bg-light text-dark"><?= htmlspecialchars($a['action']) ?></span></td>
+                                    <td><span class="badge bg-light text-dark"><?= htmlspecialchars($a['action'] ?? '') ?></span></td>
                                     <td><strong><?= $a['cnt'] ?></strong></td>
                                 </tr>
                             <?php endforeach; ?>

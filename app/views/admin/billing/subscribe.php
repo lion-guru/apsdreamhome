@@ -77,7 +77,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
             </div>
             <?php if (!empty($current['razorpay_subscription_id'])): ?>
                 <div class="mt-2">
-                    <small class="text-muted">Razorpay ID: <code><?= htmlspecialchars($current['razorpay_subscription_id']) ?></code></small>
+                    <small class="text-muted">Razorpay ID: <code><?= htmlspecialchars($current['razorpay_subscription_id'] ?? '') ?></code></small>
                 </div>
             <?php endif; ?>
         </div>
@@ -110,7 +110,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
                         <label class="plan-option <?= ($current['plan_id'] ?? 0) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
                             <input type="radio" name="plan_id" value="<?= $plan['id'] ?>" <?= ($current['plan_id'] ?? 0) == $plan['id'] ? 'checked' : '' ?>>
                             <div class="text-center">
-                                <h6 class="mb-2"><?= htmlspecialchars($plan['name']) ?></h6>
+                                <h6 class="mb-2"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
                                 <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>" class="style-4846">
                                     ₹<span class="price-monthly"><?= number_format($plan['price_monthly']) ?></span>
                                     <span class="price-yearly" class="style-2248"><?= number_format($plan['price_yearly']) ?></span>

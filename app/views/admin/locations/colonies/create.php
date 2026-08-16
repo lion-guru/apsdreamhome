@@ -1,4 +1,4 @@
-﻿
+
 
 <div class="container-fluid">
     <div class="row">
@@ -22,7 +22,7 @@
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
                                             <option value="<?php echo $state['id']; ?>">
-                                                <?php echo htmlspecialchars($state['name']); ?>
+                                                <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="starting_price" class="form-label">Starting Price (₹)</label>
+                                    <label for="starting_price" class="form-label">Starting Price (?)</label>
                                     <input type="number" class="form-control" id="starting_price" name="starting_price" min="0" step="0.01">
                                 </div>
                             </div>
@@ -82,13 +82,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="land_cost" class="form-label">Land Cost (₹)</label>
+                                    <label for="land_cost" class="form-label">Land Cost (?)</label>
                                     <input type="number" class="form-control" id="land_cost" name="land_cost" min="0" step="0.01" placeholder="Total land acquisition cost">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="min_price_per_sqft" class="form-label">Min Price Per Sqft (₹) — Floor Price</label>
+                                    <label for="min_price_per_sqft" class="form-label">Min Price Per Sqft (?) � Floor Price</label>
                                     <input type="number" class="form-control" id="min_price_per_sqft" name="min_price_per_sqft" min="0" step="0.01" placeholder="Auto-calculated from pricing">
                                 </div>
                             </div>

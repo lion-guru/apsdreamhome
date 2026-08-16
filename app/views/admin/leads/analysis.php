@@ -65,7 +65,7 @@
                     <thead><tr><th>City</th><th>Count</th></tr></thead>
                     <tbody>
                     <?php foreach ($by_city as $c): ?>
-                        <tr><td><?= htmlspecialchars($c['city']) ?></td><td><strong><?= $c['cnt'] ?></strong></td></tr>
+                        <tr><td><?= htmlspecialchars($c['city'] ?? '') ?></td><td><strong><?= $c['cnt'] ?></strong></td></tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table></div>

@@ -1,7 +1,7 @@
 <?php $page_title = $page_title ?? 'GST Summary'; $page_heading = $page_heading ?? 'GST Summary & ITC Reconciliation'; $fy = $fy ?? '2025-26'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>GST Summary — FY <?= htmlspecialchars($fy) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>GST Summary — FY <?= htmlspecialchars($fy ?? '') ?></h2>
         <a href="<?= BASE_URL ?>/admin/finance/gst" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
 

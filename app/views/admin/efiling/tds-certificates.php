@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-certificate me-2 text-info"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">FY <?= htmlspecialchars($fy) ?></span>
+        <h4 class="mb-1"><i class="fas fa-certificate me-2 text-info"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">FY <?= htmlspecialchars($fy ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
@@ -18,7 +18,7 @@ ob_start();
             <div class="col-auto">
                 <select name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
-                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -59,9 +59,9 @@ ob_start();
                     <?php foreach ($certificates as $c): ?>
                         <tr>
                             <td>#<?= $c['id'] ?></td>
-                            <td class="small fw-bold"><?= htmlspecialchars($c['certificate_number']) ?></td>
-                            <td><span class="badge bg-secondary"><?= htmlspecialchars($c['section']) ?></span></td>
-                            <td class="small"><?= htmlspecialchars($c['assessment_year']) ?></td>
+                            <td class="small fw-bold"><?= htmlspecialchars($c['certificate_number'] ?? '') ?></td>
+                            <td><span class="badge bg-secondary"><?= htmlspecialchars($c['section'] ?? '') ?></span></td>
+                            <td class="small"><?= htmlspecialchars($c['assessment_year'] ?? '') ?></td>
                             <td class="small">Q<?= $c['quarter'] ?></td>
                             <td class="fw-bold">?<?= number_format($c['tds_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $c['status'] === 'sent' ? 'success' : ($c['status'] === 'generated' ? 'info' : 'secondary') ?>"><?= ucfirst($c['status']) ?></span></td>

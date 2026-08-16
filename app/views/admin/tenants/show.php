@@ -32,7 +32,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
                 <h4 class="mb-0"><?= htmlspecialchars($tenant['name'] ?? '') ?></h4>
                 <p class="mb-0" class="style-91394">
                     <code><?= htmlspecialchars($tenant['slug'] ?? '') ?></code>
-                    <?php if ($tenant['domain'] ?? ''): ?> Â· <?= htmlspecialchars($tenant['domain']) ?><?php endif; ?>
+                    <?php if ($tenant['domain'] ?? ''): ?> Â· <?= htmlspecialchars($tenant['domain'] ?? '') ?><?php endif; ?>
                 </p>
             </div>
         </div>

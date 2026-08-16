@@ -7,7 +7,7 @@ $departments = $departments ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-sync-alt me-2"></i><?= htmlspecialchars($page_heading) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-sync-alt me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h4>
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addRotationModal"><i class="fas fa-plus"></i> Add Rotation</button>
     </div>
     <div class="card border-0 shadow-sm">

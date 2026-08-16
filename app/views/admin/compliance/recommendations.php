@@ -95,7 +95,7 @@ function recBadgeClass($priority) {
                             <div class="rec-card">
                                 <div class="rec-indicator" class="style-59620"></div>
                                 <div class="rec-body">
-                                    <div class="rec-text"><?= htmlspecialchars($rec['recommendation']) ?></div>
+                                    <div class="rec-text"><?= htmlspecialchars($rec['recommendation'] ?? '') ?></div>
                                     <div class="rec-meta">
                                         <span>Impact: <strong><?= $rec['impact'] ?></strong></span>
                                         <span class="badge <?= recBadgeClass($rec['priority']) ?>" class="style-88259"><?= strtoupper($rec['priority']) ?></span>

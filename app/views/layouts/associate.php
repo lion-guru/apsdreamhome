@@ -561,8 +561,8 @@ $GLOBALS['_html_doc_started'] = true;
                 $badge = $menuItem['badge'] ?? null;
             ?>
             <li class="sidebar-item">
-                <a href="<?= BASE_URL . htmlspecialchars($menuItem['url']) ?>" class="sidebar-link <?= $isActive ? 'active' : '' ?> <?= $isLogout ? 'text-danger' : '' ?>" data-menu-key="<?= htmlspecialchars($menuItem['key']) ?>">
-                    <i class="<?= htmlspecialchars($menuItem['icon']) ?>"></i>
+                <a href="<?= BASE_URL . htmlspecialchars($menuItem['url'] ?? '') ?>" class="sidebar-link <?= $isActive ? 'active' : '' ?> <?= $isLogout ? 'text-danger' : '' ?>" data-menu-key="<?= htmlspecialchars($menuItem['key'] ?? '') ?>">
+                    <i class="<?= htmlspecialchars($menuItem['icon'] ?? '') ?>"></i>
                     <span><?= htmlspecialchars(__('menu_' . $menuItem['key'], null, $menuItem['label'])) ?></span>
                     <?php if ($badge !== null && $badge > 0): ?>
                     <span class="sidebar-badge"><?= (int)$badge ?></span>

@@ -12,7 +12,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Customer Name</label>
-                                    <input type="text" name="customer_name" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_name']); ?>" required>
+                                    <input type="text" name="customer_name" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_name'] ?? ''); ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Customer Email</label>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Testimonial Content</label>
-                            <textarea name="content" class="form-control" rows="5" required placeholder="Customer's feedback..."><?php echo htmlspecialchars($testimonial['content']); ?></textarea>
+                            <textarea name="content" class="form-control" rows="5" required placeholder="Customer's feedback..."><?php echo htmlspecialchars($testimonial['content'] ?? ''); ?></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Update Testimonial</button>
                         <a href="<?php echo BASE_URL; ?>/admin/testimonials" class="btn btn-secondary">Cancel</a>

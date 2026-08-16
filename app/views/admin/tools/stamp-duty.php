@@ -95,7 +95,7 @@ $total_circle_rates = $total_circle_rates ?? 0;
                                 <tbody>
                                     <?php foreach ($configs as $c): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($c['state_code']) ?></strong></td>
+                                        <td><strong><?= htmlspecialchars($c['state_code'] ?? '') ?></strong></td>
                                         <td><span class="badge bg-info"><?= ucfirst($c['property_type']) ?></span></td>
                                         <td><span class="text-primary fw-bold"><?= $c['stamp_rate'] ?>%</span></td>
                                         <td><?= $c['registration_rate'] ?>%</td>
@@ -145,9 +145,9 @@ $total_circle_rates = $total_circle_rates ?? 0;
                                 <tbody>
                                     <?php foreach ($circle_rates as $cr): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($cr['state_code']) ?></strong></td>
-                                        <td><?= htmlspecialchars($cr['district']) ?></td>
-                                        <td><span class="badge bg-secondary"><?= htmlspecialchars($cr['area_type']) ?></span></td>
+                                        <td><strong><?= htmlspecialchars($cr['state_code'] ?? '') ?></strong></td>
+                                        <td><?= htmlspecialchars($cr['district'] ?? '') ?></td>
+                                        <td><span class="badge bg-secondary"><?= htmlspecialchars($cr['area_type'] ?? '') ?></span></td>
                                         <td class="text-success fw-bold">₹<?= number_format($cr['rate_per_sqft'] ?? 0) ?></td>
                                         <td>₹<?= number_format($cr['rate_per_sqm'] ?? 0) ?></td>
                                         <td><small class="text-muted"><?= htmlspecialchars($cr['effective_from'] ?? '') ?></small></td>

@@ -16,14 +16,14 @@ $properties = $properties ?? [];
 
     <?php if (!empty($_SESSION['flash_success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success']) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <?php unset($_SESSION['flash_success']); ?>
     <?php endif; ?>
     <?php if (!empty($_SESSION['flash_error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error']) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <?php unset($_SESSION['flash_error']); ?>
@@ -48,7 +48,7 @@ $properties = $properties ?? [];
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm h-100">
                     <?php if (!empty($p['image'])): ?>
-                        <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($p['image']) ?>" class="card-img-top" alt="" class="style-6390">
+                        <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($p['image'] ?? '') ?>" class="card-img-top" alt="" class="style-6390">
                     <?php else: ?>
                         <div class="card-img-top d-flex align-items-center justify-content-center" class="style-8293">
                             <i class="fas fa-image fa-3x text-muted"></i>
@@ -68,7 +68,7 @@ $properties = $properties ?? [];
                             <small class="text-muted"><i class="fas fa-ruler-combined me-1"></i><?= number_format($p['area_sqft']) ?> sq ft</small>
                         <?php endif; ?>
                         <?php if (!empty($p['address'])): ?>
-                            <div class="small text-muted mt-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(mb_substr($p['address'], 0, 60)) ?></div>
+                            <div class="small text-muted mt-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(mb_substr($p['address'] ?? '', 0, 60)) ?></div>
                         <?php endif; ?>
                         <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
                             <small class="text-muted"><i class="fas fa-eye me-1"></i><?= (int)($p['views'] ?? 0) ?> <?= __('assoc_prop_views', [], 'views') ?></small>

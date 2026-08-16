@@ -28,7 +28,7 @@
                     <?= __('gallery_filter_all') ?> <span class="badge bg-white text-primary ms-1"><?= count($galleryImages) ?></span>
                 </button>
                 <?php foreach ($galleryCategories as $cat): ?>
-                <button type="button" class="btn btn-outline-primary" data-filter="<?= htmlspecialchars($cat) ?>"><?= ucfirst(htmlspecialchars($cat)) ?></button>
+                <button type="button" class="btn btn-outline-primary" data-filter="<?= htmlspecialchars($cat ?? '') ?>"><?= ucfirst(htmlspecialchars($cat ?? '')) ?></button>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -42,7 +42,7 @@
                         <?php if (!empty($img['image_path'])): ?>
                         <?php $imgRaw = $img['image_path'] ?? '';
                               $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100" class="style-44820" loading="lazy">
+                        <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100" class="style-44820" loading="lazy">
                         <?php else: ?>
                         <div class="bg-light d-flex align-items-center justify-content-center h-100"><i class="fas fa-image fa-3x text-muted"></i></div>
                         <?php endif; ?>
@@ -55,10 +55,10 @@
                     </div>
                     <div class="card-body p-3">
                         <?php if (!empty($img['title'])): ?>
-                        <h6 class="card-title mb-1"><?= htmlspecialchars($img['title']) ?></h6>
+                        <h6 class="card-title mb-1"><?= htmlspecialchars($img['title'] ?? '') ?></h6>
                         <?php endif; ?>
                         <?php if (!empty($img['caption'])): ?>
-                        <p class="text-muted small mb-0"><?= htmlspecialchars($img['caption']) ?></p>
+                        <p class="text-muted small mb-0"><?= htmlspecialchars($img['caption'] ?? '') ?></p>
                         <?php endif; ?>
                     </div>
                 </div>

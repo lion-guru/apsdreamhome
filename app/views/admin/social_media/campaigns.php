@@ -1,11 +1,11 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Campaigns';
 $account = $account ?? [];
 $campaigns = $campaigns ?? [];
 $csrf = $_SESSION['csrf_token'] ?? '';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-bullhorn me-2"></i>Campaigns — <?= htmlspecialchars($account['account_name'] ?? '') ?></h2>
+    <h2><i class="fas fa-bullhorn me-2"></i>Campaigns � <?= htmlspecialchars($account['account_name'] ?? '') ?></h2>
     <a href="<?= BASE_URL ?>/admin/social-media" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Accounts</a>
 </div>
 
@@ -37,14 +37,14 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <tbody>
                                 <?php foreach ($campaigns as $c): ?>
                                 <tr>
-                                    <td><strong><?= htmlspecialchars($c['name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($c['platform_campaign_id']) ?></small></td>
+                                    <td><strong><?= htmlspecialchars($c['name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($c['platform_campaign_id'] ?? '') ?></small></td>
                                     <td><span class="badge bg-secondary"><?= ucfirst($c['platform']) ?></span></td>
                                     <td><?= ucfirst(str_replace('_', ' ', $c['objective'] ?? '')) ?></td>
                                     <td><span class="badge bg-<?= match($c['status']) { 'active' => 'success', 'paused' => 'warning', 'archived' => 'secondary', 'deleted' => 'danger', default => 'secondary' } ?>"><?= ucfirst($c['status']) ?></span></td>
-                                    <td><?= !empty($c['daily_budget']) ? '₹' . number_format($c['daily_budget'], 2) : '—' ?></td>
-                                    <td>₹<?= number_format($c['spend'] ?? 0, 2) ?></td>
+                                    <td><?= !empty($c['daily_budget']) ? '?' . number_format($c['daily_budget'], 2) : '�' ?></td>
+                                    <td>?<?= number_format($c['spend'] ?? 0, 2) ?></td>
                                     <td><?= $c['leads_count'] ?? 0 ?></td>
-                                    <td>₹<?= number_format($c['cost_per_lead'] ?? 0, 2) ?></td>
+                                    <td>?<?= number_format($c['cost_per_lead'] ?? 0, 2) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -116,7 +116,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <?php if (!empty($accounts)): ?>
                 <div class="list-group">
                     <?php foreach ($accounts as $acc): ?>
-                        <a href="<?= BASE_URL ?>/admin/social-media/campaigns/<?= $acc['id'] ?>" class="list-group-item list-group-item-action"><?= htmlspecialchars($acc['account_name']) ?></a>
+                        <a href="<?= BASE_URL ?>/admin/social-media/campaigns/<?= $acc['id'] ?>" class="list-group-item list-group-item-action"><?= htmlspecialchars($acc['account_name'] ?? '') ?></a>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>

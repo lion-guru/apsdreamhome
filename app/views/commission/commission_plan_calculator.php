@@ -324,7 +324,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user-circle me-1"></i>
-                        <?php echo htmlspecialchars($associate_name); ?>
+                        <?php echo htmlspecialchars($associate_name ?? ''); ?>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="associate_dashboard.php">
@@ -391,7 +391,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 <option value="">Choose a plan...</option>
                                                 <?php foreach ($plans as $plan): ?>
                                                     <option value="<?php echo $plan['id']; ?>">
-                                                        <?php echo htmlspecialchars($plan['plan_name']); ?> (<?php echo $plan['plan_code']; ?>)
+                                                        <?php echo htmlspecialchars($plan['plan_name'] ?? ''); ?> (<?php echo $plan['plan_code']; ?>)
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -452,8 +452,8 @@ if (isset($_GET['calculated']) && $calculation_result) {
 
                                         <!-- Summary Cards -->
                                         <div class="summary-card">
-                                            <h3><?php echo htmlspecialchars($calculation_result['plan']['plan_name']); ?></h3>
-                                            <p class="mb-0"><?php echo htmlspecialchars($calculation_result['plan']['description']); ?></p>
+                                            <h3><?php echo htmlspecialchars($calculation_result['plan']['plan_name'] ?? ''); ?></h3>
+                                            <p class="mb-0"><?php echo htmlspecialchars($calculation_result['plan']['description'] ?? ''); ?></p>
                                         </div>
 
                                         <!-- Key Metrics -->

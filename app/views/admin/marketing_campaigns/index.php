@@ -118,7 +118,7 @@ ob_start();
                                 <tr>
                                     <td>#<?= $c['id'] ?></td>
                                     <td>
-                                        <strong><?= htmlspecialchars($c['name']) ?></strong>
+                                        <strong><?= htmlspecialchars($c['name'] ?? '') ?></strong>
                                         <br><small class="text-muted"><?= htmlspecialchars($c['creator_name'] ?? 'System') ?></small>
                                     </td>
                                     <td>

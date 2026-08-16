@@ -132,7 +132,7 @@ $isTestMode = $isTestMode ?? true;
                                 elseif ($st === 'failed') $statusCls = 'bg-danger';
                                 elseif ($st === 'cancelled') $statusCls = 'bg-warning text-dark';
                                 ?>
-                                <span class="badge <?= $statusCls ?>"><?= ucfirst(htmlspecialchars($st)) ?></span>
+                                <span class="badge <?= $statusCls ?>"><?= ucfirst(htmlspecialchars($st ?? '')) ?></span>
                             </td>
                             <td><?= htmlspecialchars($m['next_payment_date'] ?? 'N/A') ?></td>
                             <td class="text-center">

@@ -54,7 +54,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         </div>
       <?php endif; ?>
       <?php if (!empty($colony['rera_number'])): ?>
-        <span class="badge bg-danger fs-6"><i class="fas fa-stamp me-1"></i> RERA: <?= htmlspecialchars($colony['rera_number']) ?></span>
+        <span class="badge bg-danger fs-6"><i class="fas fa-stamp me-1"></i> RERA: <?= htmlspecialchars($colony['rera_number'] ?? '') ?></span>
       <?php endif; ?>
       <div class="small text-muted mt-1">Owner: <?= htmlspecialchars($colony['land_owner_name'] ?? 'N/A') ?></div>
     </div>
@@ -216,8 +216,8 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         <div class="card-body">
           <?php if ($layout): ?>
             <div class="row g-3">
-              <div class="col-md-4"><small class="text-muted d-block">Layout Name</small><strong><?= htmlspecialchars($layout['layout_name']) ?></strong></div>
-              <div class="col-md-4"><small class="text-muted d-block">Version</small><strong><?= htmlspecialchars($layout['version']) ?></strong></div>
+              <div class="col-md-4"><small class="text-muted d-block">Layout Name</small><strong><?= htmlspecialchars($layout['layout_name'] ?? '') ?></strong></div>
+              <div class="col-md-4"><small class="text-muted d-block">Version</small><strong><?= htmlspecialchars($layout['version'] ?? '') ?></strong></div>
               <div class="col-md-4"><small class="text-muted d-block">Type</small><strong><?= ucfirst($layout['layout_type']) ?></strong></div>
               <div class="col-md-4"><small class="text-muted d-block">Road Area</small><strong><?= $layout['road_area_pct'] ?>%</strong></div>
               <div class="col-md-4"><small class="text-muted d-block">Common Area</small><strong><?= $layout['common_area_pct'] ?>%</strong></div>
@@ -254,8 +254,8 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         <div class="card-body">
           <?php if ($rera): ?>
             <div class="row g-3">
-              <div class="col-md-4"><small class="text-muted d-block">RERA Number</small><strong class="text-danger"><?= htmlspecialchars($rera['rera_number']) ?></strong></div>
-              <div class="col-md-4"><small class="text-muted d-block">Builder</small><strong><?= htmlspecialchars($rera['builder_name']) ?></strong></div>
+              <div class="col-md-4"><small class="text-muted d-block">RERA Number</small><strong class="text-danger"><?= htmlspecialchars($rera['rera_number'] ?? '') ?></strong></div>
+              <div class="col-md-4"><small class="text-muted d-block">Builder</small><strong><?= htmlspecialchars($rera['builder_name'] ?? '') ?></strong></div>
               <div class="col-md-4"><small class="text-muted d-block">Status</small><span class="badge bg-success"><?= $rera['status'] ?></span></div>
               <div class="col-md-4"><small class="text-muted d-block">Registration Date</small><strong><?= $rera['registration_date'] ?></strong></div>
               <div class="col-md-4"><small class="text-muted d-block">Validity</small><strong><?= $rera['validity_date'] ?></strong></div>
@@ -270,7 +270,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
                   <tbody>
                     <?php foreach ($milestones as $m): ?>
                       <tr>
-                        <td><?= htmlspecialchars($m['milestone_name']) ?></td>
+                        <td><?= htmlspecialchars($m['milestone_name'] ?? '') ?></td>
                         <td><span class="badge bg-secondary"><?= $m['milestone_type'] ?></span></td>
                         <td><?= $m['planned_date'] ?></td>
                         <td><span class="badge bg-<?= $m['status'] === 'completed' ? 'success' : ($m['status'] === 'delayed' ? 'danger' : 'warning') ?>"><?= ucfirst($m['status']) ?></span></td>
@@ -394,7 +394,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
               <i class="fas <?= ($chk['passed'] ?? false) ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> me-2"></i>
               <span class="small <?= ($chk['passed'] ?? false) ? '' : 'text-muted' ?>"><?= htmlspecialchars($chk['label'] ?? '') ?></span>
               <?php if (!empty($chk['detail'])): ?>
-                <span class="badge bg-secondary ms-2"><?= htmlspecialchars($chk['detail']) ?></span>
+                <span class="badge bg-secondary ms-2"><?= htmlspecialchars($chk['detail'] ?? '') ?></span>
               <?php endif; ?>
             </div>
           <?php endforeach; ?>

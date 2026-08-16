@@ -56,8 +56,8 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body text-center">
-                            <h5><?php echo htmlspecialchars($project['title']); ?></h5>
-                            <p class="text-muted small"><?php echo htmlspecialchars($project['location']); ?></p>
+                            <h5><?php echo htmlspecialchars($project['title'] ?? ''); ?></h5>
+                            <p class="text-muted small"><?php echo htmlspecialchars($project['location'] ?? ''); ?></p>
                             <p class="h4 text-success"><?php echo $project['price']; ?></p>
                             <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-success"><?= __('featured_view_details') ?></a>
                         </div>

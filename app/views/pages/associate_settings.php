@@ -11,14 +11,14 @@
 
 <?php if ($success): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success); ?>
+        <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($success ?? ''); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
 
 <?php if ($error): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
+        <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error ?? ''); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
@@ -35,16 +35,16 @@
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_name', [], 'Name') ?></label>
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($associate_name); ?>" readonly>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($associate_name ?? ''); ?>" readonly>
                         <small class="text-muted">Contact admin to change name</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_email', [], 'Email') ?></label>
-                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($associate_email); ?>">
+                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($associate_email ?? ''); ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_phone', [], 'Phone') ?></label>
-                        <input type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($associate_phone); ?>">
+                        <input type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($associate_phone ?? ''); ?>">
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i><?= __('assoc_update_btn', [], 'Update Profile') ?>
@@ -137,7 +137,7 @@
                 <ul class="list-unstyled">
                     <li class="mb-2">
                         <i class="fas fa-phone text-success me-2"></i>
-                        <strong><?= htmlspecialchars($phoneDisplay) ?></strong>
+                        <strong><?= htmlspecialchars($phoneDisplay ?? '') ?></strong>
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-envelope text-primary me-2"></i>

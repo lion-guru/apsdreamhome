@@ -66,14 +66,14 @@ $agreement = $agreement ?? [];
     <?php if ($agreement['terms_conditions'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Terms & Conditions</h5></div>
-        <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($agreement['terms_conditions'])); ?></div>
+        <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($agreement['terms_conditions'] ?? '')); ?></div>
     </div>
     <?php endif; ?>
 
     <?php if ($agreement['remarks'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Remarks</h5></div>
-        <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($agreement['remarks'])); ?></div>
+        <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($agreement['remarks'] ?? '')); ?></div>
     </div>
     <?php endif; ?>
 
@@ -81,7 +81,7 @@ $agreement = $agreement ?? [];
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-file-pdf me-2"></i>Document</h5></div>
         <div class="card-body aps-cp-card-body">
-            <a href="<?php echo htmlspecialchars($agreement['document_path']); ?>" class="btn btn-outline-danger" target="_blank"><i class="fas fa-file-pdf me-1"></i>View Document</a>
+            <a href="<?php echo htmlspecialchars($agreement['document_path'] ?? ''); ?>" class="btn btn-outline-danger" target="_blank"><i class="fas fa-file-pdf me-1"></i>View Document</a>
         </div>
     </div>
     <?php endif; ?>

@@ -63,8 +63,8 @@
                     <tbody>
                         <?php foreach ($supported_locales as $code => $name): ?>
                         <tr>
-                            <td><code><?= htmlspecialchars($code) ?></code></td>
-                            <td><?= htmlspecialchars($name) ?></td>
+                            <td><code><?= htmlspecialchars($code ?? '') ?></code></td>
+                            <td><?= htmlspecialchars($name ?? '') ?></td>
                             <td>
                                 <a href="<?= BASE_URL ?>/admin/localization/editor?locale=<?= urlencode($code) ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-edit me-1"></i> Edit Translations

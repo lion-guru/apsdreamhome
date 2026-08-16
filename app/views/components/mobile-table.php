@@ -13,13 +13,13 @@ $headerClass = $headerClass ?? 'table-light';
     <!-- Desktop Table View -->
     <div class="d-none d-md-block">
         <div class="table-responsive">
-            <div class="table-responsive"><table class="table <?php echo htmlspecialchars($tableClass); ?> table-responsive">
+            <div class="table-responsive"><table class="table <?php echo htmlspecialchars($tableClass ?? ''); ?> table-responsive">
                 <?php if(isset($headers)): ?>
-                    <thead class="<?php echo htmlspecialchars($headerClass); ?>">
+                    <thead class="<?php echo htmlspecialchars($headerClass ?? ''); ?>">
                         <tr>
                             <?php foreach($headers as $header): ?>
                                 <th <?php echo isset($header['width']) ? 'class="style-61709"' : ''; ?>>
-                                    <?php echo htmlspecialchars($header['title']); ?>
+                                    <?php echo htmlspecialchars($header['title'] ?? ''); ?>
                                 </th>
                             <?php endforeach; ?>
                         </tr>

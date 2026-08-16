@@ -126,7 +126,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-2">Set this URL in your Meta App Dashboard &rarr; WhatsApp &rarr; Configuration &rarr; Webhook:</p>
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($webhookUrl); ?>" readonly onclick="this.select()">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($webhookUrl ?? ''); ?>" readonly onclick="this.select()">
                         <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">
                             Copy
                         </button>

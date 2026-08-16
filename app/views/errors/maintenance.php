@@ -34,13 +34,13 @@ header('Retry-After: 3600');
                 <div class="card p-5 text-center">
                     <div class="icon-circle"><i class="fas fa-cog fa-spin"></i></div>
                     <h1 class="h2 mb-3">Be right back</h1>
-                    <p class="lead text-muted mb-4"><?= htmlspecialchars($message) ?></p>
+                    <p class="lead text-muted mb-4"><?= htmlspecialchars($message ?? '') ?></p>
                     <?php if ($eta): ?>
-                        <p class="mb-4"><i class="far fa-clock text-primary me-2"></i>Estimated return: <strong><?= htmlspecialchars($eta) ?></strong></p>
+                        <p class="mb-4"><i class="far fa-clock text-primary me-2"></i>Estimated return: <strong><?= htmlspecialchars($eta ?? '') ?></strong></p>
                     <?php endif; ?>
                     <hr>
                     <p class="small text-muted mb-0">
-                        Need help? <a href="mailto:<?= htmlspecialchars($contact) ?>"><?= htmlspecialchars($contact) ?></a>
+                        Need help? <a href="mailto:<?= htmlspecialchars($contact ?? '') ?>"><?= htmlspecialchars($contact ?? '') ?></a>
                     </p>
                     <div class="mt-3">
                         <a href="<?= $base ?>" class="text-muted small"><i class="fas fa-sync-alt me-1"></i>Try again</a>

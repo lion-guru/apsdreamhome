@@ -36,7 +36,7 @@ $selectedRole = $selectedRole ?? 'customer';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
+    <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token ?? '') ?>">
     <title>Register - APS Dream Home</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -166,21 +166,21 @@ $selectedRole = $selectedRole ?? 'customer';
         <div class="card">
             <?php if (!empty($errors)): ?>
                 <div class="error"><i class="fas fa-exclamation-circle"></i>
-                    <ul><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul>
+                    <ul><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e ?? '') ?></li><?php endforeach; ?></ul>
                 </div>
             <?php endif; ?>
             <?php if ($success): ?>
-                <div class="success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?></div>
+                <div class="success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($success ?? '') ?></div>
             <?php endif; ?>
 
             <?php if (!empty($ref)): ?>
-                <div class="ref-info"><i class="fas fa-gift"></i> Referral code applied: <strong><?= htmlspecialchars($ref) ?></strong></div>
+                <div class="ref-info"><i class="fas fa-gift"></i> Referral code applied: <strong><?= htmlspecialchars($ref ?? '') ?></strong></div>
             <?php endif; ?>
 
             <form method="POST" action="<?= $base ?>/auth/register" id="registerForm" novalidate>
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-                <input type="hidden" name="role" id="selectedRole" value="<?= htmlspecialchars($selectedRole) ?>">
-                <input type="hidden" name="referral_code" value="<?= htmlspecialchars($ref) ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
+                <input type="hidden" name="role" id="selectedRole" value="<?= htmlspecialchars($selectedRole ?? '') ?>">
+                <input type="hidden" name="referral_code" value="<?= htmlspecialchars($ref ?? '') ?>">
 
                 <!-- Role Selection Cards -->
                 <div class="role-selector">
@@ -246,7 +246,7 @@ $selectedRole = $selectedRole ?? 'customer';
                 <div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
                     <label><i class="fas fa-gift"></i> Referral Code</label>
                     <div class="input-wrap">
-                        <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref) ?>" placeholder="Enter sponsor's referral code">
+                        <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref ?? '') ?>" placeholder="Enter sponsor's referral code">
                         <i class="fas fa-gift field-icon"></i>
                     </div>
                 </div>

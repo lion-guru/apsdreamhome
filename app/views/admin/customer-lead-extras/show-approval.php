@@ -34,13 +34,13 @@ $page_description = 'Detailed view of lead assignment approval request';
                         <?php if (!empty($approval['lead_phone'])): ?>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-phone me-2"></i>
-                                <?php echo htmlspecialchars($approval['lead_phone']); ?>
+                                <?php echo htmlspecialchars($approval['lead_phone'] ?? ''); ?>
                             </p>
                         <?php endif; ?>
                         <?php if (!empty($approval['lead_company'])): ?>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-building me-2"></i>
-                                <?php echo htmlspecialchars($approval['lead_company']); ?>
+                                <?php echo htmlspecialchars($approval['lead_company'] ?? ''); ?>
                             </p>
                         <?php endif; ?>
                     </div>
@@ -96,7 +96,7 @@ $page_description = 'Detailed view of lead assignment approval request';
                     <div class="col-md-6">
                         <?php if (!empty($approval['notes'])): ?>
                             <p><strong>Request Notes:</strong></p>
-                            <p class="text-muted fsmall"><?php echo nl2br(htmlspecialchars($approval['notes'])); ?></p>
+                            <p class="text-muted fsmall"><?php echo nl2br(htmlspecialchars($approval['notes'] ?? '')); ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -132,7 +132,7 @@ $page_description = 'Detailed view of lead assignment approval request';
                         </p>
                         <?php if ($approval['status'] !== 'pending' && !empty($approval['admin_notes'])): ?>
                             <p><strong>Admin Notes:</strong></p>
-                            <p class="text-muted fsmall"><?php echo nl2br(htmlspecialchars($approval['admin_notes'])); ?></p>
+                            <p class="text-muted fsmall"><?php echo nl2br(htmlspecialchars($approval['admin_notes'] ?? '')); ?></p>
                         <?php endif; ?>
                         <?php if ($approval['status'] !== 'pending' && !empty($approval['approved_by_name'])): ?>
                             <p><strong>Reviewed By:</strong> 

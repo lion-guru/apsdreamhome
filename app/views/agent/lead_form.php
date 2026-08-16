@@ -36,7 +36,7 @@ $base = BASE_URL ?? '';
                     <select name="source" class="form-select">
                         <option value="manual">Manual Entry</option>
                         <?php foreach ($sources as $s): ?>
-                            <option value="<?= htmlspecialchars($s['name'] ?? $s['id']) ?>"><?= htmlspecialchars($s['name']) ?></option>
+                            <option value="<?= htmlspecialchars($s['name'] ?? $s['id']) ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                         <option value="referral">Referral</option>
                         <option value="walk_in">Walk-in</option>

@@ -5,7 +5,7 @@
             <div class="card shadow-sm">
                 <?php if (!empty($media['url'])): ?>
                     <?php $ext = strtolower(pathinfo($media['url'], PATHINFO_EXTENSION)); if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
-                        <img src="<?= htmlspecialchars($media['url']) ?>" class="card-img-top" alt="Preview">
+                        <img src="<?= htmlspecialchars($media['url'] ?? '') ?>" class="card-img-top" alt="Preview">
                     <?php else: ?>
                         <div class="card-body text-center py-5">
                             <i class="fas fa-file display-1 text-muted"></i>

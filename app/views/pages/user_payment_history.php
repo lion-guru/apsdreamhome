@@ -107,7 +107,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                             </td>
                             <td>
                                 <?php if (!empty($p['installment_number'])): ?>
-                                    #<?= htmlspecialchars($p['installment_number']) ?>
+                                    #<?= htmlspecialchars($p['installment_number'] ?? '') ?>
                                 <?php elseif (!empty($p['due_date'])): ?>
                                     <small class="text-muted">Due: <?= date('d M', strtotime($p['due_date'])) ?></small>
                                 <?php else: ?>
@@ -122,9 +122,9 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                             </td>
                             <td>
                                 <?php if (!empty($p['transaction_id'])): ?>
-                                    <small class="text-muted" class="style-79813"><?= htmlspecialchars($p['transaction_id']) ?></small>
+                                    <small class="text-muted" class="style-79813"><?= htmlspecialchars($p['transaction_id'] ?? '') ?></small>
                                 <?php elseif (!empty($p['reference_number'])): ?>
-                                    <small class="text-muted"><?= htmlspecialchars($p['reference_number']) ?></small>
+                                    <small class="text-muted"><?= htmlspecialchars($p['reference_number'] ?? '') ?></small>
                                 <?php else: ?>
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>

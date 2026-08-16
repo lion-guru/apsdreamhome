@@ -41,14 +41,14 @@ $satisfaction = $satisfaction ?? 98;
                                 <i class="fas fa-star <?= $i <= $review['rating'] ? 'text-warning' : 'text-muted' ?>"></i>
                             <?php endfor; ?>
                         </div>
-                        <p class="text-muted fst-italic">"<?php echo htmlspecialchars($review['text']); ?>"</p>
+                        <p class="text-muted fst-italic">"<?php echo htmlspecialchars($review['text'] ?? ''); ?>"</p>
                         <div class="d-flex align-items-center mt-3">
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" class="style-87543">
                                 <?= strtoupper(substr($review['name'], 0, 1)) ?>
                             </div>
                             <div class="ms-3">
-                                <strong><?= htmlspecialchars($review['name']) ?></strong>
-                                <div class="small text-muted"><?= htmlspecialchars($review['property']) ?></div>
+                                <strong><?= htmlspecialchars($review['name'] ?? '') ?></strong>
+                                <div class="small text-muted"><?= htmlspecialchars($review['property'] ?? '') ?></div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 <?php $pageTitle = $page_title ?? 'Smart Home Service Packages'; ?>
 <div class="container-fluid py-4">
-    <h4 class="mb-4"><i class="fas fa-tags me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
+    <h4 class="mb-4"><i class="fas fa-tags me-2"></i><?= htmlspecialchars($pageTitle ?? '') ?></h4>
     <div class="row g-3">
         <?php foreach (($packages ?? []) as $key => $pkg): ?>
             <div class="col-md-4">
@@ -13,13 +13,13 @@
                         <p class="fw-bold mb-2">Devices Included:</p>
                         <ul class="list-unstyled small">
                             <?php foreach (($pkg['devices'] ?? []) as $d): ?>
-                                <li><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($d) ?></li>
+                                <li><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($d ?? '') ?></li>
                             <?php endforeach; ?>
                         </ul>
                         <p class="fw-bold mb-2 mt-3">Features:</p>
                         <ul class="list-unstyled small">
                             <?php foreach (($pkg['features'] ?? []) as $f): ?>
-                                <li><i class="fas fa-star text-warning me-1"></i><?= htmlspecialchars($f) ?></li>
+                                <li><i class="fas fa-star text-warning me-1"></i><?= htmlspecialchars($f ?? '') ?></li>
                             <?php endforeach; ?>
                         </ul>
                         <p class="text-muted small mt-3"><?= htmlspecialchars($pkg['support'] ?? '') ?></p>

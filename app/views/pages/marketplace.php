@@ -155,12 +155,12 @@ $base = defined('BASE_URL') ? BASE_URL : '';
       <a href="<?= $base ?>/marketplace/<?= $p['id'] ?>" class="text-decoration-none text-dark premium-card">
         <div class="ribbon" class="style-35829"><?= $ptype ?></div>
         <?php if ($img): ?>
-        <img src="<?= $img ?>" class="p-img" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy">
+        <img src="<?= $img ?>" class="p-img" alt="<?= htmlspecialchars($p['name'] ?? '') ?>" loading="lazy">
         <?php else: ?>
         <div class="p-img bg-light d-flex align-items-center justify-content-center"><i class="fas fa-home fa-2x text-muted"></i></div>
         <?php endif; ?>
         <div class="p-body">
-          <h6><?= htmlspecialchars(mb_substr($p['name'], 0, 35)) ?></h6>
+          <h6><?= htmlspecialchars(mb_substr($p['name'] ?? '', 0, 35)) ?></h6>
           <p class="small text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($p['city_name'] ?? $p['location'] ?? 'N/A') ?></p>
           <div class="price">₹<?= number_format($p['price']) ?></div>
           <div class="d-flex gap-1 mt-1">
@@ -213,12 +213,12 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <span class="position-absolute top-0 end-0 m-2 premium-badge-sm <?= $bc ?>" class="style-58936"><i class="fas fa-crown me-1"></i><?= $badge ?></span>
             <?php endif; ?>
             <?php if ($img): ?>
-            <img src="<?= $img ?>" class="r-img" alt="<?= htmlspecialchars($prop['name']) ?>" loading="lazy">
+            <img src="<?= $img ?>" class="r-img" alt="<?= htmlspecialchars($prop['name'] ?? '') ?>" loading="lazy">
             <?php else: ?>
             <div class="r-img bg-light d-flex align-items-center justify-content-center"><i class="fas fa-home fa-2x text-muted"></i></div>
             <?php endif; ?>
             <div class="r-body">
-              <h6><?= htmlspecialchars(mb_substr($prop['name'], 0, 45)) ?></h6>
+              <h6><?= htmlspecialchars(mb_substr($prop['name'] ?? '', 0, 45)) ?></h6>
               <p class="small text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($prop['city_name'] ?? $prop['location'] ?? 'N/A') ?></p>
               <div class="d-flex gap-1 mb-1">
                 <span class="badge bg-primary text-capitalize"><?= $prop['property_type'] ?></span>

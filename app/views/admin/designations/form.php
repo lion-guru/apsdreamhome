@@ -1,4 +1,4 @@
-ï»¿<!-- Designation Form - Create/Edit -->
+<!-- Designation Form - Create/Edit -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -44,10 +44,10 @@
                                 <div class="form-group">
                                     <label>Department *</label>
                                     <select name="department_id" class="form-control" required>
-                                        <option value="">â€” Select Department â€”</option>
+                                        <option value="">— Select Department —</option>
                                         <?php foreach ($departments as $d): ?>
                                             <option value="<?= $d['id'] ?>" <?= ($designation['department_id'] ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($d['code'] . ' â€” ' . $d['name']) ?>
+                                                <?= htmlspecialchars($d['code'] . ' — ' . $d['name'] ?? '') ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -57,11 +57,11 @@
                                 <div class="form-group">
                                     <label>Level *</label>
                                     <select name="level" class="form-control" required>
-                                        <option value="1" <?= ($designation['level'] ?? 1) == 1 ? 'selected' : '' ?>>1 â€” Junior</option>
-                                        <option value="2" <?= ($designation['level'] ?? 1) == 2 ? 'selected' : '' ?>>2 â€” Executive</option>
-                                        <option value="3" <?= ($designation['level'] ?? 1) == 3 ? 'selected' : '' ?>>3 â€” Senior</option>
-                                        <option value="4" <?= ($designation['level'] ?? 1) == 4 ? 'selected' : '' ?>>4 â€” Manager</option>
-                                        <option value="5" <?= ($designation['level'] ?? 1) == 5 ? 'selected' : '' ?>>5 â€” Director</option>
+                                        <option value="1" <?= ($designation['level'] ?? 1) == 1 ? 'selected' : '' ?>>1 — Junior</option>
+                                        <option value="2" <?= ($designation['level'] ?? 1) == 2 ? 'selected' : '' ?>>2 — Executive</option>
+                                        <option value="3" <?= ($designation['level'] ?? 1) == 3 ? 'selected' : '' ?>>3 — Senior</option>
+                                        <option value="4" <?= ($designation['level'] ?? 1) == 4 ? 'selected' : '' ?>>4 — Manager</option>
+                                        <option value="5" <?= ($designation['level'] ?? 1) == 5 ? 'selected' : '' ?>>5 — Director</option>
                                     </select>
                                 </div>
                             </div>
@@ -70,14 +70,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Min Salary (â‚¹/month)</label>
+                                    <label>Min Salary (?/month)</label>
                                     <input type="number" name="min_salary" class="form-control" min="0" step="1000"
                                            value="<?= $designation['min_salary'] ?? 0 ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Max Salary (â‚¹/month)</label>
+                                    <label>Max Salary (?/month)</label>
                                     <input type="number" name="max_salary" class="form-control" min="0" step="1000"
                                            value="<?= $designation['max_salary'] ?? 0 ?>">
                                 </div>

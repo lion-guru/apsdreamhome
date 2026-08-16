@@ -61,14 +61,14 @@ $c = $collection;
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <strong class="text-muted small">Reference Number</strong>
-                            <p class="mb-0"><?php echo htmlspecialchars($c['reference_number']); ?></p>
+                            <p class="mb-0"><?php echo htmlspecialchars($c['reference_number'] ?? ''); ?></p>
                         </div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($c['notes'])): ?>
                     <div class="mb-3">
                         <strong class="text-muted small">Notes</strong>
-                        <p class="mb-0"><?php echo nl2br(htmlspecialchars($c['notes'])); ?></p>
+                        <p class="mb-0"><?php echo nl2br(htmlspecialchars($c['notes'] ?? '')); ?></p>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($c['verified_at'])): ?>
@@ -76,7 +76,7 @@ $c = $collection;
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <strong class="text-muted small">Verified At</strong>
-                            <p class="mb-0"><?php echo htmlspecialchars($c['verified_at']); ?></p>
+                            <p class="mb-0"><?php echo htmlspecialchars($c['verified_at'] ?? ''); ?></p>
                         </div>
                         <div class="col-md-6">
                             <strong class="text-muted small">Verified By</strong>

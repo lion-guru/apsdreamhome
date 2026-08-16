@@ -41,7 +41,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <?php else: ?>
                         <?php foreach ($topLocations as $loc): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div><strong class="small"><?= htmlspecialchars($loc['loc']) ?></strong></div>
+                                <div><strong class="small"><?= htmlspecialchars($loc['loc'] ?? '') ?></strong></div>
                                 <div class="text-end"><span class="badge bg-primary"><?= $loc['cnt'] ?></span><br><small class="text-muted">Avg ₹<?= $loc['avg_price'] > 100000 ? number_format($loc['avg_price']/100000,1).'L' : number_format($loc['avg_price']) ?></small></div>
                             </div>
                         <?php endforeach; ?>
@@ -56,7 +56,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <?php foreach ($typeDistribution as $td): ?>
                         <?php $pct = $activeListings > 0 ? round($td['cnt']/$activeListings*100) : 0; ?>
                         <div class="mb-2">
-                            <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($td['property_type']) ?></small><small><?= $td['cnt'] ?> (<?= $pct ?>%)</small></div>
+                            <div class="d-flex justify-content-between"><small class="text-capitalize"><?= htmlspecialchars($td['property_type'] ?? '') ?></small><small><?= $td['cnt'] ?> (<?= $pct ?>%)</small></div>
                             <div class="progress" class="style-51910"><div class="progress-bar bg-primary" class="style-21859"></div></div>
                         </div>
                     <?php endforeach; ?>
@@ -81,7 +81,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="aps-cp-card-body p-2">
                     <?php foreach ($featuredListings as $f): ?>
                         <div class="d-flex justify-content-between align-items-center p-1 border-bottom small">
-                            <span><?= htmlspecialchars(mb_substr($f['name'], 0, 25)) ?></span>
+                            <span><?= htmlspecialchars(mb_substr($f['name'] ?? '', 0, 25)) ?></span>
                             <form method="post" action="<?= $base ?>/admin/marketplace/toggle-featured" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                 <input type="hidden" name="id" value="<?= $f['id'] ?>">
@@ -98,7 +98,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="aps-cp-card-body p-2">
                     <?php foreach ($urgentListings as $u): ?>
                         <div class="d-flex justify-content-between align-items-center p-1 border-bottom small">
-                            <span><?= htmlspecialchars(mb_substr($u['name'], 0, 25)) ?></span>
+                            <span><?= htmlspecialchars(mb_substr($u['name'] ?? '', 0, 25)) ?></span>
                             <form method="post" action="<?= $base ?>/admin/marketplace/toggle-urgent" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                 <input type="hidden" name="id" value="<?= $u['id'] ?>">
@@ -125,8 +125,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php foreach ($recentListings as $p): ?>
                             <tr>
                                 <td>#<?= $p['id'] ?></td>
-                                <td><strong><?= htmlspecialchars(mb_substr($p['name'], 0, 40)) ?></strong></td>
-                                <td><span class="text-capitalize"><?= htmlspecialchars($p['property_type']) ?></span></td>
+                                <td><strong><?= htmlspecialchars(mb_substr($p['name'] ?? '', 0, 40)) ?></strong></td>
+                                <td><span class="text-capitalize"><?= htmlspecialchars($p['property_type'] ?? '') ?></span></td>
                                 <td>₹<?= $p['price'] > 100000 ? number_format($p['price']/100000,1).'L' : number_format($p['price']) ?></td>
                                 <td class="small"><?= htmlspecialchars($p['location'] ?? $p['city_name'] ?? 'N/A') ?></td>
                                 <td class="small"><?= htmlspecialchars($p['seller_name'] ?? 'N/A') ?></td>
@@ -138,7 +138,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                         <span class="text-muted small">—</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><span class="aps-cp-badge badge bg-<?= $p['status'] === 'approved' ? 'success' : ($p['status'] === 'pending' ? 'warning' : ($p['status'] === 'sold' ? 'info' : 'danger')) ?>"><?= ucfirst(htmlspecialchars($p['status'])) ?></span></td>
+                                <td><span class="aps-cp-badge badge bg-<?= $p['status'] === 'approved' ? 'success' : ($p['status'] === 'pending' ? 'warning' : ($p['status'] === 'sold' ? 'info' : 'danger')) ?>"><?= ucfirst(htmlspecialchars($p['status'] ?? '')) ?></span></td>
                                 <td><?= (int)$p['views'] ?></td>
                                 <td>
                                     <div class="btn-group btn-group-sm">

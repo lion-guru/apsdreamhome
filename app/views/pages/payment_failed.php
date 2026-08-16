@@ -33,7 +33,7 @@ $orderId = $order_id ?? '';
 
         <div class="support-box">
             <h3><i class="fas fa-headset"></i> <?php echo __('payment_failed_need_help', [], 'Need Help?'); ?></h3>
-            <p><i class="fas fa-phone"></i> <?= htmlspecialchars($phoneDisplay) ?></p>
+            <p><i class="fas fa-phone"></i> <?= htmlspecialchars($phoneDisplay ?? '') ?></p>
             <p><i class="fas fa-envelope"></i> <?= $sc('contact_email', 'info@apsdreamhome.com') ?></p>
             <p><i class="fas fa-clock"></i> <?php echo __('payment_failed_hours', [], 'Mon-Sat, 9:00 AM - 7:00 PM IST'); ?></p>
         </div>

@@ -13,7 +13,7 @@
 
     <?php if (!empty($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

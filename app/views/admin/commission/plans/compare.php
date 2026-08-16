@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <select name="plan_a" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planIdA == $p['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($p['plan_name']) ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
+                                <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -48,7 +48,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <select name="plan_b" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planIdB == $p['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($p['plan_name']) ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
+                                <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -64,14 +64,14 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-6">
                     <div class="style-731">
                         <div class="style-34740">Plan A</div>
-                        <div class="style-69154"><?= htmlspecialchars($comparison['plan_a']['name']) ?></div>
+                        <div class="style-69154"><?= htmlspecialchars($comparison['plan_a']['name'] ?? '') ?></div>
                         <div class="cp-version" class="style-62298">v<?= $comparison['plan_a']['version'] ?></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="style-71182">
                         <div class="style-34740">Plan B</div>
-                        <div class="style-62989"><?= htmlspecialchars($comparison['plan_b']['name']) ?></div>
+                        <div class="style-62989"><?= htmlspecialchars($comparison['plan_b']['name'] ?? '') ?></div>
                         <div class="cp-version" class="style-62298">v<?= $comparison['plan_b']['version'] ?></div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             $ld = $lv['level_b'] - $lv['level_a'];
                             ?>
                             <tr>
-                                <td class="style-35725"><?= htmlspecialchars($lv['name_a']) ?> / <?= htmlspecialchars($lv['name_b']) ?></td>
+                                <td class="style-35725"><?= htmlspecialchars($lv['name_a'] ?? '') ?> / <?= htmlspecialchars($lv['name_b'] ?? '') ?></td>
                                 <td class="plan-a"><?= $lv['direct_a'] ?>%</td>
                                 <td class="plan-b"><?= $lv['direct_b'] ?>%</td>
                                 <td class="<?= $dd > 0 ? 'diff-pos' : ($dd < 0 ? 'diff-neg' : 'diff-zero') ?>"><?= $dd > 0 ? '+' : '' ?><?= $dd ?>%</td>

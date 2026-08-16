@@ -56,13 +56,13 @@
             <div class="card-body aps-cp-card-body">
                 <?php $amenities = array_filter(array_map('trim', explode("\n", $colony['amenities'] ?? ''))); ?>
                 <?php if (empty($amenities)): ?><p class="text-muted mb-0">None listed</p>
-                <?php else: ?><ul class="mb-0"><?php foreach ($amenities as $a): ?><li><?php echo htmlspecialchars($a); ?></li><?php endforeach; ?></ul><?php endif; ?>
+                <?php else: ?><ul class="mb-0"><?php foreach ($amenities as $a): ?><li><?php echo htmlspecialchars($a ?? ''); ?></li><?php endforeach; ?></ul><?php endif; ?>
             </div></div>
 
             <?php if ($colony['map_link'] ?? ''): ?>
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Location</h6></div>
             <div class="card-body p-0">
-                <iframe src="<?php echo htmlspecialchars($colony['map_link']); ?>" width="100%" height="250" class="style-84307" allowfullscreen loading="lazy"></iframe>
+                <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="250" class="style-84307" allowfullscreen loading="lazy"></iframe>
             </div></div>
             <?php endif; ?>
         </div>

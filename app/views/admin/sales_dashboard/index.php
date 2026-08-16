@@ -101,14 +101,14 @@
                                         <?php foreach (array_slice($recentLeads, 0, 5) as $l): ?>
                                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <strong class="small"><?php echo htmlspecialchars($l['name']); ?></strong>
+                                                    <strong class="small"><?php echo htmlspecialchars($l['name'] ?? ''); ?></strong>
                                                     <br><small class="text-muted"><?php echo htmlspecialchars($l['phone'] ?? $l['email'] ?? '—'); ?></small>
                                                 </div>
                                                 <div class="text-end">
                                                     <span class="badge bg-<?php
                                                         $s = $l['status'] ?? 'new';
                                                         echo $s === 'closed_won' ? 'success' : ($s === 'closed_lost' ? 'danger' : 'secondary');
-                                                    ?>"><?php echo htmlspecialchars($s); ?></span>
+                                                    ?>"><?php echo htmlspecialchars($s ?? ''); ?></span>
                                                     <?php if (($l['score'] ?? 0) > 0): ?>
                                                         <br><span class="badge bg-warning mt-1"><?php echo (int)$l['score']; ?></span>
                                                     <?php endif; ?>
@@ -157,7 +157,7 @@
                                         <div class="d-flex align-items-center">
                                             <span class="badge bg-<?php echo $i === 0 ? 'warning' : ($i === 1 ? 'secondary' : 'light text-dark'); ?> me-2" class="style-52796"><?php echo $i + 1; ?></span>
                                             <div>
-                                                <strong class="small"><?php echo htmlspecialchars($p['name']); ?></strong>
+                                                <strong class="small"><?php echo htmlspecialchars($p['name'] ?? ''); ?></strong>
                                                 <br><small class="text-muted"><?php echo (int)$p['won_count']; ?> won / <?php echo (int)$p['lead_count']; ?> leads</small>
                                             </div>
                                         </div>

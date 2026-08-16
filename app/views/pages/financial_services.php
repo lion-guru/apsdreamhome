@@ -82,7 +82,7 @@ try {
                                         <?php foreach ($features as $feature): ?>
                                             <li>
                                                 <i class="fas fa-check text-success"></i>
-                                                <?php echo htmlspecialchars($feature); ?>
+                                                <?php echo htmlspecialchars($feature ?? ''); ?>
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -147,14 +147,14 @@ try {
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
                     <div class="advisor-card h-100">
                         <?php if (!empty($advisor['photo'])): ?>
-                            <img src="<?= htmlspecialchars($advisor['photo']) ?>" alt="<?= htmlspecialchars($advisor['name']) ?>" class="advisor-photo">
+                            <img src="<?= htmlspecialchars($advisor['photo'] ?? '') ?>" alt="<?= htmlspecialchars($advisor['name'] ?? '') ?>" class="advisor-photo">
                         <?php else: ?>
                             <div class="advisor-photo-placeholder">
                                 <i class="fas fa-user-tie fa-3x text-primary"></i>
                             </div>
                         <?php endif; ?>
                         <div class="advisor-info">
-                            <h4 class="fw-bold"><?= htmlspecialchars($advisor['name']) ?></h4>
+                            <h4 class="fw-bold"><?= htmlspecialchars($advisor['name'] ?? '') ?></h4>
                             <p class="text-primary mb-1"><?= htmlspecialchars($advisor['title'] ?? '') ?></p>
                             <p class="text-muted small mb-2">
                                 <i class="fas fa-briefcase me-1"></i><?= htmlspecialchars($advisor['experience'] ?? '') ?>
@@ -162,12 +162,12 @@ try {
                             <p class="text-muted small mb-3"><?= htmlspecialchars($advisor['specialization'] ?? '') ?></p>
                             <div class="advisor-contact">
                                 <?php if (!empty($advisor['phone'])): ?>
-                                    <a href="tel:<?= htmlspecialchars($advisor['phone']) ?>" class="text-decoration-none text-muted">
+                                    <a href="tel:<?= htmlspecialchars($advisor['phone'] ?? '') ?>" class="text-decoration-none text-muted">
                                         <i class="fas fa-phone me-1"></i> Call
                                     </a>
                                 <?php endif; ?>
                                 <?php if (!empty($advisor['email'])): ?>
-                                    <a href="mailto:<?= htmlspecialchars($advisor['email']) ?>" class="text-decoration-none text-muted ms-3">
+                                    <a href="mailto:<?= htmlspecialchars($advisor['email'] ?? '') ?>" class="text-decoration-none text-muted ms-3">
                                         <i class="fas fa-envelope me-1"></i> Email
                                     </a>
                                 <?php endif; ?>
@@ -211,7 +211,7 @@ try {
                             <h2 class="accordion-header" id="heading<?= $catIndex ?>">
                                 <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $catIndex ?>" aria-expanded="false" aria-controls="collapse<?= $catIndex ?>">
                                     <i class="fas fa-question-circle me-2 text-primary"></i>
-                                    <?= htmlspecialchars($category) ?>
+                                    <?= htmlspecialchars($category ?? '') ?>
                                     <span class="badge bg-primary ms-2"><?= count($catFaqs) ?></span>
                                 </button>
                             </h2>
@@ -221,12 +221,12 @@ try {
                                         <div class="accordion-item border-0 shadow-sm mb-2">
                                             <h2 class="accordion-header" id="faqHeading<?= $catIndex . $faqIndex ?>">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse<?= $catIndex . $faqIndex ?>" aria-expanded="false" aria-controls="faqCollapse<?= $catIndex . $faqIndex ?>">
-                                                    <?= htmlspecialchars($faq['question']) ?>
+                                                    <?= htmlspecialchars($faq['question'] ?? '') ?>
                                                 </button>
                                             </h2>
                                             <div id="faqCollapse<?= $catIndex . $faqIndex ?>" class="accordion-collapse collapse" aria-labelledby="faqHeading<?= $catIndex . $faqIndex ?>" data-bs-parent="#financialFaqs">
                                                 <div class="accordion-body">
-                                                    <?= htmlspecialchars($faq['answer']) ?>
+                                                    <?= htmlspecialchars($faq['answer'] ?? '') ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -275,7 +275,7 @@ try {
                                     <select name="service" class="form-select" required>
                                         <option value=""><?= __('fs_select_service') ?></option>
                                         <?php foreach ($services as $svc): ?>
-                                            <option value="<?= htmlspecialchars($svc['slug'] ?? $svc['title']) ?>"><?= htmlspecialchars($svc['title']) ?></option>
+                                            <option value="<?= htmlspecialchars($svc['slug'] ?? $svc['title']) ?>"><?= htmlspecialchars($svc['title'] ?? '') ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

@@ -16,7 +16,7 @@ $day_of_week = $day_of_week ?? date('w');
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i><?= htmlspecialchars($page_heading) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h4>
         <div class="btn-group">
             <a href="<?= BASE_URL ?>/admin/schedule/shift-types" class="btn btn-outline-primary btn-sm"><i class="fas fa-clock"></i> Shift Types</a>
             <a href="<?= BASE_URL ?>/admin/schedule/employee-shifts" class="btn btn-outline-primary btn-sm"><i class="fas fa-user-clock"></i> Employee Shifts</a>

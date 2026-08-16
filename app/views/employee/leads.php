@@ -55,10 +55,10 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/employee/leads">
             <div class="input-group input-group-sm">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0 ps-0" name="search" placeholder="Search name, phone, email..." value="<?= htmlspecialchars($search) ?>">
+                <input type="text" class="form-control border-start-0 ps-0" name="search" placeholder="Search name, phone, email..." value="<?= htmlspecialchars($search ?? '') ?>">
             </div>
             <?php if ($currentStatus): ?>
-                <input type="hidden" name="status" value="<?= htmlspecialchars($currentStatus) ?>">
+                <input type="hidden" name="status" value="<?= htmlspecialchars($currentStatus ?? '') ?>">
             <?php endif; ?>
             <button type="submit" class="btn btn-sm btn-primary">Search</button>
             <?php if ($search || $currentStatus): ?>
@@ -170,7 +170,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                                         <?= htmlspecialchars($lead['name'] ?? 'Unknown') ?>
                                     </a>
                                     <?php if (!empty($lead['city'])): ?>
-                                        <div><small class="text-muted"><?= htmlspecialchars($lead['city']) ?></small></div>
+                                        <div><small class="text-muted"><?= htmlspecialchars($lead['city'] ?? '') ?></small></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -200,7 +200,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <?php if (!empty($lead['phone'])): ?>
-                                    <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-sm btn-outline-success" title="Call">
+                                    <a href="tel:<?= htmlspecialchars($lead['phone'] ?? '') ?>" class="btn btn-sm btn-outline-success" title="Call">
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 <?php endif; ?>

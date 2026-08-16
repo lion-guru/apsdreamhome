@@ -26,13 +26,13 @@ $page_description = 'Edit existing custom field for lead tracking';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Field Name *</label>
-                                <input type="text" class="form-control" name="field_name" value="<?php echo htmlspecialchars($customField['field_name']); ?>" required>
+                                <input type="text" class="form-control" name="field_name" value="<?php echo htmlspecialchars($customField['field_name'] ?? ''); ?>" required>
                                 <small class="text-muted">Use lowercase letters, numbers, and underscores only. This will be used in the database.</small>
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label">Field Label *</label>
-                                <input type="text" class="form-control" name="field_label" value="<?php echo htmlspecialchars($customField['field_label']); ?>" required>
+                                <input type="text" class="form-control" name="field_label" value="<?php echo htmlspecialchars($customField['field_label'] ?? ''); ?>" required>
                                 <small class="text-muted">This is the label that will be shown to users.</small>
                             </div>
                             
@@ -57,7 +57,7 @@ $page_description = 'Edit existing custom field for lead tracking';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Default Value</label>
-                                <input type="text" class="form-control" name="default_value" value="<?php echo htmlspecialchars($customField['default_value']); ?>">
+                                <input type="text" class="form-control" name="default_value" value="<?php echo htmlspecialchars($customField['default_value'] ?? ''); ?>">
                                 <small class="text-muted">Optional: Set a default value that will be pre-filled for new leads.</small>
                             </div>
                             
@@ -79,7 +79,7 @@ $page_description = 'Edit existing custom field for lead tracking';
                             
                             <div class="mb-3">
                                 <label class="form-label">Validation Rules (Optional)</label>
-                                <input type="text" class="form-control" name="validation_rules" value="<?php echo htmlspecialchars($customField['validation_rules']); ?>">
+                                <input type="text" class="form-control" name="validation_rules" value="<?php echo htmlspecialchars($customField['validation_rules'] ?? ''); ?>">
                                 <small class="text-muted">Leave blank for no validation. Use pipe (|) to separate multiple rules.</small>
                             </div>
                             

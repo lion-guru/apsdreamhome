@@ -87,7 +87,7 @@
                     <td><span class="status-badge status-<?php echo $p['status'] ?? 'available'; ?>"><?php echo ucfirst(str_replace('_', ' ', $p['status'] ?? 'available')); ?></span></td>
                     <td>
                         <?php if (!empty($p['customer_name'])): ?>
-                        <span class="fw-semibold"><?php echo htmlspecialchars($p['customer_name']); ?></span><br>
+                        <span class="fw-semibold"><?php echo htmlspecialchars($p['customer_name'] ?? ''); ?></span><br>
                         <small class="text-muted"><?php echo htmlspecialchars($p['customer_phone'] ?? ''); ?></small>
                         <?php else: ?>
                         <span class="text-muted">-</span>

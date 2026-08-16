@@ -5,7 +5,7 @@
         <div class="alert alert-danger">Lead not found.</div>
     <?php else: ?>
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user me-2"></i><?= htmlspecialchars($lead['name']) ?> (Lead #<?= $lead['id'] ?>)</h6></div>
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user me-2"></i><?= htmlspecialchars($lead['name'] ?? '') ?> (Lead #<?= $lead['id'] ?>)</h6></div>
             <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3"><small class="text-muted">Phone:</small><br><?= htmlspecialchars($lead['phone'] ?? 'N/A') ?></div>
@@ -26,7 +26,7 @@
                             <?php foreach ($notes as $n): ?>
                                 <div class="border-bottom pb-2 mb-2">
                                     <small class="text-muted"><?= date('d M Y H:i', strtotime($n['created_at'])) ?> by <?= htmlspecialchars($n['author'] ?? 'System') ?></small>
-                                    <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($n['content'])) ?></p>
+                                    <p class="mb-0 mt-1"><?= nl2br(htmlspecialchars($n['content'] ?? '')) ?></p>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>

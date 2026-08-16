@@ -5,7 +5,7 @@ $task = $task ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($page_heading) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h2>
         <div>
             <a href="<?= BASE_URL ?>/async/tasks" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Tasks</a>
             <?php if (($task['status'] ?? '') === 'pending' || ($task['status'] ?? '') === 'running'): ?>
@@ -120,7 +120,7 @@ $task = $task ?? [];
                     <?php if (!empty($task['error_message'])): ?>
                     <div class="alert alert-danger">
                         <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Error</h6>
-                        <pre class="mb-0"><?= htmlspecialchars($task['error_message']) ?></pre>
+                        <pre class="mb-0"><?= htmlspecialchars($task['error_message'] ?? '') ?></pre>
                     </div>
                     <?php endif; ?>
                 </div>

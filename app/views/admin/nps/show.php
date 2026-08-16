@@ -10,7 +10,7 @@ ob_start();
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1"><?= htmlspecialchars($survey['title']) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($survey['title'] ?? '') ?></h2>
             <p class="text-muted mb-0">
                 <span class="badge bg-<?= $survey['is_active'] ? 'success' : 'secondary' ?>">
                     <?= $survey['is_active'] ? 'Active' : 'Inactive' ?>
@@ -31,10 +31,10 @@ ob_start();
             <div class="card border-0 shadow-sm">
                 <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3">Survey Details</h6>
-                    <p><strong>Question:</strong> <?= htmlspecialchars($survey['question_text']) ?></p>
-                    <p><strong>Scale:</strong> <?= htmlspecialchars($survey['scale_min_label']) ?> (0) to <?= htmlspecialchars($survey['scale_max_label']) ?> (10)</p>
+                    <p><strong>Question:</strong> <?= htmlspecialchars($survey['question_text'] ?? '') ?></p>
+                    <p><strong>Scale:</strong> <?= htmlspecialchars($survey['scale_min_label'] ?? '') ?> (0) to <?= htmlspecialchars($survey['scale_max_label'] ?? '') ?> (10)</p>
                     <?php if ($survey['follow_up_question']): ?>
-                        <p><strong>Follow-up:</strong> <?= htmlspecialchars($survey['follow_up_question']) ?></p>
+                        <p><strong>Follow-up:</strong> <?= htmlspecialchars($survey['follow_up_question'] ?? '') ?></p>
                     <?php endif; ?>
                     <p><strong>Trigger:</strong> <?= ucfirst(str_replace('_', ' ', $survey['trigger_event'])) ?></p>
                     <p><strong>Created:</strong> <?= date('M j, Y H:i', strtotime($survey['created_at'])) ?> by <?= htmlspecialchars($survey['creator_name'] ?? 'Unknown') ?></p>
@@ -107,12 +107,12 @@ ob_start();
                                     <td>#<?= $r['id'] ?></td>
                                     <td>
                                         <?php if ($r['user_name']): ?>
-                                            <strong><?= htmlspecialchars($r['user_name']) ?></strong>
+                                            <strong><?= htmlspecialchars($r['user_name'] ?? '') ?></strong>
                                             <?php if ($r['visitor_name'] && $r['visitor_name'] !== $r['user_name']): ?>
-                                                <br><small class="text-muted"><?= htmlspecialchars($r['visitor_name']) ?></small>
+                                                <br><small class="text-muted"><?= htmlspecialchars($r['visitor_name'] ?? '') ?></small>
                                             <?php endif; ?>
                                         <?php elseif ($r['visitor_name']): ?>
-                                            <strong><?= htmlspecialchars($r['visitor_name']) ?></strong>
+                                            <strong><?= htmlspecialchars($r['visitor_name'] ?? '') ?></strong>
                                         <?php else: ?>
                                             <span class="text-muted">Anonymous</span>
                                         <?php endif; ?>

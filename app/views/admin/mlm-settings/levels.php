@@ -44,7 +44,7 @@
                 <?php foreach ($levels as $l): ?>
                 <tr>
                     <td><?php echo $l['level_number']; ?></td>
-                    <td><strong><?php echo htmlspecialchars($l['level_name']); ?></strong></td>
+                    <td><strong><?php echo htmlspecialchars($l['level_name'] ?? ''); ?></strong></td>
                     <td><?php echo $l['direct_commission_percentage']; ?>%</td>
                     <td><?php echo $l['team_commission_percentage']; ?>%</td>
                     <td><?php echo $l['level_difference_commission_percentage']; ?>%</td>

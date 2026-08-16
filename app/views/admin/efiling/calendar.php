@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-calendar-check me-2 text-success"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">FY <?= htmlspecialchars($fy) ?><?= $type ? ' | ' . strtoupper($type) : '' ?></span>
+        <h4 class="mb-1"><i class="fas fa-calendar-check me-2 text-success"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">FY <?= htmlspecialchars($fy ?? '') ?><?= $type ? ' | ' . strtoupper($type) : '' ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
@@ -18,7 +18,7 @@ ob_start();
             <div class="col-auto">
                 <select name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
-                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

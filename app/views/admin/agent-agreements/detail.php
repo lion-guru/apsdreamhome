@@ -114,7 +114,7 @@ $statusBadgeClass = [
     <?php if (!empty($agreement['notes'])): ?>
     <div class="aag-card">
         <h5><i class="fas fa-sticky-note me-2" class="style-62159"></i>Notes</h5>
-        <p class="style-77298"><?= nl2br(htmlspecialchars($agreement['notes'])) ?></p>
+        <p class="style-77298"><?= nl2br(htmlspecialchars($agreement['notes'] ?? '')) ?></p>
     </div>
     <?php endif; ?>
 

@@ -7,7 +7,7 @@
     </div>
 
     <?php if (!empty($success)): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?php echo htmlspecialchars($success); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show"><?php echo htmlspecialchars($success ?? ''); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <!-- Filters -->

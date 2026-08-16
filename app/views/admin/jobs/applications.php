@@ -92,7 +92,7 @@ $error = $error ?? null;
                             <?php foreach ($applications as $app): ?>
                                 <tr>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($app['first_name'] . ' ' . $app['last_name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($app['first_name'] . ' ' . $app['last_name'] ?? ''); ?></strong>
                                         <br>
                                         <small class="text-muted"><?php echo htmlspecialchars($app['city'] ?? 'N/A'); ?></small>
                                     </td>

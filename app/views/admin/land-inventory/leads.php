@@ -28,11 +28,11 @@ $statusColors = [
     </div>
 
     <?php if ($msg = \App\Core\Session::flash('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($msg) ?>
+        <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($msg ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
     <?php if ($msg = \App\Core\Session::flash('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($msg) ?>
+        <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($msg ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
@@ -110,7 +110,7 @@ $statusColors = [
                             </td>
                             <td>
                                 <?= htmlspecialchars($l['village'] ?? '') ?>
-                                <?php if (!empty($l['tehsil'])): ?>, <?= htmlspecialchars($l['tehsil']) ?><?php endif; ?><br>
+                                <?php if (!empty($l['tehsil'])): ?>, <?= htmlspecialchars($l['tehsil'] ?? '') ?><?php endif; ?><br>
                                 <small class="text-muted"><?= htmlspecialchars($l['district'] ?? '') ?>, <?= htmlspecialchars($l['state'] ?? '') ?></small>
                             </td>
                             <td>
@@ -123,7 +123,7 @@ $statusColors = [
                                     <?= htmlspecialchars(ucfirst($l['lead_source'] ?? '—')) ?>
                                 </span>
                                 <?php if (!empty($l['broker_name'])): ?>
-                                    <br><small class="text-muted"><?= htmlspecialchars($l['broker_name']) ?></small>
+                                    <br><small class="text-muted"><?= htmlspecialchars($l['broker_name'] ?? '') ?></small>
                                 <?php endif; ?>
                             </td>
                             <td>

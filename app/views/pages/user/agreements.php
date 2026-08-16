@@ -128,7 +128,7 @@ $typeLabels = [
                                 <td>
                                     <span><?= htmlspecialchars($ag['plot_number'] ?? 'N/A') ?></span>
                                     <?php if (!empty($ag['block'])): ?>
-                                        <small class="text-muted">(<?= htmlspecialchars($ag['block']) ?>)</small>
+                                        <small class="text-muted">(<?= htmlspecialchars($ag['block'] ?? '') ?>)</small>
                                     <?php endif; ?>
                                     <br><small class="text-muted"><?= htmlspecialchars($ag['colony_name'] ?? '') ?></small>
                                 </td>

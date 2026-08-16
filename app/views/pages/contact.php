@@ -16,7 +16,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 <?php if ($contactError): ?>
     <div class="container mt-4">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($contactError); ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($contactError ?? ''); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     </div>

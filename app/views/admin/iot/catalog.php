@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $items = $items ?? [];
 $category = $category ?? '';
 $csrf = $_SESSION['csrf_token'] ?? '';
@@ -28,8 +28,8 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
         <div class="col-md-4 mb-3">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between"><h6 class="mb-1"><i class="fas fa-microchip me-2 text-primary"></i><?= htmlspecialchars($it['name']) ?></h6><span class="badge bg-light text-dark"><?= ucfirst($it['category']) ?></span></div>
-                    <p class="small text-muted mb-1"><?= htmlspecialchars($it['manufacturer'] ?? 'Generic') ?> · <?= strtoupper($it['protocol'] ?? 'wifi') ?></p>
+                    <div class="d-flex justify-content-between"><h6 class="mb-1"><i class="fas fa-microchip me-2 text-primary"></i><?= htmlspecialchars($it['name'] ?? '') ?></h6><span class="badge bg-light text-dark"><?= ucfirst($it['category']) ?></span></div>
+                    <p class="small text-muted mb-1"><?= htmlspecialchars($it['manufacturer'] ?? 'Generic') ?> � <?= strtoupper($it['protocol'] ?? 'wifi') ?></p>
                     <p class="small"><?= htmlspecialchars($it['description'] ?? '') ?></p>
                 </div>
                 <div class="card-footer d-flex justify-content-end gap-2">

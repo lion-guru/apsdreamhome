@@ -672,7 +672,7 @@ $base = BASE_URL;
                         <div class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix these errors</div>
                         <ul>
                             <?php foreach ($errors as $error): ?>
-                                <li><?php echo htmlspecialchars($error); ?></li>
+                                <li><?php echo htmlspecialchars($error ?? ''); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -682,8 +682,8 @@ $base = BASE_URL;
             <!-- Form -->
             <div class="form-body">
                 <form method="POST" action="<?php echo $base; ?>/register/unified" id="regForm" novalidate>
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
-                    <input type="hidden" name="role" id="selectedRole" value="<?php echo htmlspecialchars($role); ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
+                    <input type="hidden" name="role" id="selectedRole" value="<?php echo htmlspecialchars($role ?? ''); ?>">
 
                     <!-- Step 1: Personal Info -->
                     <div class="form-section" id="step1">
@@ -763,7 +763,7 @@ $base = BASE_URL;
                             <div class="field-group">
                                 <label>Referral Code <span class="opt">(optional)</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="referral_code" id="refCode" placeholder="Got a code? Enter it here" value="<?php echo htmlspecialchars($ref); ?>" autocomplete="off">
+                                    <input type="text" class="form-control" name="referral_code" id="refCode" placeholder="Got a code? Enter it here" value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-ticket field-icon"></i>
                                 </div>
                             </div>
@@ -788,7 +788,7 @@ $base = BASE_URL;
                             <div class="field-group" id="fg-ref-agent">
                                 <label>Referral Code <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="referral_code" placeholder="Enter referrer's code" required value="<?php echo htmlspecialchars($ref); ?>" autocomplete="off">
+                                    <input type="text" class="form-control" name="referral_code" placeholder="Enter referrer's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-ticket field-icon"></i>
                                 </div>
                                 <div class="field-msg error" id="msg-ref-agent"><i class="fas fa-info-circle"></i> Required to join as Agent</div>
@@ -816,7 +816,7 @@ $base = BASE_URL;
                             <div class="field-group" id="fg-sponsor">
                                 <label>Sponsor Code <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="sponsor_code" id="sponsorCode" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref); ?>" autocomplete="off">
+                                    <input type="text" class="form-control" name="sponsor_code" id="sponsorCode" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-link field-icon"></i>
                                 </div>
                                 <div class="sponsor-box">
@@ -833,7 +833,7 @@ $base = BASE_URL;
                     </div>
 
                     <!-- Submit -->
-                    <button type="submit" class="btn-submit" id="submitBtn" data-role="<?php echo htmlspecialchars($role); ?>">
+                    <button type="submit" class="btn-submit" id="submitBtn" data-role="<?php echo htmlspecialchars($role ?? ''); ?>">
                         <i class="fas fa-arrow-right me-2"></i><span id="btnText">Create Account</span>
                     </button>
                 </form>

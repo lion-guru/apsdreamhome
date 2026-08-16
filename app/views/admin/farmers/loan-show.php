@@ -31,7 +31,7 @@ $loan = $loan ?? [];
                                 <?php elseif ($s === 'closed'): ?><span class="badge bg-info">Closed</span>
                                 <?php elseif ($s === 'defaulted'): ?><span class="badge bg-danger">Defaulted</span>
                                 <?php elseif ($s === 'applied'): ?><span class="badge bg-secondary">Applied</span>
-                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s); ?></span>
+                                <?php else: ?><span class="badge bg-light text-dark"><?php echo htmlspecialchars($s ?? ''); ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -84,7 +84,7 @@ $loan = $loan ?? [];
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Repayment Schedule</h5></div>
         <div class="card-body aps-cp-card-body">
-            <pre class="mb-0"><?php echo htmlspecialchars($loan['repayment_schedule']); ?></pre>
+            <pre class="mb-0"><?php echo htmlspecialchars($loan['repayment_schedule'] ?? ''); ?></pre>
         </div>
     </div>
     <?php endif; ?>

@@ -1,8 +1,8 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay ?? '') ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay ?? '') ?>'); ?>
 <div class="container py-4">
     <h3 class="mb-4"><i class="fas fa-calendar-check me-2"></i><?php echo __('book_site_visit_heading', [], 'Book a Site Visit'); ?></h3>
     <?php if (!empty($message)): ?>
-        <div class="alert alert-<?= $message_type ?? 'info' ?>"><?= htmlspecialchars($message) ?></div>
+        <div class="alert alert-<?= $message_type ?? 'info' ?>"><?= htmlspecialchars($message ?? '') ?></div>
     <?php endif; ?>
     <div class="row">
         <div class="col-md-8">
@@ -60,7 +60,7 @@
                         <li class="mb-1"><?php echo __('book_site_visit_info_4', [], 'Project brochures & price list provided'); ?></li>
                     </ul>
                     <hr>
-                    <p class="small mb-0"><i class="fas fa-phone me-1"></i>Call: <?= htmlspecialchars($phoneDisplay) ?></p>
+                    <p class="small mb-0"><i class="fas fa-phone me-1"></i>Call: <?= htmlspecialchars($phoneDisplay ?? '') ?></p>
                 </div>
             </div>
         </div>

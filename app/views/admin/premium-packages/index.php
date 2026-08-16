@@ -24,7 +24,7 @@
               <?php $features = json_decode($pkg['features'] ?? '[]', true); ?>
               <tr>
                 <td>#<?= $pkg['id'] ?></td>
-                <td><strong><?= htmlspecialchars($pkg['name']) ?></strong></td>
+                <td><strong><?= htmlspecialchars($pkg['name'] ?? '') ?></strong></td>
                 <td><span class="badge" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? '') ?></span></td>
                 <td>₹<?= number_format($pkg['price']) ?></td>
                 <td><?= $pkg['duration_days'] ?> days</td>

@@ -48,7 +48,7 @@
                             <?php else: ?>
                             <?php foreach ($levels ?? [] as $l): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($l['rank_name']) ?></strong></td>
+                                <td><strong><?= htmlspecialchars($l['rank_name'] ?? '') ?></strong></td>
                                 <td><?= (float)$l['commission_percentage'] ?>%</td>
                                 <td><?= (float)($l['gen1_override_pct'] ?? 0) ?>%</td>
                                 <td><?= (float)($l['gen2_override_pct'] ?? 0) ?>%</td>

@@ -80,13 +80,13 @@
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target="#faq-<?= htmlspecialchars($faqId, ENT_QUOTES, 'UTF-8') ?>">
-                                                <?= htmlspecialchars($question) ?>
+                                                <?= htmlspecialchars($question ?? '') ?>
                                             </button>
                                         </h2>
                                         <div id="faq-<?= htmlspecialchars($faqId, ENT_QUOTES, 'UTF-8') ?>" class="accordion-collapse collapse"
                                             data-bs-parent="#faqAccordion">
                                             <div class="accordion-body">
-                                                <?= nl2br(htmlspecialchars($answer)) ?>
+                                                <?= nl2br(htmlspecialchars($answer ?? '')) ?>
                                                 <?php if (!empty($relatedLinks)): ?>
                                                     <div class="related-links mt-3">
                                                         <h6>Related Resources:</h6>
@@ -97,9 +97,9 @@
                                                                 foreach ($links as $link):
                                                             ?>
                                                                     <li>
-                                                                        <a href="<?= htmlspecialchars($link['url']) ?>" class="text-primary">
+                                                                        <a href="<?= htmlspecialchars($link['url'] ?? '') ?>" class="text-primary">
                                                                             <i class="fas fa-external-link-alt me-2"></i>
-                                                                            <?= htmlspecialchars($link['title']) ?>
+                                                                            <?= htmlspecialchars($link['title'] ?? '') ?>
                                                                         </a>
                                                                     </li>
                                                             <?php

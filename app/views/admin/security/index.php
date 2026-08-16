@@ -97,7 +97,7 @@ $recentBlocked = $recentBlocked ?? [];
                     <?php else: ?>
                         <?php foreach ($topIPs as $ip): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <code class="small"><?= htmlspecialchars($ip['ip_address']) ?></code>
+                                <code class="small"><?= htmlspecialchars($ip['ip_address'] ?? '') ?></code>
                                 <span class="badge bg-danger"><?= $ip['cnt'] ?> attempts</span>
                             </div>
                         <?php endforeach; ?>
@@ -112,7 +112,7 @@ $recentBlocked = $recentBlocked ?? [];
                     <?php else: ?>
                         <?php foreach ($recentBlocked as $bl): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div><code class="small"><?= htmlspecialchars($bl['ip_address']) ?></code><br><small class="text-muted"><?= htmlspecialchars($bl['reason'] ?? 'No reason') ?></small></div>
+                                <div><code class="small"><?= htmlspecialchars($bl['ip_address'] ?? '') ?></code><br><small class="text-muted"><?= htmlspecialchars($bl['reason'] ?? 'No reason') ?></small></div>
                                 <span class="aps-cp-badge badge bg-<?= ($bl['unblocked_at'] ?? null) ? 'secondary' : 'danger' ?>"><?= ($bl['unblocked_at'] ?? null) ? 'Unblocked' : 'Active' ?></span>
                             </div>
                         <?php endforeach; ?>

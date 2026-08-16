@@ -8,8 +8,8 @@
     <div class="col-lg-12">
         <div class="hero-section-project" class="style-57165">
             <div class="container">
-                <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Suryoday Colony' ?></h1>
-                <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : "Gorakhpur's Finest Residential Community" ?></p>
+                <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name'] ?? '') : 'Suryoday Colony' ?></h1>
+                <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description'] ?? '') : "Gorakhpur's Finest Residential Community" ?></p>
             </div>
         </div>
 
@@ -19,8 +19,8 @@
                 <div class="col-lg-7">
                     <h2 class="display-6 fw-bold text-primary mb-4">About the Project</h2>
                     <p class="lead text-muted">
-                        <b><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Suryoday Colony' ?></b> is a premium residential project designed for those who seek 
-                        a peaceful yet connected lifestyle. Located in the heart of <?= isset($project['location']) ? htmlspecialchars($project['location']) : 'Gorakhpur' ?>, 
+                        <b><?= isset($project['name']) ? htmlspecialchars($project['name'] ?? '') : 'Suryoday Colony' ?></b> is a premium residential project designed for those who seek 
+                        a peaceful yet connected lifestyle. Located in the heart of <?= isset($project['location']) ? htmlspecialchars($project['location'] ?? '') : 'Gorakhpur' ?>, 
                         this colony offers modern infrastructure and essential amenities.
                     </p>
                     <div class="row g-4 mt-4">
@@ -86,7 +86,7 @@
                 <div class="col-6 col-md-3 mb-4">
                     <div class="card h-100 border-0 shadow-sm text-center p-4">
                         <div class="amenity-icon mb-3">
-                            <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($amenity['image']) ?>" alt="<?= htmlspecialchars($amenity['title']) ?>" class="img-fluid" class="style-92690">
+                            <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($amenity['image'] ?? '') ?>" alt="<?= htmlspecialchars($amenity['title'] ?? '') ?>" class="img-fluid" class="style-92690">
                         </div>
                         <h6 class="fw-bold"><?= $amenity['title'] ?></h6>
                     </div>

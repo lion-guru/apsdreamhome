@@ -405,7 +405,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                                 </div>
                                 <div>
                                     <div class="fw-bold"><?php echo htmlspecialchars($user['name'] ?? 'Unknown'); ?></div>
-                                    <div class="small text-muted"><?php echo htmlspecialchars($user['email']); ?></div>
+                                    <div class="small text-muted"><?php echo htmlspecialchars($user['email'] ?? ''); ?></div>
                                     <span class="badge bg-<?php echo $user['role'] === 'customer' ? 'primary' : ($user['role'] === 'associate' ? 'success' : 'info'); ?>">
                                         <?php echo ucfirst($user['role']); ?>
                                     </span>

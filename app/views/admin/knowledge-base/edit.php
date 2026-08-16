@@ -10,11 +10,11 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Title</label>
-                            <input type="text" name="title" class="form-control" value="<?php echo htmlspecialchars($article['title']); ?>" required>
+                            <input type="text" name="title" class="form-control" value="<?php echo htmlspecialchars($article['title'] ?? ''); ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Content</label>
-                            <textarea name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($article['content']); ?></textarea>
+                            <textarea name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($article['content'] ?? ''); ?></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-6">

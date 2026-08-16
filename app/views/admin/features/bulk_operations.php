@@ -15,7 +15,7 @@ unset($_SESSION['bulk_result']);
         <strong>Imported <?= $result['imported'] ?> rows.</strong>
         <?php if ($result['failed'] > 0): ?>
           <strong class="text-warning"><?= $result['failed'] ?> failed.</strong>
-          <ul class="mb-0 mt-2 small"><?php foreach ($result['errors'] as $err): ?><li><?= htmlspecialchars($err) ?></li><?php endforeach; ?></ul>
+          <ul class="mb-0 mt-2 small"><?php foreach ($result['errors'] as $err): ?><li><?= htmlspecialchars($err ?? '') ?></li><?php endforeach; ?></ul>
         <?php endif; ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
@@ -39,7 +39,7 @@ unset($_SESSION['bulk_result']);
               <select name="table" class="form-select" required>
                 <option value="">-- Select table --</option>
                 <?php foreach ($tables as $t): ?>
-                  <option value="<?= $t ?>"><?= htmlspecialchars($t) ?> (<?= $row_counts[$t] ?? 0 ?> rows)</option>
+                  <option value="<?= $t ?>"><?= htmlspecialchars($t ?? '') ?> (<?= $row_counts[$t] ?? 0 ?> rows)</option>
                 <?php endforeach; ?>
               </select>
             </div>
@@ -63,7 +63,7 @@ unset($_SESSION['bulk_result']);
             <?php foreach ($tables as $t): ?>
               <div class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                  <strong><?= htmlspecialchars($t) ?></strong>
+                  <strong><?= htmlspecialchars($t ?? '') ?></strong>
                   <span class="badge bg-secondary ms-2"><?= number_format($row_counts[$t] ?? 0) ?> rows</span>
                 </div>
                 <div>
@@ -85,7 +85,7 @@ unset($_SESSION['bulk_result']);
       <div class="row">
         <?php foreach ($tables as $t): ?>
           <div class="col-md-4 mb-3">
-            <h6><code><?= htmlspecialchars($t) ?></code></h6>
+            <h6><code><?= htmlspecialchars($t ?? '') ?></code></h6>
             <div class="small text-muted">
               <?php
               $svc = new \App\Services\BulkOperationsService($this->db ?? \App\Core\Database::getInstance());

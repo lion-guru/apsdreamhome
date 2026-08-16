@@ -71,10 +71,10 @@ $base = BASE_URL ?? '';
                             </td>
                             <td>
                                 <?php if (!empty($lead['phone'])): ?>
-                                    <div><i class="fas fa-phone me-1"></i><?= htmlspecialchars($lead['phone']) ?></div>
+                                    <div><i class="fas fa-phone me-1"></i><?= htmlspecialchars($lead['phone'] ?? '') ?></div>
                                 <?php endif; ?>
                                 <?php if (!empty($lead['email'])): ?>
-                                    <div><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email']) ?></div>
+                                    <div><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email'] ?? '') ?></div>
                                 <?php endif; ?>
                             </td>
                             <td>

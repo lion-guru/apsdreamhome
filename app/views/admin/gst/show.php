@@ -5,7 +5,7 @@
         <div>
             <a href="<?= BASE_URL ?>/admin/gst" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
             <?php if (!empty($inv['e_invoice_number'])): ?>
-                <span class="badge bg-success fs-6 ms-2">E-Invoice: <?= htmlspecialchars($inv['e_invoice_number']) ?></span>
+                <span class="badge bg-success fs-6 ms-2">E-Invoice: <?= htmlspecialchars($inv['e_invoice_number'] ?? '') ?></span>
             <?php endif; ?>
         </div>
     </div>

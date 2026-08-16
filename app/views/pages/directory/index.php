@@ -1,6 +1,6 @@
 <div class="container py-4">
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['flash_message'])): ?>
@@ -37,17 +37,17 @@
                 <div class="col-md-4 col-lg-3 mb-4">
                     <div class="card h-100 shadow-sm border-0">
                         <?php if ($f['photo']): ?>
-                            <img src="<?= htmlspecialchars($f['photo']) ?>" loading="lazy" class="card-img-top" alt="<?= htmlspecialchars($f['business_name']) ?>" class="style-66292">
+                            <img src="<?= htmlspecialchars($f['photo'] ?? '') ?>" loading="lazy" class="card-img-top" alt="<?= htmlspecialchars($f['business_name'] ?? '') ?>" class="style-66292">
                         <?php else: ?>
                             <div class="bg-light text-center py-5"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-building') ?> fa-3x text-muted"></i></div>
                         <?php endif; ?>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="card-title mb-0"><?= htmlspecialchars($f['business_name']) ?></h6>
+                                <h6 class="card-title mb-0"><?= htmlspecialchars($f['business_name'] ?? '') ?></h6>
                                 <?php if ($f['is_verified']): ?><i class="fas fa-check-circle text-info" title="Verified"></i><?php endif; ?>
                             </div>
                             <p class="text-muted small mb-1"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-tag') ?> me-1"></i><?= htmlspecialchars($f['category_name'] ?? '') ?></p>
-                            <?php if ($f['city']): ?><p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($f['city']) ?></p><?php endif; ?>
+                            <?php if ($f['city']): ?><p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($f['city'] ?? '') ?></p><?php endif; ?>
                             <?php if ($f['rating'] > 0): ?>
                                 <p class="mb-1"><span class="text-warning"><?= str_repeat('â˜…', (int)$f['rating']) ?></span><span class="text-muted"> (<?= $f['review_count'] ?>)</span></p>
                             <?php endif; ?>
@@ -64,11 +64,11 @@
     <div class="row">
         <?php foreach ($categories as $cat): ?>
             <div class="col-md-4 col-lg-3 mb-3">
-                <a href="<?= BASE_URL ?>/services/<?= htmlspecialchars($cat['slug']) ?>" class="text-decoration-none">
+                <a href="<?= BASE_URL ?>/services/<?= htmlspecialchars($cat['slug'] ?? '') ?>" class="text-decoration-none">
                     <div class="card h-100 border-0 shadow-sm category-card">
                         <div class="card-body text-center py-4">
                             <i class="<?= htmlspecialchars($cat['icon'] ?? 'fas fa-building') ?> fa-3x mb-3 text-primary"></i>
-                            <h5 class="card-title"><?= htmlspecialchars($cat['name']) ?></h5>
+                            <h5 class="card-title"><?= htmlspecialchars($cat['name'] ?? '') ?></h5>
                             <p class="text-muted small mb-0"><?= htmlspecialchars($cat['description'] ?? '') ?></p>
                         </div>
                     </div>

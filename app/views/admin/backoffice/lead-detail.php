@@ -76,7 +76,7 @@
                 <div class="small text-muted"><?= $t['activity_date'] ?? '' ?> | <?= ucfirst($t['activity_type'] ?? '') ?></div>
                 <div><strong><?= htmlspecialchars($t['subject'] ?? '') ?></strong></div>
                 <div class="small"><?= htmlspecialchars($t['description'] ?? '') ?></div>
-                <?php if ($t['outcome'] ?? ''): ?><div class="small text-success"><?= __('bko_outcome') ?>: <?= htmlspecialchars($t['outcome']) ?></div><?php endif; ?>
+                <?php if ($t['outcome'] ?? ''): ?><div class="small text-success"><?= __('bko_outcome') ?>: <?= htmlspecialchars($t['outcome'] ?? '') ?></div><?php endif; ?>
               </div>
             <?php endforeach; ?>
           <?php endif; ?>

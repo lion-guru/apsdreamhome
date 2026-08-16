@@ -64,7 +64,7 @@ $base    = BASE_URL ?? '';
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card plan-card shadow-sm">
                 <div class="card-header <?= ($plan['slug'] ?? '') === 'free' ? 'bg-secondary' : 'bg-primary' ?> text-white text-center">
-                    <h6 class="mb-0"><?= htmlspecialchars($plan['name']) ?></h6>
+                    <h6 class="mb-0"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
                 </div>
                 <div class="card-body text-center">
                     <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">

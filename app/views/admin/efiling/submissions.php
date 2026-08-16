@@ -4,7 +4,7 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-paper-plane me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-paper-plane me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
@@ -67,7 +67,7 @@ ob_start();
                         <tr>
                             <td><?= $s['id'] ?></td>
                             <td><span class="badge bg-secondary"><?= $typeLabels[$s['submission_type']] ?? strtoupper($s['submission_type']) ?></span></td>
-                            <td class="small"><?= htmlspecialchars($s['financial_year']) ?></td>
+                            <td class="small"><?= htmlspecialchars($s['financial_year'] ?? '') ?></td>
                             <td class="small"><?= $periodLabel ?></td>
                             <td><?= $s['total_records'] ?></td>
                             <td>?<?= number_format($s['total_amount'], 0) ?></td>

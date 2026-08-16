@@ -32,7 +32,7 @@
                     <select name="employee_id" class="form-select select2-filter">
                         <option value="">All Employees</option>
                         <?php foreach ($users ?? [] as $e): ?>
-                        <option value="<?= $e['id'] ?>" <?= ($filter_employee ?? 0) == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name']) ?></option>
+                        <option value="<?= $e['id'] ?>" <?= ($filter_employee ?? 0) == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -95,7 +95,7 @@
                                         <?= ucwords(str_replace('_',' ', $p['payment_method'] ?? 'bank_transfer')) ?>
                                     </span>
                                     <?php if(!empty($p['transaction_id'])): ?>
-                                        <div class="small text-muted mt-1">Txn: <?= htmlspecialchars($p['transaction_id']) ?></div>
+                                        <div class="small text-muted mt-1">Txn: <?= htmlspecialchars($p['transaction_id'] ?? '') ?></div>
                                     <?php endif; ?>
                                 </td>
                                 <td>

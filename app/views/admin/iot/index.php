@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $stats = $stats ?? [];
 $devices = $devices ?? [];
 $automations = $automations ?? [];
@@ -31,7 +31,7 @@ $automations = $automations ?? [];
                     <table class="table mb-0"><tbody>
                     <?php foreach ($devices as $d): ?>
                         <tr>
-                            <td><i class="fas fa-microchip me-2 text-muted"></i><strong><?= htmlspecialchars($d['name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($d['location'] ?? '') ?></small></td>
+                            <td><i class="fas fa-microchip me-2 text-muted"></i><strong><?= htmlspecialchars($d['name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($d['location'] ?? '') ?></small></td>
                             <td class="text-end"><span class="badge bg-<?= match($d['status'] ?? 'offline') { 'online' => 'success', 'fault' => 'danger', 'configuring' => 'warning', default => 'secondary' } ?>"><?= ucfirst($d['status'] ?? 'offline') ?></span></td>
                         </tr>
                     <?php endforeach; ?>
@@ -49,7 +49,7 @@ $automations = $automations ?? [];
                 <?php else: ?>
                     <table class="table mb-0"><tbody>
                     <?php foreach ($automations as $a): ?>
-                        <tr><td><strong><?= htmlspecialchars($a['name']) ?></strong><br><small class="text-muted"><?= ucfirst($a['trigger_type']) ?> → <?= ucfirst($a['action_type']) ?></small></td>
+                        <tr><td><strong><?= htmlspecialchars($a['name'] ?? '') ?></strong><br><small class="text-muted"><?= ucfirst($a['trigger_type']) ?> ? <?= ucfirst($a['action_type']) ?></small></td>
                         <td class="text-end"><span class="badge bg-<?= ($a['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($a['is_active'] ?? 0) ? 'On' : 'Off' ?></span></td></tr>
                     <?php endforeach; ?>
                     </tbody></table>

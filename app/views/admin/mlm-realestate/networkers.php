@@ -50,7 +50,7 @@
             <div class="mb-3"><label class="form-label">Package</label>
                 <select name="package_id" class="form-select">
                     <?php foreach ($packages ?? [] as $p): ?>
-                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?> (₹<?= number_format((float)$p['price']) ?>)</option>
+                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?> (₹<?= number_format((float)$p['price']) ?>)</option>
                     <?php endforeach; ?>
                 </select>
             </div>

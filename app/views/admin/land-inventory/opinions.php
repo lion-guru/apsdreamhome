@@ -94,10 +94,10 @@ $id = (int)($lead['id'] ?? 0);
                             <div class="col-6"><span class="text-muted">Encroach Risk:</span> <?= htmlspecialchars($o['encroachment_risk'] ?? '—') ?></div>
                         </div>
                         <?php if (!empty($o['rera_implications'])): ?>
-                            <div class="mt-2 small"><span class="text-muted">RERA:</span> <?= nl2br(htmlspecialchars($o['rera_implications'])) ?></div>
+                            <div class="mt-2 small"><span class="text-muted">RERA:</span> <?= nl2br(htmlspecialchars($o['rera_implications'] ?? '')) ?></div>
                         <?php endif; ?>
                         <?php if (!empty($o['remarks'])): ?>
-                            <div class="mt-2 small"><span class="text-muted">Remarks:</span> <?= nl2br(htmlspecialchars($o['remarks'])) ?></div>
+                            <div class="mt-2 small"><span class="text-muted">Remarks:</span> <?= nl2br(htmlspecialchars($o['remarks'] ?? '')) ?></div>
                         <?php endif; ?>
                     </div>
                     <?php endforeach; ?>

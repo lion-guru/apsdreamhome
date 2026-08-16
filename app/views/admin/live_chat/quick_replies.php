@@ -35,10 +35,10 @@ ob_start();
                         <?php else: ?>
                         <?php foreach ($replies as $r): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($r['title']) ?></strong></td>
+                                <td><strong><?= htmlspecialchars($r['title'] ?? '') ?></strong></td>
                                 <td><code><?= htmlspecialchars($r['shortcut'] ?? '') ?></code></td>
                                 <td><small><?= htmlspecialchars(substr($r['message'], 0, 100)) ?>...</small></td>
-                                <td><span class="badge bg-light text-dark"><?= htmlspecialchars($r['category']) ?></span></td>
+                                <td><span class="badge bg-light text-dark"><?= htmlspecialchars($r['category'] ?? '') ?></span></td>
                                 <td><?= $r['sort_order'] ?></td>
                             </tr>
                         <?php endforeach; ?>

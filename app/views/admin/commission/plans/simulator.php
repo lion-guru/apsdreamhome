@@ -49,7 +49,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                     <select name="plan_id" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= ($activePlan && $activePlan['id'] == $p['id'] && empty($_POST['plan_id'])) || ($_POST['plan_id'] ?? 0) == $p['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($p['plan_name']) ?> v<?= $p['version'] ?>
+                                <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -76,7 +76,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                     <select name="plan_id_b" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= ($_POST['plan_id_b'] ?? 0) == $p['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($p['plan_name']) ?> v<?= $p['version'] ?>
+                                <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -124,7 +124,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                                 <tbody>
                                     <?php foreach ($r['track_a_entries'] as $e): ?>
                                     <tr>
-                                        <td class="style-35725"><?= htmlspecialchars($e['label']) ?></td>
+                                        <td class="style-35725"><?= htmlspecialchars($e['label'] ?? '') ?></td>
                                         <td><span class="style-17206"><?= $e['type'] ?></span></td>
                                         <td><?= $e['rate'] ?>%</td>
                                         <td class="style-35725">₹<?= number_format($e['amount']) ?></td>
@@ -140,13 +140,13 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <h6 class="style-29209">Tracks B + C</h6>
                         <?php foreach ($r['track_b_entries'] as $e): ?>
                         <div class="style-79052">
-                            <div class="style-65484"><?= htmlspecialchars($e['label']) ?></div>
+                            <div class="style-65484"><?= htmlspecialchars($e['label'] ?? '') ?></div>
                             <div class="style-50281">₹<?= number_format($e['amount']) ?></div>
                         </div>
                         <?php endforeach; ?>
                         <?php foreach ($r['track_c_entries'] as $e): ?>
                         <div class="style-79052">
-                            <div class="style-65484"><?= htmlspecialchars($e['label']) ?></div>
+                            <div class="style-65484"><?= htmlspecialchars($e['label'] ?? '') ?></div>
                             <div class="style-62989">₹<?= number_format($e['amount']) ?></div>
                         </div>
                         <?php endforeach; ?>
@@ -172,7 +172,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                             <?php foreach ($result['rank_results'] as $rr): ?>
                             <?php if ($rr['success']): ?>
                             <tr>
-                                <td class="style-35725"><?= htmlspecialchars($rr['seller_rank']) ?></td>
+                                <td class="style-35725"><?= htmlspecialchars($rr['seller_rank'] ?? '') ?></td>
                                 <td><?= $rr['seller_rate'] ?>%</td>
                                 <td>₹<?= number_format($rr['track_a_total']) ?></td>
                                 <td>₹<?= number_format($rr['track_b_total']) ?></td>

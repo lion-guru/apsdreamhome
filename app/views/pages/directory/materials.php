@@ -56,7 +56,7 @@
         <?php foreach ($grouped as $catName => $items): ?>
             <div class="card shadow-sm mb-4">
                 <div class="card-header aps-cp-card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="fas fa-tag me-2"></i><?= htmlspecialchars($catName) ?></h5>
+                    <h5 class="mb-0"><i class="fas fa-tag me-2"></i><?= htmlspecialchars($catName ?? '') ?></h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -67,7 +67,7 @@
                             <tbody>
                                 <?php foreach ($items as $m): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($m['material_name']) ?></strong></td>
+                                        <td><strong><?= htmlspecialchars($m['material_name'] ?? '') ?></strong></td>
                                         <td><?= htmlspecialchars($m['brand'] ?? '-') ?></td>
                                         <td><strong class="text-danger">₹<?= number_format($m['price'], 2) ?></strong></td>
                                         <td><?= htmlspecialchars($m['unit'] ?? '') ?></td>

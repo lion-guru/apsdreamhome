@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Schedule Meeting View
  * Data: $page_title
@@ -17,7 +17,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <div class="card-header bg-primary text-white"><i class="fas fa-clock me-1"></i> New Meeting</div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/meetings/store">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
 
                     <div class="mb-3">
                         <label class="form-label">Title <span class="text-danger">*</span></label>

@@ -50,7 +50,7 @@ ob_start();
               <label class="form-label small text-muted">User</label>
               <?php if (!empty($log['user_name'])): ?>
                 <div class="fs-6">
-                  <strong><?= htmlspecialchars($log['user_name']) ?></strong>
+                  <strong><?= htmlspecialchars($log['user_name'] ?? '') ?></strong>
                   <span class="badge bg-<?= in_array($log['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?> ms-2">
                     <?= htmlspecialchars($log['user_role'] ?? '') ?>
                   </span>
@@ -83,9 +83,9 @@ ob_start();
               <div class="col-md-6">
                 <label class="form-label small text-muted">Entity</label>
                 <div class="fs-6">
-                  <span class="badge bg-info"><?= htmlspecialchars($log['entity_type']) ?></span>
+                  <span class="badge bg-info"><?= htmlspecialchars($log['entity_type'] ?? '') ?></span>
                   <?php if (!empty($log['entity_id'])): ?>
-                    <span class="ms-2">#<?= htmlspecialchars($log['entity_id']) ?></span>
+                    <span class="ms-2">#<?= htmlspecialchars($log['entity_id'] ?? '') ?></span>
                   <?php endif; ?>
                 </div>
               </div>
@@ -94,13 +94,13 @@ ob_start();
           <?php if (!empty($log['description'])): ?>
             <div class="mb-3">
               <label class="form-label small text-muted">Description</label>
-              <p class="text-muted"><?= htmlspecialchars($log['description']) ?></p>
+              <p class="text-muted"><?= htmlspecialchars($log['description'] ?? '') ?></p>
             </div>
           <?php endif; ?>
           <?php if (!empty($log['request_url'])): ?>
             <div class="mb-3">
               <label class="form-label small text-muted">Request URL</label>
-              <a href="<?= htmlspecialchars($log['request_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+              <a href="<?= htmlspecialchars($log['request_url'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                 <i class="fas fa-external-link-alt me-1"></i>Open in New Tab
               </a>
             </div>
@@ -108,7 +108,7 @@ ob_start();
           <?php if (!empty($log['user_agent'])): ?>
             <div class="mb-3">
               <label class="form-label small text-muted">User Agent</label>
-              <pre class="bg-light p-2 rounded small text-muted"><code><?= htmlspecialchars($log['user_agent']) ?></code></pre>
+              <pre class="bg-light p-2 rounded small text-muted"><code><?= htmlspecialchars($log['user_agent'] ?? '') ?></code></pre>
             </div>
           <?php endif; ?>
         </div>
@@ -178,7 +178,7 @@ ob_start();
                   <div class="small text-muted mt-1">
                     <?= htmlspecialchars($r['created_at'] ?? '') ?>
                     <?php if (!empty($r['entity_type'])): ?>
-                      Â· <span class="badge bg-info"><?= htmlspecialchars($r['entity_type']) ?></span>
+                      Â· <span class="badge bg-info"><?= htmlspecialchars($r['entity_type'] ?? '') ?></span>
                     <?php endif; ?>
                   </div>
                   <?php if (!empty($r['description'])): ?>

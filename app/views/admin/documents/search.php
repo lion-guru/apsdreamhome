@@ -20,7 +20,7 @@
     <?php if (!empty($query)): ?>
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-list me-2"></i>Search Results for "<?= htmlspecialchars($query) ?>"</span>
+                <span><i class="fas fa-list me-2"></i>Search Results for "<?= htmlspecialchars($query ?? '') ?>"</span>
                 <span class="badge bg-primary"><?= count($results) ?> found</span>
             </div>
             <div class="card-body aps-cp-card-body">

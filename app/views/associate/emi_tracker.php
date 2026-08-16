@@ -74,13 +74,13 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                                 <td>
                                     <strong><?= htmlspecialchars($emi['customer_name'] ?? __('assoc_emi_na', [], 'N/A')) ?></strong>
                                     <?php if (!empty($emi['customer_phone'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($emi['customer_phone']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($emi['customer_phone'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?= htmlspecialchars($emi['property_title'] ?? __('assoc_emi_na', [], 'N/A')) ?>
                                     <?php if (!empty($emi['city'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($emi['city']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($emi['city'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>#<?= $emi['installment_number'] ?? $emi['id'] ?></td>

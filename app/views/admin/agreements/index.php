@@ -164,7 +164,7 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
                                 <td>
                                     <strong><?= htmlspecialchars($a['plot_number'] ?? '—') ?></strong>
                                     <?php if (!empty($a['block'])): ?>
-                                        <br><small class="text-muted">Block: <?= htmlspecialchars($a['block']) ?></small>
+                                        <br><small class="text-muted">Block: <?= htmlspecialchars($a['block'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td><small><?= htmlspecialchars($a['colony_name'] ?? '—') ?></small></td>

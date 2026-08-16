@@ -56,10 +56,10 @@ $early_settlement = $early_settlement ?? [];
                         </div>
                     </div>
                     <?php if (!empty($loan['offer_name'])): ?>
-                        <div class="mt-3 p-2 bg-light rounded"><small><i class="fas fa-tag text-info me-1"></i>Offer: <?= htmlspecialchars($loan['offer_name']) ?></small></div>
+                        <div class="mt-3 p-2 bg-light rounded"><small><i class="fas fa-tag text-info me-1"></i>Offer: <?= htmlspecialchars($loan['offer_name'] ?? '') ?></small></div>
                     <?php endif; ?>
                     <?php if (!empty($loan['purpose'])): ?>
-                        <div class="mt-2"><small class="text-muted">Purpose:</small> <?= htmlspecialchars($loan['purpose']) ?></div>
+                        <div class="mt-2"><small class="text-muted">Purpose:</small> <?= htmlspecialchars($loan['purpose'] ?? '') ?></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -109,7 +109,7 @@ $early_settlement = $early_settlement ?? [];
                         <hr>
                         <div><small>Settlement Amount:</small> <strong class="text-success h5">₹<?= number_format($early_settlement['settlement_amount'] ?? 0) ?></strong></div>
                         <?php if ($early_settlement['incentive_applied'] ?? null): ?>
-                            <small class="text-muted">Incentive: <?= htmlspecialchars($early_settlement['incentive_applied']) ?></small>
+                            <small class="text-muted">Incentive: <?= htmlspecialchars($early_settlement['incentive_applied'] ?? '') ?></small>
                         <?php endif; ?>
                     </div>
                 </div>

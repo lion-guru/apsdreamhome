@@ -36,13 +36,13 @@ $receipts = $receipts ?? [];
                                 <td>
                                     <?= htmlspecialchars($r['customer_name'] ?? __('assoc_ph_na', [], 'N/A')) ?>
                                     <?php if (!empty($r['customer_phone'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($r['customer_phone']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($r['customer_phone'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?= htmlspecialchars($r['property_title'] ?? __('assoc_ph_na', [], 'N/A')) ?>
                                     <?php if (!empty($r['city'])): ?>
-                                        <br><small class="text-muted"><?= htmlspecialchars($r['city']) ?></small>
+                                        <br><small class="text-muted"><?= htmlspecialchars($r['city'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td><strong class="text-success">₹<?= number_format($r['amount'] ?? 0) ?></strong></td>

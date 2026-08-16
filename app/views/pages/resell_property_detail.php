@@ -34,13 +34,13 @@ $content = $content ?? '';
             <div class="row g-3 mb-4">
               <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-ruler-combined fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_area', 'Area') ?></div><strong><?= htmlspecialchars($property['area_sqft'] ?? 0) ?> <?= __('user_resell_detail_sqft', 'sqft') ?></strong></div></div>
               <?php if (!empty($property['bedrooms'])): ?>
-                <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-bed fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_bedrooms', 'Bedrooms') ?></div><strong><?= htmlspecialchars($property['bedrooms']) ?></strong></div></div>
+                <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-bed fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_bedrooms', 'Bedrooms') ?></div><strong><?= htmlspecialchars($property['bedrooms'] ?? '') ?></strong></div></div>
               <?php endif; ?>
               <?php if (!empty($property['bathrooms'])): ?>
-                <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-bath fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_bathrooms', 'Bathrooms') ?></div><strong><?= htmlspecialchars($property['bathrooms']) ?></strong></div></div>
+                <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-bath fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_bathrooms', 'Bathrooms') ?></div><strong><?= htmlspecialchars($property['bathrooms'] ?? '') ?></strong></div></div>
               <?php endif; ?>
               <?php if (!empty($property['age_years'])): ?>
-                <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-calendar fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_age', 'Age') ?></div><strong><?= htmlspecialchars($property['age_years']) ?> <?= __('user_resell_detail_years', 'years') ?></strong></div></div>
+                <div class="col-md-3"><div class="border rounded p-3 text-center"><i class="fas fa-calendar fa-2x text-muted"></i><div class="mt-2 small text-muted"><?= __('user_resell_detail_age', 'Age') ?></div><strong><?= htmlspecialchars($property['age_years'] ?? '') ?> <?= __('user_resell_detail_years', 'years') ?></strong></div></div>
               <?php endif; ?>
             </div>
 
@@ -53,9 +53,9 @@ $content = $content ?? '';
                 <?php
                   $amenities = is_string($property['amenities']) ? json_decode($property['amenities'], true) : $property['amenities'];
                   if (is_array($amenities)) {
-                    foreach ($amenities as $a) echo '<span class="badge bg-light text-dark border"><i class="fas fa-check me-1 text-success"></i>' . htmlspecialchars($a) . '</span>';
+                    foreach ($amenities as $a) echo '<span class="badge bg-light text-dark border"><i class="fas fa-check me-1 text-success"></i>' . htmlspecialchars($a ?? '') . '</span>';
                   } else {
-                    echo '<span class="text-muted">' . htmlspecialchars($property['amenities']) . '</span>';
+                    echo '<span class="text-muted">' . htmlspecialchars($property['amenities'] ?? '') . '</span>';
                   }
                 ?>
               </div>
@@ -65,7 +65,7 @@ $content = $content ?? '';
               <h5><?= __('user_resell_detail_ai_tags', 'AI-Generated Tags') ?></h5>
               <div class="d-flex flex-wrap gap-2 mb-3">
                 <?php foreach ($property['ai_tags'] as $tag): ?>
-                  <span class="badge bg-info"><i class="fas fa-robot me-1"></i><?= htmlspecialchars($tag['tag']) ?> (<?= round((float)$tag['confidence'] * 100) ?>%)</span>
+                  <span class="badge bg-info"><i class="fas fa-robot me-1"></i><?= htmlspecialchars($tag['tag'] ?? '') ?> (<?= round((float)$tag['confidence'] * 100) ?>%)</span>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -88,10 +88,10 @@ $content = $content ?? '';
             <h5 class="card-title"><?= __('user_resell_detail_contact_owner', 'Contact Owner') ?></h5>
             <p class="mb-2"><i class="fas fa-user me-2"></i><strong><?= htmlspecialchars($property['owner_name'] ?? __('user_resell_detail_default_owner', 'Owner')) ?></strong></p>
             <?php if (!empty($property['owner_phone'])): ?>
-              <p class="mb-2"><i class="fas fa-phone me-2"></i><a href="tel:<?= htmlspecialchars($property['owner_phone']) ?>"><?= htmlspecialchars($property['owner_phone']) ?></a></p>
+              <p class="mb-2"><i class="fas fa-phone me-2"></i><a href="tel:<?= htmlspecialchars($property['owner_phone'] ?? '') ?>"><?= htmlspecialchars($property['owner_phone'] ?? '') ?></a></p>
             <?php endif; ?>
             <?php if (!empty($property['owner_email'])): ?>
-              <p class="mb-2"><i class="fas fa-envelope me-2"></i><a href="mailto:<?= htmlspecialchars($property['owner_email']) ?>"><?= htmlspecialchars($property['owner_email']) ?></a></p>
+              <p class="mb-2"><i class="fas fa-envelope me-2"></i><a href="mailto:<?= htmlspecialchars($property['owner_email'] ?? '') ?>"><?= htmlspecialchars($property['owner_email'] ?? '') ?></a></p>
             <?php endif; ?>
             <hr>
             <a href="<?= BASE_URL ?>/contact?property_id=<?= (int)$property['id'] ?>" class="btn btn-primary w-100 mb-2"><i class="fas fa-envelope me-1"></i> <?= __('user_resell_detail_send_inquiry', 'Send Inquiry') ?></a>

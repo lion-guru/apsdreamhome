@@ -101,9 +101,9 @@ $statusColors = [
                                     <i class="fas <?= $typeIcons[$cred['credential_type']] ?? 'fa-certificate' ?> me-1 text-muted"></i>
                                     <?= htmlspecialchars($typeLabels[$cred['credential_type']] ?? $cred['credential_type']) ?>
                                 </td>
-                                <td><?= htmlspecialchars($cred['credential_label']) ?></td>
+                                <td><?= htmlspecialchars($cred['credential_label'] ?? '') ?></td>
                                 <td>
-                                    <code><?= htmlspecialchars($cred['credential_value']) ?></code>
+                                    <code><?= htmlspecialchars($cred['credential_value'] ?? '') ?></code>
                                 </td>
                                 <td><?= htmlspecialchars($cred['issuer'] ?? '—') ?></td>
                                 <td>
@@ -119,7 +119,7 @@ $statusColors = [
                                         $isSoon = !$isPast && $exp < strtotime('+30 days');
                                         ?>
                                         <span class="<?= $isPast ? 'text-danger' : ($isSoon ? 'text-warning' : '') ?>">
-                                            <?= htmlspecialchars($cred['expiry_date']) ?>
+                                            <?= htmlspecialchars($cred['expiry_date'] ?? '') ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>

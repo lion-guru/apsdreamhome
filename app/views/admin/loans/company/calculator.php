@@ -37,7 +37,7 @@ $offers = $offers ?? [];
                                 <option value="">Custom</option>
                                 <?php foreach ($offers as $o): ?>
                                     <option value="<?= $o['interest_free_months'] ?>" data-months="<?= $o['interest_free_months'] ?>">
-                                        <?= htmlspecialchars($o['name']) ?> (<?= $o['interest_free_months'] ?> months free)
+                                        <?= htmlspecialchars($o['name'] ?? '') ?> (<?= $o['interest_free_months'] ?> months free)
                                     </option>
                                 <?php endforeach; ?>
                             </select>

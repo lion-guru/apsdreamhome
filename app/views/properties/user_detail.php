@@ -1,4 +1,4 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay ?? '') ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay ?? '') ?>'); ?>
 <div class="container my-5">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -38,8 +38,8 @@
                     <p class="text-muted mb-2">
                         <i class="fas fa-map-marker-alt text-danger me-1"></i>
                         <?php echo htmlspecialchars($property['address'] ?? ($property['city_name'] ?? '')); ?>
-                        <?php if (!empty($property['district_name'])): ?>, <?php echo htmlspecialchars($property['district_name']); ?><?php endif; ?>
-                        <?php if (!empty($property['state_name'])): ?>, <?php echo htmlspecialchars($property['state_name']); ?><?php endif; ?>
+                        <?php if (!empty($property['district_name'])): ?>, <?php echo htmlspecialchars($property['district_name'] ?? ''); ?><?php endif; ?>
+                        <?php if (!empty($property['state_name'])): ?>, <?php echo htmlspecialchars($property['state_name'] ?? ''); ?><?php endif; ?>
                     </p>
 
                     <h3 class="text-primary h4 mb-4">
@@ -79,7 +79,7 @@
 
                     <?php if (!empty($property['description'])): ?>
                     <h5 class="fw-bold mb-3">Description</h5>
-                    <p class="text-muted lh-lg"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
+                    <p class="text-muted lh-lg"><?php echo nl2br(htmlspecialchars($property['description'] ?? '')); ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -99,11 +99,11 @@
                         <p class="mb-1"><i class="fas fa-user text-muted me-2"></i><?php echo htmlspecialchars($property['name'] ?? 'Owner'); ?></p>
                         <?php if (!empty($property['phone'])): ?>
                         <p class="mb-1"><i class="fas fa-phone text-muted me-2"></i>
-                            <a href="tel:<?php echo htmlspecialchars($property['phone']); ?>" class="text-decoration-none"><?php echo htmlspecialchars($property['phone']); ?></a>
+                            <a href="tel:<?php echo htmlspecialchars($property['phone'] ?? ''); ?>" class="text-decoration-none"><?php echo htmlspecialchars($property['phone'] ?? ''); ?></a>
                         </p>
                         <?php endif; ?>
                         <?php if (!empty($property['email'])): ?>
-                        <p class="mb-0"><i class="fas fa-envelope text-muted me-2"></i><?php echo htmlspecialchars($property['email']); ?></p>
+                        <p class="mb-0"><i class="fas fa-envelope text-muted me-2"></i><?php echo htmlspecialchars($property['email'] ?? ''); ?></p>
                         <?php endif; ?>
                     </div>
                     <?php endif; ?>
@@ -133,7 +133,7 @@
                 <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-3"><i class="fas fa-tools me-2"></i>Quick Actions</h6>
                     <a href="tel:919277121112" class="btn btn-success w-100 mb-2">
-                        <i class="fas fa-phone me-2"></i>Call APS (<?= htmlspecialchars($phoneDisplay) ?>)
+                        <i class="fas fa-phone me-2"></i>Call APS (<?= htmlspecialchars($phoneDisplay ?? '') ?>)
                     </a>
                     <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($property['name'] ?? 'this property'); ?>" target="_blank" class="btn btn-outline-success w-100 mb-2">
                         <i class="fab fa-whatsapp me-2"></i>WhatsApp

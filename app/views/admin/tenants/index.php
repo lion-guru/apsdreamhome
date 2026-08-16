@@ -86,7 +86,7 @@ $base = BASE_URL ?? '';
                 <select name="plan_id" class="form-select form-select-sm">
                     <option value="">All Plans</option>
                     <?php foreach ($plans as $p): ?>
-                        <option value="<?= $p['id'] ?>" <?= (int)($filters['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>><?= htmlspecialchars($p['name']) ?></option>
+                        <option value="<?= $p['id'] ?>" <?= (int)($filters['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>><?= htmlspecialchars($p['name'] ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -126,10 +126,10 @@ $base = BASE_URL ?? '';
                             <tr class="tenant-row">
                                 <td class="text-muted"><?= $i ?></td>
                                 <td>
-                                    <div class="fw-semibold"><?= htmlspecialchars($t['name']) ?></div>
-                                    <small class="text-muted"><code><?= htmlspecialchars($t['slug']) ?></code></small>
+                                    <div class="fw-semibold"><?= htmlspecialchars($t['name'] ?? '') ?></div>
+                                    <small class="text-muted"><code><?= htmlspecialchars($t['slug'] ?? '') ?></code></small>
                                     <?php if ($t['domain']): ?>
-                                        <br><small class="text-muted"><i class="fas fa-globe me-1"></i><?= htmlspecialchars($t['domain']) ?></small>
+                                        <br><small class="text-muted"><i class="fas fa-globe me-1"></i><?= htmlspecialchars($t['domain'] ?? '') ?></small>
                                     <?php endif; ?>
                                 </td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($t['plan_name'] ?? 'Free') ?></span></td>
@@ -162,7 +162,7 @@ $base = BASE_URL ?? '';
                                         <?php if (($t['status'] ?? '') === 'active' && ($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
                                             <form method="POST" action="<?= $base ?>/admin/tenants/<?= $t['id'] ?>/switch" class="style-35851">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                                <button type="submit" class="btn btn-outline-success btn-sm" title="Switch to this tenant" onclick="return confirm('Switch to <?= htmlspecialchars($t['name']) ?>?')">
+                                                <button type="submit" class="btn btn-outline-success btn-sm" title="Switch to this tenant" onclick="return confirm('Switch to <?= htmlspecialchars($t['name'] ?? '') ?>?')">
                                                     <i class="fas fa-exchange-alt"></i>
                                                 </button>
                                             </form>

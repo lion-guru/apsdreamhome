@@ -64,7 +64,7 @@ if ($role === 'associate') {
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1 fw-bold"><?= $roleLabel ?> Dashboard</h1>
-        <p class="text-muted mb-0">Welcome back, <?= htmlspecialchars($userName) ?>!</p>
+        <p class="text-muted mb-0">Welcome back, <?= htmlspecialchars($userName ?? '') ?>!</p>
     </div>
     <div class="d-flex gap-2">
         <a href="<?= $base ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white">

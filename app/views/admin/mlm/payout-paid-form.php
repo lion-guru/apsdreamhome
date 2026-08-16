@@ -7,8 +7,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <h5 class="m-0"><i class="fas fa-check-circle me-2"></i>Mark Payout Paid</h5>
     </div>
     <div class="aps-cp-card-body">
-        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/<?= (int)($payout['id'] ?? 0) ?>/mark-paid">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+        <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/<?= (int)($payout['id'] ?? 0) ?>/mark-paid">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Payment Mode <span class="text-danger">*</span></label>
@@ -44,7 +44,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check me-1"></i>Confirm Payment
                     </button>
-                    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </div>
         </form>

@@ -51,7 +51,7 @@ $page_description = 'Manage marketplace applications and integrations';
                                     <td><?= htmlspecialchars($a['provider'] ?? '—') ?></td>
                                     <td>
                                         <?php if (!empty($a['app_url'])): ?>
-                                            <a href="<?= htmlspecialchars($a['app_url']) ?>" target="_blank" rel="noopener">
+                                            <a href="<?= htmlspecialchars($a['app_url'] ?? '') ?>" target="_blank" rel="noopener">
                                                 <?= htmlspecialchars(mb_strimwidth($a['app_url'], 0, 40, '...')) ?>
                                                 <i class="fas fa-external-link-alt ms-1 small"></i>
                                             </a>

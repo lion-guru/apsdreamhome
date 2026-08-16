@@ -7,14 +7,14 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
 <div class="container-fluid py-4" class="style-88096">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-money-check-alt me-2"></i>Set / Revise Salary Structure</h4>
-        <a href="<?= htmlspecialchars($base) ?>/admin/agents/salaried" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/agents/salaried" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back
         </a>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form method="POST" action="<?= htmlspecialchars($base) ?>/admin/agents/salaried/store">
+            <form method="POST" action="<?= htmlspecialchars($base ?? '') ?>/admin/agents/salaried/store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
                 <!-- Agent Selection -->

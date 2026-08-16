@@ -61,13 +61,13 @@ $stats = $stats ?? [];
                         <div class="d-flex align-items-center">
                             <div class="testimonial-avatar me-3"><?= $initials ?></div>
                             <div>
-                                <strong class="d-block"><?= htmlspecialchars($t['customer_name']) ?></strong>
+                                <strong class="d-block"><?= htmlspecialchars($t['customer_name'] ?? '') ?></strong>
                                 <small class="text-muted">
                                     <?php if ($t['project_name']): ?>
-                                        <i class="fas fa-building me-1"></i><?= htmlspecialchars($t['project_name']) ?>
+                                        <i class="fas fa-building me-1"></i><?= htmlspecialchars($t['project_name'] ?? '') ?>
                                     <?php endif; ?>
                                     <?php if ($t['location']): ?>
-                                        <br><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($t['location']) ?>
+                                        <br><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($t['location'] ?? '') ?>
                                     <?php endif; ?>
                                 </small>
                             </div>
@@ -107,10 +107,10 @@ $stats = $stats ?? [];
                         <div class="d-flex align-items-center">
                             <div class="testimonial-avatar me-3"><?= $initials ?></div>
                             <div>
-                                <strong class="d-block"><?= htmlspecialchars($customerName) ?></strong>
+                                <strong class="d-block"><?= htmlspecialchars($customerName ?? '') ?></strong>
                                 <small class="text-muted">
                                     <?php if ($t['project_name']): ?>
-                                        <i class="fas fa-building me-1"></i><?= htmlspecialchars($t['project_name']) ?>
+                                        <i class="fas fa-building me-1"></i><?= htmlspecialchars($t['project_name'] ?? '') ?>
                                     <?php endif; ?>
                                 </small>
                             </div>

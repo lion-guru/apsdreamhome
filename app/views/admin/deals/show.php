@@ -54,7 +54,7 @@
                 <?php if (!empty($deal['description'])): ?>
                     <hr>
                     <small class="text-muted d-block mb-1">Description</small>
-                    <p class="mb-0"><?= nl2br(htmlspecialchars($deal['description'])) ?></p>
+                    <p class="mb-0"><?= nl2br(htmlspecialchars($deal['description'] ?? '')) ?></p>
                 <?php endif; ?>
             </div>
         </div>

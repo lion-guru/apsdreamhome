@@ -11,7 +11,7 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-0"><i class="fas fa-flask me-2 text-primary"></i><?= htmlspecialchars($pageTitle) ?></h1>
+            <h1 class="h3 mb-0"><i class="fas fa-flask me-2 text-primary"></i><?= htmlspecialchars($pageTitle ?? '') ?></h1>
             <p class="text-muted mb-0">Run controlled experiments and measure conversion lifts.</p>
         </div>
         <div>
@@ -29,13 +29,13 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
 
     <?php if ($flashSuccess): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess) ?>
+            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flashError): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError) ?>
+            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -76,10 +76,10 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                 ?>
                                 <tr>
                                     <td>
-                                        <strong><?= htmlspecialchars($exp['name']) ?></strong>
+                                        <strong><?= htmlspecialchars($exp['name'] ?? '') ?></strong>
                                         <?php if (!empty($exp['description'])): ?>
                                             <div class="small text-muted text-truncate" class="style-96974">
-                                                <?= htmlspecialchars($exp['description']) ?>
+                                                <?= htmlspecialchars($exp['description'] ?? '') ?>
                                             </div>
                                         <?php endif; ?>
                                     </td>
@@ -97,12 +97,12 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                     <td class="text-end"><?= number_format((int)($exp['total_conversions'] ?? 0)) ?></td>
                                     <td>
                                         <?php if (!empty($exp['winner'])): ?>
-                                            <span class="badge bg-warning text-dark"><i class="fas fa-trophy me-1"></i><?= htmlspecialchars($exp['winner']) ?></span>
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-trophy me-1"></i><?= htmlspecialchars($exp['winner'] ?? '') ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">—</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="small text-muted"><?= !empty($exp['started_at']) ? htmlspecialchars($exp['started_at']) : '—' ?></td>
+                                    <td class="small text-muted"><?= !empty($exp['started_at']) ? htmlspecialchars($exp['started_at'] ?? '') : '—' ?></td>
                                     <td class="text-end">
                                         <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/results" class="btn btn-sm btn-outline-success" title="View Results Dashboard">
                                             <i class="fas fa-chart-line"></i>

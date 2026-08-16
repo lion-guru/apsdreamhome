@@ -7,7 +7,7 @@ $stats = $stats ?? ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' =>
 function lvStatusBadge($status) {
     $map = ['approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger', 'cancelled' => 'secondary'];
     $cls = $map[strtolower($status)] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status)) . '</span>';
+    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status ?? '')) . '</span>';
 }
 function lvDate($d) { return $d ? date('d M Y', strtotime($d)) : '—'; }
 function lvDays($d) { return (int)$d; }
@@ -41,14 +41,14 @@ function lvDays($d) { return (int)$d; }
     <!-- Flash Messages -->
     <?php if (!empty($_SESSION['flash_success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success']) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <?php unset($_SESSION['flash_success']); ?>
     <?php endif; ?>
     <?php if (!empty($_SESSION['flash_error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error']) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_error'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <?php unset($_SESSION['flash_error']); ?>
@@ -198,7 +198,7 @@ function lvDays($d) { return (int)$d; }
                             <select name="leave_type_id" class="form-select" required>
                                 <option value="">Select leave type...</option>
                                 <?php foreach ($leaveTypes as $lt): ?>
-                                    <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name']) ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' Â· Paid' : ' Â· Unpaid' ?>)</option>
+                                    <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name'] ?? '') ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' Â· Paid' : ' Â· Unpaid' ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

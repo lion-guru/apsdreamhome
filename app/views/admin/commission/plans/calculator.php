@@ -8,7 +8,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-calculator me-2"></i>Commission Calculator</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/commission-plans" class="btn btn-link btn-sm">Back to Plans</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/commission-plans" class="btn btn-link btn-sm">Back to Plans</a>
     </div>
     <div class="aps-cp-card-body">
         <div class="row mb-4">
@@ -19,8 +19,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <option value="">No plans available</option>
                     <?php else: ?>
                         <?php foreach ($plans as $plan): ?>
-                            <option value="<?= $plan['id'] ?>" <?= ($activePlan && $activePlan['id'] == $plan['id']) ? 'selected' : '' ?> data-name="<?= htmlspecialchars($plan['plan_name']) ?>">
-                                <?= htmlspecialchars($plan['plan_name']) ?> (<?= htmlspecialchars($plan['plan_code']) ?>) — <?= ucfirst($plan['status']) ?>
+                            <option value="<?= $plan['id'] ?>" <?= ($activePlan && $activePlan['id'] == $plan['id']) ? 'selected' : '' ?> data-name="<?= htmlspecialchars($plan['plan_name'] ?? '') ?>">
+                                <?= htmlspecialchars($plan['plan_name'] ?? '') ?> (<?= htmlspecialchars($plan['plan_code'] ?? '') ?>) — <?= ucfirst($plan['status']) ?>
                             </option>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -115,7 +115,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="alert alert-secondary small">
             <i class="fas fa-info-circle me-1"></i>
             <strong>Global Cap:</strong> Total commission per payment must not exceed 20% of sale amount.
-            The calculator highlights rows exceeding 20% in red. Adjust percentages in the <a href="<?= htmlspecialchars($base) ?>/admin/commission-plans/edit/1">plan editor</a>.
+            The calculator highlights rows exceeding 20% in red. Adjust percentages in the <a href="<?= htmlspecialchars($base ?? '') ?>/admin/commission-plans/edit/1">plan editor</a>.
         </div>
     </div>
 </div>

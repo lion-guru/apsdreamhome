@@ -3,7 +3,7 @@ $leave = $leave ?? [];
 function ldStatusBadge($status) {
     $map = ['approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger', 'cancelled' => 'secondary'];
     $cls = $map[strtolower($status)] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . ' fs-6">' . htmlspecialchars(ucfirst($status)) . '</span>';
+    return '<span class="badge bg-' . $cls . ' fs-6">' . htmlspecialchars(ucfirst($status ?? '')) . '</span>';
 }
 function ldDate($d) { return $d ? date('d M Y', strtotime($d)) : '—'; }
 function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—'; }
@@ -91,13 +91,13 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
                     <?php if (!empty($leave['emergency_contact'])): ?>
                     <div class="ld-info-row">
                         <div class="ld-label">Emergency Contact</div>
-                        <div class="ld-value"><?= htmlspecialchars($leave['emergency_contact']) ?></div>
+                        <div class="ld-value"><?= htmlspecialchars($leave['emergency_contact'] ?? '') ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($leave['work_coverage'])): ?>
                     <div class="ld-info-row">
                         <div class="ld-label">Work Coverage Plan</div>
-                        <div class="ld-value"><?= htmlspecialchars($leave['work_coverage']) ?></div>
+                        <div class="ld-value"><?= htmlspecialchars($leave['work_coverage'] ?? '') ?></div>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -116,13 +116,13 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
                         </div>
                         <div class="text-center fw-semibold mb-1">Approved</div>
                         <?php if (!empty($leave['approved_by_name'])): ?>
-                            <div class="text-center text-muted small">By: <?= htmlspecialchars($leave['approved_by_name']) ?></div>
+                            <div class="text-center text-muted small">By: <?= htmlspecialchars($leave['approved_by_name'] ?? '') ?></div>
                         <?php endif; ?>
                         <?php if (!empty($leave['approved_at'])): ?>
                             <div class="text-center text-muted small">On: <?= ldDateTime($leave['approved_at']) ?></div>
                         <?php endif; ?>
                         <?php if (!empty($leave['approved_notes'])): ?>
-                            <div class="mt-2 p-2 bg-success bg-opacity-10 rounded small"><?= htmlspecialchars($leave['approved_notes']) ?></div>
+                            <div class="mt-2 p-2 bg-success bg-opacity-10 rounded small"><?= htmlspecialchars($leave['approved_notes'] ?? '') ?></div>
                         <?php endif; ?>
                     <?php elseif (strtolower($leave['status'] ?? '') === 'rejected'): ?>
                         <div class="text-center text-danger mb-2">
@@ -130,7 +130,7 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
                         </div>
                         <div class="text-center fw-semibold mb-1">Rejected</div>
                         <?php if (!empty($leave['rejection_reason'])): ?>
-                            <div class="mt-2 p-2 bg-danger bg-opacity-10 rounded small"><?= htmlspecialchars($leave['rejection_reason']) ?></div>
+                            <div class="mt-2 p-2 bg-danger bg-opacity-10 rounded small"><?= htmlspecialchars($leave['rejection_reason'] ?? '') ?></div>
                         <?php endif; ?>
                     <?php elseif (strtolower($leave['status'] ?? '') === 'cancelled'): ?>
                         <div class="text-center text-secondary mb-2">

@@ -6,7 +6,7 @@ $month = $month ?? date('Y-m');
 function attStatusBadge($status) {
     $map = ['present' => 'success', 'full day' => 'success', 'absent' => 'danger', 'late' => 'warning', 'half day' => 'info', 'holiday' => 'secondary', 'week off' => 'secondary', 'leave' => 'purple'];
     $cls = $map[strtolower($status)] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status)) . '</span>';
+    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status ?? '')) . '</span>';
 }
 function attStatusColor($status) {
     $map = ['present' => 'success', 'full day' => 'success', 'absent' => 'danger', 'late' => 'warning', 'half day' => 'info'];
@@ -35,7 +35,7 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
         </div>
         <form method="get" class="d-flex gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
-            <input type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month) ?>" class="style-79467">
+            <input type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month ?? '') ?>" class="style-79467">
             <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Filter</button>
         </form>
     </div>

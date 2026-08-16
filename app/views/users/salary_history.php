@@ -5,7 +5,7 @@ $stats = $stats ?? ['total' => 0, 'paid' => 0, 'pending' => 0, 'total_earned' =>
 function salStatusBadge($status) {
     $map = ['paid' => 'success', 'processed' => 'info', 'pending' => 'warning', 'held' => 'danger'];
     $cls = $map[strtolower($status)] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($status) . '</span>';
+    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($status ?? '') . '</span>';
 }
 function salMonth($date) {
     if (!$date) return '—';

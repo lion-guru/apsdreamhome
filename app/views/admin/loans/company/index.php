@@ -92,7 +92,7 @@ $offers = $offers ?? [];
                         <tbody>
                         <?php foreach ($loans as $l): ?>
                             <tr>
-                                <td><a href="<?= BASE_URL ?>/admin/company-loans/<?= $l['id'] ?>" class="fw-bold"><?= htmlspecialchars($l['loan_number']) ?></a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/company-loans/<?= $l['id'] ?>" class="fw-bold"><?= htmlspecialchars($l['loan_number'] ?? '') ?></a></td>
                                 <td><?= htmlspecialchars($l['customer_name'] ?? 'N/A') ?><br><small class="text-muted"><?= htmlspecialchars($l['customer_phone'] ?? '') ?></small></td>
                                 <td>₹<?= number_format($l['loan_amount'] / 100000, 1) ?>L</td>
                                 <td>₹<?= number_format($l['emi_amount']) ?></td>

@@ -22,7 +22,7 @@
                                    name="q"
                                    class="form-control"
                                    placeholder="Search Farmers..."
-                                   value="<?= htmlspecialchars($search_term) ?>">
+                                   value="<?= htmlspecialchars($search_term ?? '') ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="submit">
                                     <i class="fas fa-search"></i>
@@ -39,7 +39,7 @@
             <?php if ($search_term): ?>
                 <div class="mt-3">
                     <p class="text-muted">
-                        "<strong><?= htmlspecialchars($search_term) ?></strong>" results for
+                        "<strong><?= htmlspecialchars($search_term ?? '') ?></strong>" results for
                         <span class="badge badge-primary ml-2">
                             <?= count($farmers) ?> farmers found
                         </span>
@@ -58,7 +58,7 @@
                         <i class="fas fa-search fa-4x text-muted mb-4"></i>
                         <h4 class="text-muted">No results found</h4>
                         <p class="text-muted mb-4">
-                            "<strong><?= htmlspecialchars($search_term) ?></strong>" results for No farmers found.
+                            "<strong><?= htmlspecialchars($search_term ?? '') ?></strong>" results for No farmers found.
                         </p>
                         <div class="d-flex justify-content-center">
                             <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary mr-3">
@@ -89,7 +89,7 @@
                                                 </div>
                                                 <div>
                                                     <h6 class="mb-1 font-weight-bold">
-                                                        <?= htmlspecialchars($farmer['name']) ?>
+                                                        <?= htmlspecialchars($farmer['name'] ?? '') ?>
                                                     </h6>
                                                     <small class="text-muted">
                                                         ID: <?= $farmer['id'] ?>
@@ -100,16 +100,16 @@
                                             <div class="farmer-info">
                                                 <div class="info-item mb-2">
                                                     <i class="fas fa-phone mr-2 text-success"></i>
-                                                    <a href="tel:<?= htmlspecialchars($farmer['phone']) ?>" class="text-decoration-none">
-                                                        <?= htmlspecialchars($farmer['phone']) ?>
+                                                    <a href="tel:<?= htmlspecialchars($farmer['phone'] ?? '') ?>" class="text-decoration-none">
+                                                        <?= htmlspecialchars($farmer['phone'] ?? '') ?>
                                                     </a>
                                                 </div>
 
                                                 <?php if ($farmer['email']): ?>
                                                     <div class="info-item mb-2">
                                                         <i class="fas fa-envelope mr-2 text-primary"></i>
-                                                        <a href="mailto:<?= htmlspecialchars($farmer['email']) ?>" class="text-decoration-none">
-                                                            <?= htmlspecialchars($farmer['email']) ?>
+                                                        <a href="mailto:<?= htmlspecialchars($farmer['email'] ?? '') ?>" class="text-decoration-none">
+                                                            <?= htmlspecialchars($farmer['email'] ?? '') ?>
                                                         </a>
                                                     </div>
                                                 <?php endif; ?>

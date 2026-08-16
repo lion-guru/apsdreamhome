@@ -10,7 +10,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title><?= htmlspecialchars($title) ?></title>
+    <title><?= htmlspecialchars($title ?? '') ?></title>
     <style>
         body { font-family: 'Georgia', 'Times New Roman', serif; font-size: 12pt; color: #333; margin: 0; padding: 20px; }
         .header { text-align: center; margin-bottom: 10px; border-bottom: 3px solid #c8a01e; padding-bottom: 10px; }
@@ -41,12 +41,12 @@
 </head>
 <body>
     <div class="header">
-        <div class="company-name"><?= htmlspecialchars($companyName) ?></div>
+        <div class="company-name"><?= htmlspecialchars($companyName ?? '') ?></div>
         <div class="company-details">
-            <?= htmlspecialchars($companyAddress) ?><br>
-            Phone: <?= htmlspecialchars($companyPhone) ?> | Email: <?= htmlspecialchars($companyEmail) ?>
+            <?= htmlspecialchars($companyAddress ?? '') ?><br>
+            Phone: <?= htmlspecialchars($companyPhone ?? '') ?> | Email: <?= htmlspecialchars($companyEmail ?? '') ?>
         </div>
-        <div class="doc-title"><?= htmlspecialchars($title) ?></div>
+        <div class="doc-title"><?= htmlspecialchars($title ?? '') ?></div>
         <div class="doc-meta">
             Date: <?= date('d/m/Y') ?>
         </div>
@@ -58,25 +58,25 @@
             <td class="label">Buyer Name:</td>
             <td><?= htmlspecialchars($data['customer_name'] ?? 'N/A') ?></td>
             <td class="label">Company:</td>
-            <td><?= htmlspecialchars($companyName) ?></td>
+            <td><?= htmlspecialchars($companyName ?? '') ?></td>
         </tr>
         <tr>
             <td class="label">Address:</td>
             <td><?= htmlspecialchars($data['customer_address'] ?? 'N/A') ?></td>
             <td class="label">Address:</td>
-            <td><?= htmlspecialchars($companyAddress) ?></td>
+            <td><?= htmlspecialchars($companyAddress ?? '') ?></td>
         </tr>
         <tr>
             <td class="label">Phone:</td>
             <td><?= htmlspecialchars($data['customer_phone'] ?? 'N/A') ?></td>
             <td class="label">Phone:</td>
-            <td><?= htmlspecialchars($companyPhone) ?></td>
+            <td><?= htmlspecialchars($companyPhone ?? '') ?></td>
         </tr>
         <tr>
             <td class="label">Email:</td>
             <td><?= htmlspecialchars($data['customer_email'] ?? 'N/A') ?></td>
             <td class="label">Email:</td>
-            <td><?= htmlspecialchars($companyEmail) ?></td>
+            <td><?= htmlspecialchars($companyEmail ?? '') ?></td>
         </tr>
     </table></div>
 
@@ -225,7 +225,7 @@
             $terms = ['The payment schedule is tentative and subject to change with mutual consent.', 'All payments must be made via cheque, bank transfer, or online payment.', 'Delayed payments will attract interest at 12% per annum on the outstanding amount.', 'The buyer can prepay any installment without penalty.', 'Taxes and registration charges are payable in addition to the plot price.'];
         }
         foreach ($terms as $ti => $term): ?>
-            <p><?= ($ti + 1) ?>. <?= htmlspecialchars($term) ?></p>
+            <p><?= ($ti + 1) ?>. <?= htmlspecialchars($term ?? '') ?></p>
         <?php endforeach; ?>
     </div>
 
@@ -244,7 +244,7 @@
                     <div class="style-8484">
                         <div class="line"></div>
                         <div class="label">SELLER (Authorized Signatory)</div>
-                        <div>For <?= htmlspecialchars($companyName) ?></div>
+                        <div>For <?= htmlspecialchars($companyName ?? '') ?></div>
                     </div>
                 </td>
             </tr>
@@ -267,7 +267,7 @@
 
     <div class="footer">
         This is a computer-generated document and does not require a physical signature.<br>
-        <?= htmlspecialchars($companyName) ?> | <?= htmlspecialchars($companyAddress) ?><br>
+        <?= htmlspecialchars($companyName ?? '') ?> | <?= htmlspecialchars($companyAddress ?? '') ?><br>
         Generated on: <?= date('d/m/Y H:i:s') ?>
     </div>
 </body>

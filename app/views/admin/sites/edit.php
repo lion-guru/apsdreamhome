@@ -30,7 +30,7 @@
                     <div class="col-md-4"><label class="form-label">Nearby Places (JSON)</label><textarea name="nearby_places" class="form-control" rows="2" placeholder='[{"name":"Railway","distance":"3km","type":"railway"}]'><?= htmlspecialchars($site['nearby_places'] ?? '') ?></textarea></div>
                     <div class="col-md-12"><label class="form-label">Featured Image</label>
                         <?php if(!empty($site['image'])): ?>
-                            <div class="mb-2"><img src="<?= htmlspecialchars($site['image']) ?>" alt="Current Image" class="style-60421"></div>
+                            <div class="mb-2"><img src="<?= htmlspecialchars($site['image'] ?? '') ?>" alt="Current Image" class="style-60421"></div>
                         <?php endif; ?>
                         <input type="file" name="image" class="form-control" accept="image/*">
                     </div>

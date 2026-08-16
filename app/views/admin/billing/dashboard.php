@@ -83,7 +83,7 @@ $base = BASE_URL ?? '';
                     <?php foreach ($stats['by_plan'] as $bp): ?>
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-1">
-                                <span class="fw-semibold"><?= htmlspecialchars($bp['name']) ?></span>
+                                <span class="fw-semibold"><?= htmlspecialchars($bp['name'] ?? '') ?></span>
                                 <span class="text-muted">₹<?= number_format($bp['revenue']) ?> (<?= $bp['count'] ?> tenants)</span>
                             </div>
                             <div class="trend-bar">
@@ -191,7 +191,7 @@ $base = BASE_URL ?? '';
                 <div class="col-lg-3 col-md-6 mb-3">
                     <div class="card border h-100 <?= ($plan['slug'] ?? '') === 'free' ? 'border-secondary' : 'border-primary' ?>">
                         <div class="card-body text-center">
-                            <h6 class="card-title"><?= htmlspecialchars($plan['name']) ?></h6>
+                            <h6 class="card-title"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
                             <h3 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">
                                 ₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small>
                             </h3>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Social Media Integration';
 $accounts = $accounts ?? [];
 $platforms = $platforms ?? [];
@@ -80,8 +80,8 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         </span>
                                     </td>
                                     <td>
-                                        <strong><?= htmlspecialchars($acc['account_name']) ?></strong>
-                                        <br><small class="text-muted">ID: <?= htmlspecialchars($acc['account_id']) ?></small>
+                                        <strong><?= htmlspecialchars($acc['account_name'] ?? '') ?></strong>
+                                        <br><small class="text-muted">ID: <?= htmlspecialchars($acc['account_id'] ?? '') ?></small>
                                     </td>
                                     <td><?= ucfirst(str_replace('_', ' ', $acc['account_type'] ?? 'personal')) ?></td>
                                     <td>

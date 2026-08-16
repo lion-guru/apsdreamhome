@@ -7,7 +7,7 @@ $status_filter = $status_filter ?? null;
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted"><?= __('admin_noc_subtitle') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/nocs/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('admin_new_noc_request') ?></a>
@@ -56,14 +56,14 @@ $status_filter = $status_filter ?? null;
                         <tr>
                             <td><?= $n['id'] ?></td>
                             <td>
-                                <div class="fw-semibold small"><?= htmlspecialchars($n['booking_number']) ?></div>
+                                <div class="fw-semibold small"><?= htmlspecialchars($n['booking_number'] ?? '') ?></div>
                             </td>
                             <td>
                                 <div class="small"><?= htmlspecialchars($n['customer_name'] ?? '—') ?></div>
                                 <div class="text-muted" class="style-86760"><?= htmlspecialchars($n['customer_phone'] ?? '') ?></div>
                             </td>
-                            <td class="small"><?= htmlspecialchars($n['plot_no']) ?>, <?= htmlspecialchars($n['colony_name']) ?></td>
-                            <td class="small text-truncate" class="style-1698"><?= htmlspecialchars($n['purpose']) ?></td>
+                            <td class="small"><?= htmlspecialchars($n['plot_no'] ?? '') ?>, <?= htmlspecialchars($n['colony_name'] ?? '') ?></td>
+                            <td class="small text-truncate" class="style-1698"><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
                             <td>
                                 <?php
                                 $colors = ['pending'=>'warning','processing'=>'info','approved'=>'success','rejected'=>'danger','blocked'=>'dark'];
@@ -71,7 +71,7 @@ $status_filter = $status_filter ?? null;
                                 ?>
                                 <span class="badge bg-<?= $color ?>"><?= ucfirst($n['status']) ?></span>
                                 <?php if ($n['noc_number']): ?>
-                                    <div class="text-muted" class="style-39570"><?= htmlspecialchars($n['noc_number']) ?></div>
+                                    <div class="text-muted" class="style-39570"><?= htmlspecialchars($n['noc_number'] ?? '') ?></div>
                                 <?php endif; ?>
                             </td>
                             <td class="small text-muted"><?= date('d M Y', strtotime($n['created_at'])) ?></td>

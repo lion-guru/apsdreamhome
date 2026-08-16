@@ -18,7 +18,7 @@ $base = $base ?? BASE_URL;
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                 <span class="badge bg-light text-dark fs-6 px-3 py-2">
-                    <i class="fas fa-user-shield me-1"></i> <?= __('user_ai_chat_enhanced_role_label', 'Role:') ?> <?= htmlspecialchars($current_user_role) ?>
+                    <i class="fas fa-user-shield me-1"></i> <?= __('user_ai_chat_enhanced_role_label', 'Role:') ?> <?= htmlspecialchars($current_user_role ?? '') ?>
                 </span>
             </div>
         </div>
@@ -36,16 +36,16 @@ $base = $base ?? BASE_URL;
                                 <i class="fas fa-user fa-lg"></i>
                             </div>
                             <div>
-                                <h6 class="mb-0"><?= htmlspecialchars($user_name) ?></h6>
-                                <small class="text-muted"><?= htmlspecialchars(ucfirst($current_user_role)) ?></small>
+                                <h6 class="mb-0"><?= htmlspecialchars($user_name ?? '') ?></h6>
+                                <small class="text-muted"><?= htmlspecialchars(ucfirst($current_user_role ?? '')) ?></small>
                             </div>
                         </div>
                         <?php if (!empty($available_roles)): ?>
                         <label class="form-label small fw-bold"><?= __('user_ai_chat_enhanced_switch_role', 'Switch Role') ?></label>
                         <select id="ai-role-select-enhanced" class="form-select form-select-sm mb-3" onchange="changeEnhancedRole(this.value)">
                             <?php foreach ($available_roles as $role_key => $role_name): ?>
-                            <option value="<?= htmlspecialchars($role_key) ?>" <?= $role_key === $current_user_role ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($role_name) ?>
+                            <option value="<?= htmlspecialchars($role_key ?? '') ?>" <?= $role_key === $current_user_role ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($role_name ?? '') ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -98,7 +98,7 @@ $base = $base ?? BASE_URL;
                                 <div class="mb-3">
                                     <span class="display-1">ðŸ¤–</span>
                                 </div>
-                                <h5><?= __('user_ai_chat_enhanced_welcome', 'Welcome,') ?> <?= htmlspecialchars($user_name) ?>!</h5>
+                                <h5><?= __('user_ai_chat_enhanced_welcome', 'Welcome,') ?> <?= htmlspecialchars($user_name ?? '') ?>!</h5>
                                 <p class="text-muted mb-3"><?= __('user_ai_chat_enhanced_welcome_sub', "I'm your enhanced AI assistant. Ask me anything about properties, leads, or reports.") ?></p>
                                 <div class="row justify-content-center g-2">
                                     <div class="col-auto">
@@ -135,7 +135,7 @@ $base = $base ?? BASE_URL;
 </section>
 
 <script>
-let enhancedRole = '<?= htmlspecialchars($current_user_role) ?>';
+let enhancedRole = '<?= htmlspecialchars($current_user_role ?? '') ?>';
 
 function handleEnhancedKeyPress(e) {
     if (e.key === 'Enter') sendEnhancedMessage();

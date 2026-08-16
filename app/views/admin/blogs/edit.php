@@ -12,11 +12,11 @@
                             <div class="col-md-8">
                                 <div class="mb-3">
                                     <label class="form-label">Title</label>
-                                    <input type="text" name="title" class="form-control" value="<?php echo htmlspecialchars($blog['title']); ?>" required>
+                                    <input type="text" name="title" class="form-control" value="<?php echo htmlspecialchars($blog['title'] ?? ''); ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
-                                    <textarea name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($blog['content']); ?></textarea>
+                                    <textarea name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($blog['content'] ?? ''); ?></textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -25,7 +25,7 @@
                                     <select name="category_id" class="form-select">
                                         <option value="">Select Category</option>
                                         <?php foreach ($categories ?? [] as $cat): ?>
-                                        <option value="<?php echo $cat['id']; ?>" <?php echo $blog['category_id'] == $cat['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($cat['name']); ?></option>
+                                        <option value="<?php echo $cat['id']; ?>" <?php echo $blog['category_id'] == $cat['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($cat['name'] ?? ''); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -41,7 +41,7 @@
                                     <label class="form-label">Featured Image</label>
                                     <input type="file" name="image" class="form-control" accept="image/*">
                                     <?php if (!empty($blog['image'])): ?>
-                                    <img src="<?php echo BASE_URL; ?>/assets/images/blogs/<?php echo htmlspecialchars($blog['image']); ?>" class="mt-2" alt="<?php echo htmlspecialchars($blog['title'] ?? 'Blog image'); ?>" class="style-65684" loading="lazy">
+                                    <img src="<?php echo BASE_URL; ?>/assets/images/blogs/<?php echo htmlspecialchars($blog['image'] ?? ''); ?>" class="mt-2" alt="<?php echo htmlspecialchars($blog['title'] ?? 'Blog image'); ?>" class="style-65684" loading="lazy">
                                     <?php endif; ?>
                                 </div>
                                 <div class="mb-3">

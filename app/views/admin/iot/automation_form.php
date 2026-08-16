@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $automation = $automation ?? null;
 $isEdit = !empty($automation);
 $devices = $devices ?? [];
@@ -19,10 +19,10 @@ $targets = ['security'=>'Security Team','owner'=>'Property Owner','admin'=>'Admi
         <form method="POST" action="<?= BASE_URL ?>/admin/iot/automation/save">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $automation['id'] ?>"><?php endif; ?>
-            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($automation['name']) : '' ?>" required></div>
+            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($automation['name'] ?? '') : '' ?>" required></div>
             <div class="row">
                 <div class="col-md-6 mb-3"><label class="form-label">Property ID (optional)</label><input type="number" name="property_id" class="form-control" value="<?= $isEdit ? ($automation['property_id'] ?? '') : '' ?>"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Device (optional)</label><select name="device_id" class="form-select"><option value="">Any device</option><?php foreach ($devices as $d): ?><option value="<?= $d['id'] ?>" <?= $isEdit && ($automation['device_id'] ?? '')==$d['id']?'selected':'' ?>><?= htmlspecialchars($d['name']) ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Device (optional)</label><select name="device_id" class="form-select"><option value="">Any device</option><?php foreach ($devices as $d): ?><option value="<?= $d['id'] ?>" <?= $isEdit && ($automation['device_id'] ?? '')==$d['id']?'selected':'' ?>><?= htmlspecialchars($d['name'] ?? '') ?></option><?php endforeach; ?></select></div>
             </div>
 
             <h6 class="text-primary">Trigger</h6>

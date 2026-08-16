@@ -30,8 +30,8 @@
                 <?php else: ?>
                 <?php foreach ($rules as $r): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($r['rule_name']); ?></td>
-                    <td><?php echo htmlspecialchars($r['mlm_rank']); ?></td>
+                    <td><?php echo htmlspecialchars($r['rule_name'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($r['mlm_rank'] ?? ''); ?></td>
                     <td>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/mlm-settings/rules/update/<?php echo $r['id']; ?>" class="d-flex align-items-center gap-2">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

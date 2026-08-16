@@ -82,10 +82,10 @@ $content = $content ?? '';
             <div class="d-flex justify-content-between text-muted small mb-3">
               <span><i class="fas fa-ruler-combined me-1"></i><?= htmlspecialchars($p['area_sqft'] ?? 0) ?> <?= __('user_resell_public_sqft', 'sqft') ?></span>
               <?php if (!empty($p['bedrooms'])): ?>
-                <span><i class="fas fa-bed me-1"></i><?= htmlspecialchars($p['bedrooms']) ?> <?= __('user_resell_public_bed', 'bed') ?></span>
+                <span><i class="fas fa-bed me-1"></i><?= htmlspecialchars($p['bedrooms'] ?? '') ?> <?= __('user_resell_public_bed', 'bed') ?></span>
               <?php endif; ?>
               <?php if (!empty($p['bathrooms'])): ?>
-                <span><i class="fas fa-bath me-1"></i><?= htmlspecialchars($p['bathrooms']) ?> <?= __('user_resell_public_bath', 'bath') ?></span>
+                <span><i class="fas fa-bath me-1"></i><?= htmlspecialchars($p['bathrooms'] ?? '') ?> <?= __('user_resell_public_bath', 'bath') ?></span>
               <?php endif; ?>
             </div>
             <div class="d-grid">

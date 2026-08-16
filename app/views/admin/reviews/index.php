@@ -130,7 +130,7 @@ ob_start();
                                     <tr><td colspan="9" class="bg-light">
                                         <div class="ps-4 small">
                                             <strong class="text-primary">Your response:</strong>
-                                            <em>"<?= htmlspecialchars($r['admin_response']) ?>"</em>
+                                            <em>"<?= htmlspecialchars($r['admin_response'] ?? '') ?>"</em>
                                         </div>
                                     </td></tr>
                                 <?php else: ?>
@@ -188,7 +188,7 @@ ob_start();
                                 <tr>
                                     <td>#<?= $t['id'] ?></td>
                                     <td>
-                                        <strong><?= htmlspecialchars($t['customer_name']) ?></strong>
+                                        <strong><?= htmlspecialchars($t['customer_name'] ?? '') ?></strong>
                                         <?php if (!empty($t['client_photo'])): ?>
                                             <br><img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="rounded-circle mt-1" class="style-91602" />
                                         <?php endif; ?>
@@ -196,7 +196,7 @@ ob_start();
                                     <td>
                                         <strong><?= htmlspecialchars($t['project_name'] ?? 'N/A') ?></strong>
                                         <?php if ($t['location']): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($t['location']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($t['location'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td>

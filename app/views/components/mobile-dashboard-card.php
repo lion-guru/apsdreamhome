@@ -13,21 +13,21 @@ $action_url = $action_url ?? '#';
 $action_text = $action_text ?? __('component_view', 'View');
 ?>
 
-<div class="dashboard-card <?php echo htmlspecialchars($card_class); ?>">
+<div class="dashboard-card <?php echo htmlspecialchars($card_class ?? ''); ?>">
     <div class="card shadow h-100">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">
                 <?php if($icon): ?>
-                    <i class="bi bi-<?php echo htmlspecialchars($icon); ?> me-1"></i>
+                    <i class="bi bi-<?php echo htmlspecialchars($icon ?? ''); ?> me-1"></i>
                 <?php endif; ?>
-                <?php echo htmlspecialchars($title); ?>
+                <?php echo htmlspecialchars($title ?? ''); ?>
             </h6>
             <?php if($action): ?>
-                <a href="<?php echo htmlspecialchars($action_url); ?>" class="btn btn-sm btn-outline-primary">
+                <a href="<?php echo htmlspecialchars($action_url ?? ''); ?>" class="btn btn-sm btn-outline-primary">
                     <?php if(isset($action_icon)): ?>
-                        <i class="bi bi-<?php echo htmlspecialchars($action_icon); ?> me-1"></i>
+                        <i class="bi bi-<?php echo htmlspecialchars($action_icon ?? ''); ?> me-1"></i>
                     <?php endif; ?>
-                    <?php echo htmlspecialchars($action_text); ?>
+                    <?php echo htmlspecialchars($action_text ?? ''); ?>
                 </a>
             <?php endif; ?>
         </div>

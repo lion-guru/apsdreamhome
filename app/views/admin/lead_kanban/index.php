@@ -117,7 +117,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
           <select id="filterAssignee" class="form-select form-select-sm" class="style-90031">
             <option value="">All Assignees</option>
             <?php foreach ($users as $u): ?>
-              <option value="<?= (int)$u['id'] ?>" <?= ($currentFilters['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['name']) ?></option>
+              <option value="<?= (int)$u['id'] ?>" <?= ($currentFilters['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['name'] ?? '') ?></option>
             <?php endforeach; ?>
           </select>
 
@@ -125,7 +125,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
           <select id="filterSource" class="form-select form-select-sm" class="style-90031">
             <option value="">All Sources</option>
             <?php foreach ($sources as $src): ?>
-              <option value="<?= htmlspecialchars($src) ?>" <?= ($currentFilters['source'] ?? '') === $src ? 'selected' : '' ?>><?= ucfirst(htmlspecialchars($src)) ?></option>
+              <option value="<?= htmlspecialchars($src ?? '') ?>" <?= ($currentFilters['source'] ?? '') === $src ? 'selected' : '' ?>><?= ucfirst(htmlspecialchars($src ?? '')) ?></option>
             <?php endforeach; ?>
           </select>
 
@@ -146,11 +146,11 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
       $count     = $col['count'];
       $stageVal  = $col['total_value'];
     ?>
-      <div class="pipeline-col" data-stage="<?= htmlspecialchars($slug) ?>">
+      <div class="pipeline-col" data-stage="<?= htmlspecialchars($slug ?? '') ?>">
         <div class="col-header" class="style-71574">
           <div class="d-flex align-items-center">
             <span class="stage-dot" class="style-96004"></span>
-            <span class="col-header-text col-title"><?= htmlspecialchars($label) ?></span>
+            <span class="col-header-text col-title"><?= htmlspecialchars($label ?? '') ?></span>
             <span class="col-count col-count-badge"><?= $count ?></span>
           </div>
           <div class="d-flex align-items-center gap-2">
@@ -158,7 +158,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
             <i class="fas fa-chevron-left collapse-icon" title="Collapse"></i>
           </div>
         </div>
-        <div class="col-body" data-stage="<?= htmlspecialchars($slug) ?>">
+        <div class="col-body" data-stage="<?= htmlspecialchars($slug ?? '') ?>">
           <?php if (empty($leads)): ?>
             <div class="empty-col">
               <i class="fas fa-inbox"></i>
@@ -208,7 +208,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
                 else $timeAgo = date('M j', strtotime($createdAt));
               }
             ?>
-              <div class="lead-card" draggable="true" data-id="<?= $lid ?>" data-stage="<?= htmlspecialchars($slug) ?>" onclick="quickViewLead(<?= $lid ?>)">
+              <div class="lead-card" draggable="true" data-id="<?= $lid ?>" data-stage="<?= htmlspecialchars($slug ?? '') ?>" onclick="quickViewLead(<?= $lid ?>)">
                 <?php if ($priority === 'urgent'): ?>
                   <div class="card-priority urgent"></div>
                 <?php elseif ($priority === 'high'): ?>

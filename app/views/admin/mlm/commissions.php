@@ -19,7 +19,7 @@ $statusBadge = function ($s) {
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header">
         <h5 class="m-0"><i class="fas fa-percentage me-2"></i>MLM Commissions Ledger</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/dashboard" class="btn btn-link btn-sm">Back to Dashboard</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/dashboard" class="btn btn-link btn-sm">Back to Dashboard</a>
     </div>
     <div class="aps-cp-card-body">
         <form method="get" class="row g-2 mb-3">
@@ -46,7 +46,7 @@ $statusBadge = function ($s) {
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary btn-sm me-2" type="submit"><i class="fas fa-search me-1"></i>Filter</button>
-                <a class="btn btn-outline-secondary btn-sm" href="<?= htmlspecialchars($base) ?>/admin/mlm/commissions">Reset</a>
+                <a class="btn btn-outline-secondary btn-sm" href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/commissions">Reset</a>
             </div>
         </form>
 
@@ -83,7 +83,7 @@ $statusBadge = function ($s) {
                             <td class="text-end"><strong>&#8377;<?= number_format((float)($c['amount'] ?? 0), 2) ?></strong></td>
                             <td><span class="badge <?= $statusBadge($c['status'] ?? '') ?>"><?= htmlspecialchars((string)($c['status'] ?? '')) ?></span></td>
                             <td>
-                                <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($base) ?>/admin/mlm/commissions/<?= (int)($c['id'] ?? 0) ?>">
+                                <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/commissions/<?= (int)($c['id'] ?? 0) ?>">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </td>

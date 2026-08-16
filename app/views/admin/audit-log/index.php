@@ -105,8 +105,8 @@ ob_start();
           <select name="user_role" class="form-select form-select-sm">
             <option value="">All Roles</option>
             <?php foreach ($roles as $r): ?>
-              <option value="<?= htmlspecialchars($r) ?>" <?= ($filters['user_role'] ?? '') === $r ? 'selected' : '' ?>>
-                <?= htmlspecialchars($r) ?>
+              <option value="<?= htmlspecialchars($r ?? '') ?>" <?= ($filters['user_role'] ?? '') === $r ? 'selected' : '' ?>>
+                <?= htmlspecialchars($r ?? '') ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -116,8 +116,8 @@ ob_start();
           <select name="action" class="form-select form-select-sm">
             <option value="">All Actions</option>
             <?php foreach ($actions as $a): ?>
-              <option value="<?= htmlspecialchars($a) ?>" <?= ($filters['action'] ?? '') === $a ? 'selected' : '' ?>>
-                <?= htmlspecialchars($a) ?>
+              <option value="<?= htmlspecialchars($a ?? '') ?>" <?= ($filters['action'] ?? '') === $a ? 'selected' : '' ?>>
+                <?= htmlspecialchars($a ?? '') ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -127,8 +127,8 @@ ob_start();
           <select name="entity_type" class="form-select form-select-sm">
             <option value="">All Types</option>
             <?php foreach ($entity_types as $e): ?>
-              <option value="<?= htmlspecialchars($e) ?>" <?= ($filters['entity_type'] ?? '') === $e ? 'selected' : '' ?>>
-                <?= htmlspecialchars($e) ?>
+              <option value="<?= htmlspecialchars($e ?? '') ?>" <?= ($filters['entity_type'] ?? '') === $e ? 'selected' : '' ?>>
+                <?= htmlspecialchars($e ?? '') ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -172,7 +172,7 @@ ob_start();
         <?php foreach (array_slice($stats['by_action'], 0, 10, true) as $item): ?>
           <div class="mb-2">
             <div class="d-flex justify-content-between">
-              <span><code><?= htmlspecialchars($item['action']) ?></code></span>
+              <span><code><?= htmlspecialchars($item['action'] ?? '') ?></code></span>
               <strong><?= number_format($item['cnt']) ?></strong>
             </div>
             <div class="progress" class="style-29939">
@@ -218,7 +218,7 @@ ob_start();
                 <td><small><?= htmlspecialchars($l['created_at'] ?? '') ?></small></td>
                 <td>
                   <?php if (!empty($l['user_name'])): ?>
-                    <strong><?= htmlspecialchars($l['user_name']) ?></strong>
+                    <strong><?= htmlspecialchars($l['user_name'] ?? '') ?></strong>
                     <br>
                     <span class="badge bg-<?= in_array($l['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?> small">
                       <?= htmlspecialchars($l['user_role'] ?? '') ?>
@@ -248,9 +248,9 @@ ob_start();
                 <td>
                   <?php if (!empty($l['entity_type'])): ?>
                     <span class="badge bg-info">
-                      <?= htmlspecialchars($l['entity_type']) ?>
+                      <?= htmlspecialchars($l['entity_type'] ?? '') ?>
                       <?php if (!empty($l['entity_id'])): ?>
-                        #<?= htmlspecialchars($l['entity_id']) ?>
+                        #<?= htmlspecialchars($l['entity_id'] ?? '') ?>
                       <?php endif; ?>
                     </span>
                   <?php else: ?>

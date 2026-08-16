@@ -4,12 +4,12 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications" class="style-75937">Push Notifications</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/push-notifications/campaigns" class="style-75937">Campaigns</a></li>
-                <li class="breadcrumb-item active" class="style-27277"><?= htmlspecialchars($campaign['name']) ?></li>
+                <li class="breadcrumb-item active" class="style-27277"><?= htmlspecialchars($campaign['name'] ?? '') ?></li>
             </ol>
         </nav>
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1 class="h3 mb-1 fw-bold"><?= htmlspecialchars($campaign['name']) ?></h1>
+                <h1 class="h3 mb-1 fw-bold"><?= htmlspecialchars($campaign['name'] ?? '') ?></h1>
                 <p class="mb-0" class="style-54585">
                     <?= htmlspecialchars(mb_strimwidth($campaign['description'] ?? '', 0, 80, '...')) ?>
                 </p>
@@ -42,13 +42,13 @@
 
     <?php if (!empty($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+            <?= htmlspecialchars($_SESSION['success'] ?? ''); unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (!empty($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -93,7 +93,7 @@
                         $st = $statusStyles[$campaign['status']] ?? ['bg' => '#334155', 'text' => '#94a3b8'];
                     ?>
                     <span class="badge fs-6 p-2" class="style-43336">
-                        <?= ucfirst(htmlspecialchars($campaign['status'])) ?>
+                        <?= ucfirst(htmlspecialchars($campaign['status'] ?? '')) ?>
                     </span>
                 </div>
             </div>
@@ -125,14 +125,14 @@
                             <td class="style-96443">
                                 <?= htmlspecialchars(ucwords(str_replace('_', ' ', $campaign['target_type'] ?? ''))) ?>
                                 <?php if (!empty($campaign['target_value'])): ?>
-                                    <br><small class="style-27277"><?= htmlspecialchars($campaign['target_value']) ?></small>
+                                    <br><small class="style-27277"><?= htmlspecialchars($campaign['target_value'] ?? '') ?></small>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
                             <td class="style-54585">Template</td>
                             <td class="style-96443">
-                                <?= $campaign['template_name'] ? htmlspecialchars($campaign['template_name']) : '<span class="style-42047">None</span>' ?>
+                                <?= $campaign['template_name'] ? htmlspecialchars($campaign['template_name'] ?? '') : '<span class="style-42047">None</span>' ?>
                             </td>
                         </tr>
                         <tr>
@@ -162,10 +162,10 @@
                 <div class="card-body">
                     <div class="p-3 rounded" class="style-1278">
                         <div class="fw-semibold mb-1" class="style-96443">
-                            <?= htmlspecialchars($campaign['title']) ?>
+                            <?= htmlspecialchars($campaign['title'] ?? '') ?>
                         </div>
                         <div class="style-24601">
-                            <?= nl2br(htmlspecialchars($campaign['body'])) ?>
+                            <?= nl2br(htmlspecialchars($campaign['body'] ?? '')) ?>
                         </div>
                     </div>
                 </div>

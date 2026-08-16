@@ -6,7 +6,7 @@ $st = $stats ?? [];
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted"><?= __('admin_pipeline_subtitle') ?></span>
     </div>
     <div class="d-flex gap-2">
@@ -138,9 +138,9 @@ $st = $stats ?? [];
                             <tbody>
                             <?php foreach ($recent_nocs as $n): ?>
                                 <tr>
-                                    <td class="small"><?= htmlspecialchars($n['booking_number']) ?></td>
-                                    <td class="small"><?= htmlspecialchars($n['customer_name']) ?></td>
-                                    <td class="small text-truncate" class="style-64120"><?= htmlspecialchars($n['purpose']) ?></td>
+                                    <td class="small"><?= htmlspecialchars($n['booking_number'] ?? '') ?></td>
+                                    <td class="small"><?= htmlspecialchars($n['customer_name'] ?? '') ?></td>
+                                    <td class="small text-truncate" class="style-64120"><?= htmlspecialchars($n['purpose'] ?? '') ?></td>
                                     <td><span class="badge bg-<?= $n['status'] === 'approved' ? 'success' : ($n['status'] === 'rejected' ? 'danger' : ($n['status'] === 'blocked' ? 'dark' : 'warning')) ?>"><?= ucfirst($n['status']) ?></span></td>
                                     <td><a href="<?= BASE_URL ?>/admin/noc-registry/nocs/<?= $n['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                                 </tr>
@@ -170,9 +170,9 @@ $st = $stats ?? [];
                             <tbody>
                             <?php foreach ($recent_registries as $r): ?>
                                 <tr>
-                                    <td class="small"><?= htmlspecialchars($r['booking_number']) ?></td>
-                                    <td class="small"><?= htmlspecialchars($r['customer_name']) ?></td>
-                                    <td class="small"><?= htmlspecialchars($r['plot_no']) ?>, <?= htmlspecialchars($r['colony_name']) ?></td>
+                                    <td class="small"><?= htmlspecialchars($r['booking_number'] ?? '') ?></td>
+                                    <td class="small"><?= htmlspecialchars($r['customer_name'] ?? '') ?></td>
+                                    <td class="small"><?= htmlspecialchars($r['plot_no'] ?? '') ?>, <?= htmlspecialchars($r['colony_name'] ?? '') ?></td>
                                     <td class="small">₹<?= number_format($r['total_registry_cost'], 0) ?></td>
                                     <td><span class="badge bg-<?= $r['status'] === 'completed' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : ($r['status'] === 'cancelled' ? 'dark' : 'primary')) ?>"><?= ucfirst(str_replace('_', ' ', $r['status'])) ?></span></td>
                                     <td><a href="<?= BASE_URL ?>/admin/noc-registry/registries/<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>

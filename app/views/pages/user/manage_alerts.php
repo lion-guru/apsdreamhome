@@ -22,13 +22,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
     <?php if ($flash_success): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flash_success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flash_error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flash_error) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flash_error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

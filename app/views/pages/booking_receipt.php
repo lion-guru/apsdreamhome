@@ -49,11 +49,11 @@
             <tr><th><?= __('receipt_plot_details', [], 'Plot Details') ?></th><td>
                 <strong><?= __('receipt_plot_no', [], 'Plot #') ?><?= htmlspecialchars($booking['plot_number'] ?? '') ?></strong><br>
                 <?= htmlspecialchars($booking['colony_name'] ?? '') ?>
-                <?php if (!empty($booking['district_name'])): ?>, <?= htmlspecialchars($booking['district_name']) ?><?php endif; ?>
-                <?php if (!empty($booking['state_name'])): ?>, <?= htmlspecialchars($booking['state_name']) ?><?php endif; ?>
+                <?php if (!empty($booking['district_name'])): ?>, <?= htmlspecialchars($booking['district_name'] ?? '') ?><?php endif; ?>
+                <?php if (!empty($booking['state_name'])): ?>, <?= htmlspecialchars($booking['state_name'] ?? '') ?><?php endif; ?>
             </td></tr>
             <tr><th><?= __('receipt_plot_size', [], 'Plot Size') ?></th><td>
-                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> — <?php endif; ?>
+                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> — <?php endif; ?>
                 <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft
             </td></tr>
             <tr><th><?= __('receipt_block', [], 'Block') ?></th><td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td></tr>
@@ -112,7 +112,7 @@
                 <div class="col-6">
                     <strong>APS Dream Home</strong><br>
                     <?= __('receipt_footer_address', [], 'Gorakhpur, Uttar Pradesh') ?><br>
-                    <?= __('receipt_footer_phone', [], 'Phone:') ?> <?= htmlspecialchars($phoneDisplay) ?>
+                    <?= __('receipt_footer_phone', [], 'Phone:') ?> <?= htmlspecialchars($phoneDisplay ?? '') ?>
                 </div>
                 <div class="col-6 text-end">
                     <small><?= __('receipt_footer_computer', [], 'This is a computer-generated receipt.') ?><br>

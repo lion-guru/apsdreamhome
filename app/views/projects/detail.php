@@ -53,7 +53,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
         <div class="row h-100 align-items-center">
             <div class="col-lg-6 text-white">
                 <h1 class="display-3 fw-bold mb-4">
-                    <?= htmlspecialchars($project['project_name']) ?>
+                    <?= htmlspecialchars($project['project_name'] ?? '') ?>
                 </h1>
                 <p class="lead mb-4">
                     <?= htmlspecialchars($project['short_description'] ?? $project['description']) ?>
@@ -71,7 +71,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <div class="col-md-4">
                         <div class="stat-item text-center">
                             <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
-                            <h4><?= htmlspecialchars($project['city']) ?></h4>
+                            <h4><?= htmlspecialchars($project['city'] ?? '') ?></h4>
                             <small>Location</small>
                         </div>
                     </div>
@@ -102,7 +102,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Main Image -->
                 <div class="main-image-container">
                     <?php if (!empty($project['gallery_images'])): ?>
-                        <img src="<?= htmlspecialchars($project['gallery_images'][0] ?? $project['gallery_images']) ?>" class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>" id="mainImage" loading="lazy">
+                        <img src="<?= htmlspecialchars($project['gallery_images'][0] ?? $project['gallery_images']) ?>" class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name'] ?? '') ?>" id="mainImage" loading="lazy">
                     <?php else: ?>
                         <img loading="lazy" src="/assets/images/placeholder/property.svg"
                              class="img-fluid rounded shadow" alt="No Image Available"
@@ -157,7 +157,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     <?php if (!empty($project['rera_number'])): ?>
                                         <tr>
                                             <td><strong>RERA Number:</strong></td>
-                                            <td><?= htmlspecialchars($project['rera_number']) ?></td>
+                                            <td><?= htmlspecialchars($project['rera_number'] ?? '') ?></td>
                                         </tr>
                                     <?php endif; ?>
                                 </table></div>
@@ -167,23 +167,23 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                 <div class="table-responsive"><table class="table table-borderless table-responsive">
                                     <tr>
                                         <td><strong>Developer:</strong></td>
-                                        <td><?= htmlspecialchars($project['developer_name']) ?></td>
+                                        <td><?= htmlspecialchars($project['developer_name'] ?? '') ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Contact:</strong></td>
-                                        <td><?= htmlspecialchars($project['developer_contact']) ?></td>
+                                        <td><?= htmlspecialchars($project['developer_contact'] ?? '') ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Email:</strong></td>
-                                        <td><?= htmlspecialchars($project['developer_email']) ?></td>
+                                        <td><?= htmlspecialchars($project['developer_email'] ?? '') ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Project Head:</strong></td>
-                                        <td><?= htmlspecialchars($project['project_head']) ?></td>
+                                        <td><?= htmlspecialchars($project['project_head'] ?? '') ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Sales Manager:</strong></td>
-                                        <td><?= htmlspecialchars($project['sales_manager']) ?></td>
+                                        <td><?= htmlspecialchars($project['sales_manager'] ?? '') ?></td>
                                     </tr>
                                 </table></div>
                             </div>
@@ -198,7 +198,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <p class="lead">
-                            <?= nl2br(htmlspecialchars($project['description'])) ?>
+                            <?= nl2br(htmlspecialchars($project['description'] ?? '')) ?>
                         </p>
                     </div>
                 </div>
@@ -215,7 +215,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     <div class="col-md-6 mb-3">
                                         <div class="amenity-item">
                                             <i class="fas fa-check-circle text-success me-2"></i>
-                                            <?= htmlspecialchars($amenity) ?>
+                                            <?= htmlspecialchars($amenity ?? '') ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -236,7 +236,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     <div class="col-md-6 mb-3">
                                         <div class="highlight-item">
                                             <i class="fas fa-star text-warning me-2"></i>
-                                            <?= htmlspecialchars($highlight) ?>
+                                            <?= htmlspecialchars($highlight ?? '') ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -256,7 +256,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                 <?php foreach ($project['gallery_images'] as $index => $image): ?>
                                     <div class="col-md-4 mb-3">
                                         <div class="gallery-item">
-                                            <img src="<?= htmlspecialchars($image) ?>" class="img-fluid rounded cursor-pointer" onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)" alt="Gallery Image <?= $index + 1 ?>" loading="lazy">
+                                            <img src="<?= htmlspecialchars($image ?? '') ?>" class="img-fluid rounded cursor-pointer" onclick="openGallery(<?= htmlspecialchars($index, ENT_QUOTES, 'UTF-8') ?>)" alt="Gallery Image <?= $index + 1 ?>" loading="lazy">
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -274,7 +274,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         <div class="card-body aps-cp-card-body">
                             <div class="location-info mb-3">
                                 <p><i class="fas fa-map-marker-alt me-2"></i>
-                                   <?= htmlspecialchars($project['address']) ?>
+                                   <?= htmlspecialchars($project['address'] ?? '') ?>
                                 </p>
                                 <p class="mb-0">
                                     <strong>Coordinates:</strong>
@@ -293,7 +293,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
-                            <img src="<?= htmlspecialchars($project['layout_map']) ?>" class="img-fluid" alt="Project Layout" class="style-52003" loading="lazy">
+                            <img src="<?= htmlspecialchars($project['layout_map'] ?? '') ?>" class="img-fluid" alt="Project Layout" class="style-52003" loading="lazy">
                         </div>
                     </div>
                 <?php endif; ?>
@@ -331,11 +331,11 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                             <div class="mt-2">
                                 <p class="mb-1">
                                     <i class="fas fa-phone me-2"></i>
-                                    <?= htmlspecialchars($project['contact_number']) ?>
+                                    <?= htmlspecialchars($project['contact_number'] ?? '') ?>
                                 </p>
                                 <p class="mb-0">
                                     <i class="fas fa-envelope me-2"></i>
-                                    <?= htmlspecialchars($project['contact_email']) ?>
+                                    <?= htmlspecialchars($project['contact_email'] ?? '') ?>
                                 </p>
                             </div>
                         </div>
@@ -343,7 +343,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         <?php if (!empty($project['website'])): ?>
                             <div class="info-item mb-3">
                                 <strong>Website:</strong>
-                                <a href="<?= htmlspecialchars($project['website']) ?>" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <a href="<?= htmlspecialchars($project['website'] ?? '') ?>" target="_blank" class="btn btn-outline-primary btn-sm">
                                     Visit Website
                                 </a>
                             </div>
@@ -391,17 +391,17 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         </div>
                         <div class="card-body text-center">
                             <?php if (!empty($project['social_facebook'])): ?>
-                                <a href="<?= htmlspecialchars($project['social_facebook']) ?>" target="_blank" class="btn btn-outline-primary me-2">
+                                <a href="<?= htmlspecialchars($project['social_facebook'] ?? '') ?>" target="_blank" class="btn btn-outline-primary me-2">
                                     <i class="fab fa-facebook"></i> Facebook
                                 </a>
                             <?php endif; ?>
                             <?php if (!empty($project['social_instagram'])): ?>
-                                <a href="<?= htmlspecialchars($project['social_instagram']) ?>" target="_blank" class="btn btn-outline-danger me-2">
+                                <a href="<?= htmlspecialchars($project['social_instagram'] ?? '') ?>" target="_blank" class="btn btn-outline-danger me-2">
                                     <i class="fab fa-instagram"></i> Instagram
                                 </a>
                             <?php endif; ?>
                             <?php if (!empty($project['social_twitter'])): ?>
-                                <a href="<?= htmlspecialchars($project['social_twitter']) ?>" target="_blank" class="btn btn-outline-info">
+                                <a href="<?= htmlspecialchars($project['social_twitter'] ?? '') ?>" target="_blank" class="btn btn-outline-info">
                                     <i class="fab fa-twitter"></i> Twitter
                                 </a>
                             <?php endif; ?>
@@ -424,7 +424,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
             <form id="bookingForm">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="modal-body">
-                    <input type="hidden" name="project_code" value="<?= htmlspecialchars($project['project_code']) ?>">
+                    <input type="hidden" name="project_code" value="<?= htmlspecialchars($project['project_code'] ?? '') ?>">
 
                     <div class="row">
                         <div class="col-md-6">
@@ -515,7 +515,7 @@ function showBookingModal() {
 
 function downloadBrochure() {
     <?php if (!empty($project['brochure'])): ?>
-        window.open('/uploads/projects/<?= htmlspecialchars($project['brochure']) ?>', '_blank');
+        window.open('/uploads/projects/<?= htmlspecialchars($project['brochure'] ?? '') ?>', '_blank');
     <?php else: ?>
         alert('Brochure not available for this project.');
     <?php endif; ?>
@@ -523,7 +523,7 @@ function downloadBrochure() {
 
 function showVirtualTour() {
     <?php if (!empty($project['virtual_tour'])): ?>
-        window.open('<?= htmlspecialchars($project['virtual_tour']) ?>', '_blank');
+        window.open('<?= htmlspecialchars($project['virtual_tour'] ?? '') ?>', '_blank');
     <?php else: ?>
         alert('Virtual tour not available for this project.');
     <?php endif; ?>
@@ -594,7 +594,7 @@ function initMap() {
     const marker = new google.maps.Marker({
         position: location,
         map: map,
-        title: '<?= htmlspecialchars($project['project_name']) ?>'
+        title: '<?= htmlspecialchars($project['project_name'] ?? '') ?>'
     });
 }
 <?php endif; ?>

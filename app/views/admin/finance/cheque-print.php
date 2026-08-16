@@ -363,34 +363,34 @@ $amountFigures = number_format($amount, 2);
         <!-- Row 1: Bank + Date -->
         <div class="cheque-top">
             <div class="bank-info">
-                <div class="bank-name"><?= htmlspecialchars($bankName) ?></div>
-                <div class="branch-ifsc"><?= htmlspecialchars($branch) ?><?= $branch && $ifsc ? ' &bull; ' : '' ?>IFSC: <?= htmlspecialchars($ifsc) ?></div>
+                <div class="bank-name"><?= htmlspecialchars($bankName ?? '') ?></div>
+                <div class="branch-ifsc"><?= htmlspecialchars($branch ?? '') ?><?= $branch && $ifsc ? ' &bull; ' : '' ?>IFSC: <?= htmlspecialchars($ifsc ?? '') ?></div>
             </div>
             <div class="cheque-date">
                 <label>Date</label>
-                <div class="date-value"><?= htmlspecialchars($formattedDate) ?></div>
+                <div class="date-value"><?= htmlspecialchars($formattedDate ?? '') ?></div>
             </div>
         </div>
 
         <!-- Row 2: Pay -->
         <div class="cheque-pay">
             <span class="pay-label">Pay</span>
-            <span class="pay-name"><?= htmlspecialchars($payee) ?></span>
+            <span class="pay-name"><?= htmlspecialchars($payee ?? '') ?></span>
             <span class="pay-suffix">or Bearer</span>
         </div>
 
         <!-- Row 3: Amount in words -->
         <div class="cheque-amount-words">
             <span class="amt-label">Rupees</span>
-            <span class="amt-words"><?= htmlspecialchars($amountInWords) ?></span>
+            <span class="amt-words"><?= htmlspecialchars($amountInWords ?? '') ?></span>
         </div>
 
         <!-- Row 4: Account + Signatory + Amount figure -->
         <div class="cheque-bottom">
             <div>
-                <div class="cheque-acct">A/c No: <span><?= htmlspecialchars($acctNo) ?></span></div>
+                <div class="cheque-acct">A/c No: <span><?= htmlspecialchars($acctNo ?? '') ?></span></div>
                 <?php if ($purpose): ?>
-                    <div class="cheque-acct" class="style-37634">Purpose: <?= htmlspecialchars($purpose) ?></div>
+                    <div class="cheque-acct" class="style-37634">Purpose: <?= htmlspecialchars($purpose ?? '') ?></div>
                 <?php endif; ?>
             </div>
 
@@ -398,7 +398,7 @@ $amountFigures = number_format($amount, 2);
                 <div class="sig-line"></div>
                 <div class="sig-label">Authorized Signatory</div>
                 <?php if ($signatory): ?>
-                    <div class="sig-name"><?= htmlspecialchars($signatory) ?></div>
+                    <div class="sig-name"><?= htmlspecialchars($signatory ?? '') ?></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -406,7 +406,7 @@ $amountFigures = number_format($amount, 2);
         <!-- Amount in figures -->
         <div class="cheque-amount-fig">
             <span class="rupee-symbol">&#8377;</span>
-            <span class="rupee-value"><?= htmlspecialchars($amountFigures) ?></span>
+            <span class="rupee-value"><?= htmlspecialchars($amountFigures ?? '') ?></span>
         </div>
 
     </div>

@@ -37,7 +37,7 @@
                     </div>
                     <p class="mb-1 text-muted small"><?php echo htmlspecialchars($n['message'] ?? ''); ?></p>
                     <?php if (!empty($n['action_url'])): ?>
-                        <a href="<?php echo htmlspecialchars($n['action_url']); ?>" class="btn btn-sm btn-link ps-0"><?php echo __('notifications_view_details', [], 'View Details'); ?> &raquo;</a>
+                        <a href="<?php echo htmlspecialchars($n['action_url'] ?? ''); ?>" class="btn btn-sm btn-link ps-0"><?php echo __('notifications_view_details', [], 'View Details'); ?> &raquo;</a>
                     <?php endif; ?>
                 </div>
                 <?php if ($isUnread): ?>

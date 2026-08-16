@@ -24,7 +24,7 @@ $statusBadge = function ($s) {
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-chart-line me-2"></i>Module 2: Customer Sales + Allotment</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/new" class="btn btn-primary btn-sm">
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/new" class="btn btn-primary btn-sm">
             <i class="fas fa-plus me-1"></i>New Booking
         </a>
     </div>
@@ -63,7 +63,7 @@ $statusBadge = function ($s) {
         <div class="aps-cp-card">
             <div class="aps-cp-card-header d-flex justify-content-between">
                 <h5 class="m-0"><i class="fas fa-list me-2"></i>Recent Bookings</h5>
-                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings" class="btn btn-link btn-sm">View all <i class="fas fa-arrow-right"></i></a>
+                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings" class="btn btn-link btn-sm">View all <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="aps-cp-card-body p-0">
                 <div class="table-responsive"><table class="table table-sm m-0">
@@ -82,7 +82,7 @@ $statusBadge = function ($s) {
                         <?php else: foreach ($recent as $b): ?>
                             <tr>
                                 <td>
-                                    <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($b['id'] ?? 0) ?>">
+                                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($b['id'] ?? 0) ?>">
                                         <?= htmlspecialchars((string)($b['booking_number'] ?? '')) ?>
                                     </a>
                                 </td>
@@ -121,7 +121,7 @@ $statusBadge = function ($s) {
                                 <td><?= htmlspecialchars((string)($o['due_date'] ?? '')) ?></td>
                                 <td class="text-end text-danger fw-bold">&#8377;<?= number_format((float)($o['amount_due'] ?? 0)) ?></td>
                                 <td>
-                                    <a class="btn btn-sm btn-outline-warning" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($o['booking_id'] ?? 0) ?>">Open</a>
+                                    <a class="btn btn-sm btn-outline-warning" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($o['booking_id'] ?? 0) ?>">Open</a>
                                 </td>
                             </tr>
                         <?php endforeach; endif; ?>

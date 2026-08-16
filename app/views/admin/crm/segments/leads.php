@@ -60,7 +60,7 @@ $leads = $leads ?? [];
                             <?php foreach ($leads as $i => $l): ?>
                                 <tr>
                                     <td class="text-muted"><?= $i + 1 ?></td>
-                                    <td><a href="<?= BASE_URL ?>/admin/leads/<?= $l['id'] ?>" class="fw-bold text-decoration-none"><?= htmlspecialchars($l['name']) ?></a></td>
+                                    <td><a href="<?= BASE_URL ?>/admin/leads/<?= $l['id'] ?>" class="fw-bold text-decoration-none"><?= htmlspecialchars($l['name'] ?? '') ?></a></td>
                                     <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>
                                     <td><small class="text-muted"><?= htmlspecialchars($l['email'] ?? '') ?></small></td>
                                     <td><span class="badge bg-light text-dark"><?= htmlspecialchars($l['source'] ?? 'N/A') ?></span></td>

@@ -45,17 +45,17 @@ $filterTo = $_GET['to'] ?? '';
                     <select name="agent" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach ($agents as $ag): ?>
-                            <option value="<?= htmlspecialchars($ag) ?>" <?= $filterAgent === $ag ? 'selected' : '' ?>><?= htmlspecialchars($ag) ?></option>
+                            <option value="<?= htmlspecialchars($ag ?? '') ?>" <?= $filterAgent === $ag ? 'selected' : '' ?>><?= htmlspecialchars($ag ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">From</label>
-                    <input type="date" name="from" value="<?= htmlspecialchars($filterFrom) ?>" class="form-control form-control-sm">
+                    <input type="date" name="from" value="<?= htmlspecialchars($filterFrom ?? '') ?>" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">To</label>
-                    <input type="date" name="to" value="<?= htmlspecialchars($filterTo) ?>" class="form-control form-control-sm">
+                    <input type="date" name="to" value="<?= htmlspecialchars($filterTo ?? '') ?>" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i>Filter</button>
@@ -81,12 +81,12 @@ $filterTo = $_GET['to'] ?? '';
                             <tr>
                                 <td>#<?= $s['id'] ?></td>
                                 <td><?= htmlspecialchars($s['lead_name'] ?? 'N/A') ?></td>
-                                <td><code class="small"><?= htmlspecialchars($s['phone']) ?></code></td>
+                                <td><code class="small"><?= htmlspecialchars($s['phone'] ?? '') ?></code></td>
                                 <td><span class="aps-cp-badge badge bg-secondary"><?= htmlspecialchars($s['ai_agent_id'] ?? 'N/A') ?></span></td>
                                 <td><?= $s['duration_seconds'] > 0 ? round($s['duration_seconds']/60,1).'m' : '-' ?></td>
                                 <td><span class="aps-cp-badge badge bg-<?= $s['customer_response'] === 'interested' ? 'success' : ($s['customer_response'] === 'dnd' ? 'danger' : ($s['customer_response'] === 'callback' ? 'warning' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($s['customer_response'] ?? '-')) ?></span></td>
                                 <td><span class="text-<?= $s['sentiment'] === 'positive' ? 'success' : ($s['sentiment'] === 'negative' ? 'danger' : 'muted') ?>"><?= ucfirst(htmlspecialchars($s['sentiment'] ?? '-')) ?></span></td>
-                                <td><span class="aps-cp-badge badge bg-<?= $s['status'] === 'completed' ? 'success' : ($s['status'] === 'failed' ? 'danger' : ($s['status'] === 'in_progress' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($s['status'])) ?></span></td>
+                                <td><span class="aps-cp-badge badge bg-<?= $s['status'] === 'completed' ? 'success' : ($s['status'] === 'failed' ? 'danger' : ($s['status'] === 'in_progress' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($s['status'] ?? '')) ?></span></td>
                                 <td class="text-muted small"><?= date('d M Y H:i', strtotime($s['created_at'])) ?></td>
                                 <td>
                                     <?php if ($s['call_transcript']): ?>
@@ -104,7 +104,7 @@ $filterTo = $_GET['to'] ?? '';
                             <div class="modal-header"><h5 class="modal-title">Call #<?= $s['id'] ?> — <?= htmlspecialchars($s['lead_name'] ?? '') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                             <div class="modal-body">
                                 <h6>Transcript</h6><pre class="bg-light p-3 rounded small" class="style-82023"><?= htmlspecialchars($s['call_transcript'] ?? '') ?></pre>
-                                <?php if ($s['ai_summary']): ?><h6 class="mt-3">AI Summary</h6><p><?= htmlspecialchars($s['ai_summary']) ?></p><?php endif; ?>
+                                <?php if ($s['ai_summary']): ?><h6 class="mt-3">AI Summary</h6><p><?= htmlspecialchars($s['ai_summary'] ?? '') ?></p><?php endif; ?>
                             </div>
                         </div></div></div>
                     <?php endif; ?>

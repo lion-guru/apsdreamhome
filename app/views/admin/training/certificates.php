@@ -53,7 +53,7 @@ $page_description = 'Manage issued certificates';
                         <td>
                             <div class="btn-group">
                                 <?php if (!empty($c['certificate_url'])): ?>
-                                <a href="<?= htmlspecialchars($c['certificate_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-external-link-alt"></i></a>
+                                <a href="<?= htmlspecialchars($c['certificate_url'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-external-link-alt"></i></a>
                                 <?php endif; ?>
                                 <a href="<?= BASE_URL ?>/admin/training/certificates/download/<?= $c['id'] ?>" class="btn btn-sm btn-outline-success" title="Download"><i class="fas fa-download"></i></a>
                             </div>

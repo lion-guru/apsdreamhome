@@ -9,9 +9,9 @@
 <?php if (isset($breadcrumbs)): ?>
     <?php foreach ($breadcrumbs as $crumb): ?>
         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
         <?php else: ?>
-            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
         <?php endif; ?>
     <?php endforeach; ?>
 <?php else: ?>
@@ -50,7 +50,7 @@
                                 </div>
                                 <p class="card-text text-muted mb-4">
                                     <i class="fas fa-quote-left fa-lg text-primary opacity-25 me-2"></i>
-                                    <?= htmlspecialchars($message) ?>
+                                    <?= htmlspecialchars($message ?? '') ?>
                                 </p>
                                 <div class="d-flex align-items-center mt-auto">
                                     <div class="flex-shrink-0">
@@ -59,8 +59,8 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0 fw-bold"><?= htmlspecialchars($name) ?></h6>
-                                        <small class="text-muted"><?= htmlspecialchars($designation) ?></small>
+                                        <h6 class="mb-0 fw-bold"><?= htmlspecialchars($name ?? '') ?></h6>
+                                        <small class="text-muted"><?= htmlspecialchars($designation ?? '') ?></small>
                                     </div>
                                 </div>
                             </div>

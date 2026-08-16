@@ -81,8 +81,8 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                             <?php if (!empty($colony['image_path'])): ?>
                                 <?php $imgRaw = $colony['image_path'] ?? '';
                                       $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-                                <img src="<?= htmlspecialchars($imgSrc) ?>"
-                                     alt="<?= htmlspecialchars($colony['name']) ?>"
+                                <img src="<?= htmlspecialchars($imgSrc ?? '') ?>"
+                                     alt="<?= htmlspecialchars($colony['name'] ?? '') ?>"
                                      class="w-100" class="style-46386">
                             <?php else: ?>
                                 <div class="w-100 d-flex align-items-center justify-content-center"
@@ -95,7 +95,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                             </span>
                         </div>
                         <div class="p-3">
-                            <h6 class="mb-1 text-dark fw-bold"><?= htmlspecialchars($colony['name']) ?></h6>
+                            <h6 class="mb-1 text-dark fw-bold"><?= htmlspecialchars($colony['name'] ?? '') ?></h6>
                             <p class="text-muted small mb-2">
                                 <i class="fas fa-map-marker-alt me-1"></i>
                                 <?= htmlspecialchars($colony['district_name'] ?? __('user_new_booking_location', 'Location')) ?>
@@ -148,12 +148,12 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                     <tbody>
                         <?php foreach ($plots as $plot): ?>
                         <tr id="plot-row-<?= (int)$plot['id'] ?>">
-                            <td><strong><?= htmlspecialchars($plot['plot_number']) ?></strong></td>
-                            <td><span class="badge bg-secondary"><?= htmlspecialchars($plot['block']) ?></span></td>
+                            <td><strong><?= htmlspecialchars($plot['plot_number'] ?? '') ?></strong></td>
+                            <td><span class="badge bg-secondary"><?= htmlspecialchars($plot['block'] ?? '') ?></span></td>
                             <td><?= number_format((float)$plot['area_sqft']) ?></td>
                             <td>
                                 <?php if (!empty($plot['dimension_label'])): ?>
-                                    <?= htmlspecialchars($plot['dimension_label']) ?>
+                                    <?= htmlspecialchars($plot['dimension_label'] ?? '') ?>
                                 <?php elseif (!empty($plot['width_ft']) && !empty($plot['length_ft'])): ?>
                                     <?= number_format((float)$plot['width_ft'], 0) ?> x <?= number_format((float)$plot['length_ft'], 0) ?> ft
                                 <?php else: ?>
@@ -165,8 +165,8 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                             <td class="text-end">
                                 <button class="btn btn-sm btn-primary aps-select-plot"
                                         data-plot-id="<?= (int)$plot['id'] ?>"
-                                        data-plot-no="<?= htmlspecialchars($plot['plot_number']) ?>"
-                                        data-block="<?= htmlspecialchars($plot['block']) ?>"
+                                        data-plot-no="<?= htmlspecialchars($plot['plot_number'] ?? '') ?>"
+                                        data-block="<?= htmlspecialchars($plot['block'] ?? '') ?>"
                                         data-area="<?= number_format((float)$plot['area_sqft']) ?>"
                                         data-dims="<?= htmlspecialchars($plot['dimension_label'] ?: ($plot['width_ft'] . 'x' . $plot['length_ft'])) ?>"
                                         data-price="<?= number_format((float)$plot['total_price']) ?>"

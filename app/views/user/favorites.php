@@ -59,7 +59,7 @@ if (!defined('BASE_URL')) {
                         <div class="property-card">
                             <!-- Property Image -->
                             <div class="property-image">
-                                <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/placeholder/property.svg') ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="img-fluid" onerror="this.src='<?= BASE_URL ?>assets/images/placeholder/property.svg'" loading="lazy">
+                                <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/placeholder/property.svg') ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="img-fluid" onerror="this.src='<?= BASE_URL ?>assets/images/placeholder/property.svg'" loading="lazy">
                                 <div class="property-overlay">
                                     <div class="property-actions">
                                         <button class="btn btn-danger btn-sm remove-favorite"
@@ -85,7 +85,7 @@ if (!defined('BASE_URL')) {
                                 <div class="property-header">
                                     <h5 class="property-title">
                                         <a href="<?php echo BASE_URL; ?>/property/<?php echo $property['id']; ?>">
-                                            <?php echo htmlspecialchars($property['title']); ?>
+                                            <?php echo htmlspecialchars($property['title'] ?? ''); ?>
                                         </a>
                                     </h5>
                                     <div class="property-location">

@@ -267,14 +267,14 @@ $language = $language ?? 'hi';
         <h2>APS Dream Homes</h2>
         <p>AI Voice Assistant</p>
         <?php if ($customer_name): ?>
-            <div class="greeting-badge">Namaste, <?= htmlspecialchars($customer_name) ?>!</div>
+            <div class="greeting-badge">Namaste, <?= htmlspecialchars($customer_name ?? '') ?>!</div>
         <?php endif; ?>
     </div>
 
     <div class="chat-area" id="chatArea">
         <div class="msg bot" id="welcomeMsg">
             <?php if ($customer_name): ?>
-                Namaste <?= htmlspecialchars($customer_name) ?>! Main APS Dream Homes ka AI assistant hoon. Aap mujhse property, booking, EMI, ya kisi bhi cheez ke baare mein baat kar sakte hain. Bolna shuru karein ya niche type karein!
+                Namaste <?= htmlspecialchars($customer_name ?? '') ?>! Main APS Dream Homes ka AI assistant hoon. Aap mujhse property, booking, EMI, ya kisi bhi cheez ke baare mein baat kar sakte hain. Bolna shuru karein ya niche type karein!
             <?php else: ?>
                 Namaste! Main APS Dream Homes ka AI assistant hoon. Aap mujhse property, booking, EMI, ya kisi bhi cheez ke baare mein baat kar sakte hain. Bolna shuru karein ya niche type karein!
             <?php endif; ?>

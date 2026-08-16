@@ -508,7 +508,7 @@
             <div class="upline-item">
                 <div class="avatar"><?php echo strtoupper(substr($parent['name'], 0, 1)); ?></div>
                 <div class="info">
-                    <div class="name"><?php echo htmlspecialchars($parent['name']); ?></div>
+                    <div class="name"><?php echo htmlspecialchars($parent['name'] ?? ''); ?></div>
                     <div class="id"><?php echo $parent['customer_id']; ?></div>
                 </div>
                 <span class="level">Level <?php echo $parent['level']; ?></span>

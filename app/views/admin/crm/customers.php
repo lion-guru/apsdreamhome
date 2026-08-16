@@ -19,8 +19,8 @@
                         <?php foreach ($customers as $c): ?>
                             <tr>
                                 <td><?= $c['id'] ?></td>
-                                <td><strong><?= htmlspecialchars($c['name']) ?></strong></td>
-                                <td><?= htmlspecialchars($c['email']) ?></td>
+                                <td><strong><?= htmlspecialchars($c['name'] ?? '') ?></strong></td>
+                                <td><?= htmlspecialchars($c['email'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($c['phone'] ?? '') ?></td>
                                 <td><span class="badge bg-primary"><?= $c['lead_count'] ?></span></td>
                                 <td><span class="badge bg-info"><?= $c['inquiry_count'] ?></span></td>

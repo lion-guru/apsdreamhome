@@ -6,8 +6,8 @@
                 <div>
                     <form method="GET" class="d-inline-flex align-items-center gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
-                        <input type="date" name="start_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($start_date); ?>">
-                        <input type="date" name="end_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($end_date); ?>">
+                        <input type="date" name="start_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($start_date ?? ''); ?>">
+                        <input type="date" name="end_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($end_date ?? ''); ?>">
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Filter</button>
                     </form>
                 </div>
@@ -55,7 +55,7 @@
 
     <div class="card aps-cp-card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Leads — <?php echo htmlspecialchars($start_date); ?> to <?php echo htmlspecialchars($end_date); ?></h5>
+            <h5 class="card-title mb-0">Leads — <?php echo htmlspecialchars($start_date ?? ''); ?> to <?php echo htmlspecialchars($end_date ?? ''); ?></h5>
             <a href="<?php echo BASE_URL; ?>/admin/reports/export?type=leads&start_date=<?php echo urlencode($start_date); ?>&end_date=<?php echo urlencode($end_date); ?>" class="btn btn-sm btn-success">
                 <i class="fas fa-download"></i> Export CSV
             </a>

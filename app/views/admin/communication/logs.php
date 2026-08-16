@@ -30,7 +30,7 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
                     <select name="channel" class="form-select">
                         <option value="">All Channels</option>
                         <?php foreach ($channels as $ch): ?>
-                            <option value="<?= htmlspecialchars($ch) ?>" <?= $filters['channel'] === $ch ? 'selected' : '' ?>><?= ucfirst($ch) ?></option>
+                            <option value="<?= htmlspecialchars($ch ?? '') ?>" <?= $filters['channel'] === $ch ? 'selected' : '' ?>><?= ucfirst($ch) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -106,9 +106,9 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
                                         </span>
                                     </td>
                                     <td>
-                                        <strong><?= htmlspecialchars($log['contact_identifier']) ?></strong>
+                                        <strong><?= htmlspecialchars($log['contact_identifier'] ?? '') ?></strong>
                                         <?php if (!empty($log['message_id'])): ?>
-                                            <br><small class="text-muted">ID: <?= htmlspecialchars($log['message_id']) ?></small>
+                                            <br><small class="text-muted">ID: <?= htmlspecialchars($log['message_id'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td>

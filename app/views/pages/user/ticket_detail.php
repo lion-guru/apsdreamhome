@@ -152,7 +152,7 @@ $isClosed = in_array($ticket['status'] ?? '', ['resolved', 'closed']);
                     <?php if (!empty($ticket['assigned_name'])): ?>
                     <tr>
                         <td class="text-muted"><?= __('user_ticket_detail_field_assigned_to', 'Assigned To') ?></td>
-                        <td><?= htmlspecialchars($ticket['assigned_name']) ?></td>
+                        <td><?= htmlspecialchars($ticket['assigned_name'] ?? '') ?></td>
                     </tr>
                     <?php endif; ?>
                     <tr>

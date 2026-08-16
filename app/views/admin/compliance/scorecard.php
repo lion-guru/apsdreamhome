@@ -182,7 +182,7 @@ function complianceBadgeClass($status) {
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <div class="rec-area" class="style-16000"><?= $rec['area'] ?></div>
-                                    <div class="rec-text"><?= htmlspecialchars($rec['recommendation']) ?></div>
+                                    <div class="rec-text"><?= htmlspecialchars($rec['recommendation'] ?? '') ?></div>
                                 </div>
                                 <span class="rec-priority bg-<?= $rec['priority'] === 'critical' ? 'danger' : ($rec['priority'] === 'high' ? 'warning' : 'success') ?> text-white ms-2"><?= $rec['priority'] ?></span>
                             </div>

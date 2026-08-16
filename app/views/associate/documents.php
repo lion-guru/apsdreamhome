@@ -115,7 +115,7 @@ $statusBadges = [
                                     <div class="doc-icon-box" class="style-96626">
                                         <i class="fas <?= $typeInfo['icon'] ?>" class="style-48136"></i>
                                     </div>
-                                    <span class="small"><?= htmlspecialchars($typeInfo['label']) ?></span>
+                                    <span class="small"><?= htmlspecialchars($typeInfo['label'] ?? '') ?></span>
                                 </div>
                             </td>
                             <td><?= htmlspecialchars($doc['title'] ?? $doc['document_name'] ?? 'Untitled') ?></td>
@@ -128,7 +128,7 @@ $statusBadges = [
                                 </a>
                                 <?php endif; ?>
                                 <?php if (($doc['status'] ?? '') === 'rejected' && !empty($doc['remarks'])): ?>
-                                <button class="btn btn-sm btn-outline-danger" title="<?= htmlspecialchars($doc['remarks']) ?>">
+                                <button class="btn btn-sm btn-outline-danger" title="<?= htmlspecialchars($doc['remarks'] ?? '') ?>">
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </button>
                                 <?php endif; ?>

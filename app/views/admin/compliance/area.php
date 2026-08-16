@@ -48,7 +48,7 @@ function areaStatusLabel($status) {
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <a href="<?= $base ?>/admin/compliance-scorecard" class="text-white-50 text-decoration-none" class="style-87981"><i class="fas fa-arrow-left me-1"></i>Back to Scorecard</a>
-                <h2 class="mb-1 fw-bold mt-1"><i class="<?= $area_icon ?> me-2"></i><?= htmlspecialchars($area_label) ?></h2>
+                <h2 class="mb-1 fw-bold mt-1"><i class="<?= $area_icon ?> me-2"></i><?= htmlspecialchars($area_label ?? '') ?></h2>
                 <p class="mb-0 opacity-75" class="style-42715">Weight: <?= round($area_weight * 100) ?>% of overall compliance</p>
             </div>
             <div class="text-end">
@@ -66,7 +66,7 @@ function areaStatusLabel($status) {
             <!-- Details -->
             <div class="p-4 mb-4" class="style-32484">
                 <h6 class="fw-bold mb-3" class="style-88720"><i class="fas fa-info-circle me-2 text-primary"></i>Check Summary</h6>
-                <p class="mb-0" class="style-36467"><?= htmlspecialchars($result['details']) ?></p>
+                <p class="mb-0" class="style-36467"><?= htmlspecialchars($result['details'] ?? '') ?></p>
             </div>
 
             <!-- Findings -->
@@ -82,7 +82,7 @@ function areaStatusLabel($status) {
                     </div>
                 <?php else: ?>
                     <?php foreach ($result['findings'] as $finding): ?>
-                        <div class="finding-item"><?= htmlspecialchars($finding) ?></div>
+                        <div class="finding-item"><?= htmlspecialchars($finding ?? '') ?></div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
@@ -100,7 +100,7 @@ function areaStatusLabel($status) {
                     </div>
                 <?php else: ?>
                     <?php foreach ($result['recommendations'] as $rec): ?>
-                        <div class="rec-item-sm"><?= htmlspecialchars($rec) ?></div>
+                        <div class="rec-item-sm"><?= htmlspecialchars($rec ?? '') ?></div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>

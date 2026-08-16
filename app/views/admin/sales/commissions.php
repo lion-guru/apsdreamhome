@@ -56,7 +56,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     ?>
                         <tr>
                             <td>
-                                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($c['booking_id'] ?? 0) ?>">
+                                <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($c['booking_id'] ?? 0) ?>">
                                     <?= htmlspecialchars((string)($c['booking_number'] ?? '')) ?>
                                 </a>
                             </td>
@@ -65,7 +65,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <td>L<?= (int)($c['level'] ?? 0) ?></td>
                             <td class="text-end"><?= number_format((float)($c['percentage'] ?? 0), 2) ?>%</td>
                             <td class="text-end">&#8377;<?= number_format((float)($c['amount'] ?? 0)) ?></td>
-                            <td><span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st) ?></span></td>
+                            <td><span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st ?? '') ?></span></td>
                         </tr>
                     <?php endforeach; endif; ?>
                 </tbody>

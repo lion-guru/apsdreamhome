@@ -6,7 +6,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="m-0"><i class="fas fa-cogs text-primary me-2"></i>MLM Plan Editor</h4>
-    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/rank-benefits" class="btn btn-outline-secondary btn-sm"><i class="fas fa-eye me-1"></i>View Benefits</a>
+    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/rank-benefits" class="btn btn-outline-secondary btn-sm"><i class="fas fa-eye me-1"></i>View Benefits</a>
 </div>
 
 <?php if ($msg = \App\Core\Session::flash('success')): ?>
@@ -16,7 +16,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
     <div class="alert alert-danger alert-dismissible fade show"><?= $msg; ?><button class="btn-close" data-bs-dismiss="alert"></button></div>
 <?php endif; ?>
 
-<form method="POST" action="<?= htmlspecialchars($base) ?>/admin/mlm/plan-editor/update">
+<form method="POST" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/plan-editor/update">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
     <!-- RANK BENEFITS TABLE -->
@@ -45,7 +45,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                     </thead>
                     <tbody>
                         <?php foreach ($benefits as $b):
-                            $rn = htmlspecialchars($b['rank_name']);
+                            $rn = htmlspecialchars($b['rank_name'] ?? '');
                         ?>
                             <tr>
                                 <td>
@@ -114,7 +114,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                         <?php foreach ($levels as $l): ?>
                             <tr>
                                 <td><?= (int)$l['level_number'] ?></td>
-                                <td class="fw-bold"><?= htmlspecialchars($l['level_name']) ?></td>
+                                <td class="fw-bold"><?= htmlspecialchars($l['level_name'] ?? '') ?></td>
                                 <td><strong><?= number_format((float)$l['direct_commission_percentage'], 1) ?>%</strong></td>
                                 <td><?= number_format((float)($l['team_commission_percentage'] ?? 0), 1) ?>%</td>
                                 <td><?= number_format((float)($l['level_difference_commission_percentage'] ?? 0), 1) ?>%</td>
@@ -129,7 +129,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 </table>
             </div>
             <div class="card-footer bg-white">
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>To edit differential levels, go to <a href="<?= htmlspecialchars($base) ?>/admin/mlm-settings/levels">MLM Settings â†’ Levels</a></small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>To edit differential levels, go to <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm-settings/levels">MLM Settings â†’ Levels</a></small>
             </div>
         </div>
     </div>
@@ -352,7 +352,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
 
     <!-- SAVE BUTTON -->
     <div class="text-end mb-4">
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Back to Dashboard</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Back to Dashboard</a>
         <button type="submit" class="btn btn-primary btn-lg" onclick="return confirmSave()">
             <i class="fas fa-save me-1"></i> Save MLM Plan
         </button>

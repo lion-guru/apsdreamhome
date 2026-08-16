@@ -179,7 +179,7 @@
         <h4 class="mb-3"><i class="fas fa-share-alt me-2"></i>Share Your Referral Code</h4>
         <p class="mb-0 opacity-75">Share this code with friends and earn points when they register!</p>
         <div class="referral-code-display">
-            <?php echo htmlspecialchars($user_referral_code); ?>
+            <?php echo htmlspecialchars($user_referral_code ?? ''); ?>
         </div>
         <div class="text-center">
             <button class="copy-btn" onclick="copyReferralCode()">
@@ -266,7 +266,7 @@
                     </div>
                     <div class="referral-details">
                         <div class="referral-name">
-                            <?php echo htmlspecialchars($referral['name']); ?>
+                            <?php echo htmlspecialchars($referral['name'] ?? ''); ?>
                             <?php if ($referral['reward_amount']): ?>
                                 <span class="level-badge <?php echo strtolower($referral['user_type'] ?? 'customer'); ?>">
                                     <?php echo ucfirst($referral['user_type'] ?? 'Customer'); ?>
@@ -275,11 +275,11 @@
                         </div>
                         <div class="referral-meta">
                             <i class="fas fa-envelope me-1"></i>
-                            <?php echo htmlspecialchars($referral['email']); ?>
+                            <?php echo htmlspecialchars($referral['email'] ?? ''); ?>
                         </div>
                         <div class="referral-meta">
                             <i class="fas fa-phone me-1"></i>
-                            <?php echo htmlspecialchars($referral['phone']); ?>
+                            <?php echo htmlspecialchars($referral['phone'] ?? ''); ?>
                         </div>
                         <div class="referral-meta">
                             <i class="fas fa-calendar me-1"></i>

@@ -22,7 +22,7 @@ $active_page = 'dashboard';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
+    <title><?php echo htmlspecialchars($page_title ?? ''); ?></title>
     <link rel="icon" type="image/png" href="<?= $base ?>/app/views/admin/assets/img/favicon.png">
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
@@ -221,7 +221,7 @@ $active_page = 'dashboard';
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
                         <div>
-                            <div class="style-46756"><?php echo htmlspecialchars($agent_name); ?></div>
+                            <div class="style-46756"><?php echo htmlspecialchars($agent_name ?? ''); ?></div>
                             <div class="style-46475"><?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?></div>
                         </div>
                         <i class="fas fa-chevron-down ms-2" class="style-46475"></i>
@@ -275,8 +275,8 @@ $active_page = 'dashboard';
             <!-- Header with Stats -->
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <h2 class="mb-1"><?php echo htmlspecialchars($page_title); ?></h2>
-                    <p class="text-muted mb-0"><?php echo htmlspecialchars($page_description); ?></p>
+                    <h2 class="mb-1"><?php echo htmlspecialchars($page_title ?? ''); ?></h2>
+                    <p class="text-muted mb-0"><?php echo htmlspecialchars($page_description ?? ''); ?></p>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="<?php echo $base; ?>/agent/leads" class="btn btn-primary">
@@ -481,7 +481,7 @@ $active_page = 'dashboard';
                                             </span>
                                             <strong><?php echo ucfirst(str_replace('_', ' ', $comm['type'] ?? 'Commission')); ?></strong>
                                             <?php if (!empty($comm['description'])): ?>
-                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description']); ?></small>
+                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description'] ?? ''); ?></small>
                                             <?php endif; ?>
                                         </div>
                                         <div class="text-end">
@@ -591,7 +591,7 @@ $active_page = 'dashboard';
                                             <small class="text-muted ms-2"><?php echo htmlspecialchars($visit['visitor_phone'] ?? $visit['lead_phone'] ?? ''); ?></small>
                                         </div>
                                         <?php if (!empty($visit['colony_name'])): ?>
-                                        <span class="badge bg-success"><?php echo htmlspecialchars($visit['colony_name']); ?></span>
+                                        <span class="badge bg-success"><?php echo htmlspecialchars($visit['colony_name'] ?? ''); ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -628,7 +628,7 @@ $active_page = 'dashboard';
                                         <div>
                                             <strong><?php echo htmlspecialchars($comm['property_title'] ?? 'Property Sale'); ?></strong>
                                             <?php if (!empty($comm['description'])): ?>
-                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description']); ?></small>
+                                            <small class="text-muted ms-2"><?php echo htmlspecialchars($comm['description'] ?? ''); ?></small>
                                             <?php endif; ?>
                                         </div>
                                         <div class="text-end">
@@ -710,7 +710,7 @@ $active_page = 'dashboard';
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center gap-3">
                                             <?php if (!empty($prop['image'])): ?>
-                                            <img src="<?php echo htmlspecialchars($prop['image']); ?>" alt="" class="style-97710">
+                                            <img src="<?php echo htmlspecialchars($prop['image'] ?? ''); ?>" alt="" class="style-97710">
                                             <?php else: ?>
                                             <div class="style-44705">
                                                 <i class="fas fa-building text-muted"></i>

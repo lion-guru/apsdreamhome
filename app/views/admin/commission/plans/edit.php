@@ -40,7 +40,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
 <div class="cp-card">
     <div class="cp-card-header">
         <div class="style-1552">
-            <h5 class="m-0" class="style-43926"><i class="fas fa-edit me-2" class="style-13856"></i><?= htmlspecialchars($plan['plan_name']) ?></h5>
+            <h5 class="m-0" class="style-43926"><i class="fas fa-edit me-2" class="style-13856"></i><?= htmlspecialchars($plan['plan_name'] ?? '') ?></h5>
             <span class="cp-version">v<?= $plan['version'] ?></span>
             <span class="cp-badge <?= $statusBadge ?>" class="style-77741"><?= ucfirst($plan['status']) ?></span>
             <?php if ($isActive): ?>
@@ -86,11 +86,11 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
             <div class="row mb-4">
                 <div class="col-md-3">
                     <label class="cp-label">Plan Name</label>
-                    <input type="text" name="plan_name" class="cp-input" value="<?= htmlspecialchars($plan['plan_name']) ?>" required <?= $canEdit ? '' : 'disabled' ?>>
+                    <input type="text" name="plan_name" class="cp-input" value="<?= htmlspecialchars($plan['plan_name'] ?? '') ?>" required <?= $canEdit ? '' : 'disabled' ?>>
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Code</label>
-                    <input type="text" class="cp-input" value="<?= htmlspecialchars($plan['plan_code']) ?>" disabled>
+                    <input type="text" class="cp-input" value="<?= htmlspecialchars($plan['plan_code'] ?? '') ?>" disabled>
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Type</label>
@@ -136,7 +136,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                             ?>
                             <tr>
                                 <td class="style-53581"><?= $lv['level_order'] ?></td>
-                                <td class="style-93158"><?= htmlspecialchars($lv['level_name']) ?></td>
+                                <td class="style-93158"><?= htmlspecialchars($lv['level_name'] ?? '') ?></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][direct_commission]" value="<?= $lv['direct_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][team_commission]" value="<?= $lv['team_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td><input type="number" name="levels[<?= $lv['id'] ?>][level_bonus]" value="<?= $lv['level_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>

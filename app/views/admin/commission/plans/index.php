@@ -53,9 +53,9 @@ $statusBadge = fn($s) => match($s) {
                 <i class="fas fa-check-circle" class="style-56297"></i>
                 <div>
                     <strong class="style-43926">Active Plan:</strong>
-                    <span class="style-55803"><?= htmlspecialchars($activePlan['plan_name']) ?></span>
+                    <span class="style-55803"><?= htmlspecialchars($activePlan['plan_name'] ?? '') ?></span>
                     <span class="cp-version">v<?= $activePlan['version'] ?></span>
-                    <span class="cp-badge bg-success ms-2"><?= htmlspecialchars($activePlan['plan_code']) ?></span>
+                    <span class="cp-badge bg-success ms-2"><?= htmlspecialchars($activePlan['plan_code'] ?? '') ?></span>
                     <span class="style-72550">
                         Global Cap: <?= $activePlan['global_cap_pct'] ?>% |
                         Track A: <?= $activePlan['track_a_pct'] ?>% |
@@ -104,10 +104,10 @@ $statusBadge = fn($s) => match($s) {
                         <?php foreach ($plans as $i => $p): ?>
                             <tr>
                                 <td><?= $i + 1 ?></td>
-                                <td><strong><?= htmlspecialchars($p['plan_name']) ?></strong></td>
-                                <td><code class="style-13856"><?= htmlspecialchars($p['plan_code']) ?></code></td>
+                                <td><strong><?= htmlspecialchars($p['plan_name'] ?? '') ?></strong></td>
+                                <td><code class="style-13856"><?= htmlspecialchars($p['plan_code'] ?? '') ?></code></td>
                                 <td><span class="cp-version">v<?= $p['version'] ?></span></td>
-                                <td><?= ucfirst(htmlspecialchars($p['plan_type'])) ?></td>
+                                <td><?= ucfirst(htmlspecialchars($p['plan_type'] ?? '')) ?></td>
                                 <td><span class="cp-badge bg-primary"><?= (int)($p['level_count'] ?? 0) ?></span></td>
                                 <td>
                                     <strong><?= $p['global_cap_pct'] ?>%</strong>

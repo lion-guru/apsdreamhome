@@ -9,11 +9,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-plus-circle me-2"></i>Create Payout Batch</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="aps-cp-card-body">
-        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches/create">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+        <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches/create">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Year <span class="text-danger">*</span></label>

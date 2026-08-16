@@ -9,7 +9,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1"><?= htmlspecialchars($page_heading) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($page_heading ?? '') ?></h2>
             <p class="text-muted mb-0">Update campaign #<?= (int)($campaign['id'] ?? 0) ?> details</p>
         </div>
         <a href="<?= $base ?>/admin/marketing-campaigns" class="btn btn-outline-secondary">

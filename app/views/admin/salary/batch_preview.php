@@ -113,7 +113,7 @@
                             <?php else: ?>
                                 <?php foreach ($entries as $e): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($e['employee_name']) ?></strong></td>
+                                        <td><strong><?= htmlspecialchars($e['employee_name'] ?? '') ?></strong></td>
                                         <td><span class="badge badge-info"><?= htmlspecialchars($e['department'] ?? '') ?></span></td>
                                         <td>₹<?= number_format($e['basic_salary']) ?></td>
                                         <td>₹<?= number_format($e['hra']) ?></td>

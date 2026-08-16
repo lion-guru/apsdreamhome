@@ -5,7 +5,7 @@ $builders = $builders ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-building me-2"></i><?= htmlspecialchars($page_heading) ?></h2>
+        <h2 class="mb-0"><i class="fas fa-building me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h2>
         <a href="<?= BASE_URL ?>/admin/builders/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Builder</a>
     </div>
 

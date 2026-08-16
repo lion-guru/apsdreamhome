@@ -42,13 +42,13 @@ $context = $contextMessages[$redirectTo] ?? '';
                     <h4 class="text-center mb-4"><i class="fas fa-sign-in-alt me-2"></i>Login</h4>
                     <?php if ($context): ?>
                         <div class="alert alert-info mb-4">
-                            <i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($context) ?>
+                            <i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($context ?? '') ?>
                         </div>
                     <?php endif; ?>
                     <form method="POST" action="<?= BASE_URL ?>/login">
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                         <?php if ($redirectTo): ?>
-                            <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirectTo) ?>">
+                            <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirectTo ?? '') ?>">
                         <?php endif; ?>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
@@ -65,7 +65,7 @@ $context = $contextMessages[$redirectTo] ?? '';
                         <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger">
                             <?php foreach ($errors as $err): ?>
-                            <div><?= htmlspecialchars($err) ?></div>
+                            <div><?= htmlspecialchars($err ?? '') ?></div>
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>

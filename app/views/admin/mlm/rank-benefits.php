@@ -6,7 +6,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-medal me-2"></i>Rank Benefits & Tiers</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/associate-ranks" class="btn btn-link btn-sm">View Associates</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks" class="btn btn-link btn-sm">View Associates</a>
     </div>
     <div class="aps-cp-card-body">
         <div class="row g-3">
@@ -18,7 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-6 col-lg-4">
                     <div class="aps-cp-rank-card">
                         <div class="aps-cp-rank-banner" class="style-78579">
-                            <i class="fas <?= htmlspecialchars($icon) ?>"></i>
+                            <i class="fas <?= htmlspecialchars($icon ?? '') ?>"></i>
                         </div>
                         <div class="aps-cp-rank-body">
                             <h4 class="m-0 mb-1"><?= htmlspecialchars(ucfirst((string)$rb['rank_name'])) ?></h4>

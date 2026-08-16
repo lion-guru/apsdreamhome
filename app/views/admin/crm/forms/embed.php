@@ -28,7 +28,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted mb-3">Copy this code and paste it wherever you want the form to appear:</p>
                     <div class="position-relative">
-                        <textarea class="form-control font-monospace" rows="3" readonly id="iframeCode"><?= htmlspecialchars($embed_code) ?></textarea>
+                        <textarea class="form-control font-monospace" rows="3" readonly id="iframeCode"><?= htmlspecialchars($embed_code ?? '') ?></textarea>
                         <button class="btn btn-sm btn-primary position-absolute" class="style-71993" onclick="copyToClipboard('iframeCode')"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="mt-3 p-3 bg-light rounded">
@@ -47,7 +47,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted mb-3">Add this code to your website's HTML. The form will load in a popup/modal:</p>
                     <div class="position-relative">
-                        <textarea class="form-control font-monospace" rows="2" readonly id="scriptCode"><?= htmlspecialchars($script_code) ?></textarea>
+                        <textarea class="form-control font-monospace" rows="2" readonly id="scriptCode"><?= htmlspecialchars($script_code ?? '') ?></textarea>
                         <button class="btn btn-sm btn-primary position-absolute" class="style-71993" onclick="copyToClipboard('scriptCode')"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                 </div>

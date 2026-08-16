@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h2 class="mb-4"><i class="fas fa-briefcase me-2 text-primary"></i>Apply for Position</h2>
-            <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+            <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div><?php endif; ?>
             <form method="POST" action="<?= BASE_URL ?>/careers/submit-application" enctype="multipart/form-data" class="card shadow-sm p-4">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="career_id" value="<?= (int)($career['id'] ?? 0) ?>">

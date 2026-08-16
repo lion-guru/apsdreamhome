@@ -26,7 +26,7 @@
                                 <?php foreach ($articles ?? [] as $article): ?>
                                 <tr>
                                     <td><?php echo $article['id']; ?></td>
-                                    <td><?php echo htmlspecialchars($article['title']); ?></td>
+                                    <td><?php echo htmlspecialchars($article['title'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($article['category'] ?? '-'); ?></td>
                                     <td><?php echo $article['views'] ?? 0; ?></td>
                                     <td>

@@ -55,11 +55,11 @@ $colonyId = (int)($colony['id'] ?? 0);
                         <tr><th class="text-muted">Total Area</th><td><?= number_format((float)($l['total_area_sqft'] ?? 0), 0) ?> sqft</td></tr>
                         <tr><th class="text-muted">Roads %</th><td><?= number_format((float)($l['road_area_pct'] ?? 0), 1) ?>%</td></tr>
                         <tr><th class="text-muted">Common %</th><td><?= number_format((float)($l['common_area_pct'] ?? 0), 1) ?>%</td></tr>
-                        <tr><th class="text-muted">Approved</th><td><?= !empty($l['approval_date']) ? '✓ '.htmlspecialchars($l['approval_date']) : '<span class="text-muted">Pending</span>' ?></td></tr>
+                        <tr><th class="text-muted">Approved</th><td><?= !empty($l['approval_date']) ? '✓ '.htmlspecialchars($l['approval_date'] ?? '') : '<span class="text-muted">Pending</span>' ?></td></tr>
                         <tr><th class="text-muted">Auth #</th><td><?= htmlspecialchars($l['approval_number'] ?? '—') ?></td></tr>
                     </table></div>
                     <?php if (!empty($l['notes'])): ?>
-                        <p class="small text-muted"><?= nl2br(htmlspecialchars($l['notes'])) ?></p>
+                        <p class="small text-muted"><?= nl2br(htmlspecialchars($l['notes'] ?? '')) ?></p>
                     <?php endif; ?>
                 </div>
             </div>

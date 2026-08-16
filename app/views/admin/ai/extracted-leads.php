@@ -69,7 +69,7 @@ $convertedCount = $convertedCount ?? 0;
                                 <td class="small"><?= htmlspecialchars($e['extracted_email'] ?? '') ?></td>
                                 <td class="small"><?= htmlspecialchars($e['extracted_budget'] ?? 'N/A') ?></td>
                                 <td class="small"><?= htmlspecialchars($e['extracted_location'] ?? 'N/A') ?></td>
-                                <td><span class="aps-cp-badge badge bg-<?= $e['interest_level'] === 'hot' ? 'danger' : ($e['interest_level'] === 'warm' ? 'warning' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($e['interest_level'])) ?></span></td>
+                                <td><span class="aps-cp-badge badge bg-<?= $e['interest_level'] === 'hot' ? 'danger' : ($e['interest_level'] === 'warm' ? 'warning' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($e['interest_level'] ?? '')) ?></span></td>
                                 <td><span class="aps-cp-badge badge bg-info"><?= str_replace('_',' ', ucfirst(htmlspecialchars($e['buying_timeline'] ?? 'N/A'))) ?></span></td>
                                 <td><span class="aps-cp-badge badge bg-<?= $e['is_verified'] ? 'success' : 'warning' ?>"><?= $e['is_verified'] ? 'Verified' : 'Pending' ?></span></td>
                                 <td>
@@ -82,7 +82,7 @@ $convertedCount = $convertedCount ?? 0;
                                 <td class="text-muted small"><?= date('d M Y', strtotime($e['created_at'])) ?></td>
                             </tr>
                             <?php if ($e['extracted_requirements']): ?>
-                                <tr><td colspan="11" class="bg-light"><small class="text-muted"><strong>Requirements:</strong> <?= htmlspecialchars($e['extracted_requirements']) ?></small></td></tr>
+                                <tr><td colspan="11" class="bg-light"><small class="text-muted"><strong>Requirements:</strong> <?= htmlspecialchars($e['extracted_requirements'] ?? '') ?></small></td></tr>
                             <?php endif; ?>
                         <?php endforeach; ?>
                         </tbody>

@@ -31,11 +31,11 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
             <?php if ($isAuthenticated): ?>
                 <div class="dropdown">
                     <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="dropdown">
-                        <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar) : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="img-fluid"
+                        <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="img-fluid"
                              alt="Profile" class="rounded-circle" class="style-35333">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><h6 class="dropdown-header"><?php echo htmlspecialchars($userName); ?></h6></li>
+                        <li><h6 class="dropdown-header"><?php echo htmlspecialchars($userName ?? ''); ?></h6></li>
                         <li><hr class="dropdown-divider"></li>
                         <?php if ($userRole === 'associate'): ?>
                             <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>associate/dashboard">
@@ -124,10 +124,10 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                     <?php if ($isAuthenticated): ?>
                         <div class="dropdown">
                             <button class="btn btn-link text-decoration-none d-flex align-items-center ms-auto p-0" type="button" data-bs-toggle="dropdown">
-                                <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar) : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="rounded-circle me-2"
+                                <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="rounded-circle me-2"
                                      alt="Profile" class="style-58830">
                                 <div class="text-start d-none d-md-block">
-                                    <div class="fw-bold small"><?php echo htmlspecialchars($userName); ?></div>
+                                    <div class="fw-bold small"><?php echo htmlspecialchars($userName ?? ''); ?></div>
                                     <div class="text-muted small">
                                         <?php echo ucfirst($userRole); ?>
                                     </div>
@@ -208,9 +208,9 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
             <!-- User Info -->
             <?php if ($isAuthenticated): ?>
                 <div class="text-center mb-4 pb-3 border-bottom">
-                    <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar) : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="rounded-circle mb-2"
+                    <img src="<?= !empty($userAvatar) ? htmlspecialchars($userAvatar ?? '') : (BASE_URL . '/assets/images/logo/apslogonew.jpg') ?>" class="rounded-circle mb-2"
                          alt="Profile" class="style-12174">
-                    <div class="fw-bold"><?php echo htmlspecialchars($userName); ?></div>
+                    <div class="fw-bold"><?php echo htmlspecialchars($userName ?? ''); ?></div>
                     <small class="text-muted"><?php echo ucfirst($userRole); ?></small>
                 </div>
             <?php endif; ?>

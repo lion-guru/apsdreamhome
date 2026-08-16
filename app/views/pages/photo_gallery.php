@@ -8,7 +8,7 @@
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>" class="style-27608">
                         <?php if (!empty($image['caption'])): ?>
                             <div class="card-body p-2">
-                                <p class="card-text small"><?php echo htmlspecialchars($image['caption']); ?></p>
+                                <p class="card-text small"><?php echo htmlspecialchars($image['caption'] ?? ''); ?></p>
                             </div>
                         <?php endif; ?>
                     </div>

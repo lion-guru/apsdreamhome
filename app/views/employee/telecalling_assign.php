@@ -1,7 +1,7 @@
 <?php $page_title = $page_title ?? 'Assign Leads'; ?>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><?php echo htmlspecialchars($page_title); ?></h4>
+        <h4 class="mb-0"><?php echo htmlspecialchars($page_title ?? ''); ?></h4>
         <button class="btn btn-primary" onclick="bulkAssign()"><i class="fas fa-users-cog me-1"></i> Bulk Assign</button>
     </div>
     <div class="card aps-cp-card">
@@ -24,7 +24,7 @@
                                 <select class="form-select form-select-sm assign-select">
                                     <option value="">Select...</option>
                                     <?php foreach ($telecallers as $tc): ?>
-                                    <option value="<?= $tc['id'] ?>"><?= htmlspecialchars($tc['name']) ?></option>
+                                    <option value="<?= $tc['id'] ?>"><?= htmlspecialchars($tc['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>

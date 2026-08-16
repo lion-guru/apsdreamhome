@@ -48,7 +48,7 @@ $department_members = $department_members ?? [];
                                     <h5 class="mb-0 fw-bold"><?= htmlspecialchars($manager['name'] ?? '') ?></h5>
                                     <div class="text-muted small"><?= htmlspecialchars($manager['designation'] ?? '') ?></div>
                                     <?php if (!empty($manager['email'])): ?>
-                                        <div class="small"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($manager['email']) ?></div>
+                                        <div class="small"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($manager['email'] ?? '') ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@ $department_members = $department_members ?? [];
                                 <h5 class="mb-0 fw-bold"><?= htmlspecialchars($employee['name'] ?? '') ?></h5>
                                 <div class="text-muted small"><?= htmlspecialchars($employee['designation'] ?? '') ?></div>
                                 <?php if (!empty($employee['department'])): ?>
-                                    <span class="dept-badge mt-1"><?= htmlspecialchars($employee['department']) ?></span>
+                                    <span class="dept-badge mt-1"><?= htmlspecialchars($employee['department'] ?? '') ?></span>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -123,10 +123,10 @@ $department_members = $department_members ?? [];
                                         </div>
                                         <div class="d-flex gap-2 mt-2">
                                             <?php if (!empty($sub['email'])): ?>
-                                                <a href="mailto:<?= htmlspecialchars($sub['email']) ?>" class="btn btn-sm btn-outline-primary py-0 px-2" class="style-20558"><i class="fas fa-envelope"></i></a>
+                                                <a href="mailto:<?= htmlspecialchars($sub['email'] ?? '') ?>" class="btn btn-sm btn-outline-primary py-0 px-2" class="style-20558"><i class="fas fa-envelope"></i></a>
                                             <?php endif; ?>
                                             <?php if (!empty($sub['phone'])): ?>
-                                                <a href="tel:<?= htmlspecialchars($sub['phone']) ?>" class="btn btn-sm btn-outline-success py-0 px-2" class="style-20558"><i class="fas fa-phone"></i></a>
+                                                <a href="tel:<?= htmlspecialchars($sub['phone'] ?? '') ?>" class="btn btn-sm btn-outline-success py-0 px-2" class="style-20558"><i class="fas fa-phone"></i></a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@ $department_members = $department_members ?? [];
                                         <td><small><?= htmlspecialchars($m['designation'] ?? '') ?></small></td>
                                         <td>
                                             <?php if (!empty($m['email'])): ?>
-                                                <a href="mailto:<?= htmlspecialchars($m['email']) ?>" class="small text-decoration-none"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($m['email']) ?></a>
+                                                <a href="mailto:<?= htmlspecialchars($m['email'] ?? '') ?>" class="small text-decoration-none"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($m['email'] ?? '') ?></a>
                                             <?php else: ?>
                                                 <span class="text-muted small">—</span>
                                             <?php endif; ?>
@@ -179,7 +179,7 @@ $department_members = $department_members ?? [];
                                             $st = strtolower($m['status'] ?? 'active');
                                             $stColor = $st === 'active' ? 'success' : ($st === 'inactive' ? 'secondary' : 'warning');
                                             ?>
-                                            <span class="badge bg-<?= $stColor ?> bg-opacity-10 text-<?= $stColor ?>"><?= ucfirst(htmlspecialchars($st)) ?></span>
+                                            <span class="badge bg-<?= $stColor ?> bg-opacity-10 text-<?= $stColor ?>"><?= ucfirst(htmlspecialchars($st ?? '')) ?></span>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

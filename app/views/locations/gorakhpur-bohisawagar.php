@@ -97,7 +97,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                         <div class="card-body aps-cp-card-body">
                             <h2 class="mb-4">About the Project</h2>
                             <div class="project-description">
-                                <?php echo nl2br(htmlspecialchars($projectDescription)); ?>
+                                <?php echo nl2br(htmlspecialchars($projectDescription ?? '')); ?>
                             </div>
 
                             <h3 class="mt-5 mb-4">Project Highlights</h3>

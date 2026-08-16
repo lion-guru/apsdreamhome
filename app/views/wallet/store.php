@@ -7,7 +7,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
+    <title><?php echo htmlspecialchars($page_title ?? ''); ?></title>
     <link rel="icon" type="image/png" href="<?= $base ?>/app/views/admin/assets/img/favicon.png">
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
@@ -59,10 +59,10 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                     <div class="store-icon <?php echo $color; ?>">
                         <i class="<?php echo $item['icon']; ?>"></i>
                     </div>
-                    <h3 class="store-title"><?php echo htmlspecialchars($item['name']); ?></h3>
-                    <p class="store-desc"><?php echo htmlspecialchars($item['description']); ?></p>
+                    <h3 class="store-title"><?php echo htmlspecialchars($item['name'] ?? ''); ?></h3>
+                    <p class="store-desc"><?php echo htmlspecialchars($item['description'] ?? ''); ?></p>
                     <div class="store-price">₹<?php echo number_format($item['price']); ?></div>
-                    <button class="btn-buy" onclick="purchaseItem('<?php echo $item['id']; ?>', '<?php echo htmlspecialchars($item['name']); ?>', <?php echo $item['price']; ?>)">
+                    <button class="btn-buy" onclick="purchaseItem('<?php echo $item['id']; ?>', '<?php echo htmlspecialchars($item['name'] ?? ''); ?>', <?php echo $item['price']; ?>)">
                         Purchase Now
                     </button>
                 </div>

@@ -22,7 +22,7 @@
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
                                             <option value="<?php echo $state['id']; ?>">
-                                                <?php echo htmlspecialchars($state['name']); ?>
+                                                <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>

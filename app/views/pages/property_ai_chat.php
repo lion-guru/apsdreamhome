@@ -34,7 +34,7 @@ $base = $base ?? BASE_URL;
                         <?php if ($property): ?>
                         <div class="mb-3">
                             <?php if (!empty($property['image'])): ?>
-                            <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?= htmlspecialchars($property['title'] ?? __('user_property_ai_chat_default_alt', 'Property')) ?>" class="img-fluid rounded mb-3">
+                            <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?= htmlspecialchars($property['title'] ?? __('user_property_ai_chat_default_alt', 'Property')) ?>" class="img-fluid rounded mb-3">
                             <?php endif; ?>
                             <h4><?= htmlspecialchars($property['title'] ?? __('user_property_ai_chat_untitled', 'Untitled')) ?></h4>
                             <p class="text-muted mb-1">
@@ -48,19 +48,19 @@ $base = $base ?? BASE_URL;
                                 <?php if (!empty($property['bedrooms'])): ?>
                                 <div class="col-4">
                                     <small class="text-muted d-block"><?= __('user_property_ai_chat_bedrooms', 'Bedrooms') ?></small>
-                                    <strong><?= htmlspecialchars($property['bedrooms']) ?></strong>
+                                    <strong><?= htmlspecialchars($property['bedrooms'] ?? '') ?></strong>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (!empty($property['bathrooms'])): ?>
                                 <div class="col-4">
                                     <small class="text-muted d-block"><?= __('user_property_ai_chat_bathrooms', 'Bathrooms') ?></small>
-                                    <strong><?= htmlspecialchars($property['bathrooms']) ?></strong>
+                                    <strong><?= htmlspecialchars($property['bathrooms'] ?? '') ?></strong>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (!empty($property['area'])): ?>
                                 <div class="col-4">
                                     <small class="text-muted d-block"><?= __('user_property_ai_chat_area', 'Area') ?></small>
-                                    <strong><?= htmlspecialchars($property['area']) ?> sq.ft</strong>
+                                    <strong><?= htmlspecialchars($property['area'] ?? '') ?> sq.ft</strong>
                                 </div>
                                 <?php endif; ?>
                             </div>

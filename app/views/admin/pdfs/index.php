@@ -9,13 +9,13 @@ $flash = $flash ?? [];
 ?>
 
 <div class="container-fluid py-4">
-    <h1 class="h3 mb-4"><?= htmlspecialchars($page_heading) ?></h1>
+    <h1 class="h3 mb-4"><?= htmlspecialchars($page_heading ?? '') ?></h1>
 
     <?php if (!empty($flash['success'])): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($flash['success']) ?></div>
+        <div class="alert alert-success"><?= htmlspecialchars($flash['success'] ?? '') ?></div>
     <?php endif; ?>
     <?php if (!empty($flash['error'])): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($flash['error']) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($flash['error'] ?? '') ?></div>
     <?php endif; ?>
 
     <div class="row g-3 mb-4">
@@ -64,7 +64,7 @@ $flash = $flash ?? [];
                     <label class="form-label">Type</label>
                     <select name="type" class="form-select" required>
                         <?php foreach ($types as $t): ?>
-                            <option value="<?= htmlspecialchars($t) ?>"><?= htmlspecialchars($t) ?></option>
+                            <option value="<?= htmlspecialchars($t ?? '') ?>"><?= htmlspecialchars($t ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -100,10 +100,10 @@ $flash = $flash ?? [];
                     <?php endif; ?>
                     <?php foreach ($recent as $f): ?>
                         <tr>
-                            <td><span class="badge bg-secondary"><?= htmlspecialchars($f['type']) ?></span></td>
-                            <td><code><?= htmlspecialchars($f['filename']) ?></code></td>
+                            <td><span class="badge bg-secondary"><?= htmlspecialchars($f['type'] ?? '') ?></span></td>
+                            <td><code><?= htmlspecialchars($f['filename'] ?? '') ?></code></td>
                             <td><?= number_format((int)$f['bytes'] / 1024, 1) ?> KB</td>
-                            <td class="text-muted small"><?= htmlspecialchars($f['mtime']) ?></td>
+                            <td class="text-muted small"><?= htmlspecialchars($f['mtime'] ?? '') ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

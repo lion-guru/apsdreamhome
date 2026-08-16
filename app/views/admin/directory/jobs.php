@@ -18,7 +18,7 @@
                             <?php foreach ($jobs as $j): ?>
                                 <tr>
                                     <td><?= $j['id'] ?></td>
-                                    <td><?= htmlspecialchars($j['title']) ?></td>
+                                    <td><?= htmlspecialchars($j['title'] ?? '') ?></td>
                                     <td><span class="badge bg-secondary"><?= str_replace('_', ' ', $j['job_type'] ?? 'gig') ?></span></td>
                                     <td><?= htmlspecialchars($j['category'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($j['business_name'] ?? '') ?></td>

@@ -7,7 +7,7 @@
                 <select id="colonyFilter" class="form-select form-select-sm d-inline-block w-auto" onchange="filterByColony(this.value)">
                     <option value="0">All Colonies</option>
                     <?php foreach ($colonies as $c): ?>
-                        <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                        <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -43,9 +43,9 @@
                     $svgH = $rows * ($rh + $gap) + $gap + 20;
                 ?>
                 <div class="colony-section mb-4" data-colony="<?= $colony['id'] ?>">
-                    <h5 class="text-primary mb-2"><?= htmlspecialchars($colony['name']) ?></h5>
+                    <h5 class="text-primary mb-2"><?= htmlspecialchars($colony['name'] ?? '') ?></h5>
                     <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light" class="style-50142">
-                        <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name']) ?> — <?= count($cplots) ?> plots</text>
+                        <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name'] ?? '') ?> — <?= count($cplots) ?> plots</text>
                         <?php foreach ($cplots as $i => $p):
                             $col = $i % $cols;
                             $row = intdiv($i, $cols);
@@ -63,13 +63,13 @@
                         ?>
                         <rect x="<?= $x ?>" y="<?= $y ?>" width="<?= $cw ?>" height="<?= $rh ?>"
                               fill="<?= $statusColor ?>" rx="3" class="plot-cell"
-                              data-plot="<?= htmlspecialchars($p['plot_number']) ?>" data-status="<?= $p['status'] ?>"
+                              data-plot="<?= htmlspecialchars($p['plot_number'] ?? '') ?>" data-status="<?= $p['status'] ?>"
                               data-colony-id="<?= $p['colony_id'] ?>">
                             <title><?= $tooltip ?></title>
                         </rect>
                         <text x="<?= $x + $cw/2 ?>" y="<?= $y + $rh/2 + 4 ?>"
                               text-anchor="middle" font-size="8" fill="#fff" pointer-events="none"
-                              class="style-30355"><?= htmlspecialchars($p['plot_number']) ?></text>
+                              class="style-30355"><?= htmlspecialchars($p['plot_number'] ?? '') ?></text>
                         <?php endforeach; ?>
                     </svg>
                 </div>

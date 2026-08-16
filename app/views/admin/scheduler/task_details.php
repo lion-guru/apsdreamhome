@@ -29,8 +29,8 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
                             </td>
                         </tr>
                         <tr><th>Schedule</th><td><code><?= htmlspecialchars($task['schedule'] ?? '') ?></code></td></tr>
-                        <tr><th>Last Run</th><td><?= !empty($task['last_run']) ? htmlspecialchars($task['last_run']) : '<span class="text-muted">Never</span>' ?></td></tr>
-                        <tr><th>Next Run</th><td><?= !empty($task['next_run']) ? htmlspecialchars($task['next_run']) : '<span class="text-muted">Not scheduled</span>' ?></td></tr>
+                        <tr><th>Last Run</th><td><?= !empty($task['last_run']) ? htmlspecialchars($task['last_run'] ?? '') : '<span class="text-muted">Never</span>' ?></td></tr>
+                        <tr><th>Next Run</th><td><?= !empty($task['next_run']) ? htmlspecialchars($task['next_run'] ?? '') : '<span class="text-muted">Not scheduled</span>' ?></td></tr>
                     </table>
                 </div>
             </div>

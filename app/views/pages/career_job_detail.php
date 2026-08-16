@@ -23,19 +23,19 @@ $job = $job ?? [];
                     <div class="card-body p-4 p-md-5">
                         <div class="d-flex flex-wrap gap-2 mb-4">
                             <?php if (!empty($job['department'])): ?>
-                                <span class="badge bg-primary"><?= htmlspecialchars($job['department']) ?></span>
+                                <span class="badge bg-primary"><?= htmlspecialchars($job['department'] ?? '') ?></span>
                             <?php endif; ?>
                             <?php if (!empty($job['location'])): ?>
-                                <span class="badge bg-info"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($job['location']) ?></span>
+                                <span class="badge bg-info"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($job['location'] ?? '') ?></span>
                             <?php endif; ?>
                             <?php if (!empty($job['experience'])): ?>
-                                <span class="badge bg-warning text-dark"><i class="fas fa-briefcase me-1"></i><?= htmlspecialchars($job['experience']) ?></span>
+                                <span class="badge bg-warning text-dark"><i class="fas fa-briefcase me-1"></i><?= htmlspecialchars($job['experience'] ?? '') ?></span>
                             <?php endif; ?>
                             <?php if (!empty($job['salary'])): ?>
-                                <span class="badge bg-success"><i class="fas fa-rupee-sign me-1"></i><?= htmlspecialchars($job['salary']) ?></span>
+                                <span class="badge bg-success"><i class="fas fa-rupee-sign me-1"></i><?= htmlspecialchars($job['salary'] ?? '') ?></span>
                             <?php endif; ?>
                             <?php if (!empty($job['job_type'])): ?>
-                                <span class="badge bg-secondary"><?= htmlspecialchars($job['job_type']) ?></span>
+                                <span class="badge bg-secondary"><?= htmlspecialchars($job['job_type'] ?? '') ?></span>
                             <?php endif; ?>
                         </div>
 
@@ -47,14 +47,14 @@ $job = $job ?? [];
                         <?php if (!empty($job['requirements'])): ?>
                             <h5 class="fw-bold mb-3">Requirements</h5>
                             <div class="text-muted mb-4" class="style-79072">
-                                <?= nl2br(htmlspecialchars($job['requirements'])) ?>
+                                <?= nl2br(htmlspecialchars($job['requirements'] ?? '')) ?>
                             </div>
                         <?php endif; ?>
 
                         <?php if (!empty($job['benefits'])): ?>
                             <h5 class="fw-bold mb-3">Benefits</h5>
                             <div class="text-muted mb-4" class="style-79072">
-                                <?= nl2br(htmlspecialchars($job['benefits'])) ?>
+                                <?= nl2br(htmlspecialchars($job['benefits'] ?? '')) ?>
                             </div>
                         <?php endif; ?>
 

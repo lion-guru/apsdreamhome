@@ -103,7 +103,7 @@
                                             <option value="<?php echo $et; ?>" <?php echo $entity_type === $et ? 'selected' : ''; ?>><?php echo ucfirst(str_replace('_', ' ', $et)); ?></option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <a href="<?php echo BASE_URL; ?>/admin/saved-searches?favorites=<?php echo $favorites_only ? '0' : '1'; ?>&entity_type=<?php echo htmlspecialchars($entity_type); ?>" class="btn btn-sm btn-outline-warning">
+                                    <a href="<?php echo BASE_URL; ?>/admin/saved-searches?favorites=<?php echo $favorites_only ? '0' : '1'; ?>&entity_type=<?php echo htmlspecialchars($entity_type ?? ''); ?>" class="btn btn-sm btn-outline-warning">
                                         <i class="fas fa-star me-1"></i><?php echo $favorites_only ? 'Show All' : 'Favorites Only'; ?>
                                     </a>
                                 </div>
@@ -142,18 +142,18 @@
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
-                                                        <strong><?php echo htmlspecialchars($s['name']); ?></strong>
+                                                        <strong><?php echo htmlspecialchars($s['name'] ?? ''); ?></strong>
                                                         <?php if (!empty($s['description'])): ?>
-                                                            <br><small class="text-muted"><?php echo htmlspecialchars($s['description']); ?></small>
+                                                            <br><small class="text-muted"><?php echo htmlspecialchars($s['description'] ?? ''); ?></small>
                                                         <?php endif; ?>
                                                     </td>
-                                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($s['entity_type']); ?></span></td>
+                                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($s['entity_type'] ?? ''); ?></span></td>
                                                     <td>
                                                         <?php
                                                         $fkeys = array_keys($s['filters'] ?? []);
                                                         $shown = array_slice($fkeys, 0, 3);
                                                         foreach ($shown as $k): ?>
-                                                            <span class="badge bg-light text-dark border me-1"><?php echo htmlspecialchars($k); ?></span>
+                                                            <span class="badge bg-light text-dark border me-1"><?php echo htmlspecialchars($k ?? ''); ?></span>
                                                         <?php endforeach;
                                                         if (count($fkeys) > 3): ?>
                                                             <span class="badge bg-light text-muted">+<?php echo count($fkeys) - 3; ?></span>
@@ -246,7 +246,7 @@
                                 <?php foreach ($history as $h): ?>
                                     <div class="border-bottom pb-2 mb-2">
                                         <div class="d-flex justify-content-between">
-                                            <span class="badge bg-secondary"><?php echo htmlspecialchars($h['entity_type']); ?></span>
+                                            <span class="badge bg-secondary"><?php echo htmlspecialchars($h['entity_type'] ?? ''); ?></span>
                                             <small class="text-muted"><?php echo date('M j, H:i', strtotime($h['created_at'])); ?></small>
                                         </div>
                                         <small class="text-muted">

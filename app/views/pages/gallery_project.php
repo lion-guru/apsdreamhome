@@ -34,7 +34,7 @@ $images = $images ?? [];
                                  class="style-31036" loading="lazy">
                             <?php if (!empty($img['title'])): ?>
                                 <div class="card-body p-2">
-                                    <p class="card-text small text-muted mb-0"><?= htmlspecialchars($img['title']) ?></p>
+                                    <p class="card-text small text-muted mb-0"><?= htmlspecialchars($img['title'] ?? '') ?></p>
                                 </div>
                             <?php endif; ?>
                         </div>

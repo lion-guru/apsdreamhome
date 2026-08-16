@@ -11,7 +11,7 @@
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit District: <?= htmlspecialchars($district['name'] ?? '') ?></h5></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($errors)): ?>
-                    <div class="alert alert-danger"><?php foreach ($errors as $e): ?><p class="mb-0"><?= htmlspecialchars($e) ?></p><?php endforeach; ?></div>
+                    <div class="alert alert-danger"><?php foreach ($errors as $e): ?><p class="mb-0"><?= htmlspecialchars($e ?? '') ?></p><?php endforeach; ?></div>
                     <?php endif; ?>
                     <form method="post" action="<?= BASE_URL ?>admin/locations/districts/edit/<?= $district['id'] ?? 0 ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

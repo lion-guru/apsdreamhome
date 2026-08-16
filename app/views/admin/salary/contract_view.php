@@ -31,7 +31,7 @@
                     <?php if ($contract['terms'] ?? ''): ?>
                     <div class="mt-3">
                         <h6>Terms & Conditions</h6>
-                        <div class="border p-3 rounded bg-light"><?= nl2br(htmlspecialchars($contract['terms'])) ?></div>
+                        <div class="border p-3 rounded bg-light"><?= nl2br(htmlspecialchars($contract['terms'] ?? '')) ?></div>
                     </div>
                     <?php endif; ?>
                 </div>

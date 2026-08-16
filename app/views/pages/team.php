@@ -418,7 +418,7 @@ foreach ($team_members ?? [] as $tm) {
                 $catSlug = strtolower(preg_replace('/[^a-zA-Z0-9]/', '-', trim($cat)));
                 // DB stores full relative path like "assets/images/team/name.jpg"
                 $photoPath = ltrim($m->photo ?? '', '/');
-                $photoUrl = !empty($photoPath) ? BASE_URL . '/' . htmlspecialchars($photoPath) : '';
+                $photoUrl = !empty($photoPath) ? BASE_URL . '/' . htmlspecialchars($photoPath ?? '') : '';
                 $hasPhoto = !empty($photoPath) && file_exists(__DIR__ . '/../../../' . $photoPath);
                 $groupColors = ['APS Warriors' => '#dc2626', 'Dream Builders' => '#2563eb', 'Nari Shakti' => '#d946ef', 'Tech Pioneers' => '#059669'];
                 $gColor = $groupColors[$m->group_name ?? ''] ?? '#0d9488';
@@ -522,7 +522,7 @@ foreach ($team_members ?? [] as $tm) {
                     <div class="col-md-6">
                         <div class="team-card" class="style-32337">
                             <div class="team-card-photo" class="style-26845">
-                                <?php $wPhotoPath = ltrim($w->photo ?? '', '/'); $wPhoto = !empty($wPhotoPath) && file_exists(__DIR__ . '/../../../' . $wPhotoPath) ? BASE_URL . '/' . htmlspecialchars($wPhotoPath) : ''; ?>
+                                <?php $wPhotoPath = ltrim($w->photo ?? '', '/'); $wPhoto = !empty($wPhotoPath) && file_exists(__DIR__ . '/../../../' . $wPhotoPath) ? BASE_URL . '/' . htmlspecialchars($wPhotoPath ?? '') : ''; ?>
                                 <?php if ($wPhoto): ?>
                                 <img src="<?= $wPhoto ?>" alt="">
                                 <?php else: ?>
@@ -574,7 +574,7 @@ foreach ($team_members ?? [] as $tm) {
                     </div>
                     <?php endif; ?>
                     <div class="group-icon"><i class="<?= htmlspecialchars($g['icon'] ?? 'fas fa-users') ?>"></i></div>
-                    <h4><?= htmlspecialchars($g['name']) ?></h4>
+                    <h4><?= htmlspecialchars($g['name'] ?? '') ?></h4>
                     <div class="slogan">"<?= htmlspecialchars($g['slogan'] ?? '') ?>"</div>
                     <p class="style-3434"><?= htmlspecialchars($g['description'] ?? '') ?></p>
                     <div class="d-flex justify-content-between align-items-end mt-3">

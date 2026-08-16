@@ -20,8 +20,8 @@ $distAt      = $pool['distributed_at'] ?? null;
 
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
-        <h5 class="m-0"><i class="fas fa-trophy me-2 text-warning"></i>Site Manager Royalty Pool — <?= htmlspecialchars($monthYear) ?></h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payout-simulator" class="btn btn-outline-primary btn-sm">
+        <h5 class="m-0"><i class="fas fa-trophy me-2 text-warning"></i>Site Manager Royalty Pool — <?= htmlspecialchars($monthYear ?? '') ?></h5>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payout-simulator" class="btn btn-outline-primary btn-sm">
             <i class="fas fa-calculator me-1"></i>Payout Simulator
         </a>
     </div>
@@ -67,7 +67,7 @@ $distAt      = $pool['distributed_at'] ?? null;
                     <div class="aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-sm mb-0">
                             <tbody>
-                                <tr><td class="text-muted">Month</td><td class="fw-bold"><?= htmlspecialchars($monthYear) ?></td></tr>
+                                <tr><td class="text-muted">Month</td><td class="fw-bold"><?= htmlspecialchars($monthYear ?? '') ?></td></tr>
                                 <tr><td class="text-muted">Total Contributed</td><td class="fw-bold">&#8377;<?= number_format($contribTotal, 2) ?></td></tr>
                                 <tr><td class="text-muted">Status</td>
                                     <td>
@@ -79,7 +79,7 @@ $distAt      = $pool['distributed_at'] ?? null;
                                     </td>
                                 </tr>
                                 <?php if ($distAt): ?>
-                                <tr><td class="text-muted">Distributed At</td><td><?= htmlspecialchars($distAt) ?></td></tr>
+                                <tr><td class="text-muted">Distributed At</td><td><?= htmlspecialchars($distAt ?? '') ?></td></tr>
                                 <?php endif; ?>
                                 <tr><td class="text-muted">Qualification Threshold</td><td>&#8377;50,00,000 (₹50 Lakhs GBV)</td></tr>
                                 <tr><td class="text-muted">Distribution Method</td><td>Equal split among qualifying Site Managers</td></tr>

@@ -36,9 +36,9 @@ $pagination = $pagination ?? [];
                 <?php if (isset($breadcrumbs)): ?>
                     <?php foreach ($breadcrumbs as $crumb): ?>
                         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
                         <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -59,7 +59,7 @@ $pagination = $pagination ?? [];
                 <label class="form-label fw-bold"><?= __('resell_search') ?></label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="<?= __('resell_search_ph') ?>" value="<?= htmlspecialchars($filters['search']) ?>">
+                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="<?= __('resell_search_ph') ?>" value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
             </div>
 
@@ -69,7 +69,7 @@ $pagination = $pagination ?? [];
                     <option value=""><?= __('resell_all_cities') ?></option>
                     <?php foreach ($cities as $city): ?>
                         <?php $cityValue = is_array($city) ? ($city['city'] ?? '') : ($city ?? ''); ?>
-                        <option value="<?= htmlspecialchars($cityValue) ?>" <?= $filters['city'] == $cityValue ? 'selected' : '' ?>>
+                        <option value="<?= htmlspecialchars($cityValue ?? '') ?>" <?= $filters['city'] == $cityValue ? 'selected' : '' ?>>
                             <?= htmlspecialchars($cityValue ?: 'Unknown') ?>
                         </option>
                     <?php endforeach; ?>
@@ -82,7 +82,7 @@ $pagination = $pagination ?? [];
                     <option value=""><?= __('resell_all_types') ?></option>
                     <?php foreach ($property_types as $type): ?>
                         <?php $typeValue = is_array($type) ? ($type['type'] ?? '') : ($type ?? ''); ?>
-                        <option value="<?= htmlspecialchars($typeValue) ?>" <?= $filters['type'] == $typeValue ? 'selected' : '' ?>>
+                        <option value="<?= htmlspecialchars($typeValue ?? '') ?>" <?= $filters['type'] == $typeValue ? 'selected' : '' ?>>
                             <?= htmlspecialchars($typeValue ?: 'Unknown') ?>
                         </option>
                     <?php endforeach; ?>
@@ -91,12 +91,12 @@ $pagination = $pagination ?? [];
 
             <div class="col-md-2">
                 <label class="form-label fw-bold"><?= __('resell_min_price') ?></label>
-                <input type="number" name="min_price" class="form-control" placeholder="Min" value="<?= htmlspecialchars($filters['min_price']) ?>">
+                <input type="number" name="min_price" class="form-control" placeholder="Min" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>">
             </div>
 
             <div class="col-md-2">
                 <label class="form-label fw-bold"><?= __('resell_max_price') ?></label>
-                <input type="number" name="max_price" class="form-control" placeholder="Max" value="<?= htmlspecialchars($filters['max_price']) ?>">
+                <input type="number" name="max_price" class="form-control" placeholder="Max" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>">
             </div>
 
             <div class="col-12 text-end mt-4">

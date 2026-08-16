@@ -44,7 +44,7 @@
                                 <tbody>
                                     <?php foreach ($sessions as $session): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($session['name']) ?></td>
+                                            <td><?= htmlspecialchars($session['name'] ?? '') ?></td>
                                             <td><?= $session['property_count'] ?> properties</td>
                                             <td><?= date('M d, Y', strtotime($session['created_at'])) ?></td>
                                             <td>
@@ -82,8 +82,8 @@
                     <div class="row" id="property-grid">
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 col-lg-4 col-xl-3 mb-4 property-card"
-                                data-name="<?= strtolower(htmlspecialchars($property['title'])) ?>"
-                                data-location="<?= strtolower(htmlspecialchars($property['location'])) ?>">
+                                data-name="<?= strtolower(htmlspecialchars($property['title'] ?? '')) ?>"
+                                data-location="<?= strtolower(htmlspecialchars($property['location'] ?? '')) ?>">
                                 <div class="card h-100 property-select-card" id="property-<?= $property['id'] ?>"
                                     onclick="toggleProperty(<?= $property['id'] ?>)" class="style-75920">
 
@@ -99,7 +99,7 @@
                                     <div class="property-image-wrapper" class="style-16984">
                                         <?php if ($property['primary_image']): ?>
                                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
-                                                class="card-img-top" alt="<?= htmlspecialchars($property['title']) ?>"
+                                                class="card-img-top" alt="<?= htmlspecialchars($property['title'] ?? '') ?>"
                                                 class="style-59893">
                                         <?php else: ?>
                                             <div class="bg-light d-flex align-items-center justify-content-center h-100">
@@ -109,9 +109,9 @@
                                     </div>
 
                                     <div class="card-body aps-cp-card-body">
-                                        <h5 class="card-title text-truncate"><?= htmlspecialchars($property['title']) ?></h5>
+                                        <h5 class="card-title text-truncate"><?= htmlspecialchars($property['title'] ?? '') ?></h5>
                                         <p class="text-muted small mb-2">
-                                            <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location']) ?>
+                                            <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location'] ?? '') ?>
                                         </p>
 
                                         <div class="d-flex justify-content-between align-items-center mb-2">

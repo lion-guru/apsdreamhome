@@ -4,7 +4,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <?php if (!empty($media['url'])): ?>
-                    <img src="<?= htmlspecialchars($media['url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($media['title'] ?? '') ?>">
+                    <img src="<?= htmlspecialchars($media['url'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($media['title'] ?? '') ?>">
                 <?php endif; ?>
                 <div class="card-body">
                     <h5><?= htmlspecialchars($media['title'] ?? 'Untitled') ?></h5>

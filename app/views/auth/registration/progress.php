@@ -28,7 +28,7 @@ $stepLabels = [
                     <i class="fas <?= $info['icon'] ?>"></i>
                 </div>
                 <div class="small mt-1 <?= $isActive ? 'fw-bold text-primary' : 'text-muted' ?>">
-                    Step <?= $num ?>: <?= htmlspecialchars($info['label']) ?>
+                    Step <?= $num ?>: <?= htmlspecialchars($info['label'] ?? '') ?>
                 </div>
             </div>
         <?php endforeach; ?>

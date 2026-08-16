@@ -109,7 +109,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
 
         <iframe
             id="dashboard-frame"
-            src="<?= $dashboardUrl ?>?colony_id=<?= $colony['id'] ?? 4 ?>&app_id=<?= htmlspecialchars($app_id) ?>"
+            src="<?= $dashboardUrl ?>?colony_id=<?= $colony['id'] ?? 4 ?>&app_id=<?= htmlspecialchars($app_id ?? '') ?>"
             loading="lazy"
             allowfullscreen
         ></iframe>

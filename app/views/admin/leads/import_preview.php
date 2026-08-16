@@ -79,7 +79,7 @@ $success_rows = $total_rows - $error_rows;
                                 <td>
                                     <?php if (!empty($row['_errors'])): ?>
                                         <?php foreach ($row['_errors'] as $err): ?>
-                                            <div class="text-danger small"><i class="fas fa-exclamation-circle me-1"></i><?= htmlspecialchars($err) ?></div>
+                                            <div class="text-danger small"><i class="fas fa-exclamation-circle me-1"></i><?= htmlspecialchars($err ?? '') ?></div>
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <i class="fas fa-check-circle text-success"></i>

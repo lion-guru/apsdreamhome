@@ -87,13 +87,13 @@ $customers = $customers ?? [];
                                     <?php if (!empty($c['phone'])): ?>
                                         <div class="d-flex align-items-center mb-1">
                                             <i class="fas fa-phone text-muted me-2" class="style-18746"></i>
-                                            <a href="tel:<?= $c['phone'] ?>" class="text-decoration-none"><?= htmlspecialchars($c['phone']) ?></a>
+                                            <a href="tel:<?= $c['phone'] ?>" class="text-decoration-none"><?= htmlspecialchars($c['phone'] ?? '') ?></a>
                                         </div>
                                     <?php endif; ?>
                                     <?php if (!empty($c['email'])): ?>
                                         <div class="d-flex align-items-center mb-1">
                                             <i class="fas fa-envelope text-muted me-2" class="style-18746"></i>
-                                            <a href="mailto:<?= $c['email'] ?>" class="text-decoration-none small"><?= htmlspecialchars($c['email']) ?></a>
+                                            <a href="mailto:<?= $c['email'] ?>" class="text-decoration-none small"><?= htmlspecialchars($c['email'] ?? '') ?></a>
                                         </div>
                                     <?php endif; ?>
                                 </div>

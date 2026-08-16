@@ -13,7 +13,7 @@
                         <select name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($users ?? [] as $emp): ?>
-                                <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name']) ?> (<?= htmlspecialchars($emp['email']) ?>)</option>
+                                <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?> (<?= htmlspecialchars($emp['email'] ?? '') ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>

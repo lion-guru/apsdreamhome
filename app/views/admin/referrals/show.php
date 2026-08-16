@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-md-3"><small class="text-muted">Referrer</small><br><strong><?= htmlspecialchars($referral['referrer_name'] ?? 'Unknown') ?></strong></div>
                     <div class="col-md-3"><small class="text-muted">Email</small><br><?= htmlspecialchars($referral['referrer_email'] ?? '') ?></div>
-                    <div class="col-md-3"><small class="text-muted">Referred Email</small><br><?= htmlspecialchars($referral['referred_email']) ?></div>
+                    <div class="col-md-3"><small class="text-muted">Referred Email</small><br><?= htmlspecialchars($referral['referred_email'] ?? '') ?></div>
                     <div class="col-md-3"><small class="text-muted">Code</small><br><code><?= htmlspecialchars($referral['referral_code'] ?? '') ?></code></div>
                 </div>
                 <hr>

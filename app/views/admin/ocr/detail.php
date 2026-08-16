@@ -111,13 +111,13 @@ $conf = (float)($doc['confidence_score'] ?? 0);
 
                         <?php if (!empty($doc['error_message'])): ?>
                             <div class="style-49565">
-                                <i class="fas fa-exclamation-triangle me-1"></i><?= htmlspecialchars($doc['error_message']) ?>
+                                <i class="fas fa-exclamation-triangle me-1"></i><?= htmlspecialchars($doc['error_message'] ?? '') ?>
                             </div>
                         <?php endif; ?>
 
                         <?php if (!empty($doc['rejection_reason'])): ?>
                             <div class="style-49565">
-                                <i class="fas fa-ban me-1"></i><strong>Rejection Reason:</strong> <?= htmlspecialchars($doc['rejection_reason']) ?>
+                                <i class="fas fa-ban me-1"></i><strong>Rejection Reason:</strong> <?= htmlspecialchars($doc['rejection_reason'] ?? '') ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -141,7 +141,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                                     <div class="ocr-field-row">
                                         <div class="ocr-field-name"><?= ucwords(str_replace('_', ' ', $fName)) ?></div>
                                         <div class="ocr-field-value <?= empty($fVal) ? 'ocr-field-empty' : '' ?>">
-                                            <?= $fVal !== null && $fVal !== '' ? htmlspecialchars($fVal) : 'Not detected' ?>
+                                            <?= $fVal !== null && $fVal !== '' ? htmlspecialchars($fVal ?? '') : 'Not detected' ?>
                                         </div>
                                     </div>
                                 <?php endforeach;
@@ -158,7 +158,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                             <h6><i class="fas fa-align-left me-1"></i>Raw Extracted Text</h6>
                         </div>
                         <div class="ocr-card-body">
-                            <div class="ocr-raw-text"><?= htmlspecialchars($doc['extracted_text']) ?></div>
+                            <div class="ocr-raw-text"><?= htmlspecialchars($doc['extracted_text'] ?? '') ?></div>
                         </div>
                     </div>
                 <?php endif; ?>

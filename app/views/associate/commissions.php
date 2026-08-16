@@ -145,11 +145,11 @@ $typeLabels = [
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small"><?php echo __('assoc_comm_from', [], 'From'); ?></label>
-                    <input type="date" name="date_from" class="form-control form-control-sm" value="<?php echo htmlspecialchars($date_from); ?>">
+                    <input type="date" name="date_from" class="form-control form-control-sm" value="<?php echo htmlspecialchars($date_from ?? ''); ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small"><?php echo __('assoc_comm_to', [], 'To'); ?></label>
-                    <input type="date" name="date_to" class="form-control form-control-sm" value="<?php echo htmlspecialchars($date_to); ?>">
+                    <input type="date" name="date_to" class="form-control form-control-sm" value="<?php echo htmlspecialchars($date_to ?? ''); ?>">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i><?php echo __('assoc_comm_filter', [], 'Filter'); ?></button>

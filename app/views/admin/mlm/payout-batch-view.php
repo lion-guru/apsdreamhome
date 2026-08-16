@@ -37,7 +37,7 @@ $payoutStatusBadge = function ($s) {
                 <span class="badge bg-secondary ms-2"><?= htmlspecialchars((string)($batch['batch_number'] ?? '')) ?></span>
             <?php endif; ?>
         </h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches" class="btn btn-link btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="aps-cp-card-body">
         <?php if (!$batch): ?>
@@ -77,8 +77,8 @@ $payoutStatusBadge = function ($s) {
                     <span class="me-3 text-muted small">Created: <?= htmlspecialchars((string)($batch['created_at'] ?? '')) ?></span>
                 </div>
                 <?php if (in_array($batch['status'], ['draft', 'pending_approval'], true)): ?>
-                    <form method="post" action="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches/<?= (int)($batch['id'] ?? 0) ?>/approve">
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+                    <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches/<?= (int)($batch['id'] ?? 0) ?>/approve">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                         <button class="btn btn-success btn-sm" type="submit">
                             <i class="fas fa-check me-1"></i>Approve Batch
                         </button>
@@ -116,7 +116,7 @@ $payoutStatusBadge = function ($s) {
                                 <td><?= htmlspecialchars((string)($p['paid_date'] ?? '—')) ?></td>
                                 <td>
                                     <?php if (in_array($p['status'] ?? '', ['pending', 'processing'], true) && in_array($batch['status'], ['approved', 'processing', 'completed'], true)): ?>
-                                        <a class="btn btn-sm btn-outline-success" href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/<?= (int)($p['id'] ?? 0) ?>/mark-paid">
+                                        <a class="btn btn-sm btn-outline-success" href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/<?= (int)($p['id'] ?? 0) ?>/mark-paid">
                                             <i class="fas fa-check"></i> Mark Paid
                                         </a>
                                     <?php endif; ?>

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $pageTitle = 'Property Details';
 
 // Initialize variables with defaults if not passed from controller
@@ -33,7 +33,7 @@ $property = $property ?? [
             <div class="col-md-8">
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white py-3">
-                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($property['title']) ?></h5>
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($property['title'] ?? '') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row mb-3">
@@ -42,7 +42,7 @@ $property = $property ?? [
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Price</div>
-                            <div class="col-sm-8"><strong class="text-success">₹<?= number_format($property['price'] ?? 0, 2) ?></strong></div>
+                            <div class="col-sm-8"><strong class="text-success">?<?= number_format($property['price'] ?? 0, 2) ?></strong></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Location</div>

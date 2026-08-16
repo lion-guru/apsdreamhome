@@ -18,9 +18,9 @@
                 <?php if (isset($breadcrumbs)): ?>
                     <?php foreach ($breadcrumbs as $crumb): ?>
                         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
-                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title'] ?? '') ?></li>
                         <?php else: ?>
-                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?><?= htmlspecialchars($crumb['url']) ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?><?= htmlspecialchars($crumb['url'] ?? '') ?>"><?= htmlspecialchars($crumb['title'] ?? '') ?></a></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -55,12 +55,12 @@
                     $newsImage = $news['image'];
                     $newsImageUrl = str_starts_with($newsImage, 'http') ? $newsImage : get_asset_url($newsImage);
                     ?>
-                    <img src="<?= htmlspecialchars($newsImageUrl) ?>" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" class="img-fluid rounded mb-4 w-100" class="style-64278">
+                    <img src="<?= htmlspecialchars($newsImageUrl ?? '') ?>" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" class="img-fluid rounded mb-4 w-100" class="style-64278">
                 <?php endif; ?>
 
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <?php if (!empty($news['category'])): ?>
-                        <span class="badge bg-primary fs-6"><?= htmlspecialchars($news['category']) ?></span>
+                        <span class="badge bg-primary fs-6"><?= htmlspecialchars($news['category'] ?? '') ?></span>
                     <?php endif; ?>
                     <small class="text-muted">
                         <i class="far fa-calendar-alt me-1"></i>
@@ -77,7 +77,7 @@
 
                 <?php if (!empty($news['summary'])): ?>
                     <div class="lead text-muted mb-4 border-start border-primary border-3 ps-3">
-                        <?= htmlspecialchars($news['summary']) ?>
+                        <?= htmlspecialchars($news['summary'] ?? '') ?>
                     </div>
                 <?php endif; ?>
 

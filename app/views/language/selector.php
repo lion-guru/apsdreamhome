@@ -10,7 +10,7 @@ $current_language = $current_language ?? 'en';
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="page-title"><?= htmlspecialchars($page_title) ?></h1>
+            <h1 class="page-title"><?= htmlspecialchars($page_title ?? '') ?></h1>
             <p class="text-muted">Choose your preferred language for the APS Dream Home platform.</p>
         </div>
     </div>

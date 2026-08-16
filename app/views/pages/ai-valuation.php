@@ -34,7 +34,7 @@ $content = $content ?? '';
                                 <select class="form-select" id="location" name="location" required>
                                     <option value=""><?= __('user_ai_valuation_select_location', 'Select Location') ?></option>
                                     <?php foreach ($locations as $location): ?>
-                                        <option value="<?= htmlspecialchars($location) ?>"><?= htmlspecialchars($location) ?></option>
+                                        <option value="<?= htmlspecialchars($location ?? '') ?>"><?= htmlspecialchars($location ?? '') ?></option>
                                     <?php endforeach; ?>
                                     <option value="Gorakhpur"><?= __('city_gorakhpur', 'Gorakhpur') ?></option>
                                     <option value="Lucknow"><?= __('city_lucknow', 'Lucknow') ?></option>
@@ -115,7 +115,7 @@ $content = $content ?? '';
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 mb-3">
                                 <div class="card property-card" class="style-75920"
-                                    onclick="selectProperty('<?= htmlspecialchars($property['location']) ?>', 
+                                    onclick="selectProperty('<?= htmlspecialchars($property['location'] ?? '') ?>', 
                                          <?= $property['area_sqft'] ?>, '<?= $property['property_type'] ?>', 
                                          <?= $property['bedrooms'] ?? 0 ?>, <?= $property['bathrooms'] ?? 0 ?>, this)">
                                     <div class="row g-0">
@@ -131,9 +131,9 @@ $content = $content ?? '';
                                         </div>
                                         <div class="col-8">
                                             <div class="card-body py-2">
-                                                <h6 class="card-title mb-1 text-truncate"><?= htmlspecialchars($property['title']) ?></h6>
+                                                <h6 class="card-title mb-1 text-truncate"><?= htmlspecialchars($property['title'] ?? '') ?></h6>
                                                 <p class="card-text small text-muted mb-1">
-                                                    <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location']) ?>
+                                                    <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location'] ?? '') ?>
                                                 </p>
                                                 <p class="card-text small mb-0">
                                                     <span class="me-2"><i class="fas fa-ruler-combined me-1"></i><?= $property['area_sqft'] ?> sqft</span>

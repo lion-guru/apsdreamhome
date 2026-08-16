@@ -33,7 +33,7 @@ $totalQueries = $totalQueries ?? 0;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fab fa-php"></i></span></div>
-                    <div><div class="aps-cp-stat-label">PHP Version</div><div class="aps-cp-stat-value fs-5"><?= htmlspecialchars($phpVersion) ?></div></div>
+                    <div><div class="aps-cp-stat-label">PHP Version</div><div class="aps-cp-stat-value fs-5"><?= htmlspecialchars($phpVersion ?? '') ?></div></div>
                 </div>
             </div></div>
         </div>
@@ -41,7 +41,7 @@ $totalQueries = $totalQueries ?? 0;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-info rounded-pill p-2"><i class="fas fa-database"></i></span></div>
-                    <div><div class="aps-cp-stat-label">MySQL Version</div><div class="aps-cp-stat-value fs-5"><?= htmlspecialchars($mysqlVersion) ?></div></div>
+                    <div><div class="aps-cp-stat-label">MySQL Version</div><div class="aps-cp-stat-value fs-5"><?= htmlspecialchars($mysqlVersion ?? '') ?></div></div>
                 </div>
             </div></div>
         </div>
@@ -49,7 +49,7 @@ $totalQueries = $totalQueries ?? 0;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-server"></i></span></div>
-                    <div><div class="aps-cp-stat-label">Server</div><div class="aps-cp-stat-value fs-6"><?= htmlspecialchars($serverSoftware) ?></div></div>
+                    <div><div class="aps-cp-stat-label">Server</div><div class="aps-cp-stat-value fs-6"><?= htmlspecialchars($serverSoftware ?? '') ?></div></div>
                 </div>
             </div></div>
         </div>

@@ -73,7 +73,7 @@ $colonies = $data['colonies'] ?? [];
               <div>
                 <strong><?= htmlspecialchars($alert['name'] ?? '') ?></strong>
                 <?php if (!empty($alert['top_risk'])): ?>
-                  <br><small class="text-muted"><?= htmlspecialchars($alert['top_risk']) ?></small>
+                  <br><small class="text-muted"><?= htmlspecialchars($alert['top_risk'] ?? '') ?></small>
                 <?php endif; ?>
               </div>
             </div>
@@ -100,7 +100,7 @@ $colonies = $data['colonies'] ?? [];
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-3">
               <div>
-                <h5 class="mb-1"><?= htmlspecialchars($colony['name']) ?></h5>
+                <h5 class="mb-1"><?= htmlspecialchars($colony['name'] ?? '') ?></h5>
                 <span class="badge bg-secondary"><?= $stage ?></span>
               </div>
               <div class="text-center">
@@ -146,14 +146,14 @@ $colonies = $data['colonies'] ?? [];
             <!-- Top Risk -->
             <?php if (!empty($colony['top_risk'])): ?>
               <div class="alert alert-danger py-2 px-3 mb-2" class="style-49273">
-                <i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars($colony['top_risk']) ?>
+                <i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars($colony['top_risk'] ?? '') ?>
               </div>
             <?php endif; ?>
 
             <!-- Recommendation -->
             <?php if (!empty($colony['recommendation'])): ?>
               <div class="alert alert-info py-2 px-3 mb-0" class="style-49273">
-                <i class="fas fa-lightbulb me-1"></i> <?= htmlspecialchars($colony['recommendation']) ?>
+                <i class="fas fa-lightbulb me-1"></i> <?= htmlspecialchars($colony['recommendation'] ?? '') ?>
               </div>
             <?php endif; ?>
           </div>

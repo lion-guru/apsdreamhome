@@ -8,8 +8,8 @@
     <div class="col-lg-12">
         <div class="page-banner mb-5" class="style-23579">
             <div class="container text-center">
-                <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Raghunath Nagri' ?></h1>
-                <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : 'Premium Township at Motiram to Jhangha Road, Gorakhpur' ?></p>
+                <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name'] ?? '') : 'Raghunath Nagri' ?></h1>
+                <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description'] ?? '') : 'Premium Township at Motiram to Jhangha Road, Gorakhpur' ?></p>
             </div>
         </div>
 
@@ -19,8 +19,8 @@
                 <div class="col-lg-7">
                     <h2 class="display-6 fw-bold text-primary mb-4">Integrated Township</h2>
                     <p class="lead text-muted mb-4">
-                        <b><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'RAGHUNATH NAGRI' ?></b> is a master-planned integrated township located at a prime location 
-                        in <?= isset($project['location']) ? htmlspecialchars($project['location']) : 'Gorakhpur' ?>. Spread across more than 15 acres, it is designed to provide a 
+                        <b><?= isset($project['name']) ? htmlspecialchars($project['name'] ?? '') : 'RAGHUNATH NAGRI' ?></b> is a master-planned integrated township located at a prime location 
+                        in <?= isset($project['location']) ? htmlspecialchars($project['location'] ?? '') : 'Gorakhpur' ?>. Spread across more than 15 acres, it is designed to provide a 
                         luxurious and convenient lifestyle.
                     </p>
                     <p class="text-muted">
@@ -80,7 +80,7 @@
                         <div class="col-6 col-md-4 col-lg-3">
                             <div class="card h-100 border-0 shadow-sm text-center p-4 hover-up">
                                 <div class="mb-3">
-                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['alt_text']) ?>" class="img-fluid" class="style-46452">
+                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['alt_text'] ?? '') ?>" class="img-fluid" class="style-46452">
                                 </div>
                                 <h6 class="fw-bold mb-0"><?= $item['title'] ?></h6>
                             </div>

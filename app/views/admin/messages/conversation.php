@@ -14,7 +14,7 @@
                 ?>"><?= ucfirst($role) ?></span>
                 <?= htmlspecialchars($other_user['email'] ?? '') ?>
                 <?php if (!empty($other_user['phone'])): ?>
-                    &middot; <?= htmlspecialchars($other_user['phone']) ?>
+                    &middot; <?= htmlspecialchars($other_user['phone'] ?? '') ?>
                 <?php endif; ?>
             </small>
         </div>

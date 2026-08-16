@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = $page_title ?? 'Social Account';
 $platforms = $platforms ?? [];
 $account = $account ?? null;
@@ -30,13 +30,13 @@ $isEdit = !empty($account);
 
                     <div class="mb-3">
                         <label class="form-label">Account Name</label>
-                        <input type="text" name="account_name" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_name']) : '' ?>" placeholder="e.g. APS Dream Home Official" required>
+                        <input type="text" name="account_name" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_name'] ?? '') : '' ?>" placeholder="e.g. APS Dream Home Official" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Platform Account / Page ID</label>
-                        <input type="text" name="account_id" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_id']) : '' ?>" placeholder="Facebook Page ID or Business Manager ID" <?= $isEdit ? 'disabled' : 'required' ?>>
-                        <?php if ($isEdit): ?><input type="hidden" name="account_id" value="<?= htmlspecialchars($account['account_id']) ?>"><?php endif; ?>
+                        <input type="text" name="account_id" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_id'] ?? '') : '' ?>" placeholder="Facebook Page ID or Business Manager ID" <?= $isEdit ? 'disabled' : 'required' ?>>
+                        <?php if ($isEdit): ?><input type="hidden" name="account_id" value="<?= htmlspecialchars($account['account_id'] ?? '') ?>"><?php endif; ?>
                     </div>
 
                     <div class="mb-3">

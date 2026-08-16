@@ -58,7 +58,7 @@ ob_start();
                                 <select class="form-select" name="template_id" id="templateSelect" onchange="loadTemplate()">
                                     <option value="">Custom content</option>
                                     <?php foreach ($templates as $t): ?>
-                                                        <option value="<?= $t['id'] ?>" data-type="<?= $t['type'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '', ENT_QUOTES) ?>" data-body="<?= htmlspecialchars($t['body'], ENT_QUOTES) ?>"><?= htmlspecialchars($t['name']) ?> (<?= ucfirst($t['type']) ?>)</option>
+                                                        <option value="<?= $t['id'] ?>" data-type="<?= $t['type'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '', ENT_QUOTES) ?>" data-body="<?= htmlspecialchars($t['body'], ENT_QUOTES) ?>"><?= htmlspecialchars($t['name'] ?? '') ?> (<?= ucfirst($t['type']) ?>)</option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

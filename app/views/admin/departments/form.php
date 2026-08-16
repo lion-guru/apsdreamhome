@@ -74,7 +74,7 @@
                                         <option value="">— Select Head —</option>
                                         <?php foreach ($users as $u): ?>
                                             <option value="<?= $u['id'] ?>" <?= ($department['head_user_id'] ?? '') == $u['id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($u['name']) ?>
+                                                <?= htmlspecialchars($u['name'] ?? '') ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -88,7 +88,7 @@
                                         <?php foreach ($departments as $d): ?>
                                             <?php if (!$department || $d['id'] != $department['id']): ?>
                                                 <option value="<?= $d['id'] ?>" <?= ($department['parent_dept_id'] ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name']) ?>
+                                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name'] ?? '') ?>
                                                 </option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>

@@ -59,10 +59,10 @@ $webhooks = $webhooks ?? [];
                                 <tbody>
                                 <?php foreach ($apps as $app): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($app['dev_name']) ?></strong></td>
-                                        <td><?= htmlspecialchars($app['email']) ?></td>
-                                        <td><span class="aps-cp-badge badge bg-<?= $app['status'] === 'active' ? 'success' : ($app['status'] === 'suspended' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($app['status'])) ?></span></td>
-                                        <td class="text-muted small"><?= htmlspecialchars($app['created_at']) ?></td>
+                                        <td><strong><?= htmlspecialchars($app['dev_name'] ?? '') ?></strong></td>
+                                        <td><?= htmlspecialchars($app['email'] ?? '') ?></td>
+                                        <td><span class="aps-cp-badge badge bg-<?= $app['status'] === 'active' ? 'success' : ($app['status'] === 'suspended' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($app['status'] ?? '')) ?></span></td>
+                                        <td class="text-muted small"><?= htmlspecialchars($app['created_at'] ?? '') ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>
@@ -81,8 +81,8 @@ $webhooks = $webhooks ?? [];
                     <?php else: ?>
                         <?php foreach ($recentCalls as $call): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div><strong class="small"><?= htmlspecialchars($call['key_name']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($call['service_name']) ?></small></div>
-                                <div class="text-end"><span class="badge bg-secondary"><?= number_format($call['usage_count']) ?> calls</span><br><small class="text-muted"><?= htmlspecialchars($call['last_used_at']) ?></small></div>
+                                <div><strong class="small"><?= htmlspecialchars($call['key_name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($call['service_name'] ?? '') ?></small></div>
+                                <div class="text-end"><span class="badge bg-secondary"><?= number_format($call['usage_count']) ?> calls</span><br><small class="text-muted"><?= htmlspecialchars($call['last_used_at'] ?? '') ?></small></div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -96,8 +96,8 @@ $webhooks = $webhooks ?? [];
                     <?php else: ?>
                         <?php foreach ($webhooks as $wh): ?>
                             <div class="mb-2 p-2 bg-light rounded">
-                                <strong class="small"><?= htmlspecialchars($wh['name']) ?></strong><br>
-                                <code class="small text-muted"><?= htmlspecialchars(mb_substr($wh['url'], 0, 50)) ?>...</code><br>
+                                <strong class="small"><?= htmlspecialchars($wh['name'] ?? '') ?></strong><br>
+                                <code class="small text-muted"><?= htmlspecialchars(mb_substr($wh['url'] ?? '', 0, 50)) ?>...</code><br>
                                 <span class="aps-cp-badge badge bg-<?= $wh['is_active'] ? 'success' : 'secondary' ?> mt-1"><?= $wh['is_active'] ? 'Active' : 'Inactive' ?></span>
                             </div>
                         <?php endforeach; ?>

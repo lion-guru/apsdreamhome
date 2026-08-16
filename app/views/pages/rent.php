@@ -172,7 +172,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                 <div class="col-md-6 col-lg-4 scroll-reveal">
                     <div class="rent-card h-100">
                         <div class="card-img-wrap">
-                            <img src="<?= $propImage ?>" alt="<?= htmlspecialchars($propTitle) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>/assets/images/properties/placeholder.jpg'">
+                            <img src="<?= $propImage ?>" alt="<?= htmlspecialchars($propTitle ?? '') ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>/assets/images/properties/placeholder.jpg'">
                             <div class="img-badges">
                                 <span class="badge" class="style-90511">
                                     <i class="fas fa-key me-1"></i>For Rent
@@ -185,7 +185,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <div class="prop-name"><?= htmlspecialchars($propTitle) ?></div>
+                            <div class="prop-name"><?= htmlspecialchars($propTitle ?? '') ?></div>
                             <div class="prop-location">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <?= htmlspecialchars($property['location'] ?? $property['city_name'] ?? $property['address'] ?? 'Location TBD') ?>
@@ -193,7 +193,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 
                             <?php if (!empty($property['description'])): ?>
                                 <p class="style-88890">
-                                    <?= htmlspecialchars($property['description']) ?>
+                                    <?= htmlspecialchars($property['description'] ?? '') ?>
                                 </p>
                             <?php endif; ?>
 
@@ -235,7 +235,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                                 <div class="prop-actions">
                                     <button class="btn btn-interest"
                                             data-id="<?= $property['id'] ?? '' ?>"
-                                            data-name="<?= htmlspecialchars($propTitle) ?>"
+                                            data-name="<?= htmlspecialchars($propTitle ?? '') ?>"
                                             onclick="showPropertyInterestModal(this)">
                                         <i class="fas fa-hand-pointer me-1"></i>Interested
                                     </button>

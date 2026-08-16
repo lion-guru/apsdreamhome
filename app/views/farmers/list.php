@@ -173,7 +173,7 @@
                                                         <?= strtoupper(substr($farmer['name'], 0, 1)) ?>
                                                     </div>
                                                     <div>
-                                                        <strong><?= htmlspecialchars($farmer['name']) ?></strong>
+                                                        <strong><?= htmlspecialchars($farmer['name'] ?? '') ?></strong>
                                                         <?php if ($farmer['aadhar_number']): ?>
                                                             <br><small class="text-muted">
                                                                 Aadhaar: <?= htmlspecialchars(substr($farmer['aadhar_number'], -4)) ?>
@@ -185,15 +185,15 @@
                                             <td>
                                                 <div>
                                                     <i class="fas fa-phone mr-1 text-success"></i>
-                                                    <a href="tel:<?= htmlspecialchars($farmer['phone']) ?>">
-                                                        <?= htmlspecialchars($farmer['phone']) ?>
+                                                    <a href="tel:<?= htmlspecialchars($farmer['phone'] ?? '') ?>">
+                                                        <?= htmlspecialchars($farmer['phone'] ?? '') ?>
                                                     </a>
                                                 </div>
                                                 <?php if ($farmer['email']): ?>
                                                     <div class="mt-1">
                                                         <i class="fas fa-envelope mr-1 text-primary"></i>
-                                                        <a href="mailto:<?= htmlspecialchars($farmer['email']) ?>">
-                                                            <?= htmlspecialchars($farmer['email']) ?>
+                                                        <a href="mailto:<?= htmlspecialchars($farmer['email'] ?? '') ?>">
+                                                            <?= htmlspecialchars($farmer['email'] ?? '') ?>
                                                         </a>
                                                     </div>
                                                 <?php endif; ?>
@@ -254,7 +254,7 @@
                                                     </a>
                                                     <button type="button"
                                                             class="btn btn-outline-danger btn-sm"
-                                                            onclick="deleteFarmer(<?= $farmer['id'] ?>, '<?= htmlspecialchars($farmer['name']) ?>')"
+                                                            onclick="deleteFarmer(<?= $farmer['id'] ?>, '<?= htmlspecialchars($farmer['name'] ?? '') ?>')"
                                                             title="Delete">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </button>

@@ -120,7 +120,7 @@ $content = ob_start();
                         <tbody>
                             <?php foreach ($topIntents as $i): ?>
                                 <tr>
-                                    <td><code><?= htmlspecialchars($i['detected_intent']) ?></code></td>
+                                    <td><code><?= htmlspecialchars($i['detected_intent'] ?? '') ?></code></td>
                                     <td><span class="badge bg-primary"><?= $i['cnt'] ?></span></td>
                                 </tr>
                             <?php endforeach; ?>

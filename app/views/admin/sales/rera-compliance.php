@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </table></div>
 
             <h6 class="mt-4"><?= __('sale_add_quarterly_filing') ?></h6>
-            <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/rera/store" class="row g-2 align-items-end">
+            <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/rera/store" class="row g-2 align-items-end">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
                 <input type="hidden" name="colony_id" value="<?= $selected_colony ?>">
                 <div class="col-md-2">

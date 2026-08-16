@@ -45,7 +45,7 @@ ob_start();
                                             <span class="badge bg-info">Aadhaar</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td><code><?= htmlspecialchars($log['identifier']) ?></code></td>
+                                    <td><code><?= htmlspecialchars($log['identifier'] ?? '') ?></code></td>
                                     <td>
                                         <?php if ($log['success']): ?>
                                             <span class="badge bg-success"><i class="fas fa-check me-1"></i>Success</span>

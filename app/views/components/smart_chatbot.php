@@ -59,7 +59,7 @@ if (isset($_SESSION['associate_id'])) {
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="message-content">
-                    <p>ðŸ'‹ Namaste <?php echo htmlspecialchars($userName); ?>! <br><br>
+                    <p>ðŸ'‹ Namaste <?php echo htmlspecialchars($userName ?? ''); ?>! <br><br>
                         Main APS AI hoon, aapka smart real estate assistant! ðŸ� <br><br>
                         ðŸ'¬ Aap mujhse pooch sakte hain:<br>
                         —¢ Property buy/sell/rent<br>

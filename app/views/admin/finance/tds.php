@@ -36,7 +36,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-4"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label"><?= __('tds_total_gross') ?></div><div class="aps-cp-stat-value">₹<?= number_format((float)($summary['total_gross'] ?? 0), 0) ?></div></div></div></div>
         <div class="col-md-4"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label"><?= __('tds_total_tds_deducted') ?></div><div class="aps-cp-stat-value text-danger">₹<?= number_format((float)($summary['total_tds'] ?? 0), 0) ?></div></div></div></div>
-        <div class="col-md-4"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label"><?= __('tds_fy') ?></div><div class="aps-cp-stat-value text-primary"><?= htmlspecialchars($fy) ?></div></div></div></div>
+        <div class="col-md-4"><div class="aps-cp-card"><div class="aps-cp-card-body"><div class="aps-cp-stat-label"><?= __('tds_fy') ?></div><div class="aps-cp-stat-value text-primary"><?= htmlspecialchars($fy ?? '') ?></div></div></div></div>
     </div>
 
     <div class="aps-cp-card">
@@ -47,7 +47,7 @@
                 </thead>
                 <tbody>
                 <?php if (empty($entries)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4"><?= __('tds_no_entries') ?> <?= htmlspecialchars($fy) ?></td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4"><?= __('tds_no_entries') ?> <?= htmlspecialchars($fy ?? '') ?></td></tr>
                 <?php else: foreach ($entries as $t): ?>
                     <tr>
                         <td><?= htmlspecialchars($t['tds_date'] ?? '-') ?></td>

@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">FY <?= htmlspecialchars($fy) ?> | Quarter <?= htmlspecialchars($quarter) ?></span>
+        <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">FY <?= htmlspecialchars($fy ?? '') ?> | Quarter <?= htmlspecialchars($quarter ?? '') ?></span>
     </div>
     <div>
         <a href="<?= BASE_URL ?>/admin/efiling/tds" class="btn btn-outline-secondary btn-sm me-1"><i class="fas fa-arrow-left me-1"></i>TDS Filing</a>
@@ -25,7 +25,7 @@ ob_start();
             <div class="col-auto">
                 <select name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
-                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -89,8 +89,8 @@ ob_start();
                             <td>#<?= $c['id'] ?></td>
                             <td class="small fw-bold"><?= htmlspecialchars($c['challan_number'] ?? '-') ?></td>
                             <td class="small"><?= htmlspecialchars($c['bsr_code'] ?? '-') ?></td>
-                            <td><span class="badge bg-secondary"><?= htmlspecialchars($c['section']) ?></span></td>
-                            <td class="small"><?= htmlspecialchars($c['assessment_year']) ?></td>
+                            <td><span class="badge bg-secondary"><?= htmlspecialchars($c['section'] ?? '') ?></span></td>
+                            <td class="small"><?= htmlspecialchars($c['assessment_year'] ?? '') ?></td>
                             <td class="fw-bold">?<?= number_format($c['total_with_charges'], 0) ?></td>
                             <td class="small"><?= date('d M Y', strtotime($c['deposit_date'])) ?></td>
                             <td><span class="badge bg-<?= $c['deposited_via'] === 'online' ? 'primary' : 'info' ?>"><?= ucfirst($c['deposited_via']) ?></span></td>

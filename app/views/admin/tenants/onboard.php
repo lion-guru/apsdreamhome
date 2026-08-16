@@ -165,7 +165,7 @@ $steps = [
                     <?php foreach ($plans as $plan): ?>
                         <div class="col-lg-3 col-md-6 mb-3">
                             <div class="plan-wizard-card <?= ($wizardData['plan_id'] ?? 1) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
-                                <h6 class="mb-2"><?= htmlspecialchars($plan['name']) ?></h6>
+                                <h6 class="mb-2"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
                                 <h4 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h4>
                                 <div class="small text-muted mt-2">
                                     <?= $plan['max_users'] ?> users Â· <?= $plan['max_leads'] ?> leads<br>
@@ -240,7 +240,7 @@ $steps = [
                         <h6 class="text-muted mb-2 mt-3">Invites (<?= count($wizardData['invite_emails']) ?>)</h6>
                         <ul class="list-unstyled small">
                             <?php foreach ($wizardData['invite_emails'] as $email): ?>
-                                <li><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($email) ?></li>
+                                <li><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($email ?? '') ?></li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>

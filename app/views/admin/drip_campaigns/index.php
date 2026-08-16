@@ -99,7 +99,7 @@ ob_start();
                                 <tr>
                                     <td>#<?= $c['id'] ?></td>
                                     <td>
-                                        <strong><?= htmlspecialchars($c['name']) ?></strong>
+                                        <strong><?= htmlspecialchars($c['name'] ?? '') ?></strong>
                                         <?php if ($c['description']): ?>
                                             <br><small class="text-muted"><?= htmlspecialchars(substr($c['description'], 0, 60)) ?></small>
                                         <?php endif; ?>

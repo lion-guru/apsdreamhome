@@ -32,7 +32,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
 <div class="container py-4">
     <?php if (!empty($errors)): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <ul class="mb-0"><?php foreach ($errors as $err): ?><li><?= htmlspecialchars($err) ?></li><?php endforeach; ?></ul>
+            <ul class="mb-0"><?php foreach ($errors as $err): ?><li><?= htmlspecialchars($err ?? '') ?></li><?php endforeach; ?></ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

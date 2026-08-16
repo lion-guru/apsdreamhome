@@ -49,7 +49,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 <div class="aps-cp-card-body py-3">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-check-circle text-success fa-lg me-3"></i>
-                        <div class="flex-grow-1"><?= htmlspecialchars($success) ?></div>
+                        <div class="flex-grow-1"><?= htmlspecialchars($success ?? '') ?></div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 <div class="aps-cp-card-body py-3">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-exclamation-circle text-danger fa-lg me-3"></i>
-                        <div class="flex-grow-1"><?= htmlspecialchars($error) ?></div>
+                        <div class="flex-grow-1"><?= htmlspecialchars($error ?? '') ?></div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
@@ -236,7 +236,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                     <?php if (!empty($acc['upi_id'])): ?>
                                     <div class="aps-cp-account-upi">
                                         <i class="fas fa-check-circle"></i>
-                                        UPI: <?= htmlspecialchars($acc['upi_id']) ?>
+                                        UPI: <?= htmlspecialchars($acc['upi_id'] ?? '') ?>
                                     </div>
                                     <?php endif; ?>
                                     <div class="text-muted mt-1" class="style-11723">

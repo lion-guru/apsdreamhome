@@ -34,7 +34,7 @@ $receipts = $receipts ?? [];
                         <tr><td class="text-muted" class="style-12616"><?= __('assoc_br_name', [], 'Name') ?></td><td><strong><?= htmlspecialchars($booking['customer_name'] ?? __('assoc_br_na', [], 'N/A')) ?></strong></td></tr>
                         <tr><td class="text-muted"><?= __('assoc_br_phone', [], 'Phone') ?></td><td>
                             <?php if (!empty($booking['customer_phone'])): ?>
-                                <a href="tel:<?= $booking['customer_phone'] ?>"><?= htmlspecialchars($booking['customer_phone']) ?></a>
+                                <a href="tel:<?= $booking['customer_phone'] ?>"><?= htmlspecialchars($booking['customer_phone'] ?? '') ?></a>
                             <?php else: ?><?= __('assoc_br_na', [], 'N/A') ?><?php endif; ?>
                         </td></tr>
                         <tr><td class="text-muted"><?= __('assoc_br_email', [], 'Email') ?></td><td><?= htmlspecialchars($booking['customer_email'] ?? __('assoc_br_na', [], 'N/A')) ?></td></tr>

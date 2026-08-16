@@ -19,7 +19,7 @@ $statusBadge = function ($s) {
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-money-check-alt me-2"></i>Payout Batches</h5>
-        <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches/create" class="btn btn-primary btn-sm">
+        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches/create" class="btn btn-primary btn-sm">
             <i class="fas fa-plus me-1"></i>New Batch
         </a>
     </div>
@@ -42,7 +42,7 @@ $statusBadge = function ($s) {
             <tbody>
                 <?php if (empty($batches)): ?>
                     <tr><td colspan="10" class="text-center py-4 text-muted">
-                        No payout batches yet — <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches/create">create the first one</a>.
+                        No payout batches yet — <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches/create">create the first one</a>.
                     </td></tr>
                 <?php else: foreach ($batches as $b): ?>
                     <tr>
@@ -59,7 +59,7 @@ $statusBadge = function ($s) {
                         <td><span class="badge <?= $statusBadge($b['status'] ?? '') ?>"><?= htmlspecialchars((string)($b['status'] ?? '')) ?></span></td>
                         <td><?= htmlspecialchars((string)($b['created_at'] ?? '')) ?></td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches/<?= (int)($b['id'] ?? 0) ?>">
+                            <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/payouts/batches/<?= (int)($b['id'] ?? 0) ?>">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>

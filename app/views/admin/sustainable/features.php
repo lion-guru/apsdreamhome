@@ -29,7 +29,7 @@ $cats = ['energy' => 'Energy', 'water' => 'Water', 'waste' => 'Waste', 'material
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h6 class="mb-1"><i class="fas <?= htmlspecialchars($f['icon'] ?? 'fa-leaf') ?> me-2 text-success"></i><?= htmlspecialchars($f['name']) ?></h6>
+                        <h6 class="mb-1"><i class="fas <?= htmlspecialchars($f['icon'] ?? 'fa-leaf') ?> me-2 text-success"></i><?= htmlspecialchars($f['name'] ?? '') ?></h6>
                         <span class="badge bg-light text-dark"><?= ucfirst($f['category']) ?></span>
                     </div>
                     <p class="small text-muted mb-2"><?= htmlspecialchars($f['description'] ?? '') ?></p>

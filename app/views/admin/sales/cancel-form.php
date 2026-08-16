@@ -13,14 +13,14 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <i class="fas fa-exclamation-triangle me-1"></i>
             <?= __('sale_cancel_warning') ?>
         </div>
-        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/cancel">
+        <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/cancel">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_reason') ?> *</label>
                     <select name="reason" class="form-select" required>
                         <?php foreach (['Customer request', 'EMI default', 'Title issue', 'Payment failure', 'Force majeure', 'Other'] as $r): ?>
-                            <option value="<?= htmlspecialchars($r) ?>"><?= htmlspecialchars($r) ?></option>
+                            <option value="<?= htmlspecialchars($r ?? '') ?>"><?= htmlspecialchars($r ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -37,7 +37,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <button class="btn btn-danger" type="submit" onclick="return confirm('Cancel this booking? Plot will be released.');">
                     <i class="fas fa-ban me-1"></i><?= __('sale_cancel_booking') ?>
                 </button>
-                <a class="btn btn-link" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>"><?= __('sale_back') ?></a>
+                <a class="btn btn-link" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>"><?= __('sale_back') ?></a>
             </div>
         </form>
     </div>

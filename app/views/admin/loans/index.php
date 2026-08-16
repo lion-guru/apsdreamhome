@@ -72,8 +72,8 @@ $emiPlans = $emiPlans ?? [];
                                 <td>₹<?= number_format($ep['emi_amount']) ?></td>
                                 <td><?= $ep['interest_rate'] ?>%</td>
                                 <td><?= $ep['tenure_months'] ?>m</td>
-                                <td><span class="aps-cp-badge badge bg-<?= $ep['status'] === 'active' ? 'success' : ($ep['status'] === 'defaulted' ? 'danger' : ($ep['status'] === 'completed' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($ep['status'])) ?></span></td>
-                                <td class="text-muted small"><?= htmlspecialchars($ep['start_date']) ?></td>
+                                <td><span class="aps-cp-badge badge bg-<?= $ep['status'] === 'active' ? 'success' : ($ep['status'] === 'defaulted' ? 'danger' : ($ep['status'] === 'completed' ? 'info' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($ep['status'] ?? '')) ?></span></td>
+                                <td class="text-muted small"><?= htmlspecialchars($ep['start_date'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

@@ -8,7 +8,7 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-briefcase me-2"></i><?= htmlspecialchars($page_heading) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-briefcase me-2"></i><?= htmlspecialchars($page_heading ?? '') ?></h4>
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addWorkScheduleModal"><i class="fas fa-plus"></i> Add Schedule</button>
     </div>
     <div class="card border-0 shadow-sm">
@@ -33,7 +33,7 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
                                         <span class="text-muted">Not set</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= !empty($emp['shift_start']) ? htmlspecialchars($emp['shift_start'] . ' - ' . $emp['shift_end']) : '<span class="text-muted">--</span>' ?></td>
+                                <td><?= !empty($emp['shift_start']) ? htmlspecialchars($emp['shift_start'] . ' - ' . $emp['shift_end'] ?? '') : '<span class="text-muted">--</span>' ?></td>
                                 <td><?= !empty($emp['ws_active']) ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>' ?></td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary edit-schedule" data-id="<?= $emp['id'] ?>" data-wsid="<?= $emp['ws_id'] ?? 0 ?>"><i class="fas fa-edit"></i></button>

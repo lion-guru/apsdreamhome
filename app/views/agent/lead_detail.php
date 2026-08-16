@@ -72,13 +72,13 @@ $activityIcons = [
             </h4>
             <div class="lead-meta">
                 <?php if (!empty($lead['phone'])): ?>
-                    <span class="me-3"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($lead['phone']) ?></span>
+                    <span class="me-3"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($lead['phone'] ?? '') ?></span>
                 <?php endif; ?>
                 <?php if (!empty($lead['email'])): ?>
-                    <span class="me-3"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email']) ?></span>
+                    <span class="me-3"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email'] ?? '') ?></span>
                 <?php endif; ?>
                 <?php if (!empty($lead['city'])): ?>
-                    <span class="me-3"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($lead['city']) ?></span>
+                    <span class="me-3"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($lead['city'] ?? '') ?></span>
                 <?php endif; ?>
                 <span><i class="fas fa-clock me-1"></i>Created <?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></span>
             </div>
@@ -143,7 +143,7 @@ $activityIcons = [
                     <?php if (!empty($lead['notes'])): ?>
                     <div class="col-12">
                         <label class="text-muted small">Notes</label>
-                        <div class="fw-semibold"><?= nl2br(htmlspecialchars($lead['notes'])) ?></div>
+                        <div class="fw-semibold"><?= nl2br(htmlspecialchars($lead['notes'] ?? '')) ?></div>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -220,8 +220,8 @@ $activityIcons = [
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <?php if (!empty($lead['phone'])): ?>
-                    <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-success d-flex align-items-center justify-content-center gap-2">
-                        <i class="fas fa-phone"></i>Call <?= htmlspecialchars($lead['phone']) ?>
+                    <a href="tel:<?= htmlspecialchars($lead['phone'] ?? '') ?>" class="btn btn-success d-flex align-items-center justify-content-center gap-2">
+                        <i class="fas fa-phone"></i>Call <?= htmlspecialchars($lead['phone'] ?? '') ?>
                     </a>
                     <?php endif; ?>
                     <?php if (!empty($lead['phone'])): ?>
@@ -230,7 +230,7 @@ $activityIcons = [
                     </a>
                     <?php endif; ?>
                     <?php if (!empty($lead['email'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($lead['email']) ?>" class="btn btn-outline-info d-flex align-items-center justify-content-center gap-2">
+                    <a href="mailto:<?= htmlspecialchars($lead['email'] ?? '') ?>" class="btn btn-outline-info d-flex align-items-center justify-content-center gap-2">
                         <i class="fas fa-envelope"></i>Email
                     </a>
                     <?php endif; ?>

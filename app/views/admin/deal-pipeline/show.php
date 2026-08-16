@@ -47,7 +47,7 @@
                     <?php if (!empty($deal['notes'])): ?>
                     <div class="mt-3">
                         <strong>Notes:</strong>
-                        <p class="mt-1"><?= nl2br(htmlspecialchars($deal['notes'])) ?></p>
+                        <p class="mt-1"><?= nl2br(htmlspecialchars($deal['notes'] ?? '')) ?></p>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -85,7 +85,7 @@
             <div class="card mb-3">
                 <div class="card-header aps-cp-card-header"><h5>Property</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <p><strong>Title:</strong> <?= htmlspecialchars($deal['property_title']) ?></p>
+                    <p><strong>Title:</strong> <?= htmlspecialchars($deal['property_title'] ?? '') ?></p>
                     <p><strong>Location:</strong> <?= htmlspecialchars($deal['property_location'] ?? '') ?></p>
                     <p><strong>Price:</strong> ₹<?= number_format($deal['property_price'] ?? 0) ?></p>
                 </div>

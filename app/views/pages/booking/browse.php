@@ -38,7 +38,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                             <option value=""><?= __('browse_all_colonies') ?></option>
                             <?php foreach ($colonies as $col): ?>
                             <option value="<?= (int)$col['id'] ?>" <?= ($current_colony == $col['id']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($col['name']) ?> (<?= (int)$col['available_count'] ?>)
+                                <?= htmlspecialchars($col['name'] ?? '') ?> (<?= (int)$col['available_count'] ?>)
                             </option>
                             <?php endforeach; ?>
                         </select>
@@ -94,12 +94,12 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
                             <h6 class="fw-bold mb-0">
-                                <?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number']) ?>
+                                <?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?>
                             </h6>
                             <small class="text-muted">
-                                <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name']) ?>
+                                <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name'] ?? '') ?>
                                 <?php if (!empty($plot['block'])): ?>
-                                    &middot; <?= __('browse_block') ?> <?= htmlspecialchars($plot['block']) ?>
+                                    &middot; <?= __('browse_block') ?> <?= htmlspecialchars($plot['block'] ?? '') ?>
                                 <?php endif; ?>
                             </small>
                         </div>

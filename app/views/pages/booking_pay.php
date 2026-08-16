@@ -9,7 +9,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if ($flashMessage = $_SESSION['flash_message'] ?? null): ?>
                         <div class="alert alert-<?= $_SESSION['flash_type'] ?? 'info' ?> alert-dismissible fade show">
-                            <?= htmlspecialchars($flashMessage) ?>
+                            <?= htmlspecialchars($flashMessage ?? '') ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                         <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
@@ -91,7 +91,7 @@
                                 <div class="card-body py-2">
                                     <small><strong><?= __('payment_office_visit') ?>:</strong><br>
                                     <?= __('payment_office_desc') ?><br>
-                                    <?= __('common_call') ?> <?= htmlspecialchars($phoneDisplay) ?> <?= __('common_for_details') ?></small>
+                                    <?= __('common_call') ?> <?= htmlspecialchars($phoneDisplay ?? '') ?> <?= __('common_for_details') ?></small>
                                 </div>
                             </div>
                         </div>

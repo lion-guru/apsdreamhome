@@ -69,7 +69,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                     <div class="ocr-template-item">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div>
-                                <div class="ocr-template-name"><?= htmlspecialchars($t['template_name']) ?></div>
+                                <div class="ocr-template-name"><?= htmlspecialchars($t['template_name'] ?? '') ?></div>
                                 <div class="ocr-template-type">
                                     <?= $doc_type_labels[$t['document_type']] ?? $t['document_type'] ?>
                                 </div>
@@ -84,7 +84,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                                 <?php foreach ($fields as $f):
                                     $fName = $f['name'] ?? $f['field_name'] ?? 'unknown';
                                 ?>
-                                    <span><?= htmlspecialchars($fName) ?></span>
+                                    <span><?= htmlspecialchars($fName ?? '') ?></span>
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>

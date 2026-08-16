@@ -59,7 +59,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     <?php if (!empty($booking['block'])): ?>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_pay_token_block', 'Block') ?></small>
-                        <strong><?= htmlspecialchars($booking['block']) ?></strong>
+                        <strong><?= htmlspecialchars($booking['block'] ?? '') ?></strong>
                     </div>
                     <?php endif; ?>
                     <div class="col-sm-6">
@@ -69,7 +69,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     <?php if (!empty($booking['dimension_label'])): ?>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_pay_token_dimensions', 'Dimensions') ?></small>
-                        <strong><?= htmlspecialchars($booking['dimension_label']) ?></strong>
+                        <strong><?= htmlspecialchars($booking['dimension_label'] ?? '') ?></strong>
                     </div>
                     <?php endif; ?>
                     <div class="col-sm-6">

@@ -215,7 +215,7 @@ try {
                                         <div>
                                             <small><?= htmlspecialchars(str_replace('_', ' ', $activity['commission_type'] ?? 'Activity')) ?></small>
                                             <?php if (!empty($activity['from_user'])): ?>
-                                                <br><small class="text-muted">From: <?= htmlspecialchars($activity['from_user']) ?></small>
+                                                <br><small class="text-muted">From: <?= htmlspecialchars($activity['from_user'] ?? '') ?></small>
                                             <?php endif; ?>
                                         </div>
                                         <div class="text-end">

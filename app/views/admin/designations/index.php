@@ -73,7 +73,7 @@
                             <option value="">All Departments</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['id'] ?>" <?= ($filter_dept ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name']) ?>
+                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name'] ?? '') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -111,7 +111,7 @@
                             <?php else: ?>
                                 <?php foreach ($designations as $desig): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($desig['name']) ?></strong></td>
+                                        <td><strong><?= htmlspecialchars($desig['name'] ?? '') ?></strong></td>
                                         <td><span class="badge badge-info"><?= htmlspecialchars($desig['department_code'] ?? '') ?></span> <?= htmlspecialchars($desig['department_name'] ?? '') ?></td>
                                         <td>
                                             <?php

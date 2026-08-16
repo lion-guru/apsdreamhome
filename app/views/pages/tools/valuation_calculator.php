@@ -14,7 +14,7 @@
                                 <select class="form-select" id="valCity">
                                     <option value="">-- <?php echo __('select_district', [], 'Select District'); ?> --</option>
                                     <?php foreach (($districts ?? []) as $d): ?>
-                                        <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
+                                        <option value="<?= htmlspecialchars($d['name'] ?? '') ?>"><?= htmlspecialchars($d['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                     <option value="Gorakhpur">Gorakhpur</option>
                                     <option value="Lucknow">Lucknow</option>

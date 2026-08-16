@@ -61,7 +61,7 @@ require_once __DIR__ . '/../layouts/header.php';
                         }
                         $csrf_token = $_SESSION['csrf_token'];
                         ?>
-                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                         <div class="mb-4">
                             <label for="email" class="form-label fw-semibold">

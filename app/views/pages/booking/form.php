@@ -10,7 +10,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= $baseUrl ?>"><?= __('home') ?></a></li>
             <li class="breadcrumb-item"><a href="<?= $baseUrl ?>/plots/browse"><?= __('book_browse_plots') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/detail"><?= __('plot') ?> <?= htmlspecialchars($plot['plot_number']) ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/detail"><?= __('plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?></a></li>
             <li class="breadcrumb-item active"><?= __('book_book') ?></li>
         </ol>
     </nav>
@@ -18,7 +18,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
     <h2 class="fw-bold mb-4"><i class="fas fa-file-contract me-2"></i><?= __('book_title') ?></h2>
 
     <form method="POST" action="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book" id="bookingForm">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
 
         <div class="row g-4">
 
@@ -182,9 +182,9 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                 <div class="aps-cp-card mb-4" class="style-99001">
                     <div class="aps-cp-card-body">
                         <h5 class="fw-bold mb-3">
-                            <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name']) ?>
+                            <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name'] ?? '') ?>
                         </h5>
-                        <h3 class="fw-bold mb-3"><?= __('plot') ?> <?= htmlspecialchars($plot['plot_number']) ?></h3>
+                        <h3 class="fw-bold mb-3"><?= __('plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h3>
                         <div class="fs-2 fw-bold mb-3">₹<?= number_format($plot['total_price']) ?></div>
                         <hr class="style-94432">
                         <div class="row g-2 mb-3">
@@ -249,7 +249,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 (function() {
     const BASE = '<?= $baseUrl ?>';
     const PLOT_ID = <?= (int)$plot['id'] ?>;
-    const CSRF = '<?= htmlspecialchars($csrfToken) ?>';
+    const CSRF = '<?= htmlspecialchars($csrfToken ?? '') ?>';
     let lockInterval = null;
     let lockExpiresAt = null;
 

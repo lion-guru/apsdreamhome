@@ -179,8 +179,8 @@ $report = $report ?? [
                         <?php foreach (array_slice($report['top_performers'], 0, 20) as $index => $performer): ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($performer['name']) ?></td>
-                            <td><?= htmlspecialchars($performer['email']) ?></td>
+                            <td><?= htmlspecialchars($performer['name'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($performer['email'] ?? '') ?></td>
                             <td><code><?= htmlspecialchars($performer['referral_code'] ?? '') ?></code></td>
                             <td><?= $performer['direct_referrals'] ?></td>
                             <td>₹<?= number_format($performer['total_commissions'] ?? 0, 2) ?></td>

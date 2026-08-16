@@ -10,7 +10,7 @@ $byStatus = $stats['by_status'] ?? [];
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-            <h2 class="mb-1"><?= htmlspecialchars($page_heading) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($page_heading ?? '') ?></h2>
             <p class="text-muted mb-0">Real-time delivery metrics for campaign #<?= (int) $campaign_id ?></p>
         </div>
         <div class="d-flex gap-2">

@@ -191,7 +191,7 @@ foreach ($nodes as $n) {
                             <span class="leg-badge mb-2 d-inline-block" class="style-61782"><?php echo __('assoc_net_you', [], 'YOU'); ?></span>
                             <div class="fw-bold" class="style-88102"><?= htmlspecialchars($root['name'] ?? 'You') ?></div>
                             <div class="small text-muted mt-1">
-                                <span class="badge" class="style-37804"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars($rootLabel) ?></span>
+                                <span class="badge" class="style-37804"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars($rootLabel ?? '') ?></span>
                             </div>
                             <div class="mt-2" class="style-64777">
                                 <span class="me-3"><i class="fas fa-rupee-sign text-success"></i> <?= number_format((float)($root['total_commission'] ?? 0)) ?></span>
@@ -251,7 +251,7 @@ foreach ($nodes as $n) {
                                     <td><span class="gen-badge">Gen <?= (int)($n['level'] ?? 0) ?></span></td>
                                     <td>
                                         <span class="badge" class="style-76027">
-                                            <i class="fas <?= $icon ?> me-1"></i><?= htmlspecialchars($label) ?>
+                                            <i class="fas <?= $icon ?> me-1"></i><?= htmlspecialchars($label ?? '') ?>
                                         </span>
                                     </td>
                                     <td>
@@ -293,7 +293,7 @@ foreach ($nodes as $n) {
                             <i class="fas <?= $icon ?> fa-lg"></i>
                         </div>
                         <h6 class="fw-bold mb-1"><?= htmlspecialchars($n['name'] ?? 'Unknown') ?></h6>
-                        <span class="badge mb-2" class="style-34096"><?= htmlspecialchars($label) ?></span>
+                        <span class="badge mb-2" class="style-34096"><?= htmlspecialchars($label ?? '') ?></span>
                         <div class="gen-badge mb-2 d-inline-block">Gen <?= (int)($n['level'] ?? 0) ?></div>
                         <div class="d-flex justify-content-around mt-2" class="style-436">
                             <div>

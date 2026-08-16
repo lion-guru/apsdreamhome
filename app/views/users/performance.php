@@ -196,17 +196,17 @@ function perfLevelBadge($level) {
                                     <div class="small text-muted mb-2">
                                         <i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($rv['review_date'] ?? $rv['created_at'] ?? 'now')) ?>
                                         <?php if (!empty($rv['reviewer_name'])): ?>
-                                            &middot; <i class="fas fa-user me-1"></i> <?= htmlspecialchars($rv['reviewer_name']) ?>
+                                            &middot; <i class="fas fa-user me-1"></i> <?= htmlspecialchars($rv['reviewer_name'] ?? '') ?>
                                         <?php endif; ?>
                                     </div>
                                     <?php if (!empty($rv['strengths'])): ?>
-                                        <div class="small mb-1"><strong class="text-success"><i class="fas fa-thumbs-up me-1"></i>Strengths:</strong> <?= htmlspecialchars($rv['strengths']) ?></div>
+                                        <div class="small mb-1"><strong class="text-success"><i class="fas fa-thumbs-up me-1"></i>Strengths:</strong> <?= htmlspecialchars($rv['strengths'] ?? '') ?></div>
                                     <?php endif; ?>
                                     <?php if (!empty($rv['areas_for_improvement'])): ?>
-                                        <div class="small mb-1"><strong class="text-warning"><i class="fas fa-bolt me-1"></i>Improve:</strong> <?= htmlspecialchars($rv['areas_for_improvement']) ?></div>
+                                        <div class="small mb-1"><strong class="text-warning"><i class="fas fa-bolt me-1"></i>Improve:</strong> <?= htmlspecialchars($rv['areas_for_improvement'] ?? '') ?></div>
                                     <?php endif; ?>
                                     <?php if (!empty($rv['reviewer_comments'])): ?>
-                                        <div class="small mt-2 p-2 bg-light rounded"><i class="fas fa-quote-left me-1 text-muted"></i> <?= htmlspecialchars($rv['reviewer_comments']) ?></div>
+                                        <div class="small mt-2 p-2 bg-light rounded"><i class="fas fa-quote-left me-1 text-muted"></i> <?= htmlspecialchars($rv['reviewer_comments'] ?? '') ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>

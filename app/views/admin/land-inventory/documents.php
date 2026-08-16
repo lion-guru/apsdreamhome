@@ -105,7 +105,7 @@ $docTypes = [
                                     </td>
                                     <td>
                                         <?php if (!empty($d['file_path'])): ?>
-                                            <a href="<?= BASE_URL ?>/<?= htmlspecialchars($d['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="<?= BASE_URL ?>/<?= htmlspecialchars($d['file_path'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-download"></i>
                                             </a>
                                         <?php else: ?>

@@ -33,7 +33,7 @@
                                 <option value="">-- None (Top Level) --</option>
                                 <?php if (!empty($parents)): ?>
                                     <?php foreach ($parents as $p): ?>
-                                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?></option>
+                                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
@@ -82,7 +82,7 @@
                                                         <select name="parent_id" class="form-select form-select-sm">
                                                             <option value="">None</option>
                                                             <?php foreach ($parents as $p): ?>
-                                                                <option value="<?= (int)$p['id'] ?>" <?= ((int)$cat['parent_id'] === (int)$p['id']) ? 'selected' : '' ?>><?= htmlspecialchars($p['name']) ?></option>
+                                                                <option value="<?= (int)$p['id'] ?>" <?= ((int)$cat['parent_id'] === (int)$p['id']) ? 'selected' : '' ?>><?= htmlspecialchars($p['name'] ?? '') ?></option>
                                                             <?php endforeach; ?>
                                                         </select>
                                                     </div>

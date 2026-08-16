@@ -15,7 +15,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <i class="fas fa-info-circle me-1"></i>
             <?= __('sale_transfer_warning') ?>
         </div>
-        <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/transfer">
+        <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/transfer">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="row g-3">
                 <div class="col-md-6">
@@ -48,7 +48,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <button class="btn btn-warning" type="submit" onclick="return confirm('Initiate transfer? Booking will be reassigned.');">
                     <i class="fas fa-exchange-alt me-1"></i><?= __('sale_initiate_transfer') ?>
                 </button>
-                <a class="btn btn-link" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>"><?= __('sale_back') ?></a>
+                <a class="btn btn-link" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>"><?= __('sale_back') ?></a>
             </div>
         </form>
     </div>

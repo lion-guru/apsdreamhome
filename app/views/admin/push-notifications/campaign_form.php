@@ -13,7 +13,7 @@
 
     <?php if (!empty($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+            <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -126,7 +126,7 @@
                                         <option value="<?= $t['id'] ?>" <?= ($campaign['template_id'] ?? '') == $t['id'] ? 'selected' : '' ?>
                                                 data-title="<?= htmlspecialchars($t['title'] ?? '') ?>"
                                                 data-body="<?= htmlspecialchars($t['body'] ?? '') ?>">
-                                            <?= htmlspecialchars($t['name']) ?> (<?= strtoupper($t['channel']) ?>)
+                                            <?= htmlspecialchars($t['name'] ?? '') ?> (<?= strtoupper($t['channel']) ?>)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

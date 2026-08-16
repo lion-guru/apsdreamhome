@@ -34,13 +34,13 @@ $page_description = 'Detailed view of lead event';
                         <?php if (!empty($event['lead_phone'])): ?>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-phone me-2"></i>
-                                <?php echo htmlspecialchars($event['lead_phone']); ?>
+                                <?php echo htmlspecialchars($event['lead_phone'] ?? ''); ?>
                             </p>
                         <?php endif; ?>
                         <?php if (!empty($event['lead_company'])): ?>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-building me-2"></i>
-                                <?php echo htmlspecialchars($event['lead_company']); ?>
+                                <?php echo htmlspecialchars($event['lead_company'] ?? ''); ?>
                             </p>
                         <?php endif; ?>
                     </div>
@@ -103,7 +103,7 @@ $page_description = 'Detailed view of lead event';
                     <h5 class="mb-0">Event Data</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <pre class="bg-light p-3 rounded"><?php echo htmlspecialchars($event['event_data']); ?></pre>
+                    <pre class="bg-light p-3 rounded"><?php echo htmlspecialchars($event['event_data'] ?? ''); ?></pre>
                 </div>
             </div>
         <?php endif; ?>

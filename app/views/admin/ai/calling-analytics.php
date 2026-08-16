@@ -91,7 +91,7 @@ $days = $days ?? 30;
                     <tbody>
                         <?php foreach ($byAgent as $a): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($a['ai_agent_id']) ?></strong></td>
+                            <td><strong><?= htmlspecialchars($a['ai_agent_id'] ?? '') ?></strong></td>
                             <td><?= number_format($a['total']) ?></td>
                             <td><?= number_format($a['completed']) ?></td>
                             <td><?= number_format($a['interested']) ?></td>

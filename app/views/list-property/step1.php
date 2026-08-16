@@ -38,7 +38,7 @@ $t = $old['title'] ?? $state_data['title'] ?? '';
                     <p class="text-muted">Tell us what kind of property you're listing.</p>
 
                     <?php if (!empty($errors)): ?>
-                        <div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul></div>
+                        <div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e ?? '') ?></li><?php endforeach; ?></ul></div>
                     <?php endif; ?>
 
                     <form method="POST" action="<?= BASE_URL ?>/list-property/step1">
@@ -64,7 +64,7 @@ $t = $old['title'] ?? $state_data['title'] ?? '';
                         <div class="mb-3">
                             <label class="form-label">Title *</label>
                             <input type="text" name="title" class="form-control" required minlength="5" maxlength="200"
-                                   value="<?= htmlspecialchars($t) ?>" placeholder="e.g. 2 BHK Flat in Gorakhpur">
+                                   value="<?= htmlspecialchars($t ?? '') ?>" placeholder="e.g. 2 BHK Flat in Gorakhpur">
                         </div>
                         <div class="d-flex justify-content-end mt-4">
                             <button type="submit" class="btn btn-primary px-4">Next <i class="fas fa-arrow-right ms-1"></i></button>

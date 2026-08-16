@@ -47,7 +47,7 @@
                                     <td class="text-<?= $budget > 0 && $spent > $budget ? 'danger' : 'success' ?>">₹<?= number_format($spent, 2) ?></td>
                                     <td>
                                         <?php $flags = $p['risk_flags'] ?? ''; ?>
-                                        <span class="badge bg-<?= empty($flags) ? 'success' : 'danger' ?>"><?= empty($flags) ? 'None' : htmlspecialchars($flags) ?></span>
+                                        <span class="badge bg-<?= empty($flags) ? 'success' : 'danger' ?>"><?= empty($flags) ? 'None' : htmlspecialchars($flags ?? '') ?></span>
                                     </td>
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/projects/progress/show/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>

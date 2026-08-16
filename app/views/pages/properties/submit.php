@@ -132,7 +132,7 @@
                             <div class="col-md-12">
                                 <label class="form-label fw-bold"><?php echo __('property_featured_image', 'Featured Image'); ?></label>
                                 <?php if($is_edit && !empty($property['pimage'])): ?>
-                                    <div class="mb-2"><img src="<?= BASE_URL ?>/public/uploads/property/<?= htmlspecialchars($property['pimage']) ?>" height="50" class="rounded border" alt="Property image"></div>
+                                    <div class="mb-2"><img src="<?= BASE_URL ?>/public/uploads/property/<?= htmlspecialchars($property['pimage'] ?? '') ?>" height="50" class="rounded border" alt="Property image"></div>
                                 <?php endif; ?>
                                 <input type="file" class="form-control" name="aimage" <?= $is_edit ? '' : 'required' ?>>
                             </div>
@@ -203,7 +203,7 @@
                     <div class="mt-5 p-3 bg-white rounded border">
                         <h4 class="h5 mb-3"><?php echo __('need_help', 'Need Help?'); ?></h4>
                         <p class="small text-muted mb-3"><?php echo __('need_help_desc', 'If you need assistance with submitting your property, please contact our support team:'); ?></p>
-                        <p class="mb-2 fw-bold"><i class="fas fa-phone-alt text-primary me-2"></i> <?= htmlspecialchars($phoneDisplay) ?></p>
+                        <p class="mb-2 fw-bold"><i class="fas fa-phone-alt text-primary me-2"></i> <?= htmlspecialchars($phoneDisplay ?? '') ?></p>
                         <p class="mb-0 fw-bold"><i class="fas fa-envelope text-primary me-2"></i> <?= htmlspecialchars($sc('contact_email', 'info@apsdreamhome.com')) ?></p>
                     </div>
                 </div>

@@ -52,7 +52,7 @@
                     <tr>
                         <td><a href="<?= BASE_URL ?>/admin/department-requests/<?= $req['id'] ?>">#<?= $req['id'] ?></a></td>
                         <td><span class="badge bg-info"><?= ucfirst($req['request_type']) ?></span></td>
-                        <td><?= htmlspecialchars($req['title']) ?></td>
+                        <td><?= htmlspecialchars($req['title'] ?? '') ?></td>
                         <td>
                             <span class="badge bg-<?= $req['priority'] === 'urgent' ? 'danger' : ($req['priority'] === 'high' ? 'warning' : ($req['priority'] === 'medium' ? 'info' : 'secondary')) ?>">
                                 <?= ucfirst($req['priority']) ?>

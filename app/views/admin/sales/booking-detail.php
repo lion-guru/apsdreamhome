@@ -43,10 +43,10 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
             <span class="badge ms-2 <?= $statusBadge($booking['status'] ?? '') ?>"><?= htmlspecialchars((string)($booking['status'] ?? '')) ?></span>
         </h5>
         <div class="d-flex gap-1 flex-wrap">
-            <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit me-1"></i><?= __('sale_edit') ?></a>
-            <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule" class="btn btn-sm btn-outline-info"><i class="fas fa-calendar me-1"></i><?= __('sale_schedule') ?></a>
-            <a href="<?= htmlspecialchars($base) ?>/admin/finance/agreement/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i><?= __('sale_agreement') ?></a>
-            <a href="<?= htmlspecialchars($base) ?>/admin/finance/allotment/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i><?= __('sale_allotment') ?></a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit me-1"></i><?= __('sale_edit') ?></a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule" class="btn btn-sm btn-outline-info"><i class="fas fa-calendar me-1"></i><?= __('sale_schedule') ?></a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/finance/agreement/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i><?= __('sale_agreement') ?></a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/finance/allotment/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-file-pdf me-1"></i><?= __('sale_allotment') ?></a>
             <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal"><i class="fas fa-ban me-1"></i><?= __('sale_cancel') ?></button>
             <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#transferModal"><i class="fas fa-exchange-alt me-1"></i><?= __('sale_transfer') ?></button>
         </div>
@@ -128,13 +128,13 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                                     $st = $s['status'] ?? 'pending';
                                     $cls = ['paid' => 'success', 'overdue' => 'danger', 'partial' => 'warning', 'cleared' => 'success'][$st] ?? 'secondary';
                                     ?>
-                                    <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st) ?></span>
+                                    <span class="badge bg-<?= $cls ?>"><?= htmlspecialchars($st ?? '') ?></span>
                                 </td>
                                 <td class="text-nowrap">
                                     <?php if ($st !== 'paid'): ?>
-                                        <a href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay" class="btn btn-sm btn-success"><i class="fas fa-indian-rupee-sign"></i> <?= __('sale_pay') ?></a>
-                                        <a href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/demand-letter" class="btn btn-sm btn-outline-warning"><i class="fas fa-envelope"></i></a>
-                                        <a href="<?= htmlspecialchars($base) ?>/admin/finance/demand-letter/<?= (int)($s['id'] ?? 0) ?>" class="btn btn-sm btn-outline-danger" title="Download Demand Letter PDF"><i class="fas fa-file-pdf"></i></a>
+                                        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay" class="btn btn-sm btn-success"><i class="fas fa-indian-rupee-sign"></i> <?= __('sale_pay') ?></a>
+                                        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/demand-letter" class="btn btn-sm btn-outline-warning"><i class="fas fa-envelope"></i></a>
+                                        <a href="<?= htmlspecialchars($base ?? '') ?>/admin/finance/demand-letter/<?= (int)($s['id'] ?? 0) ?>" class="btn btn-sm btn-outline-danger" title="Download Demand Letter PDF"><i class="fas fa-file-pdf"></i></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -248,7 +248,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
 
 <!-- Cancel modal -->
 <div class="modal fade" id="cancelModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
-    <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/cancel">
+    <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/cancel">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
         <div class="modal-header"><h5 class="modal-title"><?= __('sale_cancel_booking') ?></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
@@ -261,7 +261,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
 
 <!-- Transfer modal -->
 <div class="modal fade" id="transferModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
-    <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/transfer">
+    <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/transfer">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
         <div class="modal-header"><h5 class="modal-title"><?= __('sale_transfer_booking') ?></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">

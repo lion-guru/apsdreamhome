@@ -37,17 +37,17 @@ ob_start();
     ?>
     <div class="aps-cp-info-card" data-address-id="<?= (int)$a['id'] ?>">
         <div class="aps-cp-info-card-head">
-            <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($a['label']) ?>
+            <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($a['label'] ?? '') ?>
                 <?php if ((int)$a['is_primary'] === 1): ?><span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= __('user_address_primary_badge', null, 'Primary') ?></span><?php endif; ?>
             </h4>
-            <span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= htmlspecialchars(ucfirst($type)) ?></span>
+            <span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= htmlspecialchars(ucfirst($type ?? '')) ?></span>
         </div>
         <address class="aps-cp-info-card-meta" class="style-81916">
-            <?= htmlspecialchars($a['address_line1']) ?>
-            <?php if (!empty($a['address_line2'])): ?>, <?= htmlspecialchars($a['address_line2']) ?><?php endif; ?><br>
-            <?= htmlspecialchars($a['city']) ?>, <?= htmlspecialchars($a['state']) ?> - <?= htmlspecialchars($a['pincode']) ?><br>
+            <?= htmlspecialchars($a['address_line1'] ?? '') ?>
+            <?php if (!empty($a['address_line2'])): ?>, <?= htmlspecialchars($a['address_line2'] ?? '') ?><?php endif; ?><br>
+            <?= htmlspecialchars($a['city'] ?? '') ?>, <?= htmlspecialchars($a['state'] ?? '') ?> - <?= htmlspecialchars($a['pincode'] ?? '') ?><br>
             <?= htmlspecialchars($a['country'] ?? 'India') ?>
-            <?php if (!empty($a['phone'])): ?><br><?= __('user_address_phone_label', null, 'Phone:') ?> <?= htmlspecialchars($a['phone']) ?><?php endif; ?>
+            <?php if (!empty($a['phone'])): ?><br><?= __('user_address_phone_label', null, 'Phone:') ?> <?= htmlspecialchars($a['phone'] ?? '') ?><?php endif; ?>
         </address>
         <div class="aps-cp-info-card-foot">
             <?php if ((int)$a['is_primary'] !== 1): ?>

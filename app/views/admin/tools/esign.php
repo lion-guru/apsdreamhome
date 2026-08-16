@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $stats = $stats ?? ['total' => 0, 'initiated' => 0, 'signed' => 0, 'expired' => 0, 'today' => 0];
 $transactions = $transactions ?? [];
 $config = $config ?? [];
@@ -154,7 +154,7 @@ $status_filter = $status_filter ?? '';
                                 <td><small class="text-muted"><?= date('d M Y H:i', strtotime($t['created_at'] ?? '')) ?></small></td>
                                 <td>
                                     <?php if (($t['status'] ?? '') === 'signed'): ?>
-                                        <a href="<?= BASE_URL ?>/api/esign/document/<?= htmlspecialchars($t['transaction_id']) ?>" class="btn btn-sm btn-outline-primary" title="Download Signed Doc">
+                                        <a href="<?= BASE_URL ?>/api/esign/document/<?= htmlspecialchars($t['transaction_id'] ?? '') ?>" class="btn btn-sm btn-outline-primary" title="Download Signed Doc">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     <?php endif; ?>

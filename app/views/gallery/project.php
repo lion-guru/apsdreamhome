@@ -60,16 +60,16 @@ $project_id = $project_id ?? 0;
                     <ol class="breadcrumb justify-content-center">
                         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/" class="text-white">Home</a></li>
                         <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/gallery" class="text-white">Gallery</a></li>
-                        <li class="breadcrumb-item active text-white-50"><?php echo htmlspecialchars($project['project_name']); ?></li>
+                        <li class="breadcrumb-item active text-white-50"><?php echo htmlspecialchars($project['project_name'] ?? ''); ?></li>
                     </ol>
                 </nav>
                 
                 <div class="animate-fade-up">
-                    <h1 class="display-3 fw-bold mb-4"><?php echo htmlspecialchars($project['project_name']); ?></h1>
-                    <p class="lead text-white-90 mb-4"><?php echo htmlspecialchars($project['project_description']); ?></p>
+                    <h1 class="display-3 fw-bold mb-4"><?php echo htmlspecialchars($project['project_name'] ?? ''); ?></h1>
+                    <p class="lead text-white-90 mb-4"><?php echo htmlspecialchars($project['project_description'] ?? ''); ?></p>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <span class="badge bg-white text-primary px-3 py-2">
-                            <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($project['location']['address']); ?>
+                            <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($project['location']['address'] ?? ''); ?>
                         </span>
                         <span class="badge bg-white text-success px-3 py-2">
                             <i class="fas fa-check-circle me-2"></i>Completed Project
@@ -125,7 +125,7 @@ $project_id = $project_id ?? 0;
                             <i class="fas fa-map-marker-alt text-primary me-3"></i>
                             <div>
                                 <h5 class="mb-1">Address</h5>
-                                <p class="text-muted mb-0"><?php echo htmlspecialchars($project['location']['address']); ?></p>
+                                <p class="text-muted mb-0"><?php echo htmlspecialchars($project['location']['address'] ?? ''); ?></p>
                             </div>
                         </div>
                         <div class="location-item d-flex align-items-center mb-3">
@@ -202,17 +202,17 @@ $project_id = $project_id ?? 0;
                                              class="photo-image" loading="lazy">
                                         <div class="photo-overlay">
                                             <div class="photo-actions">
-                                                <button class="btn btn-light btn-sm" onclick="openPhotoModal('<?php echo htmlspecialchars($image['url']); ?>', '<?php echo htmlspecialchars($image['title']); ?>')">
+                                                <button class="btn btn-light btn-sm" onclick="openPhotoModal('<?php echo htmlspecialchars($image['url'] ?? ''); ?>', '<?php echo htmlspecialchars($image['title'] ?? ''); ?>')">
                                                     <i class="fas fa-expand"></i>
                                                 </button>
-                                                <button class="btn btn-primary btn-sm" onclick="downloadPhoto('<?php echo htmlspecialchars($image['url']); ?>')">
+                                                <button class="btn btn-primary btn-sm" onclick="downloadPhoto('<?php echo htmlspecialchars($image['url'] ?? ''); ?>')">
                                                     <i class="fas fa-download"></i>
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="photo-info">
-                                        <h5 class="photo-title"><?php echo htmlspecialchars($image['title']); ?></h5>
+                                        <h5 class="photo-title"><?php echo htmlspecialchars($image['title'] ?? ''); ?></h5>
                                         <p class="photo-description">Click to view full size</p>
                                     </div>
                                 </div>
@@ -230,19 +230,19 @@ $project_id = $project_id ?? 0;
                             <div class="col-lg-6">
                                 <div class="video-card animate-fade-up" class="style-88811">
                                     <div class="video-container">
-                                        <iframe src="<?php echo htmlspecialchars($video['url']); ?>" 
+                                        <iframe src="<?php echo htmlspecialchars($video['url'] ?? ''); ?>" 
                                                 frameborder="0" 
                                                 allowfullscreen
                                                 class="video-iframe">
                                         </iframe>
                                         <div class="video-info-overlay">
-                                            <h4 class="video-title"><?php echo htmlspecialchars($video['title']); ?></h4>
+                                            <h4 class="video-title"><?php echo htmlspecialchars($video['title'] ?? ''); ?></h4>
                                         </div>
                                     </div>
                                     <div class="video-details">
-                                        <h5 class="video-name"><?php echo htmlspecialchars($video['title']); ?></h5>
+                                        <h5 class="video-name"><?php echo htmlspecialchars($video['title'] ?? ''); ?></h5>
                                         <p class="video-description">Watch the complete project tour</p>
-                                        <button class="btn btn-primary btn-sm" onclick="openVideoModal('<?php echo htmlspecialchars($video['url']); ?>', '<?php echo htmlspecialchars($video['title']); ?>')">
+                                        <button class="btn btn-primary btn-sm" onclick="openVideoModal('<?php echo htmlspecialchars($video['url'] ?? ''); ?>', '<?php echo htmlspecialchars($video['title'] ?? ''); ?>')">
                                             <i class="fas fa-play me-1"></i>Watch Full Screen
                                         </button>
                                     </div>

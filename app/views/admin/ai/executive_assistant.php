@@ -75,8 +75,8 @@ $focusAreas = $focusAreas ?? [];
     <!-- Sidebar: Role Info + KPIs + Quick Queries -->
     <div class="ai-sidebar">
         <div class="ai-role-card">
-            <h3><?= htmlspecialchars($userName) ?></h3>
-            <span class="role-badge"><?= htmlspecialchars($roleTitle) ?></span>
+            <h3><?= htmlspecialchars($userName ?? '') ?></h3>
+            <span class="role-badge"><?= htmlspecialchars($roleTitle ?? '') ?></span>
             <?php if (!empty($focusAreas)): ?>
             <div class="style-17873">
                 <div class="style-83709">Focus Areas</div>
@@ -116,8 +116,8 @@ $focusAreas = $focusAreas ?? [];
         <div class="ai-chat-messages" id="chatMessages">
             <div class="welcome-message">
                 <div class="icon">ðŸ¤–</div>
-                <h2>Namaste, <?= htmlspecialchars($userName) ?>!</h2>
-                <p>Main aapka <?= htmlspecialchars($roleTitle) ?> AI assistant hoon. Ask me anything about your department, KPIs, or business decisions.</p>
+                <h2>Namaste, <?= htmlspecialchars($userName ?? '') ?>!</h2>
+                <p>Main aapka <?= htmlspecialchars($roleTitle ?? '') ?> AI assistant hoon. Ask me anything about your department, KPIs, or business decisions.</p>
             </div>
         </div>
         

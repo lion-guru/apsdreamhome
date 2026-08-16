@@ -11,7 +11,7 @@
         <tr>
           <th></th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
-          <th><?= htmlspecialchars($prop['title']) ?></th>
+          <th><?= htmlspecialchars($prop['title'] ?? '') ?></th>
           <?php endforeach; ?>
         </tr>
       </thead>
@@ -23,12 +23,12 @@
         </tr>
         <tr><th>Location</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
-          <td><?= htmlspecialchars($prop['location']) ?></td>
+          <td><?= htmlspecialchars($prop['location'] ?? '') ?></td>
           <?php endforeach; ?>
         </tr>
         <tr><th>Type</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
-          <td><?= htmlspecialchars($prop['type']) ?></td>
+          <td><?= htmlspecialchars($prop['type'] ?? '') ?></td>
           <?php endforeach; ?>
         </tr>
         <tr><th>Bedrooms</th>
@@ -53,7 +53,7 @@
         </tr>
         <tr><th>City</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
-          <td><?= htmlspecialchars($prop['city']) ?></td>
+          <td><?= htmlspecialchars($prop['city'] ?? '') ?></td>
           <?php endforeach; ?>
         </tr>
       </tbody>

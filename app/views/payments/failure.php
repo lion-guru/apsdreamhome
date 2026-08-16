@@ -7,9 +7,9 @@
                 <div class="card-body py-5">
                     <div class="mb-4"><i class="fas fa-times-circle text-danger" class="style-69098"></i></div>
                     <h3 class="text-danger mb-3">Payment Failed!</h3>
-                    <p class="text-muted mb-1"><?= htmlspecialchars($errorMessage) ?></p>
+                    <p class="text-muted mb-1"><?= htmlspecialchars($errorMessage ?? '') ?></p>
                     <?php if ($transactionId): ?>
-                    <p class="small text-muted">Transaction ID: <code><?= htmlspecialchars($transactionId) ?></code></p>
+                    <p class="small text-muted">Transaction ID: <code><?= htmlspecialchars($transactionId ?? '') ?></code></p>
                     <?php endif; ?>
                     <hr class="my-4">
                     <div class="d-flex justify-content-center gap-3">

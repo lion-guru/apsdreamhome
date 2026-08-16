@@ -263,7 +263,7 @@
         <div class="wallet-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-1">Welcome, <?php echo htmlspecialchars($user_name); ?>!</h5>
+                    <h5 class="mb-1">Welcome, <?php echo htmlspecialchars($user_name ?? ''); ?>!</h5>
                     <p class="mb-0 opacity-75">Your Wallet Balance</p>
                     <div class="balance-display">₹<?php echo number_format($wallet['points_balance'], 2); ?></div>
                 </div>
@@ -289,7 +289,7 @@
         <h4 class="mb-3"><i class="fas fa-gift me-2"></i>Your Referral Code</h4>
         <p class="mb-0 opacity-75">Share this code with friends and earn points when they register!</p>
         <div class="mt-3">
-            <span class="referral-code"><?php echo htmlspecialchars($user_referral_code); ?></span>
+            <span class="referral-code"><?php echo htmlspecialchars($user_referral_code ?? ''); ?></span>
             <button class="copy-btn" onclick="copyReferralCode()"><i class="fas fa-copy me-2"></i>Copy</button>
         </div>
         <div class="mt-3">
@@ -366,7 +366,7 @@
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-title">
-                                    <?php echo htmlspecialchars($transaction['description']); ?>
+                                    <?php echo htmlspecialchars($transaction['description'] ?? ''); ?>
                                 </div>
                                 <div class="transaction-date">
                                     <?php echo date('M d, Y - h:i A', strtotime($transaction['created_at'])); ?>

@@ -13,13 +13,13 @@
                 $detailImage = $post['featured_image'];
                 $detailImageUrl = str_starts_with($detailImage, 'http') ? $detailImage : get_asset_url($detailImage);
                 ?>
-                <img src="<?= htmlspecialchars($detailImageUrl) ?>" class="img-fluid rounded mb-4 w-100" alt="<?= htmlspecialchars($post['title'] ?? '') ?>" class="style-44644">
+                <img src="<?= htmlspecialchars($detailImageUrl ?? '') ?>" class="img-fluid rounded mb-4 w-100" alt="<?= htmlspecialchars($post['title'] ?? '') ?>" class="style-44644">
             <?php endif; ?>
             <h1 class="display-5 fw-bold mb-3"><?php echo htmlspecialchars($post['title'] ?? ''); ?></h1>
             <p class="text-muted mb-4">
                 <i class="far fa-calendar-alt me-1"></i> <?= date('F d, Y', strtotime($post['created_at'] ?? 'now')) ?>
                 <?php if (!empty($post['category'])): ?>
-                    <span class="ms-3"><i class="fas fa-tag me-1"></i> <?= htmlspecialchars($post['category']) ?></span>
+                    <span class="ms-3"><i class="fas fa-tag me-1"></i> <?= htmlspecialchars($post['category'] ?? '') ?></span>
                 <?php endif; ?>
                 <?php if (!empty($post['read_time'])): ?>
                     <span class="ms-3"><i class="fas fa-clock me-1"></i> <?= (int)$post['read_time'] ?> min read</span>

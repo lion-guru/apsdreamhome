@@ -108,7 +108,7 @@ ob_start();
                         <?php if (empty($sessions)): ?>
                             <tr><td colspan="10" class="text-center text-muted py-5">
                                 <i class="fas fa-comments fa-3x mb-3 d-block text-secondary"></i>
-                                No <?= htmlspecialchars($current_status) ?> chat sessions
+                                No <?= htmlspecialchars($current_status ?? '') ?> chat sessions
                             </td></tr>
                         <?php else: ?>
                             <?php foreach ($sessions as $s): ?>
@@ -117,13 +117,13 @@ ob_start();
                                     <td>
                                         <strong><?= htmlspecialchars($s['visitor_name'] ?: $s['user_name'] ?: 'Anonymous') ?></strong>
                                         <?php if ($s['visitor_email']): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($s['visitor_email']) ?></small>
+                                            <br><small class="text-muted"><?= htmlspecialchars($s['visitor_email'] ?? '') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <?= htmlspecialchars($s['subject'] ?: '—') ?>
                                         <?php if ($s['category']): ?>
-                                            <br><span class="badge bg-light text-dark"><?= htmlspecialchars($s['category']) ?></span>
+                                            <br><span class="badge bg-light text-dark"><?= htmlspecialchars($s['category'] ?? '') ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

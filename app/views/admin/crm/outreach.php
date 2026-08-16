@@ -117,7 +117,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
                                 <?php else: ?>
                                     <?php foreach ($campaigns as $c): ?>
                                         <tr>
-                                            <td class="fw-bold small"><?= htmlspecialchars($c['name']) ?></td>
+                                            <td class="fw-bold small"><?= htmlspecialchars($c['name'] ?? '') ?></td>
                                             <td><span class="badge bg-info"><?= str_replace('_', ' ', ucfirst($c['campaign_type'])) ?></span></td>
                                             <td><?= (int)$c['total_leads'] ?></td>
                                             <td><?= (int)($c['total_sent'] ?? 0) ?></td>

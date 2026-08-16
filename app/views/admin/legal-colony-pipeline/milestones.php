@@ -190,7 +190,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
                         <div class="small text-muted">
                           <?= $milestoneTypeLabels[$type] ?? ucfirst(str_replace('_', ' ', $type)) ?>
                           <?php if (!empty($m['description'])): ?>
-                            — <?= htmlspecialchars($m['description']) ?>
+                            — <?= htmlspecialchars($m['description'] ?? '') ?>
                           <?php endif; ?>
                         </div>
                       </div>
@@ -240,7 +240,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
 
                     <?php if (!empty($m['remarks'])): ?>
                       <div class="mt-2 p-2 bg-light rounded small text-muted">
-                        <i class="fas fa-comment me-1"></i> <?= htmlspecialchars($m['remarks']) ?>
+                        <i class="fas fa-comment me-1"></i> <?= htmlspecialchars($m['remarks'] ?? '') ?>
                       </div>
                     <?php endif; ?>
                   </div>

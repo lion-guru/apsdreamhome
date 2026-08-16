@@ -31,7 +31,7 @@
                             <td><?= $t['duration_months'] ?> months</td>
                             <td><?= htmlspecialchars($t['start_date'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($t['end_date'] ?? '-') ?></td>
-                            <td><span class="badge bg-<?= $t['status'] === 'active' ? 'success' : ($t['status'] === 'completed' ? 'primary' : 'secondary') ?>"><?= htmlspecialchars($t['status']) ?></span></td>
+                            <td><span class="badge bg-<?= $t['status'] === 'active' ? 'success' : ($t['status'] === 'completed' ? 'primary' : 'secondary') ?>"><?= htmlspecialchars($t['status'] ?? '') ?></span></td>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>

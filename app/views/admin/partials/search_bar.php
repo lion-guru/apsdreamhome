@@ -20,7 +20,7 @@ $searchValue = $_GET['search'] ?? '';
                 class="form-control"
                 name="search"
                 placeholder="Search..."
-                value="<?php echo htmlspecialchars($searchValue); ?>"
+                value="<?php echo htmlspecialchars($searchValue ?? ''); ?>"
                 id="searchInput">
             <button class="btn btn-primary" type="submit">
                 Search

@@ -111,12 +111,12 @@ $page_description = 'Manage custom fields for lead tracking';
                             <?php foreach ($customFields as $field): ?>
                                 <tr>
                                     <td>
-                                        <code class="bg-light px-2 py-1 rounded"><?php echo htmlspecialchars($field['field_name']); ?></code>
+                                        <code class="bg-light px-2 py-1 rounded"><?php echo htmlspecialchars($field['field_name'] ?? ''); ?></code>
                                     </td>
-                                    <td><?php echo htmlspecialchars($field['field_label']); ?></td>
+                                    <td><?php echo htmlspecialchars($field['field_label'] ?? ''); ?></td>
                                     <td>
                                         <span class="badge bg-light text-dark border">
-                                            <?php echo htmlspecialchars($field['field_type']); ?>
+                                            <?php echo htmlspecialchars($field['field_type'] ?? ''); ?>
                                         </span>
                                     </td>
                                     <td>

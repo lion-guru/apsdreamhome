@@ -15,12 +15,12 @@ $messageVal = $_POST['message'] ?? '';
                     <?php if (!empty($success)): ?>
                         <div class="alert alert-success" role="alert">
                             <i class="fas fa-check-circle me-2"></i>
-                            <?php echo htmlspecialchars($success); ?>
+                            <?php echo htmlspecialchars($success ?? ''); ?>
                         </div>
                     <?php elseif (!empty($error)): ?>
                         <div class="alert alert-danger" role="alert">
                             <i class="fas fa-exclamation-circle me-2"></i>
-                            <?php echo htmlspecialchars($error); ?>
+                            <?php echo htmlspecialchars($error ?? ''); ?>
                         </div>
                     <?php endif; ?>
 
@@ -29,7 +29,7 @@ $messageVal = $_POST['message'] ?? '';
                         <div class="mb-3">
                             <label for="subject" class="form-label"><?php echo __('subject'); ?> <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-lg" id="subject" name="subject" required
-                                value="<?php echo isset($subjectVal) ? htmlspecialchars($subjectVal) : ''; ?>">
+                                value="<?php echo isset($subjectVal) ? htmlspecialchars($subjectVal ?? '') : ''; ?>">
                         </div>
 
                         <div class="mb-3">
@@ -44,7 +44,7 @@ $messageVal = $_POST['message'] ?? '';
 
                         <div class="mb-4">
                             <label for="message" class="form-label"><?php echo __('message_label'); ?> <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="message" name="message" rows="6" required><?php echo isset($messageVal) ? htmlspecialchars($messageVal) : ''; ?></textarea>
+                            <textarea class="form-control" id="message" name="message" rows="6" required><?php echo isset($messageVal) ? htmlspecialchars($messageVal ?? '') : ''; ?></textarea>
                         </div>
 
                         <div class="d-grid gap-2">

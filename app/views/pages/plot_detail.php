@@ -24,7 +24,7 @@
         <!-- Left: Plot Image / Map -->
         <div class="col-lg-7 mb-4">
             <?php if (!empty($plot['image_path'])): ?>
-                <img src="<?= htmlspecialchars($plot['image_path']) ?>" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
+                <img src="<?= htmlspecialchars($plot['image_path'] ?? '') ?>" alt="Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?>" class="plot-gallery-img">
             <?php else: ?>
                 <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center" class="style-68724">
                     <div class="text-center text-muted">
@@ -36,7 +36,7 @@
             
             <?php if (!empty($plot['map_link'])): ?>
                 <div class="mt-3">
-                    <a href="<?= htmlspecialchars($plot['map_link']) ?>" target="_blank" class="btn btn-outline-primary">
+                    <a href="<?= htmlspecialchars($plot['map_link'] ?? '') ?>" target="_blank" class="btn btn-outline-primary">
                         <i class="fas fa-map"></i> <?= __('plot_detail_view_map') ?>
                     </a>
                 </div>
@@ -105,7 +105,7 @@
                             <span class="badge bg-success me-1"><?= __('colony_park_facing') ?></span>
                         <?php endif; ?>
                         <?php if (!empty($plot['facing'])): ?>
-                            <span class="badge bg-info me-1"><?= __('plot_detail_facing') ?> <?= htmlspecialchars($plot['facing']) ?></span>
+                            <span class="badge bg-info me-1"><?= __('plot_detail_facing') ?> <?= htmlspecialchars($plot['facing'] ?? '') ?></span>
                         <?php endif; ?>
                         <?php if ($plot['road_width_ft'] ?? false): ?>
                             <span class="badge bg-secondary"><?= __('compare_road_width') ?> <?= floatval($plot['road_width_ft']) ?>ft</span>
@@ -117,7 +117,7 @@
                 <?php if (!empty($plot['description'])): ?>
                     <div class="mb-3">
                         <h6 class="fw-bold"><?= __('plot_detail_description') ?></h6>
-                        <p class="text-muted"><?= nl2br(htmlspecialchars($plot['description'])) ?></p>
+                        <p class="text-muted"><?= nl2br(htmlspecialchars($plot['description'] ?? '')) ?></p>
                     </div>
                 <?php endif; ?>
 

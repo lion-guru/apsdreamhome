@@ -42,7 +42,7 @@
             <select name="bank_account_id" required class="form-select">
                 <option value="">— <?php echo __('finance_select'); ?> —</option>
                 <?php foreach (($banks ?? []) as $b): ?>
-                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name']) ?></option>
+                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name'] ?? '') ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

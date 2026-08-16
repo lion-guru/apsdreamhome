@@ -29,7 +29,7 @@ $_date = $date ?? date('Y-m-d');
                         <select name="agent" class="form-control form-control-sm mr-3">
                             <option value="">All Agents</option>
                             <?php foreach ($_ag as $key => $a): ?>
-                            <option value="<?= $key ?>" <?= $_filter === $key ? 'selected' : '' ?>><?= htmlspecialchars($a['name']) ?></option>
+                            <option value="<?= $key ?>" <?= $_filter === $key ? 'selected' : '' ?>><?= htmlspecialchars($a['name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                         <label class="mr-2">Date:</label>
@@ -58,9 +58,9 @@ $_date = $date ?? date('Y-m-d');
                                 <td class="text-muted small" class="style-30672"><?= date('H:i:s', strtotime($l['created_at'])) ?></td>
                                 <td>
                                     <?php $a = $_ag[$l['agent_type']] ?? ['name' => $l['agent_type'], 'color' => '#666', 'icon' => 'fa-robot']; ?>
-                                    <span class="style-37833"><i class="fas <?= $a['icon'] ?>"></i> <?= htmlspecialchars($a['name']) ?></span>
+                                    <span class="style-37833"><i class="fas <?= $a['icon'] ?>"></i> <?= htmlspecialchars($a['name'] ?? '') ?></span>
                                 </td>
-                                <td><?= htmlspecialchars($l['task_name']) ?></td>
+                                <td><?= htmlspecialchars($l['task_name'] ?? '') ?></td>
                                 <td>
                                     <?php
                                     $sc = ['completed' => 'success', 'running' => 'info', 'failed' => 'danger', 'escalated' => 'warning', 'pending' => 'secondary'];

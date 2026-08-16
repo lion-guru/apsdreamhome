@@ -46,7 +46,7 @@ if ($selectedPlotId) {
         <h5 class="m-0"><i class="fas fa-<?= $mode === 'edit' ? 'edit' : 'plus' ?> me-2"></i><?= $mode === 'edit' ? __('sale_edit_booking') : __('sale_new_booking') ?></h5>
     </div>
     <div class="aps-cp-card-body">
-        <form method="post" action="<?= htmlspecialchars($action) ?>">
+        <form method="post" action="<?= htmlspecialchars($action ?? '') ?>">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="row g-3">
                 <?php if ($mode !== 'edit'): ?>
@@ -56,7 +56,7 @@ if ($selectedPlotId) {
                         <option value=""><?= __('sale_select_colony') ?></option>
                         <?php foreach ($coloniesMap as $cId => $cName): ?>
                             <option value="<?= $cId ?>" <?= $cId === $selectedColonyId ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($cName) ?>
+                                <?= htmlspecialchars($cName ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -172,7 +172,7 @@ if ($selectedPlotId) {
                             if ($cat) {
                                 $templates = $svc->getTemplates(['category_id' => $cat['id'], 'status' => 'published']);
                                 foreach ($templates as $t) {
-                                    echo '<option value="' . $t['id'] . '">' . htmlspecialchars($t['name']) . '</option>';
+                                    echo '<option value="' . $t['id'] . '">' . htmlspecialchars($t['name'] ?? '') . '</option>';
                                 }
                             }
                         } catch (\Exception $e) {
@@ -192,7 +192,7 @@ if ($selectedPlotId) {
                             if ($cat) {
                                 $templates = $svc->getTemplates(['category_id' => $cat['id'], 'status' => 'published']);
                                 foreach ($templates as $t) {
-                                    echo '<option value="' . $t['id'] . '">' . htmlspecialchars($t['name']) . '</option>';
+                                    echo '<option value="' . $t['id'] . '">' . htmlspecialchars($t['name'] ?? '') . '</option>';
                                 }
                             }
                         } catch (\Exception $e) {
@@ -256,7 +256,7 @@ if ($selectedPlotId) {
             <div class="mt-3 d-flex gap-2">
                 <button class="btn btn-primary" type="submit"><i class="fas fa-save me-1"></i><?= $mode === 'edit' ? __('sale_update_booking') : __('sale_create_booking') ?></button>
                 <button type="button" class="btn btn-outline-secondary" id="preview_emi_btn"><i class="fas fa-eye me-1"></i>Preview EMI Schedule</button>
-                <a class="btn btn-link" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings"><?= __('sale_cancel') ?></a>
+                <a class="btn btn-link" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings"><?= __('sale_cancel') ?></a>
             </div>
         </form>
     </div>

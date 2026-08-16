@@ -44,7 +44,7 @@ $content = $content ?? '';
                 <h6 class="mb-3">Step 2: Or Enter Manually</h6>
                 <p class="small text-muted">If you can't scan, enter this key manually:</p>
                 <div class="bg-light p-2 rounded mb-3">
-                  <code class="user-select-all"><?= htmlspecialchars($manual_key) ?></code>
+                  <code class="user-select-all"><?= htmlspecialchars($manual_key ?? '') ?></code>
                 </div>
 
                 <h6 class="mb-3">Step 3: Enter Code</h6>

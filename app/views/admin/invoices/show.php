@@ -37,7 +37,7 @@
 
     <?php if (!empty($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_GET['success']) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_GET['success'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -56,7 +56,7 @@
                             <div class="fw-bold"><?= htmlspecialchars($company['company_name'] ?? 'APS Dream Home') ?></div>
                             <div class="text-muted small"><?= htmlspecialchars($company['address'] ?? '') ?></div>
                             <?php if (!empty($company['gstin'])): ?>
-                                <div class="text-muted small">GSTIN: <?= htmlspecialchars($company['gstin']) ?></div>
+                                <div class="text-muted small">GSTIN: <?= htmlspecialchars($company['gstin'] ?? '') ?></div>
                             <?php endif; ?>
                             <div class="text-muted small"><?= htmlspecialchars($company['phone'] ?? '') ?></div>
                             <div class="text-muted small"><?= htmlspecialchars($company['email'] ?? '') ?></div>
@@ -65,13 +65,13 @@
                             <h6 class="text-muted">To:</h6>
                             <div class="fw-bold"><?= htmlspecialchars($invoice['client_name'] ?? '') ?></div>
                             <?php if (!empty($invoice['client_email'])): ?>
-                                <div class="text-muted small"><?= htmlspecialchars($invoice['client_email']) ?></div>
+                                <div class="text-muted small"><?= htmlspecialchars($invoice['client_email'] ?? '') ?></div>
                             <?php endif; ?>
                             <?php if (!empty($invoice['client_phone'])): ?>
-                                <div class="text-muted small"><?= htmlspecialchars($invoice['client_phone']) ?></div>
+                                <div class="text-muted small"><?= htmlspecialchars($invoice['client_phone'] ?? '') ?></div>
                             <?php endif; ?>
                             <?php if (!empty($invoice['client_address'])): ?>
-                                <div class="text-muted small"><?= nl2br(htmlspecialchars($invoice['client_address'])) ?></div>
+                                <div class="text-muted small"><?= nl2br(htmlspecialchars($invoice['client_address'] ?? '')) ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -99,18 +99,18 @@
                         <div class="row mb-3 g-3">
                             <div class="col-sm-4">
                                 <small class="text-muted d-block">Client GSTIN</small>
-                                <strong><?= htmlspecialchars($invoice['gstin']) ?></strong>
+                                <strong><?= htmlspecialchars($invoice['gstin'] ?? '') ?></strong>
                             </div>
                             <?php if (!empty($invoice['hsn_code'])): ?>
                                 <div class="col-sm-4">
                                     <small class="text-muted d-block">HSN Code</small>
-                                    <strong><?= htmlspecialchars($invoice['hsn_code']) ?></strong>
+                                    <strong><?= htmlspecialchars($invoice['hsn_code'] ?? '') ?></strong>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($invoice['e_invoice_number'])): ?>
                                 <div class="col-sm-4">
                                     <small class="text-muted d-block">E-Invoice #</small>
-                                    <strong><?= htmlspecialchars($invoice['e_invoice_number']) ?></strong>
+                                    <strong><?= htmlspecialchars($invoice['e_invoice_number'] ?? '') ?></strong>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -141,9 +141,9 @@
                                     <tr>
                                         <td><?= $i ?></td>
                                         <td>
-                                            <div class="fw-medium"><?= htmlspecialchars($item['item_name']) ?></div>
+                                            <div class="fw-medium"><?= htmlspecialchars($item['item_name'] ?? '') ?></div>
                                             <?php if (!empty($item['item_description'])): ?>
-                                                <small class="text-muted"><?= htmlspecialchars($item['item_description']) ?></small>
+                                                <small class="text-muted"><?= htmlspecialchars($item['item_description'] ?? '') ?></small>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center"><?= (int)$item['quantity'] ?></td>
@@ -196,12 +196,12 @@
                     <div class="card-body aps-cp-card-body">
                         <?php if (!empty($invoice['payment_terms'])): ?>
                             <div class="mb-2"><strong class="text-muted small">Payment Terms:</strong>
-                                <p class="mb-0"><?= nl2br(htmlspecialchars($invoice['payment_terms'])) ?></p>
+                                <p class="mb-0"><?= nl2br(htmlspecialchars($invoice['payment_terms'] ?? '')) ?></p>
                             </div>
                         <?php endif; ?>
                         <?php if (!empty($invoice['notes'])): ?>
                             <div><strong class="text-muted small">Notes:</strong>
-                                <p class="mb-0"><?= nl2br(htmlspecialchars($invoice['notes'])) ?></p>
+                                <p class="mb-0"><?= nl2br(htmlspecialchars($invoice['notes'] ?? '')) ?></p>
                             </div>
                         <?php endif; ?>
                     </div>

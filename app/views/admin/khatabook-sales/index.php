@@ -51,7 +51,7 @@
                             <select name="batch" class="form-select form-select-sm">
                                 <option value="">All Batches</option>
                                 <?php foreach ($batches as $b): ?>
-                                    <option value="<?= htmlspecialchars($b['import_batch']) ?>" <?= ($_GET['batch'] ?? '') === $b['import_batch'] ? 'selected' : '' ?>><?= htmlspecialchars(substr($b['import_batch'], 0, 20)) ?></option>
+                                    <option value="<?= htmlspecialchars($b['import_batch'] ?? '') ?>" <?= ($_GET['batch'] ?? '') === $b['import_batch'] ? 'selected' : '' ?>><?= htmlspecialchars(substr($b['import_batch'], 0, 20)) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -90,8 +90,8 @@
                             <?php $i = ($page - 1) * $perPage; foreach ($sales as $s): $i++; ?>
                                 <tr>
                                     <td><?= $i ?></td>
-                                    <td><?= htmlspecialchars($s['transaction_date']) ?></td>
-                                    <td><strong><?= htmlspecialchars($s['customer_name']) ?></strong></td>
+                                    <td><?= htmlspecialchars($s['transaction_date'] ?? '') ?></td>
+                                    <td><strong><?= htmlspecialchars($s['customer_name'] ?? '') ?></strong></td>
                                     <td><?= htmlspecialchars($s['customer_phone'] ?? '-') ?></td>
                                     <td><?= htmlspecialchars(mb_substr($s['item_description'] ?? '-', 0, 40)) ?></td>
                                     <td><?= $s['quantity'] > 0 ? number_format($s['quantity'], 2) : '-' ?></td>

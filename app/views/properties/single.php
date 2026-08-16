@@ -92,7 +92,7 @@ try {
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Home</a></li>
                     <li class="breadcrumb-item"><a href="/properties">Properties</a></li>
-                    <li class="breadcrumb-item active"><?php echo htmlspecialchars($property['title']); ?></li>
+                    <li class="breadcrumb-item active"><?php echo htmlspecialchars($property['title'] ?? ''); ?></li>
                 </ol>
             </nav>
         </div>
@@ -103,12 +103,12 @@ try {
         <div class="col-lg-8">
             <div class="property-gallery">
                 <div class="gallery-main">
-                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="gallery-main-img" id="mainImage" loading="lazy">
+                    <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image'] ?? '') : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="gallery-main-img" id="mainImage" loading="lazy">
                 </div>
                 <?php if (count($property_images) > 1): ?>
                 <div class="gallery-thumbnails mt-3">
                     <?php foreach ($property_images as $index => $image): ?>
-                    <img src="<?= htmlspecialchars($image['image_path']) ?>" alt="Property view <?php echo $index + 1; ?>" class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>" onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')" loading="lazy">
+                    <img src="<?= htmlspecialchars($image['image_path'] ?? '') ?>" alt="Property view <?php echo $index + 1; ?>" class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>" onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path'] ?? ''); ?>')" loading="lazy">
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
@@ -119,7 +119,7 @@ try {
         <div class="col-lg-4">
             <div class="property-quick-info card">
                 <div class="card-body aps-cp-card-body">
-                    <h2 class="property-title mb-3"><?php echo htmlspecialchars($property['title']); ?></h2>
+                    <h2 class="property-title mb-3"><?php echo htmlspecialchars($property['title'] ?? ''); ?></h2>
 
                     <div class="property-price mb-4">
                         <span class="price-main">₹<?php echo number_format($property['price']); ?></span>
@@ -143,18 +143,18 @@ try {
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-building text-primary"></i>
-                            <span><?php echo htmlspecialchars($property['property_type']); ?></span>
+                            <span><?php echo htmlspecialchars($property['property_type'] ?? ''); ?></span>
                         </div>
                     </div>
 
                     <div class="property-actions mb-4">
-                        <button class="btn btn-primary btn-lg w-100 mb-2" onclick="scheduleVisit(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title']); ?>')">
+                        <button class="btn btn-primary btn-lg w-100 mb-2" onclick="scheduleVisit(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title'] ?? ''); ?>')">
                             <i class="fas fa-calendar-check me-2"></i>Schedule Visit
                         </button>
                         <button class="btn btn-outline-primary w-100 mb-2" onclick="toggleFavorite(<?php echo $property['id']; ?>)">
                             <i class="far fa-heart me-2"></i>Add to Favorites
                         </button>
-                        <button class="btn btn-outline-secondary w-100" onclick="shareProperty(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title']); ?>')">
+                        <button class="btn btn-outline-secondary w-100" onclick="shareProperty(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title'] ?? ''); ?>')">
                             <i class="fas fa-share-alt me-2"></i>Share Property
                         </button>
                     </div>
@@ -163,16 +163,16 @@ try {
                     <?php if ($property['agent_name']): ?>
                     <div class="agent-card">
                         <div class="agent-avatar">
-                            <img src="<?= !empty($property['agent_image']) ? htmlspecialchars($property['agent_image']) : (BASE_URL . '/assets/images/agents/default.jpg') ?>" alt="Agent" class="agent-img">
+                            <img src="<?= !empty($property['agent_image']) ? htmlspecialchars($property['agent_image'] ?? '') : (BASE_URL . '/assets/images/agents/default.jpg') ?>" alt="Agent" class="agent-img">
                         </div>
                         <div class="agent-info">
-                            <h6 class="agent-name"><?php echo htmlspecialchars($property['agent_name']); ?></h6>
+                            <h6 class="agent-name"><?php echo htmlspecialchars($property['agent_name'] ?? ''); ?></h6>
                             <p class="agent-title">Property Agent</p>
                             <div class="agent-contact">
-                                <a href="tel:<?php echo htmlspecialchars($property['agent_phone']); ?>" class="btn btn-sm btn-outline-primary me-2">
+                                <a href="tel:<?php echo htmlspecialchars($property['agent_phone'] ?? ''); ?>" class="btn btn-sm btn-outline-primary me-2">
                                     <i class="fas fa-phone me-1"></i>Call
                                 </a>
-                                <a href="mailto:<?php echo htmlspecialchars($property['agent_email']); ?>" class="btn btn-sm btn-outline-primary">
+                                <a href="mailto:<?php echo htmlspecialchars($property['agent_email'] ?? ''); ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-envelope me-1"></i>Email
                                 </a>
                             </div>
@@ -224,7 +224,7 @@ try {
                                     <div class="table-responsive"><table class="table table-borderless table-responsive">
                                         <tr>
                                             <td><strong>Property Type:</strong></td>
-                                            <td><?php echo htmlspecialchars($property['property_type']); ?></td>
+                                            <td><?php echo htmlspecialchars($property['property_type'] ?? ''); ?></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Bedrooms:</strong></td>
@@ -304,7 +304,7 @@ try {
                                             <div class="text-center">
                                                 <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
                                                 <h5>Interactive Map</h5>
-                                                <p class="text-muted">Location: <?php echo htmlspecialchars($property['address']); ?></p>
+                                                <p class="text-muted">Location: <?php echo htmlspecialchars($property['address'] ?? ''); ?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -399,10 +399,10 @@ try {
                 <?php foreach ($related_properties as $related): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card property-card h-100">
-                        <img src="<?= !empty($related['image_path']) ? htmlspecialchars($related['image_path']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related['title']); ?>" loading="lazy">
+                        <img src="<?= !empty($related['image_path']) ? htmlspecialchars($related['image_path'] ?? '') : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related['title'] ?? ''); ?>" loading="lazy">
                         <div class="card-body aps-cp-card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($related['title']); ?></h5>
-                            <p class="card-text text-muted"><?php echo htmlspecialchars($related['address']); ?></p>
+                            <h5 class="card-title"><?php echo htmlspecialchars($related['title'] ?? ''); ?></h5>
+                            <p class="card-text text-muted"><?php echo htmlspecialchars($related['address'] ?? ''); ?></p>
                             <div class="property-features">
                                 <span><i class="fas fa-bed me-1"></i><?php echo $related['bedrooms']; ?> beds</span>
                                 <span><i class="fas fa-bath me-1"></i><?php echo $related['bathrooms']; ?> baths</span>

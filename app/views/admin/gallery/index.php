@@ -36,7 +36,7 @@ $current_category = $current_category ?? '';
         <div class="card border-0 shadow-sm h-100">
             <div class="position-relative" class="style-16984">
                 <?php if (!empty($img['image_path'])): ?>
-                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path']) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="style-83369" loading="lazy">
+                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path'] ?? '') ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="style-83369" loading="lazy">
                 <?php else: ?>
                 <div class="bg-light d-flex align-items-center justify-content-center h-100"><i class="fas fa-image fa-3x text-muted"></i></div>
                 <?php endif; ?>
@@ -47,7 +47,7 @@ $current_category = $current_category ?? '';
             </div>
             <div class="card-body p-3">
                 <?php if (!empty($img['title'])): ?>
-                <h6 class="card-title mb-1"><?= htmlspecialchars($img['title']) ?></h6>
+                <h6 class="card-title mb-1"><?= htmlspecialchars($img['title'] ?? '') ?></h6>
                 <?php endif; ?>
                 <p class="card-text small text-muted mb-0"><?= htmlspecialchars($img['caption'] ?? 'No caption') ?></p>
                 <?php if (($img['sort_order'] ?? 0) > 0): ?>

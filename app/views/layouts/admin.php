@@ -45,8 +45,8 @@ $GLOBALS['_html_doc_started'] = true;
     <?php $tcColors = \App\Core\Middleware\TenantContext::getColors(); $tcLogo = \App\Core\Middleware\TenantContext::getLogo(); ?>
     <style>
         :root {
-            --tenant-primary: <?= htmlspecialchars($tcColors['primary']) ?>;
-            --tenant-secondary: <?= htmlspecialchars($tcColors['secondary']) ?>;
+            --tenant-primary: <?= htmlspecialchars($tcColors['primary'] ?? '') ?>;
+            --tenant-secondary: <?= htmlspecialchars($tcColors['secondary'] ?? '') ?>;
         }
         .navbar-brand img[src*="favicon"], .navbar-brand img:not([src]) { max-height: 36px; }
         .sidebar-heading { background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary)); }
@@ -273,7 +273,7 @@ $GLOBALS['_html_doc_started'] = true;
                     <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" class="style-10432">
                         <div class="user-avatar"><?php echo strtoupper(substr($adminName, 0, 1)); ?></div>
                         <div class="user-info">
-                            <div class="user-name"><?php echo htmlspecialchars($adminName); ?></div>
+                            <div class="user-name"><?php echo htmlspecialchars($adminName ?? ''); ?></div>
                             <div class="user-role"><?php echo ucfirst(str_replace('_', ' ', $adminRole)); ?></div>
                         </div>
                         <i class="fas fa-chevron-down" class="style-40544"></i>

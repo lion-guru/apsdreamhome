@@ -19,7 +19,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
             <i class="fas fa-chart-line" class="style-78618"></i>Real-Time Analytics
         </h1>
         <p class="style-61566">
-            <span id="rt-updated">Last updated: <?= htmlspecialchars($updated) ?></span>
+            <span id="rt-updated">Last updated: <?= htmlspecialchars($updated ?? '') ?></span>
             <span id="rt-ws-status" class="style-56313">
                 <i class="fas fa-circle" class="style-338"></i> Connecting&hellip;
             </span>

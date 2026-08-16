@@ -117,7 +117,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         <div class="mb-3">
             <label class="form-label fw-bold"><?= __('assoc_ref_share_link', [], 'Share Link') ?></label>
             <div class="input-group">
-                <input type="text" class="form-control" id="shareLink" value="<?= htmlspecialchars($shareUrl) ?>" readonly>
+                <input type="text" class="form-control" id="shareLink" value="<?= htmlspecialchars($shareUrl ?? '') ?>" readonly>
                 <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">
                     <i class="fas fa-link me-1"></i> <?= __('assoc_ref_copy', [], 'Copy') ?>
                 </button>
@@ -231,10 +231,10 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                         <td><?= htmlspecialchars($ref['referred_name'] ?: __('assoc_ref_pending_reg', [], 'Pending Registration')) ?></td>
                         <td>
                             <?php if ($ref['referred_email']): ?>
-                            <small><?= htmlspecialchars($ref['referred_email']) ?></small><br>
+                            <small><?= htmlspecialchars($ref['referred_email'] ?? '') ?></small><br>
                             <?php endif; ?>
                             <?php if ($ref['referred_phone']): ?>
-                            <small><?= htmlspecialchars($ref['referred_phone']) ?></small>
+                            <small><?= htmlspecialchars($ref['referred_phone'] ?? '') ?></small>
                             <?php endif; ?>
                         </td>
                         <td>

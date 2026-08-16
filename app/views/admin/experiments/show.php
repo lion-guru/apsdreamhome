@@ -22,14 +22,14 @@ $variantNames = array_keys($results);
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0">
-                <i class="fas fa-chart-bar me-2 text-primary"></i><?= htmlspecialchars($experiment['name']) ?>
+                <i class="fas fa-chart-bar me-2 text-primary"></i><?= htmlspecialchars($experiment['name'] ?? '') ?>
                 <span class="badge bg-<?= $badge ?> ms-2"><?= ucfirst($status) ?></span>
                 <?php if (!empty($experiment['winner'])): ?>
-                    <span class="badge bg-warning text-dark ms-1"><i class="fas fa-trophy me-1"></i><?= htmlspecialchars($experiment['winner']) ?></span>
+                    <span class="badge bg-warning text-dark ms-1"><i class="fas fa-trophy me-1"></i><?= htmlspecialchars($experiment['winner'] ?? '') ?></span>
                 <?php endif; ?>
             </h1>
             <?php if (!empty($experiment['description'])): ?>
-                <p class="text-muted mb-0"><?= htmlspecialchars($experiment['description']) ?></p>
+                <p class="text-muted mb-0"><?= htmlspecialchars($experiment['description'] ?? '') ?></p>
             <?php endif; ?>
         </div>
         <a href="<?= $baseUrl ?>/admin/experiments" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> All Experiments</a>
@@ -37,13 +37,13 @@ $variantNames = array_keys($results);
 
     <?php if ($flashSuccess): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess) ?>
+            <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars($flashSuccess ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($flashError): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError) ?>
+            <i class="fas fa-times-circle me-1"></i> <?= htmlspecialchars($flashError ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -138,7 +138,7 @@ $variantNames = array_keys($results);
                                 <?php $isBest = $bestRate > 0 && abs(((float)$r['rate']) - $bestRate) < 1e-9; ?>
                                 <tr>
                                     <td>
-                                        <strong><?= htmlspecialchars($name) ?></strong>
+                                        <strong><?= htmlspecialchars($name ?? '') ?></strong>
                                         <?php if ($isBest && count($results) > 1): ?>
                                             <i class="fas fa-trophy text-warning ms-1" title="Highest rate"></i>
                                         <?php endif; ?>
@@ -159,13 +159,13 @@ $variantNames = array_keys($results);
                     <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/end"
                               onsubmit="return confirm('End this experiment? You can still view results afterwards.');">
-                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
                             <div class="mb-2">
                                 <label class="form-label small">Declare winner (optional)</label>
                                 <select name="winner" class="form-select form-select-sm">
                                     <option value="">— No winner —</option>
                                     <?php foreach ($variantNames as $vn): ?>
-                                        <option value="<?= htmlspecialchars($vn) ?>"><?= htmlspecialchars($vn) ?></option>
+                                        <option value="<?= htmlspecialchars($vn ?? '') ?>"><?= htmlspecialchars($vn ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

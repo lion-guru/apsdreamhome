@@ -66,9 +66,9 @@ $active_page = 'bookings';
                                 if (isset($associate['role']) && !in_array(strtolower($associate['role']), ['agent', 'associate', 'telecaller'])) continue;
                             ?>
                                 <option value="<?= $associate['id'] ?>">
-                                    <?= htmlspecialchars($associate['name']) ?> 
+                                    <?= htmlspecialchars($associate['name'] ?? '') ?> 
                                     <?php if (!empty($associate['role'])): ?>
-                                        (<?= ucfirst(htmlspecialchars($associate['role'])) ?>)
+                                        (<?= ucfirst(htmlspecialchars($associate['role'] ?? '')) ?>)
                                     <?php endif; ?>
                                 </option>
                             <?php endforeach; ?>

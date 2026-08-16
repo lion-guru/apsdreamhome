@@ -7,7 +7,7 @@ $eligibility = $eligibility ?? [];
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted">NOC #<?= $noc['id'] ?? 0 ?> — <?= htmlspecialchars($noc['noc_number'] ?? 'Pending') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_nocs') ?></a>
@@ -45,11 +45,11 @@ $eligibility = $eligibility ?? [];
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_booking_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($noc['booking_number']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($noc['booking_number'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_customer_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($noc['customer_name']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($noc['customer_name'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_customer_phone') ?></div>
@@ -57,11 +57,11 @@ $eligibility = $eligibility ?? [];
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_plot_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($noc['plot_no']) ?>, <?= htmlspecialchars($noc['colony_name']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($noc['plot_no'] ?? '') ?>, <?= htmlspecialchars($noc['colony_name'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_purpose_label') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($noc['purpose']) ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($noc['purpose'] ?? '') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_created_at') ?></div>
@@ -76,13 +76,13 @@ $eligibility = $eligibility ?? [];
                         <?php if ($noc['rejection_reason']): ?>
                         <div class="col-12">
                             <div class="text-muted small"><?= __('admin_rejection_reason') ?></div>
-                            <div class="text-danger fw-semibold"><?= htmlspecialchars($noc['rejection_reason']) ?></div>
+                            <div class="text-danger fw-semibold"><?= htmlspecialchars($noc['rejection_reason'] ?? '') ?></div>
                         </div>
                         <?php endif; ?>
                         <?php if ($noc['notes']): ?>
                         <div class="col-12">
                             <div class="text-muted small"><?= __('admin_notes_label') ?></div>
-                            <div><?= nl2br(htmlspecialchars($noc['notes'])) ?></div>
+                            <div><?= nl2br(htmlspecialchars($noc['notes'] ?? '')) ?></div>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -103,9 +103,9 @@ $eligibility = $eligibility ?? [];
                             <div class="d-flex align-items-start mb-2">
                                 <i class="fas fa-<?= $check['passed'] ? 'check-circle text-success' : 'times-circle text-danger' ?> me-2 mt-1"></i>
                                 <div>
-                                    <div class="small fw-semibold"><?= htmlspecialchars($check['label']) ?></div>
+                                    <div class="small fw-semibold"><?= htmlspecialchars($check['label'] ?? '') ?></div>
                                     <?php if (!$check['passed']): ?>
-                                        <div class="text-danger" class="style-86760"><?= htmlspecialchars($check['message']) ?></div>
+                                        <div class="text-danger" class="style-86760"><?= htmlspecialchars($check['message'] ?? '') ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>

@@ -71,7 +71,7 @@
                             <?php foreach ($items as $item): ?>
                                 <tr class="style-23517">
                                     <td><?= $item['id'] ?></td>
-                                    <td><strong class="style-48283"><?= htmlspecialchars($item['batch_name']) ?></strong></td>
+                                    <td><strong class="style-48283"><?= htmlspecialchars($item['batch_name'] ?? '') ?></strong></td>
                                     <td><span class="badge bg-info"><?= ucfirst($item['batch_type']) ?></span></td>
                                     <td>
                                         <?php if ($item['period_from'] && $item['period_to']): ?>

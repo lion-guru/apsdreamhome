@@ -4,7 +4,7 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title) ?></h4>
+        <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
         <span class="text-muted">Form 281 Challan</span>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Challans</a>
@@ -86,7 +86,7 @@ ob_start();
             <hr>
             <div>
                 <label class="form-label small text-muted">Remarks</label>
-                <div class="small"><?= nl2br(htmlspecialchars($challan['remarks'])) ?></div>
+                <div class="small"><?= nl2br(htmlspecialchars($challan['remarks'] ?? '')) ?></div>
             </div>
         <?php endif; ?>
     </div>

@@ -1,7 +1,7 @@
 <?php $pageTitle = $page_title ?? 'Smart Home Automation'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-robot me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
+        <h4 class="mb-0"><i class="fas fa-robot me-2"></i><?= htmlspecialchars($pageTitle ?? '') ?></h4>
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addRuleModal"><i class="fas fa-plus me-1"></i>New Rule</button>
     </div>
     <div class="card border-0 shadow-sm">

@@ -158,7 +158,7 @@ $today = date('Y-m-d');
                     <div class="style-46800">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="style-30934"><?= htmlspecialchars($task['title']) ?></div>
+                                <div class="style-30934"><?= htmlspecialchars($task['title'] ?? '') ?></div>
                                 <div class="style-74061">
                                     <i class="fas fa-user me-1"></i><?= htmlspecialchars($task['lead_name'] ?? __('assoc_crm_unknown', [], 'Unknown')) ?>
                                     <?php if ($task['due_date']): ?>
@@ -190,7 +190,7 @@ $today = date('Y-m-d');
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="style-64847">
-                                    <?= htmlspecialchars($v['visitor_name']) ?>
+                                    <?= htmlspecialchars($v['visitor_name'] ?? '') ?>
                                     <?php if ($isTodayVisit): ?><span class="badge bg-warning text-dark ms-1"><?= __('assoc_crm_today', [], 'Today') ?></span><?php endif; ?>
                                 </div>
                                 <div class="style-76464">
@@ -198,10 +198,10 @@ $today = date('Y-m-d');
                                     &bull; <i class="fas fa-clock me-1"></i><?= date('h:i A', strtotime($v['visit_time'])) ?>
                                 </div>
                                 <?php if (!empty($v['lead_name'])): ?>
-                                    <div class="style-50608"><i class="fas fa-user me-1"></i><?= htmlspecialchars($v['lead_name']) ?></div>
+                                    <div class="style-50608"><i class="fas fa-user me-1"></i><?= htmlspecialchars($v['lead_name'] ?? '') ?></div>
                                 <?php endif; ?>
                             </div>
-                            <a href="tel:<?= htmlspecialchars($v['visitor_phone']) ?>" class="btn btn-sm btn-outline-success" class="style-52516"><i class="fas fa-phone"></i></a>
+                            <a href="tel:<?= htmlspecialchars($v['visitor_phone'] ?? '') ?>" class="btn btn-sm btn-outline-success" class="style-52516"><i class="fas fa-phone"></i></a>
                         </div>
                     </div>
                     <?php endforeach; ?>

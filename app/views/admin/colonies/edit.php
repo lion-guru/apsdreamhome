@@ -26,7 +26,7 @@ $districts = $districts ?? [];
                         <select name="state_id" class="form-select" onchange="loadDistricts(this.value)">
                             <option value="">Select State</option>
                             <?php foreach ($states as $s): ?>
-                            <option value="<?php echo $s['id']; ?>" <?php echo ($colony['district_id'] ?? 0) == $s['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['name']); ?></option>
+                            <option value="<?php echo $s['id']; ?>" <?php echo ($colony['district_id'] ?? 0) == $s['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -34,7 +34,7 @@ $districts = $districts ?? [];
                         <label class="form-label">District</label>
                         <select name="district_id" class="form-select" id="district_select">
                             <?php foreach ($districts as $d): ?>
-                            <option value="<?php echo $d['id']; ?>" <?php echo ($colony['district_id'] ?? 0) == $d['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['name']); ?></option>
+                            <option value="<?php echo $d['id']; ?>" <?php echo ($colony['district_id'] ?? 0) == $d['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['name'] ?? ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

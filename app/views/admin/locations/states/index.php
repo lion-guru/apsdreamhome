@@ -88,10 +88,10 @@
                                 <tr>
                                     <td><?php echo $state['id']; ?></td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($state['name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($state['name'] ?? ''); ?></strong>
                                     </td>
                                     <td>
-                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($state['code']); ?></span>
+                                        <span class="badge bg-secondary"><?php echo htmlspecialchars($state['code'] ?? ''); ?></span>
                                     </td>
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-sm btn-outline-primary">

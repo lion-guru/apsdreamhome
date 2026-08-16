@@ -5,8 +5,8 @@
             <i class="fas fa-plus me-1"></i>New Associate
         </a>
     </div>
-    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
-    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success ?? '') ?></div><?php endif; ?>
+    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div><?php endif; ?>
     <div class="aps-cp-card">
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive">

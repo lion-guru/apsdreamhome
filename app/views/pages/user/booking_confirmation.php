@@ -101,7 +101,7 @@ $statusColors = [
                                     &middot; <?= number_format((float)$booking['width_ft'], 0) ?> x <?= number_format((float)$booking['length_ft'], 0) ?> ft
                                 <?php endif; ?>
                                 <?php if (!empty($booking['facing'])): ?>
-                                    &middot; <?= htmlspecialchars($booking['facing']) ?> <?= __('user_booking_confirm_facing_suffix', 'facing') ?>
+                                    &middot; <?= htmlspecialchars($booking['facing'] ?? '') ?> <?= __('user_booking_confirm_facing_suffix', 'facing') ?>
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -195,7 +195,7 @@ $statusColors = [
                 <h5 class="mb-0"><i class="fas fa-sticky-note text-warning me-2"></i><?= __('user_booking_confirm_notes', 'Notes') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <p class="mb-0"><?= nl2br(htmlspecialchars($booking['notes'])) ?></p>
+                <p class="mb-0"><?= nl2br(htmlspecialchars($booking['notes'] ?? '')) ?></p>
             </div>
         </div>
         <?php endif; ?>

@@ -218,7 +218,7 @@ ob_start();
                     <tr>
                       <td>
                         <strong><?= htmlspecialchars($u['name'] ?? 'Unknown') ?></strong>
-                        <?php if (!empty($u['email'])): ?><br><small class="text-muted"><?= htmlspecialchars($u['email']) ?></small><?php endif; ?>
+                        <?php if (!empty($u['email'])): ?><br><small class="text-muted"><?= htmlspecialchars($u['email'] ?? '') ?></small><?php endif; ?>
                       </td>
                       <td>
                         <span class="badge bg-<?= in_array($u['user_role'] ?? '', ['admin', 'super_admin']) ? 'danger' : 'secondary' ?>">

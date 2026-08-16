@@ -14,7 +14,7 @@
         <?php if (!empty($prop['image'])): ?>
           <?php $imgRaw = $prop['image'] ?? '';
                 $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
-          <img src="<?= htmlspecialchars($imgSrc) ?>" class="card-img-top rounded-top" class="style-94960" alt="<?= htmlspecialchars($prop['name']) ?>">
+          <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" class="card-img-top rounded-top" class="style-94960" alt="<?= htmlspecialchars($prop['name'] ?? '') ?>">
         <?php endif; ?>
         <div class="aps-cp-card-body">
           <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
@@ -65,7 +65,7 @@
                 <div class="col-md-4"><strong>Bathrooms:</strong> <?= (int)$prop['bathrooms'] ?></div>
               <?php endif; ?>
               <?php if (!empty($prop['furnished'])): ?>
-                <div class="col-md-4"><strong>Furnished:</strong> <span class="text-capitalize"><?= htmlspecialchars($prop['furnished']) ?></span></div>
+                <div class="col-md-4"><strong>Furnished:</strong> <span class="text-capitalize"><?= htmlspecialchars($prop['furnished'] ?? '') ?></span></div>
               <?php endif; ?>
             </div>
           <?php endif; ?>
@@ -78,13 +78,13 @@
         <div class="aps-cp-card-header"><i class="fas fa-user me-2"></i>Contact Owner</div>
         <div class="aps-cp-card-body">
           <?php if (!empty($prop['name'])): ?>
-            <p class="mb-1"><strong><?= htmlspecialchars($prop['name']) ?></strong></p>
+            <p class="mb-1"><strong><?= htmlspecialchars($prop['name'] ?? '') ?></strong></p>
           <?php endif; ?>
           <?php if (!empty($prop['phone'])): ?>
-            <p class="mb-1"><i class="fas fa-phone me-1"></i><a href="tel:<?= htmlspecialchars($prop['phone']) ?>"><?= htmlspecialchars($prop['phone']) ?></a></p>
+            <p class="mb-1"><i class="fas fa-phone me-1"></i><a href="tel:<?= htmlspecialchars($prop['phone'] ?? '') ?>"><?= htmlspecialchars($prop['phone'] ?? '') ?></a></p>
           <?php endif; ?>
           <?php if (!empty($prop['email'])): ?>
-            <p class="mb-0"><i class="fas fa-envelope me-1"></i><a href="mailto:<?= htmlspecialchars($prop['email']) ?>"><?= htmlspecialchars($prop['email']) ?></a></p>
+            <p class="mb-0"><i class="fas fa-envelope me-1"></i><a href="mailto:<?= htmlspecialchars($prop['email'] ?? '') ?>"><?= htmlspecialchars($prop['email'] ?? '') ?></a></p>
           <?php endif; ?>
           <hr>
           <div class="d-flex gap-2">

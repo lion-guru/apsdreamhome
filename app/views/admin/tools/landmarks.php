@@ -150,10 +150,10 @@ $categories = $categories ?? [];
                             <?php foreach ($landmarks as $l): ?>
                             <tr>
                                 <td>
-                                    <div class="fw-medium"><?= htmlspecialchars($l['name']) ?></div>
+                                    <div class="fw-medium"><?= htmlspecialchars($l['name'] ?? '') ?></div>
                                     <small class="text-muted"><?= htmlspecialchars($l['address'] ?? '') ?></small>
                                 </td>
-                                <td><span class="badge bg-info"><?= ucfirst(htmlspecialchars($l['category'])) ?></span></td>
+                                <td><span class="badge bg-info"><?= ucfirst(htmlspecialchars($l['category'] ?? '')) ?></span></td>
                                 <td>
                                     <small class="text-muted">
                                         <?= $l['latitude'] ? round($l['latitude'], 4) : '—' ?>, 
@@ -210,9 +210,9 @@ $categories = $categories ?? [];
                         <tbody>
                             <?php foreach ($distances as $d): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($d['colony_name']) ?></strong></td>
-                                <td><?= htmlspecialchars($d['landmark_name']) ?></td>
-                                <td><span class="badge bg-info"><?= ucfirst(htmlspecialchars($d['landmark_category'])) ?></span></td>
+                                <td><strong><?= htmlspecialchars($d['colony_name'] ?? '') ?></strong></td>
+                                <td><?= htmlspecialchars($d['landmark_name'] ?? '') ?></td>
+                                <td><span class="badge bg-info"><?= ucfirst(htmlspecialchars($d['landmark_category'] ?? '')) ?></span></td>
                                 <td>
                                     <?php
                                     $km = $d['distance_km'] ?? 0;

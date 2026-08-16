@@ -83,7 +83,7 @@
                                     <?php foreach ($rules as $i => $rule): ?>
                                         <tr>
                                             <td><?= $i + 1 ?></td>
-                                            <td><strong><?= htmlspecialchars($rule['name']) ?></strong></td>
+                                            <td><strong><?= htmlspecialchars($rule['name'] ?? '') ?></strong></td>
                                             <td><code><?= htmlspecialchars($rule['source_pattern'] ?? '*') ?></code></td>
                                             <td><code><?= htmlspecialchars($rule['city_pattern'] ?? '*') ?></code></td>
                                             <td>
@@ -156,7 +156,7 @@
                         <h6><i class="fas fa-chart-bar me-1 text-warning"></i>Top Rules</h6>
                         <?php foreach ($stats['top_rules'] as $tr): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <small class="text-muted"><?= htmlspecialchars($tr['name']) ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($tr['name'] ?? '') ?></small>
                                 <span class="badge bg-info"><?= $tr['route_count'] ?></span>
                             </div>
                         <?php endforeach; ?>

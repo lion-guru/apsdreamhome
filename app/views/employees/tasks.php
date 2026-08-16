@@ -6,12 +6,12 @@ $sort = $_GET['sort'] ?? 'priority';
 
 function taskPriorityBadge($p) {
     $map = ['High' => 'danger', 'Medium' => 'warning', 'Low' => 'success'];
-    return '<span class="badge bg-' . ($map[$p] ?? 'secondary') . ' bg-opacity-10 text-' . ($map[$p] ?? 'secondary') . '">' . htmlspecialchars($p) . '</span>';
+    return '<span class="badge bg-' . ($map[$p] ?? 'secondary') . ' bg-opacity-10 text-' . ($map[$p] ?? 'secondary') . '">' . htmlspecialchars($p ?? '') . '</span>';
 }
 function taskStatusBadge($s) {
     $map = ['completed' => 'success', 'in progress' => 'info', 'pending' => 'secondary', 'on hold' => 'warning'];
     $cls = $map[strtolower($s)] ?? 'secondary';
-    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($s) . '</span>';
+    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($s ?? '') . '</span>';
 }
 function taskPriorityIcon($p) {
     $map = ['High' => 'arrow-up text-danger', 'Medium' => 'minus text-warning', 'Low' => 'arrow-down text-success'];
@@ -159,7 +159,7 @@ if ($filter && $filter !== 'all') {
                                         </span>
                                     <?php endif; ?>
                                     <?php if (!empty($t['assigned_by_name'])): ?>
-                                        <span class="small text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($t['assigned_by_name']) ?></span>
+                                        <span class="small text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($t['assigned_by_name'] ?? '') ?></span>
                                     <?php endif; ?>
                                     <?php if (!empty($t['created_at'])): ?>
                                         <span class="small text-muted"><i class="fas fa-clock me-1"></i><?= timeAgo($t['created_at']) ?></span>

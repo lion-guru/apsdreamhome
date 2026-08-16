@@ -54,7 +54,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                         <option value="">— None —</option>
                         <?php foreach ($brokers as $b): ?>
                             <option value="<?= (int)$b['id'] ?>" <?= ($lead['broker_id'] ?? '') == $b['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($b['broker_name']) ?>
+                                <?= htmlspecialchars($b['broker_name'] ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

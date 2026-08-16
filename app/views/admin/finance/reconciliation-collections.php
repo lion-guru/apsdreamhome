@@ -7,7 +7,7 @@ $filters = $filters ?? [];
 ?>
 <div class="aps-cp-container">
     <div class="aps-cp-page-header">
-        <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading) ?></h1>
+        <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading ?? '') ?></h1>
     </div>
 
     <!-- Start New Reconciliation -->
@@ -23,7 +23,7 @@ $filters = $filters ?? [];
                     <select name="collector_id" class="aps-cp-form-select" required>
                         <option value="">-- Select --</option>
                         <?php foreach ($collectors as $c): ?>
-                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -56,7 +56,7 @@ $filters = $filters ?? [];
                     <select name="collector_id" class="aps-cp-form-select">
                         <option value="">All</option>
                         <?php foreach ($collectors as $c): ?>
-                            <option value="<?= $c['id'] ?>" <?= (int)($filters['collector_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+                            <option value="<?= $c['id'] ?>" <?= (int)($filters['collector_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -94,7 +94,7 @@ $filters = $filters ?? [];
                         <tbody>
                             <?php foreach ($sessions as $s): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($s['session_date']) ?></td>
+                                    <td><?= htmlspecialchars($s['session_date'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($s['collector_name'] ?? 'N/A') ?></td>
                                     <td>₹<?= number_format($s['total_submitted'], 2) ?></td>
                                     <td class="style-45683">₹<?= number_format($s['total_verified'], 2) ?></td>

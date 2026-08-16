@@ -30,7 +30,7 @@
                                     <option value="">All States</option>
                                     <?php foreach ($states as $state): ?>
                                         <option value="<?php echo $state['id']; ?>" <?php echo (isset($_GET['state_id']) && $_GET['state_id'] == $state['id']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($state['name']); ?>
+                                            <?php echo htmlspecialchars($state['name'] ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -41,7 +41,7 @@
                                     <option value="">All Districts</option>
                                     <?php foreach ($districts as $district): ?>
                                         <option value="<?php echo $district['id']; ?>" class="district-option state-<?php echo $district['state_id']; ?>" <?php echo (isset($_GET['district_id']) && $_GET['district_id'] == $district['id']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($district['name']); ?>
+                                            <?php echo htmlspecialchars($district['name'] ?? ''); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -97,7 +97,7 @@
                                 <tr>
                                     <td><?php echo $colony['id']; ?></td>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($colony['name']); ?></strong>
+                                        <strong><?php echo htmlspecialchars($colony['name'] ?? ''); ?></strong>
                                         <?php if ($colony['description']): ?>
                                             <br><small class="text-muted"><?php echo htmlspecialchars(substr($colony['description'], 0, 50)) . '...'; ?></small>
                                         <?php endif; ?>

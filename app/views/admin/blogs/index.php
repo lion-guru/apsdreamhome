@@ -26,7 +26,7 @@
                                 <?php foreach ($blogs ?? [] as $blog): ?>
                                 <tr>
                                     <td><?php echo $blog['id']; ?></td>
-                                    <td><?php echo htmlspecialchars($blog['title']); ?></td>
+                                    <td><?php echo htmlspecialchars($blog['title'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($blog['category'] ?? '-'); ?></td>
                                     <td>
                                         <?php if ($blog['status'] == 'published'): ?>

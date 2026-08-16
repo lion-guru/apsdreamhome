@@ -29,7 +29,7 @@ $steps = [
                 ?>
                 <li class="d-flex align-items-center py-1 <?= $cls ?>">
                     <i class="fas <?= $icon ?> me-2"></i>
-                    <span class="small"><?= $num ?>. <?= htmlspecialchars($info['label']) ?></span>
+                    <span class="small"><?= $num ?>. <?= htmlspecialchars($info['label'] ?? '') ?></span>
                 </li>
             <?php endforeach; ?>
         </ul>

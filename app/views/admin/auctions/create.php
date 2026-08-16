@@ -37,7 +37,7 @@ ob_start();
                         <select name="property_id" class="form-select">
                             <option value="">-- Not linked --</option>
                             <?php foreach ($properties as $p): ?>
-                                <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?> - <?= htmlspecialchars($p['address']) ?></option>
+                                <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title'] ?? '') ?> - <?= htmlspecialchars($p['address'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -34,7 +34,7 @@ $page_description = 'Detailed view of customer journey';
                         <?php if (!empty($journey['customer_phone'])): ?>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-phone me-2"></i>
-                                <?php echo htmlspecialchars($journey['customer_phone']); ?>
+                                <?php echo htmlspecialchars($journey['customer_phone'] ?? ''); ?>
                             </p>
                         <?php endif; ?>
                     </div>

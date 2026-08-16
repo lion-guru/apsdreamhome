@@ -5,11 +5,11 @@
     </div>
 
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div>
     <?php endif; ?>
 
     <?php if (isset($_GET['success'])): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($_GET['success']) ?></div>
+        <div class="alert alert-success"><?= htmlspecialchars($_GET['success'] ?? '') ?></div>
     <?php endif; ?>
 
     <?php if (!empty($stats)): ?>

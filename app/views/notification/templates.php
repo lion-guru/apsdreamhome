@@ -45,8 +45,8 @@
                                                 <tr>
                                                     <td><span class="badge bg-<?= $log['channel'] === 'Email' ? 'primary' : 'success' ?>"><?= $log['channel'] ?></span></td>
                                                     <td><?= htmlspecialchars(substr($log['subject'], 0, 60)) ?><?= strlen($log['subject']) > 60 ? '...' : '' ?></td>
-                                                    <td><span class="badge bg-<?= $log['status'] === 'sent' ? 'success' : ($log['status'] === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($log['status'])) ?></span></td>
-                                                    <td><?= htmlspecialchars($log['date']) ?></td>
+                                                    <td><span class="badge bg-<?= $log['status'] === 'sent' ? 'success' : ($log['status'] === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($log['status'] ?? '')) ?></span></td>
+                                                    <td><?= htmlspecialchars($log['date'] ?? '') ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>

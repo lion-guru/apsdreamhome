@@ -7,7 +7,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-edit me-2 text-primary"></i>Edit Template: <?= htmlspecialchars($template['name']) ?> <small class="text-muted">v<?= (int)($template['version'] ?? 1) ?></small></h4>
+        <h4 class="mb-0"><i class="fas fa-edit me-2 text-primary"></i>Edit Template: <?= htmlspecialchars($template['name'] ?? '') ?> <small class="text-muted">v<?= (int)($template['version'] ?? 1) ?></small></h4>
         <div>
             <a href="<?= BASE_URL ?>/admin/legal/templates" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
         </div>
@@ -42,7 +42,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                                     <?php foreach ($merge_fields as $group => $fields): ?>
                                         <h6 class="dropdown-header"><?= ucfirst($group) ?></h6>
                                         <?php foreach ($fields as $key => $label): ?>
-                                            <button type="button" class="dropdown-item small" onclick="insertAtCursor('content', '<?= $key ?>')"><?= htmlspecialchars($key) ?> - <?= htmlspecialchars($label) ?></button>
+                                            <button type="button" class="dropdown-item small" onclick="insertAtCursor('content', '<?= $key ?>')"><?= htmlspecialchars($key ?? '') ?> - <?= htmlspecialchars($label ?? '') ?></button>
                                         <?php endforeach; ?>
                                     <?php endforeach; ?>
                                 </div>

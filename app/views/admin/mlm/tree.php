@@ -75,8 +75,8 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0"><i class="fas fa-project-diagram me-2"></i>Network Tree</h4>
         <div>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm/genealogy" class="btn btn-outline-primary btn-sm me-2"><i class="fas fa-sitemap me-1"></i>Genealogy</a>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to MLM</a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/genealogy" class="btn btn-outline-primary btn-sm me-2"><i class="fas fa-sitemap me-1"></i>Genealogy</a>
+            <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to MLM</a>
         </div>
     </div>
 
@@ -135,7 +135,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
                     <i class="fas fa-project-diagram fa-3x text-muted mb-3"></i>
                     <h5 class="text-muted">No Network Data</h5>
                     <p class="text-muted">The network tree will populate as associates recruit members.</p>
-                    <a href="<?= htmlspecialchars($base) ?>/admin/mlm/users" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Associate</a>
+                    <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/users" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Associate</a>
                 </div>
             </div>
         <?php else: ?>
@@ -151,7 +151,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
                     ?>
                     <div class="text-center mb-4 tree-root">
                         <div class="d-inline-block border rounded p-3 tree-card" class="style-75034">
-                            <span class="badge mb-1" class="style-11051"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars(ucfirst($rootLevel)) ?></span>
+                            <span class="badge mb-1" class="style-11051"><i class="fas <?= $rootIcon ?> me-1"></i><?= htmlspecialchars(ucfirst($rootLevel ?? '')) ?></span>
                             <div class="fw-bold"><?= htmlspecialchars($root['name'] ?? 'Unknown') ?></div>
                             <div class="text-muted small"><?= htmlspecialchars($root['email'] ?? '') ?></div>
                             <div class="mt-1" class="style-436">
@@ -214,10 +214,10 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td><span class="badge" class="style-37328"><?= htmlspecialchars(ucfirst($level)) ?></span></td>
+                                    <td><span class="badge" class="style-37328"><?= htmlspecialchars(ucfirst($level ?? '')) ?></span></td>
                                     <td>
                                         <?php if ($pos && $pos !== '-'): ?>
-                                            <span class="badge" class="style-8985"><?= htmlspecialchars(ucfirst($pos)) ?></span>
+                                            <span class="badge" class="style-8985"><?= htmlspecialchars(ucfirst($pos ?? '')) ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">-</span>
                                         <?php endif; ?>

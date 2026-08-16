@@ -27,7 +27,7 @@
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="fw-bold mb-0"><?= htmlspecialchars($f['name']) ?></h6>
+                                <h6 class="fw-bold mb-0"><?= htmlspecialchars($f['name'] ?? '') ?></h6>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-light" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
                                     <ul class="dropdown-menu dropdown-menu-end">
@@ -106,7 +106,7 @@
                                     $db = \App\Core\Database\Database::getInstance()->getConnection();
                                     $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
                                     foreach ($agents as $a): ?>
-                                        <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name']) ?></option>
+                                        <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?></option>
                                     <?php endforeach;
                                 } catch (\Throwable $e) {}
                                 ?>
@@ -121,7 +121,7 @@
                                     $db = \App\Core\Database\Database::getInstance()->getConnection();
                                     $campaigns = $db->query("SELECT id, name FROM campaigns WHERE status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
                                     foreach ($campaigns as $c): ?>
-                                        <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                                        <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                                     <?php endforeach;
                                 } catch (\Throwable $e) {}
                                 ?>

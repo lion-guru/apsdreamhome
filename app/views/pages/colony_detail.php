@@ -88,7 +88,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
                         <p class="text-muted mb-0"><?php echo htmlspecialchars($h['desc'] ?? ''); ?></p>
                     <?php else: ?>
                         <div class="icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-check-circle"></i></div>
-                        <h5><?php echo htmlspecialchars($h); ?></h5>
+                        <h5><?php echo htmlspecialchars($h ?? ''); ?></h5>
                     <?php endif; ?>
                 </div>
             </div>
@@ -107,7 +107,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <div class="col-lg-6">
                 <?php $imgSrc = $colony['image_path'] ?? '';
                       $imgSrc = (str_starts_with($imgSrc, 'http://') || str_starts_with($imgSrc, 'https://')) ? $imgSrc : BASE_URL . '/' . $imgSrc; ?>
-                <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow" loading="lazy">
+                <img src="<?= htmlspecialchars($imgSrc ?? '') ?>" alt="<?= htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow" loading="lazy">
             </div>
             <?php endif; ?>
             <div class="col-lg-<?php echo ($colony['image_path'] ?? '') ? '6' : '12'; ?>">
@@ -125,7 +125,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-concierge-bell text-primary me-2"></i><?= __('colony_amenities_heading') ?></h2>
         <div class="text-center">
-            <?php foreach ($amenities as $a): ?><span class="amenity-tag"><i class="fas fa-check-circle me-1"></i><?php echo htmlspecialchars($a); ?></span><?php endforeach; ?>
+            <?php foreach ($amenities as $a): ?><span class="amenity-tag"><i class="fas fa-check-circle me-1"></i><?php echo htmlspecialchars($a ?? ''); ?></span><?php endforeach; ?>
         </div>
     </div>
 </section>
@@ -242,7 +242,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <?php $imgIsExternal = (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0); ?>
             <div class="col-md-4 col-sm-6">
                 <a href="<?php echo $imgIsExternal ? $img : BASE_URL . '/' . ltrim($img, '/'); ?>" data-lightbox="gallery">
-                    <img src="<?php echo $imgIsExternal ? htmlspecialchars($img) : BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" alt="Gallery" class="gallery-img" loading="lazy">
+                    <img src="<?php echo $imgIsExternal ? htmlspecialchars($img ?? '') : BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" alt="Gallery" class="gallery-img" loading="lazy">
                 </a>
             </div>
             <?php endforeach; ?>
@@ -259,7 +259,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow">
-                    <iframe src="<?php echo htmlspecialchars($colony['youtube_video_url']); ?>" allowfullscreen></iframe>
+                    <iframe src="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
@@ -297,7 +297,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i><?= __('colony_location_map_heading') ?></h2>
         <div class="rounded-4 overflow-hidden shadow">
-            <iframe src="<?php echo htmlspecialchars($colony['map_link']); ?>" width="100%" height="400" class="style-69986" allowfullscreen loading="lazy"></iframe>
+            <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="400" class="style-69986" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
 </section>
@@ -311,10 +311,10 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <p class="mb-4 opacity-75"><?= __('colony_get_in_touch') ?></p>
             <div class="d-flex flex-wrap justify-content-center gap-4 mb-4">
                 <?php if ($colony['contact_phone'] ?? ''): ?>
-                <a href="tel:<?php echo htmlspecialchars($colony['contact_phone']); ?>" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($colony['contact_phone']); ?></a>
+                <a href="tel:<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?></a>
                 <?php endif; ?>
                 <?php if ($colony['contact_email'] ?? ''): ?>
-                <a href="mailto:<?php echo htmlspecialchars($colony['contact_email']); ?>" class="btn btn-outline-light btn-lg"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($colony['contact_email']); ?></a>
+                <a href="mailto:<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>" class="btn btn-outline-light btn-lg"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?></a>
                 <?php endif; ?>
             </div>
             <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-warning btn-lg"><i class="fas fa-paper-plane me-2"></i><?= __('colony_send_enquiry') ?></a>

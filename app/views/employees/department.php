@@ -11,7 +11,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($dept_title) ?> — APS Dream Home</title>
+    <title><?= htmlspecialchars($dept_title ?? '') ?> — APS Dream Home</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,8 +69,8 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                 <i class="<?= $dept_icon ?>"></i>
             </div>
             <div>
-                <h3 class="fw-bold mb-0" class="style-10134"><?= htmlspecialchars($dept_title) ?></h3>
-                <p class="mb-0 mt-1" class="style-62698"><?= htmlspecialchars($dept_desc) ?></p>
+                <h3 class="fw-bold mb-0" class="style-10134"><?= htmlspecialchars($dept_title ?? '') ?></h3>
+                <p class="mb-0 mt-1" class="style-62698"><?= htmlspecialchars($dept_desc ?? '') ?></p>
             </div>
         </div>
     </div>
@@ -141,7 +141,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
                 <h6><i class="fas fa-list me-2" class="style-94187"></i>Recent Activity</h6>
                 <div class="empty-state">
                     <i class="<?= $dept_icon ?>"></i>
-                    <h5><?= htmlspecialchars($dept_title) ?></h5>
+                    <h5><?= htmlspecialchars($dept_title ?? '') ?></h5>
                     <p>Use the quick actions on the right to navigate to the relevant admin modules for this department.</p>
                 </div>
             </div>

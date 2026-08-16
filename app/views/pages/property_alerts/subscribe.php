@@ -27,7 +27,7 @@ $logged_in = $logged_in ?? false;
             <strong><i class="fas fa-exclamation-triangle me-2"></i><?= __('alert_sub_fix_errors', [], 'Please fix the following:') ?></strong>
             <ul class="mb-0 mt-2">
                 <?php foreach ($errors as $err): ?>
-                    <li><?= htmlspecialchars($err) ?></li>
+                    <li><?= htmlspecialchars($err ?? '') ?></li>
                 <?php endforeach; ?>
             </ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -223,7 +223,7 @@ $logged_in = $logged_in ?? false;
                         <h6 class="mb-3"><i class="fas fa-list me-2"></i><?= __('alert_sub_your_active', [], 'Your Active Alerts') ?> (<?= count($subscriptions) ?>)</h6>
                         <?php foreach (array_slice($subscriptions, 0, 3) as $sub): ?>
                             <div class="border-bottom pb-2 mb-2 small">
-                                <strong><?= htmlspecialchars($sub['property_type']) ?></strong>
+                                <strong><?= htmlspecialchars($sub['property_type'] ?? '') ?></strong>
                                 <span class="badge bg-<?= $sub['frequency'] === 'instant' ? 'warning' : 'info' ?> ms-1"><?= $sub['frequency'] ?></span>
                                 <br>
                                 <span class="text-muted"><?= htmlspecialchars($sub['city'] ?? 'any city') ?> · ₹<?= number_format($sub['min_price'] ?? 0) ?> - <?= number_format($sub['max_price'] ?? 0) ?></span>

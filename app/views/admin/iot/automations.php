@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $automations = $automations ?? [];
 $pagination = $pagination ?? ['page'=>1,'pages'=>1];
 $csrf = $_SESSION['csrf_token'] ?? '';
@@ -19,11 +19,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <tbody>
                     <?php foreach ($automations as $a): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($a['name']) ?></strong></td>
+                            <td><strong><?= htmlspecialchars($a['name'] ?? '') ?></strong></td>
                             <td><?= htmlspecialchars($a['device_name'] ?? 'Any') ?></td>
                             <td><span class="badge bg-light text-dark"><?= ucfirst($a['trigger_type']) ?></span></td>
                             <td><span class="badge bg-info"><?= ucfirst($a['action_type']) ?></span></td>
-                            <td><small><?= !empty($a['last_triggered_at']) ? date('M d, H:i', strtotime($a['last_triggered_at'])) : '—' ?></small></td>
+                            <td><small><?= !empty($a['last_triggered_at']) ? date('M d, H:i', strtotime($a['last_triggered_at'])) : '�' ?></small></td>
                             <td class="text-end">
                                 <a href="<?= BASE_URL ?>/admin/iot/automation/form/<?= $a['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
                                 <form method="POST" action="<?= BASE_URL ?>/admin/iot/automation/delete/<?= $a['id'] ?>" class="d-inline" onsubmit="return confirm('Delete automation?')"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>

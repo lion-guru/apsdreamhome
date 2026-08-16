@@ -78,7 +78,7 @@ $isEdit = !empty($template);
 
                         <div class="mb-4">
                             <label class="ocr-label">Field Definitions (JSON)</label>
-                            <textarea name="field_definitions_json" class="ocr-textarea" placeholder='[{"name": "full_name", "label": "Full Name", "pattern": "/Name:\\s*(.+)/i"}]' id="fieldsJson"><?= htmlspecialchars($fields_json) ?></textarea>
+                            <textarea name="field_definitions_json" class="ocr-textarea" placeholder='[{"name": "full_name", "label": "Full Name", "pattern": "/Name:\\s*(.+)/i"}]' id="fieldsJson"><?= htmlspecialchars($fields_json ?? '') ?></textarea>
                             <div class="d-flex gap-2 mt-2">
                                 <button type="button" class="ocr-btn ocr-btn-outline" class="style-45098" onclick="validateJson()"><i class="fas fa-check me-1"></i>Validate JSON</button>
                                 <button type="button" class="ocr-btn ocr-btn-outline" class="style-45098" onclick="prettifyJson()"><i class="fas fa-indent me-1"></i>Prettify</button>

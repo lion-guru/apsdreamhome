@@ -108,7 +108,7 @@ $active = $active ?? 0;
                     <?php endif; ?>
                     <?php if (!empty($s['features'])): ?>
                     <hr>
-                    <small class="text-muted"><?php echo nl2br(htmlspecialchars($s['features'])); ?></small>
+                    <small class="text-muted"><?php echo nl2br(htmlspecialchars($s['features'] ?? '')); ?></small>
                     <?php endif; ?>
                 </div>
             </div>

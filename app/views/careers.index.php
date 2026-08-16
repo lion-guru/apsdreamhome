@@ -18,7 +18,7 @@
                             <select class="form-select form-select-sm" name="category">
                                 <option value="">All Departments</option>
                                 <?php foreach ($categories as $k => $v): ?>
-                                <option value="<?= $k ?>" <?= (($_GET['category'] ?? '') === $k) ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                                <option value="<?= $k ?>" <?= (($_GET['category'] ?? '') === $k) ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

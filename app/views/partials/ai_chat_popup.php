@@ -82,7 +82,7 @@ async function sendPopupMessage() {
         const res = await fetch('<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/api/ai-chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message, role: '<?= htmlspecialchars($user_role) ?>', context: 'popup_chat' })
+            body: JSON.stringify({ message, role: '<?= htmlspecialchars($user_role ?? '') ?>', context: 'popup_chat' })
         });
         const data = await res.json();
         removePopupTyping();

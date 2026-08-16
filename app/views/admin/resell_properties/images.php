@@ -57,7 +57,7 @@ $p = $property ?? [];
                     <?php $src = (strpos(trim($img), 'http') === 0) ? trim($img) : BASE_URL . trim($img); ?>
                     <div class="col-md-3">
                         <div class="card border position-relative" class="style-94398">
-                            <img src="<?= htmlspecialchars($src) ?>" alt="Property Image <?= $idx + 1 ?>" class="card-img-top" class="style-58348" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                            <img src="<?= htmlspecialchars($src ?? '') ?>" alt="Property Image <?= $idx + 1 ?>" class="card-img-top" class="style-58348" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                             <div class="d-none align-items-center justify-content-center bg-light" class="style-59965"><i class="fas fa-broken-image fa-2x text-muted"></i></div>
                             <div class="card-body p-2 text-center d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Image #<?= $idx + 1 ?></small>

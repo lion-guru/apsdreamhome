@@ -102,11 +102,11 @@ $stat = $stat ?? ['in_progress' => 0, 'completed' => 0, 'failed' => 0, 'with_rec
                                     <td><small><?= htmlspecialchars($s['started_at'] ?? '') ?></small></td>
                                     <td class="text-end">
                                         <button class="btn btn-sm btn-outline-primary"
-                                                onclick="transferCall('<?= htmlspecialchars($s['call_sid']) ?>')">
+                                                onclick="transferCall('<?= htmlspecialchars($s['call_sid'] ?? '') ?>')">
                                             <i class="fas fa-share"></i> Transfer
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger"
-                                                onclick="hangupCall('<?= htmlspecialchars($s['call_sid']) ?>')">
+                                                onclick="hangupCall('<?= htmlspecialchars($s['call_sid'] ?? '') ?>')">
                                             <i class="fas fa-phone-slash"></i> Hangup
                                         </button>
                                     </td>
@@ -153,14 +153,14 @@ $stat = $stat ?? ['in_progress' => 0, 'completed' => 0, 'failed' => 0, 'with_rec
                                     <td>
                                         <?php $st = $s['status'] ?? ''; ?>
                                         <span class="badge bg-<?= $st === 'completed' ? 'success' : 'danger' ?>">
-                                            <?= htmlspecialchars($st) ?>
+                                            <?= htmlspecialchars($st ?? '') ?>
                                         </span>
                                     </td>
                                     <td><?= htmlspecialchars(($s['duration_seconds'] ?? '-') . 's') ?></td>
                                     <td><?= htmlspecialchars($s['digits_pressed'] ?? '-') ?></td>
                                     <td>
                                         <?php if (!empty($s['recording_url'])): ?>
-                                            <a href="<?= htmlspecialchars($s['recording_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="<?= htmlspecialchars($s['recording_url'] ?? '') ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-play"></i> Listen
                                             </a>
                                         <?php else: ?>

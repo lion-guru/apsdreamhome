@@ -164,7 +164,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <tbody>
                                 <?php foreach ($type_stats as $t): ?>
                                     <tr>
-                                        <td><span class="style-56206"><?= htmlspecialchars($t['type']) ?></span></td>
+                                        <td><span class="style-56206"><?= htmlspecialchars($t['type'] ?? '') ?></span></td>
                                         <td class="text-end"><?= number_format($t['count']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -191,8 +191,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <?php foreach ($template_stats['sms'] as $t): ?>
                             <div class="template-card">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="name"><?= htmlspecialchars($t['template_name']) ?></span>
-                                    <span class="badge-channel badge-sms"><?= htmlspecialchars($t['template_code']) ?></span>
+                                    <span class="name"><?= htmlspecialchars($t['template_name'] ?? '') ?></span>
+                                    <span class="badge-channel badge-sms"><?= htmlspecialchars($t['template_code'] ?? '') ?></span>
                                 </div>
                                 <div class="body"><?= htmlspecialchars(substr($t['body'] ?? '', 0, 150)) ?>...</div>
                             </div>
@@ -207,7 +207,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <?php foreach ($template_stats['whatsapp'] as $t): ?>
                             <div class="template-card">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="name"><?= htmlspecialchars($t['template_name']) ?></span>
+                                    <span class="name"><?= htmlspecialchars($t['template_name'] ?? '') ?></span>
                                     <div>
                                         <span class="badge-channel badge-whatsapp"><?= htmlspecialchars($t['category'] ?? '') ?></span>
                                         <span class="badge-status badge-<?= ($t['status'] ?? '') === 'approved' ? 'sent' : 'pending' ?>"><?= htmlspecialchars($t['status'] ?? 'draft') ?></span>

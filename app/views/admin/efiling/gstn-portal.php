@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-cloud-upload-alt me-2 text-primary"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">GSTN API Integration | FY <?= htmlspecialchars($fy) ?></span>
+        <h4 class="mb-1"><i class="fas fa-cloud-upload-alt me-2 text-primary"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">GSTN API Integration | FY <?= htmlspecialchars($fy ?? '') ?></span>
     </div>
     <div class="d-flex gap-2">
         <a href="<?= BASE_URL ?>/admin/efiling/gst" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>GST Filing</a>
@@ -36,7 +36,7 @@ ob_start();
                     <div>
                         <div class="text-muted small">TIN (TDS)</div>
                         <div class="fw-bold"><?= $tin_status['connected'] ? 'Connected' : 'Disconnected' ?></div>
-                        <div class="small text-muted"><?= htmlspecialchars($tin_status['message']) ?></div>
+                        <div class="small text-muted"><?= htmlspecialchars($tin_status['message'] ?? '') ?></div>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@ ob_start();
                     <div>
                         <div class="text-muted small">GSTN (GST)</div>
                         <div class="fw-bold"><?= $gstn_status['connected'] ? 'Connected' : 'Disconnected' ?></div>
-                        <div class="small text-muted"><?= htmlspecialchars($gstn_status['message']) ?></div>
+                        <div class="small text-muted"><?= htmlspecialchars($gstn_status['message'] ?? '') ?></div>
                     </div>
                 </div>
             </div>

@@ -9,7 +9,7 @@ ob_start();
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h3 mb-1"><i class="fas fa-history me-2 text-primary"></i>Entity Timeline</h1>
-      <p class="text-muted mb-0">Complete history for <strong><?= htmlspecialchars($entity_type) ?></strong> <code>#<?= $entity_id ?></code></p>
+      <p class="text-muted mb-0">Complete history for <strong><?= htmlspecialchars($entity_type ?? '') ?></strong> <code>#<?= $entity_id ?></code></p>
     </div>
     <a href="<?= BASE_URL ?>/admin/audit-logs" class="btn btn-outline-secondary">
       <i class="fas fa-arrow-left me-1"></i>Back to Audit Logs
@@ -49,13 +49,13 @@ ob_start();
                   <?= htmlspecialchars($t['user_role'] ?? '') ?>
                 </span>
                 <?php if (!empty($t['user_name'])): ?>
-                  <strong><?= htmlspecialchars($t['user_name']) ?></strong>
+                  <strong><?= htmlspecialchars($t['user_name'] ?? '') ?></strong>
                 <?php else: ?>
                   <span class="text-muted"><i class="fas fa-robot me-1"></i>System</span>
                 <?php endif; ?>
               </div>
               <?php if (!empty($t['description'])): ?>
-                <p class="text-muted small mb-1"><?= htmlspecialchars($t['description']) ?></p>
+                <p class="text-muted small mb-1"><?= htmlspecialchars($t['description'] ?? '') ?></p>
               <?php endif; ?>
               <?php if (!empty($t['new_values']) || !empty($t['old_values'])): ?>
                 <details class="mb-2">

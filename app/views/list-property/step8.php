@@ -43,7 +43,7 @@ $published = isset($_GET['published']) ? (int)$_GET['published'] : 0;
                     <?php endif; ?>
 
                     <?php if (!empty($errors) && !$published): ?>
-                        <div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul></div>
+                        <div class="alert alert-danger"><ul class="mb-0"><?php foreach ($errors as $e): ?><li><?= htmlspecialchars($e ?? '') ?></li><?php endforeach; ?></ul></div>
                     <?php endif; ?>
 
                     <?php if (!$published): ?>

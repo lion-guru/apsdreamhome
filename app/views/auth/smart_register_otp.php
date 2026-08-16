@@ -130,20 +130,20 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
             <?php if (!empty($error)): ?>
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo htmlspecialchars($error); ?>
+                    <?php echo htmlspecialchars($error ?? ''); ?>
                 </div>
             <?php endif; ?>
 
             <?php if (!empty($success)): ?>
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
-                    <?php echo htmlspecialchars($success); ?>
+                    <?php echo htmlspecialchars($success ?? ''); ?>
                 </div>
             <?php endif; ?>
 
             <form method="POST" action="<?php echo $base; ?>/register/smart/verify-otp" id="otpForm">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
-                <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
+                <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
                 <input type="hidden" name="otp" id="otpHidden" value="">
 
                 <div class="otp-inputs">
@@ -278,7 +278,7 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `csrf_token=<?php echo htmlspecialchars($csrf_token); ?>&token=<?php echo urlencode($token); ?>`
+                body: `csrf_token=<?php echo htmlspecialchars($csrf_token ?? ''); ?>&token=<?php echo urlencode($token); ?>`
             })
             .then(response => response.text())
             .then(data => {

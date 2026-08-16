@@ -5,7 +5,7 @@
     </div>
 
     <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error ?? '') ?></div>
     <?php endif; ?>
 
     <div class="card aps-cp-card">
@@ -18,7 +18,7 @@
                         <select name="customer_id" class="form-select" required>
                             <option value="">Select Customer</option>
                             <?php foreach ($users as $c): ?>
-                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['phone']) ?>)</option>
+                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?> (<?= htmlspecialchars($c['phone'] ?? '') ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -27,7 +27,7 @@
                         <select name="property_id" class="form-select" required>
                             <option value="">Select Property</option>
                             <?php foreach ($properties as $p): ?>
-                            <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?> - Plot <?= htmlspecialchars($p['plot_number'] ?? '') ?> (<?= number_format($p['area_sqft'] ?? 0) ?> sqft)</option>
+                            <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title'] ?? '') ?> - Plot <?= htmlspecialchars($p['plot_number'] ?? '') ?> (<?= number_format($p['area_sqft'] ?? 0) ?> sqft)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>

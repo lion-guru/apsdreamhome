@@ -107,7 +107,7 @@ function statusColor($status) {
             <tbody>
               <?php foreach ($services as $name => $info): ?>
                 <tr>
-                  <td><strong><?= htmlspecialchars($name) ?></strong></td>
+                  <td><strong><?= htmlspecialchars($name ?? '') ?></strong></td>
                   <td><span class="badge bg-<?= ($info['loaded'] ?? false) ? 'success' : 'danger' ?>"><?= ($info['loaded'] ?? false) ? 'Loaded' : 'Missing' ?></span></td>
                   <td><small><?= $info['size_kb'] ?? 0 ?> KB</small></td>
                   <td><code class="small"><?= htmlspecialchars($info['path'] ?? '') ?></code></td>

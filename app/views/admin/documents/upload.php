@@ -40,7 +40,7 @@
                             <option value="">-- None --</option>
                             <?php if (!empty($categories)): ?>
                                 <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                    <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -51,7 +51,7 @@
                             <option value="">-- None --</option>
                             <?php if (!empty($doc_types)): ?>
                                 <?php foreach ($doc_types as $dt): ?>
-                                    <option value="<?= (int)$dt['id'] ?>"><?= htmlspecialchars($dt['name']) ?></option>
+                                    <option value="<?= (int)$dt['id'] ?>"><?= htmlspecialchars($dt['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>

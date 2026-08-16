@@ -185,7 +185,7 @@ $kpis = [
                                             <td>
                                                 <div class="d-flex align-items-center gap-2">
                                                     <div class="recent-avatar" class="style-37549"><?= strtoupper(substr($l['name'] ?? 'N', 0, 1)) ?></div>
-                                                    <a href="<?= $base ?>/admin/leads/<?= $l['id'] ?>" class="text-decoration-none fw-bold text-dark"><?= htmlspecialchars($l['name']) ?></a>
+                                                    <a href="<?= $base ?>/admin/leads/<?= $l['id'] ?>" class="text-decoration-none fw-bold text-dark"><?= htmlspecialchars($l['name'] ?? '') ?></a>
                                                 </div>
                                             </td>
                                             <td><small class="text-muted"><?= htmlspecialchars($l['phone'] ?? '') ?></small></td>

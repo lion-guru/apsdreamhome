@@ -13,7 +13,7 @@
                         <?php foreach ($scored as $s): ?>
                             <tr>
                                 <td><?= $s['id'] ?></td>
-                                <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] ?? '') ?></a></td>
                                 <td><?= htmlspecialchars($s['phone'] ?? '') ?></td>
                                 <td>
                                     <?php $score = $s['lead_score'] ?? 0; ?>

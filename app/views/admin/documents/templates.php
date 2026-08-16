@@ -40,7 +40,7 @@
                                     <option value="">-- None --</option>
                                     <?php if (!empty($categories)): ?>
                                         <?php foreach ($categories as $cat): ?>
-                                            <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                            <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name'] ?? '') ?></option>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
                                 </select>

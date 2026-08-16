@@ -215,7 +215,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['mutation_number'])): ?>
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th class="style-97126">Mutation #</th><td><?= htmlspecialchars($booking['mutation_number']) ?></td></tr>
+                    <tr><th class="style-97126">Mutation #</th><td><?= htmlspecialchars($booking['mutation_number'] ?? '') ?></td></tr>
                     <tr><th>Mutation Date</th><td><?= !empty($booking['mutation_date']) ? date('d M Y', strtotime($booking['mutation_date'])) : 'N/A' ?></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-<?= ($booking['mutation_status'] ?? '') === 'completed' ? 'success' : (($booking['mutation_status'] ?? '') === 'in_progress' ? 'warning' : 'secondary') ?>"><?= ucfirst($booking['mutation_status'] ?? 'pending') ?></span></td></tr>
                 </table></div>
@@ -258,7 +258,7 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-sticky-note"></i> Registry Notes</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['registry_notes'])): ?>
-                    <pre class="style-33711"><?= htmlspecialchars($booking['registry_notes']) ?></pre>
+                    <pre class="style-33711"><?= htmlspecialchars($booking['registry_notes'] ?? '') ?></pre>
                 <?php else: ?>
                     <p class="text-muted">No notes yet.</p>
                 <?php endif; ?>

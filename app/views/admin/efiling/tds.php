@@ -4,8 +4,8 @@ ob_start();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="fas fa-file-invoice-dollar me-2 text-danger"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">FY <?= htmlspecialchars($fy) ?> | Quarter <?= htmlspecialchars($quarter) ?></span>
+        <h4 class="mb-1"><i class="fas fa-file-invoice-dollar me-2 text-danger"></i><?= htmlspecialchars($page_title ?? '') ?></h4>
+        <span class="text-muted">FY <?= htmlspecialchars($fy ?? '') ?> | Quarter <?= htmlspecialchars($quarter ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
@@ -22,7 +22,7 @@ ob_start();
                 <label class="form-label small">Financial Year</label>
                 <select name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
-                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -52,7 +52,7 @@ ob_start();
                 <tbody>
                 <?php foreach ($summary['by_section'] as $s): ?>
                     <tr>
-                        <td><strong><?= htmlspecialchars($s['tds_section']) ?></strong></td>
+                        <td><strong><?= htmlspecialchars($s['tds_section'] ?? '') ?></strong></td>
                         <td class="small"><?= htmlspecialchars(($rates[$s['tds_section']]['desc'] ?? $s['tds_section'])) ?></td>
                         <td class="text-end"><?= $s['count'] ?></td>
                         <td class="text-end">₹<?= number_format($s['total_gross'], 0) ?></td>
@@ -80,7 +80,7 @@ ob_start();
             <div class="col-auto">
                 <select name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
-                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
+                        <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -92,7 +92,7 @@ ob_start();
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Generate Form 26Q for <?= htmlspecialchars($quarter) ?> <?= htmlspecialchars($fy) ?>?')">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Generate Form 26Q for <?= htmlspecialchars($quarter ?? '') ?> <?= htmlspecialchars($fy ?? '') ?>?')">
                     <i class="fas fa-file-export me-1"></i>Generate 26Q JSON
                 </button>
             </div>

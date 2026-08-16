@@ -57,7 +57,7 @@
                                     </td>
                                     <td class="text-muted small">
                                         <?php if (!empty($entry['error_message'])): ?>
-                                            <span class="text-danger" title="<?= htmlspecialchars($entry['error_message']) ?>">
+                                            <span class="text-danger" title="<?= htmlspecialchars($entry['error_message'] ?? '') ?>">
                                                 <i class="fas fa-exclamation-triangle"></i> Error
                                             </span>
                                         <?php else: ?>

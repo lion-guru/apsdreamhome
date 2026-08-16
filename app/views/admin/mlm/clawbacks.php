@@ -18,7 +18,7 @@ $statusBadge = function ($s) {
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-undo-alt me-2"></i>Clawback Log</h5>
         <form method="POST" action="<?= $base ?>/admin/mlm/clawbacks/process" class="d-inline" onsubmit="return confirm('Process clawbacks for all 30+ day overdue installments? This will debit associate wallets.')">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
             <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-play me-1"></i>Process Clawbacks Now</button>
         </form>
     </div>

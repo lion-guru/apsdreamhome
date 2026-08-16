@@ -27,7 +27,7 @@
           <?php foreach ($telecallers as $i => $t): ?>
           <tr>
             <td><?= $i + 1 ?></td>
-            <td><?= htmlspecialchars($t['name']) ?></td>
+            <td><?= htmlspecialchars($t['name'] ?? '') ?></td>
             <td><?= htmlspecialchars(ucfirst($t['role'])) ?></td>
             <td><?= $t['leads_assigned'] ?: 0 ?></td>
             <td><?= $t['conversions'] ?: 0 ?></td>

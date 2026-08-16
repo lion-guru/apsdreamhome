@@ -195,7 +195,7 @@ function autoAdvance() {
                 <td>
                   <strong><?= htmlspecialchars($c['name'] ?? '') ?></strong>
                   <?php if (!empty($c['land_owner_name'])): ?>
-                    <br><small class="text-muted">Owner: <?= htmlspecialchars($c['land_owner_name']) ?></small>
+                    <br><small class="text-muted">Owner: <?= htmlspecialchars($c['land_owner_name'] ?? '') ?></small>
                   <?php endif; ?>
                 </td>
                 <td><?= htmlspecialchars($c['location'] ?? $c['name'] ?? '') ?></td>

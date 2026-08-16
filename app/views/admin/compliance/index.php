@@ -68,14 +68,14 @@ $pendingTds = $pendingTds ?? 0;
                                 <?php foreach ($reraFilings as $r): ?>
                                     <tr>
                                         <td><strong><?= htmlspecialchars($r['colony_name'] ?? 'N/A') ?></strong></td>
-                                        <td><?= htmlspecialchars($r['quarter']) ?></td>
+                                        <td><?= htmlspecialchars($r['quarter'] ?? '') ?></td>
                                         <td><?= $r['year'] ?></td>
                                         <td>
                                             <div class="progress" class="style-32026"><div class="progress-bar bg-<?= $r['progress_percent'] >= 70 ? 'success' : 'warning' ?>" class="style-47424"></div></div>
                                             <small><?= $r['progress_percent'] ?>%</small>
                                         </td>
                                         <td>₹<?= number_format($r['amount_withdrawn']) ?></td>
-                                        <td><span class="aps-cp-badge badge bg-<?= $r['status'] === 'accepted' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : ($r['status'] === 'submitted' ? 'info' : 'warning')) ?>"><?= ucfirst(htmlspecialchars($r['status'])) ?></span></td>
+                                        <td><span class="aps-cp-badge badge bg-<?= $r['status'] === 'accepted' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : ($r['status'] === 'submitted' ? 'info' : 'warning')) ?>"><?= ucfirst(htmlspecialchars($r['status'] ?? '')) ?></span></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>
@@ -98,10 +98,10 @@ $pendingTds = $pendingTds ?? 0;
                                 <tbody>
                                 <?php foreach ($gstReturns as $g): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($g['return_period']) ?></td>
-                                        <td><span class="aps-cp-badge badge bg-info"><?= strtoupper(htmlspecialchars($g['return_type'])) ?></span></td>
+                                        <td><?= htmlspecialchars($g['return_period'] ?? '') ?></td>
+                                        <td><span class="aps-cp-badge badge bg-info"><?= strtoupper(htmlspecialchars($g['return_type'] ?? '')) ?></span></td>
                                         <td>₹<?= number_format($g['total_tax_amount']) ?></td>
-                                        <td><span class="aps-cp-badge badge bg-<?= $g['filing_status'] === 'filed' ? 'success' : ($g['filing_status'] === 'late_filed' ? 'danger' : 'warning') ?>"><?= ucfirst(htmlspecialchars($g['filing_status'])) ?></span></td>
+                                        <td><span class="aps-cp-badge badge bg-<?= $g['filing_status'] === 'filed' ? 'success' : ($g['filing_status'] === 'late_filed' ? 'danger' : 'warning') ?>"><?= ucfirst(htmlspecialchars($g['filing_status'] ?? '')) ?></span></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>
@@ -118,7 +118,7 @@ $pendingTds = $pendingTds ?? 0;
                     <?php else: ?>
                         <?php foreach ($tdsSummary as $t): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span><span class="aps-cp-badge badge bg-<?= $t['status'] === 'deposited' ? 'success' : ($t['status'] === 'verified' ? 'info' : 'warning') ?>"><?= ucfirst(htmlspecialchars($t['status'])) ?></span></span>
+                                <span><span class="aps-cp-badge badge bg-<?= $t['status'] === 'deposited' ? 'success' : ($t['status'] === 'verified' ? 'info' : 'warning') ?>"><?= ucfirst(htmlspecialchars($t['status'] ?? '')) ?></span></span>
                                 <span><strong>₹<?= number_format($t['total']) ?></strong> (<?= $t['cnt'] ?> entries)</span>
                             </div>
                         <?php endforeach; ?>

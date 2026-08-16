@@ -51,13 +51,13 @@ $associate_email = $associate_email ?? '';
 
     <?php if ($success): ?>
         <div class="alert alert-success alert-dismissible fade show py-2">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($error): ?>
         <div class="alert alert-danger alert-dismissible fade show py-2">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -240,7 +240,7 @@ $associate_email = $associate_email ?? '';
                     <select id="state_id" name="state_id" class="form-select" required>
                         <option value="">Select</option>
                         <?php foreach ($states as $state): ?>
-                            <option value="<?= $state['id'] ?>"><?= htmlspecialchars($state['name']) ?></option>
+                            <option value="<?= $state['id'] ?>"><?= htmlspecialchars($state['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -276,16 +276,16 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3">
                 <div class="col-6">
                     <label class="form-label">Your Name *</label>
-                    <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($associate_name) ?>" required>
+                    <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($associate_name ?? '') ?>" required>
                 </div>
                 <div class="col-6">
                     <label class="form-label">Phone *</label>
-                    <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($associate_phone) ?>" required inputmode="tel">
+                    <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($associate_phone ?? '') ?>" required inputmode="tel">
                 </div>
             </div>
             <div class="mt-3">
                 <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($associate_email) ?>">
+                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($associate_email ?? '') ?>">
             </div>
         </div>
 

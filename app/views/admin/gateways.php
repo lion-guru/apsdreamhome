@@ -27,7 +27,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-network-wired me-2"></i><?= htmlspecialchars($page_heading) ?>
+            <i class="fas fa-network-wired me-2"></i><?= htmlspecialchars($page_heading ?? '') ?>
         </h1>
         <?php if (empty($logs_only)): ?>
             <a href="<?= $baseUrl ?>/admin/gateways/logs/twilio" class="btn btn-sm btn-outline-secondary">
@@ -57,7 +57,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">
                     <i class="fas fa-list me-1"></i>
-                    <?= htmlspecialchars(ucfirst($gateway)) ?> à¢€—� last 100 calls
+                    <?= htmlspecialchars(ucfirst($gateway ?? '')) ?> à¢€—� last 100 calls
                 </h6>
                                 <a href="<?= $baseUrl ?>/admin/gateways" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left me-1"></i><?= __('admin_btn_back_cards', null, 'Back to cards') ?>
@@ -114,8 +114,8 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                     <div class="card shadow h-100">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="fas <?= htmlspecialchars($card['icon']) ?> me-1"></i>
-                                <?= htmlspecialchars($card['name']) ?>
+                                <i class="fas <?= htmlspecialchars($card['icon'] ?? '') ?> me-1"></i>
+                                <?= htmlspecialchars($card['name'] ?? '') ?>
                             </h6>
                             <?php if ($card['configured']): ?>
                                 <span class="badge bg-success"><?= __('admin_gw_configured', null, 'Configured') ?></span>
@@ -126,7 +126,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                         <div class="card-body aps-cp-card-body">
                             <p class="text-muted small mb-2">
                                 <i class="fas fa-info-circle me-1"></i>
-                                <?= htmlspecialchars($card['detail']) ?>
+                                <?= htmlspecialchars($card['detail'] ?? '') ?>
                             </p>
 
                             <?php $t = $card['total']; ?>
@@ -172,11 +172,11 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                             </ul>
 
                             <?php if (!empty($card['can_test'])): ?>
-                                <form method="post" action="<?= $baseUrl ?>/admin/gateways/<?= htmlspecialchars($card['test_action']) ?>" class="mt-2">
+                                <form method="post" action="<?= $baseUrl ?>/admin/gateways/<?= htmlspecialchars($card['test_action'] ?? '') ?>" class="mt-2">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>"/>
                                     <div class="input-group input-group-sm">
                                         <input type="tel" name="phone" class="form-control" placeholder="+91xxxxxxxxxx"
-                                               value="<?= htmlspecialchars($admin_phone) ?>" required>
+                                               value="<?= htmlspecialchars($admin_phone ?? '') ?>" required>
                                         <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
 <button class="btn btn-primary" type="submit">
                                             <i class="fas fa-paper-plane me-1"></i><?= __('admin_gw_btn_test', null, 'Test') ?>
@@ -186,7 +186,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                             <?php endif; ?>
 
                             <div class="d-flex justify-content-between mt-2">
-                                <a href="<?= $baseUrl ?>/admin/gateways/logs/<?= htmlspecialchars($card['key']) ?>" class="small">
+                                <a href="<?= $baseUrl ?>/admin/gateways/logs/<?= htmlspecialchars($card['key'] ?? '') ?>" class="small">
                                     <i class="fas fa-list me-1"></i><?= __('admin_gw_view_logs', null, 'View logs') ?>
                                 </a>
                                 <?php if ($card['configured']): ?>
@@ -266,7 +266,7 @@ TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
                         <label class="small text-muted mb-1">Webhook URL</label>
                         <div class="input-group input-group-sm mb-3">
                             <input type="text" id="razorpay-webhook-url" class="form-control font-monospace" readonly
-                                   value="<?= htmlspecialchars($webhookUrl) ?>">
+                                   value="<?= htmlspecialchars($webhookUrl ?? '') ?>">
                             <button class="btn btn-outline-secondary" type="button"
                                     onclick="var el=document.getElementById('razorpay-webhook-url'); el.select(); document.execCommand('copy'); this.innerHTML='<i class=\'fas fa-check me-1\'></i>Copied!'; setTimeout(()=>this.innerHTML='<i class=\'fas fa-copy me-1\'></i>Copy',1500);">
                                 <i class="fas fa-copy me-1"></i>Copy

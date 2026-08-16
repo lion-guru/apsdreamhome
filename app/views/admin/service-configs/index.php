@@ -57,13 +57,13 @@ $groupLabels = [
     <!-- Flash messages -->
     <?php if ($saved): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($saved) ?>
+            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($saved ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if ($error): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-times-circle me-2"></i><?= htmlspecialchars($error) ?>
+            <i class="fas fa-times-circle me-2"></i><?= htmlspecialchars($error ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -74,9 +74,9 @@ $groupLabels = [
             <?php $meta = $groupIcons[$groupName] ?? ['icon' => 'fa-cog', 'color' => 'secondary']; ?>
             <li class="nav-item" role="presentation">
                 <button class="nav-link <?= $first ? 'active' : '' ?>"
-                        id="tab-<?= htmlspecialchars($groupName) ?>"
+                        id="tab-<?= htmlspecialchars($groupName ?? '') ?>"
                         data-bs-toggle="tab"
-                        data-bs-target="#panel-<?= htmlspecialchars($groupName) ?>"
+                        data-bs-target="#panel-<?= htmlspecialchars($groupName ?? '') ?>"
                         type="button" role="tab">
                     <i class="fas <?= $meta['icon'] ?> me-1"></i>
                     <?= htmlspecialchars($groupLabels[$groupName] ?? ucfirst($groupName)) ?>
@@ -93,12 +93,12 @@ $groupLabels = [
 
     <!-- Tab Content -->
     <form method="POST" action="<?= $baseUrl ?>/admin/service-configs/update">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
 
         <div class="tab-content" id="serviceTabContent">
             <?php $first = true; foreach ($groups as $groupName => $configs): ?>
                 <div class="tab-pane fade <?= $first ? 'show active' : '' ?>"
-                     id="panel-<?= htmlspecialchars($groupName) ?>" role="tabpanel">
+                     id="panel-<?= htmlspecialchars($groupName ?? '') ?>" role="tabpanel">
 
                     <!-- Group header -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -121,21 +121,21 @@ $groupLabels = [
                         <div class="col-lg-6">
                             <div class="card shadow-sm h-100">
                                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                                    <h6 class="fw-bold mb-0 text-capitalize"><?= htmlspecialchars($svcName) ?></h6>
+                                    <h6 class="fw-bold mb-0 text-capitalize"><?= htmlspecialchars($svcName ?? '') ?></h6>
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a class="dropdown-item text-info" href="#" onclick="testConnection('<?= htmlspecialchars($svcName) ?>'); return false;">
+                                                <a class="dropdown-item text-info" href="#" onclick="testConnection('<?= htmlspecialchars($svcName ?? '') ?>'); return false;">
                                                     <i class="fas fa-plug me-2"></i>Test Connection
                                                 </a>
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
-                                                <form method="POST" action="<?= $baseUrl ?>/admin/service-configs/reset/<?= htmlspecialchars($svcName) ?>" onsubmit="return confirm('Reset all <?= htmlspecialchars($svcName) ?> configs to defaults?');">
-                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                                                <form method="POST" action="<?= $baseUrl ?>/admin/service-configs/reset/<?= htmlspecialchars($svcName ?? '') ?>" onsubmit="return confirm('Reset all <?= htmlspecialchars($svcName ?? '') ?> configs to defaults?');">
+                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
                                                     <button type="submit" class="dropdown-item text-danger">
                                                         <i class="fas fa-undo me-2"></i>Reset to Defaults
                                                     </button>
@@ -148,7 +148,7 @@ $groupLabels = [
                                     <?php foreach ($svcConfigs as $cfg): ?>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold small">
-                                                <?= htmlspecialchars($cfg['description'] ?: ucfirst(str_replace('_', ' ', $cfg['config_key']))) ?>
+                                                <?= htmlspecialchars($cfg['description'] ?: ucfirst(str_replace('_', ' ', $cfg['config_key'] ?? ''))) ?>
                                                 <?php if ($cfg['is_secret']): ?>
                                                     <span class="badge bg-danger ms-1">Secret</span>
                                                 <?php endif; ?>
@@ -157,14 +157,14 @@ $groupLabels = [
                                             <?php if ($cfg['config_type'] === 'boolean'): ?>
                                                 <!-- Toggle switch for booleans -->
                                                 <div class="form-check form-switch">
-                                                    <input type="hidden" name="configs[<?= htmlspecialchars($cfg['service_name']) ?>][<?= htmlspecialchars($cfg['config_key']) ?>]" value="0">
+                                                    <input type="hidden" name="configs[<?= htmlspecialchars($cfg['service_name'] ?? '') ?>][<?= htmlspecialchars($cfg['config_key'] ?? '') ?>]" value="0">
                                                     <input class="form-check-input"
                                                            type="checkbox"
-                                                           name="configs[<?= htmlspecialchars($cfg['service_name']) ?>][<?= htmlspecialchars($cfg['config_key']) ?>]"
+                                                           name="configs[<?= htmlspecialchars($cfg['service_name'] ?? '') ?>][<?= htmlspecialchars($cfg['config_key'] ?? '') ?>]"
                                                            value="1"
-                                                           id="cfg-<?= htmlspecialchars($cfg['service_name']) ?>-<?= htmlspecialchars($cfg['config_key']) ?>"
+                                                           id="cfg-<?= htmlspecialchars($cfg['service_name'] ?? '') ?>-<?= htmlspecialchars($cfg['config_key'] ?? '') ?>"
                                                            <?= ($cfg['config_value'] == '1') ? 'checked' : '' ?>>
-                                                    <label class="form-check-label" for="cfg-<?= htmlspecialchars($cfg['service_name']) ?>-<?= htmlspecialchars($cfg['config_key']) ?>">
+                                                    <label class="form-check-label" for="cfg-<?= htmlspecialchars($cfg['service_name'] ?? '') ?>-<?= htmlspecialchars($cfg['config_key'] ?? '') ?>">
                                                         <?= ($cfg['config_value'] == '1') ? '<span class="text-success fw-semibold">Enabled</span>' : '<span class="text-muted">Disabled</span>' ?>
                                                     </label>
                                                 </div>
@@ -172,20 +172,20 @@ $groupLabels = [
                                             <?php elseif ($cfg['config_type'] === 'number'): ?>
                                                 <input type="number"
                                                        class="form-control form-control-sm"
-                                                       name="configs[<?= htmlspecialchars($cfg['service_name']) ?>][<?= htmlspecialchars($cfg['config_key']) ?>]"
-                                                       value="<?= htmlspecialchars($cfg['config_value']) ?>">
+                                                       name="configs[<?= htmlspecialchars($cfg['service_name'] ?? '') ?>][<?= htmlspecialchars($cfg['config_key'] ?? '') ?>]"
+                                                       value="<?= htmlspecialchars($cfg['config_value'] ?? '') ?>">
 
                                             <?php elseif ($cfg['is_secret']): ?>
                                                 <!-- Password field with reveal toggle -->
                                                 <div class="input-group input-group-sm">
                                                     <input type="password"
                                                            class="form-control secret-field"
-                                                           name="configs[<?= htmlspecialchars($cfg['service_name']) ?>][<?= htmlspecialchars($cfg['config_key']) ?>]"
-                                                           value="<?= htmlspecialchars($cfg['config_value']) ?>"
+                                                           name="configs[<?= htmlspecialchars($cfg['service_name'] ?? '') ?>][<?= htmlspecialchars($cfg['config_key'] ?? '') ?>]"
+                                                           value="<?= htmlspecialchars($cfg['config_value'] ?? '') ?>"
                                                            placeholder="Enter value..."
-                                                           id="cfg-<?= htmlspecialchars($cfg['service_name']) ?>-<?= htmlspecialchars($cfg['config_key']) ?>">
+                                                           id="cfg-<?= htmlspecialchars($cfg['service_name'] ?? '') ?>-<?= htmlspecialchars($cfg['config_key'] ?? '') ?>">
                                                     <button class="btn btn-outline-secondary" type="button"
-                                                            onclick="toggleSecret('cfg-<?= htmlspecialchars($cfg['service_name']) ?>-<?= htmlspecialchars($cfg['config_key']) ?>')">
+                                                            onclick="toggleSecret('cfg-<?= htmlspecialchars($cfg['service_name'] ?? '') ?>-<?= htmlspecialchars($cfg['config_key'] ?? '') ?>')">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 </div>
@@ -193,8 +193,8 @@ $groupLabels = [
                                             <?php else: ?>
                                                 <input type="text"
                                                        class="form-control form-control-sm"
-                                                       name="configs[<?= htmlspecialchars($cfg['service_name']) ?>][<?= htmlspecialchars($cfg['config_key']) ?>]"
-                                                       value="<?= htmlspecialchars($cfg['config_value']) ?>"
+                                                       name="configs[<?= htmlspecialchars($cfg['service_name'] ?? '') ?>][<?= htmlspecialchars($cfg['config_key'] ?? '') ?>]"
+                                                       value="<?= htmlspecialchars($cfg['config_value'] ?? '') ?>"
                                                        placeholder="Enter value...">
                                             <?php endif; ?>
                                         </div>

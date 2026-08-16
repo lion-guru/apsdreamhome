@@ -36,8 +36,8 @@ ob_start();
               <?php foreach (($codes ?? []) as $i => $c): ?>
                 <div class="col-md-6">
                   <div class="border rounded p-2 d-flex justify-content-between align-items-center bg-white">
-                    <code class="fs-6 user-select-all fw-bold text-primary"><?= htmlspecialchars($c) ?></code>
-                    <button type="button" class="btn btn-sm btn-link p-0 ms-2 copy-code" data-code="<?= htmlspecialchars($c) ?>" title="Copy">
+                    <code class="fs-6 user-select-all fw-bold text-primary"><?= htmlspecialchars($c ?? '') ?></code>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2 copy-code" data-code="<?= htmlspecialchars($c ?? '') ?>" title="Copy">
                       <i class="fas fa-copy"></i>
                     </button>
                   </div>

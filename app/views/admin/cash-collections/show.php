@@ -45,13 +45,13 @@ ob_start();
                     <?php if (!empty($collection['reference_number'])): ?>
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Reference Number</div>
-                        <div class="col-sm-8"><?= htmlspecialchars($collection['reference_number']) ?></div>
+                        <div class="col-sm-8"><?= htmlspecialchars($collection['reference_number'] ?? '') ?></div>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($collection['booking_number'])): ?>
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Linked Booking</div>
-                        <div class="col-sm-8"><?= htmlspecialchars($collection['booking_number']) ?></div>
+                        <div class="col-sm-8"><?= htmlspecialchars($collection['booking_number'] ?? '') ?></div>
                     </div>
                     <?php endif; ?>
                     <div class="row mb-3">
@@ -74,7 +74,7 @@ ob_start();
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-image me-2"></i>Receipt Photo</h5></div>
                 <div class="card-body text-center">
-                    <img src="<?= BASE_URL . '/storage/' . htmlspecialchars($collection['receipt_photo']) ?>" alt="Receipt" class="img-fluid rounded" class="style-35589">
+                    <img src="<?= BASE_URL . '/storage/' . htmlspecialchars($collection['receipt_photo'] ?? '') ?>" alt="Receipt" class="img-fluid rounded" class="style-35589">
                 </div>
             </div>
             <?php endif; ?>
@@ -118,7 +118,7 @@ ob_start();
                         <?php if (!empty($collection['rejection_reason'])): ?>
                         <div class="row">
                             <div class="col-6 text-muted">Rejection reason</div>
-                            <div class="col-6 text-danger"><?= htmlspecialchars($collection['rejection_reason']) ?></div>
+                            <div class="col-6 text-danger"><?= htmlspecialchars($collection['rejection_reason'] ?? '') ?></div>
                         </div>
                         <?php endif; ?>
                     <?php endif; ?>

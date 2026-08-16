@@ -36,7 +36,7 @@ $colonies = $colonies ?? [];
                     <select class="form-select" id="colonyFilter" onchange="filterPlots()">
                         <option value=""><?= __('assoc_bp_all_colonies', [], 'All Colonies') ?></option>
                         <?php foreach ($colonies as $c): ?>
-                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -46,7 +46,7 @@ $colonies = $colonies ?? [];
                         <option value=""><?= __('assoc_bp_select_plot_placeholder', [], 'Select Plot') ?></option>
                         <?php foreach ($plots as $p): ?>
                             <option value="<?= $p['id'] ?>" data-colony="<?= $p['colony_id'] ?>" data-price="<?= $p['price'] ?>" data-area="<?= $p['area_sqft'] ?>">
-                                <?= __('assoc_bp_plot_option', ['number' => htmlspecialchars($p['plot_number']), 'area' => number_format($p['area_sqft']), 'price' => number_format($p['price'])], 'Plot #%number% - %area% sq ft - ₹%price%') ?>
+                                <?= __('assoc_bp_plot_option', ['number' => htmlspecialchars($p['plot_number'] ?? ''), 'area' => number_format($p['area_sqft']), 'price' => number_format($p['price'])], 'Plot #%number% - %area% sq ft - ₹%price%') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
