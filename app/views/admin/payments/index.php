@@ -73,7 +73,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         </td>
                                         <td><?php echo isset($payment['payment_date']) ? date('M d, Y', strtotime($payment['payment_date'])) : '-'; ?></td>
                                         <td>
-                                            <a href="<?php echo $base; ?>/admin/payments/show/<?php echo $payment['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="<?php echo $base; ?>/admin/payments/show/<?php echo $payment['payment_id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

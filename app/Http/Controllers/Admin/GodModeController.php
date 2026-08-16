@@ -373,7 +373,7 @@ class GodModeController extends AdminController
             'total_properties' => $safeCount('user_properties'),
             'total_commissions' => $safeCount('commissions'),
             'active_sessions' => $safeCount('user_sessions', "last_activity > DATE_SUB(NOW(), INTERVAL 1 HOUR)"),
-            'failed_logins_24h' => $safeCount('activity_logs_unified', "created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status = 'failed'")
+            'failed_logins_24h' => $safeCount('activity_logs_unified', "created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR) AND log_type = 'failed_login'")
         ];
     }
 
