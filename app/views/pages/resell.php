@@ -1,6 +1,11 @@
 <?php
 // app/views/pages/resell.php
 // Available variables: $properties, $cities, $property_types, $filters, $pagination
+$properties = $properties ?? [];
+$cities = $cities ?? [];
+$property_types = $property_types ?? [];
+$filters = $filters ?? ['search' => '', 'city' => '', 'type' => '', 'min_price' => '', 'max_price' => ''];
+$pagination = $pagination ?? [];
 ?>
 
 <!-- Hero Section -->

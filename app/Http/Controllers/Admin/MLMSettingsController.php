@@ -69,6 +69,7 @@ class MLMSettingsController extends AdminController
     public function rules()
     {
         $this->requireAdmin();
+        $rules = [];
         try {
             $rules = $this->db->fetchAll("SELECT * FROM commission_calculation_rules ORDER BY priority ASC");
         } catch (\Throwable $e) {

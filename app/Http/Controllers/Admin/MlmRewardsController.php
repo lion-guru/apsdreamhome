@@ -184,6 +184,7 @@ class MlmRewardsController extends AdminController
     public function rewards()
     {
         $this->requireAdmin();
+        $rewards = [];
         try {
             $rewards = $this->db->fetchAll("
                 SELECT rh.*, u.name as associate_name

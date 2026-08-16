@@ -89,7 +89,7 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
     <!-- ============== CHECKLIST ============== -->
     <div class="row g-3">
         <?php foreach ($checks as $check):
-            $status = $check['status'];
+            $status = $check['status'] ?? 'manual';
             $badgeCls = $status === 'pass' ? 'bg-success' : ($status === 'fail' ? 'bg-danger' : 'bg-secondary');
             $badgeTxt = $status === 'pass' ? 'Auto: pass' : ($status === 'fail' ? 'Auto: fail' : 'Manual');
             $done = !empty($check['done']);

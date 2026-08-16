@@ -1,6 +1,8 @@
 <?php
 $selectedCategory = $selected_category ?? '';
 $searchQuery = $search_query ?? '';
+$categories = $categories ?? [];
+$documents = $documents ?? [];
 ?>
 
 <div class="container mt-4">

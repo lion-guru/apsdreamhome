@@ -31,7 +31,7 @@
                             <div class="card border-0 shadow-sm h-100">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6 class="fw-bold mb-0"><?= htmlspecialchars($t['name']) ?></h6>
+                                        <h6 class="fw-bold mb-0"><?= htmlspecialchars($t['name'] ?? '') ?></h6>
                                         <span class="badge bg-primary">Email</span>
                                     </div>
                                     <?php if (!empty($t['subject'])): ?>
@@ -70,7 +70,7 @@
                             <div class="card border-0 shadow-sm h-100">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6 class="fw-bold mb-0"><?= htmlspecialchars($t['name']) ?></h6>
+                                        <h6 class="fw-bold mb-0"><?= htmlspecialchars($t['name'] ?? '') ?></h6>
                                         <span class="badge bg-success">SMS</span>
                                     </div>
                                     <p class="text-muted mb-2" class="style-86354"><?= htmlspecialchars(mb_strimwidth($t['body'] ?? '', 0, 120, '...')) ?></p>

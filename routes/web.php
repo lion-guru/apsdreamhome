@@ -5023,7 +5023,7 @@ $router->post('/admin/agent-agreements/cancel/{id}', 'App\\Http\\Controllers\\Ad
 // LEGAL DOCUMENTS (Admin CRUD + Public)
 // ============================================================
 $router->get('/admin/legal-documents', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@index');
-$router->get('/admin/legal-documents/create', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@create');
+$router->get('/admin/legal-documents/create', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@documentCreate');
 $router->post('/admin/legal-documents/store', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@store');
 $router->get('/admin/legal-documents/{id}', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@show');
 $router->get('/admin/legal-documents/{id}/edit', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@edit');
