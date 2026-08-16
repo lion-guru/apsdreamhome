@@ -235,14 +235,14 @@ private function getTenantId(): int
             $tid = $this->getTenantId();
             $sql = "SELECT * FROM scheduled_tasks 
                 WHERE status = 'active' 
-                AND (next_run IS NULL OR next_run <= NOW())
-                AND (last_run IS NULL OR status != 'running')";
+                AND (next_run_at IS NULL OR next_run_at <= NOW())
+                AND (last_run_at IS NULL OR status != 'running')";
             $params = [];
             if ($tid > 1) {
                 $sql .= " AND tenant_id = ?";
                 $params[] = $tid;
             }
-            $sql .= " ORDER BY next_run ASC";
+            $sql .= " ORDER BY next_run_at ASC";
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
@@ -588,7 +588,7 @@ private function getTenantId(): int
         try {
             $tid = $this->getTenantId();
             $sql = "UPDATE scheduled_tasks SET 
-                last_run = NOW(),
+                last_run_at = NOW(),
                 status = ?
                 WHERE id = ?";
             $params = [$status, $taskId];
@@ -618,7 +618,7 @@ private function getTenantId(): int
         
         try {
             $tid = $this->getTenantId();
-            $sql = "UPDATE scheduled_tasks SET next_run = ? WHERE id = ?";
+            $sql = "UPDATE scheduled_tasks SET next_run_at = ? WHERE id = ?";
             $params = [$nextRun, $taskId];
             if ($tid > 1) {
                 $sql .= " AND tenant_id = ?";
@@ -703,7 +703,7 @@ private function getTenantId(): int
                 COUNT(*) as total_tasks,
                 SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_tasks,
                 SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_tasks,
-                SUM(CASE WHEN last_run < DATE_SUB(NOW(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) as stale_tasks
+                SUM(CASE WHEN last_run_at < DATE_SUB(NOW(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) as stale_tasks
                 FROM scheduled_tasks";
             $params = [];
             if ($tid > 1) {
