@@ -57,7 +57,7 @@ $messageVal = $_POST['message'] ?? '';
                 <div class="card-footer text-center py-3">
                     <div class="small">
                         <?php echo __('need_immediate_assistance'); ?> <a href="tel:<?= $phoneRaw ?>"><?= $phoneDisplay ?></a> <?php echo __('or_email_us'); ?>
-                        <a href="mailto:info@apsdreamhome.com"><?php echo __('email_us_link'); ?></a>.
+                        <a href="mailto:<?= $sc('contact_email', 'info@apsdreamhome.com') ?>"><?php echo __('email_us_link'); ?></a>.
                     </div>
                 </div>
             </div>

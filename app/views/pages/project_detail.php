@@ -65,7 +65,7 @@ if ($project) {
             </div>
             <div class="col-md-4 mb-2 mb-md-0">
                 <i class="fas fa-envelope me-2"></i>
-                <a href="mailto:info@apsdreamhome.com" class="text-white text-decoration-none">info@apsdreamhome.com</a>
+                <a href="mailto:<?= $sc('contact_email', 'info@apsdreamhome.com') ?>" class="text-white text-decoration-none"><?= $sc('contact_email', 'info@apsdreamhome.com') ?></a>
             </div>
             <div class="col-md-4">
                 <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success">

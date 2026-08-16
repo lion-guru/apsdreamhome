@@ -141,7 +141,7 @@
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-envelope text-primary me-2"></i>
-                        <strong>support@apsdreamhome.com</strong>
+                        <strong><?= $sc('contact_email', 'info@apsdreamhome.com') ?></strong>
                     </li>
                     <li>
                         <i class="fas fa-clock text-warning me-2"></i>

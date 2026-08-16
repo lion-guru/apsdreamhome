@@ -249,7 +249,7 @@
                 </div>
                 <div class="row mt-4 g-3 text-center">
                     <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6><?= __('const_call_us') ?></h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-envelope text-primary fa-2x mb-2"></i><h6><?= __('const_email') ?></h6><p class="mb-0 text-muted">info@apsdreamhome.com</p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-envelope text-primary fa-2x mb-2"></i><h6><?= __('const_email') ?></h6><p class="mb-0 text-muted"><?= $sc('contact_email', 'info@apsdreamhome.com') ?></p></div></div>
                     <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i><h6><?= __('const_office') ?></h6><p class="mb-0 text-muted">Gorakhpur, UP</p></div></div>
                 </div>
             </div>

@@ -299,7 +299,7 @@ if (!function_exists('__')) {
                     <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary btn-lg">
                         <i class="fas fa-phone-alt me-2"></i><?= __('faqs_cta_call') ?>
                     </a>
-                    <a href="mailto:info@apsdreamhome.com" class="btn btn-outline-secondary btn-lg">
+                    <a href="mailto:<?= $sc('contact_email', 'info@apsdreamhome.com') ?>" class="btn btn-outline-secondary btn-lg">
                         <i class="fas fa-envelope me-2"></i><?= __('faqs_cta_email') ?>
                     </a>
                 </div>
