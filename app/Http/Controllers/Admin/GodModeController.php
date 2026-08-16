@@ -540,7 +540,7 @@ class GodModeController extends AdminController
 
             case 'reset_failed_logins':
                 // Clear failed login attempts
-                $this->db->execute("DELETE FROM activity_logs_unified WHERE status = 'failed' AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+                $this->db->execute("DELETE FROM activity_logs_unified WHERE log_type = 'failed_login' AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
                 return ['success' => true, 'message' => 'Failed login attempts cleared'];
 
             case 'sync_permissions':

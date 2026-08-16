@@ -1606,7 +1606,7 @@ class CRMService
     public function logActivity(int $leadId, int $userId, string $type, string $subject, string $body = '', array $meta = []): array
     {
         try {
-            $actCols = "lead_id, user_id, activity_type, subject, description, meta_data, created_at";
+            $actCols = "lead_id, created_by, activity_type, subject, description, metadata, created_at";
             $actVals = "?, ?, ?, ?, ?, ?, NOW()";
             $actParams = [$leadId, $userId, $type, $subject, $body, json_encode($meta)];
             if ($tid = $this->tid()) { $actCols .= ", tenant_id"; $actVals .= ", ?"; $actParams[] = $tid; }

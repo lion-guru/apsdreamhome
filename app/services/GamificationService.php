@@ -289,6 +289,81 @@ class GamificationService
     }
 
     /**
+     * Get gamification data for a specific associate
+     */
+    public function forAssociate(int $userId, int $associateId = 0): array
+    {
+        try {
+            $stats = $this->getUserStats($userId);
+            $badges = $this->getUserBadges($userId);
+            $leaderboard = $this->getLeaderboard(10);
+            $rank = 0;
+            foreach ($leaderboard as $i => $entry) {
+                if ((int)$entry['user_id'] === $userId) { $rank = $i + 1; break; }
+            }
+            return [
+                'stats' => $stats,
+                'badges' => $badges,
+                'rank' => $rank,
+                'leaderboard' => $leaderboard,
+            ];
+        } catch (\Throwable $e) {
+            error_log('GamificationService::forAssociate error: ' . $e->getMessage());
+            return ['stats' => [], 'badges' => [], 'rank' => 0, 'leaderboard' => []];
+        }
+    }
+
+    /**
+     * Get gamification data for a specific agent
+     */
+    public function forAgent(int $userId, int $agentId = 0): array
+    {
+        try {
+            $stats = $this->getUserStats($userId);
+            $badges = $this->getUserBadges($userId);
+            $leaderboard = $this->getLeaderboard(10);
+            $rank = 0;
+            foreach ($leaderboard as $i => $entry) {
+                if ((int)$entry['user_id'] === $userId) { $rank = $i + 1; break; }
+            }
+            return [
+                'stats' => $stats,
+                'badges' => $badges,
+                'rank' => $rank,
+                'leaderboard' => $leaderboard,
+            ];
+        } catch (\Throwable $e) {
+            error_log('GamificationService::forAgent error: ' . $e->getMessage());
+            return ['stats' => [], 'badges' => [], 'rank' => 0, 'leaderboard' => []];
+        }
+    }
+
+    /**
+     * Get gamification data for a specific employee
+     */
+    public function forEmployee(int $employeeId): array
+    {
+        try {
+            $stats = $this->getUserStats($employeeId);
+            $badges = $this->getUserBadges($employeeId);
+            $leaderboard = $this->getLeaderboard(10);
+            $rank = 0;
+            foreach ($leaderboard as $i => $entry) {
+                if ((int)$entry['user_id'] === $employeeId) { $rank = $i + 1; break; }
+            }
+            return [
+                'stats' => $stats,
+                'badges' => $badges,
+                'rank' => $rank,
+                'leaderboard' => $leaderboard,
+            ];
+        } catch (\Throwable $e) {
+            error_log('GamificationService::forEmployee error: ' . $e->getMessage());
+            return ['stats' => [], 'badges' => [], 'rank' => 0, 'leaderboard' => []];
+        }
+    }
+
+    /**
      * Get top employee by gamification points
      */
     public function getTopEmployee(): ?array

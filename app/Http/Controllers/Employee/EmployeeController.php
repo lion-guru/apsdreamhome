@@ -362,13 +362,10 @@ class EmployeeController extends BaseController
     private function getEmployeeActivities($employeeId)
     {
         try {
-            try {
-                $query = "SELECT * FROM employee_activities WHERE employee_id = ? ORDER BY created_at DESC LIMIT 10";
-            } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
-            }
-            return $this->db->fetchAll($query, [$employeeId]);
+            return $this->db->fetchAll(
+                "SELECT * FROM employee_activities WHERE employee_id = ? ORDER BY created_at DESC LIMIT 10",
+                [$employeeId]
+            );
         } catch (\Exception $e) {
             error_log("Activities data error: " . $e->getMessage());
             return [];

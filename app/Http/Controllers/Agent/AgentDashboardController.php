@@ -224,7 +224,7 @@ class AgentDashboardController extends BaseController
                 "SELECT l.name, l.email, l.phone, l.status, l.created_at, p.title as property_title
                  FROM leads l 
                  LEFT JOIN properties p ON l.property_id = p.id 
-                 WHERE l.agent_id = ? 
+                 WHERE l.assigned_to = ? 
                  ORDER BY l.created_at DESC 
                  LIMIT 10",
                 [$userId]
