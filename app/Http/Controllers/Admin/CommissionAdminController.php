@@ -612,7 +612,7 @@ class CommissionAdminController extends AdminController
                 SELECT mcl.*, u.name as associate_name, u.email as associate_email,
                        u.bank_account, u.bank_name, u.ifsc_code
                 FROM mlm_commission_ledger mcl
-                JOIN users u ON mcl.associate_id = u.id
+                JOIN users u ON mcl.beneficiary_user_id = u.id
                 WHERE mcl.status = 'approved' AND (mcl.payout_date IS NULL OR mcl.payout_date = '')
                 ORDER BY mcl.approved_at ASC
             ") ?: [];
@@ -621,7 +621,7 @@ class CommissionAdminController extends AdminController
             $this->data['payout_history'] = $this->db->fetchAll("
                 SELECT mcl.*, u.name as associate_name, u.email as associate_email
                 FROM mlm_commission_ledger mcl
-                JOIN users u ON mcl.associate_id = u.id
+                JOIN users u ON mcl.beneficiary_user_id = u.id
                 WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
                 ORDER BY mcl.payout_date DESC
                 LIMIT 20

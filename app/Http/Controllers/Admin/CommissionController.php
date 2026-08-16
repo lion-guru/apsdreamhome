@@ -277,7 +277,7 @@ class CommissionController extends AdminController
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
                            b.booking_number, p.title as property_title
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     LEFT JOIN bookings b ON mcl.source_booking_id = b.id
                     LEFT JOIN properties p ON b.property_id = p.id
                     WHERE mcl.status = 'pending'
@@ -299,7 +299,7 @@ class CommissionController extends AdminController
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
                            mcl.payout_method, mcl.payout_date
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
                     ORDER BY mcl.payout_date DESC
                     LIMIT 10";
@@ -447,7 +447,7 @@ class CommissionController extends AdminController
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
                            b.booking_number, p.title as property_title
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     LEFT JOIN bookings b ON mcl.source_booking_id = b.id
                     LEFT JOIN properties p ON b.property_id = p.id
                     WHERE mcl.status = 'pending'
@@ -503,7 +503,7 @@ class CommissionController extends AdminController
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email,
                            u.bank_account, u.bank_name, u.ifsc_code
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     WHERE mcl.status = 'approved' AND (mcl.payout_date IS NULL OR mcl.payout_date = '')
                     ORDER BY mcl.approved_at ASC";
             return $this->db->fetchAll($sql) ?: [];
@@ -521,7 +521,7 @@ class CommissionController extends AdminController
         try {
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
                     ORDER BY mcl.payout_date DESC
                     LIMIT 20";
@@ -621,7 +621,7 @@ class CommissionController extends AdminController
                            COALESCE(SUM(mcl.amount), 0) as total_commission,
                            COUNT(mcl.id) as commission_count
                     FROM users u
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     WHERE u.role = 'associate'
                     GROUP BY u.id
                     ORDER BY total_commission DESC

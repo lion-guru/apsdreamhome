@@ -221,7 +221,7 @@ class NetworkController extends AdminController
                            u.mlm_rank
                     FROM users u
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     WHERE u.role = 'associate' AND u.status = 'active'{$tidSql}
                     GROUP BY u.id
                     ORDER BY total_commissions DESC, direct_referrals DESC
@@ -299,7 +299,7 @@ class NetworkController extends AdminController
                            COALESCE(SUM(mcl.amount), 0) as total_commissions
                     FROM users u
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     WHERE u.sponsor_id = ? AND u.role = 'associate'{$tidSql}
                     GROUP BY u.id
                     ORDER BY u.created_at ASC";
@@ -356,7 +356,7 @@ class NetworkController extends AdminController
         try {
             $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     WHERE mcl.status = 'paid'
                     ORDER BY mcl.payout_date DESC
                     LIMIT 20";
@@ -412,7 +412,7 @@ class NetworkController extends AdminController
                            COALESCE(SUM(mcl.amount), 0) as total_earnings
                     FROM users u
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     WHERE u.role = 'associate' AND u.status = 'active'{$tidSql}
                     GROUP BY u.id
                     ORDER BY total_earnings DESC
@@ -548,7 +548,7 @@ class NetworkController extends AdminController
                     FROM users u
                     LEFT JOIN users s ON u.sponsor_id = s.id
                     LEFT JOIN users u2 ON u.id = u2.sponsor_id
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     WHERE u.role = 'associate'{$tidSql}
                     GROUP BY u.id
                     ORDER BY u.created_at DESC";

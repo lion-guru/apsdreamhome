@@ -617,7 +617,7 @@ class SalesController extends AdminController
                            COUNT(mcl.id) as commission_count,
                            COALESCE(SUM(mcl.amount), 0) as total_commissions
                     FROM mlm_commission_ledger mcl
-                    JOIN users u ON mcl.associate_id = u.id
+                    JOIN users u ON mcl.beneficiary_user_id = u.id
                     WHERE mcl.commission_type = 'sale_commission'
                     GROUP BY u.id
                     ORDER BY total_commissions DESC

@@ -214,7 +214,7 @@ class AnalyticsController extends AdminController
                            COUNT(mcl.id) as commission_count,
                            AVG(mcl.amount) as avg_commission
                     FROM users u
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     WHERE u.role = 'associate'
                     GROUP BY u.id, u.name, u.email
                     ORDER BY total_commission DESC
@@ -255,7 +255,7 @@ class AnalyticsController extends AdminController
                            COALESCE(SUM(mcl.amount), 0) as total_commission,
                            COUNT(DISTINCT b.id) as total_bookings
                     FROM users u
-                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                    LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                     LEFT JOIN bookings b ON u.id = b.associate_id
                     WHERE u.role = 'associate' AND u.status = 'active'
                     GROUP BY u.id, u.name, u.email, u.mlm_rank
@@ -281,7 +281,7 @@ class AnalyticsController extends AdminController
                     FROM (
                         SELECT AVG(mcl.amount) as commission_avg
                         FROM users u
-                        LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                        LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                         WHERE u.role = 'associate'
                         GROUP BY u.id
                     ) as avg_table";
@@ -639,7 +639,7 @@ class AnalyticsController extends AdminController
                 case 'commission':
                     $sql = "SELECT mcl.*, u.name as associate_name, u.email as associate_email
                             FROM mlm_commission_ledger mcl
-                            JOIN users u ON mcl.associate_id = u.id
+                            JOIN users u ON mcl.beneficiary_user_id = u.id
                             WHERE mcl.created_at BETWEEN ? AND ?
                             ORDER BY mcl.created_at DESC";
                     break;
@@ -654,7 +654,7 @@ class AnalyticsController extends AdminController
                 case 'users':
                     $sql = "SELECT u.*, COALESCE(SUM(mcl.amount), 0) as total_commission
                             FROM users u
-                            LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.associate_id AND mcl.status = 'paid'
+                            LEFT JOIN mlm_commission_ledger mcl ON u.id = mcl.beneficiary_user_id AND mcl.status = 'paid'
                             WHERE u.role = 'associate'
                             GROUP BY u.id
                             ORDER BY total_commission DESC";
