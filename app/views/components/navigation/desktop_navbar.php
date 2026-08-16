@@ -12,22 +12,14 @@ if (!function_exists('navUrl')) {
     <div class="container d-flex align-items-center">
 
         <!-- Logo - Always on the left -->
-        <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>" class="style-38085">
-            <?php $brand = $nav->companyName(); ?>
+        <a class="navbar-brand d-flex align-items-center me-0" href="<?php echo BASE_URL; ?>">
             <?php $logo = $nav->getSetting('company_logo', '/assets/images/logo/apslogonew.jpg');
                    if ($logo && $logo[0] !== '/') $logo = '/' . $logo; ?>
             <img src="<?php echo navUrl($logo); ?>"
-                 alt="<?php echo htmlspecialchars($brand); ?>"
+                 alt="APS Dream Home"
                  class="logo"
-                 class="style-11857"
                  loading="eager"
                  fetchpriority="high">
-            <?php if (isset($brand)): ?>
-                <span class="brand-text d-none d-md-inline ms-2 fw-bold"
-                      class="style-38619">
-                    <?php echo htmlspecialchars($brand); ?>
-                </span>
-            <?php endif; ?>
         </a>
 
         <!-- Mobile Toggle (visible only on mobile) -->
@@ -245,16 +237,6 @@ if (!function_exists('navUrl')) {
                     </li>
                 <?php endforeach; ?>
 
-                <!-- Search Trigger (Ctrl+K) -->
-                <li class="nav-item d-none d-xl-inline-block">
-                    <button class="desktop-search-trigger" onclick="openCommandPalette()" title="Search (Ctrl+K)">
-                        <i class="fas fa-search"></i>
-                        <span class="d-none d-lg-inline">Search</span>
-                        <kbd>Ctrl+K</kbd>
-                    </button>
-                </li>
-
-                <!-- Auth Button / User Menu -->
                 <li class="nav-item dropdown">
                     <?php if ($nav->isLoggedIn()): ?>
                         <a class="nav-link dropdown-toggle"
@@ -307,11 +289,11 @@ if (!function_exists('navUrl')) {
                 <li class="nav-item dropdown ms-2">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" title="<?= __('language') ?>">
                         <i class="fas fa-globe"></i>
-                        <span class="d-none d-lg-inline"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'à¤¹à¤¿à¤‚à¤¦à¥€' : 'English' ?></span>
+                        <span class="d-none d-lg-inline"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिन्दी' : 'English' ?></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">ðŸ‡¬ðŸ‡§</span> English</a></li>
-                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">ðŸ‡®ðŸ‡³</span> Hindi</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
+                        <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">🇮🇳</span> Hindi</a></li>
                     </ul>
                 </li>
 
@@ -345,17 +327,6 @@ if (!function_exists('navUrl')) {
                 </li>
                 <?php endif; ?>
 
-                <!-- Quick Search Typeahead (Desktop) -->
-                <li class="nav-item ms-2 d-none d-xl-inline-block">
-                    <form id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off" class="d-flex align-items-center position-relative">
-    <?php echo CSRFProtection::csrfField(); ?>
-                        <input type="search" class="form-control border-start-0" id="quickSearchInput"
-                               placeholder="<?= __('search_properties') ?>..."
-                               aria-label="<?= __('search_properties') ?>"
-                               class="style-13204">
-                        <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" class="style-54390"></div>
-                    </form>
-                </li>
 
             </ul>
         </div>

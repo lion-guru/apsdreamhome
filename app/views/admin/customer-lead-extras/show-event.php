@@ -23,7 +23,7 @@ $page_description = 'Detailed view of lead event';
             <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle" />
+                        <img src="<?= BASE_URL ?>/assets/images/user/default-avatar.jpg" alt="Avatar" class="img-fluid rounded-circle" />
                     </div>
                     <div class="col-md-9">
                         <h4><?php echo htmlspecialchars($event['lead_name'] ?? 'Unknown'); ?></h4>

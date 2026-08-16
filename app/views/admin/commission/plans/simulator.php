@@ -41,7 +41,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
 
             <div class="row mb-3">
                 <div class="col-md-2">
-                    <label class="cp-label">Sale Amount (â‚¹)</label>
+                    <label class="cp-label">Sale Amount (₹)</label>
                     <input type="number" name="sale_amount" class="cp-input" value="<?= htmlspecialchars($_POST['sale_amount'] ?? 1500000, ENT_QUOTES, 'UTF-8') ?>" step="10000" min="0">
                 </div>
                 <div class="col-md-2">
@@ -97,18 +97,18 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 $pctUsed = $totalCap > 0 ? min(100, ($r['total_distributed'] / $totalCap) * 100) : 0;
                 ?>
                 <div class="row mb-4">
-                    <div class="col-md-2"><div class="result-card"><div class="result-num">â‚¹<?= number_format($r['sale_amount']) ?></div><div class="result-label">Sale Amount</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['sale_amount']) ?></div><div class="result-label">Sale Amount</div></div></div>
                     <div class="col-md-2"><div class="result-card"><div class="result-num" class="style-27526"><?= $r['seller_rank'] ?></div><div class="result-label"><?= $r['seller_rate'] ?>% Direct Rate</div></div></div>
-                    <div class="col-md-2"><div class="result-card"><div class="result-num">â‚¹<?= number_format($r['global_cap']) ?></div><div class="result-label">Global Cap (<?= $result['plan']['name'] ?? '' ?>)</div></div></div>
-                    <div class="col-md-2"><div class="result-card"><div class="result-num">â‚¹<?= number_format($r['track_a_total']) ?></div><div class="result-label">Track A Total</div></div></div>
-                    <div class="col-md-2"><div class="result-card"><div class="result-num">â‚¹<?= number_format($r['total_distributed']) ?></div><div class="result-label">Total Distributed</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['global_cap']) ?></div><div class="result-label">Global Cap (<?= $result['plan']['name'] ?? '' ?>)</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['track_a_total']) ?></div><div class="result-label">Track A Total</div></div></div>
+                    <div class="col-md-2"><div class="result-card"><div class="result-num">₹<?= number_format($r['total_distributed']) ?></div><div class="result-label">Total Distributed</div></div></div>
                     <div class="col-md-2"><div class="result-card"><div class="result-num"><?= $r['payout_ratio'] ?>%</div><div class="result-label">Payout Ratio</div></div></div>
                 </div>
 
                 <div class="style-48859">
                     <div class="style-22159">
                         <span class="style-27141">Cap Utilization: <?= number_format($pctUsed, 1) ?>%</span>
-                        <span class="style-27141">Remaining: â‚¹<?= number_format($r['remaining_cap']) ?></span>
+                        <span class="style-27141">Remaining: ₹<?= number_format($r['remaining_cap']) ?></span>
                     </div>
                     <div class="track-bar" class="style-44570">
                         <div class="track-bar-fill" class="style-85724"></div>
@@ -127,11 +127,11 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                                         <td class="style-35725"><?= htmlspecialchars($e['label']) ?></td>
                                         <td><span class="style-17206"><?= $e['type'] ?></span></td>
                                         <td><?= $e['rate'] ?>%</td>
-                                        <td class="style-35725">â‚¹<?= number_format($e['amount']) ?></td>
+                                        <td class="style-35725">₹<?= number_format($e['amount']) ?></td>
                                         <td class="style-53581"><?= $r['sale_amount'] > 0 ? number_format(($e['amount'] / $r['sale_amount']) * 100, 2) : 0 ?>%</td>
                                     </tr>
                                     <?php endforeach; ?>
-                                    <tr class="style-16029"><td colspan="3" class="style-4046">Track A Total</td><td class="style-4046">â‚¹<?= number_format($r['track_a_total']) ?></td><td></td></tr>
+                                    <tr class="style-16029"><td colspan="3" class="style-4046">Track A Total</td><td class="style-4046">₹<?= number_format($r['track_a_total']) ?></td><td></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -141,13 +141,13 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <?php foreach ($r['track_b_entries'] as $e): ?>
                         <div class="style-79052">
                             <div class="style-65484"><?= htmlspecialchars($e['label']) ?></div>
-                            <div class="style-50281">â‚¹<?= number_format($e['amount']) ?></div>
+                            <div class="style-50281">₹<?= number_format($e['amount']) ?></div>
                         </div>
                         <?php endforeach; ?>
                         <?php foreach ($r['track_c_entries'] as $e): ?>
                         <div class="style-79052">
                             <div class="style-65484"><?= htmlspecialchars($e['label']) ?></div>
-                            <div class="style-62989">â‚¹<?= number_format($e['amount']) ?></div>
+                            <div class="style-62989">₹<?= number_format($e['amount']) ?></div>
                         </div>
                         <?php endforeach; ?>
 
@@ -156,7 +156,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <?php foreach ($r['monthly_bonuses'] as $bName => $b): ?>
                         <div class="style-18062">
                             <span class="style-53581"><?= ucfirst($bName) ?> (<?= $b['rate'] ?>%)</span>
-                            <span class="style-86771">â‚¹<?= number_format($b['estimated']) ?></span>
+                            <span class="style-86771">₹<?= number_format($b['estimated']) ?></span>
                         </div>
                         <?php endforeach; ?>
                         <?php endif; ?>
@@ -164,7 +164,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 </div>
 
             <?php elseif ($simMode === 'bulk'): ?>
-                <h6 class="style-36277">All Ranks at â‚¹<?= number_format($_POST['sale_amount'] ?? 1500000) ?> â€” <?= htmlspecialchars($result['plan']['name'] ?? '') ?></h6>
+                <h6 class="style-36277">All Ranks at ₹<?= number_format($_POST['sale_amount'] ?? 1500000) ?> — <?= htmlspecialchars($result['plan']['name'] ?? '') ?></h6>
                 <div class="style-50496">
                     <table class="table sim-table m-0">
                         <thead><tr><th>Rank</th><th>Direct Rate</th><th>Track A</th><th>Track B</th><th>Track C</th><th>Total Payout</th><th>Payout %</th></tr></thead>
@@ -174,10 +174,10 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                             <tr>
                                 <td class="style-35725"><?= htmlspecialchars($rr['seller_rank']) ?></td>
                                 <td><?= $rr['seller_rate'] ?>%</td>
-                                <td>â‚¹<?= number_format($rr['track_a_total']) ?></td>
-                                <td>â‚¹<?= number_format($rr['track_b_total']) ?></td>
-                                <td>â‚¹<?= number_format($rr['track_c_total']) ?></td>
-                                <td class="style-4046">â‚¹<?= number_format($rr['total_distributed']) ?></td>
+                                <td>₹<?= number_format($rr['track_a_total']) ?></td>
+                                <td>₹<?= number_format($rr['track_b_total']) ?></td>
+                                <td>₹<?= number_format($rr['track_c_total']) ?></td>
+                                <td class="style-4046">₹<?= number_format($rr['total_distributed']) ?></td>
                                 <td><?= $rr['payout_ratio'] ?>%</td>
                             </tr>
                             <?php endif; ?>
@@ -195,14 +195,14 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                     <div class="col-md-6">
                         <div class="style-731">
                             <div class="style-65484"><?= htmlspecialchars($simA['plan']['name'] ?? '') ?></div>
-                            <div class="style-44212">â‚¹<?= number_format($simA['total_distributed']) ?></div>
+                            <div class="style-44212">₹<?= number_format($simA['total_distributed']) ?></div>
                             <div class="style-27141"><?= $simA['payout_ratio'] ?>% payout ratio</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="style-71182">
                             <div class="style-65484"><?= htmlspecialchars($simB['plan']['name'] ?? '') ?></div>
-                            <div class="style-81038">â‚¹<?= number_format($simB['total_distributed']) ?></div>
+                            <div class="style-81038">₹<?= number_format($simB['total_distributed']) ?></div>
                             <div class="style-27141"><?= $simB['payout_ratio'] ?>% payout ratio</div>
                         </div>
                     </div>
@@ -213,7 +213,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 ?>
                 <div class="result-card" class="style-76692">
                     <div class="style-34740">Difference (Plan B âˆ’ Plan A)</div>
-                    <div class="result-num" class="style-33167">â‚¹<?= number_format($diffTotal) ?></div>
+                    <div class="result-num" class="style-33167">₹<?= number_format($diffTotal) ?></div>
                     <div class="style-10603"><?= $diffTotal > 0 ? 'Plan B pays MORE' : ($diffTotal < 0 ? 'Plan A pays MORE' : 'Same payout') ?></div>
                 </div>
 

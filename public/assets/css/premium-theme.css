@@ -365,14 +365,14 @@ h6 { font-size: var(--h6-size); font-weight: 500; }
 }
 
 /* Card Body High Contrast Text Protection — NOT in dark mode */
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body p,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body span,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body td,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body th,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body strong,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body label,
-body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary) .card-body li {
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body p,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body span,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body td,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body th,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body strong,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body label,
+body:not(.dark-mode) .card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body li {
   color: #1e293b !important;
 }
 
@@ -1920,8 +1920,8 @@ section[style*="linear-gradient"] .bg-light .form-control::placeholder {
   color: #6c757d !important;
 }
 
-/* Preserve light-colored elements inside dark sections */
-section[style*="linear-gradient"] .card,
+/* Preserve light-colored elements inside dark sections — but NOT dark-themed cards */
+section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark),
 section[style*="linear-gradient"] .card.bg-white,
 section[style*="linear-gradient"] .card.bg-light,
 section[style*="linear-gradient"] .card.bg-primary.text-white,
@@ -1936,7 +1936,7 @@ section[style*="linear-gradient"] div[style*="background: linear-gradient"] {
   color: #1e293b !important;
 }
 
-section[style*="linear-gradient"] .card *,
+section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark) *,
 section[style*="linear-gradient"] .card.bg-white *,
 section[style*="linear-gradient"] .card.bg-light *,
 section[style*="linear-gradient"] .bg-light *,

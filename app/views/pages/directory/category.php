@@ -24,7 +24,7 @@
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Search by name or keyword..." value="<?= htmlspecialchars($search) ?>">
+                        <input type="text" name="search" class="form-control" placeholder="Search by name or keyword..." value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
                 </div>
                 <div class="col-md-3">

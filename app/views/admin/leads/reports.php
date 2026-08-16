@@ -84,7 +84,7 @@ Page Header -->
                                                 Average Budget
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                â‚¹<?= number_format(floatval(report['avg_budget'] ?? 0) ?? 0) ?>
+                                                ₹<?= number_format(floatval(report['avg_budget'] ?? 0) ?? 0) ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -231,7 +231,7 @@ Page Header -->
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td>â‚¹<?= number_format(floatval(source['avg_budget'] ?? 0) ?? 0) ?></td>
+                                                            <td>₹<?= number_format(floatval(source['avg_budget'] ?? 0) ?? 0) ?></td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 <?php else: ?>

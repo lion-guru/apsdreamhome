@@ -34,7 +34,7 @@
                             <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-receipt fa-3x d-block mb-3"></i>No expenses recorded yet</td></tr>
                         <?php else: ?>
                             <?php $i=1; foreach ($expenseList as $exp): ?>
-                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($exp['date'])) ?></td><td><span class="badge bg-warning-subtle text-warning rounded-pill px-3"><?= $exp['category'] ?? 'General' ?></span></td><td><?= $exp['description'] ?></td><td><?= $exp['payee'] ?? '-' ?></td><td class="text-end pe-4 fw-bold text-danger">-â‚¹<?= number_format($exp['amount'] ?? 0, 2) ?></td></tr>
+                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($exp['date'])) ?></td><td><span class="badge bg-warning-subtle text-warning rounded-pill px-3"><?= $exp['category'] ?? 'General' ?></span></td><td><?= $exp['description'] ?></td><td><?= $exp['payee'] ?? '-' ?></td><td class="text-end pe-4 fw-bold text-danger">-₹<?= number_format($exp['amount'] ?? 0, 2) ?></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>

@@ -174,7 +174,7 @@ function complianceBadgeClass($status) {
                 <?php if (empty($recommendations)): ?>
                     <div class="text-center text-muted py-4">
                         <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
-                        <p class="mb-0">All areas compliant â€” no critical recommendations</p>
+                        <p class="mb-0">All areas compliant — no critical recommendations</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($recommendations as $rec): ?>
@@ -201,7 +201,7 @@ function complianceBadgeClass($status) {
                     </div>
                 <?php else: ?>
                     <canvas id="trendChart" height="200"></canvas>
-                    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4"></script>
+                    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
                     <script>
                         const trendData = <?= json_encode(array_reverse($trend)) ?>;
                         const ctx = document.getElementById('trendChart').getContext('2d');

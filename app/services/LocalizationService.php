@@ -234,8 +234,8 @@ class LocalizationService
         $formats = [
             'en' => ['symbol' => '$', 'position' => 'before', 'decimal' => '.', 'thousands' => ','],
             'hi' => ['symbol' => '₹', 'position' => 'before', 'decimal' => '.', 'thousands' => ','],
-            'es' => ['symbol' => 'â‚¬', 'position' => 'after', 'decimal' => ',', 'thousands' => '.'],
-            'fr' => ['symbol' => 'â‚¬', 'position' => 'after', 'decimal' => ',', 'thousands' => ' '],
+            'es' => ['symbol' => '€', 'position' => 'after', 'decimal' => ',', 'thousands' => '.'],
+            'fr' => ['symbol' => '€', 'position' => 'after', 'decimal' => ',', 'thousands' => ' '],
             'ar' => ['symbol' => 'Ø±.Ø³', 'position' => 'before', 'decimal' => '.', 'thousands' => ',']
         ];
         

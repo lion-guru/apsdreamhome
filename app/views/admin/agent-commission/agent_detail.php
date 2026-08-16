@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <div class="row mb-4">
         <div class="col-md-4 mb-2">
             <div class="ac-stat">
-                <div class="num ac-money">â‚¹<?= number_format((float)$totalEarned) ?></div>
+                <div class="num ac-money">₹<?= number_format((float)$totalEarned) ?></div>
                 <div class="lbl">Total Earned</div>
             </div>
         </div>
@@ -90,7 +90,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <?php foreach ($commissions as $c): ?>
                             <tr>
                                 <td>#<?= (int)$c['id'] ?></td>
-                                <td><span class="ac-money">â‚¹<?= number_format((float)$c['amount']) ?></span></td>
+                                <td><span class="ac-money">₹<?= number_format((float)$c['amount']) ?></span></td>
                                 <td><span class="ac-badge ac-badge-<?= $c['status'] ?>"><?= ucfirst($c['status']) ?></span></td>
                                 <td class="style-4937"><?= date('d M Y, h:i A', strtotime($c['created_at'])) ?></td>
                             </tr>

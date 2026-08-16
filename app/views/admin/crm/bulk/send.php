@@ -45,7 +45,7 @@
                                         <option value="<?= $t['id'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '') ?>" data-type="email">ðŸ“§ <?= htmlspecialchars($t['name']) ?></option>
                                     <?php endforeach; ?>
                                     <?php foreach ($sms_templates as $t): ?>
-                                        <option value="<?= $t['id'] ?>" data-type="sms">ðŸ“± <?= htmlspecialchars($t['name']) ?></option>
+                                        <option value="<?= $t['id'] ?>" data-type="sms">📱 <?= htmlspecialchars($t['name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -64,7 +64,7 @@
                         </div>
 
                         <div class="p-3 bg-light rounded mb-3">
-                            <small class="text-muted"><strong>Merge fields:</strong> {{name}} {{phone}} {{email}} {{city}} {{budget}} â€” will be replaced per lead</small>
+                            <small class="text-muted"><strong>Merge fields:</strong> {{name}} {{phone}} {{email}} {{city}} {{budget}} — will be replaced per lead</small>
                         </div>
 
                         <div class="d-flex gap-2">
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         body = body.replace(/\{\{phone\}\}/g, '98XX-XXX-XXXX');
         body = body.replace(/\{\{email\}\}/g, 'john@example.com');
         body = body.replace(/\{\{city\}\}/g, 'Your City');
-        body = body.replace(/\{\{budget\}\}/g, 'â‚¹XX,XX,XXX');
+        body = body.replace(/\{\{budget\}\}/g, '₹XX,XX,XXX');
         document.getElementById('messagePreview').innerHTML = body;
     });
 });

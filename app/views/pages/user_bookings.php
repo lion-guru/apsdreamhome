@@ -57,9 +57,9 @@ $bookings = $bookings ?? [];
                             <td><strong>#<?= $b['id'] ?></strong></td>
                             <td><strong>#<?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?></strong></td>
                             <td><?= htmlspecialchars($b['colony_name'] ?? 'N/A') ?></td>
-                            <td>â‚¹<?= number_format($totalAmt) ?></td>
+                            <td>₹<?= number_format($totalAmt) ?></td>
                             <td>
-                                â‚¹<?= number_format($tokenPaid) ?>
+                                ₹<?= number_format($tokenPaid) ?>
                                 <?php if ($tokenRequired > 0): ?>
                                 <div class="progress" class="style-52430">
                                     <div class="progress-bar bg-success" class="style-15112"></div>

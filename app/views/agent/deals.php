@@ -31,7 +31,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                 <div class="style-38412">
                     <i class="fas fa-rupee-sign fa-lg" class="style-93945"></i>
                 </div>
-                <h3 class="style-613">â‚¹<?= number_format($totalValue) ?></h3>
+                <h3 class="style-613">₹<?= number_format($totalValue) ?></h3>
                 <p class="text-muted mb-0">Total Deal Value</p>
             </div>
         </div>
@@ -96,7 +96,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                             </div>
                         </td>
                         <td class="px-3"><?= htmlspecialchars($deal['customer_name'] ?? '-') ?></td>
-                        <td class="px-3 fw-bold" class="style-93945">â‚¹<?= number_format($deal['total_amount'] ?? $deal['booking_amount'] ?? 0) ?></td>
+                        <td class="px-3 fw-bold" class="style-93945">₹<?= number_format($deal['total_amount'] ?? $deal['booking_amount'] ?? 0) ?></td>
                         <td class="px-3">
                             <?php
                             $status = $deal['status'] ?? 'pending';

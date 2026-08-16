@@ -8,6 +8,7 @@ use PDOException;
 class Database
 {
     private static $instance = null;
+    private static $initialized = false;
     protected $pdo;
     protected $config;
 
@@ -57,6 +58,11 @@ class Database
         }
 
         $this->connect();
+    }
+
+    public static function isInitialized(): bool
+    {
+        return self::$initialized && self::$instance !== null && self::$instance->pdo !== null;
     }
 
     protected function connect()

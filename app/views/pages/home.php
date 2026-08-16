@@ -136,54 +136,6 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         </div>
     </section>
 
-    <!-- Quick Links -->
-    <section class="py-4 bg-light">
-        <div class="container">
-            <div class="row g-3">
-                <div class="col-6 col-md-3">
-                    <a href="<?php echo BASE_URL; ?>/properties?type=residential" class="text-decoration-none">
-                        <div class="quick-link-card hover-lift">
-                            <div class="icon-wrap" class="style-14178">
-                                <i class="fas fa-home fa-xl iu-teal"></i>
-                            </div>
-                            <h6 class="text-dark fw-bold"><?= __('nav_residential') ?></h6>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <a href="<?php echo BASE_URL; ?>/properties?type=commercial" class="text-decoration-none">
-                        <div class="quick-link-card hover-lift">
-                            <div class="icon-wrap" class="style-35677">
-                                <i class="fas fa-store fa-xl iu-emerald"></i>
-                            </div>
-                            <h6 class="text-dark fw-bold"><?= __('nav_commercial') ?></h6>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <a href="<?php echo BASE_URL; ?>/properties?type=plot" class="text-decoration-none">
-                        <div class="quick-link-card hover-lift">
-                            <div class="icon-wrap" class="style-61450">
-                                <i class="fas fa-vector-square fa-xl iu-amber"></i>
-                            </div>
-                            <h6 class="text-dark fw-bold"><?= __('plots') ?></h6>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <a href="<?php echo BASE_URL; ?>/list-property" class="text-decoration-none">
-                        <div class="quick-link-card hover-lift">
-                            <div class="icon-wrap" class="style-44276">
-                                <i class="fas fa-plus-circle fa-xl" class="style-61912"></i>
-                            </div>
-                            <h6 class="text-dark fw-bold"><?= __('nav_post_property') ?></h6>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Stats - Big Company Feel -->
     <section class="py-0 stats-section">
         <div class="container">
@@ -250,7 +202,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                 <div class="col-md-7">
                                     <div class="mb-4">
                                         <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span
-                                                id="loanAmtDisplay" class="text-warning">â‚¹50,00,000</span></label>
+                                                id="loanAmtDisplay" class="text-warning">₹50,00,000</span></label>
                                         <input type="range" class="form-range" id="loanAmount" min="100000"
                                             max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="<?= __('home_loan_amount') ?>">
                                         <div class="d-flex justify-content-between small text-white-50">
@@ -284,7 +236,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                     <div class="result-card bg-dark text-white" class="style-87517">
                                         <p class="text-white-50 mb-1 small text-uppercase text-center"
                                             class="style-82962"><?= __('home_your_monthly_emi') ?></p>
-                                        <p class="display-5 fw-bold mb-0 text-center iu-teal-light" id="emiResult">â‚¹42,426</p>
+                                        <p class="display-5 fw-bold mb-0 text-center iu-teal-light" id="emiResult">₹42,426</p>
                                         
                                         <!-- Animated Donut Chart -->
                                         <div class="emi-chart-container my-3">
@@ -302,15 +254,15 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                         <hr class="border-light my-3 opacity-50">
                                         <div class="d-flex justify-content-between">
                                             <span class="text-white-50"><i class="fas fa-circle me-1" class="style-91518"></i><?= __('home_loan_amount') ?></span>
-                                            <span class="fw-bold text-white" id="totalPrincipalDisp">â‚¹50,00,000</span>
+                                            <span class="fw-bold text-white" id="totalPrincipalDisp">₹50,00,000</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-2">
                                             <span class="text-white-50"><i class="fas fa-circle me-1" class="style-88794"></i><?= __('home_total_interest') ?></span>
-                                            <span class="fw-bold text-white" id="totalInterest">â‚¹51,82,240</span>
+                                            <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-2 pt-2 border-top border-light opacity-50">
                                             <span class="text-white-50"><?= __('home_total_payment') ?></span>
-                                            <span class="fw-bold text-white" id="totalPayment">â‚¹1,01,82,240</span>
+                                            <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
                                         </div>
                                     </div>
                                 </div>
@@ -330,7 +282,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         const R = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
         const N = parseFloat(document.getElementById('loanTenure').value) * 12;
 
-        document.getElementById('loanAmtDisplay').textContent = 'â‚¹' + P.toLocaleString('en-IN');
+        document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
         document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
         document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' ' + '<?= __('home_years') ?>';
 
@@ -348,11 +300,11 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             totalInt = totalPay - P;
         }
 
-        document.getElementById('emiResult').textContent = 'â‚¹' + Math.round(emi).toLocaleString('en-IN');
-        document.getElementById('totalInterest').textContent = 'â‚¹' + Math.round(totalInt).toLocaleString('en-IN');
-        document.getElementById('totalPayment').textContent = 'â‚¹' + Math.round(totalPay).toLocaleString('en-IN');
+        document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
+        document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
         if (document.getElementById('totalPrincipalDisp')) {
-            document.getElementById('totalPrincipalDisp').textContent = 'â‚¹' + P.toLocaleString('en-IN');
+            document.getElementById('totalPrincipalDisp').textContent = '₹' + P.toLocaleString('en-IN');
         }
 
         // Calculate donut segments
@@ -581,10 +533,10 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 $hasProjects = !empty($featured_properties);
                 if (!$hasProjects):
                     $fallbackProjects = [
-                        ['title' => 'Suryoday Colony', 'city' => 'Gorakhpur', 'price' => 'â‚¹999+/sqft', 'slug' => 'suryoday-colony', 'status' => 'Possession Ready', 'img' => 'gorakhpur/suryoday.jpg', 'plots' => '1050+', 'type' => 'Residential', 'area' => '35 Acres', 'sold' => '100+ Sold'],
-                        ['title' => 'Braj Radha Nagri', 'city' => 'Gorakhpur', 'price' => 'â‚¹7.5L+', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday.jpg', 'plots' => '1550+', 'type' => 'Premium', 'area' => '10 Acres', 'sold' => 'Best Seller'],
-                        ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => 'â‚¹5.5L+', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday1.jpeg', 'plots' => '780+', 'type' => 'Residential', 'area' => '22 Acres', 'sold' => 'Hot Deal'],
-                        ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => 'â‚¹3.5L+', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg', 'plots' => '1280+', 'type' => 'Affordable', 'area' => '30 Acres', 'sold' => 'Value Buy'],
+                        ['title' => 'Suryoday Colony', 'city' => 'Gorakhpur', 'price' => '₹999+/sqft', 'slug' => 'suryoday-colony', 'status' => 'Possession Ready', 'img' => 'gorakhpur/suryoday.jpg', 'plots' => '1050+', 'type' => 'Residential', 'area' => '35 Acres', 'sold' => '100+ Sold'],
+                        ['title' => 'Braj Radha Nagri', 'city' => 'Gorakhpur', 'price' => '₹7.5L+', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday.jpg', 'plots' => '1550+', 'type' => 'Premium', 'area' => '10 Acres', 'sold' => 'Best Seller'],
+                        ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => '₹5.5L+', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/suryoday1.jpeg', 'plots' => '780+', 'type' => 'Residential', 'area' => '22 Acres', 'sold' => 'Hot Deal'],
+                        ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => '₹3.5L+', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg', 'plots' => '1280+', 'type' => 'Affordable', 'area' => '30 Acres', 'sold' => 'Value Buy'],
                     ];
                     foreach ($fallbackProjects as $p):
                 ?>
@@ -1457,27 +1409,27 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-white-50 small">&nbsp;</label>
-                                    <div class="fw-bold h4 mb-0 pt-1" id="growthResult">â‚¹40,45,558</div>
+                                    <div class="fw-bold h4 mb-0 pt-1" id="growthResult">₹40,45,558</div>
                                 </div>
                             </div>
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
-                                    <span class="small fw-bold text-success" id="reValue">â‚¹52,33,855</span>
+                                    <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
                                 </div>
                                 <div class="progress mb-2 progress-thin">
                                     <div class="progress-bar bg-success" id="reBar" class="style-3541"></div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small text-white-50"><?= __('home_fd_cagr') ?></span>
-                                    <span class="small fw-bold text-warning" id="fdValue">â‚¹17,90,848</span>
+                                    <span class="small fw-bold text-warning" id="fdValue">₹17,90,848</span>
                                 </div>
                                 <div class="progress mb-2 progress-thin">
                                     <div class="progress-bar bg-warning" id="fdBar" class="style-85960"></div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <span class="small text-white-50"><?= __('home_gold_cagr') ?></span>
-                                    <span class="small fw-bold text-info" id="goldValue">â‚¹23,67,364</span>
+                                    <span class="small fw-bold text-info" id="goldValue">₹23,67,364</span>
                                 </div>
                                 <div class="progress mb-0 progress-thin">
                                     <div class="progress-bar bg-primary" id="goldBar" class="style-86013"></div>
@@ -1516,10 +1468,10 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
 
         const maxVal = Math.max(re, fd, gold);
 
-        document.getElementById('reValue').textContent = 'â‚¹' + Math.round(re).toLocaleString('en-IN');
-        document.getElementById('fdValue').textContent = 'â‚¹' + Math.round(fd).toLocaleString('en-IN');
-        document.getElementById('goldValue').textContent = 'â‚¹' + Math.round(gold).toLocaleString('en-IN');
-        document.getElementById('growthResult').textContent = 'â‚¹' + Math.round(re).toLocaleString('en-IN');
+        document.getElementById('reValue').textContent = '₹' + Math.round(re).toLocaleString('en-IN');
+        document.getElementById('fdValue').textContent = '₹' + Math.round(fd).toLocaleString('en-IN');
+        document.getElementById('goldValue').textContent = '₹' + Math.round(gold).toLocaleString('en-IN');
+        document.getElementById('growthResult').textContent = '₹' + Math.round(re).toLocaleString('en-IN');
 
         document.getElementById('reBar').style.width = (re / maxVal * 100) + '%';
         document.getElementById('fdBar').style.width = (fd / maxVal * 100) + '%';
@@ -1802,7 +1754,7 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         return '<div class="row g-4">' +
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.loanAmt +
-            ' <span class="text-warning" id="mEmiAmt">â‚¹50,00,000</span></label>' +
+            ' <span class="text-warning" id="mEmiAmt">₹50,00,000</span></label>' +
             '<input type="range" class="form-range" min="100000" max="50000000" step="100000" value="5000000" oninput="mCalcEMI()"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.intRate +
             ' <span class="text-warning" id="mEmiRate">8.5%</span></label>' +
@@ -1812,11 +1764,11 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             '<input type="range" class="form-range" min="1" max="30" step="1" value="20" oninput="mCalcEMI()"></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.monthlyEmi + '</p>' +
-             '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">â‚¹42,426</p><hr class="border-light opacity-50 my-3">' +
+             '<p class="display-5 fw-bold mb-0 text-warning" id="mEmiResult">₹42,426</p><hr class="border-light opacity-50 my-3">' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.totalInt +
-            '</span><span class="fw-bold" id="mEmiInterest">â‚¹51,82,240</span></div>' +
+            '</span><span class="fw-bold" id="mEmiInterest">₹51,82,240</span></div>' +
             '<div class="d-flex justify-content-between mt-2"><span class="text-white-50">' + T.totalPay +
-            '</span><span class="fw-bold" id="mEmiTotal">â‚¹1,01,82,240</span></div>' +
+            '</span><span class="fw-bold" id="mEmiTotal">₹1,01,82,240</span></div>' +
             '</div></div></div>';
     }
 
@@ -1838,13 +1790,13 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             '<?= __("home_years_20") ?>' + '</option></select></div>' +
             '<div class="mt-3">' +
             '<div class="d-flex justify-content-between mb-1"><span>' + T.reEstate +
-            ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">â‚¹52,33,855</span></div>' +
+            ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,855</span></div>' +
             '<div class="progress mb-2" class="style-51910"><div class="progress-bar bg-success" id="mInvREBar" class="style-90537"></div></div>' +
             '<div class="d-flex justify-content-between mb-1"><span>' + T.fd +
-            ' <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">â‚¹17,90,848</span></div>' +
+            ' <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">₹17,90,848</span></div>' +
             '<div class="progress mb-2" class="style-51910"><div class="progress-bar bg-warning" id="mInvFDBar" class="style-76833"></div></div>' +
             '<div class="d-flex justify-content-between"><span>' + T.gold +
-             ' <span class="text-info">(9%)</span></span><span class="fw-bold text-info" id="mInvGold">â‚¹23,67,364</span></div>' +
+             ' <span class="text-info">(9%)</span></span><span class="fw-bold text-info" id="mInvGold">₹23,67,364</span></div>' +
             '<div class="progress" class="style-51910"><div class="progress-bar bg-primary" id="mInvGoldBar" class="style-2443"></div></div></div></div>' +
             '<div class="col-md-5 text-center d-flex flex-column justify-content-center">' +
             '<div class="bg-success bg-opacity-10 rounded-4 p-4"><i class="fas fa-trophy fa-3x text-success mb-3"></i>' +
@@ -1873,14 +1825,14 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             '<option value="joint">' + T.joint + '</option></select></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.propPrice +
-            '</span><span class="fw-bold" id="mStampBase">â‚¹50,00,000</span></div>' +
+            '</span><span class="fw-bold" id="mStampBase">₹50,00,000</span></div>' +
             '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.stampDuty +
-            '</span><span class="fw-bold text-warning" id="mStampDuty">â‚¹2,50,000</span></div>' +
+            '</span><span class="fw-bold text-warning" id="mStampDuty">₹2,50,000</span></div>' +
             '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.regFee +
-            '</span><span class="fw-bold text-info" id="mStampReg">â‚¹50,000</span></div>' +
+            '</span><span class="fw-bold text-info" id="mStampReg">₹50,000</span></div>' +
              '<hr class="border-light opacity-50 my-2">' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.totalCost +
-            '</span><span class="fw-bold text-success fs-5" id="mStampTotal">â‚¹53,00,000</span></div>' +
+            '</span><span class="fw-bold text-success fs-5" id="mStampTotal">₹53,00,000</span></div>' +
             '</div></div></div>';
     }
 
@@ -1922,9 +1874,9 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             '</option><option value="30">' + '<?= __("home_years_30") ?>' + '</option></select></div></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.eligFor + '</p>' +
-             '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">â‚¹27,23,250</p><hr class="border-light opacity-50 my-3">' +
+             '<p class="display-5 fw-bold mb-0 text-success" id="mEligResult">₹27,23,250</p><hr class="border-light opacity-50 my-3">' +
             '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.maxEmi +
-            '</span><span class="fw-bold" id="mEligMaxEmi">â‚¹27,000</span></div>' +
+            '</span><span class="fw-bold" id="mEligMaxEmi">₹27,000</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.foir +
             '</span><span class="fw-bold" id="mEligFoir">45%</span></div>' +
             '</div></div></div>';
@@ -1952,9 +1904,9 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
             '</option></select></div></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
             '<p class="text-white-50 mb-1 small">' + T.estValue + '</p>' +
-             '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">â‚¹22,50,000</p><hr class="border-light opacity-50 my-3">' +
+             '<p class="display-5 fw-bold mb-0 text-warning" id="mValResult">₹22,50,000</p><hr class="border-light opacity-50 my-3">' +
             '<div class="d-flex justify-content-between mb-2"><span class="text-white-50">' + T.pricePerSqft +
-            '</span><span class="fw-bold" id="mValPsf">â‚¹1,500</span></div>' +
+            '</span><span class="fw-bold" id="mValPsf">₹1,500</span></div>' +
             '<div class="d-flex justify-content-between"><span class="text-white-50">' + T.confidence +
             '</span><span class="fw-bold text-success" id="mValConf">' + T.high + '</span></div>' +
             '</div></div></div>';
@@ -2096,9 +2048,9 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
                 const result = await response.json();
 
                 if (result.success && result.data) {
-                    document.getElementById('mValResult').textContent = 'â‚¹' + (result.data
+                    document.getElementById('mValResult').textContent = '₹' + (result.data
                         .estimated_value_formatted || T.na);
-                    document.getElementById('mValPsf').textContent = 'â‚¹' + (result.data.price_per_sqft_formatted ||
+                    document.getElementById('mValPsf').textContent = '₹' + (result.data.price_per_sqft_formatted ||
                         T.na);
                     document.getElementById('mValConf').textContent = result.data.confidence || T.medium;
                 } else {
@@ -2176,9 +2128,9 @@ $phoneDisplay = $sc('contact_phone', '+91 92771 21112');
         </div>
     </section>
 
-    <!-- Why Join APS Dream Home â€” COMMENTED OUT: moved to /opportunity page
+    <!-- Why Join APS Dream Home — COMMENTED OUT: moved to /opportunity page
     <section class="py-5 bg-light">
-        ... (career section with salary, insurance, commission, training, MLM, reasons â€” see /opportunity page)
+        ... (career section with salary, insurance, commission, training, MLM, reasons — see /opportunity page)
     </section>
     -->
 

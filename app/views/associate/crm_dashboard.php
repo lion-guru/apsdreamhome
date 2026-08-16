@@ -28,7 +28,7 @@ $today = date('Y-m-d');
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="mb-1"><i class="fas fa-tachometer-alt text-primary me-2"></i><?= __('assoc_crm_title', [], 'CRM Dashboard') ?></h4>
-            <small class="text-muted"><?= __('assoc_crm_welcome', [], 'Welcome back â€” here\'s your pipeline at a glance') ?></small>
+            <small class="text-muted"><?= __('assoc_crm_welcome', [], 'Welcome back — here\'s your pipeline at a glance') ?></small>
         </div>
         <div class="d-flex gap-2">
             <a href="<?= BASE_URL ?>/associate/site-visits" class="btn btn-outline-warning btn-sm">
@@ -223,7 +223,7 @@ $today = date('Y-m-d');
                                     <i class="fas fa-<?= $act['interaction_type'] === 'call' ? 'phone' : ($act['interaction_type'] === 'email' ? 'envelope' : ($act['interaction_type'] === 'meeting' ? 'users' : 'comment')) ?> text-muted me-1"></i>
                                     <?= ucfirst(str_replace('_', ' ', $act['interaction_type'] ?? __('assoc_crm_note', [], 'note'))) ?>
                                 </strong>
-                                <span class="text-muted ms-1" class="style-20558">â€” <?= htmlspecialchars($act['lead_name'] ?? '') ?></span>
+                                <span class="text-muted ms-1" class="style-20558">— <?= htmlspecialchars($act['lead_name'] ?? '') ?></span>
                             </div>
                             <small class="text-muted" class="style-68658"><?= date('M d, g:i A', strtotime($act['created_at'])) ?></small>
                         </div>

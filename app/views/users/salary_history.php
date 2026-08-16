@@ -8,7 +8,7 @@ function salStatusBadge($status) {
     return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($status) . '</span>';
 }
 function salMonth($date) {
-    if (!$date) return 'â€”';
+    if (!$date) return '—';
     return date('M Y', strtotime($date));
 }
 ?>
@@ -62,7 +62,7 @@ function salMonth($date) {
             <div class="card emp-sal-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="stat-icon" class="style-94511"><i class="fas fa-indian-rupee-sign"></i></div>
-                    <div><div class="fw-bold fs-4" class="style-50238">â‚¹<?= number_format($stats['total_earned']) ?></div><div class="text-muted small">Total Earned</div></div>
+                    <div><div class="fw-bold fs-4" class="style-50238">₹<?= number_format($stats['total_earned']) ?></div><div class="text-muted small">Total Earned</div></div>
                 </div>
             </div>
         </div>
@@ -103,11 +103,11 @@ function salMonth($date) {
                                             <small class="text-muted"><?= date('d M Y', strtotime($s['pay_date'])) ?></small>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="text-end">â‚¹<?= number_format((float)($s['basic'] ?? 0)) ?></td>
-                                    <td class="text-end">â‚¹<?= number_format((float)($s['hra'] ?? 0)) ?></td>
-                                    <td class="text-end">â‚¹<?= number_format((float)($s['allowances'] ?? 0)) ?></td>
-                                    <td class="text-end text-danger">-â‚¹<?= number_format((float)($s['deductions'] ?? 0)) ?></td>
-                                    <td class="text-end fw-bold">â‚¹<?= number_format((float)($s['net_pay'] ?? 0)) ?></td>
+                                    <td class="text-end">₹<?= number_format((float)($s['basic'] ?? 0)) ?></td>
+                                    <td class="text-end">₹<?= number_format((float)($s['hra'] ?? 0)) ?></td>
+                                    <td class="text-end">₹<?= number_format((float)($s['allowances'] ?? 0)) ?></td>
+                                    <td class="text-end text-danger">-₹<?= number_format((float)($s['deductions'] ?? 0)) ?></td>
+                                    <td class="text-end fw-bold">₹<?= number_format((float)($s['net_pay'] ?? 0)) ?></td>
                                     <td><?= salStatusBadge($s['status'] ?? 'Pending') ?></td>
                                     <td class="text-end">
                                         <button class="emp-sal-slip-btn" onclick="window.print()"><i class="fas fa-print me-1"></i>Print Payslip</button>

@@ -46,7 +46,7 @@ $statusMap = [
             <form class="d-flex gap-2" method="GET">
                 <div class="input-group" class="style-67695">
                     <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" class="form-control" name="q" placeholder="Search name, phone, lead..." value="<?= htmlspecialchars($search) ?>">
+                    <input type="text" class="form-control" name="q" placeholder="Search name, phone, lead..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <input type="hidden" name="tab" value="<?= htmlspecialchars($active_tab) ?>">
                 <button type="submit" class="btn btn-primary btn-sm">Search</button>
@@ -94,22 +94,22 @@ $statusMap = [
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <strong><?= date('d M Y', strtotime($v['visit_date'])) ?></strong>
-                                    <br><small class="text-muted"><?= date('h:i A', strtotime($v['visit_time'])) ?></small>
+                                    <strong><?= $v['visit_date'] ? date('d M Y', strtotime($v['visit_date'])) : '—' ?></strong>
+                                    <br><small class="text-muted"><?= $v['visit_time'] ? date('h:i A', strtotime($v['visit_time'])) : '—' ?></small>
                                     <?php if ($isToday): ?><span class="badge bg-primary ms-1">Today</span><?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if (!empty($v['lead_name'])): ?>
                                         <span class="badge bg-light text-dark"><?= htmlspecialchars($v['lead_name']) ?></span>
                                     <?php else: ?>
-                                        <span class="text-muted">â€”</span>
+                                        <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <?php if (!empty($v['associate_name'])): ?>
                                         <?= htmlspecialchars($v['associate_name']) ?>
                                     <?php else: ?>
-                                        <span class="text-muted">â€”</span>
+                                        <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -123,7 +123,7 @@ $statusMap = [
                                     <?php if (!empty($v['rating'])): ?>
                                         <span class="style-62159"><?php for ($i=1; $i<=5; $i++): ?><i class="fas fa-star<?= $i <= $v['rating'] ? '' : '-o' ?>"></i><?php endfor; ?></span>
                                     <?php else: ?>
-                                        <span class="text-muted">â€”</span>
+                                        <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>

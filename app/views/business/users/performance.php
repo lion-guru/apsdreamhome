@@ -13,7 +13,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0 opacity-75">Total Sales</h6>
-                            <h3 class="mb-0 mt-1">â‚¹<?= number_format($metrics['total_sales'] ?? 0) ?></h3>
+                            <h3 class="mb-0 mt-1">₹<?= number_format($metrics['total_sales'] ?? 0) ?></h3>
                         </div>
                         <i class="fas fa-shopping-cart fa-2x opacity-50"></i>
                     </div>
@@ -39,7 +39,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0 opacity-75">Avg Deal Size</h6>
-                            <h3 class="mb-0 mt-1">â‚¹<?= number_format($metrics['avg_deal_size'] ?? 0) ?></h3>
+                            <h3 class="mb-0 mt-1">₹<?= number_format($metrics['avg_deal_size'] ?? 0) ?></h3>
                         </div>
                         <i class="fas fa-chart-line fa-2x opacity-50"></i>
                     </div>
@@ -82,7 +82,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <small class="text-muted">Best Month</small>
-                        <p class="mb-0 fw-bold"><?= htmlspecialchars($metrics['best_month'] ?? 'â€”') ?></p>
+                        <p class="mb-0 fw-bold"><?= htmlspecialchars($metrics['best_month'] ?? '—') ?></p>
                     </div>
                     <div class="mb-3">
                         <small class="text-muted">Total Leads Generated</small>
@@ -94,7 +94,7 @@
                     </div>
                     <div>
                         <small class="text-muted">Total Commission Earned</small>
-                        <p class="mb-0 fw-bold">â‚¹<?= number_format($metrics['total_commission'] ?? 0) ?></p>
+                        <p class="mb-0 fw-bold">₹<?= number_format($metrics['total_commission'] ?? 0) ?></p>
                     </div>
                 </div>
             </div>
@@ -128,8 +128,8 @@
                                     <td><strong><?= htmlspecialchars($row['month'] ?? '') ?></strong></td>
                                     <td><?= number_format($row['leads_generated'] ?? 0) ?></td>
                                     <td><?= number_format($row['deals_closed'] ?? 0) ?></td>
-                                    <td>â‚¹<?= number_format($row['revenue'] ?? 0) ?></td>
-                                    <td>â‚¹<?= number_format($row['commission_earned'] ?? 0) ?></td>
+                                    <td>₹<?= number_format($row['revenue'] ?? 0) ?></td>
+                                    <td>₹<?= number_format($row['commission_earned'] ?? 0) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

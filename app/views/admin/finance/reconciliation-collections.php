@@ -96,14 +96,14 @@ $filters = $filters ?? [];
                                 <tr>
                                     <td><?= htmlspecialchars($s['session_date']) ?></td>
                                     <td><?= htmlspecialchars($s['collector_name'] ?? 'N/A') ?></td>
-                                    <td>â‚¹<?= number_format($s['total_submitted'], 2) ?></td>
-                                    <td class="style-45683">â‚¹<?= number_format($s['total_verified'], 2) ?></td>
-                                    <td class="style-78245">â‚¹<?= number_format($s['total_rejected'], 2) ?></td>
+                                    <td>₹<?= number_format($s['total_submitted'], 2) ?></td>
+                                    <td class="style-45683">₹<?= number_format($s['total_verified'], 2) ?></td>
+                                    <td class="style-78245">₹<?= number_format($s['total_rejected'], 2) ?></td>
                                     <td>
                                         <?php if ((float)$s['discrepancy_amount'] > 0): ?>
-                                            <span class="style-60540">â‚¹<?= number_format($s['discrepancy_amount'], 2) ?></span>
+                                            <span class="style-60540">₹<?= number_format($s['discrepancy_amount'], 2) ?></span>
                                         <?php else: ?>
-                                            <span class="style-7250">â€”</span>
+                                            <span class="style-7250">—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

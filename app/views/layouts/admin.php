@@ -11,7 +11,7 @@ $GLOBALS['_html_doc_started'] = true;
         $tenantTitleName = class_exists('\App\Core\Middleware\TenantContext') ? \App\Core\Middleware\TenantContext::getName() : 'APS Dream Home';
         echo $page_title ?? ($tenantTitleName . ' - Admin');
     ?></title>
-    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/favicon.png">
+    <link rel="icon" type="image/jpeg" href="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <?php if (isset($_SESSION['admin_id']) || isset($_SESSION['user_id'])): ?>
@@ -256,7 +256,7 @@ $GLOBALS['_html_doc_started'] = true;
                     <i class="fas fa-moon" id="darkModeIcon"></i>
                 </button>
 
-                <!-- Notifications (Leads) â€” replaced by notification-system.js -->
+                <!-- Notifications (Leads) — replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo $newLeadsCount; ?></span>
@@ -316,7 +316,7 @@ $GLOBALS['_html_doc_started'] = true;
             <?php endif; ?>
 
             <?php
-            // Tenant status banner â€” read-only mode for suspended/cancelled tenants
+            // Tenant status banner — read-only mode for suspended/cancelled tenants
             $tenantBanner = null;
             if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
                 try {

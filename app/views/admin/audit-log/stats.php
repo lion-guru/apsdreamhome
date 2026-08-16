@@ -40,7 +40,7 @@ ob_start();
                 <h6 class="mb-0 small"><?= htmlspecialchars($topAction['action'] ?? '') ?></h6>
                 <small><?= number_format($topAction['cnt'] ?? 0) ?> events</small>
               <?php else: ?>
-                <h6 class="mb-0 small">â€”</h6>
+                <h6 class="mb-0 small">—</h6>
               <?php endif; ?>
             </div>
             <i class="fas fa-bolt fa-2x opacity-50"></i>
@@ -59,7 +59,7 @@ ob_start();
                 <h6 class="mb-0 small"><?= htmlspecialchars($topRole['user_role'] ?? '') ?></h6>
                 <small><?= number_format($topRole['cnt'] ?? 0) ?> events</small>
               <?php else: ?>
-                <h6 class="mb-0 small">â€”</h6>
+                <h6 class="mb-0 small">—</h6>
               <?php endif; ?>
             </div>
             <i class="fas fa-user-tie fa-2x opacity-50"></i>

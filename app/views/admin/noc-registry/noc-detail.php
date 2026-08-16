@@ -8,7 +8,7 @@ $eligibility = $eligibility ?? [];
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-file-contract me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">NOC #<?= $noc['id'] ?? 0 ?> â€” <?= htmlspecialchars($noc['noc_number'] ?? 'Pending') ?></span>
+        <span class="text-muted">NOC #<?= $noc['id'] ?? 0 ?> — <?= htmlspecialchars($noc['noc_number'] ?? 'Pending') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_nocs') ?></a>
 </div>
@@ -41,7 +41,7 @@ $eligibility = $eligibility ?? [];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_noc_number') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($noc['noc_number'] ?? 'â€”') ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($noc['noc_number'] ?? '—') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_booking_label') ?></div>
@@ -53,7 +53,7 @@ $eligibility = $eligibility ?? [];
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_customer_phone') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($noc['customer_phone'] ?? 'â€”') ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($noc['customer_phone'] ?? '—') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_plot_label') ?></div>

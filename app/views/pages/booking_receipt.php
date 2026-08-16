@@ -53,7 +53,7 @@
                 <?php if (!empty($booking['state_name'])): ?>, <?= htmlspecialchars($booking['state_name']) ?><?php endif; ?>
             </td></tr>
             <tr><th><?= __('receipt_plot_size', [], 'Plot Size') ?></th><td>
-                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> â€” <?php endif; ?>
+                <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label']) ?> — <?php endif; ?>
                 <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft
             </td></tr>
             <tr><th><?= __('receipt_block', [], 'Block') ?></th><td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td></tr>

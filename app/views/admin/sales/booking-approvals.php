@@ -81,10 +81,10 @@ $statusBadge = function ($s) {
                                     <?= htmlspecialchars($b['booking_number'] ?? '') ?>
                                 </a>
                             </td>
-                            <td><?= htmlspecialchars($b['customer_name'] ?? 'â€”') ?></td>
-                            <td><?= htmlspecialchars($b['plot_code'] ?? 'â€”') ?></td>
-                            <td><?= htmlspecialchars($b['associate_name'] ?? 'â€”') ?></td>
-                            <td class="text-end">â‚¹<?= number_format((float)($b['agreement_value'] ?? 0)) ?></td>
+                            <td><?= htmlspecialchars($b['customer_name'] ?? '—') ?></td>
+                            <td><?= htmlspecialchars($b['plot_code'] ?? '—') ?></td>
+                            <td><?= htmlspecialchars($b['associate_name'] ?? '—') ?></td>
+                            <td class="text-end">₹<?= number_format((float)($b['agreement_value'] ?? 0)) ?></td>
                             <td><span class="badge <?= $statusBadge($apStatus) ?>"><?= ucfirst($apStatus) ?></span></td>
                             <td><?= htmlspecialchars($b['booking_date'] ?? '') ?></td>
                             <td>
@@ -98,7 +98,7 @@ $statusBadge = function ($s) {
                                         </button>
                                     </div>
                                 <?php else: ?>
-                                    <span class="text-muted" class="style-64777"><?= htmlspecialchars($b['approval_notes'] ?? 'â€”') ?></span>
+                                    <span class="text-muted" class="style-64777"><?= htmlspecialchars($b['approval_notes'] ?? '—') ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>

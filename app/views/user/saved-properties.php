@@ -112,7 +112,7 @@
 
                                 <div class="property-footer">
                                     <div class="property-price">
-                                        <span class="price-amount">â‚¹<?php echo number_format($property['price']); ?></span>
+                                        <span class="price-amount">₹<?php echo number_format($property['price']); ?></span>
                                     </div>
                                     <div class="property-actions">
                                         <button class="btn btn-outline-primary btn-sm favorite-toggle"

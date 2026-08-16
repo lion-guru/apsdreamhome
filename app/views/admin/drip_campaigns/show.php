@@ -131,12 +131,12 @@ ob_start();
                                         </span>
                                     </td>
                                     <td><small><?= date('M j, H:i', strtotime($e['enrolled_at'])) ?></small></td>
-                                    <td><small><?= $e['last_sent_at'] ? date('M j, H:i', strtotime($e['last_sent_at'])) : 'â€”' ?></small></td>
+                                    <td><small><?= $e['last_sent_at'] ? date('M j, H:i', strtotime($e['last_sent_at'])) : '—' ?></small></td>
                                     <td>
                                         <?php if ($e['next_send_at'] && $e['status'] === 'active'): ?>
                                             <small><?= date('M j, H:i', strtotime($e['next_send_at'])) ?></small>
                                         <?php else: ?>
-                                            <small class="text-muted">â€”</small>
+                                            <small class="text-muted">—</small>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

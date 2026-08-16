@@ -68,7 +68,7 @@ $total_count = $total_count ?? 0;
                     <td><?php echo htmlspecialchars($r['eligible_level'] ?? 'N/A'); ?></td>
                     <td><?php echo $r['team_size'] ?? 0; ?></td>
                     <td><?php echo $r['direct_referrals'] ?? 0; ?></td>
-                    <td>â‚¹<?php echo number_format($r['monthly_sales'] ?? 0); ?></td>
+                    <td>₹<?php echo number_format($r['monthly_sales'] ?? 0); ?></td>
                     <td>
                         <?php if ($r['promoted'] ?? false): ?>
                             <span class="badge bg-success">Promoted!</span>

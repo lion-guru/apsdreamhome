@@ -108,8 +108,8 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         if (!empty($filters['type'])) $filterBadges[] = ['Type', ucfirst($filters['type'])];
                         if (!empty($filters['listing'])) $filterBadges[] = ['Listing', ucfirst($filters['listing'])];
                         if (!empty($filters['location'])) $filterBadges[] = ['Location', $filters['location']];
-                        if (!empty($filters['min_price'])) $filterBadges[] = ['Min â‚¹', number_format($filters['min_price'])];
-                        if (!empty($filters['max_price'])) $filterBadges[] = ['Max â‚¹', number_format($filters['max_price'])];
+                        if (!empty($filters['min_price'])) $filterBadges[] = ['Min ₹', number_format($filters['min_price'])];
+                        if (!empty($filters['max_price'])) $filterBadges[] = ['Max ₹', number_format($filters['max_price'])];
                         if (!empty($filters['bedrooms'])) $filterBadges[] = ['Beds', $filters['bedrooms'] . '+'];
                         if (!empty($filters['bathrooms'])) $filterBadges[] = ['Baths', $filters['bathrooms'] . '+'];
                         if (!empty($filters['furnished'])) $filterBadges[] = ['Furnished', ucfirst($filters['furnished'])];
@@ -198,14 +198,14 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <?php foreach ($alertLog as $log): ?>
                             <tr>
                                 <td><small><?= date('d M Y, H:i', strtotime($log['sent_at'] ?? 'now')) ?></small></td>
-                                <td><?= htmlspecialchars($log['search_name'] ?? 'â€”') ?></td>
+                                <td><?= htmlspecialchars($log['search_name'] ?? '—') ?></td>
                                 <td>
                                     <?php if (!empty($log['property_id'])): ?>
                                         <a href="<?= BASE_URL ?>/listing/<?= (int)$log['property_id'] ?>" target="_blank">
                                             <?= htmlspecialchars($log['property_name'] ?? 'Property #' . $log['property_id']) ?>
                                         </a>
                                     <?php else: ?>
-                                        â€”
+                                        —
                                     <?php endif; ?>
                                 </td>
                                 <td>

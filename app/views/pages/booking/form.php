@@ -83,15 +83,15 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             <div class="row text-center">
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_token_amount') ?></small>
-                                    <strong class="text-primary">â‚¹<?= number_format($tokenAmount) ?></strong>
+                                    <strong class="text-primary">₹<?= number_format($tokenAmount) ?></strong>
                                 </div>
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_balance') ?></small>
-                                    <strong>â‚¹<?= number_format($plot['total_price'] - $tokenAmount) ?></strong>
+                                    <strong>₹<?= number_format($plot['total_price'] - $tokenAmount) ?></strong>
                                 </div>
                                 <div class="col">
                                     <small class="text-muted d-block"><?= __('book_total_price') ?></small>
-                                    <strong class="text-primary fs-5">â‚¹<?= number_format($plot['total_price']) ?></strong>
+                                    <strong class="text-primary fs-5">₹<?= number_format($plot['total_price']) ?></strong>
                                 </div>
                             </div>
                         </div>
@@ -185,7 +185,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name']) ?>
                         </h5>
                         <h3 class="fw-bold mb-3"><?= __('plot') ?> <?= htmlspecialchars($plot['plot_number']) ?></h3>
-                        <div class="fs-2 fw-bold mb-3">â‚¹<?= number_format($plot['total_price']) ?></div>
+                        <div class="fs-2 fw-bold mb-3">₹<?= number_format($plot['total_price']) ?></div>
                         <hr class="style-94432">
                         <div class="row g-2 mb-3">
                             <div class="col-6">
@@ -194,11 +194,11 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             </div>
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_dimensions') ?></small><br>
-                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? 'â€”') ?></strong>
+                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? '—') ?></strong>
                             </div>
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_block') ?></small><br>
-                                <strong><?= htmlspecialchars($plot['block'] ?? 'â€”') ?></strong>
+                                <strong><?= htmlspecialchars($plot['block'] ?? '—') ?></strong>
                             </div>
                             <div class="col-6">
                                 <small class="opacity-75"><?= __('book_location') ?></small><br>
@@ -253,7 +253,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
     let lockInterval = null;
     let lockExpiresAt = null;
 
-    // â”€â”€ Plot Lock on page load â”€â”€
+    // —€—€ Plot Lock on page load —€—€
     fetch(BASE + '/plots/' + PLOT_ID + '/lock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
@@ -288,14 +288,14 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
         }, 1000);
     }
 
-    // â”€â”€ Release lock on page unload â”€â”€
+    // —€—€ Release lock on page unload —€—€
     window.addEventListener('beforeunload', () => {
         navigator.sendBeacon(BASE + '/plots/' + PLOT_ID + '/unlock', new URLSearchParams({
             csrf_token: CSRF
         }));
     });
 
-    // â”€â”€ KYC verification on form submit â”€â”€
+    // —€—€ KYC verification on form submit —€—€
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
         // Check all checkboxes
         const checks = ['termsCheck', 'cancellationCheck', 'emiTermsCheck', 'kycCheck', 'esignConsent'];

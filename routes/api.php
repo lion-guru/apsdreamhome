@@ -682,6 +682,9 @@ $router->get('/api/v2/mobile/stamp-duty/states', 'Api\StampDutyController@getSta
 $router->get('/api/v2/mobile/stamp-duty/circle-rate', 'Api\StampDutyController@getCircleRate');
 $router->get('/api/v2/mobile/stamp-duty/circle-rates', 'Api\StampDutyController@searchCircleRates');
 
+// --- AI Property Search ---
+$router->post('/api/properties/ai-search', 'Api\PropertyMatchmakerController@aiSearch');
+
 // --- Property Tax Calculator API (mobile) ---
 $router->post('/api/v2/mobile/property-tax/calculate', 'Api\PropertyTaxController@calculate');
 $router->get('/api/v2/mobile/property-tax/rates', 'Api\PropertyTaxController@getRates');

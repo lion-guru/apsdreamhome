@@ -41,10 +41,10 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?= isset($p['progress_last_updated']) ? date('d M Y', strtotime($p['progress_last_updated'])) : 'â€”' ?></td>
-                                    <td><?= htmlspecialchars($p['project_manager'] ?? 'â€”') ?></td>
-                                    <td>â‚¹<?= number_format($budget, 2) ?></td>
-                                    <td class="text-<?= $budget > 0 && $spent > $budget ? 'danger' : 'success' ?>">â‚¹<?= number_format($spent, 2) ?></td>
+                                    <td><?= isset($p['progress_last_updated']) ? date('d M Y', strtotime($p['progress_last_updated'])) : '—' ?></td>
+                                    <td><?= htmlspecialchars($p['project_manager'] ?? '—') ?></td>
+                                    <td>₹<?= number_format($budget, 2) ?></td>
+                                    <td class="text-<?= $budget > 0 && $spent > $budget ? 'danger' : 'success' ?>">₹<?= number_format($spent, 2) ?></td>
                                     <td>
                                         <?php $flags = $p['risk_flags'] ?? ''; ?>
                                         <span class="badge bg-<?= empty($flags) ? 'success' : 'danger' ?>"><?= empty($flags) ? 'None' : htmlspecialchars($flags) ?></span>

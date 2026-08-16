@@ -49,22 +49,22 @@ $groupLabels = [
                         <label class="form-label fw-semibold"><?= htmlspecialchars($label) ?></label>
 
                         <?php if ($type === 'textarea'): ?>
-                            <textarea name="content[<?= htmlspecialchars($key) ?>]" class="form-control" rows="3"><?= htmlspecialchars($val) ?></textarea>
+                            <textarea name="content[<?= htmlspecialchars($key) ?>]" class="form-control" rows="3"><?= htmlspecialchars($val ?? '') ?></textarea>
 
                         <?php elseif ($type === 'image'): ?>
                             <?php if (!empty($val) && file_exists(dirname(__DIR__, 3) . '/' . $val)): ?>
                                 <div class="mb-2">
-                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val) ?>" class="img-thumbnail" class="style-2652" alt="<?= htmlspecialchars($label) ?>">
+                                    <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val ?? '') ?>" class="img-thumbnail" class="style-2652" alt="<?= htmlspecialchars($label) ?>">
                                 </div>
                             <?php endif; ?>
                             <input type="file" name="content_image[<?= htmlspecialchars($key) ?>]" class="form-control" accept="image/*">
-                            <input type="hidden" name="content[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars($val) ?>">
+                            <input type="hidden" name="content[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars($val ?? '') ?>">
 
                         <?php elseif ($type === 'number'): ?>
-                            <input type="number" name="content[<?= htmlspecialchars($key) ?>]" class="form-control" value="<?= htmlspecialchars($val) ?>">
+                            <input type="number" name="content[<?= htmlspecialchars($key) ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
 
                         <?php else: ?>
-                            <input type="text" name="content[<?= htmlspecialchars($key) ?>]" class="form-control" value="<?= htmlspecialchars($val) ?>">
+                            <input type="text" name="content[<?= htmlspecialchars($key) ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
                         <?php endif; ?>
 
                         <small class="text-muted">Key: <?= htmlspecialchars($key) ?></small>

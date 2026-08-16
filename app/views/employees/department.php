@@ -1,6 +1,6 @@
 <?php
 /**
- * Employee Department Page â€” shared view for 16 department routes
+ * Employee Department Page — shared view for 16 department routes
  * Data: $dept_title, $dept_icon, $dept_desc, $dept_color, $dept_slug, $employee_name, $stats
  */
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
@@ -11,7 +11,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($dept_title) ?> â€” APS Dream Home</title>
+    <title><?= htmlspecialchars($dept_title) ?> — APS Dream Home</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">

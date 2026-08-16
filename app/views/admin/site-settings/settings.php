@@ -85,7 +85,7 @@ $tabs = [
         <input type="hidden" name="active_tab" value="<?= htmlspecialchars($active_tab) ?>">
 
         <?php if ($active_tab === 'general'): ?>
-        <!-- â•�â•�â•� GENERAL TAB â•�â•�â•� -->
+        <!-- •�•�•� GENERAL TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="settings-group">
@@ -164,7 +164,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'contact'): ?>
-        <!-- â•�â•�â•� CONTACT TAB â•�â•�â•� -->
+        <!-- •�•�•� CONTACT TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -243,7 +243,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'social'): ?>
-        <!-- â•�â•�â•� SOCIAL TAB â•�â•�â•� -->
+        <!-- •�•�•� SOCIAL TAB •�•�•� -->
         <div class="settings-group">
             <h6><i class="fas fa-share-alt me-2"></i>Social Media Links</h6>
             <p class="text-muted small mb-4">Enter full URLs including https://. Leave blank to hide the icon.</p>
@@ -276,7 +276,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'seo'): ?>
-        <!-- â•�â•�â•� SEO TAB â•�â•�â•� -->
+        <!-- •�•�•� SEO TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="settings-group">
@@ -325,7 +325,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'footer'): ?>
-        <!-- â•�â•�â•� FOOTER TAB â•�â•�â•� -->
+        <!-- •�•�•� FOOTER TAB •�•�•� -->
         <div class="settings-group">
             <h6><i class="fas fa-shoe-prints me-2"></i>Footer Content</h6>
             <div class="row">
@@ -345,7 +345,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'hero'): ?>
-        <!-- â•�â•�â•� HOMEPAGE TAB â•�â•�â•� -->
+        <!-- •�•�•� HOMEPAGE TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="settings-group">
@@ -404,7 +404,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'widget'): ?>
-        <!-- â•�â•�â•� WIDGETS TAB â•�â•�â•� -->
+        <!-- •�•�•� WIDGETS TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -429,7 +429,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'email'): ?>
-        <!-- â•�â•�â•� EMAIL/SMTP TAB â•�â•�â•� -->
+        <!-- •�•�•� EMAIL/SMTP TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -510,7 +510,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'payment'): ?>
-        <!-- â•�â•�â•� PAYMENT GATEWAY TAB â•�â•�â•� -->
+        <!-- •�•�•� PAYMENT GATEWAY TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">
@@ -576,7 +576,7 @@ $tabs = [
         </div>
 
         <?php elseif ($active_tab === 'sms'): ?>
-        <!-- â•�â•�â•� SMS & WHATSAPP TAB â•�â•�â•� -->
+        <!-- •�•�•� SMS & WHATSAPP TAB •�•�•� -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="settings-group">

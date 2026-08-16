@@ -1,6 +1,6 @@
 <?php
 /**
- * Careers Page â€” APS Dream Home
+ * Careers Page — APS Dream Home
  * Data from Career\CareerController@index
  */
 ?>
@@ -69,14 +69,14 @@
 }
 </style>
 
-<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� HERO â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+<!-- •�•�•�•�•�•�•�•�•�•�•�•� HERO •�•�•�•�•�•�•�•�•�•�•�•� -->
 <section class="careers-hero text-white py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
                 <h1 class="display-4 fw-bold mb-3"><?= __('careers_hero_title', null, 'Build Your Future with APS Dream Home') ?></h1>
                 <p class="lead mb-4">
-                    <?= __('careers_hero_desc', null, 'Join APS Dream Home â€” Eastern UP\'s leading real estate company. We\'re building premium colonies across Gorakhpur and Deoria.') ?>
+                    <?= __('careers_hero_desc', null, 'Join APS Dream Home — Eastern UP\'s leading real estate company. We\'re building premium colonies across Gorakhpur and Deoria.') ?>
                 </p>
                 <a href="#jobs" class="btn btn-light btn-lg px-4">
                     <i class="fas fa-search me-2"></i><?= __('careers_view_positions', null, 'View Open Positions') ?>
@@ -86,7 +86,7 @@
     </div>
 </section>
 
-<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� BREADCRUMB â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+<!-- •�•�•�•�•�•�•�•�•�•�•�•� BREADCRUMB •�•�•�•�•�•�•�•�•�•�•�•� -->
 <div class="bg-light py-2">
     <div class="container">
         <nav aria-label="breadcrumb">
@@ -98,7 +98,7 @@
     </div>
 </div>
 
-<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� WHY JOIN US â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+<!-- •�•�•�•�•�•�•�•�•�•�•�•� WHY JOIN US •�•�•�•�•�•�•�•�•�•�•�•� -->
 <section class="careers-section bg-light">
     <div class="container">
         <div class="text-center mb-5">
@@ -106,7 +106,7 @@
                 <i class="fas fa-rocket me-1"></i><?= __('home_career_opportunity', null, 'Career Opportunity') ?>
             </span>
             <h2 class="fw-bold"><?= __('home_why_join_title', null, 'Why Join APS Dream Home?') ?></h2>
-            <p class="lead text-muted mt-2"><?= __('home_why_join_subtitle', null, 'A new beginning in Real Estate â€” with Salary + Commission + Insurance!') ?></p>
+            <p class="lead text-muted mt-2"><?= __('home_why_join_subtitle', null, 'A new beginning in Real Estate — with Salary + Commission + Insurance!') ?></p>
             <div class="mx-auto mt-3" class="style-60068"></div>
         </div>
 
@@ -128,13 +128,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">â‚¹10L+</td><td class="text-center fw-bold" class="style-65172">5%</td><td class="text-end text-muted">Mobile</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">â‚¹35L+</td><td class="text-center fw-bold" class="style-65172">7%</td><td class="text-end text-muted">Tablet</td></tr>
-                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">â‚¹70L+</td><td class="text-center fw-bold" class="style-65172">10%</td><td class="text-end text-muted">Laptop</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">â‚¹1.5Cr+</td><td class="text-center fw-bold" class="style-65172">12%</td><td class="text-end text-muted">Tour Package</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">â‚¹3Cr+</td><td class="text-center fw-bold" class="style-65172">15%</td><td class="text-end text-muted">Bike</td></tr>
-                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">â‚¹5Cr+</td><td class="text-center fw-bold" class="style-65172">18%</td><td class="text-end text-muted">Royal Enfield</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">â‚¹5Cr+</td><td class="text-center fw-bold" class="style-65172">20%</td><td class="text-end text-muted">Car</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">₹10L+</td><td class="text-center fw-bold" class="style-65172">5%</td><td class="text-end text-muted">Mobile</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">₹35L+</td><td class="text-center fw-bold" class="style-65172">7%</td><td class="text-end text-muted">Tablet</td></tr>
+                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">₹70L+</td><td class="text-center fw-bold" class="style-65172">10%</td><td class="text-end text-muted">Laptop</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">₹1.5Cr+</td><td class="text-center fw-bold" class="style-65172">12%</td><td class="text-end text-muted">Tour Package</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">₹3Cr+</td><td class="text-center fw-bold" class="style-65172">15%</td><td class="text-end text-muted">Bike</td></tr>
+                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold" class="style-65172">18%</td><td class="text-end text-muted">Royal Enfield</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold" class="style-65172">20%</td><td class="text-end text-muted">Car</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -156,7 +156,7 @@
             </div>
         </div>
 
-        <!-- MLM Network Benefits â€” REAL data from mlm_rank_benefits + rank_bonus_amounts -->
+        <!-- MLM Network Benefits — REAL data from mlm_rank_benefits + rank_bonus_amounts -->
         <div class="row g-4 mb-5">
             <div class="col-12">
                 <div class="pillar-card">
@@ -164,7 +164,7 @@
                         <div class="pillar-icon me-3" class="style-75102"><i class="fas fa-crown"></i></div>
                         <div>
                             <h4 class="fw-bold mb-0"><?= __('home_mlm_benefits', null, 'MLM Network Benefits') ?></h4>
-                            <p class="text-muted small mb-0"><?= __('home_mlm_benefits_desc', null, 'Build your network and earn residual commission on their sales. 7 rank structure â€” earning increases with every rank!') ?></p>
+                            <p class="text-muted small mb-0"><?= __('home_mlm_benefits_desc', null, 'Build your network and earn residual commission on their sales. 7 rank structure — earning increases with every rank!') ?></p>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -179,13 +179,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">â‚¹10L</td><td class="text-center fw-bold" class="style-65172">5%</td><td class="text-center text-muted">â€”</td><td class="text-end text-muted">Mobile</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">â‚¹35L</td><td class="text-center fw-bold" class="style-65172">7%</td><td class="text-center text-muted">â‚¹5,000/mo</td><td class="text-end text-muted">Tablet</td></tr>
-                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">â‚¹70L</td><td class="text-center fw-bold" class="style-65172">10%</td><td class="text-center text-muted">â‚¹15,000/mo</td><td class="text-end text-muted">Laptop</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">â‚¹1.5Cr</td><td class="text-center fw-bold" class="style-65172">12%</td><td class="text-center text-muted">â‚¹35,000/mo</td><td class="text-end text-muted">Tour Package</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">â‚¹3Cr</td><td class="text-center fw-bold" class="style-65172">15%</td><td class="text-center text-muted">â‚¹75,000/mo</td><td class="text-end text-muted">Bike</td></tr>
-                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">â‚¹5Cr</td><td class="text-center fw-bold" class="style-65172">18%</td><td class="text-center text-muted">â‚¹1,50,000/mo</td><td class="text-end text-muted">Royal Enfield</td></tr>
-                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">â‚¹5Cr+</td><td class="text-center fw-bold" class="style-65172">20%</td><td class="text-center text-muted">â‚¹3,00,000/mo</td><td class="text-end text-muted">Car</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Associate</td><td class="text-center">₹10L</td><td class="text-center fw-bold" class="style-65172">5%</td><td class="text-center text-muted">—</td><td class="text-end text-muted">Mobile</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. Associate</td><td class="text-center">₹35L</td><td class="text-center fw-bold" class="style-65172">7%</td><td class="text-center text-muted">₹5,000/mo</td><td class="text-end text-muted">Tablet</td></tr>
+                                <tr><td class="ps-2 fw-semibold">BDM</td><td class="text-center">₹70L</td><td class="text-center fw-bold" class="style-65172">10%</td><td class="text-center text-muted">₹15,000/mo</td><td class="text-end text-muted">Laptop</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Sr. BDM</td><td class="text-center">₹1.5Cr</td><td class="text-center fw-bold" class="style-65172">12%</td><td class="text-center text-muted">₹35,000/mo</td><td class="text-end text-muted">Tour Package</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Vice President</td><td class="text-center">₹3Cr</td><td class="text-center fw-bold" class="style-65172">15%</td><td class="text-center text-muted">₹75,000/mo</td><td class="text-end text-muted">Bike</td></tr>
+                                <tr><td class="ps-2 fw-semibold">President</td><td class="text-center">₹5Cr</td><td class="text-center fw-bold" class="style-65172">18%</td><td class="text-center text-muted">₹1,50,000/mo</td><td class="text-end text-muted">Royal Enfield</td></tr>
+                                <tr><td class="ps-2 fw-semibold">Site Manager</td><td class="text-center">₹5Cr+</td><td class="text-center fw-bold" class="style-65172">20%</td><td class="text-center text-muted">₹3,00,000/mo</td><td class="text-end text-muted">Car</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -219,7 +219,7 @@
     </div>
 </section>
 
-<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� CURRENT OPENINGS â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+<!-- •�•�•�•�•�•�•�•�•�•�•�•� CURRENT OPENINGS •�•�•�•�•�•�•�•�•�•�•�•� -->
 <section class="careers-section" id="jobs">
     <div class="container">
         <div class="text-center mb-5">
@@ -245,12 +245,12 @@
 
                             <?php if (!empty($career->salary_min) && !empty($career->salary_max)): ?>
                                 <div class="mb-2">
-                                    <span class="text-primary fw-bold">â‚¹<?= number_format($career->salary_min) ?> â€” â‚¹<?= number_format($career->salary_max) ?></span>
+                                    <span class="text-primary fw-bold">₹<?= number_format($career->salary_min) ?> — ₹<?= number_format($career->salary_max) ?></span>
                                     <small class="text-muted"><?= __('careers_per_annum', null, '/annum') ?></small>
                                 </div>
                             <?php endif; ?>
 
-                            <p class="text-muted mb-3 small"><?= htmlspecialchars(mb_substr($career->description ?? '', 0, 140)) ?>â€¦</p>
+                            <p class="text-muted mb-3 small"><?= htmlspecialchars(mb_substr($career->description ?? '', 0, 140)) ?>—¦</p>
 
                             <?php if (!empty($career->department)): ?>
                                 <div class="mb-2">
@@ -284,7 +284,7 @@
     </div>
 </section>
 
-<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� APPLICATION MODAL â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+<!-- •�•�•�•�•�•�•�•�•�•�•�•� APPLICATION MODAL •�•�•�•�•�•�•�•�•�•�•�•� -->
 <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
@@ -324,7 +324,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold"><?= __('careers_resume_cv', null, 'Resume/CV') ?> <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx" required>
-                        <small class="text-muted"><?= __('careers_resume_help', null, 'PDF, DOC, or DOCX only â€” Max 5MB') ?></small>
+                        <small class="text-muted"><?= __('careers_resume_help', null, 'PDF, DOC, or DOCX only — Max 5MB') ?></small>
                     </div>
                 </form>
             </div>
@@ -338,7 +338,7 @@
     </div>
 </div>
 
-<!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� CTA â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+<!-- •�•�•�•�•�•�•�•�•�•�•�•� CTA •�•�•�•�•�•�•�•�•�•�•�•� -->
 <section class="careers-section">
     <div class="container">
         <div class="careers-cta text-center">

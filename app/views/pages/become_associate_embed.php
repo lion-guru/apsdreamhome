@@ -4,8 +4,8 @@ $referral_code = $referral_code ?? '';
 $referral_link = $referral_link ?? '';
 $base = $base ?? BASE_URL;
 
-$shareText = "Join APS Dream Home as an Associate using my referral code and start earning! ðŸ�¡ðŸ’°";
-$whatsappUrl = "https://wa.me/?text=" . urlencode($shareText . "\n\nðŸ”— Register here: " . $referral_link);
+$shareText = "Join APS Dream Home as an Associate using my referral code and start earning!";
+$whatsappUrl = "https://wa.me/?text=" . urlencode($shareText . "\n\nRegister here: " . $referral_link);
 $facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . urlencode($referral_link) . "&quote=" . urlencode($shareText);
 $twitterUrl = "https://twitter.com/intent/tweet?text=" . urlencode($shareText) . "&url=" . urlencode($referral_link);
 $linkedinUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" . urlencode($referral_link);

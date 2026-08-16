@@ -40,7 +40,7 @@ $today = date('Y-m-d');
         <div class="aps-cp-stat aps-cp-stat--green">
             <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['total_paid']) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['total_paid']) ?></div>
                 <div class="aps-cp-stat-label">Total Paid</div>
             </div>
         </div>
@@ -49,7 +49,7 @@ $today = date('Y-m-d');
         <div class="aps-cp-stat aps-cp-stat--red">
             <div class="aps-cp-stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['total_pending']) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['total_pending']) ?></div>
                 <div class="aps-cp-stat-label">Total Pending</div>
                 <?php if ($stats['overdue_count'] > 0): ?>
                     <small class="text-danger fw-bold"><?= $stats['overdue_count'] ?> overdue</small>
@@ -67,11 +67,11 @@ $today = date('Y-m-d');
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h6 class="mb-1" class="style-23621"><i class="fas fa-bell me-2"></i>Next Payment Due</h6>
-                <div class="fw-bold">Installment #<?= htmlspecialchars($np['installment_number'] ?? 'â€”') ?> â€” <?= htmlspecialchars($np['booking_number'] ?? '') ?></div>
-                <div class="text-muted">Due: <?= date('D, d M Y', strtotime($np['due_date'])) ?> | Plot: <?= htmlspecialchars($np['plot_number'] ?? 'â€”') ?>, <?= htmlspecialchars($np['colony_name'] ?? '') ?></div>
+                <div class="fw-bold">Installment #<?= htmlspecialchars($np['installment_number'] ?? '—') ?> — <?= htmlspecialchars($np['booking_number'] ?? '') ?></div>
+                <div class="text-muted">Due: <?= date('D, d M Y', strtotime($np['due_date'])) ?> | Plot: <?= htmlspecialchars($np['plot_number'] ?? '—') ?>, <?= htmlspecialchars($np['colony_name'] ?? '') ?></div>
             </div>
             <div class="text-end">
-                <div class="fs-4 fw-bold text-primary">â‚¹<?= number_format((float)($np['amount'] ?? 0)) ?></div>
+                <div class="fs-4 fw-bold text-primary">₹<?= number_format((float)($np['amount'] ?? 0)) ?></div>
                 <a href="<?= BASE_URL ?>/user/installments/<?= $np['id'] ?>/pay" class="btn btn-primary btn-sm mt-1">
                     <i class="fas fa-credit-card me-1"></i> Pay Now
                 </a>
@@ -124,10 +124,10 @@ $today = date('Y-m-d');
                             <td><strong><?= $idx + 1 ?></strong></td>
                             <td>
                                 <small class="text-muted"><?= htmlspecialchars($inst['booking_number'] ?? '') ?></small>
-                                <br>Inst #<?= htmlspecialchars($inst['installment_number'] ?? 'â€”') ?>
+                                <br>Inst #<?= htmlspecialchars($inst['installment_number'] ?? '—') ?>
                             </td>
                             <td>
-                                <?= htmlspecialchars($inst['plot_number'] ?? 'â€”') ?>
+                                <?= htmlspecialchars($inst['plot_number'] ?? '—') ?>
                                 <br><small class="text-muted"><?= htmlspecialchars($inst['colony_name'] ?? '') ?></small>
                             </td>
                             <td>
@@ -138,19 +138,19 @@ $today = date('Y-m-d');
                                     <?php endif; ?>
                                 </span>
                             </td>
-                            <td class="fw-bold">â‚¹<?= number_format($amount) ?></td>
+                            <td class="fw-bold">₹<?= number_format($amount) ?></td>
                             <td>
                                 <?php if ($isPaid): ?>
-                                    <span class="text-success">â‚¹<?= number_format($paid) ?></span>
+                                    <span class="text-success">₹<?= number_format($paid) ?></span>
                                 <?php else: ?>
-                                    <span class="text-muted">â‚¹<?= number_format($paid) ?></span>
+                                    <span class="text-muted">₹<?= number_format($paid) ?></span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if ($penalty > 0): ?>
-                                    <span class="text-danger fw-bold">â‚¹<?= number_format($penalty) ?></span>
+                                    <span class="text-danger fw-bold">₹<?= number_format($penalty) ?></span>
                                 <?php else: ?>
-                                    <span class="text-muted">â‚¹0</span>
+                                    <span class="text-muted">₹0</span>
                                 <?php endif; ?>
                             </td>
                             <td>

@@ -46,7 +46,7 @@ function recBadgeClass($priority) {
             <div>
                 <a href="<?= $base ?>/admin/compliance-scorecard" class="text-white-50 text-decoration-none" class="style-87981"><i class="fas fa-arrow-left me-1"></i>Back to Scorecard</a>
                 <h2 class="mb-1 fw-bold mt-1"><i class="fas fa-list-check me-2"></i>All Recommendations</h2>
-                <p class="mb-0 opacity-75" class="style-42715">Sorted by impact â€” highest impact first</p>
+                <p class="mb-0 opacity-75" class="style-42715">Sorted by impact — highest impact first</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <?php
@@ -72,7 +72,7 @@ function recBadgeClass($priority) {
                 <div class="text-center py-5" class="style-32484">
                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
                     <h5 class="fw-bold">All Clear!</h5>
-                    <p class="text-muted mb-0">No compliance recommendations â€” all areas are fully compliant.</p>
+                    <p class="text-muted mb-0">No compliance recommendations — all areas are fully compliant.</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($grouped as $areaKey => $recs): ?>

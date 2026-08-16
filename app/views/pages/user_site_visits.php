@@ -141,7 +141,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <div class="mb-3">
                         <label class="form-label fw-bold">Colony / Location</label>
                         <select class="form-select" name="colony_id">
-                            <option value="">â€” Select â€”</option>
+                            <option value="">— Select —</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
                             <?php endforeach; ?>

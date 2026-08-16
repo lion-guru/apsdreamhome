@@ -49,19 +49,19 @@ $base = BASE_URL ?? '/apsdreamhome';
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Total Plot Value</label>
-                            <div class="fw-bold text-primary fs-5">â‚¹<?= number_format((float)($booking['total_plot_value'] ?? 0), 2) ?></div>
+                            <div class="fw-bold text-primary fs-5">₹<?= number_format((float)($booking['total_plot_value'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Agreement Value</label>
-                            <div class="fw-bold text-success fs-5">â‚¹<?= number_format((float)($booking['agreement_value'] ?? 0), 2) ?></div>
+                            <div class="fw-bold text-success fs-5">₹<?= number_format((float)($booking['agreement_value'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Token Paid</label>
-                            <div class="fw-bold">â‚¹<?= number_format((float)($booking['booking_amount'] ?? 0), 2) ?></div>
+                            <div class="fw-bold">₹<?= number_format((float)($booking['booking_amount'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small">Balance</label>
-                            <div class="fw-bold text-danger">â‚¹<?= number_format((float)($booking['agreement_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) ?></div>
+                            <div class="fw-bold text-danger">₹<?= number_format((float)($booking['agreement_value'] ?? 0) - (float)($booking['booking_amount'] ?? 0), 2) ?></div>
                         </div>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="text-muted small">Total Principal</div>
-                                <div class="fw-bold" id="emiTotalPrincipal">â‚¹0</div>
+                                <div class="fw-bold" id="emiTotalPrincipal">₹0</div>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="text-muted small">Total Interest</div>
-                                <div class="fw-bold text-danger" id="emiTotalInterest">â‚¹0</div>
+                                <div class="fw-bold text-danger" id="emiTotalInterest">₹0</div>
                             </div>
                         </div>
                     </div>
@@ -204,7 +204,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="text-muted small">Total Payable</div>
-                                <div class="fw-bold text-primary" id="emiTotalPayable">â‚¹0</div>
+                                <div class="fw-bold text-primary" id="emiTotalPayable">₹0</div>
                             </div>
                         </div>
                     </div>
@@ -405,9 +405,9 @@ async function previewEMI() {
         
         if (data.success) {
             renderEMITable(data.schedule);
-            document.getElementById('emiTotalPrincipal').textContent = 'â‚¹' + data.summary.total_principal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('emiTotalInterest').textContent = 'â‚¹' + data.summary.total_interest.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById('emiTotalPayable').textContent = 'â‚¹' + data.summary.total_payable.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('emiTotalPrincipal').textContent = '₹' + data.summary.total_principal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('emiTotalInterest').textContent = '₹' + data.summary.total_interest.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('emiTotalPayable').textContent = '₹' + data.summary.total_payable.toLocaleString('en-IN', {minimumFractionDigits: 2});
             document.getElementById('emiPreview').classList.remove('d-none');
         } else {
             alert('Error: ' + data.error);
@@ -427,10 +427,10 @@ function renderEMITable(schedule) {
         row.innerHTML = `
             <td>${index + 1}</td>
             <td>${new Date(inst.due_date).toLocaleDateString('en-IN')}</td>
-            <td>â‚¹${Number(inst.principal_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-            <td>â‚¹${Number(inst.interest_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-            <td><strong>â‚¹${Number(inst.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
-            <td>â‚¹${Number(inst.balance_after).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td>₹${Number(inst.principal_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td>₹${Number(inst.interest_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+            <td><strong>₹${Number(inst.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+            <td>₹${Number(inst.balance_after).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
         `;
         tbody.appendChild(row);
     });

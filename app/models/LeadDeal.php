@@ -218,7 +218,7 @@ class LeadDeal extends Model
     {
         $symbols = [
             'USD' => '$',
-            'EUR' => 'â‚¬',
+            'EUR' => '€',
             'GBP' => 'Â£',
             'JPY' => 'Â¥',
             'INR' => '₹',

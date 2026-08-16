@@ -1,6 +1,6 @@
 <?php
 /**
- * Executive AI Assistant â€” Chat Interface
+ * Executive AI Assistant — Chat Interface
  * Role-context-aware AI assistant for all executive roles
  */
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';

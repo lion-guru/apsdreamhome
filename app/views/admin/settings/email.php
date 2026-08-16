@@ -3,7 +3,7 @@
 <div class="container-fluid py-4">
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/settings">Settings</a></li><li class="breadcrumb-item active">Email Configuration</li></ol></nav>
     <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-envelope me-2"></i>Email Settings</h4></div>
-    <form method="post" action="<?= BASE_URL ?>admin/settings/email">
+    <form method="post" action="<?= BASE_URL ?>/admin/settings/email-config/save">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-4">
             <div class="col-lg-8">

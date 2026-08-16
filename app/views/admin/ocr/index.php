@@ -123,7 +123,7 @@ $doc_type_labels = $doc_type_labels ?? [];
         </div>
 
         <form class="ocr-filter-bar" method="GET" action="<?= BASE_URL ?>/admin/ocr">
-            <input type="text" name="q" placeholder="Search filename..." value="<?= htmlspecialchars($search) ?>" class="style-55638">
+            <input type="text" name="q" placeholder="Search filename..." value="<?= htmlspecialchars($search ?? '') ?>" class="style-55638">
             <select name="status">
                 <option value="">All Status</option>
                 <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>

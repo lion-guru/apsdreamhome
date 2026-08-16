@@ -202,7 +202,7 @@ $total_pages = $total_pages ?? 1;
                                             <small><?= $job['confidence_score'] ?>%</small>
                                         </div>
                                     <?php else: ?>
-                                        <span class="text-muted">â€”</span>
+                                        <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -357,7 +357,7 @@ function renderReviewForm(job) {
                     html += `<input type="number" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
                     break;
                 case 'currency':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="â‚¹">`;
+                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="₹">`;
                     break;
                 case 'percentage':
                     html += `<input type="number" step="0.01" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="%">`;

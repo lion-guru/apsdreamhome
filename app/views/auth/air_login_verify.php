@@ -102,7 +102,7 @@ $base = BASE_URL;
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
                     <div class="otp-form">
-                        <input type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="Ã¢â‚¬Â¢" required autocomplete="one-time-password" autofocus>
+                        <input type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="•" required autocomplete="one-time-password" autofocus>
                     </div>
 
                     
@@ -119,14 +119,14 @@ $base = BASE_URL;
                 <div class="divider"><span>or</span></div>
 
                 <div class="login-link">
-                    <a href="<?= $base ?>/auth/login">Ã¢â€ ï¿½ Back to Password Login</a>
+                    <a href="<?= $base ?>/auth/login">← Back to Password Login</a>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Auto-format OTP input Ã¢â‚¬â€� allow typing 6 digits into single field
+        // Auto-format OTP input — allow typing 6 digits into single field
         const otpInput = document.getElementById('otp');
 
         otpInput.addEventListener('input', function(e) {

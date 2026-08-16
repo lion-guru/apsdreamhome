@@ -75,7 +75,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                                 <?php endif; ?>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-success fw-bold fs-5">â‚¹<?= number_format((float)($p['price'] ?? 0)) ?></span>
+                                <span class="text-success fw-bold fs-5">₹<?= number_format((float)($p['price'] ?? 0)) ?></span>
                                 <a href="<?= BASE_URL ?>/listing/<?= (int)($p['id'] ?? 0) ?>" class="btn btn-sm btn-primary"><?= __('saved_res_view_details', null, 'View Details') ?></a>
                             </div>
                         </div>

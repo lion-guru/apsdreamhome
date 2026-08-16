@@ -33,7 +33,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Body <span class="text-danger">*</span></label>
-                            <textarea name="body" class="form-control" rows="4" placeholder="e.g. Check out our new 3BHK apartments in Lucknow starting at â‚¹45 Lakh!" required maxlength="300"></textarea>
+                            <textarea name="body" class="form-control" rows="4" placeholder="e.g. Check out our new 3BHK apartments in Lucknow starting at ₹45 Lakh!" required maxlength="300"></textarea>
                             <small class="text-muted">Max 300 characters. The main notification message.</small>
                         </div>
 

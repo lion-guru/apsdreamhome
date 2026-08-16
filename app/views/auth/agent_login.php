@@ -511,7 +511,7 @@ $base = BASE_URL;
                     <span class="quick-stat-label">Commission</span>
                 </div>
                 <div class="quick-stat">
-                    <span class="quick-stat-value">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹3.5L+</span>
+                    <span class="quick-stat-value">₹3.5L+</span>
                     <span class="quick-stat-label">Avg. Monthly</span>
                 </div>
                 <div class="quick-stat">

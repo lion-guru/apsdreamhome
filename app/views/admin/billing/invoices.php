@@ -1,4 +1,4 @@
-<!-- Billing Invoices â€” Subscription History for a Tenant -->
+<!-- Billing Invoices — Subscription History for a Tenant -->
 <?php
 $tenant        = $tenant ?? [];
 $subscriptions = $subscriptions ?? [];
@@ -15,7 +15,7 @@ $base          = BASE_URL ?? '';
         <div>
             <h4 class="mb-0"><i class="fas fa-receipt me-2"></i>Billing History</h4>
             <p class="mb-0 mt-1" class="style-91394">
-                <?= htmlspecialchars($tenant['name'] ?? 'Tenant') ?> â€” All subscription records
+                <?= htmlspecialchars($tenant['name'] ?? 'Tenant') ?> — All subscription records
             </p>
         </div>
         <div>
@@ -63,7 +63,7 @@ $totalPaid     = array_sum(array_map(fn($s) => (float)($s['amount'] ?? 0), array
     <div class="col-md-3">
         <div class="card shadow-sm text-center">
             <div class="card-body">
-                <h3 class="text-success">â‚¹<?= number_format($totalPaid) ?></h3>
+                <h3 class="text-success">₹<?= number_format($totalPaid) ?></h3>
                 <small class="text-muted">Active Revenue</small>
             </div>
         </div>
@@ -100,12 +100,12 @@ $totalPaid     = array_sum(array_map(fn($s) => (float)($s['amount'] ?? 0), array
                                 <td>
                                     <span class="badge bg-light text-dark"><?= ucfirst($sub['billing_cycle'] ?? 'monthly') ?></span>
                                 </td>
-                                <td class="fw-semibold">â‚¹<?= number_format($sub['amount'] ?? 0) ?></td>
-                                <td><?= $sub['created_at'] ? date('d M Y H:i', strtotime($sub['created_at'])) : 'â€”' ?></td>
+                                <td class="fw-semibold">₹<?= number_format($sub['amount'] ?? 0) ?></td>
+                                <td><?= $sub['created_at'] ? date('d M Y H:i', strtotime($sub['created_at'])) : '—' ?></td>
                                 <td>
-                                    <?= $sub['current_period_start'] ? date('d M Y', strtotime($sub['current_period_start'])) : 'â€”' ?>
+                                    <?= $sub['current_period_start'] ? date('d M Y', strtotime($sub['current_period_start'])) : '—' ?>
                                     â†’
-                                    <?= $sub['current_period_end'] ? date('d M Y', strtotime($sub['current_period_end'])) : 'â€”' ?>
+                                    <?= $sub['current_period_end'] ? date('d M Y', strtotime($sub['current_period_end'])) : '—' ?>
                                 </td>
                                 <td>
                                     <?php
@@ -117,7 +117,7 @@ $totalPaid     = array_sum(array_map(fn($s) => (float)($s['amount'] ?? 0), array
                                     <?php if (!empty($sub['razorpay_subscription_id'])): ?>
                                         <code class="small"><?= htmlspecialchars(substr($sub['razorpay_subscription_id'], 0, 20)) ?>...</code>
                                     <?php else: ?>
-                                        <span class="text-muted">â€”</span>
+                                        <span class="text-muted">—</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>

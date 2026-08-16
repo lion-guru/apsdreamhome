@@ -22,7 +22,7 @@ $filters = $filters ?? [];
             </div>
             <div class="aps-cp-stat-info">
                 <div class="aps-cp-stat-label">Today's Collections</div>
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['today_total'] ?? 0) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['today_total'] ?? 0) ?></div>
                 <div class="aps-cp-stat-subtext"><?= ($stats['today_count'] ?? 0) ?> entries</div>
             </div>
         </div>
@@ -33,7 +33,7 @@ $filters = $filters ?? [];
             <div class="aps-cp-stat-info">
                 <div class="aps-cp-stat-label">Pending Verification</div>
                 <div class="aps-cp-stat-value"><?= ($stats['pending_verification'] ?? 0) ?></div>
-                <div class="aps-cp-stat-subtext">â‚¹<?= number_format($stats['pending_amount'] ?? 0) ?></div>
+                <div class="aps-cp-stat-subtext">₹<?= number_format($stats['pending_amount'] ?? 0) ?></div>
             </div>
         </div>
         <div class="aps-cp-stat-card">
@@ -42,7 +42,7 @@ $filters = $filters ?? [];
             </div>
             <div class="aps-cp-stat-info">
                 <div class="aps-cp-stat-label">This Month</div>
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['month_total'] ?? 0) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['month_total'] ?? 0) ?></div>
                 <div class="aps-cp-stat-subtext"><?= ($stats['month_count'] ?? 0) ?> collections</div>
             </div>
         </div>
@@ -52,7 +52,7 @@ $filters = $filters ?? [];
             </div>
             <div class="aps-cp-stat-info">
                 <div class="aps-cp-stat-label">Rejected Total</div>
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['rejected_total'] ?? 0) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['rejected_total'] ?? 0) ?></div>
             </div>
         </div>
     </div>
@@ -125,7 +125,7 @@ $filters = $filters ?? [];
                                     <td><?= htmlspecialchars($c['collection_date']) ?></td>
                                     <td><?= htmlspecialchars($c['customer_name']) ?></td>
                                     <td><?= htmlspecialchars($c['collector_name'] ?? 'N/A') ?></td>
-                                    <td class="style-24039">â‚¹<?= number_format($c['amount'], 2) ?></td>
+                                    <td class="style-24039">₹<?= number_format($c['amount'], 2) ?></td>
                                     <td><span class="aps-cp-badge aps-cp-badge-info"><?= ucfirst($c['payment_method']) ?></span></td>
                                     <td>
                                         <?php

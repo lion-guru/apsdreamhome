@@ -143,7 +143,7 @@
                                         ?>
                                         <span class="badge bg-<?= $color ?>"><?= ucfirst($h['status']) ?></span>
                                     </td>
-                                    <td><small><?= htmlspecialchars($h['approved_by_name'] ?? 'â€”') ?></small></td>
+                                    <td><small><?= htmlspecialchars($h['approved_by_name'] ?? '—') ?></small></td>
                                     <td><small><?= date('M j, g:i A', strtotime($h['created_at'])) ?></small></td>
                                 </tr>
                             <?php endforeach; ?>

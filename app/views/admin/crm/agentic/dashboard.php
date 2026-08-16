@@ -67,7 +67,7 @@ $actionIcons = [
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h2 class="mb-1 fw-bold"><i class="fas fa-robot me-2"></i>Agentic CRM AI</h2>
-                <p class="mb-0 opacity-75" class="style-42715">Intelligent automation â€” follow-ups, scoring, assignment, insights</p>
+                <p class="mb-0 opacity-75" class="style-42715">Intelligent automation — follow-ups, scoring, assignment, insights</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <form method="POST" action="<?= BASE_URL ?>/admin/crm/agentic/run-all" class="quick-run-form">

@@ -49,7 +49,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
         <h4 class="mb-1" class="style-86030">
             <i class="fas fa-user-tie me-2"></i>My Leads
         </h4>
-        <p class="text-muted mb-0">Leads assigned to you â€” track and convert</p>
+        <p class="text-muted mb-0">Leads assigned to you — track and convert</p>
     </div>
     <div class="d-flex gap-2">
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/employee/leads">
@@ -180,7 +180,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                             <div><small class="text-muted"><?= htmlspecialchars($lead['email'] ?? '-') ?></small></div>
                         </td>
                         <td class="px-3"><small><?= htmlspecialchars($lead['property_interest'] ?? '-') ?></small></td>
-                        <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? 'â‚¹' . number_format((float)$lead['budget']) : '-' ?></small></td>
+                        <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? '₹' . number_format((float)$lead['budget']) : '-' ?></small></td>
                         <td class="px-3">
                             <span class="badge <?= $scoreClass === 'score-hot' ? 'bg-danger' : ($scoreClass === 'score-warm' ? 'bg-warning text-dark' : ($scoreClass === 'score-lukewarm' ? 'bg-info' : 'bg-secondary')) ?>">
                                 <?= $scoreVal ?>

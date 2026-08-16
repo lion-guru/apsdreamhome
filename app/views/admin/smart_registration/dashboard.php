@@ -51,7 +51,7 @@ $channels = $channels ?? [];
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="mb-1"><i class="fas fa-user-plus me-2 text-primary"></i>Smart Registration Analytics</h4>
-            <small class="text-muted">Phone-first registration flow â€” abandoned recovery dashboard</small>
+            <small class="text-muted">Phone-first registration flow — abandoned recovery dashboard</small>
         </div>
         <div>
             <button class="btn btn-sm btn-outline-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
@@ -232,9 +232,9 @@ $channels = $channels ?? [];
                             <?php foreach ($sessions as $s): ?>
                                 <tr class="sr-session-row" onclick="location.href='<?= BASE_URL ?>/admin/smart-registration/detail?id=<?= $s['id'] ?>'">
                                     <td>#<?= $s['id'] ?></td>
-                                    <td><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($s['phone'] ?? 'â€”') ?></td>
-                                    <td><small><?= htmlspecialchars($s['email'] ?? 'â€”') ?></small></td>
-                                    <td><span class="sr-channel-badge sr-channel-<?= $s['otp_channel'] ?? 'email' ?>"><?= ucfirst($s['otp_channel'] ?? 'â€”') ?></span></td>
+                                    <td><i class="fas fa-phone me-1 text-muted"></i><?= htmlspecialchars($s['phone'] ?? '—') ?></td>
+                                    <td><small><?= htmlspecialchars($s['email'] ?? '—') ?></small></td>
+                                    <td><span class="sr-channel-badge sr-channel-<?= $s['otp_channel'] ?? 'email' ?>"><?= ucfirst($s['otp_channel'] ?? '—') ?></span></td>
                                     <td><span class="sr-status-badge sr-status-<?= $s['registration_status'] ?>"><?= str_replace('_', ' ', $s['registration_status']) ?></span></td>
                                     <td>
                                         <?php if ($s['detected_role']): ?>
@@ -245,7 +245,7 @@ $channels = $channels ?? [];
                                                 <?php endif; ?>
                                             </span>
                                         <?php else: ?>
-                                            <span class="text-muted">â€”</span>
+                                            <span class="text-muted">—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -259,7 +259,7 @@ $channels = $channels ?? [];
                                     </td>
                                     <td>
                                         <small>
-                                            <?= ($s['followup_count'] ?? 0) > 0 ? $s['followup_count'] . ' sent' : 'â€”' ?>
+                                            <?= ($s['followup_count'] ?? 0) > 0 ? $s['followup_count'] . ' sent' : '—' ?>
                                         </small>
                                     </td>
                                     <td><small class="text-muted"><?= date('d M H:i', strtotime($s['created_at'])) ?></small></td>

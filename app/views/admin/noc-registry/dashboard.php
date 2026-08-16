@@ -72,7 +72,7 @@ $st = $stats ?? [];
                     <div>
                         <div class="text-muted small"><?= __('admin_registry_completed') ?></div>
                         <div class="fw-bold fs-5"><?= $st['regCompleted'] ?? 0 ?></div>
-                        <small class="text-muted">â‚¹<?= number_format($st['regTotalCost'] ?? 0, 0) ?></small>
+                        <small class="text-muted">₹<?= number_format($st['regTotalCost'] ?? 0, 0) ?></small>
                     </div>
                 </div>
             </div>
@@ -173,7 +173,7 @@ $st = $stats ?? [];
                                     <td class="small"><?= htmlspecialchars($r['booking_number']) ?></td>
                                     <td class="small"><?= htmlspecialchars($r['customer_name']) ?></td>
                                     <td class="small"><?= htmlspecialchars($r['plot_no']) ?>, <?= htmlspecialchars($r['colony_name']) ?></td>
-                                    <td class="small">â‚¹<?= number_format($r['total_registry_cost'], 0) ?></td>
+                                    <td class="small">₹<?= number_format($r['total_registry_cost'], 0) ?></td>
                                     <td><span class="badge bg-<?= $r['status'] === 'completed' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : ($r['status'] === 'cancelled' ? 'dark' : 'primary')) ?>"><?= ucfirst(str_replace('_', ' ', $r['status'])) ?></span></td>
                                     <td><a href="<?= BASE_URL ?>/admin/noc-registry/registries/<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                                 </tr>

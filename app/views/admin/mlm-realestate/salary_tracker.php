@@ -3,7 +3,7 @@
         <h1 class="h3 mb-0"><i class="fas fa-money-bill-wave me-2"></i>Leadership Salary Tracker</h1>
         <div>
             <span class="badge bg-success fs-6 me-2"><?= $active_count ?? 0 ?> Active</span>
-            <span class="badge bg-info fs-6">â‚¹<?= number_format((float)($total_monthly ?? 0), 2) ?>/mo</span>
+            <span class="badge bg-info fs-6">₹<?= number_format((float)($total_monthly ?? 0), 2) ?>/mo</span>
         </div>
     </div>
     <div class="card shadow-sm border-0">
@@ -25,9 +25,9 @@
                         <tr>
                             <td>#<?= $t['id'] ?></td>
                             <td><strong><?= htmlspecialchars($t['user_name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($t['email'] ?? '') ?></small></td>
-                            <td>â‚¹<?= number_format((float)$t['target_volume'], 2) ?></td>
+                            <td>₹<?= number_format((float)$t['target_volume'], 2) ?></td>
                             <td><?= $t['achieved_in_days'] ? $t['achieved_in_days'] . ' days' : '-' ?></td>
-                            <td><strong>â‚¹<?= number_format((float)$t['monthly_payout'], 2) ?></strong></td>
+                            <td><strong>₹<?= number_format((float)$t['monthly_payout'], 2) ?></strong></td>
                             <td><?= $t['duration_months'] ?> months</td>
                             <td><?= htmlspecialchars($t['start_date'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($t['end_date'] ?? '-') ?></td>

@@ -111,7 +111,7 @@
                                             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="<?= $item['unit_price'] ?? 0 ?>" min="0" step="0.01"></td>
                                             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="<?= $item['discount_percent'] ?? 0 ?>" min="0" max="100" step="0.01"></td>
                                             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="<?= $item['tax_percent'] ?? 18 ?>" min="0" max="100" step="0.01"></td>
-                                            <td class="fw-bold item-total">â‚¹<?= number_format($item['line_total'] ?? 0, 2) ?></td>
+                                            <td class="fw-bold item-total">₹<?= number_format($item['line_total'] ?? 0, 2) ?></td>
                                             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove"><i class="fas fa-times"></i></button></td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -131,15 +131,15 @@
                                             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
                                             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
                                             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
-                                            <td class="fw-bold item-total">â‚¹0.00</td>
+                                            <td class="fw-bold item-total">₹0.00</td>
                                             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove"><i class="fas fa-times"></i></button></td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
                                 <tfoot>
-                                    <tr><td colspan="8" class="text-end border-0"><strong>Subtotal:</strong></td><td class="fw-bold" id="subtotalDisplay">â‚¹0.00</td><td class="border-0"></td></tr>
-                                    <tr><td colspan="8" class="text-end border-0"><strong>Tax (GST):</strong></td><td class="fw-bold text-primary" id="taxDisplay">â‚¹0.00</td><td class="border-0"></td></tr>
-                                    <tr class="table-active"><td colspan="8" class="text-end border-0"><strong>Total:</strong></td><td class="fw-bold" id="totalDisplay">â‚¹0.00</td><td class="border-0"></td></tr>
+                                    <tr><td colspan="8" class="text-end border-0"><strong>Subtotal:</strong></td><td class="fw-bold" id="subtotalDisplay">₹0.00</td><td class="border-0"></td></tr>
+                                    <tr><td colspan="8" class="text-end border-0"><strong>Tax (GST):</strong></td><td class="fw-bold text-primary" id="taxDisplay">₹0.00</td><td class="border-0"></td></tr>
+                                    <tr class="table-active"><td colspan="8" class="text-end border-0"><strong>Total:</strong></td><td class="fw-bold" id="totalDisplay">₹0.00</td><td class="border-0"></td></tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
             <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
-            <td class="fw-bold item-total">â‚¹0.00</td>
+            <td class="fw-bold item-total">₹0.00</td>
             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="fas fa-times"></i></button></td>
         `;
         tbody.appendChild(row);
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const discAmt = gross * disc / 100;
         const taxable = gross - discAmt;
         const taxAmt = taxable * tax / 100;
-        row.querySelector('.item-total').textContent = 'â‚¹' + (taxable + taxAmt).toFixed(2);
+        row.querySelector('.item-total').textContent = '₹' + (taxable + taxAmt).toFixed(2);
     }
 
     function renumberRows() {
@@ -309,9 +309,9 @@ document.addEventListener('DOMContentLoaded', function() {
             subtotal += taxable + taxAmt;
             totalTax += taxAmt;
         });
-        document.getElementById('subtotalDisplay').textContent = 'â‚¹' + subtotal.toFixed(2);
-        document.getElementById('taxDisplay').textContent = 'â‚¹' + totalTax.toFixed(2);
-        document.getElementById('totalDisplay').textContent = 'â‚¹' + subtotal.toFixed(2);
+        document.getElementById('subtotalDisplay').textContent = '₹' + subtotal.toFixed(2);
+        document.getElementById('taxDisplay').textContent = '₹' + totalTax.toFixed(2);
+        document.getElementById('totalDisplay').textContent = '₹' + subtotal.toFixed(2);
     }
 
     recalcAll();

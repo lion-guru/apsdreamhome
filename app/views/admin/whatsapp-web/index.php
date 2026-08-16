@@ -67,7 +67,7 @@ async function checkStatus() {
         if (d.connected) {
             el.innerHTML = `<div class="alert alert-success mb-0">âœ… Connected to ${d.number}<br><small>${d.pushname || ''}</small></div>`;
         } else if (d.qr_generated) {
-            el.innerHTML = `<div class="alert alert-warning mb-0">ðŸ“± QR ready - Scan with WhatsApp</div>`;
+            el.innerHTML = `<div class="alert alert-warning mb-0">📱 QR ready - Scan with WhatsApp</div>`;
         } else {
             el.innerHTML = `<div class="alert alert-secondary mb-0">â�³ Initializing... Refresh in 10s</div>`;
         }

@@ -41,7 +41,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="style-42991">
               <tr>
                 <td class="style-30011">
-                  <strong class="style-52648">Ticket #{{ticket_id}} â€” {{subject}}</strong><br><br>
+                  <strong class="style-52648">Ticket #{{ticket_id}} — {{subject}}</strong><br><br>
                   <div class="style-73231">
                     {{reply_message}}
                   </div>

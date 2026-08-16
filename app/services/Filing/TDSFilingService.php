@@ -4,7 +4,7 @@ namespace App\Services\Filing;
 use PDO;
 
 /**
- * TDSFilingService â€” TDS-specific e-filing operations
+ * TDSFilingService —" TDS-specific e-filing operations
  * Form 26Q generation, Challan 281, Form 16A, TRACES API client
  */
 class TDSFilingService
@@ -494,7 +494,7 @@ class TDSFilingService
 
     public function getAssessmentYear(string $fy): string
     {
-        // FY 2025-26 â†’ AY 2026-27
+        // FY 2025-26 â†' AY 2026-27
         $startYear = (int)substr($fy, 0, 4);
         return ($startYear + 1) . '-' . substr($startYear + 2, -2);
     }

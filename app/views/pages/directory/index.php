@@ -11,7 +11,7 @@
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
             <h1 class="display-5 fw-bold mb-3">Real Estate Services Directory</h1>
-            <p class="lead text-muted mb-4">Find trusted masons, plumbers, electricians, architects, material suppliers and more â€” all for your dream home</p>
+            <p class="lead text-muted mb-4">Find trusted masons, plumbers, electricians, architects, material suppliers and more — all for your dream home</p>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="#categories" class="btn btn-primary btn-lg"><i class="fas fa-search me-2"></i>Browse Services</a>
                 <a href="<?= BASE_URL ?>/services/jobs" class="btn btn-outline-success btn-lg"><i class="fas fa-briefcase me-2"></i>Jobs</a>

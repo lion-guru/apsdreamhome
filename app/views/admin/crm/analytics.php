@@ -82,7 +82,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
         </div>
         <div class="col-6 col-lg-3">
             <div class="analytics-kpi kpi-info">
-                <div class="kpi-val">â‚¹<?= number_format($pipelineTotal / 100000, 1) ?>L</div>
+                <div class="kpi-val">₹<?= number_format($pipelineTotal / 100000, 1) ?>L</div>
                 <div class="kpi-label">Pipeline Value</div>
                 <div class="kpi-change"><i class="fas fa-rupee-sign"></i> Weighted</div>
             </div>
@@ -146,7 +146,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                                 <div class="pipeline-stage">
                                     <div class="stage-val text-<?= $color ?>"><?= $stage['count'] ?></div>
                                     <div class="stage-label"><?= ucfirst(str_replace('_',' ',$stage['stage'])) ?></div>
-                                    <div class="stage-value">â‚¹<?= number_format($stage['value'] / 100000, 1) ?>L</div>
+                                    <div class="stage-value">₹<?= number_format($stage['value'] / 100000, 1) ?>L</div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -267,7 +267,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                 <div class="col-md-4">
                     <div class="p-3 bg-primary-subtle rounded">
                         <h6 class="text-primary fw-bold mb-1"><i class="fas fa-user-tie me-1"></i> Top Agent</h6>
-                        <p class="mb-0"><strong><?= htmlspecialchars($bestAgent['name'] ?? '') ?></strong> â€” <?= (int)($bestAgent['conversion_rate'] ?? 0) ?>% conversion</p>
+                        <p class="mb-0"><strong><?= htmlspecialchars($bestAgent['name'] ?? '') ?></strong> — <?= (int)($bestAgent['conversion_rate'] ?? 0) ?>% conversion</p>
                     </div>
                 </div>
                 <?php endif; ?>

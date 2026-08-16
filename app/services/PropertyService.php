@@ -134,7 +134,7 @@ class PropertyService
     }
     
     public function getResellProperties($filters = []) {
-        $sql = "SELECT * FROM resell_properties WHERE listing_status = 'active'" . ($this->tid() > 1 ? " AND tenant_id = :tenant_id" : "");
+        $sql = "SELECT * FROM resell_properties WHERE status = 'active'" . ($this->tid() > 1 ? " AND tenant_id = :tenant_id" : "");
         $params = $this->tid() > 1 ? [':tenant_id' => $this->tid()] : [];
         
         if (!empty($filters['property_type'])) {
@@ -143,16 +143,16 @@ class PropertyService
         }
         
         if (!empty($filters['min_price'])) {
-            $sql .= " AND expected_price >= :min_price";
+            $sql .= " AND asking_price >= :min_price";
             $params[':min_price'] = $filters['min_price'];
         }
         
         if (!empty($filters['max_price'])) {
-            $sql .= " AND expected_price <= :max_price";
+            $sql .= " AND asking_price <= :max_price";
             $params[':max_price'] = $filters['max_price'];
         }
         
-        $sql .= " ORDER BY featured DESC, listing_date DESC";
+        $sql .= " ORDER BY created_at DESC";
         
         try {
             $stmt = $this->db->prepare($sql);

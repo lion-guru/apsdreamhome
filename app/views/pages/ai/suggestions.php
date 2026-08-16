@@ -20,7 +20,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="budget" class="form-label"><?= __('aisug_label_budget', [], 'Budget (â‚¹)') ?></label>
+                                <label for="budget" class="form-label"><?= __('aisug_label_budget', [], 'Budget (₹)') ?></label>
                                 <input type="number" id="budget" name="budget" class="form-control" placeholder="<?= __('aisug_placeholder_budget', [], 'e.g. 5000000') ?>" required>
                             </div>
 

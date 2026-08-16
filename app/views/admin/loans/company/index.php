@@ -42,7 +42,7 @@ $offers = $offers ?? [];
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-rupee-sign"></i></span></div>
-                    <div><div class="aps-cp-stat-label">Outstanding</div><div class="aps-cp-stat-value">â‚¹<?= number_format(($stats['total_outstanding'] ?? 0) / 100000, 1) ?>L</div><div class="aps-cp-stat-meta">Collected: â‚¹<?= number_format(($stats['total_collected'] ?? 0) / 100000, 1) ?>L</div></div>
+                    <div><div class="aps-cp-stat-label">Outstanding</div><div class="aps-cp-stat-value">₹<?= number_format(($stats['total_outstanding'] ?? 0) / 100000, 1) ?>L</div><div class="aps-cp-stat-meta">Collected: ₹<?= number_format(($stats['total_collected'] ?? 0) / 100000, 1) ?>L</div></div>
                 </div>
             </div></div>
         </div>
@@ -94,11 +94,11 @@ $offers = $offers ?? [];
                             <tr>
                                 <td><a href="<?= BASE_URL ?>/admin/company-loans/<?= $l['id'] ?>" class="fw-bold"><?= htmlspecialchars($l['loan_number']) ?></a></td>
                                 <td><?= htmlspecialchars($l['customer_name'] ?? 'N/A') ?><br><small class="text-muted"><?= htmlspecialchars($l['customer_phone'] ?? '') ?></small></td>
-                                <td>â‚¹<?= number_format($l['loan_amount'] / 100000, 1) ?>L</td>
-                                <td>â‚¹<?= number_format($l['emi_amount']) ?></td>
+                                <td>₹<?= number_format($l['loan_amount'] / 100000, 1) ?>L</td>
+                                <td>₹<?= number_format($l['emi_amount']) ?></td>
                                 <td><?= $l['tenure_months'] ?>m</td>
-                                <td>â‚¹<?= number_format($l['amount_paid'] / 100000, 1) ?>L</td>
-                                <td><strong>â‚¹<?= number_format($l['balance_amount'] / 100000, 1) ?>L</strong></td>
+                                <td>₹<?= number_format($l['amount_paid'] / 100000, 1) ?>L</td>
+                                <td><strong>₹<?= number_format($l['balance_amount'] / 100000, 1) ?>L</strong></td>
                                 <td>
                                     <span class="aps-cp-badge badge bg-<?= match($l['status']) {
                                         'active' => 'success', 'pending' => 'warning', 'completed' => 'info',

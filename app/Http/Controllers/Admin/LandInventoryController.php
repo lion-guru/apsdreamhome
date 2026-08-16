@@ -32,7 +32,12 @@ class LandInventoryController extends AdminController
         } catch (\Exception $e) {
             $this->db = null;
         }
-        $this->service = new LandAcquisitionService();
+        try {
+            $this->service = new LandAcquisitionService();
+        } catch (\Throwable $e) {
+            error_log("LandInventoryController: service failed: " . $e->getMessage());
+            throw $e;
+        }
 
         // File upload path for land documents
         $this->uploadPath = rtrim($_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/../../../public', '/\\')
@@ -356,15 +361,20 @@ class LandInventoryController extends AdminController
     public function acquisitions()
     {
         $this->requireAdmin();
-        $filters = ['status' => $_GET['status'] ?? ''];
-        $result = $this->service->listDeals($filters);
-        $this->render('admin/land-inventory/acquisitions', [
-            'page_title'   => 'Land Deals',
-            'page_heading' => 'Closed / In-Progress Land Deals',
-            'deals'        => $result['data'] ?? [],
-            'filters'      => $filters,
-            'statuses'     => ['in_progress','registered','mutated','closed','cancelled'],
-        ]);
+        try {
+            $filters = ['status' => $_GET['status'] ?? ''];
+            $result = $this->service->listDeals($filters);
+            $this->render('admin/land-inventory/acquisitions', [
+                'page_title'   => 'Land Deals',
+                'page_heading' => 'Closed / In-Progress Land Deals',
+                'deals'        => $result['data'] ?? [],
+                'filters'      => $filters,
+                'statuses'     => ['in_progress','registered','mutated','closed','cancelled'],
+            ]);
+        } catch (\Throwable $e) {
+            error_log("LandInventory acquisitions error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+            throw $e;
+        }
     }
 
     public function acquisitionDetail($id)

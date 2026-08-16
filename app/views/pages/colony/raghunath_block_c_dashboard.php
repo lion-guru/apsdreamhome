@@ -1,6 +1,6 @@
 <?php
 /**
- * Raghunath Nagri Block C â€” Interactive Booking Dashboard
+ * Raghunath Nagri Block C — Interactive Booking Dashboard
  * Embeds the standalone real-time suite via iframe.
  * Firebase config + MySQL plot data passed from controller.
  */
@@ -89,7 +89,7 @@ $dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html';
     <div class="dash-wrapper position-relative">
         <div class="dash-header">
             <div>
-                <h2><i class="fas fa-map-marked-alt me-2"></i>Raghunath Nagri â€” Block C Live Dashboard</h2>
+                <h2><i class="fas fa-map-marked-alt me-2"></i>Raghunath Nagri — Block C Live Dashboard</h2>
                 <small class="style-54585">Real-time Firebase booking sync for field team &amp; admin</small>
             </div>
             <div class="stats-row">

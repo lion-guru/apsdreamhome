@@ -80,7 +80,7 @@ class SmartAIController extends BaseController
     }
 
     /**
-     * CSRF check is disabled for API controllers — handled by router for /api/ routes
+     * CSRF check is disabled for API controllers - handled by router for /api/ routes
      */
     protected function skipCsrfProtection(): bool
     {
@@ -109,7 +109,7 @@ class SmartAIController extends BaseController
             exit;
         }
 
-        // ─── CONVERSATION ENGINE — Multi-turn action flows ───
+        // ��� CONVERSATION ENGINE - Multi-turn action flows ���
         $conversationState = null;
         try {
             $engine = new ConversationEngine($sessionId, $userContext['id'], $userContext['role'], $userContext['name'], $this->db);
@@ -185,10 +185,10 @@ class SmartAIController extends BaseController
             // Fall through to 7-layer AI on error
         }
 
-        // ─── Check for actions first (booking, lead creation, etc.) ───
+        // ��� Check for actions first (booking, lead creation, etc.) ���
         $actionResult = $this->detectAndPerformAction($message, $userContext);
 
-        // Get AI response (Gemini â†’ OpenRouter â†’ HuggingFace â†’ rule-based â†’ local)
+        // Get AI response (Gemini ->' OpenRouter ->' HuggingFace ->' rule-based ->' local)
         $modelUsed = 'none';
         $response = null;
 
@@ -281,7 +281,7 @@ class SmartAIController extends BaseController
 
         // Add action confirmation if action was performed
         if ($actionResult['performed']) {
-            $response .= "\n\nâœ… " . $actionResult['message'];
+            $response .= "\n\n* " . $actionResult['message'];
         }
         
         // Save conversation for learning
@@ -318,7 +318,7 @@ class SmartAIController extends BaseController
     {
         $lower = mb_strtolower($message);
         $keywords = ['plot', 'property', 'colony', 'kharid', 'buy', 'budget', 'price',
-            'available', 'land', 'ghar', 'zameen', 'जमीन', 'खरीद', 'प्लॉट', 'कॉलोनी'];
+            'available', 'land', 'ghar', 'zameen', '�म�न', '�र�द', 'प�ल��', '��ल�न�'];
         $isProperty = false;
         foreach ($keywords as $k) {
             if (mb_strpos($lower, $k) !== false) {
@@ -482,7 +482,7 @@ class SmartAIController extends BaseController
     }
 
     /**
-     * Get response from Groq API (fastest free cloud AI — Llama 3.3 70B)
+     * Get response from Groq API (fastest free cloud AI - Llama 3.3 70B)
      */
     private function getGroqResponse($message, $userContext, $language, $apiKey)
     {
@@ -539,7 +539,7 @@ class SmartAIController extends BaseController
         $prompt .= "4. If user is asking about projects, give specific details\n";
         $prompt .= "5. If user wants to buy/sell/rent, guide them step by step\n";
         $prompt .= "6. Keep responses concise but informative\n";
-        $prompt .= "7. Use emojis where appropriate ðŸ˜Š\n\n";
+        $prompt .= "7. Use emojis where appropriate -\n\n";
         $prompt .= "Response:";
 
         try {
@@ -675,46 +675,46 @@ class SmartAIController extends BaseController
         if (strpos($msg, 'hello') !== false || strpos($msg, 'hi') !== false || strpos($msg, 'namaste') !== false || strpos($msg, 'namaskar') !== false) {
             if ($role === 'associate') {
                 $commission = number_format($userContext['data']['total_commission'] ?? 0);
-                return "ðŸ‘‹ Namaste {$name}! Aapka APS Dream Home associate dashboard mein swagat hai!\n\nðŸ’° Aapki total commission: ₹{$commission}\nðŸ‘¥ Network size: " . ($userContext['data']['network_size'] ?? 0) . "\n\nMain aapki kya madad kar sakta hoon?";
+                return "Namaste {$name}! Aapka APS Dream Home associate dashboard mein swagat hai!\n\nAapki total commission: Rs.{$commission}\nNetwork size: " . ($userContext['data']['network_size'] ?? 0) . "\n\nMain aapki kya madad kar sakta hoon?";
             } elseif ($role === 'customer') {
-                return "ðŸ‘‹ Hello {$name}! APS Dream Home mein aapka swagat hai!\n\nðŸ  Aapki properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n\nMain aapki kya help kar sakta hoon? Buy, sell, rent ya kuch aur?";
+                return "Hello {$name}! APS Dream Home mein aapka swagat hai!\n\nAapki properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n\nMain aapki kya help kar sakta hoon? Buy, sell, rent ya kuch aur?";
             } else {
-                return "ðŸ‘‹ Namaste! APS Dream Home mein aapka swagat hai!\n\nðŸ  Main aapki property search mein madad kar sakta hoon. Kya chahiye aapko?";
+                return "Namaste! APS Dream Home mein aapka swagat hai!\n\nMain aapki property search mein madad kar sakta hoon. Kya chahiye aapko?";
             }
         }
 
         // Intent detection
         if (strpos($msg, 'buy') !== false || strpos($msg, 'kharid') !== false || strpos($msg, 'plot') !== false || strpos($msg, 'ghar') !== false || strpos($msg, 'makan') !== false) {
-            return "ðŸŽ¯ *Perfect! Aap buy karna chahte hain.*\n\nðŸ  Main projects:\nðŸ“ *Suryoday Colony* - Gorakhpur (Premium)\nðŸ“ *Raghunath City Center* - Gorakhpur\nðŸ“ *Braj Radha Enclave* - Lucknow\nðŸ“ *Budh Bihar Colony* - Kushinagar\n\nðŸ’° *Starting from ₹5.5 Lakh*\n\nKaunsa location prefer karenge aap? Ya budget bataiye?";
+            return "Perfect! Aap buy karna chahte hain.\n\nMain projects:\n* Suryoday Colony - Gorakhpur (Premium)\n* Raghunath City Center - Gorakhpur\n* Braj Radha Enclave - Lucknow\n* Budh Bihar Colony - Kushinagar\n\nStarting from Rs.5.5 Lakh\n\nKaunsa location prefer karenge aap? Ya budget bataiye?";
         }
 
         if (strpos($msg, 'sell') !== false || strpos($msg, 'bech') !== false || strpos($msg, 'list') !== false || strpos($msg, 'post') !== false) {
-            return "ðŸ·ï¸ *Aap apni property sell karna chahte hain!*\n\nâœ… *100% FREE listing*\nâœ… *No commission*\nâœ… *Verified buyers*\n\nðŸ“‹ Form fill karein bas 1 minute mein:\nðŸ‘‰ " . BASE_URL . "/list-property\n\nYa seedha phone karein:\nðŸ“± +91 92771 21112\n\nProperty ka type kya hai? (Plot, House, Flat, Shop)";
+            return "Aap apni property sell karna chahte hain!\n\n100% FREE listing\nNo commission\nVerified buyers\n\nForm fill karein bas 1 minute mein:\n" . BASE_URL . "/list-property\n\nYa seedha phone karein:\n+91 92771 21112\n\nProperty ka type kya hai? (Plot, House, Flat, Shop)";
         }
 
         if (strpos($msg, 'price') !== false || strpos($msg, 'rate') !== false || strpos($msg, 'cost') !== false || strpos($msg, 'kitna') !== false || strpos($msg, 'paisa') !== false) {
-            return "ðŸ’° *Pricing Details:*\n\nðŸ  *Residential Plots:*\n• Suryoday Colony: ₹5.5L - ₹15L\n• Raghunath City: ₹8L - ₹20L\n• Budh Bihar: ₹4L - ₹10L\n\nðŸ¢ *Commercial:*\n• Raghunath City Center: ₹15L - ₹50L\n\nðŸ¡ *Houses:*\n• Starting ₹25L onwards\n\nBudget bataiye, main best options suggest karunga!";
+            return "Pricing Details:\n\nResidential Plots:\n* Suryoday Colony: Rs.5.5L - Rs.15L\n* Raghunath City: Rs.8L - Rs.20L\n* Budh Bihar: Rs.4L - Rs.10L\n\nCommercial:\n* Raghunath City Center: Rs.15L - Rs.50L\n\nHouses:\n* Starting Rs.25L onwards\n\nBudget bataiye, main best options suggest karunga!";
         }
 
         if (strpos($msg, 'loan') !== false || strpos($msg, 'finance') !== false || strpos($msg, 'emi') !== false || strpos($msg, 'bank') !== false) {
-            return "ðŸ¦ *Home Loan Facility Available!*\n\nâœ… Instant approval\nâœ… Low interest rates (8.5% onwards)\nâœ… Flexible EMI options\nâœ… 20 years tenure\n\nðŸ“‹ Required Documents:\n• Aadhaar & PAN\n• Income Proof\n• Bank Statements (6 months)\n• Property Documents\n\nðŸ‘‰ Apply now: " . BASE_URL . "/financial-services\n\nLoan amount kitna chahiye aapko?";
+            return "Home Loan Facility Available!\n\nInstant approval\nLow interest rates (8.5% onwards)\nFlexible EMI options\n20 years tenure\n\nRequired Documents:\n* Aadhaar & PAN\n* Income Proof\n* Bank Statements (6 months)\n* Property Documents\n\nApply now: " . BASE_URL . "/financial-services\n\nLoan amount kitna chahiye aapko?";
         }
 
         if (strpos($msg, 'commission') !== false && $role === 'associate') {
             $total = number_format($userContext['data']['total_commission'] ?? 0);
             $pending = number_format($userContext['data']['pending_commission'] ?? 0);
-            return "ðŸ’° *Aapki Commission Details:*\n\nâœ… Total Earned: ₹{$total}\nâ³ Pending: ₹{$pending}\n\nðŸ’¡ *Commission Structure:*\n• Direct Sale: 2%\n• Level 1 Referral: 1%\n• Level 2 Referral: 0.5%\n\nAur leads add karein commission badhane ke liye! ðŸ‘¥";
+            return "Aapki Commission Details:\n\nTotal Earned: Rs.{$total}\nPending: Rs.{$pending}\n\nCommission Structure:\n* Direct Sale: 2%\n* Level 1 Referral: 1%\n* Level 2 Referral: 0.5%\n\nAur leads add karein commission badhane ke liye!";
         }
 
         if (strpos($msg, 'network') !== false || strpos($msg, 'team') !== false || strpos($msg, 'referral') !== false) {
             if ($role === 'associate') {
                 $size = $userContext['data']['network_size'] ?? 0;
-                return "ðŸ‘¥ *Aapka Network:*\n\nTotal users: {$size}\n\nðŸ”— *Referral Link:*\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nðŸ“± Social media par share karein:\n• WhatsApp\n• Facebook\n• Instagram\n\nJitne zyada referrals, utna zyada commission! ðŸ’°";
+                return "Aapka Network:\n\nTotal users: {$size}\n\nReferral Link:\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nSocial media par share karein:\n* WhatsApp\n* Facebook\n* Instagram\n\nJitne zyada referrals, utna zyada commission!";
             }
         }
 
         // Default response
-        return "ðŸ¤” Main samajh gaya aap yeh kehna chahte hain: \"{$message}\"\n\nðŸ  *APS Dream Home Services:*\n1ï¸âƒ£ Property Buy/Sell/Rent\n2ï¸âƒ£ Home Loan Assistance\n3ï¸âƒ£ Legal Documentation\n4ï¸âƒ£ Interior Design\n5ï¸âƒ£ Property Valuation\n\nKya main inmein se kisi mein madad kar sakta hoon? ðŸ˜Š";
+        return "Main samajh gaya aap yeh kehna chahte hain: \"{$message}\"\n\nAPS Dream Home Services:\n1. Property Buy/Sell/Rent\n2. Home Loan Assistance\n3. Legal Documentation\n4. Interior Design\n5. Property Valuation\n\nKya main inmein se kisi mein madad kar sakta hoon?";
     }
 
     /**
@@ -741,7 +741,7 @@ class SmartAIController extends BaseController
                         [$userContext['id'], $userContext['name'], $phone]
                     );
                     $result['performed'] = true;
-                    $result['message'] = "Aapki lead humare team ko bhej di gayi hai! Aapko 24 ghante mein call karenge. ðŸ“ž";
+                    $result['message'] = "Aapki lead humare team ko bhej di gayi hai! Aapko 24 ghante mein call karenge.";
                 } catch (\Exception $e) {
                     error_log("Lead creation error: " . $e->getMessage());
                 }
@@ -763,7 +763,7 @@ PROJECT KNOWLEDGE:
 - Company: APS Dream Home - Premium Real Estate in UP
 - Locations: Gorakhpur, Kushinagar, Lucknow, Varanasi
 - Projects: Suryoday Colony, Raghunath Nagri, Braj Radha Nagri, Budh Bihar Colony
-- Price Range: ₹5.5 Lakh to ₹50 Lakh
+- Price Range: �5.5 Lakh to �50 Lakh
 - Services: Buy, Sell, Rent, Home Loan, Legal, Interior Design
 - Official Phone: +91 92771 21112, +91 70074 44842
 - Office: Kunraghat, Gorakhpur, UP 273008
@@ -807,8 +807,8 @@ EOT;
 
         if ($userContext['role'] === 'associate') {
             $prompt .= "Network Size: " . ($userContext['data']['network_size'] ?? 0) . "\n";
-            $prompt .= "Total Commission: ₹" . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
-            $prompt .= "Pending Commission: ₹" . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
+            $prompt .= "Total Commission: �" . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
+            $prompt .= "Pending Commission: �" . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
             $prompt .= "Total Leads: " . ($userContext['data']['total_leads'] ?? 0) . "\n";
         } elseif ($userContext['role'] === 'customer') {
             $prompt .= "Total Properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n";
@@ -825,10 +825,10 @@ EOT;
             // Query live EMI schedules and overdue counts
             try {
                 $emis = $this->db->fetch("SELECT count(*) as total, sum(emi_amount) as monthly FROM emi_plans WHERE customer_id = ? AND status = 'active'", [$userContext['id']]);
-                $prompt .= "Active EMI Plans: " . ($emis['total'] ?? 0) . " (Monthly: ₹" . number_format($emis['monthly'] ?? 0) . ")\n";
+                $prompt .= "Active EMI Plans: " . ($emis['total'] ?? 0) . " (Monthly: �" . number_format($emis['monthly'] ?? 0) . ")\n";
                 
                 $overdue = $this->db->fetch("SELECT count(*) as count, sum(amount) as balance FROM emi_payments WHERE user_id = ? AND status = 'overdue'", [$userContext['id']]);
-                $prompt .= "Overdue Installments: " . ($overdue['count'] ?? 0) . " (Balance: ₹" . number_format($overdue['balance'] ?? 0) . ")\n";
+                $prompt .= "Overdue Installments: " . ($overdue['count'] ?? 0) . " (Balance: �" . number_format($overdue['balance'] ?? 0) . ")\n";
             } catch (\Exception $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
 
@@ -943,7 +943,7 @@ EOT;
                     $selfLearning = new SelfLearningAI($sessionId, $userId);
                     $selfLearning->processFeedback($messageId, $positive, $comment);
                 } catch (\Exception $e) {
-                // Graceful — message might not exist in ai_chat_messages
+                // Graceful - message might not exist in ai_chat_messages
                 error_log($e->getMessage());
                 }
             }
@@ -1075,13 +1075,13 @@ EOT;
 
         // Action labels
         $actionLabels = [
-            'post_property' => '🏠 Property Post',
-            'add_lead' => '👤 Add Lead',
-            'book_site_visit' => '📅 Site Visit',
-            'search_property' => '🔍 Search',
-            'register' => '📋 Register',
-            'file_complaint' => '⚠️ Complaint',
-            'check_booking' => '📊 Check Booking',
+            'post_property' => '� Property Post',
+            'add_lead' => '� Add Lead',
+            'book_site_visit' => '� Site Visit',
+            'search_property' => '� Search',
+            'register' => '� Register',
+            'file_complaint' => '�� Complaint',
+            'check_booking' => '� Check Booking',
         ];
 
         $this->render('admin/chat/analytics', [
@@ -1093,7 +1093,7 @@ EOT;
     }
 
     /**
-     * Chat History — view past conversations (admin page)
+     * Chat History - view past conversations (admin page)
      */
     public function chatHistory()
     {
@@ -1134,13 +1134,13 @@ EOT;
         }
 
         $actionLabels = [
-            'post_property' => '🏠 Property Post',
-            'add_lead' => '👤 Add Lead',
-            'book_site_visit' => '📅 Site Visit',
-            'search_property' => '🔍 Search',
-            'register' => '📋 Register',
-            'file_complaint' => '⚠️ Complaint',
-            'check_booking' => '📊 Check Booking',
+            'post_property' => '� Property Post',
+            'add_lead' => '� Add Lead',
+            'book_site_visit' => '� Site Visit',
+            'search_property' => '� Search',
+            'register' => '� Register',
+            'file_complaint' => '�� Complaint',
+            'check_booking' => '� Check Booking',
         ];
 
         $this->render('admin/chat/history', [

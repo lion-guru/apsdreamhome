@@ -65,7 +65,7 @@
                         <div class="col-6">
                             <button class="btn btn-outline-info btn-sm w-100" onclick="alert('Placing <?= ($item['name'] ?? '') ?> in AR view')">
                                 <i class="fas fa-cube me-1"></i><?= ($item['name'] ?? 'Item') ?><br>
-                                <small>â‚¹<?= number_format($item['price'] ?? 0) ?></small>
+                                <small>₹<?= number_format($item['price'] ?? 0) ?></small>
                             </button>
                         </div>
                         <?php endforeach; ?>

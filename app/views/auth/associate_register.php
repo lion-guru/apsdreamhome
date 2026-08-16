@@ -161,31 +161,31 @@ $ref = $ref ?? $_GET['ref'] ?? $old['sponsor_code'] ?? '';
             </div>
 
             <div class="earnings-display">
-                <h4><i class="fas fa-calculator me-2"></i>Example: Ã¢â€šÂ¹1 Lakh Sale</h4>
+                <h4><i class="fas fa-calculator me-2"></i>Example: ₹1 Lakh Sale</h4>
                 <div class="earnings-row">
                     <span class="label">Track A (Direct Sale)</span>
-                    <span class="value">Ã¢â€šÂ¹15,000</span>
+                    <span class="value">₹15,000</span>
                 </div>
                 <div class="earnings-row">
                     <span class="label">Track B (Performance)</span>
-                    <span class="value">Ã¢â€šÂ¹3,000</span>
+                    <span class="value">₹3,000</span>
                 </div>
                 <div class="earnings-row">
                     <span class="label">Track C (Milestone)</span>
-                    <span class="value">Ã¢â€šÂ¹2,000</span>
+                    <span class="value">₹2,000</span>
                 </div>
                 <div class="earnings-row" class="style-24496">
                     <span class="label" class="style-14635">Total Earning</span>
-                    <span class="value" class="style-36688">Ã¢â€šÂ¹20,000</span>
+                    <span class="value" class="style-36688">₹20,000</span>
                 </div>
             </div>
 
             <?php
                 $s = $stats ?? ['total_paid' => 10560320, 'commission_count' => 311, 'rank_count' => 7, 'max_rate' => 20];
                 $formatAmount = function($amt) {
-                    if ($amt >= 10000000) return 'Ã¢â€šÂ¹' . round($amt / 10000000, 2) . 'Cr';
-                    if ($amt >= 100000) return 'Ã¢â€šÂ¹' . round($amt / 100000, 2) . 'L';
-                    return 'Ã¢â€šÂ¹' . number_format($amt);
+                    if ($amt >= 10000000) return '₹' . round($amt / 10000000, 2) . 'Cr';
+                    if ($amt >= 100000) return '₹' . round($amt / 100000, 2) . 'L';
+                    return '₹' . number_format($amt);
                 };
             ?>
             <div class="stats-bar">

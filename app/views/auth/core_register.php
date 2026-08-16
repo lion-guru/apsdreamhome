@@ -1,6 +1,6 @@
 <?php
 /**
- * Core Register â€” Unified registration with role selection cards
+ * Core Register — Unified registration with role selection cards
  * @var string $csrf_token
  * @var array $errors
  * @var array $old
@@ -66,8 +66,11 @@ $selectedRole = $selectedRole ?? 'customer';
         }
         .role-card:hover { border-color: #475569; color: #e2e8f0; }
         .role-card.selected { 
-            border-color: currentColor; background: rgba(currentColor, 0.1); color: currentColor; 
+            border-color: currentColor; color: currentColor; 
         }
+        .role-card.selected.customer { background: rgba(13,148,136,0.15); }
+        .role-card.selected.associate { background: rgba(245,158,11,0.15); }
+        .role-card.selected.agent { background: rgba(37,99,235,0.15); }
         .role-card .role-icon { font-size: 28px; display: block; margin-bottom: 8px; }
         .role-card .role-label { font-size: 13px; font-weight: 600; display: block; }
         .role-card .role-desc { font-size: 10px; margin-top: 4px; opacity: 0.8; }
@@ -124,6 +127,18 @@ $selectedRole = $selectedRole ?? 'customer';
         .login-link { text-align: center; margin-top: 24px; color: #64748b; font-size: 14px; }
         .login-link a { color: #f59e0b; text-decoration: none; font-weight: 600; }
         .login-link a:hover { text-decoration: underline; }
+
+        /* CAPTCHA styling */
+        .captcha-wrap { display: flex; gap: 8px; align-items: stretch; }
+        .captcha-wrap input { flex: 1; }
+        .captcha-wrap .input-group-text { 
+            background: #1e293b; border: 1px solid #334155; border-radius: 10px; 
+            padding: 4px 8px; display: flex; align-items: center; 
+        }
+        .captcha-wrap .input-group-text img { 
+            height: 44px; border-radius: 6px; display: block;
+            background: #fff;
+        }
         
         .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
         .terms-row input[type="checkbox"] { accent-color: #f59e0b; width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
@@ -146,7 +161,7 @@ $selectedRole = $selectedRole ?? 'customer';
     <div class="register-container">
         <div class="brand">
             <h1><i class="fas fa-home"></i> APS Dream Home</h1>
-            <p>Create your account â€” choose your role</p>
+            <p>Create your account — choose your role</p>
         </div>
         <div class="card">
             <?php if (!empty($errors)): ?>
@@ -228,12 +243,19 @@ $selectedRole = $selectedRole ?? 'customer';
                     </div>
                 </div>
 
+                <div class="form-group" id="referralGroup" style="display:<?= ($selectedRole === 'associate' || $selectedRole === 'agent') ? 'block' : 'none' ?>">
+                    <label><i class="fas fa-gift"></i> Referral Code</label>
+                    <div class="input-wrap">
+                        <input type="text" name="referral_code" id="referralCodeInput" value="<?= htmlspecialchars($ref) ?>" placeholder="Enter sponsor's referral code">
+                        <i class="fas fa-gift field-icon"></i>
+                    </div>
+                </div>
+
                 <div class="terms-row">
                     <input type="checkbox" name="terms" id="terms" required>
                     <label for="terms">I agree to the <a href="<?= BASE_URL ?>/terms">Terms of Service</a> and <a href="<?= BASE_URL ?>/privacy">Privacy Policy</a> *</label>
                 </div>
 
-                
 <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
 <button type="submit" class="btn-submit">
                     <i class="fas fa-user-plus"></i> Create Account
@@ -252,6 +274,9 @@ $selectedRole = $selectedRole ?? 'customer';
             document.querySelectorAll('.role-card').forEach(t => t.classList.remove('selected'));
             el.classList.add('selected');
             document.getElementById('selectedRole').value = role;
+            // Show referral field only for associate/agent
+            var refGroup = document.getElementById('referralGroup');
+            refGroup.style.display = (role === 'associate' || role === 'agent') ? 'block' : 'none';
         }
 
         // Password Toggle

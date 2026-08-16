@@ -22,7 +22,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
     <!-- RANK BENEFITS TABLE -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
-            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-medal text-warning me-2"></i>Rank Benefits â€” Commission Rates & Thresholds</h5>
+            <h5 class="card-title mb-0 fw-bold"><i class="fas fa-medal text-warning me-2"></i>Rank Benefits — Commission Rates & Thresholds</h5>
         </div>
         <div class="alert alert-info mb-3 mx-3 mt-3" role="alert">
             <h6 class="alert-heading"><i class="fas fa-layer-group me-2"></i>Differential Commission Model Active</h6>
@@ -37,7 +37,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                             <th>Order</th>
                             <th>Rank Name</th>
                             <th>Min Legs</th>
-                            <th>Min Volume (â‚¹)</th>
+                            <th>Min Volume (₹)</th>
                             <th>Direct %</th>
                             <th>Commission Model</th>
                             <th>Badge</th>
@@ -159,12 +159,12 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                     <small class="text-muted">Shared by VP+ ranks from total sales</small>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Min Qualifying Volume (â‚¹)</label>
+                    <label class="form-label fw-bold">Min Qualifying Volume (₹)</label>
                     <input type="number" name="settings[min_qualifying_volume]" value="<?= htmlspecialchars($settings['min_qualifying_volume'] ?? '50000') ?>" class="form-control" min="0" step="10000">
                     <small class="text-muted">Min monthly team sales for Track B</small>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Escrow Release Threshold (â‚¹)</label>
+                    <label class="form-label fw-bold">Escrow Release Threshold (₹)</label>
                     <input type="number" name="settings[escrow_release_threshold]" value="<?= htmlspecialchars($settings['escrow_release_threshold'] ?? '100000') ?>" class="form-control" min="10000" step="10000">
                     <small class="text-muted">Min escrow balance to trigger payout</small>
                 </div>
@@ -316,7 +316,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-2 col-sm-4">
                     <label class="form-label fw-semibold small"><?= $rl ?></label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text">â‚¹</span>
+                        <span class="input-group-text">₹</span>
                         <input type="number" name="rank_bonus[<?= $rk ?>]" value="<?= (int)($rankBonusAmounts[$rk] ?? 0) ?>"
                                class="form-control rank-bonus-input" min="0" step="1000" data-rank="<?= $rk ?>">
                     </div>
@@ -342,7 +342,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">Min Monthly Volume (â‚¹)</label>
+                    <label class="form-label fw-bold">Min Monthly Volume (₹)</label>
                     <input type="number" name="settings[min_monthly_volume]" value="<?= htmlspecialchars($settings['min_monthly_volume'] ?? '10000') ?>" class="form-control" min="0" step="1000">
                     <small class="text-muted">Associate must achieve this volume monthly to stay active</small>
                 </div>

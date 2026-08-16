@@ -67,6 +67,17 @@ class RegisterController extends BaseController
         if ($password !== $confirm) $errors[] = 'Passwords do not match';
         if (!in_array($role, ['customer', 'associate', 'agent'], true)) $errors[] = 'Invalid role selected';
 
+        // CAPTCHA validation
+        $captcha_code = trim($_POST['captcha_code'] ?? '');
+        if (empty($captcha_code)) {
+            $errors[] = 'Security code is required';
+        } else {
+            require_once __DIR__ . '/../../../Helpers/SimpleCaptcha.php';
+            if (!\SimpleCaptcha::validate($captcha_code)) {
+                $errors[] = 'Invalid or expired security code. Please try again.';
+            }
+        }
+
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old_input'] = $_POST;

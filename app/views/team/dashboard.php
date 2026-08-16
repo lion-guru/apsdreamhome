@@ -570,7 +570,7 @@
     <header class="team-header">
         <div class="header-content">
             <div class="welcome-section">
-                <h1>Team Management Center ðŸ‘¥</h1>
+                <h1>Team Management Center ðŸ'¥</h1>
                 <p>Monitor, manage, and grow your team</p>
             </div>
             <div class="team-stats">
@@ -617,7 +617,7 @@
                 <div class="overview-icon info">
                     <i class="bi bi-cash-stack"></i>
                 </div>
-                <div class="overview-value">â‚¹<?php echo htmlspecialchars(number_format($teamInfo['total_earnings'], 0) ); ?></div>
+                <div class="overview-value">₹<?php echo htmlspecialchars(number_format($teamInfo['total_earnings'], 0) ); ?></div>
                 <div class="overview-label">Team Earnings</div>
                 <div class="overview-change positive">
                     <i class="bi bi-plus-circle"></i> From <?php echo htmlspecialchars($teamInfo['contributing_members'] ?? '0'); ?> members
@@ -671,7 +671,7 @@
                                 <div class="text-muted small">Level <?php echo htmlspecialchars($performer['level'] ?? '0'); ?></div>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold text-success">â‚¹<?php echo htmlspecialchars(number_format($performer['earnings'], 0) ); ?></div>
+                                <div class="fw-bold text-success">₹<?php echo htmlspecialchars(number_format($performer['earnings'], 0) ); ?></div>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -763,7 +763,7 @@
             <div class="incentive-item <?php echo htmlspecialchars($incentive['type'] ?? 'primary'); ?>">
                 <div class="incentive-header">
                     <div class="incentive-title"><?php echo htmlspecialchars($incentive['title'] ?? 'Incentive'); ?></div>
-                    <div class="incentive-amount">â‚¹<?php echo htmlspecialchars(number_format($incentive['amount'], 0) ); ?></div>
+                    <div class="incentive-amount">₹<?php echo htmlspecialchars(number_format($incentive['amount'], 0) ); ?></div>
                 </div>
                 <div class="incentive-description"><?php echo htmlspecialchars($incentive['description'] ?? 'No description'); ?></div>
                 <?php if(isset($incentive['progress'])): ?>
@@ -864,7 +864,7 @@
             data: {
                 labels: earningsData.map(item => item.month),
                 datasets: [{
-                    label: 'Team Earnings (â‚¹)',
+                    label: 'Team Earnings (₹)',
                     data: earningsData.map(item => item.earnings),
                     borderColor: '#2962ff',
                     backgroundColor: 'rgba(41, 98, 255, 0.1)',
@@ -889,7 +889,7 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return 'â‚¹' + value.toLocaleString();
+                                return '₹' + value.toLocaleString();
                             }
                         }
                     }

@@ -16,8 +16,8 @@
                         <tr><th>Address</th><td><?= nl2br(htmlspecialchars($sale['customer_address'] ?? '-')) ?></td></tr>
                         <tr><th>Item Description</th><td><?= nl2br(htmlspecialchars($sale['item_description'] ?? '-')) ?></td></tr>
                         <tr><th>Quantity</th><td><?= number_format($sale['quantity'], 2) ?></td></tr>
-                        <tr><th>Rate</th><td>â‚¹<?= number_format($sale['rate'], 2) ?></td></tr>
-                        <tr><th>Total Amount</th><td><h4 class="text-success mb-0">â‚¹<?= number_format($sale['amount'], 2) ?></h4></td></tr>
+                        <tr><th>Rate</th><td>₹<?= number_format($sale['rate'], 2) ?></td></tr>
+                        <tr><th>Total Amount</th><td><h4 class="text-success mb-0">₹<?= number_format($sale['amount'], 2) ?></h4></td></tr>
                         <tr><th>Payment Method</th><td><?= htmlspecialchars($sale['payment_method'] ?? '-') ?></td></tr>
                         <tr><th>Reference No</th><td><?= htmlspecialchars($sale['reference_no'] ?? '-') ?></td></tr>
                         <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($sale['notes'] ?? '-')) ?></td></tr>

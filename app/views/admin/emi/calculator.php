@@ -13,9 +13,9 @@
                 <div class="aps-cp-card-header"><i class="fas fa-sliders-h me-2"></i>Loan Details</div>
                 <div class="aps-cp-card-body">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Loan Amount (â‚¹)</label>
+                        <label class="form-label fw-bold">Loan Amount (₹)</label>
                         <input type="number" id="loanAmount" class="form-control" value="2500000" min="100000" step="50000">
-                        <div class="form-text">Min â‚¹1,00,000</div>
+                        <div class="form-text">Min ₹1,00,000</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Interest Rate (% per annum)</label>
@@ -36,15 +36,15 @@
                     <div class="row text-center">
                         <div class="col-4">
                             <div class="aps-cp-stat-label">Monthly EMI</div>
-                            <div class="aps-cp-stat-value text-primary fs-5" id="monthlyEmi">â‚¹0</div>
+                            <div class="aps-cp-stat-value text-primary fs-5" id="monthlyEmi">₹0</div>
                         </div>
                         <div class="col-4">
                             <div class="aps-cp-stat-label">Total Interest</div>
-                            <div class="aps-cp-stat-value text-danger fs-5" id="totalInterest">â‚¹0</div>
+                            <div class="aps-cp-stat-value text-danger fs-5" id="totalInterest">₹0</div>
                         </div>
                         <div class="col-4">
                             <div class="aps-cp-stat-label">Total Payment</div>
-                            <div class="aps-cp-stat-value text-success fs-5" id="totalPayment">â‚¹0</div>
+                            <div class="aps-cp-stat-value text-success fs-5" id="totalPayment">₹0</div>
                         </div>
                     </div>
                     <canvas id="emiPieChart" height="180" class="mt-3"></canvas>
@@ -80,9 +80,9 @@
 <script>
 let emiChart = null;
 function formatINR(n) {
-    if (n >= 10000000) return 'â‚¹' + (n/10000000).toFixed(2) + ' Cr';
-    if (n >= 100000) return 'â‚¹' + (n/100000).toFixed(2) + ' L';
-    return 'â‚¹' + n.toLocaleString('en-IN');
+    if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
+    if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+    return '₹' + n.toLocaleString('en-IN');
 }
 
 function calculateEMI() {

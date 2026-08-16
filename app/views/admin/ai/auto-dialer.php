@@ -147,7 +147,7 @@ $recent_logs = $recent_logs ?? [];
                                     <small class="text-muted"><?= date('d M H:i', strtotime($log['created_at'])) ?></small>
                                 </div>
                                 <div>
-                                    <span class="badge bg-<?= ($log['outcome'] ?? '') === 'connected' ? 'success' : (($log['outcome'] ?? '') === 'not_answered' ? 'secondary' : 'light') ?>"><?= ucfirst(str_replace('_', ' ', $log['outcome'] ?? 'â€”')) ?></span>
+                                    <span class="badge bg-<?= ($log['outcome'] ?? '') === 'connected' ? 'success' : (($log['outcome'] ?? '') === 'not_answered' ? 'secondary' : 'light') ?>"><?= ucfirst(str_replace('_', ' ', $log['outcome'] ?? '—')) ?></span>
                                     <span class="badge bg-dark"><?= ucfirst($log['method'] ?? 'app') ?></span>
                                     <?php if (!empty($log['duration'])): ?><span class="badge bg-info"><?= $log['duration'] ?>s</span><?php endif; ?>
                                 </div>

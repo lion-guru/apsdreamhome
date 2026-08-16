@@ -31,11 +31,11 @@ $esignStatus = $esign['status'] ?? 'pending';
                     <div class="row g-3">
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('esign_booking_number') ?></small>
-                            <strong><?= htmlspecialchars($booking['booking_number'] ?? 'â€”') ?></strong>
+                            <strong><?= htmlspecialchars($booking['booking_number'] ?? '—') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('esign_plot') ?></small>
-                            <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> â€” <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
+                            <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('esign_area') ?></small>
@@ -43,11 +43,11 @@ $esignStatus = $esign['status'] ?? 'pending';
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('esign_dimensions') ?></small>
-                            <strong><?= htmlspecialchars($booking['dimension_label'] ?? 'â€”') ?></strong>
+                            <strong><?= htmlspecialchars($booking['dimension_label'] ?? '—') ?></strong>
                         </div>
                         <div class="col-12">
                             <small class="text-muted d-block"><?= __('esign_total_amount') ?></small>
-                            <strong class="fs-5 text-primary">â‚¹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
+                            <strong class="fs-5 text-primary">₹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@ $esignStatus = $esign['status'] ?? 'pending';
                         <div class="text-center py-4">
                             <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
                             <h5><?= __('esign_signed_success') ?></h5>
-                            <p class="text-muted"><?= sprintf(__('esign_signed_desc'), htmlspecialchars($esign['signed_at'] ?? 'â€”')) ?></p>
+                            <p class="text-muted"><?= sprintf(__('esign_signed_desc'), htmlspecialchars($esign['signed_at'] ?? '—')) ?></p>
                             <button class="btn btn-success mt-2" onclick="verifySignature()">
                                 <i class="fas fa-certificate me-1"></i><?= __('esign_verify_signature') ?>
                             </button>

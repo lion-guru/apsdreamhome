@@ -43,7 +43,7 @@ $bookings = $bookings ?? [];
 
                 <div class="aps-cp-form-row" class="style-37292">
                     <div class="aps-cp-form-group">
-                        <label class="aps-cp-form-label">Amount (â‚¹) <span class="style-85206">*</span></label>
+                        <label class="aps-cp-form-label">Amount (₹) <span class="style-85206">*</span></label>
                         <input type="number" name="amount" class="aps-cp-form-input" required min="1" step="0.01" placeholder="e.g. 5000">
                     </div>
                     <div class="aps-cp-form-group">

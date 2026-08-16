@@ -6,7 +6,7 @@ use App\Core\Database\Database;
 
 class CRMSettingsController extends AdminController
 {
-    private Database $db;
+    protected $db;
 
     public function __construct()
     {
@@ -42,7 +42,7 @@ class CRMSettingsController extends AdminController
         
         $placeholders = str_repeat('?,', count($settingsKeys) - 1) . '?';
         
-        $query = "SELECT key_name, value FROM settings WHERE key_name IN ($placeholders)";
+        $query = "SELECT `key`, value FROM settings WHERE `key` IN ($placeholders)";
         $params = $settingsKeys;
         
         if ($tid > 1) {
@@ -74,7 +74,7 @@ class CRMSettingsController extends AdminController
         ];
 
         foreach ($rows as $row) {
-            $settings[$row['key_name']] = $row['value'];
+            $settings[$row['key']] = $row['value'];
         }
 
         $this->render('admin/crm/settings', [
@@ -129,7 +129,7 @@ class CRMSettingsController extends AdminController
         try {
             foreach ($updates as $key => $val) {
                 // Upsert
-                $q = "SELECT id FROM settings WHERE key_name = ?";
+                $q = "SELECT id FROM settings WHERE `key` = ?";
                 $p = [$key];
                 if ($tid > 1) {
                     $q .= " AND tenant_id = ?";
@@ -142,15 +142,7 @@ class CRMSettingsController extends AdminController
                     $u = "UPDATE settings SET value = ? WHERE id = ?";
                     $this->db->query($u, [$val, $exists['id']]);
                 } else {
-                    $cols = "key_name, value, description";
-                    $vals = "?, ?, 'CRM Setting'";
-                    $ip = [$key, $val];
-                    if ($tid > 1) {
-                        $cols .= ", tenant_id";
-                        $vals .= ", ?";
-                        $ip[] = $tid;
-                    }
-                    $this->db->query("INSERT INTO settings ($cols) VALUES ($vals)", $ip);
+                    $this->db->query("INSERT INTO settings (`key`, value) VALUES (?, ?)", [$key, $val]);
                 }
             }
             $_SESSION['crm_settings_success'] = 'CRM settings updated successfully.';

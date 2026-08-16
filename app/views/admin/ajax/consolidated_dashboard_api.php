@@ -185,9 +185,13 @@ function getFinancialData($db)
     }
     $financial['receivables'] = $row['total'] ?? 0;
 
-    // Payables
-    $row = $db->fetch("SELECT SUM(current_balance) as total FROM suppliers WHERE current_balance > 0");
-    $financial['payables'] = $row['total'] ?? 0;
+    try {
+        // Payables
+        $row = $db->fetch("SELECT SUM(current_balance) as total FROM vendors WHERE current_balance > 0");
+        $financial['payables'] = $row['total'] ?? 0;
+    } catch (\Throwable $e) {
+        $financial['payables'] = 0;
+    }
 
     // Monthly income/expense
     $current_month = date('Y-m');

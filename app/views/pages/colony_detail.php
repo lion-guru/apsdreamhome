@@ -21,7 +21,8 @@ if (!empty($amenitiesRaw)) {
 }
 $page_title = $colony['meta_title'] ?: ($colony['name'] . ' - APS Dream Home');
 $page_description = $colony['meta_description'] ?: ($colony['name'] . ' - Premium residential plots and properties');
-$bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_image'], '/') : '';
+$bannerRaw = $colony['banner_image'] ?? '';
+$bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || str_starts_with($bannerRaw, 'https://')) ? $bannerRaw : ($bannerRaw ? BASE_URL . '/' . ltrim($bannerRaw, '/') : '');
 ?>
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .hero-section { position:relative; min-height:60vh; display:flex; align-items:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); overflow:hidden; }
@@ -64,7 +65,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                 <div class="row g-3">
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_total_plots') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_available') ?></div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num">Ã¢â€šÂ¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num">à¢—šÂ¹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
                     <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl"><?= __('colony_amenities') ?></div></div></div>
                 </div>
             </div>
@@ -104,7 +105,9 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
         <div class="row g-5 align-items-center">
             <?php if ($colony['image_path'] ?? ''): ?>
             <div class="col-lg-6">
-                <img src="<?= BASE_URL ?>/<?php echo htmlspecialchars($colony['image_path'] ?? ''); ?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow" loading="lazy">
+                <?php $imgSrc = $colony['image_path'] ?? '';
+                      $imgSrc = (str_starts_with($imgSrc, 'http://') || str_starts_with($imgSrc, 'https://')) ? $imgSrc : BASE_URL . '/' . $imgSrc; ?>
+                <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid rounded-4 shadow" loading="lazy">
             </div>
             <?php endif; ?>
             <div class="col-lg-<?php echo ($colony['image_path'] ?? '') ? '6' : '12'; ?>">
@@ -142,7 +145,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                         <span class="badge bg-success"><?= __('colony_available') ?></span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo $p['area_sqft'] ?? 0; ?> sqft</p>
-                    <div class="price">Ã¢â€šÂ¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
+                    <div class="price">à¢—šÂ¹<?php echo number_format($p['total_price'] ?? 0); ?></div>
                 </div>
             </div>
             <?php endforeach; ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic login view ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ redirects to role-specific login pages.
+ * Generic login view — redirects to role-specific login pages.
  * Used by AuthenticationController as a unified entry point.
  */
 $role = $_GET['role'] ?? '';

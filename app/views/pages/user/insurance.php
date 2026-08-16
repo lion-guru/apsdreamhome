@@ -63,8 +63,8 @@ ob_start();
                         <td><code><?= htmlspecialchars($p['policy_number']) ?></code></td>
                         <td><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($p['plan_name']) ?></td>
                         <td><span class="aps-cp-badge aps-cp-badge-<?= $categoryColors[$cat] ?? 'primary' ?>"><?= htmlspecialchars($categoryNames[$cat] ?? ucfirst($cat)) ?></span></td>
-                        <td>â‚¹<?= number_format((float)$p['sum_insured']) ?></td>
-                        <td>â‚¹<?= number_format((float)$p['premium_amount']) ?></td>
+                        <td>₹<?= number_format((float)$p['sum_insured']) ?></td>
+                        <td>₹<?= number_format((float)$p['premium_amount']) ?></td>
                         <td><?= htmlspecialchars(date('M j, Y', strtotime($p['end_date']))) ?></td>
                         <td><span class="aps-cp-badge aps-cp-badge-<?= $statusColor ?>"><?= htmlspecialchars(ucfirst($p['status'] ?? 'pending')) ?></span></td>
                     </tr>
@@ -95,14 +95,14 @@ ob_start();
                     <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($plan['plan_name']) ?></h4>
                     <?php if (!empty($plan['is_featured'])): ?><span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= __('user_insurance_featured', null, 'Featured') ?></span><?php endif; ?>
                 </div>
-                <p class="aps-cp-info-card-meta"><?= htmlspecialchars($plan['insurer_name'] ?? '') ?> | <?= __('user_insurance_coverage', null, 'Coverage') ?>: â‚¹<?= number_format((float)$plan['coverage_amount']) ?></p>
+                <p class="aps-cp-info-card-meta"><?= htmlspecialchars($plan['insurer_name'] ?? '') ?> | <?= __('user_insurance_coverage', null, 'Coverage') ?>: ₹<?= number_format((float)$plan['coverage_amount']) ?></p>
                 <?php if (!empty($plan['features'])): ?>
                 <ul class="aps-cp-list">
                     <?php foreach ($plan['features'] as $f): ?><li><?= htmlspecialchars($f) ?></li><?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
                 <div class="aps-cp-info-card-foot">
-                    <strong><?= __('user_insurance_from', null, 'From') ?> â‚¹<?= number_format((float)$plan['premium_monthly']) ?>/<?= __('user_insurance_mo', null, 'mo') ?></strong>
+                    <strong><?= __('user_insurance_from', null, 'From') ?> ₹<?= number_format((float)$plan['premium_monthly']) ?>/<?= __('user_insurance_mo', null, 'mo') ?></strong>
                     <button class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary" onclick="openEnrolModal(<?= (int)$plan['id'] ?>, '<?= htmlspecialchars(addslashes($plan['plan_name'])) ?>')"><?= __('user_insurance_enrol_btn', null, 'Enrol') ?></button>
                 </div>
             </div>

@@ -50,7 +50,7 @@ $logs = $logs ?? [];
                                     <?php elseif ($status === 'running'): ?>
                                         <span class="badge bg-warning">Running</span>
                                     <?php else: ?>
-                                        <span class="badge bg-secondary"><?= htmlspecialchars($status) ?: 'Unknown' ?></span>
+                                        <span class="badge bg-secondary"><?= htmlspecialchars($status ?? '') ?: 'Unknown' ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td><code><?= htmlspecialchars(substr($log['output'] ?? '', 0, 120)) ?></code></td>

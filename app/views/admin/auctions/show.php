@@ -29,27 +29,27 @@ ob_start();
                     <div class="row g-2">
                         <div class="col-md-6">
                             <small class="text-muted d-block">Start Price</small>
-                            <strong>â‚¹<?= number_format($auction['start_price']) ?></strong>
+                            <strong>₹<?= number_format($auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Current Bid</small>
-                            <strong class="text-success">â‚¹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
+                            <strong class="text-success">₹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Bid Increment</small>
-                            <strong>â‚¹<?= number_format($auction['bid_increment']) ?></strong>
+                            <strong>₹<?= number_format($auction['bid_increment']) ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Buy Now Price</small>
-                            <strong><?= $auction['buy_now_price'] ? 'â‚¹' . number_format($auction['buy_now_price']) : 'â€”' ?></strong>
+                            <strong><?= $auction['buy_now_price'] ? '₹' . number_format($auction['buy_now_price']) : '—' ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Deposit Required</small>
-                            <strong><?= $auction['deposit_amount'] ? 'â‚¹' . number_format($auction['deposit_amount']) : 'None' ?></strong>
+                            <strong><?= $auction['deposit_amount'] ? '₹' . number_format($auction['deposit_amount']) : 'None' ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Reserve Price</small>
-                            <strong><?= $auction['reserve_price'] ? 'â‚¹' . number_format($auction['reserve_price']) : 'â€”' ?></strong>
+                            <strong><?= $auction['reserve_price'] ? '₹' . number_format($auction['reserve_price']) : '—' ?></strong>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted d-block">Starts</small>
@@ -87,7 +87,7 @@ ob_start();
                                         <br><small class="text-muted"><?= date('M j, H:i', strtotime($b['placed_at'])) ?></small>
                                     </div>
                                     <div class="text-end">
-                                        <strong>â‚¹<?= number_format($b['bid_amount']) ?></strong>
+                                        <strong>₹<?= number_format($b['bid_amount']) ?></strong>
                                         <br><span class="badge bg-<?= ['winning'=>'success','outbid'=>'secondary','won'=>'success','lost'=>'dark'][$b['status']] ?? 'secondary' ?>" class="style-65487"><?= ucfirst($b['status']) ?></span>
                                     </div>
                                 </div>

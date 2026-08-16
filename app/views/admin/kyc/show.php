@@ -15,10 +15,10 @@ unset($_SESSION['kyc_verify_results']);
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
                         <tr><th class="style-97126">ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
-                        <tr><th>Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? 'â€”') ?></strong></td></tr>
-                        <tr><th>PAN</th><td><code><?= htmlspecialchars($r['pan_number'] ?? 'â€”') ?></code></td></tr>
-                        <tr><th>Aadhaar</th><td><code><?= htmlspecialchars($r['aadhaar_number'] ?? 'â€”') ?></code></td></tr>
-                        <tr><th>Date of Birth</th><td><?= htmlspecialchars($r['dob'] ?? 'â€”') ?></td></tr>
+                        <tr><th>Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? '—') ?></strong></td></tr>
+                        <tr><th>PAN</th><td><code><?= htmlspecialchars($r['pan_number'] ?? '—') ?></code></td></tr>
+                        <tr><th>Aadhaar</th><td><code><?= htmlspecialchars($r['aadhaar_number'] ?? '—') ?></code></td></tr>
+                        <tr><th>Date of Birth</th><td><?= htmlspecialchars($r['dob'] ?? '—') ?></td></tr>
                         <tr><th>Status</th>
                             <td>
                                 <span class="badge bg-<?= match($r['status'] ?? 'pending') { 'approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning', default => 'secondary' } ?> fs-6">

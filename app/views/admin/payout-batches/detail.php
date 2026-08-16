@@ -48,7 +48,7 @@
         <i class="fas fa-info-circle me-2"></i>
         Status: <strong><?= str_replace('_', ' ', ucfirst($batch['status'])) ?></strong>
         <?php if ($batch['approved_by_name']): ?>
-            â€” Approved by <?= htmlspecialchars($batch['approved_by_name']) ?> on <?= date('d M Y H:i', strtotime($batch['approved_at'])) ?>
+            — Approved by <?= htmlspecialchars($batch['approved_by_name']) ?> on <?= date('d M Y H:i', strtotime($batch['approved_at'])) ?>
         <?php endif; ?>
     </div>
 
@@ -65,7 +65,7 @@
         <div class="col-md-3">
             <div class="card" class="style-62867">
                 <div class="card-body text-center">
-                    <h3 class="style-86204">â‚¹<?= number_format((float)$batch['total_amount']) ?></h3>
+                    <h3 class="style-86204">₹<?= number_format((float)$batch['total_amount']) ?></h3>
                     <small class="style-77712">Gross Amount</small>
                 </div>
             </div>
@@ -78,7 +78,7 @@
                     $totalTds = array_sum(array_map(function($e) { return (float)($e['tds_amount'] ?? 0); }, $entries));
                     $totalNet = array_sum(array_map(function($e) { return (float)($e['net_amount'] ?? 0); }, $entries));
                     ?>
-                    <h3 class="style-52183">â‚¹<?= number_format($totalTds) ?></h3>
+                    <h3 class="style-52183">₹<?= number_format($totalTds) ?></h3>
                     <small class="style-77712">TDS Deducted</small>
                 </div>
             </div>
@@ -86,7 +86,7 @@
         <div class="col-md-3">
             <div class="card" class="style-62867">
                 <div class="card-body text-center">
-                    <h3 class="style-29525">â‚¹<?= number_format($totalNet) ?></h3>
+                    <h3 class="style-29525">₹<?= number_format($totalNet) ?></h3>
                     <small class="style-77712">Net Payout</small>
                 </div>
             </div>
@@ -150,9 +150,9 @@
                                 <th class="style-56943">#</th>
                                 <th class="style-56943">Beneficiary</th>
                                 <th class="style-56943">Type</th>
-                                <th class="style-56943">Gross (â‚¹)</th>
-                                <th class="style-56943">TDS (â‚¹)</th>
-                                <th class="style-56943">Net (â‚¹)</th>
+                                <th class="style-56943">Gross (₹)</th>
+                                <th class="style-56943">TDS (₹)</th>
+                                <th class="style-56943">Net (₹)</th>
                                 <th class="style-56943">Status</th>
                                 <th class="style-56943">Ref</th>
                                 <?php if ($batch['status'] === 'processing'): ?>
@@ -166,9 +166,9 @@
                                     <td><?= $e['id'] ?></td>
                                     <td><?= htmlspecialchars($e['beneficiary_name'] ?? 'User #' . $e['beneficiary_user_id']) ?></td>
                                     <td><span class="badge bg-info" class="style-68658"><?= $e['commission_type'] ?? 'N/A' ?></span></td>
-                                    <td>â‚¹<?= number_format((float)$e['amount']) ?></td>
-                                    <td class="style-52183">â‚¹<?= number_format((float)$e['tds_amount']) ?></td>
-                                    <td class="style-63408">â‚¹<?= number_format((float)$e['net_amount']) ?></td>
+                                    <td>₹<?= number_format((float)$e['amount']) ?></td>
+                                    <td class="style-52183">₹<?= number_format((float)$e['tds_amount']) ?></td>
+                                    <td class="style-63408">₹<?= number_format((float)$e['net_amount']) ?></td>
                                     <td>
                                         <?php
                                         $eColors = ['pending' => '#ffc107', 'processing' => '#17a2b8', 'completed' => '#28a745', 'failed' => '#dc3545', 'cancelled' => '#6c757d'];
@@ -192,9 +192,9 @@
                         <tfoot>
                             <tr class="style-6026">
                                 <td colspan="3"><strong class="style-56943">Total</strong></td>
-                                <td><strong>â‚¹<?= number_format(array_sum(array_map(fn($e) => (float)$e['amount'], $entries))) ?></strong></td>
-                                <td><strong class="style-52183">â‚¹<?= number_format(array_sum(array_map(fn($e) => (float)$e['tds_amount'], $entries))) ?></strong></td>
-                                <td><strong class="style-56943">â‚¹<?= number_format(array_sum(array_map(fn($e) => (float)$e['net_amount'], $entries))) ?></strong></td>
+                                <td><strong>₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['amount'], $entries))) ?></strong></td>
+                                <td><strong class="style-52183">₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['tds_amount'], $entries))) ?></strong></td>
+                                <td><strong class="style-56943">₹<?= number_format(array_sum(array_map(fn($e) => (float)$e['net_amount'], $entries))) ?></strong></td>
                                 <td colspan="3"></td>
                             </tr>
                         </tfoot>

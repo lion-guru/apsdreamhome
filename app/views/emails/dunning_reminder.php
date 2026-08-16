@@ -13,7 +13,7 @@
     
     <div class="style-10299">
         <p class="style-46091">Amount Due</p>
-        <p class="style-30392">â‚¹{{amount}}</p>
+        <p class="style-30392">₹{{amount}}</p>
     </div>
 
     <table class="style-73344">

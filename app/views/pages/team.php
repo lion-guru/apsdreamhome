@@ -604,7 +604,7 @@ foreach ($team_members ?? [] as $tm) {
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 mb-3" class="style-51894"><i class="fas fa-microchip me-2"></i>Tech Powered</span>
                 <h2 class="section-title">AI & Software Innovation</h2>
-                <p class="section-subtitle text-start mb-3">APS Dream Home is not just a real estate company â€” we're a tech company that does real estate. Our in-house team builds AI tools, automation, and software that gives us a competitive edge.</p>
+                <p class="section-subtitle text-start mb-3">APS Dream Home is not just a real estate company — we're a tech company that does real estate. Our in-house team builds AI tools, automation, and software that gives us a competitive edge.</p>
                 <div class="row g-3 mt-2">
                     <div class="col-md-6">
                         <div class="feature-card text-start p-3">
@@ -631,7 +631,7 @@ foreach ($team_members ?? [] as $tm) {
                         <div class="feature-card text-start p-3">
                             <div class="f-icon text-info" class="style-43152"><i class="fas fa-calculator"></i></div>
                             <h5 class="style-85997">Smart Calculators</h5>
-                            <p class="style-64777">EMI, stamp duty, loan eligibility â€” all AI-powered.</p>
+                            <p class="style-64777">EMI, stamp duty, loan eligibility — all AI-powered.</p>
                         </div>
                     </div>
                 </div>
@@ -649,7 +649,7 @@ foreach ($team_members ?? [] as $tm) {
                         <span class="badge bg-secondary">Docker</span>
                         <span class="badge bg-purple" class="style-90453">Flutter</span>
                     </div>
-                    <p class="text-muted small">Built in-house by our Tech Pioneers team led by Vijay Verma (CTO). From AI chatbots to interactive property maps â€” everything is custom-built for the Indian real estate market.</p>
+                    <p class="text-muted small">Built in-house by our Tech Pioneers team led by Vijay Verma (CTO). From AI chatbots to interactive property maps — everything is custom-built for the Indian real estate market.</p>
                     <a href="<?= BASE_URL ?>/tools-hub" class="btn btn-outline-success rounded-pill"><i class="fas fa-flask me-2"></i>Explore Our Tools</a>
                 </div>
             </div>
@@ -663,8 +663,8 @@ foreach ($team_members ?? [] as $tm) {
         <div class="row align-items-center">
             <div class="col-lg-5 mb-4 mb-lg-0">
                 <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3" class="style-51894"><i class="fas fa-graduation-cap me-2"></i>Student Program</span>
-                <h2 class="section-title">College Students â€” Earn While You Learn</h2>
-                <p class="section-subtitle text-start mb-3">Perfect for students who want financial independence. Focus on rental properties â€” the easiest entry point in real estate.</p>
+                <h2 class="section-title">College Students — Earn While You Learn</h2>
+                <p class="section-subtitle text-start mb-3">Perfect for students who want financial independence. Focus on rental properties — the easiest entry point in real estate.</p>
                 <ul class="list-unstyled">
                     <li class="mb-3 d-flex align-items-start gap-3">
                         <i class="fas fa-home text-primary mt-1" class="style-30322"></i>

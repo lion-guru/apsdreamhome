@@ -53,13 +53,13 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                     <div class="col-6 col-md-3">
                         <div class="p-2 rounded" class="style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_monthly_vol', [], 'Monthly Volume') ?></div>
-                            <div class="fw-bold">â‚¹<?= number_format($monthlyVolume) ?></div>
+                            <div class="fw-bold">₹<?= number_format($monthlyVolume) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="p-2 rounded" class="style-93131">
                             <div class="small opacity-75"><?= __('assoc_rank_lifetime_vol', [], 'Lifetime Volume') ?></div>
-                            <div class="fw-bold">â‚¹<?= number_format($lifetimeVolume) ?></div>
+                            <div class="fw-bold">₹<?= number_format($lifetimeVolume) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
@@ -111,7 +111,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
             <div class="col-md-6">
                 <div class="d-flex justify-content-between mb-2">
                     <span class="fw-bold"><?= __('assoc_rank_biz_volume', [], 'Business Volume') ?></span>
-                    <span>â‚¹<?= number_format($lifetimeVolume) ?> / â‚¹<?= number_format($targetVolume) ?></span>
+                    <span>₹<?= number_format($lifetimeVolume) ?> / ₹<?= number_format($targetVolume) ?></span>
                 </div>
                 <div class="progress" class="style-58663">
                     <div class="progress-bar <?= $volumePct >= 100 ? 'bg-success' : '' ?>" role="progressbar" 
@@ -120,7 +120,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                     </div>
                 </div>
                 <?php if ($volumePct < 100): ?>
-                    <small class="text-muted"><?= __('assoc_rank_more_needed', [], 'â‚¹%s more needed') ?></small>
+                    <small class="text-muted"><?= __('assoc_rank_more_needed', [], '₹%s more needed') ?></small>
                 <?php else: ?>
                     <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('assoc_rank_target_achieved', [], 'Target achieved!') ?></small>
                 <?php endif; ?>
@@ -195,7 +195,7 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                                     <strong><?= $rankDisplay[$rankName] ?? $rank['rank_name'] ?></strong>
                                 </div>
                             </td>
-                            <td>â‚¹<?= number_format($rank['min_qualifying_volume']) ?></td>
+                            <td>₹<?= number_format($rank['min_qualifying_volume']) ?></td>
                             <td><?= $rank['min_leg_count'] ?> <?= __('assoc_rank_members', [], 'members') ?></td>
                             <td><?= $rank['direct_sale_pct'] ?>%</td>
                             <td><span class="badge bg-light text-dark"><?= $config['reward'] ?></span></td>

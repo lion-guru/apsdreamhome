@@ -135,9 +135,9 @@ $payout_history = $payout_history ?? [];
     $rankBenefits      = $rank_benefits      ?? [];
     ?>
 
-    <!-- â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�
+    <!-- •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
          MY RANK PROGRESS SECTION
-    â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� -->
+    •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� -->
     <div class="row g-4 mb-4">
 
         <!-- LEFT: Rank Progress Card -->
@@ -173,8 +173,8 @@ $payout_history = $payout_history ?? [];
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mt-2">
-                            <small class="text-muted">Your GBV: <strong class="text-dark">â‚¹<?= number_format($lifetimeSales) ?></strong></small>
-                            <small class="text-muted">Need: <strong class="text-danger">â‚¹<?= number_format($amountToNext) ?> more</strong></small>
+                            <small class="text-muted">Your GBV: <strong class="text-dark">₹<?= number_format($lifetimeSales) ?></strong></small>
+                            <small class="text-muted">Need: <strong class="text-danger">₹<?= number_format($amountToNext) ?> more</strong></small>
                         </div>
                     </div>
 
@@ -191,7 +191,7 @@ $payout_history = $payout_history ?? [];
                     <?php else: ?>
                     <div class="alert alert-success py-2 mb-3">
                         <i class="fas fa-crown me-2"></i>
-                        <strong>Congratulations!</strong> You are at the highest rank â€” <strong>Site Manager (20%)</strong>
+                        <strong>Congratulations!</strong> You are at the highest rank — <strong>Site Manager (20%)</strong>
                     </div>
                     <?php endif; ?>
 
@@ -221,7 +221,7 @@ $payout_history = $payout_history ?? [];
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>My Earnings Breakdown</h6>
-                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">Total: â‚¹<?= number_format($totalCommEarned) ?></span>
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">Total: ₹<?= number_format($totalCommEarned) ?></span>
                     </div>
 
                     <?php
@@ -254,7 +254,7 @@ $payout_history = $payout_history ?? [];
                             <div class="flex-grow-1 min-w-0">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <small class="fw-semibold text-dark text-truncate"><?= htmlspecialchars($typeMeta['label']) ?></small>
-                                    <small class="fw-bold ms-2 flex-shrink-0" class="style-44543">â‚¹<?= number_format($ct['total']) ?></small>
+                                    <small class="fw-bold ms-2 flex-shrink-0" class="style-44543">₹<?= number_format($ct['total']) ?></small>
                                 </div>
                                 <div class="progress" class="style-94565">
                                     <div class="progress-bar" class="style-32326"></div>
@@ -558,7 +558,7 @@ $payout_history = $payout_history ?? [];
                                             ];
                                             ?>
                                             <i class="fas <?= $typeIcons[$type] ?? 'fa-coins' ?> text-success me-1"></i>
-                                            <?= htmlspecialchars($type) ?>
+                                            <?= htmlspecialchars($type ?? '') ?>
                                         </span>
                                     </td>
                                     <td class="fw-bold text-success">&#8377;<?= number_format($comm['amount'] ?? 0, 2) ?></td>
@@ -697,7 +697,7 @@ $payout_history = $payout_history ?? [];
 
     function requestPayout() {
         <?php if ($pending_payout > 0): ?>
-        if (confirm('<?= __('mlm_dash_confirm_payout', ['amount' => number_format($pending_payout, 2)], 'Request payout of â‚¹' . number_format($pending_payout, 2) . '?') ?>')) {
+        if (confirm('<?= __('mlm_dash_confirm_payout', ['amount' => number_format($pending_payout, 2)], 'Request payout of ₹' . number_format($pending_payout, 2) . '?') ?>')) {
             alert('<?= __('mlm_dash_payout_submitted', [], 'Payout request submitted successfully!') ?>');
         }
         <?php else: ?>

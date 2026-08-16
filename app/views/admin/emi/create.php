@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <option value="<?php echo $booking['id']; ?>" data-amount="<?php echo $booking['total_amount']; ?>">
                                         <?php echo htmlspecialchars($booking['booking_number'] ?? ''); ?> - 
                                         <?php echo htmlspecialchars($booking['customer_name'] ?? ''); ?> - 
-                                        â‚¹<?php echo number_format(floatval($booking['total_amount'] ?? 0)); ?>
+                                        ₹<?php echo number_format(floatval($booking['total_amount'] ?? 0)); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -40,13 +40,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         
                         <!-- Total Amount -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Total Amount (â‚¹) *</label>
+                            <label class="form-label">Total Amount (₹) *</label>
                             <input type="number" name="total_amount" class="form-control" step="0.01" min="0" required readonly>
                         </div>
                         
                         <!-- Down Payment -->
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Down Payment (â‚¹) *</label>
+                            <label class="form-label">Down Payment (₹) *</label>
                             <input type="number" name="down_payment" class="form-control" step="0.01" min="0" required>
                         </div>
                         
@@ -69,19 +69,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <div class="row">
                             <div class="col-md-3">
                                 <small>Loan Amount:</small>
-                                <p class="mb-0 fw-bold" id="loanAmount">â‚¹0</p>
+                                <p class="mb-0 fw-bold" id="loanAmount">₹0</p>
                             </div>
                             <div class="col-md-3">
                                 <small>Monthly EMI:</small>
-                                <p class="mb-0 fw-bold" id="monthlyEmi">â‚¹0</p>
+                                <p class="mb-0 fw-bold" id="monthlyEmi">₹0</p>
                             </div>
                             <div class="col-md-3">
                                 <small>Total Interest:</small>
-                                <p class="mb-0 fw-bold" id="totalInterest">â‚¹0</p>
+                                <p class="mb-0 fw-bold" id="totalInterest">₹0</p>
                             </div>
                             <div class="col-md-3">
                                 <small>Total Payable:</small>
-                                <p class="mb-0 fw-bold" id="totalPayable">â‚¹0</p>
+                                <p class="mb-0 fw-bold" id="totalPayable">₹0</p>
                             </div>
                         </div>
                     </div>
@@ -130,10 +130,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 const totalPayable = downPayment + (emiAmount * tenureMonths);
                 const totalInterest = totalPayable - totalAmount;
                 
-                document.getElementById('loanAmount').textContent = 'â‚¹' + loanAmount.toLocaleString('en-IN', {maximumFractionDigits: 2});
-                document.getElementById('monthlyEmi').textContent = 'â‚¹' + emiAmount.toLocaleString('en-IN', {maximumFractionDigits: 2});
-                document.getElementById('totalInterest').textContent = 'â‚¹' + totalInterest.toLocaleString('en-IN', {maximumFractionDigits: 2});
-                document.getElementById('totalPayable').textContent = 'â‚¹' + totalPayable.toLocaleString('en-IN', {maximumFractionDigits: 2});
+                document.getElementById('loanAmount').textContent = '₹' + loanAmount.toLocaleString('en-IN', {maximumFractionDigits: 2});
+                document.getElementById('monthlyEmi').textContent = '₹' + emiAmount.toLocaleString('en-IN', {maximumFractionDigits: 2});
+                document.getElementById('totalInterest').textContent = '₹' + totalInterest.toLocaleString('en-IN', {maximumFractionDigits: 2});
+                document.getElementById('totalPayable').textContent = '₹' + totalPayable.toLocaleString('en-IN', {maximumFractionDigits: 2});
                 document.getElementById('emiPreview').style.display = 'block';
             }
         }

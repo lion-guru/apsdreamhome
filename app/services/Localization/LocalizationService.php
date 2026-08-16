@@ -36,8 +36,8 @@ class LocalizationService
     private array $translationCache;
 
     // System Dependencies
-    private Database $db;
-    private LoggerInterface $logger;
+    private ?Database $db;
+    private ?LoggerInterface $logger;
 
     // Advanced Configuration
     private string $localizationMode;
@@ -57,8 +57,14 @@ class LocalizationService
     {
         if (self::$instance === null) {
             try {
-                $db = Database::getInstance();
-                self::$instance = new self($db, null, 'en_US');
+                // Check if we're in a web context with database available
+                if (class_exists(\App\Core\Database\Database::class) && \App\Core\Database\Database::isInitialized()) {
+                    $db = \App\Core\Database\Database::getInstance();
+                    self::$instance = new self($db, null, 'en_US');
+                } else {
+                    // Fallback for CLI or testing
+                    self::$instance = new self(null, null, 'en_US');
+                }
             } catch (\Throwable $e) {
                 error_log("Auto-init LocalizationService failed: " . $e->getMessage());
                 self::$instance = new self(null, null, 'en_US');
@@ -95,7 +101,14 @@ class LocalizationService
         $this->fallbackStrategy = self::FALLBACK_DEFAULT;
         $this->translationSources = [];
 
-        $this->initializeLocalization();
+        // Only initialize if we have a database connection
+        if ($this->db !== null) {
+            try {
+                $this->initializeLocalization();
+            } catch (\Throwable $e) {
+                error_log("LocalizationService initialization failed: " . $e->getMessage());
+            }
+        }
     }
 
     /**

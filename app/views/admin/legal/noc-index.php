@@ -52,16 +52,16 @@
                             <?php foreach ($registries as $r): ?>
                             <tr>
                                 <td><?= (int)$r['id'] ?></td>
-                                <td><?= htmlspecialchars($r['booking_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['customer_name'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['plot_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['registration_no'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['sub_registrar_office'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($r['registration_date'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td>â‚¹<?= number_format((float)($r['total_registry_cost'] ?? 0), 2) ?></td>
+                                <td><?= htmlspecialchars($r['booking_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['customer_name'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['plot_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['registration_no'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['sub_registrar_office'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($r['registration_date'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td>₹<?= number_format((float)($r['total_registry_cost'] ?? 0), 2) ?></td>
                                 <td>
                                     <span class="badge bg-<?= match($r['status'] ?? '') { 'completed' => 'success', 'pending' => 'warning', 'failed' => 'danger', default => 'secondary' } ?>">
-                                        <?= htmlspecialchars($r['status'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?>
+                                        <?= htmlspecialchars($r['status'] ?? '—', ENT_QUOTES, 'UTF-8') ?>
                                     </span>
                                 </td>
                                 <td>
@@ -106,14 +106,14 @@
                             <?php foreach ($nocs as $n): ?>
                             <tr>
                                 <td><?= (int)$n['id'] ?></td>
-                                <td><?= htmlspecialchars($n['booking_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['customer_name'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['plot_number'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['noc_type'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($n['created_at'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['booking_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['customer_name'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['plot_number'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['noc_type'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($n['created_at'] ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
                                 <td>
                                     <span class="badge bg-<?= match($n['status'] ?? '') { 'approved' => 'success', 'pending' => 'warning', 'blocked' => 'danger', 'rejected' => 'danger', default => 'secondary' } ?>">
-                                        <?= htmlspecialchars($n['status'] ?? 'â€”', ENT_QUOTES, 'UTF-8') ?>
+                                        <?= htmlspecialchars($n['status'] ?? '—', ENT_QUOTES, 'UTF-8') ?>
                                     </span>
                                 </td>
                                 <td>

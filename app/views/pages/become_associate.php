@@ -299,19 +299,19 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
-                        <div class="earning-amount">â‚¹200</div>
+                        <div class="earning-amount">₹200</div>
                         <p><?= __('assoc_per_associate') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
-                        <div class="earning-amount">â‚¹250</div>
+                        <div class="earning-amount">₹250</div>
                         <p><?= __('assoc_per_agent') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
-                        <div class="earning-amount">â‚¹100</div>
+                        <div class="earning-amount">₹100</div>
                         <p><?= __('assoc_per_customer') ?></p>
                     </div>
                 </div>

@@ -246,7 +246,7 @@ $active_page = 'dashboard';
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div>
-                    <h5 class="alert-heading fw-bold mb-1" class="style-8077">You Missed â‚¹<?php echo $commission_summary['total_missed']; ?> in Commissions!</h5>
+                    <h5 class="alert-heading fw-bold mb-1" class="style-8077">You Missed ₹<?php echo $commission_summary['total_missed']; ?> in Commissions!</h5>
                     <p class="mb-0 text-danger">Your account is currently inactive. You missed out on commissions this month because of it. 
                         <a href="<?php echo $base; ?>/agent/renew" class="fw-bold text-decoration-underline" class="style-29076">Activate your account now</a> to prevent losing more money!
                     </p>
@@ -297,7 +297,7 @@ $active_page = 'dashboard';
                 <div>
                     <h5 class="alert-heading text-warning mb-1" class="style-58498">Action Required: Missed Commissions!</h5>
                     <p class="mb-0 text-dark">
-                        You have missed out on <strong>â‚¹<?php echo $commission_summary['total_missed'] ?? '0.00'; ?></strong> in network commissions this month because your ID is currently inactive.
+                        You have missed out on <strong>₹<?php echo $commission_summary['total_missed'] ?? '0.00'; ?></strong> in network commissions this month because your ID is currently inactive.
                         <br>
                         <small>Activate your ID or renew your subscription to start earning from your team's sales again.</small>
                     </p>
@@ -347,7 +347,7 @@ $active_page = 'dashboard';
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">Total Commission</p>
-                                <h4 class="mb-0 text-warning">â‚¹<?php echo $commission_summary['total_commission'] ?? ($agent_stats['total_commission'] ?? 0); ?></h4>
+                                <h4 class="mb-0 text-warning">₹<?php echo $commission_summary['total_commission'] ?? ($agent_stats['total_commission'] ?? 0); ?></h4>
                             </div>
                             <div class="stat-icon gold"><i class="fas fa-rupee-sign"></i></div>
                         </div>
@@ -406,7 +406,7 @@ $active_page = 'dashboard';
                                     <p class="text-muted mb-0 small">Total Team Size</p>
                                 </div>
                                 <div class="network-stat">
-                                    <h4 class="mb-1 text-info">â‚¹<?php echo $network_stats['team_gv'] ?? '0.00'; ?></h4>
+                                    <h4 class="mb-1 text-info">₹<?php echo $network_stats['team_gv'] ?? '0.00'; ?></h4>
                                     <p class="text-muted mb-0 small">Team Group Volume</p>
                                 </div>
                             </div>
@@ -424,23 +424,23 @@ $active_page = 'dashboard';
                             <div class="commission-breakdown">
                                 <div class="commission-item primary">
                                     <div class="text-muted small">Direct Sales</div>
-                                    <div class="fw-bold text-success">â‚¹<?php echo $commission_summary['total_direct'] ?? '0.00'; ?></div>
+                                    <div class="fw-bold text-success">₹<?php echo $commission_summary['total_direct'] ?? '0.00'; ?></div>
                                 </div>
                                 <div class="commission-item secondary">
                                     <div class="text-muted small">Network/Override</div>
-                                    <div class="fw-bold text-info">â‚¹<?php echo $commission_summary['total_network'] ?? '0.00'; ?></div>
+                                    <div class="fw-bold text-info">₹<?php echo $commission_summary['total_network'] ?? '0.00'; ?></div>
                                 </div>
                                 <?php if (!empty($commission_summary['total_missed']) && $commission_summary['total_missed'] > 0): ?>
                                 <div class="commission-item" class="style-25241">
                                     <div class="text-muted small">Missed (Inactive ID)</div>
-                                    <div class="fw-bold text-danger">â‚¹<?php echo $commission_summary['total_missed']; ?></div>
+                                    <div class="fw-bold text-danger">₹<?php echo $commission_summary['total_missed']; ?></div>
                                 </div>
                                 <?php endif; ?>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold">Total Earned</span>
-                                <span class="fw-bold text-success fs-5">â‚¹<?php echo $commission_summary['total_commission'] ?? '0.00'; ?></span>
+                                <span class="fw-bold text-success fs-5">₹<?php echo $commission_summary['total_commission'] ?? '0.00'; ?></span>
                             </div>
                         </div>
                     </div>
@@ -486,7 +486,7 @@ $active_page = 'dashboard';
                                         </div>
                                         <div class="text-end">
                                             <div class="fw-bold text-<?php echo $isDirect ? 'success' : 'info'; ?>">
-                                                â‚¹<?php echo number_format($comm['amount'] ?? 0, 2); ?>
+                                                ₹<?php echo number_format($comm['amount'] ?? 0, 2); ?>
                                             </div>
                                             <small class="text-muted"><?php echo date('d M Y', strtotime($comm['created_at'])); ?></small>
                                         </div>
@@ -514,17 +514,17 @@ $active_page = 'dashboard';
                                 <div class="perf-card highlight">
                                     <h4 class="text-primary mb-1"><?php echo $performance['this_month']['count'] ?? 0; ?></h4>
                                     <p class="text-muted mb-0 small">This Month Sales</p>
-                                    <small class="text-success">â‚¹<?php echo $performance['this_month']['volume'] ?? '0.00'; ?></small>
+                                    <small class="text-success">₹<?php echo $performance['this_month']['volume'] ?? '0.00'; ?></small>
                                 </div>
                                 <div class="perf-card">
                                     <h4 class="text-info mb-1"><?php echo $performance['last_month']['count'] ?? 0; ?></h4>
                                     <p class="text-muted mb-0 small">Last Month Sales</p>
-                                    <small class="text-info">â‚¹<?php echo $performance['last_month']['volume'] ?? '0.00'; ?></small>
+                                    <small class="text-info">₹<?php echo $performance['last_month']['volume'] ?? '0.00'; ?></small>
                                 </div>
                                 <div class="perf-card">
                                     <h4 class="text-warning mb-1"><?php echo $performance['career']['count'] ?? 0; ?></h4>
                                     <p class="text-muted mb-0 small">Career Total Sales</p>
-                                    <small class="text-warning">â‚¹<?php echo $performance['career']['volume'] ?? '0.00'; ?></small>
+                                    <small class="text-warning">₹<?php echo $performance['career']['volume'] ?? '0.00'; ?></small>
                                 </div>
                             </div>
                         </div>
@@ -556,8 +556,8 @@ $active_page = 'dashboard';
                                         <?php 
                                             $model = $commission_summary['brokerage_model'] ?? 'flat_percentage';
                                             if ($model === 'flat_percentage') echo $commission_summary['brokerage_rate'] ?? 0 . '%';
-                                            elseif ($model === 'flat_rate_sqft') echo 'â‚¹' . number_format($commission_summary['brokerage_rate'] ?? 0, 2) . '/sqft';
-                                            else echo 'â‚¹' . number_format($commission_summary['flat_fee'] ?? 0, 2);
+                                            elseif ($model === 'flat_rate_sqft') echo '₹' . number_format($commission_summary['brokerage_rate'] ?? 0, 2) . '/sqft';
+                                            else echo '₹' . number_format($commission_summary['flat_fee'] ?? 0, 2);
                                         ?>
                                     </h6>
                                 </div>
@@ -632,7 +632,7 @@ $active_page = 'dashboard';
                                             <?php endif; ?>
                                         </div>
                                         <div class="text-end">
-                                            <div class="fw-bold text-success">â‚¹<?php echo number_format($comm['amount'] ?? 0, 2); ?></div>
+                                            <div class="fw-bold text-success">₹<?php echo number_format($comm['amount'] ?? 0, 2); ?></div>
                                             <small class="text-muted"><?php echo date('d M Y', strtotime($comm['created_at'])); ?></small>
                                         </div>
                                     </div>
@@ -724,7 +724,7 @@ $active_page = 'dashboard';
                                             </div>
                                         </div>
                                         <div class="text-end">
-                                            <div class="fw-bold text-primary">â‚¹<?php echo number_format($prop['price'] ?? 0); ?></div>
+                                            <div class="fw-bold text-primary">₹<?php echo number_format($prop['price'] ?? 0); ?></div>
                                             <span class="property-status <?php echo strtolower($prop['status'] ?? 'available'); ?>">
                                                 <?php echo ucfirst($prop['status'] ?? 'Available'); ?>
                                             </span>

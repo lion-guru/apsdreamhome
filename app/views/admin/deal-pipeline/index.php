@@ -17,7 +17,7 @@
         <div class="col-md-3"><div class="card bg-primary text-white p-3"><h5>Total Deals</h5><h2><?= $stats['total_deals'] ?? 0 ?></h2></div></div>
         <div class="col-md-3"><div class="card bg-success text-white p-3"><h5>Won</h5><h2><?= $stats['won_deals'] ?? 0 ?></h2></div></div>
         <div class="col-md-3"><div class="card bg-warning text-white p-3"><h5>Lost</h5><h2><?= $stats['lost_deals'] ?? 0 ?></h2></div></div>
-        <div class="col-md-3"><div class="card bg-info text-white p-3"><h5>Total Value</h5><h2>â‚¹<?= number_format($stats['total_value'] ?? 0) ?></h2></div></div>
+        <div class="col-md-3"><div class="card bg-info text-white p-3"><h5>Total Value</h5><h2>₹<?= number_format($stats['total_value'] ?? 0) ?></h2></div></div>
     </div>
     <?php endif; ?>
 
@@ -39,7 +39,7 @@
                     <div class="card-body p-2">
                         <h6 class="mb-1"><?= htmlspecialchars($deal['deal_number'] ?? '') ?></h6>
                         <small class="text-muted"><?= htmlspecialchars($deal['customer_name'] ?? 'N/A') ?></small><br>
-                        <small>â‚¹<?= number_format($deal['deal_value'] ?? 0) ?></small>
+                        <small>₹<?= number_format($deal['deal_value'] ?? 0) ?></small>
                         <span class="badge bg-<?= $deal['priority'] === 'urgent' ? 'danger' : ($deal['priority'] === 'high' ? 'warning' : 'info') ?> float-end">
                             <?= ucfirst($deal['priority'] ?? 'medium') ?>
                         </span>

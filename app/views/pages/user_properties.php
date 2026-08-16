@@ -51,7 +51,9 @@ $extraHead = '<style>
                             </div>
 
                             <?php if (!empty($p['image'])): ?>
-                                <img src="<?= BASE_URL ?>/<?php echo htmlspecialchars($p['image']); ?>" class="img-fluid rounded mb-3" class="style-9014" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
+                                <?php $imgRaw = $p['image'] ?? '';
+                                      $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+                                <img src="<?= htmlspecialchars($imgSrc) ?>" class="img-fluid rounded mb-3" class="style-9014" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
                             <?php endif; ?>
 
                             <div class="row mb-3">

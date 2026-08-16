@@ -64,7 +64,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <div class="col-md-4">
                         <div class="stat-item text-center">
                             <i class="fas fa-rupee-sign fa-2x mb-2"></i>
-                            <h4>â‚¹<?= number_format($project['base_price'], 0) ?></h4>
+                            <h4>₹<?= number_format($project['base_price'], 0) ?></h4>
                             <small>Starting Price</small>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                     </tr>
                                     <tr>
                                         <td><strong>Price per sqft:</strong></td>
-                                        <td>â‚¹<?= number_format($project['price_per_sqft'] ?? 0) ?></td>
+                                        <td>₹<?= number_format($project['price_per_sqft'] ?? 0) ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Possession:</strong></td>
@@ -316,7 +316,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                         <div class="info-item mb-3">
                             <strong>Booking Amount:</strong>
-                            <span class="text-primary">â‚¹<?= number_format($project['booking_amount'] ?? 0) ?></span>
+                            <span class="text-primary">₹<?= number_format($project['booking_amount'] ?? 0) ?></span>
                         </div>
 
                         <?php if ($project['emi_available']): ?>
@@ -358,7 +358,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
-                            <label for="loanAmount" class="form-label">Loan Amount (â‚¹)</label>
+                            <label for="loanAmount" class="form-label">Loan Amount (₹)</label>
                             <input type="number" class="form-control" id="loanAmount" placeholder="Enter loan amount">
                         </div>
                         <div class="mb-3">
@@ -560,8 +560,8 @@ function calculateEMI() {
     const emi = principal * rate * Math.pow(1 + rate, tenure) / (Math.pow(1 + rate, tenure) - 1);
     const totalAmount = emi * tenure;
 
-    document.getElementById('monthlyEMI').textContent = 'â‚¹' + Math.round(emi).toLocaleString();
-    document.getElementById('totalAmount').textContent = 'â‚¹' + Math.round(totalAmount).toLocaleString();
+    document.getElementById('monthlyEMI').textContent = '₹' + Math.round(emi).toLocaleString();
+    document.getElementById('totalAmount').textContent = '₹' + Math.round(totalAmount).toLocaleString();
     document.getElementById('emiResult').style.display = 'block';
 }
 

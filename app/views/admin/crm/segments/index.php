@@ -44,6 +44,7 @@
                                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/crm/segments/<?= $seg['id'] ?>/leads"><i class="fas fa-eye me-2"></i>View Leads</a></li>
                                         <li>
                                             <form method="POST" action="<?= BASE_URL ?>/admin/crm/bulk-send" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="segment_id" value="<?= $seg['id'] ?>">
                                                 <button class="dropdown-item"><i class="fas fa-paper-plane me-2"></i>Bulk Send</button>
                                             </form>

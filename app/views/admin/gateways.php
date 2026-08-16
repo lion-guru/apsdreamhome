@@ -57,7 +57,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">
                     <i class="fas fa-list me-1"></i>
-                    <?= htmlspecialchars(ucfirst($gateway)) ?> Ã¢â‚¬â€� last 100 calls
+                    <?= htmlspecialchars(ucfirst($gateway)) ?> à¢€—� last 100 calls
                 </h6>
                                 <a href="<?= $baseUrl ?>/admin/gateways" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left me-1"></i><?= __('admin_btn_back_cards', null, 'Back to cards') ?>
@@ -163,7 +163,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                             </span>
                                             <code><?= htmlspecialchars((string)($row['action'] ?? '-')) ?></code>
                                             <?php if (!empty($row['recipient'])): ?>
-                                                <span class="text-muted">Ã¢â€ â€™ <?= htmlspecialchars((string)$row['recipient']) ?></span>
+                                                <span class="text-muted">à¢— —™ <?= htmlspecialchars((string)$row['recipient']) ?></span>
                                             <?php endif; ?>
                                         </span>
                                         <span class="text-muted"><?= htmlspecialchars((string)($row['created_at'] ?? '')) ?></span>
@@ -214,7 +214,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                         </h6>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <p class="mb-2"><strong>Twilio</strong> Ã¢â‚¬â€� set in <code>.env</code>:</p>
+                        <p class="mb-2"><strong>Twilio</strong> à¢€—� set in <code>.env</code>:</p>
                         <pre class="bg-light p-2 small mb-3">TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=your_auth_token
 TWILIO_FROM_NUMBER=+15555555555
@@ -222,7 +222,7 @@ TWILIO_WHATSAPP_NUMBER=+14155238886
 TWILIO_VERIFY_SERVICE_SID=VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
 
-                        <p class="mb-2"><strong>Razorpay / Stripe / PhonePe</strong> Ã¢â‚¬â€� payment gateways are wired through their SDK; use the existing test mode flags.</p>
+                        <p class="mb-2"><strong>Razorpay / Stripe / PhonePe</strong> à¢€—� payment gateways are wired through their SDK; use the existing test mode flags.</p>
 
                         <p class="mb-0 text-muted small">All gateway calls are logged to the <code>gateway_logs</code> table (success and failure). Rate-limited at 100 calls/min per process by default.</p>
                     </div>

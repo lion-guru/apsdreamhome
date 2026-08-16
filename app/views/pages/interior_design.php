@@ -165,7 +165,7 @@
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
-                                <div class="col-6"><label class="small text-muted">Total Budget (â‚¹)</label><input type="number" class="form-control form-control-sm" id="budgetTotal" value="500000" min="5000" step="10000"></div>
+                                <div class="col-6"><label class="small text-muted">Total Budget (₹)</label><input type="number" class="form-control form-control-sm" id="budgetTotal" value="500000" min="5000" step="10000"></div>
                                 <div class="col-6"><label class="small text-muted">Home Type</label><select class="form-select form-select-sm" id="budgetType"><option value="1bhk">1 BHK</option><option value="2bhk" selected>2 BHK</option><option value="3bhk">3 BHK</option><option value="villa">Villa</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-warning" onclick="planBudget()"><i class="fas fa-pie-chart me-1"></i>Plan Budget</button>
@@ -319,10 +319,10 @@ function estimateCost() {
     let html = '';
     categories.forEach(c => {
         const amt = baseCost * c.pct / 100;
-        html += `<div class="d-flex justify-content-between small"><span>${c.name}</span><span>â‚¹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
+        html += `<div class="d-flex justify-content-between small"><span>${c.name}</span><span>₹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
     });
     document.getElementById('costBreakdown').innerHTML = html;
-    document.getElementById('costTotal').textContent = 'Total Estimated Cost: â‚¹' + baseCost.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('costTotal').textContent = 'Total Estimated Cost: ₹' + baseCost.toLocaleString('en-IN', {maximumFractionDigits:0});
     document.getElementById('costResult').classList.remove('d-none');
 }
 function planRoom() {
@@ -337,7 +337,7 @@ function planRoom() {
         gaj: sqft / 9
     };
     const labels = { sqft: 'Sq Ft', sqm: 'Sq Meters', sqyd: 'Sq Yards', gaj: 'Gaj' };
-    let html = `<table class="table table-sm mb-0"><tr><td>Room Size</td><td><strong>${w} ft Ã— ${l} ft</strong></td></tr>`;
+    let html = `<table class="table table-sm mb-0"><tr><td>Room Size</td><td><strong>${w} ft × ${l} ft</strong></td></tr>`;
     html += `<tr><td>Perimeter</td><td><strong>${2*(w+l)} ft</strong></td></tr>`;
     html += `<tr><td>Wall Area (10ft ceiling)</td><td><strong>${2*(w+l)*10} sq ft</strong></td></tr>`;
     Object.keys(conversions).forEach(k => {
@@ -364,12 +364,12 @@ function planBudget() {
     Object.keys(allocation).forEach(k => {
         const amt = total * allocation[k] / 100;
         used += amt;
-        html += `<div class="d-flex justify-content-between small mb-1"><span>${k}</span><span class="fw-medium">â‚¹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
+        html += `<div class="d-flex justify-content-between small mb-1"><span>${k}</span><span class="fw-medium">₹${amt.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>`;
         html += `<div class="progress mb-2" class="style-12222"><div class="progress-bar" class="style-45041"></div></div>`;
     });
     document.getElementById('budgetBreakdown').innerHTML = html;
     const rem = total - used;
-    document.getElementById('budgetRemaining').textContent = 'Contingency Fund: â‚¹' + rem.toLocaleString('en-IN', {maximumFractionDigits:0}) + ' (' + (rem/total*100).toFixed(0) + '% of budget)';
+    document.getElementById('budgetRemaining').textContent = 'Contingency Fund: ₹' + rem.toLocaleString('en-IN', {maximumFractionDigits:0}) + ' (' + (rem/total*100).toFixed(0) + '% of budget)';
     document.getElementById('budgetResult').classList.remove('d-none');
 }
 </script>
@@ -454,11 +454,11 @@ function planBudget() {
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_budget') ?></label>
                                     <select name="budget" class="form-select form-select-lg">
                                         <option value=""><?= __('id_form_budget_select') ?></option>
-                                        <option value="50000">Under â‚¹50,000</option>
-                                        <option value="100000">â‚¹50,000 - â‚¹1,00,000</option>
-                                        <option value="200000">â‚¹1,00,000 - â‚¹2,00,000</option>
-                                        <option value="500000">â‚¹2,00,000 - â‚¹5,00,000</option>
-                                        <option value="1000000">â‚¹5,00,000+</option>
+                                        <option value="50000">Under ₹50,000</option>
+                                        <option value="100000">₹50,000 - ₹1,00,000</option>
+                                        <option value="200000">₹1,00,000 - ₹2,00,000</option>
+                                        <option value="500000">₹2,00,000 - ₹5,00,000</option>
+                                        <option value="1000000">₹5,00,000+</option>
                                     </select>
                                 </div>
                                 <div class="col-12"><label class="form-label fw-medium"><?= __('id_form_requirements') ?></label><textarea name="message" rows="3" class="form-control" placeholder="<?= __('id_form_requirements_placeholder') ?>"></textarea></div>

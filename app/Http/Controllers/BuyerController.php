@@ -40,7 +40,7 @@ class BuyerController extends BaseController
 
         try {
             $matched = $db->fetchAll(
-                "SELECT bi.*, up.title, up.address, up.price, up.image, up.property_type
+                "SELECT bi.*, up.name, up.address, up.price, up.image, up.property_type
                  FROM buyer_interests bi
                  LEFT JOIN user_properties up ON bi.matched_property_id = up.id
                  WHERE bi.user_id = ? AND bi.status = 'matched'

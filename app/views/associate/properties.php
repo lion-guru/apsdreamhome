@@ -63,7 +63,7 @@ $properties = $properties ?? [];
                             <span class="badge bg-light text-dark"><i class="fas fa-home me-1"></i><?= ucfirst(str_replace('_', ' ', $p['property_type'] ?? __('assoc_prop_type', [], 'Property'))) ?></span>
                             <span class="badge bg-light text-dark"><i class="fas fa-tag me-1"></i><?= ucfirst($p['listing_type'] ?? __('assoc_prop_listing', [], 'Listing')) ?></span>
                         </div>
-                        <div class="fw-bold text-primary mb-1" class="style-88102">â‚¹<?= number_format($p['price'] ?? 0) ?></div>
+                        <div class="fw-bold text-primary mb-1" class="style-88102">₹<?= number_format($p['price'] ?? 0) ?></div>
                         <?php if (!empty($p['area_sqft'])): ?>
                             <small class="text-muted"><i class="fas fa-ruler-combined me-1"></i><?= number_format($p['area_sqft']) ?> sq ft</small>
                         <?php endif; ?>

@@ -117,7 +117,7 @@ $statusBadge = fn($s) => match($s) {
                                     <?= $p['track_a_pct'] ?> / <?= $p['track_b_pct'] ?> / <?= $p['track_c_pct'] ?>%
                                 </td>
                                 <td><span class="cp-badge <?= $statusBadge($p['status']) ?>"><?= ucfirst($p['status']) ?></span></td>
-                                <td class="style-76409"><?= $p['effective_date'] ?? 'â€”' ?></td>
+                                <td class="style-76409"><?= $p['effective_date'] ?? '—' ?></td>
                                 <td>
                                     <div class="cp-action-bar justify-content-end">
                                         <a href="<?= $base ?>/admin/commission-plans/edit/<?= $p['id'] ?>" class="btn-cp btn-cp-outline" title="Edit"><i class="fas fa-edit"></i></a>

@@ -27,7 +27,7 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <small class="text-muted d-block">Amount</small>
-                        <strong class="text-success">â‚¹<?= number_format($deal['amount'] ?? $deal['deal_value'] ?? 0, 2) ?></strong>
+                        <strong class="text-success">₹<?= number_format($deal['amount'] ?? $deal['deal_value'] ?? 0, 2) ?></strong>
                     </div>
                     <div class="col-md-4">
                         <small class="text-muted d-block">Probability</small>

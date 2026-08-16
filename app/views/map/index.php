@@ -43,7 +43,7 @@
                                     <h6 class="mb-0 small"><?= htmlspecialchars($p['title'] ?? '') ?></h6>
                                     <small class="text-muted"><i class="fas fa-map-pin me-1"></i><?= htmlspecialchars($p['location'] ?? '') ?></small>
                                 </div>
-                                <span class="text-primary fw-bold small">â‚¹<?= number_format($p['price'] ?? 0) ?></span>
+                                <span class="text-primary fw-bold small">₹<?= number_format($p['price'] ?? 0) ?></span>
                             </div>
                         </a>
                         <?php endforeach; ?>

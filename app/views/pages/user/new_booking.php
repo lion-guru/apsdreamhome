@@ -79,7 +79,9 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                          class="style-73923">
                         <div class="position-relative">
                             <?php if (!empty($colony['image_path'])): ?>
-                                <img src="<?= BASE_URL ?>/<?= htmlspecialchars($colony['image_path']) ?>"
+                                <?php $imgRaw = $colony['image_path'] ?? '';
+                                      $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+                                <img src="<?= htmlspecialchars($imgSrc) ?>"
                                      alt="<?= htmlspecialchars($colony['name']) ?>"
                                      class="w-100" class="style-46386">
                             <?php else: ?>
@@ -99,7 +101,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                                 <?= htmlspecialchars($colony['district_name'] ?? __('user_new_booking_location', 'Location')) ?>
                             </p>
                             <p class="mb-1 small">
-                                <strong><?= __('user_new_booking_starting_from', 'Starting from') ?> â‚¹<?= number_format((float)($colony['starting_price'] ?? 0)) ?></strong>
+                                <strong><?= __('user_new_booking_starting_from', 'Starting from') ?> ₹<?= number_format((float)($colony['starting_price'] ?? 0)) ?></strong>
                             </p>
                             <p class="text-muted small mb-0">
                                 <?= (int)($colony['total_plots'] ?? 0) ?> <?= __('user_new_booking_total_plots', 'total plots') ?> &middot; <?= (int)($colony['available_plots'] ?? 0) ?> <?= __('user_new_booking_open', 'open') ?>
@@ -159,7 +161,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($plot['facing'] ?? '-') ?></td>
-                            <td><strong>â‚¹<?= number_format((float)$plot['total_price']) ?></strong></td>
+                            <td><strong>₹<?= number_format((float)$plot['total_price']) ?></strong></td>
                             <td class="text-end">
                                 <button class="btn btn-sm btn-primary aps-select-plot"
                                         data-plot-id="<?= (int)$plot['id'] ?>"
@@ -207,7 +209,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                     <div class="col-md-6">
                         <div class="bg-light rounded-3 p-3">
                             <h6 class="text-muted small mb-2"><?= __('user_new_booking_modal_booking_summary', 'BOOKING SUMMARY') ?></h6>
-                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>â‚¹25,000</strong></p>
+                            <p class="mb-1"><?= __('user_new_booking_modal_token_amount', 'Token Amount') ?>: <strong>₹25,000</strong></p>
                             <p class="mb-1"><?= __('user_new_booking_modal_total_price', 'Total Price') ?>: <strong id="modal-price"></strong></p>
                             <p class="mb-0"><?= __('user_new_booking_modal_status', 'Status') ?>: <span class="badge bg-primary"><?= __('user_new_booking_modal_token_paid', 'Token Paid') ?></span></p>
                         </div>
@@ -240,7 +242,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
                     <div class="alert alert-warning mt-3 mb-0 small">
                         <i class="fas fa-info-circle me-1"></i>
-                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>â‚¹25,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
+                        <?= __('user_new_booking_terms', 'By confirming, you agree to pay the token amount of') ?> <strong>₹25,000</strong> <?= __('user_new_booking_terms_towards', 'towards the booking.') ?>
                         <?= __('user_new_booking_terms_emi', 'The remaining amount can be paid via EMI or lump sum as per your payment plan.') ?>
                     </div>
                 </form>
@@ -348,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('success-booking-number').textContent = data.booking_number;
                 document.getElementById('success-plot').textContent = data.plot;
                 document.getElementById('success-colony').textContent = data.colony;
-                document.getElementById('success-amount').textContent = 'â‚¹' + Number(data.total_amount).toLocaleString('en-IN');
+                document.getElementById('success-amount').textContent = '₹' + Number(data.total_amount).toLocaleString('en-IN');
                 document.getElementById('success-confirmation-link').href = baseUrl + '/user/bookings/' + data.booking_id + '/confirmation';
 
                 var successModal = new bootstrap.Modal(document.getElementById('successModal'));

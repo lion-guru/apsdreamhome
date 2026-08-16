@@ -125,7 +125,7 @@ function loadNeighborhood() {
         </div>
         <div class="col-md-3">
           <div class="card aps-cp-card"><div class="card-body text-center">
-            <div class="fs-1 text-success">${d.property ? 'â‚¹' + Number(d.property.price || 0).toLocaleString('en-IN') : '-'}</div>
+            <div class="fs-1 text-success">${d.property ? '₹' + Number(d.property.price || 0).toLocaleString('en-IN') : '-'}</div>
             <div class="text-muted">Property Price</div>
           </div></div>
         </div>
@@ -141,7 +141,7 @@ function loadNeighborhood() {
         document.getElementById('nearbyProperties').innerHTML = d.nearby_properties.map(p =>
           `<div class="d-flex justify-content-between border-bottom pb-2 mb-2">
             <span>${p.title || 'Property'}</span>
-            <span class="fw-bold">â‚¹${Number(p.price || 0).toLocaleString('en-IN')}</span>
+            <span class="fw-bold">₹${Number(p.price || 0).toLocaleString('en-IN')}</span>
           </div>`
         ).join('');
       } else {
@@ -153,7 +153,7 @@ function loadNeighborhood() {
           `<div class="d-flex justify-content-between border-bottom pb-2 mb-2">
             <span>${t.period || 'N/A'}</span>
             <span class="fw-bold ${t.trend === 'up' ? 'text-success' : t.trend === 'down' ? 'text-danger' : ''}">
-              â‚¹${Number(t.price || 0).toLocaleString('en-IN')}
+              ₹${Number(t.price || 0).toLocaleString('en-IN')}
             </span>
           </div>`
         ).join('');

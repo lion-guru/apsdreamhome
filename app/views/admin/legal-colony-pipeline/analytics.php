@@ -15,7 +15,7 @@ $salesVelocity = $data['sales_velocity'] ?? [];
 $milestones    = $data['milestone_progress'] ?? [];
 $roi           = $data['roi_projection'] ?? [];
 
-function inr($n) { return 'â‚¹' . number_format($n); }
+function inr($n) { return '₹' . number_format($n); }
 ?>
 
 <div class="container-fluid py-4">
@@ -35,7 +35,7 @@ function inr($n) { return 'â‚¹' . number_format($n); }
         <i class="fas fa-arrow-left me-1"></i> Back to Colony
       </a>
       <h2 class="mb-1"><i class="fas fa-chart-line me-2 text-success"></i>Colony Analytics</h2>
-      <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?> â€” <?= htmlspecialchars($colony['location'] ?? '') ?></small>
+      <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?> — <?= htmlspecialchars($colony['location'] ?? '') ?></small>
     </div>
     <div>
       <a href="/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-primary btn-sm">
@@ -213,7 +213,7 @@ function inr($n) { return 'â‚¹' . number_format($n); }
               <tbody>
               <?php foreach ($blockBreakdown as $b): ?>
                 <tr>
-                  <td><strong><?= htmlspecialchars($b['block'] ?? 'â€”') ?></strong></td>
+                  <td><strong><?= htmlspecialchars($b['block'] ?? '—') ?></strong></td>
                   <td class="text-end"><?= $b['count'] ?? 0 ?></td>
                   <td class="text-end text-success"><?= $b['available'] ?? 0 ?></td>
                   <td class="text-end text-danger"><?= $b['sold'] ?? 0 ?></td>
@@ -240,7 +240,7 @@ function inr($n) { return 'â‚¹' . number_format($n); }
             </div>
           <?php else: ?>
             <table class="table table-sm table-hover mb-0">
-              <thead><tr><th>Type</th><th class="text-end">Count</th><th class="text-end">Area (sqft)</th><th class="text-end">Value</th><th class="text-end">Avg â‚¹/sqft</th></tr></thead>
+              <thead><tr><th>Type</th><th class="text-end">Count</th><th class="text-end">Area (sqft)</th><th class="text-end">Value</th><th class="text-end">Avg ₹/sqft</th></tr></thead>
               <tbody>
               <?php foreach ($typeBreakdown as $t): ?>
                 <tr>

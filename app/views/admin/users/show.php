@@ -59,7 +59,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm bg-info text-white">
-            <div class="card-body text-center"><i class="fas fa-wallet fa-2x mb-2 opacity-75"></i><h3 class="mb-0">â‚¹<?= number_format($user['wallet_balance'] ?? 0) ?></h3><small>Wallet</small></div>
+            <div class="card-body text-center"><i class="fas fa-wallet fa-2x mb-2 opacity-75"></i><h3 class="mb-0">₹<?= number_format($user['wallet_balance'] ?? 0) ?></h3><small>Wallet</small></div>
         </div>
     </div>
     <div class="col-md-3">

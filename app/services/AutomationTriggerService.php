@@ -72,11 +72,10 @@ class AutomationTriggerService
                 $tidSql = $tid > 1 ? ", tenant_id" : "";
                 $tidParams = $tid > 1 ? [$tid] : [];
                 $stmt = $this->pdo()->prepare(
-                    "INSERT INTO lead_status_history (lead_id, old_status, new_status, changed_at{$tidSql}) VALUES (?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")"
+                    "INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_at{$tidSql}) VALUES (?, 'status_change', ?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")"
                 );
-                $stmt->execute(array_merge([$leadId, $oldStatus, $newStatus], $tidParams));
+                $stmt->execute(array_merge([$leadId, "Status changed from $oldStatus to $newStatus", $oldStatus, $newStatus], $tidParams));
             } catch (\Exception $e) {
-            // Table may not exist
             error_log($e->getMessage());
             }
 

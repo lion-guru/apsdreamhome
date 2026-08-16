@@ -20,7 +20,7 @@
                     <form method="POST" action="<?= BASE_URL ?>/payment/process">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
-                            <label class="form-label">Amount (â‚¹)</label>
+                            <label class="form-label">Amount (₹)</label>
                             <input type="number" name="amount" class="form-control form-control-lg" required step="0.01" value="<?= htmlspecialchars($_POST['amount'] ?? $amount ?? '') ?>">
                         </div>
                         <div class="mb-3">
@@ -67,7 +67,7 @@
                             <label class="form-label">Phone</label>
                             <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($_POST['phone'] ?? $phone ?? '') ?>">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-lg"><i class="fas fa-lock me-1"></i>Pay â‚¹<?= number_format($_POST['amount'] ?? $amount ?? 0, 2) ?></button>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg"><i class="fas fa-lock me-1"></i>Pay ₹<?= number_format($_POST['amount'] ?? $amount ?? 0, 2) ?></button>
                     </form>
                 </div>
             </div>

@@ -44,13 +44,13 @@ if (empty($grouped_projects) && !empty($projects)) {
         <div class="container">
             <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
-                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3" class="style-6722">
-                    <i class="fas fa-building me-1"></i><?= __('user_properties') ?>
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm btn-outline-primary px-3">
+                    <i class="fas fa-building me-1"></i><?= __('properties') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" class="style-97522">
-                    <i class="fas fa-vector-square me-1"></i><?= __('available_plots') ?>
+                <a href="<?= BASE_URL ?>/plots/browse" class="btn btn-sm btn-outline-primary px-3">
+                    <i class="fas fa-vector-square me-1"></i><?= __('plots') ?>
                 </a>
-                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" class="style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3" class="style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>

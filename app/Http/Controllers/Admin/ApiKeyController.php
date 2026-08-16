@@ -25,6 +25,7 @@ class ApiKeyController extends AdminController
             'keys' => $keys,
             'stats' => $stats,
             'new_key' => $newKey,
+            'BASE_URL' => defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome'
         ]);
         return $this->render('admin/features/api_keys', $this->data);
     }

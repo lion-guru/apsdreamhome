@@ -77,7 +77,7 @@ $statusColors = [
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small"><?= __('nach_label_mandate_amount', [], 'Mandate Amount Cap') ?></label>
-                            <p class="fw-semibold mb-0">â‚¹<?= number_format((float)($m['mandate_amount'] ?? 0)) ?></p>
+                            <p class="fw-semibold mb-0">₹<?= number_format((float)($m['mandate_amount'] ?? 0)) ?></p>
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small"><?= __('nach_label_frequency', [], 'Frequency') ?></label>
@@ -144,7 +144,7 @@ $statusColors = [
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label"><?= __('nach_form_max_amount', [], 'Maximum Monthly Amount (â‚¹)') ?> <span class="text-danger">*</span></label>
+                                <label class="form-label"><?= __('nach_form_max_amount', [], 'Maximum Monthly Amount (₹)') ?> <span class="text-danger">*</span></label>
                                 <input type="number" name="mandate_amount" class="form-control" min="100" step="0.01"
                                        value="<?= number_format(($booking['total_plot_value'] ?? 0) / 24, 0, '.', '') ?>" required>
                                 <small class="text-muted"><?= __('nach_max_amount_help', [], 'Maximum amount that can be auto-debited per month.') ?></small>

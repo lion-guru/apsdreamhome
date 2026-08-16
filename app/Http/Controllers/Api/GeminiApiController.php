@@ -303,7 +303,7 @@ class GeminiApiController extends BaseController
         $msg = strtolower(trim($message));
 
         // Personalized greeting if user name is known
-        $greeting = $userName ? "ðŸ™ Namaste {$userName}! " : "ðŸ™ Namaste! ";
+        $greeting = $userName ? "- Namaste {$userName}! " : "- Namaste! ";
 
         // First, try to find answer from AI Knowledge Base
         $knowledgeAnswer = $this->getAnswerFromKnowledgeBase($msg);
@@ -313,55 +313,55 @@ class GeminiApiController extends BaseController
 
         // Intent patterns
         if (strpos($msg, 'hello') !== false || strpos($msg, 'hi') !== false || strpos($msg, 'namaste') !== false || strpos($msg, 'hey') !== false) {
-            return $greeting . "Welcome to APS Dream Home!\n\nI'm your personal property assistant. I can help you with:\n\nðŸ  Find properties\nðŸ“ Location details\nðŸ’° Price information\nðŸ¦ Home loan assistance\nðŸ“ž Contact details\n\nWhat are you looking for today?";
+            return $greeting . "Welcome to APS Dream Home!\n\nI'm your personal property assistant. I can help you with:\n\n- Find properties\n- Location details\n- Price information\n- Home loan assistance\n- Contact details\n\nWhat are you looking for today?";
         }
 
         if (strpos($msg, 'price') !== false || strpos($msg, 'kitna') !== false || strpos($msg, 'rate') !== false || strpos($msg, 'cost') !== false || strpos($msg, 'kimat') !== false) {
-            return "ðŸ’° **Property Prices:**\n\n• Plots starting from ₹5.5 Lakhs\n• Houses from ₹25 Lakhs\n• Commercial shops from ₹15 Lakhs\n• Apartments from ₹30 Lakhs\n\nPrices vary by location and size. Which property type interests you?";
+            return "**Property Prices:**\n\n* Plots starting from Rs.5.5 Lakhs\n* Houses from Rs.25 Lakhs\n* Commercial shops from Rs.15 Lakhs\n* Apartments from Rs.30 Lakhs\n\nPrices vary by location and size. Which property type interests you?";
         }
 
         if (strpos($msg, 'location') !== false || strpos($msg, 'where') !== false || strpos($msg, 'kaha') !== false || strpos($msg, 'address') !== false) {
-            return "ðŸ“ **Our Projects are in:**\n\n• Gorakhpur - Suryoday Colony, Raghunath Nagri, Braj Radha Nagri\n• Lucknow - Braj Radha Enclave\n• Kushinagar - Buddh Bihar Colony\n• Varanasi - Ganga Nagri\n\nWhich location would you prefer?";
+            return "**Our Projects are in:**\n\n* Gorakhpur - Suryoday Colony, Raghunath Nagri, Braj Radha Nagri\n* Lucknow - Braj Radha Enclave\n* Kushinagar - Buddh Bihar Colony\n* Varanasi - Ganga Nagri\n\nWhich location would you prefer?";
         }
 
         if (strpos($msg, 'project') !== false || strpos($msg, 'suryoday') !== false || strpos($msg, 'raghunath') !== false || strpos($msg, 'braj') !== false) {
-            return "ðŸ—ï¸ **Current Projects:**\n\n**Gorakhpur:**\n• Suryoday Colony - Premium Plots\n• Raghunath Nagri - Commercial\n\n**Lucknow:**\n• Braj Radha Enclave - Residential\n\n**Kushinagar:**\n• Buddh Bihar Colony - Affordable plots\n\n**Varanasi:**\n• Ganga Nagri - Premium location\n\nWould you like details on any specific project?";
+            return "**Current Projects:**\n\n**Gorakhpur:**\n* Suryoday Colony - Premium Plots\n* Raghunath Nagri - Commercial\n\n**Lucknow:**\n* Braj Radha Enclave - Residential\n\n**Kushinagar:**\n* Buddh Bihar Colony - Affordable plots\n\n**Varanasi:**\n* Ganga Nagri - Premium location\n\nWould you like details on any specific project?";
         }
 
         if (strpos($msg, 'plot') !== false || strpos($msg, 'land') !== false || strpos($msg, 'jameen') !== false || strpos($msg, 'naksha') !== false) {
-            return "ðŸ“ **Available Plots:**\n\n• Residential plots: 451-5000 sq ft\n• Commercial plots: 500-2000 sq ft\n• Farm houses: 1-5 acres\n• Starting from ₹5.5 Lakhs\n\nWe have plots in Gorakhpur, Lucknow, Kushinagar & Varanasi.\n\nInterested in any specific size?";
+            return "**Available Plots:**\n\n* Residential plots: 451-5000 sq ft\n* Commercial plots: 500-2000 sq ft\n* Farm houses: 1-5 acres\n* Starting from Rs.5.5 Lakhs\n\nWe have plots in Gorakhpur, Lucknow, Kushinagar & Varanasi.\n\nInterested in any specific size?";
         }
 
         if (strpos($msg, 'loan') !== false || strpos($msg, 'finance') !== false || strpos($msg, 'emi') !== false || strpos($msg, 'bank') !== false) {
-            return "ðŸ¦ **Home Loan Assistance:**\n\nWe partner with leading banks:\n• SBI, HDFC, ICICI, Axis\n• Interest rates from 8.5% onwards\n• Up to 90% property value\n• Quick approval process\n\nOur team will help you with all documentation!\n\nWould you like to speak with our loan expert?";
+            return "**Home Loan Assistance:**\n\nWe partner with leading banks:\n* SBI, HDFC, ICICI, Axis\n* Interest rates from 8.5% onwards\n* Up to 90% property value\n* Quick approval process\n\nOur team will help you with all documentation!\n\nWould you like to speak with our loan expert?";
         }
 
         if (strpos($msg, 'contact') !== false || strpos($msg, 'phone') !== false || strpos($msg, 'number') !== false || strpos($msg, 'call') !== false || strpos($msg, 'mobile') !== false) {
-            return "ðŸ“ž **Contact Us:**\n\nðŸ• Mon-Sat: 9AM - 7PM\n\nðŸ“± **Phone/WhatsApp:**\n+91 92771 21112\n+91 70074 44842\n\nðŸ“§ **Email:**\ninfo@apsdreamhome.com\n\nðŸ¢ **Office:**\n1st Floor, Singhariya Chauraha\nKunraghat, Gorakhpur, UP - 273008\n\nCall now for free consultation!";
+            return "**Contact Us:**\n\n- Mon-Sat: 9AM - 7PM\n\n- **Phone/WhatsApp:**\n+91 92771 21112\n+91 70074 44842\n\n- **Email:**\ninfo@apsdreamhome.com\n\n- **Office:**\n1st Floor, Singhariya Chauraha\nKunraghat, Gorakhpur, UP - 273008\n\nCall now for free consultation!";
         }
 
         if (strpos($msg, 'service') !== false || strpos($msg, 'legal') !== false || strpos($msg, 'registry') !== false || strpos($msg, 'mutation') !== false) {
-            return "ðŸ› ï¸ **Our Services:**\n\n• Property Sales & Purchase\n• Legal Documentation\n• Registry & Mutation\n• Interior Design\n• Home Loan Assistance\n• Property Management\n• Investment Consulting\n\nWhich service do you need?";
+            return "**Our Services:**\n\n* Property Sales & Purchase\n* Legal Documentation\n* Registry & Mutation\n* Interior Design\n* Home Loan Assistance\n* Property Management\n* Investment Consulting\n\nWhich service do you need?";
         }
 
         if (strpos($msg, 'about') !== false || strpos($msg, 'company') !== false || strpos($msg, 'aps') !== false || strpos($msg, 'dream home') !== false || strpos($msg, 'who') !== false) {
-            return "ðŸ¢ **APS Dream Home**\n\nYour trusted real estate partner in Uttar Pradesh since 2010.\n\nâœ… 5000+ Happy users\nâœ… 50+ Projects Completed\nâœ… 10+ Cities Covered\nâœ… RERA Registered\nâœ… Legal & Transparent\n\nWe deal in Residential, Commercial & Agricultural properties.\n\nHow can we help you today?";
+            return "**APS Dream Home**\n\nYour trusted real estate partner in Uttar Pradesh since 2010.\n\n* 5000+ Happy users\n* 50+ Projects Completed\n* 10+ Cities Covered\n* RERA Registered\n* Legal & Transparent\n\nWe deal in Residential, Commercial & Agricultural properties.\n\nHow can we help you today?";
         }
 
         if (strpos($msg, 'buy') !== false || strpos($msg, 'purchase') !== false || strpos($msg, 'kharidna') !== false || strpos($msg, 'book') !== false) {
-            return "ðŸ\u20AC\u00A0 **Buy Property:**\n\nGreat choice! We have:\n• Ready-to-move houses\n• Investment plots\n• Commercial shops\n• Apartments & flats\n\nWhat's your budget and preferred location?\n\nYou can also browse at:\n" . rtrim(BASE_URL, '/') . "/properties";
+            return "-\u20AC\u00A0 **Buy Property:**\n\nGreat choice! We have:\n* Ready-to-move houses\n* Investment plots\n* Commercial shops\n* Apartments & flats\n\nWhat's your budget and preferred location?\n\nYou can also browse at:\n" . rtrim(BASE_URL, '/') . "/properties";
         }
 
         if (strpos($msg, 'sell') !== false || strpos($msg, 'sale') !== false || strpos($msg, 'bechna') !== false) {
-            return "ðŸ’° **Sell Your Property:**\n\nList your property with us - **100% FREE!**\n\nâœ… Zero listing charges\nâœ… No commission\nâœ… Direct buyer contact\nâœ… Quick verification\n\nVisit:\nðŸŒ " . rtrim(BASE_URL, '/') . "/list-property\n\nOr call us at +91 92771 21112";
+            return "**Sell Your Property:**\n\nList your property with us - **100% FREE!**\n\n* Zero listing charges\n* No commission\n* Direct buyer contact\n* Quick verification\n\nVisit:\n- " . rtrim(BASE_URL, '/') . "/list-property\n\nOr call us at +91 92771 21112";
         }
 
         if (strpos($msg, 'rent') !== false || strpos($msg, 'kiraya') !== false || strpos($msg, 'lease') !== false) {
-            return "ðŸ”‘ **Rental Properties:**\n\nWe have rental options:\n• Shops & offices\n• Residential flats\n• Commercial spaces\n• Farm houses\n\nVisit our properties page or call us to discuss your rental requirements.\n\nðŸ“ž +91 92771 21112";
+            return "**Rental Properties:**\n\nWe have rental options:\n* Shops & offices\n* Residential flats\n* Commercial spaces\n* Farm houses\n\nVisit our properties page or call us to discuss your rental requirements.\n\n+91 92771 21112";
         }
 
         // Default response
-        return "ðŸ¤” I didn't understand that. Let me help you with:\n\nðŸ  Find properties\nðŸ“ Locations\nðŸ’° Prices\nðŸ¦ Home loans\nðŸ“ž Contact details\n\nOr type 'help' to see all options!\n\nYou can also call us directly:\nðŸ“ž +91 92771 21112";
+        return "I didn't understand that. Let me help you with:\n\n- Find properties\n- Locations\n- Prices\n- Home loans\n- Contact details\n\nOr type 'help' to see all options!\n\nYou can also call us directly:\n+91 92771 21112";
     }
 
     /**
@@ -384,67 +384,67 @@ class GeminiApiController extends BaseController
         // Role-based quick replies
         if ($role === 'customer' || $role === 'user') {
             if (strpos($msg, 'booking') !== false || strpos($msg, 'property') !== false) {
-                return ['ðŸ“‹ My Bookings', 'ðŸ’° Payment Status', 'ðŸ  New Property', 'ðŸ“ž Support'];
+                return ['My Bookings', 'Payment Status', 'New Property', 'Support'];
             }
             if (strpos($msg, 'payment') !== false || strpos($msg, 'emi') !== false) {
-                return ['ðŸ’³ Pay Now', 'ðŸ“„ Payment History', 'ðŸ¦ EMI Status', 'ðŸ’° Due Amount'];
+                return ['Pay Now', 'Payment History', 'EMI Status', 'Due Amount'];
             }
             // Default for users
-            return ['ðŸ“‹ My Bookings', 'ðŸ’³ Pay EMI', 'ðŸ  Browse Properties', 'ðŸ“ž Call Support'];
+            return ['My Bookings', 'Pay EMI', 'Browse Properties', 'Call Support'];
         }
 
         if ($role === 'associate' || $role === 'agent') {
             if (strpos($msg, 'lead') !== false) {
-                return ['ðŸ“Š My Leads', 'âž• Add Lead', 'ðŸ“ˆ Lead Status', 'ðŸ’° Commission'];
+                return ['My Leads', 'Add Lead', 'Lead Status', 'Commission'];
             }
             if (strpos($msg, 'commission') !== false || strpos($msg, 'payment') !== false) {
-                return ['ðŸ’° My Commission', 'ðŸ“„ Payout Status', 'â±ï¸ Pending', 'ðŸ“ž Withdraw'];
+                return ['My Commission', 'Payout Status', 'Pending', 'Withdraw'];
             }
             if (strpos($msg, 'team') !== false || strpos($msg, 'downline') !== false) {
-                return ['ðŸ‘¥ My Team', 'ðŸ“Š Team Performance', 'âž• Add Member', 'ðŸŒ Genealogy'];
+                return ['My Team', 'Team Performance', 'Add Member', 'Genealogy'];
             }
             // Default for users
-            return ['ðŸ“Š My Leads', 'ðŸ’° Commission', 'ðŸ‘¥ My Team', 'ðŸ“ž Support'];
+            return ['My Leads', 'Commission', 'My Team', 'Support'];
         }
 
         if ($role === 'admin') {
             if (strpos($msg, 'pending') !== false || strpos($msg, 'approval') !== false) {
-                return ['âœ… Approve Properties', 'â±ï¸ Pending List', 'ðŸ“Š Stats', 'ðŸ“§ Notifications'];
+                return ['Approve Properties', 'Pending List', 'Stats', 'Notifications'];
             }
             if (strpos($msg, 'report') !== false || strpos($msg, 'stats') !== false) {
-                return ['ðŸ“Š Today Report', 'ðŸ’° Revenue', 'ðŸ‘¥ Visitors', 'ðŸ  Bookings'];
+                return ['Today Report', 'Revenue', 'Visitors', 'Bookings'];
             }
             // Default for admin
-            return ['âœ… Pending Approvals', 'ðŸ“Š Dashboard', 'ðŸ‘¥ Users', 'ðŸ“ž Support'];
+            return ['Pending Approvals', 'Dashboard', 'Users', 'Support'];
         }
 
         // Guest/Public quick replies
         if (strpos($msg, 'price') !== false || strpos($msg, 'kitna') !== false || strpos($msg, 'rate') !== false) {
-            return ['ðŸ“ Plot prices', 'ðŸ  House prices', 'ðŸª Shop prices', 'ðŸ’° EMI options'];
+            return ['Plot prices', 'House prices', 'Shop prices', 'EMI options'];
         }
 
         if (strpos($msg, 'location') !== false || strpos($msg, 'kaha') !== false || strpos($msg, 'address') !== false) {
-            return ['ðŸ“ Gorakhpur', 'ðŸ“ Lucknow', 'ðŸ“ Kushinagar', 'ðŸ“ Varanasi'];
+            return ['Gorakhpur', 'Lucknow', 'Kushinagar', 'Varanasi'];
         }
 
         if (strpos($msg, 'loan') !== false || strpos($msg, 'emi') !== false || strpos($msg, 'finance') !== false) {
-            return ['ðŸ¦ SBI Loan', 'ðŸ¦ HDFC Loan', 'ðŸ“‹ Documents needed', 'ðŸ’° EMI Calculator'];
+            return ['SBI Loan', 'HDFC Loan', 'Documents needed', 'EMI Calculator'];
         }
 
         if (strpos($msg, 'buy') !== false || strpos($msg, 'plot') !== false || strpos($msg, 'property') !== false) {
-            return ['ðŸ“ Buy Plot', 'ðŸ  Buy House', 'ðŸª Buy Shop', 'ðŸ“ž Schedule Visit'];
+            return ['Buy Plot', 'Buy House', 'Buy Shop', 'Schedule Visit'];
         }
 
         if (strpos($msg, 'project') !== false || strpos($msg, 'suryoday') !== false || strpos($msg, 'raghunath') !== false) {
-            return ['ðŸ—ï¸ Suryoday Heights', 'ðŸ—ï¸ Raghunath City', 'ðŸ—ï¸ Braj Radha', 'ðŸ“ All Projects'];
+            return ['Suryoday Heights', 'Raghunath City', 'Braj Radha', 'All Projects'];
         }
 
         if (strpos($msg, 'contact') !== false || strpos($msg, 'phone') !== false || strpos($msg, 'call') !== false) {
-            return ['ðŸ“ž +91 92771 21112', 'ðŸ’¬ WhatsApp', 'ðŸ“§ Email', 'ðŸ“ Visit Office'];
+            return ['+91 92771 21112', 'WhatsApp', 'Email', 'Visit Office'];
         }
 
         // Default suggestions for guests
-        return ['ðŸ’° Check Prices', 'ðŸ“ Locations', 'ðŸ¦ Home Loan', 'ðŸ“ž Contact Us'];
+        return ['Check Prices', 'Locations', 'Home Loan', 'Contact Us'];
     }
 
     /**
@@ -613,7 +613,7 @@ class GeminiApiController extends BaseController
         $basePrompt .= "You help users with property inquiries in Gorakhpur, Lucknow, Kushinagar, and Varanasi. ";
         $basePrompt .= "Current projects: Suryoday Colony, Raghunath Nagri, Braj Radha Nagri (Gorakhpur), ";
         $basePrompt .= "Braj Radha Enclave (Lucknow), Buddh Bihar Colony (Kushinagar), Ganga Nagri (Varanasi). ";
-        $basePrompt .= "Plot prices start from ₹4.5 Lakhs. ";
+        $basePrompt .= "Plot prices start from Rs.4.5 Lakhs. ";
 
         switch ($role) {
             case 'customer':
@@ -624,7 +624,7 @@ class GeminiApiController extends BaseController
                 }
                 if (!empty($context['total_spent'])) {
                     $spent = number_format($context['total_spent'], 0);
-                    $prompt .= "They have spent ₹{$spent} with us. ";
+                    $prompt .= "They have spent Rs.{$spent} with us. ";
                 }
                 $prompt .= "Provide personalized property recommendations. ";
                 $prompt .= "You can check their booking status, payment history, and suggest new properties. ";
@@ -639,7 +639,7 @@ class GeminiApiController extends BaseController
                 }
                 if (!empty($context['total_commission'])) {
                     $comm = number_format($context['total_commission'], 0);
-                    $prompt .= "Their total commission is ₹{$comm}. ";
+                    $prompt .= "Their total commission is Rs.{$comm}. ";
                 }
                 $prompt .= "Help them with lead management, commission queries, and sales strategies. ";
                 $prompt .= "Provide team performance insights and motivate them.";

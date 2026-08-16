@@ -58,7 +58,7 @@
         <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
-                    <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email..." value="<?php echo htmlspecialchars($search); ?>">
+                    <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
                 </div>
                 <div class="col-md-3">
                     <select name="type" class="form-select">

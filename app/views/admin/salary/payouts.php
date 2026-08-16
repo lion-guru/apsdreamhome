@@ -10,7 +10,7 @@
                 <div class="card-body aps-cp-card-body">
                     <h6 class="mb-1"><?= htmlspecialchars($b['payout_batch_id'] ?? '') ?></h6>
                     <div class="d-flex justify-content-between">
-                        <span>Total: <strong>â‚¹<?= number_format($b['total_amount'] ?? 0, 2) ?></strong></span>
+                        <span>Total: <strong>₹<?= number_format($b['total_amount'] ?? 0, 2) ?></strong></span>
                         <span>users: <?= (int)($b['total'] ?? 0) ?></span>
                     </div>
                     <div class="mt-2">
@@ -42,7 +42,7 @@
                                 <td><?= $po['id'] ?></td>
                                 <td><?= htmlspecialchars($po['payout_batch_id'] ?? '-') ?></td>
                                 <td><strong><?= htmlspecialchars($po['employee_name'] ?? '') ?></strong></td>
-                                <td>â‚¹<?= number_format($po['amount'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($po['amount'] ?? 0, 2) ?></td>
                                 <td><?= htmlspecialchars($po['payout_date'] ?? '') ?></td>
                                 <td><?= ucfirst(str_replace('_',' ', $po['payment_method'] ?? 'bank_transfer')) ?></td>
                                 <td><?= htmlspecialchars($po['reference_no'] ?? '-') ?></td>
@@ -81,7 +81,7 @@
                     </div>
                     <div class="mb-3"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
                     <table class="table table-bordered">
-                        <thead class="table-light"><tr><th>Employee</th><th>Amount (â‚¹)</th></tr></thead>
+                        <thead class="table-light"><tr><th>Employee</th><th>Amount (₹)</th></tr></thead>
                         <tbody id="payoutRows">
                             <tr>
                                 <td>

@@ -35,7 +35,7 @@ $report = $report ?? null;
                     <div class="text-muted small"><?= htmlspecialchars($report['designation'] ?? '') ?> - <?= htmlspecialchars($report['department'] ?? '') ?></div>
                     <div class="mt-2">
                         <span class="badge bg-<?= ($report['status'] ?? '') === 'active' ? 'success' : 'danger' ?>"><?= htmlspecialchars($report['status'] ?? '') ?></span>
-                        <span class="badge bg-info ms-1">â‚¹<?= number_format($report['salary'] ?? 0, 2) ?></span>
+                        <span class="badge bg-info ms-1">₹<?= number_format($report['salary'] ?? 0, 2) ?></span>
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@ $report = $report ?? null;
                                 <?php foreach ($bonuses as $b): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($b['bonus_type'] ?? '') ?></td>
-                                        <td class="text-success fw-bold">â‚¹<?= number_format($b['bonus_amount'] ?? 0, 2) ?></td>
+                                        <td class="text-success fw-bold">₹<?= number_format($b['bonus_amount'] ?? 0, 2) ?></td>
                                         <td><?= htmlspecialchars($b['bonus_month'] ?? '') ?>/<?= htmlspecialchars($b['bonus_year'] ?? '') ?></td>
                                         <td><span class="badge bg-<?= ($b['payment_status'] ?? '') === 'paid' ? 'success' : 'warning' ?>"><?= htmlspecialchars($b['payment_status'] ?? '') ?></span></td>
                                     </tr>

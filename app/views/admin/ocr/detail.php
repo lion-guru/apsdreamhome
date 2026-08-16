@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Document Detail â€” OCR';
+$page_title = $page_title ?? 'Document Detail — OCR';
 $doc = $doc ?? [];
 $fields = $fields ?? [];
 $structured_data = $structured_data ?? [];

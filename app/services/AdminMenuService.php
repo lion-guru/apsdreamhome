@@ -61,11 +61,15 @@ class AdminMenuService
         $role = $role ?? $this->currentRole;
         $userId = $userId ?? $this->currentUserId;
 
-        // Super admin and admin see everything (filtered by tenant if not platform owner)
-        if ($role === RBACManager::ROLE_SUPER_ADMIN || $role === RBACManager::ROLE_ADMIN) {
+        // Super admin sees everything (filtered by tenant if not platform owner)
+        if ($role === RBACManager::ROLE_SUPER_ADMIN) {
             $items = $this->getAllMenuItems();
             return $this->filterForTenant($items);
         }
+
+        // Admin and other roles: get menu items based on role permissions
+        // Admin no longer sees everything - only what they have explicit permission for
+        // This ensures CEO/CFO/Finance Director dashboards are only visible to those roles
 
         // Employee role: resolve designation → sub-role for granular access
         if ($role === 'employee') {

@@ -29,7 +29,7 @@ $token_amount = $token_amount ?? 25000;
                 <i class="fas fa-check" class="style-3728"></i>
             </div>
             <h3 class="mt-2"><?= __('user_payment_success_thank_you', 'Thank You,') ?> <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
-            <p class="text-muted"><?= __('user_payment_success_received_prefix', 'Your token payment of') ?> <strong class="text-success">â‚¹<?= number_format($token_amount) ?></strong> <?= __('user_payment_success_received_suffix', 'has been received.') ?></p>
+            <p class="text-muted"><?= __('user_payment_success_received_prefix', 'Your token payment of') ?> <strong class="text-success">₹<?= number_format($token_amount) ?></strong> <?= __('user_payment_success_received_suffix', 'has been received.') ?></p>
         </div>
 
         <div class="aps-cp-card mb-4">
@@ -48,7 +48,7 @@ $token_amount = $token_amount ?? 25000;
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_amount_paid', 'Amount Paid') ?></small>
-                        <strong class="text-success fs-5">â‚¹<?= number_format((float)($payment['amount'] ?? $token_amount)) ?></strong>
+                        <strong class="text-success fs-5">₹<?= number_format((float)($payment['amount'] ?? $token_amount)) ?></strong>
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_payment_success_payment_method', 'Payment Method') ?></small>

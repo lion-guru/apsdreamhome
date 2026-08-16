@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-calculator mr-2"></i> Payroll Preview â€” <?= $month ?>/<?= $year ?></h1>
+                    <h1 class="m-0"><i class="fas fa-calculator mr-2"></i> Payroll Preview — <?= $month ?>/<?= $year ?></h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -59,19 +59,19 @@
                 </div>
                 <div class="col-lg-3 col-6">
                     <div class="small-box" class="style-55192">
-                        <div class="inner"><h3>â‚¹<?= number_format($total_gross) ?></h3><p>Total Gross</p></div>
+                        <div class="inner"><h3>₹<?= number_format($total_gross) ?></h3><p>Total Gross</p></div>
                         <div class="icon"><i class="fas fa-arrow-up"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
                     <div class="small-box" class="style-48582">
-                        <div class="inner"><h3>â‚¹<?= number_format($total_deductions) ?></h3><p>Total Deductions</p></div>
+                        <div class="inner"><h3>₹<?= number_format($total_deductions) ?></h3><p>Total Deductions</p></div>
                         <div class="icon"><i class="fas fa-arrow-down"></i></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
                     <div class="small-box" class="style-23498">
-                        <div class="inner"><h3>â‚¹<?= number_format($total_net) ?></h3><p>Total Net Payable</p></div>
+                        <div class="inner"><h3>₹<?= number_format($total_net) ?></h3><p>Total Net Payable</p></div>
                         <div class="icon"><i class="fas fa-rupee-sign"></i></div>
                     </div>
                 </div>
@@ -115,15 +115,15 @@
                                     <tr>
                                         <td><strong><?= htmlspecialchars($e['employee_name']) ?></strong></td>
                                         <td><span class="badge badge-info"><?= htmlspecialchars($e['department'] ?? '') ?></span></td>
-                                        <td>â‚¹<?= number_format($e['basic_salary']) ?></td>
-                                        <td>â‚¹<?= number_format($e['hra']) ?></td>
-                                        <td><strong>â‚¹<?= number_format($e['gross_salary']) ?></strong></td>
-                                        <td>â‚¹<?= number_format($e['pf_employee']) ?></td>
-                                        <td>â‚¹<?= number_format($e['esi_employee']) ?></td>
-                                        <td>â‚¹<?= number_format($e['tds']) ?></td>
-                                        <td>â‚¹<?= number_format($e['professional_tax']) ?></td>
-                                        <td class="text-danger">â‚¹<?= number_format($e['total_deductions']) ?></td>
-                                        <td class="text-success font-weight-bold">â‚¹<?= number_format($e['net_salary']) ?></td>
+                                        <td>₹<?= number_format($e['basic_salary']) ?></td>
+                                        <td>₹<?= number_format($e['hra']) ?></td>
+                                        <td><strong>₹<?= number_format($e['gross_salary']) ?></strong></td>
+                                        <td>₹<?= number_format($e['pf_employee']) ?></td>
+                                        <td>₹<?= number_format($e['esi_employee']) ?></td>
+                                        <td>₹<?= number_format($e['tds']) ?></td>
+                                        <td>₹<?= number_format($e['professional_tax']) ?></td>
+                                        <td class="text-danger">₹<?= number_format($e['total_deductions']) ?></td>
+                                        <td class="text-success font-weight-bold">₹<?= number_format($e['net_salary']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>

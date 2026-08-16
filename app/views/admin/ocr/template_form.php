@@ -127,7 +127,7 @@ function validateJson() {
         const data = JSON.parse(el.value);
         if (Array.isArray(data)) {
             status.style.color = '#34d399';
-            status.innerHTML = '<i class="fas fa-check-circle me-1"></i>Valid JSON â€” ' + data.length + ' field(s) defined';
+            status.innerHTML = '<i class="fas fa-check-circle me-1"></i>Valid JSON — ' + data.length + ' field(s) defined';
         } else {
             status.style.color = '#fbbf24';
             status.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>JSON is valid but expected an array';

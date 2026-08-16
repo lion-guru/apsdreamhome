@@ -167,7 +167,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_booking_detail_label_total_value', 'Total Plot Value') ?></small>
-                        <strong class="fs-6 text-primary">â‚¹<?= number_format($totalVal) ?></strong>
+                        <strong class="fs-6 text-primary">₹<?= number_format($totalVal) ?></strong>
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_booking_detail_label_channel', 'Channel') ?></small>
@@ -183,9 +183,9 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                         <div class="aps-cp-progress-bar" class="style-13409"></div>
                     </div>
                     <div class="d-flex justify-content-between mt-1">
-                        <small class="text-success"><?= __('user_booking_detail_paid', 'Paid') ?>: â‚¹<?= number_format($total_paid) ?></small>
+                        <small class="text-success"><?= __('user_booking_detail_paid', 'Paid') ?>: ₹<?= number_format($total_paid) ?></small>
                         <?php if ($pendingAmt > 0): ?>
-                            <small class="text-danger"><?= __('user_booking_detail_pending', 'Pending') ?>: â‚¹<?= number_format($pendingAmt) ?></small>
+                            <small class="text-danger"><?= __('user_booking_detail_pending', 'Pending') ?>: ₹<?= number_format($pendingAmt) ?></small>
                         <?php else: ?>
                             <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('user_booking_detail_fully_paid', 'Fully Paid') ?></small>
                         <?php endif; ?>
@@ -261,14 +261,14 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                                 <br><small class="text-danger"><i class="fas fa-exclamation-triangle"></i> <?= round((strtotime('now') - strtotime($p['due_date'])) / 86400) ?> <?= __('user_booking_detail_days_overdue', 'days overdue') ?></small>
                             <?php endif; ?>
                         </td>
-                        <td class="text-end">â‚¹<?= number_format((float)$p['amount']) ?></td>
-                        <td class="text-end">â‚¹<?= number_format((float)($p['principal'] ?? 0)) ?></td>
-                        <td class="text-end">â‚¹<?= number_format((float)($p['interest'] ?? 0)) ?></td>
+                        <td class="text-end">₹<?= number_format((float)$p['amount']) ?></td>
+                        <td class="text-end">₹<?= number_format((float)($p['principal'] ?? 0)) ?></td>
+                        <td class="text-end">₹<?= number_format((float)($p['interest'] ?? 0)) ?></td>
                         <td><span class="badge bg-<?= $pColor ?>"><?= ucfirst($pStatus) ?></span></td>
                         <td><?= $p['paid_date'] ? date('d M Y', strtotime($p['paid_date'])) : '-' ?></td>
                         <td class="text-end">
                             <?php if ((float)($p['paid_amount'] ?? 0) > 0): ?>
-                                â‚¹<?= number_format((float)$p['paid_amount']) ?>
+                                ₹<?= number_format((float)$p['paid_amount']) ?>
                             <?php else: ?>
                                 -
                             <?php endif; ?>
@@ -315,7 +315,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                     <tr>
                         <td><strong><?= htmlspecialchars($r['receipt_number'] ?? 'N/A') ?></strong></td>
                         <td><?= date('d M Y', strtotime($r['receipt_date'] ?? 'now')) ?></td>
-                        <td class="text-success fw-bold">â‚¹<?= number_format((float)($r['amount'] ?? 0)) ?></td>
+                        <td class="text-success fw-bold">₹<?= number_format((float)($r['amount'] ?? 0)) ?></td>
                         <td><?= ucfirst(str_replace('_', ' ', $r['payment_mode'] ?? 'cash')) ?></td>
                         <td><?= htmlspecialchars($r['transaction_ref'] ?? $r['cheque_number'] ?? '-') ?></td>
                         <td>

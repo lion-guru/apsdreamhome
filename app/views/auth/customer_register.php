@@ -68,7 +68,7 @@ $base = BASE_URL;
                 <form method="POST" action="<?php echo $base; ?>/register" id="customer-register-form" data-experiment="registration_form_length" data-variant="<?= htmlspecialchars($_SESSION['experiments']['registration_form_length'] ?? 'full', ENT_QUOTES) ?>">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <?php
-                        // A/B test: registration_form_length Ã¢â‚¬â€� 'minimal' shows only 3 fields, 'full' shows all
+                        // A/B test: registration_form_length — 'minimal' shows only 3 fields, 'full' shows all
                         $formVariant = $_SESSION['experiments']['registration_form_length'] ?? 'full';
                     ?>
                     <div class="mb-3">

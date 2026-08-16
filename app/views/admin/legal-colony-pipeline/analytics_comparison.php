@@ -4,7 +4,7 @@ $colonies = $data['colonies'] ?? [];
 $summary  = $data['summary'] ?? [];
 $colonyHealth = $colony_health ?? [];
 
-function inr($n) { return 'â‚¹' . number_format($n); }
+function inr($n) { return '₹' . number_format($n); }
 
 $stageColors = [
   'land_acquisition'  => '#ffc107',
@@ -189,7 +189,7 @@ foreach ($colonies as $c) {
                   <?php if ($health): ?>
                     <span class="fw-bold" class="style-14182"><?= $health['score'] ?>% (<?= $health['grade'] ?>)</span>
                   <?php else: ?>
-                    <span class="text-muted">â€”</span>
+                    <span class="text-muted">—</span>
                   <?php endif; ?>
                 </td>
                 <td class="text-end"><?= number_format($c['total_area_acres'] ?? 0, 2) ?></td>
@@ -249,7 +249,7 @@ foreach ($colonies as $c) {
 <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // â”€â”€ Health Score Chart â”€â”€
+  // —€—€ Health Score Chart —€—€
   const healthData = <?= json_encode(array_map(function($c) use ($colonyHealth) {
       $hid = (int)($c['id'] ?? 0);
       $h = $colonyHealth[$hid] ?? null;
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // â”€â”€ Stage Distribution Doughnut â”€â”€
+  // —€—€ Stage Distribution Doughnut —€—€
   const stageData = <?= json_encode($stageCounts) ?>;
   const stageLabels = <?= json_encode($stageLabels) ?>;
   const stageColors = <?= json_encode($stageColors) ?>;
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // â”€â”€ Profit Margin Chart â”€â”€
+  // —€—€ Profit Margin Chart —€—€
   const roiData = <?= json_encode(array_map(function($c) {
       return [
           'name'   => $c['name'] ?? '',

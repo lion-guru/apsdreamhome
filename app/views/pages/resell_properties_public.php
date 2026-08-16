@@ -78,7 +78,7 @@ $content = $content ?? '';
               <span class="badge bg-info text-white"><?= htmlspecialchars($p['property_type'] ?? 'N/A') ?></span>
               <span class="badge bg-success"><?= __('user_resell_public_verified', 'Verified') ?></span>
             </div>
-            <h3 class="text-primary mb-2">â‚¹<?= number_format((float)($p['asking_price'] ?? 0), 0) ?></h3>
+            <h3 class="text-primary mb-2">₹<?= number_format((float)($p['asking_price'] ?? 0), 0) ?></h3>
             <div class="d-flex justify-content-between text-muted small mb-3">
               <span><i class="fas fa-ruler-combined me-1"></i><?= htmlspecialchars($p['area_sqft'] ?? 0) ?> <?= __('user_resell_public_sqft', 'sqft') ?></span>
               <?php if (!empty($p['bedrooms'])): ?>

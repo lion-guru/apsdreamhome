@@ -11,7 +11,7 @@ $ai_tools = [
     ['icon' => 'fas fa-home', 'title' => 'Property Matchmaker', 'desc' => 'AI finds properties matching your budget, location, and lifestyle preferences', 'url' => '/properties', 'color' => '#f59e0b', 'bg' => '#fffbeb'],
     ['icon' => 'fas fa-chart-line', 'title' => 'Market Intelligence', 'desc' => 'Real-time market trends, price movements, and investment opportunity analysis', 'url' => '/ai-dashboard', 'color' => '#ef4444', 'bg' => '#fef2f2'],
     ['icon' => 'fas fa-file-alt', 'title' => 'Document AI', 'desc' => 'Auto-verify property documents, detect discrepancies, and flag legal issues', 'url' => '/legal-documents', 'color' => '#8b5cf6', 'bg' => '#f5f3ff'],
-    ['icon' => 'fas fa-search', 'title' => 'Smart Search', 'desc' => 'Natural language search â€” describe what you want, AI finds matching properties', 'url' => '/properties', 'color' => '#06b6d4', 'bg' => '#ecfeff'],
+    ['icon' => 'fas fa-search', 'title' => 'Smart Search', 'desc' => 'Natural language search — describe what you want, AI finds matching properties', 'url' => '/properties', 'color' => '#06b6d4', 'bg' => '#ecfeff'],
 ];
 
 $health_status = $ai_stats['system_health'] ?? 'healthy';
@@ -67,7 +67,7 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
             </div>
         </div>
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-brain me-3" class="style-30266"></i>AI Dashboard</h1>
-        <p class="lead mb-4" class="style-92305">Your personal AI-powered real estate assistant â€” smarter searches, accurate valuations, and market insights</p>
+        <p class="lead mb-4" class="style-92305">Your personal AI-powered real estate assistant — smarter searches, accurate valuations, and market insights</p>
         <div class="row g-3 justify-content-center" class="style-84285">
             <div class="col-6 col-md-3">
                 <div class="ai-dash-stat">
@@ -207,7 +207,7 @@ $health_label = match($health_status) { 'healthy' => 'All Systems Operational', 
                 <div class="p-4" class="style-99674">
                     <i class="fas fa-clock fa-2x mb-3" class="style-58842"></i>
                     <h6 class="fw-bold">Save Time</h6>
-                    <p class="style-91292">AI instantly finds properties matching your exact needs â€” no more scrolling through irrelevant listings</p>
+                    <p class="style-91292">AI instantly finds properties matching your exact needs — no more scrolling through irrelevant listings</p>
                 </div>
             </div>
             <div class="col-md-4">

@@ -47,7 +47,7 @@ include __DIR__ . '/../layouts/base.php';
                         </span>
                     </div>
                     <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark">
-                        <h4 class="text-white h5 mb-0">â‚¹<?php echo number_format($property['price']); ?></h4>
+                        <h4 class="text-white h5 mb-0">₹<?php echo number_format($property['price']); ?></h4>
                     </div>
                 </div>
                 
@@ -65,7 +65,7 @@ include __DIR__ . '/../layouts/base.php';
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-<?php echo $property['status'] == 'ready-to-move' ? 'success' : 'warning'; ?> small fw-bold uppercase">
-                            â€” <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
+                            — <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
                         </span>
                         <a href="/properties/<?php echo $property['id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
                     </div>

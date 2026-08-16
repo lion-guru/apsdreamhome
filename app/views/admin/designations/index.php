@@ -73,7 +73,7 @@
                             <option value="">All Departments</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['id'] ?>" <?= ($filter_dept ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($d['code'] . ' â€” ' . $d['name']) ?>
+                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -123,9 +123,9 @@
                                                 L<?= $lvl ?> Â· <?= $levelLabels[$lvl] ?? 'Unknown' ?>
                                             </span>
                                         </td>
-                                        <td>â‚¹<?= number_format($desig['min_salary'] ?? 0) ?> â€” â‚¹<?= number_format($desig['max_salary'] ?? 0) ?></td>
+                                        <td>₹<?= number_format($desig['min_salary'] ?? 0) ?> — ₹<?= number_format($desig['max_salary'] ?? 0) ?></td>
                                         <td><code><?= htmlspecialchars($desig['sub_role'] ?? '') ?></code></td>
-                                        <td><?= htmlspecialchars($desig['dashboard_view'] ?? 'â€”') ?></td>
+                                        <td><?= htmlspecialchars($desig['dashboard_view'] ?? '—') ?></td>
                                         <td>
                                             <?php if (($desig['status'] ?? '') === 'active'): ?>
                                                 <span class="badge badge-success">Active</span>

@@ -81,7 +81,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <?php foreach ($preferences as $key => $value): ?>
                                         <div class="list-group-item d-flex justify-content-between">
                                             <span><?php echo ucfirst(str_replace('_', ' ', $key)); ?></span>
-                                            <span class="text-muted"><?php echo htmlspecialchars($value); ?></span>
+                                            <span class="text-muted"><?php echo htmlspecialchars($value ?? ''); ?></span>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>

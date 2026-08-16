@@ -27,7 +27,7 @@
 
         <div class="content">
             <div class="notification-card priority-high">
-                <h3>ðŸ“‹ Notification Details</h3>
+                <h3>ðŸ"‹ Notification Details</h3>
                 <p><strong>Type:</strong> <?= htmlspecialchars($notification_type ?? 'System') ?></p>
                 <p><strong>Message:</strong> <?= htmlspecialchars($notification_message ?? '') ?></p>
                 <p><strong>Timestamp:</strong> <?= date('Y-m-d H:i:s') ?></p>

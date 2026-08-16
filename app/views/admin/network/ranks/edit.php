@@ -45,16 +45,16 @@ $id   = (int)($rank['id'] ?? 0);
 
                 <!-- GBV Thresholds -->
                 <hr>
-                <h6 class="text-muted mb-3">Business Volume Thresholds (â‚¹)</h6>
+                <h6 class="text-muted mb-3">Business Volume Thresholds (₹)</h6>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label" for="min_gbv">Minimum GBV to Qualify (â‚¹)</label>
+                        <label class="form-label" for="min_gbv">Minimum GBV to Qualify (₹)</label>
                         <input type="number" id="min_gbv" name="min_gbv" class="form-control"
                                value="<?= (float)($rank['min_gbv'] ?? 0) ?>" min="0" step="1" required>
                         <small class="text-muted">1 Lakh = 100000, 1 Crore = 10000000</small>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="max_gbv">Maximum GBV (â‚¹) â€” 0 means No Limit</label>
+                        <label class="form-label" for="max_gbv">Maximum GBV (₹) — 0 means No Limit</label>
                         <input type="number" id="max_gbv" name="max_gbv" class="form-control"
                                value="<?= (float)($rank['max_gbv'] ?? 0) ?>" min="0" step="1">
                         <small class="text-muted">Set 0 for the highest rank (no upper limit)</small>
@@ -66,7 +66,7 @@ $id   = (int)($rank['id'] ?? 0);
                 <h6 class="text-muted mb-3">Commission & Earnings</h6>
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
-                        <label class="form-label fw-semibold" for="commission_rate">Commission Rate (%) â€” Track A</label>
+                        <label class="form-label fw-semibold" for="commission_rate">Commission Rate (%) — Track A</label>
                         <input type="number" id="commission_rate" name="commission_rate" class="form-control"
                                value="<?= (float)($rank['commission_rate'] ?? 0) ?>" min="0" max="20" step="0.01" required>
                         <small class="text-muted">Max 20% (hard cap). This is the SLAB rate.</small>
@@ -116,7 +116,7 @@ $id   = (int)($rank['id'] ?? 0);
                                placeholder="e.g. Motorcycle Bonus">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label" for="reward_value">Reward Value (â‚¹)</label>
+                        <label class="form-label" for="reward_value">Reward Value (₹)</label>
                         <input type="number" id="reward_value" name="reward_value" class="form-control"
                                value="<?= (float)($rank['reward_value'] ?? 0) ?>" min="0" step="0.01">
                     </div>

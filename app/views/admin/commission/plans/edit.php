@@ -44,7 +44,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
             <span class="cp-version">v<?= $plan['version'] ?></span>
             <span class="cp-badge <?= $statusBadge ?>" class="style-77741"><?= ucfirst($plan['status']) ?></span>
             <?php if ($isActive): ?>
-                <span class="style-62541"><i class="fas fa-lock me-1"></i>Active â€” editing locked</span>
+                <span class="style-62541"><i class="fas fa-lock me-1"></i>Active — editing locked</span>
             <?php endif; ?>
         </div>
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
@@ -71,7 +71,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                 <div>
                     <?php foreach ($versions as $v): ?>
                         <span class="version-chip <?= $v['id'] == $plan['id'] ? 'current' : '' ?>">
-                            v<?= $v['version'] ?> â€” <?= $v['status'] ?>
+                            v<?= $v['version'] ?> — <?= $v['status'] ?>
                             (<?= $v['level_count'] ?? 0 ?> levels)
                             <?= $v['id'] == $plan['id'] ? 'â†� current' : '' ?>
                         </span>

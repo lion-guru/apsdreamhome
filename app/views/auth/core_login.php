@@ -1,6 +1,6 @@
 <?php
 /**
- * Core Login ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ï¿½ Unified login for all roles (Premium Glassmorphism)
+ * Core Login — Unified login for all roles (Premium Glassmorphism)
  * @var string $csrf_token
  * @var string|null $error
  * @var string|null $success
@@ -29,7 +29,7 @@ $supportedRoles = [
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#0d9488 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem 1rem}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#0d9488 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:auto;padding:2rem 1rem}
         body::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(13,148,136,.3) 0%,transparent 70%);top:-200px;right:-100px;border-radius:50%}
         body::after{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,158,11,.2) 0%,transparent 70%);bottom:-150px;left:-100px;border-radius:50%}
 

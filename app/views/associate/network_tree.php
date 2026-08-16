@@ -124,7 +124,7 @@ foreach ($nodes as $n) {
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_team_earnings', [], 'Team Total Earnings'); ?></small>
-                    <div class="fw-bold" class="style-4846">â‚¹<?= number_format($totalCommission) ?></div>
+                    <div class="fw-bold" class="style-4846">₹<?= number_format($totalCommission) ?></div>
                 </div>
                 <div class="col-md-4">
                     <small class="text-white-50"><?php echo __('assoc_net_left_leg', [], 'Left Leg'); ?></small>
@@ -264,8 +264,8 @@ foreach ($nodes as $n) {
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center fw-bold"><?= (int)($n['level'] ?? 0) ?></td>
-                                    <td class="text-end">â‚¹<?= number_format((float)($n['total_commission'] ?? 0)) ?></td>
-                                    <td class="text-end">â‚¹<?= number_format((float)($n['personal_bv'] ?? 0)) ?></td>
+                                    <td class="text-end">₹<?= number_format((float)($n['total_commission'] ?? 0)) ?></td>
+                                    <td class="text-end">₹<?= number_format((float)($n['personal_bv'] ?? 0)) ?></td>
                                     <td class="small text-muted"><?= date('d M Y', strtotime($n['joined_at'] ?? 'now')) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -297,11 +297,11 @@ foreach ($nodes as $n) {
                         <div class="gen-badge mb-2 d-inline-block">Gen <?= (int)($n['level'] ?? 0) ?></div>
                         <div class="d-flex justify-content-around mt-2" class="style-436">
                             <div>
-                                <div class="fw-bold text-primary">â‚¹<?= number_format((float)($n['total_commission'] ?? 0)) ?></div>
+                                <div class="fw-bold text-primary">₹<?= number_format((float)($n['total_commission'] ?? 0)) ?></div>
                                 <div class="text-muted"><?php echo __('assoc_net_earned', [], 'Earned'); ?></div>
                             </div>
                             <div>
-                                <div class="fw-bold text-success">â‚¹<?= number_format((float)($n['personal_bv'] ?? 0)) ?></div>
+                                <div class="fw-bold text-success">₹<?= number_format((float)($n['personal_bv'] ?? 0)) ?></div>
                                 <div class="text-muted"><?php echo __('assoc_net_th_bv', [], 'BV'); ?></div>
                             </div>
                         </div>
@@ -369,7 +369,7 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
         $html .= '<div class="tree-tooltip">';
         $html .= $name;
         if ($email) $html .= '<br><small>'.$email.'</small>';
-        $html .= '<br>Rank: '.$label.' | Earned: â‚¹'.$commission;
+        $html .= '<br>Rank: '.$label.' | Earned: ₹'.$commission;
         if ($pos) $html .= ' | '.strtoupper($pos).' Leg';
         $html .= '</div>';
 

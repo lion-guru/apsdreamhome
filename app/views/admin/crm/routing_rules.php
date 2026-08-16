@@ -91,11 +91,11 @@
                                                 $min = (float)($rule['min_budget'] ?? 0);
                                                 $max = (float)($rule['max_budget'] ?? 0);
                                                 if ($min > 0 && $max > 0) {
-                                                    echo 'â‚¹' . number_format($min) . ' â€“ â‚¹' . number_format($max);
+                                                    echo '₹' . number_format($min) . ' â€“ ₹' . number_format($max);
                                                 } elseif ($min > 0) {
-                                                    echo 'â‚¹' . number_format($min) . '+';
+                                                    echo '₹' . number_format($min) . '+';
                                                 } elseif ($max > 0) {
-                                                    echo 'Up to â‚¹' . number_format($max);
+                                                    echo 'Up to ₹' . number_format($max);
                                                 } else {
                                                     echo '<span class="text-muted">Any</span>';
                                                 }

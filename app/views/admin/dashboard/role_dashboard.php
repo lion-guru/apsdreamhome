@@ -93,7 +93,7 @@ if ($role === 'associate') {
                         <div class="flex-grow-1">
                             <div class="text-muted small"><?= $card['label'] ?></div>
                             <div class="fw-bold fs-5">
-                                <?= is_numeric($value) ? number_format($value) : htmlspecialchars($value) ?>
+                                <?= is_numeric($value) ? number_format($value) : htmlspecialchars($value ?? '') ?>
                             </div>
                         </div>
                     </div>

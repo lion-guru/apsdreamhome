@@ -28,7 +28,7 @@
                     <p class="text-muted mb-2"><?= htmlspecialchars($user['email'] ?? '') ?></p>
                     <p class="mb-2"><i class="fas fa-phone me-1"></i> <?= htmlspecialchars($user['phone'] ?? '') ?></p>
                     <p class="mb-1">
-                        <strong>Sponsor:</strong> <?= htmlspecialchars($user['sponsor_name'] ?? 'â€”') ?>
+                        <strong>Sponsor:</strong> <?= htmlspecialchars($user['sponsor_name'] ?? '—') ?>
                     </p>
                     <p class="mb-0">
                         <span class="badge bg-<?= match($user['level'] ?? '') { 'platinum' => 'dark', 'gold' => 'warning text-dark', 'silver' => 'secondary', default => 'info' } ?> fs-6">
@@ -60,7 +60,7 @@
                 <div class="col-md-3">
                     <div class="card bg-info text-white text-center">
                         <div class="card-body aps-cp-card-body">
-                            <h3 class="mb-0">â‚¹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
+                            <h3 class="mb-0">₹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
                             <small>Total Earnings</small>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark text-center">
                         <div class="card-body aps-cp-card-body">
-                            <h3 class="mb-0">â‚¹<?= number_format($stats['pending_commission'] ?? 0) ?></h3>
+                            <h3 class="mb-0">₹<?= number_format($stats['pending_commission'] ?? 0) ?></h3>
                             <small>Pending Commission</small>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                 <?php else: ?>
                                     <?php foreach (array_slice($activities, 0, 5) as $activity): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($activity['type'] ?? 'â€”') ?></td>
+                                            <td><?= htmlspecialchars($activity['type'] ?? '—') ?></td>
                                             <td><?= htmlspecialchars($activity['description'] ?? '') ?></td>
                                             <td><?= date('d M Y h:i A', strtotime($activity['created_at'] ?? 'now')) ?></td>
                                         </tr>

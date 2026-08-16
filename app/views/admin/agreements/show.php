@@ -74,7 +74,7 @@ $nextStatuses = [
                     <div class="col-md-4">
                         <label class="text-muted small">Plot</label>
                         <p class="fw-bold mb-0">
-                            <?= htmlspecialchars($a['plot_number'] ?? 'â€”') ?>
+                            <?= htmlspecialchars($a['plot_number'] ?? '—') ?>
                             <?php if (!empty($a['block'])): ?>
                                 <span class="text-muted"> / <?= htmlspecialchars($a['block']) ?></span>
                             <?php endif; ?>
@@ -84,7 +84,7 @@ $nextStatuses = [
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="text-muted small">Colony</label>
-                        <p class="mb-0"><?= htmlspecialchars($a['colony_name'] ?? 'â€”') ?></p>
+                        <p class="mb-0"><?= htmlspecialchars($a['colony_name'] ?? '—') ?></p>
                     </div>
                     <div class="col-md-4">
                         <label class="text-muted small">Booking Reference</label>
@@ -92,7 +92,7 @@ $nextStatuses = [
                             <?php if ($a['booking_id']): ?>
                                 <a href="<?= BASE_URL ?>/admin/bookings/<?= $a['booking_id'] ?>">BK-<?= $a['booking_id'] ?></a>
                             <?php else: ?>
-                                â€”
+                                —
                             <?php endif; ?>
                         </p>
                     </div>
@@ -104,15 +104,15 @@ $nextStatuses = [
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="text-muted small">Validity Date</label>
-                        <p class="mb-0"><?= $a['validity_date'] ? date('d M Y', strtotime($a['validity_date'])) : 'â€”' ?></p>
+                        <p class="mb-0"><?= $a['validity_date'] ? date('d M Y', strtotime($a['validity_date'])) : '—' ?></p>
                     </div>
                     <div class="col-md-4">
                         <label class="text-muted small">Created</label>
-                        <p class="mb-0"><?= $a['created_at'] ? date('d M Y H:i', strtotime($a['created_at'])) : 'â€”' ?></p>
+                        <p class="mb-0"><?= $a['created_at'] ? date('d M Y H:i', strtotime($a['created_at'])) : '—' ?></p>
                     </div>
                     <div class="col-md-4">
                         <label class="text-muted small">Last Updated</label>
-                        <p class="mb-0"><?= $a['updated_at'] ? date('d M Y H:i', strtotime($a['updated_at'])) : 'â€”' ?></p>
+                        <p class="mb-0"><?= $a['updated_at'] ? date('d M Y H:i', strtotime($a['updated_at'])) : '—' ?></p>
                     </div>
                 </div>
             </div>
@@ -128,15 +128,15 @@ $nextStatuses = [
                     <div class="col-md-6">
                         <div class="border rounded p-3 bg-light">
                             <h6 class="text-primary">Party A (Seller / Company)</h6>
-                            <p class="mb-0 fw-bold"><?= htmlspecialchars($a['party_a_name'] ?? 'â€”') ?></p>
-                            <small class="text-muted">ID: <?= $a['party_a_id'] ?? 'â€”' ?></small>
+                            <p class="mb-0 fw-bold"><?= htmlspecialchars($a['party_a_name'] ?? '—') ?></p>
+                            <small class="text-muted">ID: <?= $a['party_a_id'] ?? '—' ?></small>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="border rounded p-3 bg-light">
                             <h6 class="text-success">Party B (Buyer / Tenant)</h6>
-                            <p class="mb-0 fw-bold"><?= htmlspecialchars($a['party_b_name'] ?? 'â€”') ?></p>
-                            <small class="text-muted">ID: <?= $a['party_b_id'] ?? 'â€”' ?></small>
+                            <p class="mb-0 fw-bold"><?= htmlspecialchars($a['party_b_name'] ?? '—') ?></p>
+                            <small class="text-muted">ID: <?= $a['party_b_id'] ?? '—' ?></small>
                         </div>
                     </div>
                 </div>
@@ -171,7 +171,7 @@ $nextStatuses = [
                     <div class="col-md-3">
                         <div class="border rounded p-3">
                             <h6 class="text-muted">Registration Date</h6>
-                            <p class="mb-0 fw-bold"><?= $a['registration_date'] ? date('d M Y', strtotime($a['registration_date'])) : 'â€”' ?></p>
+                            <p class="mb-0 fw-bold"><?= $a['registration_date'] ? date('d M Y', strtotime($a['registration_date'])) : '—' ?></p>
                         </div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@ $nextStatuses = [
                                 <tr>
                                     <td><code><?= htmlspecialchars($d['document_number'] ?? '') ?></code></td>
                                     <td><span class="badge bg-secondary"><?= ucfirst($d['document_type'] ?? '') ?></span></td>
-                                    <td><small><?= $d['created_at'] ? date('d M Y H:i', strtotime($d['created_at'])) : 'â€”' ?></small></td>
+                                    <td><small><?= $d['created_at'] ? date('d M Y H:i', strtotime($d['created_at'])) : '—' ?></small></td>
                                     <td class="text-center">
                                         <?php if (!empty($d['file_path']) && file_exists(STORAGE_PATH . '/uploads/' . $d['file_path'])): ?>
                                             <a href="<?= BASE_URL ?>/storage/uploads/<?= $d['file_path'] ?>" class="btn btn-sm btn-outline-success" target="_blank"><i class="fas fa-download"></i> PDF</a>
@@ -272,19 +272,19 @@ $nextStatuses = [
                 <ul class="list-unstyled mb-0">
                     <li class="d-flex justify-content-between mb-2">
                         <span class="text-muted">ID</span>
-                        <strong>#<?= $a['id'] ?? 'â€”' ?></strong>
+                        <strong>#<?= $a['id'] ?? '—' ?></strong>
                     </li>
                     <li class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Type</span>
-                        <span class="badge bg-primary"><?= $typeLabels[$a['agreement_type']] ?? 'â€”' ?></span>
+                        <span class="badge bg-primary"><?= $typeLabels[$a['agreement_type']] ?? '—' ?></span>
                     </li>
                     <li class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Status</span>
-                        <span class="badge bg-<?= $statusBadge ?>"><?= $statusLabels[$a['status']] ?? 'â€”' ?></span>
+                        <span class="badge bg-<?= $statusBadge ?>"><?= $statusLabels[$a['status']] ?? '—' ?></span>
                     </li>
                     <li class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Plot</span>
-                        <strong><?= htmlspecialchars($a['plot_number'] ?? 'â€”') ?></strong>
+                        <strong><?= htmlspecialchars($a['plot_number'] ?? '—') ?></strong>
                     </li>
                     <li class="d-flex justify-content-between">
                         <span class="text-muted">Value</span>

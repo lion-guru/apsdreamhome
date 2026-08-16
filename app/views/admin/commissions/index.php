@@ -35,7 +35,7 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Commission</h6>
-                            <h3 class="mb-0">â‚¹<?= number_format((float)$stats['total_commission']) ?></h3>
+                            <h3 class="mb-0">₹<?= number_format((float)$stats['total_commission']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Paid Out</h6>
-                            <h3 class="mb-0">â‚¹<?= number_format((float)$stats['paid_out']) ?></h3>
+                            <h3 class="mb-0">₹<?= number_format((float)$stats['paid_out']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ $stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'u
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Pending</h6>
-                            <h3 class="mb-0">â‚¹<?= number_format((float)$stats['pending']) ?></h3>
+                            <h3 class="mb-0">₹<?= number_format((float)$stats['pending']) ?></h3>
                         </div>
                     </div>
                 </div>

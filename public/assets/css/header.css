@@ -736,6 +736,24 @@ main {
   }
 }
 
+/* 1360px — Hide non-essential buttons */
+@media (max-width: 1360px) {
+  .premium-header .nav-item.btn-compare {
+    display: none !important;
+  }
+}
+
+/* 1280px — Hide admin button + tighten nav */
+@media (max-width: 1280px) {
+  .premium-header .nav-item.btn-admin {
+    display: none !important;
+  }
+  .premium-header .navbar-nav .nav-link {
+    font-size: 11px;
+    padding: 16px 5px !important;
+  }
+}
+
 /* 1200px — Further compact */
 @media (max-width: 1200px) {
   .premium-header .navbar-brand {

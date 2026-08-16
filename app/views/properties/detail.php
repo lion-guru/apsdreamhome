@@ -226,7 +226,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 
             <div class="pd-price-bar">
                 <div class="pd-price">
-                    â‚¹<?= number_format((float)($property['price'] ?? 0)) ?>
+                    ₹<?= number_format((float)($property['price'] ?? 0)) ?>
                     <?php if (!empty($property['price_type'])): ?>
                         <small><?= $property['price_type'] ?></small>
                     <?php endif; ?>
@@ -403,7 +403,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 </div>
                 <?php if (!empty($property['price'])): ?>
                 <a href="<?= BASE_URL ?>/payment/initiate?property_id=<?= $property['id'] ?? 0 ?>&amount=<?= $property['price'] ?>" class="btn btn-buy w-100 mt-2">
-                    <i class="fas fa-credit-card me-1"></i> Buy Now â€” â‚¹<?= number_format($property['price']) ?>
+                    <i class="fas fa-credit-card me-1"></i> Buy Now — ₹<?= number_format($property['price']) ?>
                 </a>
                 <?php endif; ?>
             </div>
@@ -422,7 +422,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                         <img src="<?= $relImg ?>" alt="<?= htmlspecialchars($rel['title'] ?? $rel['name'] ?? '') ?>">
                         <div>
                             <div class="rel-name"><?= htmlspecialchars($rel['title'] ?? $rel['name'] ?? '') ?></div>
-                            <div class="rel-price">â‚¹<?= number_format($rel['price'] ?? 0) ?></div>
+                            <div class="rel-price">₹<?= number_format($rel['price'] ?? 0) ?></div>
                             <small class="style-6286"><?= htmlspecialchars($rel['location'] ?? $rel['address'] ?? '') ?></small>
                         </div>
                     </a>
@@ -480,11 +480,11 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 <label class="form-label" class="style-32973">Rating *</label>
                 <select name="rating" class="form-select" class="style-48720" required>
                     <option value="">Select Rating</option>
-                    <option value="5">5 â€” Excellent</option>
-                    <option value="4">4 â€” Good</option>
-                    <option value="3">3 â€” Average</option>
-                    <option value="2">2 â€” Poor</option>
-                    <option value="1">1 â€” Terrible</option>
+                    <option value="5">5 — Excellent</option>
+                    <option value="4">4 — Good</option>
+                    <option value="3">3 — Average</option>
+                    <option value="2">2 — Poor</option>
+                    <option value="1">1 — Terrible</option>
                 </select>
             </div>
             <div class="mb-3">

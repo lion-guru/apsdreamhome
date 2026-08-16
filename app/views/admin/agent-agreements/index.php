@@ -110,8 +110,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         </td>
                         <td class="style-88252"><?= (float)$a['commission_pct'] ?>%</td>
                         <td><span class="aag-badge aag-badge-<?= $a['status'] ?>"><?= ucfirst($a['status']) ?></span></td>
-                        <td class="style-4937"><?= $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : 'â€”' ?></td>
-                        <td class="style-4937"><?= $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : 'â€”' ?></td>
+                        <td class="style-4937"><?= $a['start_date'] ? date('d M Y', strtotime($a['start_date'])) : '—' ?></td>
+                        <td class="style-4937"><?= $a['end_date'] ? date('d M Y', strtotime($a['end_date'])) : '—' ?></td>
                         <td class="style-45903">
                             <a href="<?= $base ?>/admin/agent-agreements/detail/<?= (int)$a['id'] ?>" class="aag-btn aag-btn-view"><i class="fas fa-eye"></i></a>
                             <?php if ($a['status'] === 'draft'): ?>

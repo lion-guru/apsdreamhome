@@ -1,4 +1,4 @@
-<!-- Tenant Detail / Show â€” Super Admin -->
+<!-- Tenant Detail / Show — Super Admin -->
 <?php
 $tenant = $tenant ?? [];
 $plans = $plans ?? [];
@@ -88,27 +88,27 @@ function tenantUsageBar($used, $max, $color = 'primary') {
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="info-label">Contact Name</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['contact_name'] ?? 'â€”') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['contact_name'] ?? '—') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Email</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['contact_email'] ?? 'â€”') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['contact_email'] ?? '—') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Phone</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['contact_phone'] ?? 'â€”') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['contact_phone'] ?? '—') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">City</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['city'] ?? 'â€”') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['city'] ?? '—') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">State</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['state'] ?? 'â€”') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['state'] ?? '—') ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="info-label">Address</div>
-                        <div class="info-value"><?= htmlspecialchars($tenant['address'] ?? 'â€”') ?></div>
+                        <div class="info-value"><?= htmlspecialchars($tenant['address'] ?? '—') ?></div>
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
             <div class="card-body text-center">
                 <h5 class="text-muted mb-1">Current Plan</h5>
                 <h3 class="text-primary mb-1"><?= htmlspecialchars($tenant['plan_name'] ?? 'Free') ?></h3>
-                <p class="text-muted mb-3">â‚¹<?= number_format($tenant['price_monthly'] ?? 0) ?>/month</p>
+                <p class="text-muted mb-3">₹<?= number_format($tenant['price_monthly'] ?? 0) ?>/month</p>
                 <hr>
                 <div class="text-start small">
                     <div class="d-flex justify-content-between mb-1"><span>Storage Limit</span><strong><?= $tenant['storage_limit_mb'] ?? 100 ?> MB</strong></div>

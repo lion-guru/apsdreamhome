@@ -54,7 +54,7 @@
                                     default => 'secondary'
                                 };
                                 ?>
-                                <span class="badge bg-<?= $badgeClass ?>"><?= htmlspecialchars($status) ?></span>
+                                <span class="badge bg-<?= $badgeClass ?>"><?= htmlspecialchars($status ?? '') ?></span>
                                 <?php if ($status === 'pending'): ?>
                                     <br><small class="text-muted">Needs approval</small>
                                 <?php endif; ?>

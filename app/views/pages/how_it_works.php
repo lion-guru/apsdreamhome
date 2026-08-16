@@ -45,7 +45,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                                 <i class="fas fa-file-contract fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">3. Verify Documents</h5>
-                            <p class="text-muted mb-0">Our legal team verifies all property documents â€” title, encumbrance certificate, RERA registration, and government approvals.</p>
+                            <p class="text-muted mb-0">Our legal team verifies all property documents — title, encumbrance certificate, RERA registration, and government approvals.</p>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -63,7 +63,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                                 <i class="fas fa-credit-card fa-lg"></i>
                             </div>
                             <h5 class="fw-bold">5. Easy Payments</h5>
-                            <p class="text-muted mb-0">Choose flexible payment options â€” full payment, easy EMI, or construction-linked plans. Set up auto-pay with NACH/e-Mandate.</p>
+                            <p class="text-muted mb-0">Choose flexible payment options — full payment, easy EMI, or construction-linked plans. Set up auto-pay with NACH/e-Mandate.</p>
                         </div>
                     </div>
                     <div class="col-md-4">

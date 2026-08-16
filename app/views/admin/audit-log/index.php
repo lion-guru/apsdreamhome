@@ -254,7 +254,7 @@ ob_start();
                       <?php endif; ?>
                     </span>
                   <?php else: ?>
-                    <span class="text-muted">â€”</span>
+                    <span class="text-muted">—</span>
                   <?php endif; ?>
                 </td>
                 <td><small><?= htmlspecialchars($l['description'] ?? '') ?></small></td>

@@ -238,7 +238,7 @@ class InvoiceService
         $pdo = $this->pdo();
 
         $tid = TenantContext::getId();
-        $booking = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, p.area_sqft, p.total_price AS plot_price,
+        $booking = $pdo->prepare("SELECT pb.*, p.plot_number, p.colony_id, p.area_sqft, p.total_price AS plot_price,
                 u.name AS client_name, u.email AS client_email, u.phone AS client_phone
             FROM plot_bookings pb
             LEFT JOIN plots p ON pb.plot_id = p.id
@@ -257,7 +257,7 @@ class InvoiceService
 
         $items[] = [
             'item_type' => 'property',
-            'item_name' => 'Plot ' . ($row['plot_no'] ?? ''),
+            'item_name' => 'Plot ' . ($row['plot_number'] ?? ''),
             'item_description' => 'Colony #' . ($row['colony_id'] ?? '') . ' | ' . ($row['area_sqft'] ?? 0) . ' sqft',
             'quantity' => 1,
             'unit_price' => $plotPrice,
@@ -552,7 +552,7 @@ class InvoiceService
         try {
             $tid = TenantContext::getId();
             $sql = "SELECT pb.id, pb.booking_number, pb.total_plot_value, pb.status,
-                    p.plot_no, u.name AS client_name
+                    p.plot_number, u.name AS client_name
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
                 LEFT JOIN users u ON pb.customer_id = u.id" . ($tid > 1 ? " AND u.tenant_id = ?" : "") . "

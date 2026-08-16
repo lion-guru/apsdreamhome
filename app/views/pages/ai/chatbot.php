@@ -198,7 +198,7 @@ document.getElementById('userInput').addEventListener('keypress', (e) => {
 });
 
 // ============================================================
-// VOICE SYSTEM â€” STT + TTS (Web Speech API, 100% free)
+// VOICE SYSTEM — STT + TTS (Web Speech API, 100% free)
 // ============================================================
 let voiceMode = false;
 let recognition = null;

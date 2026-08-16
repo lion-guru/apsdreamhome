@@ -46,7 +46,7 @@ $recent_activity = $recent_activity ?? [];
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
                 <h2 class="mb-1 fw-bold"><i class="fas fa-brain me-2"></i>AI System Dashboard</h2>
-                <p class="mb-0 opacity-75" class="style-42715">5 autonomous agents â€” real estate intelligence engine</p>
+                <p class="mb-0 opacity-75" class="style-42715">5 autonomous agents — real estate intelligence engine</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <a href="<?= BASE_URL ?>/admin/ai-system/qualifier" class="btn btn-light"><i class="fas fa-magnet me-1"></i>Lead Qualifier</a>
@@ -153,7 +153,7 @@ $recent_activity = $recent_activity ?? [];
     <div class="row g-3 mb-4">
         <div class="col-12">
             <div class="style-39877">
-                <div class="section-title" class="style-61561"><i class="fas fa-bolt" class="style-82740"></i> Free AI Engines (Cost: â‚¹0)
+                <div class="section-title" class="style-61561"><i class="fas fa-bolt" class="style-82740"></i> Free AI Engines (Cost: ₹0)
                     <button id="engineHealthBtn" type="button" class="btn btn-sm" class="style-5967"><i class="fas fa-heartbeat"></i> Live Test</button>
                 </div>
                 <div id="engineHealthResult" class="style-83137"></div>

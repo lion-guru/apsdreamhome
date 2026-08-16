@@ -338,7 +338,7 @@ class PasswordOtpService
                 <table width="500" cellpadding="0" cellspacing="0" border="0" class="style-72925">
                     <tr>
                         <td class="style-26748">
-                            <h1 class="style-68412">ðŸ”� Verification Code</h1>
+                            <h1 class="style-68412">ðŸ"� Verification Code</h1>
                             <p class="style-53513">APS Dream Home - Real Estate</p>
                         </td>
                     </tr>

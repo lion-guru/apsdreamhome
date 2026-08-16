@@ -1,7 +1,7 @@
 <?php
 /**
  * Real-Time Analytics Dashboard
- * APS Dream Home â€” Live metrics + Chart.js + WebSocket auto-refresh
+ * APS Dream Home — Live metrics + Chart.js + WebSocket auto-refresh
  */
 
 $m = $metrics ?? [];
@@ -9,7 +9,7 @@ $cd = $chart_data ?? [];
 $acts = $activities ?? [];
 $updated = date('d M Y, h:i A');
 
-$fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
+$fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 ?>
 
 <!-- Title Bar -->
@@ -38,7 +38,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
     </div>
 </div>
 
-<!-- ROW 1 â€” 4 KPI Cards -->
+<!-- ROW 1 — 4 KPI Cards -->
 <div id="rt-kpi-cards" class="style-94863">
 
     <!-- Leads Today -->
@@ -98,13 +98,13 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
     </div>
 </div>
 
-<!-- ROW 2 â€” Charts (2Ã—2 grid) -->
+<!-- ROW 2 — Charts (2Ã—2 grid) -->
 <div class="style-38908">
 
     <!-- Chart 1: Leads over last 7 days (Line) -->
     <div class="aps-cp-card">
         <div class="aps-cp-card-header" class="style-48741">
-            <span><i class="fas fa-chart-area" class="style-9981"></i>Leads â€” Last 7 Days</span>
+            <span><i class="fas fa-chart-area" class="style-9981"></i>Leads — Last 7 Days</span>
             <span class="badge bg-primary-subtle text-primary-emphasis" class="style-56522">LINE</span>
         </div>
         <div class="aps-cp-card-body" class="style-47072">
@@ -137,7 +137,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
     <!-- Chart 4: Booking Trend 30 days (Line) -->
     <div class="aps-cp-card">
         <div class="aps-cp-card-header" class="style-48741">
-            <span><i class="fas fa-chart-line" class="style-39559"></i>Booking Trend â€” Last 30 Days</span>
+            <span><i class="fas fa-chart-line" class="style-39559"></i>Booking Trend — Last 30 Days</span>
             <span class="badge bg-warning-subtle text-warning-emphasis" class="style-56522">LINE</span>
         </div>
         <div class="aps-cp-card-body" class="style-47072">
@@ -146,7 +146,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
     </div>
 </div>
 
-<!-- ROW 3 â€” Live Activity Feed -->
+<!-- ROW 3 — Live Activity Feed -->
 <div class="aps-cp-card" class="style-99970">
     <div class="aps-cp-card-header" class="style-48741">
         <span><i class="fas fa-stream" class="style-26991"></i>Live Activity Feed</span>
@@ -186,7 +186,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
 (function() {
     'use strict';
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Chart Instances â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� Chart Instances •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
     let chartLeads7d    = null;
     let chartRevenue    = null;
     let chartSources    = null;
@@ -204,9 +204,9 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         palette:   ['#3b82f6','#10b981','#f59e0b','#ef4444','#14b8a6','#06b6d4','#ec4899','#84cc16']
     };
 
-    function fmt(n) { return 'â‚¹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+    function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0}); }
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Chart Renderers â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� Chart Renderers •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     function renderLeads7d(data) {
         const ctx = document.getElementById('rtChartLeads7d');
@@ -360,7 +360,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         }
     }
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Helpers â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� Helpers •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     function chartOpts(yLabel) {
         return {
@@ -397,7 +397,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         return result;
     }
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� KPI Updater â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� KPI Updater •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     function updateKPIs(m) {
         animateNumber('rt-kpi-leads', m.leads_today);
@@ -418,7 +418,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         setTimeout(function() { el.style.transform = 'scale(1)'; }, 300);
     }
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Activity Feed Updater â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� Activity Feed Updater •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     function updateActivityFeed(activities) {
         var list = document.getElementById('rt-activity-list');
@@ -449,7 +449,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         if (count) count.textContent = activities.length + ' events';
     }
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Data Fetchers â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� Data Fetchers •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     function showRefreshBadge() {
         var badge = document.getElementById('rt-refresh-badge');
@@ -494,7 +494,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         Promise.all([fetchMetrics(), fetchChartData()]).then(hideRefreshBadge).catch(hideRefreshBadge);
     }
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� WebSocket â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� WebSocket •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     var ws = null;
     var wsReconnectAttempts = 0;
@@ -524,7 +524,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
                     // Immediate refresh on analytics broadcast
                     rtRefreshAll();
                 } else if (msg.type === 'pong' || msg.type === 'connection') {
-                    // heartbeat / connection ack â€” ignore
+                    // heartbeat / connection ack — ignore
                 }
             } catch(e) { /* ignore parse errors */ }
         };
@@ -558,7 +558,7 @@ $fmt = fn($v) => 'â‚¹' . number_format((float)$v, 0, '.', ',');
         }
     }, 30000);
 
-    /* â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� Init â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•� */
+    /* •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� Init •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� */
 
     document.addEventListener('DOMContentLoaded', function() {
         // Initial render from server-side data

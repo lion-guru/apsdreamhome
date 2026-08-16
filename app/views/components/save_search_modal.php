@@ -108,7 +108,7 @@ $currentFilters = $currentFilters ?? [];
             if (filters.location) parts.push('in ' + filters.location);
             if (filters.bedrooms) parts.push(filters.bedrooms + 'BHK');
             if (filters.min_price || filters.max_price) {
-                const fmt = (n) => 'â‚¹' + (n / 100000).toFixed(n % 100000 ? 1 : 0) + 'L';
+                const fmt = (n) => '₹' + (n / 100000).toFixed(n % 100000 ? 1 : 0) + 'L';
                 if (filters.min_price && filters.max_price) parts.push(fmt(filters.min_price) + ' - ' + fmt(filters.max_price));
                 else if (filters.min_price) parts.push('from ' + fmt(filters.min_price));
                 else parts.push('up to ' + fmt(filters.max_price));

@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-3">
                 <div class="aps-cp-stat bg-info text-white">
-                    <div class="aps-cp-stat-value"><?= ucfirst((string)($rankInfo['next_rank'] ?? 'â€”')) ?></div>
+                    <div class="aps-cp-stat-value"><?= ucfirst((string)($rankInfo['next_rank'] ?? '—')) ?></div>
                     <div class="aps-cp-stat-label">Next Rank</div>
                 </div>
             </div>
@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
 
         <div class="mb-3">
-            <label class="form-label small text-muted">Progress to <?= htmlspecialchars(ucfirst((string)($rankInfo['next_rank'] ?? 'â€”'))) ?></label>
+            <label class="form-label small text-muted">Progress to <?= htmlspecialchars(ucfirst((string)($rankInfo['next_rank'] ?? '—'))) ?></label>
             <div class="progress" class="style-67065">
                 <div class="progress-bar bg-success" role="progressbar" class="style-28910">
                     <?= number_format((float)($rankInfo['progress_pct'] ?? 0), 1) ?>%
@@ -84,7 +84,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <?php else: foreach ($history as $h): ?>
                             <tr>
                                 <td><?= htmlspecialchars((string)($h['promoted_at'] ?? '')) ?></td>
-                                <td><?= htmlspecialchars(ucfirst((string)($h['from_rank'] ?? 'â€”'))) ?></td>
+                                <td><?= htmlspecialchars(ucfirst((string)($h['from_rank'] ?? '—'))) ?></td>
                                 <td><strong><?= htmlspecialchars(ucfirst((string)($h['to_rank'] ?? ''))) ?></strong></td>
                                 <td class="text-end">&#8377;<?= number_format((float)($h['qualifying_volume_at_promotion'] ?? 0)) ?></td>
                                 <td><?= (int)($h['leg_count_at_promotion'] ?? 0) ?></td>

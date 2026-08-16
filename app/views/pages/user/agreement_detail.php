@@ -56,7 +56,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-file-signature me-2"></i><?= __('user_agreement_detail_heading', null, 'Agreement Details') ?></h2>
-            <p><?= $type ?> â€” <?= $agrNumber ?></p>
+            <p><?= $type ?> — <?= $agrNumber ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
             <a href="<?= BASE_URL ?>/user/agreements" class="btn btn-light">
@@ -299,7 +299,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
             <div class="modal-footer border-top-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('user_agreement_detail_cancel', null, 'Cancel') ?></button>
                 <button type="button" class="btn btn-success" id="signBtn" onclick="signAgreement()" disabled>
-                    <i class="fas fa-pen me-2"></i><?= __('user_agreement_detail_i_agree_sign', null, 'I Agree â€” Sign Now') ?>
+                    <i class="fas fa-pen me-2"></i><?= __('user_agreement_detail_i_agree_sign', null, 'I Agree — Sign Now') ?>
                 </button>
             </div>
         </div>
@@ -311,7 +311,7 @@ var AGR_STRINGS = {
     signing: <?= json_encode(__('user_agreement_detail_signing', null, 'Signing...')) ?>,
     signFailed: <?= json_encode(__('user_agreement_detail_sign_failed', null, 'Signing failed. Please try again.')) ?>,
     networkError: <?= json_encode(__('user_agreement_detail_network_error', null, 'Network error. Please try again.')) ?>,
-    iAgreeSign: <?= json_encode(__('user_agreement_detail_i_agree_sign', null, 'I Agree â€” Sign Now')) ?>
+    iAgreeSign: <?= json_encode(__('user_agreement_detail_i_agree_sign', null, 'I Agree — Sign Now')) ?>
 };
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -1,4 +1,4 @@
-<!-- Tenant Dashboard â€” Super Admin Overview -->
+<!-- Tenant Dashboard — Super Admin Overview -->
 <?php
 $stats = $stats ?? [];
 $plans = $plans ?? [];
@@ -69,7 +69,7 @@ $base = BASE_URL ?? '';
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-rupee-sign me-2 text-success"></i>Monthly Revenue</h6></div>
             <div class="card-body text-center">
-                <h2 class="style-54781">â‚¹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h2>
+                <h2 class="style-54781">₹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h2>
                 <small class="text-muted">from active subscriptions</small>
             </div>
         </div>
@@ -151,7 +151,7 @@ $base = BASE_URL ?? '';
                     <div class="card border h-100">
                         <div class="card-body text-center">
                             <h5 class="card-title"><?= htmlspecialchars($plan['name']) ?></h5>
-                            <h3 class="text-primary">â‚¹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h3>
+                            <h3 class="text-primary">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h3>
                             <hr>
                             <ul class="list-unstyled small text-start">
                                 <li class="mb-1"><i class="fas fa-users text-muted me-2"></i><?= $plan['max_users'] ?> users</li>

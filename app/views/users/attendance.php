@@ -124,28 +124,28 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
                             ?>
                                 <tr class="emp-att-row">
                                     <td>
-                                        <div class="fw-semibold"><?= $date ? date('d M Y', strtotime($date)) : 'â€”' ?></div>
+                                        <div class="fw-semibold"><?= $date ? date('d M Y', strtotime($date)) : '—' ?></div>
                                     </td>
                                     <td class="text-muted small"><?= $dayOfWeek ?></td>
                                     <td>
                                         <?php if (!empty($a['check_in'])): ?>
                                             <span class="fw-semibold"><?= date('h:i A', strtotime($a['check_in'])) ?></span>
                                         <?php else: ?>
-                                            <span class="text-muted">â€”</span>
+                                            <span class="text-muted">—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if (!empty($a['check_out'])): ?>
                                             <span class="fw-semibold"><?= date('h:i A', strtotime($a['check_out'])) ?></span>
                                         <?php else: ?>
-                                            <span class="text-muted">â€”</span>
+                                            <span class="text-muted">—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end">
                                         <?php if (!empty($a['hours'])): ?>
                                             <span class="fw-semibold"><?= number_format((float)$a['hours'], 1) ?>h</span>
                                         <?php else: ?>
-                                            <span class="text-muted">â€”</span>
+                                            <span class="text-muted">—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td><?= attStatusBadge($a['status'] ?? 'absent') ?></td>

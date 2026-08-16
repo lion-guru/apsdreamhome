@@ -21,7 +21,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                 <div class="mb-3">
                     <label class="form-label fw-semibold" for="user_id">Select Agent / Salesman <span class="text-danger">*</span></label>
                     <select name="user_id" id="user_id" class="form-select" required>
-                        <option value="">â€” Choose Agent â€”</option>
+                        <option value="">— Choose Agent —</option>
                         <?php foreach ($all_associates as $assoc): ?>
                             <option value="<?= (int)$assoc['user_id'] ?>"
                                 <?= $preselect === (int)$assoc['user_id'] ? 'selected' : '' ?>>
@@ -42,26 +42,26 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                 </div>
 
                 <hr>
-                <h6 class="text-muted mb-3">Monthly Fixed Salary Components (â‚¹)</h6>
+                <h6 class="text-muted mb-3">Monthly Fixed Salary Components (₹)</h6>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <label class="form-label" for="basic_salary">Basic Salary (â‚¹)</label>
+                        <label class="form-label" for="basic_salary">Basic Salary (₹)</label>
                         <input type="number" id="basic_salary" name="basic_salary" class="form-control"
                                min="0" step="0.01" value="0" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="hra">HRA â€” House Rent Allowance (â‚¹)</label>
+                        <label class="form-label" for="hra">HRA — House Rent Allowance (₹)</label>
                         <input type="number" id="hra" name="hra" class="form-control"
                                min="0" step="0.01" value="0">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="ta_da">TA/DA â€” Travel & Daily Allowance (â‚¹)</label>
+                        <label class="form-label" for="ta_da">TA/DA — Travel & Daily Allowance (₹)</label>
                         <input type="number" id="ta_da" name="ta_da" class="form-control"
                                min="0" step="0.01" value="0">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="other_allowance">Other Allowance (â‚¹)</label>
+                        <label class="form-label" for="other_allowance">Other Allowance (₹)</label>
                         <input type="number" id="other_allowance" name="other_allowance" class="form-control"
                                min="0" step="0.01" value="0">
                     </div>
@@ -74,18 +74,18 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" for="incentive_type">Incentive Type</label>
                         <select name="incentive_type" id="incentive_type" class="form-select">
-                            <option value="flat_per_plot">Flat â‚¹ per Plot Sold</option>
+                            <option value="flat_per_plot">Flat ₹ per Plot Sold</option>
                             <option value="percentage">% of Plot Sale Value</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" id="incentive_value_label" for="incentive_value">
-                            Incentive Amount (â‚¹ per plot)
+                            Incentive Amount (₹ per plot)
                         </label>
                         <input type="number" name="incentive_value" id="incentive_value"
                                class="form-control" min="0" step="0.01" value="0">
                         <small class="text-muted" id="incentive_hint">
-                            E.g. â‚¹2000 per plot sold this month.
+                            E.g. ₹2000 per plot sold this month.
                         </small>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                         <input class="form-check-input" type="checkbox" name="tds_applicable"
                                id="tds_applicable" value="1" checked>
                         <label class="form-check-label" for="tds_applicable">
-                            Apply TDS on Salary (Section 192B â€” Professional Income Tax)
+                            Apply TDS on Salary (Section 192B — Professional Income Tax)
                         </label>
                     </div>
                 </div>
@@ -122,8 +122,8 @@ document.getElementById('incentive_type').addEventListener('change', function ()
         lbl.textContent  = 'Incentive % of Sale Value';
         hint.textContent = 'E.g. 1.5 means 1.5% of total plot sale value per booking.';
     } else {
-        lbl.textContent  = 'Incentive Amount (â‚¹ per plot)';
-        hint.textContent = 'E.g. â‚¹2000 flat per plot sold this month.';
+        lbl.textContent  = 'Incentive Amount (₹ per plot)';
+        hint.textContent = 'E.g. ₹2000 flat per plot sold this month.';
     }
 });
 </script>

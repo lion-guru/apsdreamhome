@@ -625,10 +625,11 @@ class AdvancedAnalyticsController extends AdminController
         try {
             $sql = "SELECT
                         COUNT(*) as total_associates,
-                        SUM(total_commission) as total_earnings,
-                        AVG(level) as avg_level,
-                        COUNT(CASE WHEN status = 'active' THEN 1 END) as active_associates
-                    FROM associate_mlm";
+                        SUM(a.commission_earned) as total_earnings,
+                        AVG(t.level) as avg_level,
+                        COUNT(CASE WHEN a.status = 'active' THEN 1 END) as active_associates
+                    FROM mlm_network_tree t
+                    JOIN associates a ON t.associate_id = a.user_id";
 
             $stmt = $this->db->query($sql);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -640,10 +641,11 @@ class AdvancedAnalyticsController extends AdminController
     private function getMLMLevelDistribution()
     {
         try {
-            $sql = "SELECT level, COUNT(*) as count
-                    FROM associate_mlm
-                    GROUP BY level
-                    ORDER BY level";
+            $sql = "SELECT t.level, COUNT(*) as count
+                    FROM mlm_network_tree t
+                    JOIN associates a ON t.associate_id = a.user_id
+                    GROUP BY t.level
+                    ORDER BY t.level";
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);

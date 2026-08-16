@@ -32,7 +32,7 @@ $associate_email = $associate_email ?? '';
     .type-option span { font-size: 0.75rem; font-weight: 600; }
     .price-input-group { position: relative; }
     .price-input-group .form-control { padding-left: 30px; }
-    .price-input-group::before { content: 'â‚¹'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; font-weight: 600; z-index: 1; }
+    .price-input-group::before { content: '₹'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6b7280; font-weight: 600; z-index: 1; }
     .quick-price { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
     .quick-price button { padding: 4px 12px; border: 1.5px solid #d1d5db; border-radius: 20px; background: #fff; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .quick-price button:hover { border-color: #6366f1; color: #6366f1; }

@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Your Account â€” APS Dream Home SaaS</title>
+    <title>Create Your Account — APS Dream Home SaaS</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style>
@@ -213,7 +213,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="plan-option <?= $isSelected ? 'selected' : '' ?>" onclick="selectPlan(this, '<?= htmlspecialchars($plan['slug']) ?>')">
                         <input type="radio" name="plan_slug" value="<?= htmlspecialchars($plan['slug']) ?>" <?= $isSelected ? 'checked' : '' ?> class="style-24280">
                         <div class="name"><?= htmlspecialchars($plan['name']) ?></div>
-                        <div class="price"><?= $isFree ? 'Free' : 'â‚¹' . number_format($plan['price_monthly'] ?? 0) . '/mo' ?></div>
+                        <div class="price"><?= $isFree ? 'Free' : '₹' . number_format($plan['price_monthly'] ?? 0) . '/mo' ?></div>
                     </div>
                     <?php endforeach; ?>
                 </div>

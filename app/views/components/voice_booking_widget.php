@@ -203,7 +203,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
                 var chunk = e.results[i][0].transcript;
                 if (e.results[i].isFinal) finalText += chunk; else interim += chunk;
             }
-            if (interim) setStatus('“' + interim + '”');
+            if (interim) setStatus('"' + interim + '"');
             if (finalText) {
                 setStatus('प्रोसेसिंग...');
                 sendToBot(finalText.trim());

@@ -373,7 +373,7 @@ th { background: #fee; }
 <table>
 <tr><th>#</th><th>Due Date</th><th>Amount</th><th>Outstanding</th><th>Penalty</th></tr>
 $rows
-<tr><th colspan="2">Total</th><th>â€”</th><th>â‚¹ $totalOverdue</th><th>â‚¹ $totalPenalty</th></tr>
+<tr><th colspan="2">Total</th><th>—"</th><th>â‚¹ $totalOverdue</th><th>â‚¹ $totalPenalty</th></tr>
 </table>
 
 <p><strong>Total Outstanding: â‚¹ </strong> " . round($totalOverdue + $totalPenalty, 2) . "</p>

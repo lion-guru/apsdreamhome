@@ -8,7 +8,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-1"><i class="fas fa-landmark me-2"></i><?= htmlspecialchars($page_title) ?></h4>
-        <span class="text-muted">Registry #<?= $registry['id'] ?? 0 ?> â€” <?= htmlspecialchars($registry['booking_number'] ?? '') ?></span>
+        <span class="text-muted">Registry #<?= $registry['id'] ?? 0 ?> — <?= htmlspecialchars($registry['booking_number'] ?? '') ?></span>
     </div>
     <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('admin_back_to_registries') ?></a>
 </div>
@@ -57,11 +57,11 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_registration_no') ?></div>
-                            <div class="fw-semibold"><?= htmlspecialchars($registry['registration_no'] ?? 'â€”') ?></div>
+                            <div class="fw-semibold"><?= htmlspecialchars($registry['registration_no'] ?? '—') ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_appointment_date') ?></div>
-                            <div class="fw-semibold"><?= $registry['appointment_date'] ? date('d M Y', strtotime($registry['appointment_date'])) : 'â€”' ?></div>
+                            <div class="fw-semibold"><?= $registry['appointment_date'] ? date('d M Y', strtotime($registry['appointment_date'])) : '—' ?></div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_created_at') ?></div>
@@ -87,23 +87,23 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                         <tbody>
                             <tr>
                                 <td><?= __('admin_plot_value') ?></td>
-                                <td class="text-end fw-bold">â‚¹<?= number_format($registry['total_plot_value'] ?? 0, 0) ?></td>
+                                <td class="text-end fw-bold">₹<?= number_format($registry['total_plot_value'] ?? 0, 0) ?></td>
                             </tr>
                             <tr>
                                 <td><?= __('admin_stamp_duty_up') ?></td>
-                                <td class="text-end">â‚¹<?= number_format($registry['stamp_duty_amount'], 0) ?></td>
+                                <td class="text-end">₹<?= number_format($registry['stamp_duty_amount'], 0) ?></td>
                             </tr>
                             <tr>
                                 <td><?= __('admin_registration_fee_capped') ?></td>
-                                <td class="text-end">â‚¹<?= number_format($registry['registration_fee'], 0) ?></td>
+                                <td class="text-end">₹<?= number_format($registry['registration_fee'], 0) ?></td>
                             </tr>
                             <tr>
                                 <td>Other Charges</td>
-                                <td class="text-end">â‚¹<?= number_format($registry['other_charges'], 0) ?></td>
+                                <td class="text-end">₹<?= number_format($registry['other_charges'], 0) ?></td>
                             </tr>
                             <tr class="table-primary">
                                 <td class="fw-bold"><?= __('admin_total_registry_cost') ?></td>
-                                <td class="text-end fw-bold fs-5">â‚¹<?= number_format($registry['total_registry_cost'], 0) ?></td>
+                                <td class="text-end fw-bold fs-5">₹<?= number_format($registry['total_registry_cost'], 0) ?></td>
                             </tr>
                         </tbody>
                     </table></div>
@@ -125,7 +125,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                         <div class="mb-3">
                             <label class="form-label small fw-semibold"><?= __('admin_new_status') ?></label>
                             <select name="status" class="form-select" required>
-                                <option value="">â€” Select â€”</option>
+                                <option value="">— Select —</option>
                                 <option value="appointment_scheduled" <?= $registry['status'] === 'appointment_scheduled' ? 'selected' : '' ?>><?= __('admin_appointment_scheduled') ?></option>
                                 <option value="documents_submitted" <?= $registry['status'] === 'documents_submitted' ? 'selected' : '' ?>><?= __('admin_documents_submitted') ?></option>
                                 <option value="in_progress" <?= $registry['status'] === 'in_progress' ? 'selected' : '' ?>><?= __('admin_in_progress') ?></option>
@@ -158,20 +158,20 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-1">
                         <span class="small"><?= __('admin_stamp_duty_colon') ?></span>
-                        <span class="fw-bold">â‚¹<?= number_format($stamp_duty_calc['stamp_duty'] ?? 0, 0) ?></span>
+                        <span class="fw-bold">₹<?= number_format($stamp_duty_calc['stamp_duty'] ?? 0, 0) ?></span>
                     </div>
                     <div class="d-flex justify-content-between mb-1">
                         <span class="small"><?= __('admin_reg_fee_max') ?></span>
-                        <span class="fw-bold">â‚¹<?= number_format($stamp_duty_calc['registration_fee'] ?? 0, 0) ?></span>
+                        <span class="fw-bold">₹<?= number_format($stamp_duty_calc['registration_fee'] ?? 0, 0) ?></span>
                     </div>
                     <div class="d-flex justify-content-between mb-1">
                         <span class="small">Other Charges:</span>
-                        <span class="fw-bold">â‚¹<?= number_format($stamp_duty_calc['other_charges'] ?? 1000) ?></span>
+                        <span class="fw-bold">₹<?= number_format($stamp_duty_calc['other_charges'] ?? 1000) ?></span>
                     </div>
                     <hr class="my-1">
                     <div class="d-flex justify-content-between">
                         <span class="fw-bold"><?= __('admin_total_label') ?></span>
-                        <span class="fw-bold text-primary">â‚¹<?= number_format($stamp_duty_calc['total'] ?? 0, 0) ?></span>
+                        <span class="fw-bold text-primary">₹<?= number_format($stamp_duty_calc['total'] ?? 0, 0) ?></span>
                     </div>
                 </div>
             </div>

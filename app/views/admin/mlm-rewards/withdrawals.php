@@ -76,8 +76,8 @@ $stats = $stats ?? [];
                         <thead class="table-light">
                             <tr>
                                 <th>Associate</th>
-                                <th>Amount (â‚¹)</th>
-                                <th>Balance (â‚¹)</th>
+                                <th>Amount (₹)</th>
+                                <th>Balance (₹)</th>
                                 <th>Method</th>
                                 <th>Status</th>
                                 <th>Request Date</th>
@@ -88,8 +88,8 @@ $stats = $stats ?? [];
                             <?php foreach ($requests as $r): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($r['associate_name'] ?? 'N/A') ?></strong></td>
-                                <td>â‚¹<?= number_format(floatval($r['amount'] ?? 0), 2) ?></td>
-                                <td>â‚¹<?= number_format(floatval($r['available_balance'] ?? 0), 2) ?></td>
+                                <td>₹<?= number_format(floatval($r['amount'] ?? 0), 2) ?></td>
+                                <td>₹<?= number_format(floatval($r['available_balance'] ?? 0), 2) ?></td>
                                 <td>
                                     <span class="badge bg-info"><?= ucfirst(str_replace('_', ' ', htmlspecialchars($r['payment_method'] ?? ''))) ?></span>
                                 </td>
@@ -103,7 +103,7 @@ $stats = $stats ?? [];
                                         default => 'warning'
                                     };
                                     ?>
-                                    <span class="badge bg-<?= $badge ?>"><?= ucfirst(htmlspecialchars($status)) ?></span>
+                                    <span class="badge bg-<?= $badge ?>"><?= ucfirst(htmlspecialchars($status ?? '')) ?></span>
                                 </td>
                                 <td><?= htmlspecialchars($r['request_date'] ?? 'N/A') ?></td>
                                 <td>
@@ -124,7 +124,7 @@ $stats = $stats ?? [];
                                         <i class="fas fa-check-double me-1"></i>Mark Processed
                                     </button>
                                     <?php else: ?>
-                                        <span class="text-muted small">â€”</span>
+                                        <span class="text-muted small">—</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>

@@ -650,7 +650,7 @@ HTML;
         </div>
         <div class="content">
             <div class="approved-box">
-                <h2>âœ“ Your listing is now live</h2>
+                <h2>âœ" Your listing is now live</h2>
             </div>
             
             <p>Hi {$data['name']},</p>

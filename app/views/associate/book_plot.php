@@ -46,7 +46,7 @@ $colonies = $colonies ?? [];
                         <option value=""><?= __('assoc_bp_select_plot_placeholder', [], 'Select Plot') ?></option>
                         <?php foreach ($plots as $p): ?>
                             <option value="<?= $p['id'] ?>" data-colony="<?= $p['colony_id'] ?>" data-price="<?= $p['price'] ?>" data-area="<?= $p['area_sqft'] ?>">
-                                <?= __('assoc_bp_plot_option', ['number' => htmlspecialchars($p['plot_number']), 'area' => number_format($p['area_sqft']), 'price' => number_format($p['price'])], 'Plot #%number% - %area% sq ft - â‚¹%price%') ?>
+                                <?= __('assoc_bp_plot_option', ['number' => htmlspecialchars($p['plot_number']), 'area' => number_format($p['area_sqft']), 'price' => number_format($p['price'])], 'Plot #%number% - %area% sq ft - ₹%price%') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -56,7 +56,7 @@ $colonies = $colonies ?? [];
                         <div class="row">
                             <div class="col-md-4"><strong><?= __('assoc_bp_plot', [], 'Plot') ?>:</strong> <span id="plotNumber">-</span></div>
                             <div class="col-md-4"><strong><?= __('assoc_bp_area', [], 'Area') ?>:</strong> <span id="plotArea">-</span> <?= __('assoc_bp_sqft', [], 'sq ft') ?></div>
-                            <div class="col-md-4"><strong><?= __('assoc_bp_price', [], 'Price') ?>:</strong> â‚¹<span id="plotPrice">-</span></div>
+                            <div class="col-md-4"><strong><?= __('assoc_bp_price', [], 'Price') ?>:</strong> ₹<span id="plotPrice">-</span></div>
                         </div>
                     </div>
                 </div>

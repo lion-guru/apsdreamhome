@@ -113,7 +113,7 @@ $base = BASE_URL;
         <div class="brand-section">
             <div class="brand-logo"><i class="fas fa-home"></i></div>
             <h1>Start Your <span>Journey</span></h1>
-            <p>Just your phone number â€” that's all it takes!</p>
+            <p>Just your phone number — that's all it takes!</p>
         </div>
 
         <div class="register-card">

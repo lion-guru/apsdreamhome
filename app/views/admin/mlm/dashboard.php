@@ -116,7 +116,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
         <!-- Commission by Type Breakdown -->
         <div class="aps-cp-card mt-4">
             <div class="aps-cp-card-header">
-                <h5 class="m-0"><i class="fas fa-layer-group me-2"></i>Commission Streams â€” All Time</h5>
+                <h5 class="m-0"><i class="fas fa-layer-group me-2"></i>Commission Streams — All Time</h5>
             </div>
             <div class="aps-cp-card-body p-0">
                 <div class="table-responsive">
@@ -238,10 +238,10 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                 <hr>
                 <div class="mb-1"><strong>Monthly Streams:</strong></div>
                 <ul class="list-unstyled ps-3">
-                    <li>ðŸ’Ž <strong>Generation Bonus</strong> â€” 5% of gen volume (President/SM only)</li>
-                    <li>â™¾ï¸� <strong>Infinity Override</strong> â€” 1% of deep downline (VP+ only)</li>
-                    <li>ðŸ¤� <strong>Matching Bonus</strong> â€” 100%/50%/25% match (President+ only)</li>
-                    <li>ðŸ‘‘ <strong>Royalty Pool</strong> â€” 2% of sales (Site Manager only)</li>
+                    <li>ðŸ’Ž <strong>Generation Bonus</strong> — 5% of gen volume (President/SM only)</li>
+                    <li>â™¾ï¸� <strong>Infinity Override</strong> — 1% of deep downline (VP+ only)</li>
+                    <li>ðŸ¤� <strong>Matching Bonus</strong> — 100%/50%/25% match (President+ only)</li>
+                    <li>ðŸ‘‘ <strong>Royalty Pool</strong> — 2% of sales (Site Manager only)</li>
                 </ul>
             </div>
         </div>
@@ -270,7 +270,7 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
     </div>
 </div>
 
-<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('mlm-rank-chart');

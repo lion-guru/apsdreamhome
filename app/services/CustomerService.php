@@ -29,8 +29,6 @@ class CustomerService
         $this->db->beginTransaction();
 
         try {
-            $userId = (int)($data["user_id"] ?? 0);
-            $customerCode = 'CUST-' . strtoupper(bin2hex(random_bytes(4)));
             $tid = $this->tenantId();
 
             $userSql = "INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at" . ($tid > 1 ? ", tenant_id" : "") . ")
@@ -46,51 +44,9 @@ class CustomerService
             $userStmt->execute($params);
             $userId = (int)$this->db->lastInsertId();
 
-            $customerSql = "INSERT INTO customers (user_id, customer_code, first_name, last_name, email, phone)
-                            VALUES (:user_id, :customer_code, :first_name, :last_name, :email, :phone)";
-            $customerStmt = $this->db->prepare($customerSql);
-            $customerStmt->execute([
-                ":user_id" => $userId,
-                ":customer_code" => $customerCode,
-                ":first_name" => $data["first_name"],
-                ":last_name" => $data["last_name"],
-                ":email" => $data["email"],
-                ":phone" => $data["phone"],
-                ":date_of_birth" => $data["date_of_birth"] ?? null,
-                ":gender" => $data["gender"] ?? null,
-                ":marital_status" => $data["marital_status"] ?? null,
-                ":occupation" => $data["occupation"] ?? null,
-                ":annual_income" => $data["annual_income"] ?? null,
-                ":permanent_address" => $data["permanent_address"] ?? null,
-                ":current_address" => $data["current_address"] ?? null,
-                ":city" => $data["city"] ?? null,
-                ":state" => $data["state"] ?? null,
-                ":pincode" => $data["pincode"] ?? null,
-                ":country" => $data["country"] ?? "India",
-                ":preferred_property_type" => $data["preferred_property_type"] ?? null,
-                ":preferred_location" => $data["preferred_location"] ?? null,
-                ":budget_range_min" => $data["budget_range_min"] ?? null,
-                ":budget_range_max" => $data["budget_range_max"] ?? null,
-                ":preferred_area_min" => $data["preferred_area_min"] ?? null,
-                ":preferred_area_max" => $data["preferred_area_max"] ?? null,
-                ":account_type" => $data["account_type"] ?? "individual",
-                ":company_name" => $data["company_name"] ?? null,
-                ":gst_number" => $data["gst_number"] ?? null,
-                ":status" => "pending",
-                ":email_verified" => 0,
-                ":phone_verified" => 0,
-                ":aadhar_verified" => 0,
-                ":kyc_completed" => 0,
-                ":verification_documents" => null,
-                ":profile_image" => null,
-                ":bio" => null,
-                ":created_by" => $userId,
-                ":updated_by" => $userId
-            ]);
-
             $this->db->commit();
 
-            return ["success" => true, "customer_code" => $customerCode, "user_id" => $userId];
+            return ["success" => true, "user_id" => $userId];
         } catch (\Exception $e) {
             $this->db->rollBack();
             error_log("Customer registration failed: " . $e->getMessage());
@@ -103,7 +59,7 @@ class CustomerService
         $tSql = $this->tenantSql();
         $params = [":id" => $id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
-        $stmt = $this->db->prepare("SELECT u.* FROM customers c JOIN users u ON c.user_id = u.id WHERE c.id = :id" . $tSql);
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id AND role = 'customer'" . $tSql);
         $stmt->execute($params);
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
@@ -295,13 +251,11 @@ class CustomerService
         try {
             $tSql = $this->tenantSql();
 
-            // Update customer KYC status
-            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = (SELECT user_id FROM customers WHERE id = ?)" . $tSql);
+            $stmt = $this->db->prepare("UPDATE users SET kyc_completed = 1, verification_documents = ? WHERE id = ?" . $tSql);
             $params = [json_encode($documents), $customerId];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $stmt->execute($params);
 
-            // Mark documents as verified
             $tSqlDocs = $this->tenantSql();
             foreach ($documents as $docType) {
                 $stmt = $this->db->prepare("UPDATE documents SET verification_status = 'verified', verified_at = NOW() WHERE entity_type = 'customer' AND entity_id = ? AND document_type = ?" . $tSqlDocs);

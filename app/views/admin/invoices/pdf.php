@@ -147,10 +147,10 @@
                         <?php endif; ?>
                     </td>
                     <td class="text-center"><?= (int)($item['quantity'] ?? 1) ?></td>
-                    <td class="text-right">â‚¹<?= number_format($item['unit_price'] ?? 0, 2) ?></td>
+                    <td class="text-right">₹<?= number_format($item['unit_price'] ?? 0, 2) ?></td>
                     <td class="text-right"><?= ($item['discount_percent'] ?? 0) > 0 ? $item['discount_percent'] . '%' : '-' ?></td>
                     <td class="text-right"><?= ($item['tax_percent'] ?? 0) > 0 ? $item['tax_percent'] . '%' : '-' ?></td>
-                    <td class="text-right"><strong>â‚¹<?= number_format($item['line_total'] ?? 0, 2) ?></strong></td>
+                    <td class="text-right"><strong>₹<?= number_format($item['line_total'] ?? 0, 2) ?></strong></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -159,14 +159,14 @@
     <div class="totals">
         <div class="totals-table">
             <div class="table-responsive"><table>
-                <tr><td>Subtotal</td><td class="text-right">â‚¹<?= number_format($invoice['subtotal'] ?? 0, 2) ?></td></tr>
+                <tr><td>Subtotal</td><td class="text-right">₹<?= number_format($invoice['subtotal'] ?? 0, 2) ?></td></tr>
                 <?php if (($invoice['discount_amount'] ?? 0) > 0): ?>
-                    <tr><td class="style-51061">Discount</td><td class="text-right" class="style-51061">-â‚¹<?= number_format($invoice['discount_amount'], 2) ?></td></tr>
+                    <tr><td class="style-51061">Discount</td><td class="text-right" class="style-51061">-₹<?= number_format($invoice['discount_amount'], 2) ?></td></tr>
                 <?php endif; ?>
                 <?php if (($invoice['tax_amount'] ?? 0) > 0): ?>
-                    <tr><td>Tax (GST)</td><td class="text-right">â‚¹<?= number_format($invoice['tax_amount'], 2) ?></td></tr>
+                    <tr><td>Tax (GST)</td><td class="text-right">₹<?= number_format($invoice['tax_amount'], 2) ?></td></tr>
                 <?php endif; ?>
-                <tr class="total-row"><td>TOTAL</td><td class="text-right">â‚¹<?= number_format($invoice['total_amount'] ?? 0, 2) ?></td></tr>
+                <tr class="total-row"><td>TOTAL</td><td class="text-right">₹<?= number_format($invoice['total_amount'] ?? 0, 2) ?></td></tr>
             </table></div>
         </div>
     </div>
@@ -176,10 +176,10 @@
             <h4>GST Breakdown</h4>
             <div class="row">
                 <?php if (($invoice['gst_type'] ?? '') === 'cgst_sgst'): ?>
-                    <div class="col"><label>CGST (<?= number_format(($invoice['gst_rate'] ?? 18) / 2, 1) ?>%)</label> â‚¹<?= number_format($invoice['cgst_amount'] ?? 0, 2) ?></div>
-                    <div class="col"><label>SGST (<?= number_format(($invoice['gst_rate'] ?? 18) / 2, 1) ?>%)</label> â‚¹<?= number_format($invoice['sgst_amount'] ?? 0, 2) ?></div>
+                    <div class="col"><label>CGST (<?= number_format(($invoice['gst_rate'] ?? 18) / 2, 1) ?>%)</label> ₹<?= number_format($invoice['cgst_amount'] ?? 0, 2) ?></div>
+                    <div class="col"><label>SGST (<?= number_format(($invoice['gst_rate'] ?? 18) / 2, 1) ?>%)</label> ₹<?= number_format($invoice['sgst_amount'] ?? 0, 2) ?></div>
                 <?php else: ?>
-                    <div class="col"><label>IGST (<?= number_format($invoice['gst_rate'] ?? 18, 1) ?>%)</label> â‚¹<?= number_format($invoice['igst_amount'] ?? 0, 2) ?></div>
+                    <div class="col"><label>IGST (<?= number_format($invoice['gst_rate'] ?? 18, 1) ?>%)</label> ₹<?= number_format($invoice['igst_amount'] ?? 0, 2) ?></div>
                 <?php endif; ?>
             </div>
         </div>

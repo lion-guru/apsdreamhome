@@ -23,7 +23,7 @@ $engine_status = $engine_status ?? [];
 <div class="settings-header">
     <div class="container-fluid px-4">
         <h2 class="mb-1 fw-bold"><i class="fas fa-key me-2"></i>AI API Settings</h2>
-        <p class="mb-0 opacity-75" class="style-42715">Configure free AI engines. Cost: â‚¹0 â€” all free tier.</p>
+        <p class="mb-0 opacity-75" class="style-42715">Configure free AI engines. Cost: ₹0 — all free tier.</p>
     </div>
 </div>
 
@@ -117,7 +117,7 @@ $engine_status = $engine_status ?? [];
                 </div>
                 <div class="col-md-4">
                     <h6 class="style-81974">All Free Forever</h6>
-                    <p class="style-64818">Ollama: unlimited. Groq: 30 RPM. OpenRouter: free models. Gemini: 15 RPM. Total cost: â‚¹0.</p>
+                    <p class="style-64818">Ollama: unlimited. Groq: 30 RPM. OpenRouter: free models. Gemini: 15 RPM. Total cost: ₹0.</p>
                 </div>
                 <div class="col-md-4">
                     <h6 class="style-81974">Zero Config Works</h6>

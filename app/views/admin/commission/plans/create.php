@@ -104,7 +104,7 @@ $ranks = [
                         <tr>
                             <th>#</th><th>Rank Name</th><th>Direct %</th><th>Team %</th>
                             <th>Level Bonus %</th><th>Matching %</th><th>Leadership %</th>
-                            <th>Performance %</th><th>GBV Threshold (â‚¹)</th>
+                            <th>Performance %</th><th>GBV Threshold (₹)</th>
                         </tr>
                     </thead>
                     <tbody>

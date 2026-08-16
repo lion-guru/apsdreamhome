@@ -113,10 +113,10 @@ class VisitService
                     $emailSvc = new \App\Services\EmailTemplateService();
                     $propertyTitle = '';
                     try {
-                        $pstmt = $this->pdo->prepare("SELECT title FROM user_properties WHERE id = ?");
+                        $pstmt = $this->pdo->prepare("SELECT name FROM user_properties WHERE id = ?");
                         $pstmt->execute([$data['property_id']]);
                         $prow = $pstmt->fetch();
-                        $propertyTitle = $prow['title'] ?? '';
+                        $propertyTitle = $prow['name'] ?? '';
                     } catch (\Throwable $e) { error_log($e->getMessage()); }
                     $emailSvc->sendSiteVisitConfirmed($customerId, [
                         'property_name' => $propertyTitle,

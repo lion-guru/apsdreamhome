@@ -17,7 +17,7 @@ $behavior = $behavior ?? [];
             <a href="<?= BASE_URL ?>/admin/smart-registration" class="text-decoration-none">
                 <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
             </a>
-            <h4 class="mt-2 mb-0">Session #<?= $s['id'] ?? '' ?> â€” <?= htmlspecialchars($s['phone'] ?? '') ?></h4>
+            <h4 class="mt-2 mb-0">Session #<?= $s['id'] ?? '' ?> — <?= htmlspecialchars($s['phone'] ?? '') ?></h4>
         </div>
         <div>
             <span class="sr-status-badge sr-status-<?= $s['registration_status'] ?? '' ?> fs-6">
@@ -35,17 +35,17 @@ $behavior = $behavior ?? [];
                     <div class="row g-3">
                         <div class="col-6">
                             <div class="sd-info-label">Phone</div>
-                            <div class="sd-info-value"><?= htmlspecialchars($s['phone'] ?? 'â€”') ?></div>
+                            <div class="sd-info-value"><?= htmlspecialchars($s['phone'] ?? '—') ?></div>
                         </div>
                         <div class="col-6">
                             <div class="sd-info-label">Email</div>
-                            <div class="sd-info-value"><?= htmlspecialchars($s['email'] ?? 'â€”') ?></div>
+                            <div class="sd-info-value"><?= htmlspecialchars($s['email'] ?? '—') ?></div>
                         </div>
                         <div class="col-6">
                             <div class="sd-info-label">OTP Channel</div>
                             <div class="sd-info-value">
                                 <span class="sr-channel-badge sr-channel-<?= $s['otp_channel'] ?? 'email' ?>">
-                                    <?= ucfirst($s['otp_channel'] ?? 'â€”') ?>
+                                    <?= ucfirst($s['otp_channel'] ?? '—') ?>
                                 </span>
                             </div>
                         </div>
@@ -108,13 +108,13 @@ $behavior = $behavior ?? [];
                                 <?php if ($s['role_confidence']): ?>
                                     <?= round($s['role_confidence'] * 100) ?>%
                                 <?php else: ?>
-                                    â€”
+                                    —
                                 <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="sd-info-label">IP Address</div>
-                            <div class="sd-info-value"><code><?= htmlspecialchars($s['ip_address'] ?? 'â€”') ?></code></div>
+                            <div class="sd-info-value"><code><?= htmlspecialchars($s['ip_address'] ?? '—') ?></code></div>
                         </div>
                         <div class="col-12">
                             <div class="sd-info-label">User Agent</div>
@@ -122,7 +122,7 @@ $behavior = $behavior ?? [];
                         </div>
                         <div class="col-12">
                             <div class="sd-info-label">Landing Page</div>
-                            <div class="sd-info-value"><small><?= htmlspecialchars($s['landing_page'] ?? 'â€”') ?></small></div>
+                            <div class="sd-info-value"><small><?= htmlspecialchars($s['landing_page'] ?? '—') ?></small></div>
                         </div>
                     </div>
                 </div>
@@ -165,7 +165,7 @@ $behavior = $behavior ?? [];
                         </div>
                         <div class="col-6">
                             <div class="sd-info-label">Last Follow-up</div>
-                            <div class="sd-info-value"><small><?= $s['last_followup_at'] ? date('d M H:i', strtotime($s['last_followup_at'])) : 'â€”' ?></small></div>
+                            <div class="sd-info-value"><small><?= $s['last_followup_at'] ? date('d M H:i', strtotime($s['last_followup_at'])) : '—' ?></small></div>
                         </div>
                     </div>
                 </div>
@@ -180,25 +180,25 @@ $behavior = $behavior ?? [];
                     <div class="sd-timeline-item <?= $s['registration_status'] === 'pending_otp' ? 'active' : '' ?>">
                         <div class="d-flex justify-content-between">
                             <small class="fw-bold">Session Created</small>
-                            <small class="text-muted"><?= $s['created_at'] ? date('d M Y H:i:s', strtotime($s['created_at'])) : 'â€”' ?></small>
+                            <small class="text-muted"><?= $s['created_at'] ? date('d M Y H:i:s', strtotime($s['created_at'])) : '—' ?></small>
                         </div>
                     </div>
                     <div class="sd-timeline-item <?= $s['registration_status'] === 'otp_sent' ? 'active' : '' ?>">
                         <div class="d-flex justify-content-between">
                             <small class="fw-bold">OTP Sent</small>
-                            <small class="text-muted"><?= $s['otp_sent_at'] ? date('d M Y H:i:s', strtotime($s['otp_sent_at'])) : 'â€”' ?></small>
+                            <small class="text-muted"><?= $s['otp_sent_at'] ? date('d M Y H:i:s', strtotime($s['otp_sent_at'])) : '—' ?></small>
                         </div>
                     </div>
                     <div class="sd-timeline-item <?= $s['registration_status'] === 'otp_verified' ? 'active' : '' ?>">
                         <div class="d-flex justify-content-between">
                             <small class="fw-bold">OTP Verified</small>
-                            <small class="text-muted"><?= $s['otp_verified_at'] ? date('d M Y H:i:s', strtotime($s['otp_verified_at'])) : 'â€”' ?></small>
+                            <small class="text-muted"><?= $s['otp_verified_at'] ? date('d M Y H:i:s', strtotime($s['otp_verified_at'])) : '—' ?></small>
                         </div>
                     </div>
                     <div class="sd-timeline-item <?= $s['registration_status'] === 'profile_complete' ? 'active' : '' ?>">
                         <div class="d-flex justify-content-between">
                             <small class="fw-bold">Completed</small>
-                            <small class="text-muted"><?= $s['completed_at'] ? date('d M Y H:i:s', strtotime($s['completed_at'])) : 'â€”' ?></small>
+                            <small class="text-muted"><?= $s['completed_at'] ? date('d M Y H:i:s', strtotime($s['completed_at'])) : '—' ?></small>
                         </div>
                     </div>
                     <?php if ($s['abandoned_at']): ?>

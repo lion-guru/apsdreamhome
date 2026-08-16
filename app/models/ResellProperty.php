@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 namespace App\Models;
 
 class ResellProperty extends Model
@@ -13,18 +11,16 @@ class ResellProperty extends Model
         'user_id',
         'title',
         'property_type',
-        'price',
+        'asking_price',
         'bedrooms',
         'bathrooms',
-        'area',
-        'address',
-        'city',
-        'state',
+        'area_sqft',
+        'location',
+        'district_id',
         'description',
-        'features',
+        'amenities',
         'status',
         'created_at',
-        'is_featured'
     ];
 
     /**
@@ -33,21 +29,17 @@ class ResellProperty extends Model
     public static function getActiveWithUser($filters = [])
     {
         $query = static::query()
-            ->select('resell_properties.*', 'resell_users.full_name', 'resell_users.mobile', 'resell_users.email as user_email')
-            ->join('resell_users', 'resell_properties.user_id', '=', 'resell_users.id')
-            ->where('resell_properties.status', 'approved');
+            ->select('resell_properties.*', 'users.name as full_name', 'users.phone as user_phone', 'users.email as user_email')
+            ->join('users', 'resell_properties.user_id', '=', 'users.id')
+            ->where('resell_properties.status', 'active');
 
         if (!empty($filters['search'])) {
             $searchTerm = "%{$filters['search']}%";
             $query->where(function($q) use ($searchTerm) {
                 $q->where('resell_properties.title', 'LIKE', $searchTerm)
-                  ->orWhere('resell_properties.address', 'LIKE', $searchTerm)
+                  ->orWhere('resell_properties.location', 'LIKE', $searchTerm)
                   ->orWhere('resell_properties.description', 'LIKE', $searchTerm);
             });
-        }
-
-        if (!empty($filters['city'])) {
-            $query->where('resell_properties.city', $filters['city']);
         }
 
         if (!empty($filters['type'])) {
@@ -55,19 +47,18 @@ class ResellProperty extends Model
         }
 
         if (!empty($filters['min_price'])) {
-            $query->where('resell_properties.price', '>=', $filters['min_price']);
+            $query->where('resell_properties.asking_price', '>=', $filters['min_price']);
         }
 
         if (!empty($filters['max_price'])) {
-            $query->where('resell_properties.price', '<=', $filters['max_price']);
+            $query->where('resell_properties.asking_price', '<=', $filters['max_price']);
         }
 
         if (!empty($filters['bedrooms'])) {
             $query->where('resell_properties.bedrooms', (int)$filters['bedrooms']);
         }
 
-        return $query->orderBy('resell_properties.is_featured', 'DESC')
-            ->orderBy('resell_properties.created_at', 'DESC')
+        return $query->orderBy('resell_properties.created_at', 'DESC')
             ->get();
     }
 
@@ -81,17 +72,5 @@ class ResellProperty extends Model
             $query->where($key, $value);
         }
         return $query->pluck($column);
-    }
-
-    /**
-     * Get price range for approved properties
-     */
-    public static function getPriceRange($status = 'approved')
-    {
-        $query = static::query()->where('status', $status);
-        return [
-            'min_price' => $query->min('price'),
-            'max_price' => $query->max('price')
-        ];
     }
 }

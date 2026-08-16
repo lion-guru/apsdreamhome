@@ -27,9 +27,9 @@
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Bank Account <span class="text-muted">(optional)</span></label>
                             <select name="bank_account_id" class="form-select">
-                                <option value="">â€” Select Bank Account â€”</option>
+                                <option value="">— Select Bank Account —</option>
                                 <?php foreach (($banks ?? []) as $b): ?>
-                                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' â€” ' . $b['bank_name']) ?></option>
+                                    <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="form-text">Link this import to a specific bank account for easier reconciliation.</div>
@@ -101,19 +101,19 @@
                                 <tr>
                                     <td><strong>Debit</strong></td>
                                     <td>Debit, Dr, Withdrawal, Debit Amount</td>
-                                    <td>Number (â‚¹)</td>
+                                    <td>Number (₹)</td>
                                     <td><span class="badge bg-secondary">No</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Credit</strong></td>
                                     <td>Credit, Cr, Deposit, Credit Amount</td>
-                                    <td>Number (â‚¹)</td>
+                                    <td>Number (₹)</td>
                                     <td><span class="badge bg-secondary">No</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Balance</strong></td>
                                     <td>Balance, Closing Balance, Running Balance</td>
-                                    <td>Number (â‚¹)</td>
+                                    <td>Number (₹)</td>
                                     <td><span class="badge bg-secondary">No</span></td>
                                 </tr>
                                 <tr>

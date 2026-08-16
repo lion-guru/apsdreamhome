@@ -1,4 +1,4 @@
-<div class="py-4" class="style-91914">
+<div class="py-4" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
     <div class="container">
         <div class="text-center mb-3">
             <h5 class="text-white-50"><i class="fas fa-tools me-2"></i>Explore More Tools</h5>

@@ -30,7 +30,7 @@ $commissions = $commissions ?? [];
                             <tr>
                                 <td><?= htmlspecialchars($c['agent_name'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($c['property_name'] ?? $c['property'] ?? '') ?></td>
-                                <td>â‚¹<?= number_format(floatval($c['amount'] ?? 0), 2) ?></td>
+                                <td>₹<?= number_format(floatval($c['amount'] ?? 0), 2) ?></td>
                                 <td><?= htmlspecialchars($c['created_at'] ?? $c['date'] ?? '') ?></td>
                                 <td>
                                     <form method="POST" action="<?= $base ?>/admin/commission/action" class="style-71727">

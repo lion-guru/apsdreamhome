@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <select name="property_id">
                         <option value="">-- General Agreement --</option>
                         <?php foreach ($properties as $p): ?>
-                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> â€” <?= htmlspecialchars($p['location'] ?? '') ?></option>
+                        <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

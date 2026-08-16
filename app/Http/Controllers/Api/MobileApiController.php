@@ -7289,7 +7289,7 @@ class MobileApiController extends BaseController
 
         // Get property owner
         $property = $this->db->query(
-            "SELECT up.*, u.full_name as owner_name FROM user_properties up 
+            "SELECT up.*, u.name as owner_name FROM user_properties up 
              LEFT JOIN users u ON up.user_id = u.id 
              WHERE up.id = ? AND up.tenant_id = 1",
             [$propertyId]
@@ -7356,10 +7356,10 @@ class MobileApiController extends BaseController
 
         // Get sender name
         $sender = $this->db->query(
-            "SELECT full_name FROM users WHERE id = ?",
+            "SELECT name FROM users WHERE id = ?",
             [$userId]
         )->fetch();
-        $senderName = $sender['full_name'] ?? 'Someone';
+        $senderName = $sender['name'] ?? 'Someone';
 
         $this->db->query(
             "INSERT INTO property_messages (property_id, sender_id, receiver_id, message, tenant_id) VALUES (?, ?, ?, ?, 1)",

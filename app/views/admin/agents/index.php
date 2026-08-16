@@ -31,7 +31,7 @@ $activeAgents = $activeAgents ?? 0;
         </div>
         <div class="col-md-3 col-6">
             <div class="card border-0 shadow-sm text-center py-3" class="style-413">
-                <div class="style-33659">â‚¹<?= number_format(array_sum(array_column($agents, 'total_commission')) / 100000, 1) ?>L</div>
+                <div class="style-33659">₹<?= number_format(array_sum(array_column($agents, 'total_commission')) / 100000, 1) ?>L</div>
                 <div class="small text-muted">Total Commission</div>
             </div>
         </div>
@@ -75,7 +75,7 @@ $activeAgents = $activeAgents ?? 0;
                                 <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
                             </td>
                             <td><span class="badge bg-info"><?= $agent['deals_count'] ?? 0 ?></span></td>
-                            <td>â‚¹<?= number_format($agent['total_commission'] ?? 0) ?></td>
+                            <td>₹<?= number_format($agent['total_commission'] ?? 0) ?></td>
                             <td>
                                 <a href="<?= BASE_URL ?>/admin/users/<?= $agent['id'] ?>" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                 <a href="<?= BASE_URL ?>/admin/users/<?= $agent['id'] ?>/edit" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="fas fa-pen"></i></a>

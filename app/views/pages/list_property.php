@@ -181,7 +181,7 @@ try {
                             <div class="col-md-6 mb-3">
                                 <label for="price" class="form-label fw-bold"><?= __('list_property_label_price') ?> *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">â‚¹</span>
+                                    <span class="input-group-text">₹</span>
                                     <input type="text" name="price" id="price" class="form-control" placeholder="<?= __('list_property_ph_price') ?>" required inputmode="numeric" aria-label="<?= __('list_property_label_price') ?>">
                                 </div>
                             </div>

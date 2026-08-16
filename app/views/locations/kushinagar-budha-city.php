@@ -4,7 +4,7 @@
  * Migrated from resources/views/Views/budhacity.php
  */
 
-// init.php not found â€” helpers.php already loaded from bootstrap
+// init.php not found — helpers.php already loaded from bootstrap
 
 // --- Dynamic Data Section ---
 $amenities = [];

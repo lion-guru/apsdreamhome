@@ -108,12 +108,12 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
                     <div class="my-3">
                         <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span class="fs-5 fw-bold text-primary">â‚¹<?= number_format($plot['total_price']) ?></span>
+                            <span class="fs-5 fw-bold text-primary">₹<?= number_format($plot['total_price']) ?></span>
                         </div>
                         <?php
-                        $psf = $plot['area_sqft'] > 0 ? number_format(round($plot['total_price'] / $plot['area_sqft'])) : 'â€”';
+                        $psf = $plot['area_sqft'] > 0 ? number_format(round($plot['total_price'] / $plot['area_sqft'])) : '—';
                         ?>
-                        <small class="text-muted">â‚¹<?= $psf ?> / <?= __('sqft') ?></small>
+                        <small class="text-muted">₹<?= $psf ?> / <?= __('sqft') ?></small>
                     </div>
 
                     <div class="row g-2 mb-3">
@@ -126,7 +126,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                         <div class="col-6">
                             <div class="bg-light rounded p-2 text-center">
                                 <small class="text-muted d-block"><?= __('browse_dimensions') ?></small>
-                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? 'â€”') ?></strong>
+                                <strong><?= htmlspecialchars($plot['dimension_label'] ?? '—') ?></strong>
                             </div>
                         </div>
                     </div>

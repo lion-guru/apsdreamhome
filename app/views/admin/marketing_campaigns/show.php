@@ -141,7 +141,7 @@ ob_start();
                                             <?= ucfirst($r['status']) ?>
                                         </span>
                                     </td>
-                                    <td><small><?= $r['delivered_at'] ? date('M j, H:i', strtotime($r['delivered_at'])) : 'â€”' ?></small></td>
+                                    <td><small><?= $r['delivered_at'] ? date('M j, H:i', strtotime($r['delivered_at'])) : '—' ?></small></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

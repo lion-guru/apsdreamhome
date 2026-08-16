@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'APS CRM â€” All-in-One Business Platform') ?></title>
+    <title><?= htmlspecialchars($page_title ?? 'APS CRM — All-in-One Business Platform') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
@@ -185,7 +185,7 @@
     <div class="hero-content">
         <div class="hero-badge"><i class="fas fa-rocket"></i> India's #1 Real Estate CRM Platform</div>
         <h1>Run Your Entire Business on <span>One Platform</span></h1>
-        <p>CRM, ERP, Accounting, Legal, AI â€” everything you need to manage properties, teams, and customers in one powerful SaaS platform.</p>
+        <p>CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.</p>
         <div class="hero-buttons">
             <a href="/tenant-signup" class="btn btn-primary"><i class="fas fa-play"></i> Start Free Trial</a>
             <a href="/pricing" class="btn btn-outline"><i class="fas fa-tag"></i> View Pricing</a>
@@ -197,7 +197,7 @@
 <div class="stats-bar">
     <div class="stat-card"><div class="number">500+</div><div class="label">Properties Listed</div></div>
     <div class="stat-card"><div class="number">50+</div><div class="label">Teams Onboarded</div></div>
-    <div class="stat-card"><div class="number">â‚¹10Cr+</div><div class="label">Revenue Managed</div></div>
+    <div class="stat-card"><div class="number">₹10Cr+</div><div class="label">Revenue Managed</div></div>
     <div class="stat-card"><div class="number">99.9%</div><div class="label">Uptime SLA</div></div>
 </div>
 
@@ -270,12 +270,12 @@
         <div class="feature-card">
             <div class="feature-icon" class="style-56135"><i class="fas fa-brain"></i></div>
             <h3>AI-Powered</h3>
-            <p>Smart lead scoring, price prediction, auto-assignment, conversational chatbot, voice AI â€” all built-in, no extra cost.</p>
+            <p>Smart lead scoring, price prediction, auto-assignment, conversational chatbot, voice AI — all built-in, no extra cost.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon" class="style-86524"><i class="fas fa-puzzle-piece"></i></div>
             <h3>Modular Architecture</h3>
-            <p>Use CRM alone, or add ERP, Accounting, Legal, MLM â€” each module works independently or together seamlessly.</p>
+            <p>Use CRM alone, or add ERP, Accounting, Legal, MLM — each module works independently or together seamlessly.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon" class="style-122"><i class="fas fa-palette"></i></div>
@@ -285,7 +285,7 @@
         <div class="feature-card">
             <div class="feature-icon" class="style-311"><i class="fas fa-mobile-screen"></i></div>
             <h3>Mobile First</h3>
-            <p>Native Android app for field teams. Leads, properties, bookings, commissions â€” manage everything on the go.</p>
+            <p>Native Android app for field teams. Leads, properties, bookings, commissions — manage everything on the go.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon" class="style-49144"><i class="fas fa-headset"></i></div>
@@ -307,7 +307,7 @@
         <div class="price-card <?= $i === 2 ? 'popular' : '' ?>">
             <h3><?= htmlspecialchars($plan['name'] ?? 'Plan') ?></h3>
             <div class="desc"><?= htmlspecialchars($plan['description'] ?? '') ?></div>
-            <div class="amount">â‚¹<?= number_format((float)($plan['price_monthly'] ?? 0)) ?><span>/mo</span></div>
+            <div class="amount">₹<?= number_format((float)($plan['price_monthly'] ?? 0)) ?><span>/mo</span></div>
             <div class="period">Billed monthly</div>
             <ul>
                 <li><i class="fas fa-check"></i> <?= (int)($plan['max_users'] ?? 0) ?> Users</li>
@@ -335,7 +335,7 @@
         </div>
         <div class="testimonial-card">
             <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            <div class="text">"The accounting module alone saved us â‚¹2 lakhs/year in CA fees. Everything from TDS to GST is automated now."</div>
+            <div class="text">"The accounting module alone saved us ₹2 lakhs/year in CA fees. Everything from TDS to GST is automated now."</div>
             <div class="author">Priya Sharma</div>
             <div class="role">Finance Head, Green Valley Estates</div>
         </div>

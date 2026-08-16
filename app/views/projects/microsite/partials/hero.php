@@ -47,7 +47,7 @@ $palette = $theme['palette'] ?? ['primary' => '#4e73df', 'accent' => '#1cc88a'];
                             <div class="col-6">
                                 <div class="microsite-stat">
                                     <small class="text-muted">Price / Sq.Ft.</small>
-                                    <p class="h5 mb-0">â‚¹<?php echo number_format((float)$project['price_per_sqft']); ?></p>
+                                    <p class="h5 mb-0">₹<?php echo number_format((float)$project['price_per_sqft']); ?></p>
                                 </div>
                             </div>
                             <?php endif; ?>

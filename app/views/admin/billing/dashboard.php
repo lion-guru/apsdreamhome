@@ -1,4 +1,4 @@
-<!-- Billing Dashboard â€” SaaS Revenue Overview -->
+<!-- Billing Dashboard — SaaS Revenue Overview -->
 <?php
 $stats         = $stats ?? [];
 $trend         = $trend ?? [];
@@ -39,7 +39,7 @@ $base = BASE_URL ?? '';
         <div class="card billing-stat shadow-sm h-100">
             <div class="card-body text-center">
                 <div class="text-success mb-2"><i class="fas fa-chart-line fa-2x"></i></div>
-                <div class="mrr-value">â‚¹<?= number_format($stats['total_mrr'] ?? 0) ?></div>
+                <div class="mrr-value">₹<?= number_format($stats['total_mrr'] ?? 0) ?></div>
                 <small class="text-muted">Monthly Recurring Revenue</small>
             </div>
         </div>
@@ -48,7 +48,7 @@ $base = BASE_URL ?? '';
         <div class="card billing-stat shadow-sm h-100">
             <div class="card-body text-center">
                 <div class="text-primary mb-2"><i class="fas fa-calendar-check fa-2x"></i></div>
-                <div class="arr-value">â‚¹<?= number_format(($stats['total_arr'] ?? 0)) ?></div>
+                <div class="arr-value">₹<?= number_format(($stats['total_arr'] ?? 0)) ?></div>
                 <small class="text-muted">Annual Revenue (yearly subs)</small>
             </div>
         </div>
@@ -84,7 +84,7 @@ $base = BASE_URL ?? '';
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="fw-semibold"><?= htmlspecialchars($bp['name']) ?></span>
-                                <span class="text-muted">â‚¹<?= number_format($bp['revenue']) ?> (<?= $bp['count'] ?> tenants)</span>
+                                <span class="text-muted">₹<?= number_format($bp['revenue']) ?> (<?= $bp['count'] ?> tenants)</span>
                             </div>
                             <div class="trend-bar">
                                 <?php
@@ -115,7 +115,7 @@ $base = BASE_URL ?? '';
                                 <tr>
                                     <td><?= $row['month'] ?></td>
                                     <td><?= $row['new_subscriptions'] ?></td>
-                                    <td class="text-end fw-semibold">â‚¹<?= number_format($row['revenue']) ?></td>
+                                    <td class="text-end fw-semibold">₹<?= number_format($row['revenue']) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -155,8 +155,8 @@ $base = BASE_URL ?? '';
                                 <td class="fw-semibold"><?= htmlspecialchars($sub['tenant_name'] ?? 'Unknown') ?></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($sub['plan_name'] ?? 'Free') ?></span></td>
                                 <td><?= ucfirst($sub['billing_cycle'] ?? 'monthly') ?></td>
-                                <td class="fw-semibold">â‚¹<?= number_format($sub['amount'] ?? 0) ?></td>
-                                <td><?= $sub['current_period_end'] ? date('d M Y', strtotime($sub['current_period_end'])) : 'â€”' ?></td>
+                                <td class="fw-semibold">₹<?= number_format($sub['amount'] ?? 0) ?></td>
+                                <td><?= $sub['current_period_end'] ? date('d M Y', strtotime($sub['current_period_end'])) : '—' ?></td>
                                 <td>
                                     <?php
                                     $sc = ['active' => 'success', 'past_due' => 'warning', 'cancelled' => 'danger'];
@@ -193,7 +193,7 @@ $base = BASE_URL ?? '';
                         <div class="card-body text-center">
                             <h6 class="card-title"><?= htmlspecialchars($plan['name']) ?></h6>
                             <h3 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">
-                                â‚¹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small>
+                                ₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small>
                             </h3>
                             <hr>
                             <ul class="list-unstyled small text-start">

@@ -51,8 +51,8 @@
                     <td><?php echo $l['matching_bonus_percentage']; ?>%</td>
                     <td><?php echo $l['team_size_required']; ?></td>
                     <td><?php echo $l['direct_referrals_required']; ?></td>
-                    <td>â‚¹<?php echo number_format($l['monthly_target']); ?></td>
-                    <td>â‚¹<?php echo number_format($l['joining_fee']); ?></td>
+                    <td>₹<?php echo number_format($l['monthly_target']); ?></td>
+                    <td>₹<?php echo number_format($l['joining_fee']); ?></td>
                     <td><a href="<?php echo BASE_URL; ?>/admin/mlm-settings/levels/edit/<?php echo $l['id']; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a></td>
                 </tr>
                 <?php endforeach; ?>

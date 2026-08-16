@@ -72,9 +72,9 @@ $statusBadgeClass = [
         <div class="aag-info-item">
             <div class="label">Duration</div>
             <div class="value" class="style-24590">
-                <?= $agreement['start_date'] ? date('d M Y', strtotime($agreement['start_date'])) : 'â€”' ?>
+                <?= $agreement['start_date'] ? date('d M Y', strtotime($agreement['start_date'])) : '—' ?>
                 â†’
-                <?= $agreement['end_date'] ? date('d M Y', strtotime($agreement['end_date'])) : 'â€”' ?>
+                <?= $agreement['end_date'] ? date('d M Y', strtotime($agreement['end_date'])) : '—' ?>
             </div>
         </div>
         <div class="aag-info-item">

@@ -1,6 +1,6 @@
 <?php
 /**
- * Gamification Widget â€” Reusable badge + progress bar block
+ * Gamification Widget — Reusable badge + progress bar block
  *
  * Required variables:
  *   $gamify['title']       string  Widget title (e.g. "MLM Rank")
@@ -10,7 +10,7 @@
  *   $gamify['metric']      string  Primary metric (e.g. "Total Team Sales: 12")
  *   $gamify['progress_pct'] float  0-100
  *   $gamify['next_label']  string  Next level name
- *   $gamify['next_target'] string  Next-level target value (e.g. "â‚¹5,00,000")
+ *   $gamify['next_target'] string  Next-level target value (e.g. "₹5,00,000")
  *   $gamify['cta_url']     string  Upgrade CTA link
  *   $gamify['cta_text']    string  CTA button text
  *   $gamify['gradient']    string  (optional) CSS gradient for bg

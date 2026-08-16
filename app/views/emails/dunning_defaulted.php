@@ -5,7 +5,7 @@
 <body class="style-26942">
 <div class="style-10137">
     <h1 class="style-85930">APS Dream Home</h1>
-    <p class="style-8849">Booking Defaulted â€” Action Required</p>
+    <p class="style-8849">Booking Defaulted — Action Required</p>
 </div>
 <div class="style-38030">
     <p class="style-33752">Dear <strong>{{customer_name}}</strong>,</p>
@@ -14,8 +14,8 @@
     <div class="style-20329">
         <table class="style-61075">
             <tr><td class="style-20694">Plot:</td><td class="style-60925">{{plot_number}}, {{colony_name}}</td></tr>
-            <tr><td class="style-20694">Total Overdue Amount:</td><td class="style-12547">â‚¹{{total_overdue}}</td></tr>
-            <tr><td class="style-20694">Total Penalty Accrued:</td><td class="style-15627">â‚¹{{total_penalty}}</td></tr>
+            <tr><td class="style-20694">Total Overdue Amount:</td><td class="style-12547">₹{{total_overdue}}</td></tr>
+            <tr><td class="style-20694">Total Penalty Accrued:</td><td class="style-15627">₹{{total_penalty}}</td></tr>
             <tr><td class="style-20694">Outstanding Installments:</td><td class="style-42101">{{overdue_count}}</td></tr>
         </table>
     </div>

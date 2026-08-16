@@ -114,7 +114,7 @@ if ($filter && $filter !== 'all') {
                         <span class="small text-muted"><i class="fas fa-bed me-1"></i><?= $prop['bedrooms'] ?> BHK</span>
                     <?php endif; ?>
                 </div>
-                <h5 class="style-613">â‚¹<?= number_format($prop['price'] ?? 0) ?></h5>
+                <h5 class="style-613">₹<?= number_format($prop['price'] ?? 0) ?></h5>
             </div>
             <div class="card-footer bg-transparent border-0 pt-0 d-flex gap-2">
                 <a href="<?= $base ?>/properties/<?= $prop['id'] ?>" class="btn btn-sm btn-outline-success flex-grow-1" target="_blank">

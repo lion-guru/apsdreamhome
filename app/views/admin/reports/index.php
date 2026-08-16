@@ -51,7 +51,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <h5 class="card-title"><i class="fas fa-rupee-sign me-2 text-info"></i>Revenue</h5>
                         <p class="text-muted">Monthly revenue analytics</p>
                         <div class="mt-3">
-                            <strong>Total:</strong> â‚¹<?php echo number_format(array_sum($reports['revenue']['data'] ?? [0])); ?>
+                            <strong>Total:</strong> ₹<?php echo number_format(array_sum($reports['revenue']['data'] ?? [0])); ?>
                         </div>
                     </div>
                 </div>

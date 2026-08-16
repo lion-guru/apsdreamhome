@@ -1,6 +1,6 @@
 <?php
 /**
- * API Documentation Ã¢â‚¬â€� Swagger UI with admin layout
+ * API Documentation à¢€—� Swagger UI with admin layout
  *
  * @var array $groups   Grouped endpoint data from ApiDocService::getEndpoints()
  * @var int   $total    Total route count

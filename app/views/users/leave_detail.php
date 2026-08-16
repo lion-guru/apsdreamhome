@@ -5,8 +5,8 @@ function ldStatusBadge($status) {
     $cls = $map[strtolower($status)] ?? 'secondary';
     return '<span class="badge bg-' . $cls . ' fs-6">' . htmlspecialchars(ucfirst($status)) . '</span>';
 }
-function ldDate($d) { return $d ? date('d M Y', strtotime($d)) : 'â€”'; }
-function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : 'â€”'; }
+function ldDate($d) { return $d ? date('d M Y', strtotime($d)) : '—'; }
+function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—'; }
 ?>
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">

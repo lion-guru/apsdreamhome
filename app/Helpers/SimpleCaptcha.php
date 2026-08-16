@@ -101,7 +101,7 @@ class SimpleCaptcha {
      * Render CAPTCHA in form
      */
     public static function renderField($label = 'Enter CAPTCHA') {
-        $img_src = 'captcha/image.php?t=' . time();
+        $img_src = BASE_URL . '/captcha/image.php?t=' . time();
         return "
         <div class='form-group'>
             <label>{$label}</label>

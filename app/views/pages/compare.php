@@ -138,7 +138,7 @@ $count = count($plots);
             <div class="compare-label-col"><div class="compare-label"><?= __('compare_price') ?></div></div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-cell <?= ($prices[$i] > 0 && $prices[$i] === $minPrice) ? 'compare-best' : '' ?>">
-                    <span class="price-highlight">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
+                    <span class="price-highlight">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
                 </div>
             <?php endforeach; ?>
 
@@ -150,7 +150,7 @@ $count = count($plots);
             <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_price_per_sqft') ?></div></div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-cell compare-row-even <?= ($pps[$i] > 0 && $pps[$i] === $minPps) ? 'compare-best' : '' ?>">
-                    <span class="price-per-sqft">â‚¹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?></span>
+                    <span class="price-per-sqft">₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?></span>
                 </div>
             <?php endforeach; ?>
 

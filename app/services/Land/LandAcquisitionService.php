@@ -28,6 +28,8 @@ use \App\Traits\ServiceTenantTrait;
  */
 class LandAcquisitionService
 {
+    use ServiceTenantTrait;
+
     /** @var \PDO */
     private $pdo;
 

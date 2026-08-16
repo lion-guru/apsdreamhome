@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-5">
             <h1 class="text-white fw-bold display-5"><i class="fas fa-handshake me-2"></i>Partner Tools</h1>
-            <p class="text-white-50 fs-5">Free tools for small land dealers â€” use without registration!</p>
+            <p class="text-white-50 fs-5">Free tools for small land dealers — use without registration!</p>
         </div>
 
         <!-- Tool 1: Land Area Converter -->
@@ -64,11 +64,11 @@
                             <input type="number" id="priceArea" class="form-control" value="1000" oninput="calcPrice()" class="style-46367">
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">Rate per sqft (â‚¹)</label>
+                            <label class="text-white-50">Rate per sqft (₹)</label>
                             <input type="number" id="priceRate" class="form-control" value="2500" oninput="calcPrice()" class="style-46367">
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">PLC Charges (â‚¹, optional)</label>
+                            <label class="text-white-50">PLC Charges (₹, optional)</label>
                             <input type="number" id="pricePLC" class="form-control" value="0" oninput="calcPrice()" class="style-46367">
                         </div>
                         <div class="mb-3">
@@ -78,20 +78,20 @@
                         <div class="style-3672">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Base Price:</span>
-                                <span class="text-white" id="priceBase">â‚¹25,00,000</span>
+                                <span class="text-white" id="priceBase">₹25,00,000</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">PLC:</span>
-                                <span class="text-white" id="pricePLCDisplay">â‚¹0</span>
+                                <span class="text-white" id="pricePLCDisplay">₹0</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Discount:</span>
-                                <span class="text-danger" id="priceDiscountDisplay">-â‚¹0</span>
+                                <span class="text-danger" id="priceDiscountDisplay">-₹0</span>
                             </div>
                             <hr class="style-96118">
                             <div class="d-flex justify-content-between">
                                 <strong class="text-white">Total Price:</strong>
-                                <strong class="text-success fs-4" id="priceTotal">â‚¹25,00,000</strong>
+                                <strong class="text-success fs-4" id="priceTotal">₹25,00,000</strong>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Sale Amount (â‚¹)</label>
+                            <label class="text-white-50">Sale Amount (₹)</label>
                             <input type="number" id="commAmount" class="form-control" value="2500000" oninput="calcCommission()" class="style-46367">
                         </div>
                         <div class="mb-3">
@@ -124,20 +124,20 @@
                         <div class="style-3672">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Track A (Direct Sale):</span>
-                                <span class="text-success" id="commTrackA">â‚¹1,25,000</span>
+                                <span class="text-success" id="commTrackA">₹1,25,000</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Track B (Performance):</span>
-                                <span class="text-info" id="commTrackB">â‚¹75,000</span>
+                                <span class="text-info" id="commTrackB">₹75,000</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Track C (Milestone):</span>
-                                <span class="text-warning" id="commTrackC">â‚¹50,000</span>
+                                <span class="text-warning" id="commTrackC">₹50,000</span>
                             </div>
                             <hr class="style-96118">
                             <div class="d-flex justify-content-between">
                                 <strong class="text-white">Total Commission (Max 20%):</strong>
-                                <strong class="text-success fs-4" id="commTotal">â‚¹2,50,000</strong>
+                                <strong class="text-success fs-4" id="commTotal">₹2,50,000</strong>
                             </div>
                             <small class="text-white-50 d-block mt-2">*Actual commission depends on downline performance & rank</small>
                         </div>
@@ -155,7 +155,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Property Value (â‚¹)</label>
+                            <label class="text-white-50">Property Value (₹)</label>
                             <input type="number" id="stampValue" class="form-control" value="2500000" oninput="calcStamp()" class="style-46367">
                         </div>
                         <div class="mb-3">
@@ -170,16 +170,16 @@
                         <div class="style-3672">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Stamp Duty:</span>
-                                <span class="text-white" id="stampDuty">â‚¹1,25,000</span>
+                                <span class="text-white" id="stampDuty">₹1,25,000</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Registration (1%):</span>
-                                <span class="text-white" id="stampReg">â‚¹25,000</span>
+                                <span class="text-white" id="stampReg">₹25,000</span>
                             </div>
                             <hr class="style-96118">
                             <div class="d-flex justify-content-between">
                                 <strong class="text-white">Total:</strong>
-                                <strong class="text-danger fs-5" id="stampTotal">â‚¹1,50,000</strong>
+                                <strong class="text-danger fs-5" id="stampTotal">₹1,50,000</strong>
                             </div>
                         </div>
                     </div>
@@ -194,7 +194,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Loan Amount (â‚¹)</label>
+                            <label class="text-white-50">Loan Amount (₹)</label>
                             <input type="number" id="emiLoan" class="form-control" value="1500000" oninput="calcEMI()" class="style-46367">
                         </div>
                         <div class="mb-3">
@@ -209,15 +209,15 @@
                         <div class="style-3672">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Monthly EMI:</span>
-                                <strong class="text-success fs-5" id="emiMonthly">â‚¹14,995</strong>
+                                <strong class="text-success fs-5" id="emiMonthly">₹14,995</strong>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-white-50">Total Interest:</span>
-                                <span class="text-danger" id="emiInterest">â‚¹11,99,100</span>
+                                <span class="text-danger" id="emiInterest">₹11,99,100</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-white-50">Total Payment:</span>
-                                <span class="text-white" id="emiTotal">â‚¹26,99,100</span>
+                                <span class="text-white" id="emiTotal">₹26,99,100</span>
                             </div>
                         </div>
                     </div>
@@ -316,10 +316,10 @@ function calcPrice() {
     const base = area * rate;
     const discount = base * disc / 100;
     const total = base + plc - discount;
-    document.getElementById('priceBase').textContent = 'â‚¹' + base.toLocaleString('en-IN');
-    document.getElementById('pricePLCDisplay').textContent = 'â‚¹' + plc.toLocaleString('en-IN');
-    document.getElementById('priceDiscountDisplay').textContent = '-â‚¹' + discount.toLocaleString('en-IN');
-    document.getElementById('priceTotal').textContent = 'â‚¹' + total.toLocaleString('en-IN');
+    document.getElementById('priceBase').textContent = '₹' + base.toLocaleString('en-IN');
+    document.getElementById('pricePLCDisplay').textContent = '₹' + plc.toLocaleString('en-IN');
+    document.getElementById('priceDiscountDisplay').textContent = '-₹' + discount.toLocaleString('en-IN');
+    document.getElementById('priceTotal').textContent = '₹' + total.toLocaleString('en-IN');
 }
 
 function calcCommission() {
@@ -330,10 +330,10 @@ function calcCommission() {
     const trackB = amount * 3 / 100;
     const trackC = amount * 2 / 100;
     const total = Math.min(trackA + trackB + trackC, amount * globalCap / 100);
-    document.getElementById('commTrackA').textContent = 'â‚¹' + trackA.toLocaleString('en-IN');
-    document.getElementById('commTrackB').textContent = 'â‚¹' + trackB.toLocaleString('en-IN');
-    document.getElementById('commTrackC').textContent = 'â‚¹' + trackC.toLocaleString('en-IN');
-    document.getElementById('commTotal').textContent = 'â‚¹' + total.toLocaleString('en-IN');
+    document.getElementById('commTrackA').textContent = '₹' + trackA.toLocaleString('en-IN');
+    document.getElementById('commTrackB').textContent = '₹' + trackB.toLocaleString('en-IN');
+    document.getElementById('commTrackC').textContent = '₹' + trackC.toLocaleString('en-IN');
+    document.getElementById('commTotal').textContent = '₹' + total.toLocaleString('en-IN');
 }
 
 function calcStamp() {
@@ -341,9 +341,9 @@ function calcStamp() {
     const rate = parseFloat(document.getElementById('stampState').value) || 5;
     const duty = val * rate / 100;
     const reg = val * 1 / 100;
-    document.getElementById('stampDuty').textContent = 'â‚¹' + duty.toLocaleString('en-IN');
-    document.getElementById('stampReg').textContent = 'â‚¹' + reg.toLocaleString('en-IN');
-    document.getElementById('stampTotal').textContent = 'â‚¹' + (duty + reg).toLocaleString('en-IN');
+    document.getElementById('stampDuty').textContent = '₹' + duty.toLocaleString('en-IN');
+    document.getElementById('stampReg').textContent = '₹' + reg.toLocaleString('en-IN');
+    document.getElementById('stampTotal').textContent = '₹' + (duty + reg).toLocaleString('en-IN');
 }
 
 function calcEMI() {
@@ -355,9 +355,9 @@ function calcEMI() {
     const emi = P * R * Math.pow(1 + R, N * 12) / (Math.pow(1 + R, N * 12) - 1);
     const total = emi * N * 12;
     const interest = total - P;
-    document.getElementById('emiMonthly').textContent = 'â‚¹' + Math.round(emi).toLocaleString('en-IN');
-    document.getElementById('emiInterest').textContent = 'â‚¹' + Math.round(interest).toLocaleString('en-IN');
-    document.getElementById('emiTotal').textContent = 'â‚¹' + Math.round(total).toLocaleString('en-IN');
+    document.getElementById('emiMonthly').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+    document.getElementById('emiInterest').textContent = '₹' + Math.round(interest).toLocaleString('en-IN');
+    document.getElementById('emiTotal').textContent = '₹' + Math.round(total).toLocaleString('en-IN');
 }
 
 // Checklist progress

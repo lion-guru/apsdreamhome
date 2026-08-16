@@ -40,7 +40,9 @@
                 <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card" class="style-10432" onclick="openLightbox(<?= $idx ?>)">
                     <div class="position-relative" class="style-44237">
                         <?php if (!empty($img['image_path'])): ?>
-                        <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path']) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100" class="style-44820" loading="lazy">
+                        <?php $imgRaw = $img['image_path'] ?? '';
+                              $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100" class="style-44820" loading="lazy">
                         <?php else: ?>
                         <div class="bg-light d-flex align-items-center justify-content-center h-100"><i class="fas fa-image fa-3x text-muted"></i></div>
                         <?php endif; ?>
@@ -106,7 +108,7 @@ function navigateLightbox(dir) {
 
 function updateLightbox() {
     var img = galleryData[currentLightboxIndex];
-    var src = img.image_path ? '<?= BASE_URL ?>/' + img.image_path : '';
+    var src = img.image_path ? (img.image_path.startsWith('http') ? img.image_path : '<?= BASE_URL ?>/' + img.image_path) : '';
     document.getElementById('lightboxImage').src = src;
     document.getElementById('lightboxTitle').textContent = img.title || '';
     document.getElementById('lightboxCaption').textContent = img.caption || '';

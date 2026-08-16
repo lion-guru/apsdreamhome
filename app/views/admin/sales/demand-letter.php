@@ -22,7 +22,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_customer') ?></div>
-                <div class="fw-bold"><?= htmlspecialchars((string)($booking['customer_name'] ?? 'â€”')) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars((string)($booking['customer_name'] ?? '—')) ?></div>
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_installment_num') ?></div>

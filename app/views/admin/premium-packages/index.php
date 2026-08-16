@@ -26,7 +26,7 @@
                 <td>#<?= $pkg['id'] ?></td>
                 <td><strong><?= htmlspecialchars($pkg['name']) ?></strong></td>
                 <td><span class="badge" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? '') ?></span></td>
-                <td>â‚¹<?= number_format($pkg['price']) ?></td>
+                <td>₹<?= number_format($pkg['price']) ?></td>
                 <td><?= $pkg['duration_days'] ?> days</td>
                 <td><?= $pkg['priority_order'] ?></td>
                 <td><?= $pkg['is_active'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>' ?></td>

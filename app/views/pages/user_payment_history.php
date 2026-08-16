@@ -20,7 +20,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
         <div class="aps-cp-stat aps-cp-stat--green">
             <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['total_paid']) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['total_paid']) ?></div>
                 <div class="aps-cp-stat-label">Total Paid</div>
             </div>
         </div>
@@ -38,7 +38,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
         <div class="aps-cp-stat aps-cp-stat--orange">
             <div class="aps-cp-stat-icon"><i class="fas fa-calendar"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">â‚¹<?= number_format($stats['this_month']) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format($stats['this_month']) ?></div>
                 <div class="aps-cp-stat-label">This Month</div>
             </div>
         </div>
@@ -51,7 +51,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                     <?php if ($stats['last_payment']): ?>
                         <?= date('d M', strtotime($stats['last_payment']['payment_date'] ?? $stats['last_payment']['created_at'] ?? 'now')) ?>
                     <?php else: ?>
-                        â€”
+                        —
                     <?php endif; ?>
                 </div>
                 <div class="aps-cp-stat-label">Last Payment</div>
@@ -93,7 +93,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                         ?>
                         <tr>
                             <td>
-                                <strong><?= $payDate ? date('d M Y', strtotime($payDate)) : 'â€”' ?></strong>
+                                <strong><?= $payDate ? date('d M Y', strtotime($payDate)) : '—' ?></strong>
                                 <?php if ($payDate): ?>
                                     <br><small class="text-muted"><?= date('h:i A', strtotime($payDate)) ?></small>
                                 <?php endif; ?>
@@ -102,7 +102,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                                 <small class="text-muted"><?= htmlspecialchars($p['booking_number'] ?? '') ?></small>
                             </td>
                             <td>
-                                <?= htmlspecialchars($p['plot_number'] ?? 'â€”') ?>
+                                <?= htmlspecialchars($p['plot_number'] ?? '—') ?>
                                 <br><small class="text-muted"><?= htmlspecialchars($p['colony_name'] ?? '') ?></small>
                             </td>
                             <td>
@@ -111,13 +111,13 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                                 <?php elseif (!empty($p['due_date'])): ?>
                                     <small class="text-muted">Due: <?= date('d M', strtotime($p['due_date'])) ?></small>
                                 <?php else: ?>
-                                    â€”
+                                    —
                                 <?php endif; ?>
                             </td>
-                            <td class="fw-bold text-success">â‚¹<?= number_format($amount) ?></td>
+                            <td class="fw-bold text-success">₹<?= number_format($amount) ?></td>
                             <td>
                                 <span class="badge bg-light text-dark">
-                                    <?= ucfirst(htmlspecialchars($p['payment_method'] ?? $p['mode'] ?? 'â€”')) ?>
+                                    <?= ucfirst(htmlspecialchars($p['payment_method'] ?? $p['mode'] ?? '—')) ?>
                                 </span>
                             </td>
                             <td>
@@ -126,7 +126,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                                 <?php elseif (!empty($p['reference_number'])): ?>
                                     <small class="text-muted"><?= htmlspecialchars($p['reference_number']) ?></small>
                                 <?php else: ?>
-                                    <span class="text-muted">â€”</span>
+                                    <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
                         </tr>

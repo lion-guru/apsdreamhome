@@ -16,9 +16,9 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <div class="card-body">
                 <div class="d-flex justify-content-between border-bottom py-2"><span>Status</span><span class="badge bg-<?= match($device['status'] ?? 'offline') { 'online'=>'success','fault'=>'danger','configuring'=>'warning',default=>'secondary' } ?>"><?= ucfirst($device['status'] ?? 'offline') ?></span></div>
                 <div class="d-flex justify-content-between border-bottom py-2"><span>Category</span><strong><?= ucfirst($device['category'] ?? 'smart') ?></strong></div>
-                <div class="d-flex justify-content-between border-bottom py-2"><span>Location</span><strong><?= htmlspecialchars($device['location'] ?? 'â€”') ?></strong></div>
-                <div class="d-flex justify-content-between border-bottom py-2"><span>UID</span><strong><?= htmlspecialchars($device['device_uid'] ?? 'â€”') ?></strong></div>
-                <div class="d-flex justify-content-between py-2"><span>Last Seen</span><strong><?= !empty($device['last_seen_at']) ? date('M d, H:i', strtotime($device['last_seen_at'])) : 'â€”' ?></strong></div>
+                <div class="d-flex justify-content-between border-bottom py-2"><span>Location</span><strong><?= htmlspecialchars($device['location'] ?? '—') ?></strong></div>
+                <div class="d-flex justify-content-between border-bottom py-2"><span>UID</span><strong><?= htmlspecialchars($device['device_uid'] ?? '—') ?></strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Last Seen</span><strong><?= !empty($device['last_seen_at']) ? date('M d, H:i', strtotime($device['last_seen_at'])) : '—' ?></strong></div>
             </div>
         </div>
 

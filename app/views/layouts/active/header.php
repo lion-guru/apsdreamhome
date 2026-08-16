@@ -34,7 +34,7 @@ $sc = function ($key, $default = '') {
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']) || isset($_SESSION['admin_id']);
 
 // NavigationHelper for mobile drawer + bottom nav
-// Class is autoloaded via App namespace â€” no require_once needed
+// Class is autoloaded via App namespace — no require_once needed
 $nav = \App\Helpers\NavigationHelper::getInstance();
 ?>
 
@@ -61,7 +61,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
 
             <!-- Navigation & Actions -->
             <div class="collapse navbar-collapse d-none d-xl-flex" id="navbarNav">
-                <ul class="navbar-nav align-items-center">
+<ul class="navbar-nav align-items-center" style="gap: 1.5rem;">
                     <?php foreach ($nav->getDesktopNavItems() as $item): ?>
                         <?php
                             $hasSubmenu = isset($item['submenu']);
@@ -75,16 +75,15 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                                    role="button"
                                    data-bs-toggle="dropdown"
                                    aria-expanded="false">
-                                    <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
-                                    <?php echo __($item['label']); ?>
+                                     <?php echo __($item['label']); ?>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="nav_<?php echo sanitize_for_html_id($item['label'] ?? 'item'); ?>D">
                                     <?php foreach ($item['submenu'] as $sub): ?>
                                         <li>
                                             <a class="dropdown-item"
                                                href="<?php echo BASE_URL . rtrim('/' . ltrim($sub['url'] ?? '#', '/'), ''); ?>">
-                                                <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
-                                                <?php echo __($sub['label']); ?>
+                                                 <?php if (isset($sub['icon'])): ?><i class="<?php echo $sub['icon']; ?> me-2"></i><?php endif; ?>
+                                                 <?php echo __($sub['label']); ?>
                                             </a>
                                         </li>
                                     <?php endforeach; ?>
@@ -94,8 +93,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $isActive ? 'active' : ''; ?> <?php echo ($item['highlight'] ?? false) ? 'text-warning fw-bold' : ''; ?>"
                                    href="<?php echo BASE_URL . rtrim('/' . ltrim($item['url'] ?? '#', '/'), ''); ?>">
-                                    <?php if (isset($item['icon'])): ?><i class="<?php echo $item['icon']; ?> me-1"></i><?php endif; ?>
-                                    <?php echo __($item['label']); ?>
+                                     <?php echo __($item['label']); ?>
                                 </a>
                             </li>
                         <?php endif; ?>
@@ -144,7 +142,7 @@ $nav = \App\Helpers\NavigationHelper::getInstance();
 window.BASE_URL = '<?php echo BASE_URL; ?>';
 
 /**
- * Unified drawer toggle â€” replaces openMenu/closeMenu pattern.
+ * Unified drawer toggle — replaces openMenu/closeMenu pattern.
  *   toggleDrawer(event)      â†’ toggles open state
  *   toggleDrawer(null,'close') â†’ closes
  *   toggleDrawer(null,'open')  â†’ opens
@@ -258,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mobile drawer dropdowns â€” accordion-style
+    // Mobile drawer dropdowns — accordion-style
     function setupDrawerDropdowns() {
         drawer.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(function(dt) {
             dt.addEventListener('click', function(e) {

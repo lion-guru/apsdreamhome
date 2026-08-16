@@ -20,42 +20,42 @@
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Basic Salary <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="basic_salary" class="form-control calc-earning" value="<?= $edit_structure['basic_salary'] ?? 0 ?>" required>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">HRA</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="hra" class="form-control calc-earning" value="<?= $edit_structure['hra'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Conveyance</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="conveyance" class="form-control calc-earning" value="<?= $edit_structure['conveyance'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Medical Allowance</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="medical_allowance" class="form-control calc-earning" value="<?= $edit_structure['medical_allowance'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Special Allowance</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="special_allowance" class="form-control calc-earning" value="<?= $edit_structure['special_allowance'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Other Allowances</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="other_allowances" class="form-control calc-earning" value="<?= $edit_structure['other_allowances'] ?? 0 ?>">
                         </div>
                     </div>
@@ -66,14 +66,14 @@
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold">Employee PF</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="pf_employee" class="form-control calc-deduction" value="<?= $edit_structure['pf_employee'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold">TDS (Tax)</label>
                         <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
+                            <span class="input-group-text">₹</span>
                             <input type="number" step="0.01" name="tds" class="form-control calc-deduction" value="<?= $edit_structure['tds'] ?? 0 ?>">
                         </div>
                     </div>
@@ -82,15 +82,15 @@
                 <div class="row mt-4 mb-4 bg-light p-3 rounded">
                     <div class="col-md-4">
                         <h5 class="text-muted">Gross Salary</h5>
-                        <h3 class="text-success" id="edit_gross_display">â‚¹<?= number_format($edit_structure['gross_salary'] ?? 0, 2) ?></h3>
+                        <h3 class="text-success" id="edit_gross_display">₹<?= number_format($edit_structure['gross_salary'] ?? 0, 2) ?></h3>
                     </div>
                     <div class="col-md-4">
                         <h5 class="text-muted">Total Deductions</h5>
-                        <h3 class="text-danger" id="edit_deduction_display">â‚¹<?= number_format($edit_structure['total_deductions'] ?? 0, 2) ?></h3>
+                        <h3 class="text-danger" id="edit_deduction_display">₹<?= number_format($edit_structure['total_deductions'] ?? 0, 2) ?></h3>
                     </div>
                     <div class="col-md-4 border-start">
                         <h5 class="text-muted">Net Payable</h5>
-                        <h3 class="text-primary fw-bold" id="edit_net_display">â‚¹<?= number_format($edit_structure['net_salary'] ?? 0, 2) ?></h3>
+                        <h3 class="text-primary fw-bold" id="edit_net_display">₹<?= number_format($edit_structure['net_salary'] ?? 0, 2) ?></h3>
                     </div>
                 </div>
 
@@ -157,16 +157,16 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>â‚¹<?= number_format($s['basic_salary'] ?? 0, 2) ?></td>
-                                <td>â‚¹<?= number_format($s['hra'] ?? 0, 2) ?></td>
-                                <td>â‚¹<?= number_format($s['conveyance'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($s['basic_salary'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($s['hra'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($s['conveyance'] ?? 0, 2) ?></td>
                                 <?php 
                                     $other_earnings = ($s['medical_allowance'] ?? 0) + ($s['special_allowance'] ?? 0) + ($s['other_allowances'] ?? 0); 
                                 ?>
-                                <td>â‚¹<?= number_format($other_earnings, 2) ?></td>
-                                <td class="text-success fw-bold">â‚¹<?= number_format($s['gross_salary'] ?? 0, 2) ?></td>
-                                <td class="text-danger fw-bold">â‚¹<?= number_format($s['total_deductions'] ?? 0, 2) ?></td>
-                                <td class="text-primary fw-bold">â‚¹<?= number_format($s['net_salary'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($other_earnings, 2) ?></td>
+                                <td class="text-success fw-bold">₹<?= number_format($s['gross_salary'] ?? 0, 2) ?></td>
+                                <td class="text-danger fw-bold">₹<?= number_format($s['total_deductions'] ?? 0, 2) ?></td>
+                                <td class="text-primary fw-bold">₹<?= number_format($s['net_salary'] ?? 0, 2) ?></td>
                                 <td><?= date('d M Y', strtotime($s['effective_date'] ?? 'now')) ?></td>
                                 <td>
                                     <?php if(($s['status'] ?? 'inactive') === 'active'): ?>
@@ -225,7 +225,7 @@
                                     <div class="mb-3">
                                         <label class="form-label text-muted small text-uppercase fw-bold">Basic Salary <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light">â‚¹</span>
+                                            <span class="input-group-text bg-light">₹</span>
                                             <input type="number" step="0.01" name="basic_salary" class="form-control form-control-lg calc-earning" value="0" required>
                                         </div>
                                     </div>
@@ -233,14 +233,14 @@
                                         <div class="col-6 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">HRA</label>
                                             <div class="input-group">
-                                                <span class="input-group-text bg-light">â‚¹</span>
+                                                <span class="input-group-text bg-light">₹</span>
                                                 <input type="number" step="0.01" name="hra" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                         <div class="col-6 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Conveyance</label>
                                             <div class="input-group">
-                                                <span class="input-group-text bg-light">â‚¹</span>
+                                                <span class="input-group-text bg-light">₹</span>
                                                 <input type="number" step="0.01" name="conveyance" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
@@ -249,21 +249,21 @@
                                         <div class="col-4 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Medical</label>
                                             <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-light">â‚¹</span>
+                                                <span class="input-group-text bg-light">₹</span>
                                                 <input type="number" step="0.01" name="medical_allowance" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                         <div class="col-4 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Special</label>
                                             <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-light">â‚¹</span>
+                                                <span class="input-group-text bg-light">₹</span>
                                                 <input type="number" step="0.01" name="special_allowance" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                         <div class="col-4 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Other</label>
                                             <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-light">â‚¹</span>
+                                                <span class="input-group-text bg-light">₹</span>
                                                 <input type="number" step="0.01" name="other_allowances" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
@@ -281,14 +281,14 @@
                                     <div class="mb-3">
                                         <label class="form-label text-muted small text-uppercase fw-bold">Employee PF</label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light">â‚¹</span>
+                                            <span class="input-group-text bg-light">₹</span>
                                             <input type="number" step="0.01" name="pf_employee" class="form-control calc-deduction" value="0">
                                         </div>
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label text-muted small text-uppercase fw-bold">TDS (Tax)</label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light">â‚¹</span>
+                                            <span class="input-group-text bg-light">₹</span>
                                             <input type="number" step="0.01" name="tds" class="form-control calc-deduction" value="0">
                                         </div>
                                     </div>
@@ -296,15 +296,15 @@
                                     <div class="p-3 bg-light rounded border">
                                         <div class="d-flex justify-content-between mb-2">
                                             <span class="text-muted fw-bold">Gross Salary:</span>
-                                            <span class="text-success fw-bold" id="create_gross_display">â‚¹0.00</span>
+                                            <span class="text-success fw-bold" id="create_gross_display">₹0.00</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2 border-bottom pb-2">
                                             <span class="text-muted fw-bold">Total Deductions:</span>
-                                            <span class="text-danger fw-bold" id="create_deduction_display">â‚¹0.00</span>
+                                            <span class="text-danger fw-bold" id="create_deduction_display">₹0.00</span>
                                         </div>
                                         <div class="d-flex justify-content-between pt-2">
                                             <span class="text-primary fw-bold fs-5">Net Payable:</span>
-                                            <span class="text-primary fw-bold fs-5" id="create_net_display">â‚¹0.00</span>
+                                            <span class="text-primary fw-bold fs-5" id="create_net_display">₹0.00</span>
                                         </div>
                                     </div>
                                 </div>
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Live Calculation Logic
     function formatCurrency(num) {
-        return 'â‚¹' + parseFloat(num).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        return '₹' + parseFloat(num).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     }
 
     function attachCalculator(formElement, prefix) {

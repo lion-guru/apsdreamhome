@@ -101,12 +101,12 @@ ob_start();
                                     </td>
                                     <td>
                                         <?php if ($v['status'] === 'scheduled'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/visits/confirm?id=<?= $v['id'] ?>" class="btn btn-sm btn-info" title="Confirm"><i class="fas fa-check"></i></a>
+                                            <a href="<?= $BASE_URL ?>/admin/visits/confirm?id=<?= $v['id'] ?>" class="btn btn-sm btn-info" title="Confirm"><i class="fas fa-check"></i></a>
                                         <?php endif; ?>
                                         <?php if (in_array($v['status'], ['scheduled', 'confirmed'])): ?>
-                                            <a href="<?= BASE_URL ?>/admin/visits/complete?id=<?= $v['id'] ?>" class="btn btn-sm btn-success" title="Mark completed"><i class="fas fa-flag-checkered"></i></a>
-                                            <a href="<?= BASE_URL ?>/admin/visits/noshow?id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-secondary" title="No show" onclick="return confirm('Mark as no-show?')"><i class="fas fa-user-times"></i></a>
-                                            <a href="<?= BASE_URL ?>/admin/visits/cancel?id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this visit?')"><i class="fas fa-times"></i></a>
+                                            <a href="<?= $BASE_URL ?>/admin/visits/complete?id=<?= $v['id'] ?>" class="btn btn-sm btn-success" title="Mark completed"><i class="fas fa-flag-checkered"></i></a>
+                                            <a href="<?= $BASE_URL ?>/admin/visits/noshow?id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-secondary" title="No show" onclick="return confirm('Mark as no-show?')"><i class="fas fa-user-times"></i></a>
+                                            <a href="<?= $BASE_URL ?>/admin/visits/cancel?id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this visit?')"><i class="fas fa-times"></i></a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

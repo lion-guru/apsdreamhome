@@ -70,7 +70,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
             <div class="row g-3">
                 <div class="col-8">
-                    <label class="form-label"><?= __('assoc_ap_price', [], 'Price (â‚¹)') ?> *</label>
+                    <label class="form-label"><?= __('assoc_ap_price', [], 'Price (₹)') ?> *</label>
                     <input type="text" name="price" id="price" class="form-control" placeholder="<?= __('assoc_ap_price_placeholder', [], 'e.g. 25,00,000') ?>" required inputmode="numeric">
                 </div>
                 <div class="col-4">

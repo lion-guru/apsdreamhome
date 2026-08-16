@@ -70,11 +70,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     </select>
                 </div>
                 <div class="col-6">
-                    <label class="form-label fw-bold small">Budget Min (â‚¹)</label>
+                    <label class="form-label fw-bold small">Budget Min (₹)</label>
                     <input type="number" name="budget_min" class="form-control form-control-sm" placeholder="e.g. 1000000">
                 </div>
                 <div class="col-6">
-                    <label class="form-label fw-bold small">Budget Max (â‚¹)</label>
+                    <label class="form-label fw-bold small">Budget Max (₹)</label>
                     <input type="number" name="budget_max" class="form-control form-control-sm" placeholder="e.g. 5000000">
                 </div>
                 <div class="col-6">
@@ -110,7 +110,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <div class="flex-grow-1">
                         <div class="fw-bold small"><?= htmlspecialchars($m['title'] ?? $m['property_type']) ?></div>
                         <div class="text-muted" class="style-20558"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($m['address'] ?? '') ?></div>
-                        <div class="fw-bold text-primary mt-1">â‚¹<?= number_format((float)$m['price']) ?></div>
+                        <div class="fw-bold text-primary mt-1">₹<?= number_format((float)$m['price']) ?></div>
                         <a href="<?= $base ?>/properties/<?= $m['id'] ?>" class="btn btn-outline-primary btn-sm mt-1" class="style-20558">View Details</a>
                     </div>
                 </div>
@@ -129,7 +129,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <?php foreach ($interests as $i): ?>
                             <tr>
                                 <td class="small fw-bold"><?= ucfirst($i['property_type']) ?></td>
-                                <td class="small">â‚¹<?= number_format((float)$i['budget_min']) ?> - â‚¹<?= number_format((float)$i['budget_max']) ?></td>
+                                <td class="small">₹<?= number_format((float)$i['budget_min']) ?> - ₹<?= number_format((float)$i['budget_max']) ?></td>
                                 <td class="small"><?= htmlspecialchars($i['preferred_location'] ?: '-') ?></td>
                                 <td><span class="badge bg-<?= $i['status'] === 'matched' ? 'success' : ($i['status'] === 'active' ? 'primary' : 'secondary') ?>"><?= ucfirst($i['status']) ?></span></td>
                             </tr>

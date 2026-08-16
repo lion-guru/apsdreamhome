@@ -1,6 +1,6 @@
 <?php
 /**
- * MLM Payout Simulator â€” Interactive Commission Calculator
+ * MLM Payout Simulator — Interactive Commission Calculator
  *
  * Simulates Track A (slab differential), Track B (performance rollup),
  * Track C (milestone escrow), royalty pool (2%), and company retention.
@@ -64,7 +64,7 @@ $csrf_token = $csrf_token ?? '';
             <!-- Track A breakdown -->
             <div class="aps-cp-card mb-3">
                 <div class="aps-cp-card-header bg-primary bg-opacity-10">
-                    <h6 class="m-0"><i class="fas fa-layer-group me-2 text-primary"></i>Track A â€” Slab Differential (15% cap)</h6>
+                    <h6 class="m-0"><i class="fas fa-layer-group me-2 text-primary"></i>Track A — Slab Differential (15% cap)</h6>
                 </div>
                 <div class="aps-cp-card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0" id="trackATable">
@@ -77,7 +77,7 @@ $csrf_token = $csrf_token ?? '';
             <!-- Track B breakdown -->
             <div class="aps-cp-card mb-3">
                 <div class="aps-cp-card-header bg-success bg-opacity-10">
-                    <h6 class="m-0"><i class="fas fa-chart-line me-2 text-success"></i>Track B â€” Performance Rollup (3% cap)</h6>
+                    <h6 class="m-0"><i class="fas fa-chart-line me-2 text-success"></i>Track B — Performance Rollup (3% cap)</h6>
                 </div>
                 <div class="aps-cp-card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0" id="trackBTable">
@@ -90,7 +90,7 @@ $csrf_token = $csrf_token ?? '';
             <!-- Track C breakdown -->
             <div class="aps-cp-card mb-3">
                 <div class="aps-cp-card-header bg-warning bg-opacity-10">
-                    <h6 class="m-0"><i class="fas fa-piggy-bank me-2 text-warning"></i>Track C â€” Milestone Escrow (2% cap)</h6>
+                    <h6 class="m-0"><i class="fas fa-piggy-bank me-2 text-warning"></i>Track C — Milestone Escrow (2% cap)</h6>
                 </div>
                 <div class="aps-cp-card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0" id="trackCTable">

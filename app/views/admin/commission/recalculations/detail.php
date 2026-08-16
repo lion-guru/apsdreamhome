@@ -20,7 +20,7 @@
     <div class="alert mb-4" class="style-39216">
         <i class="fas <?= $statusBanner['icon'] ?> me-2"></i>
         <strong>Status: <?= $statusBanner['label'] ?></strong>
-        â€” <?= date('d M Y H:i', strtotime($item['created_at'])) ?>
+        — <?= date('d M Y H:i', strtotime($item['created_at'])) ?>
     </div>
 
     <div class="row">
@@ -34,20 +34,20 @@
                     <div class="row text-center mb-3">
                         <div class="col-5">
                             <h6 class="style-77712">Original Amount</h6>
-                            <h3 class="style-52183">â‚¹<?= number_format((float)$item['original_amount']) ?></h3>
+                            <h3 class="style-52183">₹<?= number_format((float)$item['original_amount']) ?></h3>
                         </div>
                         <div class="col-2 d-flex align-items-center justify-content-center">
                             <i class="fas fa-arrow-right" class="style-65365"></i>
                         </div>
                         <div class="col-5">
                             <h6 class="style-77712">New Amount</h6>
-                            <h3 class="style-56943">â‚¹<?= number_format((float)$item['new_amount']) ?></h3>
+                            <h3 class="style-56943">₹<?= number_format((float)$item['new_amount']) ?></h3>
                         </div>
                     </div>
                     <div class="text-center">
                         <?php $diff = (float)$item['amount_diff']; ?>
                         <span class="badge" class="style-89593">
-                            <?= $diff >= 0 ? '+' : '' ?>â‚¹<?= number_format($diff) ?> (<?= $diff >= 0 ? 'Increase' : 'Decrease' ?>)
+                            <?= $diff >= 0 ? '+' : '' ?>₹<?= number_format($diff) ?> (<?= $diff >= 0 ? 'Increase' : 'Decrease' ?>)
                         </span>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                         <tr><td class="style-87809">Commission Type</td><td><span class="badge bg-info"><?= htmlspecialchars($item['orig_type'] ?? 'N/A') ?></span></td></tr>
                         <tr><td class="style-77712">Beneficiary</td><td><?= htmlspecialchars($item['beneficiary_name'] ?? 'User #' . $item['beneficiary_user_id']) ?></td></tr>
                         <tr><td class="style-77712">Source</td><td><?= htmlspecialchars($item['source_name'] ?? 'User #' . $item['source_user_id']) ?></td></tr>
-                        <tr><td class="style-77712">Sale Amount</td><td>â‚¹<?= number_format((float)($item['sale_amount'] ?? 0)) ?></td></tr>
+                        <tr><td class="style-77712">Sale Amount</td><td>₹<?= number_format((float)($item['sale_amount'] ?? 0)) ?></td></tr>
                         <tr><td class="style-77712">Original Rate</td><td><?= number_format((float)($item['orig_rate'] ?? 0), 1) ?>%</td></tr>
                         <tr><td class="style-77712">Booking ID</td><td><?= $item['booking_id'] ?? 'N/A' ?></td></tr>
                         <tr><td class="style-77712">Plan Version</td><td>v<?= $item['orig_plan_version'] ?? 'N/A' ?></td></tr>

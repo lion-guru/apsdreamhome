@@ -99,7 +99,7 @@ $team_stats = $team_stats ?? [];
             </div>
             <div class="stat-content">
                 <div class="stat-label">Revenue (30 Days)</div>
-                <div class="stat-value">â‚¹<?php echo number_format($stats['revenue_month'] ?? 0, 2); ?></div>
+                <div class="stat-value">₹<?php echo number_format($stats['revenue_month'] ?? 0, 2); ?></div>
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@ $team_stats = $team_stats ?? [];
             </div>
             <div class="stat-content">
                 <div class="stat-label">Commission Paid</div>
-                <div class="stat-value">â‚¹<?php echo number_format($stats['commission_paid'] ?? 0, 2); ?></div>
+                <div class="stat-value">₹<?php echo number_format($stats['commission_paid'] ?? 0, 2); ?></div>
             </div>
         </div>
     </div>
@@ -180,7 +180,7 @@ $team_stats = $team_stats ?? [];
             </div>
             <div class="stat-content">
                 <div class="stat-label">Total Commission</div>
-                <div class="stat-value">â‚¹<?php echo number_format($mlm_stats['total_commission'] ?? 0, 2); ?></div>
+                <div class="stat-value">₹<?php echo number_format($mlm_stats['total_commission'] ?? 0, 2); ?></div>
             </div>
         </div>
     </div>
@@ -286,7 +286,7 @@ $team_stats = $team_stats ?? [];
 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Database Tables</span>
-                        <span class="fw-semibold"><?php echo $stats['database_tables'] ?? 'â€”'; ?></span>
+                        <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '—'; ?></span>
                     </div>
                     <div class="progress" class="style-31164">
                         <div class="progress-bar bg-primary" class="style-13113"></div>

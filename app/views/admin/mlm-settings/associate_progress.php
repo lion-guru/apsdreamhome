@@ -51,11 +51,11 @@ $progress_data = $progress_data ?? [];
                         <small class="text-muted"><?php echo $dp['current']; ?>/<?php echo $dp['required']; ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>
-                    <td>â‚¹<?php echo number_format($p['monthly_sales'] ?? 0); ?></td>
+                    <td>₹<?php echo number_format($p['monthly_sales'] ?? 0); ?></td>
                     <td class="style-26283">
                         <?php $sp = $p['progress']['sales_progress'] ?? null; if ($sp): ?>
                         <div class="progress" class="style-51910"><div class="progress-bar bg-warning" class="style-81610"></div></div>
-                        <small class="text-muted">â‚¹<?php echo number_format($sp['current']); ?>/â‚¹<?php echo number_format($sp['required']); ?></small>
+                        <small class="text-muted">₹<?php echo number_format($sp['current']); ?>/₹<?php echo number_format($sp['required']); ?></small>
                         <?php else: ?><small class="text-muted">--</small><?php endif; ?>
                     </td>
                 </tr>

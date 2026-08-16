@@ -174,7 +174,7 @@ $statusBadges = [
                     <div class="mb-3">
                         <label class="form-label"><?= __('assoc_doc_upload_file', [], 'Select File') ?></label>
                         <input type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
-                        <small class="text-muted">PDF, JPG, PNG, DOC/DOCX â€” Max 10MB</small>
+                        <small class="text-muted">PDF, JPG, PNG, DOC/DOCX — Max 10MB</small>
                     </div>
                 </div>
                 <div class="modal-footer">

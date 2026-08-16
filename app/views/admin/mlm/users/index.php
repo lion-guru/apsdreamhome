@@ -43,7 +43,7 @@
                                     <?= htmlspecialchars(ucfirst($a['level'] ?? 'Bronze')) ?>
                                 </span></td>
                                 <td><?= $a['total_downline'] ?? $a['downline_count'] ?? 0 ?></td>
-                                <td>â‚¹<?= number_format($a['earnings'] ?? $a['total_earnings'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($a['earnings'] ?? $a['total_earnings'] ?? 0, 2) ?></td>
                                 <td><?php $s = $a['status'] ?? 'active'; ?>
                                     <span class="badge bg-<?= $s === 'active' ? 'success' : ($s === 'inactive' ? 'secondary' : 'warning') ?>">
                                         <?= ucfirst($s) ?>

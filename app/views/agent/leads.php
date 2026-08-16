@@ -144,7 +144,7 @@ $statusColors = [
                             <div><i class="fas fa-envelope me-1 text-muted"></i><small class="text-muted"><?= htmlspecialchars($lead['email'] ?? '-') ?></small></div>
                         </td>
                         <td class="px-3"><small><?= htmlspecialchars($lead['property_interest'] ?? '-') ?></small></td>
-                        <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? 'â‚¹' . number_format($lead['budget']) : '-' ?></small></td>
+                        <td class="px-3"><small class="fw-semibold"><?= !empty($lead['budget']) ? '₹' . number_format($lead['budget']) : '-' ?></small></td>
                         <td class="px-3">
                             <?php
                             $status = $lead['status'] ?? 'new';

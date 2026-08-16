@@ -34,10 +34,10 @@
                         <div class="card-body text-center">
                             <h6 class="text-muted mb-2">Price Range</h6>
                             <p class="h5 text-primary mb-1">
-                                â‚¹<?= number_format($comparison['price_range']['min']) ?> - 
-                                â‚¹<?= number_format($comparison['price_range']['max']) ?>
+                                ₹<?= number_format($comparison['price_range']['min']) ?> - 
+                                ₹<?= number_format($comparison['price_range']['max']) ?>
                             </p>
-                            <small class="text-muted">Avg: â‚¹<?= number_format($comparison['price_range']['avg']) ?></small>
+                            <small class="text-muted">Avg: ₹<?= number_format($comparison['price_range']['avg']) ?></small>
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                                     <?php if ($prop['id'] == $comparison['best_value']): ?>
                                     <p class="h5 text-info mb-1"><?= htmlspecialchars($prop['title']) ?></p>
                                     <small class="text-muted">
-                                        â‚¹<?= number_format($comparison['price_per_sqft'][$prop['id']], 2) ?>/sqft
+                                        ₹<?= number_format($comparison['price_per_sqft'][$prop['id']], 2) ?>/sqft
                                     </small>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
@@ -147,13 +147,13 @@
                     </p>
                     
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="text-primary mb-0">â‚¹<?= number_format($property['price']) ?></h4>
+                        <h4 class="text-primary mb-0">₹<?= number_format($property['price']) ?></h4>
                     </div>
 
                     <!-- Price per sqft -->
                     <div class="alert alert-light py-2 mb-3">
                         <small class="text-muted">Price per sqft:</small>
-                        <strong class="float-end">â‚¹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></strong>
+                        <strong class="float-end">₹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></strong>
                     </div>
                 </div>
 
@@ -220,7 +220,7 @@
                                 <tr>
                                     <td class="fw-bold"><i class="fas fa-tag me-2"></i>Price</td>
                                     <?php foreach ($properties as $property): ?>
-                                    <td class="text-primary fw-bold">â‚¹<?= number_format($property['price']) ?></td>
+                                    <td class="text-primary fw-bold">₹<?= number_format($property['price']) ?></td>
                                     <?php endforeach; ?>
                                 </tr>
                                 <tr>
@@ -232,7 +232,7 @@
                                 <tr>
                                     <td class="fw-bold"><i class="fas fa-money-bill-wave me-2"></i>Price/sqft</td>
                                     <?php foreach ($properties as $property): ?>
-                                    <td>â‚¹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></td>
+                                    <td>₹<?= number_format($comparison['price_per_sqft'][$property['id']], 2) ?></td>
                                     <?php endforeach; ?>
                                 </tr>
                                 <tr>

@@ -74,7 +74,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     <?php endif; ?>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_pay_token_total_plot_value', 'Total Plot Value') ?></small>
-                        <strong>â‚¹<?= number_format((float)($booking['plot_price'] ?? $booking['total_plot_value'] ?? 0)) ?></strong>
+                        <strong>₹<?= number_format((float)($booking['plot_price'] ?? $booking['total_plot_value'] ?? 0)) ?></strong>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                 <div class="d-flex justify-content-between align-items-center mb-3 p-3" class="style-11131">
                     <div>
                         <small class="text-muted"><?= __('user_pay_token_amount_to_pay', 'Token Amount to Pay') ?></small>
-                        <h3 class="mb-0 mt-1 text-primary">â‚¹<?= number_format($token_amount) ?></h3>
+                        <h3 class="mb-0 mt-1 text-primary">₹<?= number_format($token_amount) ?></h3>
                     </div>
                     <div class="text-end">
                         <small class="text-muted"><?= __('user_pay_token_booking_number', 'Booking #') ?></small>
@@ -124,12 +124,12 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
             <div class="aps-cp-card-body text-center py-4">
                 <?php if ($razorpay['test']): ?>
                     <div class="alert alert-info mb-3">
-                        <i class="fas fa-flask me-1"></i> <?= __('user_pay_token_test_mode', 'Test Mode â€” No real money will be charged') ?>
+                        <i class="fas fa-flask me-1"></i> <?= __('user_pay_token_test_mode', 'Test Mode — No real money will be charged') ?>
                     </div>
                 <?php endif; ?>
 
                 <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3" class="style-4415">
-                    <i class="fas fa-lock me-2"></i><?= __('user_pay_token_pay_now_prefix', 'Pay') ?> â‚¹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>
+                    <i class="fas fa-lock me-2"></i><?= __('user_pay_token_pay_now_prefix', 'Pay') ?> ₹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>
                 </button>
 
                 <div class="mt-3">
@@ -171,7 +171,7 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         amount: <?= (int)($token_amount * 100) ?>,
         currency: 'INR',
         name: 'APS Dream Home',
-        description: '<?= __('user_pay_token_js_description', 'Token Payment') ?> â€” Plot <?= htmlspecialchars($booking["plot_number"] ?? "", ENT_QUOTES) ?> at <?= htmlspecialchars($booking["colony_name"] ?? "", ENT_QUOTES) ?>',
+        description: '<?= __('user_pay_token_js_description', 'Token Payment') ?> — Plot <?= htmlspecialchars($booking["plot_number"] ?? "", ENT_QUOTES) ?> at <?= htmlspecialchars($booking["colony_name"] ?? "", ENT_QUOTES) ?>',
         order_id: <?= json_encode($order_id) ?>,
         handler: function(response) {
             btn.disabled = true;
@@ -214,7 +214,7 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         modal: {
             ondismiss: function() {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-lock me-2"></i>â‚¹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>';
+                btn.innerHTML = '<i class="fas fa-lock me-2"></i>₹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>';
             }
         }
     };
@@ -223,13 +223,13 @@ document.getElementById('pay-btn').addEventListener('click', function() {
         var rzp = new Razorpay(options);
         rzp.on('payment.failed', function(response) {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-lock me-2"></i>â‚¹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>';
+            btn.innerHTML = '<i class="fas fa-lock me-2"></i>₹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>';
             alert('<?= __('user_pay_token_js_payment_failed_prefix', 'Payment failed:') ?> ' + (response.error?.description || '<?= __('user_pay_token_js_payment_failed_unknown', 'Unknown error. Please try again.') ?>'));
         });
         rzp.open();
     } catch(e) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-lock me-2"></i>â‚¹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>';
+        btn.innerHTML = '<i class="fas fa-lock me-2"></i>₹<?= number_format($token_amount) ?> <?= __('user_pay_token_pay_now_suffix', 'Now') ?>';
         alert('<?= __('user_pay_token_js_init_error', 'Unable to initialize payment. Please try again later.') ?>');
     }
 });

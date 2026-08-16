@@ -32,7 +32,7 @@ ob_start();
                     </div>
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Amount</div>
-                        <div class="col-sm-8"><h4 class="text-success mb-0">â‚¹<?= number_format($collection['amount'] ?? 0) ?></h4></div>
+                        <div class="col-sm-8"><h4 class="text-success mb-0">₹<?= number_format($collection['amount'] ?? 0) ?></h4></div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Collection Date</div>

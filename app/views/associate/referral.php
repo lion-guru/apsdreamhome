@@ -25,7 +25,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                 </div>
                 <div>
                     <h5 class="mb-0" class="style-72606"><?= $tierInfo['label'] ?> Tier</h5>
-                    <small class="text-muted">â‚¹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· â‚¹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
+                    <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
                 </div>
             </div>
             <?php if ($tierInfo['next_tier']): ?>
@@ -66,7 +66,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body p-4 text-center">
                 <i class="fas fa-rupee-sign fa-2x mb-3 text-success"></i>
-                <div class="fs-2 fw-bold text-success">â‚¹<?= number_format($referral_earnings) ?></div>
+                <div class="fs-2 fw-bold text-success">₹<?= number_format($referral_earnings) ?></div>
                 <div class="text-muted"><?= __('assoc_ref_earnings', [], 'Referral Earnings') ?></div>
             </div>
         </div>
@@ -75,7 +75,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body p-4 text-center">
                 <i class="fas fa-gift fa-2x mb-3 text-warning"></i>
-                <div class="fs-2 fw-bold text-primary">â‚¹500</div>
+                <div class="fs-2 fw-bold text-primary">₹500</div>
                 <div class="text-muted"><?= __('assoc_ref_per_referral', [], 'Per Successful Referral') ?></div>
             </div>
         </div>
@@ -159,7 +159,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                     <i class="fas fa-rupee-sign text-warning fa-lg"></i>
                 </div>
                 <h6><?= __('assoc_ref_step3_title', [], '3. Earn Rewards') ?></h6>
-                <p class="small text-muted"><?= __('assoc_ref_step3_desc', [], 'Earn â‚¹500 for every successful referral who completes a purchase.') ?></p>
+                <p class="small text-muted"><?= __('assoc_ref_step3_desc', [], 'Earn ₹500 for every successful referral who completes a purchase.') ?></p>
             </div>
         </div>
     </div>

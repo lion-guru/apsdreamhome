@@ -67,7 +67,7 @@ $blocks = $blocks ?? [];
     <div class="col-md-2">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
-          <div class="fs-3 text-info">â‚¹<?= number_format((float)($plotStats['total_value'] ?? 0) / 100000, 1) ?>L</div>
+          <div class="fs-3 text-info">₹<?= number_format((float)($plotStats['total_value'] ?? 0) / 100000, 1) ?>L</div>
           <div class="text-muted small"><?= __('cp_total_value') ?></div>
         </div>
       </div>
@@ -80,19 +80,19 @@ $blocks = $blocks ?? [];
     <div class="card-body aps-cp-card-body">
       <div class="row text-center">
         <div class="col-md-3">
-          <div class="fw-bold fs-5">â‚¹<?= number_format((float)($devCost['total_cost'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5">₹<?= number_format((float)($devCost['total_cost'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_total_cost') ?></div>
         </div>
         <div class="col-md-3">
-          <div class="fw-bold fs-5">â‚¹<?= number_format((float)($devCost['total_gst'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5">₹<?= number_format((float)($devCost['total_gst'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_total_gst') ?></div>
         </div>
         <div class="col-md-3">
-          <div class="fw-bold fs-5 text-success">â‚¹<?= number_format((float)($devCost['total_paid'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5 text-success">₹<?= number_format((float)($devCost['total_paid'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_paid') ?></div>
         </div>
         <div class="col-md-3">
-          <div class="fw-bold fs-5 text-danger">â‚¹<?= number_format((float)($devCost['total_balance'] ?? 0), 0) ?></div>
+          <div class="fw-bold fs-5 text-danger">₹<?= number_format((float)($devCost['total_balance'] ?? 0), 0) ?></div>
           <div class="text-muted small"><?= __('cp_balance') ?></div>
         </div>
       </div>
@@ -181,7 +181,7 @@ $blocks = $blocks ?? [];
 
   <div class="text-muted small">
     <?= __('cp_avg_area') ?>: <?= number_format((float)($plotStats['avg_area'] ?? 0), 0) ?> <?= __('cp_sqft') ?>
-    &middot; <?= __('cp_starting_price') ?>: â‚¹<?= number_format((float)($colony['starting_price'] ?? 0), 0) ?>
+    &middot; <?= __('cp_starting_price') ?>: ₹<?= number_format((float)($colony['starting_price'] ?? 0), 0) ?>
     &middot; <?= __('cp_location') ?>: <?= htmlspecialchars($colony['location'] ?? '') ?>
   </div>
 </div>

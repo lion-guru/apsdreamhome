@@ -33,7 +33,7 @@ $early_incentives = $early_incentives ?? [];
                             <select name="property_id" class="form-select">
                                 <option value="">Select Plot (optional)</option>
                                 <?php foreach ($plots as $p): ?>
-                                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['colony_name'] . ' - Plot ' . $p['plot_no'] . ' (â‚¹' . number_format($p['total_price'] / 100000, 1) . 'L)') ?></option>
+                                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['colony_name'] . ' - Plot ' . $p['plot_no'] . ' (₹' . number_format($p['total_price'] / 100000, 1) . 'L)') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -51,7 +51,7 @@ $early_incentives = $early_incentives ?? [];
                     <div class="aps-cp-card-header"><i class="fas fa-sliders-h me-2"></i>Loan Terms</div>
                     <div class="aps-cp-card-body">
                         <div class="mb-3">
-                            <label class="form-label">Loan Amount (â‚¹) <span class="text-danger">*</span></label>
+                            <label class="form-label">Loan Amount (₹) <span class="text-danger">*</span></label>
                             <input type="number" name="loan_amount" id="loanAmount" class="form-control" min="10000" step="1000" required>
                         </div>
                         <div class="row mb-3">
@@ -124,10 +124,10 @@ $early_incentives = $early_incentives ?? [];
             <div class="aps-cp-card-header"><i class="fas fa-calculator me-2"></i>Loan Calculation Preview</div>
             <div class="aps-cp-card-body">
                 <div class="row g-3 text-center" id="calcResults">
-                    <div class="col-md-3"><div class="border rounded p-3 bg-light"><small class="text-muted">Monthly EMI</small><div class="fw-bold h4" id="calcEMI">â‚¹0</div></div></div>
-                    <div class="col-md-3"><div class="border rounded p-3 bg-light"><small class="text-muted">Total Payable</small><div class="fw-bold h4" id="calcTotal">â‚¹0</div></div></div>
-                    <div class="col-md-3"><div class="border rounded p-3 bg-light"><small class="text-muted">Total Interest</small><div class="fw-bold h4" id="calcInterest">â‚¹0</div></div></div>
-                    <div class="col-md-3"><div class="border rounded p-3 bg-success text-white"><small>Interest Savings</small><div class="fw-bold h4" id="calcSavings">â‚¹0</div></div></div>
+                    <div class="col-md-3"><div class="border rounded p-3 bg-light"><small class="text-muted">Monthly EMI</small><div class="fw-bold h4" id="calcEMI">₹0</div></div></div>
+                    <div class="col-md-3"><div class="border rounded p-3 bg-light"><small class="text-muted">Total Payable</small><div class="fw-bold h4" id="calcTotal">₹0</div></div></div>
+                    <div class="col-md-3"><div class="border rounded p-3 bg-light"><small class="text-muted">Total Interest</small><div class="fw-bold h4" id="calcInterest">₹0</div></div></div>
+                    <div class="col-md-3"><div class="border rounded p-3 bg-success text-white"><small>Interest Savings</small><div class="fw-bold h4" id="calcSavings">₹0</div></div></div>
                 </div>
             </div>
         </div>
@@ -176,10 +176,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 offerTotal = totalPayable - savings;
             }
 
-            document.getElementById('calcEMI').textContent = 'â‚¹' + Math.round(emi).toLocaleString();
-            document.getElementById('calcTotal').textContent = 'â‚¹' + Math.round(offerTotal).toLocaleString();
-            document.getElementById('calcInterest').textContent = 'â‚¹' + Math.round(offerTotal - amount).toLocaleString();
-            document.getElementById('calcSavings').textContent = 'â‚¹' + Math.round(savings).toLocaleString();
+            document.getElementById('calcEMI').textContent = '₹' + Math.round(emi).toLocaleString();
+            document.getElementById('calcTotal').textContent = '₹' + Math.round(offerTotal).toLocaleString();
+            document.getElementById('calcInterest').textContent = '₹' + Math.round(offerTotal - amount).toLocaleString();
+            document.getElementById('calcSavings').textContent = '₹' + Math.round(savings).toLocaleString();
             preview.style.display = 'block';
         } else {
             preview.style.display = 'none';
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const preview = document.getElementById('offerPreview');
         if (this.value) {
             preview.classList.remove('d-none');
-            document.getElementById('offerPreviewText').textContent = selected.text + ' â€” ' + months + ' months interest-free';
+            document.getElementById('offerPreviewText').textContent = selected.text + ' — ' + months + ' months interest-free';
         } else {
             preview.classList.add('d-none');
         }

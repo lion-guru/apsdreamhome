@@ -79,11 +79,11 @@ foreach ($statusSteps as $i => $step) {
                     <div class="row g-3">
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_number', [], 'Booking Number') ?></small>
-                            <strong><?= htmlspecialchars($booking['booking_number'] ?? 'â€”') ?></strong>
+                            <strong><?= htmlspecialchars($booking['booking_number'] ?? '—') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_date', [], 'Booking Date') ?></small>
-                            <strong><?= htmlspecialchars($booking['booking_date'] ?? 'â€”') ?></strong>
+                            <strong><?= htmlspecialchars($booking['booking_date'] ?? '—') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_status', [], 'Status') ?></small>
@@ -91,7 +91,7 @@ foreach ($statusSteps as $i => $step) {
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_plot', [], 'Plot') ?></small>
-                            <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> â€” <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
+                            <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_area', [], 'Area') ?></small>
@@ -99,11 +99,11 @@ foreach ($statusSteps as $i => $step) {
                         </div>
                         <div class="col-sm-6">
                             <small class="text-muted d-block"><?= __('booking_conf_dimensions', [], 'Dimensions') ?></small>
-                            <strong><?= htmlspecialchars($booking['dimension_label'] ?? 'â€”') ?></strong>
+                            <strong><?= htmlspecialchars($booking['dimension_label'] ?? '—') ?></strong>
                         </div>
                         <div class="col-12">
                             <small class="text-muted d-block"><?= __('booking_conf_total_amount', [], 'Total Amount') ?></small>
-                            <strong class="fs-5 text-primary">â‚¹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
+                            <strong class="fs-5 text-primary">₹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@ foreach ($statusSteps as $i => $step) {
                             <tr>
                                 <td><?= (int)$inst['installment_no'] ?></td>
                                 <td><?= htmlspecialchars($inst['due_date']) ?></td>
-                                <td class="text-end">â‚¹<?= number_format((float)$inst['amount']) ?></td>
+                                <td class="text-end">₹<?= number_format((float)$inst['amount']) ?></td>
                                 <td class="text-center">
                                     <?php
                                     $statusClass = match($inst['status'] ?? 'pending') {
@@ -147,7 +147,7 @@ foreach ($statusSteps as $i => $step) {
                         <tfoot class="table-light">
                             <tr>
                                 <th colspan="2"><?= __('booking_conf_totals', [], 'Totals') ?></th>
-                                <th class="text-end">â‚¹<?= number_format($totalPaid + $totalPending) ?></th>
+                                <th class="text-end">₹<?= number_format($totalPaid + $totalPending) ?></th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -178,7 +178,7 @@ foreach ($statusSteps as $i => $step) {
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" class="style-96907">2</span>
                             <div>
                                 <strong><?= __('booking_conf_step2_title', [], 'Pay Token Amount') ?></strong>
-                                <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (â‚¹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
+                                <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (₹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">

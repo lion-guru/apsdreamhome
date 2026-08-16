@@ -62,7 +62,7 @@ class DigitalBookingController extends BaseController
         
         $this->render('front/digital-booking', [
             'page_title'   => 'Booking #' . $booking['booking_number'],
-            'page_heading' => 'Digital Booking â€” ' . htmlspecialchars($booking['booking_number']),
+            'page_heading' => 'Digital Booking —" ' . htmlspecialchars($booking['booking_number']),
             'booking'      => $booking,
             'plot'         => $plot,
             'documents'    => $documents,
@@ -92,7 +92,7 @@ class DigitalBookingController extends BaseController
         }
         
         $this->render('front/digital-document', [
-            'page_title'   => 'Document â€” ' . htmlspecialchars($doc['title']),
+            'page_title'   => 'Document —" ' . htmlspecialchars($doc['title']),
             'page_heading' => htmlspecialchars($doc['title']),
             'booking'      => $booking,
             'document'     => $doc,
@@ -415,14 +415,14 @@ class DigitalBookingController extends BaseController
         }
         
         $this->render('front/digital-success', [
-            'page_title'   => 'Booking Complete â€” ' . htmlspecialchars($booking['booking_number']),
+            'page_title'   => 'Booking Complete —" ' . htmlspecialchars($booking['booking_number']),
             'page_heading' => 'Booking Completed Successfully',
             'booking'      => $booking,
         ]);
     }
 
     /**
-     * Finalize digital booking â€” POST /booking/digital/{bookingNumber}/submit
+     * Finalize digital booking —" POST /booking/digital/{bookingNumber}/submit
      */
     public function submit($bookingNumber)
     {

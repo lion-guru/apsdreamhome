@@ -101,11 +101,11 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         </div>
         <div class="stat-pill">
           <span class="stat-label">Pipeline Value</span>
-          <span class="stat-value text-success" id="stat-value">â‚¹<?= number_format($totalValue / 100000, 1) ?>L</span>
+          <span class="stat-value text-success" id="stat-value">₹<?= number_format($totalValue / 100000, 1) ?>L</span>
         </div>
         <div class="stat-pill">
           <span class="stat-label">Won</span>
-          <span class="stat-value text-warning" id="stat-won">â‚¹<?= number_format($wonValue / 100000, 1) ?>L</span>
+          <span class="stat-value text-warning" id="stat-won">₹<?= number_format($wonValue / 100000, 1) ?>L</span>
         </div>
         <div class="stat-pill">
           <span class="stat-label">Win Rate</span>
@@ -154,7 +154,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
             <span class="col-count col-count-badge"><?= $count ?></span>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <span class="col-value">â‚¹<?= $stageVal > 99999 ? number_format($stageVal / 100000, 1) . 'L' : number_format($stageVal) ?></span>
+            <span class="col-value">₹<?= $stageVal > 99999 ? number_format($stageVal / 100000, 1) . 'L' : number_format($stageVal) ?></span>
             <i class="fas fa-chevron-left collapse-icon" title="Collapse"></i>
           </div>
         </div>
@@ -193,9 +193,9 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
               // Budget formatting
               $budgetStr = '';
-              if ($budget >= 10000000) $budgetStr = 'â‚¹' . number_format($budget / 10000000, 1) . 'Cr';
-              elseif ($budget >= 100000) $budgetStr = 'â‚¹' . number_format($budget / 100000, 1) . 'L';
-              elseif ($budget > 0) $budgetStr = 'â‚¹' . number_format($budget);
+              if ($budget >= 10000000) $budgetStr = '₹' . number_format($budget / 10000000, 1) . 'Cr';
+              elseif ($budget >= 100000) $budgetStr = '₹' . number_format($budget / 100000, 1) . 'L';
+              elseif ($budget > 0) $budgetStr = '₹' . number_format($budget);
 
               // Time ago
               $timeAgo = '';
@@ -268,7 +268,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   const CSRF = '<?= $csrfToken ?>';
   let allCollapsed = false;
 
-  // â”€â”€ Drag and Drop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Drag and Drop —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   let draggedCard = null;
 
   document.addEventListener('dragstart', function(e) {
@@ -333,7 +333,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     });
   });
 
-  // â”€â”€ Column Counts After Move â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Column Counts After Move —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   function updateColumnCounts() {
     document.querySelectorAll('.pipeline-col').forEach(col => {
       const cards = col.querySelectorAll('.lead-card');
@@ -342,12 +342,12 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     });
   }
 
-  // â”€â”€ Format Stage Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Format Stage Name —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   function formatStage(slug) {
     return slug.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  // â”€â”€ Live Stats Refresh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Live Stats Refresh —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   function refreshStats() {
     const params = new URLSearchParams();
     const assignee = document.getElementById('filterAssignee').value;
@@ -360,13 +360,13 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
       .then(s => {
         document.getElementById('stat-total').textContent = s.total.toLocaleString();
         document.getElementById('stat-active').textContent = s.active.toLocaleString();
-        document.getElementById('stat-value').textContent = 'â‚¹' + (s.value / 100000).toFixed(1) + 'L';
-        document.getElementById('stat-won').textContent = 'â‚¹' + (s.won_value / 100000).toFixed(1) + 'L';
+        document.getElementById('stat-value').textContent = '₹' + (s.value / 100000).toFixed(1) + 'L';
+        document.getElementById('stat-won').textContent = '₹' + (s.won_value / 100000).toFixed(1) + 'L';
         document.getElementById('stat-conv').textContent = s.conversion + '%';
       }).catch(() => {});
   }
 
-  // â”€â”€ Filter Change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Filter Change —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   document.getElementById('filterAssignee').addEventListener('change', applyFilters);
   document.getElementById('filterSource').addEventListener('change', applyFilters);
 
@@ -379,7 +379,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     window.location.href = BASE + '/admin/lead-kanban' + (params.toString() ? '?' + params.toString() : '');
   }
 
-  // â”€â”€ Collapse/Expand â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Collapse/Expand —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   document.getElementById('collapseAllBtn').addEventListener('click', function() {
     allCollapsed = !allCollapsed;
     document.querySelectorAll('.pipeline-col').forEach(col => {
@@ -395,7 +395,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     });
   });
 
-  // â”€â”€ Quick View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Quick View —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   window.quickViewLead = function(id) {
     const modal = document.getElementById('quickviewModal');
     const content = document.getElementById('quickviewContent');
@@ -408,12 +408,12 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         if (d.error) { content.innerHTML = '<p class="text-danger p-4">' + d.error + '</p>'; return; }
         const lead = d.data || d;
         const name = lead.name || 'Unknown';
-        const phone = lead.phone || 'â€”';
-        const email = lead.email || 'â€”';
-        const budget = lead.budget ? 'â‚¹' + Number(lead.budget).toLocaleString() : 'â€”';
+        const phone = lead.phone || '—';
+        const email = lead.email || '—';
+        const budget = lead.budget ? '₹' + Number(lead.budget).toLocaleString() : '—';
         const score = lead.lead_score || lead.score || 0;
         const status = (lead.status || 'new').replace(/_/g, ' ');
-        const source = lead.source || 'â€”';
+        const source = lead.source || '—';
         const assigned = lead.assigned_to_name || 'Unassigned';
         const priority = lead.priority || 'medium';
         const notes = lead.notes || '';
@@ -495,7 +495,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     if (e.key === 'Escape') closeQuickView();
   });
 
-  // â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Toast —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   function showToast(msg, type) {
     const toast = document.createElement('div');
     toast.className = 'toast-move ' + type;
@@ -505,7 +505,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     setTimeout(() => toast.remove(), 2800);
   }
 
-  // â”€â”€ Keyboard shortcut: 'n' for new lead â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —€—€ Keyboard shortcut: 'n' for new lead —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
   document.addEventListener('keydown', function(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
     if (e.key === 'n' || e.key === 'N') window.location.href = BASE + '/admin/leads/create';

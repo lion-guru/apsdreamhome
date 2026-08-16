@@ -80,20 +80,20 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Base Price/sqft</div>
-                            <div class="fs-5 fw-bold">â‚¹<?= number_format(floatval($plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0), 2) ?></div>
+                            <div class="fs-5 fw-bold">₹<?= number_format(floatval($plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Current Price/sqft</div>
-                            <div class="fs-5 fw-bold">â‚¹<?= number_format(floatval($plot['price_per_sqft'] ?? 0), 2) ?></div>
+                            <div class="fs-5 fw-bold">₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0), 2) ?></div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Total Price</div>
-                            <div class="fs-4 fw-bold text-primary">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></div>
+                            <div class="fs-4 fw-bold text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Negotiated / Deal Price</div>
                             <div class="fs-5 fw-bold <?= !empty($plot['negotiated_price']) && $plot['negotiated_price'] != $plot['total_price'] ? 'text-success' : 'text-muted' ?>">
-                                <?= !empty($plot['negotiated_price']) ? 'â‚¹' . number_format(intval($plot['negotiated_price'])) : 'â€”' ?>
+                                <?= !empty($plot['negotiated_price']) ? '₹' . number_format(intval($plot['negotiated_price'])) : '—' ?>
                             </div>
                             <?php if (!empty($plot['price_override_reason'])): ?>
                                 <div class="text-muted small mt-1"><em><?= htmlspecialchars($plot['price_override_reason']) ?></em></div>
@@ -114,8 +114,8 @@
                             <?php foreach ($priceHistory as $ph): ?>
                             <tr>
                                 <td><?= date('d M Y H:i', strtotime($ph['created_at'] ?? 'now')) ?></td>
-                                <td>â‚¹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
-                                <td>â‚¹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
+                                <td>₹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
+                                <td>₹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($ph['change_type'] ?? 'override') ?></span></td>
                                 <td><?= htmlspecialchars($ph['reason'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($ph['changed_by_name'] ?? 'Admin') ?></td>
@@ -159,7 +159,7 @@
                             <tr>
                                 <td><a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $bk['id'] ?>">#<?= $bk['id'] ?></a></td>
                                 <td><?= htmlspecialchars($bk['customer_name'] ?? 'N/A') ?></td>
-                                <td>â‚¹<?= number_format(intval($bk['amount'] ?? $bk['total_amount'] ?? 0)) ?></td>
+                                <td>₹<?= number_format(intval($bk['amount'] ?? $bk['total_amount'] ?? 0)) ?></td>
                                 <td><span class="badge bg-<?= $bk['status'] === 'confirmed' ? 'success' : ($bk['status'] === 'pending' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($bk['status'] ?? '') ?></span></td>
                                 <td><?= htmlspecialchars($bk['booking_date'] ?? $bk['created_at'] ?? '') ?></td>
                             </tr>

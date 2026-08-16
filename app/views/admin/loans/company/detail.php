@@ -30,14 +30,14 @@ $early_settlement = $early_settlement ?? [];
                 </div>
                 <div class="aps-cp-card-body">
                     <div class="row g-3">
-                        <div class="col-md-3"><small class="text-muted d-block">Loan Amount</small><strong>â‚¹<?= number_format(($loan['loan_amount'] ?? 0) / 100000, 2) ?>L</strong></div>
+                        <div class="col-md-3"><small class="text-muted d-block">Loan Amount</small><strong>₹<?= number_format(($loan['loan_amount'] ?? 0) / 100000, 2) ?>L</strong></div>
                         <div class="col-md-3"><small class="text-muted d-block">Interest Rate</small><strong><?= $loan['interest_rate'] ?? 0 ?>%</strong> <small>(<?= $loan['interest_type'] ?? '' ?>)</small></div>
                         <div class="col-md-3"><small class="text-muted d-block">Tenure</small><strong><?= $loan['tenure_months'] ?? 0 ?> months</strong></div>
-                        <div class="col-md-3"><small class="text-muted d-block">EMI Amount</small><strong>â‚¹<?= number_format($loan['emi_amount'] ?? 0) ?></strong></div>
-                        <div class="col-md-3"><small class="text-muted d-block">Total Payable</small><strong>â‚¹<?= number_format($loan['total_payable'] ?? 0) ?></strong></div>
-                        <div class="col-md-3"><small class="text-muted d-block">Total Interest</small><strong>â‚¹<?= number_format($loan['total_interest'] ?? 0) ?></strong></div>
-                        <div class="col-md-3"><small class="text-muted d-block">Amount Paid</small><strong class="text-success">â‚¹<?= number_format($loan['amount_paid'] ?? 0) ?></strong></div>
-                        <div class="col-md-3"><small class="text-muted d-block">Balance</small><strong class="text-<?= ($loan['balance_amount'] ?? 0) > 0 ? 'danger' : 'success' ?>">â‚¹<?= number_format($loan['balance_amount'] ?? 0) ?></strong></div>
+                        <div class="col-md-3"><small class="text-muted d-block">EMI Amount</small><strong>₹<?= number_format($loan['emi_amount'] ?? 0) ?></strong></div>
+                        <div class="col-md-3"><small class="text-muted d-block">Total Payable</small><strong>₹<?= number_format($loan['total_payable'] ?? 0) ?></strong></div>
+                        <div class="col-md-3"><small class="text-muted d-block">Total Interest</small><strong>₹<?= number_format($loan['total_interest'] ?? 0) ?></strong></div>
+                        <div class="col-md-3"><small class="text-muted d-block">Amount Paid</small><strong class="text-success">₹<?= number_format($loan['amount_paid'] ?? 0) ?></strong></div>
+                        <div class="col-md-3"><small class="text-muted d-block">Balance</small><strong class="text-<?= ($loan['balance_amount'] ?? 0) > 0 ? 'danger' : 'success' ?>">₹<?= number_format($loan['balance_amount'] ?? 0) ?></strong></div>
                         <div class="col-md-3"><small class="text-muted d-block">Start Date</small><strong><?= $loan['start_date'] ?? '-' ?></strong></div>
                         <div class="col-md-3"><small class="text-muted d-block">End Date</small><strong><?= $loan['end_date'] ?? '-' ?></strong></div>
                         <div class="col-md-3"><small class="text-muted d-block">Disbursed</small><strong><?= $loan['disbursed_at'] ? date('d/m/Y', strtotime($loan['disbursed_at'])) : '-' ?></strong></div>
@@ -100,14 +100,14 @@ $early_settlement = $early_settlement ?? [];
                 <div class="aps-cp-card mt-3">
                     <div class="aps-cp-card-header bg-success text-white"><i class="fas fa-gift me-2"></i>Early Settlement</div>
                     <div class="aps-cp-card-body">
-                        <div class="mb-2"><small>Principal Remaining:</small> <strong>â‚¹<?= number_format($early_settlement['remaining_principal'] ?? 0) ?></strong></div>
-                        <div class="mb-2"><small>Remaining Interest:</small> â‚¹<?= number_format($early_settlement['remaining_interest'] ?? 0) ?></div>
+                        <div class="mb-2"><small>Principal Remaining:</small> <strong>₹<?= number_format($early_settlement['remaining_principal'] ?? 0) ?></strong></div>
+                        <div class="mb-2"><small>Remaining Interest:</small> ₹<?= number_format($early_settlement['remaining_interest'] ?? 0) ?></div>
                         <?php if (($early_settlement['discount_amount'] ?? 0) > 0): ?>
-                            <div class="mb-2 text-success"><small>Discount:</small> <strong>-â‚¹<?= number_format($early_settlement['discount_amount']) ?></strong></div>
+                            <div class="mb-2 text-success"><small>Discount:</small> <strong>-₹<?= number_format($early_settlement['discount_amount']) ?></strong></div>
                         <?php endif; ?>
-                        <div class="mb-2"><small>Penalties:</small> â‚¹<?= number_format($early_settlement['total_penalty'] ?? 0) ?></div>
+                        <div class="mb-2"><small>Penalties:</small> ₹<?= number_format($early_settlement['total_penalty'] ?? 0) ?></div>
                         <hr>
-                        <div><small>Settlement Amount:</small> <strong class="text-success h5">â‚¹<?= number_format($early_settlement['settlement_amount'] ?? 0) ?></strong></div>
+                        <div><small>Settlement Amount:</small> <strong class="text-success h5">₹<?= number_format($early_settlement['settlement_amount'] ?? 0) ?></strong></div>
                         <?php if ($early_settlement['incentive_applied'] ?? null): ?>
                             <small class="text-muted">Incentive: <?= htmlspecialchars($early_settlement['incentive_applied']) ?></small>
                         <?php endif; ?>
@@ -141,15 +141,15 @@ $early_settlement = $early_settlement ?? [];
                             <tr class="<?= $inst['status'] === 'overdue' ? 'table-danger' : ($inst['status'] === 'paid' ? 'table-success' : '') ?>">
                                 <td><?= $inst['installment_no'] ?></td>
                                 <td><?= $inst['due_date'] ?></td>
-                                <td>â‚¹<?= number_format($inst['principal_amount']) ?></td>
-                                <td>â‚¹<?= number_format($inst['interest_amount']) ?>
+                                <td>₹<?= number_format($inst['principal_amount']) ?></td>
+                                <td>₹<?= number_format($inst['interest_amount']) ?>
                                     <?php if (!empty($inst['waived_interest'])): ?>
-                                        <br><small class="text-success">(â‚¹<?= number_format($inst['waived_interest']) ?> waived)</small>
+                                        <br><small class="text-success">(₹<?= number_format($inst['waived_interest']) ?> waived)</small>
                                     <?php endif; ?>
                                 </td>
-                                <td>â‚¹<?= number_format($inst['total_amount']) ?></td>
-                                <td>â‚¹<?= number_format($inst['paid_amount']) ?></td>
-                                <td>â‚¹<?= number_format($inst['accrued_penalty']) ?></td>
+                                <td>₹<?= number_format($inst['total_amount']) ?></td>
+                                <td>₹<?= number_format($inst['paid_amount']) ?></td>
+                                <td>₹<?= number_format($inst['accrued_penalty']) ?></td>
                                 <td>
                                     <span class="badge bg-<?= $inst['status'] === 'paid' ? 'success' : ($inst['status'] === 'overdue' ? 'danger' : 'secondary') ?>">
                                         <?= ucfirst($inst['status']) ?>
@@ -279,13 +279,13 @@ $early_settlement = $early_settlement ?? [];
                         <option value="">Select installment</option>
                         <?php foreach ($installments as $inst): ?>
                             <?php if ($inst['status'] !== 'paid'): ?>
-                                <option value="<?= $inst['id'] ?>">#<?= $inst['installment_no'] ?> - Due: <?= $inst['due_date'] ?> - â‚¹<?= number_format($inst['total_amount']) ?> (Outstanding: â‚¹<?= number_format($inst['total_amount'] - $inst['paid_amount']) ?>)</option>
+                                <option value="<?= $inst['id'] ?>">#<?= $inst['installment_no'] ?> - Due: <?= $inst['due_date'] ?> - ₹<?= number_format($inst['total_amount']) ?> (Outstanding: ₹<?= number_format($inst['total_amount'] - $inst['paid_amount']) ?>)</option>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Amount (â‚¹)</label>
+                    <label class="form-label">Amount (₹)</label>
                     <input type="number" name="amount" class="form-control" min="1" step="1" required>
                 </div>
                 <div class="row mb-3">
@@ -356,7 +356,7 @@ $early_settlement = $early_settlement ?? [];
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label">Annual Income (â‚¹)</label>
+                        <label class="form-label">Annual Income (₹)</label>
                         <input type="number" name="annual_income" class="form-control" min="0">
                     </div>
                     <div class="col-md-6">
@@ -420,14 +420,14 @@ $early_settlement = $early_settlement ?? [];
                 <p>Foreclose this loan with the settlement amount below:</p>
                 <?php if ($early_settlement['success'] ?? false): ?>
                     <div class="alert alert-info">
-                        <strong>Suggested Settlement:</strong> â‚¹<?= number_format($early_settlement['settlement_amount'] ?? 0) ?>
+                        <strong>Suggested Settlement:</strong> ₹<?= number_format($early_settlement['settlement_amount'] ?? 0) ?>
                         <?php if (($early_settlement['discount_amount'] ?? 0) > 0): ?>
-                            <br><small class="text-success">Includes discount of â‚¹<?= number_format($early_settlement['discount_amount']) ?></small>
+                            <br><small class="text-success">Includes discount of ₹<?= number_format($early_settlement['discount_amount']) ?></small>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
                 <div class="mb-3">
-                    <label class="form-label">Settlement Amount (â‚¹) <span class="text-danger">*</span></label>
+                    <label class="form-label">Settlement Amount (₹) <span class="text-danger">*</span></label>
                     <input type="number" name="settlement_amount" class="form-control" min="1" step="1" required value="<?= round($early_settlement['settlement_amount'] ?? 0) ?>">
                 </div>
                 <p class="text-danger small"><i class="fas fa-exclamation-triangle me-1"></i>This action is irreversible. All remaining installments will be marked as paid.</p>

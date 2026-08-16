@@ -67,7 +67,7 @@ $success_rows = $total_rows - $error_rows;
                                 <td class="small"><?= htmlspecialchars($row['email'] ?? '') ?></td>
                                 <td class="small"><?= htmlspecialchars($row['phone'] ?? '') ?></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($row['source'] ?? 'csv_import') ?></span></td>
-                                <td class="small">â‚¹<?= number_format((float)($row['budget'] ?? 0)) ?></td>
+                                <td class="small">₹<?= number_format((float)($row['budget'] ?? 0)) ?></td>
                                 <td>
                                     <?php
                                     $pri = $row['priority'] ?? 'medium';

@@ -34,7 +34,7 @@
                             <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-coins fa-3x d-block mb-3"></i>No income records found</td></tr>
                         <?php else: ?>
                             <?php $i=1; foreach ($incomeList as $inc): ?>
-                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($inc['date'])) ?></td><td><?= $inc['source'] ?? '-' ?></td><td><?= $inc['description'] ?></td><td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $inc['category'] ?? 'General' ?></span></td><td class="text-end pe-4 fw-bold text-success">+â‚¹<?= number_format($inc['amount'] ?? 0, 2) ?></td></tr>
+                            <tr><td class="ps-4"><?= $i++ ?></td><td><?= date('d M Y', strtotime($inc['date'])) ?></td><td><?= $inc['source'] ?? '-' ?></td><td><?= $inc['description'] ?></td><td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $inc['category'] ?? 'General' ?></span></td><td class="text-end pe-4 fw-bold text-success">+₹<?= number_format($inc['amount'] ?? 0, 2) ?></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>

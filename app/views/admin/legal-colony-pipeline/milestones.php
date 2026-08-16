@@ -43,7 +43,7 @@ $milestoneIcons = [
   'default'               => 'fa-flag-checkered',
 ];
 
-function inr($n) { return 'â‚¹' . number_format($n); }
+function inr($n) { return '₹' . number_format($n); }
 $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['total']) * 100) : 0;
 ?>
 
@@ -73,7 +73,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
       <h2 class="mb-1"><i class="fas fa-tasks me-2 text-danger"></i>RERA Milestone Tracker</h2>
       <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?>
         <?php if ($rera): ?>
-          â€” RERA: <?= htmlspecialchars($rera['rera_number'] ?? '') ?>
+          — RERA: <?= htmlspecialchars($rera['rera_number'] ?? '') ?>
         <?php endif; ?>
       </small>
     </div>
@@ -190,7 +190,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
                         <div class="small text-muted">
                           <?= $milestoneTypeLabels[$type] ?? ucfirst(str_replace('_', ' ', $type)) ?>
                           <?php if (!empty($m['description'])): ?>
-                            â€” <?= htmlspecialchars($m['description']) ?>
+                            — <?= htmlspecialchars($m['description']) ?>
                           <?php endif; ?>
                         </div>
                       </div>
@@ -204,7 +204,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
 
                     <div class="d-flex justify-content-between align-items-center mt-2">
                       <div class="small">
-                        <span class="text-muted"><i class="fas fa-calendar me-1"></i> Planned: <?= $planned ?: 'â€”' ?></span>
+                        <span class="text-muted"><i class="fas fa-calendar me-1"></i> Planned: <?= $planned ?: '—' ?></span>
                         <?php if ($completed): ?>
                           <span class="text-success ms-3"><i class="fas fa-check-circle me-1"></i> Completed: <?= $completed ?></span>
                         <?php endif; ?>

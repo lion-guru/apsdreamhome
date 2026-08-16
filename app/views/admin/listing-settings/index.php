@@ -71,7 +71,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <div class="row g-2">
                         <div class="col-6">
-                            <small class="style-81715">Price (â‚¹)</small>
+                            <small class="style-81715">Price (₹)</small>
                             <input type="number" name="price" value="<?= $pkg['price'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-6">

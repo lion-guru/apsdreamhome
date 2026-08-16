@@ -1,4 +1,4 @@
-<!-- Billing Plans â€” Subscription Plan Management -->
+<!-- Billing Plans — Subscription Plan Management -->
 <?php
 $plans   = $plans ?? [];
 $by_plan = $by_plan ?? [];
@@ -51,7 +51,7 @@ $base    = BASE_URL ?? '';
         <div class="card shadow-sm">
             <div class="card-body text-center">
                 <div class="text-info mb-2"><i class="fas fa-rupee-sign fa-2x"></i></div>
-                <h3 class="mb-1">â‚¹<?= number_format(max(array_column($plans, 'price_monthly'))) ?></h3>
+                <h3 class="mb-1">₹<?= number_format(max(array_column($plans, 'price_monthly'))) ?></h3>
                 <small class="text-muted">Highest Plan</small>
             </div>
         </div>
@@ -68,11 +68,11 @@ $base    = BASE_URL ?? '';
                 </div>
                 <div class="card-body text-center">
                     <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">
-                        â‚¹<?= number_format($plan['price_monthly']) ?>
+                        ₹<?= number_format($plan['price_monthly']) ?>
                         <small class="text-muted fs-6 fw-normal">/mo</small>
                     </div>
                     <?php if (($plan['price_yearly'] ?? 0) > 0): ?>
-                        <small class="text-muted">â‚¹<?= number_format($plan['price_yearly']) ?>/yr (save <?= round((1 - $plan['price_yearly'] / ($plan['price_monthly'] * 12)) * 100) ?>%)</small>
+                        <small class="text-muted">₹<?= number_format($plan['price_yearly']) ?>/yr (save <?= round((1 - $plan['price_yearly'] / ($plan['price_monthly'] * 12)) * 100) ?>%)</small>
                     <?php endif; ?>
                     <hr>
                     <div class="text-start">

@@ -61,7 +61,7 @@
                                                 <i class="fas fa-exclamation-triangle"></i> Error
                                             </span>
                                         <?php else: ?>
-                                            â€”
+                                            —
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-muted small"><?= htmlspecialchars($entry['created_at'] ?? '') ?></td>

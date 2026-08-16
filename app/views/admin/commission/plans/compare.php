@@ -136,8 +136,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                 <td class="plan-a"><?= $lv['level_a'] ?>%</td>
                                 <td class="plan-b"><?= $lv['level_b'] ?>%</td>
                                 <td class="<?= $ld > 0 ? 'diff-pos' : ($ld < 0 ? 'diff-neg' : 'diff-zero') ?>"><?= $ld > 0 ? '+' : '' ?><?= $ld ?>%</td>
-                                <td class="plan-a">â‚¹<?= number_format($lv['target_a']) ?></td>
-                                <td class="plan-b">â‚¹<?= number_format($lv['target_b']) ?></td>
+                                <td class="plan-a">₹<?= number_format($lv['target_a']) ?></td>
+                                <td class="plan-b">₹<?= number_format($lv['target_b']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

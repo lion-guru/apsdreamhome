@@ -122,9 +122,9 @@ try {
                     <h2 class="property-title mb-3"><?php echo htmlspecialchars($property['title']); ?></h2>
 
                     <div class="property-price mb-4">
-                        <span class="price-main">â‚¹<?php echo number_format($property['price']); ?></span>
+                        <span class="price-main">₹<?php echo number_format($property['price']); ?></span>
                         <?php if ($property['price_per_sqft']): ?>
-                        <span class="price-per-sqft">â‚¹<?php echo number_format($property['price_per_sqft']); ?>/sq.ft</span>
+                        <span class="price-per-sqft">₹<?php echo number_format($property['price_per_sqft']); ?>/sq.ft</span>
                         <?php endif; ?>
                     </div>
 
@@ -409,7 +409,7 @@ try {
                                 <span><i class="fas fa-ruler-combined me-1"></i><?php echo number_format($related['area_sqft']); ?> sq.ft</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="fw-bold">â‚¹<?php echo number_format($related['price']); ?></span>
+                                <span class="fw-bold">₹<?php echo number_format($related['price']); ?></span>
                                 <a href="/property-details.php?id=<?php echo $related['id']; ?>" class="btn btn-primary btn-sm">View Details</a>
                             </div>
                         </div>

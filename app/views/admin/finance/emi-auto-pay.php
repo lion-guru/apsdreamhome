@@ -48,7 +48,7 @@ $isTestMode = $isTestMode ?? true;
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
                     <div class="aps-cp-stat-label">Total Due</div>
-                    <div class="aps-cp-stat-value text-danger">â‚¹<?= number_format((float)($stats['total_due_amount'] ?? 0), 0) ?></div>
+                    <div class="aps-cp-stat-value text-danger">₹<?= number_format((float)($stats['total_due_amount'] ?? 0), 0) ?></div>
                 </div>
             </div>
         </div>
@@ -122,7 +122,7 @@ $isTestMode = $isTestMode ?? true;
                             </td>
                             <td><code><?= htmlspecialchars($m['booking_number'] ?? '-') ?></code></td>
                             <td><?= htmlspecialchars($m['plot_number'] ?? '-') ?></td>
-                            <td class="text-end fw-bold">â‚¹<?= number_format((float)$m['amount'], 2) ?></td>
+                            <td class="text-end fw-bold">₹<?= number_format((float)$m['amount'], 2) ?></td>
                             <td><code class="small"><?= htmlspecialchars(substr($m['subscription_id'] ?? '-', 0, 20)) ?>...</code></td>
                             <td>
                                 <?php
@@ -172,7 +172,7 @@ $isTestMode = $isTestMode ?? true;
                             <td><small><?= htmlspecialchars($fp['created_at'] ?? '') ?></small></td>
                             <td><?= htmlspecialchars($fp['customer_name'] ?? '-') ?></td>
                             <td><code><?= htmlspecialchars($fp['booking_number'] ?? '-') ?></code></td>
-                            <td class="text-end">â‚¹<?= number_format(((float)($fp['amount_paise'] ?? 0)) / 100, 2) ?></td>
+                            <td class="text-end">₹<?= number_format(((float)($fp['amount_paise'] ?? 0)) / 100, 2) ?></td>
                             <td><code class="small"><?= htmlspecialchars(substr($fp['transaction_id'] ?? '-', 0, 16)) ?></code></td>
                             <td><small class="text-danger"><?= htmlspecialchars($fp['error_message'] ?? '-') ?></small></td>
                             <td class="text-center">
@@ -240,6 +240,6 @@ function runAutoPay() {
 
 function retryMandate(subscriptionId) {
     if (!confirm('Retry auto-debit for this mandate?')) return;
-    alert('Retry queued â€” will be processed on next cron run.');
+    alert('Retry queued — will be processed on next cron run.');
 }
 </script>

@@ -6,7 +6,7 @@ $period = $period ?? '7d';
 $csrf = $_SESSION['csrf_token'] ?? '';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-chart-line me-2"></i>Insights â€” <?= htmlspecialchars($account['account_name'] ?? '') ?></h2>
+    <h2><i class="fas fa-chart-line me-2"></i>Insights — <?= htmlspecialchars($account['account_name'] ?? '') ?></h2>
     <a href="<?= BASE_URL ?>/admin/social-media" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Accounts</a>
 </div>
 

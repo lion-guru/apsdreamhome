@@ -35,7 +35,7 @@ $e = $employee ?? [];
                     <tr><td class="text-muted">Email</td><td><?= htmlspecialchars($e['email'] ?? '-') ?></td></tr>
                     <tr><td class="text-muted">Phone</td><td><?= htmlspecialchars($e['phone'] ?? '-') ?></td></tr>
                     <tr><td class="text-muted">Department</td><td><?= htmlspecialchars($e['department'] ?? '-') ?></td></tr>
-                    <tr><td class="text-muted">Salary</td><td><?= ($e['salary'] ?? 0) ? 'â‚¹' . number_format($e['salary'], 2) : '-' ?></td></tr>
+                    <tr><td class="text-muted">Salary</td><td><?= ($e['salary'] ?? 0) ? '₹' . number_format($e['salary'], 2) : '-' ?></td></tr>
                     <tr><td class="text-muted">Joined</td><td><?= htmlspecialchars($e['join_date'] ?? '-') ?></td></tr>
                     <tr><td class="text-muted">User Since</td><td><?= htmlspecialchars($e['user_since'] ?? '-') ?></td></tr>
                 </table>

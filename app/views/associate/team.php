@@ -177,7 +177,7 @@ body {
             <div class="stat-card-glass" class="style-58217">
                 <div class="stat-icon-wrapper"><i class="fas fa-chart-line"></i></div>
                 <div>
-                    <div class="stat-value">â‚¹<?= number_format($team_stats['total_sales']) ?></div>
+                    <div class="stat-value">₹<?= number_format($team_stats['total_sales']) ?></div>
                     <div class="stat-label"><?= __('assoc_team_sales', [], 'Team Sales') ?></div>
                 </div>
             </div>
@@ -186,7 +186,7 @@ body {
             <div class="stat-card-glass" class="style-48682">
                 <div class="stat-icon-wrapper"><i class="fas fa-coins"></i></div>
                 <div>
-                    <div class="stat-value">â‚¹<?= number_format($team_stats['total_commission']) ?></div>
+                    <div class="stat-value">₹<?= number_format($team_stats['total_commission']) ?></div>
                     <div class="stat-label"><?= __('assoc_team_earned', [], 'Team Earned') ?></div>
                 </div>
             </div>
@@ -258,8 +258,8 @@ body {
                                     </span>
                                 </td>
                                 <td class="text-end fw-bold text-dark"><?= (int)($m['team_size'] ?? 0) ?></td>
-                                <td class="text-end fw-bold text-success">â‚¹<?= number_format((float)($m['lifetime_sales'] ?? 0)) ?></td>
-                                <td class="text-end fw-bold text-primary">â‚¹<?= number_format((float)($m['total_earned'] ?? 0)) ?></td>
+                                <td class="text-end fw-bold text-success">₹<?= number_format((float)($m['lifetime_sales'] ?? 0)) ?></td>
+                                <td class="text-end fw-bold text-primary">₹<?= number_format((float)($m['total_earned'] ?? 0)) ?></td>
                                 <td>
                                     <?php $isAct = ($m['status'] ?? '') === 'active'; ?>
                                     <span class="badge rounded-pill bg-<?= $isAct ? 'success' : 'secondary' ?> bg-opacity-10 text-<?= $isAct ? 'success' : 'secondary' ?> px-3 border border-<?= $isAct ? 'success' : 'secondary' ?>">

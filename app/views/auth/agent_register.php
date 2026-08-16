@@ -527,7 +527,7 @@ $base = BASE_URL;
                 });
             }
 
-            // Phone validation Ã¢â‚¬â€� strip non-digits
+            // Phone validation — strip non-digits
             const phoneInput = form.querySelector('input[name="phone"]');
             if (phoneInput) {
                 phoneInput.addEventListener('input', function() {

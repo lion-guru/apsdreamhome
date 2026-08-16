@@ -5,7 +5,7 @@
 <body class="style-26942">
 <div class="style-10137">
     <h1 class="style-85930">APS Dream Home</h1>
-    <p class="style-8849">Payment Overdue â€” Immediate Action Required</p>
+    <p class="style-8849">Payment Overdue — Immediate Action Required</p>
 </div>
 <div class="style-38030">
     <p class="style-33752">Dear <strong>{{customer_name}}</strong>,</p>
@@ -15,9 +15,9 @@
         <table class="style-61075">
             <tr><td class="style-20694">Booking:</td><td class="style-60925">{{booking_number}}</td></tr>
             <tr><td class="style-20694">Installment:</td><td class="style-42101">#{{installment_no}}</td></tr>
-            <tr><td class="style-20694">Original Amount:</td><td class="style-42101">â‚¹{{amount}}</td></tr>
-            <tr><td class="style-20694">Penalty Accrued:</td><td class="style-15627">â‚¹{{penalty}}</td></tr>
-            <tr><td class="style-24404">Total Due Now:</td><td class="style-77436">â‚¹{{total_due}}</td></tr>
+            <tr><td class="style-20694">Original Amount:</td><td class="style-42101">₹{{amount}}</td></tr>
+            <tr><td class="style-20694">Penalty Accrued:</td><td class="style-15627">₹{{penalty}}</td></tr>
+            <tr><td class="style-24404">Total Due Now:</td><td class="style-77436">₹{{total_due}}</td></tr>
         </table>
     </div>
 

@@ -45,10 +45,10 @@ $user_role = $this->getUserRole() ?? 'customer';
                     <strong>ðŸ™� Namaste!</strong><br>
                     Main APS Dream Home ki AI hoon. Aapki kya madad kar sakta hoon?<br><br>
                     <strong>Available help:</strong><br>
-                    â€¢ Property information<br>
-                    â€¢ Sales guidance<br>
-                    â€¢ Technical support<br>
-                    â€¢ General assistance<br><br>
+                    —¢ Property information<br>
+                    —¢ Sales guidance<br>
+                    —¢ Technical support<br>
+                    —¢ General assistance<br><br>
                     <small>Type your message below...</small>
                 </div>
             </div>

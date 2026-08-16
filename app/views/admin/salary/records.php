@@ -31,11 +31,11 @@
                                 <td><strong><?= htmlspecialchars($r['employee_name'] ?? '') ?></strong></td>
                                 <td><?= date('F', mktime(0,0,0,$r['month'] ?? 1,1)) ?></td>
                                 <td><?= $r['year'] ?? '' ?></td>
-                                <td>â‚¹<?= number_format($r['basic_pay'] ?? 0, 2) ?></td>
-                                <td>â‚¹<?= number_format($r['allowances'] ?? 0, 2) ?></td>
-                                <td class="text-danger">â‚¹<?= number_format($r['deductions'] ?? 0, 2) ?></td>
-                                <td>â‚¹<?= number_format($r['gross_pay'] ?? 0, 2) ?></td>
-                                <td><strong>â‚¹<?= number_format($r['net_pay'] ?? 0, 2) ?></strong></td>
+                                <td>₹<?= number_format($r['basic_pay'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($r['allowances'] ?? 0, 2) ?></td>
+                                <td class="text-danger">₹<?= number_format($r['deductions'] ?? 0, 2) ?></td>
+                                <td>₹<?= number_format($r['gross_pay'] ?? 0, 2) ?></td>
+                                <td><strong>₹<?= number_format($r['net_pay'] ?? 0, 2) ?></strong></td>
                                 <td><?= htmlspecialchars($r['payment_date'] ?? '') ?></td>
                                 <td><span class="badge bg-<?= match($r['status']??'pending') { 'paid'=>'success', 'pending'=>'warning', 'cancelled'=>'danger', default=>'secondary' } ?>"><?= ucfirst($r['status'] ?? 'pending') ?></span></td>
                             </tr>

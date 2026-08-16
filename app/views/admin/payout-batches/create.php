@@ -105,11 +105,11 @@
                 </div>
                 <div class="card-body">
                     <ol class="style-43707">
-                        <li class="mb-2"><strong class="style-96386">Draft</strong> â€” Create batch & add entries</li>
-                        <li class="mb-2"><strong class="style-96386">Submit</strong> â€” Send for admin approval</li>
-                        <li class="mb-2"><strong class="style-96386">Approved</strong> â€” Ready to process</li>
-                        <li class="mb-2"><strong class="style-96386">Processing</strong> â€” Payments initiated</li>
-                        <li class="mb-2"><strong class="style-96386">Completed</strong> â€” All payments done</li>
+                        <li class="mb-2"><strong class="style-96386">Draft</strong> — Create batch & add entries</li>
+                        <li class="mb-2"><strong class="style-96386">Submit</strong> — Send for admin approval</li>
+                        <li class="mb-2"><strong class="style-96386">Approved</strong> — Ready to process</li>
+                        <li class="mb-2"><strong class="style-96386">Processing</strong> — Payments initiated</li>
+                        <li class="mb-2"><strong class="style-96386">Completed</strong> — All payments done</li>
                     </ol>
                     <hr class="style-96118">
                     <small class="style-77712">

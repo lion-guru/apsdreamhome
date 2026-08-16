@@ -64,7 +64,7 @@ $colonies = $data['colonies'] ?? [];
   <div class="alert alert-danger border-0 shadow-sm mb-4 d-flex align-items-start" role="alert">
     <i class="fas fa-exclamation-triangle me-3 mt-1 fa-lg"></i>
     <div class="flex-grow-1">
-      <h6 class="alert-heading mb-2">Health Alerts â€” <?= count($belowThreshold) ?> colony(ies) below 50% threshold</h6>
+      <h6 class="alert-heading mb-2">Health Alerts — <?= count($belowThreshold) ?> colony(ies) below 50% threshold</h6>
       <div class="row g-2">
         <?php foreach ($belowThreshold as $alert): ?>
           <div class="col-md-6 col-lg-4">

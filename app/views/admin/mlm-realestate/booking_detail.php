@@ -40,8 +40,8 @@
                                 <?php if ($b['block'] ?? ''): ?> | Block <?= htmlspecialchars($b['block']) ?><?php endif; ?>
                                 <?php if ($b['colony_name'] ?? ''): ?><br><small><?= htmlspecialchars($b['colony_name']) ?></small><?php endif; ?>
                             </td></tr>
-                            <tr><th>Total Amount</th><td><strong>â‚¹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
-                            <tr><th>Paid Amount</th><td>â‚¹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
+                            <tr><th>Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
+                            <tr><th>Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
                             <tr><th>Token Progress</th><td>
                                 <div class="progress" class="style-39312">
                                     <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?>" class="style-61073">
@@ -92,7 +92,7 @@
                                 <tr>
                                     <td><?= $emi['installment_no'] ?></td>
                                     <td><small><?= htmlspecialchars($emi['due_date'] ?? '') ?></small></td>
-                                    <td>â‚¹<?= number_format((float)($emi['amount'] ?? 0)) ?></td>
+                                    <td>₹<?= number_format((float)($emi['amount'] ?? 0)) ?></td>
                                     <td><span class="badge bg-<?= ($emi['status'] ?? '') === 'paid' ? 'success' : 'warning' ?>"><?= htmlspecialchars($emi['status'] ?? 'pending') ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -107,7 +107,7 @@
                         <form method="POST" action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/payment">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                            <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (â‚¹)" required></div>
+                            <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (₹)" required></div>
                             <div class="mb-2">
                                 <select name="mode" class="form-select">
                                     <option value="cash">Cash</option>

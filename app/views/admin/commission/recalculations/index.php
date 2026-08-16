@@ -2,7 +2,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <h2 class="style-48283"><i class="fas fa-calculator me-2" class="style-86204"></i> Commission Recalculations</h2>
-            <p class="style-43180">Retroactive recalculation requests â€” approve/reject historical commission changes</p>
+            <p class="style-43180">Retroactive recalculation requests — approve/reject historical commission changes</p>
         </div>
     </div>
 
@@ -35,8 +35,8 @@
         <div class="col-md-3">
             <div class="card" class="style-44272">
                 <div class="card-body text-center">
-                    <h3 class="style-70610">â‚¹<?= number_format(array_sum(array_column($stats, 'total_diff'))) ?></h3>
-                    <small class="style-43180">Total Impact (â‚¹)</small>
+                    <h3 class="style-70610">₹<?= number_format(array_sum(array_column($stats, 'total_diff'))) ?></h3>
+                    <small class="style-43180">Total Impact (₹)</small>
                 </div>
             </div>
         </div>
@@ -113,9 +113,9 @@
                                 <th class="style-86204">Type</th>
                                 <th class="style-86204">Beneficiary</th>
                                 <th class="style-86204">Source</th>
-                                <th class="style-86204">Original (â‚¹)</th>
-                                <th class="style-86204">New (â‚¹)</th>
-                                <th class="style-86204">Diff (â‚¹)</th>
+                                <th class="style-86204">Original (₹)</th>
+                                <th class="style-86204">New (₹)</th>
+                                <th class="style-86204">Diff (₹)</th>
                                 <th class="style-86204">Status</th>
                                 <th class="style-86204">Requested By</th>
                                 <th class="style-86204">Date</th>
@@ -129,10 +129,10 @@
                                     <td><span class="badge bg-info"><?= htmlspecialchars($item['orig_type'] ?? 'N/A') ?></span></td>
                                     <td><?= htmlspecialchars($item['beneficiary_name'] ?? 'User #' . $item['beneficiary_user_id']) ?></td>
                                     <td><?= htmlspecialchars($item['source_name'] ?? 'User #' . $item['source_user_id']) ?></td>
-                                    <td>â‚¹<?= number_format((float)($item['original_amount'] ?? 0)) ?></td>
-                                    <td>â‚¹<?= number_format((float)($item['new_amount'] ?? 0)) ?></td>
+                                    <td>₹<?= number_format((float)($item['original_amount'] ?? 0)) ?></td>
+                                    <td>₹<?= number_format((float)($item['new_amount'] ?? 0)) ?></td>
                                     <td class="style-37625">
-                                        <?= ((float)($item['amount_diff'] ?? 0)) >= 0 ? '+' : '' ?>â‚¹<?= number_format((float)($item['amount_diff'] ?? 0)) ?>
+                                        <?= ((float)($item['amount_diff'] ?? 0)) >= 0 ? '+' : '' ?>₹<?= number_format((float)($item['amount_diff'] ?? 0)) ?>
                                     </td>
                                     <td>
                                         <?php

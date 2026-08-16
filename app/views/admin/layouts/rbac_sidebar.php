@@ -3,7 +3,7 @@
 /**
  * Admin Sidebar - 100% DB-Driven
  * All menu items come from admin_menu_items table.
- * NO hardcoded fallback â€” if DB is empty, sidebar shows a helpful error.
+ * NO hardcoded fallback — if DB is empty, sidebar shows a helpful error.
  */
 
 use App\Services\AdminMenuService;
@@ -33,32 +33,32 @@ foreach ($menuItems as $item) {
 
 // Section display names with icons
 $sectionNames = [
-    'dashboards'  => 'ðŸ“Š Dashboards',
-    'crm'         => 'ðŸ‘¥ CRM & Leads',
-    'properties'  => 'ðŸ�  Properties & Land',
-    'mlm'         => 'ðŸ”— MLM Network',
-    'finance'     => 'ðŸ’° Finance & Accounting',
-    'commission'  => 'ðŸ’¸ Commission Engine',
-    'cms'         => 'ðŸ“� Content (CMS)',
-    'marketing'   => 'ðŸ“¢ Marketing & Referrals',
-    'reports'     => 'ðŸ“ˆ Reports & Analytics',
-    'operations'  => 'âš™ï¸� Operations',
-    'users'       => 'ðŸ‘¤ Users & Roles',
-    'locations'   => 'ðŸ“� Locations',
-    'settings'    => 'ðŸ”§ Settings',
-    'hrm'         => 'ðŸ‘” HR & Payroll',
-    'legal'       => 'âš–ï¸� Legal & Compliance',
-    'sales'       => 'ðŸ�·ï¸� Sales & Bookings',
-    'services'    => 'ðŸ›Žï¸� Services',
-    'system'      => 'ðŸ–¥ï¸� System Admin',
-    'ai_tech'     => 'ðŸ¤– AI & Technology',
-    'security'    => 'ðŸ”’ Security',
-    'employee'    => 'ðŸ‘©â€�ðŸ’¼ Employee Portal',
-    'saas'        => 'â˜�ï¸� SaaS / Multi-Tenant',
-    'communication' => 'ðŸ“¡ Communication',
+    'dashboards'  => '📊 Dashboards',
+    'crm'         => '👥 CRM & Leads',
+    'properties'  => '🏠 Properties & Land',
+    'mlm'         => '📜 MLM Network',
+    'finance'     => '💰 Finance & Accounting',
+    'commission'  => '💸 Commission Engine',
+    'cms'         => '📖 Content (CMS)',
+    'marketing'   => '📢 Marketing & Referrals',
+    'reports'     => '📈 Reports & Analytics',
+    'operations'  => '⚙️ Operations',
+    'users'       => '👤 Users & Roles',
+    'locations'   => '📍 Locations',
+    'settings'    => '⚙️ Settings',
+    'hrm'         => '👨‍💼 HR & Payroll',
+    'legal'       => '⚖️ Legal & Compliance',
+    'sales'       => '🏷️ Sales & Bookings',
+    'services'    => '🛠️ Services',
+    'system'      => '🔧 System Admin',
+    'ai_tech'     => '🤖 AI & Technology',
+    'security'    => '🔒 Security',
+    'employee'    => '👨‍💼💼 Employee Portal',
+    'saas'        => '☁️ SaaS / Multi-Tenant',
+    'communication' => '📞 Communication',
 ];
 
-// Section sort order â€” matches DB section_order
+// Section sort order — matches DB section_order
 $sectionOrder = [
     'dashboards', 'crm', 'properties', 'sales', 'finance',
     'commission', 'mlm', 'hrm', 'legal', 'marketing',
@@ -101,7 +101,7 @@ $groupedItems = $sortedGrouped;
     </div>
 
     <?php
-    // Tenant Switch Banner â€” show when SuperAdmin is impersonating a tenant
+    // Tenant Switch Banner — show when SuperAdmin is impersonating a tenant
     $switchActive = !empty($_SESSION['tenant_switch_active']);
     $switchName = $_SESSION['tenant_switch_name'] ?? '';
     ?>
@@ -144,6 +144,7 @@ $groupedItems = $sortedGrouped;
         }
     }
     ?>
+
 
     <!-- Expand All / Collapse All toggle -->
     <div class="sidebar-sec" onclick="toggleAllSidebarSections()">

@@ -508,7 +508,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
             </div>
 
             <!-- Marketing Pages -->
-            <h2 class="category-title" data-aos="fade-up">ðŸ“Š <?php echo __('nav_marketing_admin', 'Marketing & Admin'); ?></h2>
+            <h2 class="category-title" data-aos="fade-up">ðŸ"Š <?php echo __('nav_marketing_admin', 'Marketing & Admin'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
@@ -621,7 +621,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
 
             <!-- User Section -->
             <div class="text-center mt-5" data-aos="fade-up">
-                <h2 class="style-11016">ðŸ‘¤ <?php echo __('nav_user_section', 'User Section'); ?></h2>
+                <h2 class="style-11016">ðŸ'¤ <?php echo __('nav_user_section', 'User Section'); ?></h2>
                 <div class="d-flex justify-content-center flex-wrap">
                     <a href="<?= BASE_URL ?>/login" class="action-btn">
                         <i class="fas fa-sign-in-alt me-2"></i><?php echo __('nav_login', 'Login'); ?>

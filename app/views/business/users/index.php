@@ -40,7 +40,7 @@
                                     </td>
                                     <td><?= htmlspecialchars($user['email'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($user['phone'] ?? '') ?></td>
-                                    <td><?= htmlspecialchars($user['sponsor_name'] ?? 'â€”') ?></td>
+                                    <td><?= htmlspecialchars($user['sponsor_name'] ?? '—') ?></td>
                                     <td>
                                         <span class="badge bg-<?= match($user['level'] ?? '') { 'platinum' => 'dark', 'gold' => 'warning text-dark', 'silver' => 'secondary', default => 'info' } ?>">
                                             <?= ucfirst($user['level'] ?? 'bronze') ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * SaaS Pricing Page â€” Public plan comparison and signup
+ * SaaS Pricing Page — Public plan comparison and signup
  * Variable: $plans (array of subscription_plans rows)
  */
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing Plans â€” APS Dream Home SaaS</title>
+    <title>Pricing Plans — APS Dream Home SaaS</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
     <style>
@@ -293,14 +293,14 @@ foreach ($plans as $plan):
             <?php if ($isFree): ?>
                 Free
             <?php else: ?>
-                <span class="currency">â‚¹</span><span class="amount"><?= number_format($plan['price_monthly'] ?? 0) ?></span>
+                <span class="currency">₹</span><span class="amount"><?= number_format($plan['price_monthly'] ?? 0) ?></span>
                 <span class="period">/mo</span>
             <?php endif; ?>
         </div>
 
         <?php if (!$isFree && ($plan['price_yearly'] ?? 0) > 0): ?>
             <div class="plan-annual" data-yearly-price="<?= number_format($plan['price_yearly'] ?? 0) ?>">
-                â‚¹<?= number_format($plan['price_yearly'] ?? 0) ?>/year (save <?= round((1 - ($plan['price_yearly'] / ($plan['price_monthly'] * 12))) * 100) ?>%)
+                ₹<?= number_format($plan['price_yearly'] ?? 0) ?>/year (save <?= round((1 - ($plan['price_yearly'] / ($plan['price_monthly'] * 12))) * 100) ?>%)
             </div>
         <?php endif; ?>
 

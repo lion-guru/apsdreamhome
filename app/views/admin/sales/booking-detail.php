@@ -39,7 +39,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
 <div class="aps-cp-card mb-3">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0">
-            <i class="fas fa-bookmark me-2"></i><?= __('sale_booking_num') ?> â€” <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
+            <i class="fas fa-bookmark me-2"></i><?= __('sale_booking_num') ?> — <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
             <span class="badge ms-2 <?= $statusBadge($booking['status'] ?? '') ?>"><?= htmlspecialchars((string)($booking['status'] ?? '')) ?></span>
         </h5>
         <div class="d-flex gap-1 flex-wrap">
@@ -55,19 +55,19 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_customer') ?></div>
-                <div class="fw-bold"><?= htmlspecialchars((string)($booking['customer_name'] ?? 'â€”')) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars((string)($booking['customer_name'] ?? '—')) ?></div>
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_plot') ?></div>
-                <div class="fw-bold"><?= htmlspecialchars((string)($booking['plot_code'] ?? 'â€”')) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars((string)($booking['plot_code'] ?? '—')) ?></div>
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_channel') ?></div>
-                <div class="fw-bold"><?= htmlspecialchars((string)($booking['channel'] ?? 'â€”')) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars((string)($booking['channel'] ?? '—')) ?></div>
             </div>
             <div class="col-md-3">
                 <div class="text-muted small"><?= __('sale_booking_date') ?></div>
-                <div class="fw-bold"><?= htmlspecialchars((string)($booking['booking_date'] ?? 'â€”')) ?></div>
+                <div class="fw-bold"><?= htmlspecialchars((string)($booking['booking_date'] ?? '—')) ?></div>
             </div>
         </div>
         <hr>
@@ -158,7 +158,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                         <td><?= htmlspecialchars((string)($r['payment_mode'] ?? '')) ?></td>
                         <td><span class="badge bg-light text-dark"><?= htmlspecialchars((string)($r['status'] ?? '')) ?></span></td>
                         <td class="text-end">&#8377;<?= number_format((float)($r['amount'] ?? 0)) ?></td>
-                        <td><?= htmlspecialchars((string)($r['collected_by'] ?? 'â€”')) ?></td>
+                        <td><?= htmlspecialchars((string)($r['collected_by'] ?? '—')) ?></td>
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
@@ -194,7 +194,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                 <?php else: foreach ($commissions as $c): ?>
                     <tr>
                         <td>L<?= (int)($c['level'] ?? 0) ?></td>
-                        <td><?= htmlspecialchars((string)($c['beneficiary_name'] ?? 'â€”')) ?></td>
+                        <td><?= htmlspecialchars((string)($c['beneficiary_name'] ?? '—')) ?></td>
                         <td><?= htmlspecialchars((string)($c['commission_type'] ?? '')) ?></td>
                         <td class="text-end"><?= number_format((float)($c['percentage'] ?? 0), 2) ?>%</td>
                         <td class="text-end">&#8377;<?= number_format((float)($c['amount'] ?? 0)) ?></td>
@@ -236,7 +236,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                         <td><?= htmlspecialchars((string)($h['changed_at'] ?? '')) ?></td>
                         <td><?= htmlspecialchars((string)($h['from_status'] ?? '')) ?></td>
                         <td><?= htmlspecialchars((string)($h['to_status'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars((string)($h['changed_by_name'] ?? 'â€”')) ?></td>
+                        <td><?= htmlspecialchars((string)($h['changed_by_name'] ?? '—')) ?></td>
                         <td><?= htmlspecialchars((string)($h['notes'] ?? '')) ?></td>
                     </tr>
                 <?php endforeach; endif; ?>

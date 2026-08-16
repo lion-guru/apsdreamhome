@@ -30,8 +30,8 @@ $typeLabels = [
     <div class="alert alert-info d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <i class="fas fa-wallet me-2"></i>
-            <strong>â‚¹<?php echo number_format($total_earned); ?></strong> <?php echo __('assoc_comm_total_earned', [], 'earned'); ?> &bull;
-            <strong>â‚¹<?php echo number_format($total_pending); ?></strong> <?php echo __('assoc_comm_pending', [], 'pending'); ?>
+            <strong>₹<?php echo number_format($total_earned); ?></strong> <?php echo __('assoc_comm_total_earned', [], 'earned'); ?> &bull;
+            <strong>₹<?php echo number_format($total_pending); ?></strong> <?php echo __('assoc_comm_pending', [], 'pending'); ?>
         </div>
         <a href="<?php echo BASE_URL; ?>/associate/wallet/withdraw" class="btn btn-success btn-sm">
             <i class="fas fa-arrow-right me-1"></i><?php echo __('assoc_comm_request_withdrawal', [], 'Request Withdrawal'); ?>
@@ -44,7 +44,7 @@ $typeLabels = [
             <div class="card border-0 shadow-sm bg-success text-white">
                 <div class="card-body aps-cp-card-body">
                     <h6><i class="fas fa-check-circle me-1"></i><?php echo __('assoc_comm_total_earned', [], 'Total Earned'); ?></h6>
-                    <h3 class="mb-0">â‚¹<?php echo number_format($total_earned); ?></h3>
+                    <h3 class="mb-0">₹<?php echo number_format($total_earned); ?></h3>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@ $typeLabels = [
             <div class="card border-0 shadow-sm bg-warning text-white">
                 <div class="card-body aps-cp-card-body">
                     <h6><i class="fas fa-clock me-1"></i><?php echo __('assoc_comm_pending', [], 'Pending'); ?></h6>
-                    <h3 class="mb-0">â‚¹<?php echo number_format($total_pending); ?></h3>
+                    <h3 class="mb-0">₹<?php echo number_format($total_pending); ?></h3>
                 </div>
             </div>
         </div>
@@ -95,13 +95,13 @@ $typeLabels = [
                                 <div class="d-flex justify-content-between align-items-end">
                                     <div>
                                         <div class="text-muted small"><?php echo __('assoc_comm_total', [], 'Total'); ?></div>
-                                        <div class="fw-bold text-dark" class="style-64545">â‚¹<?php echo number_format($b['total_amount']); ?></div>
+                                        <div class="fw-bold text-dark" class="style-64545">₹<?php echo number_format($b['total_amount']); ?></div>
                                     </div>
                                     <div class="text-end">
                                         <div class="text-muted small"><?php echo __('assoc_comm_paid_pending', [], 'Paid / Pending'); ?></div>
-                                        <span class="badge bg-success">â‚¹<?php echo number_format($b['paid_amount']); ?></span>
+                                        <span class="badge bg-success">₹<?php echo number_format($b['paid_amount']); ?></span>
                                         <?php if ($b['pending_amount'] > 0): ?>
-                                        <span class="badge bg-warning">â‚¹<?php echo number_format($b['pending_amount']); ?></span>
+                                        <span class="badge bg-warning">₹<?php echo number_format($b['pending_amount']); ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -192,7 +192,7 @@ $typeLabels = [
                                 <tr>
                                     <td><?php echo htmlspecialchars($c['property'] ?? __('assoc_comm_na', [], 'N/A')); ?></td>
                                     <td><span class="badge bg-secondary"><?php echo ucfirst($c['commission_type'] ?? __('assoc_comm_na', [], 'N/A')); ?></span></td>
-                                    <td><strong>â‚¹<?php echo number_format($c['amount'] ?? 0); ?></strong></td>
+                                    <td><strong>₹<?php echo number_format($c['amount'] ?? 0); ?></strong></td>
                                     <td>
                                         <span class="badge bg-<?php echo ($c['status'] ?? '') === 'paid' ? 'success' : (($c['status'] ?? '') === 'cancelled' ? 'danger' : 'warning'); ?>">
                                             <?php echo ucfirst($c['status'] ?? __('assoc_comm_pending', [], 'Pending')); ?>

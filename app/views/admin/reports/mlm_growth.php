@@ -58,7 +58,7 @@ $report = $report ?? [
                                 Total Commissions
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                â‚¹<?= number_format(array_sum(array_column($report['commission_trends'], 'total_commissions')) ?? 0, 2) ?>
+                                ₹<?= number_format(array_sum(array_column($report['commission_trends'], 'total_commissions')) ?? 0, 2) ?>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -98,7 +98,7 @@ $report = $report ?? [
                                 Avg Commission
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                â‚¹<?= number_format(array_sum(array_column($report['commission_trends'], 'avg_commission')) / (count($report['commission_trends']) ?: 1), 2) ?>
+                                ₹<?= number_format(array_sum(array_column($report['commission_trends'], 'avg_commission')) / (count($report['commission_trends']) ?: 1), 2) ?>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -183,7 +183,7 @@ $report = $report ?? [
                             <td><?= htmlspecialchars($performer['email']) ?></td>
                             <td><code><?= htmlspecialchars($performer['referral_code'] ?? '') ?></code></td>
                             <td><?= $performer['direct_referrals'] ?></td>
-                            <td>â‚¹<?= number_format($performer['total_commissions'] ?? 0, 2) ?></td>
+                            <td>₹<?= number_format($performer['total_commissions'] ?? 0, 2) ?></td>
                             <td><?= date('M Y', strtotime($performer['created_at'])) ?></td>
                         </tr>
                         <?php endforeach; ?>
@@ -225,7 +225,7 @@ $report = $report ?? [
                             <td><strong><?= $comparison['period'] ?></strong></td>
                             <td><?= $comparison['new_associates'] ?></td>
                             <td><?= $comparison['new_referrals'] ?></td>
-                            <td>â‚¹<?= number_format($comparison['total_commissions'], 2) ?></td>
+                            <td>₹<?= number_format($comparison['total_commissions'], 2) ?></td>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>

@@ -156,8 +156,8 @@ $categories = $categories ?? [];
                                 <td><span class="badge bg-info"><?= ucfirst(htmlspecialchars($l['category'])) ?></span></td>
                                 <td>
                                     <small class="text-muted">
-                                        <?= $l['latitude'] ? round($l['latitude'], 4) : 'â€”' ?>, 
-                                        <?= $l['longitude'] ? round($l['longitude'], 4) : 'â€”' ?>
+                                        <?= $l['latitude'] ? round($l['latitude'], 4) : '—' ?>, 
+                                        <?= $l['longitude'] ? round($l['longitude'], 4) : '—' ?>
                                     </small>
                                 </td>
                                 <td><span class="badge bg-success"><?= $l['linked_colonies'] ?> colonies</span></td>

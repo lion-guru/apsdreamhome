@@ -171,7 +171,7 @@ $department_members = $department_members ?? [];
                                             <?php if (!empty($m['email'])): ?>
                                                 <a href="mailto:<?= htmlspecialchars($m['email']) ?>" class="small text-decoration-none"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($m['email']) ?></a>
                                             <?php else: ?>
-                                                <span class="text-muted small">â€”</span>
+                                                <span class="text-muted small">—</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>

@@ -20,7 +20,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <h3 class="text-success">â‚¹<?= number_format(array_sum(array_column($reconciliations, 'total_submitted'))) ?></h3>
+                    <h3 class="text-success">₹<?= number_format(array_sum(array_column($reconciliations, 'total_submitted'))) ?></h3>
                     <p class="text-muted mb-0">Total Submitted</p>
                 </div>
             </div>
@@ -28,7 +28,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <h3 class="text-primary">â‚¹<?= number_format(array_sum(array_column($reconciliations, 'total_verified'))) ?></h3>
+                    <h3 class="text-primary">₹<?= number_format(array_sum(array_column($reconciliations, 'total_verified'))) ?></h3>
                     <p class="text-muted mb-0">Total Verified</p>
                 </div>
             </div>
@@ -70,15 +70,15 @@ ob_start();
                                 <td><strong><?= htmlspecialchars($r['collector_name'] ?? 'N/A') ?></strong></td>
                                 <td><?= date('d M Y', strtotime($r['session_date'])) ?></td>
                                 <td>
-                                    <strong>â‚¹<?= number_format($r['total_submitted'] ?? 0) ?></strong>
+                                    <strong>₹<?= number_format($r['total_submitted'] ?? 0) ?></strong>
                                 </td>
-                                <td><span class="text-success">â‚¹<?= number_format($r['total_verified'] ?? 0) ?></span></td>
-                                <td><span class="text-danger">â‚¹<?= number_format($r['total_rejected'] ?? 0) ?></span></td>
+                                <td><span class="text-success">₹<?= number_format($r['total_verified'] ?? 0) ?></span></td>
+                                <td><span class="text-danger">₹<?= number_format($r['total_rejected'] ?? 0) ?></span></td>
                                 <td>
                                     <?php if (($r['discrepancy_amount'] ?? 0) != 0): ?>
-                                        <span class="badge bg-warning text-dark">â‚¹<?= number_format($r['discrepancy_amount']) ?></span>
+                                        <span class="badge bg-warning text-dark">₹<?= number_format($r['discrepancy_amount']) ?></span>
                                     <?php else: ?>
-                                        <span class="text-muted">â‚¹0</span>
+                                        <span class="text-muted">₹0</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>

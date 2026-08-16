@@ -82,7 +82,7 @@
                                     <input type="text" class="form-control" name="designation" placeholder="e.g. Executive, Sr. Executive, Team Lead">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Salary (â‚¹/month)</label>
+                                    <label class="form-label fw-semibold">Salary (₹/month)</label>
                                     <input type="number" class="form-control" name="salary" step="100" min="0">
                                 </div>
                                 <div class="col-md-6">

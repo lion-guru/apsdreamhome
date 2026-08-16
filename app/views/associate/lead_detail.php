@@ -131,9 +131,9 @@ $today = date('Y-m-d');
                 <h6><i class="fas fa-info-circle text-primary me-2"></i><?= __('assoc_lead_details', [], 'Lead Details') ?></h6>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_property_interest', [], 'Property Interest') ?></span><span class="detail-value"><?= htmlspecialchars($lead['property_interest'] ?: 'â€”') ?></span></div>
-                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_budget_range', [], 'Budget Range') ?></span><span class="detail-value"><?= htmlspecialchars($lead['budget_range'] ?: 'â€”') ?></span></div>
-                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_preferred_location', [], 'Preferred Location') ?></span><span class="detail-value"><?= htmlspecialchars($lead['location_preference'] ?: 'â€”') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_property_interest', [], 'Property Interest') ?></span><span class="detail-value"><?= htmlspecialchars($lead['property_interest'] ?: '—') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_budget_range', [], 'Budget Range') ?></span><span class="detail-value"><?= htmlspecialchars($lead['budget_range'] ?: '—') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_preferred_location', [], 'Preferred Location') ?></span><span class="detail-value"><?= htmlspecialchars($lead['location_preference'] ?: '—') ?></span></div>
                     </div>
                     <div class="col-md-6">
                         <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_source', [], 'Source') ?></span><span class="detail-value"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $lead['source'] ?? ''))) ?></span></div>
@@ -222,7 +222,7 @@ $today = date('Y-m-d');
                             </div>
                             <p class="mb-0 mt-1" class="style-18526"><?= htmlspecialchars($act['description']) ?></p>
                             <?php if (!empty($act['old_value']) && !empty($act['new_value'])): ?>
-                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value']) ?> â†’ <?= htmlspecialchars($act['new_value']) ?></small>
+                                <small class="text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($act['old_value']) ?> â†' <?= htmlspecialchars($act['new_value']) ?></small>
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>
@@ -348,8 +348,8 @@ $today = date('Y-m-d');
         <h6><i class="fas fa-rupee-sign text-success me-2"></i><?= __('assoc_lead_potential_earnings', [], 'Potential Earnings') ?></h6>
         <?php if (isset($commission_estimate) && $commission_estimate['budget_mid'] > 0): ?>
             <div class="mb-3 text-center">
-                <div class="style-68864">â‚¹<?= number_format($commission_estimate['estimated_commission'], 0) ?></div>
-                <small class="text-muted"><?= __('assoc_lead_est_commission_at', [], 'Est. commission at') ?> â‚¹<?= number_format($commission_estimate['budget_mid'], 0) ?></small>
+                <div class="style-68864">₹<?= number_format($commission_estimate['estimated_commission'], 0) ?></div>
+                <small class="text-muted"><?= __('assoc_lead_est_commission_at', [], 'Est. commission at') ?> ₹<?= number_format($commission_estimate['budget_mid'], 0) ?></small>
                 <div><span class="badge bg-success mt-1"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $commission_estimate['rank']))) ?> (<?= $commission_estimate['rate'] ?>%)</span></div>
             </div>
             <?php if (!empty($commission_estimate['breakdown'])): ?>
@@ -357,12 +357,12 @@ $today = date('Y-m-d');
                     <?php foreach ($commission_estimate['breakdown'] as $b): ?>
                         <div class="d-flex justify-content-between py-1 border-bottom">
                             <span class="style-42047"><?= htmlspecialchars($b['label']) ?></span>
-                            <span class="style-24039">â‚¹<?= number_format($b['amount'], 0) ?></span>
+                            <span class="style-24039">₹<?= number_format($b['amount'], 0) ?></span>
                         </div>
                     <?php endforeach; ?>
                     <div class="d-flex justify-content-between py-1 fw-bold" class="style-7250">
                         <span><?= __('assoc_lead_total_commission', [], 'Total Est. Commission') ?></span>
-                        <span>â‚¹<?= number_format(array_sum(array_column($commission_estimate['breakdown'], 'amount')), 0) ?></span>
+                        <span>₹<?= number_format(array_sum(array_column($commission_estimate['breakdown'], 'amount')), 0) ?></span>
                     </div>
                 </div>
             <?php endif; ?>
@@ -450,7 +450,7 @@ $today = date('Y-m-d');
         <?php
         $budget = (float)($lead['budget'] ?? 0);
         $budgetRange = $lead['budget_range'] ?? '';
-        if ($budget === 0 && preg_match('/(\d[\d,]*)/', str_replace(['â‚¹', ' '], '', $budgetRange), $m)) {
+        if ($budget === 0 && preg_match('/(\d[\d,]*)/', str_replace(['₹', ' '], '', $budgetRange), $m)) {
             $budget = (float)str_replace(',', '', $m[1]);
         }
         $commissionRates = [
@@ -465,13 +465,13 @@ $today = date('Y-m-d');
             <div class="col-6">
                 <div class="style-31504">
                     <div class="style-41625"><?= __('assoc_lead_est_budget', [], 'Estimated Budget') ?></div>
-                    <div class="style-17546">â‚¹<?= number_format($budget) ?></div>
+                    <div class="style-17546">₹<?= number_format($budget) ?></div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="style-83909">
                     <div class="style-82309"><?= __('assoc_lead_your_commission', [], 'Your Commission') ?> (<?= number_format($myRate * 100, 0) ?>%)</div>
-                    <div class="style-62370">â‚¹<?= number_format($estCommission) ?></div>
+                    <div class="style-62370">₹<?= number_format($estCommission) ?></div>
                 </div>
             </div>
         </div>
@@ -516,7 +516,7 @@ $today = date('Y-m-d');
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="input-group">
                         <select class="form-select form-select-sm" name="assign_to">
-                            <option value=""><?= __('assoc_lead_select_member', [], 'â€” Select member â€”') ?></option>
+                            <option value=""><?= __('assoc_lead_select_member', [], '— Select member —') ?></option>
                             <?php foreach ($teamMembers as $tm): ?>
                                 <option value="<?= $tm['id'] ?>"><?= htmlspecialchars($tm['name']) ?></option>
                             <?php endforeach; ?>
@@ -567,7 +567,7 @@ $today = date('Y-m-d');
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_colony', [], 'Colony') ?></label>
                             <select class="form-select" name="colony_id">
-                                <option value=""><?= __('assoc_lead_modal_select', [], 'â€” Select â€”') ?></option>
+                                <option value=""><?= __('assoc_lead_modal_select', [], '— Select —') ?></option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
                                 <?php endforeach; ?>

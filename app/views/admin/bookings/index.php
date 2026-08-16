@@ -215,7 +215,7 @@ $active_page = 'bookings';
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <strong>â‚¹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></strong>
+                                    <strong>₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></strong>
                                 </td>
                                 <td>
                                     <?php
@@ -311,7 +311,7 @@ $active_page = 'bookings';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin_cancel') ?></button>
-                <form id="deleteForm" method="POST" class="style-26772">
+                <form id="deleteForm" method="POST" action="<?= BASE_URL ?>/admin/bookings/0/destroy" class="style-26772">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger"><?= __('admin_delete') ?></button>
                 </form>

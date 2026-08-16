@@ -21,7 +21,7 @@ $st = $p['status'] ?? 'pending';
             <div class="card-body aps-cp-card-body text-center py-4">
                 <span class="badge bg-<?= $statusColors[$st] ?? 'secondary' ?> fs-4 mb-3"><?= ucfirst($st) ?></span>
                 <div class="small text-muted mt-2"><?= htmlspecialchars($p['name'] ?? '') ?></div>
-                <div class="small text-muted">â‚¹<?= number_format((float)($p['price'] ?? 0)) ?></div>
+                <div class="small text-muted">₹<?= number_format((float)($p['price'] ?? 0)) ?></div>
             </div>
         </div>
         <div class="card aps-cp-card">

@@ -143,15 +143,14 @@ class LandManagerController extends BaseController
     private function getPendingSiteVisits()
     {
         $query = "SELECT sv.*, 
-                        p.title as property_title,
-                        p.location as property_location,
-                        p.type as property_type,
-                        v.name as visitor_name,
-                        v.company as visitor_company
+                        COALESCE(up.name, p.title) as property_title,
+                        COALESCE(up.location, p.location) as property_location,
+                        sv.visitor_name,
+                        sv.visitor_phone
                  FROM site_visits sv
-                 JOIN properties p ON sv.property_id = p.id
-                 LEFT JOIN visitors v ON sv.visitor_id = v.id
-                 WHERE sv.manager_id = ?
+                 LEFT JOIN user_properties up ON sv.property_id = up.id
+                 LEFT JOIN plots p ON sv.plot_id = p.id
+                 WHERE sv.assigned_to = ?
                  AND sv.visit_date >= CURDATE()
                  AND sv.status = 'scheduled'
                  ORDER BY sv.visit_date ASC, sv.visit_time ASC
@@ -280,18 +279,19 @@ class LandManagerController extends BaseController
 
             // Schedule site visit
             $query = "INSERT INTO site_visits (
-                        property_id, visitor_id, manager_id, visit_date, visit_time,
-                        purpose, expected_duration, notes, status, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', NOW())";
+                        property_id, visitor_name, visitor_phone, visit_date, visit_time,
+                        visit_type, duration_minutes, assigned_to, notes, status, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', NOW())";
 
             $this->db->execute($query, [
                 $propertyId,
-                $visitorId,
-                $this->employeeId,
+                $visitData['visitor']['name'] ?? '',
+                $visitData['visitor']['phone'] ?? '',
                 $visitData['visit_date'],
                 $visitData['visit_time'],
-                $visitData['purpose'] ?? '',
+                $visitData['purpose'] ?? 'site_visit',
                 $visitData['expected_duration'] ?? 60,
+                $this->employeeId,
                 $visitData['notes'] ?? ''
             ]);
 

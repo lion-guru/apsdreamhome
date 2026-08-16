@@ -35,7 +35,7 @@ $featuredProperties = [
                             <span><i class="fas fa-ruler-combined text-muted me-1"></i><?= $property['area'] ?></span>
                             <span><i class="fas fa-tag text-muted me-1"></i><?= $property['type'] ?></span>
                         </div>
-                        <div class="h4 text-primary">â‚¹<?= $property['price'] ?></div>
+                        <div class="h4 text-primary">₹<?= $property['price'] ?></div>
                     </div>
                     <div class="card-footer bg-white border-0 pb-3">
                         <a href="<?= BASE_URL ?>/properties" class="btn btn-primary w-100"><?= __('featured_view_details') ?></a>

@@ -30,7 +30,7 @@ $users = $users ?? [];
                     <div class="mb-4">
                         <input type="text" class="form-control" id="searchInput"
                                placeholder="Search users by name, email, or phone..."
-                               value="<?= htmlspecialchars($search) ?>"
+                               value="<?= htmlspecialchars($search ?? '') ?>"
                                onkeyup="searchUsers(this.value)">
                         <div class="mt-2">
                             <small class="text-muted">Type at least 2 characters to search</small>

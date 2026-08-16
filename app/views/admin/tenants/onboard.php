@@ -1,4 +1,4 @@
-<!-- Tenant Onboarding Wizard â€” 5-Step Guided Setup -->
+<!-- Tenant Onboarding Wizard — 5-Step Guided Setup -->
 <?php
 $plans      = $plans ?? [];
 $step       = $step ?? 1;
@@ -166,7 +166,7 @@ $steps = [
                         <div class="col-lg-3 col-md-6 mb-3">
                             <div class="plan-wizard-card <?= ($wizardData['plan_id'] ?? 1) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
                                 <h6 class="mb-2"><?= htmlspecialchars($plan['name']) ?></h6>
-                                <h4 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">â‚¹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h4>
+                                <h4 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h4>
                                 <div class="small text-muted mt-2">
                                     <?= $plan['max_users'] ?> users Â· <?= $plan['max_leads'] ?> leads<br>
                                     <?= $plan['max_properties'] ?> props Â· <?= $plan['storage_limit_mb'] ?>MB
@@ -208,12 +208,12 @@ $steps = [
                 <div class="col-md-6">
                     <h6 class="text-muted mb-3">Company Details</h6>
                     <table class="review-table w-100">
-                        <tr><td class="label">Name</td><td class="fw-semibold"><?= htmlspecialchars($wizardData['name'] ?? 'â€”') ?></td></tr>
-                        <tr><td class="label">Slug</td><td><code><?= htmlspecialchars($wizardData['slug'] ?? 'â€”') ?></code></td></tr>
+                        <tr><td class="label">Name</td><td class="fw-semibold"><?= htmlspecialchars($wizardData['name'] ?? '—') ?></td></tr>
+                        <tr><td class="label">Slug</td><td><code><?= htmlspecialchars($wizardData['slug'] ?? '—') ?></code></td></tr>
                         <tr><td class="label">Domain</td><td><?= htmlspecialchars($wizardData['domain'] ?? 'Auto') ?></td></tr>
-                        <tr><td class="label">Contact</td><td><?= htmlspecialchars($wizardData['contact_name'] ?? 'â€”') ?></td></tr>
-                        <tr><td class="label">Email</td><td><?= htmlspecialchars($wizardData['contact_email'] ?? 'â€”') ?></td></tr>
-                        <tr><td class="label">Phone</td><td><?= htmlspecialchars($wizardData['contact_phone'] ?? 'â€”') ?></td></tr>
+                        <tr><td class="label">Contact</td><td><?= htmlspecialchars($wizardData['contact_name'] ?? '—') ?></td></tr>
+                        <tr><td class="label">Email</td><td><?= htmlspecialchars($wizardData['contact_email'] ?? '—') ?></td></tr>
+                        <tr><td class="label">Phone</td><td><?= htmlspecialchars($wizardData['contact_phone'] ?? '—') ?></td></tr>
                         <tr><td class="label">Location</td><td><?= htmlspecialchars(($wizardData['city'] ?? '') . ', ' . ($wizardData['state'] ?? '')) ?></td></tr>
                     </table>
                 </div>
@@ -225,7 +225,7 @@ $steps = [
                     ?>
                     <table class="review-table w-100">
                         <tr><td class="label">Plan</td><td class="fw-semibold"><?= htmlspecialchars($selectedPlan['name'] ?? 'Free') ?></td></tr>
-                        <tr><td class="label">Price</td><td>â‚¹<?= number_format($selectedPlan['price_monthly'] ?? 0) ?>/mo</td></tr>
+                        <tr><td class="label">Price</td><td>₹<?= number_format($selectedPlan['price_monthly'] ?? 0) ?>/mo</td></tr>
                         <tr><td class="label">Users</td><td><?= $wizardData['max_users'] ?? $selectedPlan['max_users'] ?? 1 ?></td></tr>
                         <tr><td class="label">Leads</td><td><?= $wizardData['max_leads'] ?? $selectedPlan['max_leads'] ?? 50 ?></td></tr>
                         <tr><td class="label">Properties</td><td><?= $wizardData['max_properties'] ?? $selectedPlan['max_properties'] ?? 10 ?></td></tr>

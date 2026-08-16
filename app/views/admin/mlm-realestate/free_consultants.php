@@ -24,8 +24,8 @@
                             <td><strong><?= htmlspecialchars($c['name'] ?? '') ?></strong></td>
                             <td><?= htmlspecialchars($c['email'] ?? '') ?></td>
                             <td><?= htmlspecialchars($c['phone'] ?? '') ?></td>
-                            <td>â‚¹<?= number_format((float)($c['wallet_balance'] ?? 0), 2) ?></td>
-                            <td>â‚¹<?= number_format((float)($c['cumulative_sales'] ?? 0), 2) ?></td>
+                            <td>₹<?= number_format((float)($c['wallet_balance'] ?? 0), 2) ?></td>
+                            <td>₹<?= number_format((float)($c['cumulative_sales'] ?? 0), 2) ?></td>
                             <td><span class="badge bg-primary"><?= htmlspecialchars($c['associate_payout_slab'] ?? '5%') ?></span></td>
                             <td><span class="badge bg-<?= $c['is_rera_approved'] ? 'success' : 'secondary' ?>"><?= $c['is_rera_approved'] ? 'Yes' : 'No' ?></span></td>
                             <td><?= htmlspecialchars($c['created_at'] ?? '') ?></td>

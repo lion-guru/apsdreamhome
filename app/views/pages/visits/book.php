@@ -49,7 +49,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                         <p class="mb-0 text-muted">
                             <i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($property['address'] ?? $property['city'] ?? 'N/A') ?>
                             <span class="mx-2">Â·</span>
-                            <strong class="text-success">â‚¹<?= number_format($property['price'] ?? 0) ?></strong>
+                            <strong class="text-success">₹<?= number_format($property['price'] ?? 0) ?></strong>
                         </p>
                     </div>
                 </div>

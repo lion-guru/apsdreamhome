@@ -25,7 +25,7 @@
                             <td><?= htmlspecialchars($n['email'] ?? '') ?></td>
                             <td><?= htmlspecialchars($n['phone'] ?? '') ?></td>
                             <td><span class="badge bg-info"><?= htmlspecialchars($n['package_name'] ?? 'N/A') ?></span></td>
-                            <td>â‚¹<?= number_format((float)($n['wallet_balance'] ?? 0), 2) ?></td>
+                            <td>₹<?= number_format((float)($n['wallet_balance'] ?? 0), 2) ?></td>
                             <td><?= (int)($n['downline_count'] ?? 0) ?></td>
                             <td><span class="badge bg-<?= $n['is_rera_approved'] ? 'success' : 'secondary' ?>"><?= $n['is_rera_approved'] ? 'Yes' : 'No' ?></span></td>
                             <td><?= htmlspecialchars($n['created_at'] ?? '') ?></td>
@@ -50,7 +50,7 @@
             <div class="mb-3"><label class="form-label">Package</label>
                 <select name="package_id" class="form-select">
                     <?php foreach ($packages ?? [] as $p): ?>
-                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?> (â‚¹<?= number_format((float)$p['price']) ?>)</option>
+                    <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?> (₹<?= number_format((float)$p['price']) ?>)</option>
                     <?php endforeach; ?>
                 </select>
             </div>

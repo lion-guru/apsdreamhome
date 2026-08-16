@@ -39,7 +39,7 @@ $incomeByCategory = $income_by_category ?? [];
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Income</h6>
-                            <h3 class="mb-0">â‚¹<?= number_format($totalIncome / 100000, 2) ?>L</h3>
+                            <h3 class="mb-0">₹<?= number_format($totalIncome / 100000, 2) ?>L</h3>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@ $incomeByCategory = $income_by_category ?? [];
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Expenses</h6>
-                            <h3 class="mb-0">â‚¹<?= number_format($totalExpenses / 100000, 2) ?>L</h3>
+                            <h3 class="mb-0">₹<?= number_format($totalExpenses / 100000, 2) ?>L</h3>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@ $incomeByCategory = $income_by_category ?? [];
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Net Profit</h6>
-                            <h3 class="mb-0 <?= $netProfit >= 0 ? 'text-success' : 'text-danger' ?>">â‚¹<?= number_format(abs($netProfit) / 100000, 2) ?>L</h3>
+                            <h3 class="mb-0 <?= $netProfit >= 0 ? 'text-success' : 'text-danger' ?>">₹<?= number_format(abs($netProfit) / 100000, 2) ?>L</h3>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@ $incomeByCategory = $income_by_category ?? [];
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Bank Balance</h6>
-                            <h3 class="mb-0">â‚¹<?= number_format($totalBalance, 0) ?></h3>
+                            <h3 class="mb-0">₹<?= number_format($totalBalance, 0) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@ $incomeByCategory = $income_by_category ?? [];
                         <?php foreach ($incomeByCategory as $inc): ?>
                             <tr>
                                 <td class="fw-semibold"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inc['income_category']))) ?></td>
-                                <td class="text-end text-success fw-bold">â‚¹<?= number_format((float)$inc['total'], 0) ?></td>
+                                <td class="text-end text-success fw-bold">₹<?= number_format((float)$inc['total'], 0) ?></td>
                                 <td class="text-end"><?= (int)$inc['cnt'] ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -144,7 +144,7 @@ $incomeByCategory = $income_by_category ?? [];
                         <?php foreach ($expenseByCategory as $exp): ?>
                             <tr>
                                 <td class="fw-semibold"><?= htmlspecialchars($exp['category']) ?></td>
-                                <td class="text-end text-danger fw-bold">â‚¹<?= number_format((float)$exp['total'], 0) ?></td>
+                                <td class="text-end text-danger fw-bold">₹<?= number_format((float)$exp['total'], 0) ?></td>
                                 <td class="text-end"><?= (int)$exp['cnt'] ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -177,8 +177,8 @@ $incomeByCategory = $income_by_category ?? [];
                             <tr>
                                 <td><small class="text-muted"><?= date('d M Y', strtotime($inc['income_date'])) ?></small></td>
                                 <td><span class="badge bg-success bg-opacity-10 text-success"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inc['income_category']))) ?></span></td>
-                                <td><?= htmlspecialchars($inc['customer_name'] ?? 'â€”') ?></td>
-                                <td class="text-end fw-bold">â‚¹<?= number_format((float)$inc['amount'], 0) ?></td>
+                                <td><?= htmlspecialchars($inc['customer_name'] ?? '—') ?></td>
+                                <td class="text-end fw-bold">₹<?= number_format((float)$inc['amount'], 0) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
@@ -207,7 +207,7 @@ $incomeByCategory = $income_by_category ?? [];
                                 <td><small class="text-muted"><?= date('d M Y', strtotime($exp['created_at'] ?? $exp['expense_date'] ?? 'now')) ?></small></td>
                                 <td><span class="badge bg-danger bg-opacity-10 text-danger"><?= htmlspecialchars($exp['category'] ?? '') ?></span></td>
                                 <td><?= htmlspecialchars(mb_strimwidth($exp['description'] ?? '', 0, 40, '...')) ?></td>
-                                <td class="text-end fw-bold">â‚¹<?= number_format((float)$exp['amount'], 0) ?></td>
+                                <td class="text-end fw-bold">₹<?= number_format((float)$exp['amount'], 0) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

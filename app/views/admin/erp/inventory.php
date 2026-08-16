@@ -66,10 +66,10 @@
                     <th>Colony</th>
                     <th>Block</th>
                     <th>Area (sqft)</th>
-                    <th>Price (â‚¹)</th>
+                    <th>Price (₹)</th>
                     <th>Status</th>
                     <th>Customer</th>
-                    <th>Paid (â‚¹)</th>
+                    <th>Paid (₹)</th>
                     <th>Booking</th>
                 </tr>
             </thead>
@@ -83,7 +83,7 @@
                     <td><?php echo htmlspecialchars($p['colony_name'] ?? '-'); ?></td>
                     <td><?php echo htmlspecialchars($p['block'] ?? ($p['sector'] ?? '-')); ?></td>
                     <td><?php echo number_format((float)($p['area_sqft'] ?? 0)); ?></td>
-                    <td>â‚¹<?php echo number_format((float)($p['total_price'] ?? 0), 0); ?></td>
+                    <td>₹<?php echo number_format((float)($p['total_price'] ?? 0), 0); ?></td>
                     <td><span class="status-badge status-<?php echo $p['status'] ?? 'available'; ?>"><?php echo ucfirst(str_replace('_', ' ', $p['status'] ?? 'available')); ?></span></td>
                     <td>
                         <?php if (!empty($p['customer_name'])): ?>
@@ -93,7 +93,7 @@
                         <span class="text-muted">-</span>
                         <?php endif; ?>
                     </td>
-                    <td>â‚¹<?php echo number_format((float)($p['amount_paid'] ?? 0), 0); ?></td>
+                    <td>₹<?php echo number_format((float)($p['amount_paid'] ?? 0), 0); ?></td>
                     <td>
                         <?php if (!empty($p['booking_id'])): ?>
                         <a href="<?php echo BASE_URL; ?>/admin/bookings/<?php echo $p['booking_id']; ?>" class="btn btn-sm btn-outline-info">

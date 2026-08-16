@@ -79,7 +79,7 @@ $actionIcons = [
                                     $details[] = 'User #' . $context['user_id'];
                                 }
                                 if (isset($context['amount'])) {
-                                    $details[] = 'â‚¹' . number_format($context['amount']);
+                                    $details[] = '₹' . number_format($context['amount']);
                                 }
                                 if (isset($context['reason'])) {
                                     $details[] = $context['reason'];
@@ -96,13 +96,13 @@ $actionIcons = [
                                 if (isset($context['changes'])) {
                                     $details[] = 'Fields: ' . implode(', ', array_keys($context['changes']));
                                 }
-                                echo htmlspecialchars(implode(' Â· ', $details) ?: 'â€”');
+                                echo htmlspecialchars(implode(' Â· ', $details) ?: '—');
                                 ?>
                             </small>
                         </td>
                         <td><small><?= htmlspecialchars($log['admin_name'] ?? 'System') ?></small></td>
-                        <td><code class="small"><?= htmlspecialchars($log['ip_address'] ?? 'â€”') ?></code></td>
-                        <td><small class="text-muted"><?= isset($log['created_at']) ? date('M d, Y h:i A', strtotime($log['created_at'])) : 'â€”' ?></small></td>
+                        <td><code class="small"><?= htmlspecialchars($log['ip_address'] ?? '—') ?></code></td>
+                        <td><small class="text-muted"><?= isset($log['created_at']) ? date('M d, Y h:i A', strtotime($log['created_at'])) : '—' ?></small></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

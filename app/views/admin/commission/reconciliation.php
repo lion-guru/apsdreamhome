@@ -14,7 +14,7 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commission Reconciliation â€” APS Dream Home</title>
+    <title>Commission Reconciliation — APS Dream Home</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/admin/css/admin.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
 </head>
@@ -63,7 +63,7 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
                     <td class="style-23927"><?php echo $ol['booking_id']; ?></td>
                     <td class="style-23927"><?php echo $ol['beneficiary_user_id']; ?></td>
                     <td class="style-23927"><?php echo $ol['commission_type']; ?></td>
-                    <td class="style-35252">â‚¹<?php echo number_format((float)$ol['amount'], 2); ?></td>
+                    <td class="style-35252">₹<?php echo number_format((float)$ol['amount'], 2); ?></td>
                     <td class="style-23927"><span class="badge badge-<?php echo $ol['status'] === 'paid' ? 'success' : 'warning'; ?>"><?php echo $ol['status']; ?></span></td>
                 </tr>
                 <?php endforeach; ?>

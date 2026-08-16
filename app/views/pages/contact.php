@@ -52,8 +52,8 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card shadow-lg border-0 glass-card-premium" class="style-646">
-                    <div class="card-header bg-primary text-white text-center py-3" class="style-3834">
+                <div class="card shadow-lg border-0 glass-card-premium style-646">
+                    <div class="card-header bg-primary text-white text-center py-3 style-3834">
                         <h4 class="mb-0 fw-bold text-white"><i class="fas fa-envelope me-2 text-white"></i><?php echo __('send_us_message'); ?></h4>
                     </div>
                     <div class="card-body p-3 p-md-4">
@@ -69,7 +69,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 
                             <div class="aps-form-field mb-3">
                                 <label for="name" class="form-label fw-bold mb-1"><?php echo __('your_name'); ?> *</label>
-                                <input type="text" name="name" id="name" class="form-control form-control-lg animate-focus" placeholder="<?php echo __('your_name_placeholder'); ?>" required class="style-43424">
+                                <input type="text" name="name" id="name" class="form-control form-control-lg animate-focus style-43424" placeholder="<?php echo __('your_name_placeholder'); ?>" required>
                                 <div class="aps-field-error" role="alert"></div>
                             </div>
                             <div class="row g-2">
@@ -100,12 +100,12 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                             </div>
                             <div class="aps-form-field mb-3">
                                 <label for="message" class="form-label fw-bold mb-1"><?php echo __('message_label'); ?> *</label>
-                                <textarea name="message" id="message" class="form-control form-control-lg animate-focus" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required class="style-43424"></textarea>
+                                <textarea name="message" id="message" class="form-control form-control-lg animate-focus style-43424" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required></textarea>
                                 <div class="aps-field-error" role="alert"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-hover" class="style-4341">
-                                <i class="fas fa-paper-plane me-2"></i><?php echo __('send_message'); ?>
-                            </button>
+<button type="submit" class="btn btn-primary btn-lg w-100 shadow-hover style-4341">
+                    <i class="fas fa-paper-plane me-2"></i><?php echo __('send_message'); ?>
+</button>
                         </form>
                     </div>
                 </div>
@@ -165,7 +165,6 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                     }
                 })
                 .catch(function(err) {
-                    console.error('Contact AJAX submission failed:', err);
                 });
             } else {
                 // Fallback direct AJAX submit
@@ -186,17 +185,16 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnHtml;
                     if (data.success) {
-                        alert(data.message);
+                        if (window.APS?.toast) window.APS.toast(data.message, 'success'); else alert(data.message);
                         form.reset();
                     } else {
-                        alert(data.message);
+                        if (window.APS?.toast) window.APS.toast(data.message, 'error'); else alert(data.message);
                     }
                 })
                 .catch(err => {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalBtnHtml;
-                    console.error('Contact submit error:', err);
-                    alert('An error occurred. Please try again.');
+                    if (window.APS?.toast) window.APS.toast('An error occurred. Please try again.', 'error'); else alert('An error occurred. Please try again.');
                 });
             }
         });

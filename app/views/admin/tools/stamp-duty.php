@@ -137,8 +137,8 @@ $total_circle_rates = $total_circle_rates ?? 0;
                                         <th>State</th>
                                         <th>District</th>
                                         <th>Area Type</th>
-                                        <th>Rate/sqft (â‚¹)</th>
-                                        <th>Rate/sqm (â‚¹)</th>
+                                        <th>Rate/sqft (₹)</th>
+                                        <th>Rate/sqm (₹)</th>
                                         <th>Effective From</th>
                                     </tr>
                                 </thead>
@@ -148,8 +148,8 @@ $total_circle_rates = $total_circle_rates ?? 0;
                                         <td><strong><?= htmlspecialchars($cr['state_code']) ?></strong></td>
                                         <td><?= htmlspecialchars($cr['district']) ?></td>
                                         <td><span class="badge bg-secondary"><?= htmlspecialchars($cr['area_type']) ?></span></td>
-                                        <td class="text-success fw-bold">â‚¹<?= number_format($cr['rate_per_sqft'] ?? 0) ?></td>
-                                        <td>â‚¹<?= number_format($cr['rate_per_sqm'] ?? 0) ?></td>
+                                        <td class="text-success fw-bold">₹<?= number_format($cr['rate_per_sqft'] ?? 0) ?></td>
+                                        <td>₹<?= number_format($cr['rate_per_sqm'] ?? 0) ?></td>
                                         <td><small class="text-muted"><?= htmlspecialchars($cr['effective_from'] ?? '') ?></small></td>
                                     </tr>
                                     <?php endforeach; ?>

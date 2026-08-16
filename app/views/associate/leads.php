@@ -139,7 +139,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <div><i class="fas fa-phone text-muted me-1"></i><?= htmlspecialchars($lead['phone'] ?: 'â€”') ?></div>
+                                    <div><i class="fas fa-phone text-muted me-1"></i><?= htmlspecialchars($lead['phone'] ?: '—') ?></div>
                                     <?php if ($lead['email']): ?>
                                         <div><small class="text-muted"><?= htmlspecialchars($lead['email']) ?></small></div>
                                     <?php endif; ?>
@@ -148,7 +148,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                     <?php if ($lead['property_interest']): ?>
                                         <span class="badge bg-light text-dark"><?= htmlspecialchars($lead['property_interest']) ?></span>
                                     <?php else: ?>
-                                        <span class="text-muted">â€”</span>
+                                        <span class="text-muted">—</span>
                                     <?php endif; ?>
                                     <?php if ($lead['budget_range']): ?>
                                         <br><small class="text-muted"><?= htmlspecialchars($lead['budget_range']) ?></small>
@@ -182,7 +182,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                             <?php if ($isOverdue): ?><span class="badge bg-danger ms-1"><?= __('assoc_leads_overdue', [], 'Overdue') ?></span><?php endif; ?>
                                         </small>
                                     <?php else: ?>
-                                        <small class="text-muted">â€”</small>
+                                        <small class="text-muted">—</small>
                                     <?php endif; ?>
                                 </td>
                                 <td>

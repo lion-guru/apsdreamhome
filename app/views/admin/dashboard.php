@@ -144,7 +144,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                 <div class="aps-cp-stat-icon"><i class="fas fa-rupee-sign"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-label"><?= __('admin_stat_revenue', null, 'Revenue (30 Days)') ?></div>
-                    <div class="aps-cp-stat-value">â‚¹<?php echo number_format($stats['revenue_month'], 2); ?></div>
+                    <div class="aps-cp-stat-value">₹<?php echo number_format($stats['revenue_month'], 2); ?></div>
                 </div>
             </div>
         </div>
@@ -269,7 +269,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= __('admin_database_tables', null, 'Database Tables') ?></span>
-                            <span class="fw-semibold"><?php echo $stats['database_tables'] ?? 'â€”'; ?></span>
+                            <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '—'; ?></span>
                         </div>
                         <div class="progress" class="style-29939">
                             <div class="progress-bar bg-primary" class="style-13113"></div>

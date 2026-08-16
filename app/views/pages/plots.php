@@ -4,8 +4,8 @@
 <div class="container py-5">
     <div class="row mb-5 text-center">
         <div class="col-lg-8 mx-auto">
-            <h1 class="display-4 fw-bold text-dark mb-3"><?= __('plots_title') ?? 'Explore Our Premium Colonies' ?></h1>
-            <p class="lead text-muted"><?= __('plots_subtitle') ?></p>
+            <h1 class="display-4 fw-bold text-dark mb-3"><?= __('plots_title', [], 'Explore Our Premium Plots') ?></h1>
+            <p class="lead text-muted"><?= __('plots_subtitle', [], 'Discover fully developed, verified residential and commercial plots across Uttar Pradesh\'s prime hubs.') ?></p>
             <div class="d-flex justify-content-center gap-2 mt-4">
                 <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> <?= __('plots_lucknow') ?></span>
                 <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> <?= __('plots_gorakhpur') ?></span>
@@ -21,12 +21,12 @@
             <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
                 <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3" class="style-6722">
-                    <i class="fas fa-building me-1"></i><?= __('user_properties') ?>
+                    <i class="fas fa-building me-1"></i>Properties
                 </a>
                 <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" class="style-97522">
-                    <i class="fas fa-project-diagram me-1"></i><?= __('company_projects') ?>
+                    <i class="fas fa-project-diagram me-1"></i>Projects
                 </a>
-                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" class="style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3" class="style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -37,8 +37,11 @@
         <?php if (!empty($colonies)): ?>
             <?php foreach ($colonies as $colony): ?>
                 <?php
-                $img = !empty($colony['image_path']) ? BASE_URL . '/' . ltrim($colony['image_path'], '/') : BASE_URL . '/assets/images/placeholder/property.svg';
-                $startingPrice = !empty($colony['starting_price']) ? 'â‚¹' . number_format($colony['starting_price']) : 'â‚¹5.5 Lakh';
+                $imgRaw = $colony['image_path'] ?? '';
+                $img = !empty($imgRaw) && (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://'))
+                    ? $imgRaw
+                    : (!empty($imgRaw) ? BASE_URL . '/' . ltrim($imgRaw, '/') : BASE_URL . '/assets/images/placeholder/property.svg');
+                $startingPrice = !empty($colony['starting_price']) ? '₹' . number_format($colony['starting_price']) : '₹5.5 Lakh';
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative aps-colony-card" class="style-42942">

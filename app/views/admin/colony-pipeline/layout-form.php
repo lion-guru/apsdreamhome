@@ -55,7 +55,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
             <div class="text-muted small"><?= __('cp_total_plots') ?></div>
           </div>
           <div class="col-md-2">
-            <div class="fw-bold">â‚¹<?= number_format((float)($totalAreaSqft), 0) ?></div>
+            <div class="fw-bold">₹<?= number_format((float)($totalAreaSqft), 0) ?></div>
             <div class="text-muted small"><?= __('cp_total_area_sqft') ?></div>
           </div>
         </div>

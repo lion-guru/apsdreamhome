@@ -14,9 +14,9 @@
                         <div class="progress-bar bg-<?= ($project['progress_pct'] ?? 0) >= 100 ? 'success' : (($project['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>" class="style-29798"></div>
                     </div>
                     <div class="row text-center">
-                        <div class="col-md-4"><strong>Budget:</strong> â‚¹<?= number_format((float)($project['project_budget'] ?? 0), 2) ?></div>
-                        <div class="col-md-4"><strong>Spent:</strong> â‚¹<?= number_format((float)($project['amount_spent'] ?? 0), 2) ?></div>
-                        <div class="col-md-4"><strong>Remaining:</strong> â‚¹<?= number_format(max(0, (float)($project['project_budget'] ?? 0) - (float)($project['amount_spent'] ?? 0)), 2) ?></div>
+                        <div class="col-md-4"><strong>Budget:</strong> ₹<?= number_format((float)($project['project_budget'] ?? 0), 2) ?></div>
+                        <div class="col-md-4"><strong>Spent:</strong> ₹<?= number_format((float)($project['amount_spent'] ?? 0), 2) ?></div>
+                        <div class="col-md-4"><strong>Remaining:</strong> ₹<?= number_format(max(0, (float)($project['project_budget'] ?? 0) - (float)($project['amount_spent'] ?? 0)), 2) ?></div>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                         <tr><th>District</th><td><?= htmlspecialchars($project['district_name'] ?? '') ?></td></tr>
                         <tr><th>State</th><td><?= htmlspecialchars($project['state_name'] ?? '') ?></td></tr>
                         <tr><th>Colony</th><td><?= htmlspecialchars($project['colony_name'] ?? '') ?></td></tr>
-                        <tr><th>Last Updated</th><td><?= isset($project['progress_last_updated']) ? date('d M Y', strtotime($project['progress_last_updated'])) : 'â€”' ?></td></tr>
+                        <tr><th>Last Updated</th><td><?= isset($project['progress_last_updated']) ? date('d M Y', strtotime($project['progress_last_updated'])) : '—' ?></td></tr>
                         <tr><th>Risk Flags</th><td><span class="badge bg-<?= empty($project['risk_flags'] ?? '') ? 'success' : 'danger' ?>"><?= empty($project['risk_flags'] ?? '') ? 'None' : htmlspecialchars($project['risk_flags'] ?? '') ?></span></td></tr>
                     </table></div>
                 </div>
@@ -82,11 +82,11 @@
                     <form method="post" action="<?= BASE_URL ?>/admin/projects/progress/budget/<?= $project['id'] ?? 0 ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
-                            <label class="form-label">Project Budget (â‚¹)</label>
+                            <label class="form-label">Project Budget (₹)</label>
                             <input type="number" name="project_budget" class="form-control" step="0.01" value="<?= (float)($project['project_budget'] ?? 0) ?>">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Amount Spent (â‚¹)</label>
+                            <label class="form-label">Amount Spent (₹)</label>
                             <input type="number" name="amount_spent" class="form-control" step="0.01" value="<?= (float)($project['amount_spent'] ?? 0) ?>">
                         </div>
                         <div class="mb-3">

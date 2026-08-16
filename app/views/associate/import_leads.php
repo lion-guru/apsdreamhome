@@ -33,13 +33,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <p class="mb-2"><?= __('assoc_il_format_desc', [], 'Your CSV file should have these columns (first row = header):') ?></p>
                         <code class="d-block p-2 bg-white rounded mb-2">name, phone, email, source, budget, location, notes</code>
                         <ul class="mb-0" class="style-47175">
-                            <li><strong>name</strong> â€” <?= __('assoc_il_col_name', [], "Lead's full name (required)") ?></li>
-                            <li><strong>phone</strong> â€” <?= __('assoc_il_col_phone', [], "10-digit mobile number (required)") ?></li>
-                            <li><strong>email</strong> â€” <?= __('assoc_il_col_email', [], "Email address (optional)") ?></li>
-                            <li><strong>source</strong> â€” <?= __('assoc_il_col_source', [], 'Where did this lead come from? (default: csv_import)') ?></li>
-                            <li><strong>budget</strong> â€” <?= __('assoc_il_col_budget', [], 'Budget range like "30-50 Lakh" (optional)') ?></li>
-                            <li><strong>location</strong> â€” <?= __('assoc_il_col_location', [], 'Preferred location (optional)') ?></li>
-                            <li><strong>notes</strong> â€” <?= __('assoc_il_col_notes', [], 'Any additional notes (optional)') ?></li>
+                            <li><strong>name</strong> — <?= __('assoc_il_col_name', [], "Lead's full name (required)") ?></li>
+                            <li><strong>phone</strong> — <?= __('assoc_il_col_phone', [], "10-digit mobile number (required)") ?></li>
+                            <li><strong>email</strong> — <?= __('assoc_il_col_email', [], "Email address (optional)") ?></li>
+                            <li><strong>source</strong> — <?= __('assoc_il_col_source', [], 'Where did this lead come from? (default: csv_import)') ?></li>
+                            <li><strong>budget</strong> — <?= __('assoc_il_col_budget', [], 'Budget range like "30-50 Lakh" (optional)') ?></li>
+                            <li><strong>location</strong> — <?= __('assoc_il_col_location', [], 'Preferred location (optional)') ?></li>
+                            <li><strong>notes</strong> — <?= __('assoc_il_col_notes', [], 'Any additional notes (optional)') ?></li>
                         </ul>
                     </div>
 

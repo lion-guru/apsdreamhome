@@ -45,11 +45,11 @@ include __DIR__ . '/../layouts/base.php';
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <strong>Base Valuation:</strong>
-                                                <p class="text-primary" id="base-valuation">â‚¹0</p>
+                                                <p class="text-primary" id="base-valuation">₹0</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <strong>Final Valuation:</strong>
-                                                <p class="text-success" id="final-valuation">â‚¹0</p>
+                                                <p class="text-success" id="final-valuation">₹0</p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -65,7 +65,7 @@ include __DIR__ . '/../layouts/base.php';
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <strong>Amenity Value:</strong>
-                                                <p class="text-info" id="amenity-value">â‚¹0</p>
+                                                <p class="text-info" id="amenity-value">₹0</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <strong>Market Adjustment:</strong>
@@ -104,9 +104,9 @@ include __DIR__ . '/../layouts/base.php';
                                         <div class="mb-3">
                                             <strong>Price Range:</strong>
                                             <small>
-                                                <div>Min: â‚¹<span id="price-min">0</span></div>
-                                                <div>Avg: â‚¹<span id="price-avg">0</span></div>
-                                                <div>Max: â‚¹<span id="price-max">0</span></div>
+                                                <div>Min: ₹<span id="price-min">0</span></div>
+                                                <div>Avg: ₹<span id="price-avg">0</span></div>
+                                                <div>Max: ₹<span id="price-max">0</span></div>
                                             </small>
                                         </div>
                                     </div>
@@ -254,11 +254,11 @@ include __DIR__ . '/../layouts/base.php';
 
     function displayValuationResults(data) {
         // Update valuation summary
-        document.getElementById('base-valuation').textContent = 'â‚¹' + data.base_valuation.toLocaleString();
-        document.getElementById('final-valuation').textContent = 'â‚¹' + data.final_valuation.toLocaleString();
+        document.getElementById('base-valuation').textContent = '₹' + data.base_valuation.toLocaleString();
+        document.getElementById('final-valuation').textContent = '₹' + data.final_valuation.toLocaleString();
         document.getElementById('location-multiplier').textContent = data.location_multiplier + 'x';
         document.getElementById('type-multiplier').textContent = data.type_multiplier + 'x';
-        document.getElementById('amenity-value').textContent = 'â‚¹' + data.amenity_value.toLocaleString();
+        document.getElementById('amenity-value').textContent = '₹' + data.amenity_value.toLocaleString();
         document.getElementById('market-adjustment').textContent = data.market_adjustment;
 
         // Update confidence score

@@ -22,11 +22,11 @@ $tier_counts = $tier_counts ?? [];
                     <div class="text-muted small mb-3"><?= $tier['min_referrals'] ?>+ referrals needed</div>
                     
                     <div class="mb-3">
-                        <div class="fw-bold" class="style-54778">â‚¹<?= number_format($tier['bonus_per_referral']) ?></div>
+                        <div class="fw-bold" class="style-54778">₹<?= number_format($tier['bonus_per_referral']) ?></div>
                         <div class="text-muted small">per signup</div>
                     </div>
                     <div class="mb-3">
-                        <div class="fw-bold" class="style-54778">â‚¹<?= number_format($tier['bonus_on_booking']) ?></div>
+                        <div class="fw-bold" class="style-54778">₹<?= number_format($tier['bonus_on_booking']) ?></div>
                         <div class="text-muted small">on booking</div>
                     </div>
 

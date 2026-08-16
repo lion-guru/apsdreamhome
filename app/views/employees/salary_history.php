@@ -32,7 +32,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                â‚¹<?= number_format($salary_history[0]['current_salary'] ?? 0, 0) ?>
+                                ₹<?= number_format($salary_history[0]['current_salary'] ?? 0, 0) ?>
                             </h4>
                             <small>Current Salary</small>
                         </div>
@@ -49,7 +49,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                â‚¹<?= number_format(array_sum(array_column($salary_history, 'net_salary')), 0) ?>
+                                ₹<?= number_format(array_sum(array_column($salary_history, 'net_salary')), 0) ?>
                             </h4>
                             <small>Total Paid (YTD)</small>
                         </div>
@@ -66,7 +66,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                â‚¹<?= number_format(array_sum(array_column($salary_history, 'bonus')), 0) ?>
+                                ₹<?= number_format(array_sum(array_column($salary_history, 'bonus')), 0) ?>
                             </h4>
                             <small>Total Bonus (YTD)</small>
                         </div>
@@ -83,7 +83,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
-                                â‚¹<?= number_format(array_sum(array_column($salary_history, 'deductions')), 0) ?>
+                                ₹<?= number_format(array_sum(array_column($salary_history, 'deductions')), 0) ?>
                             </h4>
                             <small>Total Deductions (YTD)</small>
                         </div>
@@ -133,20 +133,20 @@
                                                 </strong>
                                             </td>
                                             <td>
-                                                â‚¹<?= number_format($record['basic_salary'] ?? 0, 2) ?>
+                                                ₹<?= number_format($record['basic_salary'] ?? 0, 2) ?>
                                             </td>
                                             <td>
-                                                â‚¹<?= number_format($record['allowances'] ?? 0, 2) ?>
+                                                ₹<?= number_format($record['allowances'] ?? 0, 2) ?>
                                             </td>
                                             <td>
-                                                â‚¹<?= number_format($record['bonus'] ?? 0, 2) ?>
+                                                ₹<?= number_format($record['bonus'] ?? 0, 2) ?>
                                             </td>
                                             <td>
-                                                â‚¹<?= number_format($record['deductions'] ?? 0, 2) ?>
+                                                ₹<?= number_format($record['deductions'] ?? 0, 2) ?>
                                             </td>
                                             <td>
                                                 <strong class="text-success">
-                                                    â‚¹<?= number_format($record['net_salary'] ?? 0, 2) ?>
+                                                    ₹<?= number_format($record['net_salary'] ?? 0, 2) ?>
                                                 </strong>
                                             </td>
                                             <td>
@@ -237,22 +237,22 @@
                         <div class="salary-info">
                             <div class="info-item mb-3">
                                 <strong>Current Basic Salary:</strong>
-                                â‚¹<?= number_format($latestSalary['basic_salary'] ?? 0, 2) ?>
+                                ₹<?= number_format($latestSalary['basic_salary'] ?? 0, 2) ?>
                             </div>
                             <div class="info-item mb-3">
                                 <strong>Allowances:</strong>
-                                â‚¹<?= number_format($latestSalary['allowances'] ?? 0, 2) ?>
+                                ₹<?= number_format($latestSalary['allowances'] ?? 0, 2) ?>
                                 <small class="text-muted d-block">
                                     (HRA, Medical, Transport, etc.)
                                 </small>
                             </div>
                             <div class="info-item mb-3">
                                 <strong>Tax Deductions:</strong>
-                                â‚¹<?= number_format($latestSalary['tax_deductions'] ?? 0, 2) ?>
+                                ₹<?= number_format($latestSalary['tax_deductions'] ?? 0, 2) ?>
                             </div>
                             <div class="info-item mb-3">
                                 <strong>PF Contribution:</strong>
-                                â‚¹<?= number_format($latestSalary['pf_deduction'] ?? 0, 2) ?>
+                                ₹<?= number_format($latestSalary['pf_deduction'] ?? 0, 2) ?>
                                 <small class="text-muted d-block">
                                     (12% of Basic Salary)
                                 </small>
@@ -261,7 +261,7 @@
                             <div class="info-item">
                                 <strong>Annual CTC:</strong>
                                 <span class="text-primary">
-                                    â‚¹<?= number_format(($latestSalary['basic_salary'] ?? 0) * 12 + ($latestSalary['allowances'] ?? 0) * 12, 2) ?>
+                                    ₹<?= number_format(($latestSalary['basic_salary'] ?? 0) * 12 + ($latestSalary['allowances'] ?? 0) * 12, 2) ?>
                                 </span>
                             </div>
                         </div>
@@ -334,7 +334,7 @@ if (trendCtx) {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return 'â‚¹' + value.toLocaleString();
+                            return '₹' + value.toLocaleString();
                         }
                     }
                 }

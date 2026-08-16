@@ -227,7 +227,7 @@ $completedCount = count($completedMeetings);
                                             'site_visit' => 'Site Visit',
                                             'video_call' => 'Video Call',
                                             'phone_call' => 'Phone Call',
-                                            default => htmlspecialchars($type)
+                                            default => htmlspecialchars($type ?? '')
                                         };
                                         ?>
                                         <span class="badge <?= $typeClass ?> badge-soft">

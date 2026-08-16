@@ -35,9 +35,9 @@
                             <td><?= htmlspecialchars($p['plot_no']) ?></td>
                             <td><?= number_format((float)$p['size_sqft']) ?> sqft</td>
                             <td><?= htmlspecialchars($p['dimension'] ?? '-') ?></td>
-                            <td>â‚¹<?= number_format((float)$p['basic_price'], 2) ?></td>
-                            <td>â‚¹<?= number_format((float)$p['plc_charges'], 2) ?></td>
-                            <td>â‚¹<?= number_format((float)$p['basic_price'] + (float)$p['plc_charges'], 2) ?></td>
+                            <td>₹<?= number_format((float)$p['basic_price'], 2) ?></td>
+                            <td>₹<?= number_format((float)$p['plc_charges'], 2) ?></td>
+                            <td>₹<?= number_format((float)$p['basic_price'] + (float)$p['plc_charges'], 2) ?></td>
                             <td><span class="badge bg-<?= $statusColors[$p['status']] ?? 'secondary' ?>"><?= htmlspecialchars($p['status']) ?></span></td>
                         </tr>
                         <?php endforeach; ?>

@@ -52,7 +52,7 @@ ob_start();
                 <div class="aps-cp-progress">
                     <div class="aps-cp-progress-bar" class="style-61755"></div>
                 </div>
-                <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest â‚¹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level']) ?></strong></p>
+                <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest ₹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level']) ?></strong></p>
             </div>
         </div>
     </div>
@@ -74,10 +74,10 @@ ob_start();
                 <tr>
                     <td><code><?= htmlspecialchars($inv['investment_ref']) ?></code></td>
                     <td><i class="fas <?= $categoryIcons[$cat] ?? 'fa-chart-line' ?>"></i> <?= htmlspecialchars($inv['plan_name']) ?></td>
-                    <td>â‚¹<?= number_format((float)$inv['principal_amount']) ?></td>
-                    <td>â‚¹<?= number_format((float)$inv['current_value']) ?></td>
-                    <td class="aps-cp-<?= $ret >= 0 ? 'text-success' : 'text-danger' ?>"><?= $ret >= 0 ? '+' : '' ?>â‚¹<?= number_format($ret) ?></td>
-                    <td>â‚¹<?= number_format((float)$inv['monthly_amount']) ?></td>
+                    <td>₹<?= number_format((float)$inv['principal_amount']) ?></td>
+                    <td>₹<?= number_format((float)$inv['current_value']) ?></td>
+                    <td class="aps-cp-<?= $ret >= 0 ? 'text-success' : 'text-danger' ?>"><?= $ret >= 0 ? '+' : '' ?>₹<?= number_format($ret) ?></td>
+                    <td>₹<?= number_format((float)$inv['monthly_amount']) ?></td>
                     <td><span class="aps-cp-badge aps-cp-badge-<?= $statusColor ?>"><?= htmlspecialchars(ucfirst($inv['status'])) ?></span></td>
                 </tr>
                 <?php endforeach; ?>
@@ -105,7 +105,7 @@ ob_start();
                     <h4><i class="fas <?= $icon ?>"></i> <?= htmlspecialchars($plan['plan_name']) ?></h4>
                     <?php if (!empty($plan['is_featured'])): ?><span class="aps-cp-badge aps-cp-badge-primary"><?= __('user_investment_plans_featured', null, 'Featured') ?></span><?php endif; ?>
                 </div>
-                <p class="aps-cp-info-card-meta"><?= __('user_investment_plans_min_amount', null, 'Min') ?>: â‚¹<?= number_format((float)$plan['min_amount']) ?> | <?= __('user_investment_plans_tenure', null, 'Tenure') ?>: <?= (int)($plan['tenure_months'] ?? 0) ?> <?= __('user_investment_plans_months', null, 'mo') ?> | <?= __('user_investment_plans_risk', null, 'Risk') ?>: <span class="aps-cp-badge aps-cp-badge-<?= $riskColors[$risk] ?? 'warning' ?>"><?= htmlspecialchars(ucfirst($risk)) ?></span></p>
+                <p class="aps-cp-info-card-meta"><?= __('user_investment_plans_min_amount', null, 'Min') ?>: ₹<?= number_format((float)$plan['min_amount']) ?> | <?= __('user_investment_plans_tenure', null, 'Tenure') ?>: <?= (int)($plan['tenure_months'] ?? 0) ?> <?= __('user_investment_plans_months', null, 'mo') ?> | <?= __('user_investment_plans_risk', null, 'Risk') ?>: <span class="aps-cp-badge aps-cp-badge-<?= $riskColors[$risk] ?? 'warning' ?>"><?= htmlspecialchars(ucfirst($risk)) ?></span></p>
                 <?php if (!empty($plan['features'])): ?>
                 <ul class="aps-cp-list">
                     <?php foreach ($plan['features'] as $f): ?><li><?= htmlspecialchars($f) ?></li><?php endforeach; ?>
@@ -134,7 +134,7 @@ ob_start();
             <input type="hidden" name="plan_id" id="investPlanId" value="">
             <div class="aps-cp-modal-body">
                 <div class="aps-cp-form-section">
-                    <label class="aps-cp-label" for="principal_amount"><?= __('user_investment_plans_label_principal', null, 'Principal Amount (â‚¹)') ?></label>
+                    <label class="aps-cp-label" for="principal_amount"><?= __('user_investment_plans_label_principal', null, 'Principal Amount (₹)') ?></label>
                     <input type="number" name="principal_amount" id="principal_amount" class="aps-cp-input" min="1000" step="100" required>
                 </div>
                 <div class="aps-cp-form-section">

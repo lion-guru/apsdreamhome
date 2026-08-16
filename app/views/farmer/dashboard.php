@@ -52,7 +52,7 @@ $land_holdings = $land_holdings ?? [];
         <div class="col-md-3 col-6">
             <div class="farmer-stat-card">
                 <div class="stat-icon-f orange"><i class="fas fa-hand-holding-usd"></i></div>
-                <div class="stat-value-f">â‚¹<?php echo number_format($stats['amount_received']); ?></div>
+                <div class="stat-value-f">₹<?php echo number_format($stats['amount_received']); ?></div>
                 <div class="stat-label-f">Amount Received</div>
             </div>
         </div>
@@ -89,7 +89,7 @@ $land_holdings = $land_holdings ?? [];
                                 <tr>
                                     <td><?php echo date('d M Y', strtotime($t['created_at'] ?? 'now')); ?></td>
                                     <td><span class="badge bg-<?php echo ($t['transaction_type'] ?? '') === 'credit' ? 'success' : (($t['transaction_type'] ?? '') === 'debit' ? 'danger' : 'info'); ?>"><?php echo ucfirst($t['transaction_type'] ?? 'N/A'); ?></span></td>
-                                    <td><strong>â‚¹<?php echo number_format($t['amount'] ?? 0); ?></strong></td>
+                                    <td><strong>₹<?php echo number_format($t['amount'] ?? 0); ?></strong></td>
                                     <td><?php echo htmlspecialchars($t['payment_method'] ?? 'N/A'); ?></td>
                                     <td><span class="badge bg-<?php echo ($t['status'] ?? '') === 'completed' ? 'success' : (($t['status'] ?? '') === 'pending' ? 'warning' : 'secondary'); ?>"><?php echo ucfirst($t['status'] ?? 'N/A'); ?></span></td>
                                 </tr>

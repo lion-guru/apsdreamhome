@@ -3,9 +3,9 @@
  * Login & Registration Notification Service
  *
  * Sends multi-channel notifications (Email + SMS + Push + WhatsApp) on:
- *  1. Registration Ã¢â‚¬â€� Welcome message across all channels
- *  2. Login Ã¢â‚¬â€� Login alert with device/IP info
- *  3. Mobile login Ã¢â‚¬â€� Special welcome with in-app feel
+ *  1. Registration à¢€—� Welcome message across all channels
+ *  2. Login à¢€—� Login alert with device/IP info
+ *  3. Mobile login à¢€—� Special welcome with in-app feel
  *
  * Uses existing infrastructure:
  *  - EmailService (PHPMailer SMTP)
@@ -52,7 +52,7 @@ class LoginNotificationService
         try { $this->gateway = AIGateway::getInstance(); } catch (\Throwable $e) { $this->gateway = null; }
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ Registration Welcome Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ Registration Welcome à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     /**
      * Send welcome notifications across all channels after registration.
@@ -74,25 +74,25 @@ class LoginNotificationService
     ): array {
         $results = [];
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 1. Email: Welcome Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 1. Email: Welcome à¢—�€à¢—�€
         $results['email'] = $this->sendWelcomeEmail($userId, $name, $email, $role);
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 2. SMS: Welcome Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 2. SMS: Welcome à¢—�€à¢—�€
         $results['sms'] = $this->sendWelcomeSms($phone, $name, $role);
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 3. Push: Welcome (mobile only) Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 3. Push: Welcome (mobile only) à¢—�€à¢—�€
         $results['push'] = $this->sendWelcomePush($userId, $name, $role, $isMobile);
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 4. WhatsApp: Welcome Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 4. WhatsApp: Welcome à¢—�€à¢—�€
         $results['whatsapp'] = $this->sendWelcomeWhatsApp($phone, $name, $role);
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ Log everything Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ Log everything à¢—�€à¢—�€
         $this->logNotificationBatch($userId, 'registration_welcome', $results);
 
         return $results;
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ Login Alert Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ Login Alert à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     /**
      * Send login alert notifications across all channels.
@@ -124,41 +124,41 @@ class LoginNotificationService
         $location = $this->getIPLocation($ip);
         $time = date('d M Y, h:i A');
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 1. Email: Login Alert Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 1. Email: Login Alert à¢—�€à¢—�€
         $results['email'] = $this->sendLoginAlertEmail(
             $user['email'], $user['name'], $ip, $deviceInfo, $location, $time, $loginMethod
         );
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 2. SMS: Login Alert (only for suspicious or new device) Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 2. SMS: Login Alert (only for suspicious or new device) à¢—�€à¢—�€
         $isNewDevice = $this->isNewDevice($userId, $userAgent);
         if ($isNewDevice) {
             $results['sms'] = $this->sendLoginAlertSms($user['phone'], $user['name'], $ip, $deviceInfo, $time);
         }
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 3. Push: Login Alert Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 3. Push: Login Alert à¢—�€à¢—�€
         $results['push'] = $this->sendLoginAlertPush($userId, $ip, $deviceInfo, $location, $isMobile);
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ 4. WhatsApp: Login Alert (new device only) Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ 4. WhatsApp: Login Alert (new device only) à¢—�€à¢—�€
         if ($isNewDevice) {
             $results['whatsapp'] = $this->sendLoginAlertWhatsApp(
                 $user['phone'], $user['name'], $ip, $deviceInfo, $location, $time
             );
         }
 
-        // Ã¢â€�â‚¬Ã¢â€�â‚¬ Log everything Ã¢â€�â‚¬Ã¢â€�â‚¬
+        // à¢—�€à¢—�€ Log everything à¢—�€à¢—�€
         $this->logNotificationBatch($userId, 'login_alert', $results);
 
         return $results;
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ Email Methods Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ Email Methods à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     private function sendWelcomeEmail(int $userId, string $name, string $email, string $role): array
     {
         if (!$this->emailService) return ['sent' => false, 'error' => 'Email service unavailable'];
 
         try {
-            $subject = "Welcome to APS Dream Home, {$name}! Ã°Å¸ï¿½Â ";
+            $subject = "Welcome to APS Dream Home, {$name}! à°Å¸ï¿½Â ";
 
             $dashboardUrl = match($role) {
                 'associate' => BASE_URL . '/associate/dashboard',
@@ -212,7 +212,7 @@ class LoginNotificationService
         }
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ SMS Methods Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ SMS Methods à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     private function sendWelcomeSms(string $phone, string $name, string $role): array
     {
@@ -240,7 +240,7 @@ class LoginNotificationService
         }
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ Push Methods Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ Push Methods à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     private function sendWelcomePush(int $userId, string $name, string $role, bool $isMobile): array
     {
@@ -254,7 +254,7 @@ class LoginNotificationService
             };
 
             $notification = [
-                'title' => 'Welcome to APS Dream Home! Ã°Å¸ï¿½Â ',
+                'title' => 'Welcome to APS Dream Home! à°Å¸ï¿½Â ',
                 'body'  => "Hi {$name}! Your account is ready. Explore properties, track your bookings, and more.",
                 'data'  => [
                     'type'              => 'welcome',
@@ -280,7 +280,7 @@ class LoginNotificationService
         if (!$this->pushService) return ['sent' => false, 'error' => 'Push service unavailable'];
 
         try {
-            $title = "New Login Alert Ã°Å¸â€�ï¿½";
+            $title = "New Login Alert à°Å¸—�ï¿½";
             $body = "Logged in from {$device}";
             if ($location) $body .= " ({$location})";
             $body .= ". If this wasn't you, secure your account now.";
@@ -309,7 +309,7 @@ class LoginNotificationService
         }
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ WhatsApp Methods Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ WhatsApp Methods à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     private function sendWelcomeWhatsApp(string $phone, string $name, string $role): array
     {
@@ -330,14 +330,14 @@ class LoginNotificationService
         if (!$this->whatsappService || empty($phone)) return ['sent' => false, 'error' => 'WhatsApp service unavailable'];
 
         try {
-            $message = "Ã°Å¸â€�ï¿½ APS Dream Home - New Login Alert\n\n";
+            $message = "à°Å¸—�ï¿½ APS Dream Home - New Login Alert\n\n";
             $message .= "Hi {$name}, a new login was detected:\n\n";
-            $message .= "Ã¢ï¿½Â° Time: {$time}\n";
-            $message .= "Ã°Å¸â€œÂ± Device: {$device}\n";
-            $message .= "Ã°Å¸Å’ï¿½ IP: {$ip}\n";
-            if ($location) $message .= "Ã°Å¸â€œï¿½ Location: {$location}\n";
-            $message .= "\nÃ¢Å¡Â Ã¯Â¸ï¿½ If this wasn't you, please change your password immediately.";
-            $message .= "\n\nÃ°Å¸â€œÅ¾ Support: " . BASE_URL . "/support";
+            $message .= "à¢ï¿½° Time: {$time}\n";
+            $message .= "à°Å¸®± Device: {$device}\n";
+            $message .= "à°Å¸Å'ï¿½ IP: {$ip}\n";
+            if ($location) $message .= "à°Å¸®ï¿½ Location: {$location}\n";
+            $message .= "\nà¢Å¡Â à¯Â¸ï¿½ If this wasn't you, please change your password immediately.";
+            $message .= "\n\nà°Å¸®Å¾ Support: " . BASE_URL . "/support";
 
             // AI-personalize the copy (warmer, name-first) when the local LLM is available
             $message = $this->aiPersonalize($message, $name, 'login_alert');
@@ -350,7 +350,7 @@ class LoginNotificationService
         }
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ Email Template Rendering Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ Email Template Rendering à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     private function renderEmailTemplate(string $code, array $vars): string
     {
@@ -402,22 +402,22 @@ body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;background:#f4f6
 <p>Your {$role} account is now active</p>
 </div>
 <div class="body">
-<h2>Hello {$name}! Ã°Å¸Å½â€°</h2>
-<p>Congratulations! Your account has been created successfully. You're now part of the APS Dream Home family Ã¢â‚¬â€� trusted by thousands to find their perfect property.</p>
-<a href="{$dashboardUrl}" class="btn">Go to Dashboard Ã¢â€ â€™</a>
+<h2>Hello {$name}! à°Å¸Å½—°</h2>
+<p>Congratulations! Your account has been created successfully. You're now part of the APS Dream Home family à¢€—� trusted by thousands to find their perfect property.</p>
+<a href="{$dashboardUrl}" class="btn">Go to Dashboard à¢— —™</a>
 <h3>What You Can Do:</h3>
 <ul class="features">
-<li>Ã°Å¸ï¿½Â  Browse verified properties across premium colonies</li>
-<li>Ã°Å¸â€œÅ  Track your bookings and EMI schedule</li>
-<li>Ã°Å¸â€™Â° Earn commissions through our MLM program</li>
-<li>Ã°Å¸â€œâ€ž Access all legal documents and agreements</li>
-<li>Ã°Å¸â€�â€� Get real-time notifications for updates</li>
+<li>à°Å¸ï¿½Â  Browse verified properties across premium colonies</li>
+<li>à°Å¸®Å  Track your bookings and EMI schedule</li>
+<li>à°Å¸—™° Earn commissions through our MLM program</li>
+<li>à°Å¸®—ž Access all legal documents and agreements</li>
+<li>à°Å¸—�—� Get real-time notifications for updates</li>
 </ul>
-<p><a href="{$propertiesUrl}">Explore Properties Ã¢â€ â€™</a></p>
+<p><a href="{$propertiesUrl}">Explore Properties à¢— —™</a></p>
 <p>Need help? Contact us at <a href="mailto:{$supportEmail}">{$supportEmail}</a></p>
 </div>
 <div class="footer">
-<p>Ã‚Â© {date('Y')} APS Dream Home. All rights reserved.</p>
+<p>à‚Â© {date('Y')} APS Dream Home. All rights reserved.</p>
 <p>This email was sent to you because you registered at APS Dream Home.</p>
 </div>
 </div></body></html>
@@ -457,29 +457,29 @@ body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;background:#f4f6
 </style></head><body>
 <div class="container">
 <div class="header">
-<h1>Ã°Å¸â€�ï¿½ New Login Detected</h1>
+<h1>à°Å¸—�ï¿½ New Login Detected</h1>
 </div>
 <div class="body">
 <h2>Hello {$name}</h2>
 <p>We detected a new login to your APS Dream Home account.</p>
 <div class="details">
 <table>
-<tr><td>Ã¢ï¿½Â° Time</td><td>{$time}</td></tr>
-<tr><td>Ã°Å¸â€œÂ± Device</td><td>{$device}</td></tr>
-<tr><td>Ã°Å¸Å’ï¿½ IP Address</td><td>{$ip}</td></tr>
-<tr><td>Ã°Å¸â€œï¿½ Location</td><td>{$location}</td></tr>
-<tr><td>Ã°Å¸â€�â€˜ Method</td><td>{$method}</td></tr>
+<tr><td>à¢ï¿½° Time</td><td>{$time}</td></tr>
+<tr><td>à°Å¸®± Device</td><td>{$device}</td></tr>
+<tr><td>à°Å¸Å'ï¿½ IP Address</td><td>{$ip}</td></tr>
+<tr><td>à°Å¸®ï¿½ Location</td><td>{$location}</td></tr>
+<tr><td>à°Å¸—�—˜ Method</td><td>{$method}</td></tr>
 </table>
 </div>
 <div class="alert-box">
-<strong>Ã¢Å¡Â Ã¯Â¸ï¿½ Wasn't you?</strong><br>
+<strong>à¢Å¡Â à¯Â¸ï¿½ Wasn't you?</strong><br>
 If you don't recognize this login, please change your password immediately and contact our support team.
 </div>
 <a href="{$supportUrl}" class="btn">Report Unauthorized Login</a>
 <p class="style-12737">For your security, we monitor all login activity on your account.</p>
 </div>
 <div class="footer">
-<p>Ã‚Â© {date('Y')} APS Dream Home. All rights reserved.</p>
+<p>à‚Â© {date('Y')} APS Dream Home. All rights reserved.</p>
 <p>This is a security notification for your account.</p>
 </div>
 </div></body></html>
@@ -489,7 +489,7 @@ HTML;
         return '';
     }
 
-    // Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬ Helpers Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬Ã¢â€�â‚¬
+    // à¢—�€à¢—�€à¢—�€ Helpers à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€à¢—�€
 
     /**
      * AI-personalize a notification message using the local LLM (Ollama) when
@@ -545,7 +545,7 @@ HTML;
             };
             preg_match('/(Chrome|Firefox|Edge|Safari|MSIE|Trident)\/([\d.]+)/i', $ua, $b);
             $browser = ($b[1] ?? 'Browser') . ' ' . ($b[2] ?? '');
-            return "{$os} Ã¢â‚¬â€� {$browser}";
+            return "{$os} à¢€—� {$browser}";
         }
 
         if (preg_match('/Mac/i', $ua)) {
@@ -615,7 +615,7 @@ HTML;
                         $type,
                         $channel,
                         "user_{$userId}",
-                        ucfirst($type) . " Ã¢â‚¬â€� " . ucfirst($channel),
+                        ucfirst($type) . " à¢€—� " . ucfirst($channel),
                         $sent ? "Delivered via {$channel}" : ($result['error'] ?? "Failed via {$channel}"),
                         json_encode($result),
                         $sent ? 'sent' : 'failed',

@@ -11,7 +11,7 @@ $unmatched_txns = $unmatched_txns ?? [];
         <h2 class="mb-0">
             <i class="fas fa-file-csv me-2 text-primary"></i>
             Import #<?= (int)($import['id'] ?? 0) ?>
-            <small class="text-muted fs-6">â€” <?= htmlspecialchars($import['original_filename'] ?? '') ?></small>
+            <small class="text-muted fs-6">— <?= htmlspecialchars($import['original_filename'] ?? '') ?></small>
         </h2>
         <div class="d-flex gap-2">
             <a href="<?= BASE_URL ?>/admin/bank-import" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
@@ -50,8 +50,8 @@ $unmatched_txns = $unmatched_txns ?? [];
                 <div class="aps-cp-card-body">
                     <div class="text-muted small mb-1">Total Transactions</div>
                     <div class="fs-3 fw-bold"><?= number_format((int)($summary['total_transactions'] ?? 0)) ?></div>
-                    <div class="small text-muted">Credits: â‚¹<?= number_format((float)($summary['total_credits'] ?? 0), 2) ?></div>
-                    <div class="small text-muted">Debits: â‚¹<?= number_format((float)($summary['total_debits'] ?? 0), 2) ?></div>
+                    <div class="small text-muted">Credits: ₹<?= number_format((float)($summary['total_credits'] ?? 0), 2) ?></div>
+                    <div class="small text-muted">Debits: ₹<?= number_format((float)($summary['total_debits'] ?? 0), 2) ?></div>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                 <div class="aps-cp-card-body">
                     <div class="text-muted small mb-1">Matched</div>
                     <div class="fs-3 fw-bold text-success"><?= number_format((int)($summary['matched_count'] ?? 0)) ?></div>
-                    <div class="small text-muted">Amount: â‚¹<?= number_format((float)($summary['matched_amount'] ?? 0), 2) ?></div>
+                    <div class="small text-muted">Amount: ₹<?= number_format((float)($summary['matched_amount'] ?? 0), 2) ?></div>
                     <div class="progress mt-1" class="style-51910">
                         <div class="progress-bar bg-success" class="style-70324"></div>
                     </div>
@@ -72,7 +72,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                 <div class="aps-cp-card-body">
                     <div class="text-muted small mb-1">Unmatched</div>
                     <div class="fs-3 fw-bold text-warning"><?= number_format((int)($summary['unmatched_count'] ?? 0)) ?></div>
-                    <div class="small text-muted">Amount: â‚¹<?= number_format((float)($summary['unmatched_amount'] ?? 0), 2) ?></div>
+                    <div class="small text-muted">Amount: ₹<?= number_format((float)($summary['unmatched_amount'] ?? 0), 2) ?></div>
                 </div>
             </div>
         </div>
@@ -128,9 +128,9 @@ $unmatched_txns = $unmatched_txns ?? [];
                                     <tr>
                                         <th>Date</th>
                                         <th>Description</th>
-                                        <th class="text-end">Debit (â‚¹)</th>
-                                        <th class="text-end">Credit (â‚¹)</th>
-                                        <th class="text-end">Balance (â‚¹)</th>
+                                        <th class="text-end">Debit (₹)</th>
+                                        <th class="text-end">Credit (₹)</th>
+                                        <th class="text-end">Balance (₹)</th>
                                         <th>Cheque/Ref</th>
                                         <th></th>
                                     </tr>
@@ -140,9 +140,9 @@ $unmatched_txns = $unmatched_txns ?? [];
                                     <tr>
                                         <td><?= htmlspecialchars($txn['transaction_date'] ?? '') ?></td>
                                         <td><?= htmlspecialchars(mb_substr($txn['description'] ?? '', 0, 60)) ?></td>
-                                        <td class="text-end"><?= (float)($txn['debit'] ?? 0) > 0 ? 'â‚¹' . number_format((float)$txn['debit'], 2) : 'â€”' ?></td>
-                                        <td class="text-end"><?= (float)($txn['credit'] ?? 0) > 0 ? 'â‚¹' . number_format((float)$txn['credit'], 2) : 'â€”' ?></td>
-                                        <td class="text-end">â‚¹<?= number_format((float)($txn['balance'] ?? 0), 2) ?></td>
+                                        <td class="text-end"><?= (float)($txn['debit'] ?? 0) > 0 ? '₹' . number_format((float)$txn['debit'], 2) : '—' ?></td>
+                                        <td class="text-end"><?= (float)($txn['credit'] ?? 0) > 0 ? '₹' . number_format((float)$txn['credit'], 2) : '—' ?></td>
+                                        <td class="text-end">₹<?= number_format((float)($txn['balance'] ?? 0), 2) ?></td>
                                         <td class="small text-muted"><?= htmlspecialchars($txn['cheque_number'] ?? $txn['reference_number'] ?? '') ?></td>
                                         <td>
                                             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#matchModal"
@@ -186,9 +186,9 @@ $unmatched_txns = $unmatched_txns ?? [];
                                     <tr>
                                         <th>Date</th>
                                         <th>Description</th>
-                                        <th class="text-end">Debit (â‚¹)</th>
-                                        <th class="text-end">Credit (â‚¹)</th>
-                                        <th class="text-end">Balance (â‚¹)</th>
+                                        <th class="text-end">Debit (₹)</th>
+                                        <th class="text-end">Credit (₹)</th>
+                                        <th class="text-end">Balance (₹)</th>
                                         <th>Cheque/Ref</th>
                                         <th>Matched At</th>
                                         <th></th>
@@ -199,9 +199,9 @@ $unmatched_txns = $unmatched_txns ?? [];
                                     <tr>
                                         <td><?= htmlspecialchars($txn['transaction_date'] ?? '') ?></td>
                                         <td><?= htmlspecialchars(mb_substr($txn['description'] ?? '', 0, 60)) ?></td>
-                                        <td class="text-end"><?= (float)($txn['debit'] ?? 0) > 0 ? 'â‚¹' . number_format((float)$txn['debit'], 2) : 'â€”' ?></td>
-                                        <td class="text-end"><?= (float)($txn['credit'] ?? 0) > 0 ? 'â‚¹' . number_format((float)$txn['credit'], 2) : 'â€”' ?></td>
-                                        <td class="text-end">â‚¹<?= number_format((float)($txn['balance'] ?? 0), 2) ?></td>
+                                        <td class="text-end"><?= (float)($txn['debit'] ?? 0) > 0 ? '₹' . number_format((float)$txn['debit'], 2) : '—' ?></td>
+                                        <td class="text-end"><?= (float)($txn['credit'] ?? 0) > 0 ? '₹' . number_format((float)$txn['credit'], 2) : '—' ?></td>
+                                        <td class="text-end">₹<?= number_format((float)($txn['balance'] ?? 0), 2) ?></td>
                                         <td class="small text-muted"><?= htmlspecialchars($txn['cheque_number'] ?? $txn['reference_number'] ?? '') ?></td>
                                         <td class="small text-muted"><?= htmlspecialchars($txn['matched_at'] ?? '') ?></td>
                                         <td>
@@ -240,7 +240,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                         <div class="row">
                             <div class="col-md-4"><strong>Date:</strong> <span id="matchDate"></span></div>
                             <div class="col-md-5"><strong>Description:</strong> <span id="matchDesc"></span></div>
-                            <div class="col-md-3"><strong>Amount:</strong> â‚¹<span id="matchAmount"></span></div>
+                            <div class="col-md-3"><strong>Amount:</strong> ₹<span id="matchAmount"></span></div>
                         </div>
                     </div>
 
@@ -264,7 +264,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                                         <th>Date</th>
                                         <th>Type</th>
                                         <th>Description</th>
-                                        <th class="text-end">Amount (â‚¹)</th>
+                                        <th class="text-end">Amount (₹)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="internalResultsBody">
@@ -352,7 +352,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                         '<td>' + (row.transaction_date || '') + '</td>' +
                         '<td>' + (row.type || '') + '</td>' +
                         '<td>' + (row.description || '').substring(0, 50) + '</td>' +
-                        '<td class="text-end">â‚¹' + parseFloat(row.amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</td>';
+                        '<td class="text-end">₹' + parseFloat(row.amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</td>';
 
                     tr.addEventListener('click', function() {
                         tr.querySelector('input[type="radio"]').checked = true;

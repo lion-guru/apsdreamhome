@@ -45,7 +45,7 @@
                 <div class="colony-section mb-4" data-colony="<?= $colony['id'] ?>">
                     <h5 class="text-primary mb-2"><?= htmlspecialchars($colony['name']) ?></h5>
                     <svg viewBox="0 0 <?= $svgW ?> <?= $svgH ?>" class="w-100 border rounded bg-light" class="style-50142">
-                        <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name']) ?> â€” <?= count($cplots) ?> plots</text>
+                        <text x="<?= $svgW/2 ?>" y="16" text-anchor="middle" font-size="11" fill="#6c757d"><?= htmlspecialchars($colony['name']) ?> — <?= count($cplots) ?> plots</text>
                         <?php foreach ($cplots as $i => $p):
                             $col = $i % $cols;
                             $row = intdiv($i, $cols);
@@ -59,7 +59,7 @@
                                 'blocked' => '#64748b',
                                 default => '#94a3b8'
                             };
-                            $tooltip = htmlspecialchars("Plot: {$p['plot_number']}\nArea: {$p['area_sqft']} sqft\nDimensions: {$p['width_ft']}x{$p['length_ft']} ft\nFacing: {$p['facing']}\nPrice: â‚¹".number_format((float)$p['total_price'])."\nStatus: {$p['status']}");
+                            $tooltip = htmlspecialchars("Plot: {$p['plot_number']}\nArea: {$p['area_sqft']} sqft\nDimensions: {$p['width_ft']}x{$p['length_ft']} ft\nFacing: {$p['facing']}\nPrice: ₹".number_format((float)$p['total_price'])."\nStatus: {$p['status']}");
                         ?>
                         <rect x="<?= $x ?>" y="<?= $y ?>" width="<?= $cw ?>" height="<?= $rh ?>"
                               fill="<?= $statusColor ?>" rx="3" class="plot-cell"

@@ -60,7 +60,7 @@ class AuctionService
     public function getAllAuctions($status = null, $limit = 50)
     {
         try {
-            $sql = "SELECT a.*, p.title as property_title, p.address as property_address FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE 1=1" . $this->tenantSql();
+            $sql = "SELECT a.*, p.name as property_title, p.address as property_address FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE 1=1" . $this->tenantSql();
             $params = [];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             if ($status) {
@@ -78,7 +78,7 @@ class AuctionService
     {
         try {
             $tid = $this->tenantId();
-            $sql = "SELECT a.*, p.title as property_title, p.address as property_address, p.city as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.status = 'live' AND a.ends_at > NOW()" . ($tid > 1 ? " AND a.tenant_id = ?" : "") . " ORDER BY a.ends_at ASC LIMIT " . (int)$limit;
+            $sql = "SELECT a.*, p.name as property_title, p.address as property_address, p.city_name as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.status = 'live' AND a.ends_at > NOW()" . ($tid > 1 ? " AND a.tenant_id = ?" : "") . " ORDER BY a.ends_at ASC LIMIT " . (int)$limit;
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($tid > 1 ? [$tid] : []);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -88,7 +88,7 @@ class AuctionService
     public function getAuctionById($id)
     {
         try {
-            $sql = "SELECT a.*, p.title as property_title, p.address as property_address, p.city as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.id = ?" . $this->tenantSql();
+            $sql = "SELECT a.*, p.name as property_title, p.address as property_address, p.city_name as property_city, p.price as property_price, p.area_sqft, p.image as property_image FROM auctions a LEFT JOIN user_properties p ON a.property_id = p.id WHERE a.id = ?" . $this->tenantSql();
             $stmt = $this->pdo->prepare($sql);
             $params = [$id];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();

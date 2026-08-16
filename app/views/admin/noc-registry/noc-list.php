@@ -59,7 +59,7 @@ $status_filter = $status_filter ?? null;
                                 <div class="fw-semibold small"><?= htmlspecialchars($n['booking_number']) ?></div>
                             </td>
                             <td>
-                                <div class="small"><?= htmlspecialchars($n['customer_name'] ?? 'â€”') ?></div>
+                                <div class="small"><?= htmlspecialchars($n['customer_name'] ?? '—') ?></div>
                                 <div class="text-muted" class="style-86760"><?= htmlspecialchars($n['customer_phone'] ?? '') ?></div>
                             </td>
                             <td class="small"><?= htmlspecialchars($n['plot_no']) ?>, <?= htmlspecialchars($n['colony_name']) ?></td>

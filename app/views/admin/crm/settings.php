@@ -54,7 +54,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="fw-semibold">Enable CRM Module</div>
-                        <small class="text-muted">Master toggle â€” disabling hides CRM from all users</small>
+                        <small class="text-muted">Master toggle — disabling hides CRM from all users</small>
                     </div>
                     <div class="toggle-switch <?= $val('crm_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_enabled').value = this.classList.contains('active') ? '1' : '0';">
                         <input type="hidden" id="crm_enabled" name="crm_enabled" value="<?= $val('crm_enabled') ?>">

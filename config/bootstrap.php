@@ -54,7 +54,7 @@ if (!defined('BASE_URL')) {
         define('BASE_URL', $protocol . '://localhost' . $base);
     } else {
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $script = dirname($_SERVER['SCRIPT_NAME']);
+        $script = isset($_SERVER['SCRIPT_NAME']) ? dirname($_SERVER['SCRIPT_NAME']) : '';
         $script = str_replace('\\', '/', $script);
         // Remove /public if it exists in the path
         if (substr($script, -7) === '/public') {
@@ -63,8 +63,18 @@ if (!defined('BASE_URL')) {
         // Remove /index.php if it exists
         $script = str_replace('/index.php', '', $script);
 
+        // Fallback for test environments where SCRIPT_NAME might be empty
+        if (empty($script)) {
+            $script = '/apsdreamhome';
+        }
+
         define('BASE_URL', rtrim("$protocol://$host$script", '/'));
     }
+}
+
+// Ensure BASE_URL is always defined as a last resort
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome');
 }
 
 if (!defined('WHATSAPP_SERVICE_URL')) {

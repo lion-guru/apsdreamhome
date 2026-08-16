@@ -92,7 +92,7 @@ $ratingBadge = function($rating) {
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Commission</h6>
-                            <h3 class="mb-0">â‚¹<?php echo number_format($overallStats['total_commission'] ?? 0, 2); ?></h3>
+                            <h3 class="mb-0">₹<?php echo number_format($overallStats['total_commission'] ?? 0, 2); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -166,7 +166,7 @@ $ratingBadge = function($rating) {
                                     <td>
                                         <span class="badge bg-success"><?php echo number_format($r['leads_converted'] ?? 0); ?></span>
                                     </td>
-                                    <td>â‚¹<?php echo number_format($r['total_commission'] ?? 0, 2); ?></td>
+                                    <td>₹<?php echo number_format($r['total_commission'] ?? 0, 2); ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="progress flex-grow-1 me-2" class="style-29939">

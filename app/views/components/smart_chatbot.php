@@ -59,13 +59,13 @@ if (isset($_SESSION['associate_id'])) {
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="message-content">
-                    <p>ðŸ‘‹ Namaste <?php echo htmlspecialchars($userName); ?>! <br><br>
+                    <p>ðŸ'‹ Namaste <?php echo htmlspecialchars($userName); ?>! <br><br>
                         Main APS AI hoon, aapka smart real estate assistant! ðŸ� <br><br>
-                        ðŸ’¬ Aap mujhse pooch sakte hain:<br>
-                        â€¢ Property buy/sell/rent<br>
-                        â€¢ Prices & locations<br>
-                        â€¢ Home loan info<br>
-                        â€¢ Project details<br><br>
+                        ðŸ'¬ Aap mujhse pooch sakte hain:<br>
+                        —¢ Property buy/sell/rent<br>
+                        —¢ Prices & locations<br>
+                        —¢ Home loan info<br>
+                        —¢ Project details<br><br>
                         Kya main aapki madad kar sakta hoon? ðŸ˜Š</p>
                     <span class="message-time"><?php echo date('h:i A'); ?></span>
                 </div>
@@ -75,8 +75,8 @@ if (isset($_SESSION['associate_id'])) {
         <!-- Quick Suggestions -->
         <div class="chatbot-suggestions">
             <button onclick="sendQuickMessage('Plot kharidna hai')">ðŸ�  Buy Plot</button>
-            <button onclick="sendQuickMessage('Property bechni hai')">ðŸ’° Sell Property</button>
-            <button onclick="sendQuickMessage('Price kya hai?')">ðŸ’µ Pricing</button>
+            <button onclick="sendQuickMessage('Property bechni hai')">ðŸ'° Sell Property</button>
+            <button onclick="sendQuickMessage('Price kya hai?')">ðŸ'µ Pricing</button>
             <button onclick="sendQuickMessage('Home loan chahiye')">ðŸ�¦ Home Loan</button>
         </div>
 
@@ -522,7 +522,7 @@ if (isset($_SESSION['associate_id'])) {
             })
             .catch(err => {
                 hideTyping();
-                addMessage('Network error. Please check your connection! ðŸ“¡', 'bot');
+                addMessage('Network error. Please check your connection! ðŸ"¡', 'bot');
                 console.error(err);
             });
     }
@@ -584,12 +584,12 @@ if (isset($_SESSION['associate_id'])) {
     function renderListings(listings) {
         const messagesDiv = document.getElementById('chatbot-messages');
         const cards = listings.map(function(l) {
-            const price = 'â‚¹' + Number(l.price).toLocaleString('en-IN');
+            const price = '₹' + Number(l.price).toLocaleString('en-IN');
             const area = Number(l.area_sqft).toLocaleString('en-IN') + ' sqft';
-            const facing = l.facing ? ' â€¢ ' + l.facing + ' facing' : '';
+            const facing = l.facing ? ' —¢ ' + l.facing + ' facing' : '';
             return '<a class="chatbot-listing" href="' + l.link + '" target="_blank" rel="noopener">' +
                 '<div class="cl-colony">' + escapeHtml(l.colony) + '</div>' +
-                '<div class="cl-sub">Plot ' + escapeHtml(String(l.plot_number)) + ' â€¢ ' + area + facing + '</div>' +
+                '<div class="cl-sub">Plot ' + escapeHtml(String(l.plot_number)) + ' —¢ ' + area + facing + '</div>' +
                 '<div class="cl-price">' + price + '</div>' +
                 '</a>';
         }).join('');
@@ -614,7 +614,7 @@ if (isset($_SESSION['associate_id'])) {
                 <i class="fas fa-robot"></i>
             </div>
             <div class="message-content">
-                <p>ðŸ‘‹ Chat cleared! Kya main aapki madad kar sakta hoon?</p>
+                <p>ðŸ'‹ Chat cleared! Kya main aapki madad kar sakta hoon?</p>
                 <span class="message-time">${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
         </div>

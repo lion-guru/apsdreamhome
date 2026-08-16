@@ -47,7 +47,7 @@ $pendingTds = $pendingTds ?? 0;
             <div class="aps-cp-card"><div class="aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><span class="badge bg-danger rounded-pill p-2"><i class="fas fa-percentage"></i></span></div>
-                    <div><div class="aps-cp-stat-label">TDS Summary</div><div class="aps-cp-stat-value">â‚¹<?= number_format($totalTdsAmount/1000,1) ?>K</div><div class="aps-cp-stat-meta">Pending: <?= $pendingTds ?></div></div>
+                    <div><div class="aps-cp-stat-label">TDS Summary</div><div class="aps-cp-stat-value">₹<?= number_format($totalTdsAmount/1000,1) ?>K</div><div class="aps-cp-stat-meta">Pending: <?= $pendingTds ?></div></div>
                 </div>
             </div></div>
         </div>
@@ -74,7 +74,7 @@ $pendingTds = $pendingTds ?? 0;
                                             <div class="progress" class="style-32026"><div class="progress-bar bg-<?= $r['progress_percent'] >= 70 ? 'success' : 'warning' ?>" class="style-47424"></div></div>
                                             <small><?= $r['progress_percent'] ?>%</small>
                                         </td>
-                                        <td>â‚¹<?= number_format($r['amount_withdrawn']) ?></td>
+                                        <td>₹<?= number_format($r['amount_withdrawn']) ?></td>
                                         <td><span class="aps-cp-badge badge bg-<?= $r['status'] === 'accepted' ? 'success' : ($r['status'] === 'rejected' ? 'danger' : ($r['status'] === 'submitted' ? 'info' : 'warning')) ?>"><?= ucfirst(htmlspecialchars($r['status'])) ?></span></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -100,7 +100,7 @@ $pendingTds = $pendingTds ?? 0;
                                     <tr>
                                         <td><?= htmlspecialchars($g['return_period']) ?></td>
                                         <td><span class="aps-cp-badge badge bg-info"><?= strtoupper(htmlspecialchars($g['return_type'])) ?></span></td>
-                                        <td>â‚¹<?= number_format($g['total_tax_amount']) ?></td>
+                                        <td>₹<?= number_format($g['total_tax_amount']) ?></td>
                                         <td><span class="aps-cp-badge badge bg-<?= $g['filing_status'] === 'filed' ? 'success' : ($g['filing_status'] === 'late_filed' ? 'danger' : 'warning') ?>"><?= ucfirst(htmlspecialchars($g['filing_status'])) ?></span></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -119,7 +119,7 @@ $pendingTds = $pendingTds ?? 0;
                         <?php foreach ($tdsSummary as $t): ?>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span><span class="aps-cp-badge badge bg-<?= $t['status'] === 'deposited' ? 'success' : ($t['status'] === 'verified' ? 'info' : 'warning') ?>"><?= ucfirst(htmlspecialchars($t['status'])) ?></span></span>
-                                <span><strong>â‚¹<?= number_format($t['total']) ?></strong> (<?= $t['cnt'] ?> entries)</span>
+                                <span><strong>₹<?= number_format($t['total']) ?></strong> (<?= $t['cnt'] ?> entries)</span>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>

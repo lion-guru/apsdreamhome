@@ -116,11 +116,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="col-md-2">
           <label class="form-label small">Min Price</label>
-          <input type="number" name="min_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>" placeholder="Min â‚¹">
+          <input type="number" name="min_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>" placeholder="Min ₹">
         </div>
         <div class="col-md-2">
           <label class="form-label small">Max Price</label>
-          <input type="number" name="max_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>" placeholder="Max â‚¹">
+          <input type="number" name="max_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>" placeholder="Max ₹">
         </div>
         <div class="col-md-2">
           <label class="form-label small">Location</label>
@@ -162,7 +162,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="p-body">
           <h6><?= htmlspecialchars(mb_substr($p['name'], 0, 35)) ?></h6>
           <p class="small text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($p['city_name'] ?? $p['location'] ?? 'N/A') ?></p>
-          <div class="price">â‚¹<?= number_format($p['price']) ?></div>
+          <div class="price">₹<?= number_format($p['price']) ?></div>
           <div class="d-flex gap-1 mt-1">
             <span class="badge bg-light text-dark text-capitalize"><?= $p['property_type'] ?></span>
             <span class="badge bg-light text-dark"><?= number_format($p['area_sqft'] ?? 0) ?> sqft</span>
@@ -180,9 +180,9 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <i class="fas fa-crown text-warning"></i>
     <span>Want to sell faster? Try our premium packages:
     <?php foreach ($packages as $pkg): ?>
-      <span class="badge ms-1" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? $pkg['name']) ?> â‚¹<?= number_format($pkg['price']) ?></span>
+      <span class="badge ms-1" class="style-79108"><?= htmlspecialchars($pkg['badge_label'] ?? $pkg['name']) ?> ₹<?= number_format($pkg['price']) ?></span>
     <?php endforeach; ?>
-    â€” <a href="<?= $base ?>/list-property" class="text-decoration-underline fw-bold">List now</a></span>
+    — <a href="<?= $base ?>/list-property" class="text-decoration-underline fw-bold">List now</a></span>
   </div>
   <?php endif; ?>
 
@@ -225,7 +225,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <span class="badge bg-secondary text-capitalize"><?= $prop['listing_type'] ?></span>
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <div class="price">â‚¹<?= number_format($prop['price']) ?></div>
+                <div class="price">₹<?= number_format($prop['price']) ?></div>
                 <small class="text-muted"><?= number_format($prop['area_sqft'] ?? 0) ?> sqft</small>
               </div>
               <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">

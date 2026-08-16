@@ -1,4 +1,4 @@
-<!-- Tenant List â€” Super Admin -->
+<!-- Tenant List — Super Admin -->
 <?php
 $tenants = $tenants ?? [];
 $total = $total ?? 0;
@@ -55,7 +55,7 @@ $base = BASE_URL ?? '';
     </div>
     <div class="col-lg-3 col-6">
         <div class="small-box" class="style-48582">
-            <div class="inner"><h3>â‚¹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h3><p>MRR</p></div>
+            <div class="inner"><h3>₹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h3><p>MRR</p></div>
             <div class="icon"><i class="fas fa-rupee-sign"></i></div>
         </div>
     </div>
@@ -151,7 +151,7 @@ $base = BASE_URL ?? '';
                                     <span><?= $t['leads_count'] ?? 0 ?></span>/<small><?= number_format($t['max_leads']) ?></small>
                                 </td>
                                 <td>
-                                    <small class="text-muted"><?= htmlspecialchars($t['contact_name'] ?? 'â€”') ?></small>
+                                    <small class="text-muted"><?= htmlspecialchars($t['contact_name'] ?? '—') ?></small>
                                     <br><small class="text-muted"><?= htmlspecialchars($t['contact_email'] ?? '') ?></small>
                                 </td>
                                 <td><small class="text-muted"><?= date('d M Y', strtotime($t['created_at'])) ?></small></td>

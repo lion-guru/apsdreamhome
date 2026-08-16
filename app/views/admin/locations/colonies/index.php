@@ -117,7 +117,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <strong>â‚¹<?php echo number_format($colony['starting_price']); ?></strong>
+                                        <strong>₹<?php echo number_format($colony['starting_price']); ?></strong>
                                     </td>
                                     <td>
                                         <?php if ($colony['is_featured']): ?>

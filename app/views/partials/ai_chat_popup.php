@@ -29,7 +29,7 @@ $base = $base ?? BASE_URL;
         </div>
         <div id="ai-popup-messages" class="ai-popup-messages">
             <div class="text-center py-4 px-3">
-                <div class="mb-2"><span class="style-46757">ðŸ‘‹</span></div>
+                <div class="mb-2"><span class="style-46757">ðŸ'‹</span></div>
                 <p class="mb-1 small fw-bold">Namaste! Main APS Dream Home ki AI hoon.</p>
                 <p class="text-muted small mb-0">Aapki kya madad kar sakta hoon?</p>
             </div>

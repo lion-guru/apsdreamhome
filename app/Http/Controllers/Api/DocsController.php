@@ -9,9 +9,9 @@ use App\Core\Router;
  * API documentation controller.
  *
  * Exposes:
- *   GET /api/docs         â€” Swagger UI
- *   GET /api/docs/spec    â€” Auto-generated OpenAPI 3.0 spec (JSON)
- *   GET /api/docs/list    â€” Lightweight route catalog
+ *   GET /api/docs         —" Swagger UI
+ *   GET /api/docs/spec    —" Auto-generated OpenAPI 3.0 spec (JSON)
+ *   GET /api/docs/list    —" Lightweight route catalog
  *
  * Spec is generated at request time by introspecting the live Router,
  * so adding a new route to routes/api.php is the only step required
@@ -22,7 +22,7 @@ class DocsController extends BaseController
     /** Methods we include in the OpenAPI spec. */
     private const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-    /** Group â†’ tag map for nicer Swagger UI grouping. */
+    /** Group â†' tag map for nicer Swagger UI grouping. */
     private const GROUP_TAGS = [
         'auth'        => 'Authentication',
         'mobile'      => 'Mobile API',

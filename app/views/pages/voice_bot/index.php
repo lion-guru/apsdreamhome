@@ -1,6 +1,6 @@
 <?php
 /**
- * APS Dream Homes â€” Browser Voice Bot
+ * APS Dream Homes — Browser Voice Bot
  * Option A: Customer opens link â†’ speaks in Hindi â†’ AI responds
  * 100% free: Web Speech API (STT+TTS) + Groq/Llama (LLM)
  */
@@ -13,7 +13,7 @@ $language = $language ?? 'hi';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APS Dream Homes â€” Voice Assistant</title>
+    <title>APS Dream Homes — Voice Assistant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -327,7 +327,7 @@ let isSpeaking = false;
 function initRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        voiceLabel.textContent = 'Speech not supported â€” type instead';
+        voiceLabel.textContent = 'Speech not supported — type instead';
         voiceLabel.className = 'voice-label error';
         return null;
     }

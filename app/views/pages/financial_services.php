@@ -97,7 +97,7 @@ try {
                                 <?php endif; ?>
                                 <?php if (!empty($service['max_amount']) && $service['max_amount'] > 0): ?>
                                     <span class="capsule-badge bg-success bg-opacity-10 text-success border border-success border-opacity-10 me-2 mb-2">
-                                        <i class="fas fa-rupee-sign me-1"></i>Up to â‚¹<?= number_format($service['max_amount'] / 10000000, 1) ?> Cr
+                                        <i class="fas fa-rupee-sign me-1"></i>Up to ₹<?= number_format($service['max_amount'] / 10000000, 1) ?> Cr
                                     </span>
                                 <?php endif; ?>
                                 <?php if (!empty($service['tenure_months']) && $service['tenure_months'] > 0): ?>

@@ -51,7 +51,7 @@ ob_start();
   <div class="card shadow-sm mb-4">
     <div class="card-header bg-white"><h5 class="mb-0">Create New API Key</h5></div>
     <div class="card-body">
-      <form method="post" action="<?= BASE_URL ?>/admin/api-keys/create">
+      <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/create">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-2">
           <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Key name (e.g. Mobile App)" required></div>
@@ -108,17 +108,17 @@ ob_start();
                 <td><small><?= htmlspecialchars($k['created_at']) ?></small></td>
                 <td>
                   <?php if ($k['is_active']): ?>
-                    <form method="post" action="<?= BASE_URL ?>/admin/api-keys/revoke/<?= $k['id'] ?>" class="d-inline">
+                    <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/revoke/<?= $k['id'] ?>" class="d-inline">
                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                       <button class="btn btn-sm btn-outline-warning" title="Revoke"><i class="fas fa-ban"></i></button>
                     </form>
                   <?php else: ?>
-                    <form method="post" action="<?= BASE_URL ?>/admin/api-keys/activate/<?= $k['id'] ?>" class="d-inline">
+                    <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/activate/<?= $k['id'] ?>" class="d-inline">
                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                       <button class="btn btn-sm btn-outline-success" title="Activate"><i class="fas fa-check"></i></button>
                     </form>
                   <?php endif; ?>
-                  <form method="post" action="<?= BASE_URL ?>/admin/api-keys/delete/<?= $k['id'] ?>" class="d-inline" onsubmit="return confirm('Permanently delete this API key?')">
+                  <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/delete/<?= $k['id'] ?>" class="d-inline" onsubmit="return confirm('Permanently delete this API key?')">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                   </form>

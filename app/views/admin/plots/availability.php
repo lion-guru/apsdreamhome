@@ -142,8 +142,8 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                                             <td><?= htmlspecialchars($p['block'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($p['dimension_label'] ?? '') ?: number_format($p['width_ft'] ?? 0) . 'x' . number_format($p['length_ft'] ?? 0) ?></td>
                                             <td class="text-end"><?= number_format($p['area_sqft'] ?? 0) ?></td>
-                                            <td class="text-end">â‚¹<?= number_format(floatval($p['price_per_sqft'] ?? 0), 2) ?></td>
-                                            <td class="text-end fw-bold">â‚¹<?= number_format(intval($p['total_price'] ?? 0)) ?></td>
+                                            <td class="text-end">₹<?= number_format(floatval($p['price_per_sqft'] ?? 0), 2) ?></td>
+                                            <td class="text-end fw-bold">₹<?= number_format(intval($p['total_price'] ?? 0)) ?></td>
                                             <td><?= htmlspecialchars(ucfirst($p['facing'] ?? '')) ?></td>
                                             <td>
                                                 <span class="badge bg-<?= $statusClass ?> p-2 w-100 status-badge"

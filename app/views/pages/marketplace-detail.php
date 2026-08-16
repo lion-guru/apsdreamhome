@@ -12,7 +12,9 @@
     <div class="col-lg-8">
       <div class="aps-cp-card">
         <?php if (!empty($prop['image'])): ?>
-          <img src="<?= BASE_URL ?>/<?= htmlspecialchars($prop['image']) ?>" class="card-img-top rounded-top" class="style-94960" alt="<?= htmlspecialchars($prop['name']) ?>">
+          <?php $imgRaw = $prop['image'] ?? '';
+                $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+          <img src="<?= htmlspecialchars($imgSrc) ?>" class="card-img-top rounded-top" class="style-94960" alt="<?= htmlspecialchars($prop['name']) ?>">
         <?php endif; ?>
         <div class="aps-cp-card-body">
           <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
@@ -20,7 +22,7 @@
               <h3 class="mb-1"><?= htmlspecialchars($prop['name'] ?? '') ?></h3>
               <p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($prop['city_name'] ?? $prop['location'] ?? $prop['address'] ?? '') ?></p>
             </div>
-            <h3 class="text-success mb-0">â‚¹<?= number_format($prop['price'] ?? 0) ?></h3>
+            <h3 class="text-success mb-0">₹<?= number_format($prop['price'] ?? 0) ?></h3>
           </div>
 
           <div class="row g-3 mb-4">
@@ -45,7 +47,7 @@
             <div class="col-3 text-center">
               <div class="bg-light rounded p-2">
                 <small class="text-muted">Price/sqft</small>
-                <p class="mb-0 fw-bold">â‚¹<?= number_format(($prop['area_sqft'] ?? 1) > 0 ? ($prop['price'] ?? 0) / $prop['area_sqft'] : 0) ?></p>
+                <p class="mb-0 fw-bold">₹<?= number_format(($prop['area_sqft'] ?? 1) > 0 ? ($prop['price'] ?? 0) / $prop['area_sqft'] : 0) ?></p>
               </div>
             </div>
           </div>

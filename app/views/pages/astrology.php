@@ -161,13 +161,15 @@ $page_description = 'Explore how Vedic astrology influences property selection a
                 <div class="col-md-6 col-lg-3" data-aos="fade-up">
                     <div class="card h-100 border-0 shadow-sm overflow-hidden">
                         <div class="position-relative">
-                            <img src="<?= BASE_URL . '/' . htmlspecialchars($colony['image_path'] ?? 'assets/images/default-banner.jpg') ?>" alt="<?= htmlspecialchars($colony['name']) ?>" class="card-img-top" class="style-58348">
+                            <?php $imgRaw = $colony['image_path'] ?? 'assets/images/default-banner.jpg';
+                                  $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+                            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($colony['name']) ?>" class="card-img-top" class="style-58348">
                             <span class="badge bg-info text-dark position-absolute top-0 end-0 m-2">Astrology OK</span>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title"><?= htmlspecialchars($colony['name'] ?? '') ?></h5>
                             <p class="text-muted small mb-2"><?= htmlspecialchars($colony['location'] ?? '') ?></p>
-                            <p class="fw-bold text-primary mb-0"><?= !empty($colony['starting_price']) ? 'â‚¹' . number_format($colony['starting_price']) : 'Contact Us' ?></p>
+                            <p class="fw-bold text-primary mb-0"><?= !empty($colony['starting_price']) ? '₹' . number_format($colony['starting_price']) : 'Contact Us' ?></p>
                         </div>
                         <div class="card-footer bg-white border-0 text-center">
                             <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug'] ?? $colony['name'] ?? '') ?>" class="btn btn-sm btn-outline-primary">View Details</a>

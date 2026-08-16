@@ -104,8 +104,8 @@ ob_start();
                     <?php if ($session['page_url']): ?>
                         <p class="small mb-1"><strong>Page:</strong> <a href="<?= htmlspecialchars($session['page_url']) ?>" target="_blank" class="text-truncate d-block" class="style-65684"><?= htmlspecialchars($session['page_url']) ?></a></p>
                     <?php endif; ?>
-                    <p class="small mb-1"><strong>IP:</strong> <?= htmlspecialchars($session['ip_address'] ?: 'â€”') ?></p>
-                    <p class="small mb-1"><strong>Country:</strong> <?= htmlspecialchars($session['country'] ?: 'â€”') ?></p>
+                    <p class="small mb-1"><strong>IP:</strong> <?= htmlspecialchars($session['ip_address'] ?: '—') ?></p>
+                    <p class="small mb-1"><strong>Country:</strong> <?= htmlspecialchars($session['country'] ?: '—') ?></p>
                     <p class="small mb-1"><strong>Agent:</strong> <?= htmlspecialchars($session['agent_name'] ?? 'Unassigned') ?></p>
                     <p class="small mb-0"><strong>Messages:</strong> <?= $session['message_count'] ?></p>
                 </div>

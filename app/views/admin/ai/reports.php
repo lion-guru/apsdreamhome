@@ -105,7 +105,7 @@ $leadQualified = $leadQualified ?? [];
     <?php endif; ?>
 </div>
 
-<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 const leadLabels = <?= json_encode($leadLabels) ?>;
 const leadTotals = <?= json_encode($leadTotals) ?>;

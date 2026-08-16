@@ -31,7 +31,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
                                 <tr><th>Dimensions</th><td><?= !empty($plot['dimension_label']) ? htmlspecialchars($plot['dimension_label']) : number_format($plot['width_ft'] ?? 0) . 'x' . number_format($plot['length_ft'] ?? 0) . ' ft' ?></td></tr>
                                 <tr><th>Area</th><td><?= number_format($plot['area_sqft'] ?? 0) ?> sqft</td></tr>
-                                <tr><th>Total Price</th><td><strong class="text-primary">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
+                                <tr><th>Total Price</th><td><strong class="text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
                                 <tr><th>Current Status</th><td><span class="badge bg-<?= $plot['status'] === 'available' ? 'success' : ($plot['status'] === 'booked' ? 'warning' : ($plot['status'] === 'sold' ? 'danger' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?></span></td></tr>
                             </table></div>
                         </div>
@@ -61,9 +61,9 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                             $transferFee = floatval($plot['total_price'] ?? 0) * $transferFeeRate;
                             ?>
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th class="style-97126">Transfer Fee</th><td><strong class="text-danger">â‚¹<?= number_format($transferFee, 2) ?></strong></td></tr>
+                                <tr><th class="style-97126">Transfer Fee</th><td><strong class="text-danger">₹<?= number_format($transferFee, 2) ?></strong></td></tr>
                                 <tr><th>Rate</th><td><?= ($transferFeeRate * 100) ?>% of total price</td></tr>
-                                <tr><th>Total Price</th><td>â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></td></tr>
+                                <tr><th>Total Price</th><td>₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></td></tr>
                             </table></div>
                             <div class="form-text">Transfer fee subject to change as per company policy.</div>
                         </div>
@@ -107,12 +107,12 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Transfer Amount (â‚¹)</label>
+                                        <label class="form-label fw-bold">Transfer Amount (₹)</label>
                                         <input type="number" name="transfer_amount" class="form-control" min="0" step="0.01" value="<?= floatval($plot['total_price'] ?? 0) ?>">
                                         <div class="form-text">Amount to be paid by new owner</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Transfer Fee (â‚¹) <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-bold">Transfer Fee (₹) <span class="text-danger">*</span></label>
                                         <input type="number" name="transfer_fee" class="form-control" min="0" step="0.01" value="<?= $transferFee ?>" required>
                                     </div>
                                 </div>

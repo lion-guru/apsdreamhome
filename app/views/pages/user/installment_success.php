@@ -39,7 +39,7 @@ $instStatusColors = [
             <h3 class="mt-2"><?= __('user_installment_success_thank_you', 'Thank You,') ?> <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
             <p class="text-muted">
                 <?= __('user_installment_success_received_prefix', 'Your installment #') ?><?= (int)($installment['installment_number'] ?? 0) ?> <?= __('user_installment_success_received_middle', 'payment of') ?>
-                <strong class="text-success">â‚¹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
+                <strong class="text-success">₹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
                 <?= __('user_installment_success_received_suffix', 'has been received.') ?>
             </p>
         </div>
@@ -61,7 +61,7 @@ $instStatusColors = [
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_installment_success_amount_paid', 'Amount Paid') ?></small>
-                        <strong class="text-success fs-5">â‚¹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
+                        <strong class="text-success fs-5">₹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
                     </div>
                     <div class="col-sm-6">
                         <small class="text-muted d-block"><?= __('user_installment_success_payment_method', 'Payment Method') ?></small>
@@ -115,8 +115,8 @@ $instStatusColors = [
                             <tr class="<?= $aiStatus === 'overdue' ? 'table-danger' : '' ?>">
                                 <td><strong><?= (int)($ai['installment_number'] ?? 0) ?></strong></td>
                                 <td><?= date('d M Y', strtotime($ai['due_date'] ?? 'now')) ?></td>
-                                <td class="text-end">â‚¹<?= number_format((float)($ai['emi_amount'] ?? 0)) ?></td>
-                                <td class="text-end">â‚¹<?= number_format((float)($ai['paid_amount'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format((float)($ai['emi_amount'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format((float)($ai['paid_amount'] ?? 0)) ?></td>
                                 <td><span class="badge bg-<?= $aiColor ?>"><?= ucfirst($aiStatus) ?></span></td>
                             </tr>
                             <?php endforeach; ?>

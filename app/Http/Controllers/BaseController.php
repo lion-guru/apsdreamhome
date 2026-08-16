@@ -118,10 +118,11 @@ class BaseController
         if (class_exists(LocalizationService::class)) {
             if (method_exists(LocalizationService::class, 'getInstance')) {
                 try {
+                    // Try to get the instance - it will handle null deps gracefully
                     $this->mlSupport = LocalizationService::getInstance();
                 } catch (\Throwable $e) {
-                // LocalizationService requires deps not available - skip silently
-                error_log($e->getMessage());
+                    // LocalizationService requires deps not available - skip silently
+                    error_log($e->getMessage());
                 }
             }
         }
@@ -464,6 +465,11 @@ class BaseController
         // Auto-inject CSRF token into every rendered view (so forms always have a valid token)
         if (!isset($data['csrf_token'])) {
             $data['csrf_token'] = $this->getCsrfToken();
+        }
+
+        // Ensure BASE_URL is available in views (views are included before layout loads bootstrap.php)
+        if (!isset($data['BASE_URL'])) {
+            $data['BASE_URL'] = defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome';
         }
 
         // Extract data to variables

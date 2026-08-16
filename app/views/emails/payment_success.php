@@ -27,7 +27,7 @@
             <div class="payment-card">
                 <h3>Payment Details</h3>
                 <p><strong>Order ID:</strong> #N/A</p>
-                <p><strong>Amount Paid:</strong> <span class="amount">â‚¹0</span></p>
+                <p><strong>Amount Paid:</strong> <span class="amount">₹0</span></p>
                 <p><strong>Payment Method:</strong> Unknown</p>
                 <p><strong>Transaction ID:</strong> N/A</p>
                 <p><strong>Payment Date:</strong> 20 Oct 2025, 10:24 PM</p>
@@ -53,8 +53,8 @@
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>
-            <p>ðŸ“§ Email: support@apsdreamhome.com<br>
-               ðŸ“ž Phone: {{company_phone}}</p>
+            <p>ðŸ"§ Email: support@apsdreamhome.com<br>
+               ðŸ"ž Phone: {{company_phone}}</p>
         </div>
 
         <div class="footer">

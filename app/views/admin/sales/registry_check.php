@@ -27,15 +27,15 @@ $isEligible   = $eligibility['eligible'] ?? false;
         <div class="row g-3">
             <div class="col-md-3">
                 <small class="text-muted d-block">Customer</small>
-                <strong><?= htmlspecialchars((string)($booking['customer_name'] ?? 'â€”')) ?></strong>
+                <strong><?= htmlspecialchars((string)($booking['customer_name'] ?? '—')) ?></strong>
             </div>
             <div class="col-md-3">
                 <small class="text-muted d-block">Plot</small>
-                <strong><?= htmlspecialchars((string)($booking['plot_number'] ?? 'â€”')) ?></strong>
+                <strong><?= htmlspecialchars((string)($booking['plot_number'] ?? '—')) ?></strong>
             </div>
             <div class="col-md-3">
                 <small class="text-muted d-block">Colony</small>
-                <strong><?= htmlspecialchars((string)($booking['colony_name'] ?? 'â€”')) ?></strong>
+                <strong><?= htmlspecialchars((string)($booking['colony_name'] ?? '—')) ?></strong>
             </div>
             <div class="col-md-3">
                 <small class="text-muted d-block">Status</small>
@@ -124,14 +124,14 @@ $isEligible   = $eligibility['eligible'] ?? false;
                 <?php if (($eligibility['pending_amount'] ?? 0) > 0): ?>
                     <div class="col-md-4">
                         <div class="alert alert-warning mb-0">
-                            <strong>â‚¹<?= number_format($eligibility['pending_amount'], 2) ?></strong> Pending Amount
+                            <strong>₹<?= number_format($eligibility['pending_amount'], 2) ?></strong> Pending Amount
                         </div>
                     </div>
                 <?php endif; ?>
                 <?php if (($eligibility['penalty_amount'] ?? 0) > 0): ?>
                     <div class="col-md-4">
                         <div class="alert alert-danger mb-0">
-                            <strong>â‚¹<?= number_format($eligibility['penalty_amount'], 2) ?></strong> Accrued Penalties
+                            <strong>₹<?= number_format($eligibility['penalty_amount'], 2) ?></strong> Accrued Penalties
                         </div>
                     </div>
                 <?php endif; ?>

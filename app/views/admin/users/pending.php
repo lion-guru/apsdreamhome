@@ -64,7 +64,7 @@
                             <?php if (!empty($user['referred_by'])): ?>
                                 <span class="badge bg-info">Has Sponsor</span>
                             <?php else: ?>
-                                <span class="text-muted">â€”</span>
+                                <span class="text-muted">—</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-end pe-4">

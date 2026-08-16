@@ -18,7 +18,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                 <div class="style-38412">
                     <i class="fas fa-wallet fa-lg" class="style-93945"></i>
                 </div>
-                <h3 class="style-613">â‚¹<?= number_format($total_earned) ?></h3>
+                <h3 class="style-613">₹<?= number_format($total_earned) ?></h3>
                 <p class="text-muted mb-0">Total Earned</p>
             </div>
         </div>
@@ -40,7 +40,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                 <div class="style-83109">
                     <i class="fas fa-chart-line fa-lg" class="style-44353"></i>
                 </div>
-                <h3 class="style-36030">â‚¹<?= number_format($total_earned > 0 ? round($total_earned / max(count($commissions), 1)) : 0) ?></h3>
+                <h3 class="style-36030">₹<?= number_format($total_earned > 0 ? round($total_earned / max(count($commissions), 1)) : 0) ?></h3>
                 <p class="text-muted mb-0">Avg per Entry</p>
             </div>
         </div>
@@ -90,7 +90,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                             <span class="badge <?= $icon[1] ?> me-1"><i class="<?= $icon[0] ?>"></i></span>
                             <?= ucfirst(str_replace('_', ' ', $type)) ?>
                         </td>
-                        <td class="px-3 fw-bold" class="style-93945">â‚¹<?= number_format($c['amount'] ?? 0) ?></td>
+                        <td class="px-3 fw-bold" class="style-93945">₹<?= number_format($c['amount'] ?? 0) ?></td>
                         <td class="px-3"><small class="text-muted"><?= htmlspecialchars($c['description'] ?? '-') ?></small></td>
                         <td class="px-3"><small class="text-muted"><?= date('d M Y', strtotime($c['created_at'] ?? 'now')) ?></small></td>
                     </tr>

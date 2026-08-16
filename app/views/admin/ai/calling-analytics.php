@@ -107,7 +107,7 @@ $days = $days ?? 30;
     <?php endif; ?>
 </div>
 
-<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 const labels = <?= json_encode($day_labels) ?>;
 const totals = <?= json_encode($day_totals) ?>;

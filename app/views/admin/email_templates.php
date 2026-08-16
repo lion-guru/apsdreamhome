@@ -49,7 +49,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i><?= __('admin_tpl_available', null, 'Available Templates') ?> (<?= count($templates) ?>)</h5>
-            <span class="badge bg-primary"><?= __('admin_tpl_brand', null, 'Brand: #0d9488 â†’ #0f766e') ?></span>
+            <span class="badge bg-primary"><?= __('admin_tpl_brand', null, 'Brand: #0d9488 to #0f766e') ?></span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">

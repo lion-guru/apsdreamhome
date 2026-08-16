@@ -150,7 +150,7 @@ function autoAdvance() {
   <!-- Filtered Colonies Table -->
   <div class="card border-0 shadow-sm">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <strong><i class="fas fa-list me-1"></i> Colonies <?= $filterStage ? 'â€” ' . ucfirst(str_replace('_', ' ', $filterStage)) : 'All Stages' ?></strong>
+      <strong><i class="fas fa-list me-1"></i> Colonies <?= $filterStage ? '— ' . ucfirst(str_replace('_', ' ', $filterStage)) : 'All Stages' ?></strong>
       <?php if ($filterStage): ?>
         <a href="/admin/legal-colony-pipeline" class="btn btn-sm btn-outline-light"><i class="fas fa-times me-1"></i> Clear Filter</a>
       <?php endif; ?>
@@ -235,7 +235,7 @@ function autoAdvance() {
                 <td><?= (int)($c['plot_count'] ?? 0) ?></td>
                 <td class="text-success"><?= (int)($c['available_count'] ?? 0) ?></td>
                 <td class="text-danger"><?= (int)($c['sold_count'] ?? 0) ?></td>
-                <td>â‚¹<?= number_format(floatval($c['dev_cost_total'] ?? 0)) ?></td>
+                <td>₹<?= number_format(floatval($c['dev_cost_total'] ?? 0)) ?></td>
                 <td>
                   <div class="btn-group btn-group-sm">
                     <a href="/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-outline-info" title="Pipeline Detail">

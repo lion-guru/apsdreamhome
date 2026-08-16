@@ -112,7 +112,7 @@ $active_page = 'properties';
                                 </td>
                                 <td>
                                     <?php if ($property['price'] > 0): ?>
-                                        â‚¹<?= number_format(floatval($property['price'] ?? 0), 2) ?>
+                                        ₹<?= number_format(floatval($property['price'] ?? 0), 2) ?>
                                     <?php else: ?>
                                         <span class="text-muted">Not Set</span>
                                     <?php endif; ?>
@@ -194,7 +194,7 @@ $active_page = 'properties';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="POST" id="deleteForm" class="style-26772">
+                <form method="POST" id="deleteForm" action="<?= BASE_URL ?>/admin/properties/0/destroy" class="style-26772">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <button type="submit" class="btn btn-danger">Delete Property</button>
                 </form>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Generic register view â€” redirects to role-specific register pages.
+ * Generic register view — redirects to role-specific register pages.
  * Used by AuthenticationController as a unified entry point.
  */
 ?>

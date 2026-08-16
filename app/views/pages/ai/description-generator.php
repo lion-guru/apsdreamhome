@@ -27,7 +27,7 @@
                                 <input type="text" id="location" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_location', [], 'e.g. Gorakhpur, UP') ?>">
                             </div>
                             <div class="col-md-4">
-                                <label for="price" class="form-label fw-bold"><?= __('aigen_label_price', [], 'Price (â‚¹)') ?></label>
+                                <label for="price" class="form-label fw-bold"><?= __('aigen_label_price', [], 'Price (₹)') ?></label>
                                 <input type="number" id="price" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_price', [], 'e.g. 5000000') ?>">
                             </div>
                             
@@ -89,7 +89,7 @@ document.getElementById('propertyForm').addEventListener('submit', async (e) => 
     const details = `
         Property Type: ${document.getElementById('propertyType').value}
         Location: ${document.getElementById('location').value}
-        Price: â‚¹${document.getElementById('price').value}
+        Price: ₹${document.getElementById('price').value}
         Area: ${document.getElementById('area').value} sq ft
         Bedrooms: ${document.getElementById('bedrooms').value || 'N/A'}
         Bathrooms: ${document.getElementById('bathrooms').value || 'N/A'}

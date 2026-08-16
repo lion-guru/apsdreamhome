@@ -38,7 +38,7 @@
                                     <td><?= htmlspecialchars($a['email'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($a['phone'] ?? '') ?></td>
                                     <td><span class="badge bg-warning text-dark"><?= (int)($a['points'] ?? 0) ?></span></td>
-                                    <td><?= htmlspecialchars($a['badges'] ?? 'â€”') ?></td>
+                                    <td><?= htmlspecialchars($a['badges'] ?? '—') ?></td>
                                     <td>
                                         <div class="progress" class="style-39312">
                                             <div class="progress-bar bg-info" class="style-97207"><?= (int)($a['training_progress'] ?? 0) ?>%</div>

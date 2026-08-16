@@ -124,7 +124,7 @@ $activityIcons = [
                     </div>
                     <div class="col-md-6">
                         <label class="text-muted small">Budget</label>
-                        <div class="fw-semibold"><?= !empty($lead['budget']) ? 'â‚¹' . number_format((float)$lead['budget']) : '-' ?></div>
+                        <div class="fw-semibold"><?= !empty($lead['budget']) ? '₹' . number_format((float)$lead['budget']) : '-' ?></div>
                     </div>
                     <div class="col-md-6">
                         <label class="text-muted small">Location Preference</label>

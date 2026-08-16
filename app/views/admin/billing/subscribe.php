@@ -1,4 +1,4 @@
-<!-- Subscribe Tenant â€” Plan Selection & Subscription Management -->
+<!-- Subscribe Tenant — Plan Selection & Subscription Management -->
 <?php
 $tenant  = $tenant ?? [];
 $plans   = $plans ?? [];
@@ -39,7 +39,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
         <div>
             <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Manage Subscription</h4>
             <p class="mb-0 mt-1" class="style-91394">
-                <?= htmlspecialchars($tenant['name'] ?? 'Tenant') ?> â€” <?= htmlspecialchars($tenant['slug'] ?? '') ?>
+                <?= htmlspecialchars($tenant['name'] ?? 'Tenant') ?> — <?= htmlspecialchars($tenant['slug'] ?? '') ?>
             </p>
         </div>
         <a href="<?= $base ?>/admin/billing" class="btn btn-outline-light btn-sm">
@@ -59,11 +59,11 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
                 </div>
                 <div class="col-md-3">
                     <small class="text-muted d-block">Amount</small>
-                    <strong>â‚¹<?= number_format($current['amount'] ?? 0) ?>/<?= $cycle ?></strong>
+                    <strong>₹<?= number_format($current['amount'] ?? 0) ?>/<?= $cycle ?></strong>
                 </div>
                 <div class="col-md-3">
                     <small class="text-muted d-block">Renews / Expires</small>
-                    <strong><?= $current['current_period_end'] ? date('d M Y', strtotime($current['current_period_end'])) : 'â€”' ?></strong>
+                    <strong><?= $current['current_period_end'] ? date('d M Y', strtotime($current['current_period_end'])) : '—' ?></strong>
                 </div>
                 <div class="col-md-2 text-end">
                     <form method="POST" action="<?= $base ?>/admin/billing/cancel/<?= $tenant['id'] ?>" class="d-inline"
@@ -112,7 +112,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
                             <div class="text-center">
                                 <h6 class="mb-2"><?= htmlspecialchars($plan['name']) ?></h6>
                                 <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>" class="style-4846">
-                                    â‚¹<span class="price-monthly"><?= number_format($plan['price_monthly']) ?></span>
+                                    ₹<span class="price-monthly"><?= number_format($plan['price_monthly']) ?></span>
                                     <span class="price-yearly" class="style-2248"><?= number_format($plan['price_yearly']) ?></span>
                                     <small class="text-muted fs-6 cycle-label">/mo</small>
                                 </div>

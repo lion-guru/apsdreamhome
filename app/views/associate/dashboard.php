@@ -233,21 +233,21 @@ body {
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass" class="style-47504">
             <div class="stat-icon-wrapper"><i class="fas fa-wallet"></i></div>
-            <div class="stat-value">â‚¹<?= number_format($walletBalance) ?></div>
+            <div class="stat-value">₹<?= number_format($walletBalance) ?></div>
             <div class="stat-label">Wallet Balance</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass" class="style-30926">
             <div class="stat-icon-wrapper"><i class="fas fa-rupee-sign"></i></div>
-            <div class="stat-value">â‚¹<?= number_format($totalEarnings) ?></div>
+            <div class="stat-value">₹<?= number_format($totalEarnings) ?></div>
             <div class="stat-label">Total Earnings</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass" class="style-58217">
             <div class="stat-icon-wrapper"><i class="fas fa-clock"></i></div>
-            <div class="stat-value">â‚¹<?= number_format($pendingCommissions) ?></div>
+            <div class="stat-value">₹<?= number_format($pendingCommissions) ?></div>
             <div class="stat-label">Pending Commission</div>
         </div>
     </div>
@@ -278,7 +278,7 @@ body {
             <div class="d-flex align-items-center gap-3">
                 <div class="style-71531"><i class="fas fa-calendar-check"></i></div>
                 <div>
-                    <div class="stat-value" class="style-79580">â‚¹<?= number_format($monthEarnings) ?></div>
+                    <div class="stat-value" class="style-79580">₹<?= number_format($monthEarnings) ?></div>
                     <div class="stat-label" class="style-62191">This Month</div>
                 </div>
             </div>
@@ -371,7 +371,7 @@ body {
                         </div>
                         <div class="text-end">
                             <div class="small text-muted fw-bold">Level Commission</div>
-                            <div class="text-success fw-bold">â‚¹<?= number_format($level['commission'] ?? 0) ?></div>
+                            <div class="text-success fw-bold">₹<?= number_format($level['commission'] ?? 0) ?></div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -396,7 +396,7 @@ body {
                             <div class="small text-muted"><?= date('M d, Y', strtotime($c['created_at'])) ?></div>
                         </div>
                         <div class="fw-bold text-success">
-                            +â‚¹<?= number_format($c['amount']) ?>
+                            +₹<?= number_format($c['amount']) ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

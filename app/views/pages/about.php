@@ -215,7 +215,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <p class="story-text mb-4">
                     APS Dream Homes Private Limited was incorporated on <strong>April 26, 2022</strong> under the 
                     Companies Act, 2013 (CIN: U70109UP2022PTC163047). Registered with the Registrar of Companies, 
-                    Kanpur, we set out with a singular vision â€” to make quality housing accessible to families in 
+                    Kanpur, we set out with a singular vision — to make quality housing accessible to families in 
                     Eastern Uttar Pradesh.
                 </p>
                 <p class="story-text mb-4">
@@ -241,11 +241,11 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 </div>
                 <div class="story-detail">
                     <h6><i class="fas fa-briefcase me-2" class="style-5793"></i> Industry</h6>
-                    <p>Real Estate Activities (NIC Code: 7010) â€” Plot & Land, Residential Floors</p>
+                    <p>Real Estate Activities (NIC Code: 7010) — Plot & Land, Residential Floors</p>
                 </div>
                 <div class="story-detail">
                     <h6><i class="fas fa-chart-line me-2" class="style-5793"></i> Capital</h6>
-                    <p>Authorized & Paid-up Capital: â‚¹10,00,000</p>
+                    <p>Authorized & Paid-up Capital: ₹10,00,000</p>
                 </div>
                 <div class="story-detail">
                     <h6><i class="fas fa-star me-2" class="style-5793"></i> Rating</h6>
@@ -266,7 +266,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <i class="fas fa-concierge-bell"></i> What We Do
             </div>
             <h2 class="style-84813">Our <span class="style-79458">Services</span></h2>
-            <p class="style-95961">End-to-end real estate solutions â€” from finding the perfect plot to handing over the keys.</p>
+            <p class="style-95961">End-to-end real estate solutions — from finding the perfect plot to handing over the keys.</p>
         </div>
         <div class="row g-4">
             <div class="col-md-3 col-6">
@@ -305,7 +305,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                     <h5>Flexible Payment Plans</h5>
-                    <p>EMI options, easy installment plans, and transparent pricing. No hidden charges â€” what you see is what you pay.</p>
+                    <p>EMI options, easy installment plans, and transparent pricing. No hidden charges — what you see is what you pay.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
@@ -345,7 +345,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         <i class="fas fa-users"></i>
                     </div>
                     <h5>Community Building</h5>
-                    <p>We don't just sell plots â€” we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
+                    <p>We don't just sell plots — we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
@@ -399,9 +399,11 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         $exp = aboutContent($sc, "leader_{$i}_exp", "about_leader_{$i}_exp");
                         $bio = aboutContent($sc, "leader_{$i}_bio", "about_leader_{$i}_bio");
                         ?>
-                        <img loading="lazy" 
-                             src="<?= BASE_URL ?>/<?= htmlspecialchars($photo) ?>" 
-                             alt="<?= htmlspecialchars($name) ?>">
+                         <?php $imgRaw = $photo ?? '';
+                               $imgSrc = (str_starts_with($imgRaw, 'http://') || str_starts_with($imgRaw, 'https://')) ? $imgRaw : BASE_URL . '/' . $imgRaw; ?>
+                         <img loading="lazy" 
+                              src="<?= htmlspecialchars($imgSrc) ?>" 
+                              alt="<?= htmlspecialchars($name) ?>">
                         <div class="leader-badge"><i class="fas fa-crown"></i> <?= $i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director') ?></div>
                     </div>
                     <div class="leader-body">
@@ -507,7 +509,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <h4>Our Values</h4>
                     <p><strong>Trust</strong> in every transaction. <strong>Transparency</strong> in every deal. 
                     <strong>Quality</strong> in every plot. <strong>Community</strong> in every project. These are 
-                    not just words â€” they are the foundation of every decision we make.</p>
+                    not just words — they are the foundation of every decision we make.</p>
                 </div>
             </div>
         </div>
@@ -711,7 +713,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                     </div>
                                     <h6 class="style-22646">Prayagraj</h6>
                                     <p class="style-724">APS Heights (200 Flats)</p>
-                                    <p class="style-724">Naini, â‚¹65 Lakh+</p>
+                                    <p class="style-724">Naini, ₹65 Lakh+</p>
                                 </div>
                             </div>
                         </div>
@@ -830,7 +832,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Plot Selling',
             subtitle: 'RERA-registered plots with clear titles',
             icon: 'fas fa-map-marked-alt',
-            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Every plot comes with clear legal title, RERA registration, and transparent pricing â€” so you invest with complete peace of mind.',
+            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Every plot comes with clear legal title, RERA registration, and transparent pricing — so you invest with complete peace of mind.',
             steps: [
                 'Browse available plots & colonies on our listings',
                 'Shortlist by location, budget & plot size',
@@ -844,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Construction & Development',
             subtitle: 'From raw land to livable neighborhoods',
             icon: 'fas fa-hard-hat',
-            desc: 'We handle complete colony development â€” internal roads, drainage, 24x7 water supply, electricity, street lighting, parks and community spaces. Our in-house team manages the entire lifecycle from land acquisition to a finished, livable township.',
+            desc: 'We handle complete colony development — internal roads, drainage, 24x7 water supply, electricity, street lighting, parks and community spaces. Our in-house team manages the entire lifecycle from land acquisition to a finished, livable township.',
             steps: [
                 'Land survey, planning & layout design',
                 'Infrastructure: roads, drainage, water & power',
@@ -872,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Flexible Payment Plans',
             subtitle: 'No hidden charges, ever',
             icon: 'fas fa-hand-holding-usd',
-            desc: 'Choose from EMI options and easy installment plans designed around your cash flow. Transparent pricing means what you see is exactly what you pay â€” no surprises, no hidden charges.',
+            desc: 'Choose from EMI options and easy installment plans designed around your cash flow. Transparent pricing means what you see is exactly what you pay — no surprises, no hidden charges.',
             steps: [
                 'Pick a plan: EMI or installment',
                 'Pay a comfortable booking amount',
@@ -886,7 +888,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Resale & Resale Assistance',
             subtitle: 'Sell at fair market value',
             icon: 'fas fa-home',
-            desc: 'Want to sell your plot? We connect you with genuine, verified buyers, handle all the documentation, and ensure you get fair market value â€” making resale simple and secure.',
+            desc: 'Want to sell your plot? We connect you with genuine, verified buyers, handle all the documentation, and ensure you get fair market value — making resale simple and secure.',
             steps: [
                 'List your property with us',
                 'We match verified interested buyers',
@@ -900,7 +902,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Free Site Visits',
             subtitle: 'See before you decide',
             icon: 'fas fa-car',
-            desc: 'Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas â€” so you can experience the location, roads and surroundings firsthand.',
+            desc: 'Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas — so you can experience the location, roads and surroundings firsthand.',
             steps: [
                 'Request a site visit (call or form)',
                 'We schedule & arrange transport',
@@ -914,12 +916,12 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Furnished Flats',
             subtitle: 'Ready-to-move in APS Heights, Prayagraj',
             icon: 'fas fa-couch',
-            desc: 'Move in without the hassle. Our ready-to-move flats in APS Heights, Prayagraj offer 2BHK & 3BHK options with modern fittings, modular kitchen and dedicated parking â€” fully furnished and livable from day one.',
+            desc: 'Move in without the hassle. Our ready-to-move flats in APS Heights, Prayagraj offer 2BHK & 3BHK options with modern fittings, modular kitchen and dedicated parking — fully furnished and livable from day one.',
             steps: [
                 'Explore available flat configurations',
                 'Visit the model flat on site',
                 'Choose 2BHK / 3BHK & book',
-                'Move in â€” fully furnished & ready'
+                'Move in — fully furnished & ready'
             ],
             link: '<?= BASE_URL ?>/properties',
             linkText: 'View Flats'
@@ -928,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Community Building',
             subtitle: 'We build neighborhoods, not just plots',
             icon: 'fas fa-users',
-            desc: 'We donâ€™t just sell plots â€” we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
+            desc: 'We don—™t just sell plots — we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
             steps: [
                 'Planned green & community spaces',
                 'Nearby temples, schools & essentials',

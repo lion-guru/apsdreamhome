@@ -116,7 +116,7 @@ try {
         <div class="col-md-3">
             <div class="card bg-info text-white">
                 <div class="card-body text-center">
-                    <h3 class="mb-0">â‚¹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
+                    <h3 class="mb-0">₹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
                     <small><?php echo __('network_total_earnings', [], 'Total Earnings'); ?></small>
                 </div>
             </div>
@@ -220,7 +220,7 @@ try {
                                         </div>
                                         <div class="text-end">
                                             <?php if (($activity['amount'] ?? 0) > 0): ?>
-                                                <span class="text-success">+â‚¹<?= number_format($activity['amount']) ?></span>
+                                                <span class="text-success">+₹<?= number_format($activity['amount']) ?></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>

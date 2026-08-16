@@ -30,7 +30,7 @@ $bookingData = $bookingData ?? [];
 
     <div class="row g-3 mb-4">
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Bookings</div><div class="aps-cp-stat-value text-primary"><?= number_format($totalBookings) ?></div></div></div></div>
-        <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Revenue</div><div class="aps-cp-stat-value text-success">â‚¹<?= number_format($totalRevenue/100000,1) ?>L</div></div></div></div>
+        <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Revenue</div><div class="aps-cp-stat-value text-success">₹<?= number_format($totalRevenue/100000,1) ?>L</div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Total Leads</div><div class="aps-cp-stat-value"><?= number_format($totalLeads) ?></div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Conversion Rate</div><div class="aps-cp-stat-value text-<?= $conversionRate > 10 ? 'success' : 'warning' ?>"><?= $conversionRate ?>%</div></div></div></div>
         <div class="col-md-2"><div class="aps-cp-card"><div class="aps-cp-card-body text-center"><div class="aps-cp-stat-label">Properties</div><div class="aps-cp-stat-value"><?= number_format($totalProperties) ?></div></div></div></div>
@@ -86,8 +86,8 @@ $bookingData = $bookingData ?? [];
 <script>
 const colors = ['#0d9488','#06b6d4','#10b981','#f59e0b','#ef4444','#14b8a6','#ec4899','#14b8a6'];
 new Chart(document.getElementById('revenueChart'), {
-    type: 'bar', data: { labels: <?= json_encode($monthLabels) ?>, datasets: [{ label: 'Revenue (â‚¹)', data: <?= json_encode(array_map('floatval', $revenueData)) ?>, backgroundColor: '#0d9488aa', borderColor: '#0d9488', borderWidth: 1 }, { label: 'Bookings', data: <?= json_encode(array_map('intval', $bookingCountData)) ?>, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y1', tension: 0.3 }] },
-    options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Revenue (â‚¹)' } }, y1: { position: 'right', beginAtZero: true, title: { display: true, text: 'Bookings' }, grid: { drawOnChartArea: false } } } }
+    type: 'bar', data: { labels: <?= json_encode($monthLabels) ?>, datasets: [{ label: 'Revenue (₹)', data: <?= json_encode(array_map('floatval', $revenueData)) ?>, backgroundColor: '#0d9488aa', borderColor: '#0d9488', borderWidth: 1 }, { label: 'Bookings', data: <?= json_encode(array_map('intval', $bookingCountData)) ?>, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y1', tension: 0.3 }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Revenue (₹)' } }, y1: { position: 'right', beginAtZero: true, title: { display: true, text: 'Bookings' }, grid: { drawOnChartArea: false } } } }
 });
 new Chart(document.getElementById('sourceChart'), {
     type: 'doughnut', data: { labels: <?= json_encode($sourceLabels) ?>, datasets: [{ data: <?= json_encode(array_map('intval', $sourceData)) ?>, backgroundColor: colors }] },

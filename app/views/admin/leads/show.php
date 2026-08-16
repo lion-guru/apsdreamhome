@@ -23,7 +23,7 @@ $scoreColor = $leadScore >= 80 ? 'success' : ($leadScore >= 50 ? 'warning' : ($l
 $priorityBadge = ['high'=>'danger','medium'=>'warning','low'=>'info'];
 $pBadge = $priorityBadge[$lead['priority'] ?? 'medium'] ?? 'secondary';
 $phone = preg_replace('/[^0-9]/', '', $lead['phone'] ?? '');
-$budgetFormatted = isset($lead['budget']) ? 'â‚¹' . number_format((float)$lead['budget'], 0) : 'N/A';
+$budgetFormatted = isset($lead['budget']) ? '₹' . number_format((float)$lead['budget'], 0) : 'N/A';
 
 function timeAgo($dt) {
     if (!$dt) return '';
@@ -513,8 +513,8 @@ function timeAgo($dt) {
                                             <td><span class="interaction-badge bg-<?= ($int['interaction_type'] ?? '') === 'call' ? 'primary' : (($int['interaction_type'] ?? '') === 'email' ? 'info' : (($int['interaction_type'] ?? '') === 'whatsapp' ? 'success' : 'secondary')) ?>-subtle text-<?= ($int['interaction_type'] ?? '') === 'call' ? 'primary' : (($int['interaction_type'] ?? '') === 'email' ? 'info' : (($int['interaction_type'] ?? '') === 'whatsapp' ? 'success' : 'secondary')) ?>-emphasis"><?= ucfirst($int['interaction_type'] ?? '') ?></span></td>
                                             <td><span class="badge bg-<?= ($int['direction'] ?? '') === 'inbound' ? 'success' : 'primary' ?>-subtle text-<?= ($int['direction'] ?? '') === 'inbound' ? 'success' : 'primary' ?>-emphasis"><?= ucfirst($int['direction'] ?? '') ?></span></td>
                                             <td class="fw-semibold" class="style-86200"><?= htmlspecialchars(mb_strimwidth($int['subject'] ?? '', 0, 50, '...')) ?></td>
-                                            <td><?= htmlspecialchars($int['outcome'] ?? 'â€”') ?></td>
-                                            <td><?= !empty($int['duration_seconds']) ? gmdate('i:s', $int['duration_seconds']) : 'â€”' ?></td>
+                                            <td><?= htmlspecialchars($int['outcome'] ?? '—') ?></td>
+                                            <td><?= !empty($int['duration_seconds']) ? gmdate('i:s', $int['duration_seconds']) : '—' ?></td>
                                             <td><small class="text-muted"><?= timeAgo($int['created_at'] ?? '') ?></small></td>
                                             <td><small><?= htmlspecialchars($int['user_name'] ?? 'System') ?></small></td>
                                         </tr>
@@ -550,11 +550,11 @@ function timeAgo($dt) {
                                     <div class="row g-2">
                                         <div class="col-6">
                                             <small class="text-muted d-block">Value</small>
-                                            <strong class="text-success fs-5">â‚¹<?= number_format((float)($deal['deal_value'] ?? 0)) ?></strong>
+                                            <strong class="text-success fs-5">₹<?= number_format((float)($deal['deal_value'] ?? 0)) ?></strong>
                                         </div>
                                         <div class="col-6">
                                             <small class="text-muted d-block">Weighted</small>
-                                            <strong class="text-primary">â‚¹<?= number_format((float)($deal['deal_value'] ?? 0) * ((float)($deal['probability'] ?? 50) / 100)) ?></strong>
+                                            <strong class="text-primary">₹<?= number_format((float)($deal['deal_value'] ?? 0) * ((float)($deal['probability'] ?? 50) / 100)) ?></strong>
                                         </div>
                                         <div class="col-6">
                                             <small class="text-muted d-block">Probability</small>
@@ -730,29 +730,29 @@ function timeAgo($dt) {
                         <div class="row g-3">
                             <?php if (!empty($commission['track_a'])): ?>
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Track A â€” Direct Sale</small>
-                                <div class="amount">â‚¹<?= number_format($commission['track_a']['amount'] ?? 0) ?></div>
+                                <small class="text-muted d-block">Track A — Direct Sale</small>
+                                <div class="amount">₹<?= number_format($commission['track_a']['amount'] ?? 0) ?></div>
                                 <small class="text-muted"><?= $commission['track_a']['rate'] ?? 0 ?>% slab rate</small>
                             </div>
                             <?php endif; ?>
                             <?php if (!empty($commission['track_b'])): ?>
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Track B â€” Override</small>
-                                <div class="amount">â‚¹<?= number_format($commission['track_b']['amount'] ?? 0) ?></div>
+                                <small class="text-muted d-block">Track B — Override</small>
+                                <div class="amount">₹<?= number_format($commission['track_b']['amount'] ?? 0) ?></div>
                                 <small class="text-muted"><?= $commission['track_b']['rate'] ?? 0 ?>% differential</small>
                             </div>
                             <?php endif; ?>
                             <?php if (!empty($commission['track_c'])): ?>
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Track C â€” Performance</small>
-                                <div class="amount">â‚¹<?= number_format($commission['track_c']['amount'] ?? 0) ?></div>
+                                <small class="text-muted d-block">Track C — Performance</small>
+                                <div class="amount">₹<?= number_format($commission['track_c']['amount'] ?? 0) ?></div>
                                 <small class="text-muted"><?= $commission['track_c']['rate'] ?? 0 ?>% rollup</small>
                             </div>
                             <?php endif; ?>
                             <?php if (!empty($commission['total'])): ?>
                             <div class="col-12 text-center mt-3 p-3 bg-white rounded">
                                 <small class="text-muted text-uppercase fw-bold">Total Estimated</small>
-                                <div class="style-43168">â‚¹<?= number_format($commission['total']) ?></div>
+                                <div class="style-43168">₹<?= number_format($commission['total']) ?></div>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -1116,7 +1116,7 @@ function toggleQuickLog() {
     document.getElementById('quickLogBar').classList.toggle('minimized');
 }
 
-// â”€â”€ Quick Log (Sticky Bar) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Quick Log (Sticky Bar) —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function submitQuickLog() {
     const subject = document.getElementById('quickSubject').value.trim();
     const body = document.getElementById('quickBody').value.trim();
@@ -1152,7 +1152,7 @@ function submitQuickLog() {
     });
 }
 
-// â”€â”€ Full Interaction Modal Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Full Interaction Modal Submit —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function submitInteraction(e) {
     e.preventDefault();
     const form = document.getElementById('interactionForm');
@@ -1182,7 +1182,7 @@ function submitInteraction(e) {
     return false;
 }
 
-// â”€â”€ Task Modal Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Task Modal Submit —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function submitTask(e) {
     e.preventDefault();
     const form = document.getElementById('taskForm');
@@ -1214,7 +1214,7 @@ function submitTask(e) {
     return false;
 }
 
-// â”€â”€ Task Toggle (existing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Task Toggle (existing) —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function toggleTask(taskId, completed) {
     fetch(BASE + '/admin/leads/' + LEAD_ID + '/complete-task', {
         method: 'POST',
@@ -1225,7 +1225,7 @@ function toggleTask(taskId, completed) {
     });
 }
 
-// â”€â”€ Toast Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Toast Helper —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function showToast(msg, type) {
     const toast = document.createElement('div');
     toast.className = 'alert alert-' + type + ' position-fixed shadow-lg';
@@ -1235,16 +1235,16 @@ function showToast(msg, type) {
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
-// â”€â”€ Existing Modal Openers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Existing Modal Openers —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 function addNote() { new bootstrap.Modal(document.getElementById('noteModal')).show(); }
 function changeStatus() { new bootstrap.Modal(document.getElementById('statusModal')).show(); }
 function assignAgent() { new bootstrap.Modal(document.getElementById('assignModal')).show(); }
 
-// â”€â”€ Quick Log Enter Key â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Quick Log Enter Key —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 document.getElementById('quickSubject').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickLog(); } });
 document.getElementById('quickBody').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickLog(); } });
 
-// â”€â”€ Minimized bar click to expand â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// —€—€ Minimized bar click to expand —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
 document.getElementById('quickLogBar').addEventListener('click', function(e) {
     if (this.classList.contains('minimized') && !e.target.closest('button')) { this.classList.remove('minimized'); }
 });

@@ -24,7 +24,7 @@ $extraHead = '<style>
                     <h5 class="mb-3"><i class="fas fa-building me-2 text-primary"></i>Property</h5>
                     <h6><?= htmlspecialchars($property['name']) ?></h6>
                     <p class="text-muted small mb-1"><?= htmlspecialchars($property['address'] ?? '') ?></p>
-                    <p class="mb-0"><strong>â‚¹<?= number_format($property['price']) ?></strong> <span class="text-capitalize badge bg-light text-dark"><?= $property['property_type'] ?> for <?= $property['listing_type'] ?></span></p>
+                    <p class="mb-0"><strong>₹<?= number_format($property['price']) ?></strong> <span class="text-capitalize badge bg-light text-dark"><?= $property['property_type'] ?> for <?= $property['listing_type'] ?></span></p>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@ $extraHead = '<style>
                                     <?php endif; ?>
                                     <div class="card-body p-0">
                                         <h5 class="card-title"><?= htmlspecialchars($pkg['name']) ?></h5>
-                                        <div class="price">â‚¹<?= number_format($pkg['price'] ?? 0) ?></div>
+                                        <div class="price">₹<?= number_format($pkg['price'] ?? 0) ?></div>
                                         <div class="duration mb-3">Valid for <?= $pkg['duration_days'] ?> days</div>
                                         <?php if (!empty($pkg['description'])): ?>
                                             <p class="small text-muted"><?= htmlspecialchars($pkg['description']) ?></p>

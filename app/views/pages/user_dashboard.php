@@ -18,7 +18,7 @@ $kycStatus = $kycStatus ?? 'not_started';
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-hand-sparkles me-2"></i><?= __('dash_welcome_back', ['name' => htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? '')], 'Welcome back, %s!') ?></h2>
-            <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments â€” all in one place.') ?></p>
+            <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments — all in one place.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0">
             <div class="aps-cp-hero-actions justify-content-md-end">
@@ -146,13 +146,13 @@ $dashBookingCount = count($dashBookings);
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-success">â‚¹<?= number_format($dashTotalPaid) ?></div>
+                            <div class="fw-bold fs-4 text-success">₹<?= number_format($dashTotalPaid) ?></div>
                             <small class="text-muted"><?= __('dash_total_paid', null, 'Total Paid') ?></small>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-danger">â‚¹<?= number_format($dashTotalPending > 0 ? $dashTotalPending : 0) ?></div>
+                            <div class="fw-bold fs-4 text-danger">₹<?= number_format($dashTotalPending > 0 ? $dashTotalPending : 0) ?></div>
                             <small class="text-muted"><?= __('dash_pending_amount', null, 'Pending Amount') ?></small>
                         </div>
                     </div>
@@ -210,9 +210,9 @@ $dashBookingCount = count($dashBookings);
                             <tr>
                                 <td><strong>#<?= htmlspecialchars($b['plot_number'] ?? $b['property_id'] ?? 'N/A') ?></strong></td>
                                 <td><?= htmlspecialchars($b['colony_name'] ?? 'N/A') ?></td>
-                                <td>â‚¹<?= number_format($totalAmt) ?></td>
+                                <td>₹<?= number_format($totalAmt) ?></td>
                                 <td>
-                                    â‚¹<?= number_format($tokenPaid) ?>
+                                    ₹<?= number_format($tokenPaid) ?>
                                     <?php if ($tokenPaid > 0 && $tokenRequired > 0): ?>
                                         <br><small class="text-muted"><?= round(($tokenPaid / $tokenRequired) * 100) ?>% <?= __('dash_pct_of_token', null, 'of token') ?></small>
                                     <?php endif; ?>
@@ -272,7 +272,7 @@ $dashBookingCount = count($dashBookings);
                     <div class="col-sm-4">
                         <div class="aps-cp-stat aps-cp-stat--red" class="style-83240">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" class="style-30322">â‚¹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-value" class="style-30322">₹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
                                 <div class="aps-cp-stat-label">Overdue Amount</div>
                             </div>
                         </div>
@@ -281,7 +281,7 @@ $dashBookingCount = count($dashBookings);
                     <div class="col-sm-4">
                         <div class="aps-cp-stat" class="style-84622">
                             <div class="aps-cp-stat-body">
-                                <div class="aps-cp-stat-value" class="style-98499">â‚¹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-value" class="style-98499">₹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
                                 <div class="aps-cp-stat-label">Accrued Penalties (18% p.a.)</div>
                             </div>
                         </div>
@@ -321,8 +321,8 @@ $dashBookingCount = count($dashBookings);
                                 <td><small><?= htmlspecialchars($inst['plot_number'] ?? '') ?></small></td>
                                 <td>#<?= (int)($inst['installment_no'] ?? 0) ?></td>
                                 <td><?= date('d M Y', strtotime($inst['due_date'] ?? 'now')) ?></td>
-                                <td class="text-end">â‚¹<?= number_format((float)($inst['amount'] ?? 0)) ?></td>
-                                <td class="text-end text-danger">â‚¹<?= number_format((float)($inst['accrued_penalty'] ?? 0)) ?></td>
+                                <td class="text-end">₹<?= number_format((float)($inst['amount'] ?? 0)) ?></td>
+                                <td class="text-end text-danger">₹<?= number_format((float)($inst['accrued_penalty'] ?? 0)) ?></td>
                                 <td><span class="badge bg-danger"><?= (int)($inst['days_overdue'] ?? 0) ?>d</span></td>
                                 <td>
                                     <a href="<?= BASE_URL ?>/user/installments/<?= (int)($inst['id'] ?? 0) ?>/pay" class="btn btn-sm btn-success">
@@ -342,7 +342,7 @@ $dashBookingCount = count($dashBookings);
                     <span class="text-success fw-semibold">NACH Auto-Debit Active</span>
                     <span class="text-muted ms-auto">
                         Next debit: <?= date('d M Y', strtotime($paymentSummary['nach_mandate']['next_debit_date'] ?? 'now')) ?>
-                        &mdash; â‚¹<?= number_format((float)($paymentSummary['nach_mandate']['mandate_amount'] ?? 0)) ?>/mo
+                        &mdash; ₹<?= number_format((float)($paymentSummary['nach_mandate']['mandate_amount'] ?? 0)) ?>/mo
                     </span>
                 </div>
                 <?php endif; ?>
@@ -377,7 +377,7 @@ $dashBookingCount = count($dashBookings);
                                     <div class="flex-grow-1 min-w-0">
                                         <h6 class="mb-1 text-truncate"><?= htmlspecialchars($property['property_type'] ?? $property['title'] ?? __('dash_fallback_property', null, 'Property')) ?></h6>
                                         <p class="text-muted mb-1 small text-truncate"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['address'] ?? $property['location'] ?? '') ?></p>
-                                        <p class="mb-2"><strong>â‚¹<?= number_format($property['price'] ?? 0) ?></strong></p>
+                                        <p class="mb-2"><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></p>
                                         <span class="badge bg-<?= ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning' ?>">
                                             <?= ucfirst($property['status'] ?? 'pending') ?>
                                         </span>
@@ -449,11 +449,11 @@ $dashBookingCount = count($dashBookings);
             </div>
             <div class="aps-cp-card-body text-center">
                 <div class="display-5 fw-bold mb-1" class="style-12445"><?= htmlspecialchars($lvl) ?></div>
-                <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: â‚¹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
+                <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
                 <div class="aps-cp-progress" class="style-51045">
                     <div class="aps-cp-progress-bar" class="style-9161"></div>
                 </div>
-                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest â‚¹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
+                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
                 <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> <?= __('dash_btn_upgrade', null, 'Upgrade') ?></a>
             </div>
         </div>
@@ -480,7 +480,7 @@ $dashBookingCount = count($dashBookings);
                     </div>
                     <div class="col-6">
                         <div class="bg-white rounded-3 p-2 border">
-                            <div class="fw-bold text-success fs-5">â‚¹<?= number_format((float)($referral_earnings ?? 0), 2) ?></div>
+                            <div class="fw-bold text-success fs-5">₹<?= number_format((float)($referral_earnings ?? 0), 2) ?></div>
                             <small class="text-muted"><?= __('dash_earnings', null, 'Earnings') ?></small>
                         </div>
                     </div>

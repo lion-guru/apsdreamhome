@@ -117,8 +117,8 @@
                                         <td><span class="badge badge-primary"><?= htmlspecialchars($dept['code']) ?></span></td>
                                         <td><strong><?= htmlspecialchars($dept['name']) ?></strong></td>
                                         <td><?= htmlspecialchars(mb_strimwidth($dept['description'] ?? '', 0, 60, '...')) ?></td>
-                                        <td><?= htmlspecialchars($dept['head_name'] ?? 'â€”') ?></td>
-                                        <td>â‚¹<?= number_format($dept['dept_budget'] ?? 0) ?></td>
+                                        <td><?= htmlspecialchars($dept['head_name'] ?? '—') ?></td>
+                                        <td>₹<?= number_format($dept['dept_budget'] ?? 0) ?></td>
                                         <td><span class="badge badge-info"><?= $dept['designation_count'] ?? 0 ?></span></td>
                                         <td><span class="badge badge-success"><?= $dept['employee_count'] ?? 0 ?></span></td>
                                         <td>

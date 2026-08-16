@@ -14,8 +14,8 @@
     <div class="style-37601">
         <table class="style-61075">
             <tr><td class="style-20694">Booking:</td><td class="style-60925">{{booking_number}}</td></tr>
-            <tr><td class="style-20694">Total Overdue Amount:</td><td class="style-36562">â‚¹{{total_overdue}}</td></tr>
-            <tr><td class="style-20694">Penalty Accrued:</td><td class="style-15627">â‚¹{{total_penalty}}</td></tr>
+            <tr><td class="style-20694">Total Overdue Amount:</td><td class="style-36562">₹{{total_overdue}}</td></tr>
+            <tr><td class="style-20694">Penalty Accrued:</td><td class="style-15627">₹{{total_penalty}}</td></tr>
             <tr><td class="style-20694">Worst Overdue:</td><td class="style-42101">{{days_overdue}} days</td></tr>
         </table>
     </div>

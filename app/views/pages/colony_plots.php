@@ -73,13 +73,13 @@
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-info text-white">
-                <h3>â‚¹<?= number_format(intval($stats['min_price'] ?? 0)) ?></h3>
+                <h3>₹<?= number_format(intval($stats['min_price'] ?? 0)) ?></h3>
                 <p><?= __('colony_plots_min_price') ?></p>
             </div>
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-secondary text-white">
-                <h3>â‚¹<?= number_format(intval($stats['max_price'] ?? 0)) ?></h3>
+                <h3>₹<?= number_format(intval($stats['max_price'] ?? 0)) ?></h3>
                 <p><?= __('colony_plots_max_price') ?></p>
             </div>
         </div>
@@ -138,8 +138,8 @@
             <div class="col-md-3">
                 <label class="form-label"><?= __('colony_price_range') ?></label>
                 <div class="input-group">
-                    <input type="number" name="min_price" class="form-control" placeholder="Min â‚¹" value="<?= $current_min_price > 0 ? $current_min_price : '' ?>">
-                    <input type="number" name="max_price" class="form-control" placeholder="Max â‚¹" value="<?= $current_max_price > 0 ? $current_max_price : '' ?>">
+                    <input type="number" name="min_price" class="form-control" placeholder="Min ₹" value="<?= $current_min_price > 0 ? $current_min_price : '' ?>">
+                    <input type="number" name="max_price" class="form-control" placeholder="Max ₹" value="<?= $current_max_price > 0 ? $current_max_price : '' ?>">
                 </div>
             </div>
 
@@ -200,7 +200,7 @@
                                         <span class="badge bg-light text-dark ms-1"><?= sprintf(__('colony_block_prefix'), htmlspecialchars($plot['block'])) ?></span>
                                     <?php endif; ?>
                                 </div>
-                                <span class="plot-price">â‚¹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
+                                <span class="plot-price">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
                             </div>
                             <div class="row g-2 mb-2">
                                 <div class="col-6 plot-detail">
@@ -213,7 +213,7 @@
                                 </div>
                                 <div class="col-6 plot-detail">
                                     <i class="fas fa-rupee-sign text-primary"></i> 
-                                    â‚¹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?>/sqft
+                                    ₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?>/sqft
                                 </div>
                                 <div class="col-6 plot-detail">
                                     <?php if ($plot['corner_plot'] ?? false): ?>

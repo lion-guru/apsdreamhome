@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="news-hero-section text-white py-5" class="style-656">
+<section class="news-hero-section text-white py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -139,7 +139,7 @@ document.getElementById('newsletterForm').addEventListener('submit', function(e)
         msg.style.display = 'block';
         if (d.success) {
             msg.className = 'mt-2 small text-success';
-            msg.textContent = 'âœ“ Subscribed successfully!';
+            msg.textContent = 'âœ" Subscribed successfully!';
             btn.textContent = 'Subscribed!';
             btn.classList.replace('btn-primary', 'btn-success');
             this.reset();

@@ -252,7 +252,7 @@
                     msg.style.display = 'block';
                     if (d.success) {
                         msg.className = 'mt-2 small text-success';
-                        msg.textContent = 'âœ“ Subscribed successfully!';
+                        msg.textContent = 'âœ" Subscribed successfully!';
                         btn.innerHTML = '<i class="fas fa-check me-1"></i>Subscribed!';
                         btn.classList.replace('btn-gold', 'btn-success');
                         nlForm.reset();

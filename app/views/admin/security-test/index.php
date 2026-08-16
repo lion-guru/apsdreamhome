@@ -27,7 +27,7 @@ $testLabels = [
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold mb-1"><i class="fas fa-shield-alt me-2 text-primary"></i>Security Test Suite</h4>
-            <p class="text-muted small mb-0">Automated security posture validation â€” 10 checks across your stack.</p>
+            <p class="text-muted small mb-0">Automated security posture validation — 10 checks across your stack.</p>
         </div>
         <div class="d-flex gap-2">
             <a href="<?= $base ?>/admin/security-test/report" target="_blank" class="btn btn-outline-secondary btn-sm">

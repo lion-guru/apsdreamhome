@@ -12,7 +12,7 @@ $base = $base ?? BASE_URL;
         </div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label">Property Price (â‚¹)</label>
+            <label class="form-label">Property Price (₹)</label>
             <input type="number" id="propertyPrice" class="form-control" value="5000000" min="100000" step="100000">
           </div>
           <div class="mb-3">
@@ -43,7 +43,7 @@ $base = $base ?? BASE_URL;
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label">Expected Monthly Rent (â‚¹)</label>
+            <label class="form-label">Expected Monthly Rent (₹)</label>
             <input type="number" id="monthlyRent" class="form-control" value="15000" min="0" step="1000">
           </div>
           <div class="mb-3">
@@ -128,25 +128,25 @@ function calculateInvestment() {
         <div class="col-md-6">
           <div class="card aps-cp-card"><div class="card-body text-center">
             <div class="fs-5 text-muted">Monthly Payment</div>
-            <div class="fs-2 text-primary fw-bold">â‚¹${Number(d.monthly_payment || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+            <div class="fs-2 text-primary fw-bold">₹${Number(d.monthly_payment || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
           </div></div>
         </div>
         <div class="col-md-6">
           <div class="card aps-cp-card"><div class="card-body text-center">
             <div class="fs-5 text-muted">Down Payment</div>
-            <div class="fs-2 text-info fw-bold">â‚¹${Number(d.down_payment_amount || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+            <div class="fs-2 text-info fw-bold">₹${Number(d.down_payment_amount || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
           </div></div>
         </div>
         <div class="col-md-6">
           <div class="card aps-cp-card"><div class="card-body text-center">
             <div class="fs-5 text-muted">Loan Amount</div>
-            <div class="fs-2 text-warning fw-bold">â‚¹${Number(d.loan_amount || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+            <div class="fs-2 text-warning fw-bold">₹${Number(d.loan_amount || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
           </div></div>
         </div>
         <div class="col-md-6">
           <div class="card aps-cp-card"><div class="card-body text-center">
             <div class="fs-5 text-muted">Total Interest</div>
-            <div class="fs-2 text-danger fw-bold">â‚¹${Number(d.total_interest || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+            <div class="fs-2 text-danger fw-bold">₹${Number(d.total_interest || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
           </div></div>
         </div>
       `;
@@ -160,11 +160,11 @@ function calculateInvestment() {
               <small class="text-muted">Expected ROI</small>
             </div>
             <div class="col-md-4 text-center border-end">
-              <div class="fs-1 text-info fw-bold">â‚¹${Number(roi.annual_income || roi.annual_return || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+              <div class="fs-1 text-info fw-bold">₹${Number(roi.annual_income || roi.annual_return || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
               <small class="text-muted">Annual Return</small>
             </div>
             <div class="col-md-4 text-center">
-              <div class="fs-1 text-warning fw-bold">â‚¹${Number(roi.total_return || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+              <div class="fs-1 text-warning fw-bold">₹${Number(roi.total_return || 0).toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
               <small class="text-muted">Total Return (${params.loan_term} yr)</small>
             </div>
           </div>

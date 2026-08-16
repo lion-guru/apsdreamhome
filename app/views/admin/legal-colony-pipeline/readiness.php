@@ -4,7 +4,7 @@ $readiness = $readiness ?? ['checks' => [], 'passed_count' => 0, 'total_checks' 
 ?>
 <div class="container-fluid py-4">
   <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
-  <h2 class="mb-4"><i class="fas fa-clipboard-check me-2 text-warning"></i>Phase 7: Sales Readiness â€” <?= htmlspecialchars($colony['name'] ?? '') ?></h2>
+  <h2 class="mb-4"><i class="fas fa-clipboard-check me-2 text-warning"></i>Phase 7: Sales Readiness — <?= htmlspecialchars($colony['name'] ?? '') ?></h2>
 
   <div class="row g-4">
     <div class="col-lg-8">
@@ -65,8 +65,8 @@ $readiness = $readiness ?? ['checks' => [], 'passed_count' => 0, 'total_checks' 
             <tr><td class="text-muted">Location</td><td><?= htmlspecialchars($colony['location'] ?? '') ?></td></tr>
             <tr><td class="text-muted">Total Plots</td><td><?= (int)($colony['total_plots'] ?? 0) ?></td></tr>
             <tr><td class="text-muted">Available</td><td><?= (int)($colony['available_plots'] ?? 0) ?></td></tr>
-            <tr><td class="text-muted">Starting Price</td><td>â‚¹<?= number_format(floatval($colony['starting_price'] ?? 0)) ?></td></tr>
-            <tr><td class="text-muted">Land Cost</td><td>â‚¹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></td></tr>
+            <tr><td class="text-muted">Starting Price</td><td>₹<?= number_format(floatval($colony['starting_price'] ?? 0)) ?></td></tr>
+            <tr><td class="text-muted">Land Cost</td><td>₹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></td></tr>
             <tr><td class="text-muted">Pipeline Stage</td><td><span class="badge bg-warning"><?= ucfirst(str_replace('_', ' ', $colony['pipeline_stage'] ?? '')) ?></span></td></tr>
           </table>
         </div>

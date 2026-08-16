@@ -552,8 +552,8 @@ class AssociateController extends BaseController
             $fullAddress = trim(($address ? $address . ', ' : '') . $location);
 
             $stmt = $db->prepare("
-                INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, title, address, area_sqft, price, price_type, description, image, status, created_at)
-                VALUES (?, ?, 'associate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
+                VALUES (?, ?, 'associate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
             ");
             $stmt->execute([
                 $associateId,
@@ -563,7 +563,6 @@ class AssociateController extends BaseController
                 $_SESSION['user_email'] ?? '',
                 $propertyType,
                 $listingType,
-                $title,
                 $fullAddress,
                 $area,
                 $price,

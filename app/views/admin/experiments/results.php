@@ -128,10 +128,10 @@ foreach ($results as $variant => $r) {
                         <div class="alert alert-<?= $chi['significant'] ? 'success' : 'secondary' ?> mb-0">
                             <?php if ($chi['significant']): ?>
                                 <i class="fas fa-check-circle me-1"></i>
-                                <strong>Significant</strong> at p &lt; 0.05 â€” results are unlikely due to chance.
+                                <strong>Significant</strong> at p &lt; 0.05 — results are unlikely due to chance.
                             <?php else: ?>
                                 <i class="fas fa-info-circle me-1"></i>
-                                Not significant â€” need more data to draw conclusions.
+                                Not significant — need more data to draw conclusions.
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
@@ -194,7 +194,7 @@ foreach ($results as $variant => $r) {
                         <label class="form-label small">Set Winner Variant</label>
                         <div class="input-group">
                             <select name="winner" class="form-select">
-                                <option value="">â€” pick variant â€”</option>
+                                <option value="">— pick variant —</option>
                                 <?php foreach ($results as $variant => $r): ?>
                                     <option value="<?= htmlspecialchars($variant) ?>" <?= ($experiment['winner'] ?? '') === $variant ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($variant) ?>
@@ -227,7 +227,7 @@ foreach ($results as $variant => $r) {
     </div>
 </div>
 
-<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 const ctx = document.getElementById('expResultsChart');
 if (ctx) {

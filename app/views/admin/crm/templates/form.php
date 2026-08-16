@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         body = body.replace(/\{\{phone\}\}/g, '98XX-XXX-XXXX');
         body = body.replace(/\{\{email\}\}/g, 'john@example.com');
         body = body.replace(/\{\{city\}\}/g, 'Your City');
-        body = body.replace(/\{\{budget\}\}/g, 'â‚¹XX,XX,XXX');
+        body = body.replace(/\{\{budget\}\}/g, '₹XX,XX,XXX');
         body = body.replace(/\{\{source\}\}/g, 'Channel');
         preview.innerHTML = body;
     }

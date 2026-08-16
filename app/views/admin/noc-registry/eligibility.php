@@ -28,12 +28,12 @@ $booking_id = $booking_id ?? 0;
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-8">
                 <select name="booking_id" class="form-select" required>
-                    <option value="">â€” Select a Booking â€”</option>
+                    <option value="">— Select a Booking —</option>
                     <?php foreach ($eligible_bookings as $b): ?>
                         <option value="<?= $b['id'] ?>" <?= $booking_id == $b['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($b['booking_number']) ?> â€” <?= htmlspecialchars($b['customer_name']) ?>
+                            <?= htmlspecialchars($b['booking_number']) ?> — <?= htmlspecialchars($b['customer_name']) ?>
                             (<?= htmlspecialchars($b['plot_no']) ?>, <?= htmlspecialchars($b['colony_name']) ?>)
-                            â€” â‚¹<?= number_format($b['total_price'] ?? 0, 0) ?>
+                            — ₹<?= number_format($b['total_price'] ?? 0, 0) ?>
                             [<?= htmlspecialchars($b['status']) ?>]
                         </option>
                     <?php endforeach; ?>

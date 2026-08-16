@@ -9,7 +9,7 @@ function lvStatusBadge($status) {
     $cls = $map[strtolower($status)] ?? 'secondary';
     return '<span class="badge bg-' . $cls . '">' . htmlspecialchars(ucfirst($status)) . '</span>';
 }
-function lvDate($d) { return $d ? date('d M Y', strtotime($d)) : 'â€”'; }
+function lvDate($d) { return $d ? date('d M Y', strtotime($d)) : '—'; }
 function lvDays($d) { return (int)$d; }
 ?>
 
@@ -156,7 +156,7 @@ function lvDays($d) { return (int)$d; }
                                         <small><?= lvDate($l['end_date']) ?></small>
                                     </td>
                                     <td class="text-center fw-semibold"><?= lvDays($l['total_days']) ?></td>
-                                    <td><small class="text-muted"><?= htmlspecialchars(mb_strimwidth($l['reason'] ?? 'â€”', 0, 60, '...')) ?></small></td>
+                                    <td><small class="text-muted"><?= htmlspecialchars(mb_strimwidth($l['reason'] ?? '—', 0, 60, '...')) ?></small></td>
                                     <td><?= lvStatusBadge($l['status'] ?? 'pending') ?></td>
                                     <td class="text-end pe-3">
                                         <a href="/employee/leaves/<?= (int)$l['id'] ?>" class="btn btn-sm btn-outline-primary" title="View Details">

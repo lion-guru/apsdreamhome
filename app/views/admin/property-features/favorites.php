@@ -38,7 +38,7 @@
                             <tr>
                                 <td class="ps-4"><?= $i + 1 ?></td>
                                 <td><strong><?= htmlspecialchars($f['property_title'] ?? 'Property #' . $f['property_id']) ?></strong></td>
-                                <td>â‚¹<?= number_format(floatval($f['property_price'] ?? 0), 2) ?></td>
+                                <td>₹<?= number_format(floatval($f['property_price'] ?? 0), 2) ?></td>
                                 <td><?= htmlspecialchars($f['user_name'] ?? '-') ?></td>
                                 <td><?= htmlspecialchars($f['user_email'] ?? '-') ?></td>
                                 <td class="text-end pe-4 small"><?= date('d M Y, h:i A', strtotime($f['created_at'] ?? 'now')) ?></td>

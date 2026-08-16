@@ -60,7 +60,7 @@ $states = $states ?? [];
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label fw-bold"><?= __('assoc_ep_price', [], 'Price (â‚¹)') ?> *</label>
+                        <label class="form-label fw-bold"><?= __('assoc_ep_price', [], 'Price (₹)') ?> *</label>
                         <input type="number" name="price" class="form-control" value="<?= (int)($property['price'] ?? 0) ?>" min="1" required>
                     </div>
                     <div class="col-md-4">

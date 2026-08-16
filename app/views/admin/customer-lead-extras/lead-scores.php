@@ -135,7 +135,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
-                                                <img src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Avatar" class="rounded-circle" width="32" height="32" />
+                                                <img src="<?= BASE_URL ?>/assets/images/user/default-avatar.jpg" alt="Avatar" class="rounded-circle" width="32" height="32" />
                                             </div>
                                             <div class="flex-grow-1 ms-2">
                                                 <h6 class="mb-0"><?php echo htmlspecialchars($score['lead_name'] ?? 'Unknown'); ?></h6>

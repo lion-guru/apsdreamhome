@@ -9,7 +9,7 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (â‚¹)'); ?></label>
+                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcStamp()">
                         </div>
                         <div class="mb-3">
@@ -27,19 +27,19 @@
                             <div class="col-4">
                                 <div class="bg-light rounded p-3">
                                     <small class="text-muted"><?php echo __('stamp_duty', [], 'Stamp Duty'); ?></small>
-                                    <h5 class="text-primary mb-0" id="stampDuty">â‚¹3,50,000</h5>
+                                    <h5 class="text-primary mb-0" id="stampDuty">₹3,50,000</h5>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-light rounded p-3">
                                     <small class="text-muted"><?php echo __('registration_1pct', [], 'Registration (1%)'); ?></small>
-                                    <h5 class="text-success mb-0" id="regFee">â‚¹50,000</h5>
+                                    <h5 class="text-success mb-0" id="regFee">₹50,000</h5>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-light rounded p-3">
                                     <small class="text-muted"><?php echo __('total_cost', [], 'Total Cost'); ?></small>
-                                    <h5 class="text-danger mb-0" id="totalCost">â‚¹55,50,000</h5>
+                                    <h5 class="text-danger mb-0" id="totalCost">₹55,50,000</h5>
                                 </div>
                             </div>
                         </div>
@@ -55,9 +55,9 @@ function calcStamp() {
     const rate = parseFloat(document.getElementById('stateSel').value) || 7;
     const stamp = val * rate / 100;
     const reg = val * 0.01;
-    document.getElementById('stampDuty').textContent = 'â‚¹' + Math.round(stamp).toLocaleString('en-IN');
-    document.getElementById('regFee').textContent = 'â‚¹' + Math.round(reg).toLocaleString('en-IN');
-    document.getElementById('totalCost').textContent = 'â‚¹' + Math.round(val + stamp + reg).toLocaleString('en-IN');
+    document.getElementById('stampDuty').textContent = '₹' + Math.round(stamp).toLocaleString('en-IN');
+    document.getElementById('regFee').textContent = '₹' + Math.round(reg).toLocaleString('en-IN');
+    document.getElementById('totalCost').textContent = '₹' + Math.round(val + stamp + reg).toLocaleString('en-IN');
 }
 calcStamp();
 </script>

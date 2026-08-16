@@ -7,7 +7,7 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/sites">Sites</a></li>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/sites/<?= $site['id'] ?? 0 ?>"><?= $site['name'] ?? 'Site' ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/sites/<?= $site['id'] ?? 0 ?>"><?= $site['site_name'] ?? 'Site' ?></a></li>
                     <li class="breadcrumb-item active">Edit</li>
                 </ul>
             </div>
@@ -18,7 +18,7 @@
             <form method="POST" action="<?= BASE_URL ?>/admin/sites/<?= $site['id'] ?? 0 ?>/update" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
-                    <div class="col-md-8"><label class="form-label">Site Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" value="<?= $site['name'] ?? '' ?>" required></div>
+                    <div class="col-md-8"><label class="form-label">Site Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" value="<?= $site['site_name'] ?? '' ?>" required></div>
                     <div class="col-md-4"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <?= ($site['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option><option value="inactive" <?= ($site['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option></select></div>
                     <div class="col-md-6"><label class="form-label">Location</label><input type="text" name="location" class="form-control" value="<?= $site['location'] ?? '' ?>"></div>
                     <div class="col-md-3"><label class="form-label">Total Area (sqft)</label><input type="number" name="total_area" class="form-control" value="<?= $site['total_area'] ?? '' ?>"></div>

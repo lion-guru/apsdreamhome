@@ -868,7 +868,7 @@ $base = BASE_URL;
         const benefits = {
             customer: [
                 { icon: 'fas fa-shield-halved', text: 'RERA Approved', highlight: true },
-                { icon: 'fas fa-percent', text: 'EMI from â‚¹8,333/mo' },
+                { icon: 'fas fa-percent', text: 'EMI from ₹8,333/mo' },
                 { icon: 'fas fa-gift', text: 'Refer & Earn Points' },
                 { icon: 'fas fa-map-marker-alt', text: '204+ Plots Available' }
             ],
@@ -939,8 +939,8 @@ $base = BASE_URL;
             if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
             if (/[0-9]/.test(pwd)) score++;
             if (/[^A-Za-z0-9]/.test(pwd)) score++;
-            if (score <= 1) return { level: 'weak', text: 'Weak â€” add more characters', color: '#ef4444' };
-            if (score <= 2) return { level: 'fair', text: 'Fair â€” try adding numbers', color: '#f59e0b' };
+            if (score <= 1) return { level: 'weak', text: 'Weak — add more characters', color: '#ef4444' };
+            if (score <= 2) return { level: 'fair', text: 'Fair — try adding numbers', color: '#f59e0b' };
             if (score <= 3) return { level: 'strong', text: 'Strong password', color: '#22c55e' };
             return { level: 'very-strong', text: 'Excellent password!', color: '#0d9488' };
         }

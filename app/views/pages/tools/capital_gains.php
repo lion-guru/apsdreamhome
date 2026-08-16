@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (â‚¹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
                                 <input type="number" class="form-control" id="purchasePrice" value="3000000" oninput="calcCG()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (â‚¹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
                                 <input type="number" class="form-control" id="salePrice" value="5000000" oninput="calcCG()">
                             </div>
                         </div>
@@ -27,7 +27,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (â‚¹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
                                 <input type="number" class="form-control" id="improveCost" value="200000" oninput="calcCG()">
                             </div>
                             <div class="col-md-4">
@@ -42,7 +42,7 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('taxable_gain', [], 'Taxable Gain'); ?></small>
-                                    <h4 class="text-danger mb-0" id="taxableGain">â‚¹18,00,000</h4>
+                                    <h4 class="text-danger mb-0" id="taxableGain">₹18,00,000</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -54,7 +54,7 @@
                             <div class="col-md-4">
                                 <div class="bg-danger text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('capital_gains_tax', [], 'Capital Gains Tax'); ?></small>
-                                    <h4 class="mb-0" id="cgTax">â‚¹3,60,000</h4>
+                                    <h4 class="mb-0" id="cgTax">₹3,60,000</h4>
                                 </div>
                             </div>
                         </div>

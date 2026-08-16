@@ -55,7 +55,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
         <div class="col-md-3 mb-2">
             <div class="ac-stat" class="style-1293">
-                <div class="num">â‚¹<?= number_format((float)($totalCommission ?? 0)) ?></div>
+                <div class="num">₹<?= number_format((float)($totalCommission ?? 0)) ?></div>
                 <div class="lbl">Total Commission Paid</div>
             </div>
         </div>
@@ -102,7 +102,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <td class="style-24039"><?= htmlspecialchars($a['name'] ?? 'N/A') ?></td>
                                 <td class="style-27277"><?= htmlspecialchars($a['email'] ?? '') ?></td>
                                 <td class="style-64867"><?= (int)$a['sale_count'] ?></td>
-                                <td class="style-64867"><span class="ac-money">â‚¹<?= number_format((float)$a['total_earned']) ?></span></td>
+                                <td class="style-64867"><span class="ac-money">₹<?= number_format((float)$a['total_earned']) ?></span></td>
                                 <td><a href="<?= $base ?>/admin/agent-commission/agent/<?= (int)$a['id'] ?>" class="btn btn-sm btn-outline-primary" class="style-10792">View</a></td>
                             </tr>
                             <?php endforeach; ?>
@@ -165,7 +165,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <div class="style-63117"><?= date('d M Y, h:i A', strtotime($rc['created_at'])) ?></div>
                         </div>
                         <div class="style-64867">
-                            <div class="ac-money">â‚¹<?= number_format((float)$rc['amount']) ?></div>
+                            <div class="ac-money">₹<?= number_format((float)$rc['amount']) ?></div>
                             <span class="ac-badge ac-badge-<?= $rc['status'] ?>"><?= ucfirst($rc['status']) ?></span>
                         </div>
                     </div>
@@ -195,7 +195,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <select name="property_id" required>
                             <option value="">-- Choose Property --</option>
                             <?php foreach ($allProperties as $p): ?>
-                            <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> â€” <?= htmlspecialchars($p['location'] ?? '') ?></option>
+                            <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name']) ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

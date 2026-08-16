@@ -45,7 +45,7 @@ $base = BASE_URL ?? '';
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Budget (â‚¹)</label>
+                    <label class="form-label fw-semibold">Budget (₹)</label>
                     <input type="number" name="budget" class="form-control" placeholder="e.g. 5000000" min="0">
                 </div>
                 <div class="col-md-6">

@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <label>Department Head</label>
                                     <select name="head_user_id" class="form-control">
-                                        <option value="">â€” Select Head â€”</option>
+                                        <option value="">— Select Head —</option>
                                         <?php foreach ($users as $u): ?>
                                             <option value="<?= $u['id'] ?>" <?= ($department['head_user_id'] ?? '') == $u['id'] ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($u['name']) ?>
@@ -84,11 +84,11 @@
                                 <div class="form-group">
                                     <label>Parent Department</label>
                                     <select name="parent_dept_id" class="form-control">
-                                        <option value="">â€” None (Root) â€”</option>
+                                        <option value="">— None (Root) —</option>
                                         <?php foreach ($departments as $d): ?>
                                             <?php if (!$department || $d['id'] != $department['id']): ?>
                                                 <option value="<?= $d['id'] ?>" <?= ($department['parent_dept_id'] ?? '') == $d['id'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($d['code'] . ' â€” ' . $d['name']) ?>
+                                                    <?= htmlspecialchars($d['code'] . ' — ' . $d['name']) ?>
                                                 </option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Annual Budget (â‚¹)</label>
+                                    <label>Annual Budget (₹)</label>
                                     <input type="number" name="dept_budget" class="form-control" min="0" step="100000"
                                            value="<?= $department['dept_budget'] ?? 0 ?>">
                                 </div>

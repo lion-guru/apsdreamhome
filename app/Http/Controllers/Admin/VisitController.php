@@ -29,7 +29,8 @@ class VisitController extends AdminController
             'page_heading' => 'Property Visit Schedule',
             'stats' => $stats,
             'visits' => $visits,
-            'slots' => $slots
+            'slots' => $slots,
+            'BASE_URL' => defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome'
         ]);
     }
 
@@ -57,7 +58,7 @@ class VisitController extends AdminController
             $leads = $stmt->fetchAll();
         } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }
         try {
-            $stmt = $this->db->prepare("SELECT id, title, location FROM user_properties WHERE status = 'approved' ORDER BY created_at DESC LIMIT 100");
+            $stmt = $this->db->prepare("SELECT id, name, location FROM user_properties WHERE status = 'approved' ORDER BY created_at DESC LIMIT 100");
             $stmt->execute();
             $properties = $stmt->fetchAll();
         } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }

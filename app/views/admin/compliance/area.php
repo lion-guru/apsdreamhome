@@ -78,7 +78,7 @@ function areaStatusLabel($status) {
                 <?php if (empty($result['findings'])): ?>
                     <div class="text-center text-muted py-3">
                         <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
-                        <p class="mb-0">No issues found â€” area is compliant</p>
+                        <p class="mb-0">No issues found — area is compliant</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($result['findings'] as $finding): ?>
@@ -96,7 +96,7 @@ function areaStatusLabel($status) {
                 <?php if (empty($result['recommendations'])): ?>
                     <div class="text-center text-muted py-3">
                         <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
-                        <p class="mb-0">No recommendations â€” area fully compliant</p>
+                        <p class="mb-0">No recommendations — area fully compliant</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($result['recommendations'] as $rec): ?>

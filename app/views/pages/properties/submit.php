@@ -113,7 +113,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_price', 'Price (â‚¹)'); ?></label>
+                                <label class="form-label fw-bold"><?php echo __('property_price', 'Price (₹)'); ?></label>
                                 <input type="number" name="price" class="form-control" placeholder="<?php echo __('property_enter_price', 'Enter Price'); ?>" value="<?= $is_edit ? h($property['price']) : '' ?>" required>
                             </div>
 

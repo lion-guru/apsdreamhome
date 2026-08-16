@@ -65,7 +65,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                             <span class="badge bg-success mb-2">Free</span>
                             <h5 class="fw-bold">Basic</h5>
                             <p class="text-muted small">Online document verification and basic background check</p>
-                            <div class="fw-bold text-success mb-3">â‚¹0</div>
+                            <div class="fw-bold text-success mb-3">₹0</div>
                             <ul class="text-muted small text-start">
                                 <li>Online records check</li>
                                 <li>RERA status verification</li>
@@ -77,7 +77,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                         <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-4">
                             <h5 class="fw-bold">Premium</h5>
                             <p class="text-muted small">Full document + physical verification</p>
-                            <div class="fw-bold text-primary mb-3">â‚¹999</div>
+                            <div class="fw-bold text-primary mb-3">₹999</div>
                             <ul class="text-muted small text-start">
                                 <li>All Basic features</li>
                                 <li>Physical site visit</li>
@@ -90,7 +90,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                             <span class="badge bg-primary mb-2">Popular</span>
                             <h5 class="fw-bold">Gold</h5>
                             <p class="text-muted small">Complete verification with legal opinion</p>
-                            <div class="fw-bold text-primary mb-3">â‚¹2,499</div>
+                            <div class="fw-bold text-primary mb-3">₹2,499</div>
                             <ul class="text-muted small text-start">
                                 <li>All Premium features</li>
                                 <li>Legal opinion letter</li>
@@ -102,7 +102,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                         <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-4">
                             <h5 class="fw-bold">Platinum</h5>
                             <p class="text-muted small">Full verification + title insurance</p>
-                            <div class="fw-bold text-primary mb-3">â‚¹4,999</div>
+                            <div class="fw-bold text-primary mb-3">₹4,999</div>
                             <ul class="text-muted small text-start">
                                 <li>All Gold features</li>
                                 <li>Title insurance</li>

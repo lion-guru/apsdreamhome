@@ -60,7 +60,7 @@
                                 <th class="style-56943">Type</th>
                                 <th class="style-56943">Period</th>
                                 <th class="style-56943">Entries</th>
-                                <th class="style-56943">Total (â‚¹)</th>
+                                <th class="style-56943">Total (₹)</th>
                                 <th class="style-56943">Status</th>
                                 <th class="style-56943">Created By</th>
                                 <th class="style-56943">Date</th>
@@ -81,7 +81,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td><strong><?= number_format($item['total_entries']) ?></strong></td>
-                                    <td class="style-63408">â‚¹<?= number_format((float)$item['total_amount']) ?></td>
+                                    <td class="style-63408">₹<?= number_format((float)$item['total_amount']) ?></td>
                                     <td>
                                         <?php
                                         $sc = $statusConfig[$item['status']] ?? ['color' => '#6c757d'];

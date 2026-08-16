@@ -55,7 +55,7 @@ if (!empty($properties) && is_array($properties)) {
 $seo = is_array($seo ?? null) ? $seo : [];
 $seo['json_ld'] = $jsonLd;
 
-$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties â€” plots, flats, villas, farmhouses â€” from APS Dream Home across India.';
+$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across India.';
 $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' . implode(', ', array_filter([
     $currentFilters['location'] ?? null,
     $currentFilters['type'] ?? null
@@ -122,10 +122,10 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 }
 </style>
 
-<div class="hero-premium pt-5 pb-5 mb-0" class="style-59409">
+<div class="hero-premium pt-5 pb-5 mb-0" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
     <div class="container hero-content premium-reveal fade-up position-relative z-2">
         <h1 class="display-4 fw-bold text-white mb-2"><i class="fas fa-building me-3"></i><?= __('properties') ?></h1>
-        <p class="lead text-white-50 mb-4">Discover premium properties across India â€” plots, flats, villas, farmhouses & more</p>
+        <p class="lead text-white-50 mb-4">Discover premium properties across India — plots, flats, villas, farmhouses & more</p>
         <div class="d-flex flex-wrap gap-2">
             <div class="capsule-badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 shadow-sm px-3 py-2">
                 <i class="fas fa-check-circle text-success me-1"></i>
@@ -145,17 +145,17 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <!-- Filters -->
     <div class="props-filter-glass mb-4">
         <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" role="button">
-            <h6><i class="fas fa-sliders-h me-2" class="style-5793"></i><?= __('advanced_search') ?></h6>
+            <h6><i class="fas fa-sliders-h me-2 style-5793"></i><?= __('advanced_search') ?></h6>
             <div class="d-flex align-items-center gap-2">
                 <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
-                    <button type="button" class="btn btn-sm" class="style-26680" onclick="event.stopPropagation();triggerSaveSearch()">
+                    <button type="button" class="btn btn-sm style-26680" onclick="event.stopPropagation();triggerSaveSearch()">
                         <i class="fas fa-bookmark me-1"></i>Save
                     </button>
                 <?php endif; ?>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();resetFilters()" class="style-94626">
+                <button type="button" class="btn btn-sm btn-outline-secondary style-94626" onclick="event.stopPropagation();resetFilters()">
                     <i class="fas fa-redo"></i>
                 </button>
-                <i class="fas fa-chevron-down" class="style-8890" id="filterChevron"></i>
+                <i class="fas fa-chevron-down style-8890" id="filterChevron"></i>
             </div>
         </div>
         <div class="collapse" id="advancedFilters">
@@ -255,11 +255,14 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         <label for="area_max" class="form-label"><?= __('max_area') ?> (sqft)</label>
                         <input type="number" class="form-control" id="area_max" name="area_max" placeholder="Max" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
                     </div>
-                    <div class="col-12 d-flex gap-2 align-items-center pt-2">
-                        <button type="submit" class="btn px-4" class="style-55218">
+                    <div class="col-12 d-flex gap-2 align-items-center pt-2 flex-wrap">
+                        <button type="submit" class="btn px-4 style-55218">
                             <i class="fas fa-search me-1"></i><?= __('search') ?>
                         </button>
-                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary" class="style-46740">
+                        <button type="button" class="btn btn-teal px-4" id="aiSearchBtn" onclick="openAISearchModal()">
+                            <i class="fas fa-robot me-1"></i><?= __('ai_search') ?>
+                        </button>
+                        <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary style-46740">
                             <i class="fas fa-times me-1"></i><?= __('clear_all') ?>
                         </a>
                     </div>
@@ -271,15 +274,15 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <!-- Cross-link Section: Also Explore -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-2 align-items-center" class="style-1563">
+            <div class="d-flex flex-wrap gap-2 align-items-center style-1563">
                 <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
                 <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" class="style-6722">
-                    <i class="fas fa-vector-square me-1"></i><?= __('company_plots') ?>
+                    <i class="fas fa-vector-square me-1"></i>Plots
                 </a>
                 <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" class="style-97522">
-                    <i class="fas fa-project-diagram me-1"></i><?= __('company_projects') ?>
+                    <i class="fas fa-project-diagram me-1"></i>Projects
                 </a>
-                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" class="style-66828">
+                <a href="<?= BASE_URL ?>/colonies" class="btn btn-sm px-3" class="style-66828">
                     <i class="fas fa-city me-1"></i><?= __('colonies') ?>
                 </a>
             </div>
@@ -288,7 +291,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
     <!-- View Toggle Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted" class="style-49273">
+        <span class="text-muted style-49273">
             Showing <strong><?= count($properties ?? []) ?></strong> of <strong><?= number_format($total ?? 0) ?></strong> properties
         </span>
         <div class="d-flex gap-2">
@@ -323,11 +326,11 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
 
                             <div class="img-badges">
-                                <span class="badge" class="style-55032">
+                                <span class="badge style-55032">
                                     <?= $propListingType === 'rent' ? 'FOR RENT' : 'FOR SALE' ?>
                                 </span>
                                 <?php if (!empty($propType)): ?>
-                                    <span class="badge" class="style-11190">
+                                    <span class="badge style-11190">
                                         <?= strtoupper($propType) ?>
                                     </span>
                                 <?php endif; ?>
@@ -335,7 +338,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                             <div class="img-actions">
                                 <button class="btn favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="<?= __('add_to_favorites') ?>" onclick="toggleFavorite(this)">
-                                    <i class="far fa-heart" class="style-53984"></i>
+                                    <i class="far fa-heart style-53984"></i>
                                 </button>
                             </div>
                         </div>
@@ -500,8 +503,8 @@ function addToCompare(btn) {
             btn.innerHTML = '<i class="fas fa-check"></i>';
             btn.classList.add('added');
             updateCompareBadge(d.count);
-        } else { alert(d.error || I18N.failed_to_add); }
-    }).catch(() => alert(I18N.network_error));
+        } else { if (window.APS?.toast) window.APS.toast(d.error || I18N.failed_to_add, 'error'); else alert(d.error || I18N.failed_to_add); }
+    }).catch(() => { if (window.APS?.toast) window.APS.toast(I18N.network_error, 'error'); else alert(I18N.network_error); });
 }
 
 function updateCompareBadge(count) {
@@ -555,9 +558,9 @@ function submitPropertyInterest(e) {
                 form.style.display = 'none';
                 document.getElementById('propInterestSuccess').style.display = 'block';
                 setTimeout(() => bootstrap.Modal.getInstance(document.getElementById('propertyInterestModal')).hide(), 2500);
-            } else { alert(data.message || 'Something went wrong.'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Interest'; }
+            } else { if (window.APS?.toast) window.APS.toast(data.message || 'Something went wrong.', 'error'); else alert(data.message || 'Something went wrong.'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Interest'; }
         })
-        .catch(() => { alert('Network error.'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Interest'; });
+        .catch(() => { if (window.APS?.toast) window.APS.toast('Network error.', 'error'); else alert('Network error.'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Interest'; });
 }
 </script>
 
@@ -609,6 +612,68 @@ function submitPropertyInterest(e) {
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">.prop-budget-chip.active{background:#0d9488!important;color:#fff!important;border-color:#0d9488!important}</style>
 
+<!-- AI Search Modal -->
+<div class="modal fade" id="aiSearchModal" tabindex="-1" aria-labelledby="aiSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content glassmorphism">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-teal" id="aiSearchModalLabel">
+                    <i class="fas fa-robot me-2"></i><?= __('ai_search_title') ?>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-4"><?= __('ai_search_description') ?></p>
+                <form id="aiSearchForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium"><?= __('describe_your_dream_home') ?></label>
+                        <textarea class="form-control" name="query" rows="4" placeholder="<?= __('ai_search_placeholder') ?>" required></textarea>
+                        <div class="form-text"><?= __('ai_search_help') ?></div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><?= __('budget_range') ?></label>
+                            <select class="form-select" name="budget_range">
+                                <option value=""><?= __('any_budget') ?></option>
+                                <option value="0-500000"><?= __('under_5l') ?></option>
+                                <option value="500000-1000000"><?= __('5l_10l') ?></option>
+                                <option value="1000000-2000000"><?= __('10l_20l') ?></option>
+                                <option value="2000000-5000000"><?= __('20l_50l') ?></option>
+                                <option value="5000000-10000000"><?= __('50l_1cr') ?></option>
+                                <option value="10000000-"><?= __('above_1cr') ?></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><?= __('property_type') ?></label>
+                            <select class="form-select" name="property_type">
+                                <option value=""><?= __('any_type') ?></option>
+                                <option value="plot">Plot</option>
+                                <option value="flat">Flat/Apartment</option>
+                                <option value="villa">Villa</option>
+                                <option value="farmhouse">Farmhouse</option>
+                                <option value="commercial">Commercial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="button" class="btn btn-secondary flex-grow-1" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i> <?= __('cancel') ?>
+                        </button>
+                        <button type="submit" class="btn btn-teal flex-grow-1" id="aiSearchSubmitBtn">
+                            <i class="fas fa-robot me-1"></i> <span id="aiSearchBtnText"><?= __('find_matches') ?></i>
+                            <span class="spinner-border spinner-border-sm ms-2 d-none" id="aiSearchSpinner" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </form>
+                <div id="aiSearchResults" class="mt-4 d-none">
+                    <h6 class="fw-bold text-teal mb-3"><i class="fas fa-robot me-1"></i> <?= __('ai_matches_found') ?></h6>
+                    <div id="aiResultsContainer" class="row g-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Smart Registration Behavior Tracking -->
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 (function() {
@@ -622,6 +687,108 @@ function submitPropertyInterest(e) {
             x.send(JSON.stringify({ token: token, event_type: type, event_data: data || null, page_url: window.location.href }));
         } catch(e) {}
     }
+    // Track search events
+    var searchForm = document.querySelector('form[action*="properties"]');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function() {
+            track('search', { query: (searchForm.querySelector('[name="q"]') || {}).value || '' });
+        });
+    }
+    // Track property card clicks
+    document.querySelectorAll('.property-card a, [data-property-id]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var id = el.getAttribute('data-property-id') || '';
+            track('page_view', { action: 'property_card_click', property_id: id });
+        });
+    });
+    
+    // AI Search Modal
+    var aiSearchModal = new bootstrap.Modal(document.getElementById('aiSearchModal'));
+    var aiSearchForm = document.getElementById('aiSearchForm');
+    var aiSearchBtn = document.getElementById('aiSearchSubmitBtn');
+    var aiSearchBtnText = document.getElementById('aiSearchBtnText');
+    var aiSearchSpinner = document.getElementById('aiSearchSpinner');
+    var aiSearchResults = document.getElementById('aiSearchResults');
+    var aiResultsContainer = document.getElementById('aiResultsContainer');
+    
+    if (aiSearchForm) {
+        aiSearchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(aiSearchForm);
+            var btn = aiSearchBtn;
+            var btnText = aiSearchBtnText;
+            var spinner = aiSearchSpinner;
+            
+            // Show loading state
+            btn.disabled = true;
+            btnText.textContent = '<?= __("searching") ?>';
+            spinner.classList.remove('d-none');
+            
+            fetch('<?= BASE_URL ?>/api/properties/ai-search', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                // Reset button
+                btn.disabled = false;
+                btnText.textContent = '<?= __("find_matches") ?>';
+                spinner.classList.add('d-none');
+                
+                if (data.success && data.properties.length > 0) {
+                    // Show results
+                    aiResultsContainer.innerHTML = '';
+                    data.properties.forEach(function(prop) {
+                        var image = prop.image ? '<?= BASE_URL ?>/' + prop.image : '<?= BASE_URL ?>/assets/images/placeholder/property.svg';
+                        var card = document.createElement('div');
+                        card.className = 'col-md-6 col-lg-4';
+                        card.innerHTML = 
+                            '<div class="card property-card h-100 glassmorphism">' +
+                            '  <div class="card-img-wrap">' +
+                            '    <img src="' + image + '" class="card-img-top" alt="' + prop.title + '" loading="lazy">' +
+                            '    <div class="img-badges">' +
+                            '      <span class="badge bg-primary">' + prop.type + '</span>' +
+                            '      <span class="badge bg-warning text-dark">AI Match: ' + (prop.ai_score || 0) + '%</span>' +
+                            '    </div>' +
+                            '  </div>' +
+                            '  <div class="card-body">' +
+                            '    <h6 class="prop-name">' + prop.title + '</h6>' +
+                            '    <div class="prop-location"><i class="fas fa-map-marker-alt"></i> <span class="text-muted">' + prop.location + '</span></div>' +
+                            '    <div class="prop-features">' +
+                            '      <div class="feat"><i class="fas fa-ruler-combined"></i><strong>' + prop.area + '</strong> sqft</div>' +
+                            '      <div class="feat"><i class="fas fa-bed"></i><strong>' + (prop.bedrooms || 0) + '</strong> BHK</div>' +
+                            '      <div class="feat"><i class="fas fa-bath"></i><strong>' + (prop.bathrooms || 0) + '</strong></div>' +
+                            '    </div>' +
+                            '    <div class="prop-footer">' +
+                            '      <span class="prop-price">&#8377;' + prop.price_formatted + '</span>' +
+                            '      <a href="' + BASE_URL + '/property/' + prop.id + '" class="btn btn-teal btn-sm">' + 'View Details' + '</a>' +
+                            '    </div>' +
+                            '  </div>' +
+                            '</div>';
+                        aiResultsContainer.appendChild(card);
+                    });
+                    aiSearchResults.classList.remove('d-none');
+                    // Scroll to results
+                    aiSearchResults.scrollIntoView({ behavior: 'smooth' });
+                } else if (data.success && data.properties.length === 0) {
+                    aiResultsContainer.innerHTML = '<div class="col-12 text-center py-4"><i class="fas fa-search fa-2x text-muted mb-2"></i><p class="text-muted">' + '<?= __("no_matches_found") ?>' + '</p></div>';
+                    aiSearchResults.classList.remove('d-none');
+                } else {
+                    alert(data.message || '<?= __("search_failed") ?>');
+                }
+            })
+            .catch(function() {
+                btn.disabled = false;
+                btnText.textContent = '<?= __("find_matches") ?>';
+                spinner.classList.add('d-none');
+                alert('<?= __("search_error") ?>');
+            });
+        });
+    }
+    
     // Track search events
     var searchForm = document.querySelector('form[action*="properties"]');
     if (searchForm) {

@@ -18,7 +18,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="mb-1 opacity-75">Available Balance</p>
-                        <h2 class="mb-0 fw-bold">â‚¹<?= number_format($balance) ?></h2>
+                        <h2 class="mb-0 fw-bold">₹<?= number_format($balance) ?></h2>
                     </div>
                     <div class="style-2839">
                         <i class="fas fa-wallet fa-2x"></i>
@@ -31,7 +31,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body text-center d-flex flex-column justify-content-center">
                 <i class="fas fa-info-circle text-muted mb-2"></i>
-                <p class="text-muted mb-0">Withdrawals are processed within 3-5 business days.<br>Minimum withdrawal: â‚¹1,000</p>
+                <p class="text-muted mb-0">Withdrawals are processed within 3-5 business days.<br>Minimum withdrawal: ₹1,000</p>
             </div>
         </div>
     </div>
@@ -77,7 +77,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
                             <?= ucfirst($type) ?>
                         </td>
                         <td class="px-3 fw-bold" class="style-90551">
-                            <?= $isCredit ? '+' : '-' ?>â‚¹<?= number_format($tx['amount'] ?? 0) ?>
+                            <?= $isCredit ? '+' : '-' ?>₹<?= number_format($tx['amount'] ?? 0) ?>
                         </td>
                         <td class="px-3"><small class="text-muted"><?= htmlspecialchars($tx['description'] ?? '-') ?></small></td>
                         <td class="px-3"><small class="text-muted"><?= date('d M Y H:i', strtotime($tx['created_at'] ?? 'now')) ?></small></td>

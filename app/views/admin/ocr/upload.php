@@ -81,7 +81,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                             <input type="file" name="document_file" id="documentFile" class="ocr-file-input" accept=".jpg,.jpeg,.png,.pdf">
                             <div class="ocr-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                             <div class="ocr-upload-text">Drag & drop your file here or <span class="style-50045">browse</span></div>
-                            <div class="ocr-upload-hint">JPG, PNG, or PDF â€” Max 10MB</div>
+                            <div class="ocr-upload-hint">JPG, PNG, or PDF — Max 10MB</div>
                             <div class="ocr-file-name" id="fileName"></div>
                         </div>
 

@@ -4,7 +4,7 @@
  * Migrated from resources/views/Views/lucknow-ram-nagri.php
  */
 
-// init.php not found â€” helpers.php already loaded from bootstrap
+// init.php not found — helpers.php already loaded from bootstrap
 
 $page_title = 'Ram Nagri Lucknow | APS Dream Homes';
 $layout = 'modern';
@@ -92,5 +92,5 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// Layout (modern.php) not found â€” render content directly
+// Layout (modern.php) not found — render content directly
 echo $content;

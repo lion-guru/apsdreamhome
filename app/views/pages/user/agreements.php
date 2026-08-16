@@ -132,7 +132,7 @@ $typeLabels = [
                                     <?php endif; ?>
                                     <br><small class="text-muted"><?= htmlspecialchars($ag['colony_name'] ?? '') ?></small>
                                 </td>
-                                <td>â‚¹<?= number_format((float)($ag['total_value'] ?? $ag['total_plot_value'] ?? 0)) ?></td>
+                                <td>₹<?= number_format((float)($ag['total_value'] ?? $ag['total_plot_value'] ?? 0)) ?></td>
                                 <td><span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= $label ?></span></td>
                                 <td><?= date('d M Y', strtotime($ag['created_at'] ?? 'now')) ?></td>
                                 <td>

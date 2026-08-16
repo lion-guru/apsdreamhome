@@ -48,7 +48,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         <div class="aps-cp-stat aps-cp-stat--orange">
             <div class="aps-cp-stat-icon"><i class="fas fa-coins"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">â‚¹<?= number_format((float)($stats['total_earned'] ?? 0)) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format((float)($stats['total_earned'] ?? 0)) ?></div>
                 <div class="aps-cp-stat-label"><?= __('referral_total_earned') ?></div>
             </div>
         </div>
@@ -57,7 +57,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         <div class="aps-cp-stat aps-cp-stat--purple">
             <div class="aps-cp-stat-icon"><i class="fas fa-hourglass-half"></i></div>
             <div class="aps-cp-stat-body">
-                <div class="aps-cp-stat-value">â‚¹<?= number_format((float)($stats['pending_earned'] ?? 0)) ?></div>
+                <div class="aps-cp-stat-value">₹<?= number_format((float)($stats['pending_earned'] ?? 0)) ?></div>
                 <div class="aps-cp-stat-label"><?= __('referral_pending_payout') ?></div>
             </div>
         </div>
@@ -76,7 +76,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                         </div>
                         <div>
                             <h5 class="mb-0" class="style-72606"><?= $tierInfo['label'] ?> Tier</h5>
-                            <small class="text-muted">â‚¹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· â‚¹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
+                            <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup Â· ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
                         </div>
                     </div>
                     <?php if ($tierInfo['next_tier']): ?>
@@ -255,7 +255,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                                         <?php endif; ?>
                                     </td>
                                     <td><small class="text-muted"><?= date('M j, Y', strtotime($r['created_at'] ?? 'now')) ?></small></td>
-                                    <td class="text-end fw-bold text-success">â‚¹<?= number_format((float)($r['commission_earned'] ?? 0), 2) ?></td>
+                                    <td class="text-end fw-bold text-success">₹<?= number_format((float)($r['commission_earned'] ?? 0), 2) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -292,7 +292,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                                 <tr>
                                     <td><strong><?= htmlspecialchars($e['referred_name'] ?? 'User') ?></strong><br><small class="text-muted"><?= htmlspecialchars($e['notes'] ?? '') ?></small></td>
                                     <td><small class="text-muted"><?= date('M j, Y', strtotime($e['created_at'] ?? 'now')) ?></small></td>
-                                    <td class="text-end fw-bold text-success">â‚¹<?= number_format((float)($e['amount'] ?? 0), 2) ?></td>
+                                    <td class="text-end fw-bold text-success">₹<?= number_format((float)($e['amount'] ?? 0), 2) ?></td>
                                     <td>
                                         <?php
                                         $st = $e['status'] ?? 'pending';
@@ -342,7 +342,7 @@ $leaderboard = $leaderboard ?? [];
                         <i class="<?= $platformIcons[$rs['share_method']] ?? 'fas fa-share' ?> me-2 text-muted"></i>
                         <span class="style-47175"><?= ucfirst(htmlspecialchars($rs['share_method'])) ?></span>
                         <?php if (!empty($rs['lead_name'])): ?>
-                            <small class="text-muted"> â€” <?= htmlspecialchars($rs['lead_name']) ?></small>
+                            <small class="text-muted"> — <?= htmlspecialchars($rs['lead_name']) ?></small>
                         <?php endif; ?>
                     </div>
                     <small class="text-muted"><?= date('M d, g:i A', strtotime($rs['created_at'])) ?></small>
@@ -386,7 +386,7 @@ $leaderboard = $leaderboard ?? [];
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-center"><?= (int)$lb['referral_count'] ?></td>
-                                <td class="text-end fw-bold text-success">â‚¹<?= number_format((float)$lb['total_earned']) ?></td>
+                                <td class="text-end fw-bold text-success">₹<?= number_format((float)$lb['total_earned']) ?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

@@ -17,7 +17,7 @@ $customers = $customers ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-body p-3 text-center">
                 <?php $totalBiz = array_sum(array_column($customers, 'total_business')); ?>
-                <div class="fs-2 fw-bold text-success">â‚¹<?= number_format($totalBiz) ?></div>
+                <div class="fs-2 fw-bold text-success">₹<?= number_format($totalBiz) ?></div>
                 <div class="small text-muted"><?= __('assoc_cust_total_biz', [], 'Total Business') ?></div>
             </div>
         </div>
@@ -108,7 +108,7 @@ $customers = $customers ?? [];
                                     <div class="col-6">
                                         <div class="p-2 rounded text-center" class="style-46892">
                                             <div class="small text-muted"><?= __('assoc_cust_business_label', [], 'Business') ?></div>
-                                            <div class="fw-bold text-success">â‚¹<?= number_format($c['total_business'] ?? 0) ?></div>
+                                            <div class="fw-bold text-success">₹<?= number_format($c['total_business'] ?? 0) ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@ $customers = $customers ?? [];
 
                                 <?php if ($pendingAmount > 0): ?>
                                     <div class="alert alert-warning py-1 px-2 mb-3">
-                                        <small><i class="fas fa-exclamation-triangle me-1"></i>â‚¹<?= number_format($pendingAmount) ?> <?= __('assoc_cust_pending', [], 'pending') ?></small>
+                                        <small><i class="fas fa-exclamation-triangle me-1"></i>₹<?= number_format($pendingAmount) ?> <?= __('assoc_cust_pending', [], 'pending') ?></small>
                                     </div>
                                 <?php endif; ?>
 

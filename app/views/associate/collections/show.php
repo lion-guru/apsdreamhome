@@ -44,7 +44,7 @@ $c = $collection;
                         </div>
                         <div class="col-md-6">
                             <strong class="text-muted small">Amount</strong>
-                            <p class="mb-0 h5 text-success">â‚¹<?php echo number_format((float)($c['amount'] ?? 0)); ?></p>
+                            <p class="mb-0 h5 text-success">₹<?php echo number_format((float)($c['amount'] ?? 0)); ?></p>
                         </div>
                     </div>
                     <div class="row mb-3">

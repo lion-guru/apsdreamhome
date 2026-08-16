@@ -51,14 +51,14 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <tr>
                         <td><?= (int)($a['id'] ?? 0) ?></td>
                         <td><?= htmlspecialchars((string)($a['name'] ?? '#'.($a['user_id'] ?? ''))) ?></td>
-                        <td><?= htmlspecialchars((string)($a['email'] ?? 'â€”')) ?></td>
+                        <td><?= htmlspecialchars((string)($a['email'] ?? '—')) ?></td>
                         <td>
                             <span class="badge" class="style-1810">
                                 <i class="fas <?= htmlspecialchars($icon) ?> me-1"></i>
                                 <?= htmlspecialchars(ucfirst($curRank)) ?>
                             </span>
                         </td>
-                        <td><?= htmlspecialchars(ucfirst((string)($a['next_rank'] ?? 'â€”'))) ?></td>
+                        <td><?= htmlspecialchars(ucfirst((string)($a['next_rank'] ?? '—'))) ?></td>
                         <td><?= (int)($a['leg_count'] ?? 0) ?></td>
                         <td>&#8377;<?= number_format((float)($a['lifetime_sales'] ?? 0)) ?></td>
                         <td class="style-286">

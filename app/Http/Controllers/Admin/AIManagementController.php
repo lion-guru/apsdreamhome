@@ -51,7 +51,7 @@ class AIManagementController extends AdminController
         try {
             $suggestions = $this->db->fetchAll("
                 SELECT s.*, u.name as user_name, u.email as user_email,
-                       COALESCE(p.title, up.title) as property_title
+                       COALESCE(p.title, up.name) as property_title
                 FROM ai_property_suggestions s
                 LEFT JOIN users u ON s.user_id = u.id
                 LEFT JOIN properties p ON s.property_id = p.id

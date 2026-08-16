@@ -18,7 +18,7 @@ $projectName = "Bohisawagar";
 $projectLocation = "Gorakhpur";
 $projectType = "Residential Plots";
 $projectStatus = "Upcoming";
-$startingPrice = "â‚¹9,50,000";
+$startingPrice = "₹9,50,000";
 $projectArea = "25 Acres";
 $totalUnits = "200";
 $possessionDate = "March 2025";
@@ -27,7 +27,7 @@ $possessionDate = "March 2025";
 $projectDescription = "Bohisawagar presents an exceptional opportunity for investment in premium residential plots in Gorakhpur. Strategically located with excellent connectivity, this project offers modern amenities and a well-planned layout for comfortable living.";
 
 // Meta description for SEO
-$metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS Dream Homes. Starting at â‚¹9,50,000. Excellent connectivity and modern amenities.";
+$metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS Dream Homes. Starting at ₹9,50,000. Excellent connectivity and modern amenities.";
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -141,7 +141,7 @@ class AuctionController extends AdminController
     private function fetchProperties()
     {
         try {
-            $stmt = $this->pdo()->query("SELECT id, title, address, price FROM user_properties WHERE status = 'approved' ORDER BY created_at DESC LIMIT 100");
+            $stmt = $this->pdo()->query("SELECT id, name, address, price FROM user_properties WHERE status = 'approved' ORDER BY created_at DESC LIMIT 100");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) { return []; }
     }

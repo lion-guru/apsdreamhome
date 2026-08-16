@@ -294,7 +294,7 @@ $kpis = [
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between mb-1">
                                     <span class="fw-semibold" class="style-87981"><?= ucfirst(str_replace('_',' ',$p['status'])) ?></span>
-                                    <span class="fw-bold"><?= (int)$p['cnt'] ?> leads &middot; â‚¹<?= number_format((float)$p['total_val'] / 100000, 1) ?>L</span>
+                                    <span class="fw-bold"><?= (int)$p['cnt'] ?> leads &middot; ₹<?= number_format((float)$p['total_val'] / 100000, 1) ?>L</span>
                                 </div>
                                 <div class="progress" class="style-28392">
                                     <div class="progress-bar" class="style-25298"></div>
@@ -322,12 +322,20 @@ $kpis = [
                     ?>
                     <?php if (!empty($statusDist)): ?>
                         <!-- Donut Chart (CSS-based) -->
+                        <?php
+                        $donutDeg = 0;
+                        $donutColors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1', '#0dcaf0', '#fd7e14', '#20c997'];
+                        $donutGradientParts = [];
+                        foreach (array_slice($statusDist, 0, 8) as $di => $ds) {
+                            $dpct = ((int)$ds['cnt'] / $totalAll) * 360;
+                            $dcolor = $donutColors[$di % count($donutColors)];
+                            $donutGradientParts[] = $dcolor . ' ' . $donutDeg . 'deg ' . ($donutDeg + $dpct) . 'deg';
+                            $donutDeg += $dpct;
+                        }
+                        $donutGradient = implode(', ', $donutGradientParts);
+                        ?>
                         <div class="d-flex align-items-center gap-4">
-                            <div class="style-72447" {$deg}deg " . ($deg + $pct) . "deg,";
-                                    $deg += $pct;
-                                endforeach;
-                                ?>
-                            );position:relative;flex-shrink:0">
+                            <div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(<?= $donutGradient ?>);position:relative;flex-shrink:0">
                                 <div class="style-36412">
                                     <strong class="style-92777"><?= number_format(array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist))) ?></strong>
                                 </div>
