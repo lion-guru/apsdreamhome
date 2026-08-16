@@ -16,7 +16,7 @@ $localCount = (int) ($info['local_count'] ?? 0);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storage Gateways - APS Dream Home</title>
-    <link rel="stylesheet" href="<?= $base ?>/assets/admin/css/admin.min.css">
+    <link rel="stylesheet" href="<?= $base ?>/assets/admin/css/admin.css">
     <style>
         .storage-card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:20px; margin-bottom:16px; }
         .storage-card h3 { margin:0 0 12px 0; font-size:1.15rem; display:flex; align-items:center; gap:8px; }

@@ -67,7 +67,7 @@
                                         </span>
                                     </td>
                                     <td class="text-end pe-3">
-                                        <a href="/admin/expenses/<?= (int)($expense['id'] ?? 0) ?>" class="btn btn-sm btn-link text-decoration-none">View Details</a>
+                                        <a href="/admin/expenses?highlight=<?= (int)($expense['id'] ?? 0) ?>" class="btn btn-sm btn-link text-decoration-none">View Details</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

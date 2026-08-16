@@ -72,7 +72,7 @@
     .chat-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 </style>
 
-<script src="/apsdreamhome/assets/js/voice-search.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/voice-search.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const chatContainer = document.getElementById('chat-container');

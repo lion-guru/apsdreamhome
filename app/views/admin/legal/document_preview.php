@@ -7,7 +7,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preview: <?= htmlspecialchars($doc['document_number'] ?? $doc['title'] ?? 'Document') ?></title>
-    <link href="<?= BASE_URL ?>/assets/admin/css/admin.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/admin/css/admin.css" rel="stylesheet">
     <style>
         @media print { .no-print { display: none !important; } body { background: #fff; } .print-container { box-shadow: none; margin: 0; padding: 20px; } }
         body { background: #f5f5f5; font-family: 'Times New Roman', Times, serif; }

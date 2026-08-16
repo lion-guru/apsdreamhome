@@ -32,8 +32,8 @@
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="/public/css/pages.css" rel="stylesheet">
-    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script">
+    <link href="<?= BASE_URL ?>/css/pages.css" rel="stylesheet">
+    <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <style>
         :root {

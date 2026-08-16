@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="<?= BASE_URL ?>/assets/images/legal-services.jpg" alt="<?php echo __('legal_services', [], 'Legal Services'); ?>" class="img-fluid rounded shadow-lg">
+                <img src="<?= BASE_URL ?>/assets/images/property-placeholder.jpg" alt="<?php echo __('legal_services', [], 'Legal Services'); ?>" class="img-fluid rounded shadow-lg" onerror="this.style.display='none'">
             </div>
         </div>
     </div>
