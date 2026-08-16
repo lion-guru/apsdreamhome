@@ -108,7 +108,12 @@ class AuthenticationService
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute($tid > 1 ? [$token, date('Y-m-d H:i:s', $expires), $user['id'], $tid] : [$token, date('Y-m-d H:i:s', $expires), $user['id']]);
 
-                setcookie('remember_token', $token, $expires, '/', '', false, true);
+                setcookie('remember_token', $token, [
+                    'expires' => $expires,
+                    'path' => '/',
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ]);
             }
 
             // Log admin action
@@ -258,7 +263,12 @@ class AuthenticationService
 
             // Clear remember me cookie
             if (isset($_COOKIE['remember_token'])) {
-                setcookie('remember_token', '', time() - 3600, '/', '', false, true);
+                setcookie('remember_token', '', [
+                    'expires' => time() - 3600,
+                    'path' => '/',
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ]);
                 unset($_COOKIE['remember_token']);
             }
 

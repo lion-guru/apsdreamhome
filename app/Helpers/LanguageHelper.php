@@ -56,7 +56,12 @@ if (!function_exists('set_lang')) {
         if (in_array($lang, $allowed)) {
             $_SESSION['lang'] = $lang;
             // Set cookie for 1 year
-            setcookie('lang', $lang, time() + 31536000, '/');
+            setcookie('lang', $lang, [
+                'expires' => time() + 31536000,
+                'path' => '/',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
         }
     }
 }

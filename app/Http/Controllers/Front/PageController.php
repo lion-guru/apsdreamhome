@@ -3074,15 +3074,26 @@ public function location($slug = null)
     public function saasHome()
     {
         $plans = [];
+        $testimonials = [];
         try {
             $plans = \App\Services\TenantService::getInstance()->getPlans();
         } catch (\Throwable $e) {
             error_log('saasHome() error: ' . $e->getMessage());
         }
 
+        try {
+            $pdo = \App\Core\Database::getInstance()->getPdo();
+            $stmt = $pdo->prepare("SELECT author_name, author_title, content, rating FROM testimonials WHERE status = 'approved' ORDER BY rating DESC, id DESC LIMIT 3");
+            $stmt->execute();
+            $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('saasHome testimonials error: ' . $e->getMessage());
+        }
+
         $this->render('pages/saas_home', [
-            'page_title' => 'APS CRM — All-in-One Business Platform',
-            'plans'      => $plans,
+            'page_title'   => 'APS CRM — All-in-One Business Platform',
+            'plans'        => $plans,
+            'testimonials' => $testimonials,
         ]);
     }
 

@@ -327,24 +327,23 @@
     <h2>Trusted by Real Estate Professionals</h2>
     <p>See what our customers have to say about APS CRM.</p>
     <div class="testimonial-grid">
+        <?php
+        $fallback_testimonials = [
+            ['author_name' => 'Rajesh Kumar', 'author_title' => 'Director, Skyline Builders', 'content' => 'APS CRM transformed our business. We went from managing leads in Excel to a full CRM with automated follow-ups in just one week.', 'rating' => 5],
+            ['author_name' => 'Priya Sharma', 'author_title' => 'Finance Head, Green Valley Estates', 'content' => 'The accounting module alone saved us ₹2 lakhs/year in CA fees. Everything from TDS to GST is automated now.', 'rating' => 5],
+            ['author_name' => 'Amit Patel', 'author_title' => 'CEO, PropertyPro Solutions', 'content' => 'The white-label feature let us launch our own branded CRM for clients in 3 days. Best investment we made.', 'rating' => 5],
+        ];
+        $display_testimonials = !empty($testimonials) ? $testimonials : $fallback_testimonials;
+        foreach ($display_testimonials as $t):
+            $stars = max(1, min(5, (int)($t['rating'] ?? 5)));
+        ?>
         <div class="testimonial-card">
-            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            <div class="text">"APS CRM transformed our business. We went from managing leads in Excel to a full CRM with automated follow-ups in just one week."</div>
-            <div class="author">Rajesh Kumar</div>
-            <div class="role">Director, Skyline Builders</div>
+            <div class="stars"><?php for ($i = 0; $i < $stars; $i++): ?><i class="fas fa-star"></i><?php endfor; ?></div>
+            <div class="text">"<?= htmlspecialchars($t['content'] ?? '') ?>"</div>
+            <div class="author"><?= htmlspecialchars($t['author_name'] ?? '') ?></div>
+            <div class="role"><?= htmlspecialchars($t['author_title'] ?? '') ?></div>
         </div>
-        <div class="testimonial-card">
-            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            <div class="text">"The accounting module alone saved us ₹2 lakhs/year in CA fees. Everything from TDS to GST is automated now."</div>
-            <div class="author">Priya Sharma</div>
-            <div class="role">Finance Head, Green Valley Estates</div>
-        </div>
-        <div class="testimonial-card">
-            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            <div class="text">"The white-label feature let us launch our own branded CRM for clients in 3 days. Best investment we made."</div>
-            <div class="author">Amit Patel</div>
-            <div class="role">CEO, PropertyPro Solutions</div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </section>
 

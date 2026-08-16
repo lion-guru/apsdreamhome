@@ -93,7 +93,12 @@ class LanguageController extends AdminController
         $_SESSION['user_language'] = $lang_code;
 
         // Set language cookie (30 days)
-        setcookie('user_language', $lang_code, time() + (30 * 24 * 60 * 60), '/');
+        setcookie('user_language', $lang_code, [
+            'expires' => time() + (30 * 24 * 60 * 60),
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
 
         // Redirect back to referring page or home
         $referer = $_SERVER['HTTP_REFERER'] ?? BASE_URL;

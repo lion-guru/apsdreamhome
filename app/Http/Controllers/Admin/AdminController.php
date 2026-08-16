@@ -30,6 +30,43 @@ class AdminController extends BaseController
     }
 
     /**
+     * Get current admin/user ID from session (used by audit logging)
+     */
+    protected function getUserId(): int
+    {
+        return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+    }
+
+    /**
+     * Get current admin/user role from session (used by audit logging)
+     */
+    protected function getUserRole(): string
+    {
+        return $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
+    }
+
+    /**
+     * Alias for getUserId() (used by DocumentEsignController)
+     */
+    protected function getAdminId(): int
+    {
+        return $this->getUserId();
+    }
+
+    /**
+     * Get POST input from request body
+     */
+    protected function getPostInput(): array
+    {
+        $input = $_POST;
+        $json = json_decode(file_get_contents('php://input'), true);
+        if (is_array($json)) {
+            $input = array_merge($input, $json);
+        }
+        return $input;
+    }
+
+    /**
      * Enterprise Dashboard
      */
     public function enterpriseDashboard()

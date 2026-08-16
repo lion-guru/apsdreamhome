@@ -407,7 +407,12 @@ class AuthenticationService
         if ($remember) {
             $this->session->set('remember_me', true);
             // Set cookie for 30 days
-            setcookie('remember_token', bin2hex(random_bytes(16)), time() + (30 * 24 * 60 * 60), '/');
+            setcookie('remember_token', bin2hex(random_bytes(16)), [
+                'expires' => time() + (30 * 24 * 60 * 60),
+                'path' => '/',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
         }
     }
 }

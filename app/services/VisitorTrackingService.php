@@ -38,7 +38,12 @@ class VisitorTrackingService
         }
 
         // Set cookie for 30 days
-        setcookie('visitor_session_id', $sessionId, time() + (86400 * 30), '/');
+        setcookie('visitor_session_id', $sessionId, [
+            'expires' => time() + (86400 * 30),
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
 
         return $sessionId;
     }

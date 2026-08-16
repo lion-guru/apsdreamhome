@@ -136,7 +136,12 @@ class AuthService
                 // Clear remember me cookie if exists
                 if (isset($_COOKIE['remember_token'])) {
                     $this->clearRememberToken($_COOKIE['remember_token']);
-                    setcookie('remember_token', '', time() - 3600, '/');
+                    setcookie('remember_token', '', [
+                        'expires' => time() - 3600,
+                        'path' => '/',
+                        'httponly' => true,
+                        'samesite' => 'Lax',
+                    ]);
                 }
                 
                 $this->logger->info('User logged out', ['user_id' => $userId]);
@@ -636,7 +641,13 @@ class AuthService
             
             $this->db->execute($sql, [$user['id'], $token, $expires, $token, $expires]);
             
-            setcookie('remember_token', $token, time() + (30 * 24 * 3600), '/', '', true, true);
+            setcookie('remember_token', $token, [
+                'expires' => time() + (30 * 24 * 3600),
+                'path' => '/',
+                'secure' => true,
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
         }
     }
 

@@ -106,7 +106,12 @@ class TranslationService
         if (php_sapi_name() !== 'cli') {
             $_SESSION['user_language'] = $lang;
             if (!headers_sent()) {
-                setcookie('user_language', $lang, time() + 86400 * 30, '/', '', false, true);
+                setcookie('user_language', $lang, [
+                    'expires' => time() + 86400 * 30,
+                    'path' => '/',
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ]);
             }
             $this->cache = []; // clear cache for safety
         }
