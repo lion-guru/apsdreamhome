@@ -102,7 +102,7 @@ class VisitController extends AdminController
                     $this->db->prepare("UPDATE leads SET status = 'visit_scheduled' WHERE id = ? $tSql")->execute(array_merge([$leadId], $tParams));
                 }
             } catch (\Throwable $e) { error_log('VisitController::store error: ' . $e->getMessage()); }
-            if ($this->audit) $this->audit->log('visit.create', $this->getUserId(), $this->getUserRole(), 'visit', $result['visit_id'] ?? 0, "Scheduled visit for " . $data['customer_name']);
+            if ($this->audit) $this->audit->log('visit.create', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $result['visit_id'] ?? 0, "Scheduled visit for " . $data['customer_name']);
             $this->setFlash('success', 'Site visit scheduled successfully');
         } else {
             $this->setFlash('error', $result['error'] ?? 'Failed to schedule visit');
@@ -176,7 +176,7 @@ class VisitController extends AdminController
             $params = array_merge($params, $tParams);
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            if ($this->audit) $this->audit->log('visit.update', $this->getUserId(), $this->getUserRole(), 'visit', $id, "Updated visit #$id to status: $status");
+            if ($this->audit) $this->audit->log('visit.update', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $id, "Updated visit #$id to status: $status");
             $this->setFlash('success', 'Visit updated successfully');
         } catch (\Throwable $e) {
             $this->setFlash('error', 'Update failed: ' . $e->getMessage());
@@ -194,7 +194,7 @@ class VisitController extends AdminController
         $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($id) {
             $this->service->cancel($id, 'Deleted by admin');
-            if ($this->audit) $this->audit->log('visit.delete', $this->getUserId(), $this->getUserRole(), 'visit', $id, "Deleted visit #$id");
+            if ($this->audit) $this->audit->log('visit.delete', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $id, "Deleted visit #$id");
             $this->setFlash('success', 'Visit deleted');
         }
         return $this->redirect(BASE_URL . '/admin/visits');
@@ -205,7 +205,7 @@ class VisitController extends AdminController
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->updateStatus($id, 'confirmed');
-            if ($this->audit) $this->audit->log('visit.confirm', $this->getUserId(), $this->getUserRole(), 'visit', $id, "Confirmed visit #$id");
+            if ($this->audit) $this->audit->log('visit.confirm', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $id, "Confirmed visit #$id");
             $this->setFlash('success', 'Visit confirmed');
         }
         return $this->redirect(BASE_URL . '/admin/visits');
@@ -227,7 +227,7 @@ class VisitController extends AdminController
         $reason = $_POST['reason'] ?? $_GET['reason'] ?? 'Cancelled by admin';
         if ($this->service && $id) {
             $this->service->cancel($id, $reason);
-            if ($this->audit) $this->audit->log('visit.cancel', $this->getUserId(), $this->getUserRole(), 'visit', $id, "Cancelled visit #$id: $reason");
+            if ($this->audit) $this->audit->log('visit.cancel', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $id, "Cancelled visit #$id: $reason");
             $this->setFlash('success', 'Visit cancelled');
         }
         return $this->redirect(BASE_URL . '/admin/visits');
@@ -250,7 +250,7 @@ class VisitController extends AdminController
         $notes = $_POST['notes'] ?? null;
         if ($id && $status) {
             $this->service->updateStatus($id, $status, $notes);
-            if ($this->audit) $this->audit->log('visit.status', $this->getUserId(), $this->getUserRole(), 'visit', $id, "Status changed to $status for visit #$id");
+            if ($this->audit) $this->audit->log('visit.status', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $id, "Status changed to $status for visit #$id");
             $this->setFlash('success', 'Status updated');
         }
         return $this->redirect(BASE_URL . '/admin/visits');

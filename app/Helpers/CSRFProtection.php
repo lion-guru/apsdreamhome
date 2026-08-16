@@ -28,16 +28,15 @@ class CSRFProtection {
         $_SESSION[self::$token_name] = $token;
         $_SESSION[self::$token_name . '_time'] = time();
 
-        // Set secure cookie
-        $cookie_options = [
-            'expires_or_seconds' => time() + self::$token_lifetime,
+        // Set secure cookie (PHP 8 compat: 'expires' not 'expires_or_seconds')
+        setcookie(self::$cookie_name, $token, [
+            'expires' => time() + self::$token_lifetime,
             'path' => '/',
             'domain' => '',
             'secure' => isset($_SERVER['HTTPS']),
             'httponly' => true,
-            'samesite' => 'Strict'
-        ];
-        setcookie(self::$cookie_name, $token, $cookie_options);
+            'samesite' => 'Strict',
+        ]);
 
         return $token;
     }
@@ -109,10 +108,10 @@ class CSRFProtection {
         unset($_SESSION[self::$token_name]);
         unset($_SESSION[self::$token_name . '_time']);
         setcookie(self::$cookie_name, '', [
-            'expires_or_seconds' => time() - 3600,
+            'expires' => time() - 3600,
             'path' => '/',
             'httponly' => true,
-            'samesite' => 'Strict'
+            'samesite' => 'Strict',
         ]);
     }
 
