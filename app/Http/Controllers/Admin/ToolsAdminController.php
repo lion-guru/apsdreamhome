@@ -313,13 +313,13 @@ class ToolsAdminController extends AdminController
 
         $templates = [];
         try {
-            $templates = $db->query("SELECT * FROM whatsapp_templates ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+            $templates = $db->query("SELECT * FROM whatsapp_templates ORDER BY template_name ASC")->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs' => 0];
         try {
             $stats['total'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_templates")->fetchColumn();
-            $stats['active'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_templates WHERE is_active = 1")->fetchColumn();
+            $stats['active'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_templates WHERE status = 'active'")->fetchColumn();
             $stats['inactive'] = $stats['total'] - $stats['active'];
             $stats['message_logs'] = (int)$db->query("SELECT COUNT(*) FROM whatsapp_message_logs")->fetchColumn();
         } catch (\Exception $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
@@ -342,7 +342,7 @@ class ToolsAdminController extends AdminController
         $content = $_POST['content'] ?? '';
         $category = $_POST['category'] ?? 'MARKETING';
         $language = $_POST['language'] ?? 'en';
-        $isActive = isset($_POST['is_active']) ? 1 : 0;
+        $isActive = isset($_POST['is_active']) ? 'active' : 'inactive';
 
         if (empty($name)) {
             $_SESSION['error'] = 'Template name is required';
@@ -352,10 +352,10 @@ class ToolsAdminController extends AdminController
 
         try {
             if ($id > 0) {
-                $stmt = $db->prepare("UPDATE whatsapp_templates SET name = ?, content = ?, category = ?, language = ?, is_active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
+                $stmt = $db->prepare("UPDATE whatsapp_templates SET template_name = ?, template_content = ?, category = ?, language = ?, status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$name, $content, $category, $language, $isActive, $id, $this->tenantId()]);
             } else {
-                $stmt = $db->prepare("INSERT INTO whatsapp_templates (name, content, category, language, is_active, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?)");
+                $stmt = $db->prepare("INSERT INTO whatsapp_templates (template_name, template_content, category, language, status, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?)");
                 $stmt->execute([$name, $content, $category, $language, $isActive, $this->tenantId()]);
             }
             $_SESSION['success'] = "Template '$name' saved";

@@ -227,7 +227,7 @@ class MLMController extends AdminController
         $data = ['members' => [], 'stats' => ['total' => 0, 'active' => 0, 'total_volume' => 0, 'max_depth' => 0]];
         try {
             $db = $this->db;
-            $members = $db->fetchAll("SELECT mp.id, mp.user_id, mp.referral_code, mp.sponsor_user_id, mp.current_level, mp.total_commission, mp.pending_commission, mp.lifetime_sales, mp.direct_referrals, mp.total_team_size, mp.status, mp.created_at, u.name, u.email, sp.name as sponsor_name FROM mlm_profiles mp LEFT JOIN users u ON mp.user_id = u.id LEFT JOIN mlm_profiles sp ON mp.sponsor_user_id = sp.user_id LEFT JOIN users su ON mp.sponsor_user_id = su.id ORDER BY mp.id ASC");
+            $members = $db->fetchAll("SELECT mp.id, mp.user_id, mp.referral_code, mp.sponsor_user_id, mp.current_level, mp.total_commission, mp.pending_commission, mp.lifetime_sales, mp.direct_referrals, mp.total_team_size, mp.status, mp.created_at, u.name, u.email, su.name as sponsor_name FROM mlm_profiles mp LEFT JOIN users u ON mp.user_id = u.id LEFT JOIN users su ON mp.sponsor_user_id = su.id ORDER BY mp.id ASC");
             $data['members'] = $members ?? [];
             $data['stats']['total'] = count($data['members']);
             foreach ($data['members'] as $m) {

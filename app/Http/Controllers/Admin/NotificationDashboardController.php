@@ -60,7 +60,7 @@ class NotificationDashboardController extends AdminController
     public function whatsappTemplates()
     {
         $db = Database::getInstance();
-        $templates = $db->query("SELECT * FROM whatsapp_templates ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+        $templates = $db->query("SELECT * FROM whatsapp_templates ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
 
         $this->render('admin/notification-dashboard/whatsapp_templates', [
             'page_title' => 'WhatsApp Templates',

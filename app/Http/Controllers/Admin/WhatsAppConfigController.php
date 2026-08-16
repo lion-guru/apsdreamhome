@@ -124,7 +124,7 @@ class WhatsAppConfigController extends AdminController
 
         try {
             $templates = $this->db->fetchAll(
-                "SELECT * FROM whatsapp_templates ORDER BY name ASC"
+                "SELECT * FROM whatsapp_templates ORDER BY template_name ASC"
             );
         } catch (\Exception $e) {
             $error = $e->getMessage();
@@ -175,7 +175,7 @@ class WhatsAppConfigController extends AdminController
                 if (empty($name)) continue;
 
                 $existing = $this->db->fetch(
-                    "SELECT id FROM whatsapp_templates WHERE name = ?",
+                    "SELECT id FROM whatsapp_templates WHERE template_name = ?",
                     [$name]
                 );
 
@@ -186,13 +186,13 @@ class WhatsAppConfigController extends AdminController
 
                 if ($existing) {
                     $this->db->execute(
-                        "UPDATE whatsapp_templates SET content = ?, category = ?, language = ?, is_active = ? WHERE id = ?",
-                        [$content, $category, $language, $status === 'APPROVED' ? 1 : 0, $existing['id']]
+                        "UPDATE whatsapp_templates SET template_content = ?, category = ?, language = ?, status = ? WHERE id = ?",
+                        [$content, $category, $language, $status === 'APPROVED' ? 'active' : 'inactive', $existing['id']]
                     );
                 } else {
                     $this->db->execute(
-                        "INSERT INTO whatsapp_templates (name, content, category, language, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
-                        [$name, $content, $category, $language, $status === 'APPROVED' ? 1 : 0]
+                        "INSERT INTO whatsapp_templates (template_name, template_content, category, language, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
+                        [$name, $content, $category, $language, $status === 'APPROVED' ? 'active' : 'inactive']
                     );
                 }
                 $synced++;
