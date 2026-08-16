@@ -85,7 +85,7 @@ class SLAService
 
     public function completeSLA($logId, $status = 'met', $notes = '') {
         try {
-            $log = $this->db->fetch("SELECT * FROM crm_sla_logs WHERE id = ?" . $this->tenantSql(), array_merge([$logId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+            $log = $this->db->fetch("SELECT * FROM crm_sla_logs WHERE id = ?" . $this->tenantSql(), [$logId]);
             if (!$log) return ['success' => false, 'error' => 'SLA log not found'];
 
             $started = strtotime($log['started_at']);
@@ -93,7 +93,7 @@ class SLAService
 
             $this->db->query(
                 "UPDATE crm_sla_logs SET ended_at = NOW(), status = ?, response_time_seconds = ?, notes = ?" . $this->tenantSql() . " AND id = ?",
-                array_merge([$status, $responseTime, $notes, $logId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                [$status, $responseTime, $notes, $logId]
             );
             return ['success' => true, 'response_time' => $responseTime];
         } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
@@ -126,7 +126,7 @@ class SLAService
                  LEFT JOIN leads l ON l.id = sl.lead_id" . $this->tenantSqlForAlias('l') . "
                  WHERE sl.status IN ('missed','breached')" . $this->tenantSqlForAlias('sl') . "
                  ORDER BY sl.created_at DESC LIMIT ?",
-                array_merge([$limit], $this->tenantId() > 1 ? [$this->tenantId(), $this->tenantId(), $this->tenantId()] : [])
+                [$limit]
             ) ?: [];
         } catch (\Exception $e) { return []; }
     }

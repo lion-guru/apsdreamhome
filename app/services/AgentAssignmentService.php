@@ -325,7 +325,6 @@ class AgentAssignmentService
             // Get assignee details
 if ($assignmentType === 'agent') {
                 $assigneeStmt = $this->db->prepare("SELECT u.name, u.email, u.phone FROM users u 
-                                                    JOIN users a ON u.id = a.user_id 
                                                     WHERE u.id = :assignee_id" . $this->tenantSqlForAlias('u') . " LIMIT 1");
                 $aparams = ['assignee_id' => $assigneeId];
                 if ($this->tenantId() > 1) $aparams[] = $this->tenantId();

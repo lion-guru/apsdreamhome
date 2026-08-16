@@ -72,7 +72,7 @@ class TrainingService
     {
         // Get next order
         $order = $this->db->query(
-            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_modules WHERE course_id = ?" . $this->tenantSqlForAlias('m') . " LIMIT 1",
+            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_modules m WHERE m.course_id = ?" . $this->tenantSqlForAlias('m') . " LIMIT 1",
             array_merge([$courseId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
         )->fetchColumn();
 
@@ -102,7 +102,7 @@ class TrainingService
     public function addLesson(int $moduleId, array $data): array
     {
         $order = $this->db->query(
-            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_lessons WHERE module_id = ?" . $this->tenantSqlForAlias('l') . " LIMIT 1",
+            "SELECT COALESCE(MAX(sort_order), 0) + 1 FROM training_lessons l WHERE l.module_id = ?" . $this->tenantSqlForAlias('l') . " LIMIT 1",
             [$moduleId]
         )->fetchColumn();
 

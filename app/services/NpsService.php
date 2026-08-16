@@ -252,7 +252,7 @@ class NpsService
         try {
             $stmt = $this->pdo->prepare("SELECT s.*, n.* FROM nps_schedule n 
                                         JOIN nps_surveys s ON n.survey_id = s.id 
-                                        WHERE n.status = 'pending' AND n.scheduled_for <= NOW() {$this->tenantSqlForAlias('n')}");
+                                        WHERE n.status = 'pending' AND n.scheduled_for <= NOW() {$this->tenantSqlForAlias('n')} {$this->tenantSqlForAlias('s')}");
             $stmt->execute();
             $due = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
