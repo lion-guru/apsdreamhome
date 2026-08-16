@@ -71,10 +71,11 @@ class RoyaltyService
             $extraCols = $insertData ? ', ' . implode(', ', array_keys($insertData)) : '';
             $extraVals = $insertData ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '';
             $stmt = $this->pdo->prepare("
-                INSERT INTO mlm_commission_ledger (user_id, commission_type, amount, description, status, created_at{$extraCols})
-                VALUES (?, 'royalty_pool', ?, ?, 'pending', NOW(){$extraVals})
+                INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, notes, status, created_at{$extraCols})
+                VALUES (?, ?, 'royalty_pool', ?, ?, 'pending', NOW(){$extraVals})
             ");
             $stmt->execute(array_merge([
+                $manager['id'],
                 $manager['id'],
                 $share,
                 "Royalty pool share for {$period}"

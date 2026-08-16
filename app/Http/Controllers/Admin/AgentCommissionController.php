@@ -31,7 +31,7 @@ class AgentCommissionController extends AdminController {
             "SELECT mcl.*, u.name as agent_name, u.email as agent_email
              FROM mlm_commission_ledger mcl
              LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
-             WHERE mcl.type = 'direct_sale' AND mcl.tenant_id = ?
+             WHERE mcl.commission_type = 'direct_sale' AND mcl.tenant_id = ?
              ORDER BY mcl.created_at DESC LIMIT 10",
             [$tid]
         )->fetchAll();
@@ -40,7 +40,7 @@ class AgentCommissionController extends AdminController {
             "SELECT u.id, u.name, u.email, COUNT(mcl.id) as sale_count, SUM(mcl.amount) as total_earned
              FROM mlm_commission_ledger mcl
              JOIN users u ON mcl.beneficiary_user_id = u.id
-             WHERE mcl.type = 'direct_sale' AND mcl.tenant_id = ?
+             WHERE mcl.commission_type = 'direct_sale' AND mcl.tenant_id = ?
              GROUP BY u.id
              ORDER BY total_earned DESC LIMIT 10",
             [$tid]

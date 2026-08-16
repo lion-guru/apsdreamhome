@@ -246,7 +246,7 @@ class BookingController extends AdminController
                 }
             } catch (\Exception $e) { error_log('BookingController::show payment error: ' . $e->getMessage()); }
             try {
-                $cStmt = $this->db->prepare("SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl LEFT JOIN users u ON mcl.associate_id = u.id WHERE mcl.booking_id = ? ORDER BY mcl.created_at DESC");
+                $cStmt = $this->db->prepare("SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl LEFT JOIN users u ON mcl.beneficiary_user_id = u.id WHERE mcl.booking_id = ? ORDER BY mcl.created_at DESC");
                 $cStmt->execute([$id]);
                 $commissions = $cStmt->fetchAll(\PDO::FETCH_ASSOC);
                 foreach ($commissions as $cm) {

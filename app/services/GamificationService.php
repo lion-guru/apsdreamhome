@@ -257,4 +257,49 @@ class GamificationService
 
         return $badge;
     }
+
+    /**
+     * Get top associate by gamification points
+     */
+    public function getTopAssociate(): ?array
+    {
+        return $this->db->fetch(
+            "SELECT gus.user_id, gus.total_points, gus.current_level, u.name, u.email
+             FROM gamification_user_stats gus
+             JOIN users u ON gus.user_id = u.id
+             WHERE u.role = 'associate'" . ($this->tenantId() > 1 ? " AND u.tenant_id = ?" : "") . "
+             ORDER BY gus.total_points DESC LIMIT 1",
+            $this->tenantId() > 1 ? [$this->tenantId()] : []
+        ) ?: null;
+    }
+
+    /**
+     * Get top agent by gamification points
+     */
+    public function getTopAgent(): ?array
+    {
+        return $this->db->fetch(
+            "SELECT gus.user_id, gus.total_points, gus.current_level, u.name, u.email
+             FROM gamification_user_stats gus
+             JOIN users u ON gus.user_id = u.id
+             WHERE u.role = 'agent'" . ($this->tenantId() > 1 ? " AND u.tenant_id = ?" : "") . "
+             ORDER BY gus.total_points DESC LIMIT 1",
+            $this->tenantId() > 1 ? [$this->tenantId()] : []
+        ) ?: null;
+    }
+
+    /**
+     * Get top employee by gamification points
+     */
+    public function getTopEmployee(): ?array
+    {
+        return $this->db->fetch(
+            "SELECT gus.user_id, gus.total_points, gus.current_level, u.name, u.email
+             FROM gamification_user_stats gus
+             JOIN users u ON gus.user_id = u.id
+             WHERE u.role = 'employee'" . ($this->tenantId() > 1 ? " AND u.tenant_id = ?" : "") . "
+             ORDER BY gus.total_points DESC LIMIT 1",
+            $this->tenantId() > 1 ? [$this->tenantId()] : []
+        ) ?: null;
+    }
 }
