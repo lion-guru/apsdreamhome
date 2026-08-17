@@ -1,0 +1,188 @@
+[
+  {
+    "page": "agreements",
+    "issues": []
+  },
+  {
+    "page": "ai_calling",
+    "issues": [
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "medium"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "page": "ai_dashboard",
+    "issues": []
+  },
+  {
+    "page": "attendance",
+    "issues": []
+  },
+  {
+    "page": "audit_log",
+    "issues": []
+  },
+  {
+    "page": "backoffice",
+    "issues": []
+  },
+  {
+    "page": "bank_accounts",
+    "issues": [
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "medium"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "page": "bookings",
+    "issues": []
+  },
+  {
+    "page": "cache",
+    "issues": []
+  },
+  {
+    "page": "campaigns",
+    "issues": [
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "medium"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "low"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "high"
+      },
+      {
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "page": "cash_book",
+    "issues": [
+      {
+        "severity": "high",
+        "category": "empty_data",
+        "description": "No data"
+      },
+      {
+        "severity": "medium",
+        "category": "broken_component",
+        "description": "Broken component"
+      },
+      {
+        "severity": "low",
+        "category": "console_error",
+        "description": "JS error overlays"
+      },
+      {
+        "severity": "high",
+        "category": "visual_bug",
+        "description": "Overlapping modals, z-index issues, cutoff modals"
+      },
+      {
+        "severity": "low",
+        "category": "responsive",
+        "description": "Content overflowing container on desktop"
+      }
+    ]
+  },
+  {
+    "page": "colonies",
+    "issues": []
+  },
+  {
+    "page": "colony_pipeline",
+    "issues": []
+  },
+  {
+    "page": "commissions",
+    "issues": []
+  },
+  {
+    "page": "crm_dashboard",
+    "issues": []
+  },
+  {
+    "page": "customers",
+    "issues": []
+  }
+]
