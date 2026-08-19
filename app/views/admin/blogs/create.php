@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(function (d) {
                 if (d.success) {
                     ta.value = (d.english || '') + "\n\n---\n\n" + (d.hindi || '');
+                    .catch(err => console.error('Request failed:', err));
                     if (meta && d.excerpt) meta.value = d.excerpt;
                 } else {
                     showToast('AI generation failed. Please try again.', 'danger');

@@ -231,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
+      .catch(err => console.error('Request failed:', err));
         if (data.success && data.plots && data.plots.length > 0) {
           var parkPct = document.querySelector('input[name="park_area_pct"]').value || '7';
           var roadW = document.querySelector('input[name="road_width"]').value || '30';

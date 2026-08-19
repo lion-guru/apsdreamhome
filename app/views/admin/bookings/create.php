@@ -251,6 +251,7 @@ $active_page = 'bookings';
             fetch('<?= BASE_URL ?>/api/user/resolve-sponsor?ref=' + associateId)
                 .then(response => response.json())
                 .then(data => {
+                .catch(err => console.error('Request failed:', err));
                     if (data.success) {
                         nameDisplay.textContent = data.name + ' (' + data.role + ')';
                         resDiv.style.display = 'block';

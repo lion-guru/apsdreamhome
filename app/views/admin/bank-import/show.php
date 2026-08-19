@@ -334,6 +334,7 @@ $unmatched_txns = $unmatched_txns ?? [];
             .then(function(data) {
                 var results = data.data || [];
                 var tbody = document.getElementById('internalResultsBody');
+                .catch(err => console.error('Request failed:', err));
                 tbody.innerHTML = '';
 
                 if (results.length === 0) {

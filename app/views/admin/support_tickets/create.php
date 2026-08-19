@@ -109,6 +109,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(data => {
                 if (data.success) {
                     showToast('Ticket created successfully! Ticket #: ' + data.ticket_number, 'success');
+                    .catch(err => console.error('Request failed:', err));
                     window.location.href = '<?php echo $base; ?>/admin/support_tickets';
                 } else {
                     showToast(data.message || 'Failed to create ticket', 'danger');

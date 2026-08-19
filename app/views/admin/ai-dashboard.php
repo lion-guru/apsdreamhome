@@ -202,6 +202,7 @@ function retrainAI() {
         .then(r => r.json())
         .then(data => {
             hideLoader();
+            .catch(err => console.error('Request failed:', err));
             if (data.success) {
                 showToast({type: 'success', body: 'AI models retrained successfully!'});
                 location.reload();

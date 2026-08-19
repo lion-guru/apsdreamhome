@@ -197,6 +197,7 @@
             .then(data => {
                 if (data.success && data.data) {
                     revenueChart.data.labels = data.data.map(item => item.date).reverse();
+                    .catch(err => console.error('Request failed:', err));
                     revenueChart.data.datasets[0].data = data.data.map(item => item.daily_revenue).reverse();
                     revenueChart.update();
                 }
@@ -218,6 +219,7 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success && data.data) {
+                    .catch(err => console.error('Request failed:', err));
                     expenseChart.data.labels = data.data.map(item => item.category);
                     expenseChart.data.datasets[0].data = data.data.map(item => item.total_amount);
                     expenseChart.update();

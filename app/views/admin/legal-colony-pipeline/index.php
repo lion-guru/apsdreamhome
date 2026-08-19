@@ -131,6 +131,7 @@ function autoAdvance() {
   .then(data => {
     if (data.success) {
       showToast(data.summary, 'info');
+      .catch(err => console.error('Request failed:', err));
       if (data.advanced && data.advanced.length > 0) {
         location.reload();
       }

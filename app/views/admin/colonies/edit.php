@@ -157,6 +157,7 @@ function loadDistricts(stateId) {
         .then(r => r.json())
         .then(data => {
             const sel = document.getElementById('district_select');
+            .catch(err => console.error('Request failed:', err));
             sel.innerHTML = '<option value="">Select District</option>';
             data.forEach(d => sel.innerHTML += '<option value="' + d.id + '">' + d.name + '</option>');
         });

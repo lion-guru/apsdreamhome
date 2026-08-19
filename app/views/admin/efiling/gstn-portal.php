@@ -210,6 +210,7 @@ document.querySelectorAll('#gstr1SubmitForm, #gstr3bSubmitForm').forEach(functio
             method: 'POST',
             body: new FormData(form)
         }).then(function(r) { return r.json(); }).then(function(data) {
+        .catch(err => console.error('Request failed:', err));
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-cloud-upload-alt me-1"></i>Submit';
             resultDiv.style.display = 'block';

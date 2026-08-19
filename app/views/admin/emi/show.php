@@ -234,6 +234,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(data => {
                 if (data.success) {
                     showToast('Payment processed successfully!', 'success');
+                    .catch(err => console.error('Request failed:', err));
                     location.reload();
                 } else {
                     showToast(data.message || 'Payment failed', 'danger');

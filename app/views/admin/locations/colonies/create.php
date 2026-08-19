@@ -88,7 +88,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="min_price_per_sqft" class="form-label">Min Price Per Sqft (?) — Floor Price</label>
+                                    <label for="min_price_per_sqft" class="form-label">Min Price Per Sqft (?)  Floor Price</label>
                                     <input type="number" class="form-control" id="min_price_per_sqft" name="min_price_per_sqft" min="0" step="0.01" placeholder="Auto-calculated from pricing">
                                 </div>
                             </div>
@@ -184,6 +184,7 @@ function loadDistricts(stateId) {
             data.forEach(function(district) {
                 districtSelect.innerHTML += '<option value="' + district.id + '">' + district.name + '</option>';
             });
+            .catch(err => console.error('Request failed:', err));
         })
         .catch(error => {
             console.error('Error loading districts:', error);

@@ -654,6 +654,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             .then(data => {
                 if (data.success) {
                     showToast(data.message, 'success');
+                    .catch(err => console.error('Request failed:', err));
                     setTimeout(() => window.location.href = data.redirect, 1000);
                 } else {
                     showToast(data.error || 'Failed to impersonate', 'error');
@@ -675,6 +676,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
+                    .catch(err => console.error('Request failed:', err));
                     showToast(data.message, 'success');
                     setTimeout(() => window.location.reload(), 1000);
                 }
@@ -696,6 +698,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             })
             .then(r => r.json())
             .then(data => {
+                    .catch(err => console.error('Request failed:', err));
                 if (data.success) {
                     showToast(data.message, 'success');
                     setTimeout(() => window.location.reload(), 1000);
@@ -713,6 +716,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(r => r.json())
+                    .catch(err => console.error('Request failed:', err));
             .then(data => {
                 if (data.success) {
                     showToast(data.message, 'success');
@@ -748,6 +752,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                 .then(r => r.json())
                 .then(data => {
                     if (data.users && data.users.length) {
+                        .catch(err => console.error('Request failed:', err));
                         let html = '';
                         data.users.forEach(u => {
                             html += `<div class="d-flex justify-content-between align-items-center p-2 border-bottom border-light"><span><strong>${u.name}</strong> <span class="badge bg-${u.role === 'super_admin' ? 'danger' : 'secondary'} ms-1">${u.role}</span><br><small class="text-white-50">${u.email}</small></span><button class="btn btn-sm btn-god" onclick="impersonateUser(${u.id})"><i class="fas fa-mask me-1"></i>Impersonate</button></div>`;
@@ -767,6 +772,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             fetch(`${baseUrl}/admin/godmode/users?role=${encodeURIComponent(role)}&limit=20`)
                 .then(r => r.json())
                 .then(data => {
+                        .catch(err => console.error('Request failed:', err));
                     if (data.users && data.users.length) {
                         let html = '';
                         data.users.forEach(u => {

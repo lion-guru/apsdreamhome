@@ -224,6 +224,7 @@ function runAutoPay() {
                 'Skipped: <strong>' + data.skipped + '</strong>. ' +
                 'Page will reload in 2 seconds.</div>';
             setTimeout(function() { location.reload(); }, 2000);
+            .catch(err => console.error('Request failed:', err));
         } else {
             resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i>Error: ' +
                 (data.error || 'Unknown error') + '</div>';

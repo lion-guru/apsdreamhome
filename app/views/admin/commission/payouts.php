@@ -177,6 +177,7 @@ function bulkPay() {
     .then(data => {
         if (data.success) {
             showToast('Payouts processed successfully!', 'success');
+            .catch(err => console.error('Request failed:', err));
             setTimeout(() => location.reload(), 1500);
         } else {
             showToast(data.message || 'Failed to process payouts', 'error');

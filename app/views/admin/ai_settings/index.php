@@ -149,6 +149,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT
             .then(data => {
                 if (data.success) {
                     showAlert('API key updated successfully!', 'success');
+                    .catch(err => console.error('Request failed:', err));
                     refreshStats();
                 } else {
                     showAlert(data.message || 'Failed to update API key', 'danger');
@@ -228,6 +229,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT
                 if (data.success && data.data && data.data.candidates) {
                     const content = data.data.candidates[0].content.parts[0].text;
                     contentDiv.innerHTML = '<pre>' + content + '</pre>';
+                    .catch(err => console.error('Request failed:', err));
                     showAlert('Content generated successfully!', 'success');
                 } else {
                     contentDiv.innerHTML = '<p class="text-danger">Failed to generate content: ' + (data.error || data.message) + '</p>';
@@ -280,6 +282,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT
                 })
             })
             .then(response => response.json())
+                .catch(err => console.error('Request failed:', err));
             .then(data => {
                 typingIndicator.remove();
 
@@ -350,6 +353,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT
                     })
                 })
                 .then(response => response.json())
+                        .catch(err => console.error('Request failed:', err));
                 .then(data => {
                     if (data.success) {
                         showAlert('Logs cleared successfully', 'success');

@@ -105,6 +105,7 @@ function sendPush(e) {
         if (d.success) {
             result.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Notification sent!') + '</div>';
             form.reset();
+            .catch(err => console.error('Request failed:', err));
         } else {
             result.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-1"></i> ' + (d.error || 'Failed to send') + '</div>';
         }

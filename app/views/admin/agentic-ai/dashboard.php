@@ -227,6 +227,7 @@ function runAllAgents(btn) {
             notif.innerHTML = '<i class="fas fa-' + (data.success ? 'check-circle' : 'exclamation-triangle') + ' me-2"></i>' + (data.message || 'Completed') +
                 '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
             setTimeout(function() { location.reload(); }, 2000);
+            .catch(err => console.error('Request failed:', err));
         })
         .catch(function(err) {
             notif.className = 'alert alert-danger alert-dismissible fade show mt-2';

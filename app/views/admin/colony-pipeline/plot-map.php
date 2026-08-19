@@ -65,6 +65,7 @@
         fetch(baseUrl + '/admin/colony-pipeline/' + colonyId + '/map/geojson')
             .then(function(r) { return r.json(); })
             .then(function(data) {
+            .catch(err => console.error('Request failed:', err));
                 if (geojsonLayer) { map.removeLayer(geojsonLayer); }
                 var statusLabels = { available: 'Available', booked: 'Booked', sold: 'Sold', hold: 'On Hold', reserved: 'Reserved' };
                 geojsonLayer = L.geoJSON(data, {

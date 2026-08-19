@@ -291,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('<?= BASE_URL ?>/admin/ai-system/health')
             .then(function (r) { return r.json(); })
             .then(function (s) {
+            .catch(err => console.error('Request failed:', err));
                 var dot = s.ollama && s.ollama.up ? '#10b981' : '#ef4444';
                 var html = '<div class="style-62899">';
                 html += '<div><span class="health-dot" class="style-87244"></span>'

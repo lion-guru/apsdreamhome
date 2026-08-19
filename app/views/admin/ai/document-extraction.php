@@ -428,6 +428,7 @@ function submitReview(action) {
     .then(result => {
         if (result.success) {
             bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
+            .catch(err => console.error('Request failed:', err));
             location.reload();
         } else {
             showToast('Error: ' + result.error, 'danger');

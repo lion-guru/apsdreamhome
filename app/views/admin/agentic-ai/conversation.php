@@ -87,6 +87,7 @@ function sendMsg(){
         if(d.success){input.value='';location.reload();}
         else{showToast('Failed: '+(d.error||'Unknown error'), 'danger');}
     ).finally(() => hideLoader());
+    .catch(err => console.error('Request failed:', err));
 }
 function claimConv(){
     showLoader();

@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(r => r.json())
         .then(data => {
             removeTypingIndicator(typingId);
+            .catch(err => console.error('Request failed:', err));
             if (data.success) {
                 addMessage('bot', data.message);
                 speak(data.message);

@@ -323,6 +323,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         .then(d => {
           if (d.success) {
             showToast('Lead moved to ' + formatStage(newStage), 'success');
+            .catch(err => console.error('Request failed:', err));
             refreshStats();
           } else {
             showToast('Failed: ' + (d.error || 'unknown'), 'error');
@@ -358,6 +359,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
     fetch(BASE + '/admin/lead-kanban/pipeline-stats?' + params.toString())
       .then(r => r.json())
       .then(s => {
+        .catch(err => console.error('Request failed:', err));
         document.getElementById('stat-total').textContent = s.total.toLocaleString();
         document.getElementById('stat-active').textContent = s.active.toLocaleString();
         document.getElementById('stat-value').textContent = '₹' + (s.value / 100000).toFixed(1) + 'L';
@@ -411,6 +413,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
         const phone = lead.phone || '—';
         const email = lead.email || '—';
         const budget = lead.budget ? '₹' + Number(lead.budget).toLocaleString() : '—';
+        .catch(err => console.error('Request failed:', err));
         const score = lead.lead_score || lead.score || 0;
         const status = (lead.status || 'new').replace(/_/g, ' ');
         const source = lead.source || '—';

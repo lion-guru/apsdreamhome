@@ -114,6 +114,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(data => {
                 if (data.success) {
                     showToast('Ticket updated successfully!', 'success');
+                    .catch(err => console.error('Request failed:', err));
                     window.location.href = '<?php echo $base; ?>/admin/support_tickets/show/<?php echo $ticket['id'] ?? 0; ?>';
                 } else {
                     showToast(data.message || 'Failed to update ticket', 'danger');

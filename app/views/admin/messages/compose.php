@@ -158,6 +158,7 @@ function searchUsers(query) {
             .then(function(r) { return r.json(); })
             .then(function(users) {
                 var list = document.getElementById('usersList');
+                .catch(err => console.error('Request failed:', err));
                 if (!users || users.length === 0) {
                     list.innerHTML = '<div class="text-center py-4"><i class="fas fa-users fa-3x text-muted mb-3"></i><p class="text-muted">No users found.</p></div>';
                     return;

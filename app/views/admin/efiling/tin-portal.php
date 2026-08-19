@@ -213,6 +213,7 @@ document.querySelectorAll('#tin26qForm, #tin27qForm').forEach(function(form) {
             method: 'POST',
             body: new FormData(form)
         }).then(function(r) { return r.json(); }).then(function(data) {
+        .catch(err => console.error('Request failed:', err));
             btn.disabled = false;
             var formType = form.querySelector('input[name="form_type"]').value;
             btn.innerHTML = '<i class="fas fa-cloud-upload-alt me-1"></i>Submit ' + formType;
@@ -242,6 +243,7 @@ document.getElementById('form16aDownload').addEventListener('submit', function(e
     if (!token) { resultDiv.style.display = 'block'; resultDiv.innerHTML = '<div class="alert alert-warning py-2 mb-0">Enter a token number</div>'; return; }
 
     fetch('<?= BASE_URL ?>/admin/efiling/tin/status/' + encodeURIComponent(token))
+        .catch(err => console.error('Request failed:', err));
         .then(function(r) { return r.json(); }).then(function(data) {
             resultDiv.style.display = 'block';
             if (data.success) {

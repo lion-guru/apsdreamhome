@@ -160,6 +160,7 @@ function previewRecipients() {
         body: formData
     }).then(r => r.json()).then(data => {
         const panel = document.getElementById('recipientPreview');
+        .catch(err => console.error('Request failed:', err));
         if (data.total > 0) {
             let html = '<div class="mb-2"><span class="badge bg-primary fs-6">' + data.total + '</span> leads will receive this message</div>';
             data.leads.forEach(l => {

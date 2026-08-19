@@ -1140,6 +1140,7 @@ function submitQuickLog() {
         btn.disabled = false;
         if (data.success) {
             showToast('âœ“ ' + quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' logged!', 'success');
+            .catch(err => console.error('Request failed:', err));
             document.getElementById('quickSubject').value = '';
             document.getElementById('quickBody').value = '';
             setTimeout(() => location.reload(), 800);
@@ -1170,6 +1171,7 @@ function submitInteraction(e) {
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Interaction';
         btn.disabled = false;
         if (data.success) {
+            .catch(err => console.error('Request failed:', err));
             bootstrap.Modal.getInstance(document.getElementById('interactionModal')).hide();
             showToast('âœ“ Interaction logged!', 'success');
             setTimeout(() => location.reload(), 800);
@@ -1202,6 +1204,7 @@ function submitTask(e) {
     }).then(r => r.json()).then(data => {
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Create Task';
         btn.disabled = false;
+            .catch(err => console.error('Request failed:', err));
         if (data.success) {
             bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
             showToast('âœ“ Task created!', 'success');

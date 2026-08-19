@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     // Show success message
                     const alert = document.createElement('div');
+                    .catch(err => console.error('Request failed:', err));
                     alert.className = 'alert alert-success alert-dismissible fade show';
                     alert.innerHTML = `
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -198,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    .catch(err => console.error('Request failed:', err));
                     const select = document.getElementById('userSelect');
                     select.innerHTML = '<option value="">-- Select a user --</option>';
                     data.users.forEach(user => {
@@ -226,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('<?php echo BASE_URL; ?>/admin/menu-permissions/get-user-permissions?user_id=' + userId)
             .then(response => response.json())
             .then(data => {
+                    .catch(err => console.error('Request failed:', err));
                 if (data.success) {
                     const tbody = document.getElementById('userPermissionsBody');
                     tbody.innerHTML = '';
@@ -317,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             })
                             .then(response => response.json())
                             .then(data => {
+                                    .catch(err => console.error('Request failed:', err));
                                 if (data.success) {
                                     // Update revoke button
                                     const actionCell = row.querySelector('td:last-child');
@@ -358,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: `user_id=${userId}&menu_item_id=${menuId}`
         })
         .then(response => response.json())
+                .catch(err => console.error('Request failed:', err));
         .then(data => {
             if (data.success) {
                 // Refresh the user permissions

@@ -127,6 +127,7 @@ document.getElementById('createJobForm').addEventListener('submit', function(e) 
     .then(data => {
         if (data.success) {
             showToast('Job posted successfully!', 'success');
+            .catch(err => console.error('Request failed:', err));
             window.location.href = '<?php echo BASE_URL; ?>/admin/jobs';
         } else {
             showToast('Error: ' + data.error, 'danger');

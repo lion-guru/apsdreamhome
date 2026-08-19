@@ -161,6 +161,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(function(r) { return r.text(); })
             .then(function(data) {
                 var blob = new Blob([data], { type: 'text/csv' });
+                .catch(err => console.error('Request failed:', err));
                 var url = URL.createObjectURL(blob);
                 var a = document.createElement('a'); a.href = url; a.download = 'campaign-' + campaignId + '-report.csv';
                 document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);

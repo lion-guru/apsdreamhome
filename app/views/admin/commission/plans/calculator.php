@@ -133,6 +133,7 @@ function loadLevels() {
             if (data.success && data.levels) {
                 calcLevels = data.levels;
                 calculateCommissions();
+                .catch(err => console.error('Request failed:', err));
             }
         })
         .catch(err => console.error('Failed to load levels:', err));

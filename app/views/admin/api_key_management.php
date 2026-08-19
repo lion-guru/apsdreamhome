@@ -272,6 +272,7 @@
                 .then(data => {
                     if (data.success) {
                         updateStats(data.stats);
+                        .catch(err => console.error('Request failed:', err));
                         loadMcpKeys();
                         loadUserKeys();
                         loadIntegrationStatus();
@@ -415,6 +416,7 @@
             })
             .then(response => response.json())
             .then(data => {
+                .catch(err => console.error('Request failed:', err));
                 hideLoader();
                 if (data.success) {
                     bootstrap.Modal.getInstance(document.getElementById("addMcpKeyModal")).hide();
@@ -444,6 +446,7 @@
                 body: formData
             })
             .then(response => response.json())
+                .catch(err => console.error('Request failed:', err));
             .then(data => {
                 hideLoader();
                 if (data.success) {

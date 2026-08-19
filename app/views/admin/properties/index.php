@@ -275,6 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&property_ids[]=' + ids.join('&property_ids[]=') + '&status=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes)
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
+            .catch(err => console.error('Request failed:', err));
             else showToast(d.error || 'Failed', 'danger');
         ).finally(() => hideLoader());
     });

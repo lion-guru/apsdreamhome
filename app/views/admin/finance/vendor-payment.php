@@ -165,6 +165,7 @@ function vFetchLiveRate() {
             icon.className = 'fas fa-sync-alt';
             if (data.success && data.rate) {
                 document.getElementById('vFxRate').value = parseFloat(data.rate).toFixed(4);
+                .catch(err => console.error('Request failed:', err));
                 status.className = 'badge bg-success ms-1';
                 status.textContent = (data.cached ? '<?= __('vpay_cached') ?>' : '<?= __('vpay_live') ?>') + ' — ' + data.fetched_at;
                 vCalc();

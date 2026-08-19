@@ -160,6 +160,7 @@ function syncLeads(accountId) {
         .then(data => {
             if (data.success) {
                 showToast(`Sync completed! Fetched: ${data.stats.fetched}, New: ${data.stats.new}, Updated: ${data.stats.updated}`, 'success');
+                .catch(err => console.error('Request failed:', err));
                 location.reload();
             } else {
                 showToast('Sync failed: ' + (data.error || 'Unknown error'), 'danger');

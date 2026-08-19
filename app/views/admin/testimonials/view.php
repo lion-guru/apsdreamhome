@@ -182,6 +182,7 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
     .then(data => {
         if (data.success) {
             showToast(data.message, 'info');
+            .catch(err => console.error('Request failed:', err));
             location.reload();
         } else {
             showToast('Error: ' + data.error, 'danger');

@@ -153,6 +153,7 @@ function testSmtpConnection() {
         const icon = d.success ? 'check-circle' : 'exclamation-circle';
         const html = `<div class="alert alert-${cls} alert-dismissible fade show mt-3"><i class="fas fa-${icon} me-2"></i>${d.message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
         document.querySelector('form').insertAdjacentHTML('beforebegin', html);
+        .catch(err => console.error('Request failed:', err));
     })
     .catch(() => {
         document.querySelector('form').insertAdjacentHTML('beforebegin', '<div class="alert alert-danger alert-dismissible fade show mt-3"><i class="fas fa-times-circle me-2"></i>Connection test failed.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');

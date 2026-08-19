@@ -299,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=' + action + '&value=' + value + '&ids=' + ids.join(',')
         }).then(r => r.json()).then(d => {
             if (d.success) location.reload();
+            .catch(err => console.error('Request failed:', err));
             else showToast(d.error || 'Failed', 'danger');
         ).finally(() => hideLoader());
     });
@@ -313,6 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
             body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=delete&ids=' + ids.join(',')
         }).then(r => r.json()).then(d => {
+            .catch(err => console.error('Request failed:', err));
             if (d.success) location.reload();
             else showToast(d.error || 'Failed', 'danger');
         ).finally(() => hideLoader());

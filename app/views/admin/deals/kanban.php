@@ -207,6 +207,7 @@ $stageIcons = [
             .then(data => {
                 if (!data.success) {
                     showToast('Failed to update deal stage', 'danger');
+                    .catch(err => console.error('Request failed:', err));
                     location.reload();
                 }
             })

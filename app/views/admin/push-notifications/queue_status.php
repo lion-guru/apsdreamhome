@@ -153,6 +153,7 @@ function processQueue() {
     })
     .then(r => r.json())
     .then(d => {
+    .catch(err => console.error('Request failed:', err));
         result.style.display = 'block';
         if (d.success) {
             result.innerHTML = '<div class="alert alert-success" class="style-54711"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Queue processed!') + '</div>';

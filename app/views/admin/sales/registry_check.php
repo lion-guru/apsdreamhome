@@ -162,6 +162,7 @@ document.getElementById('btn-generate-noc')?.addEventListener('click', function(
     })
     .then(r => r.json())
     .then(data => {
+    .catch(err => console.error('Request failed:', err));
         if (data.success) {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML =

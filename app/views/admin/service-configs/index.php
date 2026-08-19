@@ -259,6 +259,7 @@ function testConnection(service) {
     })
     .then(r => r.json())
     .then(data => {
+    .catch(err => console.error('Request failed:', err));
         const statusBadge = data.status === 'ok'
             ? '<span class="badge bg-success fs-6">OK</span>'
             : '<span class="badge bg-danger fs-6">ERROR</span>';

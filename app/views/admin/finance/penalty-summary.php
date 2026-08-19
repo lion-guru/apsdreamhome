@@ -206,6 +206,7 @@ function applyPenalties() {
                 Number(data.total_penalty).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</strong>. ' +
                 '<?= __('pen_will_reload') ?></div>';
             setTimeout(function() { location.reload(); }, 2000);
+            .catch(err => console.error('Request failed:', err));
         } else {
             resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i><?= __('pen_error') ?> ' +
                 (data.error || 'Unknown error') + '</div>';

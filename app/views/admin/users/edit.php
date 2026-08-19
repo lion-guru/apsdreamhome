@@ -114,6 +114,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             })
             .then(response => {
                 const contentType = response.headers.get('content-type');
+                .catch(err => console.error('Request failed:', err));
                 if (contentType && contentType.includes('application/json')) {
                     return response.json();
                 } else {
@@ -124,6 +125,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             })
             .then(data => {
                 if (data && data.success) {
+                    .catch(err => console.error('Request failed:', err));
                     showToast('User updated successfully!', 'success');
                     window.location.href = '<?php echo $base; ?>/admin/users';
                 } else if (data) {

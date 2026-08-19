@@ -90,6 +90,7 @@ function viewLeadTimeline(id) {
         if (d.success && d.data && d.data.length) {
             var html = '<ul class="list-group">';
             d.data.forEach(function(item) { html += '<li class="list-group-item"><strong>' + (item.action || '') + '</strong> <small class="text-muted">' + (item.created_at || '') + '</small><br>' + (item.details || item.notes || '') + '</li>'; ).finally(() => hideLoader());
+            .catch(err => console.error('Request failed:', err));
             html += '</ul>';
             document.getElementById('leadTimelineBody').innerHTML = html;
         } else {

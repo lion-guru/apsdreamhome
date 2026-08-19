@@ -164,6 +164,7 @@
             .then(data => {
                 if (data.success && data.data) {
                     constructionChart.data.labels = data.data.map(item => item.date).reverse();
+                    .catch(err => console.error('Request failed:', err));
                     constructionChart.data.datasets[0].data = data.data.map(item => item.projects_started).reverse();
                     constructionChart.data.datasets[1].data = data.data.map(item => item.projects_completed).reverse();
                     constructionChart.update();
