@@ -82,7 +82,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Detailed Breakdown</h3>
                     <?php if (!empty($entries)): ?>
-                        <form method="POST" action="<?= BASE_URL ?>/admin/salary/batch/generate" class="style-71727" onsubmit="return confirm('Generate <?= count($entries) ?> payslips for <?= $month ?>/<?= $year ?>?')">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/salary/batch/generate" class="style-71727" data-aps-confirm="Generate <?= count($entries) ?> payslips for <?= $month ?>/<?= $year ?>?">
                             <input type="hidden" name="month" value="<?= $month ?>">
                             <input type="hidden" name="year" value="<?= $year ?>">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

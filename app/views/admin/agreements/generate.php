@@ -72,13 +72,13 @@ $active_page = 'agreements';
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
-                    <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/allotment" class="btn btn-primary" onclick="return confirm('Generate Allotment Letter?')">
+                    <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/allotment" class="btn btn-primary" data-aps-confirm="Generate Allotment Letter?">
                         <i class="fas fa-file-alt"></i> Generate Allotment Letter
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/sale_agreement" class="btn btn-success" onclick="return confirm('Generate Sale Agreement?')">
+                    <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/sale_agreement" class="btn btn-success" data-aps-confirm="Generate Sale Agreement?">
                         <i class="fas fa-file-signature"></i> Generate Sale Agreement
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/payment_plan" class="btn btn-info text-white" onclick="return confirm('Generate Payment Plan?')">
+                    <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/payment_plan" class="btn btn-info text-white" data-aps-confirm="Generate Payment Plan?">
                         <i class="fas fa-credit-card"></i> Generate Payment Plan
                     </a>
                 </div>

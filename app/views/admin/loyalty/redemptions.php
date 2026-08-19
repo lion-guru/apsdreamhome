@@ -43,7 +43,7 @@ $redemptions = $redemptions ?? [];
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-success" aria-label="Confirm"><i class="fas fa-check"></i></button>
                                     </form>
-                                    <form method="POST" action="<?= $base ?>/admin/loyalty/redemptions/<?= $r['id'] ?? 0 ?>/reject" class="style-71727" onsubmit="return confirm('Reject this redemption?')">
+                                    <form method="POST" action="<?= $base ?>/admin/loyalty/redemptions/<?= $r['id'] ?? 0 ?>/reject" class="style-71727" data-aps-confirm="Reject this redemption?">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-danger" aria-label="Close"><i class="fas fa-times"></i></button>
                                     </form>

@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0"><i class="fas fa-trophy me-2"></i>Associate Ranks</h5>
         <div>
-            <form method="POST" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks/promote-all" class="d-inline" onsubmit="return confirm('Run automatic rank promotions for all associates?')">
+            <form method="POST" action="<?= htmlspecialchars($base ?? '') ?>/admin/mlm/associate-ranks/promote-all" class="d-inline" data-aps-confirm="Run automatic rank promotions for all associates?">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-success me-2"><i class="fas fa-play me-1"></i>Run Promotions</button>
             </form>

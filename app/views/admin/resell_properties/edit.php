@@ -108,7 +108,7 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                 <a href="<?= BASE_URL ?>/admin/resell-properties/status/<?= $id ?>" class="btn btn-outline-warning btn-sm"><i class="fas fa-flag me-1"></i>Update Status</a>
                 <a href="<?= BASE_URL ?>/admin/resell-properties/images/<?= $id ?>" class="btn btn-outline-info btn-sm"><i class="fas fa-image me-1"></i>Manage Images</a>
                 <a href="<?= BASE_URL ?>/admin/resell-properties/commission/<?= $id ?>" class="btn btn-outline-success btn-sm"><i class="fas fa-percentage me-1"></i>Commission</a>
-                <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/delete/<?= $id ?>" onsubmit="return confirm('Delete this property? This cannot be undone.')">
+                <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/delete/<?= $id ?>" data-aps-confirm="Delete this property? This cannot be undone.">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                     <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="fas fa-trash me-1"></i>Delete Property</button>
                 </form>

@@ -162,12 +162,12 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <?php if ($status !== 'approved'): ?>
-                                                <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/admin/careers/applicants/<?php echo $app['id'] ?? 0; ?>/status?status=approved" class="btn btn-outline-success" title="Approve" onclick="return confirm('Approve this applicant?')">
+                                                <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/admin/careers/applicants/<?php echo $app['id'] ?? 0; ?>/status?status=approved" class="btn btn-outline-success" title="Approve" data-aps-confirm="Approve this applicant?">
                                                     <i class="fas fa-check"></i>
                                                 </a>
                                             <?php endif; ?>
                                             <?php if ($status !== 'rejected'): ?>
-                                                <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/admin/careers/applicants/<?php echo $app['id'] ?? 0; ?>/status?status=rejected" class="btn btn-outline-danger" title="Reject" onclick="return confirm('Reject this applicant?')">
+                                                <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/admin/careers/applicants/<?php echo $app['id'] ?? 0; ?>/status?status=rejected" class="btn btn-outline-danger" title="Reject" data-aps-confirm="Reject this applicant?">
                                                     <i class="fas fa-times"></i>
                                                 </a>
                                             <?php endif; ?>

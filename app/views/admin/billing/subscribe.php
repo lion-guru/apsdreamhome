@@ -67,7 +67,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
                 </div>
                 <div class="col-md-2 text-end">
                     <form method="POST" action="<?= $base ?>/admin/billing/cancel/<?= $tenant['id'] ?>" class="d-inline"
-                          onsubmit="return confirm('Cancel this subscription? Tenant will be downgraded to Free plan.');">
+                          data-aps-confirm="Cancel this subscription? Tenant will be downgraded to Free plan.">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <button type="submit" class="btn btn-outline-danger btn-sm">
                             <i class="fas fa-times me-1"></i>Cancel

@@ -78,7 +78,7 @@ $early_settlement = $early_settlement ?? [];
                     <?php endif; ?>
 
                     <?php if ($loan['status'] === 'active'): ?>
-                        <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/<?= $loan['id'] ?>/default" class="mb-2" onsubmit="return confirm('Mark this loan as defaulted?')">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/<?= $loan['id'] ?>/default" class="mb-2" data-aps-confirm="Mark this loan as defaulted?">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button type="submit" class="btn btn-outline-danger w-100"><i class="fas fa-exclamation-triangle me-1"></i>Mark Default</button>
                         </form>

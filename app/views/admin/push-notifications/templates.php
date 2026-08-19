@@ -86,7 +86,7 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/push-notifications/templates/<?= $t['id'] ?>/delete"
-                                          onsubmit="return confirm('Delete this template?');" class="d-inline">
+                                          data-aps-confirm="Delete this template?" class="d-inline">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                         <button type="submit" class="btn btn-sm" class="style-35891" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>

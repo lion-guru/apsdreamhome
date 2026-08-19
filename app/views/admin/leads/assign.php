@@ -88,7 +88,7 @@ $recent_assignments = $recent_assignments ?? [];
                                 <button type="submit" class="btn btn-primary" id="assignBtn" disabled>
                                     <i class="fas fa-user-plus me-1"></i> Assign Selected
                                 </button>
-                                <a href="<?= BASE_URL ?>/admin/leads/scoring/auto-assign" class="btn btn-outline-warning" onclick="return confirm('Auto-assign all unassigned leads using round-robin?')">
+                                <a href="<?= BASE_URL ?>/admin/leads/scoring/auto-assign" class="btn btn-outline-warning" data-aps-confirm="Auto-assign all unassigned leads using round-robin?">
                                     <i class="fas fa-magic me-1"></i> Auto-Assign (Round Robin)
                                 </a>
                             </div>

@@ -51,7 +51,7 @@
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/directory/listing-form/<?= $l['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                         <a href="<?= BASE_URL ?>/services/listing/<?= $l['id'] ?>" target="_blank" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/directory/delete-listing/<?= $l['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/directory/delete-listing/<?= $l['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

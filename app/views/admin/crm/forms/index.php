@@ -36,7 +36,7 @@
                                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin/crm/forms/<?= $f['id'] ?>/edit"><i class="fas fa-edit me-2"></i>Edit</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/forms/<?= $f['id'] ?>/delete" onsubmit="return confirm('Delete this form?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/forms/<?= $f['id'] ?>/delete" data-aps-confirm="Delete this form?">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <button class="dropdown-item text-danger"><i class="fas fa-trash me-2"></i>Delete</button>
                                             </form>

@@ -134,7 +134,7 @@
                                             <a href="<?= BASE_URL ?>/admin/locations/colonies/edit/<?php echo $colony['id']; ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/delete/<?php echo $colony['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/delete/<?php echo $colony['id']; ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

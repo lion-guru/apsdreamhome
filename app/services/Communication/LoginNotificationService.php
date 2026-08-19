@@ -48,7 +48,7 @@ class LoginNotificationService
         try { $this->emailService = new EmailService(); } catch (\Throwable $e) { $this->emailService = null; }
         try { $this->smsService = new SMSService(); } catch (\Throwable $e) { $this->smsService = null; }
         try { $this->pushService = new PushNotificationService(); } catch (\Throwable $e) { $this->pushService = null; }
-        try { $this->whatsappService = new WhatsAppIntegration(); } catch (\Throwable $e) { $this->whatsappService = null; }
+        try { $this->whatsappService = new WhatsAppWebService(); } catch (\Throwable $e) { $this->whatsappService = null; }
         try { $this->gateway = AIGateway::getInstance(); } catch (\Throwable $e) { $this->gateway = null; }
     }
 

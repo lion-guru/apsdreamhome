@@ -34,7 +34,7 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
                 </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
                     <a href="<?= BASE_URL ?>/admin/iot/catalog/form/<?= $it['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/iot/catalog/delete/<?= $it['id'] ?>" class="d-inline" onsubmit="return confirm('Delete catalog item?')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/iot/catalog/delete/<?= $it['id'] ?>" class="d-inline" data-aps-confirm="Delete catalog item?">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                     </form>
                 </div>

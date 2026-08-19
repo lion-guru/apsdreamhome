@@ -40,7 +40,7 @@
                                     <td><?= number_format($s['clicks'] ?? 0) ?></td>
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/ads/edit/<?= $s['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/ads/delete/<?= $s['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this ad slot?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/ads/delete/<?= $s['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this ad slot?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

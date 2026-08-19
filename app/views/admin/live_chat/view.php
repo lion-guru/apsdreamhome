@@ -25,7 +25,7 @@ ob_start();
         </div>
         <div class="d-flex gap-2">
             <?php if ($session['status'] !== 'closed'): ?>
-                <a href="<?= BASE_URL ?>/admin/live-chat/close?id=<?= $session['id'] ?>&reason=resolved" class="btn btn-outline-secondary" onclick="return confirm('Close this chat?')">
+                <a href="<?= BASE_URL ?>/admin/live-chat/close?id=<?= $session['id'] ?>&reason=resolved" class="btn btn-outline-secondary" data-aps-confirm="Close this chat?">
                     <i class="fas fa-times-circle me-1"></i> Close
                 </a>
             <?php endif; ?>

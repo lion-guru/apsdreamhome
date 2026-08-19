@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\AI\PropertyMatchmakerAgent;
-use App\Services\PropertyListingService;
+use App\Services\AI\Agents\PropertyMatchmakerAgent;
 
 class PropertyMatchmakerController extends Controller
 {
     protected $matchmaker;
-    protected $propertyService;
 
     public function __construct()
     {
         $this->matchmaker = new PropertyMatchmakerAgent();
-        $this->propertyService = new PropertyListingService();
     }
 
     /**

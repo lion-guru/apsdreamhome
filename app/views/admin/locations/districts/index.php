@@ -101,7 +101,7 @@
                                             <a href="<?= BASE_URL ?>/admin/locations/districts/edit/<?php echo $district['id']; ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/districts/delete/<?php echo $district['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure? This will also delete all associated colonies.')">
+                                            <a href="<?= BASE_URL ?>/admin/locations/districts/delete/<?php echo $district['id']; ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure? This will also delete all associated colonies.">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

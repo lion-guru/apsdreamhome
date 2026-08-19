@@ -25,7 +25,7 @@ $prompts = $prompts ?? [];
                                 <small class="text-muted">Model: <?= htmlspecialchars($p['model'] ?? 'gemini') ?> | Temp: <?= $p['temperature'] ?? 0.30 ?> | Max: <?= (int)($p['max_tokens'] ?? 2048) ?></small>
                                 <div class="d-flex gap-1">
                                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editPromptModal<?= $p['id'] ?>"><i class="fas fa-edit"></i></button>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/legal/ai-prompts/<?= $p['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Deactivate this prompt?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/legal/ai-prompts/<?= $p['id'] ?>/delete" class="d-inline" data-aps-confirm="Deactivate this prompt?">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                         <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>

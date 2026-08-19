@@ -132,7 +132,7 @@ $groupLabels = [
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
-                                                <form method="POST" action="<?= $baseUrl ?>/admin/service-configs/reset/<?= htmlspecialchars($svcName ?? '') ?>" onsubmit="return confirm('Reset all <?= htmlspecialchars($svcName ?? '') ?> configs to defaults?');">
+                                                <form method="POST" action="<?= $baseUrl ?>/admin/service-configs/reset/<?= htmlspecialchars($svcName ?? '') ?>" data-aps-confirm="Reset all <?= htmlspecialchars($svcName ?? '') ?> configs to defaults?">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '') ?>">
                                                     <button type="submit" class="dropdown-item text-danger">
                                                         <i class="fas fa-undo me-2"></i>Reset to Defaults

@@ -162,7 +162,7 @@ $base = BASE_URL ?? '';
                                         <?php if (($t['status'] ?? '') === 'active' && ($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
                                             <form method="POST" action="<?= $base ?>/admin/tenants/<?= $t['id'] ?>/switch" class="style-35851">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                                <button type="submit" class="btn btn-outline-success btn-sm" title="Switch to this tenant" onclick="return confirm('Switch to <?= htmlspecialchars($t['name'] ?? '') ?>?')">
+                                                <button type="submit" class="btn btn-outline-success btn-sm" title="Switch to this tenant" data-aps-confirm="Switch to <?= htmlspecialchars($t['name'] ?? '') ?>?">
                                                     <i class="fas fa-exchange-alt"></i>
                                                 </button>
                                             </form>

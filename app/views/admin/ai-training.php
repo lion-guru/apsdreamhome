@@ -6,7 +6,7 @@
  */
 
 // Auth handled by controller (AdminAIController@training calls requireAdmin())
-// Data passed from AdminAIController::training() — knowledgeBase, analytics, categories
+// Data passed from AdminAIController::training()  knowledgeBase, analytics, categories
 
 $db = \App\Core\Database\Database::getInstance();
 
@@ -110,10 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Fetch all Q&A — passed from controller
+// Fetch all Q&A  passed from controller
 $knowledgeBase = $knowledgeBase ?? [];
 
-// Fetch analytics — passed from controller
+// Fetch analytics  passed from controller
 $analytics = $analytics ?? [
     'total_qa' => 0,
     'categories' => [],
@@ -547,7 +547,7 @@ $categories = [
                                     <i class="fas fa-save me-1"></i>Update
                                 </button>
                                 <a href="?delete=<?php echo $qa['id']; ?>" class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Delete this Q&A?')">
+                                    data-aps-confirm="Delete this Q&A?">
                                     <i class="fas fa-trash me-1"></i>Delete
                                 </a>
                             </div>

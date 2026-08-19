@@ -121,10 +121,10 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <?php if ($allocation['status'] == 'pending'): ?>
-                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-outline-success" title="Confirm" onclick="return confirm('Confirm this property allocation?')">
+                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-outline-success" title="Confirm" data-aps-confirm="Confirm this property allocation?">
                                                     <i class="fas fa-check"></i>
                                                 </a>
-                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this property allocation?')">
+                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-outline-danger" title="Cancel" data-aps-confirm="Cancel this property allocation?">
                                                     <i class="fas fa-times"></i>
                                                 </a>
                                             <?php endif; ?>

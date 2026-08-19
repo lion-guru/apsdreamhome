@@ -51,7 +51,7 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/segments/<?= $seg['id'] ?>/delete" onsubmit="return confirm('Delete this segment?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/segments/<?= $seg['id'] ?>/delete" data-aps-confirm="Delete this segment?">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <button class="dropdown-item text-danger"><i class="fas fa-trash me-2"></i>Delete</button>
                                             </form>

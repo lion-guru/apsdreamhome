@@ -4,7 +4,7 @@ namespace App\Services\Communication;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
-use App\Services\AI\AIChatbotService;
+use App\Services\AIChatbotService;
 use App\Services\AI\AIGateway;
 use Exception;
 use \App\Traits\ServiceTenantTrait;

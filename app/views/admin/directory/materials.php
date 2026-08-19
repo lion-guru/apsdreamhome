@@ -27,7 +27,7 @@
                                     <td><?= $m['price_date'] ? date('d M Y', strtotime($m['price_date'])) : '-' ?></td>
                                     <td><span class="badge bg-<?= $m['status'] === 'active' ? 'success' : 'secondary' ?>"><?= $m['status'] ?></span></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/directory/delete-material/<?= $m['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/directory/delete-material/<?= $m['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

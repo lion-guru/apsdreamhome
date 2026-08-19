@@ -141,7 +141,7 @@ $extraHead .= '<style>
                                         <button type="button" class="btn btn-outline-info test-btn" onclick="testKey(<?= $key['id'] ?>)" title="Test">
                                             <i class="fas fa-plug"></i>
                                         </button>
-                                        <a href="<?= BASE_URL ?>/admin/api-keys/delete/<?= $key['id'] ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                        <a href="<?= BASE_URL ?>/admin/api-keys/delete/<?= $key['id'] ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure?">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>

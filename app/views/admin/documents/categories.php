@@ -66,7 +66,7 @@
                                             <td><span class="badge bg-<?= ($cat['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($cat['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span></td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editCat<?= (int)$cat['id'] ?>"><i class="fas fa-edit"></i></button>
-                                                <form method="POST" action="<?= BASE_URL ?>/admin/documents/categories/delete/<?= (int)$cat['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this category?');">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/documents/categories/delete/<?= (int)$cat['id'] ?>" class="style-71727" data-aps-confirm="Delete this category?">
                                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                                 </form>

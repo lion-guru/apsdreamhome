@@ -152,7 +152,7 @@ unset($_SESSION['kyc_verify_results']);
                 <div class="card-header bg-warning text-dark"><h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Take Action</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex gap-2">
-                        <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/approve" class="flex-grow-1" onsubmit="return confirm('Approve this KYC request?');">
+                        <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/approve" class="flex-grow-1" data-aps-confirm="Approve this KYC request?">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                             <button type="submit" class="btn btn-success w-100"><i class="fas fa-check me-1"></i>Approve</button>
                         </form>

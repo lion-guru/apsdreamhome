@@ -161,7 +161,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                     <input type="hidden" name="sub_action" value="approve_discount">
                     <input type="hidden" name="approval_id" value="<?= (int)($pa['id'] ?? 0) ?>">
-                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('<?= __('cp_confirm_approve') ?>');">
+                    <button type="submit" class="btn btn-success btn-sm" data-aps-confirm="<?= __('cp_confirm_approve') ?>">
                       <i class="fas fa-check"></i>
                     </button>
                   </form>
@@ -171,7 +171,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
                     <input type="hidden" name="approval_id" value="<?= (int)($pa['id'] ?? 0) ?>">
                     <div class="input-group input-group-sm">
                       <input type="text" name="approval_notes" class="form-control form-control-sm" placeholder="<?= __('cp_reason') ?>" class="style-50190">
-                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('<?= __('cp_confirm_reject') ?>');">
+                      <button type="submit" class="btn btn-danger btn-sm" data-aps-confirm="<?= __('cp_confirm_reject') ?>">
                         <i class="fas fa-times"></i>
                       </button>
                     </div>
@@ -277,7 +277,7 @@ $calcUrl = $baseUrl . '/admin/colony-pipeline/' . $colonyId . '/pricing/calculat
             <?php endif; ?>
 
             <div class="mt-3">
-              <button type="submit" class="btn btn-primary w-100" onclick="return confirm('<?= __('cp_confirm_apply') ?>');">
+              <button type="submit" class="btn btn-primary w-100" data-aps-confirm="<?= __('cp_confirm_apply') ?>">
                 <i class="fas fa-check me-1"></i><?= __('cp_apply_pricing') ?>
               </button>
             </div>

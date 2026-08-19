@@ -77,7 +77,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                                                     <button class="btn btn-sm btn-outline-danger" aria-label="Reject"><i class="fas fa-times"></i></button>
                                                 </form>
                                             <?php endif; ?>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/legal/uploads/<?= $u['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this upload?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/legal/uploads/<?= $u['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this upload?">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                 <button class="btn btn-sm btn-outline-danger" aria-label="Upload"><i class="fas fa-trash"></i></button>
                                             </form>
@@ -136,7 +136,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button class="btn btn-danger w-100 btn-sm"><i class="fas fa-ban me-1"></i>Mark Cancelled</button>
                         </form>
-                        <form method="POST" action="<?= BASE_URL ?>/admin/legal/documents/<?= $doc['id'] ?>/delete" onsubmit="return confirm('Archive this document?')">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/legal/documents/<?= $doc['id'] ?>/delete" data-aps-confirm="Archive this document?">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <button class="btn btn-outline-danger w-100 btn-sm"><i class="fas fa-archive me-1"></i>Archive</button>
                         </form>

@@ -136,7 +136,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
                                             <td>
                                                 <?php if ($c['status'] === 'draft'): ?>
                                                     <form action="<?= $base ?>/admin/crm/outreach/<?= $c['id'] ?>/send" method="POST" class="style-35851">
-                                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Send to <?= (int)$c['total_leads'] ?> leads?')">
+                                                        <button type="submit" class="btn btn-success btn-sm" data-aps-confirm="Send to <?= (int)$c['total_leads'] ?> leads?">
                                                             <i class="fas fa-paper-plane me-1"></i>Send
                                                         </button>
                                                     </form>

@@ -164,7 +164,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                             </form>
                                         <?php endif; ?>
 
-                                        <form method="POST" action="<?php echo $base; ?>/admin/properties/images/delete" class="d-inline" onsubmit="return confirm('Delete this image?')">
+                                        <form method="POST" action="<?php echo $base; ?>/admin/properties/images/delete" class="d-inline" data-aps-confirm="Delete this image?">
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
                                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">

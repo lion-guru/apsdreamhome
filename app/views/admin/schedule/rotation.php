@@ -29,7 +29,7 @@ $departments = $departments ?? [];
                                 <td><?= $r['assigned_count'] ?? 0 ?></td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary" aria-label="Edit"><i class="fas fa-edit"></i></button>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/schedule/rotations/<?= $r['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this rotation schedule?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/schedule/rotations/<?= $r['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this rotation schedule?">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>

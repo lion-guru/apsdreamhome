@@ -1,7 +1,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><i class="fas fa-cubes me-2"></i>MLM & Real Estate Enterprise</h1>
-        <a href="<?= BASE_URL ?>/admin/mlm-realestate/cron" class="btn btn-outline-warning btn-sm" onclick="return confirm('Run compliance cron?')"><i class="fas fa-play me-1"></i>Run Compliance Cron</a>
+        <a href="<?= BASE_URL ?>/admin/mlm-realestate/cron" class="btn btn-outline-warning btn-sm" data-aps-confirm="Run compliance cron?"><i class="fas fa-play me-1"></i>Run Compliance Cron</a>
     </div>
     
     <div class="row mb-4">

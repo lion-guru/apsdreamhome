@@ -15,7 +15,7 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
             <p class="text-muted mb-0">Run controlled experiments and measure conversion lifts.</p>
         </div>
         <div>
-            <form method="POST" action="<?= $baseUrl ?>/admin/experiments/seed-defaults" class="d-inline" onsubmit="return confirm('Seed the 4 default experiments (homepage_cta, property_card_layout, cta_button_color, registration_form_length)?');">
+            <form method="POST" action="<?= $baseUrl ?>/admin/experiments/seed-defaults" class="d-inline" data-aps-confirm="Seed the 4 default experiments (homepage_cta, property_card_layout, cta_button_color, registration_form_length)?">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <button type="submit" class="btn btn-outline-secondary">
                     <i class="fas fa-seedling me-1"></i> Seed Defaults
@@ -113,7 +113,7 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                                         <a href="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/export" class="btn btn-sm btn-outline-secondary" title="Export CSV">
                                             <i class="fas fa-file-csv"></i>
                                         </a>
-                                        <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this experiment and ALL its events? This cannot be undone.');">
+                                        <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$exp['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this experiment and ALL its events? This cannot be undone.">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>

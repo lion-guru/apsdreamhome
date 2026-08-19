@@ -31,7 +31,7 @@ $filters = $filters ?? [];
                     <label class="aps-cp-form-label">Date</label>
                     <input type="date" name="session_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
                 </div>
-                <button type="submit" class="aps-cp-btn aps-cp-btn-primary" onclick="return confirm('Start reconciliation for this collector+date?')">
+                <button type="submit" class="aps-cp-btn aps-cp-btn-primary" data-aps-confirm="Start reconciliation for this collector+date?">
                     <i class="fas fa-play"></i> Start Session
                 </button>
             </form>
@@ -118,7 +118,7 @@ $filters = $filters ?? [];
                                             <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/close" class="style-35851">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="session_id" value="<?= $s['id'] ?>">
-                                                <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary" onclick="return confirm('Close this session?')"><i class="fas fa-lock"></i> Close</button>
+                                                <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary" data-aps-confirm="Close this session?"><i class="fas fa-lock"></i> Close</button>
                                             </form>
                                         <?php endif; ?>
                                     </td>

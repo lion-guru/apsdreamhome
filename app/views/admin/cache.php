@@ -155,7 +155,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                     <i class="fas fa-database fa-3x text-warning mb-3"></i>
                     <h5>Flush All Cache</h5>
                     <p class="text-muted small">Clear both Redis and file cache. Use when you need a clean slate.</p>
-                    <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/flush') ?>" onsubmit="return confirm('Clear ALL cache layers?');">
+                    <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/flush') ?>" data-aps-confirm="Clear ALL cache layers?">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <button type="submit" class="btn btn-warning">
                             <i class="fas fa-trash me-1"></i>Flush All
@@ -171,7 +171,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                     <i class="fas fa-bolt fa-3x text-danger mb-3"></i>
                     <h5>Flush Redis Only</h5>
                     <p class="text-muted small">Clear Redis but keep the file cache intact. Safe fallback still works.</p>
-                    <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/redis/flush') ?>" onsubmit="return confirm('Clear Redis only?');">
+                    <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/redis/flush') ?>" data-aps-confirm="Clear Redis only?">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <button type="submit" class="btn btn-danger" <?= $available ? '' : 'disabled' ?>>
                             <i class="fas fa-bolt me-1"></i>Flush Redis
@@ -208,7 +208,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
     <div class="card shadow-sm mt-4">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h6 class="mb-0"><i class="fas fa-fire text-danger me-2"></i>Hot-Path Cache (per-path hit/miss)</h6>
-            <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/hotpath/flush') ?>" onsubmit="return confirm('Clear all hot-path cache keys?');" class="d-inline">
+            <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/hotpath/flush') ?>" data-aps-confirm="Clear all hot-path cache keys?" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-outline-danger">
                     <i class="fas fa-trash me-1"></i>Clear Hot Path Cache

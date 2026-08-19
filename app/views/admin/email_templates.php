@@ -108,7 +108,7 @@ $base_url    = $base_url    ?? (defined('BASE_URL') ? BASE_URL : '');
                                     <a href="<?= htmlspecialchars($base_url ?? '') ?>/admin/email-templates/test/<?= urlencode($tpl['code']) ?>"
                                        class="btn btn-sm btn-primary"
                                        title="Send a test email using default placeholder values"
-                                       onclick="return confirm('Send a test email to <?= htmlspecialchars($admin_email ?: 'admin') ?>?');">
+                                       data-aps-confirm="Send a test email?">
                                         <i class="fas fa-paper-plane me-1"></i><?= __('admin_btn_test_send', null, 'Test Send') ?>
                                     </a>
                                 </td>

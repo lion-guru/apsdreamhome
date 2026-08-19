@@ -66,7 +66,7 @@ $merge_fields = $merge_fields ?? [];
                                 <div class="d-flex gap-1">
                                     <a href="<?= BASE_URL ?>/admin/legal/templates/<?= $t['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                     <?php if ($t['status'] !== 'archived'): ?>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/legal/templates/<?= $t['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Archive this template?')">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/legal/templates/<?= $t['id'] ?>/delete" class="d-inline" data-aps-confirm="Archive this template?">
                                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                             <button class="btn btn-sm btn-outline-danger" aria-label="Archive"><i class="fas fa-archive"></i></button>
                                         </form>

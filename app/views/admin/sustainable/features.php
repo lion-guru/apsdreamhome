@@ -40,7 +40,7 @@ $cats = ['energy' => 'Energy', 'water' => 'Water', 'waste' => 'Waste', 'material
                 </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
                     <a href="<?= BASE_URL ?>/admin/sustainable/feature/form/<?= $f['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/feature/delete/<?= $f['id'] ?>" class="d-inline" onsubmit="return confirm('Delete feature?')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/feature/delete/<?= $f['id'] ?>" class="d-inline" data-aps-confirm="Delete feature?">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                         <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                     </form>

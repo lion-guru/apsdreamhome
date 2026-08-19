@@ -22,7 +22,7 @@
                         <td><?= htmlspecialchars($t['created_at'] ?? '-') ?></td>
                         <td>
                             <a href="<?= BASE_URL ?>/admin/finance/template-form?id=<?= (int)$t['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                            <form method="post" action="<?= BASE_URL ?>/admin/finance/template-delete" class="d-inline" onsubmit="return confirm('<?php echo __('finance_delete_template_confirm'); ?>')">
+                            <form method="post" action="<?= BASE_URL ?>/admin/finance/template-delete" class="d-inline" data-aps-confirm="<?php echo __('finance_delete_template_confirm'); ?>">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                 <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
                                 <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>

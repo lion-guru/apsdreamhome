@@ -91,7 +91,7 @@ $monthName    = date('F', mktime(0, 0, 0, $month, 1, $year));
                     <input type="hidden" name="month" value="<?= $month ?>">
                     <input type="hidden" name="year" value="<?= $year ?>">
                     <button type="submit" class="btn btn-success"
-                            onclick="return confirm('Distribute ₹<?= number_format($pool_total, 2) ?> to <?= $eligible_count ?> members for <?= $monthName ?> <?= $year ?>?')">
+                            data-aps-confirm="Distribute ₹<?= number_format($pool_total, 2) ?> to <?= $eligible_count ?> members for <?= $monthName ?> <?= $year ?>?">
                         <i class="fas fa-share me-1"></i>Distribute Now
                     </button>
                 </form>

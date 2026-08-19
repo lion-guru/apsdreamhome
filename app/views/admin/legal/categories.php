@@ -24,7 +24,7 @@ $categories = $categories ?? [];
                             </div>
                             <div class="mt-3 pt-2 border-top d-flex gap-2">
                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editCatModal<?= $cat['id'] ?>"><i class="fas fa-edit"></i></button>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/legal/categories/<?= $cat['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this category?')">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/legal/categories/<?= $cat['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this category?">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                     <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>

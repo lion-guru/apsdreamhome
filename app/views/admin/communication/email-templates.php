@@ -76,7 +76,7 @@ $templates = $templates ?? [];
                                                     data-bs-toggle="modal" data-bs-target="#templateModal">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/communication/email-templates/<?= $t['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this template?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/communication/email-templates/<?= $t['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this template?">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                                 <button type="submit" class="btn btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

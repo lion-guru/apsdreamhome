@@ -40,12 +40,12 @@
                         <td><?= date('d-m-Y', strtotime($c['created_at'])) ?></td>
                         <td>
                             <?php if ($c['status'] == 'pending'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/approve/<?= $c['id'] ?>" class="style-71727" onsubmit="return confirm('Approve commission #<?= $c['id'] ?>?')">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/approve/<?= $c['id'] ?>" class="style-71727" data-aps-confirm="Approve commission #<?= $c['id'] ?>?">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-primary" aria-label="Confirm"><i class="fas fa-check"></i></button>
                             </form>
                             <?php elseif ($c['status'] == 'approved'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/pay/<?= $c['id'] ?>" class="style-71727" onsubmit="return confirm('Pay commission #<?= $c['id'] ?>?')">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/commissions/pay/<?= $c['id'] ?>" class="style-71727" data-aps-confirm="Pay commission #<?= $c['id'] ?>?">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-success" aria-label="Payment"><i class="fas fa-money-bill"></i></button>
                             </form>

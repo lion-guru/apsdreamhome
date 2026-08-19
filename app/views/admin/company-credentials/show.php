@@ -121,7 +121,7 @@ $statusColors = [
                     <a href="<?= BASE_URL ?>/admin/company-credentials/create" class="list-group-item list-group-item-action">
                         <i class="fas fa-plus me-2"></i>Add New Credential
                     </a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/company-credentials/<?= $credential['id'] ?>/delete" onsubmit="return confirm('Delete this credential permanently?')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/company-credentials/<?= $credential['id'] ?>/delete" data-aps-confirm="Delete this credential permanently?">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                         <button type="submit" class="list-group-item list-group-item-action text-danger">
                             <i class="fas fa-trash me-2"></i>Delete Credential

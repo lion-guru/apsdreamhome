@@ -94,7 +94,7 @@
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/crm/assignments/<?= $req['id'] ?>/reject" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="reason" value="Rejected by admin">
-                                                    <button class="btn btn-danger btn-sm" title="Reject" onclick="return confirm('Reject this request?')" aria-label="Reject"><i class="fas fa-times"></i></button>
+                                                    <button class="btn btn-danger btn-sm" title="Reject" data-aps-confirm="Reject this request?" aria-label="Reject"><i class="fas fa-times"></i></button>
                                                 </form>
                                             </div>
                                         </td>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="mt-2">
                         <button type="submit" name="bulk_action" value="approve" class="btn btn-success btn-sm"><i class="fas fa-check-double me-1"></i>Bulk Approve</button>
-                        <button type="submit" name="bulk_action" value="reject" class="btn btn-danger btn-sm" onclick="return confirm('Reject all selected?')"><i class="fas fa-ban me-1"></i>Bulk Reject</button>
+                        <button type="submit" name="bulk_action" value="reject" class="btn btn-danger btn-sm" data-aps-confirm="Reject all selected?"><i class="fas fa-ban me-1"></i>Bulk Reject</button>
                     </div>
                 </form>
             <?php else: ?>

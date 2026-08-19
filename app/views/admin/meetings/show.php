@@ -101,7 +101,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <form method="POST" action="<?php echo $base; ?>/admin/meetings/<?php echo $meeting['id']; ?>/update">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             <input type="hidden" name="status" value="cancelled">
-                            <button type="submit" class="btn btn-outline-danger w-100 btn-sm" onclick="return confirm('Cancel this meeting?')"><i class="fas fa-times me-2"></i>Cancel Meeting</button>
+                            <button type="submit" class="btn btn-outline-danger w-100 btn-sm" data-aps-confirm="Cancel this meeting?"><i class="fas fa-times me-2"></i>Cancel Meeting</button>
                         </form>
                     </div>
                 </div>

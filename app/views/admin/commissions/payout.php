@@ -95,8 +95,14 @@
 
 <script>
 $(document).ready(function() {
-    $('#payout-form').submit(function() {
-        return confirm('<?php echo $mlSupport->translate('Are you sure you want to generate a payout batch for all approved commissions?'); ?>');
+    $('#payout-form').submit(function(e) {
+        e.preventDefault();
+        var form = this;
+        apsConfirm('Are you sure you want to generate a payout batch for all approved commissions?').then(function(ok) {
+            if (ok) {
+                form.off('submit').submit();
+            }
+        });
     });
 });
 </script>

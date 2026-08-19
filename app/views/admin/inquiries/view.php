@@ -122,7 +122,7 @@
                 </div>
                 <?php endif; ?>
                 <hr>
-                <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo $inquiry['id']; ?>" onsubmit="return confirm('Are you sure you want to delete this inquiry?');">
+                <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo $inquiry['id']; ?>" data-aps-confirm="Are you sure you want to delete this inquiry?">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-outline-danger btn-sm w-100">
                         <i class="fas fa-trash me-1"></i>Delete Inquiry

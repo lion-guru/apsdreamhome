@@ -24,7 +24,7 @@ ob_start();
                 <i class="fas fa-arrow-left me-1"></i> Back
             </a>
             <?php if (($campaign['status'] ?? '') === 'draft'): ?>
-                <a href="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $campaign['id'] ?>" class="btn btn-success" onclick="return confirm('Send this campaign now?')">
+                <a href="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $campaign['id'] ?>" class="btn btn-success" data-aps-confirm="Send this campaign now?">
                     <i class="fas fa-paper-plane me-1"></i> Send Now
                 </a>
             <?php endif; ?>

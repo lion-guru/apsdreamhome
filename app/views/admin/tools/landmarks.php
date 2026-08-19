@@ -169,7 +169,7 @@ $categories = $categories ?? [];
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/tools/landmarks/<?= $l['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this landmark?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/tools/landmarks/<?= $l['id'] ?>/delete" class="style-71727" data-aps-confirm="Delete this landmark?">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>

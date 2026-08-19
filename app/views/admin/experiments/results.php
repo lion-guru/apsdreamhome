@@ -208,7 +208,7 @@ foreach ($results as $variant => $r) {
                     </form>
                 </div>
                 <div class="col-md-4">
-                    <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/end" onsubmit="return confirm('End this experiment? Existing users keep their variant assignment.');">
+                    <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/end" data-aps-confirm="End this experiment? Existing users keep their variant assignment.">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                         <label class="form-label small">End Experiment</label>
                         <button type="submit" class="btn btn-outline-danger w-100">

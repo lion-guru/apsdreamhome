@@ -95,8 +95,8 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><h5>Actions</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-success w-100 mb-2" onclick="return confirm('Confirm this allocation?')">Confirm Allocation</a>
-                    <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-danger w-100" onclick="return confirm('Cancel this allocation?')">Cancel Allocation</a>
+                    <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-success w-100 mb-2" data-aps-confirm="Confirm this allocation?">Confirm Allocation</a>
+                    <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-danger w-100" data-aps-confirm="Cancel this allocation?">Cancel Allocation</a>
                 </div>
             </div>
             <?php endif; ?>

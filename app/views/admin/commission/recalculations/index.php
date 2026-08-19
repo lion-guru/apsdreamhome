@@ -78,7 +78,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="style-96386">&nbsp;</label>
-                        <button type="submit" class="btn btn-warning w-100" onclick="return confirm('Request bulk recalculation? This will create individual requests for all matching entries.')">
+                        <button type="submit" class="btn btn-warning w-100" data-aps-confirm="Request bulk recalculation? This will create individual requests for all matching entries.">
                             <i class="fas fa-layer-group me-1"></i> Bulk Request
                         </button>
                     </div>

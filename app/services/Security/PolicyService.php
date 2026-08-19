@@ -49,8 +49,16 @@ class SecurityPolicyManager {
     private $securityViolationThresholds = [];
 
     public function __construct() {
-        $this->config = \App\Services\Legacy\ConfigManager::getInstance();
-        $this->eventBus = \App\Services\Legacy\event_bus();
+        $this->config = new class {
+            public function get(string $key, $default = null) {
+                return getenv($key) !== false ? getenv($key) : $default;
+            }
+        };
+        $this->eventBus = new class {
+            public function publish(string $event, array $data = []) {
+                error_log("[SecurityEvent] $event: " . json_encode($data));
+            }
+        };
 
         // Load initial configuration
         $this->loadConfiguration();

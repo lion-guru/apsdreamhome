@@ -205,7 +205,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                                                     <button type="submit" class="ocr-btn ocr-btn-success" class="style-18377" aria-label="Play"><i class="fas fa-play"></i></button>
                                                 </form>
                                             <?php endif; ?>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this document permanently?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" class="style-71727" data-aps-confirm="Delete this document permanently?">
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                                                 <button type="submit" class="ocr-btn ocr-btn-danger" class="style-18377" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

@@ -118,7 +118,7 @@ ob_start();
                       <button class="btn btn-sm btn-outline-success" title="Activate" aria-label="Confirm"><i class="fas fa-check"></i></button>
                     </form>
                   <?php endif; ?>
-                  <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/delete/<?= $k['id'] ?>" class="d-inline" onsubmit="return confirm('Permanently delete this API key?')">
+                  <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/delete/<?= $k['id'] ?>" class="d-inline" data-aps-confirm="Permanently delete this API key?">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                   </form>

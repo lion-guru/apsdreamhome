@@ -41,7 +41,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <td>₹<?= number_format($e['total_value'] ?? 0, 2) ?></td>
                             <td><span class="badge bg-<?= ($e['verified'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($e['verified'] ?? 0) ? 'Yes' : 'No' ?></span></td>
                             <td class="text-end">
-                                <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/carbon/delete/<?= $e['id'] ?>" class="d-inline" onsubmit="return confirm('Delete entry?')">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/carbon/delete/<?= $e['id'] ?>" class="d-inline" data-aps-confirm="Delete entry?">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                                     <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>

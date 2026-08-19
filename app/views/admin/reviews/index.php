@@ -121,7 +121,7 @@ ob_start();
                                                 <i class="fas fa-times"></i>
                                             </a>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/reviews/delete?id=<?= $r['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this review?')">
+                                        <a href="<?= BASE_URL ?>/admin/reviews/delete?id=<?= $r['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" data-aps-confirm="Delete this review?">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
@@ -226,7 +226,7 @@ ob_start();
                                             <a href="<?= BASE_URL ?>/admin/reviews/approve-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
                                             <a href="<?= BASE_URL ?>/admin/reviews/reject-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-warning"><i class="fas fa-times"></i></a>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/reviews/delete-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/reviews/delete-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

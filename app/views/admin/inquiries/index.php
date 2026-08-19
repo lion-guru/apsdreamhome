@@ -152,7 +152,7 @@
                                         <a href="https://wa.me/91<?php echo preg_replace('/[^0-9]/', '', $inq['phone']); ?>" target="_blank" class="btn btn-sm btn-success" title="WhatsApp">
                                             <i class="fab fa-whatsapp"></i>
                                         </a>
-                                        <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo $inq['id']; ?>" class="d-inline" onsubmit="return confirm('Delete this inquiry?');">
+                                        <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/delete/<?php echo $inq['id']; ?>" class="d-inline" data-aps-confirm="Delete this inquiry?">
                                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>

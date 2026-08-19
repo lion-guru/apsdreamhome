@@ -438,16 +438,36 @@
 
     // ----- Confirmation for destructive actions -----
     APS.enhanceDeleteActions = function() {
-        document.querySelectorAll('form[data-aps-confirm], button[data-aps-confirm], a[data-aps-confirm]').forEach(function(el) {
-            el.addEventListener('click', function(e) {
-                var msg = el.getAttribute('data-aps-confirm') || 'Are you sure you want to proceed?';
-                if (!confirm(msg)) {
+        document.querySelectorAll('[data-aps-confirm]').forEach(function(el) {
+            if (el.tagName === 'FORM') {
+                el.addEventListener('submit', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    return false;
-                }
-                return true;
-            });
+                    var msg = el.getAttribute('data-aps-confirm') || 'Are you sure you want to proceed?';
+                    apsConfirm(msg).then(function(ok) {
+                        if (!ok) return;
+                        el.removeAttribute('data-aps-confirm');
+                        el.submit();
+                    });
+                });
+            } else {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var msg = el.getAttribute('data-aps-confirm') || 'Are you sure you want to proceed?';
+                    apsConfirm(msg).then(function(ok) {
+                        if (!ok) return;
+                        if (el.tagName === 'A') {
+                            window.location.href = el.getAttribute('href');
+                        } else if (el.closest('form')) {
+                            el.closest('form').submit();
+                        } else {
+                            el.removeAttribute('data-aps-confirm');
+                            el.click();
+                        }
+                    });
+                });
+            }
         });
     };
 

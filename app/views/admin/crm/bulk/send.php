@@ -69,7 +69,7 @@
 
                         <div class="d-flex gap-2">
                             <button type="button" class="btn btn-outline-primary" onclick="previewRecipients()"><i class="fas fa-eye me-1"></i> Preview Recipients</button>
-                            <button type="submit" class="btn btn-success" onclick="return confirm('Send this bulk message to all matched leads?')"><i class="fas fa-paper-plane me-1"></i> Send Now</button>
+                            <button type="submit" class="btn btn-success" data-aps-confirm="Send this bulk message to all matched leads?"><i class="fas fa-paper-plane me-1"></i> Send Now</button>
                         </div>
                     </form>
                 </div>

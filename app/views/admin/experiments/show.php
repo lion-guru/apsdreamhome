@@ -158,7 +158,7 @@ $variantNames = array_keys($results);
                     <div class="card-header bg-warning bg-opacity-25"><h6 class="mb-0"><i class="fas fa-flag-checkered me-1"></i> End Experiment</h6></div>
                     <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/end"
-                              onsubmit="return confirm('End this experiment? You can still view results afterwards.');">
+                              data-aps-confirm="End this experiment? You can still view results afterwards.">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
                             <div class="mb-2">
                                 <label class="form-label small">Declare winner (optional)</label>

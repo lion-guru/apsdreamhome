@@ -615,7 +615,6 @@ class MobileMLMApiController extends BaseController
 
         try {
             // Check if user has enough pending balance
-            $payoutService = new \App\Services\AutoPayoutService();
             $check = $this->db->fetchOne("SELECT SUM(amount) FROM mlm_commission_ledger WHERE user_id = ? AND status = 'pending'", [$userId]);
             $pending = $check[0] ?? 0;
 

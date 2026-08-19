@@ -27,7 +27,7 @@
                                     <td><span class="badge bg-<?= $j['status'] === 'active' ? 'success' : 'secondary' ?>"><?= $j['status'] ?></span></td>
                                     <td><?= date('d M Y', strtotime($j['created_at'])) ?></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/directory/delete-job/<?= $j['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete job?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/directory/delete-job/<?= $j['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete job?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

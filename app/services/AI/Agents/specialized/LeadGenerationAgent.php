@@ -111,13 +111,15 @@ class LeadGenerationAgent extends BaseAgent {
     }
 
     private function notifyAdmin($phone, $message, $score, $analysis) {
-        if (class_exists('WhatsAppIntegration')) {
-            $wa = new WhatsAppIntegration();
+        try {
+            $wa = new \App\Services\Communication\WhatsAppWebService();
             $adminPhone = $GLOBALS['config']['admin_phone'] ?? '';
             if ($adminPhone) {
                 $intent = $analysis['intent']['name'] ?? 'unknown';
-                $wa->sendMessage($adminPhone, "🚀 *New AI-Scored Lead!*\nPhone: $phone\nScore: $score\nIntent: $intent\nMessage: $message");
+                $wa->sendMessage($adminPhone, "New AI-Scored Lead!\nPhone: $phone\nScore: $score\nIntent: $intent\nMessage: $message");
             }
+        } catch (\Throwable $e) {
+            error_log("WhatsApp notify failed: " . $e->getMessage());
         }
     }
 }

@@ -67,7 +67,7 @@
                                     <td><span class="badge bg-<?= $c['is_active'] ? 'success' : 'danger' ?>"><?= $c['is_active'] ? 'Yes' : 'No' ?></span></td>
                                     <td><?= $c['sort_order'] ?></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/directory/delete-category/<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete category?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/directory/delete-category/<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete category?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

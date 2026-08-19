@@ -102,7 +102,7 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Actions</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <a href="<?= BASE_URL ?>/admin/invoices/download/<?= $invoice['id'] ?>" class="btn btn-success w-100 mb-2"><i class="fas fa-download me-1"></i>Download Invoice</a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/invoices/delete/<?= $invoice['id'] ?>" onsubmit="return confirm('Cancel this invoice?')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/invoices/delete/<?= $invoice['id'] ?>" data-aps-confirm="Cancel this invoice?">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button class="btn btn-danger w-100"><i class="fas fa-ban me-1"></i>Cancel Invoice</button>
                     </form>

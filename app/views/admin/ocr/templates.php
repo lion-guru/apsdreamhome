@@ -93,7 +93,7 @@ $doc_type_labels = $doc_type_labels ?? [];
 
                         <div class="ocr-template-actions">
                             <a href="<?= BASE_URL ?>/admin/ocr/templates/edit/<?= $t['id'] ?>" class="ocr-btn ocr-btn-outline" class="style-95261"><i class="fas fa-edit me-1"></i>Edit</a>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/templates/delete/<?= $t['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this template?')">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/ocr/templates/delete/<?= $t['id'] ?>" class="style-71727" data-aps-confirm="Delete this template?">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                                 <button type="submit" class="ocr-btn ocr-btn-danger" class="style-95261"><i class="fas fa-trash me-1"></i>Delete</button>
                             </form>

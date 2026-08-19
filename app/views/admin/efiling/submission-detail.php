@@ -116,12 +116,12 @@ ob_start();
         <form method="POST" action="<?= BASE_URL ?>/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="status" value="submitted">
-            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Mark as submitted to the portal?')"><i class="fas fa-paper-plane me-1"></i>Mark Submitted</button>
+            <button type="submit" class="btn btn-success btn-sm" data-aps-confirm="Mark as submitted to the portal?"><i class="fas fa-paper-plane me-1"></i>Mark Submitted</button>
         </form>
         <form method="POST" action="<?= BASE_URL ?>/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="status" value="rejected">
-            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Mark as rejected?')"><i class="fas fa-times me-1"></i>Mark Rejected</button>
+            <button type="submit" class="btn btn-danger btn-sm" data-aps-confirm="Mark as rejected?"><i class="fas fa-times me-1"></i>Mark Rejected</button>
         </form>
     </div>
 </div>

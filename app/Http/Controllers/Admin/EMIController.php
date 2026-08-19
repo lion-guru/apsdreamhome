@@ -439,6 +439,40 @@ class EMIController extends AdminController
     }
 
     /**
+     * Foreclosure Report page
+     */
+    public function foreclosureReport()
+    {
+        try {
+            $filters = [
+                'start_date' => $_GET['start_date'] ?? null,
+                'end_date'   => $_GET['end_date'] ?? null,
+                'customer_id'=> $_GET['customer_id'] ?? null,
+            ];
+
+            $emiModel = new \App\Models\EMI();
+            $foreclosureStats = $emiModel->getForeclosureStats();
+            $foreclosureTrend  = $emiModel->getForeclosureTrend(12);
+            $foreclosureData   = $emiModel->getForeclosureReportData($filters);
+
+            $data = [
+                'page_title'       => 'EMI Foreclosure Report',
+                'active_page'      => 'emi',
+                'foreclosure_stats'=> $foreclosureStats,
+                'foreclosure_trend'=> $foreclosureTrend,
+                'foreclosure_data' => $foreclosureData,
+                'filters'          => $filters,
+            ];
+
+            return $this->render('admin/emi/foreclosure_report', $data);
+        } catch (\Exception $e) {
+            $this->loggingService->error("EMI Foreclosure Report error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load foreclosure report');
+            return $this->redirect('admin/emi');
+        }
+    }
+
+    /**
      * Get EMI statistics
      */
     public function getStats()

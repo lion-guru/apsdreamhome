@@ -225,7 +225,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                         <h6><i class="fas fa-cog me-1"></i>Actions</h6>
                     </div>
                     <div class="ocr-card-body d-flex flex-column gap-2">
-                        <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" onsubmit="return confirm('Delete this document permanently? This cannot be undone.')">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/ocr/delete/<?= $doc['id'] ?>" data-aps-confirm="Delete this document permanently? This cannot be undone.">
                             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                             <button type="submit" class="ocr-btn ocr-btn-danger" class="style-16158"><i class="fas fa-trash me-1"></i>Delete Document</button>
                         </form>

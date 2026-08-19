@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
             </div>
             <div class="mt-3 d-flex gap-2">
-                <button class="btn btn-danger" type="submit" onclick="return confirm('Cancel this booking? Plot will be released.');">
+                <button class="btn btn-danger" type="submit" data-aps-confirm="Cancel this booking? Plot will be released.">
                     <i class="fas fa-ban me-1"></i><?= __('sale_cancel_booking') ?>
                 </button>
                 <a class="btn btn-link" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>"><?= __('sale_back') ?></a>

@@ -186,7 +186,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
       <div class="card aps-cp-card border-danger">
         <div class="card-body aps-cp-card-body text-center">
           <form method="post" action="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>/layout/delete"
-                onsubmit="return confirm('<?= __('cp_confirm_delete_all', ['count' => number_format($existingPlots)]) ?>');">
+                data-aps-confirm="<?= __('cp_confirm_delete_all', ['count' => number_format($existingPlots)]) ?>">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
             <i class="fas fa-trash-alt fa-2x text-danger mb-2"></i>
             <div class="fw-semibold text-danger mb-2"><?= __('cp_delete_all_plots') ?></div>

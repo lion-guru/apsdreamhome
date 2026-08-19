@@ -38,7 +38,7 @@
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="keep_id" value="<?= $d['id1'] ?? $d['lead1_id'] ?? '' ?>">
                                                     <input type="hidden" name="remove_id" value="<?= $d['id2'] ?? $d['lead2_id'] ?? '' ?>">
-                                                    <button class="btn btn-sm btn-success" onclick="return confirm('Merge leads?')"><i class="fas fa-code-branch me-1"></i>Merge</button>
+                                                    <button class="btn btn-sm btn-success" data-aps-confirm="Merge leads?"><i class="fas fa-code-branch me-1"></i>Merge</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -48,7 +48,7 @@
                         </div>
                         <form method="POST" action="<?= BASE_URL ?>/admin/crm/dedup/bulk-merge">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                            <button class="btn btn-sm btn-outline-warning" onclick="return confirm('Auto-merge all?')"><i class="fas fa-bolt me-1"></i>Bulk Merge All</button>
+                            <button class="btn btn-sm btn-outline-warning" data-aps-confirm="Auto-merge all?"><i class="fas fa-bolt me-1"></i>Bulk Merge All</button>
                         </form>
                     <?php else: ?>
                         <p class="text-muted mb-0">Click "Find Duplicates" to search.</p>

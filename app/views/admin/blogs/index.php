@@ -47,7 +47,7 @@
                                             <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>/edit" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>/delete" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                            <a href="<?php echo BASE_URL; ?>/admin/blogs/<?php echo $blog['id']; ?>/delete" class="btn btn-sm btn-danger" data-aps-confirm="Are you sure?">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>

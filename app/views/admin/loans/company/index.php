@@ -56,7 +56,7 @@ $offers = $offers ?? [];
                     <span class="fw-bold me-2"><i class="fas fa-bolt me-1"></i>Quick Actions:</span>
                     <a href="<?= BASE_URL ?>/admin/company-loans/offers" class="btn btn-outline-info btn-sm"><i class="fas fa-tags me-1"></i>Manage Offers (<?= count($offers) ?>)</a>
                     <a href="<?= BASE_URL ?>/admin/company-loans/early-incentives" class="btn btn-outline-success btn-sm"><i class="fas fa-gift me-1"></i>Early Incentives</a>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/run-penalties" class="style-71727" onsubmit="return confirm('Apply daily penalties to all overdue installments?')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/run-penalties" class="style-71727" data-aps-confirm="Apply daily penalties to all overdue installments?">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <button type="submit" class="btn btn-outline-warning btn-sm"><i class="fas fa-gavel me-1"></i>Run Penalties</button>
                     </form>

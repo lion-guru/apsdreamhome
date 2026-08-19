@@ -25,7 +25,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <td><span class="badge bg-<?= ($c['is_active'] ?? 1) ? 'success' : 'secondary' ?>"><?= ($c['is_active'] ?? 1) ? 'Active' : 'Inactive' ?></span></td>
                             <td class="text-end">
                                 <a href="<?= BASE_URL ?>/admin/sustainable/certification/form/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/certification/delete/<?= $c['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this certification?')">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/sustainable/certification/delete/<?= $c['id'] ?>" class="d-inline" data-aps-confirm="Delete this certification?">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                                     <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>

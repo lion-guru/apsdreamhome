@@ -14,7 +14,7 @@ ob_start();
             <p class="text-muted mb-0">Automated lead nurturing email sequences</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="<?= BASE_URL ?>/admin/drip-campaigns/process" class="btn btn-outline-info" onclick="return confirm('Process pending emails now?')">
+            <a href="<?= BASE_URL ?>/admin/drip-campaigns/process" class="btn btn-outline-info" data-aps-confirm="Process pending emails now?">
                 <i class="fas fa-cogs me-1"></i> Process Queue
             </a>
             <a href="<?= BASE_URL ?>/admin/drip-campaigns/create" class="btn btn-primary">
@@ -123,7 +123,7 @@ ob_start();
                                         <a href="<?= BASE_URL ?>/admin/drip-campaigns/toggle?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-<?= $c['status'] === 'active' ? 'warning' : 'success' ?>" title="<?= $c['status'] === 'active' ? 'Pause' : 'Activate' ?>">
                                             <i class="fas fa-<?= $c['status'] === 'active' ? 'pause' : 'play' ?>"></i>
                                         </a>
-                                        <a href="<?= BASE_URL ?>/admin/drip-campaigns/delete?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this campaign and all its data?')">
+                                        <a href="<?= BASE_URL ?>/admin/drip-campaigns/delete?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign and all its data?">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>

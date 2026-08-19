@@ -54,7 +54,7 @@ $total_amount = $total_amount ?? 0;
                         <label class="form-label">Payment Date</label>
                         <input type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
-                    <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Process payout for selected users?')"><i class="fas fa-paper-plane me-1"></i>Process Payout</button>
+                    <button type="submit" class="btn btn-success btn-lg" data-aps-confirm="Process payout for selected users?"><i class="fas fa-paper-plane me-1"></i>Process Payout</button>
                 </form>
             <?php endif; ?>
         </div>

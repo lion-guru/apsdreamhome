@@ -61,7 +61,7 @@ $p = $property ?? [];
                             <div class="d-none align-items-center justify-content-center bg-light" class="style-59965"><i class="fas fa-broken-image fa-2x text-muted"></i></div>
                             <div class="card-body p-2 text-center d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Image #<?= $idx + 1 ?></small>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/images/<?= $id ?>/delete" class="d-inline" onsubmit="return confirm('Remove this image?')">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/images/<?= $id ?>/delete" class="d-inline" data-aps-confirm="Remove this image?">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="image_index" value="<?= $idx ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>

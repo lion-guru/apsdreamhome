@@ -18,7 +18,7 @@
                 <?php if (in_array($campaign['status'], ['draft', 'scheduled'])): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/push-notifications/campaigns/<?= $campaign['id'] ?>/launch" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                        <button type="submit" class="btn btn-success" onclick="return confirm('Launch this campaign? Notifications will be queued for delivery.');">
+                        <button type="submit" class="btn btn-success" data-aps-confirm="Launch this campaign? Notifications will be queued for delivery.">
                             <i class="fas fa-rocket me-1"></i> Launch
                         </button>
                     </form>
@@ -28,7 +28,7 @@
                 <?php elseif ($campaign['status'] === 'running'): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/push-notifications/campaigns/<?= $campaign['id'] ?>/pause" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                        <button type="submit" class="btn btn-warning" onclick="return confirm('Pause this campaign? Pending notifications will be cancelled.');">
+                        <button type="submit" class="btn btn-warning" data-aps-confirm="Pause this campaign? Pending notifications will be cancelled.">
                             <i class="fas fa-pause me-1"></i> Pause
                         </button>
                     </form>

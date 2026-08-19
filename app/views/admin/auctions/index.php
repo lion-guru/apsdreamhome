@@ -14,7 +14,7 @@ ob_start();
             <p class="text-muted mb-0">Manage live and scheduled property auctions</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="<?= BASE_URL ?>/admin/auctions/process-ending" class="btn btn-outline-info" onclick="return confirm('End all expired auctions now?')">
+            <a href="<?= BASE_URL ?>/admin/auctions/process-ending" class="btn btn-outline-info" data-aps-confirm="End all expired auctions now?">
                 <i class="fas fa-cogs me-1"></i> Process Ending
             </a>
             <a href="<?= BASE_URL ?>/admin/auctions/create" class="btn btn-primary">
@@ -129,12 +129,12 @@ ob_start();
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/auctions/show/<?= $a['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                         <?php if ($a['status'] === 'scheduled' || $a['status'] === 'draft'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/auctions/start/<?= $a['id'] ?>" class="btn btn-sm btn-outline-success" onclick="return confirm('Start this auction?')"><i class="fas fa-play"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/auctions/start/<?= $a['id'] ?>" class="btn btn-sm btn-outline-success" data-aps-confirm="Start this auction?"><i class="fas fa-play"></i></a>
                                         <?php endif; ?>
                                         <?php if ($a['status'] === 'live'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/auctions/end/<?= $a['id'] ?>" class="btn btn-sm btn-outline-warning" onclick="return confirm('End this auction now?')"><i class="fas fa-stop"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/auctions/end/<?= $a['id'] ?>" class="btn btn-sm btn-outline-warning" data-aps-confirm="End this auction now?"><i class="fas fa-stop"></i></a>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/auctions/delete/<?= $a['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this auction and all bids?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/auctions/delete/<?= $a['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this auction and all bids?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

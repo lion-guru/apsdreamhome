@@ -104,7 +104,7 @@ class EMICollectionAgent extends BaseAgent {
         $results = $this->db->fetchAll($query, [$threeDaysLater, $today]);
 
         $count = 0;
-        $wa = \class_exists('WhatsAppIntegration') ? new \WhatsAppIntegration() : null;
+        try { $wa = new \App\Services\Communication\WhatsAppWebService(); } catch (\Throwable $e) { $wa = null; }
 
         foreach ($results as $row) {
             $message = $this->formatEMIMessage($row);

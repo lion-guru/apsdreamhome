@@ -68,13 +68,13 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/scheduler/task/<?= $task['id'] ?>/run" class="mb-2">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <button type="submit" class="btn btn-success w-100" onclick="return confirm('Run this task now?')"><i class="fas fa-play me-1"></i>Run Now</button>
+                        <button type="submit" class="btn btn-success w-100" data-aps-confirm="Run this task now?"><i class="fas fa-play me-1"></i>Run Now</button>
                     </form>
                     <form method="POST" action="<?= $base ?>/admin/scheduler/task/<?= $task['id'] ?>/toggle">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-warning w-100 mb-2"><i class="fas fa-power-off me-1"></i><?= ($task['enabled'] ?? false) ? 'Disable' : 'Enable' ?></button>
                     </form>
-                    <form method="POST" action="<?= $base ?>/admin/scheduler/task/<?= $task['id'] ?>/delete" onsubmit="return confirm('Delete this task?')">
+                    <form method="POST" action="<?= $base ?>/admin/scheduler/task/<?= $task['id'] ?>/delete" data-aps-confirm="Delete this task?">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-danger w-100"><i class="fas fa-trash me-1"></i>Delete</button>
                     </form>

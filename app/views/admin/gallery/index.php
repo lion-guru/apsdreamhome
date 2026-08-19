@@ -57,7 +57,7 @@ $current_category = $current_category ?? '';
             <div class="card-footer bg-transparent border-0 pt-0">
                 <div class="btn-group w-100">
                     <a href="<?= BASE_URL ?>/admin/gallery/<?= $img['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i> Edit</a>
-                    <a href="<?= BASE_URL ?>/admin/gallery/<?= $img['id'] ?>/destroy" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this image?');"><i class="fas fa-trash"></i> Delete</a>
+                    <a href="<?= BASE_URL ?>/admin/gallery/<?= $img['id'] ?>/destroy" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this image?"><i class="fas fa-trash"></i> Delete</a>
                 </div>
             </div>
         </div>

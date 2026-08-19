@@ -138,7 +138,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="<?= BASE_URL ?>
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/designations/<?= $desig['id'] ?>/delete" class="style-71727" onsubmit="return confirm('Delete this designation?')">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/designations/<?= $desig['id'] ?>/delete" class="style-71727" data-aps-confirm="Delete this designation?">
     <?php echo CSRFProtection::csrfField(); ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

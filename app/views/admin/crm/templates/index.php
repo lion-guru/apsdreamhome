@@ -42,7 +42,7 @@
                                         <small class="text-muted"><i class="fas fa-folder me-1"></i><?= ucfirst($t['category'] ?? 'general') ?></small>
                                         <div class="d-flex gap-1">
                                             <a href="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/delete" onsubmit="return confirm('Delete this template?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/delete" data-aps-confirm="Delete this template?">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
@@ -78,7 +78,7 @@
                                         <small class="text-muted"><i class="fas fa-folder me-1"></i><?= ucfirst($t['category'] ?? 'general') ?></small>
                                         <div class="d-flex gap-1">
                                             <a href="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/delete" onsubmit="return confirm('Delete this template?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/crm/templates/<?= $t['id'] ?>/delete" data-aps-confirm="Delete this template?">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

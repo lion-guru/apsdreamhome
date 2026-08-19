@@ -52,7 +52,7 @@ foreach ($schedule as $s) {
             </div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-warning" type="submit"
-                        onclick="return confirm('<?= __('sale_regenerate_confirm') ?>');">
+                        data-aps-confirm="<?= __('sale_regenerate_confirm') ?>">
                     <i class="fas fa-sync me-1"></i><?= __('sale_regenerate') ?>
                 </button>
             </div>

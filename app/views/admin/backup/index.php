@@ -126,7 +126,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                     <h5 class="mb-0"><i class="fas fa-bolt me-1 text-warning"></i> Quick Actions</h5>
                 </div>
                 <div class="card-body d-flex flex-column gap-2">
-                    <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/create" onsubmit="return confirm('Create a full database backup now? This may take a few minutes.');">
+                    <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/create" data-aps-confirm="Create a full database backup now? This may take a few minutes.">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-plus-circle me-1"></i> Create Full Backup Now
@@ -229,7 +229,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                                             </a>
                                         <?php endif; ?>
                                         <?php if ($bStatus === 'completed' && $exists): ?>
-                                            <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/restore/<?= $bid ?>" class="d-inline" onsubmit="return confirm('RESTORE backup #<?= $bid ?> ?\n\nThis will REPLACE current database content. Make sure you have a fresh backup first.');">
+                                            <form method="POST" action="<?= htmlspecialchars($baseUrl ?? '') ?>/admin/backup/restore/<?= $bid ?>" class="d-inline" data-aps-confirm="RESTORE backup #<?= $bid ?> ?\n\nThis will REPLACE current database content. Make sure you have a fresh backup first.">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-warning" title="Restore" aria-label="Undo"><i class="fas fa-undo"></i></button>
                                             </form>

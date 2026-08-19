@@ -61,7 +61,7 @@
                         </td>
                         <td class="text-end">
                             <a href="<?php echo BASE_URL; ?>/admin/team/edit/<?php echo $m['id']; ?>" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
-                            <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/destroy/<?php echo $m['id']; ?>" class="style-71727" onsubmit="return confirm('Delete this team member?')">
+                            <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/destroy/<?php echo $m['id']; ?>" class="style-71727" data-aps-confirm="Delete this team member?">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                             </form>

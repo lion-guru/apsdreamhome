@@ -397,6 +397,7 @@ $GLOBALS['_html_doc_started'] = true;
     </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
+        <script src="<?= BASE_URL ?>/assets/js/frontend-enhancements.js"></script>
 
         <!-- Real-time Notifications (SSE stream + polling fallback) -->
         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -531,6 +532,74 @@ $GLOBALS['_html_doc_started'] = true;
                 if (exportBtn) { exportBtn.click(); }
             }
         });
+        </script>
+
+        <!-- APS Confirm Modal -->
+        <div class="modal fade" id="apsConfirmModal" tabindex="-1" aria-labelledby="apsConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content" style="border: none; border-radius: 12px; overflow: hidden;">
+                    <div class="modal-header border-0 pb-0" id="apsConfirmHeader" style="background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px 12px 0 0;">
+                        <h6 class="modal-title fw-semibold" id="apsConfirmModalLabel">Confirm Action</h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div id="apsConfirmIcon" class="mb-3" style="font-size: 2.5rem; color: #f59e0b;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <p id="apsConfirmMessage" class="mb-0 fw-medium" style="color: #1e293b; font-size: 0.95rem;"></p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center gap-2 pt-0 pb-3">
+                        <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                        <button type="button" class="btn px-3 fw-semibold" id="apsConfirmBtn" style="border-radius: 8px;">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        /* APS Confirm Modal — replaces native confirm() across admin panel
+         * Usage: apsConfirm('Delete this item?').then(ok => { if (ok) ... })
+         * Options: { title, confirmText, confirmClass, icon, iconColor }
+         */
+        (function() {
+            let _resolve = null;
+            const modal = new bootstrap.Modal(document.getElementById('apsConfirmModal'));
+            const btnEl = document.getElementById('apsConfirmBtn');
+            const msgEl = document.getElementById('apsConfirmMessage');
+            const iconEl = document.getElementById('apsConfirmIcon');
+            const headerEl = document.getElementById('apsConfirmHeader');
+            const titleEl = document.getElementById('apsConfirmModalLabel');
+
+            btnEl.addEventListener('click', function() {
+                modal.hide();
+                if (_resolve) _resolve(true);
+            });
+
+            document.getElementById('apsConfirmModal').addEventListener('hidden.bs.modal', function() {
+                if (_resolve) { _resolve(false); _resolve = null; }
+            });
+
+            window.apsConfirm = function(message, opts) {
+                opts = opts || {};
+                msgEl.textContent = message;
+                titleEl.textContent = opts.title || 'Confirm Action';
+
+                const icon = opts.icon || 'exclamation-triangle';
+                const iconColor = opts.iconColor || '#f59e0b';
+                iconEl.innerHTML = '<i class="fas fa-' + icon + '"></i>';
+                iconEl.style.color = iconColor;
+
+                btnEl.textContent = opts.confirmText || 'Confirm';
+                btnEl.className = 'btn px-3 fw-semibold ' + (opts.confirmClass || 'btn-warning');
+                btnEl.style.borderRadius = '8px';
+
+                const headerColor = opts.headerGradient || 'linear-gradient(135deg, #1e293b, #334155)';
+                headerEl.style.background = headerColor;
+
+                modal.show();
+                return new Promise(function(resolve) { _resolve = resolve; });
+            };
+        })();
         </script>
 </body>
 

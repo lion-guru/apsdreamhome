@@ -139,7 +139,7 @@ $statusColors = [
                                     <a href="<?= BASE_URL ?>/admin/company-credentials/<?= $cred['id'] ?>/edit" class="btn btn-sm btn-outline-secondary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/company-credentials/<?= $cred['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this credential permanently?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/company-credentials/<?= $cred['id'] ?>/delete" class="d-inline" data-aps-confirm="Delete this credential permanently?">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                     </form>

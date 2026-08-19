@@ -41,7 +41,7 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
                             <td class="text-end">
                                 <a href="<?= BASE_URL ?>/admin/iot/device/<?= $d['id'] ?>" class="btn btn-sm btn-outline-primary" title="Details"><i class="fas fa-chart-line"></i></a>
                                 <a href="<?= BASE_URL ?>/admin/iot/device/form/<?= $d['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/iot/device/delete/<?= $d['id'] ?>" class="d-inline" onsubmit="return confirm('Delete device?')"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
+                                <form method="POST" action="<?= BASE_URL ?>/admin/iot/device/delete/<?= $d['id'] ?>" class="d-inline" data-aps-confirm="Delete device?"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

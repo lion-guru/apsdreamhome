@@ -132,7 +132,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <form method="POST" action="<?= $base ?>
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$a['id'] ?>" class="style-35851">
     <?php echo CSRFProtection::csrfField(); ?>
-                                    <button type="submit" class="aag-btn aag-btn-cancel" onclick="return confirm('Cancel this agreement?')" aria-label="Cancel"><i class="fas fa-times"></i></button>
+                                    <button type="submit" class="aag-btn aag-btn-cancel" data-aps-confirm="Cancel this agreement?" aria-label="Cancel"><i class="fas fa-times"></i></button>
                                 </form>
                             <?php endif; ?>
                         </td>

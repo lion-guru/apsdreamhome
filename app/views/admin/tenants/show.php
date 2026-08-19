@@ -141,7 +141,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
                 <?php if (($tenant['status'] ?? '') === 'active' && ($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
                     <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/switch">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                        <button type="submit" class="btn btn-primary w-100 mb-2" onclick="return confirm('Switch to <?= htmlspecialchars($tenant['name'] ?? '') ?>? You can stop anytime.')">
+                        <button type="submit" class="btn btn-primary w-100 mb-2" data-aps-confirm="Switch to <?= htmlspecialchars($tenant['name'] ?? '') ?>? You can stop anytime.">
                             <i class="fas fa-exchange-alt me-2"></i>Switch to This Tenant
                         </button>
                     </form>
@@ -150,7 +150,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
                 <a href="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/edit" class="btn btn-outline-primary"><i class="fas fa-edit me-2"></i>Edit Tenant</a>
 
                 <?php if (($tenant['status'] ?? '') !== 'suspended'): ?>
-                    <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/suspend" onsubmit="return confirm('Suspend this tenant?')">
+                    <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/suspend" data-aps-confirm="Suspend this tenant?">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <input type="hidden" name="reason" value="Suspended by admin">
                         <button type="submit" class="btn btn-outline-warning w-100"><i class="fas fa-pause me-2"></i>Suspend</button>
@@ -163,7 +163,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
                 <?php endif; ?>
 
                 <?php if (($tenant['slug'] ?? '') !== 'apsdreamhome'): ?>
-                    <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/delete" onsubmit="return confirm('DELETE this tenant? This is soft-delete and can be restored.')">
+                    <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/delete" data-aps-confirm="DELETE this tenant? This is soft-delete and can be restored.">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <button type="submit" class="btn btn-outline-danger w-100"><i class="fas fa-trash me-2"></i>Delete Tenant</button>
                     </form>

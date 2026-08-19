@@ -48,7 +48,7 @@
                                 <div class="col-md-3 mb-3">
                                     <div class="position-relative">
                                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid rounded" alt="Project Image" />
-                                        <a href="<?= BASE_URL ?>/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" onclick="return confirm('Delete this image?')">
+                                        <a href="<?= BASE_URL ?>/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" data-aps-confirm="Delete this image?">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>

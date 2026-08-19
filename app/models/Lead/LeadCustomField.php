@@ -4,7 +4,7 @@ namespace App\Models\Lead;
 
 use App\Core\Database\Model;
 use App\Models\User\User;
-use App\Models\Lead\LeadCustomFieldValue;
+use App\Models\LeadCustomFieldValue;
 
 class LeadCustomField extends Model
 {

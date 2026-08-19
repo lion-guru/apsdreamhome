@@ -76,7 +76,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                                     </div>
                                     <small class="text-muted d-block"><?= htmlspecialchars(substr($v['change_notes'] ?? 'No notes', 0, 80)) ?></small>
                                     <div class="mt-1">
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/legal/templates/<?= $template['id'] ?>/restore/<?= $v['version_number'] ?>" class="d-inline" onsubmit="return confirm('Restore version v<?= (int)$v['version_number'] ?>?')">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/legal/templates/<?= $template['id'] ?>/restore/<?= $v['version_number'] ?>" class="d-inline" data-aps-confirm="Restore version v<?= (int)$v['version_number'] ?>?">
                                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                             <button class="btn btn-sm btn-link p-0 small">Restore</button>
                                         </form>

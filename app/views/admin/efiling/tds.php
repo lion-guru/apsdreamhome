@@ -92,7 +92,7 @@ ob_start();
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Generate Form 26Q for <?= htmlspecialchars($quarter ?? '') ?> <?= htmlspecialchars($fy ?? '') ?>?')">
+                <button type="submit" class="btn btn-danger btn-sm" data-aps-confirm="Generate Form 26Q for <?= htmlspecialchars($quarter ?? '') ?> <?= htmlspecialchars($fy ?? '') ?>?">
                     <i class="fas fa-file-export me-1"></i>Generate 26Q JSON
                 </button>
             </div>

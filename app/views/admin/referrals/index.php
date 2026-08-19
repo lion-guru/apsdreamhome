@@ -36,8 +36,8 @@
                                 <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>
                                 <td>
                                     <?php if (($r['status'] ?? 'pending') === 'pending'): ?>
-                                        <a href="<?= BASE_URL ?>/admin/referrals/<?= $r['id'] ?>/approve" class="btn btn-sm btn-success" onclick="return confirm('Approve this referral?')"><i class="fas fa-check"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/referrals/<?= $r['id'] ?>/reject" class="btn btn-sm btn-danger" onclick="return confirm('Reject this referral?')"><i class="fas fa-times"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/referrals/<?= $r['id'] ?>/approve" class="btn btn-sm btn-success" data-aps-confirm="Approve this referral?"><i class="fas fa-check"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/referrals/<?= $r['id'] ?>/reject" class="btn btn-sm btn-danger" data-aps-confirm="Reject this referral?"><i class="fas fa-times"></i></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

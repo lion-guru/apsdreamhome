@@ -204,7 +204,7 @@ ob_start();
                                             <i class="fas fa-search"></i>
                                         </button>
                                         <a href="<?= BASE_URL ?>/admin/property-alerts/delete?id=<?= $sub['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                           onclick="return confirm('Delete this subscription?')" title="Delete">
+                                           data-aps-confirm="Delete this subscription?" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>

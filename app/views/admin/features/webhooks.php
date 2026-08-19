@@ -103,7 +103,7 @@ ob_start();
                       <i class="fas fa-<?= ($ep['is_active'] ?? 0) ? 'pause' : 'play' ?>"></i>
                     </button>
                   </form>
-                  <form method="post" action="<?= BASE_URL ?>/admin/webhooks/delete/<?= $ep['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this endpoint?')">
+                  <form method="post" action="<?= BASE_URL ?>/admin/webhooks/delete/<?= $ep['id'] ?>" class="d-inline" data-aps-confirm="Delete this endpoint?">
                                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                   </form>

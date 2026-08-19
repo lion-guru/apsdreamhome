@@ -144,7 +144,7 @@ $statusBadgeClass = [
             <form method="POST" action="<?= $base ?>
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">/admin/agent-agreements/cancel/<?= (int)$agreement['id'] ?>">
     <?php echo CSRFProtection::csrfField(); ?>
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this agreement?')">
+                <button type="submit" class="btn btn-danger btn-sm" data-aps-confirm="Are you sure you want to cancel this agreement?">
                     <i class="fas fa-times me-1"></i>Cancel Agreement
                 </button>
             </form>

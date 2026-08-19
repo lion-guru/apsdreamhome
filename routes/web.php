@@ -1776,6 +1776,7 @@ $router->post('/admin/emi/store', 'App\\Http\\Controllers\\Admin\\EMIController@
 $router->get('/admin/emi/{id}', 'App\\Http\\Controllers\\Admin\\EMIController@show');
 $router->post('/admin/emi/payment/{id}', 'App\\Http\\Controllers\\Admin\\EMIController@processPayment');
 $router->get('/admin/emi/stats', 'App\\Http\\Controllers\\Admin\\EMIController@getStats');
+$router->get('/admin/emi/foreclosure-report', 'App\\Http\\Controllers\\Admin\\EMIController@foreclosureReport');
 
 // Admin Accounting
 $router->get('/admin/accounting', 'App\\Http\\Controllers\\Admin\\AccountingController@index');

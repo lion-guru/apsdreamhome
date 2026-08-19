@@ -840,7 +840,7 @@ function timeAgo($dt) {
                     </button>
                 </div>
                 <div class="col-6 col-md-4 col-lg-3">
-                    <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/destroy" onsubmit="return confirm('Are you sure you want to delete this lead? This cannot be undone.')">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/destroy" data-aps-confirm="Are you sure you want to delete this lead? This cannot be undone.">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <button type="submit" class="action-btn w-100">
                             <i class="fas fa-trash text-danger"></i>

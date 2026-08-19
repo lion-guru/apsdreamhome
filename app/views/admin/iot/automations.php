@@ -26,7 +26,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <td><small><?= !empty($a['last_triggered_at']) ? date('M d, H:i', strtotime($a['last_triggered_at'])) : '' ?></small></td>
                             <td class="text-end">
                                 <a href="<?= BASE_URL ?>/admin/iot/automation/form/<?= $a['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                                <form method="POST" action="<?= BASE_URL ?>/admin/iot/automation/delete/<?= $a['id'] ?>" class="d-inline" onsubmit="return confirm('Delete automation?')"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
+                                <form method="POST" action="<?= BASE_URL ?>/admin/iot/automation/delete/<?= $a['id'] ?>" class="d-inline" data-aps-confirm="Delete automation?"><input type="hidden" name="csrf_token" value="<?= $csrf ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

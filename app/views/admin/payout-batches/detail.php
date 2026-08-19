@@ -15,13 +15,13 @@
             <?php elseif ($batch['status'] === 'pending_approval'): ?>
                 <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/approve/<?= $batch['id'] ?>" class="style-35851">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                    <button type="submit" class="btn btn-success" onclick="return confirm('Approve this payout batch?')"><i class="fas fa-check me-1"></i> Approve</button>
+                    <button type="submit" class="btn btn-success" data-aps-confirm="Approve this payout batch?"><i class="fas fa-check me-1"></i> Approve</button>
                 </form>
                 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal"><i class="fas fa-times me-1"></i> Reject</button>
             <?php elseif ($batch['status'] === 'approved'): ?>
                 <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/process/<?= $batch['id'] ?>" class="style-35851">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                    <button type="submit" class="btn btn-info" onclick="return confirm('Start processing this batch?')"><i class="fas fa-play me-1"></i> Start Processing</button>
+                    <button type="submit" class="btn btn-info" data-aps-confirm="Start processing this batch?"><i class="fas fa-play me-1"></i> Start Processing</button>
                 </form>
                 <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/export/<?= $batch['id'] ?>" class="style-35851">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

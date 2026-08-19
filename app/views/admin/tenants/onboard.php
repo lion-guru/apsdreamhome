@@ -251,7 +251,7 @@ $steps = [
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="d-flex justify-content-between">
                     <a href="<?= $base ?>/admin/tenants/onboard?step=4" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
-                    <button type="submit" class="btn btn-success btn-lg px-5" onclick="return confirm('Launch this tenant?')">
+                    <button type="submit" class="btn btn-success btn-lg px-5" data-aps-confirm="Launch this tenant?">
                         <i class="fas fa-rocket me-2"></i>Launch Tenant
                     </button>
                 </div>

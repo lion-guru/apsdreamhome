@@ -113,10 +113,10 @@
                                     <td class="text-end pe-4">
                                         <?php if (($l['status'] ?? '') === 'pending'): ?>
                                             <div class="btn-group shadow-sm" role="group">
-                                                <a href="<?= BASE_URL ?>/admin/hr/leaves/approve/<?= $l['id'] ?>" class="btn btn-sm btn-success" title="Approve" onclick="return confirm('Are you sure you want to approve this leave request?')">
+                                                <a href="<?= BASE_URL ?>/admin/hr/leaves/approve/<?= $l['id'] ?>" class="btn btn-sm btn-success" title="Approve" data-aps-confirm="Are you sure you want to approve this leave request?">
                                                     <i class="fas fa-check me-1"></i> Approve
                                                 </a>
-                                                <a href="<?= BASE_URL ?>/admin/hr/leaves/reject/<?= $l['id'] ?>" class="btn btn-sm btn-danger" title="Reject" onclick="return confirm('Are you sure you want to reject this leave request?')">
+                                                <a href="<?= BASE_URL ?>/admin/hr/leaves/reject/<?= $l['id'] ?>" class="btn btn-sm btn-danger" title="Reject" data-aps-confirm="Are you sure you want to reject this leave request?">
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </a>
                                             </div>

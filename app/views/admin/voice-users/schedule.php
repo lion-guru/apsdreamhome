@@ -31,7 +31,7 @@
                                         <td><?= htmlspecialchars($c['scheduled_at'] ?? $c['schedule_time'] ?? '-') ?></td>
                                         <td><span class="badge bg-<?= ($c['status'] ?? 'scheduled') === 'scheduled' ? 'primary' : (($c['status'] ?? '') === 'in_progress' ? 'warning' : 'success') ?>"><?= ucfirst(str_replace('_', ' ', $c['status'] ?? 'scheduled')) ?></span></td>
                                         <td>
-                                            <form method="post" action="<?= BASE_URL ?>admin/voice-users/cancel-schedule/<?= (int)($c['id'] ?? 0) ?>" class="d-inline" onsubmit="return confirm('Cancel this call?')">
+                                            <form method="post" action="<?= BASE_URL ?>admin/voice-users/cancel-schedule/<?= (int)($c['id'] ?? 0) ?>" class="d-inline" data-aps-confirm="Cancel this call?">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Close"><i class="fas fa-times"></i></button>
                                             </form>

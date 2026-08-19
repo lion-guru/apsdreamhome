@@ -133,7 +133,7 @@ $statusBadge = fn($s) => match($s) {
                                             </form>
                                         <?php endif; ?>
                                         <?php if ($p['status'] !== 'active'): ?>
-                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/delete/<?= $p['id'] ?>" class="style-71727" onsubmit="return confirm('Delete this plan?')">
+                                            <form method="POST" action="<?= $base ?>/admin/commission-plans/delete/<?= $p['id'] ?>" class="style-71727" data-aps-confirm="Delete this plan?">
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                                                 <button type="submit" class="btn-cp btn-cp-danger" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

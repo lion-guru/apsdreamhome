@@ -139,7 +139,7 @@
                                 <label class="style-73163">Admin Notes (optional)</label>
                                 <textarea name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Reason for approval..." class="style-62452"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success" onclick="return confirm('Approve this recalculation? A new ledger entry will be created.')">
+                            <button type="submit" class="btn btn-success" data-aps-confirm="Approve this recalculation? A new ledger entry will be created.">
                                 <i class="fas fa-check me-1"></i> Approve & Apply
                             </button>
                         </form>
@@ -152,7 +152,7 @@
                                 <label class="style-73163">Rejection Reason</label>
                                 <textarea name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Why rejecting?" class="style-62452"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Reject this recalculation request?')">
+                            <button type="submit" class="btn btn-danger" data-aps-confirm="Reject this recalculation request?">
                                 <i class="fas fa-times me-1"></i> Reject
                             </button>
                         </form>

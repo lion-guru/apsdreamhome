@@ -102,7 +102,7 @@ $base = BASE_URL ?? '';
                                             <i class="fas fa-undo"></i> Restore
                                         </button>
                                     </form>
-                                    <form method="POST" action="<?= $base ?>/admin/leads/<?= (int)$lead['id'] ?>/permanent-delete" class="style-35851" onsubmit="return confirm('PERMANENTLY delete this lead? This cannot be undone!')">
+                                    <form method="POST" action="<?= $base ?>/admin/leads/<?= (int)$lead['id'] ?>/permanent-delete" class="style-35851" data-aps-confirm="PERMANENTLY delete this lead? This cannot be undone!">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Permanently Delete">
                                             <i class="fas fa-trash"></i> Delete Forever

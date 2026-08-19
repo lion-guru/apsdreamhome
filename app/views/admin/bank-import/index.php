@@ -116,12 +116,12 @@
                                 <?php if (($imp['status'] ?? '') === 'completed' && (int)($imp['unmatched_rows'] ?? 0) > 0): ?>
                                     <form method="post" action="<?= BASE_URL ?>/admin/bank-import/<?= (int)$imp['id'] ?>/match" class="d-inline">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                        <button type="submit" class="btn btn-outline-success" title="Auto-Match" onclick="return confirm('Auto-match transactions?')" aria-label="Auto"><i class="fas fa-magic"></i></button>
+                                        <button type="submit" class="btn btn-outline-success" title="Auto-Match" data-aps-confirm="Auto-match transactions?" aria-label="Auto"><i class="fas fa-magic"></i></button>
                                     </form>
                                 <?php endif; ?>
                                 <form method="post" action="<?= BASE_URL ?>/admin/bank-import/<?= (int)$imp['id'] ?>/delete" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                    <button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this import and all its transactions?')" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Delete this import and all its transactions?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </td>

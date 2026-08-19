@@ -28,7 +28,7 @@
                                 <td>
                                     <a href="<?= BASE_URL ?>/admin/salary/contracts/view/<?= $c['id'] ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
                                     <?php if (($c['status'] ?? '') === 'active'): ?>
-                                    <form method="post" action="<?= BASE_URL ?>/admin/salary/contracts/terminate/<?= $c['id'] ?>" class="d-inline" onsubmit="return confirm('Terminate this contract?')">
+                                    <form method="post" action="<?= BASE_URL ?>/admin/salary/contracts/terminate/<?= $c['id'] ?>" class="d-inline" data-aps-confirm="Terminate this contract?">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Cancel contract"><i class="fas fa-ban"></i></button>
                                     </form>

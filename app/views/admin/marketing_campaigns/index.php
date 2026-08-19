@@ -141,9 +141,9 @@ ob_start();
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/marketing-campaigns/show/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                         <?php if ($c['status'] === 'draft'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $c['id'] ?>" class="btn btn-sm btn-success" onclick="return confirm('Send this campaign now?')"><i class="fas fa-paper-plane"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $c['id'] ?>" class="btn btn-sm btn-success" data-aps-confirm="Send this campaign now?"><i class="fas fa-paper-plane"></i></a>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/marketing-campaigns/delete?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this campaign?')"><i class="fas fa-trash"></i></a>
+                                        <a href="<?= BASE_URL ?>/admin/marketing-campaigns/delete?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign?"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

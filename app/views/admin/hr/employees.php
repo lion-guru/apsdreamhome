@@ -69,7 +69,7 @@ $page_title = $page_title ?? 'users';
                                 <td class="text-end">
                                     <a href="<?= BASE_URL ?>/admin/hr/users/view/<?= $e['id'] ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
                                     <a href="<?= BASE_URL ?>/admin/hr/users/edit/<?= $e['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
-                                    <a href="<?= BASE_URL ?>/admin/hr/users/delete/<?= $e['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this employee?')"><i class="fas fa-trash"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users/delete/<?= $e['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" data-aps-confirm="Delete this employee?"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -188,8 +188,10 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
 
 <script>
 function reconcileTransaction(id) {
-    if (confirm('Mark this transaction as reconciled?')) {
-        window.location.href = '<?php echo BASE_URL; ?>/admin/banking/reconcile/' + id;
-    }
+    apsConfirm('Mark this transaction as reconciled?').then(function(result) {
+        if (result) {
+            window.location.href = '<?php echo BASE_URL; ?>/admin/banking/reconcile/' + id;
+        }
+    });
 }
 </script>
