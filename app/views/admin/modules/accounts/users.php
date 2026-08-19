@@ -179,7 +179,7 @@ $users = $users ?? [];
                                         <i class="fas fa-key"></i>
                                     </button>
                                     <?php if ($user['status'] === 'active'): ?>
-                                        <button class="btn btn-sm btn-danger" onclick="suspendUser('<?php echo $user['id']; ?>')" title="Suspend">
+                                        <button class="btn btn-sm btn-danger" onclick="suspendUser('<?php echo $user['id']; ?>')" title="Suspend" aria-label="Suspend user">
                                             <i class="fas fa-ban"></i>
                                         </button>
                                     <?php else: ?>
@@ -583,7 +583,7 @@ $users = $users ?? [];
     
     function getActionButton(user) {
         if (user.status === 'active') {
-            return `<button class="btn btn-sm btn-danger" onclick="suspendUser('${user.id}')" title="Suspend">
+            return `<button class="btn btn-sm btn-danger" onclick="suspendUser('${user.id}')" title="Suspend" aria-label="Suspend user">
                         <i class="fas fa-ban"></i>
                     </button>`;
         } else {

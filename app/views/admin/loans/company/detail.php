@@ -225,7 +225,7 @@ $early_settlement = $early_settlement ?? [];
                                             <?php if ($d['status'] === 'final' && !$d['signed_by_customer']): ?>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/company-loans/document/<?= $d['id'] ?>/sign" class="style-71727">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                                    <button type="submit" class="btn btn-outline-info" title="Mark Signed"><i class="fas fa-signature"></i></button>
+                                                    <button type="submit" class="btn btn-outline-info" title="Mark as signed" aria-label="Mark as signed"><i class="fas fa-signature"></i></button>
                                                 </form>
                                             <?php endif; ?>
                                         </div>

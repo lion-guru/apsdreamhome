@@ -30,7 +30,7 @@
                                     <?php if (($c['status'] ?? '') === 'active'): ?>
                                     <form method="post" action="<?= BASE_URL ?>/admin/salary/contracts/terminate/<?= $c['id'] ?>" class="d-inline" onsubmit="return confirm('Terminate this contract?')">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-ban"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Cancel contract"><i class="fas fa-ban"></i></button>
                                     </form>
                                     <?php endif; ?>
                                 </td>

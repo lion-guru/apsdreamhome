@@ -34,7 +34,7 @@
                         <label class="form-label">Pincode</label>
                         <div class="input-group">
                             <input type="text" name="pincode" class="form-control" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
-                            <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                            <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location" aria-label="Use my location">
                                 <i class="fas fa-location-crosshairs"></i>
                             </button>
                         </div>

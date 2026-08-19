@@ -110,7 +110,7 @@ ob_start();
                   <?php if ($k['is_active']): ?>
                     <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/revoke/<?= $k['id'] ?>" class="d-inline">
                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                      <button class="btn btn-sm btn-outline-warning" title="Revoke"><i class="fas fa-ban"></i></button>
+                      <button class="btn btn-sm btn-outline-warning" title="Revoke key" aria-label="Revoke key"><i class="fas fa-ban"></i></button>
                     </form>
                   <?php else: ?>
                     <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/activate/<?= $k['id'] ?>" class="d-inline">

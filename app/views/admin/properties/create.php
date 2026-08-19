@@ -117,7 +117,7 @@ $active_page = 'properties';
                                 <label for="pincode" class="form-label">Pincode</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
-                                    <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use my location" aria-label="Use my location">
                                         <i class="fas fa-location-crosshairs"></i>
                                     </button>
                                 </div>

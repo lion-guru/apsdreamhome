@@ -68,7 +68,7 @@ $merge_fields = $merge_fields ?? [];
                                     <?php if ($t['status'] !== 'archived'): ?>
                                         <form method="POST" action="<?= BASE_URL ?>/admin/legal/templates/<?= $t['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Archive this template?')">
                                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-archive"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" aria-label="Archive"><i class="fas fa-archive"></i></button>
                                         </form>
                                     <?php endif; ?>
                                 </div>

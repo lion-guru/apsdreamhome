@@ -124,7 +124,7 @@ $statusBadge = fn($s) => match($s) {
                                         <?php if ($p['status'] !== 'active'): ?>
                                             <form method="POST" action="<?= $base ?>/admin/commission-plans/activate/<?= $p['id'] ?>" class="style-71727">
                                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-                                                <button type="submit" class="btn-cp btn-cp-success" title="Activate"><i class="fas fa-power-off"></i></button>
+                                                <button type="submit" class="btn-cp btn-cp-success" title="Activate" aria-label="Activate plan"><i class="fas fa-power-off"></i></button>
                                             </form>
                                         <?php else: ?>
                                             <form method="POST" action="<?= $base ?>/admin/commission-plans/deactivate/<?= $p['id'] ?>" class="style-71727">
