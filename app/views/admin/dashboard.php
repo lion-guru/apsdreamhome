@@ -121,7 +121,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         $pdo = $db->getConnection();
         $stmt = $pdo->query("SELECT COUNT(*) FROM plot_bookings WHERE approval_status IS NULL OR approval_status = 'pending'");
         $pendingBookings = (int)$stmt->fetchColumn();
-    } catch (\Throwable $e) {}
+    } catch (\Throwable $e) { error_log('dashboard.php pending bookings error: ' . $e->getMessage()); }
     ?>
     <?php if ($pendingBookings > 0): ?>
     <div class="alert alert-info d-flex align-items-center mb-4" role="alert">

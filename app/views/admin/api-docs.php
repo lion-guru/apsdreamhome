@@ -241,7 +241,7 @@ $groupCount = count($groups);
 
         // Destroy previous instance
         if (swaggerUiInstance) {
-            try { swaggerUiInstance.dispose(); } catch(e) {}
+            try { swaggerUiInstance.dispose(); } catch(err) { console.error('Swagger dispose error:', err); }
         }
 
         setTimeout(() => {
@@ -287,7 +287,7 @@ $groupCount = count($groups);
         if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
         // Fallback: use Swagger UI's built-in filter
         if (swaggerUiInstance) {
-            try { swaggerUiInstance.layoutSelectors.modelSelectors.tagName.innerHTML; } catch(e) {}
+            try { swaggerUiInstance.layoutSelectors.modelSelectors.tagName.innerHTML; } catch(err) { console.error('Swagger layout error:', err); }
         }
     }
 

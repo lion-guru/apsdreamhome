@@ -22,7 +22,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
                     try {
                         $wa = new \App\Services\Communication\WhatsAppWebService();
                         $whatsappConnected = $wa->isConnected();
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) { error_log('whatsapp_integration.php connection check error: ' . $e->getMessage()); }
                     ?>
                     <div class="d-flex align-items-center gap-3 mb-4">
                         <div class="flex-shrink-0">
