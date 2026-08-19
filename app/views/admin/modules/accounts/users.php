@@ -483,26 +483,32 @@ $users = $users ?? [];
     
     function resetPassword(userId) {
         const user = allUsers.find(u => u.id === userId);
-        if (confirm(`Reset password for ${user.name}?`)) {
-            showNotification(`Password reset link sent to ${user.email}`, 'success');
-            // Here you would make API call to reset password
-        }
+        apsConfirm(`Reset password for ${user.name}?`).then(function(ok) {
+            if (ok) {
+                showNotification(`Password reset link sent to ${user.email}`, 'success');
+                // Here you would make API call to reset password
+            }
+        });
     }
     
     function suspendUser(userId) {
         const user = allUsers.find(u => u.id === userId);
-        if (confirm(`Suspend user: ${user.name}?`)) {
-            showNotification(`User ${userId} suspended`, 'warning');
-            // Here you would make API call to suspend user
-        }
+        apsConfirm(`Suspend user: ${user.name}?`).then(function(ok) {
+            if (ok) {
+                showNotification(`User ${userId} suspended`, 'warning');
+                // Here you would make API call to suspend user
+            }
+        });
     }
     
     function activateUser(userId) {
         const user = allUsers.find(u => u.id === userId);
-        if (confirm(`Activate user: ${user.name}?`)) {
-            showNotification(`User ${userId} activated`, 'success');
-            // Here you would make API call to activate user
-        }
+        apsConfirm(`Activate user: ${user.name}?`).then(function(ok) {
+            if (ok) {
+                showNotification(`User ${userId} activated`, 'success');
+                // Here you would make API call to activate user
+            }
+        });
     }
     
     function renderUsersTable() {

@@ -684,27 +684,28 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
         
         // Switch role
         function switchRole(role) {
-            if (!confirm(`Switch to ${role} role? This will change your permissions.`)) return;
-            
-            fetch(`${baseUrl}/admin/godmode/switch-role`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `role=${role}`
-            })
-            .then(r => r.json())
-            .then(data => {
-                    .catch(err => console.error('Request failed:', err));
-                if (data.success) {
-                    showToast(data.message, 'success');
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showToast(data.error || 'Failed to switch role', 'error');
-                }
-            })
-            .catch(err => showToast('Error switching role', 'error'));
+            apsConfirm(`Switch to ${role} role? This will change your permissions.`).then(function(ok) {
+                if (!ok) return;
+                
+                fetch(`${baseUrl}/admin/godmode/switch-role`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `role=${role}`
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showToast(data.error || 'Failed to switch role', 'error');
+                    }
+                })
+                .catch(err => showToast('Error switching role', 'error'));
+            });
         }
         
         // Restore role
@@ -726,21 +727,23 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
         
         // Execute system command
         function executeCommand(command) {
-            if (!confirm(`Execute command: ${command}?`)) return;
-            
-            fetch(`${baseUrl}/admin/godmode/execute-command`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `command=${command}`
-            })
-            .then(r => r.json())
-            .then(data => {
-                showToast(data.result || data.message, data.success ? 'success' : 'error');
-            })
-            .catch(err => showToast('Error executing command', 'error'));
+            apsConfirm(`Execute command: ${command}?`).then(function(ok) {
+                if (!ok) return;
+                
+                fetch(`${baseUrl}/admin/godmode/execute-command`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `command=${command}`
+                })
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.result || data.message, data.success ? 'success' : 'error');
+                })
+                .catch(err => showToast('Error executing command', 'error'));
+            });
         }
         
         // Search users

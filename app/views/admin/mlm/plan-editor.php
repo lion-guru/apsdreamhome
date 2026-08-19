@@ -353,7 +353,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
     <!-- SAVE BUTTON -->
     <div class="text-end mb-4">
         <a href="<?= htmlspecialchars($base ?? '') ?>/admin/mlm" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Back to Dashboard</a>
-        <button type="submit" class="btn btn-primary btn-lg" onclick="return confirmSave()">
+        <button type="submit" class="btn btn-primary btn-lg" id="savePlanBtn">
             <i class="fas fa-save me-1"></i> Save MLM Plan
         </button>
     </div>
@@ -390,14 +390,22 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
 
 <script>
 function confirmSave() {
-    // Rebuild rank_bonus_amounts JSON from individual inputs before submit
     const inputs = document.querySelectorAll('.rank-bonus-input');
     const amounts = {};
     inputs.forEach(function(inp) {
         amounts[inp.dataset.rank] = parseInt(inp.value) || 0;
     });
     document.getElementById('rankBonusJson').value = JSON.stringify(amounts);
-    return confirm('Save all changes to the MLM plan? This will affect commission calculations immediately.');
+    apsConfirm('Save all changes to the MLM plan? This will affect commission calculations immediately.').then(function(ok) {
+        if (ok) {
+            document.getElementById('savePlanBtn').off('submit').click();
+        }
+    });
 }
+
+document.getElementById('savePlanBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    confirmSave();
+});
 </script>
 

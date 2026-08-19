@@ -167,7 +167,7 @@ unset($_SESSION['kyc_verify_results']);
                                 <label class="form-label fw-bold">Rejection Reason <span class="text-danger">*</span></label>
                                 <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Enter reason for rejection..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Reject this KYC request?');">
+                            <button type="submit" class="btn btn-danger w-100" data-aps-confirm="Reject this KYC request?">
                                 <i class="fas fa-times me-1"></i>Confirm Rejection
                             </button>
                         </form>

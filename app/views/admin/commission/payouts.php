@@ -166,23 +166,24 @@ function bulkPay() {
     const ids = [];
     document.querySelectorAll('.payout-check:checked').forEach(cb => ids.push(cb.value));
     if (!ids.length) return;
-    if (!confirm(`Process ${ids.length} commission payouts?`)) return;
+    apsConfirm(`Process ${ids.length} commission payouts?`).then(function(ok) {
+        if (!ok) return;
 
-    fetch('<?php echo $base; ?>/admin/commission/payout', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
-        body: 'commission_ids[]=' + ids.join('&commission_ids[]=') + '&payout_method=bank_transfer&csrf_token=<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            showToast('Payouts processed successfully!', 'success');
-            .catch(err => console.error('Request failed:', err));
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            showToast(data.message || 'Failed to process payouts', 'error');
-        }
-    })
-    .catch(() => showToast('Network error', 'error'));
+        fetch('<?php echo $base; ?>/admin/commission/payout', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
+            body: 'commission_ids[]=' + ids.join('&commission_ids[]=') + '&payout_method=bank_transfer&csrf_token=<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Payouts processed successfully!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(data.message || 'Failed to process payouts', 'error');
+            }
+        })
+        .catch(() => showToast('Network error', 'error'));
+    });
 }
 </script>

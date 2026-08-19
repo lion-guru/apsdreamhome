@@ -45,7 +45,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
             </div>
             <div class="mt-3 d-flex gap-2">
-                <button class="btn btn-warning" type="submit" onclick="return confirm('Initiate transfer? Booking will be reassigned.');">
+                <button class="btn btn-warning" type="submit" data-aps-confirm="Initiate transfer? Booking will be reassigned.">
                     <i class="fas fa-exchange-alt me-1"></i><?= __('sale_initiate_transfer') ?>
                 </button>
                 <a class="btn btn-link" href="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>"><?= __('sale_back') ?></a>
